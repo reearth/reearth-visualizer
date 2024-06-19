@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
 import { useWidgetsFetcher } from "@reearth/services/api";
 
 import { SelectedWidget } from "../../hooks/useWidgets";
@@ -14,12 +15,13 @@ export default ({ sceneId, selectedWidget }: Props) => {
 
   const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
 
-  const propertyItems = useMemo(
-    () => installedWidgets?.find(w => w.id === selectedWidget?.id)?.property.items,
+  const visibleItems = useMemo(
+    () =>
+      filterVisibleItems(installedWidgets?.find(w => w.id === selectedWidget?.id)?.property.items),
     [installedWidgets, selectedWidget],
   );
 
   return {
-    propertyItems,
+    visibleItems,
   };
 };

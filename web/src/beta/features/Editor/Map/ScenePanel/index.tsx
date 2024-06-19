@@ -10,7 +10,7 @@ import { useMapPage } from "../context";
 const ScenePanel: FC = () => {
   const t = useT();
 
-  const { scene, selectedSceneSetting, onSceneSettingSelect } = useMapPage();
+  const { scene, selectedSceneSetting, handleSceneSettingSelect } = useMapPage();
 
   // TODO-VizUI: use EntryItem
   const handleTranslatedCollectionName = useCallback(
@@ -40,7 +40,7 @@ const ScenePanel: FC = () => {
             <ListItem
               key={index}
               isSelected={selectedSceneSetting === collection}
-              onItemClick={() => onSceneSettingSelect(collection)}>
+              onItemClick={() => handleSceneSettingSelect(collection)}>
               {handleTranslatedCollectionName(collection as ScenePropertyCollection)}
             </ListItem>
           ),

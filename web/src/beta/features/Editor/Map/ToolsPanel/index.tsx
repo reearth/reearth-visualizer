@@ -13,57 +13,57 @@ type SketchTool = {
 };
 
 const ToolsPanel: FC = () => {
-  const { sketchEnabled, sketchType, onSketchTypeChange } = useMapPage();
+  const { sketchEnabled, sketchType, handleSketchTypeChange } = useMapPage();
 
   const sketchTools: SketchTool[] = useMemo(
     () => [
       {
         icon: "mapPin",
         selected: sketchEnabled && sketchType === "marker",
-        onClick: () => onSketchTypeChange("marker"),
+        onClick: () => handleSketchTypeChange("marker"),
       },
       {
         icon: "polyline",
         selected: sketchEnabled && sketchType === "polyline",
-        onClick: () => onSketchTypeChange("polyline"),
+        onClick: () => handleSketchTypeChange("polyline"),
       },
       {
         icon: "circle",
         selected: sketchEnabled && sketchType === "circle",
-        onClick: () => onSketchTypeChange("circle"),
+        onClick: () => handleSketchTypeChange("circle"),
       },
       {
         icon: "square",
         selected: sketchEnabled && sketchType === "rectangle",
-        onClick: () => onSketchTypeChange("rectangle"),
+        onClick: () => handleSketchTypeChange("rectangle"),
       },
       {
         icon: "polygon",
         selected: sketchEnabled && sketchType === "polygon",
-        onClick: () => onSketchTypeChange("polygon"),
+        onClick: () => handleSketchTypeChange("polygon"),
       },
       {
         icon: "cylinder",
         selected: sketchEnabled && sketchType === "extrudedCircle",
-        onClick: () => onSketchTypeChange("extrudedCircle"),
+        onClick: () => handleSketchTypeChange("extrudedCircle"),
       },
       {
         icon: "cube",
         selected: sketchEnabled && sketchType === "extrudedRectangle",
-        onClick: () => onSketchTypeChange("extrudedRectangle"),
+        onClick: () => handleSketchTypeChange("extrudedRectangle"),
       },
       {
         icon: "extrude",
         selected: sketchEnabled && sketchType === "extrudedPolygon",
-        onClick: () => onSketchTypeChange("extrudedPolygon"),
+        onClick: () => handleSketchTypeChange("extrudedPolygon"),
       },
     ],
-    [sketchEnabled, sketchType, onSketchTypeChange],
+    [sketchEnabled, sketchType, handleSketchTypeChange],
   );
 
   useEffect(() => {
-    if (!sketchEnabled) onSketchTypeChange(undefined);
-  }, [sketchEnabled, onSketchTypeChange]);
+    if (!sketchEnabled) handleSketchTypeChange(undefined);
+  }, [sketchEnabled, handleSketchTypeChange]);
 
   return (
     <Panel storageId="editor-map-tools-panel" extend>

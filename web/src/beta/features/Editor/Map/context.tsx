@@ -21,36 +21,36 @@ import {
 } from "../hooks/useLayerStyles";
 import { GeoJsonFeatureUpdateProps } from "../hooks/useSketch";
 
-interface MapPageContextType {
-  onVisualizerResize?: (props: AreaSize) => void;
+export interface MapPageContextType {
+  handleVisualizerResize?: (props: AreaSize) => void;
   scene?: Scene;
   selectedSceneSetting?: string;
-  onSceneSettingSelect: (groupId: string) => void;
+  handleSceneSettingSelect: (groupId: string) => void;
   layers: NLSLayer[];
   selectedLayerId?: string;
-  onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
-  onLayerSelect: (id?: string) => void;
-  onDataSourceLayerCreatorOpen: () => void;
-  onSketchLayerCreatorOpen: () => void;
-  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
-  onFlyTo?: FlyTo;
+  handleLayerDelete: (id: string) => void;
+  handleLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  handleLayerSelect: (id?: string) => void;
+  openDataSourceLayerCreator: () => void;
+  openSketchLayerCreator: () => void;
+  handleLayerVisibilityUpdate: (inp: LayerVisibilityUpdateProps) => void;
+  handleFlyTo?: FlyTo;
   sketchEnabled: boolean;
   sketchType: SketchType | undefined;
-  onSketchTypeChange: (type: SketchType | undefined) => void;
+  handleSketchTypeChange: (type: SketchType | undefined) => void;
   sceneSettings?: Item[];
   layerStyles?: LayerStyle[];
   sceneId?: string;
   selectedLayerStyleId?: string;
   currentCamera?: Camera;
   selectedLayer: SelectedLayer | undefined;
-  onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
-  onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
-  onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
-  onLayerStyleAdd: (inp: LayerStyleAddProps) => void;
-  onLayerStyleDelete: (id: string) => void;
-  onLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
-  onLayerStyleSelect: (id: string) => void;
+  handleLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
+  handleLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
+  handleGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  handleLayerStyleAdd: (inp: LayerStyleAddProps) => void;
+  handleLayerStyleDelete: (id: string) => void;
+  handleLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
+  handleLayerStyleSelect: (id: string) => void;
 }
 
 const MapPageContext = createContext<MapPageContextType | undefined>(undefined);

@@ -7,7 +7,7 @@ import PublishToolsPanel from "./PublishToolsPanel";
 
 const Publish: FC = () => {
   const windowRef = useRef<HTMLDivElement>(null);
-  const { onVisualizerResize } = usePublishPage();
+  const { handleVisualizerResize } = usePublishPage();
 
   return (
     <Window ref={windowRef}>
@@ -16,7 +16,7 @@ const Publish: FC = () => {
           <Area height={34}>
             <PublishToolsPanel />
           </Area>
-          <Area extend onResize={onVisualizerResize} windowRef={windowRef} passive />
+          <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />
         </Area>
       </Area>
     </Window>

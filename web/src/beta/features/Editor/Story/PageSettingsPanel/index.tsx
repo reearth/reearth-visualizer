@@ -9,7 +9,8 @@ import { useStoryPage } from "../context";
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
-  const { selectedStoryPage, currentCamera, layers, onPageUpdate, tab, onFlyTo } = useStoryPage();
+  const { selectedStoryPage, currentCamera, layers, handleStoryPageUpdate, tab, handleFlyTo } =
+    useStoryPage();
 
   const t = useT();
 
@@ -37,8 +38,8 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           layers={layers}
           selectedPage={selectedStoryPage}
           tab={tab}
-          onPageUpdate={onPageUpdate}
-          onFlyTo={onFlyTo}
+          onPageUpdate={handleStoryPageUpdate}
+          onFlyTo={handleFlyTo}
         />
       )}
     </Panel>

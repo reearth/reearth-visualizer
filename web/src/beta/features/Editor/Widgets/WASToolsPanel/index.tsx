@@ -12,28 +12,28 @@ import Devices from "./Devices";
 
 const WASToolsPanel: FC = () => {
   const {
-    showWidgetEditor,
+    showWASEditor,
     selectedDevice = "desktop",
-    onShowWidgetEditor,
-    onDeviceChange,
-    setSelectedWidgetArea,
+    handleShowWASEditorToggle,
+    handleDeviceChange,
+    selectWidgetArea,
   } = useWidgetsPage();
 
   const t = useT();
 
   useEffect(() => {
-    if (!showWidgetEditor) {
-      setSelectedWidgetArea(undefined);
+    if (!showWASEditor) {
+      selectWidgetArea(undefined);
     }
-  }, [showWidgetEditor, setSelectedWidgetArea]);
+  }, [showWASEditor, selectWidgetArea]);
 
   return (
     <Panel extend>
       <StyledSecondaryNav>
-        <Devices selectedDevice={selectedDevice} onDeviceChange={onDeviceChange} />
+        <Devices selectedDevice={selectedDevice} onDeviceChange={handleDeviceChange} />
         <AlignSystem>
           <Text size="body">{t("Align System")}</Text>
-          <Toggle checked={!!showWidgetEditor} onChange={onShowWidgetEditor} />
+          <Toggle checked={!!showWASEditor} onChange={handleShowWASEditorToggle} />
         </AlignSystem>
       </StyledSecondaryNav>
     </Panel>

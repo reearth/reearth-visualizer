@@ -7,7 +7,7 @@ import PageSettingsPanel from "./PageSettingsPanel";
 import PagesPanel from "./PagesPanel";
 
 const Story: FC = () => {
-  const { onVisualizerResize } = useStoryPage();
+  const { handleVisualizerResize } = useStoryPage();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const leftAreaRef = useRef<AreaRef>(null);
@@ -26,7 +26,7 @@ const Story: FC = () => {
         <Area
           direction="column"
           extend
-          onResize={onVisualizerResize}
+          onResize={handleVisualizerResize}
           windowRef={windowRef}
           passive
         />

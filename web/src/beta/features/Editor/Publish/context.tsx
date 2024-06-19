@@ -4,12 +4,12 @@ import { AreaSize } from "@reearth/beta/ui/layout";
 
 import { ProjectType } from "./PublishToolsPanel/hooks";
 
-interface PublishPageContextType {
-  onVisualizerResize?: (props: AreaSize) => void;
+export interface PublishPageContextType {
+  handleVisualizerResize?: (props: AreaSize) => void;
   id?: string;
   sceneId?: string;
   selectedProjectType?: ProjectType;
-  onProjectTypeChange: (type: ProjectType) => void;
+  handleProjectTypeChange: (type: ProjectType) => void;
 }
 
 const PublishPageContext = createContext<PublishPageContextType | undefined>(undefined);

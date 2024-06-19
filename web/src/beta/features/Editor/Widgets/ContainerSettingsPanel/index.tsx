@@ -12,9 +12,9 @@ import { useWidgetsPage } from "../context";
 import useHooks from "./hooks";
 
 const ContainerSettingsPanel: FC = () => {
-  const { sceneId, selectedWidgetArea: widgetArea, setSelectedWidgetArea } = useWidgetsPage();
+  const { sceneId, selectedWidgetArea: widgetArea, selectWidgetArea } = useWidgetsPage();
 
-  const { handleWidgetAreaStateChange } = useHooks({ sceneId, setSelectedWidgetArea });
+  const { handleWidgetAreaStateChange } = useHooks({ sceneId, selectWidgetArea });
 
   const t = useT();
 

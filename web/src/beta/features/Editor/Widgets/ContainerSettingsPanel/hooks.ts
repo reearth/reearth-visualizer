@@ -5,10 +5,10 @@ import { WidgetAreaState } from "@reearth/services/state";
 
 type Props = {
   sceneId?: string;
-  setSelectedWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
+  selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
 
-export default ({ sceneId, setSelectedWidgetArea }: Props) => {
+export default ({ sceneId, selectWidgetArea }: Props) => {
   const { useUpdateWidgetAlignSystem } = useWidgetsFetcher();
 
   const handleWidgetAreaStateChange = useCallback(
@@ -16,10 +16,10 @@ export default ({ sceneId, setSelectedWidgetArea }: Props) => {
       if (!sceneId || !widgetAreaState) return;
       const results = await useUpdateWidgetAlignSystem(widgetAreaState, sceneId);
       if (results.status === "success") {
-        setSelectedWidgetArea(widgetAreaState);
+        selectWidgetArea(widgetAreaState);
       }
     },
-    [sceneId, useUpdateWidgetAlignSystem, setSelectedWidgetArea],
+    [sceneId, useUpdateWidgetAlignSystem, selectWidgetArea],
   );
 
   return {

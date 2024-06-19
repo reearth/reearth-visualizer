@@ -7,10 +7,10 @@ import { SelectedWidget } from "../../hooks/useWidgets";
 type Props = {
   sceneId?: string;
   selectedWidget: SelectedWidget | undefined;
-  setSelectedWidget: (value: SelectedWidget | undefined) => void;
+  selectWidget: (value: SelectedWidget | undefined) => void;
 };
 
-export default ({ sceneId, selectedWidget, setSelectedWidget }: Props) => {
+export default ({ sceneId, selectedWidget, selectWidget }: Props) => {
   const {
     useInstallableWidgetsQuery,
     useInstalledWidgetsQuery,
@@ -41,9 +41,9 @@ export default ({ sceneId, selectedWidget, setSelectedWidget }: Props) => {
     if (!w) return;
 
     if (w.id === selectedWidget?.id) {
-      setSelectedWidget(undefined);
+      selectWidget(undefined);
     } else {
-      setSelectedWidget({
+      selectWidget({
         id: w.id,
         pluginId: w.pluginId,
         extensionId: w.extensionId,

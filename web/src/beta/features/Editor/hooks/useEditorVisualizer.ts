@@ -18,7 +18,7 @@ export default () => {
   const [visualizerSize, setVisualizerSize] = useState({ width: 0, height: 0, left: 0, top: 0 });
   const isVisualizerResizing = useRef(false);
 
-  const handleVisuzlierResize = useCallback((size: AreaSize) => {
+  const handleVisualizerResize = useCallback((size: AreaSize) => {
     setVisualizerSize({
       left: size.left + 1,
       top: size.top + 1,
@@ -52,7 +52,7 @@ export default () => {
     isVisualizerReady,
     handleIsVisualizerUpdate,
     visualizerSize,
-    handleVisuzlierResize,
+    handleVisualizerResize,
     isVisualizerResizing,
     currentCamera,
     handleCameraUpdate,

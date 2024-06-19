@@ -14,7 +14,7 @@ import useHooks from "./hooks";
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
-  const { sceneId, selectedWidget, setSelectedWidget } = useWidgetsPage();
+  const { sceneId, selectedWidget, selectWidget } = useWidgetsPage();
 
   const t = useT();
 
@@ -29,7 +29,7 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   } = useHooks({
     sceneId,
     selectedWidget,
-    setSelectedWidget,
+    selectWidget,
   });
 
   return (

@@ -10,7 +10,7 @@ import ScenePanel from "./ScenePanel";
 import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
-  const { onVisualizerResize } = useMapPage();
+  const { handleVisualizerResize } = useMapPage();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const secRightAreaRef = useRef<AreaRef>(null);
@@ -27,7 +27,7 @@ const Map: FC = () => {
           <Area height={34}>
             <ToolsPanel />
           </Area>
-          <Area extend onResize={onVisualizerResize} windowRef={windowRef} passive />
+          <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />
         </Area>
         <Area
           direction="column"

@@ -9,19 +9,19 @@ import { SelectedWidget } from "../hooks/useWidgets";
 
 import { Device } from "./WASToolsPanel/Devices";
 
-interface WidgetsPageContextType {
-  onVisualizerResize?: (props: AreaSize) => void;
-  showWidgetEditor?: boolean;
+export interface WidgetsPageContextType {
+  handleVisualizerResize?: (props: AreaSize) => void;
+  showWASEditor?: boolean;
   selectedDevice?: Device;
-  onShowWidgetEditor: () => void;
-  onDeviceChange: (device: Device) => void;
-  setSelectedWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
+  handleShowWASEditorToggle: () => void;
+  handleDeviceChange: (device: Device) => void;
+  selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
   sceneId?: string;
   selectedWidget?: SelectedWidget;
-  setSelectedWidget: (value: SelectedWidget | undefined) => void;
+  selectWidget: (value: SelectedWidget | undefined) => void;
   selectedWidgetArea?: WidgetAreaState;
   currentCamera?: Camera;
-  onFlyTo?: FlyTo;
+  handleFlyTo?: FlyTo;
 }
 
 const WidgetsPageContext = createContext<WidgetsPageContextType | undefined>(undefined);

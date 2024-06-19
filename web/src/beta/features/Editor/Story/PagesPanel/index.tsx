@@ -19,11 +19,11 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
     storyPages,
     selectedStoryPage,
-    onPageSelect,
-    onPageAdd,
-    onPageDelete,
-    onPageMove,
-    onPropertyUpdate,
+    handleStoryPageSelect,
+    handleStoryPageAdd,
+    handleStoryPageDelete,
+    handleStoryPageMove,
+    handlePropertyValueUpdate,
   } = useStoryPage();
 
   const t = useT();
@@ -60,7 +60,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                 items.splice(index, 0, item);
                 return items;
               });
-              await onPageMove(item.id, index);
+              await handleStoryPageMove(item.id, index);
             }}
             renderItem={(storyPage, i) => {
               const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
@@ -75,17 +75,17 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                     key={i}
                     isSelected={selectedStoryPage?.id === storyPage.id}
                     isOpenAction={openedPageId === storyPage.id}
-                    onItemClick={() => onPageSelect(storyPage.id)}
+                    onItemClick={() => handleStoryPageSelect(storyPage.id)}
                     onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}
                     onOpenChange={isOpen => {
                       setOpenedPageId(isOpen ? storyPage.id : undefined);
                     }}
-                    onPageDelete={() => onPageDelete(storyPage.id)}
+                    onPageDelete={() => handleStoryPageDelete(storyPage.id)}
                     title={hasEmptySpace || !title ? t("Untitled") : title}
                     setOpenedPageId={setOpenedPageId}
                     propertyId={storyPage.property.id}
                     storyPage={storyPage}
-                    onPropertyUpdate={onPropertyUpdate}
+                    onPropertyUpdate={handlePropertyValueUpdate}
                   />
                 </PageItemWrapper>
               );
@@ -93,7 +93,11 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           />
         </SContentUp>
         <SContentBottom>
-          <Action icon="square" title={`+ ${t("New Page")}`} onClick={() => onPageAdd(false)} />
+          <Action
+            icon="square"
+            title={`+ ${t("New Page")}`}
+            onClick={() => handleStoryPageAdd(false)}
+          />
           {/* <Action icon="swiper" title={`+ ${t("New Swipe")}`} onClick={() => onPageAdd(true)} /> */}
         </SContentBottom>
       </SContent>

@@ -8,15 +8,15 @@ import { Page } from "@reearth/services/api/storytellingApi/utils";
 
 import { Tab } from "../../Navbar";
 
-interface StoryPageContextType {
-  onVisualizerResize?: (props: AreaSize) => void;
+export interface StoryPageContextType {
+  handleVisualizerResize?: (props: AreaSize) => void;
   storyPages: Page[];
-  onPageSelect: (id: string) => void;
-  onPageAdd: (isSwipeable: boolean) => void;
+  handleStoryPageSelect: (id: string) => void;
+  handleStoryPageAdd: (isSwipeable: boolean) => void;
   // onPageDuplicate: (id: string) => void; // not used
-  onPageDelete: (id: string) => void;
-  onPageMove: (id: string, targetIndex: number) => void;
-  onPropertyUpdate?: (
+  handleStoryPageDelete: (id: string) => void;
+  handleStoryPageMove: (id: string, targetIndex: number) => void;
+  handlePropertyValueUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
@@ -29,8 +29,8 @@ interface StoryPageContextType {
   currentCamera?: Camera;
   layers?: NLSLayer[];
   tab?: Tab;
-  onFlyTo?: FlyTo;
-  onPageUpdate?: (id: string, layers: string[]) => void;
+  handleFlyTo?: FlyTo;
+  handleStoryPageUpdate?: (id: string, layers: string[]) => void;
 }
 
 const StoryPageContext = createContext<StoryPageContextType | undefined>(undefined);

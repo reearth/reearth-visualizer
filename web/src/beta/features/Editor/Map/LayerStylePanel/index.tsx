@@ -17,24 +17,24 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
     layerStyles,
     selectedLayerStyleId,
-    onLayerStyleAdd,
-    onLayerStyleDelete,
-    onLayerStyleNameUpdate,
-    onLayerStyleSelect,
+    handleLayerStyleAdd,
+    handleLayerStyleDelete,
+    handleLayerStyleNameUpdate,
+    handleLayerStyleSelect,
   } = useMapPage();
 
   const t = useT();
 
   const handleLayerStyleAddition = useCallback(() => {
-    onLayerStyleAdd({ name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`, value: {} });
-  }, [layerStyles?.length, t, onLayerStyleAdd]);
+    handleLayerStyleAdd({ name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`, value: {} });
+  }, [layerStyles?.length, t, handleLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
     (layerStyle?: LayerStyle) => {
       if (!layerStyle) return;
-      onLayerStyleSelect(layerStyle.id);
+      handleLayerStyleSelect(layerStyle.id);
     },
-    [onLayerStyleSelect],
+    [handleLayerStyleSelect],
   );
 
   return (
@@ -57,7 +57,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
               id={layerStyle.id}
               key={layerStyle.id}
               name={layerStyle.name}
-              onLayerStyleNameUpdate={onLayerStyleNameUpdate}
+              onLayerStyleNameUpdate={handleLayerStyleNameUpdate}
               selected={layerStyle.id === selectedLayerStyleId}
               actionContent={
                 <PopoverMenuContent
@@ -68,7 +68,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                       icon: "bin",
                       onClick: (e?: React.MouseEvent) => {
                         e?.stopPropagation();
-                        onLayerStyleDelete(layerStyle.id);
+                        handleLayerStyleDelete(layerStyle.id);
                       },
                     },
                   ]}

@@ -15,13 +15,13 @@ const LayersPanel: FC = () => {
   const {
     layers,
     selectedLayerId,
-    onLayerDelete,
-    onLayerNameUpdate,
-    onLayerSelect,
-    onDataSourceLayerCreatorOpen,
-    onSketchLayerCreatorOpen,
-    onLayerVisibilityUpate,
-    onFlyTo,
+    handleLayerDelete,
+    handleLayerNameUpdate,
+    handleLayerSelect,
+    openDataSourceLayerCreator,
+    openSketchLayerCreator,
+    handleLayerVisibilityUpdate,
+    handleFlyTo,
   } = useMapPage();
 
   const t = useT();
@@ -34,7 +34,7 @@ const LayersPanel: FC = () => {
 
   const handleZoomToLayer = () => {
     if (selectedLayerId) {
-      onFlyTo?.(selectedLayerId, { duration: 0 });
+      handleFlyTo?.(selectedLayerId, { duration: 0 });
     }
   };
 
@@ -67,7 +67,7 @@ const LayersPanel: FC = () => {
                     name: t("Add Layer from Resource"),
                     icon: "file",
                     onClick: () => {
-                      onDataSourceLayerCreatorOpen();
+                      openDataSourceLayerCreator();
                       toggleAddMenu();
                     },
                   },
@@ -75,7 +75,7 @@ const LayersPanel: FC = () => {
                     name: t("Add Sketch Layer"),
                     icon: "pencilSimple",
                     onClick: () => {
-                      onSketchLayerCreatorOpen();
+                      openSketchLayerCreator();
                       toggleAddMenu();
                     },
                   },
@@ -93,14 +93,14 @@ const LayersPanel: FC = () => {
             layerTitle={layer.title}
             visible={layer.visible}
             isSelected={layer.id === selectedLayerId}
-            onDelete={() => onLayerDelete(layer.id)}
-            onSelect={() => onLayerSelect(layer.id)}
-            onLayerNameUpdate={onLayerNameUpdate}
-            onLayerVisibilityUpate={onLayerVisibilityUpate}
+            onDelete={() => handleLayerDelete(layer.id)}
+            onSelect={() => handleLayerSelect(layer.id)}
+            onLayerNameUpdate={handleLayerNameUpdate}
+            onLayerVisibilityUpate={handleLayerVisibilityUpdate}
           />
         ))}
       </LayerContainer>
-      <EmptySpace onClick={() => onLayerSelect(undefined)} />
+      <EmptySpace onClick={() => handleLayerSelect(undefined)} />
     </Panel>
   );
 };

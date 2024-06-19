@@ -17,7 +17,7 @@ import PublishModal from "./PublishModal";
 import { PublishStatus } from "./PublishModal/hooks";
 
 const PublishToolsPanel: FC = () => {
-  const { id, sceneId, selectedProjectType, onProjectTypeChange } = usePublishPage();
+  const { id, sceneId, selectedProjectType, handleProjectTypeChange } = usePublishPage();
   const t = useT();
 
   const {
@@ -55,12 +55,12 @@ const PublishToolsPanel: FC = () => {
           <TabButton
             selected={selectedProjectType === "default"}
             label={t("Scene")}
-            onClick={() => onProjectTypeChange("default")}
+            onClick={() => handleProjectTypeChange("default")}
           />
           <TabButton
             selected={selectedProjectType === "story"}
             label={t("Story")}
-            onClick={() => onProjectTypeChange("story")}
+            onClick={() => handleProjectTypeChange("story")}
           />
         </LeftSection>
         <Popover.Provider

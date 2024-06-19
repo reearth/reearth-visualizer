@@ -9,7 +9,7 @@ import WidgetInspectorPanel from "./WidgetInspectorPanel";
 import WidgetManagerPanel from "./WidgetManagerPanel";
 
 const Widgets: FC = () => {
-  const { onVisualizerResize, selectedWidgetArea, selectedWidget } = useWidgetsPage();
+  const { handleVisualizerResize, selectedWidgetArea, selectedWidget } = useWidgetsPage();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const rightAreaRef = useRef<AreaRef>(null);
@@ -21,7 +21,7 @@ const Widgets: FC = () => {
           <Area height={34}>
             <WASToolsPanel />
           </Area>
-          <Area extend onResize={onVisualizerResize} windowRef={windowRef} passive />
+          <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />
         </Area>
         <Area
           direction="column"

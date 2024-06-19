@@ -25,13 +25,6 @@ type Props = {
   workspaceId?: string;
 };
 
-// const spacing = {
-//   propertyMenuWidth: 308,
-//   propertyMenuMinWidth: 200,
-//   bottomPanelMinHeight: 136,
-//   bottomPanelMaxHeight: 232,
-// };
-
 const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerSize,

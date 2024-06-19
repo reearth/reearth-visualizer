@@ -22,10 +22,10 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     sceneSettings,
     currentCamera,
     selectedLayer,
-    onFlyTo,
-    onLayerStyleValueUpdate,
-    onLayerConfigUpdate,
-    onGeoJsonFeatureUpdate,
+    handleFlyTo,
+    handleLayerStyleValueUpdate,
+    handleLayerConfigUpdate,
+    handleGeoJsonFeatureUpdate,
   } = useMapPage();
 
   const t = useT();
@@ -47,7 +47,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           propertyId={scenePropertyId}
           propertyItems={sceneSettings}
           currentCamera={currentCamera}
-          onFlyTo={onFlyTo}
+          onFlyTo={handleFlyTo}
         />
       )}
       {selectedLayer && (
@@ -56,15 +56,15 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           layers={layers}
           sceneId={sceneId}
           selectedLayer={selectedLayer}
-          onLayerConfigUpdate={onLayerConfigUpdate}
-          onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
+          onLayerConfigUpdate={handleLayerConfigUpdate}
+          onGeoJsonFeatureUpdate={handleGeoJsonFeatureUpdate}
         />
       )}
       {selectedLayerStyleId && (
         <LayerStyleEditor
           selectedLayerStyleId={selectedLayerStyleId}
           sceneId={sceneId}
-          onLayerStyleValueUpdate={onLayerStyleValueUpdate}
+          onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
         />
       )}
     </Panel>
