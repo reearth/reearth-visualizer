@@ -11,7 +11,7 @@
         "test": "vitest",
         "coverage": "vitest --coverage",
         "e2e": "playwright test",
-        "prepare": "cd .. && husky install web/.husky",
+        "prepare": "cd .. && husky web/.husky",
         "build": "vite build",
         "build:preview": "run-s build storybook:build",
         "clean": "del coverage dist node_modules/.cache",
