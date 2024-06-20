@@ -5,6 +5,7 @@ import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 // import Slider from "@reearth/beta/components/Slider";
+import { useCurrentCamera } from "@reearth/beta/features/Editor/atoms";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
@@ -22,24 +23,17 @@ export type Props = {
   description?: string;
   value?: Camera;
   disabled?: boolean;
-  currentCamera?: Camera;
   onSave: (value?: Camera) => void;
   onFlyTo?: FlyTo;
 };
 
-const CameraField: React.FC<Props> = ({
-  name,
-  description,
-  value,
-  disabled,
-  currentCamera,
-  onSave,
-  onFlyTo,
-}) => {
+const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSave, onFlyTo }) => {
   const t = useT();
   const [open, setOpen] = useState<Panel>(undefined);
 
   const handleClose = useCallback(() => setOpen(undefined), []);
+
+  const [currentCamera] = useCurrentCamera();
 
   const handleClick = useCallback(
     (panel: Panel) => setOpen(current => (current === panel ? undefined : panel)),

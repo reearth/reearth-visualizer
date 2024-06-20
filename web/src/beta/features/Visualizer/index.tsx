@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { FC, MutableRefObject, SetStateAction, useRef } from "react";
+import { FC, MutableRefObject, SetStateAction } from "react";
 
 import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
@@ -8,7 +8,6 @@ import {
   type ComputedFeature,
   type ComputedLayer,
   type Layer,
-  type LayerSelectionReason,
   type EngineType,
   type ViewerProperty,
   CoreVisualizer,
@@ -60,11 +59,10 @@ type VisualizerProps = {
   currentCamera?: Camera;
   interactionMode?: InteractionModeType;
   onCameraChange?: (camera: Camera) => void;
-  handleLayerSelect?: (
+  onCoreLayerSelect?: (
     layerId: string | undefined,
-    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+    layer: ComputedLayer | undefined,
     feature: ComputedFeature | undefined,
-    reason: LayerSelectionReason | undefined,
   ) => void;
   handleLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   handleZoomToLayer?: (layerId: string | undefined) => void;
@@ -149,7 +147,7 @@ const Visualizer: FC<VisualizerProps> = ({
   currentCamera,
   interactionMode,
   onCameraChange,
-  handleLayerSelect,
+  onCoreLayerSelect,
   handleLayerDrop,
   handleZoomToLayer,
   handleSketchTypeChange,
@@ -181,11 +179,19 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
 }) => {
-  const { shouldRender, overriddenViewerProperty, overrideViewerProperty } = useHooks({
+  const {
+    shouldRender,
+    overriddenViewerProperty,
+    overrideViewerProperty,
+    storyWrapperRef,
+    visualizerCamera,
+    handleCoreLayerSelect,
+  } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
+    onCoreLayerSelect,
+    currentCamera,
   });
-  const storyWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
     <Wrapper storyPanelPosition={story?.position}>
@@ -200,11 +206,11 @@ const Visualizer: FC<VisualizerProps> = ({
         viewerProperty={overriddenViewerProperty}
         ready={ready}
         meta={engineMeta}
-        camera={currentCamera}
+        camera={visualizerCamera}
         interactionMode={interactionMode}
         shouldRender={shouldRender}
         onCameraChange={onCameraChange}
-        onLayerSelect={handleLayerSelect}
+        onLayerSelect={handleCoreLayerSelect}
         onLayerDrop={handleLayerDrop}
         onZoomToLayer={handleZoomToLayer}
         onSketchTypeChangeProp={handleSketchTypeChange}
@@ -217,7 +223,6 @@ const Visualizer: FC<VisualizerProps> = ({
             selectedStory={story}
             installableStoryBlocks={installableStoryBlocks}
             isEditable={!!inEditor}
-            currentCamera={currentCamera}
             onStoryPageChange={handleStoryPageChange}
             onStoryBlockCreate={handleStoryBlockCreate}
             onStoryBlockDelete={handleStoryBlockDelete}
@@ -233,7 +238,6 @@ const Visualizer: FC<VisualizerProps> = ({
           isBuilt={!!isBuilt}
           isEditable={!isBuilt}
           inEditor={inEditor}
-          camera={currentCamera}
           mapRef={visualizerRef}
           layers={layers}
           // Viewer

@@ -2,12 +2,11 @@ import { RefObject, useMemo } from "react";
 
 import { TimelineManagerRef, TimelineCommitter, ViewerProperty } from "@reearth/core";
 
-import { Camera, MapRef } from "./types";
+import { MapRef } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
 export const useWidgetContext = ({
   mapRef,
-  camera,
   selectedLayerId,
   viewerProperty,
   timelineManagerRef,
@@ -16,23 +15,20 @@ export const useWidgetContext = ({
     () =>
       widgetContextFromMapRef({
         mapRef,
-        camera,
         selectedLayerId,
         viewerProperty,
         timelineManagerRef,
       }),
-    [camera, mapRef, viewerProperty, selectedLayerId, timelineManagerRef],
+    [mapRef, viewerProperty, selectedLayerId, timelineManagerRef],
   );
 
 export function widgetContextFromMapRef({
   mapRef,
-  camera,
   selectedLayerId,
   viewerProperty,
   timelineManagerRef,
 }: {
   mapRef?: RefObject<MapRef>;
-  camera?: Camera;
   selectedLayerId?: {
     layerId?: string;
     featureId?: string;
@@ -44,7 +40,6 @@ export function widgetContextFromMapRef({
   const layers = () => mapRef?.current?.layers;
 
   return {
-    camera,
     get clock() {
       return engine()?.getClock();
     },

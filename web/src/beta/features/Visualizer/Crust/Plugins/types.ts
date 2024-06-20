@@ -1,7 +1,6 @@
 import type { PropsWithChildren, RefObject } from "react";
 
 import type {
-  Camera,
   ComputedFeature,
   SelectedFeatureInfo,
   Viewport,
@@ -41,7 +40,6 @@ export type Props = PropsWithChildren<{
   floatingWidgets?: InternalWidget[];
   useExperimentalSandbox?: boolean;
   timelineManagerRef?: TimelineManagerRef;
-  camera?: Camera;
   interactionMode: InteractionModeType;
   overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   overrideInteractionMode?: (mode: InteractionModeType) => void;

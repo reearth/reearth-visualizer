@@ -19,6 +19,7 @@ export const Default: Story = {
       <Button
         title="Secondary Icon Button"
         icon="settingFilled"
+        iconRight="caretDown"
         onClick={action("secondary-icon-button-click")}
       />
       <Button
@@ -63,6 +64,7 @@ export const Primary: Story = {
         appearance="primary"
         icon="settingFilled"
         onClick={action("primary-icon-button-click")}
+        iconRight="caretDown"
       />
       <Button
         title="Primary Extend"
@@ -113,6 +115,7 @@ export const Dangerous: Story = {
         title="Dangerous Icon Button"
         appearance="dangerous"
         icon="settingFilled"
+        iconRight="caretDown"
         onClick={action("dangerous-icon-button-click")}
       />
       <Button
@@ -164,6 +167,7 @@ export const Simple: Story = {
         title="Simple Icon Button"
         appearance="simple"
         icon="settingFilled"
+        iconRight="caretDown"
         onClick={action("simple-icon-button-click")}
       />
       <Button

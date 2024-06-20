@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Camera, ValueType, ValueTypes, zeroValues } from "@reearth/beta/utils/value";
+import { ValueType, ValueTypes, zeroValues } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Group, GroupListItem, Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -11,11 +11,10 @@ import PropertyList, { ListItem } from "../PropertyList";
 type Props = {
   propertyId: string;
   item?: Item;
-  currentCamera?: Camera;
   onFlyTo?: FlyTo;
 };
 
-const PropertyItem: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyTo }) => {
+const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
   const t = useT();
   const [selected, select] = useState<string>();
 
@@ -110,7 +109,6 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyT
               field={f.field}
               itemId={selected}
               schema={f.schemaField}
-              currentCamera={currentCamera}
               onFlyTo={onFlyTo}
             />
           );

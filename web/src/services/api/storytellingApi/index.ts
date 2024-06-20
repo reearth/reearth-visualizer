@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
-import { PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal/hooks";
+import { PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,

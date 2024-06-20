@@ -1,5 +1,7 @@
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
+import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
+import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
 import Article from "./Icons/Article.svg?react";
 import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
@@ -14,6 +16,7 @@ import CaretDoubleLeft from "./Icons/CaretDoubleLeft.svg?react";
 import CaretDoubleRight from "./Icons/CaretDoubleRight.svg?react";
 import CaretDown from "./Icons/CaretDown.svg?react";
 import CaretLeft from "./Icons/CaretLeft.svg?react";
+import CaretRight from "./Icons/CaretRight.svg?react";
 import CaretUp from "./Icons/CaretUp.svg?react";
 import Check from "./Icons/Check.svg?react";
 import Checked from "./Icons/Checked.svg?react";
@@ -116,6 +119,8 @@ import ZToA from "./Icons/ZToA.svg?react";
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
+  arrowsHorizontalIn: ArrowsHorizontalIn,
+  arrowsHorizontalOut: ArrowsHorizontalOut,
   article: Article,
   book: Book,
   bracketsCurly: BracketsCurly,
@@ -128,6 +133,7 @@ export default {
   caretDoubleLeft: CaretDoubleLeft,
   caretDoubleRight: CaretDoubleRight,
   caretDown: CaretDown,
+  caretRight: CaretRight,
   caretLeft: CaretLeft,
   caretUp: CaretUp,
   check: Check,

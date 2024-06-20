@@ -1,6 +1,6 @@
 import { MutableRefObject } from "react";
 
-import { Camera, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
@@ -17,7 +17,6 @@ export type Props = {
   showingIndicator?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
   isEditable?: boolean;
-  currentCamera?: Camera;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
@@ -62,7 +61,6 @@ const StoryContent: React.FC<Props> = ({
   showingIndicator,
   isAutoScrolling,
   isEditable,
-  currentCamera,
   onPageSettingsToggle,
   onPageSelect,
   onCurrentPageChange,
@@ -96,7 +94,6 @@ const StoryContent: React.FC<Props> = ({
           selectedStoryBlockId={selectedStoryBlockId}
           showPageSettings={showPageSettings}
           isEditable={isEditable}
-          currentCamera={currentCamera}
           scrollTimeoutRef={scrollTimeoutRef}
           isAutoScrolling={isAutoScrolling}
           onCurrentPageChange={onCurrentPageChange}

@@ -89,9 +89,7 @@ export const FieldComponent = ({
       name={field?.name}
       value={field?.value}
       description={field?.description}
-      // currentCamera={currentCamera}
       onSave={handlePropertyValueUpdate(propertyId, groupId, fieldId, field?.type)}
-      // onFlyTo={onFlyTo}
     />
   ) : field?.type === "number" ? (
     field?.ui === "slider" ? (

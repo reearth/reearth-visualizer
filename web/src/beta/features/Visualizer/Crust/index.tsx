@@ -121,7 +121,6 @@ export default function Crust({
   isEditable,
   inEditor,
   mapRef,
-  camera,
   selectedFeatureInfo,
   externalPlugin,
   useExperimentalSandbox,
@@ -186,7 +185,6 @@ export default function Crust({
 
   const widgetContext = useWidgetContext({
     mapRef,
-    camera,
     viewerProperty,
     selectedLayerId,
     timelineManagerRef: mapRef?.current?.timeline,
@@ -222,7 +220,6 @@ export default function Crust({
       viewport={viewport}
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
-      camera={camera}
       interactionMode={interactionMode ?? "default"}
       timelineManagerRef={mapRef?.current?.timeline}
       useExperimentalSandbox={useExperimentalSandbox}

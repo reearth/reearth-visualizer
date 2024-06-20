@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, MouseEvent } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -10,10 +10,11 @@ export type ButtonProps = {
   size?: "normal" | "small";
   iconButton?: boolean;
   icon?: IconName;
+  iconRight?: IconName;
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLElement>) => void;
 };
 
 export const Button: FC<ButtonProps> = ({
@@ -23,6 +24,7 @@ export const Button: FC<ButtonProps> = ({
   size = "normal",
   iconButton,
   title,
+  iconRight,
   extendWidth,
   minWidth,
   onClick,
@@ -38,6 +40,7 @@ export const Button: FC<ButtonProps> = ({
       onClick={onClick}>
       {icon && <Icon icon={icon} />}
       {!iconButton && title}
+      {iconRight && <Icon icon={iconRight} />}
     </StyledButton>
   );
 };
@@ -100,5 +103,9 @@ const StyledButton = styled("button")<{
     color: `${theme.content.weaker}`,
     backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
     boxShadow: "none",
+  },
+  ["& svg"]: {
+    width: iconButton && size === "small" ? "12px" : "16px",
+    height: iconButton && size === "small" ? "12px" : "16px",
   },
 }));

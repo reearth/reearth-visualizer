@@ -92,6 +92,15 @@ export const styles = css`
   .Resizer.disabled:hover {
     border-color: transparent;
   }
+
+  *:focus {
+    outline: none;
+  }
+
+  /* For Firefox */
+  body {
+    scrollbar-width: thin;
+  }
 `;
 
 const GlobalStyles: React.FC = () => <Global styles={styles} />;
