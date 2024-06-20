@@ -506,7 +506,7 @@ export default function ({
     [layersRef],
   );
 
-  const pickManyFromViewport = useCallback(
+  const getFeaturesFromViewport = useCallback(
     (
       windowPosition: [x: number, y: number],
       windowWidth: number,
@@ -596,7 +596,7 @@ export default function ({
         flyToGround,
         findFeatureById,
         findFeaturesByIds,
-        pickManyFromViewport,
+        getFeaturesFromViewport,
         bringToFront,
         sendToBack,
         forceHorizontalRoll: onCameraForceHorizontalRollChange,
@@ -668,7 +668,7 @@ export default function ({
       flyToGround,
       findFeatureById,
       findFeaturesByIds,
-      pickManyFromViewport,
+      getFeaturesFromViewport,
       bringToFront,
       sendToBack,
       overrideSceneProperty,

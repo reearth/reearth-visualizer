@@ -460,7 +460,7 @@ export function commonReearth({
   flyToGround,
   findFeatureById,
   findFeaturesByIds,
-  pickManyFromViewport,
+  getFeaturesFromViewport,
   bringToFront,
   sendToBack,
   forceHorizontalRoll,
@@ -528,7 +528,7 @@ export function commonReearth({
   findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
   bringToFront: GlobalThis["reearth"]["layers"]["bringToFront"];
   sendToBack: GlobalThis["reearth"]["layers"]["sendToBack"];
-  pickManyFromViewport: GlobalThis["reearth"]["scene"]["pickManyFromViewport"];
+  getFeaturesFromViewport: GlobalThis["reearth"]["scene"]["getFeaturesFromViewport"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -598,7 +598,7 @@ export function commonReearth({
       convertScreenToPositionOffset,
       isPositionVisible,
       translate3DPositionTo2D,
-      pickManyFromViewport,
+      getFeaturesFromViewport,
     },
     get viewport() {
       return viewport?.();

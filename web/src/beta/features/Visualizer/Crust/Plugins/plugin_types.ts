@@ -165,7 +165,7 @@ export type Scene = {
   readonly translate3DPositionTo2D: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
-  readonly pickManyFromViewport: (
+  readonly getFeaturesFromViewport: (
     windowPosition: [x: number, y: number],
     windowWidth: number,
     windowHeight: number,

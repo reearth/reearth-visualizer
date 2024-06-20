@@ -110,7 +110,7 @@ export const context: Context = {
       convertScreenToPositionOffset: act("convertScreenToPositionOffset"),
       isPositionVisible: act("isPositionVisible"),
       translate3DPositionTo2D: act("translate3DPositionTo2D"),
-      pickManyFromViewport: act("pickManyFromViewport"),
+      getFeaturesFromViewport: act("getFeaturesFromViewport"),
     },
     layers: {
       hide: act("layers.hide"),
