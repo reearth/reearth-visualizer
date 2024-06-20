@@ -441,7 +441,7 @@ export function commonReearth({
   convertLatLngHeightTo3DPoints,
   convert3DPointsToLatLngHeight,
   convertScreenToPositionOffset,
-  isPositionVisible,
+  is3DPointsVisible,
   setView,
   translate3DPositionTo2D,
   flyToBBox,
@@ -504,7 +504,7 @@ export function commonReearth({
   convertLatLngHeightTo3DPoints: GlobalThis["reearth"]["scene"]["convertLatLngHeightTo3DPoints"];
   convert3DPointsToLatLngHeight: GlobalThis["reearth"]["scene"]["convert3DPointsToLatLngHeight"];
   convertScreenToPositionOffset: GlobalThis["reearth"]["scene"]["convertScreenToPositionOffset"];
-  isPositionVisible: GlobalThis["reearth"]["scene"]["isPositionVisible"];
+  is3DPointsVisible: GlobalThis["reearth"]["scene"]["is3DPointsVisible"];
   setView: GlobalThis["reearth"]["camera"]["setView"];
   translate3DPositionTo2D: GlobalThis["reearth"]["scene"]["translate3DPositionTo2D"];
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
@@ -596,7 +596,7 @@ export function commonReearth({
       convertLatLngHeightTo3DPoints,
       convert3DPointsToLatLngHeight,
       convertScreenToPositionOffset,
-      isPositionVisible,
+      is3DPointsVisible,
       translate3DPositionTo2D,
       getFeaturesFromViewport,
     },

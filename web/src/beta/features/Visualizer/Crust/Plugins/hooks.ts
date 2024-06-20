@@ -320,7 +320,7 @@ export default function ({
     [engineRef],
   );
 
-  const isPositionVisible = useCallback(
+  const is3DPointsVisible = useCallback(
     (position: [x: number, y: number, z: number]) => {
       return !!engineRef?.isPositionVisible(position);
     },
@@ -575,7 +575,7 @@ export default function ({
         convertLatLngHeightTo3DPoints,
         convert3DPointsToLatLngHeight,
         convertScreenToPositionOffset,
-        isPositionVisible,
+        is3DPointsVisible,
         setView,
         translate3DPositionTo2D,
         rotateRight,
@@ -647,7 +647,7 @@ export default function ({
       convertLatLngHeightTo3DPoints,
       convert3DPointsToLatLngHeight,
       convertScreenToPositionOffset,
-      isPositionVisible,
+      is3DPointsVisible,
       setView,
       translate3DPositionTo2D,
       rotateRight,

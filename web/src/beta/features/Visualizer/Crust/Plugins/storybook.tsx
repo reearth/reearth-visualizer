@@ -108,7 +108,7 @@ export const context: Context = {
       convertLatLngHeightTo3DPoints: act("convertLatLngHeightTo3DPoints"),
       convert3DPointsToLatLngHeight: act("convert3DPointsToLatLngHeight"),
       convertScreenToPositionOffset: act("convertScreenToPositionOffset"),
-      isPositionVisible: act("isPositionVisible"),
+      is3DPointsVisible: act("is3DPointsVisible"),
       translate3DPositionTo2D: act("translate3DPositionTo2D"),
       getFeaturesFromViewport: act("getFeaturesFromViewport"),
     },

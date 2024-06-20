@@ -161,7 +161,7 @@ export type Scene = {
     rawPosition: [x: number, y: number, z: number],
     screenOffset: [x: number, y: number],
   ) => [x: number, y: number, z: number] | undefined;
-  readonly isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
+  readonly is3DPointsVisible: (position: [x: number, y: number, z: number]) => boolean;
   readonly translate3DPositionTo2D: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
