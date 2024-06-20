@@ -1,14 +1,14 @@
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
-import type { Story, StoryPage } from "@reearth/beta/features/Visualizer/StoryPanel/types";
+import type { Story, StoryPage } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 import { useVisualizer } from "@reearth/core";
 
-import { MapRef } from "../Crust/types";
+import { MapRef } from "../../Crust/types";
 
 import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
 import { formatISO8601 } from "./utils";
 
-export type { Story, StoryPage } from "@reearth/beta/features/Visualizer/StoryPanel/types";
+export type { Story, StoryPage } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 
 export type StoryPanelRef = {
   currentPageId?: string;

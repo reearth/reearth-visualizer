@@ -1,11 +1,10 @@
 import { useCallback, useContext, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-
-import { BlockContext } from "../../../../shared/components/BlockWrapper";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 

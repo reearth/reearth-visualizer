@@ -1,4 +1,8 @@
-import { Story, StoryBlock, StoryPage } from "@reearth/beta/features/Visualizer/StoryPanel/types";
+import {
+  Story,
+  StoryBlock,
+  StoryPage,
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 import { Scene } from "@reearth/services/api/sceneApi";
 import { StoryPage as GqlStoryPage, StoryBlock as GqlStoryBlock } from "@reearth/services/gql";
 
