@@ -1,6 +1,7 @@
 import { useEffect, useRef, useMemo, type MutableRefObject } from "react";
 
 import type { InfoboxBlock as Block } from "../Infobox/types";
+import { StoryBlock } from "../StoryPanel/types";
 import type { WidgetAlignSystem } from "../Widgets";
 import type { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
 
@@ -10,6 +11,7 @@ export type Props = {
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
   blocks?: Block[];
+  storyBlocks?: StoryBlock[];
 };
 
 export type PluginInstances = {
@@ -26,7 +28,7 @@ export type PluginInstances = {
   };
 };
 
-export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
+export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) => {
   const pluginInstancesMeta = useRef<PluginExtensionInstance[]>([]);
 
   const runTimesCache = useMemo<Map<string, number>>(() => new Map(), []);
@@ -96,7 +98,22 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
           pluginId: block.pluginId ?? "",
           name: getExtensionInstanceName(block.pluginId ?? ""),
           extensionId: block.extensionId ?? "",
-          extensionType: "block",
+          extensionType: "infoboxBlock",
+          get runTimes() {
+            return runTimesCacheHandler.get(block.id);
+          },
+        });
+      });
+    }
+
+    if (storyBlocks) {
+      storyBlocks.forEach(block => {
+        instances.push({
+          id: block.id,
+          pluginId: block.pluginId ?? "",
+          name: getExtensionInstanceName(block.pluginId ?? ""),
+          extensionId: block.extensionId ?? "",
+          extensionType: "storyBlock",
           get runTimes() {
             return runTimesCacheHandler.get(block.id);
           },
@@ -105,7 +122,7 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
     }
 
     pluginInstancesMeta.current = instances;
-  }, [alignSystem, floatingWidgets, blocks, runTimesCacheHandler]);
+  }, [alignSystem, floatingWidgets, blocks, storyBlocks, runTimesCacheHandler]);
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
 

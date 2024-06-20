@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
-import { AVAILABLE_STORY_BLOCK_IDS } from "@reearth/beta/features/Visualizer/StoryPanel/constants";
+// import { AVAILABLE_STORY_BLOCK_IDS } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/constants";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryBlockInput,
@@ -168,9 +168,8 @@ const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
       const plugin = p.plugin;
       return plugin?.extensions
         .filter(
-          e =>
-            e.type === PluginExtensionType.StoryBlock &&
-            AVAILABLE_STORY_BLOCK_IDS.includes(`reearth/${e.extensionId}`),
+          e => e.type === PluginExtensionType.StoryBlock,
+          // && AVAILABLE_STORY_BLOCK_IDS.includes(`reearth/${e.extensionId}`),
         )
         .map((e): InstallableStoryBlock => {
           return {
