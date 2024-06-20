@@ -9,3 +9,4 @@ export * from "./TimePointField";
 export * from "./TwinInputField";
 export * from "./TripletInputField";
 export * from "./QuartetInputField";
+export * from "./AssetField";
