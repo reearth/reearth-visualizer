@@ -96,6 +96,11 @@ export const styles = css`
   *:focus {
     outline: none;
   }
+
+  /* For Firefox */
+  body {
+    scrollbar-width: thin;
+  }
 `;
 
 const GlobalStyles: React.FC = () => <Global styles={styles} />;

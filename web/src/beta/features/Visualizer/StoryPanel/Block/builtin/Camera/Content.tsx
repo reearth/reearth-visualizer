@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { Camera, useVisualizer } from "@reearth/core";
+import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -13,7 +13,6 @@ type Props = {
   propertyId?: string;
   cameraButtons: CameraBlockType[];
   isEditable?: boolean;
-  currentCamera: Camera | undefined;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -40,7 +39,6 @@ const Content: React.FC<Props> = ({
   propertyId,
   cameraButtons,
   isEditable,
-  currentCamera,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
@@ -89,7 +87,6 @@ const Content: React.FC<Props> = ({
           items={cameraButtons}
           propertyId={propertyId}
           selected={selected}
-          currentCamera={currentCamera}
           setSelected={setSelected}
           onPropertyUpdate={onPropertyUpdate}
           onPropertyItemAdd={onPropertyItemAdd}

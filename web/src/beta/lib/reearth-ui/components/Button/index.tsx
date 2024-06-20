@@ -105,7 +105,7 @@ const StyledButton = styled("button")<{
     boxShadow: "none",
   },
   ["& svg"]: {
-    width: iconButton && size === "small" ? "12px" : "inherit",
-    height: iconButton && size === "small" ? "12px" : "inherit",
+    width: iconButton && size === "small" ? "12px" : "16px",
+    height: iconButton && size === "small" ? "12px" : "16px",
   },
 }));

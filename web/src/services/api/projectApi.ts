@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
-import { type PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal/hooks";
+import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import {
   UpdateProjectInput,
   ProjectPayload,

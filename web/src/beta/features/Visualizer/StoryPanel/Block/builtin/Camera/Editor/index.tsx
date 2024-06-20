@@ -15,7 +15,6 @@ export type Props = {
   items: CameraBlock[];
   selected: string;
   propertyId?: string;
-  currentCamera: Camera | undefined;
   setSelected: (id: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -43,7 +42,6 @@ const CameraBlockEditor: React.FC<Props> = ({
   items,
   propertyId,
   selected,
-  currentCamera,
   setSelected,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -111,7 +109,6 @@ const CameraBlockEditor: React.FC<Props> = ({
           description={editorProperties?.cameraPosition?.description}
           value={editorProperties?.cameraPosition?.value}
           onSave={value => handleUpdate(selected, "cameraPosition", "camera", value as Camera)}
-          currentCamera={currentCamera}
           onFlyTo={handleFlyTo}
         />
         <NumberField

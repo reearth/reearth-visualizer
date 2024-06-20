@@ -1,7 +1,6 @@
 import type { PropsWithChildren, RefObject } from "react";
 
 import type {
-  Camera,
   ComputedFeature,
   SelectedFeatureInfo,
   Viewport,
@@ -39,7 +38,6 @@ export type Props = PropsWithChildren<{
   useExperimentalSandbox?: boolean;
   timelineManagerRef?: TimelineManagerRef;
   overrideSceneProperty?: (id: string, property: any) => void;
-  camera?: Camera;
   interactionMode: InteractionModeType;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onLayerEdit?: (cb: (e: LayerEditEvent) => void) => void;

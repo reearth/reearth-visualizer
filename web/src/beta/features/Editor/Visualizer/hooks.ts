@@ -1,6 +1,7 @@
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback, useState, MutableRefObject } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
+import { Camera } from "@reearth/beta/utils/value";
 import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
@@ -13,7 +14,8 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 
-import type { LayerSelectProps, SelectedLayer } from "../useLayers";
+import { useCurrentCamera } from "../atoms";
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -24,9 +26,8 @@ export default ({
   isBuilt,
   showStoryPanel,
   selectedLayer,
+  isVisualizerResizing,
   onCoreLayerSelect,
-  onLayerStyleSelect,
-  onSceneSettingSelect,
   onVisualizerReady,
   setSelectedStoryPageId,
 }: {
@@ -35,9 +36,8 @@ export default ({
   isBuilt?: boolean;
   showStoryPanel?: boolean;
   selectedLayer?: SelectedLayer | undefined;
+  isVisualizerResizing?: MutableRefObject<boolean>;
   onCoreLayerSelect: (props: LayerSelectProps) => void;
-  onLayerStyleSelect: (layerStyleId?: string) => void;
-  onSceneSettingSelect: (collection?: string) => void;
   onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
@@ -95,14 +95,12 @@ export default ({
         return;
 
       if (layerId) {
-        onLayerStyleSelect(undefined);
-        onSceneSettingSelect(undefined);
         onCoreLayerSelect({ layerId, computedLayer, computedFeature });
       } else {
         onCoreLayerSelect(undefined);
       }
     },
-    [selectedLayer, onCoreLayerSelect, onLayerStyleSelect, onSceneSettingSelect],
+    [selectedLayer, onCoreLayerSelect],
   );
 
   const handleLayerDrop = useCallback(
@@ -183,8 +181,11 @@ export default ({
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
   const handleStoryPageChange = useCallback(
-    (pageId?: string) => setSelectedStoryPageId(pageId),
-    [setSelectedStoryPageId],
+    (pageId?: string) => {
+      if (isVisualizerResizing?.current) return;
+      setSelectedStoryPageId(pageId);
+    },
+    [isVisualizerResizing, setSelectedStoryPageId],
   );
 
   const handleStoryBlockCreate = useCallback(
@@ -264,6 +265,15 @@ export default ({
 
   const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
 
+  // Camera
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => {
+      setCurrentCamera(camera);
+    },
+    [setCurrentCamera],
+  );
+
   return {
     sceneProperty,
     pluginProperty,
@@ -273,6 +283,8 @@ export default ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
+    currentCamera,
+    handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
