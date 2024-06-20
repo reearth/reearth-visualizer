@@ -61,7 +61,6 @@ export default function ({
   interactionMode,
   timelineManagerRef,
   overrideInteractionMode,
-  useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
   onLayerSelectWithRectStart,
@@ -605,7 +604,6 @@ export default function ({
       pluginInstances,
       clientStorage,
       timelineManagerRef,
-      useExperimentalSandbox,
     }),
     [
       engineName,
@@ -676,7 +674,6 @@ export default function ({
       pluginInstances,
       clientStorage,
       timelineManagerRef,
-      useExperimentalSandbox,
     ],
   );
 

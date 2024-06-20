@@ -35,7 +35,6 @@ export type Props = PropsWithChildren<{
   viewport?: Viewport;
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
-  useExperimentalSandbox?: boolean;
   timelineManagerRef?: TimelineManagerRef;
   overrideSceneProperty?: (id: string, property: any) => void;
   interactionMode: InteractionModeType;
@@ -56,6 +55,5 @@ export type Context = {
   pluginInstances: PluginInstances;
   clientStorage: ClientStorage;
   timelineManagerRef?: TimelineManagerRef;
-  useExperimentalSandbox?: boolean;
   overrideSceneProperty?: (id: string, property: any) => void;
 };
