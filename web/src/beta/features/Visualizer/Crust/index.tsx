@@ -203,7 +203,7 @@ export default function Crust({
       engineName={engineName}
       mapRef={mapRef}
       sceneProperty={sceneProperty}
-      built={isBuilt}
+      isBuilt={isBuilt}
       inEditor={inEditor}
       selectedLayer={selectedLayer?.layer}
       selectedFeature={selectedComputedFeature}

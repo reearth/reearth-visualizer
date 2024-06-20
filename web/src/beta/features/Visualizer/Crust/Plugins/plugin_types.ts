@@ -133,7 +133,7 @@ export type Reearth = {
 
 export type Scene = {
   readonly inEditor: boolean;
-  readonly built: boolean;
+  readonly isBuilt: boolean;
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
