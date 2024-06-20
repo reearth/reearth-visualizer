@@ -1,13 +1,16 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
+import { Camera } from "@reearth/beta/utils/value";
 import { ComputedFeature, ComputedLayer } from "@reearth/core";
 
+import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 
 export default function useHooks({
   ownBuiltinWidgets,
   onCoreLayerSelect,
+  currentCamera,
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   onCoreLayerSelect?: (
@@ -15,6 +18,7 @@ export default function useHooks({
     layer: ComputedLayer | undefined,
     feature: ComputedFeature | undefined,
   ) => void;
+  currentCamera?: Camera;
 }) {
   const shouldRender = useMemo(() => {
     const shouldWidgetAnimate = ownBuiltinWidgets?.some(
@@ -36,9 +40,15 @@ export default function useHooks({
     [onCoreLayerSelect],
   );
 
+  const [visualizerCamera, setVisualizerCamera] = useVisualizerCamera();
+  useLayoutEffect(() => {
+    setVisualizerCamera(currentCamera);
+  }, [currentCamera, setVisualizerCamera]);
+
   return {
     shouldRender,
     storyWrapperRef,
+    visualizerCamera,
     handleCoreLayerSelect,
   };
 }

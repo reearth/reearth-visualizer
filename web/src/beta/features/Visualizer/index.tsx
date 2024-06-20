@@ -174,9 +174,10 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
 }) => {
-  const { shouldRender, storyWrapperRef, handleCoreLayerSelect } = useHooks({
+  const { shouldRender, storyWrapperRef, visualizerCamera, handleCoreLayerSelect } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     onCoreLayerSelect,
+    currentCamera,
   });
 
   return (
@@ -192,7 +193,7 @@ const Visualizer: FC<VisualizerProps> = ({
         sceneProperty={sceneProperty as SceneProperty}
         ready={ready}
         meta={engineMeta}
-        camera={currentCamera}
+        camera={visualizerCamera}
         interactionMode={interactionMode}
         shouldRender={shouldRender}
         onCameraChange={onCameraChange}
@@ -224,7 +225,6 @@ const Visualizer: FC<VisualizerProps> = ({
           isBuilt={!!isBuilt}
           isEditable={!isBuilt}
           inEditor={inEditor}
-          camera={currentCamera}
           mapRef={visualizerRef}
           layers={layers}
           useExperimentalSandbox={useExperimentalSandbox}

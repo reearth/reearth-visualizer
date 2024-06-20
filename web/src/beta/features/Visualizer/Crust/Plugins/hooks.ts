@@ -19,6 +19,8 @@ import {
   type TimelineCommitter,
 } from "@reearth/core";
 
+import { useVisualizerCamera } from "../../atoms";
+
 import { commonReearth } from "./api";
 import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
 import { Context, Props } from "./types";
@@ -56,7 +58,6 @@ export default function ({
   layerSelectionReason,
   alignSystem,
   floatingWidgets,
-  camera,
   interactionMode,
   timelineManagerRef,
   overrideInteractionMode,
@@ -73,6 +74,7 @@ export default function ({
   onCameraForceHorizontalRollChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
+  const [camera] = useVisualizerCamera();
 
   const layersRef = mapRef?.current?.layers;
   const engineRef = mapRef?.current?.engine;

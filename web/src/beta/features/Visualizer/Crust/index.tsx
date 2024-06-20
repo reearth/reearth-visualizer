@@ -10,7 +10,7 @@ import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import type { MapRef, SceneProperty, Camera } from "./types";
+import type { MapRef, SceneProperty } from "./types";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -52,7 +52,6 @@ export type Props = {
   mapRef?: RefObject<MapRef>;
   layers?: Layer[];
   sceneProperty?: SceneProperty;
-  camera?: Camera;
   selectedFeatureInfo?: SelectedFeatureInfo;
   // widgets
   widgetAlignSystem?: WidgetAlignSystemType;
@@ -115,7 +114,6 @@ export default function Crust({
   inEditor,
   mapRef,
   sceneProperty,
-  camera,
   selectedFeatureInfo,
   externalPlugin,
   useExperimentalSandbox,
@@ -179,7 +177,6 @@ export default function Crust({
 
   const widgetContext = useWidgetContext({
     mapRef,
-    camera,
     sceneProperty,
     selectedLayerId,
     timelineManagerRef: mapRef?.current?.timeline,
@@ -215,7 +212,6 @@ export default function Crust({
       viewport={viewport}
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
-      camera={camera}
       interactionMode={interactionMode ?? "default"}
       timelineManagerRef={mapRef?.current?.timeline}
       useExperimentalSandbox={useExperimentalSandbox}
