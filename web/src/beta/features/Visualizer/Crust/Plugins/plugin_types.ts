@@ -145,7 +145,7 @@ export type Scene = {
   readonly getTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   readonly computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
   readonly getGlobeHeight: () => void;
-  readonly toXYZ: (
+  readonly convertLatLngHeightTo3DPoints: (
     lng: number,
     lat: number,
     height: number,

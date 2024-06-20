@@ -438,7 +438,7 @@ export function commonReearth({
   getTerrainHeight,
   computeGlobeHeight,
   getGlobeHeight,
-  toXYZ,
+  convertLatLngHeightTo3DPoints,
   toLngLatHeight,
   convertScreenToPositionOffset,
   isPositionVisible,
@@ -501,7 +501,7 @@ export function commonReearth({
   getTerrainHeight: GlobalThis["reearth"]["scene"]["getTerrainHeight"];
   computeGlobeHeight: GlobalThis["reearth"]["scene"]["computeGlobeHeight"];
   getGlobeHeight: GlobalThis["reearth"]["scene"]["getGlobeHeight"];
-  toXYZ: GlobalThis["reearth"]["scene"]["toXYZ"];
+  convertLatLngHeightTo3DPoints: GlobalThis["reearth"]["scene"]["convertLatLngHeightTo3DPoints"];
   toLngLatHeight: GlobalThis["reearth"]["scene"]["toLngLatHeight"];
   convertScreenToPositionOffset: GlobalThis["reearth"]["scene"]["convertScreenToPositionOffset"];
   isPositionVisible: GlobalThis["reearth"]["scene"]["isPositionVisible"];
@@ -593,7 +593,7 @@ export function commonReearth({
       getTerrainHeight,
       computeGlobeHeight,
       getGlobeHeight,
-      toXYZ,
+      convertLatLngHeightTo3DPoints,
       toLngLatHeight,
       convertScreenToPositionOffset,
       isPositionVisible,

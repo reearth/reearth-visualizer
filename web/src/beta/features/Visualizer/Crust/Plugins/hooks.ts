@@ -281,7 +281,7 @@ export default function ({
     return engineRef?.getGlobeHeight();
   }, [engineRef]);
 
-  const toXYZ = useCallback(
+  const convertLatLngHeightTo3DPoints = useCallback(
     (
       lng: number,
       lat: number,
@@ -572,7 +572,7 @@ export default function ({
         getCameraFovInfo,
         computeGlobeHeight,
         getGlobeHeight,
-        toXYZ,
+        convertLatLngHeightTo3DPoints,
         toLngLatHeight,
         convertScreenToPositionOffset,
         isPositionVisible,
@@ -644,7 +644,7 @@ export default function ({
       getCameraFovInfo,
       computeGlobeHeight,
       getGlobeHeight,
-      toXYZ,
+      convertLatLngHeightTo3DPoints,
       toLngLatHeight,
       convertScreenToPositionOffset,
       isPositionVisible,
