@@ -405,7 +405,7 @@ export function commonReearth({
   layersInViewport,
   layers,
   sceneProperty,
-  inEditor,
+  isInEditor,
   isBuilt,
   tags,
   camera,
@@ -511,7 +511,7 @@ export function commonReearth({
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
   forceHorizontalRoll: GlobalThis["reearth"]["camera"]["forceHorizontalRoll"];
-  inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
+  isInEditor: () => GlobalThis["reearth"]["scene"]["isInEditor"];
   isBuilt: () => GlobalThis["reearth"]["scene"]["isBuilt"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
@@ -578,8 +578,8 @@ export function commonReearth({
       return interactionMode?.();
     },
     scene: {
-      get inEditor() {
-        return !!inEditor?.();
+      get isInEditor() {
+        return !!isInEditor?.();
       },
       get isBuilt() {
         return !!isBuilt?.();

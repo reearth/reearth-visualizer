@@ -29,7 +29,7 @@ type VisualizerProps = {
     cesiumIonAccessToken: string | undefined;
   };
   isBuilt?: boolean;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   ready?: boolean;
   layers?: Layer[];
   widgets?: {
@@ -130,7 +130,7 @@ const Visualizer: FC<VisualizerProps> = ({
   engine,
   engineMeta,
   isBuilt,
-  inEditor,
+  isInEditor,
   ready,
   layers,
   widgets,
@@ -209,7 +209,7 @@ const Visualizer: FC<VisualizerProps> = ({
             storyWrapperRef={storyWrapperRef}
             selectedStory={story}
             installableStoryBlocks={installableStoryBlocks}
-            isEditable={!!inEditor}
+            isEditable={!!isInEditor}
             onStoryPageChange={handleStoryPageChange}
             onStoryBlockCreate={handleStoryBlockCreate}
             onStoryBlockDelete={handleStoryBlockDelete}
@@ -224,7 +224,7 @@ const Visualizer: FC<VisualizerProps> = ({
           engineName={engine}
           isBuilt={!!isBuilt}
           isEditable={!isBuilt}
-          inEditor={inEditor}
+          isInEditor={isInEditor}
           mapRef={visualizerRef}
           layers={layers}
           useExperimentalSandbox={useExperimentalSandbox}

@@ -35,7 +35,7 @@ type TimelineProps = {
   range?: Range;
   isSelected?: boolean;
   blockId?: string;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   speed: number;
   playMode?: string;
   timelineValues?: TimelineValues;
@@ -60,7 +60,7 @@ export default ({
   range,
   isSelected,
   blockId,
-  inEditor,
+  isInEditor,
   speed,
   playMode,
   timelineValues,
@@ -130,12 +130,12 @@ export default ({
   }, [property?.panel]);
 
   const handlePopOver = useCallback(() => {
-    !inEditor && setIsOpen(!isOpen);
-  }, [inEditor, isOpen]);
+    !isInEditor && setIsOpen(!isOpen);
+  }, [isInEditor, isOpen]);
 
   const handleOnSelect = useCallback(
     (value: string, second: number) => {
-      if (!inEditor) {
+      if (!isInEditor) {
         setIsOpen(false);
         value !== selected && setSelected(value);
         isPlayingReversed
@@ -143,7 +143,7 @@ export default ({
           : onSpeedChange?.(second, committer.id);
       }
     },
-    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected],
+    [committer.id, isInEditor, isPlayingReversed, onSpeedChange, selected],
   );
 
   useEffect(() => {
@@ -161,7 +161,7 @@ export default ({
   );
 
   const handleOnPlay = useCallback(() => {
-    if (!inEditor) {
+    if (!isInEditor) {
       if (isPlayingReversed || isPause) {
         setIsPlayingReversed?.(false);
         setIsPause(false);
@@ -174,7 +174,7 @@ export default ({
       setIsPlaying(true);
     }
   }, [
-    inEditor,
+    isInEditor,
     isPlayingReversed,
     isPause,
     onPlay,
@@ -186,7 +186,7 @@ export default ({
   ]);
 
   const handleOnPlayReversed = useCallback(() => {
-    if (!inEditor) {
+    if (!isInEditor) {
       if (isPlaying || isPause) {
         setIsPause(false);
         setIsPlaying(false);
@@ -201,7 +201,7 @@ export default ({
   }, [
     committer,
     currentTime,
-    inEditor,
+    isInEditor,
     isPause,
     isPlaying,
     onPlay,
@@ -211,7 +211,7 @@ export default ({
   ]);
 
   const handleOnPause = useCallback(() => {
-    if (!inEditor) {
+    if (!isInEditor) {
       if (isPlayingReversed || isPlaying) {
         setIsPlayingReversed?.(false);
         setIsPlaying?.(false);
@@ -219,7 +219,7 @@ export default ({
       committer?.id && onPause?.(committer.id);
       setIsPause(true);
     }
-  }, [committer.id, inEditor, isPlaying, isPlayingReversed, onPause]);
+  }, [committer.id, isInEditor, isPlaying, isPlayingReversed, onPause]);
 
   const handleTick = useCallback(
     (current: Date) => {
@@ -277,22 +277,22 @@ export default ({
       if (!handleOnDrag || !e.target || !range) {
         return;
       }
-      if (target && target.style.pointerEvents === "none" && !inEditor) {
+      if (target && target.style.pointerEvents === "none" && !isInEditor) {
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [committer?.id, handleOnDrag, inEditor, range, target],
+    [committer?.id, handleOnDrag, isInEditor, range, target],
   );
 
   const handleOnClick: MouseEventHandler = useCallback(
     e => {
-      if (!inEditor && range) {
+      if (!isInEditor && range) {
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [inEditor, range, committer?.id, handleOnDrag],
+    [isInEditor, range, committer?.id, handleOnDrag],
   );
 
   const handleTimelineCommitterChange = useCallback(
@@ -390,7 +390,7 @@ export default ({
     const finalPosition = isMinimized ? 94.5 : 93.5;
 
     if (range) {
-      if (!inEditor) {
+      if (!isInEditor) {
         const totalRange = range?.end - range.start;
         const currentPosition = currentTime - range.start;
         let positionPercentage = (currentPosition / totalRange) * 90 + initialPosition;
@@ -402,7 +402,7 @@ export default ({
       }
     }
     return initialPosition;
-  }, [isMinimized, range, inEditor, currentTime]);
+  }, [isMinimized, range, isInEditor, currentTime]);
 
   return {
     formattedCurrentTime,

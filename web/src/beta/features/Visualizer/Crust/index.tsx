@@ -47,7 +47,7 @@ export type Props = {
   // common
   engineName?: string;
   isEditable?: boolean;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   isBuilt?: boolean;
   mapRef?: RefObject<MapRef>;
   layers?: Layer[];
@@ -111,7 +111,7 @@ export default function Crust({
   engineName,
   isBuilt,
   isEditable,
-  inEditor,
+  isInEditor,
   mapRef,
   sceneProperty,
   selectedFeatureInfo,
@@ -204,7 +204,7 @@ export default function Crust({
       mapRef={mapRef}
       sceneProperty={sceneProperty}
       isBuilt={isBuilt}
-      inEditor={inEditor}
+      isInEditor={isInEditor}
       selectedLayer={selectedLayer?.layer}
       selectedFeature={selectedComputedFeature}
       selectedFeatureInfo={selectedFeatureInfo}
@@ -230,7 +230,7 @@ export default function Crust({
         isMobile={viewport?.isMobile}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        inEditor={inEditor}
+        isInEditor={isInEditor}
         alignSystem={widgetAlignSystem}
         floatingWidgets={floatingWidgets}
         selectedWidgetArea={selectedWidgetArea}
@@ -252,7 +252,7 @@ export default function Crust({
       <Infobox
         infobox={featuredInfobox}
         installableInfoboxBlocks={installableInfoboxBlocks}
-        isEditable={!!inEditor}
+        isEditable={!!isInEditor}
         renderBlock={renderBlock}
         onBlockCreate={onInfoboxBlockCreate}
         onBlockDelete={onInfoboxBlockDelete}

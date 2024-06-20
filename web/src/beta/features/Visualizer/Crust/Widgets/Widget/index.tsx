@@ -26,7 +26,7 @@ export type Props = {
   layout?: WidgetLayout;
   theme?: Theme;
   isEditable?: boolean;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   isBuilt?: boolean;
   isMobile?: boolean;
   context?: Context;

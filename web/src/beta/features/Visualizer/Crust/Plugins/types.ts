@@ -26,7 +26,7 @@ export type Props = PropsWithChildren<{
   engineName?: string;
   mapRef?: RefObject<MapRef>;
   sceneProperty?: any;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   isBuilt?: boolean;
   selectedLayer?: ComputedLayer;
   selectedFeature?: ComputedFeature;

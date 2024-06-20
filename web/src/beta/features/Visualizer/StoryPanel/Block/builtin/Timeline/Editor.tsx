@@ -18,7 +18,7 @@ type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
   timelineValues?: TimelineValues;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   playMode?: string;
   padding?: PaddingProp;
   property?: any;
@@ -28,7 +28,7 @@ const TimelineEditor = ({
   blockId,
   isSelected,
   timelineValues,
-  inEditor,
+  isInEditor,
   playMode,
   padding,
   property,
@@ -77,7 +77,7 @@ const TimelineEditor = ({
     range,
     isSelected,
     blockId,
-    inEditor,
+    isInEditor,
     speed,
     playMode,
     padding,

@@ -19,7 +19,7 @@ export type Props = {
   visualizerRef?: MutableRefObject<MapRef | null>;
   sceneId?: string;
   isBuilt?: boolean;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   interactionMode?: InteractionModeType;
   isVisualizerResizing?: MutableRefObject<boolean>;
   // story
@@ -43,7 +43,7 @@ const EditorVisualizer: React.FC<Props> = ({
   visualizerRef,
   sceneId,
   isBuilt,
-  inEditor,
+  isInEditor,
   interactionMode,
   isVisualizerResizing,
   storyPanelRef,
@@ -105,7 +105,7 @@ const EditorVisualizer: React.FC<Props> = ({
       engine="cesium"
       engineMeta={engineMeta}
       isBuilt={!!isBuilt}
-      inEditor={inEditor}
+      isInEditor={isInEditor}
       ready={isBuilt || (!!layers && !!widgets)}
       layers={layers}
       widgets={widgets}

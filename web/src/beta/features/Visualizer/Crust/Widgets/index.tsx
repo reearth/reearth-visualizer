@@ -37,7 +37,7 @@ export type Props = {
   isMobile?: boolean;
   theme?: Theme;
   isEditable?: boolean;
-  inEditor?: boolean;
+  isInEditor?: boolean;
   isBuilt?: boolean;
   context?: Context;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -72,7 +72,7 @@ export default function Widgets({
   layoutConstraint,
   theme,
   isEditable,
-  inEditor,
+  isInEditor,
   isBuilt,
   context,
   renderWidget,
@@ -95,7 +95,7 @@ export default function Widgets({
         layout={layout}
         theme={theme}
         isEditable={isEditable}
-        inEditor={inEditor}
+        isInEditor={isInEditor}
         isBuilt={isBuilt}
         isMobile={isMobile}
         context={context}
@@ -116,7 +116,7 @@ export default function Widgets({
     [
       theme,
       isEditable,
-      inEditor,
+      isInEditor,
       isBuilt,
       isMobile,
       context,

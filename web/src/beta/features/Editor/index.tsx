@@ -68,7 +68,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
         <Content>
           <VisualizerArea style={{ ...visualizerSize }}>
             <EditorVisualizer
-              inEditor={tab !== "publish"}
+              isInEditor={tab !== "publish"}
               selectedLayer={selectedLayer}
               visualizerRef={visualizerRef}
               storyPanelRef={storyPanelRef}

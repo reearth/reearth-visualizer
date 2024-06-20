@@ -21,7 +21,7 @@ const VideoBlock: React.FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...pr
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      {src && <VideoPlayer isSelected={isSelected} src={src} inEditor={!!props.isEditable} />}
+      {src && <VideoPlayer isSelected={isSelected} src={src} isInEditor={!!props.isEditable} />}
     </BlockWrapper>
   );
 };

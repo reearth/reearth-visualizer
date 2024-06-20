@@ -49,7 +49,7 @@ export default function ({
   engineName,
   mapRef,
   sceneProperty,
-  inEditor,
+  isInEditor,
   isBuilt,
   // tags,
   viewport,
@@ -88,7 +88,7 @@ export default function ({
 
   const getLayers = useGet(layersRef);
   const getSceneProperty = useGet(sceneProperty);
-  const getInEditor = useGet(!!inEditor);
+  const getInEditor = useGet(!!isInEditor);
   const getBuilt = useGet(!!isBuilt);
   const getTags = useGet([]);
   const getCamera = useGet(camera);
@@ -540,7 +540,7 @@ export default function ({
         events: ev,
         layers: getLayers,
         sceneProperty: getSceneProperty,
-        inEditor: getInEditor,
+        isInEditor: getInEditor,
         isBuilt: getBuilt,
         tags: getTags,
         camera: getCamera,

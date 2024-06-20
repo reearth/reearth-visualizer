@@ -37,7 +37,7 @@ const TimelineBlock: React.FC<BlockProps<StoryBlock>> = ({ block, isSelected, ..
       property={block?.property}
       {...props}>
       <TimelineEditor
-        inEditor={!!props.isEditable}
+        isInEditor={!!props.isEditable}
         padding={props.padding}
         timelineValues={timelineValues}
         blockId={blockId}
