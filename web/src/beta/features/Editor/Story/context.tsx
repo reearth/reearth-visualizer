@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode } from "react";
 
 import { AreaSize } from "@reearth/beta/ui/layout";
-import { Camera, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
@@ -26,7 +26,6 @@ export interface StoryPageContextType {
   ) => Promise<void>;
   sceneId?: string;
   selectedStoryPage?: Page;
-  currentCamera?: Camera;
   layers?: NLSLayer[];
   tab?: Tab;
   handleFlyTo?: FlyTo;

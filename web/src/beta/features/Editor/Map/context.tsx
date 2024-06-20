@@ -1,7 +1,6 @@
 import { createContext, useContext, ReactNode } from "react";
 
 import { AreaSize } from "@reearth/beta/ui/layout";
-import { Camera } from "@reearth/beta/utils/value";
 import { FlyTo, SketchType } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
@@ -42,7 +41,6 @@ export interface MapPageContextType {
   layerStyles?: LayerStyle[];
   sceneId?: string;
   selectedLayerStyleId?: string;
-  currentCamera?: Camera;
   selectedLayer: SelectedLayer | undefined;
   handleLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   handleLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;

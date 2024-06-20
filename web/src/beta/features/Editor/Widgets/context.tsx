@@ -1,7 +1,6 @@
 import { createContext, useContext, ReactNode, SetStateAction } from "react";
 
 import { AreaSize } from "@reearth/beta/ui/layout";
-import { Camera } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { WidgetAreaState } from "@reearth/services/state";
 
@@ -20,7 +19,6 @@ export interface WidgetsPageContextType {
   selectedWidget?: SelectedWidget;
   selectWidget: (value: SelectedWidget | undefined) => void;
   selectedWidgetArea?: WidgetAreaState;
-  currentCamera?: Camera;
   handleFlyTo?: FlyTo;
 }
 

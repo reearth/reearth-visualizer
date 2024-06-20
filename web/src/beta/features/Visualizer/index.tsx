@@ -209,7 +209,6 @@ const Visualizer: FC<VisualizerProps> = ({
             selectedStory={story}
             installableStoryBlocks={installableStoryBlocks}
             isEditable={!!inEditor}
-            currentCamera={currentCamera}
             onStoryPageChange={handleStoryPageChange}
             onStoryBlockCreate={handleStoryBlockCreate}
             onStoryBlockDelete={handleStoryBlockDelete}

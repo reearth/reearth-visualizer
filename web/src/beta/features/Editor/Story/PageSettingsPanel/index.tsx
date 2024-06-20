@@ -14,8 +14,7 @@ import useHooks from "./hooks";
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
-  const { selectedStoryPage, currentCamera, layers, handleStoryPageUpdate, tab, handleFlyTo } =
-    useStoryPage();
+  const { selectedStoryPage, layers, handleStoryPageUpdate, tab, handleFlyTo } = useStoryPage();
 
   const { allCheckedLayers, checkedLayers, visibleItems, handleAllLayersCheck, handleLayerCheck } =
     useHooks({
@@ -67,7 +66,6 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                 key={i.id}
                 propertyId={selectedStoryPage.property.id}
                 item={i}
-                currentCamera={currentCamera}
                 onFlyTo={handleFlyTo}
               />
             </SidePanelSectionField>

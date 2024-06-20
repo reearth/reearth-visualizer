@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useCallback, useState, MutableRefObject } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
+import { Camera } from "@reearth/beta/utils/value";
 import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
@@ -13,6 +14,7 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 
+import { useCurrentCamera } from "../atoms";
 import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
@@ -263,6 +265,15 @@ export default ({
 
   const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
 
+  // Camera
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => {
+      setCurrentCamera(camera);
+    },
+    [setCurrentCamera],
+  );
+
   return {
     sceneProperty,
     pluginProperty,
@@ -272,6 +283,8 @@ export default ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
+    currentCamera,
+    handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,

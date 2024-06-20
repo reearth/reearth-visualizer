@@ -6,7 +6,6 @@ import {
   StoryPanelRef,
   type InstallableStoryBlock,
 } from "@reearth/beta/features/Visualizer/StoryPanel";
-import type { Camera } from "@reearth/beta/utils/value";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
@@ -21,7 +20,6 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
-  currentCamera?: Camera;
   interactionMode?: InteractionModeType;
   isVisualizerResizing?: MutableRefObject<boolean>;
   // story
@@ -33,7 +31,6 @@ export type Props = {
   selectedLayer: SelectedLayer | undefined;
   selectedWidgetArea: WidgetAreaState | undefined;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
-  onCameraChange: (camera: Camera) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   onVisualizerReady: (value: boolean) => void;
@@ -47,7 +44,6 @@ const EditorVisualizer: React.FC<Props> = ({
   sceneId,
   isBuilt,
   inEditor,
-  currentCamera,
   interactionMode,
   isVisualizerResizing,
   storyPanelRef,
@@ -58,7 +54,6 @@ const EditorVisualizer: React.FC<Props> = ({
   widgetAlignEditorActivated,
   selectedWidgetArea,
   onStoryBlockMove: handleStoryBlockMove,
-  onCameraChange,
   onSketchTypeChange,
   onSketchFeatureCreate,
   onVisualizerReady,
@@ -75,6 +70,8 @@ const EditorVisualizer: React.FC<Props> = ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
+    currentCamera,
+    handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
@@ -120,7 +117,7 @@ const EditorVisualizer: React.FC<Props> = ({
       visualizerRef={visualizerRef}
       currentCamera={currentCamera}
       interactionMode={interactionMode}
-      onCameraChange={onCameraChange}
+      onCameraChange={handleCameraUpdate}
       onCoreLayerSelect={handleCoreLayerSelect}
       handleLayerDrop={handleLayerDrop}
       handleZoomToLayer={zoomToLayer}

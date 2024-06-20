@@ -20,7 +20,6 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     selectedLayerStyleId,
     selectedSceneSetting,
     sceneSettings,
-    currentCamera,
     selectedLayer,
     handleFlyTo,
     handleLayerStyleValueUpdate,
@@ -46,7 +45,6 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
         <SceneSettings
           propertyId={scenePropertyId}
           propertyItems={sceneSettings}
-          currentCamera={currentCamera}
           onFlyTo={handleFlyTo}
         />
       )}

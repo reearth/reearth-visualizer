@@ -31,8 +31,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
     visualizerSize,
     handleVisualizerResize,
     isVisualizerResizing,
-    currentCamera,
-    handleCameraUpdate,
     handleFlyTo,
   } = useEditorVisualizer();
 
@@ -154,7 +152,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       layerStyles,
       sceneId,
       selectedLayerStyleId: selectedLayerStyle?.id,
-      currentCamera, // TODO: Camera manager
       selectedLayer,
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
@@ -173,7 +170,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       selectedLayer,
       layerStyles,
       sceneSettings,
-      currentCamera,
       selectedLayerStyle,
       sceneId,
       handleSketchTypeChange,
@@ -206,7 +202,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleStoryPageMove,
       handlePropertyValueUpdate,
       sceneId,
-      currentCamera, // TODO: Camera manager
       layers: nlsLayers,
       tab,
       handleFlyTo,
@@ -222,7 +217,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleStoryPageMove,
       handlePropertyValueUpdate,
       sceneId,
-      currentCamera,
       nlsLayers,
       tab,
       handleFlyTo,
@@ -242,7 +236,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       selectedWidget,
       selectWidget,
       selectedWidgetArea,
-      currentCamera, // TODO: Camera manager
       handleFlyTo,
     }),
     [
@@ -256,7 +249,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       selectedWidget,
       selectWidget,
       selectedWidgetArea,
-      currentCamera,
       handleFlyTo,
     ],
   );
@@ -288,11 +280,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
     currentProjectType,
     selectedStory,
     installableStoryBlocks,
-    currentCamera,
     showWASEditor,
     selectedWidgetArea,
     handleStoryBlockMove,
-    handleCameraUpdate,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
     handleIsVisualizerUpdate,

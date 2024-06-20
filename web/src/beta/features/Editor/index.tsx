@@ -35,11 +35,9 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentProjectType,
     selectedStory,
     installableStoryBlocks,
-    currentCamera,
     showWASEditor,
     selectedWidgetArea,
     handleStoryBlockMove,
-    handleCameraUpdate,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
     handleIsVisualizerUpdate,
@@ -79,11 +77,9 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               showStoryPanel={currentProjectType === "story"}
               selectedStory={selectedStory}
               installableStoryBlocks={installableStoryBlocks}
-              currentCamera={currentCamera}
               widgetAlignEditorActivated={showWASEditor}
               selectedWidgetArea={selectedWidgetArea}
               onStoryBlockMove={handleStoryBlockMove}
-              onCameraChange={handleCameraUpdate}
               onSketchTypeChange={handleSketchTypeChange}
               onSketchFeatureCreate={handleSketchFeatureCreate}
               onVisualizerReady={handleIsVisualizerUpdate}

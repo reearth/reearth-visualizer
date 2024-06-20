@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
 import { AreaSize } from "@reearth/beta/ui/layout";
-import { Camera } from "@reearth/beta/utils/value";
 import { FlyTo, MapRef } from "@reearth/core";
 
 export default () => {
@@ -31,14 +30,6 @@ export default () => {
     });
   }, []);
 
-  // Camera
-  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
-
-  const handleCameraUpdate = useCallback(
-    (camera: Camera) => setCurrentCamera(camera),
-    [setCurrentCamera],
-  );
-
   const handleFlyTo: FlyTo = useCallback(
     (target, options) => {
       if (!isVisualizerReady) return;
@@ -54,8 +45,6 @@ export default () => {
     visualizerSize,
     handleVisualizerResize,
     isVisualizerResizing,
-    currentCamera,
-    handleCameraUpdate,
     handleFlyTo,
   };
 };

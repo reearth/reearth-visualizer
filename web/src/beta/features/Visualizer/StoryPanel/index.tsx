@@ -1,7 +1,7 @@
 import { forwardRef, memo, Ref, RefObject, useMemo } from "react";
 import { createPortal } from "react-dom";
 
-import { Camera, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { BlockProvider } from "../shared/contexts/blockContext";
@@ -25,7 +25,6 @@ export type StoryPanelProps = {
   selectedStory?: Story;
   isEditable?: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
-  currentCamera?: Camera;
   onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockCreate?: (
     pageId?: string | undefined,
@@ -65,7 +64,6 @@ export const StoryPanel = memo(
         selectedStory,
         isEditable,
         installableStoryBlocks,
-        currentCamera,
         onStoryPageChange,
         onStoryBlockCreate,
         onStoryBlockMove,
@@ -159,7 +157,6 @@ export const StoryPanel = memo(
                       showingIndicator={!!pageInfo}
                       isAutoScrolling={isAutoScrolling}
                       isEditable={isEditable}
-                      currentCamera={currentCamera}
                       onPageSettingsToggle={handlePageSettingsToggle}
                       onPageSelect={handlePageSelect}
                       onCurrentPageChange={handleCurrentPageChange}

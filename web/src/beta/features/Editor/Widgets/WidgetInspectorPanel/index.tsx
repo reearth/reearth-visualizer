@@ -13,7 +13,7 @@ import useHooks from "./hooks";
 const WidgetInspectorPanel: FC = () => {
   const t = useT();
 
-  const { sceneId, selectedWidget, currentCamera, handleFlyTo } = useWidgetsPage();
+  const { sceneId, selectedWidget, handleFlyTo } = useWidgetsPage();
 
   const { visibleItems } = useHooks({ sceneId, selectedWidget });
 
@@ -27,7 +27,6 @@ const WidgetInspectorPanel: FC = () => {
                 key={i.id}
                 propertyId={selectedWidget.propertyId}
                 item={i}
-                currentCamera={currentCamera}
                 onFlyTo={handleFlyTo}
               />
             </SidePanelSectionField>
