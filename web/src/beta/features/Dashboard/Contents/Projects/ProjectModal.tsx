@@ -17,10 +17,10 @@ import { Project } from "../../type";
 type Props = {
   visible: boolean;
   onClose?: () => void;
-  onCreateProject: (data: Pick<Project, "name" | "description" | "imageUrl">) => void;
+  onProjectCreate: (data: Pick<Project, "name" | "description" | "imageUrl">) => void;
 };
 
-export const ProjectModal: FC<Props> = ({ visible, onClose, onCreateProject }) => {
+export const ProjectModal: FC<Props> = ({ visible, onClose, onProjectCreate }) => {
   const t = useT();
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
@@ -42,9 +42,9 @@ export const ProjectModal: FC<Props> = ({ visible, onClose, onCreateProject }) =
       description,
       imageUrl,
     };
-    onCreateProject(data);
+    onProjectCreate(data);
     onClose?.();
-  }, [description, imageUrl, onClose, onCreateProject, projectName]);
+  }, [description, imageUrl, onClose, onProjectCreate, projectName]);
 
   return (
     <Modal visible={visible} size="small">

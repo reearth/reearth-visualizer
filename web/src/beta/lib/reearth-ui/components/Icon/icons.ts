@@ -96,6 +96,7 @@ import SettingFilled from "./Icons/SettingFilled.svg?react";
 import Square from "./Icons/Square.svg?react";
 import SquareFilled from "./Icons/SquareFilled.svg?react";
 import Star from "./Icons/Star.svg?react";
+import StarFilled from "./Icons/StarFilled.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
 import Table from "./Icons/Table.svg?react";
@@ -218,6 +219,7 @@ export default {
   sToL: SToL,
   lToS: LToS,
   star: Star,
+  starFilled: StarFilled,
   square: Square,
   squareFilled: SquareFilled,
   swiper: Swiper,

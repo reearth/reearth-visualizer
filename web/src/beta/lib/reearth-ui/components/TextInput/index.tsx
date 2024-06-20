@@ -10,9 +10,11 @@ export type TextInputProps = {
   disabled?: boolean;
   appearance?: "readonly" | "present";
   extendWidth?: boolean;
+  autoFocus?: boolean;
   actions?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
+  onDoubleClick?: () => void;
 };
 
 export const TextInput: FC<TextInputProps> = ({
@@ -24,8 +26,10 @@ export const TextInput: FC<TextInputProps> = ({
   appearance,
   extendWidth,
   actions,
+  autoFocus,
   onChange,
   onBlur,
+  onDoubleClick,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -57,7 +61,8 @@ export const TextInput: FC<TextInputProps> = ({
       size={size}
       appearance={appearance}
       extendWidth={extendWidth}
-      status={isFocused ? "active" : "default"}>
+      status={isFocused || autoFocus ? "active" : "default"}
+      onDoubleClick={onDoubleClick}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -67,6 +72,7 @@ export const TextInput: FC<TextInputProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         appearance={appearance}
+        autoFocus={autoFocus}
       />
       {actions && (
         <ActionsWrapper>
@@ -127,6 +133,7 @@ const StyledInput = styled("input")<{
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
+  pointerEvents: disabled ? "none" : "inherit",
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,
