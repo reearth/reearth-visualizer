@@ -46,9 +46,6 @@ export default (workspaceId?: string) => {
 
   const projectNodes = projectsData?.edges.map(e => e.node);
 
-  console.log("loading", loading);
-  console.log("projectsData", projectsData);
-
   const projects = useMemo(() => {
     return (projectNodes ?? [])
       .map<Project | undefined>(project =>
@@ -66,8 +63,6 @@ export default (workspaceId?: string) => {
       )
       .filter((project): project is Project => !!project);
   }, [projectNodes]);
-
-  console.log("projects", projects);
 
   const hasMoreProjects =
     projectsData?.pageInfo?.hasNextPage || projectsData?.pageInfo?.hasPreviousPage;

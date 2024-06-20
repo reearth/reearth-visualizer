@@ -5,7 +5,7 @@ import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import DashboardContents from "./Contents";
+import DashboardContents from "./ContentsSection";
 import LeftSidePanel from "./LeftSidePanel";
 
 export type DashboardProps = {

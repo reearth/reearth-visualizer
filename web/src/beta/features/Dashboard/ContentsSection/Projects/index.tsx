@@ -10,7 +10,7 @@ import { Project as ProjectType } from "../../type";
 
 import useHooks from "./hooks";
 import { Project } from "./project";
-import { ProjectModal } from "./ProjectModal";
+import { ProjectModal } from "./projectModal";
 
 const options = [
   { value: "latestModified", label: "Latest modified" },
