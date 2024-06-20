@@ -297,7 +297,7 @@ export default function ({
     [engineRef],
   );
 
-  const toLngLatHeight = useCallback(
+  const convert3DPointsToLatLngHeight = useCallback(
     (
       x: number,
       y: number,
@@ -573,7 +573,7 @@ export default function ({
         computeGlobeHeight,
         getGlobeHeight,
         convertLatLngHeightTo3DPoints,
-        toLngLatHeight,
+        convert3DPointsToLatLngHeight,
         convertScreenToPositionOffset,
         isPositionVisible,
         setView,
@@ -645,7 +645,7 @@ export default function ({
       computeGlobeHeight,
       getGlobeHeight,
       convertLatLngHeightTo3DPoints,
-      toLngLatHeight,
+      convert3DPointsToLatLngHeight,
       convertScreenToPositionOffset,
       isPositionVisible,
       setView,

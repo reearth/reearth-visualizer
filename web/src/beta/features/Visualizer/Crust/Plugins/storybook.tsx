@@ -106,7 +106,7 @@ export const context: Context = {
       computeGlobeHeight: act("computeGlobeHeight"),
       getGlobeHeight: act("getGlobeHeight"),
       convertLatLngHeightTo3DPoints: act("convertLatLngHeightTo3DPoints"),
-      toLngLatHeight: act("toLngLatHeight"),
+      convert3DPointsToLatLngHeight: act("convert3DPointsToLatLngHeight"),
       convertScreenToPositionOffset: act("convertScreenToPositionOffset"),
       isPositionVisible: act("isPositionVisible"),
       translate3DPositionTo2D: act("translate3DPositionTo2D"),

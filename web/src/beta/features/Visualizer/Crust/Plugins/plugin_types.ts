@@ -151,7 +151,7 @@ export type Scene = {
     height: number,
     options?: { useGlobeEllipsoid?: boolean },
   ) => [x: number, y: number, z: number] | undefined;
-  readonly toLngLatHeight: (
+  readonly convert3DPointsToLatLngHeight: (
     x: number,
     y: number,
     z: number,
