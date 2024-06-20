@@ -109,7 +109,7 @@ export const context: Context = {
       toLngLatHeight: act("toLngLatHeight"),
       convertScreenToPositionOffset: act("convertScreenToPositionOffset"),
       isPositionVisible: act("isPositionVisible"),
-      toWindowPosition: act("toWindowPosition"),
+      translate3DPositionTo2D: act("translate3DPositionTo2D"),
       pickManyFromViewport: act("pickManyFromViewport"),
     },
     layers: {

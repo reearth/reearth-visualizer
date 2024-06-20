@@ -443,7 +443,7 @@ export function commonReearth({
   convertScreenToPositionOffset,
   isPositionVisible,
   setView,
-  toWindowPosition,
+  translate3DPositionTo2D,
   flyToBBox,
   rotateOnCenter,
   enableScreenSpaceCameraController,
@@ -506,7 +506,7 @@ export function commonReearth({
   convertScreenToPositionOffset: GlobalThis["reearth"]["scene"]["convertScreenToPositionOffset"];
   isPositionVisible: GlobalThis["reearth"]["scene"]["isPositionVisible"];
   setView: GlobalThis["reearth"]["camera"]["setView"];
-  toWindowPosition: GlobalThis["reearth"]["scene"]["toWindowPosition"];
+  translate3DPositionTo2D: GlobalThis["reearth"]["scene"]["translate3DPositionTo2D"];
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
@@ -597,7 +597,7 @@ export function commonReearth({
       toLngLatHeight,
       convertScreenToPositionOffset,
       isPositionVisible,
-      toWindowPosition,
+      translate3DPositionTo2D,
       pickManyFromViewport,
     },
     get viewport() {

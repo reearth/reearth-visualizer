@@ -334,7 +334,7 @@ export default function ({
     [engineRef],
   );
 
-  const toWindowPosition = useCallback(
+  const translate3DPositionTo2D = useCallback(
     (position: [x: number, y: number, z: number]) => {
       return engineRef?.toWindowPosition(position);
     },
@@ -577,7 +577,7 @@ export default function ({
         convertScreenToPositionOffset,
         isPositionVisible,
         setView,
-        toWindowPosition,
+        translate3DPositionTo2D,
         rotateRight,
         orbit,
         captureScreen,
@@ -649,7 +649,7 @@ export default function ({
       convertScreenToPositionOffset,
       isPositionVisible,
       setView,
-      toWindowPosition,
+      translate3DPositionTo2D,
       rotateRight,
       orbit,
       captureScreen,

@@ -162,7 +162,7 @@ export type Scene = {
     screenOffset: [x: number, y: number],
   ) => [x: number, y: number, z: number] | undefined;
   readonly isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
-  readonly toWindowPosition: (
+  readonly translate3DPositionTo2D: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
   readonly pickManyFromViewport: (
