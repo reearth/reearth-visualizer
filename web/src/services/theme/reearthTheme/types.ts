@@ -8,6 +8,7 @@ export type TempTheme = Theme & {
 export type Theme = Common & {
   bg: {
     transparentBlack: string;
+    base: string;
     0: string;
     1: string;
     2: string;
@@ -55,6 +56,14 @@ export type Theme = Common & {
   };
   warning: {
     main: string;
+  };
+  relative: {
+    lightest: string;
+    lighter: string;
+    light: string;
+    dark: string;
+    darker: string;
+    darkest: string;
   };
   placeHolder: {
     main_1: string;

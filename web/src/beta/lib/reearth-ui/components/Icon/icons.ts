@@ -1,6 +1,8 @@
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
+import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
+import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
 import Article from "./Icons/Article.svg?react";
 import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
@@ -123,6 +125,8 @@ export default {
   addStyle: AddStyle,
   appearance: Appearance,
   arrowLeftRight: ArrowLeftRight,
+  arrowsHorizontalIn: ArrowsHorizontalIn,
+  arrowsHorizontalOut: ArrowsHorizontalOut,
   article: Article,
   book: Book,
   bracketsCurly: BracketsCurly,

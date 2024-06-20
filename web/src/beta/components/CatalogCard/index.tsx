@@ -7,7 +7,7 @@ import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
-import { LayerStyleNameUpdateProps } from "../../features/Editor/useLayerStyles";
+import { LayerStyleNameUpdateProps } from "../../features/Editor/hooks/useLayerStyles";
 
 export type Props = {
   id?: string;

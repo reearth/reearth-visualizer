@@ -8,6 +8,7 @@ const darkTheme: Theme = {
   ...commonTheme,
   bg: {
     transparentBlack: rgba("#000000", 0.7),
+    base: "#060606",
     0: gray[100],
     1: gray[90],
     2: gray[80],
@@ -51,6 +52,14 @@ const darkTheme: Theme = {
     strong: brandRed.dark,
   },
   warning: { main: yellow[30] },
+  relative: {
+    lightest: rgba("#ffffff", 0.2),
+    lighter: rgba("#ffffff", 0.15),
+    light: rgba("#ffffff", 0.1),
+    dark: rgba("#000000", 0.1),
+    darker: rgba("#000000", 0.15),
+    darkest: rgba("#000000", 0.2),
+  },
   placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
   colorSchema: "dark",
 };

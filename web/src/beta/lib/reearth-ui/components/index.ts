@@ -16,4 +16,5 @@ export * from "./ColorInput";
 export * from "./DatePicker";
 export * from "./TimePicker";
 export * from "./Breadcrumb";
+export * from "./IconButton";
 export * from "./Selector";

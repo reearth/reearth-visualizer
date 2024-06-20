@@ -15,37 +15,34 @@ export const Default: Story = {
       <Collapse title="Default Collapse">
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
-      <Collapse title="Background Black Collapse" background="black">
+    </div>
+  ),
+};
+
+export const Small: Story = {
+  render: () => (
+    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+      <Collapse title="Small Collapse" size="small">
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
     </div>
   ),
 };
 
-export const SmallCollapse: Story = {
+export const NoPadding: Story = {
   render: () => (
     <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
-      <Collapse title="Default Collapse" size="small">
-        <p>Lorem ipsum dolor sit</p>
-      </Collapse>
-      <Collapse title="Background Black Collapse" background="black" size="small">
-        <p>Lorem ipsum dolor sit</p>
+      <Collapse title="No Padding Collapse" noPadding>
+        <p>User can manage the content freely.</p>
       </Collapse>
     </div>
   ),
 };
 
-export const CollapseWithHeaderBg: Story = {
+export const HeaderBg: Story = {
   render: () => (
     <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
-      <Collapse title="Default Collapse" headerBg="#3B3CD0">
-        <p>Lorem ipsum dolor sit</p>
-      </Collapse>
-      <Collapse
-        title="Background Black Collapse"
-        background="black"
-        size="small"
-        headerBg="#3B3CD0">
+      <Collapse title="Customized Header Background" headerBg="#3B3CD0">
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
     </div>
@@ -55,7 +52,7 @@ export const CollapseWithHeaderBg: Story = {
 export const InitialAsCollapsed: Story = {
   render: () => (
     <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
-      <Collapse title="Default Collapse" collapsed={true}>
+      <Collapse title="Collapsed" collapsed={true}>
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
     </div>
