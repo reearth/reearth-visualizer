@@ -168,9 +168,9 @@ export function exposed({
               overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
             };
           },
-          get sampleTerrainHeight() {
+          get getTerrainHeight() {
             return async (lng: number, lat: number) => {
-              const result = await commonReearth?.scene?.sampleTerrainHeight?.(lng, lat);
+              const result = await commonReearth?.scene?.getTerrainHeight?.(lng, lat);
               startEventLoop?.();
               return result;
             };
@@ -435,7 +435,7 @@ export function commonReearth({
   rotateRight,
   captureScreen,
   getLocationFromScreen,
-  sampleTerrainHeight,
+  getTerrainHeight,
   computeGlobeHeight,
   getGlobeHeight,
   toXYZ,
@@ -498,7 +498,7 @@ export function commonReearth({
   getCameraFovInfo: GlobalThis["reearth"]["camera"]["getFovInfo"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
-  sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
+  getTerrainHeight: GlobalThis["reearth"]["scene"]["getTerrainHeight"];
   computeGlobeHeight: GlobalThis["reearth"]["scene"]["computeGlobeHeight"];
   getGlobeHeight: GlobalThis["reearth"]["scene"]["getGlobeHeight"];
   toXYZ: GlobalThis["reearth"]["scene"]["toXYZ"];
@@ -590,7 +590,7 @@ export function commonReearth({
       overrideProperty: overrideSceneProperty,
       captureScreen,
       getLocationFromScreen,
-      sampleTerrainHeight,
+      getTerrainHeight,
       computeGlobeHeight,
       getGlobeHeight,
       toXYZ,

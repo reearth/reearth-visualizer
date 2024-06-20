@@ -263,9 +263,9 @@ export default function ({
     [engineRef],
   );
 
-  const sampleTerrainHeight = useCallback(
+  const getTerrainHeight = useCallback(
     async (lng: number, lat: number) => {
-      return await engineRef?.sampleTerrainHeight(lng, lat);
+      return await engineRef?.getTerrainHeight(lng, lat);
     },
     [engineRef],
   );
@@ -582,7 +582,7 @@ export default function ({
         orbit,
         captureScreen,
         getLocationFromScreen,
-        sampleTerrainHeight,
+        getTerrainHeight,
         enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -654,7 +654,7 @@ export default function ({
       orbit,
       captureScreen,
       getLocationFromScreen,
-      sampleTerrainHeight,
+      getTerrainHeight,
       enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
