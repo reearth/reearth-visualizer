@@ -23,7 +23,7 @@ const Infobox: React.FC<Props> = ({ selectedLayerId, infobox }) => {
     <Wrapper>
       {visibleItems ? (
         visibleItems.map(i => (
-          <PropertyItem key={i.id} propertyId={infobox?.property?.id} item={i} />
+          <PropertyItem key={i.id ?? ""} propertyId={infobox?.property?.id} item={i} />
         ))
       ) : (
         <ToggleField

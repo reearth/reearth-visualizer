@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 
 import type { MapRef, ComputedFeature, ComputedLayer, LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
@@ -119,9 +119,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
         layerId,
       });
       if (layerId === selectedLayer?.layer?.id) {
-        handleLayerSelect({
-          layerId: nlsLayers[deletedPageIndex + 1]?.id ?? nlsLayers[deletedPageIndex - 1]?.id,
-        });
+        handleLayerSelect(undefined);
       }
     },
     [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer],
@@ -170,6 +168,21 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     },
     [useUpdateNLSLayer],
   );
+
+  useEffect(() => {
+    setSelectedLayer(prev => {
+      if (prev?.layer) {
+        const layer = nlsLayers.find(l => l.id === prev.layer?.id);
+        return layer
+          ? {
+              ...prev,
+              layer,
+            }
+          : undefined;
+      }
+      return prev;
+    });
+  }, [nlsLayers]);
 
   return {
     nlsLayers,
