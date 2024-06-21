@@ -66,7 +66,6 @@ export type Props = {
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   // plugin
   externalPlugin: ExternalPluginProps;
-  useExperimentalSandbox?: boolean;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
@@ -141,7 +140,6 @@ export default function Crust({
   sceneProperty,
   selectedFeatureInfo,
   externalPlugin,
-  useExperimentalSandbox,
   layers,
 
   // Widget
@@ -251,7 +249,6 @@ export default function Crust({
       floatingWidgets={floatingWidgets}
       interactionMode={interactionMode ?? "default"}
       timelineManagerRef={mapRef?.current?.timeline}
-      useExperimentalSandbox={useExperimentalSandbox}
       overrideInteractionMode={handleInteractionModeChange}
       overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}

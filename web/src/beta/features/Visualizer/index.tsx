@@ -52,7 +52,6 @@ type VisualizerProps = {
     | undefined;
   story?: Story;
   zoomedLayerId?: string;
-  useExperimentalSandbox?: boolean;
   visualizerRef?: MutableRefObject<MapRef | null>;
   currentCamera?: Camera;
   interactionMode?: InteractionModeType;
@@ -138,7 +137,6 @@ const Visualizer: FC<VisualizerProps> = ({
   pluginProperty,
   story,
   zoomedLayerId,
-  useExperimentalSandbox = true,
   visualizerRef,
   currentCamera,
   interactionMode,
@@ -210,7 +208,6 @@ const Visualizer: FC<VisualizerProps> = ({
           inEditor={inEditor}
           mapRef={visualizerRef}
           layers={layers}
-          useExperimentalSandbox={useExperimentalSandbox}
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
           // Widget

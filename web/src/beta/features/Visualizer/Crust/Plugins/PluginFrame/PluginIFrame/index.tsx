@@ -2,8 +2,7 @@ import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode, 
 import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 
-import useExperimentalSandbox from "../../useExperimentalSandbox";
-import IFrame, { AutoResize } from "../IFrame";
+import { AutoResize } from "../IFrame";
 import SafeIframe from "../SafeIFrame";
 
 import useHooks, { Ref } from "./hooks";
@@ -52,38 +51,21 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     handleLoad,
   } = useHooks({ ready, ref, visible, type, enabled, onRender });
 
-  const experimentalSandbox = useExperimentalSandbox();
-
   const children = (
     <>
       {html ? (
-        experimentalSandbox ? (
-          <SafeIframe
-            ref={iFrameRef}
-            className={className}
-            iFrameProps={iFrameProps}
-            html={html}
-            autoResize={autoResize}
-            externalRef={externalRef}
-            onMessage={onMessage}
-            onClick={onClick}
-            onLoad={handleLoad}
-            {...options}
-          />
-        ) : (
-          <IFrame
-            ref={iFrameRef}
-            className={className}
-            iFrameProps={iFrameProps}
-            html={html}
-            autoResize={autoResize}
-            externalRef={externalRef}
-            onMessage={onMessage}
-            onClick={onClick}
-            onLoad={handleLoad}
-            {...options}
-          />
-        )
+        <SafeIframe
+          ref={iFrameRef}
+          className={className}
+          iFrameProps={iFrameProps}
+          html={html}
+          autoResize={autoResize}
+          externalRef={externalRef}
+          onMessage={onMessage}
+          onClick={onClick}
+          onLoad={handleLoad}
+          {...options}
+        />
       ) : renderPlaceholder ? (
         <>{renderPlaceholder}</>
       ) : null}
