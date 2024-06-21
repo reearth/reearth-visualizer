@@ -160,7 +160,7 @@ const ChooseAssetModal: React.FC<Props> = ({
           <SelectField
             value={selectedSortOption}
             options={sortOptions.map(option => ({
-              key: option.key,
+              key: option.value,
               label: option.label,
             }))}
             onChange={onSortChange}

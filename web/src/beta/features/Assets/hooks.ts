@@ -45,6 +45,7 @@ export default ({
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | undefined>(undefined);
 
   const isGettingMore = useRef(false);
 
@@ -70,14 +71,14 @@ export default ({
   const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
   const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
   const assetsWrapperRef = useRef<HTMLDivElement>(null);
-  const sortOptions: { key: string; label: string }[] = useMemo(
+  const sortOptions: { value: string; label: string }[] = useMemo(
     () => [
-      { key: "date", label: t("Last Uploaded") },
-      { key: "date-reverse", label: t("First Uploaded") },
-      { key: "name", label: t("A To Z") },
-      { key: "name-reverse", label: t("Z To A") },
-      { key: "size", label: t("Size Small to Large") },
-      { key: "size-reverse", label: t("Size Large to Small") },
+      { value: "date", label: t("Last Uploaded") },
+      { value: "date-reverse", label: t("First Uploaded") },
+      { value: "name", label: t("A To Z") },
+      { value: "name-reverse", label: t("Z To A") },
+      { value: "size", label: t("Size Small to Large") },
+      { value: "size-reverse", label: t("Size Large to Small") },
     ],
     [t],
   );
@@ -95,7 +96,7 @@ export default ({
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
   const handleSortChange = useCallback(
-    (type?: string, reverse?: boolean) => {
+    (type?: string | string[], reverse?: boolean) => {
       if (!type && reverse === undefined) return;
       setSort({
         type: (type as SortType) ?? sort?.type,
@@ -154,6 +155,19 @@ export default ({
     [selectedAssets, selectAsset],
   );
 
+  const selectedAsset = useMemo(
+    () => assets?.find(asset => asset.id === selectedAssetId) || undefined,
+    [assets, selectedAssetId],
+  );
+
+  const handleAssetSelect = useCallback(
+    (assetId: string | undefined) =>
+      setSelectedAssetId(prevId =>
+        prevId === assetId || assetId === undefined ? undefined : assetId,
+      ),
+    [],
+  );
+
   return {
     assets,
     assetsWrapperRef,
@@ -165,6 +179,8 @@ export default ({
     localSearchTerm,
     selectedAssets,
     deleteModalVisible,
+    selectedAsset,
+    handleAssetSelect,
     onScrollToBottom,
     closeDeleteModal,
     selectAsset,

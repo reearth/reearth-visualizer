@@ -7,7 +7,13 @@ import { DashboardProps } from "..";
 import { Assets } from "./Assets";
 import { Projects } from "./Projects";
 
-const DashboardContents: FC<DashboardProps> = ({ tab, workspaceId }) => {
+export type TabProps = {
+  workspaceId?: string;
+  viewState?: string;
+  onChangeView?: (v?: string) => void;
+};
+
+const ContentsContainer: FC<DashboardProps> = ({ tab, workspaceId }) => {
   const state = localStorage.getItem("viewState");
   const [viewState, setViewState] = useState(state ? state : "grid");
 
@@ -34,4 +40,4 @@ const Wrapper = styled("div")(({ theme }) => ({
   background: theme.bg[0],
 }));
 
-export default DashboardContents;
+export default ContentsContainer;

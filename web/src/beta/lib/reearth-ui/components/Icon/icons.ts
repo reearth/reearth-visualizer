@@ -51,6 +51,7 @@ import FileHtml from "./Icons/FileHtml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
 import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
+import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
 import FolderSimplePlus from "./Icons/FolderSimplePlus.svg?react";
 import GlobeSimple from "./Icons/GlobeSimple.svg?react";
@@ -175,6 +176,7 @@ export default {
   fileMD: FileMD,
   fileMDFilled: FileMDFilled,
   floppyDisk: FloppyDisk,
+  folderFilled: FolderFilled,
   folderSimple: FolderSimple,
   folderSimplePlus: FolderSimplePlus,
   globeSimple: GlobeSimple,

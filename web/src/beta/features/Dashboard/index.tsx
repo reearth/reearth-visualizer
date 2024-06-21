@@ -5,7 +5,7 @@ import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import DashboardContents from "./ContentsSection";
+import ContentsContainer from "./ContentsContainer";
 import LeftSidePanel from "./LeftSidePanel";
 
 export type DashboardProps = {
@@ -31,7 +31,7 @@ const Dashboard: FC<Omit<DashboardProps, "tab">> = ({ workspaceId }) => {
         </Header>
         <LeftSidePanel tab={currentTab} workspaceId={workspaceId} />
       </LeftSideWrapper>
-      <DashboardContents tab={currentTab} workspaceId={workspaceId} />
+      <ContentsContainer tab={currentTab} workspaceId={workspaceId} />
     </Wrapper>
   );
 };
@@ -51,6 +51,7 @@ const LeftSideWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   width: "213px",
   gap: theme.spacing.super,
+  boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)",
 }));
 
 const Header = styled("div")(({ theme }) => ({

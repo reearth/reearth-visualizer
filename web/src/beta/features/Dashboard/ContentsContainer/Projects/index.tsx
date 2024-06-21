@@ -1,12 +1,14 @@
 import { FC, useRef, MouseEvent } from "react";
 
 import Loading from "@reearth/beta/components/Loading";
-import { Button, PopupMenuItem, Selector, Typography } from "@reearth/beta/lib/reearth-ui";
+import { PopupMenuItem, Typography } from "@reearth/beta/lib/reearth-ui";
 import { onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import { TabProps } from "..";
 import { Project as ProjectType } from "../../type";
+import { CommonHeader } from "../header";
 
 import useHooks from "./hooks";
 import { Project } from "./project";
@@ -16,12 +18,6 @@ const options = [
   { value: "latestModified", label: "Latest modified" },
   { value: "date", label: "Date" },
 ];
-
-export type Props = {
-  workspaceId?: string;
-  viewState?: string;
-  onChangeView?: (v?: string) => void;
-};
 
 export type LayoutProps = {
   project: ProjectType;
@@ -40,8 +36,7 @@ export type LayoutProps = {
   onDoubleClick?: () => void;
 };
 
-export const Projects: FC<Props> = ({ workspaceId, viewState, onChangeView }) => {
-  const t = useT();
+export const Projects: FC<TabProps> = ({ workspaceId, viewState, onChangeView }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const {
     projects,
@@ -59,35 +54,19 @@ export const Projects: FC<Props> = ({ workspaceId, viewState, onChangeView }) =>
     handleStarClick,
   } = useHooks(workspaceId);
   const theme = useTheme();
+  const t = useT();
 
   return (
     <Wrapper>
-      <Header>
-        <Button
-          title={t("New Project")}
-          icon="plus"
-          appearance="primary"
-          onClick={handleVisibility}
-        />
-        <Actions>
-          <Typography size="body">{t("Sort:")}</Typography>
-          <Selector options={options} />
-          <Button
-            iconButton
-            icon="grid"
-            iconColor={viewState === "grid" ? theme.content.main : theme.content.weak}
-            appearance="simple"
-            onClick={() => onChangeView?.("grid")}
-          />
-          <Button
-            iconButton
-            icon="list"
-            iconColor={viewState === "list" ? theme.content.main : theme.content.weak}
-            appearance="simple"
-            onClick={() => onChangeView?.("list")}
-          />
-        </Actions>
-      </Header>
+      <CommonHeader
+        viewState={viewState || ""}
+        title={t("New Project")}
+        appearance="primary"
+        icon="plus"
+        options={options}
+        onChangeView={onChangeView}
+        onClick={handleVisibility}
+      />
       <Contents
         ref={wrapperRef}
         onScroll={e => {
@@ -168,17 +147,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   flexDirection: "column",
   gap: theme.spacing.large,
-}));
-
-const Header = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "space-between",
-}));
-
-const Actions = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small,
 }));
 
 const ProjectsWrapper = styled("div")<{ viewState: string }>(({ theme, viewState }) => ({
