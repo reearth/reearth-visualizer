@@ -1,9 +1,9 @@
 import { useCallback, type ComponentType, type ReactNode } from "react";
 
+import type { CommonBlockProps, BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
-import type { CommonBlockProps, BlockProps } from "../../shared/types";
 import { StoryBlock } from "../types";
 
 import builtin, { isBuiltinStoryBlock } from "./builtin";

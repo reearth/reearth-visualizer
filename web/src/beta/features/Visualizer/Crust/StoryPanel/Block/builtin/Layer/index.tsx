@@ -1,17 +1,18 @@
-import { useEffect, useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
-import BlockWrapper from "../../../../shared/components/BlockWrapper";
-import type { CommonBlockProps as BlockProps } from "../../../../shared/types";
+import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+
 import { StoryBlock } from "../../../types";
 
 import Content from "./Content";
-import { type CameraBlock as CameraBlockType } from "./Editor";
+import { type LayerBlock as LayerBlockType } from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
-  const cameraButtons = useMemo(
-    () => (block?.property?.default ?? []) as CameraBlockType[],
+const LayerBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
+  const layerButtons = useMemo(
+    () => (block?.property?.default ?? []) as LayerBlockType[],
     [block?.property?.default],
   );
 
@@ -34,7 +35,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ..
       onPropertyItemAdd={onPropertyItemAdd}
       {...props}>
       <Content
-        cameraButtons={cameraButtons}
+        layerButtons={layerButtons}
         propertyId={block?.propertyId}
         isEditable={props.isEditable}
         onPropertyUpdate={props.onPropertyUpdate}
@@ -46,4 +47,4 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ..
   );
 };
 
-export default CameraBlock;
+export default LayerBlock;

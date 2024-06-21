@@ -14,11 +14,10 @@ import {
   formatDateForSliderTimeline,
   formatDateForTimeline,
   formatRangeDateAndTime,
-} from "@reearth/beta/features/Visualizer/StoryPanel/utils";
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
+import { DEFAULT_BLOCK_PADDING } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper/hooks";
+import { getNewDate } from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
 import { TickEventCallback, TimelineCommitter } from "@reearth/core";
-
-import { DEFAULT_BLOCK_PADDING } from "../../../../shared/components/BlockWrapper/hooks";
-import { getNewDate } from "../../../../shared/hooks/useTimelineBlock";
 
 import { PaddingProp } from "./Editor";
 
