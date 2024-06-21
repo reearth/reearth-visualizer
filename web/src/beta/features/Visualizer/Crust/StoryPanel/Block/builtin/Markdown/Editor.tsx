@@ -2,10 +2,9 @@ import { debounce } from "lodash-es";
 import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState } from "react";
 
 import Markdown from "@reearth/beta/components/Markdown";
+import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-
-import { BlockContext } from "../../../../shared/components/BlockWrapper";
 
 export type Props = {
   text: string;

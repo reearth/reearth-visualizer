@@ -4,7 +4,7 @@ import { useItemContext as useDnDItemContext } from "@reearth/beta/components/Dr
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import ClickAwayListener from "../../../StoryPanel/ClickAwayListener";
+import ClickAwayListener from "../../../Crust/StoryPanel/ClickAwayListener";
 
 import ActionPanel, { type ActionPosition } from "./ActionPanel";
 import useHooks from "./hooks";

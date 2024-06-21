@@ -16,12 +16,12 @@ import { WidgetAreaState } from "@reearth/services/state";
 
 import Crust from "./Crust";
 import { InstallableInfoboxBlock } from "./Crust/Infobox";
+import { InstallableStoryBlock, StoryPanelRef } from "./Crust/StoryPanel";
+import { Position, Story } from "./Crust/StoryPanel/types";
 import { InteractionModeType, MapRef, SceneProperty } from "./Crust/types";
 import { Alignment, Widget, WidgetAlignSystem, WidgetLayoutConstraint } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
-import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
-import { Position, Story } from "./StoryPanel/types";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -52,7 +52,6 @@ type VisualizerProps = {
     | undefined;
   story?: Story;
   zoomedLayerId?: string;
-  useExperimentalSandbox?: boolean;
   visualizerRef?: MutableRefObject<MapRef | null>;
   currentCamera?: Camera;
   interactionMode?: InteractionModeType;
@@ -138,7 +137,6 @@ const Visualizer: FC<VisualizerProps> = ({
   pluginProperty,
   story,
   zoomedLayerId,
-  useExperimentalSandbox = true,
   visualizerRef,
   currentCamera,
   interactionMode,
@@ -203,23 +201,6 @@ const Visualizer: FC<VisualizerProps> = ({
         onSketchTypeChangeProp={handleSketchTypeChange}
         onSketchFeatureCreate={handleSketchFeatureCreate}
         onMount={handleMount}>
-        {showStoryPanel && (
-          <StoryPanel
-            ref={storyPanelRef}
-            storyWrapperRef={storyWrapperRef}
-            selectedStory={story}
-            installableStoryBlocks={installableStoryBlocks}
-            isEditable={!!inEditor}
-            onStoryPageChange={handleStoryPageChange}
-            onStoryBlockCreate={handleStoryBlockCreate}
-            onStoryBlockDelete={handleStoryBlockDelete}
-            onStoryBlockMove={handleStoryBlockMove}
-            onPropertyValueUpdate={handlePropertyValueUpdate}
-            onPropertyItemAdd={handlePropertyItemAdd}
-            onPropertyItemMove={handlePropertyItemMove}
-            onPropertyItemDelete={handlePropertyItemDelete}
-          />
-        )}
         <Crust
           engineName={engine}
           isBuilt={!!isBuilt}
@@ -227,7 +208,6 @@ const Visualizer: FC<VisualizerProps> = ({
           inEditor={inEditor}
           mapRef={visualizerRef}
           layers={layers}
-          useExperimentalSandbox={useExperimentalSandbox}
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
           // Widget
@@ -248,6 +228,17 @@ const Visualizer: FC<VisualizerProps> = ({
           onPropertyItemAdd={handlePropertyItemAdd}
           onPropertyItemMove={handlePropertyItemMove}
           onPropertyItemDelete={handlePropertyItemDelete}
+          // Story
+          showStoryPanel={showStoryPanel}
+          storyPanelRef={storyPanelRef}
+          storyWrapperRef={storyWrapperRef}
+          selectedStory={story}
+          installableStoryBlocks={installableStoryBlocks}
+          onStoryPageChange={handleStoryPageChange}
+          onStoryBlockCreate={handleStoryBlockCreate}
+          onStoryBlockMove={handleStoryBlockMove}
+          onStoryBlockDelete={handleStoryBlockDelete}
+          onPropertyValueUpdate={handlePropertyValueUpdate}
         />
       </CoreVisualizer>
     </Wrapper>

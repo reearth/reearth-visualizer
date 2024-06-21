@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import { getFieldValue } from "@reearth/beta/features/Visualizer/StoryPanel/utils";
+import { getFieldValue } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { isEmptyString } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";

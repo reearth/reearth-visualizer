@@ -1,10 +1,12 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, ReactNode } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
+import { BlockProps } from "../../../shared/types";
 import StoryPage from "../Page";
+import { StoryBlock } from "../types";
 
 import useHooks, { STORY_PANEL_CONTENT_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
 
@@ -50,6 +52,7 @@ export type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
 };
 
 const StoryContent: React.FC<Props> = ({
@@ -73,6 +76,7 @@ const StoryContent: React.FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
+  renderBlock,
 }) => {
   const { pageGap, scrollTimeoutRef, disableSelection, handleBlockCreate, handleBlockDelete } =
     useHooks({
@@ -107,7 +111,8 @@ const StoryContent: React.FC<Props> = ({
           onPropertyUpdate={onPropertyUpdate}
           onPropertyItemAdd={onPropertyItemAdd}
           onPropertyItemMove={onPropertyItemMove}
-          onPropertyItemDelete={onPropertyItemDelete}>
+          onPropertyItemDelete={onPropertyItemDelete}
+          renderBlock={renderBlock}>
           <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
         </StoryPage>
       ))}
