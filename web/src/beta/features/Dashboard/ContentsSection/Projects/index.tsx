@@ -19,6 +19,8 @@ const options = [
 
 export type Props = {
   workspaceId?: string;
+  viewState?: string;
+  onChangeView?: (v?: string) => void;
 };
 
 export type LayoutProps = {
@@ -38,7 +40,7 @@ export type LayoutProps = {
   onDoubleClick?: () => void;
 };
 
-export const Projects: FC<Props> = ({ workspaceId }) => {
+export const Projects: FC<Props> = ({ workspaceId, viewState, onChangeView }) => {
   const t = useT();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const {
@@ -47,9 +49,7 @@ export const Projects: FC<Props> = ({ workspaceId }) => {
     hasMoreProjects,
     selectedProject,
     visible,
-    viewState,
     isStarred,
-    handleViewChange,
     handleGetMoreProjects,
     handleVisibility,
     handleProjectUpdate,
@@ -77,14 +77,14 @@ export const Projects: FC<Props> = ({ workspaceId }) => {
             icon="grid"
             iconColor={viewState === "grid" ? theme.content.main : theme.content.weak}
             appearance="simple"
-            onClick={() => handleViewChange("grid")}
+            onClick={() => onChangeView?.("grid")}
           />
           <Button
             iconButton
             icon="list"
             iconColor={viewState === "list" ? theme.content.main : theme.content.weak}
             appearance="simple"
-            onClick={() => handleViewChange("list")}
+            onClick={() => onChangeView?.("list")}
           />
         </Actions>
       </Header>

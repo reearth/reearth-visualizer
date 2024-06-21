@@ -1,13 +1,31 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
 import { DashboardProps } from "..";
 
+import { Assets } from "./Assets";
 import { Projects } from "./Projects";
 
 const DashboardContents: FC<DashboardProps> = ({ tab, workspaceId }) => {
-  return <Wrapper>{tab === "project" && <Projects workspaceId={workspaceId} />}</Wrapper>;
+  const state = localStorage.getItem("viewState");
+  const [viewState, setViewState] = useState(state ? state : "grid");
+
+  const handleViewChange = (newView?: string) => {
+    if (!newView) return;
+    localStorage.setItem("viewState", newView);
+    setViewState(newView);
+  };
+  return (
+    <Wrapper>
+      {tab === "project" && (
+        <Projects workspaceId={workspaceId} viewState={viewState} onChangeView={handleViewChange} />
+      )}
+      {tab === "asset" && (
+        <Assets workspaceId={workspaceId} viewState={viewState} onChangeView={handleViewChange} />
+      )}
+    </Wrapper>
+  );
 };
 
 const Wrapper = styled("div")(({ theme }) => ({

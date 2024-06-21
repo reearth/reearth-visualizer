@@ -10,7 +10,6 @@ import {
   ArchiveProjectMutationVariables,
   UpdateProjectBasicAuthMutationVariables,
   UpdateProjectAliasMutationVariables,
-  CreateProjectMutation,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -31,6 +30,8 @@ import { useNotification } from "../state";
 
 import { toGqlStatus } from "./toGqlStatus";
 import { MutationReturn } from "./types";
+
+import { useStorytellingFetcher } from ".";
 
 export type Project = ProjectPayload["project"];
 
@@ -70,6 +71,7 @@ export default () => {
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
   const [createScene] = useMutation(CREATE_SCENE, { refetchQueries: ["GetProjects"] });
+  const { useCreateStory, useCreateStoryPage } = useStorytellingFetcher();
 
   const useCreateProject = useCallback(
     async (
@@ -79,7 +81,7 @@ export default () => {
       coreSupport: boolean,
       description?: string,
       imageUrl?: string,
-    ): Promise<MutationReturn<CreateProjectMutation>> => {
+    ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } = await createNewProject({
         variables: {
           teamId: workspaceId,
@@ -92,8 +94,10 @@ export default () => {
       });
       if (projectErrors || !projectResults?.createProject) {
         setNotification({ type: "error", text: t("Failed to create project.") });
+
         return { status: "error" };
       }
+
       const { data: sceneResults, errors: sceneErrors } = await createScene({
         variables: { projectId: projectResults?.createProject.project.id },
       });
@@ -102,10 +106,33 @@ export default () => {
         return { status: "error" };
       }
 
+      const { data: storyResult, errors: storyErrors } = await useCreateStory({
+        sceneId: sceneResults.createScene.scene.id,
+        title: t("Default"),
+        index: 0,
+      });
+      if (storyErrors || !storyResult?.createStory) {
+        setNotification({ type: "error", text: t("Failed to create project.") });
+        return { status: "error" };
+      } else if (storyResult?.createStory?.story.id) {
+        const { errors: storyPageErrors } = await useCreateStoryPage({
+          sceneId: sceneResults.createScene.scene.id,
+          storyId: storyResult?.createStory?.story.id,
+        });
+        if (storyPageErrors) {
+          setNotification({
+            type: "error",
+            text: t("Failed to create story page on project creation."),
+          });
+
+          return { status: "error" };
+        }
+      }
+
       setNotification({ type: "success", text: t("Successfully created project!") });
-      return { data: sceneResults, status: "success" };
+      return { data: projectResults.createProject.project, status: "success" };
     },
-    [createNewProject, createScene, setNotification, t],
+    [createNewProject, createScene, useCreateStory, t, setNotification, useCreateStoryPage],
   );
 
   const [publishProjectMutation, { loading: publishProjectLoading }] = useMutation(
