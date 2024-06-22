@@ -265,7 +265,7 @@ export default function ({
 
   const getTerrainHeight = useCallback(
     async (lng: number, lat: number) => {
-      return await engineRef?.getTerrainHeight(lng, lat);
+      return await engineRef?.sampleTerrainHeight(lng, lat);
     },
     [engineRef],
   );
