@@ -9,6 +9,8 @@ import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
+import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
+import { Story } from "./StoryPanel/types";
 import { usePublishTheme } from "./theme";
 import type { MapRef, SceneProperty } from "./types";
 import Widgets, {
@@ -64,7 +66,6 @@ export type Props = {
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   // plugin
   externalPlugin: ExternalPluginProps;
-  useExperimentalSandbox?: boolean;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
@@ -105,6 +106,29 @@ export type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  // Story
+  showStoryPanel?: boolean;
+  storyPanelRef?: RefObject<StoryPanelRef>;
+  storyWrapperRef?: RefObject<HTMLDivElement>;
+  selectedStory?: Story;
+  installableStoryBlocks?: InstallableStoryBlock[];
+  onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockCreate?: (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onStoryBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
+  onPropertyValueUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 export default function Crust({
@@ -116,7 +140,6 @@ export default function Crust({
   sceneProperty,
   selectedFeatureInfo,
   externalPlugin,
-  useExperimentalSandbox,
   layers,
 
   // Widget
@@ -138,6 +161,17 @@ export default function Crust({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
+  // story
+  showStoryPanel,
+  storyPanelRef,
+  storyWrapperRef,
+  selectedStory,
+  installableStoryBlocks,
+  onStoryPageChange,
+  onStoryBlockCreate,
+  onStoryBlockMove,
+  onStoryBlockDelete,
+  onPropertyValueUpdate,
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -208,13 +242,13 @@ export default function Crust({
       selectedLayer={selectedLayer?.layer}
       selectedFeature={selectedComputedFeature}
       selectedFeatureInfo={selectedFeatureInfo}
+      selectedStory={selectedStory}
       layerSelectionReason={selectedLayer?.reason}
       viewport={viewport}
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
       interactionMode={interactionMode ?? "default"}
       timelineManagerRef={mapRef?.current?.timeline}
-      useExperimentalSandbox={useExperimentalSandbox}
       overrideInteractionMode={handleInteractionModeChange}
       overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}
@@ -262,6 +296,24 @@ export default function Crust({
         onPropertyItemDelete={onPropertyItemDelete}
         onPropertyItemMove={onPropertyItemMove}
       />
+      {showStoryPanel && (
+        <StoryPanel
+          ref={storyPanelRef}
+          storyWrapperRef={storyWrapperRef}
+          selectedStory={selectedStory}
+          installableStoryBlocks={installableStoryBlocks}
+          isEditable={!!inEditor}
+          onStoryPageChange={onStoryPageChange}
+          onStoryBlockCreate={onStoryBlockCreate}
+          onStoryBlockDelete={onStoryBlockDelete}
+          onStoryBlockMove={onStoryBlockMove}
+          onPropertyValueUpdate={onPropertyValueUpdate}
+          onPropertyItemAdd={onPropertyItemAdd}
+          onPropertyItemMove={onPropertyItemMove}
+          onPropertyItemDelete={onPropertyItemDelete}
+          renderBlock={renderBlock}
+        />
+      )}
     </Plugins>
   );
 }

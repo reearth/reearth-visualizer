@@ -2,8 +2,8 @@ import { memo, useContext, useMemo } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
+import Template from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/Template";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
-import Template from "@reearth/beta/features/Visualizer/StoryPanel/Block/Template";
 import { coreContext } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
