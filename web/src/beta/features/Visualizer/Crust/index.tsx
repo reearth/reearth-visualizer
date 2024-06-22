@@ -302,7 +302,7 @@ export default function Crust({
           storyWrapperRef={storyWrapperRef}
           selectedStory={selectedStory}
           installableStoryBlocks={installableStoryBlocks}
-          isEditable={!!inEditor}
+          isEditable={!!isInEditor}
           onStoryPageChange={onStoryPageChange}
           onStoryBlockCreate={onStoryBlockCreate}
           onStoryBlockDelete={onStoryBlockDelete}
