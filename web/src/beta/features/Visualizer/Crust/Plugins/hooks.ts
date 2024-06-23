@@ -342,7 +342,7 @@ export default function ({
     [engineRef],
   );
 
-  const flyToBBox = useCallback(
+  const flytToBoundingBox = useCallback(
     (
       bbox: [number, number, number, number],
       options?: CameraOptions & {
@@ -563,7 +563,7 @@ export default function ({
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
         flyTo,
-        flyToBBox,
+        flytToBoundingBox,
         rotateOnCenter,
         overrideScreenSpaceController,
         lookAt,
@@ -634,7 +634,7 @@ export default function ({
       overrideScenePropertyCommon,
       layersInViewport,
       flyTo,
-      flyToBBox,
+      flytToBoundingBox,
       rotateOnCenter,
       overrideScreenSpaceController,
       lookAt,

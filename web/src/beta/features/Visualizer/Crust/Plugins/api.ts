@@ -444,7 +444,7 @@ export function commonReearth({
   is3DPointsVisible,
   setView,
   translate3DPositionTo2D,
-  flyToBBox,
+  flytToBoundingBox,
   rotateOnCenter,
   enableScreenSpaceCameraController,
   overrideScreenSpaceController,
@@ -494,8 +494,8 @@ export function commonReearth({
   zoomOut: GlobalThis["reearth"]["camera"]["zoomOut"];
   rotateRight: GlobalThis["reearth"]["camera"]["rotateRight"];
   orbit: GlobalThis["reearth"]["camera"]["orbit"];
-  cameraViewport?: () => GlobalThis["reearth"]["camera"]["viewport"];
-  getCameraFovInfo: GlobalThis["reearth"]["camera"]["getFovInfo"];
+  cameraViewport?: () => GlobalThis["reearth"]["camera"]["getViewport"];
+  getCameraFovInfo: GlobalThis["reearth"]["camera"]["getFOVInfo"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   getTerrainHeight: GlobalThis["reearth"]["scene"]["getTerrainHeight"];
@@ -507,7 +507,7 @@ export function commonReearth({
   is3DPointsVisible: GlobalThis["reearth"]["scene"]["is3DPointsVisible"];
   setView: GlobalThis["reearth"]["camera"]["setView"];
   translate3DPositionTo2D: GlobalThis["reearth"]["scene"]["translate3DPositionTo2D"];
-  flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
+  flytToBoundingBox: GlobalThis["reearth"]["camera"]["flytToBoundingBox"];
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
   forceHorizontalRoll: GlobalThis["reearth"]["camera"]["forceHorizontalRoll"];
@@ -545,10 +545,10 @@ export function commonReearth({
         get getPosition() {
           return camera?.();
         },
-        get viewport() {
+        get getViewport() {
           return cameraViewport?.();
         },
-        getFovInfo: getCameraFovInfo,
+        getFOVInfo: getCameraFovInfo,
         enableScreenSpaceController: enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -561,7 +561,7 @@ export function commonReearth({
         moveOverTerrain,
         flyToGround,
         setView,
-        flyToBBox,
+        flytToBoundingBox,
         rotateOnCenter,
         overrideScreenSpaceController,
         forceHorizontalRoll,
@@ -614,10 +614,10 @@ export function commonReearth({
       get getPosition() {
         return camera();
       },
-      get viewport() {
+      get getViewport() {
         return cameraViewport?.();
       },
-      getFovInfo: getCameraFovInfo,
+      getFOVInfo: getCameraFovInfo,
       enableScreenSpaceController: enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
@@ -630,7 +630,7 @@ export function commonReearth({
       moveOverTerrain,
       flyToGround,
       setView,
-      flyToBBox,
+      flytToBoundingBox,
       rotateOnCenter,
       overrideScreenSpaceController,
       forceHorizontalRoll,

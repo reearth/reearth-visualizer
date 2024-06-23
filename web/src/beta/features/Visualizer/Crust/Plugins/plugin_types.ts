@@ -177,8 +177,8 @@ export type Scene = {
 export type Camera = {
   /** Current camera position */
   readonly getPosition: CameraPosition | undefined;
-  readonly viewport: Rect | undefined;
-  readonly getFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+  readonly getViewport: Rect | undefined;
+  readonly getFOVInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;
@@ -188,7 +188,7 @@ export type Camera = {
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
   readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
-  readonly flyToBBox: (
+  readonly flytToBoundingBox: (
     bbox: [number, number, number, number],
     options?: CameraOptions & {
       heading?: number;
