@@ -63,7 +63,7 @@ export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) =>
                       name: getExtensionInstanceName(widget.pluginId ?? ""),
                       extensionId: widget.extensionId ?? "",
                       extensionType: "widget",
-                      get runTimes() {
+                      get runTimeCount() {
                         return runTimesCacheHandler.get(widget.id);
                       },
                     });
@@ -84,7 +84,7 @@ export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) =>
           name: getExtensionInstanceName(widget.pluginId ?? ""),
           extensionId: widget.extensionId ?? "",
           extensionType: "widget",
-          get runTimes() {
+          get runTimeCount() {
             return runTimesCacheHandler.get(widget.id);
           },
         });
@@ -99,7 +99,7 @@ export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) =>
           name: getExtensionInstanceName(block.pluginId ?? ""),
           extensionId: block.extensionId ?? "",
           extensionType: "block",
-          get runTimes() {
+          get runTimeCount() {
             return runTimesCacheHandler.get(block.id);
           },
         });
@@ -114,7 +114,7 @@ export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) =>
           name: getExtensionInstanceName(block.pluginId ?? ""),
           extensionId: block.extensionId ?? "",
           extensionType: "storyBlock",
-          get runTimes() {
+          get runTimeCount() {
             return runTimesCacheHandler.get(block.id);
           },
         });

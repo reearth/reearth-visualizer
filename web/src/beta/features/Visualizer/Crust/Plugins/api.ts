@@ -298,7 +298,7 @@ export function exposed({
             return (id: string, msg: any) => pluginPostMessage(id, msg, sender);
           },
           get instances() {
-            return commonReearth.plugins.instances;
+            return commonReearth.plugins.getInstances;
           },
         },
         clientStorage: {
@@ -739,7 +739,7 @@ export function commonReearth({
       sendToBack,
     },
     plugins: {
-      get instances() {
+      get getInstances() {
         return pluginInstances().meta.current;
       },
     },

@@ -29,17 +29,17 @@ import usePluginInstances from "./usePluginInstances";
 
 export type SelectedReearthEventType = Pick<
   ReearthEventType,
-  | "cameramove"
+  | "cameraMove"
   | "select"
   | "tick"
-  | "timelinecommit"
+  | "timelineCommit"
   | "resize"
   | keyof MouseEvents
-  | "layeredit"
-  | "sketchfeaturecreated"
-  | "sketchtypechange"
+  | "layerEdit"
+  | "sketchFeatureCreated"
+  | "sketchTypeChange"
   | "layerVisibility"
-  | "layerload"
+  | "layerLoad"
   | "layerSelectWithRectStart"
   | "layerSelectWithRectMove"
   | "layerSelectWithRectEnd"
@@ -685,7 +685,7 @@ export default function ({
         () => (selectedLayer ? [selectedLayer.id, selectedFeature?.id] : [undefined, undefined]),
         [selectedLayer, selectedFeature],
       ),
-      cameramove: useMemo<[camera: CameraPosition] | undefined>(
+      cameraMove: useMemo<[camera: CameraPosition] | undefined>(
         () => (camera ? [camera] : undefined),
         [camera],
       ),
@@ -751,19 +751,19 @@ export default function ({
       },
     );
     onLayerEdit?.(e => {
-      emit("layeredit", e);
+      emit("layerEdit", e);
     });
     onTickEvent(e => {
       emit("tick", e);
     });
     onTimelineCommitEvent(e => {
-      emit("timelinecommit", e);
+      emit("timelineCommit", e);
     });
     onLayerVisibility?.(e => {
       emit("layerVisibility", e);
     });
     onLayerLoad?.(e => {
-      emit("layerload", e);
+      emit("layerLoad", e);
     });
     onLayerSelectWithRectStart?.(e => {
       emit("layerSelectWithRectStart", e);
@@ -792,7 +792,7 @@ export default function ({
   useEffect(() => {
     if (!sketchPluginFeatureCreateEventBinded.current && onSketchPluginFeatureCreate) {
       onSketchPluginFeatureCreate?.(e => {
-        emit("sketchfeaturecreated", e);
+        emit("sketchFeatureCreated", e);
       });
       sketchPluginFeatureCreateEventBinded.current = true;
     }
@@ -803,7 +803,7 @@ export default function ({
   useEffect(() => {
     if (!sketchTypeChangeEventBinded.current && onSketchTypeChange) {
       onSketchTypeChange?.(e => {
-        emit("sketchtypechange", e);
+        emit("sketchTypeChange", e);
       });
       sketchTypeChangeEventBinded.current = true;
     }

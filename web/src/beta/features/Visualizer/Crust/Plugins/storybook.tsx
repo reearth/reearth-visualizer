@@ -92,7 +92,7 @@ export const context: Context = {
     apiVersion: 0,
     visualizer: {} as any,
     plugins: {
-      get instances() {
+      get getInstances() {
         return [];
       },
     },
@@ -169,12 +169,12 @@ export const context: Context = {
       forceHorizontalRoll: act("forceHorizontalRoll"),
     },
     clock: {
-      startTime: new Date("2022-06-01"),
-      stopTime: new Date("2022-06-03"),
-      currentTime: new Date("2022-06-02"),
-      playing: false,
-      paused: true,
-      speed: 1,
+      getStartTime: new Date("2022-06-01"),
+      getStopTime: new Date("2022-06-03"),
+      getCurrentTime: new Date("2022-06-02"),
+      isPlaying: false,
+      isPaused: true,
+      getSpeed: 1,
       play: () => {},
       pause: () => {},
       tick: () => new Date("2022-06-03"),

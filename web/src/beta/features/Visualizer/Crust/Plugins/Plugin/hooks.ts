@@ -240,7 +240,7 @@ export function useAPI({
     useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
 
   const pluginMessageSender = useCallback((msg: any) => {
-    event.current?.[1]("pluginmessage", msg);
+    event.current?.[1]("pluginMessage", msg);
   }, []);
 
   const onPreInit = useCallback(() => {
@@ -254,7 +254,7 @@ export function useAPI({
         once: ctx.reearth.once,
       };
       cancel = mergeEvents<ReearthEventType>(source, e[1], [
-        "cameramove",
+        "cameraMove",
         "select",
         "click",
         "doubleclick",
@@ -272,10 +272,10 @@ export function useAPI({
         "wheel",
         "tick",
         "resize",
-        "layeredit",
-        "timelinecommit",
-        "sketchfeaturecreated",
-        "sketchtypechange",
+        "layerEdit",
+        "timelineCommit",
+        "sketchFeatureCreated",
+        "sketchTypeChange",
         "layerVisibility",
       ]);
     }
@@ -460,11 +460,11 @@ export function useAPI({
   }, [block, layer, widget, ctx?.reearth.scene.property]);
 
   const onModalClose = useCallback(() => {
-    event.current?.[1]("modalclose");
+    event.current?.[1]("modalClose");
   }, []);
 
   const onPopupClose = useCallback(() => {
-    event.current?.[1]("popupclose");
+    event.current?.[1]("popupClose");
   }, []);
 
   return {

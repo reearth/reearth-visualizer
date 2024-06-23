@@ -50,8 +50,8 @@ export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
   console: {
-    readonly log: (...args: any[]) => void;
-    readonly error: (...args: any[]) => void;
+    readonly log: (...args: string[]) => void;
+    readonly error: (...args: string[]) => void;
   };
 };
 
@@ -84,7 +84,7 @@ export type Reearth = {
       | "overriddenLayers"
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
-      readonly overriddenProperties?: { [id: string]: any };
+      readonly overriddenProperties?: { [id: string]: Record<string, string> };
       readonly overrideProperty?: (properties: LayerSimple["properties"] | undefined) => void;
       readonly overridden?: OverriddenLayer[];
       readonly add?: (layer: NaiveLayer) => string | undefined;
@@ -134,8 +134,8 @@ export type Reearth = {
 export type Scene = {
   readonly isInEditor: boolean;
   readonly isBuilt: boolean;
-  readonly property?: any;
-  readonly overrideProperty: (property: any) => void;
+  readonly property?: Record<string, string>;
+  readonly overrideProperty: (property: Record<string, string>) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   readonly getLocationFromScreen: (
     x: number,
@@ -224,15 +224,15 @@ export type Camera = {
 };
 
 export type Clock = {
-  startTime?: Date;
-  stopTime?: Date;
-  currentTime?: Date;
-  playing?: boolean;
-  paused?: boolean;
+  getStartTime?: Date;
+  getStopTime?: Date;
+  getCurrentTime?: Date;
+  isPlaying?: boolean;
+  isPaused?: boolean;
   /** Speed of time. Specifies a multiplier for the speed of time in reality. Default is 1. */
-  speed?: number;
-  stepType?: "rate" | "fixed";
-  rangeType?: "unbounded" | "clamped" | "bounced";
+  getSpeed?: number;
+  getStepType?: "rate" | "fixed";
+  getRangeType?: "unbounded" | "clamped" | "bounced";
   readonly tick?: () => Date | void;
   readonly play?: () => void;
   readonly pause?: () => void;
@@ -252,17 +252,17 @@ export type InteractionMode = {
 };
 
 export type PluginMessage = {
-  data: any;
+  data: Record<string, string>;
   sender: string;
 };
 
 export type ReearthEventType = {
   update: [];
   close: [];
-  cameramove: [camera: CameraPosition];
-  layeredit: [e: LayerEditEvent];
+  cameraMove: [camera: CameraPosition];
+  layerEdit: [e: LayerEditEvent];
   select: [layerId: string | undefined, featureId: string | undefined];
-  message: [message: any];
+  message: [message: Record<string, string>];
   click: [props: MouseEvent];
   doubleclick: [props: MouseEvent];
   mousedown: [props: MouseEvent];
@@ -278,15 +278,15 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
-  timelinecommit: [props: TimelineCommitter];
+  timelineCommit: [props: TimelineCommitter];
   resize: [props: ViewportSize];
-  modalclose: [];
-  popupclose: [];
-  pluginmessage: [props: PluginMessage];
-  sketchfeaturecreated: [props: SketchEventProps];
-  sketchtypechange: [props: SketchType | undefined];
+  modalClose: [];
+  popupClose: [];
+  pluginMessage: [props: PluginMessage];
+  sketchFeatureCreated: [props: SketchEventProps];
+  sketchTypeChange: [props: SketchType | undefined];
   layerVisibility: [e: LayerVisibilityEvent];
-  layerload: [e: LayerLoadEvent];
+  layerLoad: [e: LayerLoadEvent];
   layerSelectWithRectStart: [e: LayerSelectWithRectStart];
   layerSelectWithRectMove: [e: LayerSelectWithRectMove];
   layerSelectWithRectEnd: [e: LayerSelectWithRectEnd];
@@ -297,7 +297,7 @@ export type Plugin = {
   readonly id: string;
   readonly extensionId: string;
   readonly extensionType: string;
-  readonly property?: any;
+  readonly property?: Record<string, string>;
 };
 
 export type PluginExtensionInstance = {
@@ -306,12 +306,12 @@ export type PluginExtensionInstance = {
   readonly name: string;
   readonly extensionId: string;
   readonly extensionType: "widget" | "block" | "infoboxBlock" | "storyBlock";
-  readonly runTimes: number | undefined; // Count number of plugin is run
+  readonly runTimeCount: number | undefined; // Count number of plugin is run
 };
 
 export type Plugins = {
-  readonly instances: PluginExtensionInstance[];
-  readonly postMessage?: (id: string, message: any) => void;
+  readonly getInstances: PluginExtensionInstance[];
+  readonly postMessage?: (id: string, message: Record<string, string>) => void;
 };
 
 export type SelectLayerOptions = {
@@ -350,7 +350,7 @@ export type UI = {
   /**
    * Sends a message to the iframe's window shown by the show method. Sent data will be automatically encoded as JSON and restored in the iframe's window. So any object that cannot be serialized to JSON will be ignored.
    */
-  readonly postMessage: (message: any) => void;
+  readonly postMessage: (message: Record<string, string>) => void;
   /**
    * Resize the iframe by the plugin. If width or height is undefined, it will be auto-resized. If a number is specified, it will be treated as pixels.
    *
@@ -376,7 +376,7 @@ export type Modal = {
       background?: string;
     },
   ) => void;
-  readonly postMessage: (message: any) => void;
+  readonly postMessage: (message: Record<string, string>) => void;
   readonly update: (options: {
     width?: number | string;
     height?: number | string;
@@ -417,7 +417,7 @@ export type Popup = {
       offset?: PopupOffset;
     },
   ) => void;
-  readonly postMessage: (message: any) => void;
+  readonly postMessage: (message: Record<string, string>) => void;
   readonly update: (options: {
     width?: number | string;
     height?: number | string;
@@ -434,9 +434,9 @@ export type Visualizer = {
   /** use `reearth.camera` instead. */
   readonly camera: Camera;
   /** use `reearth.scene.property` instead. */
-  readonly property?: any;
+  readonly property?: Record<string, string>;
   /** use `reearth.scene.overrideProperty` instead. */
-  readonly overrideProperty: (property: any) => void;
+  readonly overrideProperty: (property: Record<string, string>) => void;
 };
 
 export type ViewportSize = {
