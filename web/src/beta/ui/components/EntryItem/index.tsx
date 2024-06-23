@@ -85,7 +85,7 @@ const Wrapper = styled("div")<{ hovered?: boolean; highlight?: boolean }>(
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: theme.spacing.smallest,
+    padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     borderRadius: theme.radius.small,
     backgroundColor: "transparent",
     minHeight: 28,
