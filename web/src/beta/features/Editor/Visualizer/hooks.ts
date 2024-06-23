@@ -112,7 +112,7 @@ export default ({
   );
 
   // Widgets
-  const widgets = convertWidgets(scene);
+  const widgets = useMemo(() => convertWidgets(scene), [scene]);
 
   const handleWidgetUpdate = useCallback(
     async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
