@@ -471,7 +471,7 @@ export function commonReearth({
   sceneProperty: () => any;
   tags: () => Tag[];
   viewport: () => GlobalThis["reearth"]["viewport"];
-  camera: () => GlobalThis["reearth"]["camera"]["position"];
+  camera: () => GlobalThis["reearth"]["camera"]["getPosition"];
   clock: () => GlobalThis["reearth"]["clock"];
   sketch: () => GlobalThis["reearth"]["sketch"];
   interactionMode: () => GlobalThis["reearth"]["interactionMode"];
@@ -542,7 +542,7 @@ export function commonReearth({
         zoomOut,
         rotateRight,
         orbit,
-        get position() {
+        get getPosition() {
           return camera?.();
         },
         get viewport() {
@@ -611,7 +611,7 @@ export function commonReearth({
       zoomOut,
       rotateRight,
       orbit,
-      get position() {
+      get getPosition() {
         return camera();
       },
       get viewport() {

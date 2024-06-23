@@ -176,7 +176,7 @@ export type Scene = {
 
 export type Camera = {
   /** Current camera position */
-  readonly position: CameraPosition | undefined;
+  readonly getPosition: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
   readonly getFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
     | {

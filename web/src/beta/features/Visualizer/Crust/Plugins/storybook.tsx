@@ -133,7 +133,7 @@ export const context: Context = {
       layers,
     },
     camera: {
-      position: {
+      getPosition: {
         lat: 0,
         lng: 0,
         height: 0,
