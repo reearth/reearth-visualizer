@@ -1,3 +1,4 @@
+import fonts from "./fonts";
 import iconSizes, { IconsSizeType } from "./icons";
 import radiusSizes, { RadiusSizesType } from "./radius";
 import shadow, { ShadowType } from "./shadow";
@@ -12,6 +13,7 @@ export type Common = {
   icon: IconsSizeType;
   radius: RadiusSizesType;
   shadow: ShadowType;
+  fonts: typeof fonts;
 };
 
 const common: Common = {
@@ -20,6 +22,7 @@ const common: Common = {
   icon: iconSizes,
   radius: radiusSizes,
   shadow,
+  fonts,
 };
 
 export default common;
