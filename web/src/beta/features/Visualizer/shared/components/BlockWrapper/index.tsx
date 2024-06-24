@@ -1,6 +1,10 @@
-import { ReactNode, createContext, memo } from "react";
+import { ReactNode, createContext, memo, useCallback } from "react";
 
+import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
+import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
+import { FlyTo, useVisualizer } from "@reearth/core";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import Template from "../../../Crust/StoryPanel/Block/Template";
@@ -26,9 +30,11 @@ type Props = {
   children?: ReactNode;
   propertyId?: string;
   property?: any;
+  pluginBlockPropertyItems?: Item[];
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   minHeight?: number;
+  isPluginBlock?: boolean;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -63,9 +69,11 @@ const BlockWrapper: React.FC<Props> = ({
   children,
   propertyId,
   property,
+  pluginBlockPropertyItems,
   dndEnabled = true,
   settingsEnabled = true,
   minHeight,
+  isPluginBlock,
   onClick,
   onBlockDoubleClick,
   onClickAway,
@@ -82,6 +90,7 @@ const BlockWrapper: React.FC<Props> = ({
     showSettings,
     defaultSettings,
     generalBlockSettings,
+    pluginBlockSettings,
     disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
@@ -96,6 +105,14 @@ const BlockWrapper: React.FC<Props> = ({
     onBlockDoubleClick,
   });
 
+  const visualizerRef = useVisualizer();
+  const handleFlyTo: FlyTo = useCallback(
+    (target, options) => {
+      visualizerRef.current?.engine.flyTo(target, options);
+    },
+    [visualizerRef],
+  );
+
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea
@@ -106,7 +123,7 @@ const BlockWrapper: React.FC<Props> = ({
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
-        contentSettings={generalBlockSettings}
+        contentSettings={isPluginBlock ? pluginBlockSettings : generalBlockSettings}
         editMode={editMode}
         isEditable={isEditable}
         hideHoverUI={disableSelection}
@@ -130,7 +147,7 @@ const BlockWrapper: React.FC<Props> = ({
           {children ?? (isEditable && <Template icon={icon} height={minHeight} />)}
           {!editMode && isEditable && <Overlay disableSelection={disableSelection} />}
         </Block>
-        {editMode && groupId && propertyId && settingsEnabled && (
+        {editMode && groupId && propertyId && settingsEnabled && !isPluginBlock && (
           <EditorPanel onClick={stopClickPropagation}>
             {Object.keys(defaultSettings).map((fieldId, idx) => {
               const field = defaultSettings[fieldId];
@@ -148,6 +165,15 @@ const BlockWrapper: React.FC<Props> = ({
                 />
               );
             })}
+          </EditorPanel>
+        )}
+        {editMode && propertyId && settingsEnabled && isPluginBlock && (
+          <EditorPanel onClick={stopClickPropagation}>
+            {pluginBlockPropertyItems?.map((i, idx) => (
+              <SidePanelSectionField title={i.title} key={idx}>
+                <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={handleFlyTo} />
+              </SidePanelSectionField>
+            ))}
           </EditorPanel>
         )}
       </SelectableArea>

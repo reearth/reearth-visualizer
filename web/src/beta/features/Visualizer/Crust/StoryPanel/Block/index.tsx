@@ -2,8 +2,8 @@ import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import type { CommonBlockProps, BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
-import { styled } from "@reearth/services/theme";
 
+import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { StoryBlock } from "../types";
 
 import builtin, { isBuiltinStoryBlock } from "./builtin";
@@ -31,17 +31,17 @@ export default function StoryBlockComponent({
   return Builtin ? (
     <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
-    <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
+    <BlockWrapper
+      {...props}
+      isPluginBlock
+      name={props.block.name}
+      isEditable={props.isEditable}
+      isSelected={props.isSelected}
+      property={props.block.property}
+      propertyId={props.block.propertyId}
+      pluginBlockPropertyItems={props.block.pluginBlockPropertyItems}
+      onRemove={onRemove ? handleRemove : undefined}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
-    </Wrapper>
+    </BlockWrapper>
   ) : null;
 }
-
-const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
-  border: 1px solid
-    ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
-
-  :hover {
-    ${({ editable, theme }) => editable && `border-color: ${theme.outline.main}`};
-  }
-`;

@@ -28,7 +28,17 @@ const InfoboxBlockComponent = ({ renderBlock, onRemove, ...props }: Props): JSX.
   return Builtin ? (
     <Builtin {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
-    <BlockWrapper {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined}>
+    <BlockWrapper
+      {...props}
+      minHeight={120}
+      isPluginBlock
+      name={props.block.name}
+      isEditable={props.isEditable}
+      isSelected={props.isSelected}
+      property={props.block.property}
+      propertyId={props.block.propertyId}
+      pluginBlockPropertyItems={props.block.pluginBlockPropertyItems}
+      onRemove={onRemove ? handleRemove : undefined}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
     </BlockWrapper>
   ) : null;
