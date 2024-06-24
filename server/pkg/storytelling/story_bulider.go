@@ -22,6 +22,7 @@ func (b *StoryBuilder) Build() (*Story, error) {
 	if len(b.s.panelPosition) == 0 {
 		b.s.panelPosition = PositionLeft
 	}
+	b.s.coreSupport = true
 	return b.s, nil
 }
 
