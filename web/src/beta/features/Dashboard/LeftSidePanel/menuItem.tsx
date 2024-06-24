@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { TabItems } from ".";
+import { TabItems } from "../type";
 
 export const Menu: FC<Omit<TabItems, "id">> = ({ icon, text, active, path }) => {
   const theme = useTheme();

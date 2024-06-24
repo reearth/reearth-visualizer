@@ -5,10 +5,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 
-export type Workspace = {
-  id?: string;
-  name?: string;
-};
+import { Workspace } from "../type";
 
 export type Project = {
   id?: string;
@@ -25,6 +22,7 @@ type ProfileProp = {
   onSignOut?: () => void;
   onWorkspaceChange?: (workspaceId?: string) => void;
 };
+
 export const Profile: FC<ProfileProp> = ({
   currentUser,
   isPersonal,

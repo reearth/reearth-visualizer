@@ -57,7 +57,7 @@ export default (workspaceId?: string) => {
               imageUrl: project.imageUrl,
               isArchived: project.isArchived,
               sceneId: project.scene?.id,
-              updatedAt: project.updatedAt.toString(),
+              updatedAt: new Date(project.updatedAt),
             }
           : undefined,
       )

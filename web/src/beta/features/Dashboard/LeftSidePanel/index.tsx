@@ -1,47 +1,36 @@
 import { FC } from "react";
 
-import { IconName, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { DashboardProps } from "..";
+import { TabItems, Workspace } from "../type";
 
-import useHooks from "./hooks";
 import { Menu } from "./menuItem";
 import { Profile } from "./profile";
 
-export type TabItems = {
-  id: string;
-  text?: string;
-  icon?: IconName;
-  path?: string;
-  active?: boolean;
+type Props = {
+  workspaces: Workspace[];
+  isPersonal?: boolean;
+  tab?: string;
+  currentWorkspace?: Workspace;
+  topTabs?: TabItems[];
+  bottomTabs?: TabItems[];
+  onSignOut: () => void;
+  onWorkspaceChange: (workspaceId?: string) => void;
 };
-
-export const tabsItem: Omit<TabItems[], "active"> = [
-  { id: "project", text: "Project", icon: "grid" },
-  { id: "asset", text: "Assets", icon: "file" },
-  { id: "members", text: "Members", icon: "appearance" },
-  { id: "bin", text: "Recycle bin", icon: "trash" },
-  { id: "plugin", text: "Plugin Playgroung", icon: "puzzlePiece", path: " " },
-  { id: "documentary", text: "Documentary", icon: "book", path: " " },
-  { id: "community", text: "Community", icon: "usersFour", path: " " },
-  { id: "help", text: "Help & Support", icon: "question", path: " " },
-] as const;
-
-const LeftSidePanel: FC<DashboardProps> = ({ workspaceId, tab: currentTab }) => {
+const LeftSidePanel: FC<Props> = ({
+  topTabs,
+  bottomTabs,
+  tab: currentTab,
+  currentWorkspace,
+  isPersonal,
+  workspaces,
+  onSignOut,
+  onWorkspaceChange,
+}) => {
   const t = useT();
   const theme = useTheme();
-
-  const {
-    isPersonal,
-    currentWorkspace,
-    workspaces,
-    topTabs,
-    bottomTabs,
-    onSignOut,
-    handleWorkspaceChange,
-  } = useHooks({ tabsItem, workspaceId });
 
   return (
     <Wrapper>
@@ -52,10 +41,10 @@ const LeftSidePanel: FC<DashboardProps> = ({ workspaceId, tab: currentTab }) => 
           currentWorkspace={currentWorkspace}
           workspaces={workspaces}
           onSignOut={onSignOut}
-          onWorkspaceChange={handleWorkspaceChange}
+          onWorkspaceChange={onWorkspaceChange}
         />
         <>
-          {topTabs.map(tab => (
+          {topTabs?.map(tab => (
             <Menu
               key={tab.id}
               path={tab.path}
@@ -68,7 +57,7 @@ const LeftSidePanel: FC<DashboardProps> = ({ workspaceId, tab: currentTab }) => 
       </Section>
       <Section>
         <>
-          {bottomTabs.map(tab => (
+          {bottomTabs?.map(tab => (
             <Menu
               key={tab.id}
               path={tab.path}

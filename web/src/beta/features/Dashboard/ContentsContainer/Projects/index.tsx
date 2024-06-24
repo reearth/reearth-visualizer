@@ -1,7 +1,6 @@
 import { FC, useRef, MouseEvent } from "react";
 
-import Loading from "@reearth/beta/components/Loading";
-import { PopupMenuItem, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Loading, PopupMenuItem, Typography } from "@reearth/beta/lib/reearth-ui";
 import { onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";

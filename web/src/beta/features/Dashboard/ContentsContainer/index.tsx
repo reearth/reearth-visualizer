@@ -2,9 +2,10 @@ import { FC, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import { DashboardProps } from "..";
+import { Workspace } from "../type";
 
 import { Assets } from "./Assets";
+import { Members } from "./Members";
 import { Projects } from "./Projects";
 
 export type TabProps = {
@@ -13,7 +14,12 @@ export type TabProps = {
   onChangeView?: (v?: string) => void;
 };
 
-const ContentsContainer: FC<DashboardProps> = ({ tab, workspaceId }) => {
+export type ContainerProps = {
+  workspaceId?: string;
+  tab?: string;
+  currentWorkspace?: Workspace;
+};
+const ContentsContainer: FC<ContainerProps> = ({ tab, workspaceId, currentWorkspace }) => {
   const state = localStorage.getItem("viewState");
   const [viewState, setViewState] = useState(state ? state : "grid");
 
@@ -22,6 +28,7 @@ const ContentsContainer: FC<DashboardProps> = ({ tab, workspaceId }) => {
     localStorage.setItem("viewState", newView);
     setViewState(newView);
   };
+
   return (
     <Wrapper>
       {tab === "project" && (
@@ -30,6 +37,7 @@ const ContentsContainer: FC<DashboardProps> = ({ tab, workspaceId }) => {
       {tab === "asset" && (
         <Assets workspaceId={workspaceId} viewState={viewState} onChangeView={handleViewChange} />
       )}
+      {tab === "members" && <Members currentWorkspace={currentWorkspace} />}
     </Wrapper>
   );
 };
