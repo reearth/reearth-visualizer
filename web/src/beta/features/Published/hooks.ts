@@ -7,7 +7,7 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust";
-import { Story } from "@reearth/beta/features/Visualizer/StoryPanel";
+import { Story } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import {
   convertData,
   sceneProperty2ViewerPropertyMapping,

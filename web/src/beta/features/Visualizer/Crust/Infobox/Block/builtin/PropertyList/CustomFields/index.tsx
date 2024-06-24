@@ -1,4 +1,4 @@
-import Template from "@reearth/beta/features/Visualizer/StoryPanel/Block/Template";
+import Template from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/Template";
 
 import { PropertyListItem } from "../ListEditor";
 import ListItem from "../ListItem";

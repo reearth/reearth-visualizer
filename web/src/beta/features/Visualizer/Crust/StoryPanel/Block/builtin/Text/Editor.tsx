@@ -1,9 +1,8 @@
 import { debounce } from "lodash-es";
 import { useMemo, useContext, useCallback } from "react";
 
+import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
-
-import { BlockContext } from "../../../../shared/components/BlockWrapper";
 
 export type Props = {
   text?: string;

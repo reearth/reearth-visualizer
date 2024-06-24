@@ -60,8 +60,8 @@ export default function ({
   floatingWidgets,
   interactionMode,
   timelineManagerRef,
+  selectedStory,
   overrideInteractionMode,
-  useExperimentalSandbox,
   overrideViewerProperty,
   onLayerEdit,
   onLayerSelectWithRectStart,
@@ -83,6 +83,7 @@ export default function ({
     alignSystem,
     floatingWidgets,
     blocks: selectedLayer?.layer?.infobox?.blocks,
+    storyBlocks: selectedStory?.pages.flatMap(p => p.blocks),
   });
   const clientStorage = useClientStorage();
 
@@ -605,7 +606,6 @@ export default function ({
       pluginInstances,
       clientStorage,
       timelineManagerRef,
-      useExperimentalSandbox,
     }),
     [
       engineName,
@@ -676,7 +676,6 @@ export default function ({
       pluginInstances,
       clientStorage,
       timelineManagerRef,
-      useExperimentalSandbox,
     ],
   );
 

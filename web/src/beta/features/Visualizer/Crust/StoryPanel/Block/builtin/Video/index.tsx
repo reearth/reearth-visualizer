@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
+import VideoPlayer from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/builtin/Video/VideoPlayer";
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import VideoPlayer from "@reearth/beta/features/Visualizer/StoryPanel/Block/builtin/Video/VideoPlayer";
 import type { ValueTypes } from "@reearth/beta/utils/value";
 
 import { StoryBlock } from "../../../types";

@@ -1,18 +1,18 @@
-import { forwardRef, memo, Ref, RefObject, useMemo } from "react";
+import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
 import { createPortal } from "react-dom";
 
+import { BlockProvider } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
+import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
+import { BlockProps, InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
-
-import { BlockProvider } from "../shared/contexts/blockContext";
-import { EditModeProvider } from "../shared/contexts/editModeContext";
-import { InstallableBlock } from "../shared/types";
 
 import { STORY_PANEL_WIDTH } from "./constants";
 import { PanelProvider, StoryPanelContext } from "./context";
 import useHooks, { type StoryPanelRef, type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
+import { StoryBlock } from "./types";
 
 export type { Story, StoryPage, StoryPanelRef } from "./hooks";
 
@@ -54,6 +54,7 @@ export type StoryPanelProps = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
 };
 
 export const StoryPanel = memo(
@@ -72,6 +73,7 @@ export const StoryPanel = memo(
         onPropertyItemAdd,
         onPropertyItemMove,
         onPropertyItemDelete,
+        renderBlock,
       },
       ref: Ref<StoryPanelRef>,
     ) => {
@@ -169,6 +171,7 @@ export const StoryPanel = memo(
                       onPropertyItemAdd={onPropertyItemAdd}
                       onPropertyItemMove={onPropertyItemMove}
                       onPropertyItemDelete={onPropertyItemDelete}
+                      renderBlock={renderBlock}
                     />
                   </PanelWrapper>
                 </BlockProvider>

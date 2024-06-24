@@ -18,6 +18,7 @@ import type {
   TimelineManagerRef,
 } from "@reearth/core";
 
+import { Story } from "../StoryPanel";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
@@ -38,8 +39,8 @@ export type Props = PropsWithChildren<{
   viewport?: Viewport;
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
-  useExperimentalSandbox?: boolean;
   timelineManagerRef?: TimelineManagerRef;
+  selectedStory?: Story;
   interactionMode: InteractionModeType;
   overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
@@ -59,6 +60,5 @@ export type Context = {
   pluginInstances: PluginInstances;
   clientStorage: ClientStorage;
   timelineManagerRef?: TimelineManagerRef;
-  useExperimentalSandbox?: boolean;
   overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
 };

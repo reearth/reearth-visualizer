@@ -5,7 +5,7 @@ import { type InteractionModeType } from "@reearth/beta/features/Visualizer/Crus
 import {
   StoryPanelRef,
   type InstallableStoryBlock,
-} from "@reearth/beta/features/Visualizer/StoryPanel";
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";

@@ -1,10 +1,10 @@
 import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 
+import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps, BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 // import { styled } from "@reearth/services/theme";
 
-import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { InfoboxBlock } from "../types";
 
 import builtin, { isBuiltinInfoboxBlock } from "./builtin";

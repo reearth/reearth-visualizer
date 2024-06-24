@@ -1,15 +1,16 @@
 import { Fragment, MutableRefObject, ReactNode, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
+import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
+import ContentWrapper from "@reearth/beta/features/Visualizer/shared/components/ContentWrapper";
+import SelectableArea from "@reearth/beta/features/Visualizer/shared/components/SelectableArea";
+import { useElementOnScreen } from "@reearth/beta/features/Visualizer/shared/hooks/useElementOnScreen";
 import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import BlockAddBar from "../../shared/components/BlockAddBar";
-import ContentWrapper from "../../shared/components/ContentWrapper";
-import SelectableArea from "../../shared/components/SelectableArea";
-import { useElementOnScreen } from "../../shared/hooks/useElementOnScreen";
+import { BlockProps } from "../../../shared/types";
 import StoryBlock from "../Block";
 import {
   STORY_PANEL_CONTENT_ELEMENT_ID,
@@ -17,6 +18,7 @@ import {
   MIN_STORY_PAGE_GAP_IN_EDITOR,
   STORY_PANEL_WIDTH,
 } from "../constants";
+import { StoryBlock as StoryBlockType } from "../types";
 
 import useHooks, { type StoryPage } from "./hooks";
 
@@ -62,6 +64,7 @@ type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  renderBlock?: (block: BlockProps<StoryBlockType>) => ReactNode;
 };
 
 const StoryPanel: React.FC<Props> = ({
@@ -86,6 +89,7 @@ const StoryPanel: React.FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
+  renderBlock,
 }) => {
   const t = useT();
 
@@ -182,6 +186,7 @@ const StoryPanel: React.FC<Props> = ({
               onPropertyItemAdd={onPropertyItemAdd}
               onPropertyItemMove={onPropertyItemMove}
               onPropertyItemDelete={onPropertyItemDelete}
+              renderBlock={renderBlock}
             />
           )}
           {isEditable && !disableSelection && (
@@ -232,6 +237,7 @@ const StoryPanel: React.FC<Props> = ({
                     onPropertyItemAdd={onPropertyItemAdd}
                     onPropertyItemMove={onPropertyItemMove}
                     onPropertyItemDelete={onPropertyItemDelete}
+                    renderBlock={renderBlock}
                     padding={panelSettings?.padding?.value}
                   />
                   {isEditable && !disableSelection && (

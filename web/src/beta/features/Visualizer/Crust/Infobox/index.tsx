@@ -3,11 +3,10 @@ import { Fragment, ReactNode, memo } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
+import { InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
-
-import { InstallableBlock } from "../../shared/types";
 
 import InfoboxBlockComponent from "./Block";
 import {
