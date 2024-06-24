@@ -94,6 +94,15 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange],
   );
 
+  const selectedLabel = useMemo(() => {
+    if (Array.isArray(selectedValue)) {
+      return selectedValue
+        .map(val => optionValues.find(item => item.value === val)?.label)
+        .join(", ");
+    }
+    return optionValues.find(item => item.value === selectedValue)?.label;
+  }, [optionValues, selectedValue]);
+
   const renderTrigger = () => {
     return (
       <SelectInput isMultiple={multiple} isOpen={isOpen} disabled={disabled} width={selectorWidth}>
@@ -103,28 +112,29 @@ export const Selector: FC<SelectorProps> = ({
           </Typography>
         ) : multiple ? (
           <SelectedItems>
-            {(selectedValue as string[]).map(val => (
-              <SelectedItem key={val}>
-                <Typography
-                  size="body"
-                  color={disabled ? theme.content.weaker : theme.content.main}>
-                  {val}
-                </Typography>
-                {!disabled && (
-                  <Button
-                    iconButton
-                    icon="close"
-                    appearance="simple"
-                    size="small"
-                    onClick={e => handleUnselect(e, val)}
-                  />
-                )}
-              </SelectedItem>
-            ))}
+            {(typeof selectedLabel === "string" ? [selectedLabel] : selectedLabel) ??
+              [].map(val => (
+                <SelectedItem key={val}>
+                  <Typography
+                    size="body"
+                    color={disabled ? theme.content.weaker : theme.content.main}>
+                    {val}
+                  </Typography>
+                  {!disabled && (
+                    <Button
+                      iconButton
+                      icon="close"
+                      appearance="simple"
+                      size="small"
+                      onClick={(e: MouseEvent<HTMLElement>) => handleUnselect(e, val)}
+                    />
+                  )}
+                </SelectedItem>
+              ))}
           </SelectedItems>
         ) : (
           <Typography size="body" color={disabled ? theme.content.weaker : ""}>
-            {selectedValue}
+            {selectedLabel}
           </Typography>
         )}
         <Icon
@@ -153,7 +163,7 @@ export const Selector: FC<SelectorProps> = ({
           ) : (
             optionValues.map((item: { value: string; label?: string }) => (
               <DropDownItem
-                key={item.value}
+                key={item.value ?? ""}
                 isSelected={isSelected(item.value)}
                 onClick={() => handleChange(item.value)}>
                 <Typography size="body" color={theme.content.main}>

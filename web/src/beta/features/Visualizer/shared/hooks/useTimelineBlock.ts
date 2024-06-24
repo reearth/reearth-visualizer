@@ -2,14 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useVisualizer, TickEventCallback, TimelineCommitter } from "@reearth/core";
 
-import { TimelineValues } from "../../StoryPanel/Block/builtin/Timeline";
+import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
 import {
   convertOptionToSeconds,
   formatDateToSting,
   formatISO8601,
   formatTimezone,
   getTimeZone,
-} from "../../StoryPanel/utils";
+} from "../../Crust/StoryPanel/utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 

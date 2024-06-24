@@ -7,7 +7,7 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust";
-import { Story } from "@reearth/beta/features/Visualizer/StoryPanel";
+import { Story } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import type { Camera } from "@reearth/beta/utils/value";
 import { MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
