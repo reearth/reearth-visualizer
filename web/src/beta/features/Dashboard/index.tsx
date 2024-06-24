@@ -22,7 +22,7 @@ export const tabsItem: Omit<TabItems[], "active"> = [
   { id: "documentary", text: "Documentary", icon: "book", path: " " },
   { id: "community", text: "Community", icon: "usersFour", path: " " },
   { id: "help", text: "Help & Support", icon: "question", path: " " },
-] as const;
+];
 
 const Dashboard: FC<Omit<DashboardProps, "tab">> = ({ workspaceId }) => {
   const {
