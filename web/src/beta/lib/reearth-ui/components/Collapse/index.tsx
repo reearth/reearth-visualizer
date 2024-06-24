@@ -121,8 +121,8 @@ const ChildWrapper = styled("div")<{
   padding: noPadding
     ? 0
     : size === "normal"
-    ? `${theme.spacing.small}px`
-    : `${theme.spacing.smallest}px`,
+    ? `${theme.spacing.normal}px`
+    : `${theme.spacing.small}px`,
   flexGrow: 1,
   display: "flex",
   flexDirection: "column",

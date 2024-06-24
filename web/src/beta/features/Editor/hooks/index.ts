@@ -86,7 +86,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromUI,
     handleSceneSettingSelectFromUI,
-    handleLayerStyleSelectFromUI,
     dataSourceLayerCreatorShown,
     openDataSourceLayerCreator,
     closeDataSourceLayerCreator,
@@ -100,7 +99,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerSelect,
     handleCoreLayerSelect,
     handleSceneSettingSelect,
-    handleLayerStyleSelect,
   });
 
   const {
@@ -161,7 +159,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleAdd,
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
-      handleLayerStyleSelect: handleLayerStyleSelectFromUI,
+      handleLayerStyleSelect,
     }),
     [
       handleVisualizerResize,
@@ -184,10 +182,10 @@ export default ({ sceneId, projectId, tab }: Props) => {
       openSketchLayerCreator,
       handleLayerVisibilityUpdate,
       handleFlyTo,
+      handleLayerStyleSelect,
       handleLayerStyleAdd,
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
-      handleLayerStyleSelectFromUI,
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
