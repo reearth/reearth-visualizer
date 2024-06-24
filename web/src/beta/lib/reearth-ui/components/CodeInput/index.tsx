@@ -1,5 +1,5 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import { FC, useMemo, useRef, useCallback, useState, useEffect } from "react";
+import { FC, useMemo, useCallback, useState, useEffect } from "react";
 
 import { fonts, styled, useTheme } from "@reearth/services/theme";
 
@@ -21,7 +21,7 @@ export const CodeInput: FC<CodeInputProps> = ({
   onBlur,
 }) => {
   const theme = useTheme();
-  const currentValue = useRef<string | undefined>(value);
+  const [currentValue, setCurrentValue] = useState<string | undefined>(value);
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const options = useMemo(
@@ -58,7 +58,7 @@ export const CodeInput: FC<CodeInputProps> = ({
 
     editor.onDidBlurEditorText(() => {
       setIsActive(false);
-      onBlur?.(currentValue.current);
+      onBlur?.(currentValue);
     });
 
     editor.onDidFocusEditorWidget(() => {
@@ -68,14 +68,14 @@ export const CodeInput: FC<CodeInputProps> = ({
 
   const handleChange = useCallback(
     (val: string | undefined) => {
-      currentValue.current = val;
+      setCurrentValue(val);
       onChange?.(val);
     },
     [onChange],
   );
 
   useEffect(() => {
-    currentValue.current = value;
+    setCurrentValue(value);
   }, [value]);
 
   return (
@@ -84,7 +84,7 @@ export const CodeInput: FC<CodeInputProps> = ({
         language={language}
         theme="vs-dark"
         options={options}
-        defaultValue={value}
+        value={value}
         onChange={handleChange}
         onMount={handleEditorDidMount}
       />

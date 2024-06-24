@@ -5,18 +5,18 @@ import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { Feature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n"; // If needed
 
 import { LayerConfigUpdateProps } from "../../../hooks/useLayers";
 
-import FeatureData from "./FeatureData";
-import Infobox from "./infobox";
-import LayerData from "./LayerData";
-import LayerTab from "./LayerStyle";
+import DataSource from "./DataSource";
+import FeatureInspector from "./FeatureInspector";
+import InfoboxSettings from "./InfoboxSettings";
+import LayerStyle from "./LayerStyle";
 
 type Props = {
-  layerStyles?: LayerStyle[];
+  layerStyles?: LayerStyleType[];
   layers?: NLSLayer[];
   selectedLayer?: SelectedLayer;
   sceneId?: string;
@@ -33,7 +33,7 @@ const InspectorTabs: React.FC<Props> = ({
   onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
-  const [selectedTab, setSelectedTab] = useState("layerData");
+  const [selectedTab, setSelectedTab] = useState("dataSource");
 
   const handleTabChange = useCallback((newTab: string) => {
     setSelectedTab(newTab);
@@ -73,18 +73,18 @@ const InspectorTabs: React.FC<Props> = ({
   const tabs: TabObject[] = useMemo(
     () => [
       {
-        id: "layerData",
+        id: "dataSource",
         name: t("Data"),
         component: selectedLayer?.layer ? (
-          <LayerData selectedLayer={selectedLayer.layer} />
+          <DataSource selectedLayer={selectedLayer.layer} />
         ) : undefined,
         icon: "layerInspector",
       },
       {
-        id: "featureData",
+        id: "featureInspector",
         name: t("Feature"),
         component: selectedFeature ? (
-          <FeatureData
+          <FeatureInspector
             selectedFeature={selectedFeature}
             isSketchLayer={selectedLayer?.layer?.isSketch}
             customProperties={selectedLayer?.layer?.sketch?.customPropertySchema}
@@ -96,10 +96,10 @@ const InspectorTabs: React.FC<Props> = ({
         icon: "marker",
       },
       {
-        id: "layerStyleSelector",
+        id: "layerStyle",
         name: t("Styling"),
         component: selectedLayer?.layer?.id ? (
-          <LayerTab
+          <LayerStyle
             layerStyles={layerStyles}
             layers={layers}
             sceneId={sceneId}
@@ -110,9 +110,9 @@ const InspectorTabs: React.FC<Props> = ({
         icon: "layerStyle",
       },
       {
-        id: "infobox",
+        id: "infoboxSettings",
         component: selectedLayer?.layer?.id ? (
-          <Infobox
+          <InfoboxSettings
             selectedLayerId={selectedLayer.layer.id}
             infobox={selectedLayer.layer?.infobox}
           />

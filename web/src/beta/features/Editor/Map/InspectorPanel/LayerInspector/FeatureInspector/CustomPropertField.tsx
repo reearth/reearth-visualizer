@@ -8,7 +8,7 @@ import URLField from "@reearth/beta/components/fields/URLField";
 import { Feature } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
-import { FieldProp, ValueProp } from "./FeatureData";
+import { FieldProp, ValueProp } from ".";
 
 type Props = {
   field: any;

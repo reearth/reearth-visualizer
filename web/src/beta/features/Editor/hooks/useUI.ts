@@ -11,7 +11,6 @@ type Props = {
   tab: Tab;
   handleLayerSelect: (props: LayerSelectProps) => void;
   handleCoreLayerSelect: (props: LayerSelectProps) => void;
-  handleLayerStyleSelect: (layerStyleId?: string) => void;
   handleSceneSettingSelect: (collection?: string) => void;
 };
 
@@ -19,7 +18,6 @@ export default ({
   tab,
   handleLayerSelect,
   handleCoreLayerSelect,
-  handleLayerStyleSelect,
   handleSceneSettingSelect,
 }: Props) => {
   const [currentProjectType, setCurrentProjectType] = useState<VisualizerProjectType>(
@@ -50,42 +48,29 @@ export default ({
   // ui selections
   const handleLayerSelectFromUI = useCallback(
     (layerId?: string) => {
-      handleLayerStyleSelect(undefined);
       handleSceneSettingSelect(undefined);
       handleLayerSelect({ layerId });
     },
-    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect],
+    [handleLayerSelect, handleSceneSettingSelect],
   );
 
   const handleCoreLayerSelectFromUI = useCallback(
     (props: LayerSelectProps) => {
-      handleLayerStyleSelect(undefined);
       handleSceneSettingSelect(undefined);
       handleCoreLayerSelect(props);
     },
-    [handleCoreLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect],
+    [handleCoreLayerSelect, handleSceneSettingSelect],
   );
 
   const handleSceneSettingSelectFromUI = useCallback(
     (collection?: string) => {
-      handleLayerStyleSelect(undefined);
       handleLayerSelect(undefined);
       // change to select layer could effect the scene setting selection
       requestAnimationFrame(() => {
         handleSceneSettingSelect(collection);
       });
     },
-    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect],
-  );
-
-  // TODO: Remove this when move style to right area
-  const handleLayerStyleSelectFromUI = useCallback(
-    (layerStyleId: string) => {
-      handleLayerSelect(undefined);
-      handleSceneSettingSelect(undefined);
-      handleLayerStyleSelect(layerStyleId);
-    },
-    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect],
+    [handleLayerSelect, handleSceneSettingSelect],
   );
 
   // modals
@@ -111,7 +96,6 @@ export default ({
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromUI,
     handleSceneSettingSelectFromUI,
-    handleLayerStyleSelectFromUI,
     dataSourceLayerCreatorShown,
     openDataSourceLayerCreator,
     closeDataSourceLayerCreator,
