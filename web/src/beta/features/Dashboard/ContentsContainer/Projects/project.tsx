@@ -6,7 +6,7 @@ import { useT } from "@reearth/services/i18n";
 
 import { Project as ProjectType } from "../../type";
 
-import { GridLayour } from "./gridLayout";
+import { GridLayout } from "./gridLayout";
 import { ListLayout } from "./listLayout";
 
 type ProjectProps = {
@@ -35,6 +35,7 @@ export const Project: FC<ProjectProps> = ({
 
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleOnChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -75,17 +76,21 @@ export const Project: FC<ProjectProps> = ({
     () => handleRename(),
   );
 
+  const handleOnHover = useCallback((value: boolean) => {
+    setIsHovered(value);
+  }, []);
+
   return (
     <>
       {viewState === "grid" && (
-        <GridLayour
+        <GridLayout
           project={project}
           isStarred={isStarred}
           selectedProjectId={selectedProjectId}
           isEditing={isEditing}
           projectName={projectName}
           popupMenu={popupMenu}
-          handleRename={handleRename}
+          isHovered={isHovered}
           onProjectOpen={onProjectOpen}
           onProjectUpdate={onProjectUpdate}
           onProjectSelect={handleSingleClick}
@@ -93,6 +98,7 @@ export const Project: FC<ProjectProps> = ({
           onChange={handleOnChange}
           onBlur={handleOnBlur}
           onDoubleClick={handleDoubleClick}
+          onHover={handleOnHover}
         />
       )}
       {viewState === "list" && (
@@ -103,7 +109,7 @@ export const Project: FC<ProjectProps> = ({
           isEditing={isEditing}
           projectName={projectName}
           popupMenu={popupMenu}
-          handleRename={handleRename}
+          isHovered={isHovered}
           onProjectOpen={onProjectOpen}
           onProjectUpdate={onProjectUpdate}
           onProjectSelect={handleSingleClick}
@@ -111,6 +117,7 @@ export const Project: FC<ProjectProps> = ({
           onChange={handleOnChange}
           onBlur={handleOnBlur}
           onDoubleClick={handleDoubleClick}
+          onHover={handleOnHover}
         />
       )}
     </>

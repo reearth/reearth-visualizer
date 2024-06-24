@@ -14,7 +14,6 @@ export type TextInputProps = {
   actions?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
-  onDoubleClick?: () => void;
 };
 
 export const TextInput: FC<TextInputProps> = ({
@@ -29,7 +28,6 @@ export const TextInput: FC<TextInputProps> = ({
   autoFocus,
   onChange,
   onBlur,
-  onDoubleClick,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -61,8 +59,7 @@ export const TextInput: FC<TextInputProps> = ({
       size={size}
       appearance={appearance}
       extendWidth={extendWidth}
-      status={isFocused || autoFocus ? "active" : "default"}
-      onDoubleClick={onDoubleClick}>
+      status={isFocused || autoFocus ? "active" : "default"}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}

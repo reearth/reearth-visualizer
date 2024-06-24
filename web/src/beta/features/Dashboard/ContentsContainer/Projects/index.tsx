@@ -14,10 +14,7 @@ import useHooks from "./hooks";
 import { Project } from "./project";
 import { ProjectModal } from "./projectModal";
 
-const options = [
-  { value: "latestModified", label: "Latest modified" },
-  { value: "date", label: "Date" },
-];
+const options = [{ value: "date", label: "Latest modified" }];
 
 export type LayoutProps = {
   project: ProjectType;
@@ -26,14 +23,15 @@ export type LayoutProps = {
   isStarred?: boolean;
   isEditing?: boolean;
   projectName?: string;
+  isHovered?: boolean;
   onStarClick?: (e: MouseEvent<Element>, projectId: string) => void;
   onProjectOpen?: () => void;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: () => void;
-  handleRename?: () => void;
   onBlur?: () => void;
   onChange?: (value: string) => void;
   onDoubleClick?: () => void;
+  onHover?: (v: boolean) => void;
 };
 
 export const Projects: FC<TabProps> = ({ workspaceId, viewState, onChangeView }) => {
@@ -67,13 +65,13 @@ export const Projects: FC<TabProps> = ({ workspaceId, viewState, onChangeView })
         onChangeView={onChangeView}
         onClick={handleVisibility}
       />
-      <Contents
+      <ProjectsWrapper
         ref={wrapperRef}
         onScroll={e => {
           !projectLoading && hasMoreProjects && onScrollToBottom(e, handleGetMoreProjects);
         }}>
         {viewState === "grid" && (
-          <ProjectsWrapper viewState={viewState}>
+          <ProjectsGrid>
             {projects.map(project => (
               <Project
                 key={project.id}
@@ -87,7 +85,7 @@ export const Projects: FC<TabProps> = ({ workspaceId, viewState, onChangeView })
                 onProjectOpen={() => handleProjectOpen(project.sceneId)}
               />
             ))}
-          </ProjectsWrapper>
+          </ProjectsGrid>
         )}
         {viewState === "list" && (
           <FlexTable>
@@ -129,8 +127,8 @@ export const Projects: FC<TabProps> = ({ workspaceId, viewState, onChangeView })
             </FlexTableBody>
           </FlexTable>
         )}
-        {projectLoading && hasMoreProjects && <StyledLoading relative />}
-      </Contents>
+        {projectLoading && hasMoreProjects && <Loading relative />}
+      </ProjectsWrapper>
       {visible && (
         <ProjectModal
           visible={visible}
@@ -149,21 +147,26 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.large,
 }));
 
-const ProjectsWrapper = styled("div")<{ viewState: string }>(({ theme, viewState }) => ({
-  display: viewState === "grid" ? "flex" : " ",
-  flexWrap: "wrap",
-  gap: theme.spacing.normal,
-}));
-
-const Contents = styled("div")(() => ({
-  width: "100%",
-  height: "100%",
+const ProjectsWrapper = styled("div")(() => ({
   overflow: "auto",
+  maxHeight: "calc(100vh - 24px)",
 }));
 
-const StyledLoading = styled(Loading)`
-  margin: 52px auto;
-`;
+const ProjectsGrid = styled("div")(({ theme }) => ({
+  display: "grid",
+  gap: theme.spacing.normal,
+  gridTemplateColumns: "repeat(4, 1fr)",
+
+  "@media (max-width: 1200px)": {
+    gridTemplateColumns: "repeat(3, 1fr)",
+  },
+  "@media (max-width: 900px)": {
+    gridTemplateColumns: "repeat(2, 1fr)",
+  },
+  "@media (max-width: 600px)": {
+    gridTemplateColumns: "1fr",
+  },
+}));
 
 const FlexTable = styled("div")(({ theme }) => ({
   display: "flex",

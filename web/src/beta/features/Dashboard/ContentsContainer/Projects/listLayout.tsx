@@ -1,6 +1,7 @@
-import { FC, useState } from "react";
+import { FC, MouseEvent, useMemo } from "react";
 
 import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import { convertTimeToString } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import { LayoutProps } from ".";
@@ -12,26 +13,39 @@ export const ListLayout: FC<LayoutProps> = ({
   isStarred,
   isEditing,
   projectName,
+  isHovered,
   onProjectOpen,
   onProjectSelect,
   onStarClick,
   onBlur,
   onChange,
+  onHover,
 }) => {
   const theme = useTheme();
-  const [isHovered, setIsHovered] = useState(false);
+
+  const createAt: Date = useMemo(
+    () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
+    [project.updatedAt],
+  );
+  const UpdatedAt: Date = useMemo(
+    () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
+    [project.updatedAt],
+  );
 
   return (
     <StyledRow
       onClick={onProjectSelect}
-      isHovered={isHovered}
+      isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => onHover?.(true)}
+      onMouseLeave={() => onHover?.(false)}
       isSelected={selectedProjectId === project.id}>
       <ActionCell>
         <FlexItem>
-          <StarButtonWrapper isSelected={selectedProjectId === project.id} isHovered={isHovered}>
+          <StarButtonWrapper
+            isStarred={isStarred ?? false}
+            isHovered={isHovered ?? false}
+            isSelected={selectedProjectId === project.id}>
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
@@ -44,22 +58,28 @@ export const ListLayout: FC<LayoutProps> = ({
         </FlexItem>
       </ActionCell>
       <ProjectNameCell>
-        <TextInput
-          onChange={onChange}
-          onBlur={onBlur}
-          value={projectName}
-          disabled={!isEditing}
-          appearance="present"
-          autoFocus={isEditing}
-        />
+        {!isEditing ? (
+          <Typography size="body">{projectName}</Typography>
+        ) : (
+          <TextInput
+            onChange={onChange}
+            onBlur={onBlur}
+            value={projectName}
+            autoFocus={isEditing}
+            appearance="present"
+          />
+        )}
       </ProjectNameCell>
       <TimeCell>
-        <Typography size="body">{project.updatedAt}</Typography>
+        <Typography size="body">{convertTimeToString(UpdatedAt)}</Typography>
       </TimeCell>
       <TimeCell>
-        <Typography size="body">{project.updatedAt}</Typography>
+        <Typography size="body">{convertTimeToString(createAt)}</Typography>
       </TimeCell>
-      <ActionCell>
+      <ActionCell
+        onClick={(e: MouseEvent) => {
+          e.stopPropagation();
+        }}>
         <PopupMenu
           menu={popupMenu}
           label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
@@ -113,8 +133,10 @@ const TimeCell = styled("div")(() => ({
   flex: 0.5,
 }));
 
-const StarButtonWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
-  ({ isSelected, isHovered }) => ({
-    opacity: isSelected || isHovered ? 1 : 0,
-  }),
-);
+const StarButtonWrapper = styled("div")<{
+  isSelected: boolean;
+  isStarred: boolean;
+  isHovered: boolean;
+}>(({ isSelected, isStarred, isHovered }) => ({
+  opacity: isSelected || isStarred || isHovered ? 1 : 0,
+}));

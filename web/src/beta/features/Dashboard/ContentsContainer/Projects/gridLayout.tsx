@@ -1,15 +1,16 @@
 import { FC } from "react";
 
-import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import { LayoutProps } from ".";
 
-export const GridLayour: FC<LayoutProps> = ({
+export const GridLayout: FC<LayoutProps> = ({
   project,
   popupMenu,
   selectedProjectId,
   isStarred,
+  isHovered,
   isEditing,
   projectName,
   onProjectOpen,
@@ -18,6 +19,7 @@ export const GridLayour: FC<LayoutProps> = ({
   onBlur,
   onChange,
   onDoubleClick,
+  onHover,
 }) => {
   const theme = useTheme();
   return (
@@ -26,8 +28,14 @@ export const GridLayour: FC<LayoutProps> = ({
         backgroundImage={project.imageUrl}
         onDoubleClick={onProjectOpen}
         onClick={onProjectSelect}
+        isHovered={isHovered ?? false}
+        onMouseEnter={() => onHover?.(true)}
+        onMouseLeave={() => onHover?.(false)}
         isSelected={selectedProjectId === project.id}>
-        <StarButtonWrapper isSelected={selectedProjectId === project.id}>
+        <StarButtonWrapper
+          isStarred={isStarred ?? false}
+          isHovered={isHovered ?? false}
+          isSelected={selectedProjectId === project.id}>
           <Button
             iconButton
             icon={isStarred ? "starFilled" : "star"}
@@ -38,17 +46,21 @@ export const GridLayour: FC<LayoutProps> = ({
         </StarButtonWrapper>
       </CardImage>
       <CardFooter>
-        <CardTitle>
-          <TextInput
-            onChange={onChange}
-            onBlur={onBlur}
-            value={projectName}
-            disabled={!isEditing}
-            appearance="present"
-            autoFocus={isEditing}
-            onDoubleClick={onDoubleClick}
-          />
-        </CardTitle>
+        <CardTitleWrapper>
+          {!isEditing ? (
+            <CardTitle onDoubleClick={onDoubleClick}>
+              <Typography size="body">{projectName}</Typography>
+            </CardTitle>
+          ) : (
+            <TextInput
+              onChange={onChange}
+              onBlur={onBlur}
+              value={projectName}
+              autoFocus={isEditing}
+              appearance="present"
+            />
+          )}
+        </CardTitleWrapper>
         <CardActions>
           <PopupMenu
             menu={popupMenu}
@@ -61,44 +73,36 @@ export const GridLayour: FC<LayoutProps> = ({
 };
 
 const Card = styled("div")(() => ({
-  flex: "1 1 calc(25% - 10px)",
-  maxWidth: "calc(25% - 10px)",
-  "@media only screen and (max-width: 1200px)": {
-    flex: "1 1 calc(33.33% - 10px)",
-    maxWidth: "calc(33.33% - 10px)",
-  },
-  "@media only screen and (max-width: 900px)": {
-    flex: "1 1 calc(50% - 10px)",
-    maxWidth: "calc(50% - 10px)",
-  },
-  "@media only screen and (max-width: 600px)": {
-    flex: "1 1 calc(50% - 10px)",
-    maxWidth: "calc(50% - 10px)",
-  },
+  display: "flex",
+  flexDirection: "column",
+  height: "220px",
 }));
 
-const CardImage = styled("div")<{ backgroundImage?: string | null; isSelected: boolean }>(
-  ({ theme, backgroundImage, isSelected }) => ({
-    position: "relative",
-    background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
-    borderRadius: theme.radius.normal,
-    height: "171px",
-    cursor: "pointer",
-    border: isSelected ? `1px solid ${theme.select.main}` : "none",
-    "&:hover": {
-      border: isSelected ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
-    },
-    "&:hover > div": {
-      opacity: 1,
-    },
-  }),
-);
+const CardImage = styled("div")<{
+  backgroundImage?: string | null;
+  isSelected: boolean;
+  isHovered: boolean;
+}>(({ theme, backgroundImage, isSelected, isHovered }) => ({
+  flex: 1,
+  position: "relative",
+  background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
+  borderRadius: theme.radius.normal,
+  boxSizing: "border-box",
+  cursor: "pointer",
+  border: `1px solid ${
+    isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
+  }`,
+}));
 
-const StarButtonWrapper = styled("div")<{ isSelected: boolean }>(({ isSelected }) => ({
+const StarButtonWrapper = styled("div")<{
+  isSelected: boolean;
+  isStarred: boolean;
+  isHovered: boolean;
+}>(({ isSelected, isStarred, isHovered }) => ({
   position: "absolute",
   top: "10px",
   right: "10px",
-  opacity: isSelected ? 1 : 0,
+  opacity: isSelected || isStarred || isHovered ? 1 : 0,
 }));
 
 const CardFooter = styled("div")(() => ({
@@ -106,8 +110,11 @@ const CardFooter = styled("div")(() => ({
   alignItems: "center",
 }));
 
-const CardTitle = styled("div")(() => ({
+const CardTitleWrapper = styled("div")(() => ({
   flex: 1,
 }));
 
+const CardTitle = styled("div")(({ theme }) => ({
+  padding: theme.spacing.small,
+}));
 const CardActions = styled("div")(() => ({}));

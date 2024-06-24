@@ -58,82 +58,82 @@ export const Assets: FC<TabProps> = ({ workspaceId, viewState, onChangeView }) =
         onChangeView={onChangeView}
         onClick={handleFileUpload}
       />
-      <AssetsContainer
+      <AssetsWrapper
         ref={assetsWrapperRef}
         onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)}>
-        <AssetsContant>
-          <Typography size="body" weight="bold" color={theme.content.weak}>
-            {t("Folder")}
-          </Typography>
+        <AssetGridWrapper>
           {viewState === "grid" && (
-            <AssetsRow viewState={viewState}>
-              {AssetFolders?.map(asset => (
-                <AssetCard
-                  key={asset.id}
-                  asset={asset}
-                  icon={"folder"}
-                  selectedAssetId={selectedAsset?.id}
-                  onAssetSelect={handleAssetSelect}
-                />
-              ))}
-            </AssetsRow>
+            <>
+              <Typography size="body" weight="bold" color={theme.content.weak}>
+                {t("Folder")}
+              </Typography>
+              <AssetsRow>
+                {AssetFolders?.map(asset => (
+                  <AssetCard
+                    key={asset.id}
+                    asset={asset}
+                    icon={"folder"}
+                    selectedAssetId={selectedAsset?.id}
+                    onAssetSelect={handleAssetSelect}
+                  />
+                ))}
+              </AssetsRow>
+            </>
           )}
           {isLoading && <Loading />}
-        </AssetsContant>
-        <AssetsContant>
+        </AssetGridWrapper>
+        <AssetGridWrapper>
           <Typography size="body" weight="bold" color={theme.content.weak}>
             {t("Assets")}
           </Typography>
-          {viewState === "grid" && (
-            <AssetsRow viewState={viewState}>
-              {assets?.map(asset => (
-                <AssetCard
-                  key={asset.id}
-                  asset={asset}
-                  icon={
-                    checkIfFileType(asset.url, FILE_FORMATS)
-                      ? "file"
-                      : checkIfFileType(asset.url, IMAGE_FORMATS)
-                      ? "image"
-                      : "assetNoSupport"
-                  }
-                  selectedAssetId={selectedAsset?.id}
-                  onAssetSelect={handleAssetSelect}
-                />
-              ))}
-            </AssetsRow>
-          )}
+          <AssetsRow>
+            {assets?.map(asset => (
+              <AssetCard
+                key={asset.id}
+                asset={asset}
+                icon={
+                  checkIfFileType(asset.url, FILE_FORMATS)
+                    ? "file"
+                    : checkIfFileType(asset.url, IMAGE_FORMATS)
+                    ? "image"
+                    : "assetNoSupport"
+                }
+                selectedAssetId={selectedAsset?.id}
+                onAssetSelect={handleAssetSelect}
+              />
+            ))}
+          </AssetsRow>
           {isLoading && <Loading />}
-        </AssetsContant>
-      </AssetsContainer>
+        </AssetGridWrapper>
+      </AssetsWrapper>
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  height: "100%",
   flexDirection: "column",
   gap: theme.spacing.large,
 }));
 
-const AssetsContainer = styled("div")(({ theme }) => ({
-  width: "100%",
+const AssetsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  height: "100%",
+  maxHeight: "calc(100vh - 24px)",
   flexDirection: "column",
-  overflow: "auto",
+  overflowY: "auto",
   gap: theme.spacing.large,
 }));
 
-const AssetsContant = styled("div")(({ theme }) => ({
+const AssetGridWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
 }));
 
-const AssetsRow = styled("div")<{ viewState: string }>(({ theme, viewState }) => ({
-  display: viewState === "grid" ? "flex" : " ",
-  flexWrap: "wrap",
+const AssetsRow = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal,
+  padding: 0,
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, 160px)",
+  gridTemplateRows: "repeat(auto-fill, 130px)",
 }));

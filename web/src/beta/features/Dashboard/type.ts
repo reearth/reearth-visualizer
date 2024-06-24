@@ -8,6 +8,6 @@ export type Project = {
   isArchived?: boolean;
   description: string;
   sceneId?: string;
-  updatedAt?: string;
+  updatedAt?: Date;
   projectType?: ProjectType;
 };

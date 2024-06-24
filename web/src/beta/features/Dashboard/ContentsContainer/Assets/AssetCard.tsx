@@ -49,32 +49,19 @@ export const AssetCard: FC<ContentProps> = ({ asset, icon, selectedAssetId, onAs
 };
 
 const CardWrapper = styled("div")<{ isSelected: boolean }>(({ theme, isSelected }) => ({
-  flex: "1 1 calc(14% - 1px)",
+  display: "flex",
+  flexDirection: "column",
+  border: `2px solid ${isSelected ? theme.select.main : "transparent"}`,
+  boxSizing: "border-box",
+  width: "100%",
+  height: "100%",
   padding: theme.spacing.smallest,
-  border: isSelected ? `1px solid ${theme.select.main}` : "none",
-  maxWidth: "calc(14% - 1px)",
-  "@media only screen and (max-width: 1200px)": {
-    flex: "1 1 calc(20% - 10px)",
-    maxWidth: "calc(20% - 10px)",
-  },
-  "@media only screen and (max-width: 900px)": {
-    flex: "1 1 calc(25% - 10px)",
-    maxWidth: "calc(25% - 10px)",
-  },
-  "@media only screen and (max-width: 600px)": {
-    flex: "1 1 calc(33.33% - 10px)",
-    maxWidth: "calc(33.33% - 10px)",
-  },
-  "@media only screen and (max-width: 400px)": {
-    flex: "1 1 calc(50% - 10px)",
-    maxWidth: "calc(50% - 10px)",
-  },
 }));
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
   background: url ? `url(${url}) center/cover` : theme.bg[1],
-  borderRadius: theme.radius.small,
   height: "100px",
+  borderRadius: theme.radius.small,
   cursor: "pointer",
 }));
 
@@ -91,4 +78,5 @@ const IconWrapper = styled("div")(({ theme }) => ({
 const AssetName = styled("div")(({ theme }) => ({
   paddingTop: theme.spacing.small,
   textAlign: "center",
+  wordBreak: "break-word",
 }));
