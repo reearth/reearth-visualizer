@@ -169,7 +169,6 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   height: 24px;
   position: absolute;
   max-width: 100%;
-  overflow: hidden;
   ${({ position }) =>
     position === "left-top"
       ? `
