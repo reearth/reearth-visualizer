@@ -6,7 +6,6 @@ import { useT } from "@reearth/services/i18n";
 import { useMapPage } from "../context";
 
 import LayerInspector from "./LayerInspector";
-import LayerStyleEditor from "./LayerStyleEditor";
 import SceneSettings from "./SceneSettings";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
@@ -17,12 +16,10 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     layers,
     layerStyles,
     sceneId,
-    selectedLayerStyleId,
     selectedSceneSetting,
     sceneSettings,
     selectedLayer,
     handleFlyTo,
-    handleLayerStyleValueUpdate,
     handleLayerConfigUpdate,
     handleGeoJsonFeatureUpdate,
   } = useMapPage();
@@ -56,13 +53,6 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           selectedLayer={selectedLayer}
           onLayerConfigUpdate={handleLayerConfigUpdate}
           onGeoJsonFeatureUpdate={handleGeoJsonFeatureUpdate}
-        />
-      )}
-      {selectedLayerStyleId && (
-        <LayerStyleEditor
-          selectedLayerStyleId={selectedLayerStyleId}
-          sceneId={sceneId}
-          onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
         />
       )}
     </Panel>

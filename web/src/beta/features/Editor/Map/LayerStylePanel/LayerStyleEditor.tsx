@@ -1,8 +1,6 @@
-import MonacoEditor from "@monaco-editor/react";
 import { FC, useCallback, useState, useEffect } from "react";
 
-import Button from "@reearth/beta/components/Button";
-import Loading from "@reearth/beta/components/Loading";
+import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -13,17 +11,6 @@ type LayerStyleEditorProps = {
   selectedLayerStyleId?: string;
   sceneId?: string;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
-};
-
-const options = {
-  bracketPairColorization: {
-    enabled: true,
-  },
-  automaticLayout: true,
-  minimap: {
-    enabled: false,
-  },
-  selectOnLineNumbers: true,
 };
 
 const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
@@ -56,33 +43,26 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
 
   return (
     <EditorContainer>
-      <MonacoEditor
-        height="90%"
-        language="json"
-        theme="vs-dark"
-        value={styleCode}
-        loading={<Loading />}
-        options={options}
-        onChange={setStyleCode}
+      <CodeInput value={styleCode} onChange={setStyleCode} language="json" />
+      <Button
+        title={t("Save")}
+        extendWidth
+        size="small"
+        appearance="primary"
+        onClick={handleSubmit}
       />
-      <CenteredButton size="small" onClick={handleSubmit}>
-        {t("Save")}
-      </CenteredButton>
     </EditorContainer>
   );
 };
 
-const EditorContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-`;
-
-const CenteredButton = styled(Button)`
-  align-self: center;
-  margin-top: 16px;
-`;
+const EditorContainer = styled("div")(({ theme }) => ({
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: theme.spacing.small,
+}));
 
 export default LayerStyleEditor;
