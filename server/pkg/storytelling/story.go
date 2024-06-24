@@ -26,6 +26,7 @@ type Story struct {
 	panelPosition Position
 	bgColor       string
 	updatedAt     time.Time
+	coreSupport   bool
 
 	alias             string
 	status            PublishmentStatus
@@ -99,6 +100,10 @@ func (s *Story) BasicAuthPassword() string {
 
 func (s *Story) PublicTitle() string {
 	return s.publicTitle
+}
+
+func (s *Story) CoreSupport() bool {
+	return s.coreSupport
 }
 
 func (s *Story) SetPublicDescription(publicDescription string) {

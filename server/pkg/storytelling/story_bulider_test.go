@@ -60,6 +60,7 @@ func TestStoryBuilder(t *testing.T) {
 		isBasicAuthActive: true,
 		basicAuthUsername: "user",
 		basicAuthPassword: "pass",
+		coreSupport:       true,
 	}, s)
 
 	now := util.Now()
