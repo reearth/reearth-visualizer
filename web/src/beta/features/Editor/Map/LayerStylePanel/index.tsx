@@ -10,17 +10,20 @@ import { styled } from "@reearth/services/theme";
 import { useMapPage } from "../context";
 
 import LayerStyleCard from "./LayerStyleCard";
+import LayerStyleEditor from "./LayerStyleEditor";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
+    sceneId,
     layerStyles,
     selectedLayerStyleId,
     handleLayerStyleAdd,
     handleLayerStyleDelete,
     handleLayerStyleNameUpdate,
     handleLayerStyleSelect,
+    handleLayerStyleValueUpdate,
   } = useMapPage();
 
   const t = useT();
@@ -46,8 +49,14 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}>
       <LayerStyleContainer>
-        <Button icon="plus" extendWidth onClick={handleLayerStyleAddition} title="New Style" />
-        <CatalogListWrapper>
+        <Button
+          icon="plus"
+          extendWidth
+          size="small"
+          onClick={handleLayerStyleAddition}
+          title={t("New Style")}
+        />
+        <CatalogListWrapper editorOpened={!!selectedLayerStyleId}>
           {layerStyles?.map(layerStyle => (
             <LayerStyleCard
               id={layerStyle.id}
@@ -75,23 +84,34 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           ))}
         </CatalogListWrapper>
       </LayerStyleContainer>
+      {selectedLayerStyleId && (
+        <LayerStyleEditor
+          selectedLayerStyleId={selectedLayerStyleId}
+          sceneId={sceneId}
+          onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
+        />
+      )}
     </Panel>
   );
 };
 
 export default StylesPanel;
 
-const LayerStyleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
+const LayerStyleContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  marginBottom: theme.spacing.small,
+}));
 
-const CatalogListWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 12px;
-  overflow-y: auto;
-  padding: 12px 8px;
-`;
+const CatalogListWrapper = styled("div")<{ editorOpened?: boolean }>(({ theme, editorOpened }) => ({
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(76px, 1fr))",
+  gridGap: `${theme.spacing.small}px`,
+  justifyContent: "space-between",
+  maxHeight: editorOpened ? "200px" : "auto",
+  overflowY: "auto",
+  padding: `${theme.spacing.small}px`,
+  background: theme.relative.darker,
+  borderRadius: `${theme.radius.normal}px`,
+}));
