@@ -76,7 +76,7 @@ export const processProperty = (
       })
       .filter(([, value]) => !!value),
   );
-  console.log("infoboxBlock", mergedProperty);
+
   return mergedProperty;
 };
 
