@@ -44,7 +44,7 @@ export const processProperty = (
         const { schema, orig, parent } = value;
         if (!orig && !parent) {
           if (schema.isList) {
-            return [key, undefined]; // TODO: support list
+            return [key, undefined];
           }
           return [
             key,
@@ -76,7 +76,7 @@ export const processProperty = (
       })
       .filter(([, value]) => !!value),
   );
-
+  console.log("infoboxBlock", mergedProperty);
   return mergedProperty;
 };
 
