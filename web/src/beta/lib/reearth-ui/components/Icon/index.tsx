@@ -10,9 +10,10 @@ export type IconProps = {
   icon: IconName;
   size?: "large" | "normal" | "small";
   color?: string;
+  className?: string;
 };
 
-export const Icon: React.FC<IconProps> = ({ icon, size = "normal", color }) => {
+export const Icon: React.FC<IconProps> = ({ icon, size = "normal", color, className }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
     const SvgComponent = Icons[icon as IconName];
@@ -28,5 +29,5 @@ export const Icon: React.FC<IconProps> = ({ icon, size = "normal", color }) => {
     `;
   }, [icon, theme]);
 
-  return SvgIcon ? <SvgIcon size={size} color={color} /> : null;
+  return SvgIcon ? <SvgIcon size={size} color={color} className={className} /> : null;
 };

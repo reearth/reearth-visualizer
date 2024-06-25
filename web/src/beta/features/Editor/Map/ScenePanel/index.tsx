@@ -1,9 +1,10 @@
 import { FC, useCallback } from "react";
 
-import ListItem from "@reearth/beta/components/ListItem";
+import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { ScenePropertyCollection } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { useMapPage } from "../context";
 
@@ -34,19 +35,27 @@ const ScenePanel: FC = () => {
 
   return (
     <Panel title={t("Scene")} storageId="editor-map-scene-panel">
-      {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
-        (collection, index) =>
-          collection && (
-            <ListItem
-              key={index}
-              isSelected={selectedSceneSetting === collection}
-              onItemClick={() => handleSceneSettingSelect(collection)}>
-              {handleTranslatedCollectionName(collection as ScenePropertyCollection)}
-            </ListItem>
-          ),
-      )}
+      <Wrapper>
+        {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
+          (collection, index) =>
+            collection && (
+              <EntryItem
+                key={index}
+                title={handleTranslatedCollectionName(collection as ScenePropertyCollection)}
+                highlight={selectedSceneSetting === collection}
+                onClick={() => handleSceneSettingSelect(collection)}
+              />
+            ),
+        )}
+      </Wrapper>
     </Panel>
   );
 };
 
 export default ScenePanel;
+
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+}));
