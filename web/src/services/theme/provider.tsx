@@ -7,7 +7,7 @@ import { useAuth } from "@reearth/services/auth";
 import { Theme } from "@reearth/services/gql";
 import { useCurrentTheme } from "@reearth/services/state";
 
-import { useMeFetcher } from "../api";
+import { useMeFetcher, useCerbosFetcher } from "../api";
 
 import GlobalStyle from "./reearthTheme/common/globalStyles";
 import darkTheme from "./reearthTheme/darkTheme";
@@ -19,6 +19,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const { useMeQuery } = useMeFetcher();
   const { me } = useMeQuery({ skip: !isAuthenticated });
   const themeType = me?.theme;
+  console.log(me);
   // TODO: switch theme by the system settings
   const actualThemeType = themeType === ("light" as Theme) ? "light" : "dark";
 
@@ -36,6 +37,24 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
           classic: classicDarkTheme,
           ...darkTheme,
         };
+
+  const { checkPermission, data, loading, error } = useCerbosFetcher();
+
+  useEffect(() => {
+    checkPermission();
+  }, [checkPermission]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (!data?.checkPermission?.allowed) {
+    return <div>権限がありません。</div>;
+  }
 
   return (
     <ThemeProvider theme={theme}>
