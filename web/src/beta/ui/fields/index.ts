@@ -10,3 +10,5 @@ export * from "./TwinInputField";
 export * from "./TripletInputField";
 export * from "./QuartetInputField";
 export * from "./AssetField";
+export * from "./CameraField";
+export * from "./SpacingField";
