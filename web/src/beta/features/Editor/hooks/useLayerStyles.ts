@@ -28,7 +28,7 @@ export default function ({ sceneId }: LayerStyleProps) {
   const { useAddLayerStyle, useGetLayerStylesQuery, useRemoveLayerStyle, useUpdateLayerStyle } =
     useLayerStylesFetcher();
   const [selectedLayerStyleId, setSelectedLayerStyleId] = useState<string | undefined>(undefined);
-  const { layerStyles = [] } = useGetLayerStylesQuery({ sceneId });
+  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const selectedLayerStyle = useMemo(
     () => layerStyles.find(l => l.id === selectedLayerStyleId) || undefined,

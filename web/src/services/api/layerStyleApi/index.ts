@@ -37,7 +37,7 @@ export default () => {
     });
 
     const isRefetching = useMemo(() => networkStatus === 3, [networkStatus]);
-    const layerStyles = useMemo(() => getLayerStyles(data), [data]);
+    const layerStyles = useMemo(() => getLayerStyles(data) ?? [], [data]);
 
     return { layerStyles, loading, isRefetching, fetchMore, ...rest };
   }, []);

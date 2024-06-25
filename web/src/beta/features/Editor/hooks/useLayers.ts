@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { MapRef, ComputedFeature, ComputedLayer, LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
@@ -44,6 +44,11 @@ export type LayerVisibilityUpdateProps = {
   visible: boolean;
 };
 
+export type LayerMoveProps = {
+  layerId: string;
+  index: number;
+};
+
 export type SelectedLayer = {
   layer?: NLSLayer;
   computedLayer?: ComputedLayer;
@@ -54,7 +59,25 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   const t = useT();
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
-  const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
+
+  const { nlsLayers: originNlsLayers = [] } = useGetLayersQuery({ sceneId });
+
+  // TODO: support by gql mutation
+  const [sortedLayerIds, setSortedLayerIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSortedLayerIds(prev => (prev.length > 0 ? prev : originNlsLayers.map(l => l.id)));
+  }, [originNlsLayers]);
+
+  const nlsLayers: NLSLayer[] = useMemo(
+    () => [
+      ...(sortedLayerIds
+        .map(id => originNlsLayers.find(l => l.id === id))
+        .filter(Boolean) as NLSLayer[]),
+      ...originNlsLayers.filter(l => !sortedLayerIds.includes(l.id)),
+    ],
+    [originNlsLayers, sortedLayerIds],
+  );
 
   const [selectedLayer, setSelectedLayer] = useState<SelectedLayer | undefined>();
 
@@ -121,6 +144,11 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
       if (layerId === selectedLayer?.layer?.id) {
         handleLayerSelect(undefined);
       }
+      setSortedLayerIds(prev => {
+        const newSortedLayerIds = [...prev];
+        newSortedLayerIds.splice(deletedPageIndex, 1);
+        return newSortedLayerIds;
+      });
     },
     [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer],
   );
@@ -184,6 +212,19 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     });
   }, [nlsLayers]);
 
+  // TODO: support by gql mutation
+  const handleLayerMove = useCallback((inp: LayerMoveProps) => {
+    setSortedLayerIds(prev => {
+      const newSortedLayerIds = [...prev];
+      const index = newSortedLayerIds.indexOf(inp.layerId);
+      if (index !== -1) {
+        newSortedLayerIds.splice(index, 1);
+        newSortedLayerIds.splice(inp.index, 0, inp.layerId);
+      }
+      return newSortedLayerIds;
+    });
+  }, []);
+
   return {
     nlsLayers,
     selectedLayer,
@@ -195,5 +236,6 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
+    handleLayerMove,
   };
 }

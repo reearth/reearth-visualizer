@@ -9,6 +9,7 @@ import { Scene } from "@reearth/services/api/sceneApi";
 
 import {
   LayerConfigUpdateProps,
+  LayerMoveProps,
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
   SelectedLayer,
@@ -29,6 +30,7 @@ export interface MapPageContextType {
   selectedLayerId?: string;
   handleLayerDelete: (id: string) => void;
   handleLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  handleLayerMove: (inp: LayerMoveProps) => void;
   handleLayerSelect: (id?: string) => void;
   openDataSourceLayerCreator: () => void;
   openSketchLayerCreator: () => void;

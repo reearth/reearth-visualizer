@@ -25,7 +25,10 @@ export const AllIcons: Story = {
         {Object.keys(IconList).map(iconName => {
           const typedIconName = iconName as IconName;
           return (
-            <div key={iconName} style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
+            <div
+              key={iconName}
+              style={{ display: "flex", flexDirection: "row", gap: "8px" }}
+              title={iconName}>
               <Icon icon={typedIconName} />
             </div>
           );
@@ -35,7 +38,10 @@ export const AllIcons: Story = {
         {Object.keys(IconList).map(iconName => {
           const typedIconName = iconName as IconName;
           return (
-            <div key={iconName} style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
+            <div
+              key={iconName}
+              style={{ display: "flex", flexDirection: "row", gap: "8px" }}
+              title={iconName}>
               <Icon icon={typedIconName} size="large" color="#ff0000" />
             </div>
           );
