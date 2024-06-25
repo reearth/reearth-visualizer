@@ -12,7 +12,7 @@ on:
         default:
 env:
   # server
-  IMAGE: reearth/reearth:nightly
+  IMAGE: reearth/reearth-visualizer:nightly
   IMAGE_AWS: reearth-test-server:latest
 
 jobs:

@@ -5,8 +5,8 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 env:
-  IMAGE: reearth/reearth:nightly
-  IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth:nightly
+  IMAGE: reearth/reearth-visualizer:nightly
+  IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer:nightly
   GCP_REGION: us-central1
 jobs:
   deploy_test:
