@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
+import { FC, useCallback, useEffect, useState, ChangeEvent, useRef } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -10,6 +10,7 @@ export type TextInputProps = {
   disabled?: boolean;
   appearance?: "readonly" | "present";
   extendWidth?: boolean;
+  autoFocus?: boolean;
   actions?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
@@ -23,12 +24,14 @@ export const TextInput: FC<TextInputProps> = ({
   disabled,
   appearance,
   extendWidth,
+  autoFocus,
   actions,
   onChange,
   onBlur,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
@@ -52,6 +55,12 @@ export const TextInput: FC<TextInputProps> = ({
     setIsFocused(true);
   }, []);
 
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
+
   return (
     <Wrapper
       size={size}
@@ -59,6 +68,7 @@ export const TextInput: FC<TextInputProps> = ({
       extendWidth={extendWidth}
       status={isFocused ? "active" : "default"}>
       <StyledInput
+        ref={inputRef}
         value={currentValue}
         placeholder={placeholder}
         disabled={disabled}

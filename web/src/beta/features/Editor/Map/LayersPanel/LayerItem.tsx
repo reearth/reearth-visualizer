@@ -1,167 +1,139 @@
-import { MouseEvent, useCallback, useEffect, useState } from "react";
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from "react";
 
-import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import ListItem from "@reearth/beta/components/ListItem";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import Text from "@reearth/beta/components/Text";
-import type {
-  LayerNameUpdateProps,
-  LayerVisibilityUpdateProps,
-} from "@reearth/beta/features/Editor/hooks/useLayers";
-import useDoubleClick from "@reearth/beta/utils/use-double-click";
+import { IconButton, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem } from "@reearth/beta/ui/components";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { styled } from "@reearth/services/theme";
 
-type LayerItemProps = {
-  id: string;
-  layerTitle: string;
-  isSelected: boolean;
-  visible: boolean;
-  isSketchLayer?: boolean;
-  onDelete: () => void;
-  onSelect: () => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
-  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
-};
+import { useMapPage } from "../context";
 
-const LayerItem = ({
-  id,
-  layerTitle,
-  isSelected,
-  visible,
-  isSketchLayer,
-  onDelete,
-  onSelect,
-  onLayerNameUpdate,
-  onLayerVisibilityUpate,
-}: LayerItemProps) => {
-  const [isActionOpen, setActionOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [newValue, setNewValue] = useState(layerTitle);
-  const [isVisible, setIsVisible] = useState(visible);
-  const [value, setValue] = useState(isVisible ? "V" : "");
+interface LayerItemProps {
+  layer: NLSLayer;
+  dragHandleClassName?: string;
+  isDragging?: boolean;
+  editingLayerNameId: string;
+  setEditingLayerNameId: Dispatch<SetStateAction<string>>;
+}
 
-  const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
+const LayerItem: FC<LayerItemProps> = ({
+  layer,
+  dragHandleClassName,
+  isDragging,
+  editingLayerNameId,
+  setEditingLayerNameId,
+}) => {
+  const {
+    selectedLayerId,
+    handleLayerSelect,
+    handleLayerDelete,
+    handleLayerNameUpdate,
+    handleLayerVisibilityUpdate,
+    handleFlyTo,
+  } = useMapPage();
 
-  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
-    () => onSelect?.(),
-    () => setIsEditing(true),
+  const handleZoomToLayer = useCallback(() => {
+    handleFlyTo?.(layer.id, { duration: 0 });
+  }, [layer.id, handleFlyTo]);
+
+  const handleToggleLayerVisibility = useCallback(() => {
+    handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });
+  }, [layer.id, layer.visible, handleLayerVisibilityUpdate]);
+
+  const optionsMenu = useMemo(
+    () => [
+      {
+        id: "rename",
+        title: "Rename",
+        icon: "pencilSimple" as const,
+        onClick: () => setEditingLayerNameId(layer.id),
+      },
+      {
+        id: "delete",
+        title: "Delete",
+        icon: "trash" as const,
+        onClick: () => handleLayerDelete(layer.id),
+      },
+    ],
+    [layer.id, handleLayerDelete, setEditingLayerNameId],
   );
 
-  useEffect(() => {
-    setNewValue(layerTitle);
-  }, [layerTitle]);
-
-  const handleTitleSubmit = useCallback(
-    (newTitle: string) => {
-      setNewValue(newTitle);
-      setIsEditing(false);
-      if (newTitle.trim() !== "") {
-        onLayerNameUpdate({ layerId: id, name: newTitle });
-      }
-    },
-    [id, onLayerNameUpdate],
+  const hoverActions: ReactNode[] | undefined = useMemo(
+    () =>
+      editingLayerNameId !== layer.id
+        ? [
+            !layer.isSketch && layer.visible && (
+              <IconButton
+                key="zoom"
+                icon="crosshair"
+                size="small"
+                appearance="simple"
+                onClick={handleZoomToLayer}
+              />
+            ),
+            <IconButton
+              key="visible"
+              icon={layer.visible ? "eye" : "eyeSlash"}
+              size="small"
+              appearance="simple"
+              onClick={handleToggleLayerVisibility}
+            />,
+          ]
+        : undefined,
+    [
+      layer.id,
+      layer.isSketch,
+      layer.visible,
+      editingLayerNameId,
+      handleZoomToLayer,
+      handleToggleLayerVisibility,
+    ],
   );
 
-  const handleEditExit = useCallback(
-    (e?: React.KeyboardEvent<HTMLInputElement>) => {
-      if (layerTitle !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit(newValue);
-      } else {
-        setNewValue(layerTitle);
-      }
-      setIsEditing(false);
+  const handleTitleUpdate = useCallback(
+    (title: string) => {
+      setEditingLayerNameId("");
+      if (!title || title === layer.title) return;
+      handleLayerNameUpdate({ layerId: layer.id, name: title });
     },
-    [layerTitle, newValue, handleTitleSubmit],
-  );
-
-  const handleUpdateVisibility = useCallback(
-    (e?: MouseEvent<Element>) => {
-      e?.stopPropagation();
-      const newVisibility = !isVisible;
-      onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
-      setIsVisible(newVisibility);
-      setValue(isVisible ? "" : "V");
-    },
-    [id, isVisible, onLayerVisibilityUpate],
+    [layer.id, layer.title, handleLayerNameUpdate, setEditingLayerNameId],
   );
 
   return (
-    <ListItem
-      isSelected={isSelected}
-      isOpenAction={isActionOpen}
-      actionPlacement="bottom-end"
-      onItemClick={handleSingleClick}
-      onActionClick={handleActionMenuToggle}
-      onOpenChange={isOpen => setActionOpen(!!isOpen)}
-      actionContent={
-        <PopoverMenuContent
-          size="sm"
-          items={[
-            {
-              name: "Delete",
-              icon: "bin",
-              onClick: onDelete,
-            },
-          ]}
-        />
-      }>
-      <>
-        {isEditing ? (
-          <StyledTextInput
-            value={newValue}
+    <EntryItem
+      title={
+        editingLayerNameId === layer.id ? (
+          <TextInput
+            size="small"
+            extendWidth
             autoFocus
-            onChange={handleTitleSubmit}
-            onExit={handleEditExit}
-            onBlur={handleEditExit}
+            value={layer.title}
+            onBlur={handleTitleUpdate}
           />
         ) : (
-          <TitleText size="footnote" onDoubleClick={handleDoubleClick}>
-            {layerTitle}
-          </TitleText>
-        )}
-        {isSketchLayer && <SketchLayer>S</SketchLayer>}
-        <HideLayer onClick={handleUpdateVisibility}>
-          <Text size="footnote">{value}</Text>
-        </HideLayer>
-      </>
-    </ListItem>
+          <TitleWrapper onDoubleClick={() => setEditingLayerNameId(layer.id)}>
+            {layer.title}
+          </TitleWrapper>
+        )
+      }
+      icon={layer?.isSketch ? "pencilSimple" : "file"}
+      dragHandleClassName={dragHandleClassName}
+      onClick={() => handleLayerSelect(layer.id)}
+      highlight={layer.id === selectedLayerId}
+      disableHover={isDragging}
+      optionsMenu={optionsMenu}
+      optionsMenuWidth={100}
+      hoverActions={hoverActions}
+    />
   );
 };
 
 export default LayerItem;
 
-const TitleText = styled(Text)`
-  flex: 1;
-  word-break: break-all;
-  text-align: left;
-  padding-right: 10px;
-`;
-
-const HideLayer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  border-radius: 4px;
-  border: 1.5px solid ${({ theme }) => theme.bg[1]};
-  color: ${({ theme }) => theme.content.strong};
-  background: ${({ theme }) => theme.bg[2]};
-
-  :hover {
-    background: ${({ theme }) => theme.bg[2]};
-  }
-`;
-
-const SketchLayer = styled.div`
-  display: flex;
-  padding-right: 12px;
-`;
-const StyledTextInput = styled(TextInput)`
-  width: 100%;
-  font-size: 12px;
-  color: ${({ theme }) => theme.content.main};
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
-`;
+const TitleWrapper = styled("div")(({ theme }) => ({
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+}));

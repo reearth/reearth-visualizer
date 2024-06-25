@@ -28,6 +28,7 @@ import ClockClockwise from "./Icons/ClockClockwise.svg?react";
 import ClockFilled from "./Icons/ClockFilled.svg?react";
 import Close from "./Icons/Close.svg?react";
 import Copy from "./Icons/Copy.svg?react";
+import Crosshair from "./Icons/Crosshair.svg?react";
 import Cube from "./Icons/Cube.svg?react";
 import Cursor from "./Icons/Cursor.svg?react";
 import Cylinder from "./Icons/Cylinder.svg?react";
@@ -146,6 +147,7 @@ export default {
   clockClockwise: ClockClockwise,
   close: Close,
   copy: Copy,
+  crosshair: Crosshair,
   cube: Cube,
   cursor: Cursor,
   cylinder: Cylinder,
