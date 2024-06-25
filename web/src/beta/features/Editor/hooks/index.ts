@@ -46,6 +46,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerNameUpdate,
     handleLayerVisibilityUpdate,
     handleLayerConfigUpdate,
+    handleLayerMove,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -138,6 +139,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       selectedLayerId: selectedLayer?.layer?.id,
       handleLayerDelete,
       handleLayerNameUpdate,
+      handleLayerMove,
       handleLayerSelect: handleLayerSelectFromUI,
       openDataSourceLayerCreator,
       openSketchLayerCreator,
@@ -174,6 +176,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleSceneSettingSelectFromUI,
       handleLayerDelete,
       handleLayerNameUpdate,
+      handleLayerMove,
       handleLayerSelectFromUI,
       openDataSourceLayerCreator,
       openSketchLayerCreator,

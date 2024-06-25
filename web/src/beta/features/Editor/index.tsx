@@ -56,6 +56,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     layerStyles,
   } = useHooks({ sceneId, tab, projectId });
 
+  // TODO remove DndProvider, use DragAndDropContext instead
   return (
     <DndProvider>
       <Wrapper>

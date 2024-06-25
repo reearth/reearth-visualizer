@@ -1,8 +1,6 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
-import * as Popover from "@reearth/beta/components/Popover";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import { Button, PopupMenu, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -11,127 +9,119 @@ import { useMapPage } from "../context";
 
 import LayerItem from "./LayerItem";
 
+const LAYERS_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-layers-drag-handle";
+
 const LayersPanel: FC = () => {
   const {
     layers,
-    selectedLayerId,
-    handleLayerDelete,
-    handleLayerNameUpdate,
+    // selectedLayerId,
+    // handleLayerDelete,
+    handleLayerMove,
     handleLayerSelect,
     openDataSourceLayerCreator,
     openSketchLayerCreator,
-    handleLayerVisibilityUpdate,
-    handleFlyTo,
+    // handleFlyTo,
   } = useMapPage();
 
   const t = useT();
 
-  const [isAddMenuOpen, setAddMenuOpen] = useState(false);
+  const newLayerMenu = useMemo(() => {
+    return [
+      {
+        id: "add-datasorce-layer",
+        title: t("Add Layer from Resource"),
+        icon: "file" as const,
+        onClick: () => {
+          openDataSourceLayerCreator();
+        },
+      },
+      {
+        id: "add-sketch-layer",
+        title: t("Add Sketch Layer"),
+        icon: "pencilSimple" as const,
+        onClick: () => {
+          openSketchLayerCreator();
+        },
+      },
+    ];
+  }, [openDataSourceLayerCreator, openSketchLayerCreator, t]);
 
-  const toggleAddMenu = useCallback(() => {
-    setAddMenuOpen(prev => !prev);
+  const [isDragging, setIsDragging] = useState(false);
+  const [editingLayerNameId, setEditingLayerNameId] = useState("");
+
+  const DraggableLayerItems = useMemo(
+    () =>
+      layers.map(layer => ({
+        id: layer.id,
+        content: (
+          <LayerItem
+            layer={layer}
+            dragHandleClassName={LAYERS_DRAG_HANDLE_CLASS_NAME}
+            isDragging={isDragging}
+            editingLayerNameId={editingLayerNameId}
+            setEditingLayerNameId={setEditingLayerNameId}
+          />
+        ),
+      })),
+    [layers, isDragging, editingLayerNameId],
+  );
+
+  const handleMoveStart = useCallback(() => {
+    setIsDragging(true);
   }, []);
 
-  const handleZoomToLayer = () => {
-    if (selectedLayerId) {
-      handleFlyTo?.(selectedLayerId, { duration: 0 });
-    }
-  };
+  const handleMoveEnd = useCallback(
+    (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        handleLayerMove({ layerId: itemId, index: newIndex });
+      }
+      setIsDragging(false);
+    },
+    [handleLayerMove],
+  );
 
-  // TODO: Refactor with new UI
   return (
     <Panel title={t("Layers")} storageId="editor-map-layers-panel" extend>
-      <LayerContainer>
-        <ActionWrapper>
-          <StyledIcon
-            onClick={handleZoomToLayer}
-            icon="zoomToLayer"
-            size={16}
-            disabled={!selectedLayerId}
+      <Wrapper>
+        <PopupMenu
+          label={<Button icon="plus" title="New Layer" size="small" extendWidth />}
+          extendTriggerWidth
+          placement="bottom-end"
+          menu={newLayerMenu}
+        />
+        <LayersContainer>
+          <DragAndDropList
+            items={DraggableLayerItems}
+            handleClassName={LAYERS_DRAG_HANDLE_CLASS_NAME}
+            onMoveEnd={handleMoveEnd}
+            onMoveStart={handleMoveStart}
+            dragDisabled={!!editingLayerNameId}
           />
-          <Popover.Provider
-            open={isAddMenuOpen}
-            onOpenChange={toggleAddMenu}
-            placement="bottom-end">
-            <Popover.Trigger asChild>
-              <AddLayerIcon onClick={toggleAddMenu}>
-                <Icon icon="addLayer" />
-              </AddLayerIcon>
-            </Popover.Trigger>
-
-            <Popover.Content>
-              <PopoverMenuContent
-                size="sm"
-                items={[
-                  {
-                    name: t("Add Layer from Resource"),
-                    icon: "file",
-                    onClick: () => {
-                      openDataSourceLayerCreator();
-                      toggleAddMenu();
-                    },
-                  },
-                  {
-                    name: t("Add Sketch Layer"),
-                    icon: "pencilSimple",
-                    onClick: () => {
-                      openSketchLayerCreator();
-                      toggleAddMenu();
-                    },
-                  },
-                ]}
-              />
-            </Popover.Content>
-          </Popover.Provider>
-        </ActionWrapper>
-
-        {layers.map(layer => (
-          <LayerItem
-            key={layer.id}
-            isSketchLayer={layer?.isSketch}
-            id={layer.id}
-            layerTitle={layer.title}
-            visible={layer.visible}
-            isSelected={layer.id === selectedLayerId}
-            onDelete={() => handleLayerDelete(layer.id)}
-            onSelect={() => handleLayerSelect(layer.id)}
-            onLayerNameUpdate={handleLayerNameUpdate}
-            onLayerVisibilityUpate={handleLayerVisibilityUpdate}
-          />
-        ))}
-      </LayerContainer>
-      <EmptySpace onClick={() => handleLayerSelect(undefined)} />
+          <EmptySpace onClick={() => handleLayerSelect(undefined)} />
+        </LayersContainer>
+      </Wrapper>
     </Panel>
   );
 };
 
 export default LayersPanel;
 
-const LayerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  paddingTop: theme.spacing.smallest,
+  height: "100%",
+}));
 
-const ActionWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 10px;
-  justify-content: right;
-`;
-
-const AddLayerIcon = styled.div`
-  padding: 2px;
-  margin-bottom: 2px;
-  align-self: flex-end;
-  cursor: pointer;
-`;
-const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
-  padding: 3px;
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  color: ${({ disabled, theme }) => (disabled ? theme.content.weak : theme.content.strong)};
-  border-radius: 5px;
-`;
+const LayersContainer = styled("div")(() => ({
+  flex: 1,
+  overflowY: "auto",
+  display: "flex",
+  flexDirection: "column",
+}));
 
 const EmptySpace = styled("div")(() => ({
   flex: 1,
+  minHeight: 50,
 }));

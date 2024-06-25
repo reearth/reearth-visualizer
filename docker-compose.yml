@@ -1,7 +1,7 @@
 version: '3'
 services:
   reearth:
-    image: reearth/reearth:latest
+    image: reearth/reearth-visualizer:latest
     environment:
       REEARTH_DB: mongodb://reearth-mongo
     ports:
@@ -15,7 +15,7 @@ services:
     volumes:
       - ./data:/reearth/data
   reearth-mongo:
-    image: mongo:5-focal
+    image: mongo:7
     ports:
       - 27017:27017
     volumes:

@@ -1,7 +1,7 @@
 import { FC, ReactNode, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Popup, Icon, Typography, IconName } from "@reearth/beta/lib/reearth-ui";
+import { Popup, Icon, Typography, IconName, PopupProps } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
 const MULTLEVEL_OFFSET = 6;
@@ -23,10 +23,21 @@ export type PopupMenuProps = {
   menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
+  extendTriggerWidth?: boolean;
+  placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
 };
 
-export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon }) => {
+export const PopupMenu: FC<PopupMenuProps> = ({
+  label,
+  menu,
+  nested,
+  width,
+  extendTriggerWidth,
+  placement,
+  triggerOnHover,
+  icon,
+}) => {
   const [open, setOpen] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
   const theme = useTheme();
@@ -90,10 +101,12 @@ export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon
   return (
     <Popup
       open={open}
-      placement={nested ? "right-start" : "bottom-start"}
+      placement={placement ? placement : nested ? "right-start" : "bottom-start"}
       offset={nested ? MULTLEVEL_OFFSET : DEFAULT_OFFSET}
       onOpenChange={handlePopOver}
-      triggerOnHover={nested ? true : false}
+      triggerOnHover={triggerOnHover || nested ? true : false}
+      extendTriggerWidth={extendTriggerWidth}
+      autoClose
       trigger={
         <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
           {renderTrigger()}

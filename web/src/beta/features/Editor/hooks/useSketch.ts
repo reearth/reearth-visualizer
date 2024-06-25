@@ -102,9 +102,10 @@ export default ({
           visualizerRef?.current?.layers.selectFeature(layerId, feature?.id);
         }
         pendingSketchSelectionRef.current = undefined;
+        ignoreCoreLayerUnselect.current = false;
       }
     }, 1);
-  }, [nlsLayers, pendingSketchSelectionRef, visualizerRef]);
+  }, [nlsLayers, pendingSketchSelectionRef, visualizerRef, ignoreCoreLayerUnselect]);
 
   useEffect(() => {
     setSketchType(undefined);
