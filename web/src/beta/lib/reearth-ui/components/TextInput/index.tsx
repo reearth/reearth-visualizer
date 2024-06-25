@@ -24,7 +24,6 @@ export const TextInput: FC<TextInputProps> = ({
   disabled,
   appearance,
   extendWidth,
-  autoFocus,
   actions,
   autoFocus,
   onChange,
