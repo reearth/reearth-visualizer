@@ -124,6 +124,7 @@ const BlockWrapper: React.FC<Props> = ({
         dndEnabled={dndEnabled}
         showSettings={showSettings}
         contentSettings={isPluginBlock ? pluginBlockSettings : generalBlockSettings}
+        isPluginBlock={isPluginBlock}
         editMode={editMode}
         isEditable={isEditable}
         hideHoverUI={disableSelection}
