@@ -52,7 +52,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     return <div>Error: {error.message}</div>;
   }
 
-  console.log(!data?.checkPermission?.allowed);
+  console.log(data?.checkPermission?.allowed);
 
   if (!data?.checkPermission?.allowed) {
     return <div>権限がありません。</div>;
