@@ -48,6 +48,29 @@ A To Z: A To Z
 Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
+Upload File: Upload File
+Assets: Assets
+'Sort:': Sort:'
+Use Name or Email: Use Name or Email
+Find Member: Find Member
+New Project: New Project
+Project Name: Project Name
+Last modified: Last modified
+Created time: Created time
+Rename: Rename
+Project Setting: Project Setting
+Create new project: Create new project
+Project Name *: Project Name *
+Text: Text
+Description: Description
+Write down your content: Write down your content
+Cover Image: Cover Image
+Re:Earth Visualizer: Re:Earth Visualizer
+Version 1.0 LTS: Version 1.0 LTS
+Switch WorkSpace: Switch WorkSpace
+Account Settings: Account Settings
+Log Out: Log Out
+Page: Page
 File Format: File Format
 File format of the data source you want to add.: File format of the data source you want to add.
 From Assets: From Assets
@@ -79,22 +102,26 @@ Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
-Layers: Layers
-All Layers: All Layers
-Name: Name
-Type: Type
-New Property: New Property
-Layer Name: Layer Name
-Layer name you want to add.: Layer name you want to add.
-New Style: New Style
-Layer Style: Layer Style
-Layer style you want to add.: Layer style you want to add.
-General: General
+Inspector: Inspector
+Format: Format
+Unsupported custom field: Unsupported custom field
+ID: ID
+Geometry: Geometry
+Properties: Properties
 Custom Properties: Custom Properties
-New Sketch Layer: New Sketch Layer
-Create: Create
+Data: Data
+Feature: Feature
+Styling: Styling
+Enable Infobox: Enable Infobox
+Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
+Layers: Layers
+Add Layer from Resource: Add Layer from Resource
+Add Sketch Layer: ''
 Style_: Style_
+Layer Style: Layer Style
+New Style: New Style
 Delete: Delete
+Save: Save
 Main: Main
 Tiles: Tiles
 Terrain: Terrain
@@ -103,21 +130,15 @@ Sky: Sky
 Camera: Camera
 Unknown scene setting: Unknown scene setting
 Scene: Scene
-Outline: Outline
-Add Layer from Resource: Add Layer from Resource
-Add Sketch Layer: ''
-Inspector: Inspector
-Unsupported custom field: Unsupported custom field
-ID: ID
-Geometry: Geometry
-Properties: Properties
-Data: Data
-Feature: Feature
-Styling: Styling
-Enable Infobox: Enable Infobox
-Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
-Format: Format
-Save: Save
+Name: Name
+Type: Type
+New Property: New Property
+Layer Name: Layer Name
+Layer name you want to add.: Layer name you want to add.
+Layer style you want to add.: Layer style you want to add.
+General: General
+New Sketch Layer: New Sketch Layer
+Create: Create
 Published: Published
 Unpublished: Unpublished
 Story: Story
@@ -152,11 +173,11 @@ Unpublishing: Unpublishing
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
+Page Settings: Page Settings
+All Layers: All Layers
 Untitled: Untitled
 New Page: New Page
-Page: Page
-Page Settings: Page Settings
-Align System: Align System
+Container Settings: Container Settings
 Padding top: Padding top
 Padding right: Padding right
 Padding bottom: Padding bottom
@@ -164,11 +185,8 @@ Padding left: Padding left
 Gap spacing: Gap spacing
 Align centered: Align centered
 Background color: Background color
+Align System: Align System
 Widget Manager: Widget Manager
-Container Settings: Container Settings
-Angle: Angle
-Narrow: Narrow
-Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: Select Image
 Select: Select
@@ -183,7 +201,6 @@ No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
 Workspace Name: Workspace Name
-Account Settings: Account Settings
 Workspaces: Workspaces
 Unknown: Unknown
 Manage Workspaces: Manage Workspaces
@@ -210,7 +227,6 @@ Most project settings are hidden when the project is archived. Please unarchive 
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
 Project Info: Project Info
-Description: Description
 Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
@@ -276,20 +292,22 @@ Background Color: Background Color
 Something went wrong.: Something went wrong.
 Couldn't find the Re:Earth project you were after.: Couldn't find the Re:Earth project you were after.
 New Field: New Field
-aria-label-compass: compass
-aria-label-adjust-angle: adjust angle
-aria-label-zoom-in: zoom in
-aria-label-Go-to-the-home-position: Go to the home position
-aria-label-zoom-out: zoom out
-Spacing settings: Spacing settings
-Block: Block
-Unsupported field type: Unsupported field type
 New Camera: New Camera
 New Camera Button: New Camera Button
 Buttons List: Buttons List
 New Layers Button: New Layers Button
 Add markdown text here: Add markdown text here
-Drop here: Drop here
+aria-label-compass: compass
+aria-label-adjust-angle: adjust angle
+aria-label-zoom-in: zoom in
+aria-label-Go-to-the-home-position: Go to the home position
+aria-label-zoom-out: zoom out
+Angle: Angle
+Narrow: Narrow
+Wide: Wide
+Spacing settings: Spacing settings
+Block: Block
+Unsupported field type: Unsupported field type
 Write your story :): Write your story :)
 Normal: Normal
 Heading 1: Heading 1
@@ -315,6 +333,7 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
+Drop here: Drop here
 Close timeline: Close timeline
 Playback timeline: Playback timeline
 Play timeline: Play timeline
@@ -363,7 +382,6 @@ Re:Earth needs at least 900px width to be used effectively. Please resize your b
 OK: OK
 Click here for more details.: ''
 Create New Project: Create New Project
-Project Name: Project Name
 Select thumbnail image: Select thumbnail image
 Datasets: Datasets
 Plugins: Plugins
@@ -479,7 +497,6 @@ Set your password now: Set your password now
 Profile: Profile
 Profile picture: Profile picture
 Workspace List: Workspace List
-Assets: Assets
 Project List: Project List
 Enable basic authorization: Enable basic authorization
 Change site name: Change site name
@@ -543,6 +560,7 @@ Successfully published your project!: Successfully published your project!
 Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
 Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
 Successfully copied to clipboard!: Successfully copied to clipboard!
+Outline: Outline
 Folder: Folder
 Widget: Widget
 Infobox: Infobox
@@ -567,7 +585,6 @@ Successfully installed plugin!: Successfully installed plugin!
 Failed to uninstall plugin.: Failed to uninstall plugin.
 Successfully removed plugin.: Successfully removed plugin.
 Total Projects: Total Projects
-New Project: New Project
 Failed to create workspace.: Failed to create workspace.
 Sucessfully created a workspace!: Sucessfully created a workspace!
 Failed to update workspace name.: Failed to update workspace name.
