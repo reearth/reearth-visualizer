@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.name || github.event.inputs.new_tag
     env:
-      IMAGE_NAME: reearth/reearth
+      IMAGE_NAME: reearth/reearth-visualizer
     defaults:
       run:
         working-directory: server
