@@ -1,7 +1,16 @@
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { IconButton, TextInput } from "@reearth/beta/lib/reearth-ui";
-import { EntryItem } from "@reearth/beta/ui/components";
+import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { styled } from "@reearth/services/theme";
 
@@ -57,26 +66,33 @@ const LayerItem: FC<LayerItemProps> = ({
     [layer.id, handleLayerDelete, setEditingLayerNameId],
   );
 
-  const hoverActions: ReactNode[] | undefined = useMemo(
+  const hoverActions: EntryItemAction[] | undefined = useMemo(
     () =>
       editingLayerNameId !== layer.id
         ? [
-            !layer.isSketch && layer.visible && (
-              <IconButton
-                key="zoom"
-                icon="crosshair"
-                size="small"
-                appearance="simple"
-                onClick={handleZoomToLayer}
-              />
-            ),
-            <IconButton
-              key="visible"
-              icon={layer.visible ? "eye" : "eyeSlash"}
-              size="small"
-              appearance="simple"
-              onClick={handleToggleLayerVisibility}
-            />,
+            {
+              comp: !layer.isSketch && layer.visible && (
+                <IconButton
+                  key="zoom"
+                  icon="crosshair"
+                  size="small"
+                  appearance="simple"
+                  onClick={handleZoomToLayer}
+                />
+              ),
+            },
+            {
+              comp: (
+                <IconButton
+                  key="visible"
+                  icon={layer.visible ? "eye" : "eyeSlash"}
+                  size="small"
+                  appearance="simple"
+                  onClick={handleToggleLayerVisibility}
+                />
+              ),
+              keepVisible: !layer.visible,
+            },
           ]
         : undefined,
     [
@@ -89,14 +105,32 @@ const LayerItem: FC<LayerItemProps> = ({
     ],
   );
 
-  const handleTitleUpdate = useCallback(
-    (title: string) => {
-      setEditingLayerNameId("");
-      if (!title || title === layer.title) return;
-      handleLayerNameUpdate({ layerId: layer.id, name: title });
-    },
-    [layer.id, layer.title, handleLayerNameUpdate, setEditingLayerNameId],
-  );
+  const [localTitle, setLocalTitle] = useState(layer.title);
+
+  const handleTitleUpdate = useCallback(() => {
+    setEditingLayerNameId("");
+    if (!localTitle || localTitle === layer.title) return;
+    handleLayerNameUpdate({ layerId: layer.id, name: localTitle });
+  }, [layer.id, layer.title, localTitle, handleLayerNameUpdate, setEditingLayerNameId]);
+
+  const handleLayerItemClick = useCallback(() => {
+    if (layer.id === selectedLayerId) return;
+    handleLayerSelect(layer.id);
+    setEditingLayerNameId("");
+  }, [layer.id, selectedLayerId, handleLayerSelect, setEditingLayerNameId]);
+
+  useEffect(() => {
+    setLocalTitle(layer.title);
+  }, [layer.title]);
+
+  const handleTitleUpdateRef = useRef(handleTitleUpdate);
+  handleTitleUpdateRef.current = handleTitleUpdate;
+
+  useEffect(() => {
+    if (selectedLayerId !== layer.id) {
+      handleTitleUpdateRef.current();
+    }
+  }, [selectedLayerId, layer.id, handleTitleUpdateRef]);
 
   return (
     <EntryItem
@@ -106,23 +140,24 @@ const LayerItem: FC<LayerItemProps> = ({
             size="small"
             extendWidth
             autoFocus
-            value={layer.title}
+            value={localTitle}
+            onChange={setLocalTitle}
             onBlur={handleTitleUpdate}
           />
         ) : (
           <TitleWrapper onDoubleClick={() => setEditingLayerNameId(layer.id)}>
-            {layer.title}
+            {localTitle}
           </TitleWrapper>
         )
       }
       icon={layer?.isSketch ? "pencilSimple" : "file"}
       dragHandleClassName={dragHandleClassName}
-      onClick={() => handleLayerSelect(layer.id)}
-      highlight={layer.id === selectedLayerId}
+      onClick={handleLayerItemClick}
+      highlighted={layer.id === selectedLayerId}
       disableHover={isDragging}
       optionsMenu={optionsMenu}
       optionsMenuWidth={100}
-      hoverActions={hoverActions}
+      actions={hoverActions}
     />
   );
 };

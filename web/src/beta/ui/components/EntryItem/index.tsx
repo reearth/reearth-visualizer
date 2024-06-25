@@ -3,15 +3,19 @@ import { FC, MouseEvent, ReactNode, useCallback, useEffect, useState } from "rea
 import { Icon, IconButton, IconName, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
+export interface EntryItemAction {
+  comp: ReactNode;
+  keepVisible?: boolean;
+}
 export interface EntryItemProps {
   title: ReactNode;
   icon?: IconName;
   dragHandleClassName?: string;
-  highlight?: boolean;
+  highlighted?: boolean;
   disableHover?: boolean;
   optionsMenu?: PopupMenuItem[];
   optionsMenuWidth?: number;
-  hoverActions?: ReactNode[];
+  actions?: EntryItemAction[];
   onClick?: (e: MouseEvent) => void;
 }
 
@@ -19,11 +23,11 @@ export const EntryItem: FC<EntryItemProps> = ({
   title,
   icon,
   dragHandleClassName,
-  highlight,
+  highlighted,
   disableHover,
   optionsMenu,
   optionsMenuWidth,
-  hoverActions,
+  actions,
   onClick,
 }) => {
   const [hovered, setHovered] = useState(false);
@@ -36,6 +40,8 @@ export const EntryItem: FC<EntryItemProps> = ({
     setHovered(false);
   }, []);
 
+  // disable hover is used for fix this issue:
+  // https://stackoverflow.com/questions/11989289/css-html5-hover-state-remains-after-drag-and-drop
   useEffect(() => {
     if (disableHover) {
       setHovered(false);
@@ -52,7 +58,7 @@ export const EntryItem: FC<EntryItemProps> = ({
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       hovered={hovered}
-      highlight={highlight}
+      highlight={highlighted}
       smallPaddingRight={!!optionsMenu}>
       <MainContent className={dragHandleClassName} asDragHandle={!!dragHandleClassName}>
         {icon && (
@@ -63,8 +69,8 @@ export const EntryItem: FC<EntryItemProps> = ({
         {typeof title === "string" ? <Title>{title}</Title> : title}
       </MainContent>
       <Actions>
-        <HoverActions>{hovered && hoverActions}</HoverActions>
-        {optionsMenu && (
+        {actions?.map(a => (highlighted || hovered || a.keepVisible) && a.comp)}
+        {!!optionsMenu && (
           <OptionsWrapper onClick={handleOptionsClick}>
             <PopupMenu
               label={<IconButton icon="dotsThreeVertical" size="small" appearance="simple" />}
@@ -139,11 +145,11 @@ const Actions = styled("div")(({ theme }) => ({
   gap: theme.spacing.smallest,
 }));
 
-const HoverActions = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexShrink: 0,
-  gap: theme.spacing.smallest,
-}));
+// const HoverActions = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   flexShrink: 0,
+//   gap: theme.spacing.smallest,
+// }));
 
 const OptionsWrapper = styled("div")(() => ({
   flexShrink: 0,

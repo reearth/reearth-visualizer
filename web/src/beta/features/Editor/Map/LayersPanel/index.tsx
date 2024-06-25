@@ -14,13 +14,10 @@ const LAYERS_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-layers-drag-han
 const LayersPanel: FC = () => {
   const {
     layers,
-    // selectedLayerId,
-    // handleLayerDelete,
     handleLayerMove,
     handleLayerSelect,
     openDataSourceLayerCreator,
     openSketchLayerCreator,
-    // handleFlyTo,
   } = useMapPage();
 
   const t = useT();
