@@ -92,7 +92,7 @@ const LayersPanel: FC = () => {
             handleClassName={LAYERS_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             onMoveStart={handleMoveStart}
-            dragDisabled={!!editingLayerNameId}
+            dragDisabled={false}
           />
           <EmptySpace onClick={() => handleLayerSelect(undefined)} />
         </LayersContainer>
