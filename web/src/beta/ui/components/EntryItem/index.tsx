@@ -145,12 +145,6 @@ const Actions = styled("div")(({ theme }) => ({
   gap: theme.spacing.smallest,
 }));
 
-// const HoverActions = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   flexShrink: 0,
-//   gap: theme.spacing.smallest,
-// }));
-
 const OptionsWrapper = styled("div")(() => ({
   flexShrink: 0,
 }));
