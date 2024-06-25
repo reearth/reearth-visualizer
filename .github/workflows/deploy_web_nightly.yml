@@ -2,8 +2,8 @@ name: deploy-web-nightly
 on:
   workflow_dispatch:
 env:
-  REEARTH_URL: test.reearth.dev
-  GCS_DEST: gs://test.reearth.dev/
+  REEARTH_URL: visualizer.test.reearth.dev
+  GCS_DEST: gs://reearth-visualizer-oss-static-bucket/
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
