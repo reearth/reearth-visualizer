@@ -12,6 +12,7 @@ type Props = {
   isSelected?: boolean;
   editMode?: boolean;
   contentSettings?: any;
+  isPluginBlock?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onRemove?: () => void;
   onEditModeToggle?: (enable: boolean) => void;
@@ -24,6 +25,7 @@ export default ({
   isSelected,
   editMode,
   contentSettings,
+  isPluginBlock,
   setShowPadding,
   onRemove,
   onEditModeToggle,
@@ -41,7 +43,7 @@ export default ({
 
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [];
-    if (contentSettings) {
+    if (!isPluginBlock && contentSettings) {
       menuItems.push({
         name: settingsTitle,
         icon: "padding",
@@ -56,7 +58,7 @@ export default ({
       });
     }
     return menuItems;
-  }, [settingsTitle, contentSettings, t, setShowPadding, onRemove, handleRemove]);
+  }, [isPluginBlock, settingsTitle, contentSettings, t, setShowPadding, onRemove, handleRemove]);
 
   const actionItems: ActionItem[] = useMemo(() => {
     const menuItems: ActionItem[] = [
@@ -66,7 +68,7 @@ export default ({
       },
     ];
 
-    if (onEditModeToggle && !!contentSettings) {
+    if (onEditModeToggle && !!contentSettings && Object.keys(contentSettings).length !== 0) {
       menuItems.push({
         icon: editMode ? "exit" : "storyBlockEdit",
         hide: !isSelected,

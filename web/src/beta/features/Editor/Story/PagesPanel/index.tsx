@@ -29,10 +29,10 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const t = useT();
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
-  const [items, setItems] = useState(storyPages);
+  const [items, setItems] = useState(storyPages ?? []);
 
   useEffect(() => {
-    setItems(storyPages);
+    setItems(storyPages ?? []);
   }, [storyPages]);
 
   return (

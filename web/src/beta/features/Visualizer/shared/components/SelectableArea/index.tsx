@@ -16,6 +16,7 @@ type Props = {
   children: ReactNode;
   propertyId?: string;
   contentSettings?: any;
+  isPluginBlock?: boolean;
   dndEnabled?: boolean;
   showSettings?: boolean;
   editMode?: boolean;
@@ -67,6 +68,7 @@ const SelectableArea: React.FC<Props> = ({
   isEditable,
   hideHoverUI,
   contentSettings,
+  isPluginBlock,
   overrideGroupId,
   domId,
   onEditModeToggle,
@@ -112,6 +114,7 @@ const SelectableArea: React.FC<Props> = ({
             editMode={editMode}
             propertyId={propertyId}
             contentSettings={contentSettings}
+            isPluginBlock={isPluginBlock}
             dndEnabled={dndEnabled}
             position={position}
             overrideGroupId={overrideGroupId}

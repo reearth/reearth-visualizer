@@ -14,13 +14,10 @@ const LAYERS_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-layers-drag-han
 const LayersPanel: FC = () => {
   const {
     layers,
-    // selectedLayerId,
-    // handleLayerDelete,
     handleLayerMove,
     handleLayerSelect,
     openDataSourceLayerCreator,
     openSketchLayerCreator,
-    // handleFlyTo,
   } = useMapPage();
 
   const t = useT();
@@ -95,7 +92,7 @@ const LayersPanel: FC = () => {
             handleClassName={LAYERS_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             onMoveStart={handleMoveStart}
-            dragDisabled={!!editingLayerNameId}
+            dragDisabled={false}
           />
           <EmptySpace onClick={() => handleLayerSelect(undefined)} />
         </LayersContainer>

@@ -60,22 +60,26 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
 
-  const { nlsLayers: originNlsLayers = [] } = useGetLayersQuery({ sceneId });
+  const { nlsLayers: originNlsLayers } = useGetLayersQuery({ sceneId });
 
   // TODO: support by gql mutation
   const [sortedLayerIds, setSortedLayerIds] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!originNlsLayers) return;
     setSortedLayerIds(prev => (prev.length > 0 ? prev : originNlsLayers.map(l => l.id)));
   }, [originNlsLayers]);
 
   const nlsLayers: NLSLayer[] = useMemo(
-    () => [
-      ...(sortedLayerIds
-        .map(id => originNlsLayers.find(l => l.id === id))
-        .filter(Boolean) as NLSLayer[]),
-      ...originNlsLayers.filter(l => !sortedLayerIds.includes(l.id)),
-    ],
+    () =>
+      originNlsLayers
+        ? [
+            ...(sortedLayerIds
+              .map(id => originNlsLayers.find(l => l.id === id))
+              .filter(Boolean) as NLSLayer[]),
+            ...originNlsLayers.filter(l => !sortedLayerIds.includes(l.id)),
+          ]
+        : [],
     [originNlsLayers, sortedLayerIds],
   );
 
