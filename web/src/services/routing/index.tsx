@@ -16,6 +16,7 @@ import { styled } from "@reearth/services/theme";
 
 const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
+const PluginPlaygroundPage = lazy(() => import("@reearth/beta/pages/PluginPlaygroundPage"));
 
 const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
 const LoginPage = lazy(() => import("@reearth/classic/components/pages/Authentication/LoginPage"));
@@ -94,6 +95,10 @@ export const AppRoutes = () => {
     {
       path: "plugin-editor",
       element: <PluginEditor />,
+    },
+    {
+      path: "plugin-playground",
+      element: <PluginPlaygroundPage />,
     },
     {
       path: "settings",

@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FC, useCallback, useState } from "react";
+import { FC } from "react";
 
-import { TabItems, Tabs as TabsMenu, TabsProps } from ".";
+import { TabItem, Tabs as TabsMenu, TabsProps } from ".";
 
 const meta: Meta<TabsProps> = {
   component: TabsMenu,
@@ -12,23 +12,10 @@ export default meta;
 type Story = StoryObj<TabsProps>;
 
 const Tabs: FC<TabsProps> = ({ position, tabs, tabStyle }) => {
-  const [activeTab, setActiveTab] = useState("tab1");
-  const handleTabChange = useCallback((newTab: string) => {
-    setActiveTab(newTab);
-  }, []);
-
-  return (
-    <TabsMenu
-      position={position}
-      activeTab={activeTab}
-      tabStyle={tabStyle}
-      tabs={tabs}
-      onChange={handleTabChange}
-    />
-  );
+  return <TabsMenu position={position} tabStyle={tabStyle} tabs={tabs} />;
 };
 
-const tabsItem: TabItems[] = [
+const tabsItem: TabItem[] = [
   {
     id: "tab1",
     name: "Tab One",
@@ -52,7 +39,7 @@ const tabsItem: TabItems[] = [
   },
 ];
 
-const tabsIcons: TabItems[] = [
+const tabsIcons: TabItem[] = [
   {
     id: "tab1",
     icon: "data",

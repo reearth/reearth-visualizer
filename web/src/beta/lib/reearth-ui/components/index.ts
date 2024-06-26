@@ -20,3 +20,4 @@ export * from "./IconButton";
 export * from "./Selector";
 export * from "./PopupMenu";
 export * from "./DragAndDropList";
+export * from "./Tabs";
