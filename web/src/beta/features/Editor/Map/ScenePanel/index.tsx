@@ -42,7 +42,7 @@ const ScenePanel: FC = () => {
               <EntryItem
                 key={index}
                 title={handleTranslatedCollectionName(collection as ScenePropertyCollection)}
-                highlight={selectedSceneSetting === collection}
+                highlighted={selectedSceneSetting === collection}
                 onClick={() => handleSceneSettingSelect(collection)}
               />
             ),
