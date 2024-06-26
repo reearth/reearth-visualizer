@@ -10,7 +10,7 @@ import { Tab } from "../../Navbar";
 
 export interface StoryPageContextType {
   handleVisualizerResize?: (props: AreaSize) => void;
-  storyPages: Page[];
+  storyPages?: Page[];
   handleStoryPageSelect: (id: string) => void;
   handleStoryPageAdd: (isSwipeable: boolean) => void;
   // onPageDuplicate: (id: string) => void; // not used
