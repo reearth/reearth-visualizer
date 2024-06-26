@@ -15,6 +15,7 @@ type Props = {
   editMode?: boolean;
   propertyId?: string;
   contentSettings?: any;
+  isPluginBlock?: boolean;
   dndEnabled?: boolean;
   position?: ActionPosition;
   overrideGroupId?: string;
@@ -53,6 +54,7 @@ const ActionPanel: React.FC<Props> = ({
   editMode,
   dndEnabled,
   contentSettings,
+  isPluginBlock,
   setShowPadding,
   onEditModeToggle,
   onSettingsToggle,
@@ -65,6 +67,7 @@ const ActionPanel: React.FC<Props> = ({
     isSelected,
     editMode,
     contentSettings,
+    isPluginBlock,
     setShowPadding,
     onEditModeToggle,
     onSettingsToggle,

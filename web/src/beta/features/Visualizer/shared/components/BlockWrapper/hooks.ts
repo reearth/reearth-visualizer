@@ -104,6 +104,10 @@ export default ({
     };
   }, [property?.panel, isEditable]);
 
+  const pluginBlockSettings = useMemo(() => {
+    return property;
+  }, [property]);
+
   return {
     title,
     groupId,
@@ -111,6 +115,7 @@ export default ({
     showSettings,
     defaultSettings,
     generalBlockSettings,
+    pluginBlockSettings,
     disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
