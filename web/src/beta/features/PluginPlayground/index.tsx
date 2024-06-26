@@ -15,7 +15,7 @@ const PluginPlayground: FC = () => {
           <Area extend>
             <Tabs position="top" tabs={MainAreaTabs} />
           </Area>
-          <Area resizableEdge="top" height={100} storageId="plugin-playground-bottom-area">
+          <Area resizableEdge="top" initialHeight={100} storageId="plugin-playground-bottom-area">
             <Tabs position="top" tabs={BottomAreaTabs} />
           </Area>
         </Area>
