@@ -171,4 +171,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
 }));
