@@ -1,29 +1,57 @@
 import { FC } from "react";
 
-import { TextInput, TextInputProps, Button, ButtonProps } from "@reearth/beta/lib/reearth-ui";
+import {
+  TextInput,
+  TextInputProps,
+  Button,
+  ButtonProps,
+  Modal,
+  ModalProps,
+} from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type AssetFieldProps = CommonFieldProps &
-  Pick<TextInputProps, "value" | "placeholder" | "onChange" | "onBlur" | "disabled"> & {
-    buttonFirstProps?: ButtonProps;
-    buttonSecondProps?: ButtonProps;
-  };
+  ModalProps &
+  ButtonProps &
+  Pick<TextInputProps, "value" | "placeholder" | "onChange" | "onBlur" | "disabled">;
 
 const AssetField: FC<AssetFieldProps> = ({
   title,
   description,
-  buttonFirstProps,
-  buttonSecondProps,
+  visible,
+  children,
+  size,
+  appearance,
+  icon,
+  disabled,
+  iconButton,
+  title: titleButton,
+  iconRight,
+  extendWidth,
+  minWidth,
+  onClick,
   ...props
 }) => {
   return (
     <CommonField title={title} description={description}>
       <TextInput {...props} />
       <ButtonWrapper>
-        <Button {...buttonFirstProps} />
-        <Button {...buttonSecondProps} />
+        <Modal visible={visible} size={size}>
+          {children}
+        </Modal>
+        <Button
+          appearance={appearance}
+          icon={icon}
+          disabled={disabled}
+          iconButton={iconButton}
+          title={titleButton}
+          iconRight={iconRight}
+          extendWidth={extendWidth}
+          minWidth={minWidth}
+          onClick={onClick}
+        />
       </ButtonWrapper>
     </CommonField>
   );
