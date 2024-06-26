@@ -195,7 +195,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
   const storyPageValue: StoryPageContextType = useMemo(
     () => ({
       handleVisualizerResize,
-      storyPages: selectedStory?.pages ?? [],
+      storyPages: selectedStory?.pages,
       selectedStoryPage: currentStoryPage,
       handleStoryPageSelect: handleCurrentStoryPageChange,
       handleStoryPageAdd,

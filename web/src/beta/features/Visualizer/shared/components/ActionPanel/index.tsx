@@ -168,6 +168,7 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   gap: 4px;
   height: 24px;
   position: absolute;
+  max-width: 100%;
   ${({ position }) =>
     position === "left-top"
       ? `
@@ -210,6 +211,10 @@ const OptionWrapper = styled.div<{ showPointer?: boolean }>`
 
 const OptionText = styled(Text)`
   padding-right: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
 `;
 
 const OptionIcon = styled(Icon)<{ border?: boolean }>`
