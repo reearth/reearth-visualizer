@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 
 import { Button, IconName, Selector, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -12,7 +12,7 @@ type HeaderProp = {
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
   onClick: () => void;
   onChangeView?: (v?: string) => void;
-  onSortChange?: (value?: string | string[]) => void;
+  onSortChange?: (value?: string) => void;
 };
 export const CommonHeader: FC<HeaderProp> = ({
   title,
@@ -27,13 +27,24 @@ export const CommonHeader: FC<HeaderProp> = ({
   const theme = useTheme();
   const t = useT();
 
+  const onChange = useCallback(
+    (value: string | string[]) => {
+      onSortChange?.(value as string);
+    },
+    [onSortChange],
+  );
+
   return (
     <Header>
-      <Button title={title} icon={icon} appearance={appearance} onClick={onClick} />
+      <ButtonWrapper>
+        <Button title={title} icon={icon} appearance={appearance} onClick={onClick} />
+      </ButtonWrapper>
 
       <Actions>
-        <Typography size="body">{t("Sort:")}</Typography>
-        <Selector options={options || []} onChange={onSortChange} />
+        <Typography size="body">{t("Sort")}: </Typography>
+        <SelectorWrapper>
+          <Selector options={options || []} onChange={onChange} />
+        </SelectorWrapper>
         <Button
           iconButton
           icon="grid"
@@ -46,6 +57,7 @@ export const CommonHeader: FC<HeaderProp> = ({
           icon="list"
           iconColor={viewState === "list" ? theme.content.main : theme.content.weak}
           appearance="simple"
+          disabled={icon === "uploadSimple" ? true : false}
           onClick={() => onChangeView?.("list")}
         />
       </Actions>
@@ -62,4 +74,13 @@ const Actions = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
+  flex: 1,
+}));
+
+const ButtonWrapper = styled("div")(() => ({
+  flex: 3,
+}));
+
+const SelectorWrapper = styled("div")(() => ({
+  flex: 1,
 }));

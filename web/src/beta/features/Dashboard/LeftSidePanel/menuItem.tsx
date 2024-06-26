@@ -10,8 +10,14 @@ export const Menu: FC<Omit<TabItems, "id">> = ({ icon, text, active, path }) => 
   const theme = useTheme();
   return (
     <StyledLinkButton to={path || ""}>
-      <MenuWrapper active={active}>
-        {icon && <Icon icon={icon} size="normal" color={theme.content.weak} />}
+      <MenuWrapper active={active} path={path}>
+        {icon && (
+          <Icon
+            icon={icon}
+            size="normal"
+            color={active ? theme.content.main : theme.content.weak}
+          />
+        )}
         <Typography size="body" color={theme.content.main}>
           {text}
         </Typography>
@@ -23,16 +29,19 @@ const StyledLinkButton = styled(Link)(() => ({
   textDecoration: "none",
 }));
 
-const MenuWrapper = styled("div")<{ active?: boolean }>(({ active, theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  alignSelf: "stretch",
-  gap: theme.spacing.small,
-  background: active ? theme.select.main : "",
-  borderRadius: active ? theme.radius.small : "",
-  padding: theme.spacing.small,
-  cursor: "pointer",
-  ["&:hover"]: {
-    background: active ? theme.select.main : theme.bg[2],
-  },
-}));
+const MenuWrapper = styled("div")<{ active?: boolean; path?: string }>(
+  ({ active, theme, path }) => ({
+    display: "flex",
+    alignItems: "center",
+    alignSelf: "stretch",
+    gap: theme.spacing.small,
+    background: active ? theme.select.main : "",
+    borderRadius: active ? theme.radius.small : "",
+    padding: theme.spacing.small,
+    cursor: path === " " ? "not-allowed" : "pointer", //Temporaly disable until when the links are added
+    ["&:hover"]: {
+      background: active ? theme.select.main : theme.bg[2],
+      borderRadius: theme.radius.small,
+    },
+  }),
+);

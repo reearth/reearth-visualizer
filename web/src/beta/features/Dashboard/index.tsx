@@ -13,28 +13,31 @@ export type DashboardProps = {
   workspaceId?: string;
 };
 
-export const tabsItem: Omit<TabItems[], "active"> = [
+export const topTabItems: Omit<TabItems[], "active"> = [
   { id: "project", text: "Project", icon: "grid" },
   { id: "asset", text: "Assets", icon: "file" },
-  { id: "members", text: "Members", icon: "appearance" },
+  { id: "members", text: "Members", icon: "users" },
   { id: "bin", text: "Recycle bin", icon: "trash" },
+];
+
+export const bottomTabsItems: Omit<TabItems[], "active"> = [
   { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", path: " " },
   { id: "documentary", text: "Documentary", icon: "book", path: " " },
   { id: "community", text: "Community", icon: "usersFour", path: " " },
   { id: "help", text: "Help & Support", icon: "question", path: " " },
 ];
 
-const Dashboard: FC<Omit<DashboardProps, "tab">> = ({ workspaceId }) => {
+const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const {
     isPersonal,
     currentWorkspace,
-    workspaces,
     topTabs,
     bottomTabs,
+    workspaces,
     currentTab,
     onSignOut,
     handleWorkspaceChange,
-  } = useHooks({ tabsItem, workspaceId });
+  } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
 
   const t = useT();
   const theme = useTheme();
@@ -69,11 +72,10 @@ const Dashboard: FC<Omit<DashboardProps, "tab">> = ({ workspaceId }) => {
 
 export default Dashboard;
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(() => ({
   display: "flex",
   height: "100%",
   width: "100%",
-  background: theme.bg.transparentBlack,
 }));
 
 const LeftSideWrapper = styled("div")(({ theme }) => ({

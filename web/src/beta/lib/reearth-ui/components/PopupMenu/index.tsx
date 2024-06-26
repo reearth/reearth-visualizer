@@ -23,6 +23,7 @@ export type PopupMenuProps = {
   menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
+  size?: "small" | "normal";
   extendTriggerWidth?: boolean;
   placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
@@ -37,6 +38,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   placement,
   triggerOnHover,
   icon,
+  size = "normal",
 }) => {
   const [open, setOpen] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
@@ -61,11 +63,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             onMouseEnter={() => setHoveredItemIndex(index)}
             onMouseLeave={() => setHoveredItemIndex(null)}
             isHovered={hoveredItemIndex === index}
+            size={size}
             onClick={() => {
               onClick?.(id);
               handlePopOver(false);
             }}>
-            {" "}
             {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
             {subItem ? (
               <PopupMenu label={title} menu={subItem} width={width} nested />
@@ -136,18 +138,23 @@ const PopupMenuWrapper = styled("div")<{ width?: number }>(({ width, theme }) =>
   width: width ? `${width}px` : DEFAULT_MENU_WIDTH,
 }));
 
-const Item = styled("div")<{ isHovered?: boolean }>(({ theme, isHovered }) => ({
-  display: "flex",
-  gap: theme.spacing.smallest,
-  alignItems: "center",
-  padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
-  borderRadius: `${theme.radius.smallest}px`,
-  cursor: "pointer",
-  backgroundColor: isHovered ? `${theme.bg[2]}` : "transparent",
-  ["&:hover"]: {
-    backgroundColor: `${theme.bg[2]}`,
-  },
-}));
+const Item = styled("div")<{ isHovered?: boolean; size?: "small" | "normal" }>(
+  ({ theme, isHovered, size }) => ({
+    display: "flex",
+    gap: theme.spacing.smallest,
+    alignItems: "center",
+    padding:
+      size === "small"
+        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+        : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    borderRadius: `${theme.radius.smallest}px`,
+    cursor: "pointer",
+    backgroundColor: isHovered ? `${theme.bg[2]}` : "transparent",
+    ["&:hover"]: {
+      backgroundColor: `${theme.bg[2]}`,
+    },
+  }),
+);
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",

@@ -4,9 +4,9 @@ import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reea
 import { convertTimeToString } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { LayoutProps } from ".";
+import { ProjectProps } from ".";
 
-export const ListLayout: FC<LayoutProps> = ({
+export const ListLayout: FC<ProjectProps> = ({
   project,
   popupMenu,
   selectedProjectId,
@@ -16,16 +16,17 @@ export const ListLayout: FC<LayoutProps> = ({
   isHovered,
   onProjectOpen,
   onProjectSelect,
-  onStarClick,
-  onBlur,
-  onChange,
-  onHover,
+  onProjectStarClick,
+  onProjectBlur,
+  onProjectChange,
+  onProjectHover,
+  onProjectNameEdit,
 }) => {
   const theme = useTheme();
 
   const createAt: Date = useMemo(
-    () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
-    [project.updatedAt],
+    () => (project.createdAt ? new Date(project.createdAt) : new Date()),
+    [project.createdAt],
   );
   const UpdatedAt: Date = useMemo(
     () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
@@ -37,8 +38,8 @@ export const ListLayout: FC<LayoutProps> = ({
       onClick={onProjectSelect}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
-      onMouseEnter={() => onHover?.(true)}
-      onMouseLeave={() => onHover?.(false)}
+      onMouseEnter={() => onProjectHover?.(true)}
+      onMouseLeave={() => onProjectHover?.(false)}
       isSelected={selectedProjectId === project.id}>
       <ActionCell>
         <FlexItem>
@@ -49,9 +50,10 @@ export const ListLayout: FC<LayoutProps> = ({
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
-              onClick={e => onStarClick?.(e, project.id)}
+              onClick={e => onProjectStarClick?.(e, project.id)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
+              shadow={false}
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
@@ -59,11 +61,11 @@ export const ListLayout: FC<LayoutProps> = ({
       </ActionCell>
       <ProjectNameCell>
         {!isEditing ? (
-          <Typography size="body">{projectName}</Typography>
+          <TitleWrapper onDoubleClick={onProjectNameEdit}>{projectName}</TitleWrapper>
         ) : (
           <TextInput
-            onChange={onChange}
-            onBlur={onBlur}
+            onChange={onProjectChange}
+            onBlur={onProjectBlur}
             value={projectName}
             autoFocus={isEditing}
             appearance="present"
@@ -82,7 +84,7 @@ export const ListLayout: FC<LayoutProps> = ({
         }}>
         <PopupMenu
           menu={popupMenu}
-          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
+          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" shadow={false} />}
         />
       </ActionCell>
     </StyledRow>
@@ -95,11 +97,9 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     width: "100%",
     cursor: "pointer",
     borderRadius: theme.radius.small,
-    border: isSelected
-      ? `1px solid ${theme.select.main}`
-      : isHovered
-      ? `1px solid ${theme.outline.weak}`
-      : "none",
+    border: `1px solid ${
+      isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
+    }`,
     padding: theme.spacing.small,
     gap: theme.spacing.small,
     alignItems: "center",
@@ -139,4 +139,17 @@ const StarButtonWrapper = styled("div")<{
   isHovered: boolean;
 }>(({ isSelected, isStarred, isHovered }) => ({
   opacity: isSelected || isStarred || isHovered ? 1 : 0,
+}));
+
+const TitleWrapper = styled("div")(({ theme }) => ({
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  cursor: "pointer",
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
 }));

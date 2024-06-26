@@ -69,7 +69,7 @@ const LeftSidePanel: FC<Props> = ({
         </>
         <Version>
           <Typography size="body" color={theme.content.weak}>
-            {t("Version 1.0 LTS")}
+            {t(`Version ${__APP_VERSION__}`)}
           </Typography>
         </Version>
       </Section>

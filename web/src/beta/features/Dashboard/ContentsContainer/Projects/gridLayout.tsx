@@ -1,11 +1,11 @@
 import { FC } from "react";
 
-import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { LayoutProps } from ".";
+import { ProjectProps } from ".";
 
-export const GridLayout: FC<LayoutProps> = ({
+export const GridLayout: FC<ProjectProps> = ({
   project,
   popupMenu,
   selectedProjectId,
@@ -15,11 +15,11 @@ export const GridLayout: FC<LayoutProps> = ({
   projectName,
   onProjectOpen,
   onProjectSelect,
-  onStarClick,
-  onBlur,
-  onChange,
-  onDoubleClick,
-  onHover,
+  onProjectStarClick,
+  onProjectBlur,
+  onProjectChange,
+  onProjectNameEdit,
+  onProjectHover,
 }) => {
   const theme = useTheme();
   return (
@@ -29,8 +29,8 @@ export const GridLayout: FC<LayoutProps> = ({
         onDoubleClick={onProjectOpen}
         onClick={onProjectSelect}
         isHovered={isHovered ?? false}
-        onMouseEnter={() => onHover?.(true)}
-        onMouseLeave={() => onHover?.(false)}
+        onMouseEnter={() => onProjectHover?.(true)}
+        onMouseLeave={() => onProjectHover?.(false)}
         isSelected={selectedProjectId === project.id}>
         <StarButtonWrapper
           isStarred={isStarred ?? false}
@@ -39,34 +39,31 @@ export const GridLayout: FC<LayoutProps> = ({
           <Button
             iconButton
             icon={isStarred ? "starFilled" : "star"}
-            onClick={e => onStarClick?.(e, project.id)}
+            onClick={e => onProjectStarClick?.(e, project.id)}
             iconColor={isStarred ? theme.warning.main : theme.content.main}
             appearance="simple"
+            shadow={false}
           />
         </StarButtonWrapper>
       </CardImage>
       <CardFooter>
         <CardTitleWrapper>
           {!isEditing ? (
-            <CardTitle onDoubleClick={onDoubleClick}>
-              <Typography size="body">{projectName}</Typography>
-            </CardTitle>
+            <CardTitle onDoubleClick={onProjectNameEdit}>{projectName}</CardTitle>
           ) : (
             <TextInput
-              onChange={onChange}
-              onBlur={onBlur}
+              onChange={onProjectChange}
+              onBlur={onProjectBlur}
               value={projectName}
               autoFocus={isEditing}
               appearance="present"
             />
           )}
         </CardTitleWrapper>
-        <CardActions>
-          <PopupMenu
-            menu={popupMenu}
-            label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
-          />
-        </CardActions>
+        <PopupMenu
+          menu={popupMenu}
+          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" shadow={false} />}
+        />
       </CardFooter>
     </Card>
   );
@@ -115,6 +112,15 @@ const CardTitleWrapper = styled("div")(() => ({
 }));
 
 const CardTitle = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small,
+  flex: "1",
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  cursor: "pointer",
 }));
-const CardActions = styled("div")(() => ({}));

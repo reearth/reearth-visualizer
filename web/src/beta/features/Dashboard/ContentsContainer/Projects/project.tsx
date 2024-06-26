@@ -14,11 +14,11 @@ type ProjectProps = {
   project: ProjectType;
   selectedProjectId?: string;
   isStarred?: boolean;
-  onStarClick: (e: MouseEvent<Element>, projectId: string) => void;
+  onProjectStarClick: (e: MouseEvent<Element>, projectId: string) => void;
   onProjectOpen?: () => void;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
-  onProjectSelect?: (projectId: string) => void;
-  onClickToRename?: (projectId: string) => void;
+  onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
+  onProjectRename?: (projectId: string) => void;
 };
 
 export const Project: FC<ProjectProps> = ({
@@ -29,7 +29,7 @@ export const Project: FC<ProjectProps> = ({
   onProjectOpen,
   onProjectUpdate,
   onProjectSelect,
-  onStarClick,
+  onProjectStarClick,
 }) => {
   const t = useT();
 
@@ -37,11 +37,11 @@ export const Project: FC<ProjectProps> = ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleOnChange = useCallback((newValue: string) => {
+  const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
   }, []);
 
-  const handleOnBlur = useCallback(() => {
+  const handleProjectNameBlur = useCallback(() => {
     if (!project || projectName === project.name) return setIsEditing(false);
     const updatedProject: ProjectType = {
       ...project,
@@ -51,17 +51,17 @@ export const Project: FC<ProjectProps> = ({
     setIsEditing(false);
   }, [project, projectName, onProjectUpdate]);
 
-  const handleRename = useCallback(() => {
+  const handleProjectNameEdit = useCallback(() => {
     setIsEditing?.(true);
-    if (selectedProjectId !== project.id || selectedProjectId) onProjectSelect?.("");
-  }, [onProjectSelect, project.id, selectedProjectId, setIsEditing]);
+    if (selectedProjectId !== project.id || selectedProjectId) onProjectSelect?.(undefined);
+  }, [onProjectSelect, project.id, selectedProjectId]);
 
   const popupMenu: PopupMenuItem[] = [
     {
       id: "rename",
       title: t("Rename"),
       icon: "pencilLine",
-      onClick: () => handleRename?.(),
+      onClick: () => handleProjectNameEdit?.(),
     },
     {
       id: "setting",
@@ -71,14 +71,22 @@ export const Project: FC<ProjectProps> = ({
     },
   ];
 
-  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
-    () => onProjectSelect?.(project.id),
-    () => handleRename(),
+  const [, handleDoubleClick] = useDoubleClick(
+    () => {},
+    () => handleProjectNameEdit(),
   );
 
   const handleOnHover = useCallback((value: boolean) => {
     setIsHovered(value);
   }, []);
+
+  const handleProjectNameDoubleClick = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      handleDoubleClick();
+    },
+    [handleDoubleClick],
+  );
 
   return (
     <>
@@ -93,12 +101,12 @@ export const Project: FC<ProjectProps> = ({
           isHovered={isHovered}
           onProjectOpen={onProjectOpen}
           onProjectUpdate={onProjectUpdate}
-          onProjectSelect={handleSingleClick}
-          onStarClick={onStarClick}
-          onChange={handleOnChange}
-          onBlur={handleOnBlur}
-          onDoubleClick={handleDoubleClick}
-          onHover={handleOnHover}
+          onProjectSelect={(e: MouseEvent<Element>) => onProjectSelect?.(e, project.id)}
+          onProjectStarClick={onProjectStarClick}
+          onProjectChange={handleProjectNameChange}
+          onProjectBlur={handleProjectNameBlur}
+          onProjectNameEdit={handleProjectNameDoubleClick}
+          onProjectHover={handleOnHover}
         />
       )}
       {viewState === "list" && (
@@ -112,12 +120,12 @@ export const Project: FC<ProjectProps> = ({
           isHovered={isHovered}
           onProjectOpen={onProjectOpen}
           onProjectUpdate={onProjectUpdate}
-          onProjectSelect={handleSingleClick}
-          onStarClick={onStarClick}
-          onChange={handleOnChange}
-          onBlur={handleOnBlur}
-          onDoubleClick={handleDoubleClick}
-          onHover={handleOnHover}
+          onProjectSelect={(e: MouseEvent<Element>) => onProjectSelect?.(e, project.id)}
+          onProjectStarClick={onProjectStarClick}
+          onProjectChange={handleProjectNameChange}
+          onProjectBlur={handleProjectNameBlur}
+          onProjectNameEdit={handleProjectNameDoubleClick}
+          onProjectHover={handleOnHover}
         />
       )}
     </>

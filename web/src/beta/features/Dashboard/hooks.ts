@@ -8,11 +8,12 @@ import { useWorkspace } from "@reearth/services/state";
 import { TabItems, Workspace } from "./type";
 
 type Props = {
-  tabsItem: Omit<TabItems[], "active">;
+  bottomTabsItems: Omit<TabItems[], "active">;
+  topTabItems: Omit<TabItems[], "active">;
   workspaceId?: string;
 };
 
-export default ({ workspaceId, tabsItem }: Props) => {
+export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const navigate = useNavigate();
   const { useMeQuery } = useMeFetcher();
   const { me: data } = useMeQuery();
@@ -23,25 +24,28 @@ export default ({ workspaceId, tabsItem }: Props) => {
   const workspace = workspaces.find(workspace => workspace.id === workspaceId);
   const isPersonal = !!workspaceId && workspaceId === data?.myTeam?.id;
 
-  const tabs = useMemo(
+  const { tab } = useParams<{
+    tab?: string;
+  }>();
+  const currentTab = useMemo(() => tab ?? "project", [tab]);
+
+  const topTabs = useMemo(
     () =>
-      tabsItem
+      topTabItems
         .filter(tab => !(isPersonal && tab.id === "members"))
         .map(tab => ({
           ...tab,
           path: tab.path || `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`,
         })),
-    [tabsItem, isPersonal, workspaceId],
-  );
-
-  const topTabs = useMemo(
-    () => (isPersonal ? tabs.slice(0, 3) : tabs.slice(0, 4)),
-    [isPersonal, tabs],
+    [topTabItems, isPersonal, workspaceId],
   );
 
   const bottomTabs = useMemo(
-    () => (isPersonal ? tabs.slice(3) : tabs.slice(4)),
-    [isPersonal, tabs],
+    () =>
+      bottomTabsItems.map(tab => ({
+        ...tab,
+      })),
+    [bottomTabsItems],
   );
 
   useEffect(() => {
@@ -63,12 +67,6 @@ export default ({ workspaceId, tabsItem }: Props) => {
     },
     [workspace, setCurrentWorkspace, navigate],
   );
-
-  const { tab } = useParams<{
-    tab?: string;
-  }>();
-
-  const currentTab = useMemo(() => tab ?? "project", [tab]);
 
   return {
     workspaces,
