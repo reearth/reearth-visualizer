@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Popup, Icon, Typography, IconName, PopupProps } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-const MULTLEVEL_OFFSET = 6;
+const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 180;
 
@@ -34,7 +34,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   menu,
   nested,
   width,
-  extendTriggerWidth,
+  // extendTriggerWidth
   placement,
   triggerOnHover,
   icon,
@@ -54,9 +54,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     },
     [open],
   );
+
   const renderMenuItems = (menuItems: PopupMenuItem[]) => {
     return (
-      <PopupMenuWrapper width={width}>
+      <PopupMenuWrapper width={width} nested={nested}>
         {menuItems.map(({ title, path, icon, subItem, id, onClick }, index) => (
           <Item
             key={index}
@@ -107,7 +108,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       offset={nested ? MULTLEVEL_OFFSET : DEFAULT_OFFSET}
       onOpenChange={handlePopOver}
       triggerOnHover={triggerOnHover || nested ? true : false}
-      extendTriggerWidth={extendTriggerWidth}
+      extendTriggerWidth={nested ? true : false}
       autoClose
       trigger={
         <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
@@ -127,16 +128,22 @@ const TriggerWrapper = styled("div")<{ nested?: boolean }>(({ nested, theme }) =
   justifyContent: nested ? "space-between" : "normal",
 }));
 
-const PopupMenuWrapper = styled("div")<{ width?: number }>(({ width, theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: `${theme.spacing.micro}px`,
-  padding: `${theme.spacing.micro}px`,
-  backgroundColor: `${theme.bg[1]}`,
-  boxShadow: `${theme.shadow.popup}`,
-  borderRadius: `${theme.radius.small}px`,
-  width: width ? `${width}px` : DEFAULT_MENU_WIDTH,
-}));
+const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
+  ({ width, nested, theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: `${theme.spacing.micro}px`,
+    padding: `${theme.spacing.micro}px`,
+    backgroundColor: `${theme.bg[1]}`,
+    boxShadow: `${theme.shadow.popup}`,
+    borderRadius: `${theme.radius.small}px`,
+    border: `1px solid ${theme.outline.weaker}`,
+    width: width ? `${width}px` : DEFAULT_MENU_WIDTH,
+    maxHeight: "238px",
+    overflowY: "auto",
+    margin: nested ? "-7px 0 0 2px" : "inherit",
+  }),
+);
 
 const Item = styled("div")<{ isHovered?: boolean; size?: "small" | "normal" }>(
   ({ theme, isHovered, size }) => ({
@@ -150,9 +157,6 @@ const Item = styled("div")<{ isHovered?: boolean; size?: "small" | "normal" }>(
     borderRadius: `${theme.radius.smallest}px`,
     cursor: "pointer",
     backgroundColor: isHovered ? `${theme.bg[2]}` : "transparent",
-    ["&:hover"]: {
-      backgroundColor: `${theme.bg[2]}`,
-    },
   }),
 );
 

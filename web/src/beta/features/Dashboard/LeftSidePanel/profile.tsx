@@ -62,22 +62,22 @@ export const Profile: FC<ProfileProp> = ({
   ];
 
   return (
-    <PopupMenu
-      label={
-        <ProfileWrapper>
-          {isPersonal && (
-            <Avatar>
-              <Typography size="body">{currentUser?.charAt(0).toUpperCase()}</Typography>
-            </Avatar>
-          )}
-          <Typography size="body" weight="bold">
-            {currentUser}
-          </Typography>
-          <Icon color={theme.content.weak} icon="caretDown" size="small" />
-        </ProfileWrapper>
-      }
-      menu={popupMenu}
-    />
+    <ProfileWrapper>
+      {isPersonal && (
+        <Avatar>
+          <Typography size="body">{currentUser?.charAt(0).toUpperCase()}</Typography>
+        </Avatar>
+      )}
+      <Typography size="body" weight="bold">
+        {currentUser}
+      </Typography>
+      <div>
+        <PopupMenu
+          label={<Icon color={theme.content.weak} icon="caretDown" size="small" />}
+          menu={popupMenu}
+        />
+      </div>
+    </ProfileWrapper>
   );
 };
 
