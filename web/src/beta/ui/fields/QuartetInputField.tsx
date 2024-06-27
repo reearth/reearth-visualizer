@@ -1,6 +1,6 @@
 import { FC, useCallback, useState } from "react";
 
-import { TextInput } from "@reearth/beta/lib/reearth-ui";
+import { TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
@@ -11,6 +11,7 @@ export type QuadrupletInputFieldProps = CommonFieldProps & {
   disabled?: boolean;
   onChange?: (values: [string, string, string, string]) => void;
   onBlur?: (values: [string, string, string, string]) => void;
+  content?: [string, string, string, string];
 };
 
 const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
@@ -21,6 +22,7 @@ const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
   disabled,
   onChange,
   onBlur,
+  content = ["", "", "", ""],
 }) => {
   const [inputValues, setInputValues] = useState<[string, string, string, string]>(values);
 
@@ -41,34 +43,46 @@ const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
   return (
     <CommonField title={title} description={description}>
       <InputWrapper>
-        <TextInput
-          value={inputValues[0]}
-          placeholder={placeholders[0]}
-          disabled={disabled}
-          onChange={value => handleChange(0, value)}
-          onBlur={handleBlur}
-        />
-        <TextInput
-          value={inputValues[1]}
-          placeholder={placeholders[1]}
-          disabled={disabled}
-          onChange={value => handleChange(1, value)}
-          onBlur={handleBlur}
-        />
-        <TextInput
-          value={inputValues[2]}
-          placeholder={placeholders[2]}
-          disabled={disabled}
-          onChange={value => handleChange(2, value)}
-          onBlur={handleBlur}
-        />
-        <TextInput
-          value={inputValues[3]}
-          placeholder={placeholders[3]}
-          disabled={disabled}
-          onChange={value => handleChange(3, value)}
-          onBlur={handleBlur}
-        />
+        <TextInputWrapper>
+          <TextInput
+            value={inputValues[0]}
+            placeholder={placeholders[0]}
+            disabled={disabled}
+            onChange={value => handleChange(0, value)}
+            onBlur={handleBlur}
+          />
+          <Content size="footnote">{content[0]}</Content>
+        </TextInputWrapper>
+        <TextInputWrapper>
+          <TextInput
+            value={inputValues[1]}
+            placeholder={placeholders[1]}
+            disabled={disabled}
+            onChange={value => handleChange(1, value)}
+            onBlur={handleBlur}
+          />
+          <Content size="footnote">{content[1]}</Content>
+        </TextInputWrapper>
+        <TextInputWrapper>
+          <TextInput
+            value={inputValues[2]}
+            placeholder={placeholders[2]}
+            disabled={disabled}
+            onChange={value => handleChange(2, value)}
+            onBlur={handleBlur}
+          />
+          <Content size="footnote">{content[2]}</Content>
+        </TextInputWrapper>
+        <TextInputWrapper>
+          <TextInput
+            value={inputValues[3]}
+            placeholder={placeholders[3]}
+            disabled={disabled}
+            onChange={value => handleChange(3, value)}
+            onBlur={handleBlur}
+          />
+          <Content size="footnote">{content[3]}</Content>
+        </TextInputWrapper>
       </InputWrapper>
     </CommonField>
   );
@@ -76,8 +90,19 @@ const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
 
 export default QuadrupletInputField;
 
-const InputWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${({ theme }) => theme.spacing.small};
+const InputWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: `${theme.spacing.smallest}px`,
+}));
+
+const Content = styled(Typography)`
+  color: ${({ theme }) => theme.content.weak};
 `;
+
+const TextInputWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: `${theme.spacing.smallest}px`,
+}));

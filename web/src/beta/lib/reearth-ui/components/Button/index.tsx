@@ -11,7 +11,7 @@ export type ButtonProps = {
   iconButton?: boolean;
   icon?: IconName;
   iconRight?: IconName;
-  title?: string;
+  titleButton?: string;
   extendWidth?: boolean;
   minWidth?: number;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
@@ -23,7 +23,7 @@ export const Button: FC<ButtonProps> = ({
   disabled,
   size = "normal",
   iconButton,
-  title,
+  titleButton,
   iconRight,
   extendWidth,
   minWidth,
@@ -39,7 +39,7 @@ export const Button: FC<ButtonProps> = ({
       minWidth={minWidth}
       onClick={onClick}>
       {icon && <Icon icon={icon} />}
-      {!iconButton && title}
+      {!iconButton && titleButton}
       {iconRight && <Icon icon={iconRight} />}
     </StyledButton>
   );
