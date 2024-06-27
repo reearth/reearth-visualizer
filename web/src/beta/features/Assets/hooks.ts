@@ -45,7 +45,6 @@ export default ({
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
-  const [selectedAssetId, setSelectedAssetId] = useState<string | undefined>(undefined);
 
   const isGettingMore = useRef(false);
 
@@ -96,7 +95,7 @@ export default ({
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
   const handleSortChange = useCallback(
-    (type?: string | string[], reverse?: boolean) => {
+    (type?: string, reverse?: boolean) => {
       if (!type && reverse === undefined) return;
       setSort({
         type: (type as SortType) ?? sort?.type,
@@ -155,19 +154,6 @@ export default ({
     [selectedAssets, selectAsset],
   );
 
-  const selectedAsset = useMemo(
-    () => assets?.find(asset => asset.id === selectedAssetId) || undefined,
-    [assets, selectedAssetId],
-  );
-
-  const handleAssetSelect = useCallback(
-    (assetId: string | undefined) =>
-      setSelectedAssetId(prevId =>
-        prevId === assetId || assetId === undefined ? undefined : assetId,
-      ),
-    [],
-  );
-
   return {
     assets,
     assetsWrapperRef,
@@ -179,8 +165,6 @@ export default ({
     localSearchTerm,
     selectedAssets,
     deleteModalVisible,
-    selectedAsset,
-    handleAssetSelect,
     onScrollToBottom,
     closeDeleteModal,
     selectAsset,

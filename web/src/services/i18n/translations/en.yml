@@ -50,7 +50,7 @@ Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
 Upload File: Upload File
 Assets: Assets
-'Sort:': Sort:'
+Sort: Sort
 Use Name or Email: Use Name or Email
 Find Member: Find Member
 New Project: New Project
@@ -66,7 +66,6 @@ Description: Description
 Write down your content: Write down your content
 Cover Image: Cover Image
 Re:Earth Visualizer: Re:Earth Visualizer
-Version 1.0 LTS: Version 1.0 LTS
 Switch WorkSpace: Switch WorkSpace
 Account Settings: Account Settings
 Log Out: Log Out
@@ -114,9 +113,9 @@ Feature: Feature
 Styling: Styling
 Enable Infobox: Enable Infobox
 Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
-Layers: Layers
 Add Layer from Resource: Add Layer from Resource
 Add Sketch Layer: ''
+Layers: Layers
 Style_: Style_
 Layer Style: Layer Style
 New Style: New Style

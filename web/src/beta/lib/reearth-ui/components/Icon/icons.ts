@@ -119,6 +119,7 @@ import Trash from "./Icons/Trash.svg?react";
 import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
 import User from "./Icons/User.svg?react";
+import Users from "./Icons/Users.svg?react";
 import UsersFour from "./Icons/UsersFour.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
@@ -245,6 +246,7 @@ export default {
   triangle: Triangle,
   uploadSimple: UploadSimple,
   user: User,
+  users: Users,
   usersFour: UsersFour,
   videoFilled: VideoFilled,
   warning: Warning,

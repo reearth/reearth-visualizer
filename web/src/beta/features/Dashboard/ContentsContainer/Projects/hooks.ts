@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState, MouseEvent } from "react";
+import { useCallback, useMemo, useState, MouseEvent, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
 import { Visualizer } from "@reearth/services/gql";
 
@@ -9,12 +10,24 @@ import { Project } from "../../type";
 export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
-  const state = localStorage.getItem("viewState");
-  const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>(undefined);
   const [visible, setVisible] = useState(false);
-  const [viewState, setViewState] = useState(state ? state : "grid");
   const [isStarred, setIsStarred] = useState<Record<string, boolean>>({});
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
 
+  const projectViewStateKey = `reearth-visualizer-dashboard-project-view-state`;
+
+  const [viewState, setViewState] = useState(
+    localStorage.getItem(projectViewStateKey) ? localStorage.getItem(projectViewStateKey) : "grid",
+  );
+  const handleViewStateChange = useCallback(
+    (newView?: string) => {
+      if (!newView) return;
+      localStorage.setItem(projectViewStateKey, newView);
+      setViewState(newView);
+    },
+    [projectViewStateKey],
+  );
   const handleProjectCreate = useCallback(
     async (data: Pick<Project, "name" | "description" | "imageUrl">) => {
       if (!workspaceId) return;
@@ -48,6 +61,7 @@ export default (workspaceId?: string) => {
 
   const projects = useMemo(() => {
     return (projectNodes ?? [])
+      .filter(project => project?.coreSupport === true)
       .map<Project | undefined>(project =>
         project
           ? {
@@ -58,6 +72,8 @@ export default (workspaceId?: string) => {
               isArchived: project.isArchived,
               sceneId: project.scene?.id,
               updatedAt: new Date(project.updatedAt),
+              createdAt: new Date(project.createdAt),
+              coreSupport: project.coreSupport,
             }
           : undefined,
       )
@@ -83,27 +99,21 @@ export default (workspaceId?: string) => {
     }
   }, [hasMoreProjects, fetchMore, projectsData?.pageInfo?.endCursor]);
 
-  const selectedProject = useMemo(
-    () => projects.find(project => project.id === selectedProjectId) || undefined,
-    [projects, selectedProjectId],
-  );
-
   const handleProjectSelect = useCallback(
-    (projectId: string | undefined) =>
-      setSelectedProjectId(prevId =>
-        prevId === projectId || projectId === undefined ? undefined : projectId,
-      ),
-    [],
+    (e?: MouseEvent, projectId?: string) => {
+      e?.stopPropagation();
+      if (projectId) {
+        setSelectedProject(projects.find(project => project.id === projectId));
+      } else {
+        setSelectedProject(undefined);
+      }
+    },
+    [projects],
   );
 
-  const handleVisibility = useCallback(() => {
+  const handleProjectModalVisibility = useCallback(() => {
     setVisible(!visible);
   }, [visible]);
-
-  const handleViewChange = (newView: "grid" | "list") => {
-    localStorage.setItem("viewState", newView);
-    setViewState(newView);
-  };
 
   const handleProjectOpen = useCallback(
     (sceneId?: string) => {
@@ -114,7 +124,7 @@ export default (workspaceId?: string) => {
     [navigate],
   );
 
-  const handleStarClick = useCallback((e: MouseEvent, projectId: string) => {
+  const handleProjectStarClick = useCallback((e: MouseEvent, projectId: string) => {
     e.stopPropagation();
     setIsStarred(prev => ({
       ...prev,
@@ -122,22 +132,32 @@ export default (workspaceId?: string) => {
     }));
   }, []);
 
+  const isLoading = useMemo(() => {
+    return loading ?? isRefetchingProjects;
+  }, [isRefetchingProjects, loading]);
+
+  useEffect(() => {
+    if (wrapperRef.current && !isLoading && hasMoreProjects)
+      autoFillPage(wrapperRef, handleGetMoreProjects);
+  }, [handleGetMoreProjects, hasMoreProjects, isLoading]);
+
   return {
     projects,
     hasMoreProjects,
-    projectLoading: loading ?? isRefetchingProjects,
+    isLoading,
     selectedProject,
-    selectedProjectId,
-    viewState,
     visible,
     isStarred,
-    handleVisibility,
-    handleViewChange,
+    wrapperRef,
+    viewState,
+    handleProjectModalVisibility,
     handleGetMoreProjects,
     handleProjectUpdate,
     handleProjectOpen,
     handleProjectCreate,
     handleProjectSelect,
-    handleStarClick,
+    handleProjectStarClick,
+    onScrollToBottom,
+    handleViewStateChange,
   };
 };

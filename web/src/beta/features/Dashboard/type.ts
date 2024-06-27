@@ -10,6 +10,7 @@ export type Project = {
   description: string;
   sceneId?: string;
   updatedAt?: Date;
+  createdAt?: Date;
   projectType?: ProjectType;
 };
 

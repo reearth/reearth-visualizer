@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback, useState } from "react";
 
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import useHooks from "@reearth/beta/features/Assets/hooks";
@@ -8,22 +8,34 @@ import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { TabProps } from "..";
 import { CommonHeader } from "../header";
 
 import { AssetCard } from "./AssetCard";
 
-export const Assets: FC<TabProps> = ({ workspaceId, viewState, onChangeView }) => {
+export const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const theme = useTheme();
+
+  const assetViewStateKey = `reearth-visualizer-dashboard-asset-view-state`;
+
+  const [viewState, setViewState] = useState(
+    localStorage.getItem(assetViewStateKey) ? localStorage.getItem(assetViewStateKey) : "grid",
+  );
+  const handleViewStateChange = useCallback(
+    (newView?: string) => {
+      if (!newView) return;
+      localStorage.setItem(assetViewStateKey, newView);
+      setViewState(newView);
+    },
+    [assetViewStateKey],
+  );
+
   const {
     assets,
     assetsWrapperRef,
     isAssetsLoading: isLoading,
     hasMoreAssets,
     sortOptions,
-    selectedAsset,
-    handleAssetSelect,
     handleGetMoreAssets,
     onScrollToBottom,
     handleSortChange,
@@ -41,7 +53,7 @@ export const Assets: FC<TabProps> = ({ workspaceId, viewState, onChangeView }) =
         icon="uploadSimple"
         options={sortOptions}
         onSortChange={handleSortChange}
-        onChangeView={onChangeView}
+        onChangeView={handleViewStateChange}
         onClick={handleFileUpload}
       />
       <AssetsWrapper
@@ -63,8 +75,6 @@ export const Assets: FC<TabProps> = ({ workspaceId, viewState, onChangeView }) =
                     ? "image"
                     : "assetNoSupport"
                 }
-                selectedAssetId={selectedAsset?.id}
-                onAssetSelect={handleAssetSelect}
               />
             ))}
           </AssetsRow>
