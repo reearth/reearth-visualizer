@@ -14,7 +14,7 @@ export type SpacingFieldProps = CommonFieldProps & {
 };
 
 const SpacingField: FC<SpacingFieldProps> = ({
-  title,
+  commonTitle,
   description,
   values = ["", "", "", ""],
   placeholders = ["", "", "", ""],
@@ -39,7 +39,7 @@ const SpacingField: FC<SpacingFieldProps> = ({
   }, [inputValues, onBlur]);
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
         <CenteredInput>
           <TextInput

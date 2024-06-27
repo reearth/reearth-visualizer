@@ -4,18 +4,18 @@ import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 export interface CommonFieldProps {
-  title?: string;
+  commonTitle?: string;
   description?: string;
 }
 
 const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
-  title,
+  commonTitle,
   description,
   children,
 }) => {
   return (
     <Wrapper>
-      {title && <Typography size="body">{title}</Typography>}
+      {commonTitle && <Typography size="body">{commonTitle}</Typography>}
       {children}
       {description && <Description size="footnote">{description}</Description>}
     </Wrapper>

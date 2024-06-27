@@ -25,7 +25,7 @@ export type AssetFieldProps = CommonFieldProps &
   };
 
 const AssetField: FC<AssetFieldProps> = ({
-  title,
+  commonTitle,
   description,
   appearance,
   disabled,
@@ -85,7 +85,7 @@ const AssetField: FC<AssetFieldProps> = ({
   const handleModalClose = useCallback(() => setOpen(false), []);
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <AssetWrapper maxWidth={maxWidth}>
         <TextInput
           value={currentValue}
@@ -101,7 +101,7 @@ const AssetField: FC<AssetFieldProps> = ({
               size={size}
               disabled={disabled}
               iconButton={iconButton}
-              titleButton="Choose"
+              title="Choose"
               onClick={handleClick}
               minWidth={minWidth}
             />
@@ -111,7 +111,7 @@ const AssetField: FC<AssetFieldProps> = ({
               size={size}
               disabled={disabled}
               iconButton={iconButton}
-              titleButton="Upload"
+              title="Upload"
               onClick={handleFileUpload}
               minWidth={minWidth}
             />

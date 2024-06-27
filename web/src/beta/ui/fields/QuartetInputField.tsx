@@ -15,7 +15,7 @@ export type QuadrupletInputFieldProps = CommonFieldProps & {
 };
 
 const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
-  title,
+  commonTitle,
   description,
   values = ["", "", "", ""],
   placeholders = ["", "", "", ""],
@@ -41,7 +41,7 @@ const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
   }, [inputValues, onBlur]);
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
         <TextInputWrapper>
           <TextInput

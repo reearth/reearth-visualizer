@@ -15,7 +15,7 @@ export type TwinInputFieldProps = CommonFieldProps & {
 };
 
 const TwinInputField: FC<TwinInputFieldProps> = ({
-  title,
+  commonTitle,
   description,
   values = ["", ""],
   placeholders = ["", ""],
@@ -41,7 +41,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
   }, [inputValues, onBlur]);
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
         <TextInputWrapper>
           <TextInput

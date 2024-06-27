@@ -18,9 +18,9 @@ export type TextAreaFieldProps = CommonFieldProps &
     | "disabled"
   >;
 
-const TextAreaField: FC<TextAreaFieldProps> = ({ title, description, ...props }) => {
+const TextAreaField: FC<TextAreaFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <TextArea {...props} />
     </CommonField>
   );
