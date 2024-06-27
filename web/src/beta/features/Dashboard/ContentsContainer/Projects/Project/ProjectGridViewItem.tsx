@@ -24,7 +24,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     isHovered,
     handleProjectNameChange,
     handleProjectNameBlur,
-    handleOnHover,
+    handleProjectHover,
     handleProjectNameDoubleClick,
   } = useHooks({
     project,
@@ -40,8 +40,8 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         onDoubleClick={onProjectOpen}
         onClick={e => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
-        onMouseEnter={() => handleOnHover?.(true)}
-        onMouseLeave={() => handleOnHover?.(false)}
+        onMouseEnter={() => handleProjectHover?.(true)}
+        onMouseLeave={() => handleProjectHover?.(false)}
         isSelected={selectedProjectId === project.id}>
         <StarButtonWrapper
           isStarred={isStarred ?? false}

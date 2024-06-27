@@ -34,7 +34,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     isHovered,
     handleProjectNameChange,
     handleProjectNameBlur,
-    handleOnHover,
+    handleProjectHover,
     handleProjectNameDoubleClick,
   } = useHooks({
     project,
@@ -48,8 +48,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
       onClick={e => onProjectSelect?.(e, project.id)}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
-      onMouseEnter={() => handleOnHover?.(true)}
-      onMouseLeave={() => handleOnHover?.(false)}
+      onMouseEnter={() => handleProjectHover?.(true)}
+      onMouseLeave={() => handleProjectHover?.(false)}
       isSelected={selectedProjectId === project.id}>
       <ActionCell>
         <FlexItem>

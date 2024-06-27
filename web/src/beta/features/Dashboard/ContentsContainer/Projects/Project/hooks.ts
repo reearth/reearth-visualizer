@@ -59,7 +59,7 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     () => handleProjectNameEdit(),
   );
 
-  const handleOnHover = useCallback((value: boolean) => {
+  const handleProjectHover = useCallback((value: boolean) => {
     setIsHovered(value);
   }, []);
 
@@ -78,7 +78,7 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     popupMenu,
     handleProjectNameChange,
     handleProjectNameBlur,
-    handleOnHover,
+    handleProjectHover,
     handleProjectNameDoubleClick,
   };
 };
