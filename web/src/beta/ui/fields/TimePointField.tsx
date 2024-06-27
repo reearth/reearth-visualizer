@@ -7,9 +7,9 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type TimePointFieldProps = CommonFieldProps &
   Pick<TimePickerProps, "value" | "size" | "onChange" | "onBlur" | "disabled">;
 
-const TimePointField: FC<TimePointFieldProps> = ({ title, description, ...props }) => {
+const TimePointField: FC<TimePointFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <TimePicker {...props} />
     </CommonField>
   );

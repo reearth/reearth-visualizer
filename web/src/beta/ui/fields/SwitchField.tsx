@@ -7,9 +7,9 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type SwitchFieldProps = CommonFieldProps &
   Pick<SwitcherProps, "value" | "onChange" | "disabled">;
 
-const SwitchField: FC<SwitchFieldProps> = ({ title, description, ...props }) => {
+const SwitchField: FC<SwitchFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <Switcher {...props} />
     </CommonField>
   );

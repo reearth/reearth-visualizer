@@ -7,9 +7,9 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type SelectorFieldProps = CommonFieldProps &
   Pick<SelectorProps, "value" | "placeholder" | "onChange" | "multiple" | "disabled" | "options">;
 
-const SelectorField: FC<SelectorFieldProps> = ({ title, description, ...props }) => {
+const SelectorField: FC<SelectorFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <Selector {...props} />
     </CommonField>
   );

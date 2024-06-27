@@ -11,14 +11,14 @@ export type CameraFieldProps = CommonFieldProps &
   };
 
 const CameraField: FC<CameraFieldProps> = ({
-  title,
+  commonTitle,
   description,
   firstPopupProps,
   secondPopupProps,
   ...props
 }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <TextInput {...props} />
       <Popup {...firstPopupProps} placement={"bottom-start"} />
       <Popup {...secondPopupProps} placement={"bottom-start"} />
