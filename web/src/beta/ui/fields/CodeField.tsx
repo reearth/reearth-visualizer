@@ -4,8 +4,7 @@ import { CodeInput, CodeInputProps } from "@reearth/beta/lib/reearth-ui";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
-export type CodeFieldProps = CommonFieldProps &
-  Pick<CodeInputProps, "value" | "language" | "showLines" | "onChange" | "onBlur" | "disabled">;
+export type CodeFieldProps = CommonFieldProps & CodeInputProps;
 
 const CodeField: FC<CodeFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
