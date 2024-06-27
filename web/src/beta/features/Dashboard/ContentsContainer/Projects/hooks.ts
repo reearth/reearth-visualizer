@@ -12,7 +12,7 @@ const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-vi
 export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(false);
+  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
   const [isStarred, setIsStarred] = useState<Record<string, boolean>>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
@@ -112,10 +112,10 @@ export default (workspaceId?: string) => {
   );
 
   const showProjectCreator = useCallback(() => {
-    setVisible(true);
+    setProjectCreatorVisible(true);
   }, []);
   const closeProjectCreator = useCallback(() => {
-    setVisible(false);
+    setProjectCreatorVisible(false);
   }, []);
 
   const handleProjectOpen = useCallback(
@@ -149,10 +149,10 @@ export default (workspaceId?: string) => {
     hasMoreProjects,
     isLoading,
     selectedProject,
-    visible,
     isStarred,
     wrapperRef,
     viewState,
+    projectCreatorVisible,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,

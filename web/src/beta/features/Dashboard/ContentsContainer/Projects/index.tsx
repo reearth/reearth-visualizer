@@ -19,7 +19,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     isLoading,
     hasMoreProjects,
     selectedProject,
-    visible,
+    projectCreatorVisible,
     isStarred,
     wrapperRef,
     viewState,
@@ -111,9 +111,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         )}
         {isLoading && hasMoreProjects && <Loading relative />}
       </ProjectsWrapper>
-      {visible && (
+      {projectCreatorVisible && (
         <ProjectCreatorModal
-          visible={visible}
+          visible={projectCreatorVisible}
           onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
         />
