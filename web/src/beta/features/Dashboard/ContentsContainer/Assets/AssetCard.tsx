@@ -4,13 +4,14 @@ import { Asset } from "@reearth/beta/features/Assets/types";
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-type ContentProps = {
+type AssetCardProps = {
   asset: Asset;
   icon?: "image" | "file" | "assetNoSupport";
-  onAssetSelect?: (assetId: string) => void;
+  isSelected?: boolean;
+  onAssetSelect?: (assets: Asset[]) => void;
 };
 
-export const AssetCard: FC<ContentProps> = ({ asset, icon, onAssetSelect }) => {
+const AssetCard: FC<AssetCardProps> = ({ asset, icon, isSelected, onAssetSelect }) => {
   const theme = useTheme();
 
   const renderContent = () => {
@@ -30,7 +31,7 @@ export const AssetCard: FC<ContentProps> = ({ asset, icon, onAssetSelect }) => {
   };
 
   return (
-    <CardWrapper onClick={() => onAssetSelect?.(asset.id)}>
+    <CardWrapper onClick={() => onAssetSelect?.([asset])} isSelected={isSelected}>
       {renderContent()}
       <AssetName>
         <Typography size="body">{asset.name}</Typography>
@@ -39,13 +40,17 @@ export const AssetCard: FC<ContentProps> = ({ asset, icon, onAssetSelect }) => {
   );
 };
 
-const CardWrapper = styled("div")(({ theme }) => ({
+export default AssetCard;
+
+const CardWrapper = styled("div")<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
   display: "flex",
   flexDirection: "column",
+  border: `1px solid ${isSelected ? theme.select.main : "transparent"}`,
   boxSizing: "border-box",
   width: "100%",
   height: "160px",
   padding: theme.spacing.smallest,
+  borderRadius: theme.radius.small,
 }));
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({

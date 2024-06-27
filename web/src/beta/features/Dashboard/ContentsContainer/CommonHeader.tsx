@@ -4,7 +4,7 @@ import { Button, IconName, Selector, Typography } from "@reearth/beta/lib/reeart
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-type HeaderProp = {
+type HeaderProps = {
   viewState: string;
   title: string;
   icon?: IconName;
@@ -14,7 +14,8 @@ type HeaderProp = {
   onChangeView?: (v?: string) => void;
   onSortChange?: (value?: string) => void;
 };
-export const CommonHeader: FC<HeaderProp> = ({
+
+const CommonHeader: FC<HeaderProps> = ({
   title,
   icon,
   viewState,
@@ -65,9 +66,12 @@ export const CommonHeader: FC<HeaderProp> = ({
   );
 };
 
-const Header = styled("div")(() => ({
+export default CommonHeader;
+
+const Header = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
+  padding: theme.spacing.largest,
 }));
 
 const Actions = styled("div")(({ theme }) => ({

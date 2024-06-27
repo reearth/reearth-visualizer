@@ -5,9 +5,9 @@ import { styled } from "@reearth/services/theme";
 
 import { Member } from "../../type";
 
-export const List: FC<{ member: Member }> = ({ member }) => {
+const ListItem: FC<{ member: Member }> = ({ member }) => {
   return (
-    <ListItem>
+    <StyledListItem>
       <Avatar>
         <Typography size="body">{member.user?.name.charAt(0).toUpperCase()}</Typography>
       </Avatar>
@@ -22,11 +22,13 @@ export const List: FC<{ member: Member }> = ({ member }) => {
           {member.role.charAt(0).toUpperCase() + member.role.slice(1).toLowerCase()}
         </Typography>
       </ItemWrapper>
-    </ListItem>
+    </StyledListItem>
   );
 };
 
-const ListItem = styled("div")(({ theme }) => ({
+export default ListItem;
+
+const StyledListItem = styled("div")(({ theme }) => ({
   display: "flex",
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
   alignItems: "center",

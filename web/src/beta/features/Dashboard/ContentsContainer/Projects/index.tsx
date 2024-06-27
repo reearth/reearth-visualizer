@@ -1,39 +1,19 @@
-import { FC, MouseEvent } from "react";
+import { FC } from "react";
 
-import { Loading, PopupMenuItem, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Loading, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { Project as ProjectType } from "../../type";
-import { CommonHeader } from "../header";
+import CommonHeader from "../CommonHeader";
 
 import useHooks from "./hooks";
-import { Project } from "./project";
-import { ProjectModal } from "./projectModal";
+import ProjectGridViewItem from "./Project/ProjectGridViewItem";
+import ProjectListViewItem from "./Project/ProjectListViewItem";
+import ProjectCreatorModal from "./ProjectCreatorModal";
 
 const options = [{ value: "date", label: "Latest modified" }];
 
-export type ProjectProps = {
-  project: ProjectType;
-  popupMenu: PopupMenuItem[];
-  selectedProjectId?: string;
-  isStarred?: boolean;
-  isEditing?: boolean;
-  projectName?: string;
-  isHovered?: boolean;
-  viewState?: string;
-  onProjectStarClick?: (e: MouseEvent<Element>, projectId: string) => void;
-  onProjectOpen?: () => void;
-  onProjectUpdate?: (project: ProjectType, projectId: string) => void;
-  onProjectSelect?: (e: MouseEvent<Element>, projectId?: string) => void;
-  onProjectBlur?: () => void;
-  onProjectChange?: (value: string) => void;
-  onProjectNameEdit?: (e: MouseEvent<Element>) => void;
-  onProjectHover?: (v: boolean) => void;
-  onProjectChangeView?: (v?: string) => void;
-};
-
-export const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
+const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
     projects,
     isLoading,
@@ -43,16 +23,18 @@ export const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     isStarred,
     wrapperRef,
     viewState,
+    showProjectCreator,
+    closeProjectCreator,
     handleGetMoreProjects,
-    handleProjectModalVisibility,
     handleProjectUpdate,
     handleProjectCreate,
     handleProjectOpen,
     handleProjectSelect,
     handleProjectStarClick,
-    onScrollToBottom,
+    handleScrollToBottom,
     handleViewStateChange,
   } = useHooks(workspaceId);
+
   const theme = useTheme();
   const t = useT();
 
@@ -65,23 +47,22 @@ export const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         icon="plus"
         options={options}
         onChangeView={handleViewStateChange}
-        onClick={handleProjectModalVisibility}
+        onClick={showProjectCreator}
       />
       <ProjectsWrapper
         ref={wrapperRef}
         onScroll={e => {
-          !isLoading && hasMoreProjects && onScrollToBottom(e, handleGetMoreProjects);
+          !isLoading && hasMoreProjects && handleScrollToBottom(e, handleGetMoreProjects);
         }}>
         {viewState === "grid" && (
           <ProjectsGrid>
             {projects.map(project => (
-              <Project
+              <ProjectGridViewItem
                 key={project.id}
-                viewState={viewState}
                 project={project}
                 isStarred={isStarred[project.id] || false}
-                onProjectStarClick={handleProjectStarClick}
                 selectedProjectId={selectedProject?.id}
+                onProjectStarClick={handleProjectStarClick}
                 onProjectUpdate={handleProjectUpdate}
                 onProjectSelect={handleProjectSelect}
                 onProjectOpen={() => handleProjectOpen(project.sceneId)}
@@ -113,13 +94,12 @@ export const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             <FlexTableBody>
               {projects.map(project => (
                 <FlexTableRow key={project.id}>
-                  <Project
+                  <ProjectListViewItem
                     key={project.id}
-                    viewState={viewState}
                     project={project}
                     isStarred={isStarred[project.id] || false}
-                    onProjectStarClick={handleProjectStarClick}
                     selectedProjectId={selectedProject?.id}
+                    onProjectStarClick={handleProjectStarClick}
                     onProjectUpdate={handleProjectUpdate}
                     onProjectSelect={handleProjectSelect}
                     onProjectOpen={() => handleProjectOpen(project.sceneId)}
@@ -132,9 +112,9 @@ export const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         {isLoading && hasMoreProjects && <Loading relative />}
       </ProjectsWrapper>
       {visible && (
-        <ProjectModal
+        <ProjectCreatorModal
           visible={visible}
-          onClose={handleProjectModalVisibility}
+          onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
         />
       )}
@@ -142,19 +122,18 @@ export const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
+export default Projects;
+
+const Wrapper = styled("div")(() => ({
   display: "flex",
   height: "100%",
   flexDirection: "column",
-  gap: theme.spacing.large,
 }));
 
-const ProjectsWrapper = styled("div")(() => ({
+const ProjectsWrapper = styled("div")(({ theme }) => ({
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
   overflow: "auto",
-  maxHeight: "calc(100vh - 24px)",
-  ["* ::-webkit-scrollbar"]: {
-    width: "8px",
-  },
+  maxHeight: "calc(100vh - 76px)",
 }));
 
 const ProjectsGrid = styled("div")(({ theme }) => ({

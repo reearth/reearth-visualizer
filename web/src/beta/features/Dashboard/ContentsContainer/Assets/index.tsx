@@ -1,34 +1,32 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import useHooks from "@reearth/beta/features/Assets/hooks";
+import useAssets from "@reearth/beta/features/Assets/hooks";
 import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
-import { Loading, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Loading } from "@reearth/beta/lib/reearth-ui";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
-import { CommonHeader } from "../header";
+import CommonHeader from "../CommonHeader";
 
-import { AssetCard } from "./AssetCard";
+import AssetCard from "./AssetCard";
 
-export const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
+const ASSETS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-asset-view-state`;
+
+const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
-  const theme = useTheme();
-
-  const assetViewStateKey = `reearth-visualizer-dashboard-asset-view-state`;
 
   const [viewState, setViewState] = useState(
-    localStorage.getItem(assetViewStateKey) ? localStorage.getItem(assetViewStateKey) : "grid",
+    localStorage.getItem(ASSETS_VIEW_STATE_STORAGE_KEY)
+      ? localStorage.getItem(ASSETS_VIEW_STATE_STORAGE_KEY)
+      : "grid",
   );
-  const handleViewStateChange = useCallback(
-    (newView?: string) => {
-      if (!newView) return;
-      localStorage.setItem(assetViewStateKey, newView);
-      setViewState(newView);
-    },
-    [assetViewStateKey],
-  );
+  const handleViewStateChange = useCallback((newView?: string) => {
+    if (!newView) return;
+    localStorage.setItem(ASSETS_VIEW_STATE_STORAGE_KEY, newView);
+    setViewState(newView);
+  }, []);
 
   const {
     assets,
@@ -36,10 +34,14 @@ export const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     isAssetsLoading: isLoading,
     hasMoreAssets,
     sortOptions,
+    selectedAssets,
     handleGetMoreAssets,
     onScrollToBottom,
     handleSortChange,
-  } = useHooks({ workspaceId });
+    selectAsset,
+  } = useAssets({ workspaceId });
+
+  const selectedAssetsIds = useMemo(() => selectedAssets.map(a => a.id), [selectedAssets]);
 
   const { handleFileUpload } = useFileUploaderHook({
     workspaceId: workspaceId,
@@ -60,14 +62,12 @@ export const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         ref={assetsWrapperRef}
         onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)}>
         <AssetGridWrapper>
-          <Typography size="body" weight="bold" color={theme.content.weak}>
-            {t("Assets")}
-          </Typography>
           <AssetsRow>
             {assets?.map(asset => (
               <AssetCard
                 key={asset.id}
                 asset={asset}
+                isSelected={selectedAssetsIds.includes(asset.id)}
                 icon={
                   checkIfFileType(asset.url, FILE_FORMATS)
                     ? "file"
@@ -75,6 +75,7 @@ export const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     ? "image"
                     : "assetNoSupport"
                 }
+                onAssetSelect={selectAsset}
               />
             ))}
           </AssetsRow>
@@ -85,18 +86,19 @@ export const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
+export default Assets;
+
+const Wrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
 }));
 
 const AssetsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  maxHeight: "calc(100vh - 24px)",
+  maxHeight: "calc(100vh - 76px)",
   flexDirection: "column",
   overflowY: "auto",
-  gap: theme.spacing.large,
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
 }));
 
 const AssetGridWrapper = styled("div")(({ theme }) => ({

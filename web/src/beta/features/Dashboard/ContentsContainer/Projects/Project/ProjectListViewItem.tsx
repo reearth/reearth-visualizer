@@ -4,23 +4,17 @@ import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reea
 import { convertTimeToString } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { ProjectProps } from ".";
+import useHooks from "./hooks";
+import { ProjectProps } from "./types";
 
-export const ListLayout: FC<ProjectProps> = ({
+const ProjectListViewItem: FC<ProjectProps> = ({
   project,
-  popupMenu,
   selectedProjectId,
   isStarred,
-  isEditing,
-  projectName,
-  isHovered,
   onProjectOpen,
   onProjectSelect,
+  onProjectUpdate,
   onProjectStarClick,
-  onProjectBlur,
-  onProjectChange,
-  onProjectHover,
-  onProjectNameEdit,
 }) => {
   const theme = useTheme();
 
@@ -33,13 +27,29 @@ export const ListLayout: FC<ProjectProps> = ({
     [project.updatedAt],
   );
 
+  const {
+    projectName,
+    popupMenu,
+    isEditing,
+    isHovered,
+    handleProjectNameChange,
+    handleProjectNameBlur,
+    handleOnHover,
+    handleProjectNameDoubleClick,
+  } = useHooks({
+    project,
+    selectedProjectId,
+    onProjectUpdate,
+    onProjectSelect,
+  });
+
   return (
     <StyledRow
-      onClick={onProjectSelect}
+      onClick={e => onProjectSelect?.(e, project.id)}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
-      onMouseEnter={() => onProjectHover?.(true)}
-      onMouseLeave={() => onProjectHover?.(false)}
+      onMouseEnter={() => handleOnHover?.(true)}
+      onMouseLeave={() => handleOnHover?.(false)}
       isSelected={selectedProjectId === project.id}>
       <ActionCell>
         <FlexItem>
@@ -61,11 +71,11 @@ export const ListLayout: FC<ProjectProps> = ({
       </ActionCell>
       <ProjectNameCell>
         {!isEditing ? (
-          <TitleWrapper onDoubleClick={onProjectNameEdit}>{projectName}</TitleWrapper>
+          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>{projectName}</TitleWrapper>
         ) : (
           <TextInput
-            onChange={onProjectChange}
-            onBlur={onProjectBlur}
+            onChange={handleProjectNameChange}
+            onBlur={handleProjectNameBlur}
             value={projectName}
             autoFocus={isEditing}
             appearance="present"
@@ -90,6 +100,8 @@ export const ListLayout: FC<ProjectProps> = ({
     </StyledRow>
   );
 };
+
+export default ProjectListViewItem;
 
 const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
   ({ isSelected, theme, isHovered }) => ({

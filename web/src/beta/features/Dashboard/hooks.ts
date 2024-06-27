@@ -27,7 +27,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const { tab } = useParams<{
     tab?: string;
   }>();
-  const currentTab = useMemo(() => tab ?? "project", [tab]);
+  const currentTab = useMemo(() => tab ?? "projects", [tab]);
 
   const topTabs = useMemo(
     () =>
@@ -40,13 +40,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     [topTabItems, isPersonal, workspaceId],
   );
 
-  const bottomTabs = useMemo(
-    () =>
-      bottomTabsItems.map(tab => ({
-        ...tab,
-      })),
-    [bottomTabsItems],
-  );
+  const bottomTabs = useMemo(() => bottomTabsItems, [bottomTabsItems]);
 
   useEffect(() => {
     if (workspace?.id && workspace.id !== currentWorkspace?.id) {

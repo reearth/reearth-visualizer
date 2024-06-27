@@ -7,6 +7,8 @@ import { Visualizer } from "@reearth/services/gql";
 
 import { Project } from "../../type";
 
+const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
+
 export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
@@ -15,19 +17,17 @@ export default (workspaceId?: string) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
 
-  const projectViewStateKey = `reearth-visualizer-dashboard-project-view-state`;
-
   const [viewState, setViewState] = useState(
-    localStorage.getItem(projectViewStateKey) ? localStorage.getItem(projectViewStateKey) : "grid",
+    localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
+      ? localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
+      : "grid",
   );
-  const handleViewStateChange = useCallback(
-    (newView?: string) => {
-      if (!newView) return;
-      localStorage.setItem(projectViewStateKey, newView);
-      setViewState(newView);
-    },
-    [projectViewStateKey],
-  );
+  const handleViewStateChange = useCallback((newView?: string) => {
+    if (!newView) return;
+    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
+    setViewState(newView);
+  }, []);
+
   const handleProjectCreate = useCallback(
     async (data: Pick<Project, "name" | "description" | "imageUrl">) => {
       if (!workspaceId) return;
@@ -111,9 +111,12 @@ export default (workspaceId?: string) => {
     [projects],
   );
 
-  const handleProjectModalVisibility = useCallback(() => {
-    setVisible(!visible);
-  }, [visible]);
+  const showProjectCreator = useCallback(() => {
+    setVisible(true);
+  }, []);
+  const closeProjectCreator = useCallback(() => {
+    setVisible(false);
+  }, []);
 
   const handleProjectOpen = useCallback(
     (sceneId?: string) => {
@@ -150,14 +153,15 @@ export default (workspaceId?: string) => {
     isStarred,
     wrapperRef,
     viewState,
-    handleProjectModalVisibility,
+    showProjectCreator,
+    closeProjectCreator,
     handleGetMoreProjects,
     handleProjectUpdate,
     handleProjectOpen,
     handleProjectCreate,
     handleProjectSelect,
     handleProjectStarClick,
-    onScrollToBottom,
+    handleScrollToBottom: onScrollToBottom,
     handleViewStateChange,
   };
 };

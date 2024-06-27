@@ -3,34 +3,45 @@ import { FC } from "react";
 import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { ProjectProps } from ".";
+import useHooks from "./hooks";
+import { ProjectProps } from "./types";
 
-export const GridLayout: FC<ProjectProps> = ({
+const ProjectGridViewItem: FC<ProjectProps> = ({
   project,
-  popupMenu,
   selectedProjectId,
   isStarred,
-  isHovered,
-  isEditing,
-  projectName,
   onProjectOpen,
   onProjectSelect,
   onProjectStarClick,
-  onProjectBlur,
-  onProjectChange,
-  onProjectNameEdit,
-  onProjectHover,
+  onProjectUpdate,
 }) => {
   const theme = useTheme();
+
+  const {
+    projectName,
+    popupMenu,
+    isEditing,
+    isHovered,
+    handleProjectNameChange,
+    handleProjectNameBlur,
+    handleOnHover,
+    handleProjectNameDoubleClick,
+  } = useHooks({
+    project,
+    selectedProjectId,
+    onProjectUpdate,
+    onProjectSelect,
+  });
+
   return (
     <Card>
       <CardImage
         backgroundImage={project.imageUrl}
         onDoubleClick={onProjectOpen}
-        onClick={onProjectSelect}
+        onClick={e => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
-        onMouseEnter={() => onProjectHover?.(true)}
-        onMouseLeave={() => onProjectHover?.(false)}
+        onMouseEnter={() => handleOnHover?.(true)}
+        onMouseLeave={() => handleOnHover?.(false)}
         isSelected={selectedProjectId === project.id}>
         <StarButtonWrapper
           isStarred={isStarred ?? false}
@@ -49,11 +60,11 @@ export const GridLayout: FC<ProjectProps> = ({
       <CardFooter>
         <CardTitleWrapper>
           {!isEditing ? (
-            <CardTitle onDoubleClick={onProjectNameEdit}>{projectName}</CardTitle>
+            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>{projectName}</CardTitle>
           ) : (
             <TextInput
-              onChange={onProjectChange}
-              onBlur={onProjectBlur}
+              onChange={handleProjectNameChange}
+              onBlur={handleProjectNameBlur}
               value={projectName}
               autoFocus={isEditing}
               appearance="present"
@@ -68,6 +79,8 @@ export const GridLayout: FC<ProjectProps> = ({
     </Card>
   );
 };
+
+export default ProjectGridViewItem;
 
 const Card = styled("div")(() => ({
   display: "flex",

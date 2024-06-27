@@ -14,13 +14,17 @@ import { styled } from "@reearth/services/theme";
 
 import { Project } from "../../type";
 
-type Props = {
+type ProjectCreatorModalProps = {
   visible: boolean;
   onClose?: () => void;
   onProjectCreate: (data: Pick<Project, "name" | "description" | "imageUrl">) => void;
 };
 
-export const ProjectModal: FC<Props> = ({ visible, onClose, onProjectCreate }) => {
+const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
+  visible,
+  onClose,
+  onProjectCreate,
+}) => {
   const t = useT();
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
@@ -99,6 +103,8 @@ export const ProjectModal: FC<Props> = ({ visible, onClose, onProjectCreate }) =
     </Modal>
   );
 };
+
+export default ProjectCreatorModal;
 
 const Form = styled("div")(({ theme }) => ({
   display: "flex",

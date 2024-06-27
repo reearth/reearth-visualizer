@@ -6,9 +6,9 @@ import { styled } from "@reearth/services/theme";
 
 import { Workspace } from "../../type";
 
-import { List } from "./List";
+import ListItem from "./ListItem";
 
-export const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => {
+const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => {
   const t = useT();
   return (
     <Wrapper>
@@ -18,22 +18,21 @@ export const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace
         </TextInputWrapper>
         <Button icon="magnifyingGlass" title={t("Find Member")} size="small" />
       </Search>
-      <ProjectsWrapper>
-        <ListWrapper>
-          {currentWorkspace?.members?.map(member => (
-            <List key={member.userId} member={member} />
-          ))}
-        </ListWrapper>
-      </ProjectsWrapper>
+      <ListWrapper>
+        {currentWorkspace?.members?.map(member => (
+          <ListItem key={member.userId} member={member} />
+        ))}
+      </ListWrapper>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
+export default Members;
+
+const Wrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  gap: theme.spacing.large,
   width: "100%",
   height: "100%",
 }));
@@ -43,20 +42,19 @@ const Search = styled("div")(({ theme }) => ({
   alignItems: "flex-start",
   gap: theme.spacing.normal,
   width: "40%",
+  padding: theme.spacing.largest,
 }));
 
 const TextInputWrapper = styled("div")(() => ({
   flex: 1,
 }));
 
-const ProjectsWrapper = styled("div")(() => ({
-  overflow: "auto",
-  width: "100%",
-}));
-
 const ListWrapper = styled("div")(({ theme }) => ({
+  width: "100%",
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
   display: "flex",
   gap: theme.spacing.normal,
   flexDirection: "column",
   overflow: "auto",
+  boxSizing: "border-box",
 }));
