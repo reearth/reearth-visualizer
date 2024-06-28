@@ -5,7 +5,7 @@ export default () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const checkPermission = useCallback(async () => {
+  const checkPermission = useCallback(async (roles: string[], action: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -24,9 +24,9 @@ export default () => {
           `,
           variables: {
             input: {
-              resource: "flow",
-              roles: ["writer"],
-              action: "read",
+              resource: "visualizer",
+              roles,
+              action,
             },
           },
         }),
