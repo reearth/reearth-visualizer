@@ -34,7 +34,6 @@ import {
   ScreenSpaceCameraControllerOptions,
 } from "@reearth/core";
 
-import { InfoboxBlock as Block } from "../Infobox/types";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 
@@ -113,7 +112,7 @@ export type Reearth = {
   >;
   readonly layer?: LazyLayer;
   readonly widget?: Widget;
-  readonly block?: Block;
+  readonly block?: CommonBlock;
   readonly scene: Undefinable<Scene>;
   readonly viewer: Viewer;
   readonly viewport?: Viewport;
@@ -131,6 +130,15 @@ export type Reearth = {
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
   ) => void;
+};
+
+export type CommonBlock = {
+  id: string;
+  name?: string | null;
+  pluginId: string;
+  extensionId: string;
+  propertyId?: string;
+  property?: any;
 };
 
 export type Scene = {

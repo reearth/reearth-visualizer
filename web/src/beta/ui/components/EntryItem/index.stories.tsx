@@ -25,10 +25,10 @@ export const Default: Story = {
   },
 };
 
-export const Highlight: Story = {
+export const Highlighted: Story = {
   args: {
     title: "Item",
-    highlight: true,
+    highlighted: true,
   },
 };
 
@@ -41,7 +41,7 @@ export const Icon: Story = {
 
 export const LongText: Story = {
   args: {
-    title: "ItemNameWithALongLong Long Long LongLongLongLongName",
+    title: "Item With A Long Long Long Long Long Long Long Long Name",
     icon: "file",
   },
 };
@@ -65,24 +65,65 @@ export const OptionsMenu: Story = {
   },
 };
 
-export const HoverActions: Story = {
+export const Actions: Story = {
   args: {
     title: "Item",
-    hoverActions: [
-      <IconButton
-        key="1"
-        icon="setting"
-        size="small"
-        appearance="simple"
-        onClick={() => console.log("Action 1 clicked")}
-      />,
-      <IconButton
-        key="2"
-        icon="pencilSimple"
-        size="small"
-        appearance="simple"
-        onClick={() => console.log("Action 2 clicked")}
-      />,
+    actions: [
+      {
+        comp: (
+          <IconButton
+            key="1"
+            icon="setting"
+            size="small"
+            appearance="simple"
+            onClick={() => console.log("Action 1 clicked")}
+          />
+        ),
+      },
+      {
+        comp: (
+          <IconButton
+            key="2"
+            icon="pencilSimple"
+            size="small"
+            appearance="simple"
+            onClick={() => console.log("Action 2 clicked")}
+          />
+        ),
+        keepVisible: true,
+      },
+    ],
+  },
+};
+
+export const DisableHover: Story = {
+  args: {
+    title: "Item",
+    disableHover: true,
+    actions: [
+      {
+        comp: (
+          <IconButton
+            key="1"
+            icon="setting"
+            size="small"
+            appearance="simple"
+            onClick={() => console.log("Action 1 clicked")}
+          />
+        ),
+      },
+      {
+        comp: (
+          <IconButton
+            key="2"
+            icon="pencilSimple"
+            size="small"
+            appearance="simple"
+            onClick={() => console.log("Action 2 clicked")}
+          />
+        ),
+        keepVisible: true,
+      },
     ],
   },
 };

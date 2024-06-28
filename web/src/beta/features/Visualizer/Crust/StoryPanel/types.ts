@@ -1,3 +1,5 @@
+import { Item } from "@reearth/services/api/propertyApi/utils";
+
 export type Position = "left" | "right";
 
 export type Story = {
@@ -25,6 +27,7 @@ export type StoryBlock = {
   extensionId: string;
   propertyId?: string;
   property?: any;
+  pluginBlockPropertyItems?: Item[];
 };
 
 export type Field<V = any> = {

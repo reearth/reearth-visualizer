@@ -3,6 +3,7 @@ import {
   StoryBlock,
   StoryPage,
 } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
+import { convert } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
 import { StoryPage as GqlStoryPage, StoryBlock as GqlStoryBlock } from "@reearth/services/gql";
 
@@ -38,6 +39,7 @@ export const convertStory = (scene?: Scene, storyId?: string): Story | undefined
       name: installedBlockNames?.[b.extensionId] ?? "Story Block",
       propertyId: b.property?.id,
       property: processProperty(undefined, b.property),
+      pluginBlockPropertyItems: convert(b.property),
     }));
 
   return {
