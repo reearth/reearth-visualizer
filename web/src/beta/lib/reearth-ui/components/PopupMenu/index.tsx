@@ -24,7 +24,6 @@ export type PopupMenuProps = {
   nested?: boolean;
   width?: number;
   size?: "small" | "normal";
-  extendTriggerWidth?: boolean;
   placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
 };
@@ -34,7 +33,6 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   menu,
   nested,
   width,
-  // extendTriggerWidth
   placement,
   triggerOnHover,
   icon,

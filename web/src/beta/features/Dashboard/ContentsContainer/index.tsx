@@ -26,6 +26,7 @@ const ContentsContainer: FC<ContainerProps> = ({ tab, workspaceId, currentWorksp
 const Wrapper = styled("div")(({ theme }) => ({
   flex: 1,
   background: theme.bg[0],
+  width: "100%",
 }));
 
 export default ContentsContainer;

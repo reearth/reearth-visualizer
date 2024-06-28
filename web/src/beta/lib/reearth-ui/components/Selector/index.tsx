@@ -204,7 +204,7 @@ const SelectInput = styled("div")<{
     isMultiple ? theme.spacing.smallest : theme.spacing.small
   }px`,
   cursor: disabled ? "not-allowed" : "pointer",
-  width: width ? `${width}px` : "",
+  minWidth: width ? `${width}px` : "fit-content",
   minHeight: "32px",
 }));
 

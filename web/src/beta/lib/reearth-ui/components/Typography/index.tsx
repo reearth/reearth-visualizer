@@ -48,6 +48,7 @@ export const Typography: FC<TypographyProps> = ({
       ...otherProperties,
       color: color || theme.content.main,
       textOverflow: "ellipsis",
+      overflow: "hidden",
     }),
     [otherProperties, theme.content.main, color],
   );

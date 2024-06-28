@@ -11,17 +11,17 @@ const ListItem: FC<{ member: Member }> = ({ member }) => {
       <Avatar>
         <Typography size="body">{member.user?.name.charAt(0).toUpperCase()}</Typography>
       </Avatar>
-      <ItemWrapper>
+      <TypographyWrapper>
         <Typography size="body">{member.user?.name}</Typography>
-      </ItemWrapper>
-      <ItemWrapper>
+      </TypographyWrapper>
+      <TypographyWrapper>
         <Typography size="body">{member.user?.email}</Typography>
-      </ItemWrapper>
-      <ItemWrapper>
+      </TypographyWrapper>
+      <TypographyWrapper>
         <Typography size="body">
           {member.role.charAt(0).toUpperCase() + member.role.slice(1).toLowerCase()}
         </Typography>
-      </ItemWrapper>
+      </TypographyWrapper>
     </StyledListItem>
   );
 };
@@ -29,7 +29,8 @@ const ListItem: FC<{ member: Member }> = ({ member }) => {
 export default ListItem;
 
 const StyledListItem = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: "grid",
+  gridTemplateColumns: "auto 1fr 1fr 1fr",
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
   alignItems: "center",
   background: theme.bg[1],
@@ -47,6 +48,7 @@ const Avatar = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }));
 
-const ItemWrapper = styled("div")(() => ({
-  flex: 1,
+const TypographyWrapper = styled("div")(() => ({
+  overflow: "hidden",
+  textOverflow: "ellipsis",
 }));

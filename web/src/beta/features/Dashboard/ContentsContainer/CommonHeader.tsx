@@ -37,21 +37,22 @@ const CommonHeader: FC<HeaderProps> = ({
 
   return (
     <Header>
-      <ButtonWrapper>
-        <Button title={title} icon={icon} appearance={appearance} onClick={onClick} />
-      </ButtonWrapper>
+      <Button title={title} icon={icon} appearance={appearance} onClick={onClick} />
 
       <Actions>
         <Typography size="body">{t("Sort")}: </Typography>
-        <SelectorWrapper>
+        <SelectorContainer>
           <Selector options={options || []} onChange={onChange} />
-        </SelectorWrapper>
+        </SelectorContainer>
+
         <Button
           iconButton
           icon="grid"
           iconColor={viewState === "grid" ? theme.content.main : theme.content.weak}
           appearance="simple"
           onClick={() => onChangeView?.("grid")}
+          shadow={false}
+          size="small"
         />
         <Button
           iconButton
@@ -60,6 +61,8 @@ const CommonHeader: FC<HeaderProps> = ({
           appearance="simple"
           disabled={icon === "uploadSimple" ? true : false}
           onClick={() => onChangeView?.("list")}
+          shadow={false}
+          size="small"
         />
       </Actions>
     </Header>
@@ -68,23 +71,15 @@ const CommonHeader: FC<HeaderProps> = ({
 
 export default CommonHeader;
 
-const Header = styled("div")(({ theme }) => ({
+const Header = styled("div")(() => ({
   display: "flex",
   justifyContent: "space-between",
-  padding: theme.spacing.largest,
 }));
 
 const Actions = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
-  flex: 1,
 }));
 
-const ButtonWrapper = styled("div")(() => ({
-  flex: 3,
-}));
-
-const SelectorWrapper = styled("div")(() => ({
-  flex: 1,
-}));
+const SelectorContainer = styled("div")(() => ({ minWidth: "130px" }));

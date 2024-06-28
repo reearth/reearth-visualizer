@@ -11,7 +11,7 @@ import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
 import ProjectCreatorModal from "./ProjectCreatorModal";
 
-const options = [{ value: "date", label: "Latest modified" }];
+const options = [{ value: "date", label: "Created Time" }];
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
@@ -124,15 +124,16 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
 export default Projects;
 
-const Wrapper = styled("div")(() => ({
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
   flexDirection: "column",
+  padding: theme.spacing.largest,
+  gap: theme.spacing.largest,
 }));
 
-const ProjectsWrapper = styled("div")(({ theme }) => ({
-  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
-  overflow: "auto",
+const ProjectsWrapper = styled("div")(() => ({
+  overflowY: "auto",
   maxHeight: "calc(100vh - 76px)",
 }));
 

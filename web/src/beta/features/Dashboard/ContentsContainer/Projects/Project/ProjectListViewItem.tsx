@@ -112,7 +112,7 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     border: `1px solid ${
       isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
     }`,
-    padding: theme.spacing.small,
+    padding: `${theme.spacing.small}px 0`,
     gap: theme.spacing.small,
     alignItems: "center",
   }),
