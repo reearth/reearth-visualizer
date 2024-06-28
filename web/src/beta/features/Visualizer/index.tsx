@@ -56,6 +56,7 @@ type VisualizerProps = {
   zoomedLayerId?: string;
   visualizerRef?: MutableRefObject<MapRef | null>;
   currentCamera?: Camera;
+  initialCamera?: Camera;
   interactionMode?: InteractionModeType;
   onCameraChange?: (camera: Camera) => void;
   onCoreLayerSelect?: (
@@ -143,6 +144,7 @@ const Visualizer: FC<VisualizerProps> = ({
   zoomedLayerId,
   visualizerRef,
   currentCamera,
+  initialCamera,
   interactionMode,
   onCameraChange,
   onCoreLayerSelect,
@@ -227,6 +229,7 @@ const Visualizer: FC<VisualizerProps> = ({
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
           // Widget
+          initialCamera={initialCamera}
           widgetThemeOptions={widgetThemeOptions}
           widgetAlignSystem={widgets?.alignSystem}
           widgetAlignSystemEditing={widgetAlignEditorActivated}

@@ -71,6 +71,7 @@ const EditorVisualizer: React.FC<Props> = ({
     zoomedLayerId,
     installableInfoboxBlocks,
     currentCamera,
+    initialCamera,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
@@ -116,6 +117,7 @@ const EditorVisualizer: React.FC<Props> = ({
       zoomedLayerId={zoomedLayerId}
       visualizerRef={visualizerRef}
       currentCamera={currentCamera}
+      initialCamera={initialCamera}
       interactionMode={interactionMode}
       onCameraChange={handleCameraUpdate}
       onCoreLayerSelect={handleCoreLayerSelect}

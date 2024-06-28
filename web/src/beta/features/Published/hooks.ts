@@ -35,11 +35,15 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
 
   const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(data?.property);
     const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
     const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    if (sceneProperty?.camera?.camera) {
+      setInitialCamera(sceneProperty?.camera?.camera);
+    }
     return {
       viewerProperty: sceneProperty
         ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
@@ -48,6 +52,12 @@ export default (alias?: string) => {
       cesiumIonAccessToken,
     };
   }, [data?.property]);
+
+  useEffect(() => {
+    setCurrentCamera(initialCamera);
+  }, [initialCamera]);
+
+  console.log(currentCamera);
 
   const pluginProperty = useMemo(
     () =>
@@ -276,6 +286,7 @@ export default (alias?: string) => {
     engineMeta,
     visualizerRef,
     currentCamera,
+    initialCamera,
     setCurrentCamera,
   };
 };

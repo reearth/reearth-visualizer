@@ -83,6 +83,5 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "moon.moon": "sky.moon.show",
   "skyAtmosphere.skyAtmosphere": "sky.atmosphere.show",
   "skyAtmosphere.skyAtmosphereIntensity": "sky.atmosphere.lightIntensity",
-  "camera.camera": "camera.camera",
   "camera.allowEnterGround": "camera.allowEnterGround",
 };

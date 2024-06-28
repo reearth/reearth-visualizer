@@ -22,6 +22,7 @@ export default function Published({ alias }: Props) {
     engineMeta,
     visualizerRef,
     currentCamera,
+    initialCamera,
     setCurrentCamera,
   } = useHooks(alias);
 
@@ -45,6 +46,7 @@ export default function Published({ alias }: Props) {
       pluginProperty={pluginProperty}
       showStoryPanel={!!story}
       currentCamera={currentCamera}
+      initialCamera={initialCamera}
       onCameraChange={setCurrentCamera}
     />
   );

@@ -59,16 +59,28 @@ export default ({
     useMoveInfoboxBlock,
   } = useInfoboxFetcher();
 
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => {
+      setCurrentCamera(camera);
+    },
+    [setCurrentCamera],
+  );
+
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
 
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
     const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    if (sceneProperty?.camera?.camera) {
+      setInitialCamera(sceneProperty?.camera?.camera);
+    }
     return {
       viewerProperty: sceneProperty
         ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
@@ -76,6 +88,10 @@ export default ({
       cesiumIonAccessToken,
     };
   }, [scene?.property]);
+
+  useEffect(() => {
+    setCurrentCamera(initialCamera);
+  }, [initialCamera, setCurrentCamera]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
@@ -279,15 +295,6 @@ export default ({
 
   const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
 
-  // Camera
-  const [currentCamera, setCurrentCamera] = useCurrentCamera();
-  const handleCameraUpdate = useCallback(
-    (camera: Camera) => {
-      setCurrentCamera(camera);
-    },
-    [setCurrentCamera],
-  );
-
   return {
     viewerProperty,
     pluginProperty,
@@ -298,6 +305,7 @@ export default ({
     zoomedLayerId,
     installableInfoboxBlocks,
     currentCamera,
+    initialCamera,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,

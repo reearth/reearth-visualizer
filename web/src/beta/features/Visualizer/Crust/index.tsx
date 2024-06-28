@@ -63,6 +63,7 @@ export type Props = {
   viewerProperty?: ViewerProperty;
   overrideViewerProperty?: (pluginId: string, property: ViewerProperty) => void;
   // widgets
+  initialCamera?: Camera;
   widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignSystem?: WidgetAlignSystemType;
   widgetAlignSystemEditing?: boolean;
@@ -152,6 +153,7 @@ export default function Crust({
   viewerProperty,
   overrideViewerProperty,
   // Widget
+  initialCamera,
   widgetThemeOptions,
   widgetAlignSystem,
   widgetAlignSystemEditing,
@@ -220,6 +222,7 @@ export default function Crust({
   const widgetContext = useWidgetContext({
     mapRef,
     viewerProperty,
+    initialCamera,
     selectedLayerId,
     timelineManagerRef: mapRef?.current?.timeline,
   });
