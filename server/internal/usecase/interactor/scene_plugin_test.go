@@ -98,7 +98,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			ctx := context.Background()
 
 			tid := accountdomain.NewWorkspaceID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
 				sc.Plugins().Add(p)
 			}
@@ -230,7 +230,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			lr := memory.NewLayerWith(l1, l2)
 
 			tid := accountdomain.NewWorkspaceID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
 			sw, _ := scene.NewWidget(scene.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
@@ -378,7 +378,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			dsr := memory.NewDataset()
 
 			tid := accountdomain.NewWorkspaceID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 			sr := memory.NewSceneWith(sc)
 
