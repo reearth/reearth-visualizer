@@ -41,7 +41,6 @@ func TestSceneNil(t *testing.T) {
 	assert.Nil(t, s.Widgets())
 	assert.True(t, s.Project().IsEmpty())
 	assert.True(t, s.Workspace().IsEmpty())
-	// assert.True(t, s.RootLayer().IsEmpty())
 	assert.True(t, s.CreatedAt().IsZero())
 	assert.Nil(t, s.Plugins())
 	assert.True(t, s.Property().IsEmpty())
