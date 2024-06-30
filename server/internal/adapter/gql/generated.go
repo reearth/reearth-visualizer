@@ -1079,27 +1079,20 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
-		Clusters          func(childComplexity int) int
-		CreatedAt         func(childComplexity int) int
-		DatasetSchemas    func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		ID                func(childComplexity int) int
-		NewLayers         func(childComplexity int) int
-		Plugins           func(childComplexity int) int
-		Project           func(childComplexity int) int
-		ProjectID         func(childComplexity int) int
-		Property          func(childComplexity int) int
-		PropertyID        func(childComplexity int) int
-		RootLayer         func(childComplexity int) int
-		RootLayerID       func(childComplexity int) int
-		Stories           func(childComplexity int) int
-		Styles            func(childComplexity int) int
-		TagIds            func(childComplexity int) int
-		Tags              func(childComplexity int) int
-		Team              func(childComplexity int) int
-		TeamID            func(childComplexity int) int
-		UpdatedAt         func(childComplexity int) int
-		WidgetAlignSystem func(childComplexity int) int
-		Widgets           func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		NewLayers  func(childComplexity int) int
+		Plugins    func(childComplexity int) int
+		Project    func(childComplexity int) int
+		ProjectID  func(childComplexity int) int
+		Property   func(childComplexity int) int
+		PropertyID func(childComplexity int) int
+		Stories    func(childComplexity int) int
+		Styles     func(childComplexity int) int
+		Team       func(childComplexity int) int
+		TeamID     func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
+		Widgets    func(childComplexity int) int
 	}
 
 	ScenePlugin struct {
@@ -1693,13 +1686,9 @@ type SceneResolver interface {
 	Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error)
 	Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error)
 	Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error)
-	RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error)
 	NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error)
 	Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error)
 	Styles(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Style, error)
-	DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
-
-	Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.Tag, error)
 }
 type ScenePluginResolver interface {
 	Plugin(ctx context.Context, obj *gqlmodel.ScenePlugin) (*gqlmodel.Plugin, error)
@@ -6784,31 +6773,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RemoveWidgetPayload.WidgetID(childComplexity), true
 
-	case "Scene.clusters":
-		if e.complexity.Scene.Clusters == nil {
-			break
-		}
-
-		return e.complexity.Scene.Clusters(childComplexity), true
-
 	case "Scene.createdAt":
 		if e.complexity.Scene.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Scene.CreatedAt(childComplexity), true
-
-	case "Scene.datasetSchemas":
-		if e.complexity.Scene.DatasetSchemas == nil {
-			break
-		}
-
-		args, err := ec.field_Scene_datasetSchemas_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Scene.DatasetSchemas(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
 	case "Scene.id":
 		if e.complexity.Scene.ID == nil {
@@ -6859,20 +6829,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.PropertyID(childComplexity), true
 
-	case "Scene.rootLayer":
-		if e.complexity.Scene.RootLayer == nil {
-			break
-		}
-
-		return e.complexity.Scene.RootLayer(childComplexity), true
-
-	case "Scene.rootLayerId":
-		if e.complexity.Scene.RootLayerID == nil {
-			break
-		}
-
-		return e.complexity.Scene.RootLayerID(childComplexity), true
-
 	case "Scene.stories":
 		if e.complexity.Scene.Stories == nil {
 			break
@@ -6886,20 +6842,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Scene.Styles(childComplexity), true
-
-	case "Scene.tagIds":
-		if e.complexity.Scene.TagIds == nil {
-			break
-		}
-
-		return e.complexity.Scene.TagIds(childComplexity), true
-
-	case "Scene.tags":
-		if e.complexity.Scene.Tags == nil {
-			break
-		}
-
-		return e.complexity.Scene.Tags(childComplexity), true
 
 	case "Scene.team":
 		if e.complexity.Scene.Team == nil {
@@ -6921,13 +6863,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Scene.UpdatedAt(childComplexity), true
-
-	case "Scene.widgetAlignSystem":
-		if e.complexity.Scene.WidgetAlignSystem == nil {
-			break
-		}
-
-		return e.complexity.Scene.WidgetAlignSystem(childComplexity), true
 
 	case "Scene.widgets":
 		if e.complexity.Scene.Widgets == nil {
@@ -9796,21 +9731,21 @@ extend type Mutation {
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  rootLayerId: ID!
+  # rootLayerId: ID!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystem
+  # widgetAlignSystem: WidgetAlignSystem
   project: Project
   team: Team
   property: Property
-  rootLayer: LayerGroup
+  # rootLayer: LayerGroup
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
-  datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
-  tagIds: [ID!]!
-  tags: [Tag!]!
-  clusters: [Cluster!]!
+  # datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
+  # tagIds: [ID!]!
+  # tags: [Tag!]!
+  # clusters: [Cluster!]!
 }
 
 type SceneWidget {
@@ -12610,48 +12545,6 @@ func (ec *executionContext) field_Query_searchUser_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Scene_datasetSchemas_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["first"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["last"] = arg1
-	var arg2 *usecasex.Cursor
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["after"] = arg2
-	var arg3 *usecasex.Cursor
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg3, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg3
-	return args, nil
-}
-
 func (ec *executionContext) field_Team_assets_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -12834,36 +12727,22 @@ func (ec *executionContext) fieldContext_AddClusterPayload_scene(ctx context.Con
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -13887,36 +13766,22 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(ctx context.Cont
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -15468,36 +15333,22 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(ctx context.Co
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -17498,36 +17349,22 @@ func (ec *executionContext) fieldContext_DatasetSchema_scene(ctx context.Context
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -19929,36 +19766,22 @@ func (ec *executionContext) fieldContext_Infobox_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -20485,36 +20308,22 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(ctx context.Context,
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -21308,36 +21117,22 @@ func (ec *executionContext) fieldContext_InfoboxField_scene(ctx context.Context,
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -21447,36 +21242,22 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -22783,36 +22564,22 @@ func (ec *executionContext) fieldContext_LayerGroup_scene(ctx context.Context, f
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23813,36 +23580,22 @@ func (ec *executionContext) fieldContext_LayerItem_scene(ctx context.Context, fi
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24855,36 +24608,22 @@ func (ec *executionContext) fieldContext_MergedInfobox_scene(ctx context.Context
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -25329,36 +25068,22 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_scene(ctx context.Co
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -25872,36 +25597,22 @@ func (ec *executionContext) fieldContext_MergedLayer_scene(ctx context.Context, 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -34612,36 +34323,22 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(ctx context.Context, f
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -35103,36 +34800,22 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(ctx context.Context
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -35597,36 +35280,22 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(ctx context.Contex
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -36513,36 +36182,22 @@ func (ec *executionContext) fieldContext_Plugin_scene(ctx context.Context, field
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -39026,36 +38681,22 @@ func (ec *executionContext) fieldContext_Project_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -44781,36 +44422,22 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -45352,36 +44979,22 @@ func (ec *executionContext) fieldContext_RemoveClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -46366,36 +45979,22 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -46711,50 +46310,6 @@ func (ec *executionContext) fieldContext_Scene_updatedAt(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Scene_rootLayerId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_rootLayerId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RootLayerID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_rootLayerId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Scene_widgets(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Scene_widgets(ctx, field)
 	if err != nil {
@@ -46868,53 +46423,6 @@ func (ec *executionContext) fieldContext_Scene_plugins(ctx context.Context, fiel
 				return ec.fieldContext_ScenePlugin_property(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ScenePlugin", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_widgetAlignSystem(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WidgetAlignSystem, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.WidgetAlignSystem)
-	fc.Result = res
-	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "inner":
-				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
-			case "outer":
-				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
 		},
 	}
 	return fc, nil
@@ -47125,91 +46633,6 @@ func (ec *executionContext) fieldContext_Scene_property(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Scene_rootLayer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_rootLayer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().RootLayer(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.LayerGroup)
-	fc.Result = res
-	return ec.marshalOLayerGroup2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐLayerGroup(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_rootLayer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_LayerGroup_id(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_LayerGroup_sceneId(ctx, field)
-			case "name":
-				return ec.fieldContext_LayerGroup_name(ctx, field)
-			case "isVisible":
-				return ec.fieldContext_LayerGroup_isVisible(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_LayerGroup_propertyId(ctx, field)
-			case "pluginId":
-				return ec.fieldContext_LayerGroup_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_LayerGroup_extensionId(ctx, field)
-			case "infobox":
-				return ec.fieldContext_LayerGroup_infobox(ctx, field)
-			case "parentId":
-				return ec.fieldContext_LayerGroup_parentId(ctx, field)
-			case "linkedDatasetSchemaId":
-				return ec.fieldContext_LayerGroup_linkedDatasetSchemaId(ctx, field)
-			case "root":
-				return ec.fieldContext_LayerGroup_root(ctx, field)
-			case "layerIds":
-				return ec.fieldContext_LayerGroup_layerIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_LayerGroup_tags(ctx, field)
-			case "parent":
-				return ec.fieldContext_LayerGroup_parent(ctx, field)
-			case "property":
-				return ec.fieldContext_LayerGroup_property(ctx, field)
-			case "plugin":
-				return ec.fieldContext_LayerGroup_plugin(ctx, field)
-			case "extension":
-				return ec.fieldContext_LayerGroup_extension(ctx, field)
-			case "linkedDatasetSchema":
-				return ec.fieldContext_LayerGroup_linkedDatasetSchema(ctx, field)
-			case "layers":
-				return ec.fieldContext_LayerGroup_layers(ctx, field)
-			case "scene":
-				return ec.fieldContext_LayerGroup_scene(ctx, field)
-			case "scenePlugin":
-				return ec.fieldContext_LayerGroup_scenePlugin(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type LayerGroup", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Scene_newLayers(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Scene_newLayers(ctx, field)
 	if err != nil {
@@ -47393,213 +46816,6 @@ func (ec *executionContext) fieldContext_Scene_styles(ctx context.Context, field
 				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_datasetSchemas(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_datasetSchemas(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().DatasetSchemas(rctx, obj, fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.DatasetSchemaConnection)
-	fc.Result = res
-	return ec.marshalNDatasetSchemaConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchemaConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_datasetSchemas(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_DatasetSchemaConnection_edges(ctx, field)
-			case "nodes":
-				return ec.fieldContext_DatasetSchemaConnection_nodes(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_DatasetSchemaConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_DatasetSchemaConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DatasetSchemaConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Scene_datasetSchemas_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_tagIds(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_tagIds(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TagIds, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐIDᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_tagIds(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_tags(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_tags(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().Tags(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]gqlmodel.Tag)
-	fc.Result = res
-	return ec.marshalNTag2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTagᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_clusters(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_clusters(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Clusters, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.Cluster)
-	fc.Result = res
-	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐClusterᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_clusters(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Cluster_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Cluster_name(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Cluster_propertyId(ctx, field)
-			case "property":
-				return ec.fieldContext_Cluster_property(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Cluster", field.Name)
 		},
 	}
 	return fc, nil
@@ -49239,36 +48455,22 @@ func (ec *executionContext) fieldContext_Story_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -50692,36 +49894,22 @@ func (ec *executionContext) fieldContext_StoryPage_scene(ctx context.Context, fi
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -51201,36 +50389,22 @@ func (ec *executionContext) fieldContext_Style_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -51743,36 +50917,22 @@ func (ec *executionContext) fieldContext_TagGroup_scene(ctx context.Context, fie
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -53501,36 +52661,22 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(ctx contex
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -53589,36 +52735,22 @@ func (ec *executionContext) fieldContext_UpdateClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -54172,36 +53304,22 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(ct
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -54260,36 +53378,22 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -54412,36 +53516,22 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -54632,36 +53722,22 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -72720,11 +71796,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "rootLayerId":
-			out.Values[i] = ec._Scene_rootLayerId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "widgets":
 			out.Values[i] = ec._Scene_widgets(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -72735,8 +71806,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "widgetAlignSystem":
-			out.Values[i] = ec._Scene_widgetAlignSystem(ctx, field, obj)
 		case "project":
 			field := field
 
@@ -72813,39 +71882,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 					}
 				}()
 				res = ec._Scene_property(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "rootLayer":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Scene_rootLayer(ctx, field, obj)
 				return res
 			}
 
@@ -72977,88 +72013,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "datasetSchemas":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Scene_datasetSchemas(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "tagIds":
-			out.Values[i] = ec._Scene_tagIds(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "tags":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Scene_tags(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "clusters":
-			out.Values[i] = ec._Scene_clusters(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -76486,50 +75440,6 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCluster2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐClusterᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Cluster) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNCluster2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCluster(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Cluster) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -79542,50 +78452,6 @@ func (ec *executionContext) marshalNTag2githubᚗcomᚋreearthᚋreearthᚋserve
 	return ec._Tag(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTag2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []gqlmodel.Tag) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNTag2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTag(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNTagGroup2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTagGroup(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.TagGroup) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -81485,13 +80351,6 @@ func (ec *executionContext) marshalOVisualizer2ᚖgithubᚗcomᚋreearthᚋreear
 		return graphql.Null
 	}
 	return v
-}
-
-func (ec *executionContext) marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAlignSystem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._WidgetAlignSystem(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOWidgetArea2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetArea(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetArea) graphql.Marshaler {

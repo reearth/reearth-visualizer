@@ -1474,27 +1474,20 @@ type RemoveWidgetPayload struct {
 }
 
 type Scene struct {
-	ID                ID                       `json:"id"`
-	ProjectID         ID                       `json:"projectId"`
-	TeamID            ID                       `json:"teamId"`
-	PropertyID        ID                       `json:"propertyId"`
-	CreatedAt         time.Time                `json:"createdAt"`
-	UpdatedAt         time.Time                `json:"updatedAt"`
-	RootLayerID       ID                       `json:"rootLayerId"`
-	Widgets           []*SceneWidget           `json:"widgets"`
-	Plugins           []*ScenePlugin           `json:"plugins"`
-	WidgetAlignSystem *WidgetAlignSystem       `json:"widgetAlignSystem,omitempty"`
-	Project           *Project                 `json:"project,omitempty"`
-	Team              *Team                    `json:"team,omitempty"`
-	Property          *Property                `json:"property,omitempty"`
-	RootLayer         *LayerGroup              `json:"rootLayer,omitempty"`
-	NewLayers         []NLSLayer               `json:"newLayers"`
-	Stories           []*Story                 `json:"stories"`
-	Styles            []*Style                 `json:"styles"`
-	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
-	TagIds            []ID                     `json:"tagIds"`
-	Tags              []Tag                    `json:"tags"`
-	Clusters          []*Cluster               `json:"clusters"`
+	ID         ID             `json:"id"`
+	ProjectID  ID             `json:"projectId"`
+	TeamID     ID             `json:"teamId"`
+	PropertyID ID             `json:"propertyId"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	Widgets    []*SceneWidget `json:"widgets"`
+	Plugins    []*ScenePlugin `json:"plugins"`
+	Project    *Project       `json:"project,omitempty"`
+	Team       *Team          `json:"team,omitempty"`
+	Property   *Property      `json:"property,omitempty"`
+	NewLayers  []NLSLayer     `json:"newLayers"`
+	Stories    []*Story       `json:"stories"`
+	Styles     []*Style       `json:"styles"`
 }
 
 func (Scene) IsNode()        {}

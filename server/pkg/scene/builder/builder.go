@@ -137,9 +137,6 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSup
 	}
 
 	// layers
-	if err := b.exporter.ExportLayerByID(ctx, b.scene.RootLayer()); err != nil {
-		return nil, err
-	}
 	layers := b.encoder.Result()
 
 	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport, enableGa, trackingId)

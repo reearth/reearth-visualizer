@@ -137,7 +137,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		Project(pid).
 		Workspace(prj.Workspace()).
 		Property(p.ID()).
-		RootLayer(rootLayer.ID()).
 		Plugins(ps).
 		Build()
 

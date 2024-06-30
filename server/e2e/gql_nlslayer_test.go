@@ -201,7 +201,6 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 		  node(id: $sceneId, type: SCENE) {
 			id
 			... on Scene {
-			  rootLayerId
 			  newLayers {
 				id
 				layerType

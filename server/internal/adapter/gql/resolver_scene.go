@@ -38,21 +38,6 @@ func (r *sceneResolver) Property(ctx context.Context, obj *gqlmodel.Scene) (*gql
 	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
 
-func (r *sceneResolver) RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error) {
-	layer, err := dataloaders(ctx).Layer.Load(obj.RootLayerID)
-	if err != nil {
-		return nil, err
-	}
-	if layer == nil {
-		return nil, nil
-	}
-	layerGroup, ok := (*layer).(*gqlmodel.LayerGroup)
-	if !ok {
-		return nil, nil
-	}
-	return layerGroup, nil
-}
-
 func (r *sceneResolver) NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error) {
 	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
 	if err != nil {

@@ -118,7 +118,6 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		ID:          id,
 		Project:     scene.Project().String(),
 		Team:        scene.Workspace().String(),
-		RootLayer:   scene.RootLayer().String(),
 		Widgets:     widgetsDoc,
 		Plugins:     pluginsDoc,
 		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
@@ -142,10 +141,6 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		return nil, err
 	}
 	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
-	if err != nil {
-		return nil, err
-	}
-	lid, err := id.LayerIDFrom(d.RootLayer)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +206,6 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		ID(sid).
 		Project(projectID).
 		Workspace(tid).
-		RootLayer(lid).
 		Clusters(cl).
 		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).
 		Plugins(scene.NewPlugins(ps)).

@@ -86,7 +86,6 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 		  node(id: $sceneId, type: SCENE) {
 			id
 			... on Scene {
-			  rootLayerId
 			  propertyId
 		      stories {
 				id

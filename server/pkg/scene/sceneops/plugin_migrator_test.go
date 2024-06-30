@@ -42,7 +42,7 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
 
 	tid := accountdomain.NewWorkspaceID()
-	sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+	sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 	sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 
 	pm := PluginMigrator{

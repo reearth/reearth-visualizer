@@ -95,7 +95,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 	mfs := mockFS(nil)
 	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
-	scene := scene.New().ID(sid).Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
+	scene := scene.New().ID(sid).Workspace(ws).MustBuild()
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
@@ -170,7 +170,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	p2 := property.New().NewID().Schema(ps2.ID()).Scene(sid).MustBuild()
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(pid.Ref()).Extension(eid1.Ref()).Property(p1.IDRef()).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
-	scene := scene.New().ID(sid).Workspace(ws).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
+	scene := scene.New().ID(sid).Workspace(ws).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(pid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{
 		scene.MustWidget(wid1, pid, eid2, p2.ID(), false, false),
@@ -298,7 +298,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	}, oldp2.ID())
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(oldpid.Ref()).Extension(eid1.Ref()).Property(oldp.IDRef()).Infobox(ib).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
-	scene := scene.New().ID(sid).Workspace(ws).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
+	scene := scene.New().ID(sid).Workspace(ws).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(oldpid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{
 		scene.MustWidget(wid, oldpid, eid2, oldp4.ID(), true, false),
