@@ -37,6 +37,7 @@ type Project struct {
 	enableGa          bool
 	trackingId        string
 	sceneId           SceneID
+	starred           bool
 }
 
 func (p *Project) ID() ID {
@@ -136,6 +137,10 @@ func (p *Project) Visualizer() visualizer.Visualizer {
 	return p.visualizer
 }
 
+func (p *Project) Starred() bool {
+	return p.starred
+}
+
 func (p *Project) SetArchived(isArchived bool) {
 	p.isArchived = isArchived
 }
@@ -168,6 +173,10 @@ func (p *Project) SetImageURL(imageURL *url.URL) {
 		imageURL2 := *imageURL
 		p.imageURL = &imageURL2
 	}
+}
+
+func (p *Project) SetStarred(starred bool) {
+	p.starred = starred
 }
 
 func (p *Project) UpdateName(name string) {
