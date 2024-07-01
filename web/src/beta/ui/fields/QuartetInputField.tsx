@@ -42,23 +42,20 @@ const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
-      {" "}
       <InputWrapper>
-        {" "}
         {inputValues.map((value, index) => (
           <TextInputWrapper key={index}>
-            {" "}
             <TextInput
               value={value}
               placeholder={placeholders[index]}
               disabled={disabled}
               onChange={value => handleChange(index, value)}
               onBlur={handleBlur}
-            />{" "}
-            <Content size="footnote">{content[index]}</Content>{" "}
+            />
+            <Content size="footnote">{content[index]}</Content>
           </TextInputWrapper>
-        ))}{" "}
-      </InputWrapper>{" "}
+        ))}
+      </InputWrapper>
     </CommonField>
   );
 };

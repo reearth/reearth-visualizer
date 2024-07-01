@@ -1,25 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 
 import EditPanel from "@reearth/beta/components/fields/TimelineField/EditPanel";
-import Text from "@reearth/beta/components/Text";
-import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
+import { Button, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
-export type TimelineFieldProp = {
+export type TimePeriodFieldProp = {
   currentTime: string;
   startTime: string;
   endTime: string;
 };
 
-export type TimelineFieldProps = CommonFieldProps & {
-  value?: TimelineFieldProp;
-  onChange?: (value?: TimelineFieldProp) => void;
+export type TimePeriodFieldProps = CommonFieldProps & {
+  value?: TimePeriodFieldProp;
+  onChange?: (value?: TimePeriodFieldProp) => void;
 };
 
-const TimelineField: React.FC<TimelineFieldProps> = ({
+const TimePeriodField: React.FC<TimePeriodFieldProps> = ({
   commonTitle,
   description,
   value,
@@ -27,61 +26,64 @@ const TimelineField: React.FC<TimelineFieldProps> = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const t = useT();
+  const theme = useTheme();
 
-  const handleTimelineModalClose = useCallback(() => setOpenModal(false), []);
+  const handleTimePeriodModalClose = useCallback(() => setOpenModal(false), []);
 
-  const handleTimelineModalOpen = useCallback(() => setOpenModal(true), []);
+  const handleTimePeriodModalOpen = useCallback(() => setOpenModal(true), []);
 
-  const [timelineValues, setTimelineValues] = useState(value);
+  const [timePeriodValues, setTimePeriodValues] = useState(value);
 
-  // const handleRemoveSetting = useCallback(() => {
-  //   if (!value) return;
-  //   onChange?.();
-  // }, [value, onChange]);
+  const handleRemoveSetting = useCallback(() => {
+    if (!value) return;
+    onChange?.();
+  }, [value, onChange]);
 
   useEffect(() => {
-    setTimelineValues(value);
+    setTimePeriodValues(value);
   }, [value]);
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <Wrapper>
         <InputWrapper disabled={true}>
-          <Input dataTimeSet={!!timelineValues}>
+          <SectionInput dataTimeSet={!!timePeriodValues}>
             <Timeline>
-              <TextWrapper size="footnote" customColor>
-                {timelineValues?.startTime ? timelineValues?.startTime : t("not set")}
+              <TextWrapper size="footnote" color={theme.content.main}>
+                {timePeriodValues?.startTime ? timePeriodValues?.startTime : t("not set")}
               </TextWrapper>
-              <TextWrapper size="footnote" customColor>
-                {timelineValues?.currentTime ? timelineValues?.currentTime : t("not set")}
+              <TextWrapper size="footnote" color={theme.content.main}>
+                {timePeriodValues?.currentTime ? timePeriodValues?.currentTime : t("not set")}
               </TextWrapper>
-              <TextWrapper size="footnote" customColor>
-                {timelineValues?.endTime ? timelineValues?.endTime : t("not set")}
+              <TextWrapper size="footnote" color={theme.content.main}>
+                {timePeriodValues?.endTime ? timePeriodValues?.endTime : t("not set")}
               </TextWrapper>
             </Timeline>
-            <DeleteIcon
-              icon="trash"
-              size="small"
-              disabled={!timelineValues}
-              //   onClick={handleRemoveSetting}
-            />
-          </Input>
+            <DeleteIconWrapper onClick={handleRemoveSetting}>
+              <DeleteIcon
+                icon="trash"
+                size="small"
+                color={timePeriodValues ? theme.content.main : theme.content.weaker}
+                disabled={!timePeriodValues}
+              />
+            </DeleteIconWrapper>
+          </SectionInput>
           <TriggerButton
             appearance="secondary"
             title={t("set")}
             icon="clock"
             size="small"
-            onClick={() => handleTimelineModalOpen()}
+            onClick={() => handleTimePeriodModalOpen()}
           />
         </InputWrapper>
       </Wrapper>
       {openModal && (
         <EditPanel
-          timelineValues={timelineValues}
+          timelineValues={timePeriodValues}
           onChange={onChange}
-          onClose={handleTimelineModalClose}
+          onClose={handleTimePeriodModalClose}
           isVisible={openModal}
-          setTimelineValues={setTimelineValues}
+          setTimelineValues={setTimePeriodValues}
         />
       )}
     </CommonField>
@@ -101,7 +103,7 @@ const InputWrapper = styled.div<{ disabled?: boolean }>`
   gap: 10px;
 `;
 
-const Input = styled.div<{ dataTimeSet?: boolean }>`
+const SectionInput = styled.div<{ dataTimeSet?: boolean }>`
   gap: 14px;
   width: 100%;
   display: flex;
@@ -109,11 +111,6 @@ const Input = styled.div<{ dataTimeSet?: boolean }>`
   border-radius: 4px;
   height: auto;
   align-items: center;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  color: ${({ theme }) => theme.content.strong};
-  background: ${({ theme }) => theme.bg[1]};
-  box-shadow: ${({ theme }) => theme.shadow.input};
   color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
 `;
 
@@ -137,7 +134,7 @@ const Timeline = styled.div`
   }
 `;
 
-const TextWrapper = styled(Text)`
+const TextWrapper = styled(Typography)`
   position: relative;
   margin: 5px 0;
   :before {
@@ -167,14 +164,15 @@ const TriggerButton = styled(Button)`
   height: 28px;
 `;
 
-const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
-  width: 10%;
-  ${({ disabled, theme }) =>
-    disabled
-      ? `color: ${theme.content.weaker};`
-      : `:hover {
-    cursor: pointer;
-      }`}
+const DeleteIconWrapper = styled.div<{ disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
-export default TimelineField;
+const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
+  width: 10%;
+`;
+
+export default TimePeriodField;
