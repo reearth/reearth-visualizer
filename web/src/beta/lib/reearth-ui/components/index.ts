@@ -21,3 +21,4 @@ export * from "./Selector";
 export * from "./Loading";
 export * from "./PopupMenu";
 export * from "./DragAndDropList";
+export * from "./Tabs";

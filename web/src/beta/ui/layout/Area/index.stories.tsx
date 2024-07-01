@@ -26,7 +26,7 @@ export const Default: StoryObj<typeof Area> = {
           Left
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area height={50} backgroundColor={colors[1]}>
+          <Area initialHeight={50} backgroundColor={colors[1]}>
             Center-Top
           </Area>
           <Area extend backgroundColor={colors[2]}>
@@ -55,7 +55,7 @@ export const Complicated: StoryObj<typeof Area> = {
   render: () => (
     <div style={{ width: "100%", height: "800px" }}>
       <Area extend direction="column" asWrapper>
-        <Area height={40} backgroundColor={colors[0]}>
+        <Area initialHeight={40} backgroundColor={colors[0]}>
           Header
         </Area>
         <Area extend asWrapper>
@@ -63,14 +63,14 @@ export const Complicated: StoryObj<typeof Area> = {
             direction="column"
             resizableEdge="right"
             resizeHandleColor={resizeHandleColor}
-            width={200}
+            initialWidth={200}
             backgroundColor={colors[1]}>
             Left
           </Area>
           <Area direction="column" extend asWrapper>
-            <Area height={50} asWrapper>
+            <Area initialHeight={50} asWrapper>
               <Area
-                width={50}
+                initialWidth={50}
                 direction="column"
                 resizableEdge="right"
                 resizeHandleColor={resizeHandleColor}
@@ -84,7 +84,7 @@ export const Complicated: StoryObj<typeof Area> = {
             <Area
               resizableEdge="top"
               resizeHandleColor={resizeHandleColor}
-              height={50}
+              initialHeight={50}
               backgroundColor={colors[5]}>
               Center-Bottom
             </Area>
@@ -92,7 +92,7 @@ export const Complicated: StoryObj<typeof Area> = {
           <Area
             direction="column"
             resizableEdge="left"
-            width={200}
+            initialWidth={200}
             resizeHandleColor={resizeHandleColor}
             backgroundColor={colors[6]}>
             Right
@@ -100,12 +100,12 @@ export const Complicated: StoryObj<typeof Area> = {
           <Area
             direction="column"
             resizableEdge="left"
-            width={50}
+            initialWidth={50}
             resizeHandleColor={resizeHandleColor}
             backgroundColor={colors[7]}
           />
         </Area>
-        <Area height={40} backgroundColor={colors[8]}>
+        <Area initialHeight={40} backgroundColor={colors[8]}>
           Footer
         </Area>
       </Area>

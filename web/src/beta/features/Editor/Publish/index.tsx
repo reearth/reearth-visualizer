@@ -13,7 +13,7 @@ const Publish: FC = () => {
     <Window ref={windowRef}>
       <Area extend asWrapper>
         <Area direction="column" extend asWrapper>
-          <Area height={34}>
+          <Area initialHeight={34}>
             <PublishToolsPanel />
           </Area>
           <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />
