@@ -55,7 +55,7 @@ export const Typography: FC<TypographyProps> = ({
   );
 
   return ThemeTypography ? (
-    <ThemeTypography style={memoizedStyle} clssName={className} onClick={onClick}>
+    <ThemeTypography style={memoizedStyle} className={className} onClick={onClick}>
       {children}
     </ThemeTypography>
   ) : null;

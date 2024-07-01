@@ -86,9 +86,9 @@ const InputWrapper = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
 }));
 
-const Content = styled(Typography)`
-  color: ${({ theme }) => theme.content.weak};
-`;
+const Content = styled(Typography)(({ theme }) => ({
+  color: `${theme.content.weak}`,
+}));
 
 const TextInputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
