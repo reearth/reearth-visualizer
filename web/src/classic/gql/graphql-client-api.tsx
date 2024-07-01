@@ -1774,6 +1774,7 @@ export type Project = Node & {
   publishedAt?: Maybe<Scalars['DateTime']['output']>;
   publishmentStatus: PublishmentStatus;
   scene?: Maybe<Scene>;
+  starred: Scalars['Boolean']['output'];
   team?: Maybe<Team>;
   teamId: Scalars['ID']['output'];
   trackingId: Scalars['String']['output'];
@@ -1805,6 +1806,12 @@ export type ProjectPayload = {
   __typename?: 'ProjectPayload';
   project: Project;
 };
+
+export enum ProjectSortType {
+  Createdat = 'CREATEDAT',
+  Name = 'NAME',
+  Updatedat = 'UPDATEDAT'
+}
 
 export type Property = Node & {
   __typename?: 'Property';
@@ -2082,7 +2089,9 @@ export type QueryProjectsArgs = {
   before?: InputMaybe<Scalars['Cursor']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   includeArchived?: InputMaybe<Scalars['Boolean']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<ProjectSortType>;
   teamId: Scalars['ID']['input'];
 };
 
@@ -2666,6 +2675,7 @@ export type UpdateProjectInput = {
   publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
   publicTitle?: InputMaybe<Scalars['String']['input']>;
   sceneId?: InputMaybe<Scalars['ID']['input']>;
+  starred?: InputMaybe<Scalars['Boolean']['input']>;
   trackingId?: InputMaybe<Scalars['String']['input']>;
 };
 

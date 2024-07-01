@@ -48,6 +48,7 @@ A To Z: 昇順（ファイル名）
 Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
+Page: ページ
 File Format: ファイル形式
 File format of the data source you want to add.: 追加したいデータソースのファイル形式を選択
 From Assets: アセットから追加
@@ -77,22 +78,26 @@ Choose layer to add: レイヤーの選択
 Layer of the data source you want to add.: 追加したいデータソースのレイヤーを選択
 layer name: レイヤー名
 Layer: レイヤー
-Layers: レイヤー
-All Layers: 全てのレイヤー
-Name: 名前
-Type: ''
-New Property: ''
-Layer Name: ''
-Layer name you want to add.: ''
-New Style: ''
-Layer Style: レイヤースタイル
-Layer style you want to add.: ''
-General: ''
+Inspector: インスペクター
+Format: フォーマット
+Unsupported custom field: ''
+ID: ID
+Geometry: ジオメトリ
+Properties: プロパティ
 Custom Properties: ''
-New Sketch Layer: ''
-Create: 作成
+Data: データ
+Feature: フィーチャー
+Styling: スタイリング
+Enable Infobox: インフォボックスを有効化
+Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
+Add Layer from Resource: リソースからレイヤーを追加
+Add Sketch Layer: スケッチレイヤーを追加
+Layers: レイヤー
 Style_: スタイル_
+Layer Style: レイヤースタイル
+New Style: ''
 Delete: 削除
+Save: 保存
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -101,21 +106,15 @@ Sky: 空
 Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
-Outline: アウトライン
-Add Layer from Resource: リソースからレイヤーを追加
-Add Sketch Layer: スケッチレイヤーを追加
-Inspector: インスペクター
-Unsupported custom field: ''
-ID: ID
-Geometry: ジオメトリ
-Properties: プロパティ
-Data: データ
-Feature: フィーチャー
-Styling: スタイリング
-Enable Infobox: インフォボックスを有効化
-Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
-Format: フォーマット
-Save: 保存
+Name: 名前
+Type: ''
+New Property: ''
+Layer Name: ''
+Layer name you want to add.: ''
+Layer style you want to add.: ''
+General: ''
+New Sketch Layer: ''
+Create: 作成
 Published: 一般公開
 Unpublished: 非公開
 Story: ストーリー
@@ -146,11 +145,11 @@ Unpublishing: 非公開
 Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人でもこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
+Page Settings: ページ設定
+All Layers: 全てのレイヤー
 Untitled: タイトルなし
 New Page: 新しいページ
-Page: ページ
-Page Settings: ページ設定
-Align System: アラインシステム
+Container Settings: コンテナ設定
 Padding top: 上の余白
 Padding right: 右の余白
 Padding bottom: 下の余白
@@ -158,11 +157,8 @@ Padding left: 左の余白
 Gap spacing: 間隔
 Align centered: 中央に配置
 Background color: 背景色
+Align System: アラインシステム
 Widget Manager: ウィジェット管理
-Container Settings: コンテナ設定
-Angle: 角度
-Narrow: 狭い
-Wide: 広い
 Please select an asset before clicking Select.: アセットを選んで「選択」をクリックしてください。
 Select Image: イメージ選択
 Select: 選択
@@ -255,20 +251,22 @@ Background Color: 背景色
 Something went wrong.: 失敗しました。
 Couldn't find the Re:Earth project you were after.: そのRe:Earthプロジェクトは見つかりませんでした。
 New Field: 新しいフィールド
-aria-label-compass: コンパス
-aria-label-adjust-angle: 角度を調節する
-aria-label-zoom-in: ズームイン
-aria-label-Go-to-the-home-position: 元の位置に戻る
-aria-label-zoom-out: ズームアウト
-Spacing settings: 余白設定
-Block: ブロック
-Unsupported field type: サポートされていないフィールドタイプです
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
 Buttons List: ボタン一覧
 New Layers Button: 新しいレイヤーボタン
 Add markdown text here: マークダウンテキストを入力
-Drop here: ここにドロップ
+aria-label-compass: コンパス
+aria-label-adjust-angle: 角度を調節する
+aria-label-zoom-in: ズームイン
+aria-label-Go-to-the-home-position: 元の位置に戻る
+aria-label-zoom-out: ズームアウト
+Angle: 角度
+Narrow: 狭い
+Wide: 広い
+Spacing settings: 余白設定
+Block: ブロック
+Unsupported field type: サポートされていないフィールドタイプです
 Write your story :): ストーリーを書きましょう!
 Normal: 標準テキスト
 Heading 1: 見出し1
@@ -294,6 +292,7 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Drop here: ここにドロップ
 Close timeline: タイムラインを閉じる
 Playback timeline: タイムラインを逆再生する
 Play timeline: タイムラインを再生する
@@ -500,6 +499,7 @@ Successfully published your project!: プロジェクトの公開に成功しま
 Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
 Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
 Successfully copied to clipboard!: クリップボードにコピーしました。
+Outline: アウトライン
 Folder: 新規フォルダ
 Widget: ウィジェット
 Infobox: インフォボックス

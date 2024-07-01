@@ -48,6 +48,7 @@ A To Z: A To Z
 Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
+Page: Page
 File Format: File Format
 File format of the data source you want to add.: File format of the data source you want to add.
 From Assets: From Assets
@@ -79,22 +80,26 @@ Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
-Layers: Layers
-All Layers: All Layers
-Name: Name
-Type: Type
-New Property: New Property
-Layer Name: Layer Name
-Layer name you want to add.: Layer name you want to add.
-New Style: New Style
-Layer Style: Layer Style
-Layer style you want to add.: Layer style you want to add.
-General: General
+Inspector: Inspector
+Format: Format
+Unsupported custom field: Unsupported custom field
+ID: ID
+Geometry: Geometry
+Properties: Properties
 Custom Properties: Custom Properties
-New Sketch Layer: New Sketch Layer
-Create: Create
+Data: Data
+Feature: Feature
+Styling: Styling
+Enable Infobox: Enable Infobox
+Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
+Add Layer from Resource: Add Layer from Resource
+Add Sketch Layer: ''
+Layers: Layers
 Style_: Style_
+Layer Style: Layer Style
+New Style: New Style
 Delete: Delete
+Save: Save
 Main: Main
 Tiles: Tiles
 Terrain: Terrain
@@ -103,21 +108,15 @@ Sky: Sky
 Camera: Camera
 Unknown scene setting: Unknown scene setting
 Scene: Scene
-Outline: Outline
-Add Layer from Resource: Add Layer from Resource
-Add Sketch Layer: ''
-Inspector: Inspector
-Unsupported custom field: Unsupported custom field
-ID: ID
-Geometry: Geometry
-Properties: Properties
-Data: Data
-Feature: Feature
-Styling: Styling
-Enable Infobox: Enable Infobox
-Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
-Format: Format
-Save: Save
+Name: Name
+Type: Type
+New Property: New Property
+Layer Name: Layer Name
+Layer name you want to add.: Layer name you want to add.
+Layer style you want to add.: Layer style you want to add.
+General: General
+New Sketch Layer: New Sketch Layer
+Create: Create
 Published: Published
 Unpublished: Unpublished
 Story: Story
@@ -152,11 +151,11 @@ Unpublishing: Unpublishing
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
+Page Settings: Page Settings
+All Layers: All Layers
 Untitled: Untitled
 New Page: New Page
-Page: Page
-Page Settings: Page Settings
-Align System: Align System
+Container Settings: Container Settings
 Padding top: Padding top
 Padding right: Padding right
 Padding bottom: Padding bottom
@@ -164,11 +163,8 @@ Padding left: Padding left
 Gap spacing: Gap spacing
 Align centered: Align centered
 Background color: Background color
+Align System: Align System
 Widget Manager: Widget Manager
-Container Settings: Container Settings
-Angle: Angle
-Narrow: Narrow
-Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: Select Image
 Select: Select
@@ -276,20 +272,22 @@ Background Color: Background Color
 Something went wrong.: Something went wrong.
 Couldn't find the Re:Earth project you were after.: Couldn't find the Re:Earth project you were after.
 New Field: New Field
-aria-label-compass: compass
-aria-label-adjust-angle: adjust angle
-aria-label-zoom-in: zoom in
-aria-label-Go-to-the-home-position: Go to the home position
-aria-label-zoom-out: zoom out
-Spacing settings: Spacing settings
-Block: Block
-Unsupported field type: Unsupported field type
 New Camera: New Camera
 New Camera Button: New Camera Button
 Buttons List: Buttons List
 New Layers Button: New Layers Button
 Add markdown text here: Add markdown text here
-Drop here: Drop here
+aria-label-compass: compass
+aria-label-adjust-angle: adjust angle
+aria-label-zoom-in: zoom in
+aria-label-Go-to-the-home-position: Go to the home position
+aria-label-zoom-out: zoom out
+Angle: Angle
+Narrow: Narrow
+Wide: Wide
+Spacing settings: Spacing settings
+Block: Block
+Unsupported field type: Unsupported field type
 Write your story :): Write your story :)
 Normal: Normal
 Heading 1: Heading 1
@@ -315,6 +313,7 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
+Drop here: Drop here
 Close timeline: Close timeline
 Playback timeline: Playback timeline
 Play timeline: Play timeline
@@ -543,6 +542,7 @@ Successfully published your project!: Successfully published your project!
 Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
 Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
 Successfully copied to clipboard!: Successfully copied to clipboard!
+Outline: Outline
 Folder: Folder
 Widget: Widget
 Infobox: Infobox
