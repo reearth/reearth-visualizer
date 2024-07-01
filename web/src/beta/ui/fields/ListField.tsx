@@ -1,11 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import DragAndDropList, {
   Props as DragAndDropProps,
 } from "@reearth/beta/components/DragAndDropList";
-import Text from "@reearth/beta/components/Text";
-import { Button, ButtonProps, Icon } from "@reearth/beta/lib/reearth-ui";
-// import { useT } from "@reearth/services/i18n";
+import { Button } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem, EntryItemProps } from "@reearth/beta/ui/components/EntryItem";
 import { styled } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
@@ -16,47 +15,33 @@ type ListItem = {
 };
 
 export type ListFieldProps = CommonFieldProps &
-  ButtonProps & {
+  EntryItemProps & {
     className?: string;
-    description?: string;
     items: ListItem[];
-    removeItem: (id: string) => void;
     addItem: () => void;
     onSelect: (id: string) => void;
     selected?: string;
     atLeastOneItem?: boolean;
   } & Pick<DragAndDropProps, "onItemDrop">;
 
-const ListField: React.FC<ListFieldProps> = ({
+const ListField: FC<ListFieldProps> = ({
   className,
   commonTitle,
   description,
   items,
-  // removeItem,
   addItem,
   onItemDrop,
   onSelect,
+  optionsMenu,
   selected,
   atLeastOneItem,
-}: ListFieldProps) => {
-  // const t = useT();
-
-  // const deleteItem = useCallback(() => {
-  //   if (!selected) return;
-  //   removeItem(selected);
-  // }, [selected, removeItem]);
+}) => {
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const getId = useCallback(({ id }: ListItem) => {
     return id;
   }, []);
 
-  // const disableRemoveButton = useMemo(() => {
-  //   if (!selected || (atLeastOneItem && items.length === 1)) return true;
-
-  //   return !items.find(({ id }) => id == selected);
-  // }, [items, selected, atLeastOneItem]);
-
-  // if atleastOneItem is true, make sure one item is always selected
   useEffect(() => {
     if (!atLeastOneItem) return;
 
@@ -73,7 +58,7 @@ const ListField: React.FC<ListFieldProps> = ({
           onClick={addItem}
           icon="plus"
           appearance="secondary"
-          title=" New Item"
+          title="New Item"
           size="small"
           extendWidth={true}
         />
@@ -84,9 +69,17 @@ const ListField: React.FC<ListFieldProps> = ({
             onItemDrop={onItemDrop}
             getId={getId}
             renderItem={({ id, value }) => (
-              <Item onClick={() => onSelect(id)} selected={selected === id}>
-                <StyledText size="footnote">{value}</StyledText>
-                <Icon icon="more" size={"small"} />
+              <Item
+                onClick={() => onSelect(id)}
+                onMouseEnter={() => setHoveredItem(id)}
+                onMouseLeave={() => setHoveredItem(null)}
+                selected={selected === id}>
+                <EntryItem
+                  title={value}
+                  highlighted={selected === id || hoveredItem === id}
+                  onClick={() => onSelect(id)}
+                  optionsMenu={optionsMenu}
+                />
               </Item>
             )}
             gap={0}
@@ -115,21 +108,10 @@ const Item = styled.div<{ selected: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 12px;
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.smallest}px;
   height: 28px;
   cursor: pointer;
-  background: ${({ theme, selected }) => (selected ? theme.select.main : "inherit")};
-  &:hover {
-    background: ${({ theme, selected }) => (selected ? theme.select.main : theme.bg[2])};
-  }
-`;
-
-const StyledText = styled(Text)`
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const SectionButton = styled(Button)`
