@@ -90,6 +90,12 @@ const Wrapper = styled("div")(({ theme }) => ({
   ["* ::-webkit-scrollbar-thumb:hover"]: {
     background: theme.relative.lighter,
   },
+  overflowX: "hidden",
+  minWidth: "630px",
+  ["@media (max-width: 630px)"]: {
+    width: "630px",
+    overflowX: "auto",
+  },
 }));
 
 const LeftSideWrapper = styled("div")(({ theme }) => ({
