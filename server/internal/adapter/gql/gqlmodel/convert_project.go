@@ -63,5 +63,21 @@ func ToProject(p *project.Project) *Project {
 		CoreSupport:       p.CoreSupport(),
 		EnableGa:          p.EnableGA(),
 		TrackingID:        p.TrackingID(),
+		Starred:           p.Starred(),
 	}
+}
+func ProjectSortTypeFrom(pst *ProjectSortType) *project.SortType {
+	if pst == nil {
+		return nil
+	}
+
+	switch *pst {
+	case ProjectSortTypeCreatedat:
+		return &project.SortTypeID
+	case ProjectSortTypeUpdatedat:
+		return &project.SortTypeUpdatedAt
+	case ProjectSortTypeName:
+		return &project.SortTypeName
+	}
+	return &project.SortTypeUpdatedAt
 }

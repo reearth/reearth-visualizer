@@ -96,6 +96,7 @@ func TestToProject(t *testing.T) {
 				CoreSupport:       false,
 				EnableGa:          false,
 				TrackingID:        "",
+				Starred:           false,
 			},
 		},
 	}
