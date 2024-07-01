@@ -42,36 +42,36 @@ export const Components: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       <CommonField
-        commonTitle="Field Name"
+        commonTitle="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <InputField
         placeholder="Text"
-        commonTitle="Field Name"
+        commonTitle="InputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TwinInputField
-        values={["3.14159265", "4.14159265"]}
+        values={["3.1415926", "3.1415926"]}
         content={["Latitude", "Longitude"]}
-        commonTitle="Field Name"
+        commonTitle="TwinInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TripletInputField
-        values={["3.14159265", "4.14159265", "3.14159265"]}
+        values={["3.1415926", "3.1415926", "3.1415926"]}
         content={["Heading", "Pitch", "Roll"]}
-        commonTitle="Field Name"
+        commonTitle="TripletInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <QuartetInputField
-        values={["3.14159265", "4.14159265", "3.14159265", "4.14159265"]}
+        values={["3.1415926", "3.1415926", "3.1415926", "3.1415926"]}
         content={["x", "y", "z", "w"]}
-        commonTitle="Field Name"
+        commonTitle="QuartetInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <AssetField
         fileType="asset"
         placeholder="Asset"
-        commonTitle="Field Name"
+        commonTitle="AssetField"
         extendWidth={true}
         maxWidth={330}
         minWidth={172}
@@ -84,59 +84,59 @@ export const Components: Story = {
           { label: "Option 2", value: "option2" },
           { label: "Option 3", value: "option3" },
         ]}
-        commonTitle="Field Name"
+        commonTitle="SelectField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TextareaField
         placeholder="Text"
-        commonTitle="Field Name"
+        commonTitle="TextareaField"
         value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <SwitchField
         value={true}
         onChange={() => {}}
-        commonTitle="Field Name"
+        commonTitle="SwitchField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <CodeField
         value="const a = 1; const a = 1; const a = 1;"
         height={200}
-        commonTitle="Field Name"
+        commonTitle="CodeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <ColorField
         value="#000000"
-        commonTitle="Field Name"
+        commonTitle="ColorField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <SpacingField
         values={[10, 10, 12, 12]}
         unit="px"
-        commonTitle="Field Name"
+        commonTitle="SpacingField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <CameraField
         onSave={() => {}}
-        commonTitle="Field Name"
+        commonTitle="CameraField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <SliderField
         value={50}
         onChange={() => {}}
-        commonTitle="Field Name"
+        commonTitle="SliderField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimePointField
         value="2021-10-10"
         onChange={() => {}}
-        commonTitle="Field Name"
+        commonTitle="TimePointField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimePeriodField
         value={{ currentTime: "2021-10-10", startTime: "2021-10-10", endTime: "2021-10-10" }}
         onChange={() => {}}
-        commonTitle="Field Name"
+        commonTitle="TimePeriodField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <ListField
@@ -150,7 +150,7 @@ export const Components: Story = {
         onSelect={() => {}}
         onItemDrop={() => {}}
         optionsMenu={optionsMenu}
-        commonTitle="Field Name"
+        commonTitle="ListField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <MultiSelectInputField
@@ -159,13 +159,13 @@ export const Components: Story = {
           { label: "Option 2", value: "option2" },
           { label: "Option 3", value: "option3" },
         ]}
-        commonTitle="Field Name"
+        commonTitle="MultiSelectInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimeField
         value="12:00"
         onChange={() => {}}
-        commonTitle="Field Name"
+        commonTitle="TimeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>

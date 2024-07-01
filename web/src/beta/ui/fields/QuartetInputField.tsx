@@ -42,48 +42,23 @@ const QuadrupletInputField: FC<QuadrupletInputFieldProps> = ({
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
+      {" "}
       <InputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[0]}
-            placeholder={placeholders[0]}
-            disabled={disabled}
-            onChange={value => handleChange(0, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[0]}</Content>
-        </TextInputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[1]}
-            placeholder={placeholders[1]}
-            disabled={disabled}
-            onChange={value => handleChange(1, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[1]}</Content>
-        </TextInputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[2]}
-            placeholder={placeholders[2]}
-            disabled={disabled}
-            onChange={value => handleChange(2, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[2]}</Content>
-        </TextInputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[3]}
-            placeholder={placeholders[3]}
-            disabled={disabled}
-            onChange={value => handleChange(3, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[3]}</Content>
-        </TextInputWrapper>
-      </InputWrapper>
+        {" "}
+        {inputValues.map((value, index) => (
+          <TextInputWrapper key={index}>
+            {" "}
+            <TextInput
+              value={value}
+              placeholder={placeholders[index]}
+              disabled={disabled}
+              onChange={value => handleChange(index, value)}
+              onBlur={handleBlur}
+            />{" "}
+            <Content size="footnote">{content[index]}</Content>{" "}
+          </TextInputWrapper>
+        ))}{" "}
+      </InputWrapper>{" "}
     </CommonField>
   );
 };
@@ -96,9 +71,9 @@ const InputWrapper = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
 }));
 
-const Content = styled(Typography)`
-  color: ${({ theme }) => theme.content.weak};
-`;
+const Content = styled(Typography)(({ theme }) => ({
+  color: `${theme.content.weak}`,
+}));
 
 const TextInputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
