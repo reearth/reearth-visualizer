@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, FC } from "react";
 
 import Slider, { Props as SliderProps } from "@reearth/beta/components/Slider";
 
@@ -6,7 +6,7 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type SliderFieldProps = CommonFieldProps & SliderProps;
 
-const SliderField: React.FC<SliderFieldProps> = ({
+const SliderField: FC<SliderFieldProps> = ({
   commonTitle,
   description,
   value,

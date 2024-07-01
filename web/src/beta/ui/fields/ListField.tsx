@@ -1,9 +1,6 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import DragAndDropList, {
-  Props as DragAndDropProps,
-} from "@reearth/beta/components/DragAndDropList";
-import { Button } from "@reearth/beta/lib/reearth-ui";
+import { Button, DragAndDropList, DragAndDropListProps } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemProps } from "@reearth/beta/ui/components/EntryItem";
 import { styled } from "@reearth/services/theme";
 
@@ -12,9 +9,11 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 type ListItem = {
   id: string;
   value: string;
+  content?: JSX.Element;
 };
 
 export type ListFieldProps = CommonFieldProps &
+  DragAndDropListProps<ListItem> &
   EntryItemProps & {
     className?: string;
     items: ListItem[];
@@ -22,7 +21,7 @@ export type ListFieldProps = CommonFieldProps &
     onSelect: (id: string) => void;
     selected?: string;
     atLeastOneItem?: boolean;
-  } & Pick<DragAndDropProps, "onItemDrop">;
+  };
 
 const ListField: FC<ListFieldProps> = ({
   className,
@@ -30,17 +29,15 @@ const ListField: FC<ListFieldProps> = ({
   description,
   items,
   addItem,
-  onItemDrop,
   onSelect,
   optionsMenu,
   selected,
   atLeastOneItem,
+  setItems,
+  onMoveStart,
+  onMoveEnd,
 }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-  const getId = useCallback(({ id }: ListItem) => {
-    return id;
-  }, []);
 
   useEffect(() => {
     if (!atLeastOneItem) return;
@@ -50,6 +47,25 @@ const ListField: FC<ListFieldProps> = ({
       onSelect(items[0]?.id);
     }
   }, [selected, items, atLeastOneItem, onSelect]);
+
+  const itemsWithContent = items.map(item => ({
+    ...item,
+    content: (
+      <Item
+        key={item.id}
+        onClick={() => onSelect(item.id)}
+        onMouseEnter={() => setHoveredItem(item.id)}
+        onMouseLeave={() => setHoveredItem(null)}
+        selected={selected === item.id}>
+        <EntryItem
+          title={item.value}
+          highlighted={selected === item.id || hoveredItem === item.id}
+          onClick={() => onSelect(item.id)}
+          optionsMenu={optionsMenu}
+        />
+      </Item>
+    ),
+  }));
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
@@ -64,24 +80,10 @@ const ListField: FC<ListFieldProps> = ({
         />
         <FieldWrapper>
           <DragAndDropList<ListItem>
-            uniqueKey="ListField"
-            items={items}
-            onItemDrop={onItemDrop}
-            getId={getId}
-            renderItem={({ id, value }) => (
-              <Item
-                onClick={() => onSelect(id)}
-                onMouseEnter={() => setHoveredItem(id)}
-                onMouseLeave={() => setHoveredItem(null)}
-                selected={selected === id}>
-                <EntryItem
-                  title={value}
-                  highlighted={selected === id || hoveredItem === id}
-                  onClick={() => onSelect(id)}
-                  optionsMenu={optionsMenu}
-                />
-              </Item>
-            )}
+            items={itemsWithContent}
+            setItems={setItems}
+            onMoveStart={onMoveStart}
+            onMoveEnd={onMoveEnd}
             gap={0}
           />
         </FieldWrapper>
