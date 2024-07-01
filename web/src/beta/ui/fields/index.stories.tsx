@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import {
+  CommonField,
   InputField,
   TwinInputField,
   TripletInputField,
@@ -13,6 +14,12 @@ import {
   ColorField,
   SpacingField,
   CameraField,
+  SliderField,
+  TimePointField,
+  TimePeriodField,
+  ListField,
+  MultiSelectInputField,
+  TimeField,
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
@@ -26,6 +33,10 @@ type Story = StoryObj<typeof InputField>;
 export const Components: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <CommonField
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
       <InputField
         placeholder="Text"
         commonTitle="Field Name"
@@ -85,6 +96,7 @@ export const Components: Story = {
 
       <CodeField
         value="const a = 1; const a = 1; const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1; const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;const a = 1;"
+        height={200}
         commonTitle="Field Name"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
@@ -104,9 +116,60 @@ export const Components: Story = {
 
       <CameraField
         onSave={() => {}}
-        actions={[]}
         commonTitle="Field Name"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+
+      <SliderField
+        value={50}
+        onChange={() => {}}
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+
+      <TimePointField
+        value={"2021-10-10"}
+        onChange={() => {}}
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+
+      <TimePeriodField
+        value={{ currentTime: "2021-10-10", startTime: "2021-10-10", endTime: "2021-10-10" }}
+        onChange={() => {}}
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+
+      <ListField
+        items={[
+          { id: "1", value: "item a" },
+          { id: "2", value: "item b" },
+          { id: "3", value: "item c" },
+        ]}
+        addItem={() => {}}
+        removeItem={() => {}}
+        onSelect={() => {}}
+        onItemDrop={() => {}}
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+
+      <MultiSelectInputField
+        options={[
+          { label: "Option 1", value: "option1" },
+          { label: "Option 2", value: "option2" },
+          { label: "Option 3", value: "option3" },
+        ]}
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+
+      <TimeField
+        value="12:00"
+        onChange={() => {}}
+        commonTitle="Field Name"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>
   ),
