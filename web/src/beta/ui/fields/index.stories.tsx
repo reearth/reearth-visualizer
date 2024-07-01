@@ -146,9 +146,12 @@ export const Components: Story = {
           { id: "1", value: "item b" },
           { id: "2", value: "item c" },
         ]}
-        addItem={() => {}}
-        onSelect={() => {}}
-        onItemDrop={() => {}}
+        addItem={() => console.log("Item added")}
+        onSelect={(id: string) => console.log(`Item selected: ${id}`)}
+        onMoveStart={() => console.log("Move started")}
+        onMoveEnd={(itemId?: string, newIndex?: number) =>
+          console.log(`Move ended: ${itemId} to ${newIndex}`)
+        }
         optionsMenu={optionsMenu}
         commonTitle="ListField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
