@@ -9,7 +9,7 @@ import { useStoryPage } from "../context";
 import PageItem from "./PageItem";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
-const PAGES_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-layers-drag-handle";
+const PAGES_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-story-page-drag-handle";
 
 const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const { storyPages, handleStoryPageSelect, handleStoryPageAdd, handleStoryPageMove } =
@@ -19,7 +19,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 
   const [isDragging, setIsDragging] = useState(false);
 
-  const DraggableLayerItems = useMemo(
+  const DraggableStoryPageItems = useMemo(
     () =>
       storyPages?.map((storyPage, index) => ({
         id: storyPage.id,
@@ -67,7 +67,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       </ButtonWrapper>
       <Wrapper onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
         <DragAndDropList
-          items={DraggableLayerItems}
+          items={DraggableStoryPageItems}
           handleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
           onMoveEnd={handleMoveEnd}
           onMoveStart={handleMoveStart}
