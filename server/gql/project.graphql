@@ -23,6 +23,13 @@ type Project implements Node {
   coreSupport: Boolean!
   enableGa: Boolean!
   trackingId: String!
+  starred: Boolean!
+}
+
+enum ProjectSortType {
+  CREATEDAT
+  UPDATEDAT
+  NAME
 }
 
 type ProjectAliasAvailability {
@@ -72,6 +79,7 @@ input UpdateProjectInput {
   enableGa: Boolean
   trackingId: String
   sceneId: ID
+  starred: Boolean
 }
 
 input PublishProjectInput {
@@ -109,7 +117,7 @@ type ProjectEdge {
 }
 
 extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor, keyword: String, sort: ProjectSortType): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
 }
 
