@@ -57,7 +57,7 @@ export default () => {
 
         return { status: "error" };
       }
-
+      setNotification({ type: "success", text: t("Successfully updated the propery value!") });
       return {
         data: data.updatePropertyValue.property,
         status: "success",
