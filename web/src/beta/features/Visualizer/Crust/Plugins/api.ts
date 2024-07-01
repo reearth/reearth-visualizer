@@ -18,6 +18,12 @@ import type { GlobalThis, ReearthEventType, Reearth, Plugin, PopupPosition } fro
 import type { ClientStorage } from "./useClientStorage";
 import type { PluginInstances } from "./usePluginInstances";
 
+declare global {
+  interface Window {
+    reearth?: CommonReearth;
+  }
+}
+
 export type CommonReearth = Omit<
   Reearth,
   | "plugin"
