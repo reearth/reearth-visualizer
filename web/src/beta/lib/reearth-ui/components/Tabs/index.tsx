@@ -1,9 +1,9 @@
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-export type TabItems = {
+export type TabItem = {
   id: string;
   name?: string;
   icon?: IconName;
@@ -11,10 +11,10 @@ export type TabItems = {
 };
 
 export type TabsProps = {
-  tabs: TabItems[];
+  tabs: TabItem[];
   position?: "top" | "left";
   tabStyle?: "normal" | "separated";
-  activeTab?: string;
+  currentTab?: string;
   onChange?: (tab: string) => void;
 };
 
@@ -22,10 +22,27 @@ export const Tabs: FC<TabsProps> = ({
   tabs,
   position = "top",
   tabStyle = "normal",
-  activeTab,
+  currentTab,
   onChange,
 }) => {
+  const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0].id);
+
+  const handleTabChange = useCallback(
+    (newTab: string) => {
+      setActiveTab(newTab);
+      onChange?.(newTab);
+    },
+    [onChange],
+  );
+
+  useEffect(() => {
+    if (currentTab) {
+      setActiveTab(currentTab);
+    }
+  }, [currentTab]);
+
   const theme = useTheme();
+
   const selectedTabItem = useMemo(() => {
     return tabs.find(({ id }) => id === activeTab);
   }, [activeTab, tabs]);
@@ -36,7 +53,7 @@ export const Tabs: FC<TabsProps> = ({
         {tabs.map(({ id, icon, name }) => (
           <Tab
             key={id}
-            onClick={() => onChange?.(id)}
+            onClick={() => handleTabChange?.(id)}
             selected={id === activeTab}
             position={position}
             tabStyle={tabStyle}>
@@ -67,6 +84,7 @@ const Wrapper = styled("div")<{ position?: "top" | "left" }>(({ position, theme 
   flexFlow: position === "top" ? "column nowrap" : "row nowrap",
   background: theme.bg[1],
   height: "100%",
+  width: "100%",
 }));
 
 const TabsMenu = styled("div")<{ position?: "top" | "left"; tabStyle?: "normal" | "separated" }>(
@@ -98,5 +116,7 @@ const Tab = styled("div")<{
 
 const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
-  height: "auto",
+  height: "100%",
+  width: "100%",
+  minHeight: 0,
 }));
