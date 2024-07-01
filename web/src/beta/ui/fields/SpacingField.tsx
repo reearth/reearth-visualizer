@@ -40,47 +40,26 @@ const SpacingField: FC<SpacingFieldProps> = ({
     onBlur?.(inputValues);
   }, [inputValues, onBlur]);
 
+  const renderInputs = () => {
+    return inputValues.map((inputValue, index) => (
+      <NumberInput
+        key={index}
+        value={inputValue}
+        placeholder={placeholders[index]}
+        disabled={disabled}
+        onChange={value => handleChange(index, value)}
+        onBlur={handleBlur}
+        unit={unit}
+      />
+    ));
+  };
+
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
-        <CenteredInput>
-          <NumberInput
-            value={inputValues[0]}
-            placeholder={placeholders[0]}
-            disabled={disabled}
-            onChange={value => handleChange(0, value)}
-            onBlur={handleBlur}
-            unit={unit}
-          />
-        </CenteredInput>
-        <Row>
-          <NumberInput
-            value={inputValues[1]}
-            placeholder={placeholders[1]}
-            disabled={disabled}
-            onChange={value => handleChange(1, value)}
-            onBlur={handleBlur}
-            unit={unit}
-          />
-          <NumberInput
-            value={inputValues[2]}
-            placeholder={placeholders[2]}
-            disabled={disabled}
-            onChange={value => handleChange(2, value)}
-            onBlur={handleBlur}
-            unit={unit}
-          />
-        </Row>
-        <CenteredInput>
-          <NumberInput
-            value={inputValues[3]}
-            placeholder={placeholders[3]}
-            disabled={disabled}
-            onChange={value => handleChange(3, value)}
-            onBlur={handleBlur}
-            unit={unit}
-          />
-        </CenteredInput>
+        <CenteredInput>{renderInputs()[0]}</CenteredInput>
+        <Row>{renderInputs().slice(1, 3)}</Row>
+        <CenteredInput>{renderInputs()[3]}</CenteredInput>
       </InputWrapper>
     </CommonField>
   );
@@ -88,11 +67,11 @@ const SpacingField: FC<SpacingFieldProps> = ({
 
 export default SpacingField;
 
-const InputWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.small}px;
-`;
+const InputWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: `${theme.spacing.smallest}px`,
+}));
 
 const CenteredInput = styled.div`
   display: flex;

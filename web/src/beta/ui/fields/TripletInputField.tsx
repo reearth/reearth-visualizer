@@ -43,36 +43,18 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[0]}
-            placeholder={placeholders[0]}
-            disabled={disabled}
-            onChange={value => handleChange(0, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[1]}</Content>
-        </TextInputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[1]}
-            placeholder={placeholders[1]}
-            disabled={disabled}
-            onChange={value => handleChange(1, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[1]}</Content>
-        </TextInputWrapper>
-        <TextInputWrapper>
-          <TextInput
-            value={inputValues[2]}
-            placeholder={placeholders[2]}
-            disabled={disabled}
-            onChange={value => handleChange(2, value)}
-            onBlur={handleBlur}
-          />
-          <Content size="footnote">{content[2]}</Content>
-        </TextInputWrapper>
+        {inputValues.map((value, index) => (
+          <TextInputWrapper key={index}>
+            <TextInput
+              value={value}
+              placeholder={placeholders[index]}
+              disabled={disabled}
+              onChange={value => handleChange(index, value)}
+              onBlur={handleBlur}
+            />
+            <Content size="footnote">{content[index]}</Content>
+          </TextInputWrapper>
+        ))}
       </InputWrapper>
     </CommonField>
   );
