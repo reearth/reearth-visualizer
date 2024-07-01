@@ -101,10 +101,3 @@ const EmptySpace = styled("div")(() => ({
   flex: 1,
   minHeight: 50,
 }));
-// const ContentWrapper = styled("div")(() => ({
-//   overflowY: "auto",
-//   boxSizing: "border-box",
-//   "::-webkit-scrollbar": {
-//     display: "none",
-//   },
-// }));
