@@ -5,7 +5,7 @@ import DragAndDropList, {
 } from "@reearth/beta/components/DragAndDropList";
 import Text from "@reearth/beta/components/Text";
 import { Button, ButtonProps, Icon } from "@reearth/beta/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+// import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
@@ -39,7 +39,7 @@ const ListField: React.FC<ListFieldProps> = ({
   selected,
   atLeastOneItem,
 }: ListFieldProps) => {
-  const t = useT();
+  // const t = useT();
 
   // const deleteItem = useCallback(() => {
   //   if (!selected) return;
@@ -73,7 +73,7 @@ const ListField: React.FC<ListFieldProps> = ({
           onClick={addItem}
           icon="plus"
           appearance="secondary"
-          title={t(" New Item")}
+          title=" New Item"
           size="small"
           extendWidth={true}
         />
