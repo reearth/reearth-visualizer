@@ -166,7 +166,7 @@ export const Components: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimeField
-        value="12:00"
+        value="2023-10-24T00:00:00+09:00"
         onChange={() => {}}
         commonTitle="TimeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."

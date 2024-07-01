@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 
 import EditPanel from "@reearth/beta/components/fields/DateTimeField/EditPanel";
-import Icon from "@reearth/beta/components/Icon";
-import * as Popover from "@reearth/beta/components/Popover";
-import Text from "@reearth/beta/components/Text";
-import { Button } from "@reearth/beta/lib/reearth-ui";
+import { Button, Typography, Icon, Popup } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
@@ -31,6 +28,7 @@ const TimeField: React.FC<TimeFieldProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
+  const theme = useTheme();
 
   const handlePopOver = useCallback(() => {
     if (disableField) {
@@ -56,14 +54,16 @@ const TimeField: React.FC<TimeFieldProps> = ({
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
-      <Popover.Provider open={!!open} placement="bottom">
-        <Popover.Trigger asChild>
+      <Popup
+        trigger={
           <InputWrapper disabled={true}>
             <Input dataTimeSet={!!dateTime}>
-              <StyledText size="footnote" customColor>
+              <StyledText size="footnote" color={theme.content.main}>
                 {dateTime ? dateTime : "YYYY-MM-DDThh:mm:ss±hh:mm"}
               </StyledText>
-              <DeleteIcon icon="bin" size={10} disabled={!dateTime} onClick={handleRemoveSetting} />
+              <DeleteIconWrapper onClick={handleRemoveSetting} disabled={!dateTime}>
+                <DeleteIcon icon="trash" size="small" />
+              </DeleteIconWrapper>
             </Input>
             <TriggerButton
               appearance="secondary"
@@ -73,47 +73,49 @@ const TimeField: React.FC<TimeFieldProps> = ({
               onClick={() => handlePopOver()}
             />
           </InputWrapper>
-        </Popover.Trigger>
-        <Popover.Content autoFocus={false} attachToRoot>
-          {open && (
-            <EditPanel
-              setDateTime={setDateTime}
-              value={dateTime}
-              onChange={onChange}
-              onClose={handlePopOver}
-            />
-          )}
-        </Popover.Content>
-      </Popover.Provider>
+        }
+        open={open}
+        onOpenChange={isOpen => setOpen(isOpen)}
+        placement="bottom-start">
+        {open && (
+          <EditPanel
+            setDateTime={setDateTime}
+            value={dateTime}
+            onChange={onChange}
+            onClose={handlePopOver}
+          />
+        )}
+      </Popup>
     </CommonField>
   );
 };
 
 export default TimeField;
 
-const InputWrapper = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-`;
+const InputWrapper = styled("div")<{ disabled?: boolean }>(({ theme, disabled }) => ({
+  display: "flex",
+  width: "100%",
+  gap: theme.spacing.small,
+  flexWrap: "wrap",
+  opacity: disabled ? 0.6 : 1,
+}));
 
-const Input = styled.div<{ dataTimeSet?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  flex: 1;
-  padding: 0 8px;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  color: ${({ theme }) => theme.content.strong};
-  background: ${({ theme }) => theme.bg[1]};
-  box-shadow: ${({ theme }) => theme.shadow.input};
-  width: 65%;
-  color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
-`;
+const Input = styled("div")<{ dataTimeSet?: boolean }>(({ theme, dataTimeSet }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: theme.spacing.smallest,
+  flex: 1,
+  padding: "0 8px",
+  borderRadius: "4px",
+  border: `1px solid ${theme.outline.weak}`,
+  background: theme.bg[1],
+  boxShadow: theme.shadow.input,
+  width: "197px",
+  color: dataTimeSet ? theme.content.strong : theme.content.weak,
+}));
 
-const StyledText = styled(Text)`
+const StyledText = styled(Typography)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -125,11 +127,11 @@ const TriggerButton = styled(Button)`
   margin-left: 10px;
 `;
 
-const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
-  ${({ disabled, theme }) =>
-    disabled
-      ? `color: ${theme.content.weaker};`
-      : `:hover {
-    cursor: pointer;
-      }`}
-`;
+const DeleteIconWrapper = styled("div")<{ disabled?: boolean }>(({ disabled }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: disabled ? "not-allowed" : "pointer",
+}));
+
+const DeleteIcon = styled(Icon)``;
