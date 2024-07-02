@@ -123,7 +123,7 @@ const EntryItemWrapper = styled("div")(() => ({
 }));
 
 const PageCount = styled("div")(({ theme }) => ({
-  minWidth: "15px",
+  minWidth: "17px",
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
