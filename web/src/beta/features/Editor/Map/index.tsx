@@ -24,7 +24,7 @@ const Map: FC = () => {
           <LayersPanel />
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area height={34}>
+          <Area initialHeight={34}>
             <ToolsPanel />
           </Area>
           <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />

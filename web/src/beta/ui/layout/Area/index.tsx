@@ -27,8 +27,8 @@ export type AreaSize = {
 
 export type AreaProps = {
   direction?: "row" | "column";
-  width?: number;
-  height?: number;
+  initialWidth?: number;
+  initialHeight?: number;
   extend?: boolean;
   backgroundColor?: string;
   resizableEdge?: ResizableEdge;
@@ -59,8 +59,8 @@ export const Area = forwardRef<AreaRef, AreaProps>(
   (
     {
       direction = "row",
-      width,
-      height,
+      initialWidth,
+      initialHeight,
       backgroundColor,
       resizableEdge,
       resizeHandleColor,
@@ -82,14 +82,14 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         (sizeStorageKey && direction === "column"
           ? localStorage.getItem(sizeStorageKey)
           : undefined) ??
-          width ??
+          initialWidth ??
           DEFAULT_WIDTH,
       ),
       height: Number(
         (sizeStorageKey && direction === "row"
           ? localStorage.getItem(sizeStorageKey)
           : undefined) ??
-          height ??
+          initialHeight ??
           DEFAULT_HEIGHT,
       ),
     });
@@ -235,22 +235,19 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         localStorage.setItem(collapsedStorageKey, "0");
       }
       setSize(prevSize => {
-        const width = direction === "column" ? DEFAULT_WIDTH : prevSize.width;
-        const height = direction === "row" ? DEFAULT_HEIGHT : prevSize.height;
+        const w = direction === "column" ? initialWidth ?? DEFAULT_WIDTH : prevSize.width;
+        const h = direction === "row" ? initialHeight ?? DEFAULT_HEIGHT : prevSize.height;
 
         if (sizeStorageKey) {
-          localStorage.setItem(
-            sizeStorageKey,
-            direction === "row" ? height.toString() : width.toString(),
-          );
+          localStorage.setItem(sizeStorageKey, direction === "row" ? h.toString() : w.toString());
         }
 
         return {
-          width,
-          height,
+          width: w,
+          height: h,
         };
       });
-    }, [direction, sizeStorageKey, collapsedStorageKey]);
+    }, [direction, sizeStorageKey, collapsedStorageKey, initialWidth, initialHeight]);
 
     const collapse = useCallback(() => {
       setCollapsed(true);
@@ -305,6 +302,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
               icon="arrowsHorizontalOut"
               size="small"
               appearance="simple"
+              vertical={resizableEdge === "top" || resizableEdge === "bottom"}
               onClick={uncollapse}
             />
           </Panel>
@@ -362,8 +360,12 @@ const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(({ e
   background: color ?? "none",
 }));
 
-const StyledIconButton = styled(IconButton)(() => ({
+const StyledIconButton = styled(IconButton)<{ vertical?: boolean }>(({ vertical }) => ({
   height: "100%",
+  width: "100%",
+  ["svg"]: {
+    transform: vertical ? "rotate(90deg)" : "none",
+  },
 }));
 
 export const Window = styled("div")(({ theme }) => ({

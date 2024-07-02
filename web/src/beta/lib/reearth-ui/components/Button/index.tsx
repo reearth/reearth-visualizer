@@ -11,9 +11,11 @@ export type ButtonProps = {
   iconButton?: boolean;
   icon?: IconName;
   iconRight?: IconName;
+  iconColor?: string;
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
+  shadow?: boolean;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
 };
 
@@ -25,8 +27,10 @@ export const Button: FC<ButtonProps> = ({
   iconButton,
   title,
   iconRight,
+  iconColor,
   extendWidth,
   minWidth,
+  shadow = true,
   onClick,
 }) => {
   return (
@@ -37,8 +41,9 @@ export const Button: FC<ButtonProps> = ({
       iconButton={iconButton}
       extendWidth={extendWidth}
       minWidth={minWidth}
+      shadow={shadow}
       onClick={onClick}>
-      {icon && <Icon icon={icon} />}
+      {icon && <Icon icon={icon} color={iconColor} />}
       {!iconButton && title}
       {iconRight && <Icon icon={iconRight} />}
     </StyledButton>
@@ -51,7 +56,8 @@ const StyledButton = styled("button")<{
   iconButton?: boolean;
   extendWidth?: boolean;
   minWidth?: number;
-}>(({ appearance, size, iconButton, extendWidth, minWidth, theme }) => ({
+  shadow?: boolean;
+}>(({ appearance, size, iconButton, extendWidth, minWidth, shadow, theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -85,7 +91,7 @@ const StyledButton = styled("button")<{
   backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
   width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
-  boxShadow: theme.shadow.button,
+  boxShadow: shadow ? theme.shadow.button : "none",
   ["&:hover"]: {
     borderColor: "transparent",
     color: `${theme.content.withBackground}`,

@@ -52,6 +52,7 @@ export type Theme = Common & {
   dangerous: {
     main: string;
     weak: string;
+    strong: string;
   };
   warning: {
     main: string;

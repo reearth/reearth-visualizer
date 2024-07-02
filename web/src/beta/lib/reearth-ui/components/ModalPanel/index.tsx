@@ -24,7 +24,6 @@ export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, onCa
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  width: "fit-content",
   display: "flex",
   flexDirection: "column",
   background: theme.bg.transparentBlack,
@@ -37,7 +36,7 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   alignSelf: "stretch",
   padding: `${theme.spacing.normal}px`,
   color: theme.content.main,
-  background: theme.bg[2],
+  background: theme.bg[1],
   borderTopRightRadius: theme.radius.large,
   borderTopLeftRadius: theme.radius.large,
 }));
@@ -48,14 +47,13 @@ const Title = styled("div")(() => ({
   lineHeight: `${fonts.lineHeights.body}px`,
 }));
 
-const Content = styled("div")(({ theme }) => ({
-  padding: theme.spacing.super,
+const Content = styled("div")(() => ({
   alignSelf: "stretch",
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
-  background: theme.bg[2],
+  background: theme.bg[1],
   borderBottomRightRadius: theme.radius.large,
   borderBottomLeftRadius: theme.radius.large,
   justifyContent: "flex-end",
