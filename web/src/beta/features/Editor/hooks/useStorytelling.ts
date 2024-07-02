@@ -40,8 +40,6 @@ export default function ({ sceneId }: Props) {
       const newPage = selectedStory?.pages?.find(p => p.id === pageId);
       if (newPage) {
         storyPanelRef?.current?.handleCurrentPageChange(pageId);
-      } else {
-        storyPanelRef?.current?.handleCurrentPageChange(undefined);
       }
     },
     [selectedStoryPageId, selectedStory?.pages],

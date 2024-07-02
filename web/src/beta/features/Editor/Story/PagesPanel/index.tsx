@@ -12,8 +12,7 @@ type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 const PAGES_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-story-page-drag-handle";
 
 const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
-  const { storyPages, handleStoryPageSelect, handleStoryPageAdd, handleStoryPageMove } =
-    useStoryPage();
+  const { storyPages, handleStoryPageAdd, handleStoryPageMove } = useStoryPage();
 
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
@@ -73,7 +72,6 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           onMoveStart={handleMoveStart}
           dragDisabled={false}
         />
-        <EmptySpace onClick={() => handleStoryPageSelect(undefined)} />
       </Wrapper>
     </Panel>
   );
@@ -88,16 +86,8 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal,
   overflowY: "auto",
   boxSizing: "border-box",
-  "::-webkit-scrollbar": {
-    display: "none",
-  },
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.small}px 0`,
-}));
-
-const EmptySpace = styled("div")(() => ({
-  flex: 1,
-  minHeight: 50,
 }));

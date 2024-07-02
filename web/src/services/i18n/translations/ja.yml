@@ -562,7 +562,7 @@ Failed to delete block.: ブロックの削除に失敗しました。
 Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
-Successfully updated a layer!: ''
+Successfully updated the layer!: ''
 Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed a the layer!: レイヤーの削除に成功しました！
 Failed to add layerStyle.: レイヤースタイルの追加に失敗しました。
@@ -580,7 +580,7 @@ Successfully updated project!: プロジェクトのアップデートに成功�
 Successfully archive project!: プロジェクトのアーカイブに成功しました！
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
-Successfully updated the propery value!: ''
+Successfully updated the property value!: ''
 Failed to create story.: ストーリーの作成に失敗しました。
 Successfully created a story!: ストーリーの作成に成功しました！
 Failed to update story.: ストーリーのアップデートに失敗しました。

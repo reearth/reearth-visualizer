@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { getFieldValue } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
-import { TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { isEmptyString } from "@reearth/beta/utils/util";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
@@ -79,7 +79,7 @@ const PageItem: FC<PageItemProps> = ({ storyPage, pageCount, dragHandleClassName
 
   return (
     <Wrapper>
-      <Typography size="body">{pageCount}.</Typography>
+      <PageCount>{pageCount}.</PageCount>
       <EntryItemWrapper>
         <EntryItem
           title={
@@ -120,6 +120,13 @@ const Wrapper = styled("div")(({ theme }) => ({
 
 const EntryItemWrapper = styled("div")(() => ({
   flex: 1,
+}));
+
+const PageCount = styled("div")(({ theme }) => ({
+  minWidth: "15px",
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
