@@ -1,7 +1,7 @@
 import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
 
 import commonTheme from "../common";
-import { brandBlue } from "../common/colors";
+import { brandBlue, brandRed } from "../common/colors";
 import type { Theme } from "../types";
 
 const darkTheme: Theme = {
@@ -49,6 +49,7 @@ const darkTheme: Theme = {
   dangerous: {
     main: red[60],
     weak: red[70],
+    strong: brandRed.dark,
   },
   warning: { main: yellow[30] },
   relative: {

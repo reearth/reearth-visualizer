@@ -1,5 +1,6 @@
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
+import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
 import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
 import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
 import Article from "./Icons/Article.svg?react";
@@ -51,6 +52,7 @@ import FileHtml from "./Icons/FileHtml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
 import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
+import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
 import FolderSimplePlus from "./Icons/FolderSimplePlus.svg?react";
 import GlobeSimple from "./Icons/GlobeSimple.svg?react";
@@ -65,6 +67,7 @@ import Layers from "./Icons/Layers.svg?react";
 import LineHeight from "./Icons/LineHeight.svg?react";
 import LineSegments from "./Icons/LineSegments.svg?react";
 import LinkSimple from "./Icons/LinkSimple.svg?react";
+import List from "./Icons/List.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
 import LToS from "./Icons/LToS.svg?react";
@@ -87,6 +90,7 @@ import Polygon from "./Icons/Polygon.svg?react";
 import Polygone from "./Icons/Polygone.svg?react";
 import Polyline from "./Icons/Polyline.svg?react";
 import PuzzlePiece from "./Icons/PuzzlePiece.svg?react";
+import Question from "./Icons/Question.svg?react";
 import Return from "./Icons/Return.svg?react";
 import Rows from "./Icons/Rows.svg?react";
 import Setting from "./Icons/Setting.svg?react";
@@ -94,6 +98,7 @@ import SettingFilled from "./Icons/SettingFilled.svg?react";
 import Square from "./Icons/Square.svg?react";
 import SquareFilled from "./Icons/SquareFilled.svg?react";
 import Star from "./Icons/Star.svg?react";
+import StarFilled from "./Icons/StarFilled.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
 import Table from "./Icons/Table.svg?react";
@@ -113,6 +118,9 @@ import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
 import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
+import User from "./Icons/User.svg?react";
+import Users from "./Icons/Users.svg?react";
+import UsersFour from "./Icons/UsersFour.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
 import ZToA from "./Icons/ZToA.svg?react";
@@ -120,6 +128,7 @@ import ZToA from "./Icons/ZToA.svg?react";
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
+  arrowLeftRight: ArrowLeftRight,
   arrowsHorizontalIn: ArrowsHorizontalIn,
   arrowsHorizontalOut: ArrowsHorizontalOut,
   article: Article,
@@ -170,6 +179,7 @@ export default {
   fileMD: FileMD,
   fileMDFilled: FileMDFilled,
   floppyDisk: FloppyDisk,
+  folderFilled: FolderFilled,
   folderSimple: FolderSimple,
   folderSimplePlus: FolderSimplePlus,
   globeSimple: GlobeSimple,
@@ -186,6 +196,7 @@ export default {
   linkSimple: LinkSimple,
   listDashes: ListDashes,
   listDashesFilled: ListDashesFilled,
+  list: List,
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,
   mapTrifold: MapTrifold,
@@ -205,6 +216,7 @@ export default {
   polygone: Polygone,
   polyline: Polyline,
   puzzlePiece: PuzzlePiece,
+  question: Question,
   return: Return,
   rows: Rows,
   setting: Setting,
@@ -212,6 +224,7 @@ export default {
   sToL: SToL,
   lToS: LToS,
   star: Star,
+  starFilled: StarFilled,
   square: Square,
   squareFilled: SquareFilled,
   swiper: Swiper,
@@ -232,6 +245,9 @@ export default {
   trash: Trash,
   triangle: Triangle,
   uploadSimple: UploadSimple,
+  user: User,
+  users: Users,
+  usersFour: UsersFour,
   videoFilled: VideoFilled,
   warning: Warning,
   aToZ: AToZ,

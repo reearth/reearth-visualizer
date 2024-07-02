@@ -24,8 +24,8 @@ export const TextInput: FC<TextInputProps> = ({
   disabled,
   appearance,
   extendWidth,
-  autoFocus,
   actions,
+  autoFocus,
   onChange,
   onBlur,
 }) => {
@@ -59,7 +59,7 @@ export const TextInput: FC<TextInputProps> = ({
       size={size}
       appearance={appearance}
       extendWidth={extendWidth}
-      status={isFocused ? "active" : "default"}>
+      status={isFocused || autoFocus ? "active" : "default"}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -100,7 +100,7 @@ const Wrapper = styled("div")<{
   return {
     border: borderStyle,
     borderRadius: theme.radius.small,
-    background: theme.bg[1],
+    background: appearance === "present" ? "" : theme.bg[1],
     display: "flex",
     gap: `${theme.spacing.smallest}px`,
     alignItems: "center",
@@ -109,7 +109,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
-    width: !extendWidth ? "fit-content" : "100%",
+    width: !extendWidth ? "" : "100%",
   };
 });
 
@@ -130,6 +130,7 @@ const StyledInput = styled("input")<{
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
+  pointerEvents: disabled ? "none" : "inherit",
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,

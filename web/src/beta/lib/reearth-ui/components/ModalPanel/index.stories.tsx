@@ -14,7 +14,7 @@ export default meta;
 type Story = StoryObj<typeof ModalPanel>;
 
 const MockChild: FC = () => (
-  <div style={{ color: "#e0e0e0", fontSize: "14px", width: "417px" }}>
+  <div style={{ color: "#e0e0e0", fontSize: "14px", width: "417px", padding: "24px" }}>
     <p>
       Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature
       from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at
@@ -25,6 +25,13 @@ const MockChild: FC = () => (
 );
 
 export const Default: Story = {
+  render: args => {
+    return (
+      <div style={{ width: "fit-content" }}>
+        <ModalPanel {...args} />
+      </div>
+    );
+  },
   args: {
     title: "Modal Panel Title",
     children: <MockChild />,
@@ -33,6 +40,13 @@ export const Default: Story = {
 };
 
 export const MultipleActions: Story = {
+  render: args => {
+    return (
+      <div style={{ width: "490px" }}>
+        <ModalPanel {...args} />
+      </div>
+    );
+  },
   args: {
     title: "Modal Panel Title",
     children: <MockChild />,
