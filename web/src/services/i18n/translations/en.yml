@@ -49,10 +49,10 @@ Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
 Upload File: Upload File
-Assets: Assets
 Sort: Sort
 Use Name or Email: Use Name or Email
 Find Member: Find Member
+No Member match your search.: ''
 New Project: New Project
 Project Name: Project Name
 Last modified: Last modified
@@ -496,6 +496,7 @@ Set your password now: Set your password now
 Profile: Profile
 Profile picture: Profile picture
 Workspace List: Workspace List
+Assets: Assets
 Project List: Project List
 Enable basic authorization: Enable basic authorization
 Change site name: Change site name

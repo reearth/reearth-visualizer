@@ -49,10 +49,10 @@ Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
 Upload File: ''
-Assets: アセット
 Sort: ''
 Use Name or Email: ''
 Find Member: ''
+No Member match your search.: ''
 New Project: 新規プロジェクト
 Project Name: プロジェクト名
 Last modified: ''
@@ -459,6 +459,7 @@ Set your password now: 現在のパスワード
 Profile: プロフィール
 Profile picture: プロフィール画像
 Workspace List: ワークスペース一覧
+Assets: アセット
 Project List: プロジェクト一覧
 Enable basic authorization: ベーシック認証を有効化する
 Change site name: サイト名を変更
