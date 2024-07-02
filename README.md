@@ -53,7 +53,7 @@ docker compose up -d
 # visit http://localhost:8080
 ```
 
-For more information, refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/set-up-reearth-in-your-environment).
+For more information, refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/).
 
 ## Cloud Service (SaaS)
 
