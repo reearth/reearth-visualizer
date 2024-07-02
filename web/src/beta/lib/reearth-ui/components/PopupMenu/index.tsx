@@ -23,6 +23,7 @@ export type PopupMenuProps = {
   menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
+  extendTriggerWidth?: boolean;
   size?: "small" | "normal";
   placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
@@ -33,6 +34,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   menu,
   nested,
   width,
+  extendTriggerWidth,
   placement,
   triggerOnHover,
   icon,
@@ -106,7 +108,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       offset={nested ? MULTLEVEL_OFFSET : DEFAULT_OFFSET}
       onOpenChange={handlePopOver}
       triggerOnHover={triggerOnHover || nested ? true : false}
-      extendTriggerWidth={nested ? true : false}
+      extendTriggerWidth={extendTriggerWidth || nested ? true : false}
       autoClose
       trigger={
         <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>

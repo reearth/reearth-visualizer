@@ -68,11 +68,11 @@ const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => 
 
 export default Members;
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(() => ({
   display: "grid",
   gridTemplateRows: "auto 1fr",
-  gap: theme.spacing.largest,
-  padding: theme.spacing.largest,
+  boxSizing: "border-box",
+  height: "100%",
 }));
 
 const Search = styled("div")(({ theme }) => ({
@@ -80,6 +80,7 @@ const Search = styled("div")(({ theme }) => ({
   gridTemplateColumns: "1fr 1fr",
   gap: theme.spacing.super,
   width: "max-content",
+  padding: theme.spacing.largest,
   "@media (min-width: 650px)": {
     maxWidth: "550px",
     gridTemplateColumns: "2fr 1fr",
@@ -91,6 +92,7 @@ const ListWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal,
   overflowY: "auto",
   boxSizing: "border-box",
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
 }));
 
 const TemplateWrapper = styled("div")(() => ({

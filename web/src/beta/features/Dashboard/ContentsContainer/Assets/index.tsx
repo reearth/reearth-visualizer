@@ -88,18 +88,19 @@ const Assets: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
 export default Assets;
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  padding: theme.spacing.largest,
-  gap: theme.spacing.large,
+  height: "100%",
+  boxSizing: "border-box",
 }));
 
-const AssetsWrapper = styled("div")(() => ({
+const AssetsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   maxHeight: "calc(100vh - 76px)",
   flexDirection: "column",
   overflowY: "auto",
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
 }));
 
 const AssetGridWrapper = styled("div")(({ theme }) => ({

@@ -71,9 +71,10 @@ const CommonHeader: FC<HeaderProps> = ({
 
 export default CommonHeader;
 
-const Header = styled("div")(() => ({
+const Header = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
+  padding: theme.spacing.largest,
 }));
 
 const Actions = styled("div")(({ theme }) => ({

@@ -124,16 +124,16 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
 export default Projects;
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(() => ({
   display: "flex",
   height: "100%",
   flexDirection: "column",
-  padding: theme.spacing.largest,
-  gap: theme.spacing.largest,
+  boxSizing: "border-box",
 }));
 
-const ProjectsWrapper = styled("div")(() => ({
+const ProjectsWrapper = styled("div")(({ theme }) => ({
   overflowY: "auto",
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
   maxHeight: "calc(100vh - 76px)",
 }));
 
