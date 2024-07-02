@@ -48,6 +48,27 @@ A To Z: 昇順（ファイル名）
 Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
+Upload File: ''
+Sort: ''
+Use Name or Email: ''
+Find Member: ''
+No Member match your search.: ''
+New Project: 新規プロジェクト
+Project Name: プロジェクト名
+Last modified: ''
+Created time: ''
+Rename: ''
+Project Setting: ''
+Create new project: ''
+Project Name *: ''
+Text: ''
+Description: プロジェクト概要
+Write down your content: ''
+Cover Image: ''
+Re:Earth Visualizer: ''
+Switch WorkSpace: ''
+Account Settings: アカウント設定
+Log Out: ''
 Page: ページ
 File Format: ファイル形式
 File format of the data source you want to add.: 追加したいデータソースのファイル形式を選択
@@ -148,6 +169,7 @@ This means that anybody with the URL will become unable to view this project.: U
 Page Settings: ページ設定
 All Layers: 全てのレイヤー
 Untitled: タイトルなし
+New Page: 新しいページ
 Container Settings: コンテナ設定
 Padding top: 上の余白
 Padding right: 右の余白
@@ -170,7 +192,6 @@ No layerStyle match your search.: 検索からレイヤースタイルを見つ�
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルをまだ作成していません。「レイヤースタイル」パネルの＋ボタンをクリックし作成してください。
 Create New Workspace: 新規ワークスペース作成
 Workspace Name: ワークスペース名
-Account Settings: アカウント設定
 Workspaces: ワークスペース
 Unknown: 不明
 Manage Workspaces: ワークスペースを管理
@@ -195,7 +216,6 @@ You are about to delete one or more assets from the current workspace.: 1つま�
 Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
-Description: プロジェクト概要
 Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
@@ -336,7 +356,6 @@ Re:Earth needs at least 900px width to be used effectively. Please resize your b
 OK: 確認
 Click here for more details.: 詳細はこちら
 Create New Project: 新規プロジェクト作成
-Project Name: プロジェクト名
 Select thumbnail image: サムネイル画像を選択
 Datasets: データセット
 Plugins: プラグイン
@@ -523,7 +542,6 @@ Successfully installed plugin!: プラグインがインストールされまし
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully removed plugin.: プラグインが削除されました。
 Total Projects: 全てのプロジェクト
-New Project: 新規プロジェクト
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Sucessfully created a workspace!: 新しいワークスペースの作成に成功しました！
 Failed to update workspace name.: ワークスペース名の変更に失敗しました。

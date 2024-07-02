@@ -48,6 +48,27 @@ A To Z: A To Z
 Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
+Upload File: Upload File
+Sort: Sort
+Use Name or Email: Use Name or Email
+Find Member: Find Member
+No Member match your search.: ''
+New Project: New Project
+Project Name: Project Name
+Last modified: Last modified
+Created time: Created time
+Rename: Rename
+Project Setting: Project Setting
+Create new project: Create new project
+Project Name *: Project Name *
+Text: Text
+Description: Description
+Write down your content: Write down your content
+Cover Image: Cover Image
+Re:Earth Visualizer: Re:Earth Visualizer
+Switch WorkSpace: Switch WorkSpace
+Account Settings: Account Settings
+Log Out: Log Out
 Page: Page
 File Format: File Format
 File format of the data source you want to add.: File format of the data source you want to add.
@@ -154,6 +175,7 @@ This means that anybody with the URL will become unable to view this project.: T
 Page Settings: Page Settings
 All Layers: All Layers
 Untitled: Untitled
+New Page: New Page
 Container Settings: Container Settings
 Padding top: Padding top
 Padding right: Padding right
@@ -178,7 +200,6 @@ No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
 Workspace Name: Workspace Name
-Account Settings: Account Settings
 Workspaces: Workspaces
 Unknown: Unknown
 Manage Workspaces: Manage Workspaces
@@ -205,7 +226,6 @@ Most project settings are hidden when the project is archived. Please unarchive 
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
 Project Info: Project Info
-Description: Description
 Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
@@ -361,7 +381,6 @@ Re:Earth needs at least 900px width to be used effectively. Please resize your b
 OK: OK
 Click here for more details.: ''
 Create New Project: Create New Project
-Project Name: Project Name
 Select thumbnail image: Select thumbnail image
 Datasets: Datasets
 Plugins: Plugins
@@ -566,7 +585,6 @@ Successfully installed plugin!: Successfully installed plugin!
 Failed to uninstall plugin.: Failed to uninstall plugin.
 Successfully removed plugin.: Successfully removed plugin.
 Total Projects: Total Projects
-New Project: New Project
 Failed to create workspace.: Failed to create workspace.
 Sucessfully created a workspace!: Sucessfully created a workspace!
 Failed to update workspace name.: Failed to update workspace name.

@@ -1,8 +1,8 @@
 import { lazy } from "react";
 import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import Dashboard from "@reearth/beta/pages/Dashboard";
 import RootPage from "@reearth/classic/components/pages/Authentication/RootPage";
-import Dashboard from "@reearth/classic/components/pages/Dashboard";
 import AccountSettings from "@reearth/classic/components/pages/Settings/Account";
 import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
 import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
@@ -42,6 +42,14 @@ export const AppRoutes = () => {
   const router = createBrowserRouter([
     /* Beta routes - start */
     {
+      path: "dashboard/:workspaceId/",
+      element: <Dashboard />,
+    },
+    {
+      path: "dashboard/:workspaceId/:tab",
+      element: <Dashboard />,
+    },
+    {
       path: "scene/:sceneId/:tab",
       element: <BetaEditor />,
     },
@@ -74,14 +82,7 @@ export const AppRoutes = () => {
       path: "password-reset",
       element: <PasswordResetPage />,
     },
-    {
-      path: "dashboard",
-      element: <Dashboard />,
-    },
-    {
-      path: "dashboard/:workspaceId",
-      element: <Dashboard />,
-    },
+
     {
       path: "edit/:sceneId",
       children: [

@@ -38,6 +38,7 @@ type Project struct {
 	file              gateway.File
 	nlsLayerRepo      repo.NLSLayer
 	layerStyles       repo.Style
+	repos             *repo.Container
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
@@ -65,8 +66,18 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
-	return i.projectRepo.FindByWorkspace(ctx, id, p)
+func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+	return Run2(
+		ctx, operator, i.repos,
+		Usecase().WithReadableWorkspaces(id),
+		func(ctx context.Context) ([]*project.Project, *usecasex.PageInfo, error) {
+			return i.repos.Project.FindByWorkspace(ctx, id, repo.ProjectFilter{
+				Sort:       sort,
+				Keyword:    keyword,
+				Pagination: p,
+			})
+		},
+	)
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -204,6 +215,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.SetBasicAuthPassword(*p.BasicAuthPassword)
 	}
 
+	if p.Starred != nil {
+		prj.SetStarred(*p.Starred)
+	}
+
 	if p.PublicTitle != nil {
 		prj.UpdatePublicTitle(*p.PublicTitle)
 	}
@@ -246,6 +261,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 			}
 		}
 	}
+
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
