@@ -110,7 +110,7 @@ export type Reearth = {
       selectedFeature?: ComputedFeature;
     }
   >;
-  readonly layer?: LazyLayer;
+  readonly layer: LazyLayer;
   readonly widget?: Widget;
   readonly block?: CommonBlock;
   readonly scene: Undefinable<Scene>;

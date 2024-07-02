@@ -1,32 +1,48 @@
+import { Block } from "./block";
 import { Camera } from "./camera";
-import { Cesium } from "./cesium";
+import { ClientStorage } from "./clientStorage";
 import { Engine } from "./engine";
+import { Events } from "./events";
 import { Layers } from "./layers";
 import { Modal } from "./modal";
 import { Popup } from "./popup";
+import { Sketch } from "./sketch";
 import { Timeline } from "./timeline";
+import { Tools } from "./tools";
 import { UI } from "./ui";
-
-export type GlobalThis = {
-  Cesium?: Cesium;
-  reearth: Reearth;
-  console: {
-    readonly log: (...args: any[]) => void;
-    readonly error: (...args: any[]) => void;
-  };
-};
+import { Viewer } from "./viewer";
+import { Widget } from "./widget";
 
 export declare type Reearth = {
-  readonly version: string; // e.g. "1.0.0"
-  readonly apiVersion: string; // e.g. "1.0.0"
+  // system
+  readonly version: string;
+  readonly apiVersion: string;
   readonly engine: Engine;
-  //
+  // viewer
+  readonly viewer: Viewer;
   readonly camera: Camera;
   readonly timeline: Timeline;
-  //
+  // layers
+  readonly layers: Layers;
+  // plugin ui
   readonly ui: UI;
   readonly modal: Modal;
   readonly popup: Popup;
-  //
-  readonly layers: Layers;
+  // plugin data
+  readonly widget?: Widget;
+  readonly block?: Block;
+  readonly plugin?: Plugin;
+  readonly clientStorage: ClientStorage;
+  // functions
+  readonly sketch: Sketch;
+  // tools
+  readonly tools: Tools;
+} & Events;
+
+export type GlobalThis = {
+  reearth: Reearth;
+  console: {
+    readonly log: (...args: unknown[]) => void;
+    readonly error: (...args: unknown[]) => void;
+  };
 };
