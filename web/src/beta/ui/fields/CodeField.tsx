@@ -20,7 +20,10 @@ const CodeField: FC<CodeFieldProps> = ({ commonTitle, description, height, width
 
 export default CodeField;
 
-const CodeInputWrapper = styled.div<{ height?: number; width?: number }>`
-  height: ${({ height }) => (height ? `${height}px` : "auto")};
-  width: ${({ width }) => (width ? `${width}px` : "100%")};
-`;
+const CodeInputWrapper = styled("div")<{
+  height?: number;
+  width?: number;
+}>(({ height, width }) => ({
+  height: height ? `${height}px` : "auto",
+  width: width ? `${width}px` : "100%",
+}));

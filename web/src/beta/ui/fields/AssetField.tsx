@@ -153,11 +153,11 @@ const AssetWrapper = styled("div")<{
   width: "100%",
 }));
 
-const ButtonWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${({ theme }) => theme.spacing.smallest}px;
-`;
+const ButtonWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: `${theme.spacing.smallest}px`,
+}));
 
 const SelectionButton = styled(Button)`
   cursor: pointer;

@@ -92,36 +92,36 @@ const ListField: FC<ListFieldProps> = ({
   );
 };
 
-const FieldContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.smallest}px;
-`;
+const FieldContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: `${theme.spacing.smallest}px`,
+}));
 
-const FieldWrapper = styled.div`
-  min-height: 84px;
-  max-height: 224px;
-  border-radius: 4px;
-  border: 1px solid rgba(77, 83, 88, 1);
-  overflow: auto;
-`;
+const FieldWrapper = styled("div")(() => ({
+  minHeight: "84px",
+  maxHeight: "224px",
+  borderRadius: "4px",
+  border: "1px solid rgba(77, 83, 88, 1)",
+  overflow: "auto",
+}));
 
-const Item = styled.div<{ selected: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.smallest}px;
-  height: 28px;
-  cursor: pointer;
-`;
+const Item = styled("div")<{ selected: boolean }>(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  padding: `${theme.spacing.smallest}px`,
+  height: "28px",
+  cursor: "pointer",
+}));
 
-const SectionButton = styled(Button)`
-  height: 28px;
-  width: 100%;
-  padding: 0px;
-  margin: 0px;
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
-`;
+const SectionButton = styled(Button)<{ disabled?: boolean }>(({ disabled }) => ({
+  height: "28px",
+  width: "100%",
+  padding: "0px",
+  margin: "0px",
+  opacity: disabled ? 0.6 : 1,
+}));
 
 export default ListField;

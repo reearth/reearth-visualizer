@@ -24,12 +24,12 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
 
 export default CommonField;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.small};
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+}));
 
-const Description = styled(Typography)`
-  color: ${({ theme }) => theme.content.weak};
-`;
+const Description = styled(Typography)(({ theme }) => ({
+  color: theme.content.weak,
+}));

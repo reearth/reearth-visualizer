@@ -48,7 +48,7 @@ const TimePeriodField: React.FC<TimePeriodFieldProps> = ({
       <Wrapper>
         <InputWrapper disabled={true}>
           <SectionInput dataTimeSet={!!timePeriodValues}>
-            <Timeline>
+            <TimePeriod>
               <TextWrapper size="footnote" color={theme.content.main}>
                 {timePeriodValues?.startTime ? timePeriodValues?.startTime : t("not set")}
               </TextWrapper>
@@ -58,7 +58,7 @@ const TimePeriodField: React.FC<TimePeriodFieldProps> = ({
               <TextWrapper size="footnote" color={theme.content.main}>
                 {timePeriodValues?.endTime ? timePeriodValues?.endTime : t("not set")}
               </TextWrapper>
-            </Timeline>
+            </TimePeriod>
             <DeleteIconWrapper onClick={handleRemoveSetting}>
               <DeleteIcon
                 icon="trash"
@@ -90,89 +90,86 @@ const TimePeriodField: React.FC<TimePeriodFieldProps> = ({
   );
 };
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-bottom: 12px;
-`;
+const Wrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: "4px",
+  paddingBottom: "12px",
+}));
 
-const InputWrapper = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  width: 100%;
-  gap: 10px;
-`;
+const InputWrapper = styled("div")<{ disabled?: boolean }>(({ disabled }) => ({
+  display: "flex",
+  width: "100%",
+  gap: "10px",
+  opacity: disabled ? 0.6 : 1,
+}));
 
-const SectionInput = styled.div<{ dataTimeSet?: boolean }>`
-  gap: 14px;
-  width: 100%;
-  display: flex;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  height: auto;
-  align-items: center;
-  color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
-`;
+const SectionInput = styled("div")<{ dataTimeSet?: boolean }>(({ theme, dataTimeSet }) => ({
+  gap: "14px",
+  width: "100%",
+  display: "flex",
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: "4px",
+  height: "auto",
+  alignItems: "center",
+  color: dataTimeSet ? theme.content.strong : theme.content.weak,
+}));
 
-const Timeline = styled.div`
-  padding-left: 26px;
-  position: relative;
-  width: 90%;
-  &:before {
-    position: absolute;
-    content: "";
-    width: 2px;
-    background: ${({ theme }) => theme.outline.weak};
-    top: 8px;
-    bottom: 10px;
-    left: 15px;
-  }
-  &:nth-of-type(2n) {
-    &:before {
-      display: none;
-    }
-  }
-`;
+const TimePeriod = styled("div")(({ theme }) => ({
+  paddingLeft: "26px",
+  position: "relative",
+  width: "90%",
+  "&:before": {
+    position: "absolute",
+    content: '""',
+    width: "2px",
+    background: theme.outline.weak,
+    top: "8px",
+    bottom: "10px",
+    left: "15px",
+  },
+  "&:nth-of-type(2n):before": {
+    display: "none",
+  },
+}));
 
-const TextWrapper = styled(Typography)`
-  position: relative;
-  margin: 5px 0;
-  :before {
-    position: absolute;
-  }
-  ::after {
-    position: absolute;
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    top: 22%;
-    left: -15px;
-    background: ${({ theme }) => theme.content.main};
-    border: 1px solid ${({ theme }) => theme.outline.main};
-  }
-  &:nth-of-type(2) {
-    ::after {
-      background: transparent;
-      border: 1px solid ${({ theme }) => theme.outline.main};
-    }
-  }
-`;
+const TextWrapper = styled(Typography)(({ theme }) => ({
+  position: "relative",
+  margin: "5px 0",
+  ":before": {
+    position: "absolute",
+  },
+  "::after": {
+    position: "absolute",
+    content: '""',
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    top: "22%",
+    left: "-15px",
+    background: theme.content.main,
+    border: `1px solid ${theme.outline.main}`,
+  },
+  "&:nth-of-type(2)::after": {
+    background: "transparent",
+    border: `1px solid ${theme.outline.main}`,
+  },
+}));
 
-const TriggerButton = styled(Button)`
-  margin: 0;
-  height: 28px;
-`;
+const TriggerButton = styled(Button)(() => ({
+  margin: "0",
+  height: "28px",
+}));
 
-const DeleteIconWrapper = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
-`;
+const DeleteIconWrapper = styled("div")<{ disabled?: boolean }>(({ disabled }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: disabled ? "not-allowed" : "pointer",
+}));
 
-const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
-  width: 10%;
-`;
+const DeleteIcon = styled(Icon)<{ disabled?: boolean }>({
+  width: "10%",
+});
 
 export default TimePeriodField;
