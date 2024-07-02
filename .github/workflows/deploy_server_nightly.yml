@@ -5,8 +5,9 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 env:
+  APP_NAME: reearth-visualizer-api
   IMAGE: reearth/reearth-visualizer:nightly
-  IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer:nightly
+  IMAGE_GCP: asia-northeast1-docker.pkg.dev/reearth-oss/reearth-visualizer-api:nightly
   GCP_REGION: us-central1
 jobs:
   deploy_test:
@@ -28,8 +29,8 @@ jobs:
           docker push $IMAGE_GCP
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy reearth-backend \
-            --image $IMAGE_GCP \
+          gcloud run deploy $APP_NAME \
+            --image $IMAGE_NAME_GCP \
             --region $GCP_REGION \
             --platform managed \
             --quiet
