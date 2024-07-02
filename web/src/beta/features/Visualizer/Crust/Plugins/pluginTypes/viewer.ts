@@ -1,11 +1,14 @@
 import { InteractionModeType, ViewerProperty } from "@reearth/core";
 
+import { LatLngHeight } from "./common";
+
 export declare type Viewer = {
   readonly property: ViewerProperty;
   readonly overrideProperty: (property: ViewerProperty) => void;
   readonly viewPort: Viewport;
   readonly interactionMode: InteractionMode;
   readonly env: Env;
+  readonly tools: Tools;
 };
 
 export declare type ViewportSize = {
@@ -20,10 +23,20 @@ export declare type Viewport = ViewportSize & {
 };
 
 export declare type InteractionMode = {
-  mode: InteractionModeType;
-  override?: (mode: InteractionModeType) => void;
+  readonly mode: InteractionModeType;
+  readonly override?: (mode: InteractionModeType) => void;
 };
 
 export declare type Env = {
-  inEditor: boolean;
+  readonly inEditor: boolean;
+};
+
+export declare type Tools = {
+  readonly getLocationFromScreen: (
+    x: number,
+    y: number,
+    withTerrain?: boolean,
+  ) => LatLngHeight | undefined;
+  readonly asyncGetTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  readonly getGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
 };

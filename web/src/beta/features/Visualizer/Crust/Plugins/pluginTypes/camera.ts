@@ -1,3 +1,4 @@
+import { GeoRect, LatLngHeight } from "./common";
 import { LayerId } from "./layers";
 
 export declare type Camera = {
@@ -68,19 +69,6 @@ export declare type LookAtDestination = {
   pitch?: number;
   range?: number;
   radius?: number;
-};
-
-export declare type GeoRect = {
-  west: number;
-  south: number;
-  east: number;
-  north: number;
-};
-
-export declare type LatLngHeight = {
-  lat: number;
-  lng: number;
-  height: number;
 };
 
 export declare type CameraMoveOptions = {

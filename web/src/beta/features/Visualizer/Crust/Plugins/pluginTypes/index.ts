@@ -5,6 +5,8 @@ import { Engine } from "./engine";
 import { Events } from "./events";
 import { Layers } from "./layers";
 import { Modal } from "./modal";
+import { Plugin } from "./plugin";
+import { Plugins } from "./plugins";
 import { Popup } from "./popup";
 import { Sketch } from "./sketch";
 import { Timeline } from "./timeline";
@@ -32,6 +34,7 @@ export declare type Reearth = {
   readonly widget?: Widget;
   readonly block?: Block;
   readonly plugin?: Plugin;
+  readonly plugins: Plugins;
   readonly clientStorage: ClientStorage;
   // functions
   readonly sketch: Sketch;
