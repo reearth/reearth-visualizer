@@ -3,8 +3,8 @@ import { useState } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import Action from "@reearth/beta/features/Editor/Story/PagesPanel/Action";
-import PageItemWrapper from "@reearth/beta/features/Editor/Story/PagesPanel/PageItemWrapper";
+import Action from "@reearth/beta/features/Editor/Story/TempContentStory/Action";
+import PageItemWrapper from "@reearth/beta/features/Editor/Story/TempContentStory/PageItemWrapper";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
