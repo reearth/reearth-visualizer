@@ -18,24 +18,58 @@ export const InputGroup: React.FC<{
   );
 };
 
-const InputGroupWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-`;
+const InputGroupWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  width: "100%",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: theme.spacing.smallest,
+}));
 
-const Label = styled.label`
-  font-size: 0.75rem;
-  font-weight: 400;
-  line-height: 1.25rem;
-  color: ${({ theme }) => theme.content.main};
-`;
+export const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  height: "100%",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: theme.spacing.large,
+}));
 
-const Description = styled.div`
-  font-size: 0.625rem;
-  color: ${({ theme }) => theme.content.weak};
-`;
+export const Label = styled("div")(({ theme }) => ({
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+}));
+
+const Description = styled("div")(({ theme }) => ({
+  color: theme.content.weak,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+}));
+export const InputsWrapper = styled("div")(() => ({
+  width: "100%",
+}));
+
+export const SubmitWrapper = styled("div")(() => ({
+  width: "100%",
+  display: "flex",
+  justifyContent: "flex-end",
+}));
+
+export const AddLayerWrapper = styled("div")(() => ({
+  marginTop: "5px",
+}));
+
+export const LayerWrapper = styled("div")(() => ({
+  display: "flex",
+  width: "100%",
+}));
+
+export const LayerNameListWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  width: "100%",
+}));
 
 export const Input = styled.input`
   flex: auto;
@@ -81,13 +115,6 @@ export const RadioButtonLabel = styled.label`
   }
 `;
 
-export const SubmitWrapper = styled.div`
-  margin-top: 24px;
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-`;
-
 export const TextArea = styled.textarea`
   flex: auto;
   background: transparent;
@@ -99,11 +126,6 @@ export const TextArea = styled.textarea`
   color: ${props => props.theme.content.main};
 `;
 
-export const LayerWrapper = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
 export const DeleteLayerIcon = styled(Icon)<{ disabled?: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   background: transparent;
@@ -112,13 +134,6 @@ export const DeleteLayerIcon = styled(Icon)<{ disabled?: boolean }>`
   border-radius: 4px;
   outline: none;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)}; // Reduce opacity for disabled state
-`;
-
-export const AddLayerWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  margin-top: 5px;
-  justify-content: flex-start;
 `;
 
 export const LayerStyleIcon = styled(Icon)`

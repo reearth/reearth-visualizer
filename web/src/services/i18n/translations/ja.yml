@@ -70,35 +70,34 @@ Switch WorkSpace: ''
 Account Settings: アカウント設定
 Log Out: ''
 Page: ページ
-File Format: ファイル形式
-File format of the data source you want to add.: 追加したいデータソースのファイル形式を選択
 From Assets: アセットから追加
 From Web: Webから追加
 From Value: 値を入力
+File Format: ファイル形式
+File format of the data source you want to add.: 追加したいデータソースのファイル形式を選択
 Source Type: ソースの種類
-Select the type of data source you want to add.: 追加したいデータソースの種類を選択
+Asset: アセット
 Resource URL: リソースURL
-URL of the data source you want to add.: 追加したいデータソースのURLを入力
 Input Text: 入力
 Value: 値
-Write syntactically correct data based on the file format you have selected above.: 上記で選択したファイル形式に基づき、正しいデータを記述
 Input data here: データ入力
-Asset: アセット
 Prioritize Performance: パフォーマンスを優先
 Add to Layer: レイヤー追加
-Point coordinates: 座標
+Visualizer only support csv point data now, so please write down the latitude and longitude file name in your data below.: ''
 Latitude Field: 緯度
 Longitude Field: 経度
-Data Source Manager: データソースマネージャー
 Common: Common
 CSV: CSV
 WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
+Data Source Manager: データソースマネージャー
+URL of the data source you want to add.: 追加したいデータソースのURLを入力
 Choose layer to add: レイヤーの選択
 Layer of the data source you want to add.: 追加したいデータソースのレイヤーを選択
 layer name: レイヤー名
 Layer: レイヤー
+Layer name: ''
 Inspector: インスペクター
 Format: フォーマット
 Unsupported custom field: ''

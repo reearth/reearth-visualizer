@@ -1,24 +1,25 @@
 import { FC } from "react";
 
-import Button from "@reearth/beta/components/Button";
 import {
   AddLayerWrapper,
-  AssetWrapper,
-  ColJustifyBetween,
-  DeleteLayerIcon,
-  Input,
   InputGroup,
+  InputsWrapper,
+  LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
+  Wrapper,
   generateTitle,
 } from "@reearth/beta/features/Editor/utils";
+import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import { useTheme } from "@reearth/services/theme";
 
 import { DataProps } from "..";
 import useHooks from "../hooks";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
+  const theme = useTheme();
 
   const {
     urlValue,
@@ -61,62 +62,59 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustifyBetween>
-      <AssetWrapper>
-        <InputGroup
-          label={t("Resource URL")}
-          description={t("URL of the data source you want to add.")}>
-          <Input
-            type="text"
+    <Wrapper>
+      <InputGroup label={t("Resource URL")}>
+        <InputsWrapper>
+          <TextInput
             placeholder="https://"
             value={urlValue}
-            onChange={e => setUrlValue(e.target.value)}
+            onChange={value => setUrlValue(value)}
           />
-        </InputGroup>
-        <InputGroup
-          label={t("Choose layer to add")}
-          description={t("Layer of the data source you want to add.")}>
+        </InputsWrapper>
+      </InputGroup>
+      <InputGroup label={t("Choose layer to add")}>
+        <LayerNameListWrapper>
           {layers.map((layer: string, index: number) => (
             <LayerWrapper key={index}>
-              <Input type="text" value={`${layer}`} disabled={true} />
-              <DeleteLayerIcon icon="bin" size={16} onClick={() => handleDeleteLayer(index)} />
+              <TextInput value={`${layer}`} extendWidth />
+              <Button
+                icon="close"
+                iconButton
+                shadow={false}
+                appearance="simple"
+                iconColor={theme.content.main}
+                onClick={() => handleDeleteLayer(index)}
+              />
             </LayerWrapper>
           ))}
           {(!layers.length || layerInput) && (
             <LayerWrapper>
-              <Input
-                type="text"
+              <TextInput
                 placeholder={t("layer name")}
                 value={layerValue}
-                onChange={e => setLayerValue(e.target.value)}
-                onKeyDown={handleAddLayer}
+                extendWidth
+                onBlur={handleAddLayer}
+                onChange={value => setLayerValue(value)}
               />
-              <DeleteLayerIcon disabled={true} icon="bin" size={16} />
+              <Button
+                icon="close"
+                iconButton
+                shadow={false}
+                iconColor={theme.content.weak}
+                appearance="simple"
+              />
             </LayerWrapper>
           )}
+        </LayerNameListWrapper>
 
-          <AddLayerWrapper>
-            <Button
-              icon="plus"
-              text={t("Layer")}
-              buttonType="primary"
-              size="small"
-              onClick={handleLayerInput}
-              disabled={!layerValue && !layers.length}
-            />
-          </AddLayerWrapper>
-        </InputGroup>
-      </AssetWrapper>
+        <AddLayerWrapper>
+          <Button icon="plus" title={t("Layer name")} size="small" onClick={handleLayerInput} />
+        </AddLayerWrapper>
+      </InputGroup>
       <SubmitWrapper>
-        <Button
-          text={t("Add to Layer")}
-          buttonType="primary"
-          size="medium"
-          onClick={handleSubmit}
-          disabled={!urlValue}
-        />
+        <Button title={t("Add to Layer")} appearance="primary" onClick={handleSubmit} />
       </SubmitWrapper>
-    </ColJustifyBetween>
+    </Wrapper>
   );
 };
 

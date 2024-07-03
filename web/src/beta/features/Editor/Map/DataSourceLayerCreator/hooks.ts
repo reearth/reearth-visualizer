@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from "react";
+import { useState } from "react";
 
 export default () => {
   const [urlValue, setUrlValue] = useState("");
@@ -19,11 +19,9 @@ export default () => {
     setLayerInput(true);
   };
 
-  const handleAddLayer = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleonAddLayer();
-      setLayerInput(false);
-    }
+  const handleAddLayer = () => {
+    handleonAddLayer();
+    setLayerInput(false);
   };
 
   const handleDeleteLayer = (idx: number) => {

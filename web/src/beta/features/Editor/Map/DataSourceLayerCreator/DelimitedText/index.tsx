@@ -1,35 +1,32 @@
 import { useCallback, useMemo, useState } from "react";
 
-import Button from "@reearth/beta/components/Button";
 import URLField from "@reearth/beta/components/fields/URLField";
-import RadioGroup from "@reearth/beta/components/RadioGroup";
-import Text from "@reearth/beta/components/Text";
 import {
-  ColJustifyBetween,
-  AssetWrapper,
   InputGroup,
-  Input,
-  SourceTypeWrapper,
   SubmitWrapper,
   generateTitle,
+  Wrapper,
+  InputsWrapper,
 } from "@reearth/beta/features/Editor/utils";
+import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { DataProps, SourceType, DataSourceOptType } from "..";
 
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-
+  const theme = useTheme();
   const [sourceType, setSourceType] = useState<SourceType>("local");
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
   const [lat, setLat] = useState("");
   const [long, setLong] = useState("");
 
-  const DataSourceOptions: DataSourceOptType = useMemo(
+  const dataSourceOptions: DataSourceOptType = useMemo(
     () => [
-      { label: t("From Assets"), keyValue: "local" },
-      { label: t("From Web"), keyValue: "url" },
+      { label: t("From Assets"), value: "local" },
+      { label: t("From Web"), value: "url" },
     ],
     [t],
   );
@@ -59,74 +56,93 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     setLayerName(name || "");
   }, []);
 
-  return (
-    <ColJustifyBetween>
-      <AssetWrapper>
-        <InputGroup
-          label={t("Source Type")}
-          description={t("Select the type of data source you want to add.")}>
-          <SourceTypeWrapper>
-            <RadioGroup
-              options={DataSourceOptions}
-              selectedValue={sourceType}
-              onChange={(newValue: string) => setSourceType(newValue as SourceType)}
-            />
-          </SourceTypeWrapper>
-        </InputGroup>
+  const handleDataSourceTypeOnChange = useCallback((newValue: string) => {
+    setSourceType(newValue as SourceType);
+    setValue("");
+  }, []);
 
-        {sourceType == "url" && (
-          <InputGroup
-            label={t("Resource URL")}
-            description={t("URL of the data source you want to add.")}>
-            <Input
-              type="text"
-              placeholder={t("Input Text")}
-              value={value}
-              onChange={e => setValue(e.target.value)}
-            />
-          </InputGroup>
-        )}
-        {sourceType == "local" && (
+  return (
+    <Wrapper>
+      <InputGroup label={t("Source Type")}>
+        <RadioGroup
+          checkedValue={sourceType}
+          options={dataSourceOptions}
+          onChange={handleDataSourceTypeOnChange}
+        />
+      </InputGroup>
+
+      {sourceType == "local" && (
+        //this Url field component will be replaced with new ui/fields
+        <InputsWrapper>
           <URLField
             fileType="asset"
             entityType="file"
+            name={t("Asset")}
             value={value}
             fileFormat="CSV"
-            name={t("Asset")}
             onChange={handleOnChange}
           />
-        )}
-        <Text size="body">{t("Point coordinates")}</Text>
+        </InputsWrapper>
+      )}
+      {sourceType == "url" && (
+        <InputGroup label={t("Resource URL")}>
+          <InputsWrapper>
+            <TextInput placeholder={t("Input Text")} value={value} onChange={handleOnChange} />
+          </InputsWrapper>
+        </InputGroup>
+      )}
+      <Warning>
+        <Icon icon="lightBulb" color={theme.warning.main} size="large" />
+        <TextWrapper>
+          {t(
+            "Visualizer only support csv point data now, so please write down the latitude and longitude file name in your data below.",
+          )}
+        </TextWrapper>
+      </Warning>
+      <CoordinateWrapper>
         <InputGroup label={t("Latitude Field")}>
-          <Input
-            type="text"
-            placeholder={t("Input Text")}
-            value={lat}
-            onChange={e => setLat(e.target.value)}
-          />
+          <InputsWrapper>
+            {" "}
+            <TextInput
+              value={lat}
+              placeholder={t("Input Text")}
+              onChange={value => setLat(value)}
+            />
+          </InputsWrapper>
         </InputGroup>
         <InputGroup label={t("Longitude Field")}>
-          <Input
-            type="text"
-            placeholder={t("Input Text")}
-            value={long}
-            onChange={e => setLong(e.target.value)}
-          />
+          <InputsWrapper>
+            <TextInput
+              value={long}
+              placeholder={t("Input Text")}
+              onChange={value => setLong(value)}
+            />
+          </InputsWrapper>
         </InputGroup>
-      </AssetWrapper>
+      </CoordinateWrapper>
+
       <SubmitWrapper>
-        <Button
-          text={t("Add to Layer")}
-          buttonType="primary"
-          size="medium"
-          onClick={handleSubmit}
-          disabled={
-            (sourceType === "url" || sourceType === "value" || sourceType === "local") && !value
-          }
-        />
+        <Button title={t("Add to Layer")} appearance="primary" onClick={handleSubmit} />
       </SubmitWrapper>
-    </ColJustifyBetween>
+    </Wrapper>
   );
 };
 
+const Warning = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.smallest,
+  alignItems: "center",
+}));
+
+const TextWrapper = styled("div")(({ theme }) => ({
+  color: theme.warning.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+}));
+const CoordinateWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center",
+  width: "100%",
+}));
 export default DelimitedText;

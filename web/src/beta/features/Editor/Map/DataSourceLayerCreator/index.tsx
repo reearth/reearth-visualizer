@@ -5,7 +5,7 @@ import { useT } from "@reearth/services/i18n";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
-import Asset from "./Common";
+import CommonAsset from "./Common";
 import DelimitedText from "./DelimitedText";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
@@ -21,7 +21,7 @@ export type SourceType = "url" | "local" | "value";
 
 export type DataSourceOptType = {
   label: string;
-  keyValue: SourceType;
+  value: SourceType;
 }[];
 
 const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
@@ -31,7 +31,7 @@ const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) =
     {
       id: "asset",
       name: t("Common"),
-      children: <Asset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
     },
     {
       id: "delimitedText",
