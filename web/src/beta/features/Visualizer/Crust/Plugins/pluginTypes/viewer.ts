@@ -37,6 +37,26 @@ export declare type Tools = {
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
-  readonly asyncGetTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  readonly getTerrainHeightAsync: (lng: number, lat: number) => Promise<number | undefined>;
   readonly getGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly cartographicToCartesian: (
+    lng: number,
+    lat: number,
+    height: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [x: number, y: number, z: number] | undefined;
+  readonly cartesianToCartographic: (
+    x: number,
+    y: number,
+    z: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [lng: number, lat: number, height: number] | undefined;
+  readonly transformWithOffsetInScreen: (
+    rawPosition: [x: number, y: number, z: number],
+    screenOffset: [x: number, y: number],
+  ) => [x: number, y: number, z: number] | undefined;
+  readonly isPositionVisibleOnGlobe: (position: [x: number, y: number, z: number]) => boolean;
+  readonly getScreenCoordinatesFromPosition: (
+    position: [x: number, y: number, z: number],
+  ) => [x: number, y: number] | undefined;
 };

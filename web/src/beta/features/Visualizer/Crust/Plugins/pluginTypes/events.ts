@@ -56,7 +56,7 @@ export declare type ReearthEventType = {
   popupclose: [];
   pluginmessage: [props: PluginMessage];
   sketchfeaturecreated: [props: SketchEventProps];
-  sketchtypechange: [props: SketchType | undefined];
+  sketchtoolchange: [props: SketchType | undefined];
   layerVisibility: [e: LayerVisibilityEvent];
   layerload: [e: LayerLoadEvent];
   layerSelectWithRectStart: [e: LayerSelectWithRectStart];

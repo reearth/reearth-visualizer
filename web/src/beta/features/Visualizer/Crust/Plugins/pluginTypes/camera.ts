@@ -42,7 +42,7 @@ export declare type Camera = {
   readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
   // TODO: breaking change. lookHorizontal lookVertical removed.
   // TODO: breaking change. merged functions.
-  readonly moveForward: (
+  readonly move: (
     direction: "forward" | "backward" | "up" | "down" | "left" | "right",
     amount: number,
   ) => void;
