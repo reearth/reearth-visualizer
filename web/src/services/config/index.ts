@@ -51,10 +51,12 @@ export type Config = {
 
 declare global {
   let __APP_VERSION__: string;
+  let __REEARTH_COMMIT_HASH__: string;
   interface Window {
     REEARTH_CONFIG?: Config;
     REEARTH_E2E_ACCESS_TOKEN?: string;
     REEARTH_E2E_CESIUM_VIEWER?: any;
+    REEARTH_COMMIT_HASH?: string;
   }
 }
 
