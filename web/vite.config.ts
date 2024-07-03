@@ -19,7 +19,10 @@ import pkg from "./package.json";
 const NO_MINIFY = !!process.env.NO_MINIFY;
 const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 
-const commitHash = execSync("git rev-parse HEAD").toString().trimEnd();
+let commitHash = "";
+try {
+  commitHash = execSync("git rev-parse HEAD").toString().trimEnd();
+} catch {}
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
