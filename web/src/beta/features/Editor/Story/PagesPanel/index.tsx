@@ -66,13 +66,15 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
         />
       </ButtonWrapper>
       <Wrapper onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
-        <DragAndDropList
-          items={DraggableStoryPageItems}
-          handleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
-          onMoveEnd={handleMoveEnd}
-          onMoveStart={handleMoveStart}
-          dragDisabled={false}
-        />
+        {!!DraggableStoryPageItems && (
+          <DragAndDropList
+            items={DraggableStoryPageItems}
+            handleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
+            onMoveEnd={handleMoveEnd}
+            onMoveStart={handleMoveStart}
+            dragDisabled={false}
+          />
+        )}
       </Wrapper>
     </Panel>
   );
