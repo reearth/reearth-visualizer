@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 /// <reference types="vitest" />
 
+import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 
@@ -18,6 +19,11 @@ import pkg from "./package.json";
 const NO_MINIFY = !!process.env.NO_MINIFY;
 const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 
+let commitHash = "";
+try {
+  commitHash = execSync("git rev-parse HEAD").toString().trimEnd();
+} catch {}
+
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
   plugins: [svgr(), react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
@@ -26,6 +32,7 @@ export default defineConfig({
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
+    "window.REEARTH_COMMIT_HASH": JSON.stringify(commitHash),
   },
   mode: NO_MINIFY ? "development" : undefined,
   server: {
