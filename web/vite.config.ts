@@ -22,7 +22,9 @@ const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 let commitHash = "";
 try {
   commitHash = execSync("git rev-parse HEAD").toString().trimEnd();
-} catch {}
+} catch {
+  // noop
+}
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
