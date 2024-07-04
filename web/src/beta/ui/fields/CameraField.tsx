@@ -1,7 +1,5 @@
 import { useCallback, useState, FC } from "react";
 
-import CapturePanel from "@reearth/beta/components/fields/CameraField/CapturePanel";
-import EditPanel from "@reearth/beta/components/fields/CameraField/EditPanel";
 import { useCurrentCamera } from "@reearth/beta/features/Editor/atoms";
 import { Button, ButtonProps, Icon, Typography, Popup } from "@reearth/beta/lib/reearth-ui";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -9,6 +7,7 @@ import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import { CapturePanel, EditPanel } from "./CameraField/index";
 import CommonField, { CommonFieldProps } from "./CommonField";
 
 type Panel = "editor" | "capture" | undefined;
