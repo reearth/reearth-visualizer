@@ -87,7 +87,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       {sourceType == "url" && (
         <InputGroup label={t("Resource URL")}>
           <InputsWrapper>
-            <TextInput placeholder={t("Input Text")} value={value} onChange={handleOnChange} />
+            <TextInput placeholder="https://" value={value} onChange={handleOnChange} />
           </InputsWrapper>
         </InputGroup>
       )}
@@ -100,21 +100,20 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         </TextWrapper>
       </Warning>
       <CoordinateWrapper>
-        <InputGroup label={t("Latitude Field")}>
+        <InputGroup label={t("Latitude Column Name")}>
           <InputsWrapper>
-            {" "}
             <TextInput
               value={lat}
-              placeholder={t("Input Text")}
+              placeholder={t("Column Name")}
               onChange={value => setLat(value)}
             />
           </InputsWrapper>
         </InputGroup>
-        <InputGroup label={t("Longitude Field")}>
+        <InputGroup label={t("Longitude Column Name")}>
           <InputsWrapper>
             <TextInput
               value={long}
-              placeholder={t("Input Text")}
+              placeholder={t("Column Name")}
               onChange={value => setLong(value)}
             />
           </InputsWrapper>
@@ -122,7 +121,12 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       </CoordinateWrapper>
 
       <SubmitWrapper>
-        <Button title={t("Add to Layer")} appearance="primary" onClick={handleSubmit} />
+        <Button
+          title={t("Add to Layer")}
+          disabled={!value}
+          appearance="primary"
+          onClick={handleSubmit}
+        />
       </SubmitWrapper>
     </Wrapper>
   );
@@ -130,7 +134,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
 const Warning = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.small,
   alignItems: "center",
 }));
 

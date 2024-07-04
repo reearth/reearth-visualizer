@@ -40,8 +40,8 @@ const RadioWrapper = styled("div")(({ theme }) => ({
 }));
 
 const RadioIndicator = styled("div")<{ checked?: boolean }>(({ checked, theme }) => ({
-  width: "10px",
-  height: "10px",
+  width: "6px",
+  height: "6px",
   borderRadius: "50%",
   background: checked ? theme.select.main : theme.content.main,
 }));
@@ -64,8 +64,8 @@ const RadioInput = styled("input")(() => ({
 
 const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
   ({ checked, disabled, theme }) => ({
-    width: "16px",
-    height: "16px",
+    width: "12px",
+    height: "12px",
     borderRadius: "50%",
     border: disabled
       ? `1px solid ${theme.content.weak}`

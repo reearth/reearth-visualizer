@@ -54,8 +54,9 @@ export const SubmitWrapper = styled("div")(() => ({
   justifyContent: "flex-end",
 }));
 
-export const LayerWrapper = styled("div")(() => ({
+export const LayerWrapper = styled("div")(({ theme }) => ({
   display: "flex",
+  gap: theme.spacing.small,
 }));
 
 export const LayerNameListWrapper = styled("div")(({ theme }) => ({

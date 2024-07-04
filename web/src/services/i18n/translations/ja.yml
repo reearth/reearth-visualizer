@@ -84,8 +84,9 @@ Input data here: データ入力
 Prioritize Performance: パフォーマンスを優先
 Add to Layer: レイヤー追加
 Visualizer only support csv point data now, so please write down the latitude and longitude file name in your data below.: ''
-Latitude Field: 緯度
-Longitude Field: 経度
+Latitude Column Name: ''
+Column Name: ''
+Longitude Column Name: ''
 Common: Common
 CSV: CSV
 WMS: WMS

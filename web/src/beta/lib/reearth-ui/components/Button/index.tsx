@@ -107,7 +107,8 @@ const StyledButton = styled("button")<{
     cursor: "not-allowed",
     borderColor: "transparent",
     color: `${theme.content.weaker}`,
-    backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
+    backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "c",
+    border: appearance === "simple" ? `1px solid transparent` : `1px solid ${theme.content.weaker}`,
     boxShadow: "none",
   },
   ["& svg"]: {

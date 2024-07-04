@@ -36,7 +36,8 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   alignSelf: "stretch",
   padding: `${theme.spacing.normal}px`,
   color: theme.content.main,
-  background: theme.bg[2],
+  background: theme.bg[1],
+  borderBottom: `1px solid ${theme.outline.weaker}`,
   borderTopRightRadius: theme.radius.large,
   borderTopLeftRadius: theme.radius.large,
 }));
@@ -53,7 +54,7 @@ const Content = styled("div")(() => ({
 
 const ActionWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
-  background: theme.bg[2],
+  background: theme.bg[1],
   borderBottomRightRadius: theme.radius.large,
   borderBottomLeftRadius: theme.radius.large,
   justifyContent: "flex-end",
