@@ -92,11 +92,8 @@ WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
 Data Source Manager: データソースマネージャー
-URL of the data source you want to add.: 追加したいデータソースのURLを入力
 Choose layer to add: レイヤーの選択
-Layer of the data source you want to add.: 追加したいデータソースのレイヤーを選択
 layer name: レイヤー名
-Layer: レイヤー
 Layer name: ''
 Inspector: インスペクター
 Format: フォーマット
@@ -518,6 +515,7 @@ Successfully unpublished your project. Now nobody can access your project.: プ�
 Successfully copied to clipboard!: クリップボードにコピーしました。
 Outline: アウトライン
 Folder: 新規フォルダ
+Layer: レイヤー
 Widget: ウィジェット
 Infobox: インフォボックス
 Tag: タグ

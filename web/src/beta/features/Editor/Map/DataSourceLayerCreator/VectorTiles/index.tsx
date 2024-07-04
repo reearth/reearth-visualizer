@@ -1,57 +1,57 @@
 import { FC } from "react";
 
-import Button from "@reearth/beta/components/Button";
 import {
-  AddLayerWrapper,
-  AssetWrapper,
-  ColJustifyBetween,
-  DeleteLayerIcon,
-  Input,
   InputGroup,
+  InputsWrapper,
+  LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
-  generateTitle,
-} from "@reearth/beta/features/Editor/utils";
+  Wrapper,
+} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
+import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { useT } from "@reearth/services/i18n";
+import { useTheme } from "@reearth/services/theme";
 
 import { DataProps } from "..";
 import useHooks from "../hooks";
 
-const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+  const t = useT();
+  const theme = useTheme();
+
   const {
-    urlValue,
-    layerValue,
-    layerInput,
+    mvtUrlValue,
+    layerNameValue,
+    isLayerName,
     layers,
     setLayers,
-    setUrlValue,
-    setLayerValue,
-    handleAddLayer,
-    handleDeleteLayer,
-    handleLayerInput,
+    handleOnChange,
+    setLayerNameValue,
+    handleOnBlur,
+    handleLayerNameButtonClick,
+    handleLayerNameDelete,
   } = useHooks();
-
-  const t = useT();
 
   const handleSubmit = () => {
     let updatedLayers = layers;
-    if (layerValue.trim() !== "") {
-      const exist = layers.some(layer => layer === layerValue);
+    if (layerNameValue.trim() !== "") {
+      const exist = layers.some(layer => layer === layerNameValue);
       if (!exist) {
-        updatedLayers = [...layers, layerValue];
+        updatedLayers = [...layers, layerNameValue];
         setLayers(updatedLayers);
       }
-      setLayerValue("");
+      setLayerNameValue("");
     }
 
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle(urlValue),
+      title: generateTitle(mvtUrlValue),
       visible: true,
       config: {
         data: {
-          url: urlValue !== "" ? urlValue : undefined,
+          url: mvtUrlValue !== "" ? mvtUrlValue : undefined,
           type: "mvt",
           layers: updatedLayers.length === 1 ? updatedLayers[0] : updatedLayers,
         },
@@ -61,63 +61,71 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustifyBetween>
-      <AssetWrapper>
-        <InputGroup
-          label={t("Resource URL")}
-          description={t("URL of the data source you want to add.")}>
-          <Input
-            type="text"
+    <Wrapper>
+      <InputGroup label={t("Resource URL")}>
+        <InputsWrapper>
+          <TextInput
             placeholder="https://"
-            value={urlValue}
-            onChange={e => setUrlValue(e.target.value)}
+            value={mvtUrlValue}
+            onChange={value => handleOnChange(value, "mvtUrl")}
           />
-        </InputGroup>
-        <InputGroup
-          label={t("Choose layer to add")}
-          description={t("Layer of the data source you want to add.")}>
+        </InputsWrapper>
+      </InputGroup>
+      <InputGroup label={t("Choose layer to add")}>
+        <LayerNameListWrapper>
           {layers.map((layer: string, index: number) => (
             <LayerWrapper key={index}>
-              <Input type="text" value={`${layer}`} disabled={true} />
-              <DeleteLayerIcon icon="bin" size={16} onClick={() => handleDeleteLayer(index)} />
+              <TextInput value={`${layer}`} extendWidth />
+              <Button
+                icon="close"
+                iconButton
+                shadow={false}
+                appearance="simple"
+                size="small"
+                iconColor={theme.content.main}
+                onClick={() => handleLayerNameDelete(index)}
+              />
             </LayerWrapper>
           ))}
-          {(!layers.length || layerInput) && (
+          {(!layers.length || isLayerName) && (
             <LayerWrapper>
-              <Input
-                type="text"
+              <TextInput
                 placeholder={t("layer name")}
-                value={layerValue}
-                onChange={e => setLayerValue(e.target.value)}
-                onKeyDown={handleAddLayer}
+                value={layerNameValue}
+                extendWidth
+                onBlur={handleOnBlur}
+                onChange={value => setLayerNameValue(value)}
               />
-              <DeleteLayerIcon disabled={true} icon="bin" size={16} />
+              <Button
+                icon="close"
+                iconButton
+                shadow={false}
+                iconColor={theme.content.weak}
+                size="small"
+                appearance="simple"
+                disabled
+              />
             </LayerWrapper>
           )}
+        </LayerNameListWrapper>
 
-          <AddLayerWrapper>
-            <Button
-              icon="plus"
-              text={t("Layer")}
-              buttonType="primary"
-              size="small"
-              onClick={handleLayerInput}
-              disabled={!layerValue && !layers.length}
-            />
-          </AddLayerWrapper>
-        </InputGroup>
-      </AssetWrapper>
+        <Button
+          icon="plus"
+          title={t("Layer name")}
+          size="small"
+          onClick={handleLayerNameButtonClick}
+        />
+      </InputGroup>
       <SubmitWrapper>
         <Button
-          text={t("Add to Layer")}
-          buttonType="primary"
-          size="medium"
+          title={t("Add to Layer")}
+          appearance="primary"
           onClick={handleSubmit}
-          disabled={!urlValue}
+          disabled={!mvtUrlValue.endsWith(".mvt")}
         />
       </SubmitWrapper>
-    </ColJustifyBetween>
+    </Wrapper>
   );
 };
 
-export default VectorTiles;
+export default WmsTiles;

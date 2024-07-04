@@ -4,11 +4,11 @@ import URLField from "@reearth/beta/components/fields/URLField";
 import {
   InputGroup,
   SubmitWrapper,
-  generateTitle,
   Wrapper,
   InputsWrapper,
-} from "@reearth/beta/features/Editor/utils";
+} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
 import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -139,10 +139,12 @@ const TextWrapper = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
 }));
+
 const CoordinateWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   alignItems: "center",
   width: "100%",
 }));
+
 export default DelimitedText;

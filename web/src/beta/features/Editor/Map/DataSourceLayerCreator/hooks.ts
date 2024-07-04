@@ -1,45 +1,57 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export default () => {
-  const [urlValue, setUrlValue] = useState("");
-  const [layerValue, setLayerValue] = useState("");
-  const [layers, setLayers] = useState<string[]>([]);
-  const [layerInput, setLayerInput] = useState(false);
+  const [mvtUrlValue, setMvtUrlValue] = useState("");
+  const [wmsUrlValue, setWmsUrlValue] = useState("");
 
-  const handleonAddLayer = () => {
-    if (layerValue.trim() !== "") {
-      const exist = layers.some((layer: string) => layer === layerValue);
-      if (!exist) setLayers(prev => [...prev, layerValue]);
-      setLayerValue("");
+  const [isLayerName, setIsLayerName] = useState(false);
+  const [layerNameValue, setLayerNameValue] = useState("");
+  const [layers, setLayers] = useState<string[]>([]);
+
+  const handleLayerNameAdd = () => {
+    if (layerNameValue.trim() !== "") {
+      const exist = layers.some((layer: string) => layer === layerNameValue);
+      if (!exist) setLayers(prev => [...prev, layerNameValue]);
+      setLayerNameValue("");
     }
   };
 
-  const handleLayerInput = () => {
-    handleonAddLayer();
-    setLayerInput(true);
+  const handleOnBlur = () => {
+    handleLayerNameAdd();
+    setIsLayerName(true);
   };
 
-  const handleAddLayer = () => {
-    handleonAddLayer();
-    setLayerInput(false);
+  const handleLayerNameButtonClick = () => {
+    handleLayerNameAdd();
+    setIsLayerName(true);
   };
 
-  const handleDeleteLayer = (idx: number) => {
+  const handleLayerNameDelete = (idx: number) => {
     const updatedLayers = [...layers];
     updatedLayers.splice(idx, 1);
     setLayers(updatedLayers);
   };
 
+  const handleOnChange = useCallback((value: string, name?: string) => {
+    if (name === "mvtUrl") {
+      setMvtUrlValue(value);
+    } else if (name === "wmsUrl") {
+      setWmsUrlValue(value);
+    }
+  }, []);
+
   return {
-    urlValue,
-    layerInput,
-    layerValue,
+    mvtUrlValue,
+    wmsUrlValue,
+    isLayerName,
+    layerNameValue,
     layers,
     setLayers,
-    setLayerValue,
-    setUrlValue,
-    handleAddLayer,
-    handleLayerInput,
-    handleDeleteLayer,
+    setLayerNameValue,
+    handleOnChange,
+    handleOnBlur,
+    handleLayerNameDelete,
+    handleLayerNameButtonClick,
+    handleLayerNameAdd,
   };
 };

@@ -6,7 +6,7 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
-} from "@reearth/beta/features/Editor/utils";
+} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
 import {
   Selector,
   RadioGroup,

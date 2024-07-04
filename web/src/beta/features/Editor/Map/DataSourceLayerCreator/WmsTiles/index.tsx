@@ -1,16 +1,15 @@
 import { FC } from "react";
 
 import {
-  AddLayerWrapper,
   InputGroup,
   InputsWrapper,
   LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
   Wrapper,
-  generateTitle,
-} from "@reearth/beta/features/Editor/utils";
+} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 
@@ -22,37 +21,37 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const theme = useTheme();
 
   const {
-    urlValue,
-    layerValue,
-    layerInput,
+    wmsUrlValue,
+    layerNameValue,
+    isLayerName,
     layers,
     setLayers,
-    setUrlValue,
-    setLayerValue,
-    handleAddLayer,
-    handleDeleteLayer,
-    handleLayerInput,
+    handleOnChange,
+    setLayerNameValue,
+    handleLayerNameDelete,
+    handleLayerNameButtonClick,
+    handleOnBlur,
   } = useHooks();
 
   const handleSubmit = () => {
     let updatedLayers = layers;
-    if (layerValue.trim() !== "") {
-      const exist = layers.some(layer => layer === layerValue);
+    if (layerNameValue.trim() !== "") {
+      const exist = layers.some(layer => layer === layerNameValue);
       if (!exist) {
-        updatedLayers = [...layers, layerValue];
+        updatedLayers = [...layers, layerNameValue];
         setLayers(updatedLayers);
       }
-      setLayerValue("");
+      setLayerNameValue("");
     }
 
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle(urlValue),
+      title: generateTitle(wmsUrlValue),
       visible: true,
       config: {
         data: {
-          url: urlValue !== "" ? urlValue : undefined,
+          url: wmsUrlValue !== "" ? wmsUrlValue : undefined,
           type: "wms",
           layers: updatedLayers.length === 1 ? updatedLayers[0] : updatedLayers,
         },
@@ -67,8 +66,8 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         <InputsWrapper>
           <TextInput
             placeholder="https://"
-            value={urlValue}
-            onChange={value => setUrlValue(value)}
+            value={wmsUrlValue}
+            onChange={value => handleOnChange(value, "wmsUrl")}
           />
         </InputsWrapper>
       </InputGroup>
@@ -82,37 +81,48 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 iconButton
                 shadow={false}
                 appearance="simple"
+                size="small"
                 iconColor={theme.content.main}
-                onClick={() => handleDeleteLayer(index)}
+                onClick={() => handleLayerNameDelete(index)}
               />
             </LayerWrapper>
           ))}
-          {(!layers.length || layerInput) && (
+          {(!layers.length || isLayerName) && (
             <LayerWrapper>
               <TextInput
                 placeholder={t("layer name")}
-                value={layerValue}
+                value={layerNameValue}
                 extendWidth
-                onBlur={handleAddLayer}
-                onChange={value => setLayerValue(value)}
+                onBlur={handleOnBlur}
+                onChange={value => setLayerNameValue(value)}
               />
               <Button
                 icon="close"
                 iconButton
                 shadow={false}
+                size="small"
                 iconColor={theme.content.weak}
                 appearance="simple"
+                disabled
               />
             </LayerWrapper>
           )}
         </LayerNameListWrapper>
 
-        <AddLayerWrapper>
-          <Button icon="plus" title={t("Layer name")} size="small" onClick={handleLayerInput} />
-        </AddLayerWrapper>
+        <Button
+          icon="plus"
+          title={t("Layer name")}
+          size="small"
+          onClick={handleLayerNameButtonClick}
+        />
       </InputGroup>
       <SubmitWrapper>
-        <Button title={t("Add to Layer")} appearance="primary" onClick={handleSubmit} />
+        <Button
+          title={t("Add to Layer")}
+          appearance="primary"
+          onClick={handleSubmit}
+          disabled={!wmsUrlValue.endsWith(".wms")}
+        />
       </SubmitWrapper>
     </Wrapper>
   );

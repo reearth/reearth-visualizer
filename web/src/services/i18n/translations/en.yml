@@ -92,11 +92,8 @@ WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
 Data Source Manager: Data Source Manager
-URL of the data source you want to add.: URL of the data source you want to add.
 Choose layer to add: Choose layer to add
-Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
-Layer: Layer
 Layer name: ''
 Inspector: Inspector
 Format: Format
@@ -559,6 +556,7 @@ Successfully unpublished your project. Now nobody can access your project.: Succ
 Successfully copied to clipboard!: Successfully copied to clipboard!
 Outline: Outline
 Folder: Folder
+Layer: Layer
 Widget: Widget
 Infobox: Infobox
 Tag: Tag

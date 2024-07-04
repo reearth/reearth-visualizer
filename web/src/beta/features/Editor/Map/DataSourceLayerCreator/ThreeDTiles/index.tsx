@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 
-import Button from "@reearth/beta/components/Button";
 import {
-  ColJustifyBetween,
-  AssetWrapper,
   InputGroup,
-  Input,
   SubmitWrapper,
-  generateTitle,
-} from "@reearth/beta/features/Editor/utils";
+  Wrapper,
+  InputsWrapper,
+} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
+import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { DataProps } from "..";
 
-const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const [value, setValue] = useState("");
 
@@ -34,30 +34,27 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustifyBetween>
-      <AssetWrapper>
-        <InputGroup
-          label={t("Resource URL")}
-          description={t("URL of the data source you want to add.")}>
-          <Input
-            type="text"
-            placeholder={t("Input Text")}
-            value={value}
-            onChange={e => setValue(e.target.value)}
-          />
-        </InputGroup>
-      </AssetWrapper>
+    <Wrapper>
+      <InputGroup label={t("Resource URL")}>
+        <InputsWrapper>
+          <TextInput placeholder="https://" value={value} onChange={value => setValue(value)} />
+        </InputsWrapper>
+      </InputGroup>
+      <Spacer />
       <SubmitWrapper>
         <Button
-          text={t("Add to Layer")}
-          buttonType="primary"
-          size="medium"
+          title={t("Add to Layer")}
+          appearance="primary"
           onClick={handleSubmit}
           disabled={!value}
         />
       </SubmitWrapper>
-    </ColJustifyBetween>
+    </Wrapper>
   );
 };
+
+const Spacer = styled("div")(() => ({
+  minHeight: "100px",
+}));
 
 export default ThreeDTiles;

@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from "react";
 
 import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
+import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps, DataSourceOptType, SourceType } from "..";
-import { generateTitle } from "../../../utils";
 
 export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   const t = useT();
