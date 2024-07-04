@@ -83,8 +83,9 @@ export const Selector: FC<SelectorProps> = ({
   };
 
   const handleUnselect = useCallback(
-    (e: MouseEvent<HTMLElement>, value: string) => {
+    (e: MouseEvent<HTMLElement>, value: string | undefined) => {
       e.stopPropagation();
+      if (value === undefined) return;
       if (Array.isArray(selectedValue) && selectedValue.length) {
         const newSelectedArr = selectedValue.filter(val => val !== value);
         setSelectedValue(newSelectedArr);
@@ -94,13 +95,11 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange],
   );
 
-  const selectedLabel = useMemo(() => {
+  const selectedLabels = useMemo(() => {
     if (Array.isArray(selectedValue)) {
-      return selectedValue
-        .map(val => optionValues.find(item => item.value === val)?.label)
-        .join(", ");
+      return selectedValue.map(val => optionValues.find(item => item.value === val)?.label);
     }
-    return optionValues.find(item => item.value === selectedValue)?.label;
+    return [optionValues.find(item => item.value === selectedValue)?.label];
   }, [optionValues, selectedValue]);
 
   const renderTrigger = () => {
@@ -112,29 +111,28 @@ export const Selector: FC<SelectorProps> = ({
           </Typography>
         ) : multiple ? (
           <SelectedItems>
-            {(typeof selectedLabel === "string" ? [selectedLabel] : selectedLabel) ??
-              [].map(val => (
-                <SelectedItem key={val}>
-                  <Typography
-                    size="body"
-                    color={disabled ? theme.content.weaker : theme.content.main}>
-                    {val}
-                  </Typography>
-                  {!disabled && (
-                    <Button
-                      iconButton
-                      icon="close"
-                      appearance="simple"
-                      size="small"
-                      onClick={(e: MouseEvent<HTMLElement>) => handleUnselect(e, val)}
-                    />
-                  )}
-                </SelectedItem>
-              ))}
+            {selectedLabels.map(val => (
+              <SelectedItem key={val}>
+                <Typography
+                  size="body"
+                  color={disabled ? theme.content.weaker : theme.content.main}>
+                  {val}
+                </Typography>
+                {!disabled && (
+                  <Button
+                    iconButton
+                    icon="close"
+                    appearance="simple"
+                    size="small"
+                    onClick={(e: MouseEvent<HTMLElement>) => handleUnselect(e, val)}
+                  />
+                )}
+              </SelectedItem>
+            ))}
           </SelectedItems>
         ) : (
           <Typography size="body" color={disabled ? theme.content.weaker : ""}>
-            {selectedLabel}
+            {selectedLabels[0]}
           </Typography>
         )}
         <Icon
