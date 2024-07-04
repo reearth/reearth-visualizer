@@ -175,7 +175,6 @@ This means that anybody with the URL will become unable to view this project.: T
 Page Settings: Page Settings
 All Layers: All Layers
 Untitled: Untitled
-New Page: New Page
 Container Settings: Container Settings
 Padding top: Padding top
 Padding right: Padding right
@@ -606,6 +605,7 @@ Failed to delete block.: Failed to delete block.
 Block was successfully deleted.: Block was successfully deleted.
 Failed to move block.: Failed to move block.
 Block was successfully moved.: Block was successfully moved.
+Successfully updated the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
 Failed to add layerStyle.: ''
@@ -623,6 +623,7 @@ Successfully updated project!: ''
 Successfully archive project!: ''
 Successfully delete project!: ''
 Failed to update property.: Failed to update property.
+Successfully updated the property value!: ''
 Failed to create story.: Failed to create story.
 Successfully created a story!: ''
 Failed to update story.: ''
