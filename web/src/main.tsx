@@ -11,6 +11,7 @@ import wdyr from "./wdyr";
 
 window.React = React;
 window.ReactDOM = ReactDOM;
+window.REEARTH_COMMIT_HASH = __REEARTH_COMMIT_HASH__;
 
 loadConfig().finally(async () => {
   const element = document.getElementById("root");

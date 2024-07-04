@@ -35,7 +35,7 @@ export default function ({ sceneId }: Props) {
   );
 
   const handleCurrentStoryPageChange = useCallback(
-    (pageId: string) => {
+    (pageId?: string) => {
       if (selectedStoryPageId && selectedStoryPageId === pageId) return;
       const newPage = selectedStory?.pages?.find(p => p.id === pageId);
       if (newPage) {

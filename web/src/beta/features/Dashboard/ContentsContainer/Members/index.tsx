@@ -88,7 +88,8 @@ const Search = styled("div")(({ theme }) => ({
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({
-  display: "grid",
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal,
   overflowY: "auto",
   boxSizing: "border-box",
