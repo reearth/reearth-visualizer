@@ -1,8 +1,0 @@
-/build
-/dist
-/coverage
-/storybook-static
-!/.storybook
-/.storybook/public
-/src/classic/gql/graphql-client-api.tsx
-/src/services/gql/__gen__

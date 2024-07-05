@@ -1,7 +1,25 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-workflow": "/.github/workflows/**/*.yml"
-    },
-    "vitest.commandLine": "yarn run vitest watch"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow": "/.github/workflows/**/*.yml"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "eslint.enable": true,
+  "eslint.experimental.useFlatConfig": true,
+  "prettier.enable": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
