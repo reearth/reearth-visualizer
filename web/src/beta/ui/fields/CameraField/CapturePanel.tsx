@@ -2,8 +2,7 @@ import { useMemo, FC } from "react";
 
 import type { RowType } from "@reearth/beta/components/fields/CameraField/types";
 import { radiansToDegrees } from "@reearth/beta/components/fields/CameraField/utils";
-import PanelCommon from "@reearth/beta/components/fields/common/PanelCommon";
-import { Button, Typography, NumberInput } from "@reearth/beta/lib/reearth-ui";
+import { Button, Typography, NumberInput, PopupPanel } from "@reearth/beta/lib/reearth-ui";
 import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -36,7 +35,21 @@ const CapturePanel: FC<Props> = ({ camera, onSave, onClose }) => {
   }, [t, camera]);
 
   return (
-    <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>
+    <PopupPanel
+      title={t("Camera Position Editor")}
+      onCancel={onClose}
+      actions={
+        <ButtonWrapper>
+          <StyledButton title={t("Cancel")} size="small" onClick={onClose} extendWidth />
+          <StyledButton
+            title={t("Capture")}
+            size="small"
+            appearance="primary"
+            extendWidth
+            onClick={() => onSave(camera)}
+          />
+        </ButtonWrapper>
+      }>
       {Object.keys(panelContent).map(group => (
         <FieldGroup key={group}>
           <Typography size="footnote">{group}</Typography>
@@ -59,18 +72,7 @@ const CapturePanel: FC<Props> = ({ camera, onSave, onClose }) => {
           </InputWrapper>
         </FieldGroup>
       ))}
-      <Divider />
-      <ButtonWrapper>
-        <StyledButton title={t("Cancel")} size="small" onClick={onClose} extendWidth={true} />
-        <StyledButton
-          title={t("Capture")}
-          size="small"
-          appearance="primary"
-          extendWidth={true}
-          onClick={() => onSave(camera)}
-        />
-      </ButtonWrapper>
-    </PanelCommon>
+    </PopupPanel>
   );
 };
 
@@ -98,17 +100,15 @@ const PanelContentWrapper = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
 }));
 
-const Divider = styled("div")(({ theme }) => ({
-  borderTop: `1px solid ${theme.outline.weak}`,
-}));
-
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: `${theme.spacing.small}px`,
   padding: `${theme.spacing.small}px`,
 }));
 
-const StyledButton = styled(Button)({});
+const StyledButton = styled(Button)({
+  flex: 1,
+});
 
 const StyledNumberInput = styled(NumberInput)({
   width: "100%",
