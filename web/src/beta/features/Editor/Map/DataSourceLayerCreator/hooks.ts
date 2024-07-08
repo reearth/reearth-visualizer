@@ -18,7 +18,7 @@ export default () => {
 
   const handleOnBlur = () => {
     handleLayerNameAdd();
-    setIsLayerName(true);
+    setIsLayerName(false);
   };
 
   const handleLayerNameButtonClick = () => {

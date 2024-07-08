@@ -4,6 +4,7 @@ import {
   ContentWrapper,
   InputGroup,
   InputsWrapper,
+  LayerNameList,
   LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
@@ -75,38 +76,40 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         </InputGroup>
         <InputGroup label={t("Choose layer to add")}>
           <LayerNameListWrapper>
-            {layers.map((layer: string, index: number) => (
-              <LayerWrapper key={index}>
-                <TextInput value={`${layer}`} extendWidth />
-                <Button
-                  icon="close"
-                  iconButton
-                  appearance="simple"
-                  size="small"
-                  iconColor={theme.content.main}
-                  onClick={() => handleLayerNameDelete(index)}
-                />
-              </LayerWrapper>
-            ))}
-            {(!layers.length || isLayerName) && (
-              <LayerWrapper>
-                <TextInput
-                  placeholder={t("layer name")}
-                  value={layerNameValue}
-                  extendWidth
-                  onBlur={handleOnBlur}
-                  onChange={value => setLayerNameValue(value)}
-                />
-                <Button
-                  icon="close"
-                  iconButton
-                  iconColor={theme.content.weak}
-                  size="small"
-                  appearance="simple"
-                  disabled
-                />
-              </LayerWrapper>
-            )}
+            <LayerNameList>
+              {layers.map((layer: string, index: number) => (
+                <LayerWrapper key={index}>
+                  <TextInput value={`${layer}`} extendWidth />
+                  <Button
+                    icon="close"
+                    iconButton
+                    appearance="simple"
+                    size="small"
+                    iconColor={theme.content.main}
+                    onClick={() => handleLayerNameDelete(index)}
+                  />
+                </LayerWrapper>
+              ))}
+              {(!layers.length || isLayerName) && (
+                <LayerWrapper>
+                  <TextInput
+                    placeholder={t("layer name")}
+                    value={layerNameValue}
+                    extendWidth
+                    onBlur={handleOnBlur}
+                    onChange={value => setLayerNameValue(value)}
+                  />
+                  <Button
+                    icon="close"
+                    iconButton
+                    iconColor={theme.content.weak}
+                    size="small"
+                    appearance="simple"
+                    disabled
+                  />
+                </LayerWrapper>
+              )}
+            </LayerNameList>
           </LayerNameListWrapper>
 
           <Button
