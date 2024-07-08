@@ -7,7 +7,7 @@ import { styled } from "@reearth/services/theme";
 import { LayerAddProps } from "../../hooks/useLayers";
 
 import CommonAsset from "./Common";
-import DelimitedText from "./DelimitedText";
+import CSV from "./CSV";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
 import WmsTiles from "./WmsTiles";
@@ -35,9 +35,9 @@ const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) =
       children: <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
     },
     {
-      id: "delimitedText",
+      id: "csv",
       name: t("CSV"),
-      children: <DelimitedText sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
     },
     {
       id: "wms",

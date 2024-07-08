@@ -36,6 +36,7 @@ export const Radio: FC<RadioProps> = ({ value, label, disabled, checked, onChang
 const RadioWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
+  alignItems: "center",
 }));
 
 const RadioIndicator = styled("div")<{ checked?: boolean }>(({ checked, theme }) => ({

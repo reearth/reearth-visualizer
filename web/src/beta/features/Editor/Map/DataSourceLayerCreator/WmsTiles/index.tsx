@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback, useState } from "react";
 
 import {
   ContentWrapper,
@@ -9,43 +9,52 @@ import {
   LayerWrapper,
   SubmitWrapper,
   Wrapper,
-} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
+} from "@reearth/beta/features/Editor/Map/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 
 import { DataProps } from "..";
-import useHooks from "../hooks";
 import { generateTitle } from "../util";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const theme = useTheme();
 
-  const {
-    wmsUrlValue,
-    layerNameValue,
-    isLayerName,
-    layers,
-    setLayers,
-    handleOnChange,
-    setLayerNameValue,
-    handleLayerNameDelete,
-    handleLayerNameButtonClick,
-    handleOnBlur,
-  } = useHooks();
+  const [wmsUrlValue, setWmsUrlValue] = useState("");
+  const [isLayerName, setIsLayerName] = useState(false);
+  const [layerNameValue, setLayerNameValue] = useState("");
+  const [layersNameList, setLayersNameList] = useState<string[]>([]);
 
-  const handleSubmit = () => {
-    let updatedLayers = layers;
+  const handleLayerNameAdd = () => {
     if (layerNameValue.trim() !== "") {
-      const exist = layers.some(layer => layer === layerNameValue);
-      if (!exist) {
-        updatedLayers = [...layers, layerNameValue];
-        setLayers(updatedLayers);
-      }
+      const exist = layersNameList.some((layer: string) => layer === layerNameValue);
+      if (!exist) setLayersNameList(prev => [...prev, layerNameValue]);
       setLayerNameValue("");
     }
+  };
 
+  const handleBlur = () => {
+    handleLayerNameAdd();
+    setIsLayerName(false);
+  };
+
+  const handleLayerNameButtonClick = () => {
+    handleLayerNameAdd();
+    setIsLayerName(true);
+  };
+
+  const handleLayerNameDelete = (idx: number) => {
+    const updatedLayers = [...layersNameList];
+    updatedLayers.splice(idx, 1);
+    setLayersNameList(updatedLayers);
+  };
+
+  const handleValueChange = useCallback((value: string) => {
+    setWmsUrlValue(value);
+  }, []);
+
+  const handleSubmit = () => {
     onSubmit({
       layerType: "simple",
       sceneId,
@@ -55,7 +64,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: wmsUrlValue !== "" ? wmsUrlValue : undefined,
           type: "wms",
-          layers: updatedLayers.length === 1 ? updatedLayers[0] : updatedLayers,
+          layers: LayerNameList.length === 1 ? layersNameList[0] : layersNameList,
         },
       },
     });
@@ -70,14 +79,14 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             <TextInput
               placeholder="https://"
               value={wmsUrlValue}
-              onChange={value => handleOnChange(value, "wmsUrl")}
+              onChange={value => handleValueChange(value)}
             />
           </InputsWrapper>
         </InputGroup>
         <InputGroup label={t("Choose layer to add")}>
           <LayerNameListWrapper>
             <LayerNameList>
-              {layers.map((layer: string, index: number) => (
+              {layersNameList.map((layer: string, index: number) => (
                 <LayerWrapper key={index}>
                   <TextInput value={`${layer}`} extendWidth />
                   <Button
@@ -90,13 +99,13 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                   />
                 </LayerWrapper>
               ))}
-              {(!layers.length || isLayerName) && (
+              {(!layersNameList.length || isLayerName) && (
                 <LayerWrapper>
                   <TextInput
                     placeholder={t("layer name")}
                     value={layerNameValue}
                     extendWidth
-                    onBlur={handleOnBlur}
+                    onBlur={handleBlur}
                     onChange={value => setLayerNameValue(value)}
                   />
                   <Button

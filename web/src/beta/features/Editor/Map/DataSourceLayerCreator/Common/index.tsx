@@ -7,7 +7,7 @@ import {
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
+} from "@reearth/beta/features/Editor/Map/SharedComponent";
 import {
   Selector,
   RadioGroup,
@@ -29,10 +29,10 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     value,
     fileFormat,
     sourceType,
-    dataSourceOptions,
+    dataSourceTypeOptions,
     fileFormatOptions,
     prioritizePerformance,
-    handleOnChange,
+    handleValueChange,
     handleDataSourceTypeChange,
     handleFileFormatChange,
     handleSubmit,
@@ -53,7 +53,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup options={dataSourceTypeOptions} onChange={handleDataSourceTypeChange} />
         </InputGroup>
 
         {sourceType == "local" && (
@@ -65,14 +65,14 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               name={t("Asset")}
               value={value}
               fileFormat={fileFormat}
-              onChange={handleOnChange}
+              onChange={handleValueChange}
             />
           </InputsWrapper>
         )}
         {sourceType == "url" && (
           <InputGroup label={t("Resource URL")}>
             <InputsWrapper>
-              <TextInput placeholder={t("Input Text")} value={value} onChange={handleOnChange} />
+              <TextInput placeholder={t("Input Text")} value={value} onChange={handleValueChange} />
             </InputsWrapper>
           </InputGroup>
         )}
@@ -83,7 +83,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 placeholder={t("Input data here")}
                 rows={8}
                 value={value}
-                onChange={handleOnChange}
+                onChange={handleValueChange}
               />
             </InputsWrapper>
           </InputGroup>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import URLField from "@reearth/beta/components/fields/URLField";
 import {
@@ -7,7 +7,7 @@ import {
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
+} from "@reearth/beta/features/Editor/Map/SharedComponent";
 import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -15,14 +15,14 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { DataProps, SourceType, DataSourceOptType } from "..";
 import { generateTitle } from "../util";
 
-const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const theme = useTheme();
   const [sourceType, setSourceType] = useState<SourceType>("local");
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
   const [lat, setLat] = useState("");
-  const [long, setLong] = useState("");
+  const [lng, setLng] = useState("");
 
   const dataSourceOptions: DataSourceOptType = useMemo(
     () => [
@@ -44,7 +44,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           type: "csv",
           csv: {
             latColumn: lat,
-            lngColumn: long,
+            lngColumn: lng,
           },
         },
       },
@@ -52,12 +52,12 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = useCallback((value?: string, name?: string) => {
+  const handleValueChange = useCallback((value?: string, name?: string) => {
     setValue(value || "");
     setLayerName(name || "");
   }, []);
 
-  const handleDataSourceTypeOnChange = useCallback((newValue: string) => {
+  const handleDataSourceTypeChange = useCallback((newValue: string) => {
     setSourceType(newValue as SourceType);
     setValue("");
   }, []);
@@ -66,7 +66,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <Wrapper>
       <ContentWrapper>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeOnChange} />
+          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeChange} />
         </InputGroup>
 
         {sourceType == "local" && (
@@ -78,14 +78,14 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               name={t("Asset")}
               value={value}
               fileFormat="CSV"
-              onChange={handleOnChange}
+              onChange={handleValueChange}
             />
           </InputsWrapper>
         )}
         {sourceType == "url" && (
           <InputGroup label={t("Resource URL")}>
             <InputsWrapper>
-              <TextInput placeholder="https://" value={value} onChange={handleOnChange} />
+              <TextInput placeholder="https://" value={value} onChange={handleValueChange} />
             </InputsWrapper>
           </InputGroup>
         )}
@@ -110,9 +110,9 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <InputGroup label={t("Longitude Column Name")}>
             <InputsWrapper>
               <TextInput
-                value={long}
+                value={lng}
                 placeholder={t("Column Name")}
-                onChange={value => setLong(value)}
+                onChange={value => setLng(value)}
               />
             </InputsWrapper>
           </InputGroup>
@@ -121,7 +121,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       <SubmitWrapper>
         <Button
           title={t("Add to Layer")}
-          disabled={!value}
+          disabled={!value || !lng || !lat}
           appearance="primary"
           onClick={handleSubmit}
         />
@@ -149,4 +149,4 @@ const CoordinateWrapper = styled("div")(({ theme }) => ({
   width: "100%",
 }));
 
-export default DelimitedText;
+export default CSV;

@@ -16,7 +16,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
-  const dataSourceOptions: DataSourceOptType = useMemo(
+  const dataSourceTypeOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("From Assets"), value: "local" },
       { label: t("From Web"), value: "url" },
@@ -75,7 +75,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     onClose();
   };
 
-  const handleOnChange = useCallback((value?: string, name?: string) => {
+  const handleValueChange = useCallback((value?: string, name?: string) => {
     setValue(value || "");
     setLayerName(name || "");
   }, []);
@@ -91,14 +91,14 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
 
   return {
     value,
-    dataSourceOptions,
+    dataSourceTypeOptions,
     fileFormatOptions,
     fileFormat,
     sourceType,
     prioritizePerformance,
     setPrioritizePerformance,
     isValidExtension,
-    handleOnChange,
+    handleValueChange,
     handleFileFormatChange,
     handleDataSourceTypeChange,
     handleSubmit,

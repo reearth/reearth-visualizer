@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback, useState } from "react";
 
 import {
   ContentWrapper,
@@ -9,43 +9,52 @@ import {
   LayerWrapper,
   SubmitWrapper,
   Wrapper,
-} from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
+} from "@reearth/beta/features/Editor/Map/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 
 import { DataProps } from "..";
-import useHooks from "../hooks";
 import { generateTitle } from "../util";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const theme = useTheme();
 
-  const {
-    mvtUrlValue,
-    layerNameValue,
-    isLayerName,
-    layers,
-    setLayers,
-    handleOnChange,
-    setLayerNameValue,
-    handleOnBlur,
-    handleLayerNameButtonClick,
-    handleLayerNameDelete,
-  } = useHooks();
+  const [mvtUrlValue, setMvtUrlValue] = useState("");
+  const [isLayerName, setIsLayerName] = useState(false);
+  const [layerName, setLayerName] = useState("");
+  const [layerNameList, setLayerNameList] = useState<string[]>([]);
+
+  const handleLayerNameAdd = () => {
+    if (layerName.trim() !== "") {
+      const exist = layerNameList.some((layer: string) => layer === layerName);
+      if (!exist) setLayerNameList(prev => [...prev, layerName]);
+      setLayerName("");
+    }
+  };
+
+  const handleBlur = () => {
+    handleLayerNameAdd();
+    setIsLayerName(false);
+  };
+
+  const handleLayerNameButtonClick = () => {
+    handleLayerNameAdd();
+    setIsLayerName(true);
+  };
+
+  const handleLayerNameDelete = (idx: number) => {
+    const updatedLayerNameList = [...layerNameList];
+    updatedLayerNameList.splice(idx, 1);
+    setLayerNameList(updatedLayerNameList);
+  };
+
+  const handleValueChange = useCallback((value: string) => {
+    setMvtUrlValue(value);
+  }, []);
 
   const handleSubmit = () => {
-    let updatedLayers = layers;
-    if (layerNameValue.trim() !== "") {
-      const exist = layers.some(layer => layer === layerNameValue);
-      if (!exist) {
-        updatedLayers = [...layers, layerNameValue];
-        setLayers(updatedLayers);
-      }
-      setLayerNameValue("");
-    }
-
     onSubmit({
       layerType: "simple",
       sceneId,
@@ -55,7 +64,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: mvtUrlValue !== "" ? mvtUrlValue : undefined,
           type: "mvt",
-          layers: updatedLayers.length === 1 ? updatedLayers[0] : updatedLayers,
+          layers: layerNameList.length === 1 ? layerNameList[0] : layerNameList,
         },
       },
     });
@@ -70,14 +79,14 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             <TextInput
               placeholder="https://"
               value={mvtUrlValue}
-              onChange={value => handleOnChange(value, "mvtUrl")}
+              onChange={value => handleValueChange(value)}
             />
           </InputsWrapper>
         </InputGroup>
         <InputGroup label={t("Choose layer to add")}>
           <LayerNameListWrapper>
             <LayerNameList>
-              {layers.map((layer: string, index: number) => (
+              {layerNameList.map((layer: string, index: number) => (
                 <LayerWrapper key={index}>
                   <TextInput value={`${layer}`} extendWidth />
                   <Button
@@ -90,14 +99,14 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                   />
                 </LayerWrapper>
               ))}
-              {(!layers.length || isLayerName) && (
+              {(!layerNameList.length || isLayerName) && (
                 <LayerWrapper>
                   <TextInput
                     placeholder={t("layer name")}
-                    value={layerNameValue}
+                    value={layerName}
                     extendWidth
-                    onBlur={handleOnBlur}
-                    onChange={value => setLayerNameValue(value)}
+                    onBlur={handleBlur}
+                    onChange={value => setLayerName(value)}
                   />
                   <Button
                     icon="close"
