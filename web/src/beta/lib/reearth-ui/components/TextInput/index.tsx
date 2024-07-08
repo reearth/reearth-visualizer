@@ -12,6 +12,7 @@ export type TextInputProps = {
   extendWidth?: boolean;
   autoFocus?: boolean;
   actions?: FC[];
+  leftAction?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
 };
@@ -25,6 +26,7 @@ export const TextInput: FC<TextInputProps> = ({
   appearance,
   extendWidth,
   actions,
+  leftAction,
   autoFocus,
   onChange,
   onBlur,
@@ -60,6 +62,13 @@ export const TextInput: FC<TextInputProps> = ({
       appearance={appearance}
       extendWidth={extendWidth}
       status={isFocused || autoFocus ? "active" : "default"}>
+      {leftAction && (
+        <ActionsWrapper>
+          {leftAction.map((Action, i) => (
+            <Action key={i} />
+          ))}
+        </ActionsWrapper>
+      )}
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -143,5 +152,4 @@ const ActionsWrapper = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
   flexShrink: 0,
   padding: theme.spacing.micro,
-  color: theme.content.weak,
 }));

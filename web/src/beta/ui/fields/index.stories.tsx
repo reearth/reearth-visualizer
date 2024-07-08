@@ -45,6 +45,19 @@ export const Components: Story = {
         commonTitle="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
+      <div style={{ maxWidth: "350px" }}>
+        <AssetField
+          fileType="asset"
+          placeholder="Asset"
+          commonTitle="AssetField"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+        />
+      </div>
+      <CameraField
+        onSave={() => {}}
+        commonTitle="CameraField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
       <InputField
         placeholder="Text"
         commonTitle="InputField"
@@ -66,16 +79,6 @@ export const Components: Story = {
         values={["3.1415926", "3.1415926", "3.1415926", "3.1415926"]}
         content={["x", "y", "z", "w"]}
         commonTitle="QuartetInputField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
-      <AssetField
-        fileType="asset"
-        placeholder="Asset"
-        commonTitle="AssetField"
-        extendWidth={true}
-        maxWidth={330}
-        minWidth={172}
-        size="small"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <SelectField
@@ -116,11 +119,7 @@ export const Components: Story = {
         commonTitle="SpacingField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <CameraField
-        onSave={() => {}}
-        commonTitle="CameraField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
+
       <SliderField
         value={50}
         onChange={() => {}}
