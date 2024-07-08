@@ -6,6 +6,7 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
+  ContentWrapper,
 } from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
 import {
   Selector,
@@ -16,7 +17,6 @@ import {
   TextArea,
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import { DataProps } from "..";
 
@@ -33,8 +33,8 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     fileFormatOptions,
     prioritizePerformance,
     handleOnChange,
-    handleDataSourceTypeOnChange,
-    handleFileFormatOnChange,
+    handleDataSourceTypeChange,
+    handleFileFormatChange,
     handleSubmit,
     setPrioritizePerformance,
     isValidExtension,
@@ -42,61 +42,58 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   return (
     <Wrapper>
-      <InputGroup
-        label={t("File Format")}
-        description={t("File format of the data source you want to add.")}>
-        <Selector
-          value={fileFormat}
-          options={fileFormatOptions}
-          onChange={handleFileFormatOnChange}
-        />
-      </InputGroup>
-      <InputGroup label={t("Source Type")}>
-        <RadioGroup
-          checkedValue={sourceType}
-          options={dataSourceOptions}
-          onChange={handleDataSourceTypeOnChange}
-        />
-      </InputGroup>
-
-      {sourceType == "local" && (
-        //this Url field component will be replaced with new ui/fields
-        <InputsWrapper>
-          <URLField
-            fileType="asset"
-            entityType="file"
-            name={t("Asset")}
-            value={value}
-            fileFormat={fileFormat}
-            onChange={handleOnChange}
+      <ContentWrapper>
+        <InputGroup
+          label={t("File Format")}
+          description={t("File format of the data source you want to add.")}>
+          <Selector
+            value={fileFormat}
+            options={fileFormatOptions}
+            onChange={handleFileFormatChange}
           />
-        </InputsWrapper>
-      )}
-      {sourceType == "url" && (
-        <InputGroup label={t("Resource URL")}>
-          <InputsWrapper>
-            <TextInput placeholder={t("Input Text")} value={value} onChange={handleOnChange} />
-          </InputsWrapper>
         </InputGroup>
-      )}
-      {sourceType == "value" && (
-        <InputGroup label={t("Value")}>
+        <InputGroup label={t("Source Type")}>
+          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeChange} />
+        </InputGroup>
+
+        {sourceType == "local" && (
+          //this Url field component will be replaced with new ui/fields
           <InputsWrapper>
-            <TextArea
-              placeholder={t("Input data here")}
-              rows={8}
+            <URLField
+              fileType="asset"
+              entityType="file"
+              name={t("Asset")}
               value={value}
+              fileFormat={fileFormat}
               onChange={handleOnChange}
             />
           </InputsWrapper>
-        </InputGroup>
-      )}
-      {fileFormat === "GeoJSON" && (
-        <InputGroup label={t("Prioritize Performance")}>
-          <Switcher value={prioritizePerformance} onChange={v => setPrioritizePerformance(v)} />
-        </InputGroup>
-      )}
-      <Spacer />
+        )}
+        {sourceType == "url" && (
+          <InputGroup label={t("Resource URL")}>
+            <InputsWrapper>
+              <TextInput placeholder={t("Input Text")} value={value} onChange={handleOnChange} />
+            </InputsWrapper>
+          </InputGroup>
+        )}
+        {sourceType == "value" && (
+          <InputGroup label={t("Value")}>
+            <InputsWrapper>
+              <TextArea
+                placeholder={t("Input data here")}
+                rows={8}
+                value={value}
+                onChange={handleOnChange}
+              />
+            </InputsWrapper>
+          </InputGroup>
+        )}
+        {fileFormat === "GeoJSON" && (
+          <InputGroup label={t("Prioritize Performance")}>
+            <Switcher value={prioritizePerformance} onChange={v => setPrioritizePerformance(v)} />
+          </InputGroup>
+        )}
+      </ContentWrapper>
       <SubmitWrapper>
         <Button
           title={t("Add to Layer")}
@@ -112,9 +109,5 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     </Wrapper>
   );
 };
-
-const Spacer = styled("div")(() => ({
-  minHeight: "100px",
-}));
 
 export default CommonAsset;

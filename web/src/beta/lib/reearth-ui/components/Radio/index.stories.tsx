@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FC, useState } from "react";
 
 import { Radio, RadioProps } from ".";
 
@@ -11,21 +10,10 @@ export default meta;
 
 type Story = StoryObj<RadioProps>;
 
-const RadioWrapper: FC<Omit<RadioProps, "checked">> = props => {
-  const [checked, setChecked] = useState(false);
-
-  const handleChange = (value: string) => {
-    setChecked(prevChecked => !prevChecked);
-    props.onChange?.(value);
-  };
-
-  return <Radio {...props} checked={checked} onChange={handleChange} />;
-};
-
 export const Default: Story = {
-  render: () => <RadioWrapper value={""} label="Radio button" />,
+  render: () => <Radio value={""} label="Radio button" checked={true} />,
 };
 
 export const Disabled: Story = {
-  render: () => <RadioWrapper value="" disabled={true} label="Radio button" />,
+  render: () => <Radio value="" disabled={true} label="Radio button" />,
 };

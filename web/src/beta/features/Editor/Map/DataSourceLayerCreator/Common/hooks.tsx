@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from "react";
 
 import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
-import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps, DataSourceOptType, SourceType } from "..";
+import { generateTitle } from "../util";
 
 export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   const t = useT();
@@ -49,19 +49,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   }, [value, fileFormat, sourceType]);
 
   const handleSubmit = () => {
-    let parsedValue = null;
-
-    if (sourceType === "value" && value !== "") {
-      if (fileFormat === "GeoJSON") {
-        try {
-          parsedValue = JSON.parse(value);
-        } catch (error) {
-          parsedValue = value;
-        }
-      } else {
-        parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
-      }
-    }
+    const dataURL = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
 
     onSubmit({
       layerType: "simple",
@@ -74,10 +62,10 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
             (sourceType === "url" || sourceType === "local") && value !== ""
               ? value
               : fileFormat === "CZML" || fileFormat === "KML"
-              ? parsedValue
+              ? dataURL
               : undefined,
           type: fileFormat.toLowerCase() as DataType,
-          value: parsedValue,
+          value: value,
           geojson: {
             useAsResource: prioritizePerformance,
           },
@@ -92,11 +80,11 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     setLayerName(name || "");
   }, []);
 
-  const handleFileFormatOnChange = useCallback((value: string | string[]) => {
+  const handleFileFormatChange = useCallback((value: string | string[]) => {
     setFileFormat(value as AcceptedFileFormat);
   }, []);
 
-  const handleDataSourceTypeOnChange = useCallback((newValue: string) => {
+  const handleDataSourceTypeChange = useCallback((newValue: string) => {
     setSourceType(newValue as SourceType);
     setValue("");
   }, []);
@@ -111,8 +99,8 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     setPrioritizePerformance,
     isValidExtension,
     handleOnChange,
-    handleFileFormatOnChange,
-    handleDataSourceTypeOnChange,
+    handleFileFormatChange,
+    handleDataSourceTypeChange,
     handleSubmit,
   };
 };

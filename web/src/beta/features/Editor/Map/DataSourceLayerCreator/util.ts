@@ -1,4 +1,4 @@
-import generateRandomString from "./generate-random-string";
+import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
 export const generateTitle = (url: string, layerName?: string): string => {
   if (layerName && layerName.trim() !== "") return layerName;

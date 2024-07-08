@@ -6,13 +6,14 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
+  ContentWrapper,
 } from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
 import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
-import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import { DataProps, SourceType, DataSourceOptType } from "..";
+import { generateTitle } from "../util";
 
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
@@ -63,63 +64,60 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   return (
     <Wrapper>
-      <InputGroup label={t("Source Type")}>
-        <RadioGroup
-          checkedValue={sourceType}
-          options={dataSourceOptions}
-          onChange={handleDataSourceTypeOnChange}
-        />
-      </InputGroup>
-
-      {sourceType == "local" && (
-        //this Url field component will be replaced with new ui/fields
-        <InputsWrapper>
-          <URLField
-            fileType="asset"
-            entityType="file"
-            name={t("Asset")}
-            value={value}
-            fileFormat="CSV"
-            onChange={handleOnChange}
-          />
-        </InputsWrapper>
-      )}
-      {sourceType == "url" && (
-        <InputGroup label={t("Resource URL")}>
-          <InputsWrapper>
-            <TextInput placeholder="https://" value={value} onChange={handleOnChange} />
-          </InputsWrapper>
+      <ContentWrapper>
+        <InputGroup label={t("Source Type")}>
+          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeOnChange} />
         </InputGroup>
-      )}
-      <Warning>
-        <Icon icon="lightBulb" color={theme.warning.main} size="large" />
-        <TextWrapper>
-          {t(
-            "Visualizer only support csv point data now, so please write down the latitude and longitude file name in your data below.",
-          )}
-        </TextWrapper>
-      </Warning>
-      <CoordinateWrapper>
-        <InputGroup label={t("Latitude Column Name")}>
+
+        {sourceType == "local" && (
+          //this Url field component will be replaced with new ui/fields
           <InputsWrapper>
-            <TextInput
-              value={lat}
-              placeholder={t("Column Name")}
-              onChange={value => setLat(value)}
+            <URLField
+              fileType="asset"
+              entityType="file"
+              name={t("Asset")}
+              value={value}
+              fileFormat="CSV"
+              onChange={handleOnChange}
             />
           </InputsWrapper>
-        </InputGroup>
-        <InputGroup label={t("Longitude Column Name")}>
-          <InputsWrapper>
-            <TextInput
-              value={long}
-              placeholder={t("Column Name")}
-              onChange={value => setLong(value)}
-            />
-          </InputsWrapper>
-        </InputGroup>
-      </CoordinateWrapper>
-
+        )}
+        {sourceType == "url" && (
+          <InputGroup label={t("Resource URL")}>
+            <InputsWrapper>
+              <TextInput placeholder="https://" value={value} onChange={handleOnChange} />
+            </InputsWrapper>
+          </InputGroup>
+        )}
+        <Warning>
+          <Icon icon="lightBulb" color={theme.warning.main} size="large" />
+          <TextWrapper>
+            {t(
+              "Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.",
+            )}
+          </TextWrapper>
+        </Warning>
+        <CoordinateWrapper>
+          <InputGroup label={t("Latitude Column Name")}>
+            <InputsWrapper>
+              <TextInput
+                value={lat}
+                placeholder={t("Column Name")}
+                onChange={value => setLat(value)}
+              />
+            </InputsWrapper>
+          </InputGroup>
+          <InputGroup label={t("Longitude Column Name")}>
+            <InputsWrapper>
+              <TextInput
+                value={long}
+                placeholder={t("Column Name")}
+                onChange={value => setLong(value)}
+              />
+            </InputsWrapper>
+          </InputGroup>
+        </CoordinateWrapper>
+      </ContentWrapper>
       <SubmitWrapper>
         <Button
           title={t("Add to Layer")}

@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FC, useState } from "react";
 
 import { RadioGroup, RadioGroupProps } from ".";
 
@@ -17,21 +16,10 @@ const options = [
   { label: "option3", value: "Option 3" },
 ];
 
-const RadioGroupWrapper: FC<RadioGroupProps> = props => {
-  const [checkedValue, setCheckedValue] = useState<string | undefined>(undefined);
-
-  const handleChange = (value: string) => {
-    setCheckedValue(value);
-    props.onChange?.(value);
-  };
-
-  return <RadioGroup {...props} checkedValue={checkedValue} onChange={handleChange} />;
-};
-
 export const Default: Story = {
-  render: () => <RadioGroupWrapper options={options} />,
+  render: () => <RadioGroup options={options} />,
 };
 
 export const Horizontal: Story = {
-  render: () => <RadioGroupWrapper options={options} layout="vertical" />,
+  render: () => <RadioGroup options={options} layout="vertical" />,
 };

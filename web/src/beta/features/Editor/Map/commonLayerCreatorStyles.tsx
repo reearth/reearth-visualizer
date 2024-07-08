@@ -65,3 +65,12 @@ export const LayerNameListWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
   width: "100%",
 }));
+
+export const ContentWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flex: 1,
+  width: "100%",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: theme.spacing.large,
+}));

@@ -32,6 +32,7 @@ import {
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
+import { Geometry } from "@reearth/services/gql/__gen__/graphql";
 
 import convertInfobox from "./convert-infobox";
 
@@ -58,20 +59,20 @@ export type Widget = Omit<RawWidget, "layout" | "extended"> & {
   extended?: boolean;
 };
 
-export const handleCoordinate = (geomery: any) => {
-  switch (geomery.type) {
+export const getGeometryCoordinates = (geometry?: Geometry) => {
+  switch (geometry?.type) {
     case "Polygon":
-      return geomery.polygonCoordinates;
+      return "polygonCoordinates" in geometry && geometry.polygonCoordinates;
     case "MultiPolygon":
-      return geomery.multiPolygonCoordinates;
+      return "multiPolygonCoordinates" in geometry && geometry.multiPolygonCoordinates;
     case "LineString":
-      return geomery.lineStringCoordinates;
+      return "lineStringCoordinates" in geometry && geometry.lineStringCoordinates;
     case "Point":
-      return geomery.pointCoordinates;
+      return "pointCoordinates" in geometry && geometry.pointCoordinates;
     case "GeometryCollection":
-      return geomery.geometries;
+      return "geometries" in geometry && geometry.geometries;
     default:
-      return geomery;
+      return geometry;
   }
 };
 
@@ -385,16 +386,19 @@ export function processLayers(
 
   return newLayers?.map(nlsLayer => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
         features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
+          const geometryType = feature.geometry?.type;
+          if (geometryType) return;
           const cleanedFeatures = {
             ...feature,
             geometry: {
-              type: feature.geometry?.type,
-              coordinates: handleCoordinate(feature.geometry),
+              type: geometryType,
+              coordinates: getGeometryCoordinates(feature.geometry),
             },
           };
 

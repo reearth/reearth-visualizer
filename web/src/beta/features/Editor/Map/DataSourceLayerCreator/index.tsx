@@ -2,6 +2,7 @@ import { FC } from "react";
 
 import { Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
@@ -58,10 +59,15 @@ const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) =
   return (
     <Modal size="medium" visible={true}>
       <ModalPanel title={t("Data Source Manager")} onCancel={onClose}>
-        <Tabs tabs={tabsItem} position="left" tabStyle="separated" />
+        <Wrapper>
+          <Tabs tabs={tabsItem} position="left" tabStyle="separated" />
+        </Wrapper>
       </ModalPanel>
     </Modal>
   );
 };
+const Wrapper = styled("div")(() => ({
+  height: "440px",
+}));
 
 export default DataSourceLayerCreator;

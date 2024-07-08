@@ -5,13 +5,13 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
+  ContentWrapper,
 } from "@reearth/beta/features/Editor/Map/commonLayerCreatorStyles";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
-import { generateTitle } from "@reearth/beta/utils/generate-title";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import { DataProps } from "..";
+import { generateTitle } from "../util";
 
 const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
@@ -35,12 +35,14 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   return (
     <Wrapper>
-      <InputGroup label={t("Resource URL")}>
-        <InputsWrapper>
-          <TextInput placeholder="https://" value={value} onChange={value => setValue(value)} />
-        </InputsWrapper>
-      </InputGroup>
-      <Spacer />
+      <ContentWrapper>
+        <InputGroup label={t("Resource URL")}>
+          <InputsWrapper>
+            <TextInput placeholder="https://" value={value} onChange={value => setValue(value)} />
+          </InputsWrapper>
+        </InputGroup>
+      </ContentWrapper>
+
       <SubmitWrapper>
         <Button
           title={t("Add to Layer")}
@@ -52,9 +54,5 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     </Wrapper>
   );
 };
-
-const Spacer = styled("div")(() => ({
-  minHeight: "100px",
-}));
 
 export default ThreeDTiles;
