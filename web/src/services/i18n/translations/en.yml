@@ -83,7 +83,7 @@ Value: Value
 Input data here: Input data here
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
-Visualizer only support csv point data now, so please write down the latitude and longitude file name in your data below.: ''
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: 'Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.'
 Latitude Column Name: ''
 Column Name: ''
 Longitude Column Name: ''
