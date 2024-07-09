@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 
 import { Button, DragAndDropList, DragAndDropListProps } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemProps } from "@reearth/beta/ui/components/EntryItem";
@@ -17,8 +17,8 @@ export type ListFieldProps = CommonFieldProps &
   EntryItemProps & {
     className?: string;
     items: ListItem[];
-    addItem: () => void;
-    onSelect: (id: string) => void;
+    onItemAdd: () => void;
+    onItemSelect: (id: string) => void;
     selected?: string;
     atLeastOneItem?: boolean;
   };
@@ -28,8 +28,8 @@ const ListField: FC<ListFieldProps> = ({
   commonTitle,
   description,
   items,
-  addItem,
-  onSelect,
+  onItemAdd,
+  onItemSelect,
   optionsMenu,
   selected,
   atLeastOneItem,
@@ -37,30 +37,23 @@ const ListField: FC<ListFieldProps> = ({
   onMoveStart,
   onMoveEnd,
 }) => {
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
   useEffect(() => {
     if (!atLeastOneItem) return;
 
     const updateSelected = !selected || !items.find(({ id }) => id === selected);
     if (updateSelected) {
-      onSelect(items[0]?.id);
+      onItemSelect(items[0]?.id);
     }
-  }, [selected, items, atLeastOneItem, onSelect]);
+  }, [selected, items, atLeastOneItem, onItemSelect]);
 
   const itemsWithContent = items.map(item => ({
     ...item,
     content: (
-      <Item
-        key={item.id}
-        onClick={() => onSelect(item.id)}
-        onMouseEnter={() => setHoveredItem(item.id)}
-        onMouseLeave={() => setHoveredItem(null)}
-        selected={selected === item.id}>
+      <Item key={item.id} onClick={() => onItemSelect(item.id)} selected={selected === item.id}>
         <EntryItem
           title={item.value}
-          highlighted={selected === item.id || hoveredItem === item.id}
-          onClick={() => onSelect(item.id)}
+          highlighted={selected === item.id}
+          onClick={() => onItemSelect(item.id)}
           optionsMenu={optionsMenu}
         />
       </Item>
@@ -70,8 +63,8 @@ const ListField: FC<ListFieldProps> = ({
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <FieldContainer className={className}>
-        <SectionButton
-          onClick={addItem}
+        <Button
+          onClick={onItemAdd}
           icon="plus"
           appearance="secondary"
           title="New Item"
@@ -98,10 +91,10 @@ const FieldContainer = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
 }));
 
-const FieldWrapper = styled("div")(() => ({
+const FieldWrapper = styled("div")(({ theme }) => ({
   minHeight: "84px",
   maxHeight: "224px",
-  borderRadius: "4px",
+  borderRadius: theme.radius.small,
   border: "1px solid rgba(77, 83, 88, 1)",
   overflow: "auto",
 }));
@@ -111,17 +104,9 @@ const Item = styled("div")<{ selected: boolean }>(({ theme }) => ({
   justifyContent: "space-between",
   alignItems: "center",
   width: "100%",
-  padding: `${theme.spacing.smallest}px`,
+  padding: theme.spacing.smallest,
   height: "28px",
   cursor: "pointer",
-}));
-
-const SectionButton = styled(Button)<{ disabled?: boolean }>(({ disabled }) => ({
-  height: "28px",
-  width: "100%",
-  padding: "0px",
-  margin: "0px",
-  opacity: disabled ? 0.6 : 1,
 }));
 
 export default ListField;

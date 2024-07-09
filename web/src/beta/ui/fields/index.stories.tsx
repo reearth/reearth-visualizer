@@ -40,7 +40,7 @@ const optionsMenu = [
 
 export const Components: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "550px" }}>
       <CommonField
         commonTitle="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
@@ -64,19 +64,19 @@ export const Components: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TwinInputField
-        values={["3.1415926", "3.1415926"]}
+        values={[3.1415926, 3.1415926]}
         content={["Latitude", "Longitude"]}
         commonTitle="TwinInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TripletInputField
-        values={["3.1415926", "3.1415926", "3.1415926"]}
+        values={[3.1415926, 3.1415926, 3.1415926]}
         content={["Heading", "Pitch", "Roll"]}
         commonTitle="TripletInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <QuartetInputField
-        values={["3.1415926", "3.1415926", "3.1415926", "3.1415926"]}
+        values={[3.1415926, 3.1415926, 3.1415926, 3.1415926]}
         content={["x", "y", "z", "w"]}
         commonTitle="QuartetInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
@@ -145,8 +145,8 @@ export const Components: Story = {
           { id: "1", value: "item b" },
           { id: "2", value: "item c" },
         ]}
-        addItem={() => console.log("Item added")}
-        onSelect={(id: string) => console.log(`Item selected: ${id}`)}
+        onItemAdd={() => console.log("Item added")}
+        onItemSelect={(id: string) => console.log(`Item selected: ${id}`)}
         onMoveStart={() => console.log("Move started")}
         onMoveEnd={(itemId?: string, newIndex?: number) =>
           console.log(`Move ended: ${itemId} to ${newIndex}`)

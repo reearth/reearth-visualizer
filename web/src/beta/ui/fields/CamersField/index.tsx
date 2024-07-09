@@ -1,7 +1,5 @@
-import { useCallback, useState, FC } from "react";
+import { useCallback, useState, FC, useEffect } from "react";
 
-import CapturePanel from "@reearth/beta/components/fields/CameraField/CapturePanel";
-import EditPanel from "@reearth/beta/components/fields/CameraField/EditPanel";
 import { useCurrentCamera } from "@reearth/beta/features/Editor/atoms";
 import { Button, ButtonProps, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -11,11 +9,18 @@ import { styled, useTheme } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
-type Panel = "editor" | "capture" | undefined;
+import CapturePanel from "./CapturePanel";
+import EditPanel from "./EditorPanel";
+
+export type PanelProps = {
+  camera?: Camera;
+  onSave: (value?: Camera) => void;
+  onFlyTo?: (camera?: Camera) => void;
+  onClose: () => void;
+};
 
 export type CameraFieldProps = CommonFieldProps &
   ButtonProps & {
-    name?: string;
     description?: string;
     value?: Camera;
     disabled?: boolean;
@@ -27,26 +32,26 @@ const CameraField: FC<CameraFieldProps> = ({
   description,
   value,
   disabled,
+  commonTitle,
   onSave,
   onFlyTo,
-  commonTitle,
 }) => {
   const theme = useTheme();
   const t = useT();
-  const [open, setOpen] = useState<Panel>(undefined);
-  const handleClose = useCallback(() => setOpen(undefined), []);
-
-  const [currentCamera] = useCurrentCamera();
+  const [open, setOpen] = useState<"editor" | "capture" | null>(null);
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
 
   const handleClick = useCallback(
-    (panel: Panel) => setOpen(current => (current === panel ? undefined : panel)),
+    (panel: "editor" | "capture") => setOpen(current => (current === panel ? null : panel)),
     [],
   );
+
+  const handleClose = useCallback(() => setOpen(null), []);
 
   const handleSave = useCallback(
     (value?: Camera) => {
       onSave(value);
-      setOpen(undefined);
+      setOpen(null);
     },
     [onSave],
   );
@@ -67,6 +72,11 @@ const CameraField: FC<CameraFieldProps> = ({
     handleSave();
   }, [value, handleSave]);
 
+  useEffect(() => {
+    if (!value) return;
+    setCurrentCamera(value);
+  }, [setCurrentCamera, value]);
+
   const ZoomToPosition: FC = () => (
     <Button
       icon="capture"
@@ -78,7 +88,8 @@ const CameraField: FC<CameraFieldProps> = ({
       iconColor={value ? theme.content.main : theme.content.weak}
     />
   );
-  const DelectAction: FC = () => (
+
+  const DeleteAction: FC = () => (
     <Button
       icon="trash"
       size="small"
@@ -96,48 +107,51 @@ const CameraField: FC<CameraFieldProps> = ({
         <TextInput
           value={value && t("Position Set")}
           placeholder={t("Not set")}
+          appearance="readonly"
           disabled
-          leftAction={[ZoomToPosition]}
-          actions={[DelectAction]}
+          leftAction={value && [ZoomToPosition]}
+          actions={[DeleteAction]}
         />
         <Popup
           trigger={
-            <ButtonWrapper>
-              <Button
-                appearance="secondary"
-                title={t("Edit")}
-                icon="pencilSimple"
-                size="small"
-                onClick={() => handleClick("editor")}
-                disabled={disabled}
-              />
-              <Button
-                appearance="secondary"
-                title={t("Capture")}
-                icon="camera"
-                size="small"
-                onClick={() => handleClick("capture")}
-                disabled={disabled}
-              />
-            </ButtonWrapper>
+            <Button
+              appearance="secondary"
+              title={t("Edit")}
+              icon="pencilSimple"
+              size="small"
+              onClick={() => handleClick("editor")}
+              disabled={disabled}
+            />
           }
-          open={open !== undefined}
-          onOpenChange={isOpen => {
-            if (!isOpen) {
-              setOpen(undefined);
-            }
-          }}
+          open={open === "editor"}
+          offset={4}
           placement="bottom-start">
-          {open === "capture" ? (
-            <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
-          ) : open === "editor" ? (
+          {open === "editor" && (
             <EditPanel
               camera={value}
               onSave={handleSave}
               onFlyTo={handleFlyto}
               onClose={handleClose}
             />
-          ) : null}
+          )}
+        </Popup>
+        <Popup
+          trigger={
+            <Button
+              appearance="secondary"
+              title={t("Capture")}
+              icon="camera"
+              size="small"
+              onClick={() => handleClick("capture")}
+              disabled={disabled}
+            />
+          }
+          open={open === "capture"}
+          offset={4}
+          placement="bottom-start">
+          {open === "capture" && (
+            <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
+          )}
         </Popup>
       </InputWrapper>
     </CommonField>
@@ -148,11 +162,7 @@ const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   flexWrap: "wrap",
-}));
-
-const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  gap: theme.spacing.small,
+  width: "100%",
 }));
 
 export default CameraField;

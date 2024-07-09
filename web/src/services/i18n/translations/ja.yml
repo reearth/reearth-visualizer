@@ -310,6 +310,8 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Position Capture: ''
+value: ''
 Drop here: ここにドロップ
 Close timeline: タイムラインを閉じる
 Playback timeline: タイムラインを逆再生する

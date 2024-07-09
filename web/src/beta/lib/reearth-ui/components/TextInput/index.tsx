@@ -111,6 +111,7 @@ const Wrapper = styled("div")<{
     borderRadius: theme.radius.small,
     background: appearance === "present" ? "" : theme.bg[1],
     display: "flex",
+    flex: 1,
     gap: `${theme.spacing.smallest}px`,
     alignItems: "center",
     padding:
@@ -140,6 +141,7 @@ const StyledInput = styled("input")<{
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
   pointerEvents: disabled ? "none" : "inherit",
+  width: "100%",
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,
@@ -151,5 +153,4 @@ const ActionsWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
   flexShrink: 0,
-  padding: theme.spacing.micro,
 }));

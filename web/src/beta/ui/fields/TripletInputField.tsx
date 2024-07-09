@@ -1,35 +1,38 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
-import { TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
-import { styled } from "@reearth/services/theme";
+import { NumberInput, NumberInputProps, Typography } from "@reearth/beta/lib/reearth-ui";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
-export type TripletInputFieldProps = CommonFieldProps & {
-  values?: [string, string, string];
-  placeholders?: [string, string, string];
-  disabled?: boolean;
-  onChange?: (values: [string, string, string]) => void;
-  onBlur?: (values: [string, string, string]) => void;
-  content?: [string, string, string];
-};
+type commonTurple = [number, number, number];
+export type TripletInputFieldProps = CommonFieldProps &
+  Pick<NumberInputProps, "size" | "disabled" | "max" | "min" | "unit"> & {
+    values: commonTurple;
+    placeholders?: [string, string, string];
+    content?: [string, string, string];
+    onChange?: (values: commonTurple) => void;
+    onBlur?: (values: commonTurple) => void;
+  };
 
 const TripletInputField: FC<TripletInputFieldProps> = ({
   commonTitle,
   description,
-  values = ["", "", ""],
-  placeholders = ["", "", ""],
-  disabled,
+  values,
+  placeholders,
+  content,
   onChange,
   onBlur,
-  content = ["", "", ""],
+  ...props
 }) => {
-  const [inputValues, setInputValues] = useState<[string, string, string]>(values);
+  const [inputValues, setInputValues] = useState<commonTurple>(values);
 
+  const theme = useTheme();
   const handleChange = useCallback(
-    (index: number, value: string) => {
-      const newValues = [...inputValues] as [string, string, string];
-      newValues[index] = value;
+    (index: number, value: number | string) => {
+      const newValues = [...inputValues] as commonTurple;
+      const parsedValue = value === "" ? 0 : Number(value);
+      newValues[index] = isNaN(parsedValue) ? 0 : parsedValue;
       setInputValues(newValues);
       onChange?.(newValues);
     },
@@ -40,41 +43,43 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
     onBlur?.(inputValues);
   }, [inputValues, onBlur]);
 
+  useEffect(() => {
+    setInputValues(values);
+  }, [values]);
+
   return (
     <CommonField commonTitle={commonTitle} description={description}>
-      <InputWrapper>
+      <Wrapper>
         {inputValues.map((value, index) => (
-          <TextInputWrapper key={index}>
-            <TextInput
+          <InputWrapper key={index}>
+            <NumberInput
               value={value}
-              placeholder={placeholders[index]}
-              disabled={disabled}
-              onChange={value => handleChange(index, value)}
+              placeholder={placeholders?.[index]}
+              onChange={value => handleChange(index, value as number)}
               onBlur={handleBlur}
+              {...props}
             />
-            <Content size="footnote">{content[index]}</Content>
-          </TextInputWrapper>
+            <Typography size="body" color={theme.content.weak}>
+              {content?.[index]}
+            </Typography>
+          </InputWrapper>
         ))}
-      </InputWrapper>
+      </Wrapper>
     </CommonField>
   );
 };
 
 export default TripletInputField;
 
-const InputWrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  flexDirection: "row",
   gap: `${theme.spacing.smallest}px`,
+  alignItems: "flex-start",
 }));
 
-const Content = styled(Typography)(({ theme }) => ({
-  color: `${theme.content.weak}`,
-}));
-
-const TextInputWrapper = styled("div")(({ theme }) => ({
+const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: `${theme.spacing.smallest}px`,
+  gap: theme.spacing.smallest,
 }));
