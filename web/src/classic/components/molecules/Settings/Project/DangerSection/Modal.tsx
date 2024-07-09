@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
+import TextBox from "@reearth/beta/components/TextBox";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { fonts, metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -64,8 +64,8 @@ const DangerModal: React.FC<Props> = ({
         actionType === "delete"
           ? t("Delete project")
           : actionType === "archive"
-          ? t("Archive project")
-          : t("Unarchive project")
+            ? t("Archive project")
+            : t("Unarchive project")
       }
       isVisible={isVisible}
       size="sm"
@@ -115,8 +115,8 @@ const DangerModal: React.FC<Props> = ({
           actionType === "delete"
             ? t("I am sure I want to delete this project.")
             : actionType === "archive"
-            ? t("I am sure I want to archive this project.")
-            : t("I am sure I want to unarchive this project.")
+              ? t("I am sure I want to archive this project.")
+              : t("I am sure I want to unarchive this project.")
         }
         buttonType="danger"
         disabled={disabled}
@@ -126,7 +126,7 @@ const DangerModal: React.FC<Props> = ({
   );
 };
 
-const Subtitle = styled(Text)<{ center?: boolean }>`
+const Subtitle = styled(Text) <{ center?: boolean }>`
   text-align: ${props => (props.center ? "center" : "left")};
   margin: 20px auto 10px;
 `;
@@ -140,7 +140,7 @@ const StyledTextBox = styled(TextBox)`
   margin: 20px auto;
 `;
 
-const RedButton = styled(Button)<{ disabled: boolean }>`
+const RedButton = styled(Button) <{ disabled: boolean }>`
   border-radius: ${metricsSizes.s}px;
   width: auto;
   font-size: ${fonts.sizes.s}px;

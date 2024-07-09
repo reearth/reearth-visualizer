@@ -1,5 +1,5 @@
 import type { Colors as CommonColors } from "./common/colors";
-import type { MetricsSizesType } from "./common/metrics";
+import type { MetricsSizesType } from "../../../beta/utils/metrics";
 import type { ZIndex } from "./common/zIndex";
 import type { Colors as DarkColors } from "./darkTheme/colors";
 import type { Colors as LightColors } from "./lightTheme/colors";

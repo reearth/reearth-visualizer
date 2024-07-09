@@ -1,7 +1,7 @@
 export * from "./reearthTheme/common";
 export * from "./styled";
 export { default as fonts } from "./reearthTheme/common/fonts";
-export { default as metrics, metricsSizes } from "./reearthTheme/common/metrics";
+export { default as metrics, metricsSizes } from "../../beta/utils/metrics";
 export { default } from "./reearthTheme/darkTheme";
 export { usePublishTheme, mask } from "./publishTheme";
 export { default as GlobalStyles } from "./reearthTheme/common/globalStyles";

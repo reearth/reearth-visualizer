@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
-import { metricsSizes } from "@reearth/classic/theme";
+import Button from "@reearth/beta/components/Button";
+import Flex from "@reearth/beta/components/Flex";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
+import TextBox from "@reearth/beta/components/TextBox";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -116,7 +116,6 @@ const PasswordModal: React.FC<Props> = ({
       onClose={handleClose}
       button1={
         <Button
-          large
           disabled={disabled}
           buttonType="primary"
           text={t("Change password")}
@@ -126,12 +125,12 @@ const PasswordModal: React.FC<Props> = ({
       {hasPassword ? (
         <div>
           <SubText>
-            <Text size="m">
+            <Text size="body">
               {t(`In order to protect your account, make sure your password is unique and strong.`)}
             </Text>
           </SubText>
           <PasswordField direction="column">
-            <Text size="m">{t("New password")}</Text>
+            <Text size="body">{t("New password")}</Text>
             <TextBox
               type="password"
               borderColor={theme.classic.main.border}
@@ -143,14 +142,14 @@ const PasswordModal: React.FC<Props> = ({
                 passwordPolicy?.tooLong?.test(password)
                   ? theme.classic.main.danger
                   : passwordPolicy?.highSecurity?.test(password)
-                  ? theme.classic.main.accent
-                  : undefined
+                    ? theme.classic.main.accent
+                    : undefined
               }
             />
-            <PasswordMessage size="xs">{password ? regexMessage : undefined}</PasswordMessage>
+            <PasswordMessage size="body">{password ? regexMessage : undefined}</PasswordMessage>
           </PasswordField>
           <PasswordField direction="column">
-            <Text size="m">{t("New password (for confirmation)")}</Text>
+            <Text size="body">{t("New password (for confirmation)")}</Text>
             <TextBox
               type="password"
               borderColor={theme.classic.main.border}
@@ -163,7 +162,7 @@ const PasswordModal: React.FC<Props> = ({
         </div>
       ) : (
         <div>
-          <Text size="s">{t("New password")}</Text>
+          <Text size="footnote">{t("New password")}</Text>
           <TextBox
             type="password"
             borderColor={theme.classic.main.border}
@@ -171,7 +170,6 @@ const PasswordModal: React.FC<Props> = ({
             onChange={setPasswordConfirmation}
           />
           <Button
-            large
             disabled={disabled}
             buttonType="primary"
             text={t("Set your password now")}

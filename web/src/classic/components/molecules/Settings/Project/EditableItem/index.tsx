@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 
+import TextBox from "@reearth/beta/components/TextBox";
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import SelectField from "@reearth/classic/components/molecules/Settings/SelectField";
 import { metricsSizes } from "@reearth/classic/theme";
@@ -17,12 +17,12 @@ export type Props<T extends string = string> = {
   dropdown?: boolean;
   isImage?: boolean;
   dropdownItems?:
-    | {
-        key: T;
-        label: string;
-        icon?: string | undefined;
-      }[]
-    | undefined;
+  | {
+    key: T;
+    label: string;
+    icon?: string | undefined;
+  }[]
+  | undefined;
   currentItem?: T;
   imageSrc?: string;
   icon?: string;

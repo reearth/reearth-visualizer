@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
+import TextBox from "@reearth/beta/components/TextBox";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { metricsSizes } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { useT } from "@reearth/services/i18n";
@@ -69,7 +69,7 @@ const DangerModal: React.FC<Props> = ({ workspace, isVisible, deleteWorkspace, o
   );
 };
 
-const Subtitle = styled(Text)<{ center?: boolean }>`
+const Subtitle = styled(Text) <{ center?: boolean }>`
   text-align: ${props => (props.center ? "center" : "left")};
   margin: ${metricsSizes.xl}px auto ${metricsSizes.m}px;
 `;
@@ -83,7 +83,7 @@ const StyledTextBox = styled(TextBox)`
   margin: ${metricsSizes.xl}px auto;
 `;
 
-const RedButton = styled(Button)<{ disabled: boolean }>`
+const RedButton = styled(Button) <{ disabled: boolean }>`
   border-radius: ${metricsSizes.s}px;
   width: auto;
   font-size: ${fonts.sizes.s}px;

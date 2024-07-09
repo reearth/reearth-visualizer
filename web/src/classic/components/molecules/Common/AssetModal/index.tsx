@@ -1,11 +1,11 @@
 import React, { useCallback, useState, ComponentType, useEffect } from "react";
 
+import TextBox from "@reearth/beta/components/TextBox";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import TabularModal from "@reearth/classic/components/atoms/TabularModal";
 import Text from "@reearth/classic/components/atoms/Text";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

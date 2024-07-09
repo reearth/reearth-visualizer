@@ -1,9 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import PasswordModal, {
-  PasswordPolicy,
-} from "@reearth/classic/components/molecules/Settings/Account/PasswordModal";
+import Icon from "@reearth/beta/components/Icon";
+import PasswordModal, { PasswordPolicy } from "@reearth/beta/molecules/PasswordModal";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import EditableItem from "@reearth/classic/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/classic/components/molecules/Settings/Section";

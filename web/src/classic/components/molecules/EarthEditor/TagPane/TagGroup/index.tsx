@@ -1,12 +1,12 @@
 import React, { useCallback, useRef, useState, useMemo } from "react";
 import { useClickAway } from "react-use";
 
+import TextBox from "@reearth/beta/components/TextBox";
 import AutoComplete from "@reearth/classic/components/atoms/AutoComplete";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import Tag from "@reearth/classic/components/atoms/Tag";
 import Text from "@reearth/classic/components/atoms/Text";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

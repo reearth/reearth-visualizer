@@ -1,7 +1,7 @@
 import React from "react";
 
+import TextBox from "@reearth/beta/components/TextBox";
 import Text from "@reearth/classic/components/atoms/Text";
-import TextBox from "@reearth/classic/components/atoms/TextBox";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import { FieldProps } from "../types";
@@ -32,8 +32,8 @@ const TextField: React.FC<Props> = ({
   const color = overridden
     ? theme.classic.main.warning
     : linked
-    ? theme.classic.main.link
-    : undefined;
+      ? theme.classic.main.link
+      : undefined;
 
   return (
     <Wrapper className={className} onClick={onClick}>
