@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import Public from "@reearth/classic/components/organisms/Settings/Project/Public";
+import Public from "@reearth/beta/organisms/Settings/Project/Public";
 import { AuthenticatedPage } from "@reearth/services/auth";
 
 export type Props = {

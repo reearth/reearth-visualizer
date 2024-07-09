@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import Plugin from "@reearth/classic/components/organisms/Settings/Project/Plugin";
+import Plugin from "@reearth/beta/organisms/Settings/Project/Plugin";
 import { AuthenticatedPage } from "@reearth/services/auth";
 
 export type Props = {

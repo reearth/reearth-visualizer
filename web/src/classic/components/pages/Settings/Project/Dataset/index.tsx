@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import Dataset from "@reearth/classic/components/organisms/Settings/Project/Dataset";
+import Dataset from "@reearth/beta/organisms/Settings/Project/Dataset";
 import { AuthenticatedPage } from "@reearth/services/auth";
 
 export type Props = {

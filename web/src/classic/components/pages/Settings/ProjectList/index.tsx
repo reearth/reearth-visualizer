@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import OrganismsProjectList from "@reearth/classic/components/organisms/Settings/ProjectList";
+import OrganismsProjectList from "@reearth/beta/organisms/Settings/ProjectList";
 
 export interface Props {
   path?: string;

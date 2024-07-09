@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import Workspace from "@reearth/classic/components/organisms/Settings/Workspace";
+import Workspace from "@reearth/beta/organisms/Settings/Workspace";
 import { AuthenticatedPage } from "@reearth/services/auth";
 
 export type Props = {
