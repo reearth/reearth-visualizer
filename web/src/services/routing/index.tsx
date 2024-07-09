@@ -3,6 +3,7 @@ import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-
 
 import Dashboard from "@reearth/beta/pages/Dashboard";
 import AccountSettings from "@reearth/beta/pages/Settings/Account";
+import WorkspaceList from "@reearth/beta/pages/Settings/WorkspaceList";
 import RootPage from "@reearth/classic/components/pages/Authentication/RootPage";
 import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
 import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
@@ -11,7 +12,6 @@ import PublicSettings from "@reearth/classic/components/pages/Settings/Project/P
 import SettingsProjectList from "@reearth/classic/components/pages/Settings/ProjectList";
 import WorkspaceSettings from "@reearth/classic/components/pages/Settings/Workspace";
 import AssetSettings from "@reearth/classic/components/pages/Settings/Workspace/Asset";
-import WorkspaceList from "@reearth/classic/components/pages/Settings/WorkspaceList";
 import { styled } from "@reearth/services/theme";
 
 const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
