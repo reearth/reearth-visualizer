@@ -1,7 +1,7 @@
 import React from "react";
 
-import Loading from "@reearth/classic/components/atoms/Loading";
-import MoleculeRootPage from "@reearth/classic/components/molecules/RootPage";
+import Loading from "@reearth/beta/components/Loading";
+import MoleculeRootPage from "@reearth/beta/molecules/RootPage";
 
 import useHooks from "./hooks";
 

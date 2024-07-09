@@ -1,9 +1,9 @@
 import React, { useRef, useMemo } from "react";
 
+import PublicationStatus, { Status } from "@reearth/beta/components/PublicationStatus";
 import Button from "@reearth/classic/components/atoms/Button";
 import Dropdown, { Ref as DropDownRef } from "@reearth/classic/components/atoms/Dropdown";
 import Flex from "@reearth/classic/components/atoms/Flex";
-import PublicationStatus, { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import CommonHeader, {
   Props as CommonHeaderProps,
 } from "@reearth/classic/components/molecules/Common/Header";

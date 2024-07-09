@@ -20,7 +20,7 @@ import {
   WidgetAreaType,
   WidgetAreaAlign,
   ValueType,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
 import { config } from "@reearth/services/config";
 import { useLang } from "@reearth/services/i18n";
@@ -125,9 +125,9 @@ export default (isBuilt?: boolean) => {
   const rootLayer = useMemo(
     () =>
       datasetLoaded &&
-      layerData?.node &&
-      layerData.node.__typename === "Scene" &&
-      layerData.node.rootLayer
+        layerData?.node &&
+        layerData.node.__typename === "Scene" &&
+        layerData.node.rootLayer
         ? processLayer(layerData?.node.rootLayer as RawLayer, undefined, datasets)
         : undefined,
     [layerData, datasets, datasetLoaded],
@@ -262,10 +262,10 @@ export default (isBuilt?: boolean) => {
           enabled: true,
           location: update.location
             ? {
-                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-                section: update.location.section?.toUpperCase() as WidgetSectionType,
-                area: update.location.area?.toUpperCase() as WidgetAreaType,
-              }
+              zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+              section: update.location.section?.toUpperCase() as WidgetSectionType,
+              area: update.location.area?.toUpperCase() as WidgetAreaType,
+            }
             : undefined,
           extended: update.extended,
           index: update.index,

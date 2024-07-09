@@ -4,7 +4,7 @@ import {
   Maybe,
   PluginExtensionType,
   PluginFragmentFragment,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 
 const excludePrimitiveType = ["polyline", "polygon", "rect"];
 
@@ -13,8 +13,8 @@ export const processDatasets = (
 ): { [key: string]: string }[] => {
   return rawDatasets
     ? rawDatasets
-        .filter((r): r is DatasetFragmentFragment => !!r)
-        .map(r => processDataset(r.fields))
+      .filter((r): r is DatasetFragmentFragment => !!r)
+      .map(r => processDataset(r.fields))
     : [];
 };
 

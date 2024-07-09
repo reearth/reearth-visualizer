@@ -1,14 +1,14 @@
 import { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { User } from "@reearth/classic/components/molecules/Common/Header";
 import {
   useGetMeQuery,
   useGetProjectSceneQuery,
   useGetTeamsQuery,
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
+import { User } from "@reearth/classic/components/molecules/Common/Header";
 import { useWorkspace, useProject } from "@reearth/services/state";
 
 type Params = {

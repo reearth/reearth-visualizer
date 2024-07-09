@@ -1,14 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { PluginItem } from "@reearth/classic/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useGetInstalledPluginsQuery,
   useInstallPluginMutation,
   useUninstallPluginMutation,
   useUploadPluginMutation,
   useUpgradePluginMutation,
-} from "@reearth/classic/gql/graphql-client-api";
+} from "@reearth/beta/graphql/graphql-client-api";
+import { PluginItem } from "@reearth/beta/molecules/Settings/Project/Plugin/PluginSection";
 import { useAuth } from "@reearth/services/auth";
 import { useLang, useT } from "@reearth/services/i18n";
 import { useProject, useNotification, useCurrentTheme } from "@reearth/services/state";

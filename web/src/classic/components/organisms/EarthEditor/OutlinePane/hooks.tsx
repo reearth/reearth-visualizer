@@ -26,7 +26,7 @@ import {
   useGetClustersQuery,
   PluginExtensionType,
   GetLayersFromLayerIdQuery,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import deepFind from "@reearth/classic/util/deepFind";
 import deepGet from "@reearth/classic/util/deepGet";
 import { useLang, useT } from "@reearth/services/i18n";
@@ -80,8 +80,8 @@ export default () => {
     () =>
       widgetData?.node?.__typename === "Scene"
         ? widgetData.node.plugins
-            .find(p => p.plugin?.id === "reearth")
-            ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
+          .find(p => p.plugin?.id === "reearth")
+          ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
         : undefined,
     [widgetData?.node],
   );
@@ -285,10 +285,10 @@ export default () => {
     const layerIndex =
       selected?.type === "layer"
         ? deepFind<Maybe<GQLLayer> | undefined>(
-            layers,
-            l => l?.id === selected.layerId,
-            children,
-          )[1]
+          layers,
+          l => l?.id === selected.layerId,
+          children,
+        )[1]
         : undefined;
     const parentLayer = layerIndex?.length
       ? deepGet<Maybe<GQLLayer> | undefined>(layers, layerIndex.slice(0, -1), children)
@@ -474,7 +474,7 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"
-    ? {
+      ? {
         id: layer.id,
         title: layer.name,
         type: "group",
@@ -485,13 +485,13 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
           .filter((l): l is Layer => !!l)
           .reverse(),
       }
-    : layer.__typename === "LayerItem"
-    ? {
-        id: layer.id,
-        title: layer.name,
-        visible: layer.isVisible,
-        linked: !!layer.linkedDatasetId,
-        icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
-        type: "item",
-      }
-    : undefined;
+      : layer.__typename === "LayerItem"
+        ? {
+          id: layer.id,
+          title: layer.name,
+          visible: layer.isVisible,
+          linked: !!layer.linkedDatasetId,
+          icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
+          type: "item",
+        }
+        : undefined;

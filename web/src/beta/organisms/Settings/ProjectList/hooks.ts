@@ -2,7 +2,6 @@ import { useApolloClient } from "@apollo/client";
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Project } from "@reearth/classic/components/molecules/Dashboard/types";
 import {
   useGetMeQuery,
   PublishmentStatus,
@@ -11,7 +10,8 @@ import {
   useGetProjectsQuery,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
+import { Project } from "@reearth/classic/components/molecules/Dashboard/types";
 import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";

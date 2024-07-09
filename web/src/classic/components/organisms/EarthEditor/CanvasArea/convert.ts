@@ -29,7 +29,7 @@ import {
   EarthLayerCommonFragment,
   EarthLayerItemFragment,
   PropertySchemaGroupFragmentFragment,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { valueFromGQL } from "@reearth/classic/util/value";
 
 type PropertyGroupFragmentFragment = Extract<
@@ -45,9 +45,9 @@ export type RawLayer = EarthLayerCommonFragment &
   (
     | EarthLayerItemFragment
     | {
-        __typename: "LayerGroup";
-        layers?: RawLayer[] | null | undefined;
-      }
+      __typename: "LayerGroup";
+      layers?: RawLayer[] | null | undefined;
+    }
   );
 
 type BlockType = Item & {
@@ -107,30 +107,30 @@ export const processLayer = (
     propertyId: layer.propertyId ?? undefined,
     ...(!isDatasetLayer
       ? {
-          property: processProperty(
-            parent?.property,
-            layer.property,
-            layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
-            datasets,
-          ),
-        }
+        property: processProperty(
+          parent?.property,
+          layer.property,
+          layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
+          datasets,
+        ),
+      }
       : {}),
     ...(layer.infobox || parent?.infobox
       ? {
-          infobox: processInfobox(
-            layer.infobox,
-            parent?.infobox,
-            layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
-            datasets,
-          ),
-        }
+        infobox: processInfobox(
+          layer.infobox,
+          parent?.infobox,
+          layer.__typename === "LayerItem" ? layer.linkedDatasetId : undefined,
+          datasets,
+        ),
+      }
       : {}),
     ...(layer.__typename === "LayerGroup"
       ? {
-          children: layer.layers
-            ?.map(l => processLayer(l as RawLayer, isDatasetLayer ? layer : undefined, datasets))
-            .filter((l): l is Layer => !!l),
-        }
+        children: layer.layers
+          ?.map(l => processLayer(l as RawLayer, isDatasetLayer ? layer : undefined, datasets))
+          .filter((l): l is Layer => !!l),
+      }
       : {}),
   };
 };
@@ -281,11 +281,11 @@ export const convertWidgets = (
   data: GetEarthWidgetsQuery | undefined,
 ):
   | {
-      floatingWidgets: Widget[];
-      alignSystem: WidgetAlignSystem;
-      layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
-      ownBuiltinWidgets: (keyof BuiltinWidgets)[];
-    }
+    floatingWidgets: Widget[];
+    alignSystem: WidgetAlignSystem;
+    layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
+    ownBuiltinWidgets: (keyof BuiltinWidgets)[];
+  }
   | undefined => {
   if (!data?.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
     return undefined;
@@ -299,15 +299,15 @@ export const convertWidgets = (
         (b, e) =>
           e?.widgetLayout?.extendable
             ? {
-                ...b,
-                [`${p.pluginId}/${e.extensionId}`]: {
-                  extendable: {
-                    horizontally: e?.widgetLayout?.extendable.horizontally,
-                    vertically: e?.widgetLayout?.extendable.vertically,
-                  },
-                  floating: !!e?.widgetLayout?.floating,
+              ...b,
+              [`${p.pluginId}/${e.extensionId}`]: {
+                extendable: {
+                  horizontally: e?.widgetLayout?.extendable.horizontally,
+                  vertically: e?.widgetLayout?.extendable.vertically,
                 },
-              }
+                floating: !!e?.widgetLayout?.floating,
+              },
+            }
             : b,
         {},
       ),
@@ -410,17 +410,17 @@ export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined 
         .map<BlockType | undefined>(extension =>
           plugin.plugin
             ? {
-                id: `${plugin.plugin.id}/${extension.extensionId}`,
-                icon:
-                  extension.icon ||
-                  // for official plugin
-                  (plugin.plugin.id === "reearth" && extension.extensionId.replace(/block$/, "")) ||
-                  "plugin",
-                name: extension.name,
-                description: extension.description,
-                pluginId: plugin.plugin.id,
-                extensionId: extension.extensionId,
-              }
+              id: `${plugin.plugin.id}/${extension.extensionId}`,
+              icon:
+                extension.icon ||
+                // for official plugin
+                (plugin.plugin.id === "reearth" && extension.extensionId.replace(/block$/, "")) ||
+                "plugin",
+              name: extension.name,
+              description: extension.description,
+              pluginId: plugin.plugin.id,
+              extensionId: extension.extensionId,
+            }
             : undefined,
         )
         .filter((b): b is BlockType => !!b),

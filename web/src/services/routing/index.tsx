@@ -1,10 +1,10 @@
 import { lazy } from "react";
 import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import RootPage from "@reearth/beta/pages/Authentication/RootPage";
 import Dashboard from "@reearth/beta/pages/Dashboard";
 import AccountSettings from "@reearth/beta/pages/Settings/Account";
 import WorkspaceList from "@reearth/beta/pages/Settings/WorkspaceList";
-import RootPage from "@reearth/classic/components/pages/Authentication/RootPage";
 import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
 import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
 import PluginSettings from "@reearth/classic/components/pages/Settings/Project/Plugin";

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
 // Components
-import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import PublicationStatus, {
   Status as StatusType,
-} from "@reearth/classic/components/atoms/PublicationStatus";
+} from "@reearth/beta/components/PublicationStatus";
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import Text from "@reearth/classic/components/atoms/Text";
 import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";

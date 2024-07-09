@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 
-import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
+import { Status } from "@reearth/beta/components/PublicationStatus";
 import {
   useGetProjectQuery,
   useCheckProjectAliasLazyQuery,
@@ -8,7 +8,7 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useLang as useCurrentLang } from "@reearth/services/i18n";
 import {
   useWorkspace,

@@ -13,7 +13,7 @@ import {
   useCreateSceneMutation,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useStorytellingFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import {
@@ -45,8 +45,8 @@ export default (workspaceId?: string) => {
     s === PublishmentStatus.Public
       ? "published"
       : s === PublishmentStatus.Limited
-      ? "limited"
-      : "unpublished";
+        ? "limited"
+        : "unpublished";
 
   const user: User = {
     name: data?.me?.name || "",
@@ -132,16 +132,16 @@ export default (workspaceId?: string) => {
       .map<Project | undefined>(project =>
         project
           ? {
-              id: project.id,
-              description: project.description,
-              name: project.name,
-              image: project.imageUrl,
-              status: toPublishmentStatus(project.publishmentStatus),
-              isArchived: project.isArchived,
-              sceneId: project.scene?.id,
-              updatedAt: project.updatedAt.toString(),
-              projectType: project.coreSupport ? "beta" : "classic",
-            }
+            id: project.id,
+            description: project.description,
+            name: project.name,
+            image: project.imageUrl,
+            status: toPublishmentStatus(project.publishmentStatus),
+            isArchived: project.isArchived,
+            sceneId: project.scene?.id,
+            updatedAt: project.updatedAt.toString(),
+            projectType: project.coreSupport ? "beta" : "classic",
+          }
           : undefined,
       )
       .filter((project): project is Project => !!project);

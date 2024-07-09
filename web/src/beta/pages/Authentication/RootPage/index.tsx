@@ -1,6 +1,6 @@
 import React from "react";
 
-import OrganismRootPage from "@reearth/classic/components/organisms/Authentication/RootPage";
+import OrganismRootPage from "@reearth/beta/organisms/Authentication/RootPage";
 
 export type Props = {
   path?: string;

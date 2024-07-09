@@ -1,8 +1,8 @@
 import React from "react";
 import { RingLoader } from "react-spinners";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {
@@ -28,7 +28,7 @@ const RootPage: React.FC<Props> = ({ loading }) => {
   );
 };
 
-const Wrapper = styled(Flex)<{ bg?: string }>`
+const Wrapper = styled(Flex) <{ bg?: string }>`
   height: 100%;
   background: ${({ theme, bg }) =>
     bg ||

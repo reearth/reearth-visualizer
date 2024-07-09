@@ -4,7 +4,7 @@ import {
   useAddLayerGroupFromDatasetSchemaMutation,
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/services/state";
 

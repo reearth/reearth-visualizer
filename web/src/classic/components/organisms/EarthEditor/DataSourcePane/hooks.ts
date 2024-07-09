@@ -11,7 +11,7 @@ import {
   useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
   useGetDatasetSchemasWithCountQuery,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useT, useLang } from "@reearth/services/i18n";
 import {
   useSceneId,
@@ -42,17 +42,17 @@ export default () => {
     () =>
       data?.scene
         ? data.scene.datasetSchemas.nodes
-            .map<DatasetSchema | undefined>(n =>
-              n
-                ? {
-                    id: n.id,
-                    name: n.name,
-                    source: n.source as DataSource,
-                    totalCount: n.totalCount,
-                  }
-                : undefined,
-            )
-            .filter((e): e is DatasetSchema => !!e)
+          .map<DatasetSchema | undefined>(n =>
+            n
+              ? {
+                id: n.id,
+                name: n.name,
+                source: n.source as DataSource,
+                totalCount: n.totalCount,
+              }
+              : undefined,
+          )
+          .filter((e): e is DatasetSchema => !!e)
         : [],
     [data],
   );

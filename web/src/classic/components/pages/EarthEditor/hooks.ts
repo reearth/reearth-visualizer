@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useGetSceneQuery } from "@reearth/classic/gql";
+import { useGetSceneQuery } from "@reearth/beta/graphql";
 import { useAuth } from "@reearth/services/auth";
 import { useSceneId, useRootLayerId, useZoomedLayerId } from "@reearth/services/state";
 

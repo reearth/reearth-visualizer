@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 
+import PublicationStatus, { Status } from "@reearth/beta/components/PublicationStatus";
 import Text from "@reearth/beta/components/Text";
 import Field from "@reearth/beta/molecules/Settings/Field";
 import Section from "@reearth/beta/molecules/Settings/Section";
-import PublicationStatus, { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -19,8 +19,8 @@ const StatusSection: React.FC<Props> = ({ projectStatus }) => {
     return projectStatus === "published"
       ? t("This project is published with search engine indexing enabled.")
       : projectStatus === "limited"
-        ? t("This project is published with search engine indexing disabled.")
-        : t("This project is not published.");
+      ? t("This project is published with search engine indexing disabled.")
+      : t("This project is not published.");
   }, [t, projectStatus]);
 
   return (

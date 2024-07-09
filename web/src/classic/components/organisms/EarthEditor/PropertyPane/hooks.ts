@@ -1,10 +1,6 @@
 import { useCallback } from "react";
 
 import {
-  ValueTypes,
-  ValueType,
-} from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
-import {
   useUpdatePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
@@ -22,7 +18,11 @@ import {
   WidgetAreaType,
   WidgetSectionType,
   WidgetZoneType,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
+import {
+  ValueTypes,
+  ValueType,
+} from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
 import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/classic/util/value";
 import { useLang } from "@reearth/services/i18n";
 import {

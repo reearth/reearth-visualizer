@@ -1,6 +1,6 @@
 import React from "react";
 
-import Text from "@reearth/classic/components/atoms/Text";
+import Text from "@reearth/beta/components/Text";
 // Theme
 import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";

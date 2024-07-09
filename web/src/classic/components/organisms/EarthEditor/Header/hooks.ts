@@ -11,7 +11,7 @@ import {
   usePublishProjectMutation,
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
 import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/services/state";
@@ -88,10 +88,10 @@ export default () => {
   useEffect(() => {
     setValidAlias(
       !validatingAlias &&
-        !!project &&
-        !!checkProjectAliasData &&
-        (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
-          checkProjectAliasData.checkProjectAlias.available),
+      !!project &&
+      !!checkProjectAliasData &&
+      (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
+        checkProjectAliasData.checkProjectAlias.available),
     );
   }, [validatingAlias, checkProjectAliasData, project]);
 
@@ -100,10 +100,10 @@ export default () => {
       p?.id !== project?.id
         ? project
           ? {
-              id: project.id,
-              name: project.name,
-              sceneId: project.sceneId,
-            }
+            id: project.id,
+            name: project.name,
+            sceneId: project.sceneId,
+          }
           : undefined
         : p,
     );
@@ -137,8 +137,8 @@ export default () => {
         s === "limited"
           ? PublishmentStatus.Limited
           : s == "published"
-          ? PublishmentStatus.Public
-          : PublishmentStatus.Private;
+            ? PublishmentStatus.Public
+            : PublishmentStatus.Private;
       const result = await publishProjectMutation({
         variables: { projectId: project.id, alias, status: gqlStatus },
       });
@@ -155,8 +155,8 @@ export default () => {
             s === "limited"
               ? t("Successfully published your project!")
               : s == "published"
-              ? t("Successfully published your project with search engine indexing!")
-              : t("Successfully unpublished your project. Now nobody can access your project."),
+                ? t("Successfully published your project with search engine indexing!")
+                : t("Successfully unpublished your project. Now nobody can access your project."),
         });
       }
     },

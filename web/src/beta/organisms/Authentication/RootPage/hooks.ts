@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useGetTeamsQuery } from "@reearth/classic/gql";
+import { useGetTeamsQuery } from "@reearth/beta/graphql";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useNotification, useUserId } from "@reearth/services/state";

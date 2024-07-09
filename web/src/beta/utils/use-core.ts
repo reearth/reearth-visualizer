@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { useGetScenePropertyQuery } from "@reearth/classic/gql";
+import { useGetScenePropertyQuery } from "@reearth/beta/graphql";
 
 export const useCore = (
   type?: "published" | "earth_editor",
@@ -23,10 +23,10 @@ export const useCore = (
     const enable =
       data?.node?.__typename === "Scene"
         ? !!data?.node?.property?.items.find(
-            item =>
-              item.__typename === "PropertyGroup" &&
-              item.fields.find(f => f.fieldId === "experimental_core" && f.value),
-          )
+          item =>
+            item.__typename === "PropertyGroup" &&
+            item.fields.find(f => f.fieldId === "experimental_core" && f.value),
+        )
         : false;
     return { isCore: enable };
   }

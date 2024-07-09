@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/classic/gql";
+import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/beta/graphql";
 import { useLang } from "@reearth/services/i18n";
 import { useSceneId, useSelected } from "@reearth/services/state";
 
@@ -56,9 +56,9 @@ export default () => {
                 index,
                 ...(location
                   ? {
-                      lat: location.lat,
-                      lng: location.lng,
-                    }
+                    lat: location.lat,
+                    lng: location.lng,
+                  }
                   : {}),
                 lang: lang,
               },

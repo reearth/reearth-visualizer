@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Role as RoleUnion } from "@reearth/classic/components/molecules/Settings/Workspace/MemberListItem";
 import {
   useGetTeamsQuery,
   useGetUserBySearchLazyQuery,
@@ -12,7 +11,8 @@ import {
   useUpdateMemberOfTeamMutation,
   Role,
   useRemoveMemberFromTeamMutation,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
+import { Role as RoleUnion } from "@reearth/beta/molecules/Settings/Workspace/MemberListItem";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 

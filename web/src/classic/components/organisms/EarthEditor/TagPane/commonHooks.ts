@@ -11,7 +11,7 @@ import {
   useGetSceneTagsQuery,
   useRemoveTagMutation,
   useUpdateTagMutation,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useSceneId, useSelected } from "@reearth/services/state";
@@ -48,16 +48,16 @@ export default () => {
     const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_ID, label: "Default", tags: [] };
     const formattedGroups: TagGroup[] = sceneTags
       ? sceneTags
-          ?.map(t => {
-            if (t.__typename === "TagGroup") {
-              return { id: t.id, label: t.label, tags: t.tags };
-            }
-            defaultTagGroup.tags.push({ id: t.id, label: t.label });
-            return;
-          })
-          .filter((t): t is TagGroup => {
-            return !!t && "label" in t && "tags" in t;
-          })
+        ?.map(t => {
+          if (t.__typename === "TagGroup") {
+            return { id: t.id, label: t.label, tags: t.tags };
+          }
+          defaultTagGroup.tags.push({ id: t.id, label: t.label });
+          return;
+        })
+        .filter((t): t is TagGroup => {
+          return !!t && "label" in t && "tags" in t;
+        })
       : [];
     return [defaultTagGroup, ...formattedGroups];
   }, [sceneTags]);
@@ -67,21 +67,21 @@ export default () => {
     const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_ID, label: "Default", tags: [] };
     const formattedGroups: TagGroup[] = selectedLayerTags
       ? selectedLayerTags
-          ?.map(t => {
-            if (!t.tag) return;
-            if (t.__typename === "LayerTagGroup") {
-              return {
-                id: t.tag?.id,
-                label: t.tag?.label,
-                tags: t.children.map(c => ({ id: c.tag?.id, label: c.tag?.label })),
-              };
-            }
-            defaultTagGroup.tags.push({ id: t.tag.id, label: t.tag.label });
-            return;
-          })
-          .filter((t): t is TagGroup => {
-            return !!t && "label" in t && "tags" in t;
-          })
+        ?.map(t => {
+          if (!t.tag) return;
+          if (t.__typename === "LayerTagGroup") {
+            return {
+              id: t.tag?.id,
+              label: t.tag?.label,
+              tags: t.children.map(c => ({ id: c.tag?.id, label: c.tag?.label })),
+            };
+          }
+          defaultTagGroup.tags.push({ id: t.tag.id, label: t.tag.label });
+          return;
+        })
+        .filter((t): t is TagGroup => {
+          return !!t && "label" in t && "tags" in t;
+        })
       : [];
     return [defaultTagGroup, ...formattedGroups];
   }, [selectedLayerTags]);

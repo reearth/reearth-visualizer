@@ -8,7 +8,7 @@ import {
   useGetAssetsQuery,
   Maybe,
   AssetSortType as GQLSortType,
-} from "@reearth/classic/gql";
+} from "@reearth/beta/graphql";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
