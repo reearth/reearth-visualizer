@@ -59,10 +59,29 @@ export const LayerWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
 }));
 
-export const LayerNameListWrapper = styled("div")(({ theme }) => ({
+export const LayerNameListWrapper = styled("div")(() => ({
   maxHeight: "250px",
   overflowY: "auto",
   width: "100%",
+}));
+
+export const LayerNameList = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+}));
+
+export const ContentWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flex: 1,
+  width: "100%",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: theme.spacing.large,
+  boxSizing: "border-box",
+  ["*"]: {
+    boxSizing: "border-box",
+  },
   ["* ::-webkit-scrollbar"]: {
     width: "8px",
   },
@@ -77,20 +96,4 @@ export const LayerNameListWrapper = styled("div")(({ theme }) => ({
   ["* ::-webkit-scrollbar-thumb:hover"]: {
     background: theme.relative.lighter,
   },
-}));
-
-export const LayerNameList = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.small,
-  width: "97%",
-}));
-
-export const ContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flex: 1,
-  width: "100%",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  gap: theme.spacing.large,
 }));
