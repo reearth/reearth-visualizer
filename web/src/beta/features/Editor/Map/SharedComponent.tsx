@@ -59,10 +59,24 @@ export const LayerWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
 }));
 
-export const LayerNameListWrapper = styled("div")(() => ({
+export const LayerNameListWrapper = styled("div")(({ theme }) => ({
   maxHeight: "250px",
-  overflowY: "scroll",
+  overflowY: "auto",
   width: "100%",
+  ["* ::-webkit-scrollbar"]: {
+    width: "8px",
+  },
+  ["* ::-webkit-scrollbar-track"]: {
+    background: theme.relative.darker,
+    borderRadius: "10px",
+  },
+  ["* ::-webkit-scrollbar-thumb"]: {
+    background: theme.relative.light,
+    borderRadius: "4px",
+  },
+  ["* ::-webkit-scrollbar-thumb:hover"]: {
+    background: theme.relative.lighter,
+  },
 }));
 
 export const LayerNameList = styled("div")(({ theme }) => ({
