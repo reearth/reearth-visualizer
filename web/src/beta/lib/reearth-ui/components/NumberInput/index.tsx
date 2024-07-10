@@ -124,6 +124,7 @@ const StyledInput = styled("input")<{
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
+  pointerEvents: disabled ? "none" : "inherit",
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,

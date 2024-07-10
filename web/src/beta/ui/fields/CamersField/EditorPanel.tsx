@@ -67,6 +67,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
           commonTitle={t("Rotation")}
           values={[newCamera?.heading ?? 0, newCamera?.pitch ?? 0, newCamera?.roll ?? 0]}
           content={[t("Heading"), t("Pitch"), t("Roll")]}
+          placeholders={[t("value"), t("value"), t("value")]}
           onChange={handleTrippleFieldChange}
           onBlur={handleTrippleFieldBlur}
         />

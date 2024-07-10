@@ -7,7 +7,7 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 
 type commonTurple = [number, number, number];
 export type TripletInputFieldProps = CommonFieldProps &
-  Pick<NumberInputProps, "size" | "disabled" | "max" | "min" | "unit"> & {
+  Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
     values: commonTurple;
     placeholders?: [string, string, string];
     content?: [string, string, string];

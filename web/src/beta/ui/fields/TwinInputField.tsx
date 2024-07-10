@@ -7,7 +7,7 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 
 type commonTupleProps = [number, number];
 export type TwinInputFieldProps = CommonFieldProps &
-  Pick<NumberInputProps, "size" | "disabled" | "max" | "min" | "unit"> & {
+  Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
     values: commonTupleProps;
     placeholders?: [string, string];
     content?: [string, string];
