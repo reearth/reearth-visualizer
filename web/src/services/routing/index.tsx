@@ -4,14 +4,6 @@ import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-
 import RootPage from "@reearth/beta/pages/Authentication/RootPage";
 import Dashboard from "@reearth/beta/pages/Dashboard";
 import AccountSettings from "@reearth/beta/pages/Settings/Account";
-import WorkspaceList from "@reearth/beta/pages/Settings/WorkspaceList";
-import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
-import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
-import PluginSettings from "@reearth/classic/components/pages/Settings/Project/Plugin";
-import PublicSettings from "@reearth/classic/components/pages/Settings/Project/Public";
-import SettingsProjectList from "@reearth/classic/components/pages/Settings/ProjectList";
-import WorkspaceSettings from "@reearth/classic/components/pages/Settings/Workspace";
-import AssetSettings from "@reearth/classic/components/pages/Settings/Workspace/Asset";
 import { styled } from "@reearth/services/theme";
 
 const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
@@ -19,19 +11,8 @@ const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettin
 const PluginPlaygroundPage = lazy(() => import("@reearth/beta/pages/PluginPlaygroundPage"));
 
 const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
-const LoginPage = lazy(() => import("@reearth/classic/components/pages/Authentication/LoginPage"));
-const PasswordResetPage = lazy(
-  () => import("@reearth/classic/components/pages/Authentication/PasswordReset"),
-);
-
-const SignupPage = lazy(
-  () => import("@reearth/classic/components/pages/Authentication/SignupPage"),
-);
-const Preview = lazy(() => import("@reearth/classic/components/pages/Preview"));
-const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 
 const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlayground"));
-const PluginEditor = lazy(() => import("@reearth/classic/components/pages/PluginEditor"));
 
 export const AppRoutes = () => {
   const redirectRoutes = redirects.map(([from, to]) => ({
@@ -71,33 +52,6 @@ export const AppRoutes = () => {
       element: <RootPage />,
     },
     {
-      path: "login",
-      element: <LoginPage />,
-    },
-    {
-      path: "signup",
-      element: <SignupPage />,
-    },
-    {
-      path: "password-reset",
-      element: <PasswordResetPage />,
-    },
-
-    {
-      path: "edit/:sceneId",
-      children: [
-        {
-          index: true,
-          element: <EarthEditor />,
-        },
-        { path: "preview", element: <Preview /> },
-      ],
-    },
-    {
-      path: "plugin-editor",
-      element: <PluginEditor />,
-    },
-    {
       path: "plugin-playground",
       element: <PluginPlaygroundPage />,
     },
@@ -106,32 +60,6 @@ export const AppRoutes = () => {
       children: [
         { index: true, element: <Navigate to="/settings/account" /> },
         { path: "account", element: <AccountSettings /> },
-        {
-          path: "workspaces",
-          children: [
-            {
-              index: true,
-              element: <WorkspaceList />,
-            },
-            {
-              path: ":workspaceId",
-              children: [
-                { index: true, element: <WorkspaceSettings /> },
-                { path: "projects", element: <SettingsProjectList /> },
-                { path: "asset", element: <AssetSettings /> },
-              ],
-            },
-          ],
-        },
-        {
-          path: "projects/:projectId",
-          children: [
-            { index: true, element: <ProjectSettings /> },
-            { path: "public", element: <PublicSettings /> },
-            { path: "dataset", element: <DatasetSettings /> },
-            { path: "plugins", element: <PluginSettings /> },
-          ],
-        },
         { path: "*", element: <Navigate to="/settings/account" /> },
       ],
     },
