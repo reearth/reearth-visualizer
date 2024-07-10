@@ -17,7 +17,7 @@ export const Radio: FC<RadioProps> = ({ value, label, disabled, checked, onChang
   };
 
   return (
-    <RadioWrapper>
+    <RadioWrapper onClick={handleChange}>
       <RadioInput
         type="radio"
         value={value}
@@ -25,7 +25,7 @@ export const Radio: FC<RadioProps> = ({ value, label, disabled, checked, onChang
         disabled={disabled}
         onChange={handleChange}
       />
-      <RadioButton checked={checked} disabled={disabled} onClick={handleChange}>
+      <RadioButton checked={checked} disabled={disabled}>
         {checked && !disabled && <RadioIndicator checked={checked} />}
       </RadioButton>
       {label && <RadioLabel disabled={disabled}>{label}</RadioLabel>}

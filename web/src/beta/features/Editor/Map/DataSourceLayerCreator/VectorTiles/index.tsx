@@ -135,7 +135,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={!mvtUrlValue}
+          disabled={!mvtUrlValue || !layerName}
         />
       </SubmitWrapper>
     </Wrapper>
