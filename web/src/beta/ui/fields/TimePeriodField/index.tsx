@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -19,7 +19,7 @@ export type TimePeriodFieldProps = CommonFieldProps & {
   onChange?: (value?: TimePeriodFieldProp) => void;
 };
 
-const TimePeriodField: React.FC<TimePeriodFieldProps> = ({
+const TimePeriodField: FC<TimePeriodFieldProps> = ({
   commonTitle,
   description,
   value,

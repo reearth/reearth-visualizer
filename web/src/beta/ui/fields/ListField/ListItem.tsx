@@ -13,7 +13,7 @@ type ItemProps = {
   isDragging?: boolean;
   onItemDelete?: (id: string) => void;
   onItemSelect?: (id: string) => void;
-  onItemNameUpdate?: () => void;
+  onItemNameUpdate?: (id: string, value: string) => void;
 };
 
 const ListItem: FC<ItemProps> = ({
@@ -54,8 +54,8 @@ const ListItem: FC<ItemProps> = ({
   const handleTitleUpdate = useCallback(() => {
     setItemNameRenameId("");
     if (!localTitle || localTitle === item.title) return;
-    onItemNameUpdate?.();
-  }, [item.title, localTitle, onItemNameUpdate]);
+    onItemNameUpdate?.(item.id, localTitle);
+  }, [item.id, item.title, localTitle, onItemNameUpdate]);
 
   return (
     <Wrapper>

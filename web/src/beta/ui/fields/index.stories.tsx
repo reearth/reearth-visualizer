@@ -15,7 +15,6 @@ import {
   SpacingField,
   CameraField,
   TimePeriodField,
-  ListField,
   TimePointField,
 } from "./index";
 
@@ -26,37 +25,21 @@ const meta: Meta<typeof InputField> = {
 export default meta;
 
 type Story = StoryObj<typeof InputField>;
-
 export const Components: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "550px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "850px",
+        padding: "24px",
+      }}>
       <CommonField
         commonTitle="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <TimePeriodField
-        value={{
-          currentTime: "2024-07-19T11:03:56+00:00",
-          startTime: "2024-07-20T11:03:56+00:00",
-          endTime: "2024-07-24T11:03:56+00:00",
-        }}
-        onChange={() => {}}
-        commonTitle="TimePeriodField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
-      <div style={{ maxWidth: "350px" }}>
-        <AssetField
-          fileType="asset"
-          placeholder="Asset"
-          commonTitle="AssetField"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-        />
-      </div>
-      <CameraField
-        onSave={() => {}}
-        commonTitle="CameraField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
+
       <InputField
         placeholder="Text"
         commonTitle="InputField"
@@ -80,6 +63,12 @@ export const Components: Story = {
         commonTitle="QuartetInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
+      <TextareaField
+        placeholder="Text"
+        commonTitle="TextareaField"
+        value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
       <SelectField
         options={[
           { label: "Option 1", value: "option1" },
@@ -90,12 +79,7 @@ export const Components: Story = {
         commonTitle="SelectField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <TextareaField
-        placeholder="Text"
-        commonTitle="TextareaField"
-        value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
+
       <SwitchField
         value={true}
         onChange={() => {}}
@@ -113,25 +97,36 @@ export const Components: Story = {
         commonTitle="ColorField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <SpacingField
-        commonTitle="SpacingField"
+      <div style={{ maxWidth: "350px" }}>
+        <AssetField
+          fileType="asset"
+          placeholder="Asset"
+          commonTitle="AssetField"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+        />
+      </div>
+      <CameraField
+        onSave={() => {}}
+        commonTitle="CameraField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-
-      <ListField
-        items={[
-          { id: "0", title: "item a" },
-          { id: "1", title: "item b" },
-          { id: "2", title: "item c" },
-        ]}
-        onItemAdd={() => console.log("Item added")}
-        onItemSelect={(id: string) => console.log(`Item selected: ${id}`)}
-        commonTitle="ListField"
+      <SpacingField
+        commonTitle="SpacingField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimePointField
         value="2023-10-24T00:00:00+09:00"
         commonTitle="TimePointField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <TimePeriodField
+        value={{
+          currentTime: "2024-07-19T11:03:56+00:00",
+          startTime: "2024-07-20T11:03:56+00:00",
+          endTime: "2024-07-24T11:03:56+00:00",
+        }}
+        onChange={() => {}}
+        commonTitle="TimePeriodField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>

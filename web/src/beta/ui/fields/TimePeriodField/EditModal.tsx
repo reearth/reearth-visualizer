@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import { getTimeZone } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { Button, Icon, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
@@ -19,13 +19,13 @@ type EditPanelProps = {
   setTimePeriodValues?: (value?: TimePeriodFieldProp) => void;
 };
 
-const EditModal = ({
+const EditModal: FC<EditPanelProps> = ({
   visible,
   timePeriodValues,
   setTimePeriodValues,
   onClose,
   onChange,
-}: EditPanelProps) => {
+}) => {
   const t = useT();
   const {
     isDisabled,

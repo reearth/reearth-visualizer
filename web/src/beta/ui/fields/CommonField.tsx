@@ -28,6 +28,20 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
+  ["* ::-webkit-scrollbar"]: {
+    width: "8px",
+  },
+  ["* ::-webkit-scrollbar-track"]: {
+    background: theme.relative.darker,
+    borderRadius: "10px",
+  },
+  ["* ::-webkit-scrollbar-thumb"]: {
+    background: theme.relative.light,
+    borderRadius: "4px",
+  },
+  ["* ::-webkit-scrollbar-thumb:hover"]: {
+    background: theme.relative.lighter,
+  },
 }));
 
 const Description = styled(Typography)(({ theme }) => ({

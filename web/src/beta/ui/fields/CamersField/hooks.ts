@@ -30,10 +30,12 @@ export default ({
   camera,
   onFlyTo,
   onSave,
+  onClose,
 }: {
   camera?: Camera;
   onFlyTo?: (c?: Camera) => void;
   onSave: (value?: Camera) => void;
+  onClose?: () => void;
 }) => {
   const [newCamera, setNewCamera] = useState<Camera | undefined>(
     camera ? handleCameraeRadianToDegree(camera) : undefined,
@@ -65,7 +67,8 @@ export default ({
     if (!newCamera) return;
     const data = handleCameraDegreeToRadian(newCamera);
     onSave?.(data);
-  }, [newCamera, onSave]);
+    onClose?.();
+  }, [newCamera, onClose, onSave]);
 
   const handleTwinFieldChange = (values: [number, number]) => {
     handleFieldChange("lat", values[0]);

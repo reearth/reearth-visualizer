@@ -27,6 +27,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
     camera,
     onFlyTo,
     onSave,
+    onClose,
   });
 
   return (

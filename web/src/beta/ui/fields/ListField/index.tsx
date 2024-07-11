@@ -16,11 +16,13 @@ export type ListItemProps = {
 
 export type ListFieldProps = CommonFieldProps & {
   items: ListItemProps[];
-  onItemAdd?: () => void;
-  onItemSelect?: (id: string) => void;
-  onDeleteItem?: (id: string) => void;
   selected?: string;
   atLeastOneItem?: boolean;
+  onItemAdd?: () => void;
+  onItemSelect?: (id: string) => void;
+  onItemDelete?: (id: string) => void;
+  onItemMove?: (id: string, targetIndex: number) => void;
+  onItemNameUpdate?: (id: string, value: string) => void;
 };
 
 const ListField: FC<ListFieldProps> = ({
@@ -31,7 +33,9 @@ const ListField: FC<ListFieldProps> = ({
   atLeastOneItem,
   onItemAdd,
   onItemSelect,
-  onDeleteItem,
+  onItemDelete,
+  onItemMove,
+  onItemNameUpdate,
 }) => {
   useEffect(() => {
     if (!atLeastOneItem) return;
@@ -45,7 +49,6 @@ const ListField: FC<ListFieldProps> = ({
   const DraggableListItems = useMemo(
     () =>
       items.map(item => ({
-        ...item,
         id: item.id,
         content: (
           <ListItem
@@ -53,21 +56,28 @@ const ListField: FC<ListFieldProps> = ({
             dragHandleClassName={LIST_FIELD_DRAG_HANDLE_CLASS_NAME}
             isDragging={isDragging}
             selectedItem={selected}
-            onItemDelete={onDeleteItem}
+            onItemDelete={onItemDelete}
             onItemSelect={onItemSelect}
+            onItemNameUpdate={onItemNameUpdate}
           />
         ),
       })),
-    [items, isDragging, selected, onDeleteItem, onItemSelect],
+    [items, isDragging, selected, onItemDelete, onItemSelect, onItemNameUpdate],
   );
 
   const handleMoveStart = useCallback(() => {
     setIsDragging(true);
   }, []);
 
-  const handleMoveEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  const handleMoveEnd = useCallback(
+    (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        onItemMove?.(itemId, newIndex);
+      }
+      setIsDragging(false);
+    },
+    [onItemMove],
+  );
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
@@ -96,13 +106,13 @@ const ListField: FC<ListFieldProps> = ({
 const FieldContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: `${theme.spacing.smallest}px`,
+  gap: theme.spacing.smallest,
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
-  minHeight: "84px",
-  maxHeight: "224px",
+  maxHeight: "136px",
   borderRadius: theme.radius.small,
+  padding: theme.spacing.smallest,
   border: `1px solid ${theme.outline.weak}`,
   overflow: "auto",
 }));
