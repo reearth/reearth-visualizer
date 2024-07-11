@@ -6,7 +6,7 @@ concurrency:
   cancel-in-progress: true
 env:
   IMAGE: reearth/reearth-visualizer-api:nightly
-  IMAGE_GCP: asia-northeast1-docker.pkg.dev/reearth-oss/reearth-visualizer-api:nightly
+  IMAGE_GCP: asia-northeast1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer-api:nightly
   GCP_REGION: us-central1
 jobs:
   deploy_test:
