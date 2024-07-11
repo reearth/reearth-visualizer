@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { useGetScenePropertyQuery } from "@reearth/beta/graphql";
-import { PublishedData } from "@reearth/classic/components/organisms/Published/core/types";
+import { PublishedData } from "@reearth/beta/organisms/Published/core/types";
 
 // TODO: Remove this hook when we use reearth/core completely.
 export const useCore = (
@@ -25,10 +25,10 @@ export const useCore = (
     const enable =
       data?.node?.__typename === "Scene"
         ? !!data?.node?.property?.items.find(
-            item =>
-              item.__typename === "PropertyGroup" &&
-              item.fields.find(f => f.fieldId === "experimental_core" && f.value),
-          )
+          item =>
+            item.__typename === "PropertyGroup" &&
+            item.fields.find(f => f.fieldId === "experimental_core" && f.value),
+        )
         : false;
     return enable;
   }

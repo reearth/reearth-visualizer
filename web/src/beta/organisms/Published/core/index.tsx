@@ -1,4 +1,4 @@
-import Error from "@reearth/classic/components/molecules/Published/Error";
+import Error from "@reearth/beta/molecules/Published/Error";
 import Visualizer from "@reearth/classic/core/Visualizer";
 import { config } from "@reearth/services/config";
 
