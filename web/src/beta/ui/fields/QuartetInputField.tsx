@@ -28,16 +28,11 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   const [inputValues, setInputValues] = useState<commonTurple>(values);
 
   const theme = useTheme();
-  const handleChange = useCallback(
-    (index: number, value: number | string) => {
-      const newValues = [...inputValues] as commonTurple;
-      const parsedValue = value === "" ? 0 : Number(value);
-      newValues[index] = isNaN(parsedValue) ? 0 : parsedValue;
-      setInputValues(newValues);
-      onChange?.(newValues);
-    },
-    [inputValues, onChange],
-  );
+  const handleChange = useCallback(() => {
+    const newValues = [...inputValues] as commonTurple;
+    setInputValues(newValues);
+    onChange?.(newValues);
+  }, [inputValues, onChange]);
 
   const handleBlur = useCallback(() => {
     onBlur?.(inputValues);
@@ -55,7 +50,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
             <NumberInput
               value={value}
               placeholder={placeholders?.[index]}
-              onChange={value => handleChange(index, value as number)}
+              onChange={handleChange}
               onBlur={handleBlur}
               {...props}
             />

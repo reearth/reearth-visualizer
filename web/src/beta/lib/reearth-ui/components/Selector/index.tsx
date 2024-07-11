@@ -13,6 +13,7 @@ export type SelectorProps = {
   options: { value: string; label?: string }[];
   disabled?: boolean;
   placeholder?: string;
+  maxHeight?: number;
   onChange?: (value: string | string[]) => void;
 };
 
@@ -22,6 +23,7 @@ export const Selector: FC<SelectorProps> = ({
   options,
   placeholder = "Please select",
   disabled,
+  maxHeight,
   onChange,
 }) => {
   const theme = useTheme();
@@ -151,7 +153,7 @@ export const Selector: FC<SelectorProps> = ({
         onOpenChange={setIsOpen}
         disabled={disabled}
         placement="bottom-start">
-        <DropDownWrapper width={selectorWidth}>
+        <DropDownWrapper maxHeight={maxHeight} width={selectorWidth}>
           {optionValues.length === 0 ? (
             <DropDownItem>
               <Typography size="body" color={theme.content.weaker}>
@@ -203,7 +205,7 @@ const SelectInput = styled("div")<{
   }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  minHeight: "32px",
+  height: "32px",
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
@@ -225,7 +227,8 @@ const SelectedItem = styled("div")(({ theme }) => ({
 
 const DropDownWrapper = styled("div")<{
   width?: number;
-}>(({ width, theme }) => ({
+  maxHeight?: number;
+}>(({ width, maxHeight, theme }) => ({
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
@@ -236,6 +239,8 @@ const DropDownWrapper = styled("div")<{
   borderRadius: `${theme.radius.small}px`,
   width: width ? `${width}px` : "",
   border: `1px solid ${theme.outline.weaker}`,
+  maxHeight: maxHeight ? `${maxHeight}px` : "",
+  overflowY: maxHeight ? "auto" : "hidden",
 }));
 
 const DropDownItem = styled("div")<{

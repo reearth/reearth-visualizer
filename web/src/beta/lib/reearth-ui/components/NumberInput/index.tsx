@@ -50,9 +50,8 @@ export const NumberInput: FC<NumberInputProps> = ({
             validatedValue = currentValue;
           }
         }
-
         setCurrentValue(validatedValue);
-        onChange?.(parseFloat(validatedValue));
+        onChange?.(currentValue === "" ? undefined : parseFloat(validatedValue));
       }
     },
     [max, min, onChange],
@@ -101,6 +100,7 @@ const Wrapper = styled("div")<{
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",
+    flex: 1,
     gap: theme.spacing.smallest,
     alignItems: "center",
     padding:

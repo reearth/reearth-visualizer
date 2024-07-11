@@ -49,6 +49,7 @@ const Title = styled("div")(() => ({
 
 const Content = styled("div")(() => ({
   alignSelf: "stretch",
+  userSelect: "none",
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({

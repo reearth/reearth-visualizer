@@ -28,16 +28,11 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
   const [inputValues, setInputValues] = useState<commonTupleProps>(values);
 
   const theme = useTheme();
-  const handleChange = useCallback(
-    (index: number, value: number | string) => {
-      const newValues = [...inputValues] as commonTupleProps;
-      const parsedValue = value === "" ? 0 : Number(value);
-      newValues[index] = isNaN(parsedValue) ? 0 : parsedValue;
-      setInputValues(newValues);
-      onChange?.(newValues);
-    },
-    [inputValues, onChange],
-  );
+  const handleChange = useCallback(() => {
+    const newValues = [...inputValues] as commonTupleProps;
+    setInputValues(newValues);
+    onChange?.(newValues);
+  }, [inputValues, onChange]);
 
   const handleBlur = useCallback(() => {
     onBlur?.(inputValues);
@@ -54,7 +49,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
           <InputWrapper key={index}>
             <NumberInput
               value={value}
-              onChange={value => handleChange(index, value as number)}
+              onChange={handleChange}
               onBlur={handleBlur}
               placeholder={placeholders?.[index]}
               {...props}

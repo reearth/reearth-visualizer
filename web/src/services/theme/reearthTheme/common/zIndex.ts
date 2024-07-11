@@ -18,11 +18,11 @@ export const zIndex = {
   editor: {
     navbar: 500,
     panel: 500,
-    popover: 600,
     modal: {
       bg: 700,
       self: 705,
     },
+    popover: 800,
     loading: 900,
     notificationBar: 1000,
   },

@@ -14,12 +14,9 @@ import {
   ColorField,
   SpacingField,
   CameraField,
-  SliderField,
-  TimePointField,
   TimePeriodField,
   ListField,
-  MultiSelectInputField,
-  TimeField,
+  TimePointField,
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
@@ -35,6 +32,16 @@ export const Components: Story = {
     <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "550px" }}>
       <CommonField
         commonTitle="CommonField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <TimePeriodField
+        value={{
+          currentTime: "2024-07-19T11:03:56+00:00",
+          startTime: "2024-07-20T11:03:56+00:00",
+          endTime: "2024-07-24T11:03:56+00:00",
+        }}
+        onChange={() => {}}
+        commonTitle="TimePeriodField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <div style={{ maxWidth: "350px" }}>
@@ -79,6 +86,7 @@ export const Components: Story = {
           { label: "Option 2", value: "option2" },
           { label: "Option 3", value: "option3" },
         ]}
+        multiple={true}
         commonTitle="SelectField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
@@ -106,30 +114,10 @@ export const Components: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <SpacingField
-        values={[10, 10, 12, 12]}
-        unit="px"
         commonTitle="SpacingField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
 
-      <SliderField
-        value={50}
-        onChange={() => {}}
-        commonTitle="SliderField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
-      <TimePointField
-        value="2021-10-10"
-        onChange={() => {}}
-        commonTitle="TimePointField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
-      <TimePeriodField
-        value={{ currentTime: "2021-10-10", startTime: "2021-10-10", endTime: "2021-10-10" }}
-        onChange={() => {}}
-        commonTitle="TimePeriodField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
       <ListField
         items={[
           { id: "0", title: "item a" },
@@ -141,19 +129,9 @@ export const Components: Story = {
         commonTitle="ListField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <MultiSelectInputField
-        options={[
-          { label: "Option 1", value: "option1" },
-          { label: "Option 2", value: "option2" },
-          { label: "Option 3", value: "option3" },
-        ]}
-        commonTitle="MultiSelectInputField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
-      <TimeField
+      <TimePointField
         value="2023-10-24T00:00:00+09:00"
-        onChange={() => {}}
-        commonTitle="TimeField"
+        commonTitle="TimePointField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>
