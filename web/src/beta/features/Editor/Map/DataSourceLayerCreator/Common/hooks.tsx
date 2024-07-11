@@ -49,7 +49,19 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   }, [value, fileFormat, sourceType]);
 
   const handleSubmit = () => {
-    const dataURL = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
+    let parsedValue = null;
+
+    if (sourceType === "value" && value !== "") {
+      if (fileFormat === "GeoJSON") {
+        try {
+          parsedValue = JSON.parse(value);
+        } catch (error) {
+          parsedValue = value;
+        }
+      } else {
+        parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
+      }
+    }
 
     onSubmit({
       layerType: "simple",
@@ -62,10 +74,10 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
             (sourceType === "url" || sourceType === "local") && value !== ""
               ? value
               : fileFormat === "CZML" || fileFormat === "KML"
-              ? dataURL
+              ? parsedValue
               : undefined,
           type: fileFormat.toLowerCase() as DataType,
-          value: value,
+          value: parsedValue,
           geojson: {
             useAsResource: prioritizePerformance,
           },
