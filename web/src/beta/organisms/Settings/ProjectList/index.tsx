@@ -8,7 +8,7 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import TabSection from "@reearth/classic/components/atoms/TabSection";
 import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
 import ProjectTypeSelectionModal from "@reearth/classic/components/molecules/Common/ProjectTypeSelectionModal";
-import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
+import AssetModal from "@reearth/beta/organisms/AssetModal";
 import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";

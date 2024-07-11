@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import assetHooks from "@reearth/classic/components/organisms/Common/AssetContainer/hooks";
+import assetHooks from "@reearth/beta/organisms/Common/AssetContainer/hooks";
 import { useWorkspace, useProject } from "@reearth/services/state";
 
 export type Params = {

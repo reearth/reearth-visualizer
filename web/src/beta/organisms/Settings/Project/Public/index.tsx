@@ -7,7 +7,7 @@ import PublishSection from "@reearth/beta/molecules/Settings/Project/PublishSect
 import StatusSection from "@reearth/beta/molecules/Settings/Project/StatusSection";
 import SettingsHeader from "@reearth/beta/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/beta/organisms/Settings/SettingPage";
-import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
+import AssetModal from "@reearth/beta/organisms/AssetModal";
 import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";

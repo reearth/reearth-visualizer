@@ -3,7 +3,7 @@ import React, { useEffect, useCallback } from "react";
 import MoleculeAssetContainer, {
   Asset as AssetType,
   Props as AssetContainerProps,
-} from "@reearth/classic/components/molecules/Common/AssetModal/AssetContainer";
+} from "@reearth/beta/molecules/Common/AssetModal/AssetContainer";
 
 import useHooks from "./hooks";
 

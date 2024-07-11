@@ -4,7 +4,7 @@ import Loading from "@reearth/classic/components/atoms/Loading";
 import Wrapper from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
 import AssetModal, {
   Props as AssetModalProps,
-} from "@reearth/classic/components/organisms/Common/AssetModal";
+} from "@reearth/beta/organisms/AssetModal";
 
 import useHooks, { Mode as RawMode } from "./hooks";
 

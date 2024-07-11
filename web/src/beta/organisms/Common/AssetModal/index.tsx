@@ -1,8 +1,6 @@
 import React from "react";
 
-import MoleculeAssetModal, {
-  Props as PropsType,
-} from "@reearth/classic/components/molecules/Common/AssetModal";
+import MoleculeAssetModal, { Props as PropsType } from "@reearth/beta/molecules/Common/AssetModal";
 
 import AssetContainer from "../AssetContainer";
 

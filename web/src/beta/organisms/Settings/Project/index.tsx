@@ -5,7 +5,7 @@ import DangerSection from "@reearth/beta/molecules/Settings/Project/DangerSectio
 import ProfileSection from "@reearth/beta/molecules/Settings/Project/ProfileSection";
 import SettingsHeader from "@reearth/beta/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/beta/organisms/Settings/SettingPage";
-import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
+import AssetModal from "@reearth/beta/organisms/AssetModal";
 
 import useHooks from "./hooks";
 

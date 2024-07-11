@@ -5,7 +5,7 @@ import MarketplaceButton from "@reearth/classic/components/molecules/Dashboard/M
 import ProjectList from "@reearth/classic/components/molecules/Dashboard/ProjectList";
 import QuickStart from "@reearth/classic/components/molecules/Dashboard/QuickStart";
 import Workspace from "@reearth/classic/components/molecules/Dashboard/Workspace";
-import AssetModal from "@reearth/classic/components/organisms/Common/AssetModal";
+import AssetModal from "@reearth/beta/organisms/AssetModal";
 import { useAuth } from "@reearth/services/auth";
 
 import useHooks from "./hooks";

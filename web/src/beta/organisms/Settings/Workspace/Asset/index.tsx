@@ -2,7 +2,7 @@ import React from "react";
 
 import SettingsHeader from "@reearth/beta/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/beta/organisms/Settings/SettingPage";
-import AssetContainer from "@reearth/classic/components/organisms/Common/AssetContainer";
+import AssetContainer from "@reearth/beta/organisms/Common/AssetContainer";
 import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";
