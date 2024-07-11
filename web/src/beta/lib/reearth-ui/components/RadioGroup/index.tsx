@@ -5,26 +5,30 @@ import { styled } from "@reearth/services/theme";
 
 export type RadioGroupProps = {
   layout?: "vertical" | "horizontal";
+  value?: string;
   options?: { value: string; label?: string }[];
   onChange?: (value: string) => void;
 };
 
-export const RadioGroup: FC<RadioGroupProps> = ({ layout = "horizontal", options, onChange }) => {
-  const [checkedValue, setCheckedValue] = useState("");
+export const RadioGroup: FC<RadioGroupProps> = ({
+  layout = "horizontal",
+  value,
+  options,
+  onChange,
+}) => {
+  const [currentValue, setCurrentValue] = useState(value);
 
   useEffect(() => {
-    if (options && options.length > 0 && !checkedValue) {
-      setCheckedValue(options[0].value);
-    }
-  }, [options, checkedValue, onChange]);
+    setCurrentValue(value);
+  }, [value]);
 
-  const handleRadioChange = useCallback(
+  const handleValueChange = useCallback(
     (newValue: string) => {
-      if (newValue === checkedValue) return;
-      setCheckedValue(newValue);
+      if (newValue === currentValue) return;
+      setCurrentValue(newValue);
       onChange?.(newValue);
     },
-    [onChange, checkedValue],
+    [onChange, currentValue],
   );
 
   return (
@@ -34,8 +38,8 @@ export const RadioGroup: FC<RadioGroupProps> = ({ layout = "horizontal", options
           key={index}
           value={option.value}
           label={option.label}
-          checked={option.value === checkedValue}
-          onChange={handleRadioChange}
+          checked={option.value === currentValue}
+          onChange={handleValueChange}
         />
       ))}
     </RadioGroupWrapper>
