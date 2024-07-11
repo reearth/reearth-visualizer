@@ -7,7 +7,7 @@ concurrency:
 env:
   IMAGE: reearth/reearth-visualizer-api:nightly
   IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer-api:nightly
-  GCP_REGION: us-central1
+  GCP_REGION: asia-northeast1
 jobs:
   deploy_test:
     name: Deploy app to test env
