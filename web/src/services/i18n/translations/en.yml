@@ -83,7 +83,8 @@ Value: Value
 Input data here: Input data here
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: 'Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.'
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.:
+  Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.
 Latitude Column Name: ''
 Column Name: ''
 Longitude Column Name: ''
@@ -326,6 +327,9 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
+Position Capture: ''
+value: ''
+Time Period Settings: Time Period Settings
 Drop here: Drop here
 Close timeline: Close timeline
 Playback timeline: Playback timeline
