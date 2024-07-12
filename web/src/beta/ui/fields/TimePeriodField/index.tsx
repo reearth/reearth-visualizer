@@ -83,7 +83,6 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
             onClick={handleTimePeriodSettingDelete}
             disabled={!timePeriodValues}
             appearance="simple"
-            shadow={false}
           />
         </TimePeriodWrapper>
         <ButtonWrapper>
