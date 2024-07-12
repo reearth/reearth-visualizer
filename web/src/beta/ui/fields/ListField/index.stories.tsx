@@ -66,7 +66,8 @@ export const Default: Story = (args: ListFieldProps) => {
         display: "flex",
         flexDirection: "column",
         gap: "10px",
-        width: "332px",
+        width: "500px",
+        margin: "0 auto",
       }}>
       <ListField
         {...args}
