@@ -139,11 +139,6 @@ func (r *mutationResolver) CreateStoryPage(ctx context.Context, input gqlmodel.C
 		return nil, err
 	}
 
-	layersId, err := gqlmodel.ToIDs[id.NLSLayer](input.Layers)
-	if err != nil {
-		return nil, err
-	}
-
 	swipeableLayersIds, err := gqlmodel.ToIDs[id.NLSLayer](input.SwipeableLayers)
 	if err != nil {
 		return nil, err
@@ -154,7 +149,6 @@ func (r *mutationResolver) CreateStoryPage(ctx context.Context, input gqlmodel.C
 		StoryID:         storyId,
 		Title:           input.Title,
 		Swipeable:       input.Swipeable,
-		Layers:          layersId,
 		SwipeableLayers: swipeableLayersIds,
 		Index:           input.Index,
 	}
@@ -176,11 +170,6 @@ func (r *mutationResolver) UpdateStoryPage(ctx context.Context, input gqlmodel.U
 		return nil, err
 	}
 
-	layersId, err := gqlmodel.ToIDs[id.NLSLayer](input.Layers)
-	if err != nil {
-		return nil, err
-	}
-
 	swipeableLayersIds, err := gqlmodel.ToIDs[id.NLSLayer](input.SwipeableLayers)
 	if err != nil {
 		return nil, err
@@ -192,7 +181,6 @@ func (r *mutationResolver) UpdateStoryPage(ctx context.Context, input gqlmodel.U
 		PageID:          pageId,
 		Title:           input.Title,
 		Swipeable:       input.Swipeable,
-		Layers:          layersId,
 		SwipeableLayers: swipeableLayersIds,
 		Index:           input.Index,
 	}
@@ -279,7 +267,7 @@ func (r *mutationResolver) DuplicateStoryPage(ctx context.Context, input gqlmode
 }
 
 func (r *mutationResolver) AddPageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error) {
-	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.NLSLayer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
+	sceneId, storyId, pageId, err := gqlmodel.ToID3[id.Scene, id.Story, id.Page](input.SceneID, input.StoryID, input.PageID)
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +277,6 @@ func (r *mutationResolver) AddPageLayer(ctx context.Context, input gqlmodel.Page
 		StoryID:   storyId,
 		PageID:    pageId,
 		Swipeable: lo.FromPtrOr(input.Swipeable, false),
-		LayerID:   layerId,
 	}
 
 	story, page, err := usecases(ctx).StoryTelling.AddPageLayer(ctx, inp, getOperator(ctx))
@@ -304,7 +291,7 @@ func (r *mutationResolver) AddPageLayer(ctx context.Context, input gqlmodel.Page
 }
 
 func (r *mutationResolver) RemovePageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error) {
-	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.NLSLayer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
+	sceneId, storyId, pageId, err := gqlmodel.ToID3[id.Scene, id.Story, id.Page](input.SceneID, input.StoryID, input.PageID)
 	if err != nil {
 		return nil, err
 	}
@@ -314,7 +301,6 @@ func (r *mutationResolver) RemovePageLayer(ctx context.Context, input gqlmodel.P
 		StoryID:   storyId,
 		PageID:    pageId,
 		Swipeable: lo.FromPtrOr(input.Swipeable, false),
-		LayerID:   layerId,
 	}
 
 	story, page, err := usecases(ctx).StoryTelling.RemovePageLayer(ctx, inp, getOperator(ctx))

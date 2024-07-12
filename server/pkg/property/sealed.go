@@ -1,11 +1,5 @@
 package property
 
-import (
-	"context"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
-)
-
 type Sealed struct {
 	Original      *ID
 	Parent        *ID
@@ -33,88 +27,6 @@ func (f *SealedField) Value() *Value {
 		return nil
 	}
 	return f.Val.Value()
-}
-
-func Seal(ctx context.Context, p *Merged, d dataset.GraphLoader) (*Sealed, error) {
-	if p == nil {
-		return nil, nil
-	}
-	items := make([]*SealedItem, 0, len(p.Groups))
-	for _, g := range p.Groups {
-		i, err := sealedItemFrom(ctx, g, d)
-		if err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-
-	return &Sealed{
-		Original:      p.Original.CloneRef(),
-		Parent:        p.Parent.CloneRef(),
-		Schema:        p.Schema,
-		LinkedDataset: p.LinkedDataset.CloneRef(),
-		Items:         items,
-	}, nil
-}
-
-func SealProperty(ctx context.Context, p *Property) *Sealed {
-	if p == nil {
-		return nil
-	}
-	m := Merge(p, nil, nil)
-	s, _ := Seal(ctx, m, nil)
-	return s
-}
-
-func sealedItemFrom(ctx context.Context, g *MergedGroup, d dataset.GraphLoader) (item *SealedItem, err error) {
-	if g == nil {
-		return
-	}
-
-	item = &SealedItem{
-		Original:      g.Original.CloneRef(),
-		Parent:        g.Parent.CloneRef(),
-		SchemaGroup:   g.SchemaGroup,
-		LinkedDataset: g.LinkedDataset.CloneRef(),
-	}
-
-	if len(g.Groups) > 0 {
-		item.Groups, err = sealedGroupList(ctx, g.Groups, d)
-	} else if len(g.Fields) > 0 {
-		item.Fields, err = sealedGroup(ctx, g.Fields, d)
-	}
-
-	return
-}
-
-func sealedGroupList(ctx context.Context, gl []*MergedGroup, d dataset.GraphLoader) ([]*SealedItem, error) {
-	res := make([]*SealedItem, 0, len(gl))
-	for _, g := range gl {
-		sg, err := sealedItemFrom(ctx, g, d)
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, sg)
-	}
-	return res, nil
-}
-
-func sealedGroup(ctx context.Context, fields []*MergedField, d dataset.GraphLoader) ([]*SealedField, error) {
-	res := []*SealedField{}
-	for _, f := range fields {
-		dv, err := f.DatasetValue(ctx, d)
-		if err != nil {
-			return nil, err
-		}
-
-		if val := NewValueAndDatasetValue(f.Type, dv.Clone(), f.Value.Clone()); val != nil {
-			res = append(res, &SealedField{
-				ID:  f.ID,
-				Val: val,
-			})
-		}
-	}
-	return res, nil
 }
 
 func (s *Sealed) Interface() map[string]interface{} {

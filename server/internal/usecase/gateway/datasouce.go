@@ -3,9 +3,6 @@ package gateway
 import (
 	"context"
 	"errors"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -13,6 +10,5 @@ var (
 )
 
 type DataSource interface {
-	Fetch(context.Context, string, id.SceneID) ([]*dataset.Schema, []*dataset.Dataset, error)
 	IsURLValid(context.Context, string) bool
 }

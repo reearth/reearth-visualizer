@@ -48,7 +48,6 @@ type PropertySchemaField {
 }
 
 enum PropertySchemaFieldUI {
-  LAYER
   MULTILINE
   SELECTION
   COLOR
@@ -82,7 +81,6 @@ type Property implements Node {
   schemaId: ID!
   items: [PropertyItem!]!
   schema: PropertySchema
-  layer: Layer
   merged: MergedProperty
 }
 
@@ -111,23 +109,11 @@ type PropertyField {
   parentId: ID!
   schemaId: ID!
   fieldId: ID!
-  links: [PropertyFieldLink!]
   type: ValueType!
   value: Any
   parent: Property
   schema: PropertySchema
   field: PropertySchemaField
-  actualValue: Any
-}
-
-type PropertyFieldLink {
-  datasetId: ID
-  datasetSchemaId: ID!
-  datasetSchemaFieldId: ID!
-  dataset: Dataset
-  datasetField: DatasetField
-  datasetSchema: DatasetSchema
-  datasetSchemaField: DatasetSchemaField
 }
 
 type MergedProperty {
@@ -139,7 +125,6 @@ type MergedProperty {
   original: Property
   parent: Property
   schema: PropertySchema
-  linkedDataset: Dataset
   groups: [MergedPropertyGroup!]!
 }
 
@@ -151,7 +136,6 @@ type MergedPropertyGroup {
   schemaGroupId: ID!
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   fields: [MergedPropertyField!]!
   groups: [MergedPropertyGroup!]!
   originalProperty: Property
@@ -159,7 +143,6 @@ type MergedPropertyGroup {
   original: PropertyGroup
   parent: PropertyGroup
   schema: PropertySchema
-  linkedDataset: Dataset
 }
 
 type MergedPropertyField {
@@ -167,11 +150,9 @@ type MergedPropertyField {
   fieldId: ID!
   value: Any
   type: ValueType!
-  links: [PropertyFieldLink!]
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
-  actualValue: Any
 }
 
 enum ListOperation {
@@ -229,9 +210,6 @@ input LinkDatasetToPropertyValueInput {
   schemaGroupId: ID
   itemId: ID
   fieldId: ID!
-  datasetSchemaIds: [ID!]!
-  datasetSchemaFieldIds: [ID!]!
-  datasetIds: [ID!]
 }
 
 input UnlinkPropertyValueInput {
@@ -297,7 +275,6 @@ extend type Mutation {
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
   unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
   addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
   movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload

@@ -98,17 +98,6 @@ func newPropertyField(f *property.Field) *PropertyFieldDocument {
 		Value: f.Value().Interface(),
 	}
 
-	if links := f.Links().Links(); links != nil {
-		field.Links = make([]*PropertyLinkDocument, 0, len(links))
-		for _, l := range links {
-			field.Links = append(field.Links, &PropertyLinkDocument{
-				Schema:  l.DatasetSchema().StringRef(),
-				Dataset: l.Dataset().StringRef(),
-				Field:   l.DatasetSchemaField().StringRef(),
-			})
-		}
-	}
-
 	return field
 }
 
@@ -185,34 +174,10 @@ func NewProperties(properties []*property.Property, f scene.IDList) ([]interface
 }
 
 func toModelPropertyField(f *PropertyFieldDocument) *property.Field {
-	if f == nil {
-		return nil
-	}
-
-	var flinks *property.Links
-	if f.Links != nil {
-		links := make([]*property.Link, 0, len(f.Links))
-		for _, l := range f.Links {
-			var link *property.Link
-			d := id.DatasetIDFromRef(l.Dataset)
-			ds := id.DatasetSchemaIDFromRef(l.Schema)
-			df := id.DatasetFieldIDFromRef(l.Field)
-			if d != nil && ds != nil && df != nil {
-				link = property.NewLink(*d, *ds, *df)
-			} else if ds != nil && df != nil {
-				link = property.NewLinkFieldOnly(*ds, *df)
-			} else {
-				continue
-			}
-			links = append(links, link)
-		}
-		flinks = property.NewLinks(links)
-	}
 
 	vt := property.ValueType(f.Type)
 	field := property.NewField(property.FieldID(f.Field)).
 		Value(property.NewOptionalValue(vt, toModelPropertyValue(f.Value, f.Type))).
-		Links(flinks).
 		Build()
 
 	return field

@@ -18,31 +18,6 @@ type Geometry interface {
 	IsGeometry()
 }
 
-type Layer interface {
-	IsLayer()
-	GetID() ID
-	GetSceneID() ID
-	GetName() string
-	GetIsVisible() bool
-	GetPropertyID() *ID
-	GetPluginID() *ID
-	GetExtensionID() *ID
-	GetInfobox() *Infobox
-	GetParentID() *ID
-	GetParent() *LayerGroup
-	GetProperty() *Property
-	GetPlugin() *Plugin
-	GetExtension() *PluginExtension
-	GetScenePlugin() *ScenePlugin
-	GetTags() []LayerTag
-}
-
-type LayerTag interface {
-	IsLayerTag()
-	GetTagID() ID
-	GetTag() Tag
-}
-
 type NLSLayer interface {
 	IsNLSLayer()
 	GetID() ID
@@ -65,14 +40,6 @@ type PropertyItem interface {
 	IsPropertyItem()
 }
 
-type Tag interface {
-	IsTag()
-	GetID() ID
-	GetSceneID() ID
-	GetLabel() string
-	GetLayers() []Layer
-}
-
 type AddClusterInput struct {
 	SceneID ID     `json:"sceneId"`
 	Name    string `json:"name"`
@@ -88,65 +55,11 @@ type AddCustomPropertySchemaInput struct {
 	Schema  JSON `json:"schema,omitempty"`
 }
 
-type AddDatasetSchemaInput struct {
-	SceneID             ID     `json:"sceneId"`
-	Name                string `json:"name"`
-	Representativefield *ID    `json:"representativefield,omitempty"`
-}
-
-type AddDatasetSchemaPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema,omitempty"`
-}
-
 type AddGeoJSONFeatureInput struct {
 	Type       string `json:"type"`
 	Geometry   JSON   `json:"geometry"`
 	Properties JSON   `json:"properties,omitempty"`
 	LayerID    ID     `json:"layerId"`
-}
-
-type AddInfoboxFieldInput struct {
-	LayerID     ID   `json:"layerId"`
-	PluginID    ID   `json:"pluginId"`
-	ExtensionID ID   `json:"extensionId"`
-	Index       *int `json:"index,omitempty"`
-}
-
-type AddInfoboxFieldPayload struct {
-	InfoboxField *InfoboxField `json:"infoboxField"`
-	Layer        Layer         `json:"layer"`
-}
-
-type AddLayerGroupInput struct {
-	ParentLayerID         ID      `json:"parentLayerId"`
-	PluginID              *ID     `json:"pluginId,omitempty"`
-	ExtensionID           *ID     `json:"extensionId,omitempty"`
-	Index                 *int    `json:"index,omitempty"`
-	LinkedDatasetSchemaID *ID     `json:"linkedDatasetSchemaID,omitempty"`
-	Name                  *string `json:"name,omitempty"`
-	RepresentativeFieldID *ID     `json:"representativeFieldId,omitempty"`
-}
-
-type AddLayerGroupPayload struct {
-	Layer       *LayerGroup `json:"layer"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-	Index       *int        `json:"index,omitempty"`
-}
-
-type AddLayerItemInput struct {
-	ParentLayerID ID       `json:"parentLayerId"`
-	PluginID      ID       `json:"pluginId"`
-	ExtensionID   ID       `json:"extensionId"`
-	Index         *int     `json:"index,omitempty"`
-	Name          *string  `json:"name,omitempty"`
-	Lat           *float64 `json:"lat,omitempty"`
-	Lng           *float64 `json:"lng,omitempty"`
-}
-
-type AddLayerItemPayload struct {
-	Layer       *LayerItem  `json:"layer"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-	Index       *int        `json:"index,omitempty"`
 }
 
 type AddMemberToTeamInput struct {
@@ -240,24 +153,6 @@ type AssetEdge struct {
 	Node   *Asset          `json:"node,omitempty"`
 }
 
-type AttachTagItemToGroupInput struct {
-	ItemID  ID `json:"itemID"`
-	GroupID ID `json:"groupID"`
-}
-
-type AttachTagItemToGroupPayload struct {
-	Tag *TagGroup `json:"tag"`
-}
-
-type AttachTagToLayerInput struct {
-	TagID   ID `json:"tagID"`
-	LayerID ID `json:"layerID"`
-}
-
-type AttachTagToLayerPayload struct {
-	Layer Layer `json:"layer"`
-}
-
 type Camera struct {
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`
@@ -282,14 +177,6 @@ type CreateAssetInput struct {
 
 type CreateAssetPayload struct {
 	Asset *Asset `json:"asset"`
-}
-
-type CreateInfoboxInput struct {
-	LayerID ID `json:"layerId"`
-}
-
-type CreateInfoboxPayload struct {
-	Layer Layer `json:"layer"`
 }
 
 type CreateNLSInfoboxInput struct {
@@ -345,33 +232,8 @@ type CreateStoryPageInput struct {
 	StoryID         ID      `json:"storyId"`
 	Title           *string `json:"title,omitempty"`
 	Swipeable       *bool   `json:"swipeable,omitempty"`
-	Layers          []ID    `json:"layers,omitempty"`
 	SwipeableLayers []ID    `json:"swipeableLayers,omitempty"`
 	Index           *int    `json:"index,omitempty"`
-}
-
-type CreateTagGroupInput struct {
-	SceneID ID     `json:"sceneId"`
-	Label   string `json:"label"`
-	Tags    []ID   `json:"tags,omitempty"`
-}
-
-type CreateTagGroupPayload struct {
-	Tag *TagGroup `json:"tag"`
-}
-
-type CreateTagItemInput struct {
-	SceneID               ID     `json:"sceneId"`
-	Label                 string `json:"label"`
-	Parent                *ID    `json:"parent,omitempty"`
-	LinkedDatasetSchemaID *ID    `json:"linkedDatasetSchemaID,omitempty"`
-	LinkedDatasetID       *ID    `json:"linkedDatasetID,omitempty"`
-	LinkedDatasetField    *ID    `json:"linkedDatasetField,omitempty"`
-}
-
-type CreateTagItemPayload struct {
-	Tag    *TagItem  `json:"tag"`
-	Parent *TagGroup `json:"parent,omitempty"`
 }
 
 type CreateTeamInput struct {
@@ -381,84 +243,6 @@ type CreateTeamInput struct {
 type CreateTeamPayload struct {
 	Team *Team `json:"team"`
 }
-
-type Dataset struct {
-	ID       ID              `json:"id"`
-	Source   string          `json:"source"`
-	SchemaID ID              `json:"schemaId"`
-	Fields   []*DatasetField `json:"fields"`
-	Schema   *DatasetSchema  `json:"schema,omitempty"`
-	Name     *string         `json:"name,omitempty"`
-}
-
-func (Dataset) IsNode()        {}
-func (this Dataset) GetID() ID { return this.ID }
-
-type DatasetConnection struct {
-	Edges      []*DatasetEdge `json:"edges"`
-	Nodes      []*Dataset     `json:"nodes"`
-	PageInfo   *PageInfo      `json:"pageInfo"`
-	TotalCount int            `json:"totalCount"`
-}
-
-type DatasetEdge struct {
-	Cursor usecasex.Cursor `json:"cursor"`
-	Node   *Dataset        `json:"node,omitempty"`
-}
-
-type DatasetField struct {
-	FieldID  ID                  `json:"fieldId"`
-	SchemaID ID                  `json:"schemaId"`
-	Source   string              `json:"source"`
-	Type     ValueType           `json:"type"`
-	Value    interface{}         `json:"value,omitempty"`
-	Schema   *DatasetSchema      `json:"schema,omitempty"`
-	Field    *DatasetSchemaField `json:"field,omitempty"`
-	ValueRef *Dataset            `json:"valueRef,omitempty"`
-}
-
-type DatasetSchema struct {
-	ID                    ID                    `json:"id"`
-	Source                string                `json:"source"`
-	Name                  string                `json:"name"`
-	SceneID               ID                    `json:"sceneId"`
-	Fields                []*DatasetSchemaField `json:"fields"`
-	TotalCount            int                   `json:"totalCount"`
-	RepresentativeFieldID *ID                   `json:"representativeFieldId,omitempty"`
-	Dynamic               *bool                 `json:"dynamic,omitempty"`
-	Datasets              *DatasetConnection    `json:"datasets"`
-	Scene                 *Scene                `json:"scene,omitempty"`
-	RepresentativeField   *DatasetSchemaField   `json:"representativeField,omitempty"`
-}
-
-func (DatasetSchema) IsNode()        {}
-func (this DatasetSchema) GetID() ID { return this.ID }
-
-type DatasetSchemaConnection struct {
-	Edges      []*DatasetSchemaEdge `json:"edges"`
-	Nodes      []*DatasetSchema     `json:"nodes"`
-	PageInfo   *PageInfo            `json:"pageInfo"`
-	TotalCount int                  `json:"totalCount"`
-}
-
-type DatasetSchemaEdge struct {
-	Cursor usecasex.Cursor `json:"cursor"`
-	Node   *DatasetSchema  `json:"node,omitempty"`
-}
-
-type DatasetSchemaField struct {
-	ID       ID             `json:"id"`
-	Source   string         `json:"source"`
-	Name     string         `json:"name"`
-	Type     ValueType      `json:"type"`
-	SchemaID ID             `json:"schemaId"`
-	RefID    *ID            `json:"refId,omitempty"`
-	Schema   *DatasetSchema `json:"schema,omitempty"`
-	Ref      *DatasetSchema `json:"ref,omitempty"`
-}
-
-func (DatasetSchemaField) IsNode()        {}
-func (this DatasetSchemaField) GetID() ID { return this.ID }
 
 type DeleteGeoJSONFeatureInput struct {
 	FeatureID ID `json:"featureId"`
@@ -513,24 +297,6 @@ type DeleteTeamPayload struct {
 	TeamID ID `json:"teamId"`
 }
 
-type DetachTagFromLayerInput struct {
-	TagID   ID `json:"tagID"`
-	LayerID ID `json:"layerID"`
-}
-
-type DetachTagFromLayerPayload struct {
-	Layer Layer `json:"layer"`
-}
-
-type DetachTagItemFromGroupInput struct {
-	ItemID  ID `json:"itemID"`
-	GroupID ID `json:"groupID"`
-}
-
-type DetachTagItemFromGroupPayload struct {
-	Tag *TagGroup `json:"tag"`
-}
-
 type DuplicateNLSLayerInput struct {
 	LayerID ID `json:"layerId"`
 }
@@ -572,48 +338,6 @@ type GeometryCollection struct {
 
 func (GeometryCollection) IsGeometry() {}
 
-type ImportDatasetFromGoogleSheetInput struct {
-	AccessToken     string `json:"accessToken"`
-	FileID          string `json:"fileId"`
-	SheetName       string `json:"sheetName"`
-	SceneID         ID     `json:"sceneId"`
-	DatasetSchemaID *ID    `json:"datasetSchemaId,omitempty"`
-}
-
-type ImportDatasetInput struct {
-	File            graphql.Upload `json:"file"`
-	SceneID         ID             `json:"sceneId"`
-	DatasetSchemaID *ID            `json:"datasetSchemaId,omitempty"`
-}
-
-type ImportDatasetPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema"`
-}
-
-type ImportLayerInput struct {
-	LayerID ID                  `json:"layerId"`
-	File    graphql.Upload      `json:"file"`
-	Format  LayerEncodingFormat `json:"format"`
-}
-
-type ImportLayerPayload struct {
-	Layers      []Layer     `json:"layers"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-}
-
-type Infobox struct {
-	SceneID         ID              `json:"sceneId"`
-	LayerID         ID              `json:"layerId"`
-	PropertyID      ID              `json:"propertyId"`
-	Fields          []*InfoboxField `json:"fields"`
-	LinkedDatasetID *ID             `json:"linkedDatasetId,omitempty"`
-	Layer           Layer           `json:"layer"`
-	Property        *Property       `json:"property,omitempty"`
-	LinkedDataset   *Dataset        `json:"linkedDataset,omitempty"`
-	Merged          *MergedInfobox  `json:"merged,omitempty"`
-	Scene           *Scene          `json:"scene,omitempty"`
-}
-
 type InfoboxBlock struct {
 	ID          ID               `json:"id"`
 	SceneID     ID               `json:"sceneId"`
@@ -625,25 +349,6 @@ type InfoboxBlock struct {
 	ExtensionID ID               `json:"extensionId"`
 	Extension   *PluginExtension `json:"extension,omitempty"`
 	Scene       *Scene           `json:"scene,omitempty"`
-}
-
-type InfoboxField struct {
-	ID              ID                  `json:"id"`
-	SceneID         ID                  `json:"sceneId"`
-	LayerID         ID                  `json:"layerId"`
-	PropertyID      ID                  `json:"propertyId"`
-	PluginID        ID                  `json:"pluginId"`
-	ExtensionID     ID                  `json:"extensionId"`
-	LinkedDatasetID *ID                 `json:"linkedDatasetId,omitempty"`
-	Layer           Layer               `json:"layer"`
-	Infobox         *Infobox            `json:"infobox"`
-	Property        *Property           `json:"property,omitempty"`
-	Plugin          *Plugin             `json:"plugin,omitempty"`
-	Extension       *PluginExtension    `json:"extension,omitempty"`
-	LinkedDataset   *Dataset            `json:"linkedDataset,omitempty"`
-	Merged          *MergedInfoboxField `json:"merged,omitempty"`
-	Scene           *Scene              `json:"scene,omitempty"`
-	ScenePlugin     *ScenePlugin        `json:"scenePlugin,omitempty"`
 }
 
 type InstallPluginInput struct {
@@ -667,123 +372,6 @@ type LatLngHeight struct {
 	Height float64 `json:"height"`
 }
 
-type LayerGroup struct {
-	ID                    ID               `json:"id"`
-	SceneID               ID               `json:"sceneId"`
-	Name                  string           `json:"name"`
-	IsVisible             bool             `json:"isVisible"`
-	PropertyID            *ID              `json:"propertyId,omitempty"`
-	PluginID              *ID              `json:"pluginId,omitempty"`
-	ExtensionID           *ID              `json:"extensionId,omitempty"`
-	Infobox               *Infobox         `json:"infobox,omitempty"`
-	ParentID              *ID              `json:"parentId,omitempty"`
-	LinkedDatasetSchemaID *ID              `json:"linkedDatasetSchemaId,omitempty"`
-	Root                  bool             `json:"root"`
-	LayerIds              []ID             `json:"layerIds"`
-	Tags                  []LayerTag       `json:"tags"`
-	Parent                *LayerGroup      `json:"parent,omitempty"`
-	Property              *Property        `json:"property,omitempty"`
-	Plugin                *Plugin          `json:"plugin,omitempty"`
-	Extension             *PluginExtension `json:"extension,omitempty"`
-	LinkedDatasetSchema   *DatasetSchema   `json:"linkedDatasetSchema,omitempty"`
-	Layers                []Layer          `json:"layers"`
-	Scene                 *Scene           `json:"scene,omitempty"`
-	ScenePlugin           *ScenePlugin     `json:"scenePlugin,omitempty"`
-}
-
-func (LayerGroup) IsLayer()                            {}
-func (this LayerGroup) GetID() ID                      { return this.ID }
-func (this LayerGroup) GetSceneID() ID                 { return this.SceneID }
-func (this LayerGroup) GetName() string                { return this.Name }
-func (this LayerGroup) GetIsVisible() bool             { return this.IsVisible }
-func (this LayerGroup) GetPropertyID() *ID             { return this.PropertyID }
-func (this LayerGroup) GetPluginID() *ID               { return this.PluginID }
-func (this LayerGroup) GetExtensionID() *ID            { return this.ExtensionID }
-func (this LayerGroup) GetInfobox() *Infobox           { return this.Infobox }
-func (this LayerGroup) GetParentID() *ID               { return this.ParentID }
-func (this LayerGroup) GetParent() *LayerGroup         { return this.Parent }
-func (this LayerGroup) GetProperty() *Property         { return this.Property }
-func (this LayerGroup) GetPlugin() *Plugin             { return this.Plugin }
-func (this LayerGroup) GetExtension() *PluginExtension { return this.Extension }
-func (this LayerGroup) GetScenePlugin() *ScenePlugin   { return this.ScenePlugin }
-func (this LayerGroup) GetTags() []LayerTag {
-	if this.Tags == nil {
-		return nil
-	}
-	interfaceSlice := make([]LayerTag, 0, len(this.Tags))
-	for _, concrete := range this.Tags {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
-
-type LayerItem struct {
-	ID              ID               `json:"id"`
-	SceneID         ID               `json:"sceneId"`
-	Name            string           `json:"name"`
-	IsVisible       bool             `json:"isVisible"`
-	PropertyID      *ID              `json:"propertyId,omitempty"`
-	PluginID        *ID              `json:"pluginId,omitempty"`
-	ExtensionID     *ID              `json:"extensionId,omitempty"`
-	Infobox         *Infobox         `json:"infobox,omitempty"`
-	ParentID        *ID              `json:"parentId,omitempty"`
-	LinkedDatasetID *ID              `json:"linkedDatasetId,omitempty"`
-	Tags            []LayerTag       `json:"tags"`
-	Parent          *LayerGroup      `json:"parent,omitempty"`
-	Property        *Property        `json:"property,omitempty"`
-	Plugin          *Plugin          `json:"plugin,omitempty"`
-	Extension       *PluginExtension `json:"extension,omitempty"`
-	LinkedDataset   *Dataset         `json:"linkedDataset,omitempty"`
-	Merged          *MergedLayer     `json:"merged,omitempty"`
-	Scene           *Scene           `json:"scene,omitempty"`
-	ScenePlugin     *ScenePlugin     `json:"scenePlugin,omitempty"`
-}
-
-func (LayerItem) IsLayer()                            {}
-func (this LayerItem) GetID() ID                      { return this.ID }
-func (this LayerItem) GetSceneID() ID                 { return this.SceneID }
-func (this LayerItem) GetName() string                { return this.Name }
-func (this LayerItem) GetIsVisible() bool             { return this.IsVisible }
-func (this LayerItem) GetPropertyID() *ID             { return this.PropertyID }
-func (this LayerItem) GetPluginID() *ID               { return this.PluginID }
-func (this LayerItem) GetExtensionID() *ID            { return this.ExtensionID }
-func (this LayerItem) GetInfobox() *Infobox           { return this.Infobox }
-func (this LayerItem) GetParentID() *ID               { return this.ParentID }
-func (this LayerItem) GetParent() *LayerGroup         { return this.Parent }
-func (this LayerItem) GetProperty() *Property         { return this.Property }
-func (this LayerItem) GetPlugin() *Plugin             { return this.Plugin }
-func (this LayerItem) GetExtension() *PluginExtension { return this.Extension }
-func (this LayerItem) GetScenePlugin() *ScenePlugin   { return this.ScenePlugin }
-func (this LayerItem) GetTags() []LayerTag {
-	if this.Tags == nil {
-		return nil
-	}
-	interfaceSlice := make([]LayerTag, 0, len(this.Tags))
-	for _, concrete := range this.Tags {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
-
-type LayerTagGroup struct {
-	TagID    ID              `json:"tagId"`
-	Children []*LayerTagItem `json:"children"`
-	Tag      Tag             `json:"tag,omitempty"`
-}
-
-func (LayerTagGroup) IsLayerTag()       {}
-func (this LayerTagGroup) GetTagID() ID { return this.TagID }
-func (this LayerTagGroup) GetTag() Tag  { return this.Tag }
-
-type LayerTagItem struct {
-	TagID ID  `json:"tagId"`
-	Tag   Tag `json:"tag,omitempty"`
-}
-
-func (LayerTagItem) IsLayerTag()       {}
-func (this LayerTagItem) GetTagID() ID { return this.TagID }
-func (this LayerTagItem) GetTag() Tag  { return this.Tag }
-
 type LineString struct {
 	Type                  string      `json:"type"`
 	LineStringCoordinates [][]float64 `json:"lineStringCoordinates"`
@@ -792,13 +380,10 @@ type LineString struct {
 func (LineString) IsGeometry() {}
 
 type LinkDatasetToPropertyValueInput struct {
-	PropertyID            ID   `json:"propertyId"`
-	SchemaGroupID         *ID  `json:"schemaGroupId,omitempty"`
-	ItemID                *ID  `json:"itemId,omitempty"`
-	FieldID               ID   `json:"fieldId"`
-	DatasetSchemaIds      []ID `json:"datasetSchemaIds"`
-	DatasetSchemaFieldIds []ID `json:"datasetSchemaFieldIds"`
-	DatasetIds            []ID `json:"datasetIds,omitempty"`
+	PropertyID    ID  `json:"propertyId"`
+	SchemaGroupID *ID `json:"schemaGroupId,omitempty"`
+	ItemID        *ID `json:"itemId,omitempty"`
+	FieldID       ID  `json:"fieldId"`
 }
 
 type Me struct {
@@ -813,36 +398,6 @@ type Me struct {
 	MyTeam   *Team        `json:"myTeam,omitempty"`
 }
 
-type MergedInfobox struct {
-	SceneID  ID                    `json:"sceneID"`
-	Property *MergedProperty       `json:"property,omitempty"`
-	Fields   []*MergedInfoboxField `json:"fields"`
-	Scene    *Scene                `json:"scene,omitempty"`
-}
-
-type MergedInfoboxField struct {
-	OriginalID  ID               `json:"originalId"`
-	SceneID     ID               `json:"sceneID"`
-	PluginID    ID               `json:"pluginId"`
-	ExtensionID ID               `json:"extensionId"`
-	Property    *MergedProperty  `json:"property,omitempty"`
-	Plugin      *Plugin          `json:"plugin,omitempty"`
-	Extension   *PluginExtension `json:"extension,omitempty"`
-	Scene       *Scene           `json:"scene,omitempty"`
-	ScenePlugin *ScenePlugin     `json:"scenePlugin,omitempty"`
-}
-
-type MergedLayer struct {
-	OriginalID ID              `json:"originalId"`
-	ParentID   *ID             `json:"parentId,omitempty"`
-	SceneID    ID              `json:"sceneID"`
-	Property   *MergedProperty `json:"property,omitempty"`
-	Infobox    *MergedInfobox  `json:"infobox,omitempty"`
-	Original   *LayerItem      `json:"original,omitempty"`
-	Parent     *LayerGroup     `json:"parent,omitempty"`
-	Scene      *Scene          `json:"scene,omitempty"`
-}
-
 type MergedProperty struct {
 	OriginalID      *ID                    `json:"originalId,omitempty"`
 	ParentID        *ID                    `json:"parentId,omitempty"`
@@ -851,20 +406,17 @@ type MergedProperty struct {
 	Original        *Property              `json:"original,omitempty"`
 	Parent          *Property              `json:"parent,omitempty"`
 	Schema          *PropertySchema        `json:"schema,omitempty"`
-	LinkedDataset   *Dataset               `json:"linkedDataset,omitempty"`
 	Groups          []*MergedPropertyGroup `json:"groups"`
 }
 
 type MergedPropertyField struct {
-	SchemaID    ID                   `json:"schemaId"`
-	FieldID     ID                   `json:"fieldId"`
-	Value       interface{}          `json:"value,omitempty"`
-	Type        ValueType            `json:"type"`
-	Links       []*PropertyFieldLink `json:"links,omitempty"`
-	Overridden  bool                 `json:"overridden"`
-	Schema      *PropertySchema      `json:"schema,omitempty"`
-	Field       *PropertySchemaField `json:"field,omitempty"`
-	ActualValue interface{}          `json:"actualValue,omitempty"`
+	SchemaID   ID                   `json:"schemaId"`
+	FieldID    ID                   `json:"fieldId"`
+	Value      interface{}          `json:"value,omitempty"`
+	Type       ValueType            `json:"type"`
+	Overridden bool                 `json:"overridden"`
+	Schema     *PropertySchema      `json:"schema,omitempty"`
+	Field      *PropertySchemaField `json:"field,omitempty"`
 }
 
 type MergedPropertyGroup struct {
@@ -874,7 +426,6 @@ type MergedPropertyGroup struct {
 	ParentID           *ID                    `json:"parentId,omitempty"`
 	SchemaGroupID      ID                     `json:"schemaGroupId"`
 	SchemaID           *ID                    `json:"schemaId,omitempty"`
-	LinkedDatasetID    *ID                    `json:"linkedDatasetId,omitempty"`
 	Fields             []*MergedPropertyField `json:"fields"`
 	Groups             []*MergedPropertyGroup `json:"groups"`
 	OriginalProperty   *Property              `json:"originalProperty,omitempty"`
@@ -882,32 +433,6 @@ type MergedPropertyGroup struct {
 	Original           *PropertyGroup         `json:"original,omitempty"`
 	Parent             *PropertyGroup         `json:"parent,omitempty"`
 	Schema             *PropertySchema        `json:"schema,omitempty"`
-	LinkedDataset      *Dataset               `json:"linkedDataset,omitempty"`
-}
-
-type MoveInfoboxFieldInput struct {
-	LayerID        ID  `json:"layerId"`
-	InfoboxFieldID ID  `json:"infoboxFieldId"`
-	Index          int `json:"index"`
-}
-
-type MoveInfoboxFieldPayload struct {
-	InfoboxFieldID ID    `json:"infoboxFieldId"`
-	Layer          Layer `json:"layer"`
-	Index          int   `json:"index"`
-}
-
-type MoveLayerInput struct {
-	LayerID     ID   `json:"layerId"`
-	DestLayerID *ID  `json:"destLayerId,omitempty"`
-	Index       *int `json:"index,omitempty"`
-}
-
-type MoveLayerPayload struct {
-	LayerID         ID          `json:"layerId"`
-	FromParentLayer *LayerGroup `json:"fromParentLayer"`
-	ToParentLayer   *LayerGroup `json:"toParentLayer"`
-	Index           int         `json:"index"`
 }
 
 type MoveNLSInfoboxBlockInput struct {
@@ -1049,7 +574,6 @@ type PageLayerInput struct {
 	StoryID   ID    `json:"storyId"`
 	PageID    ID    `json:"pageId"`
 	Swipeable *bool `json:"swipeable,omitempty"`
-	LayerID   ID    `json:"layerId"`
 }
 
 type Pagination struct {
@@ -1180,7 +704,6 @@ type Property struct {
 	SchemaID ID              `json:"schemaId"`
 	Items    []PropertyItem  `json:"items"`
 	Schema   *PropertySchema `json:"schema,omitempty"`
-	Layer    Layer           `json:"layer,omitempty"`
 	Merged   *MergedProperty `json:"merged,omitempty"`
 }
 
@@ -1194,27 +717,15 @@ type PropertyCondition struct {
 }
 
 type PropertyField struct {
-	ID          string               `json:"id"`
-	ParentID    ID                   `json:"parentId"`
-	SchemaID    ID                   `json:"schemaId"`
-	FieldID     ID                   `json:"fieldId"`
-	Links       []*PropertyFieldLink `json:"links,omitempty"`
-	Type        ValueType            `json:"type"`
-	Value       interface{}          `json:"value,omitempty"`
-	Parent      *Property            `json:"parent,omitempty"`
-	Schema      *PropertySchema      `json:"schema,omitempty"`
-	Field       *PropertySchemaField `json:"field,omitempty"`
-	ActualValue interface{}          `json:"actualValue,omitempty"`
-}
-
-type PropertyFieldLink struct {
-	DatasetID            *ID                 `json:"datasetId,omitempty"`
-	DatasetSchemaID      ID                  `json:"datasetSchemaId"`
-	DatasetSchemaFieldID ID                  `json:"datasetSchemaFieldId"`
-	Dataset              *Dataset            `json:"dataset,omitempty"`
-	DatasetField         *DatasetField       `json:"datasetField,omitempty"`
-	DatasetSchema        *DatasetSchema      `json:"datasetSchema,omitempty"`
-	DatasetSchemaField   *DatasetSchemaField `json:"datasetSchemaField,omitempty"`
+	ID       string               `json:"id"`
+	ParentID ID                   `json:"parentId"`
+	SchemaID ID                   `json:"schemaId"`
+	FieldID  ID                   `json:"fieldId"`
+	Type     ValueType            `json:"type"`
+	Value    interface{}          `json:"value,omitempty"`
+	Parent   *Property            `json:"parent,omitempty"`
+	Schema   *PropertySchema      `json:"schema,omitempty"`
+	Field    *PropertySchemaField `json:"field,omitempty"`
 }
 
 type PropertyFieldPayload struct {
@@ -1346,42 +857,6 @@ type RemoveClusterPayload struct {
 	ClusterID ID     `json:"clusterId"`
 }
 
-type RemoveDatasetSchemaInput struct {
-	SchemaID ID    `json:"schemaId"`
-	Force    *bool `json:"force,omitempty"`
-}
-
-type RemoveDatasetSchemaPayload struct {
-	SchemaID ID `json:"schemaId"`
-}
-
-type RemoveInfoboxFieldInput struct {
-	LayerID        ID `json:"layerId"`
-	InfoboxFieldID ID `json:"infoboxFieldId"`
-}
-
-type RemoveInfoboxFieldPayload struct {
-	InfoboxFieldID ID    `json:"infoboxFieldId"`
-	Layer          Layer `json:"layer"`
-}
-
-type RemoveInfoboxInput struct {
-	LayerID ID `json:"layerId"`
-}
-
-type RemoveInfoboxPayload struct {
-	Layer Layer `json:"layer"`
-}
-
-type RemoveLayerInput struct {
-	LayerID ID `json:"layerId"`
-}
-
-type RemoveLayerPayload struct {
-	LayerID     ID          `json:"layerId"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-}
-
 type RemoveMemberFromTeamInput struct {
 	TeamID ID `json:"teamId"`
 	UserID ID `json:"userId"`
@@ -1452,15 +927,6 @@ type RemoveStyleInput struct {
 
 type RemoveStylePayload struct {
 	StyleID ID `json:"styleId"`
-}
-
-type RemoveTagInput struct {
-	TagID ID `json:"tagID"`
-}
-
-type RemoveTagPayload struct {
-	TagID         ID      `json:"tagId"`
-	UpdatedLayers []Layer `json:"updatedLayers"`
 }
 
 type RemoveWidgetInput struct {
@@ -1583,10 +1049,7 @@ type StoryPage struct {
 	Title              string        `json:"title"`
 	Blocks             []*StoryBlock `json:"blocks"`
 	Swipeable          bool          `json:"swipeable"`
-	LayersIds          []ID          `json:"layersIds"`
-	Layers             []Layer       `json:"layers"`
 	SwipeableLayersIds []ID          `json:"swipeableLayersIds,omitempty"`
-	SwipeableLayers    []Layer       `json:"swipeableLayers,omitempty"`
 	PropertyID         ID            `json:"propertyId"`
 	Property           *Property     `json:"property,omitempty"`
 	CreatedAt          time.Time     `json:"createdAt"`
@@ -1612,73 +1075,6 @@ type Style struct {
 	Value   JSON   `json:"value"`
 	SceneID ID     `json:"sceneId"`
 	Scene   *Scene `json:"scene,omitempty"`
-}
-
-type SyncDatasetInput struct {
-	SceneID ID     `json:"sceneId"`
-	URL     string `json:"url"`
-}
-
-type SyncDatasetPayload struct {
-	SceneID       ID               `json:"sceneId"`
-	URL           string           `json:"url"`
-	DatasetSchema []*DatasetSchema `json:"datasetSchema"`
-	Dataset       []*Dataset       `json:"dataset"`
-}
-
-type TagGroup struct {
-	ID      ID         `json:"id"`
-	SceneID ID         `json:"sceneId"`
-	Label   string     `json:"label"`
-	TagIds  []ID       `json:"tagIds,omitempty"`
-	Tags    []*TagItem `json:"tags"`
-	Scene   *Scene     `json:"scene,omitempty"`
-	Layers  []Layer    `json:"layers"`
-}
-
-func (TagGroup) IsTag()                {}
-func (this TagGroup) GetID() ID        { return this.ID }
-func (this TagGroup) GetSceneID() ID   { return this.SceneID }
-func (this TagGroup) GetLabel() string { return this.Label }
-func (this TagGroup) GetLayers() []Layer {
-	if this.Layers == nil {
-		return nil
-	}
-	interfaceSlice := make([]Layer, 0, len(this.Layers))
-	for _, concrete := range this.Layers {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
-
-type TagItem struct {
-	ID                    ID             `json:"id"`
-	SceneID               ID             `json:"sceneId"`
-	Label                 string         `json:"label"`
-	ParentID              *ID            `json:"parentId,omitempty"`
-	LinkedDatasetID       *ID            `json:"linkedDatasetID,omitempty"`
-	LinkedDatasetSchemaID *ID            `json:"linkedDatasetSchemaID,omitempty"`
-	LinkedDatasetFieldID  *ID            `json:"linkedDatasetFieldID,omitempty"`
-	LinkedDatasetSchema   *DatasetSchema `json:"linkedDatasetSchema,omitempty"`
-	LinkedDataset         *Dataset       `json:"linkedDataset,omitempty"`
-	LinkedDatasetField    *DatasetField  `json:"linkedDatasetField,omitempty"`
-	Parent                *TagGroup      `json:"parent,omitempty"`
-	Layers                []Layer        `json:"layers"`
-}
-
-func (TagItem) IsTag()                {}
-func (this TagItem) GetID() ID        { return this.ID }
-func (this TagItem) GetSceneID() ID   { return this.SceneID }
-func (this TagItem) GetLabel() string { return this.Label }
-func (this TagItem) GetLayers() []Layer {
-	if this.Layers == nil {
-		return nil
-	}
-	interfaceSlice := make([]Layer, 0, len(this.Layers))
-	for _, concrete := range this.Layers {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
 }
 
 type Team struct {
@@ -1747,30 +1143,11 @@ type UpdateClusterPayload struct {
 	Cluster *Cluster `json:"cluster"`
 }
 
-type UpdateDatasetSchemaInput struct {
-	SchemaID ID     `json:"schemaId"`
-	Name     string `json:"name"`
-}
-
-type UpdateDatasetSchemaPayload struct {
-	DatasetSchema *DatasetSchema `json:"datasetSchema,omitempty"`
-}
-
 type UpdateGeoJSONFeatureInput struct {
 	FeatureID  ID   `json:"featureId"`
 	Geometry   JSON `json:"geometry,omitempty"`
 	Properties JSON `json:"properties,omitempty"`
 	LayerID    ID   `json:"layerId"`
-}
-
-type UpdateLayerInput struct {
-	LayerID ID      `json:"layerId"`
-	Name    *string `json:"name,omitempty"`
-	Visible *bool   `json:"visible,omitempty"`
-}
-
-type UpdateLayerPayload struct {
-	Layer Layer `json:"layer"`
 }
 
 type UpdateMeInput struct {
@@ -1875,7 +1252,6 @@ type UpdateStoryPageInput struct {
 	PageID          ID      `json:"pageId"`
 	Title           *string `json:"title,omitempty"`
 	Swipeable       *bool   `json:"swipeable,omitempty"`
-	Layers          []ID    `json:"layers,omitempty"`
 	SwipeableLayers []ID    `json:"swipeableLayers,omitempty"`
 	Index           *int    `json:"index,omitempty"`
 }
@@ -1888,16 +1264,6 @@ type UpdateStyleInput struct {
 
 type UpdateStylePayload struct {
 	Style *Style `json:"style"`
-}
-
-type UpdateTagInput struct {
-	TagID   ID      `json:"tagId"`
-	SceneID ID      `json:"sceneId"`
-	Label   *string `json:"label,omitempty"`
-}
-
-type UpdateTagPayload struct {
-	Tag Tag `json:"tag"`
 }
 
 type UpdateTeamInput struct {
@@ -2082,53 +1448,6 @@ func (e *AssetSortType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AssetSortType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type LayerEncodingFormat string
-
-const (
-	LayerEncodingFormatKml     LayerEncodingFormat = "KML"
-	LayerEncodingFormatCzml    LayerEncodingFormat = "CZML"
-	LayerEncodingFormatGeojson LayerEncodingFormat = "GEOJSON"
-	LayerEncodingFormatShape   LayerEncodingFormat = "SHAPE"
-	LayerEncodingFormatReearth LayerEncodingFormat = "REEARTH"
-)
-
-var AllLayerEncodingFormat = []LayerEncodingFormat{
-	LayerEncodingFormatKml,
-	LayerEncodingFormatCzml,
-	LayerEncodingFormatGeojson,
-	LayerEncodingFormatShape,
-	LayerEncodingFormatReearth,
-}
-
-func (e LayerEncodingFormat) IsValid() bool {
-	switch e {
-	case LayerEncodingFormatKml, LayerEncodingFormatCzml, LayerEncodingFormatGeojson, LayerEncodingFormatShape, LayerEncodingFormatReearth:
-		return true
-	}
-	return false
-}
-
-func (e LayerEncodingFormat) String() string {
-	return string(e)
-}
-
-func (e *LayerEncodingFormat) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = LayerEncodingFormat(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid LayerEncodingFormat", str)
-	}
-	return nil
-}
-
-func (e LayerEncodingFormat) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2337,7 +1656,6 @@ func (e Position) MarshalGQL(w io.Writer) {
 type PropertySchemaFieldUI string
 
 const (
-	PropertySchemaFieldUILayer      PropertySchemaFieldUI = "LAYER"
 	PropertySchemaFieldUIMultiline  PropertySchemaFieldUI = "MULTILINE"
 	PropertySchemaFieldUISelection  PropertySchemaFieldUI = "SELECTION"
 	PropertySchemaFieldUIColor      PropertySchemaFieldUI = "COLOR"
@@ -2353,7 +1671,6 @@ const (
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
-	PropertySchemaFieldUILayer,
 	PropertySchemaFieldUIMultiline,
 	PropertySchemaFieldUISelection,
 	PropertySchemaFieldUIColor,
@@ -2370,7 +1687,7 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
+	case PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
 		return true
 	}
 	return false

@@ -1,10 +1,8 @@
 package property
 
 import (
-	"context"
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
@@ -27,9 +25,6 @@ func TestProperty_MigrateSchema(t *testing.T) {
 	schemaField7ID := FieldID("g")
 	schemaField8ID := FieldID("h")
 	schemaGroupID := SchemaGroupID("i")
-	datasetID := NewDatasetID()
-	datasetSchemaID := NewDatasetSchemaID()
-	datasetFieldID := NewDatasetFieldID()
 
 	schemaField1, _ := NewSchemaField().ID(schemaField1ID).Type(ValueTypeString).Build()
 	schemaField2, _ := NewSchemaField().ID(schemaField2ID).Type(ValueTypeNumber).Min(0).Max(100).Build()
@@ -74,16 +69,10 @@ func TestProperty_MigrateSchema(t *testing.T) {
 		// should remain
 		NewField(schemaField5ID).
 			Type(ValueTypeString).
-			Links(NewLinks([]*Link{
-				NewLink(datasetID, datasetSchemaID, datasetFieldID),
-			})).
 			MustBuild(),
 		// should be removed because of linked dataset field value type
 		NewField(schemaField6ID).
 			Type(ValueTypeString).
-			Links(NewLinks([]*Link{
-				NewLink(datasetID, datasetSchemaID, datasetFieldID),
-			})).
 			MustBuild(),
 		// should be removed because of type
 		NewField(schemaField7ID).
@@ -98,15 +87,8 @@ func TestProperty_MigrateSchema(t *testing.T) {
 		NewGroup().NewID().SchemaGroup(schemaGroupID).Fields(fields).MustBuild(),
 	}
 
-	datasetFields := []*dataset.Field{
-		dataset.NewField(datasetFieldID, dataset.ValueTypeString.ValueFrom("a"), ""),
-	}
-
 	schema, _ := NewSchema().ID(newSchema).Groups(schemaGroups).Build()
 	property, _ := New().NewID().Scene(sceneID).Schema(oldSchema).Items(items).Build()
-	ds, _ := dataset.New().ID(datasetID).Schema(datasetSchemaID).Scene(sceneID).Fields(datasetFields).Build()
-
-	property.MigrateSchema(context.Background(), schema, dataset.LoaderFrom([]*dataset.Dataset{ds}))
 
 	newGroup := ToGroup(property.ItemBySchema(schemaGroupID))
 	newFields := newGroup.Fields(nil)
@@ -537,8 +519,7 @@ func TestProperty_MoveFields(t *testing.T) {
 		wantFieldsTo   []*Field
 	}{
 		{
-			name:   "same group",
-			target: testProperty1.Clone(),
+			name: "same group",
 			args: args{
 				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
 				to:   NewPointer(testGroup1.SchemaGroup().Ref(), nil, FieldID("x").Ref()),

@@ -162,9 +162,6 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 	}
 
 	if parentLayer != nil {
-		return lid, nil, interfaces.ErrCannotRemoveLayerToLinkedLayerGroup
-	}
-	if parentLayer != nil {
 		parentLayer.Children().RemoveLayer(lid)
 		err = i.nlslayerRepo.Save(ctx, parentLayer)
 		if err != nil {
@@ -254,9 +251,6 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 	}
 
 	infobox := l.Infobox()
-	if infobox != nil {
-		return nil, interfaces.ErrInfoboxAlreadyExists
-	}
 
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
 	property, err := property.New().NewID().Schema(schema.ID()).Scene(l.Scene()).Build()

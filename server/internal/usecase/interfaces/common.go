@@ -21,10 +21,26 @@ var (
 	ErrFeatureNotFound error = errors.New("feature not found")
 )
 
+var (
+	ErrParentLayerNotFound                  error = errors.New("parent layer not found")
+	ErrPluginNotFound                       error = errors.New("plugin not found")
+	ErrExtensionNotFound                    error = errors.New("extension not found")
+	ErrInfoboxNotFound                      error = errors.New("infobox not found")
+	ErrInfoboxAlreadyExists                 error = errors.New("infobox already exists")
+	ErrCannotAddLayerToLinkedLayerGroup     error = errors.New("cannot add layer to linked layer group")
+	ErrCannotRemoveLayerToLinkedLayerGroup  error = errors.New("cannot remove layer to linked layer group")
+	ErrLinkedLayerItemCannotBeMoved         error = errors.New("linked layer item cannot be moved")
+	ErrLayerCannotBeMovedToLinkedLayerGroup error = errors.New("layer cannot be moved to linked layer group")
+	ErrCannotMoveLayerToOtherScene          error = errors.New("layer cannot layer to other scene")
+	ErrExtensionTypeMustBePrimitive         error = errors.New("extension type must be primitive")
+	ErrExtensionTypeMustBeBlock             error = errors.New("extension type must be block")
+	ErrInvalidExtensionType                 error = errors.New("invalid extension type")
+	ErrSketchNotFound                       error = errors.New("sketch not found")
+	ErrFeatureCollectionNotFound            error = errors.New("featureCollection not found")
+)
+
 type Container struct {
 	Asset        Asset
-	Dataset      Dataset
-	Layer        Layer
 	NLSLayer     NLSLayer
 	Plugin       Plugin
 	Policy       Policy
@@ -32,7 +48,6 @@ type Container struct {
 	Property     Property
 	Published    Published
 	Scene        Scene
-	Tag          Tag
 	StoryTelling Storytelling
 	Style        Style
 	User         accountinterfaces.User

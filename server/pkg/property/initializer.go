@@ -262,21 +262,8 @@ func (p *InitializerField) PropertyField() *Field {
 		return nil
 	}
 
-	var plinks *Links
-	if p.Links != nil {
-		links := make([]*Link, 0, len(p.Links))
-		for _, l := range p.Links {
-			link := l.PropertyLink()
-			if link != nil {
-				links = append(links, link)
-			}
-		}
-		plinks = NewLinks(links)
-	}
-
 	return NewField(p.Field).
 		Value(NewOptionalValue(p.Type, p.Value.Clone())).
-		Links(plinks).
 		Build()
 }
 
@@ -296,16 +283,4 @@ func (p *InitializerLink) Clone() *InitializerLink {
 		Schema:  p.Schema,
 		Field:   p.Field,
 	}
-}
-
-func (p *InitializerLink) PropertyLink() *Link {
-	if p == nil {
-		return nil
-	}
-
-	if p.Dataset == nil {
-		return NewLinkFieldOnly(p.Schema, p.Field)
-	}
-
-	return NewLink(*p.Dataset, p.Schema, p.Field)
 }

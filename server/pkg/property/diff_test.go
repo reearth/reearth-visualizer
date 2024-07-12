@@ -257,7 +257,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 					{SchemaFieldPointer: SchemaFieldPointer{SchemaGroup: testGroupList1.SchemaGroup(), Field: testField2.Field()}, NewType: ValueTypeString},
 				},
 			},
-			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
 				id:     testProperty1.ID(),
@@ -302,7 +301,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 					},
 				},
 			},
-			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
 				id:     testProperty1.ID(),
@@ -341,7 +339,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 					{SchemaFieldPointer: SchemaFieldPointer{SchemaGroup: "x", Field: testField1.Field()}, NewType: ValueTypeNumber},
 				},
 			},
-			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
 				id:     testProperty1.ID(),
@@ -379,7 +376,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 					},
 				},
 			},
-			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
 				id:     testProperty1.ID(),
@@ -409,7 +405,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 					},
 				},
 			},
-			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
 				id:     testProperty1.ID(),
@@ -438,7 +433,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 					},
 				},
 			},
-			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
 				id:     testProperty1.ID(),

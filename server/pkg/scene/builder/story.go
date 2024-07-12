@@ -28,7 +28,6 @@ type pageJSON struct {
 
 type blockJSON struct {
 	ID          string                  `json:"id"`
-	Property    propertyJSON            `json:"property"`
 	Plugins     map[string]propertyJSON `json:"plugins"`
 	ExtensionId string                  `json:"extensionId"`
 	PluginId    string                  `json:"pluginId"`
@@ -40,8 +39,7 @@ func (b *Builder) storyJSON(ctx context.Context, p []*property.Property) (*story
 	}
 
 	return &storyJSON{
-		ID:       b.story.Id().String(),
-		Property: b.property(ctx, findProperty(p, b.story.Property())),
+		ID: b.story.Id().String(),
 		Pages: lo.FilterMap(b.story.Pages().Pages(), func(page *storytelling.Page, _ int) (pageJSON, bool) {
 			if page == nil {
 				return pageJSON{}, false
@@ -55,9 +53,8 @@ func (b *Builder) storyJSON(ctx context.Context, p []*property.Property) (*story
 
 func (b *Builder) pageJSON(ctx context.Context, page storytelling.Page, p []*property.Property) pageJSON {
 	return pageJSON{
-		ID:       page.Id().String(),
-		Property: b.property(ctx, findProperty(p, page.Property())),
-		Title:    page.Title(),
+		ID:    page.Id().String(),
+		Title: page.Title(),
 		Blocks: lo.FilterMap(page.Blocks(), func(block *storytelling.Block, _ int) (blockJSON, bool) {
 			if block == nil {
 				return blockJSON{}, false
@@ -73,7 +70,6 @@ func (b *Builder) pageJSON(ctx context.Context, page storytelling.Page, p []*pro
 func (b *Builder) blockJSON(ctx context.Context, block storytelling.Block, p []*property.Property) blockJSON {
 	return blockJSON{
 		ID:          block.ID().String(),
-		Property:    b.property(ctx, findProperty(p, block.Property())),
 		Plugins:     nil,
 		ExtensionId: block.Extension().String(),
 		PluginId:    block.Plugin().String(),

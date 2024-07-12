@@ -34,30 +34,6 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 			return nil, nil
 		}
 		return result, err
-	case gqlmodel.NodeTypeDataset:
-		result, err := dataloaders.Dataset.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeDatasetSchema:
-		result, err := dataloaders.DatasetSchema.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerItem:
-		result, err := dataloaders.LayerItem.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerGroup:
-		result, err := dataloaders.LayerGroup.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
 	case gqlmodel.NodeTypeProject:
 		result, err := dataloaders.Project.Load(i)
 		if result == nil {
@@ -103,46 +79,6 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 		nodes := make([]gqlmodel.Node, len(data))
 		for i := range data {
 			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeDataset:
-		data, err := dataloaders.Dataset.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeDatasetSchema:
-		data, err := dataloaders.DatasetSchema.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerItem:
-		data, err := dataloaders.LayerItem.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerGroup:
-		data, err := dataloaders.LayerGroup.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
 		}
 		return nodes, nil
 	case gqlmodel.NodeTypeProject:
@@ -224,28 +160,12 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 	return data, nil
 }
 
-func (r *queryResolver) Layer(ctx context.Context, layerID gqlmodel.ID) (gqlmodel.Layer, error) {
-	result, err := dataloaders(ctx).Layer.Load(layerID)
-	if result == nil || *result == nil {
-		return nil, nil
-	}
-	return *result, err
-}
-
 func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error) {
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
 func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, first, last, before, after)
-}
-
-func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
-}
-
-func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
-	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {

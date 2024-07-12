@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -114,7 +113,6 @@ func TestScene_InstallPlugin(t *testing.T) {
 				sceneRepo:      sr,
 				pluginRepo:     pr,
 				pluginRegistry: &mockPluginRegistry{},
-				propertyRepo:   prr,
 				transaction:    &usecasex.NopTransaction{},
 			}
 
@@ -223,12 +221,6 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			ppr2 := property.New().NewID().Scene(sid).Schema(id.NewPropertySchemaID(pid, "a")).MustBuild()
 			prr := memory.NewPropertyWith(ppr, ppr2)
 
-			ibf := layer.NewInfoboxField().NewID().Plugin(pid).Extension("a").Property(id.NewPropertyID()).MustBuild()
-			ib := layer.NewInfobox([]*layer.InfoboxField{ibf}, id.NewPropertyID())
-			l1 := layer.New().NewID().Scene(sid).Infobox(ib).Item().MustBuild()
-			l2 := layer.New().NewID().Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
-			lr := memory.NewLayerWith(l1, l2)
-
 			tid := accountdomain.NewWorkspaceID()
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
@@ -242,8 +234,6 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			uc := &Scene{
 				sceneRepo:          sr,
 				pluginRepo:         pr,
-				propertyRepo:       prr,
-				layerRepo:          lr,
 				propertySchemaRepo: psr,
 				file:               fsg,
 				transaction:        &usecasex.NopTransaction{},
@@ -368,15 +358,6 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			pl2p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 			prr := memory.NewPropertyWith(pl1p, pl2p)
 
-			ibf1 := layer.NewInfoboxField().NewID().Plugin(plugin.OfficialPluginID).Extension("textblock").Property(id.NewPropertyID()).MustBuild()
-			ibf2 := layer.NewInfoboxField().NewID().Plugin(pid1).Extension("a").Property(pl2p.ID()).MustBuild()
-			ib := layer.NewInfobox([]*layer.InfoboxField{ibf1, ibf2}, id.NewPropertyID())
-			l1 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
-			l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
-			lr := memory.NewLayerWith(l1, l2)
-
-			dsr := memory.NewDataset()
-
 			tid := accountdomain.NewWorkspaceID()
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
@@ -385,10 +366,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			uc := &Scene{
 				sceneRepo:          sr,
 				pluginRepo:         pr,
-				propertyRepo:       prr,
 				propertySchemaRepo: psr,
-				layerRepo:          lr,
-				datasetRepo:        dsr,
 				pluginRegistry:     &mockPluginRegistry{},
 				transaction:        &usecasex.NopTransaction{},
 			}
@@ -417,21 +395,10 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			assert.Equal(*pl2.Schema(), p.Schema())
 
 			// layers plugin id should not be changed
-			ls, err := lr.FindByScene(ctx, sid)
 			assert.NoError(err)
-			for _, l := range ls {
-				assert.Equal(plugin.OfficialPluginID.Ref(), (*l).Plugin())
-			}
 
 			// layer > infobox > field
-			ll1 := *ls.Find(l1.ID())
-			assert.NotNil(ll1.Infobox().Field(ibf1.ID()))
-			assert.Equal(id.OfficialPluginID, ll1.Infobox().Field(ibf1.ID()).Plugin())
-			assert.NotNil(ll1.Infobox().Field(ibf2.ID()))
-			assert.Equal(tt.args.new, ll1.Infobox().Field(ibf2.ID()).Plugin())
-			prop, err := prr.FindByID(ctx, ll1.Infobox().Field(ibf2.ID()).Property())
 			assert.NoError(err)
-			assert.Equal(tt.args.new, prop.Schema().Plugin())
 		})
 	}
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer/layerops"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
@@ -129,23 +128,6 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 	// remove widgets
 	removedProperties = append(removedProperties, scene.Widgets().RemoveAllByPlugin(pid, nil)...)
 
-	// remove blocks
-	res, err := layerops.Processor{
-		LayerLoader: repo.LayerLoaderFrom(i.layerRepo),
-	}.UninstallPlugin(ctx, pid)
-	if err != nil {
-		return nil, err
-	}
-
-	removedProperties = append(removedProperties, res.RemovedProperties...)
-
-	// save
-	if len(res.ModifiedLayers) > 0 {
-		if err := i.layerRepo.SaveAll(ctx, res.ModifiedLayers); err != nil {
-			return nil, err
-		}
-	}
-
 	if len(removedProperties) > 0 {
 		if err := i.propertyRepo.RemoveAll(ctx, removedProperties); err != nil {
 			return nil, err
@@ -213,8 +195,6 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 	pluginMigrator := sceneops.PluginMigrator{
 		Property:       repo.PropertyLoaderFrom(i.propertyRepo),
 		PropertySchema: repo.PropertySchemaLoaderFrom(i.propertySchemaRepo),
-		Dataset:        repo.DatasetLoaderFrom(i.datasetRepo),
-		Layer:          repo.LayerLoaderBySceneFrom(i.layerRepo),
 		Plugin:         repo.PluginLoaderFrom(i.pluginRepo),
 	}
 
@@ -227,9 +207,6 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 		return nil, err
 	}
 	if err := i.propertyRepo.SaveAll(ctx, result.Properties); err != nil {
-		return nil, err
-	}
-	if err := i.layerRepo.SaveAll(ctx, result.Layers); err != nil {
 		return nil, err
 	}
 	if err := i.propertyRepo.RemoveAll(ctx, result.RemovedProperties); err != nil {

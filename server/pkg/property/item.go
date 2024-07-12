@@ -2,8 +2,6 @@ package property
 
 import (
 	"context"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 type Item interface {
@@ -11,18 +9,12 @@ type Item interface {
 	IDRef() *ItemID
 	SchemaGroup() SchemaGroupID
 	SchemaGroupRef() *SchemaGroupID
-	HasLinkedField() bool
-	Datasets() []DatasetID
-	FieldsByLinkedDataset(DatasetSchemaID, DatasetID) []*Field
-	IsDatasetLinked(DatasetSchemaID, DatasetID) bool
 	IsEmpty() bool
 	Prune() bool
-	MigrateSchema(context.Context, *Schema, dataset.Loader)
-	MigrateDataset(DatasetMigrationParam)
+	MigrateSchema(context.Context, *Schema)
 	ValidateSchema(*SchemaGroup) error
 	Fields(*Pointer) []*Field
 	RemoveFields(*Pointer) bool
-	CloneItem() Item
 	GroupAndFields(*Pointer) []GroupAndField
 	GuessSchema() *SchemaGroup
 }

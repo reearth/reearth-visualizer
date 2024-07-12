@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -27,8 +26,6 @@ type Scene struct {
 	propertySchemaRepo repo.PropertySchema
 	projectRepo        repo.Project
 	pluginRepo         repo.Plugin
-	layerRepo          repo.Layer
-	datasetRepo        repo.Dataset
 	transaction        usecasex.Transaction
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
@@ -42,8 +39,6 @@ func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 		propertySchemaRepo: r.PropertySchema,
 		projectRepo:        r.Project,
 		pluginRepo:         r.Plugin,
-		layerRepo:          r.Layer,
-		datasetRepo:        r.Dataset,
 		transaction:        r.Transaction,
 		file:               g.File,
 		pluginRegistry:     g.PluginRegistry,
@@ -113,11 +108,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	schema := builtin.GetPropertySchemaByVisualizer(viz)
 	sceneID := id.NewSceneID()
 
-	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
-	if err != nil {
-		return nil, err
-	}
-
 	ps := scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(id.OfficialPluginID, nil),
 	})
@@ -149,11 +139,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	err = i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer)
-	if err != nil {
-		return nil, err
 	}
 
 	err = i.sceneRepo.Save(ctx, res)

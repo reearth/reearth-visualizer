@@ -34,83 +34,9 @@ models:
     fields:
       team:
         resolver: true
-  Cluster:
-    fields:
-      property:
-        resolver: true
-  Dataset:
-    fields:
-      schema:
-        resolver: true
-      name:
-        resolver: true
-  DatasetSchema:
-    fields:
-      datasets:
-        resolver: true
-      scene:
-        resolver: true
-      representativeField:
-        resolver: true
-      totalCount:
-        resolver: true
-  DatasetField:
-    fields:
-      schema:
-        resolver: true
-      field:
-        resolver: true
-      valueRef:
-        resolver: true
-  DatasetSchemaField:
-    fields:
-      schema:
-        resolver: true
-      ref:
-        resolver: true
-  LayerItem:
-    fields:
-      parent:
-        resolver: true
-      property:
-        resolver: true
-      plugin:
-        resolver: true
-      extension:
-        resolver: true
-      linkedDataset:
-        resolver: true
-      merged:
-        resolver: true
-      scene:
-        resolver: true
-      scenePlugin:
-        resolver: true
-  LayerGroup:
-    fields:
-      parent:
-        resolver: true
-      property:
-        resolver: true
-      plugin:
-        resolver: true
-      extension:
-        resolver: true
-      linkedDatasetSchema:
-        resolver: true
-      layers:
-        resolver: true
-      scene:
-        resolver: true
-      scenePlugin:
-        resolver: true
   Infobox:
     fields:
-      layer:
-        resolver: true
       property:
-        resolver: true
-      linkedDataset:
         resolver: true
       merged:
         resolver: true
@@ -118,8 +44,6 @@ models:
         resolver: true
   InfoboxField:
     fields:
-      layer:
-        resolver: true
       infobox:
         resolver: true
       property:
@@ -128,29 +52,9 @@ models:
         resolver: true
       extension:
         resolver: true
-      linkedDataset:
-        resolver: true
-      merged:
-        resolver: true
       scene:
         resolver: true
       scenePlugin:
-        resolver: true
-  LayerTagItem:
-    fields:
-      tag:
-        resolver: true
-  LayerTagGroup:
-    fields:
-      tag:
-        resolver: true
-  MergedLayer:
-    fields:
-      original:
-        resolver: true
-      parent:
-        resolver: true
-      scene:
         resolver: true
   MergedInfobox:
     fields:
@@ -224,10 +128,6 @@ models:
     fields:
       schema:
         resolver: true
-      layer:
-        resolver: true
-      merged:
-        resolver: true
   PropertyGroup:
     fields:
       schema:
@@ -250,16 +150,6 @@ models:
         resolver: true
       actualValue:
         resolver: true
-  PropertyFieldLink:
-    fields:
-      dataset:
-        resolver: true
-      datasetField:
-        resolver: true
-      datasetSchema:
-        resolver: true
-      datasetSchemaField:
-        resolver: true
   MergedProperty:
     fields:
       original:
@@ -267,8 +157,6 @@ models:
       parent:
         resolver: true
       schema:
-        resolver: true
-      linkedDataset:
         resolver: true
       groups:
         resolver: true
@@ -284,16 +172,6 @@ models:
         resolver: true
       schema:
         resolver: true
-      linkedDataset:
-        resolver: true
-  MergedPropertyField:
-    fields:
-      schema:
-        resolver: true
-      field:
-        resolver: true
-      actualValue:
-        resolver: true
   Scene:
     fields:
       project:
@@ -302,13 +180,7 @@ models:
         resolver: true
       property:
         resolver: true
-      rootLayer:
-        resolver: true
       newLayers:
-        resolver: true
-      datasetSchemas:
-        resolver: true
-      tags:
         resolver: true
       stories:
         resolver: true
@@ -327,30 +199,6 @@ models:
       plugin:
         resolver: true
       property:
-        resolver: true
-  Tag:
-    fields:
-      layers:
-        resolver: true
-  TagItem:
-    fields:
-      linkedDatasetSchema:
-        resolver: true
-      linkedDataset:
-        resolver: true
-      linkedDatasetField:
-        resolver: true
-      parent:
-        resolver: true
-      layers:
-        resolver: true
-  TagGroup:
-    fields:
-      tags:
-        resolver: true
-      scene:
-        resolver: true
-      layers:
         resolver: true
   Team:
     fields:
@@ -381,8 +229,6 @@ models:
       scene:
         resolver: true
       property:
-        resolver: true
-      layers:
         resolver: true
       swipeableLayers:
         resolver: true

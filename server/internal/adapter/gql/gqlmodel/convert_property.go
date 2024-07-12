@@ -153,59 +153,6 @@ func ToPropertyField(f *property.Field, parent *property.Property, gl *property.
 		FieldID:  ID(f.Field()),
 		Value:    ToPropertyValue(f.Value()),
 		Type:     ToValueType(value.Type(f.Type())),
-		Links:    util.Map(f.Links().Links(), ToPropertyFieldLink),
-	}
-}
-
-func ToPropertyFieldLinks(flinks *property.Links) []*PropertyFieldLink {
-	if flinks == nil {
-		return nil
-	}
-	var links []*PropertyFieldLink
-	links = make([]*PropertyFieldLink, 0, flinks.Len())
-	for _, l := range flinks.Links() {
-		links = append(links, ToPropertyFieldLink(l))
-	}
-	return links
-}
-
-func FromPropertyFieldLink(datasetSchema, ds, fields []ID) (*property.Links, error) {
-	if len(datasetSchema) != len(fields) || (ds != nil && len(ds) != len(fields) && len(ds) > 1) {
-		return nil, nil
-	}
-
-	links := make([]*property.Link, 0, len(datasetSchema))
-	for i, dss := range datasetSchema {
-		f := fields[i]
-		dsid, dsfid, err := ToID2[id.DatasetSchema, id.DatasetField](dss, f)
-		if err != nil {
-			return nil, err
-		}
-		if len(ds) == 0 || (len(ds) == 1 && i > 0) {
-			links = append(links, property.NewLinkFieldOnly(dsid, dsfid))
-		} else {
-			did, err := ToID[id.Dataset](ds[i])
-			if err != nil {
-				return nil, err
-			}
-			links = append(links, property.NewLink(did, dsid, dsfid))
-		}
-	}
-
-	return property.NewLinks(links), nil
-}
-
-func ToPropertyFieldLink(link *property.Link) *PropertyFieldLink {
-	ds := link.DatasetSchema()
-	df := link.DatasetSchemaField()
-	if ds == nil || df == nil {
-		return nil
-	}
-
-	return &PropertyFieldLink{
-		DatasetID:            IDFromRef(link.Dataset()),
-		DatasetSchemaID:      IDFrom(*ds),
-		DatasetSchemaFieldID: IDFrom(*df),
 	}
 }
 
@@ -310,8 +257,6 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		ui2 = PropertySchemaFieldUIVideo
 	case property.SchemaFieldUIFile:
 		ui2 = PropertySchemaFieldUIFile
-	case property.SchemaFieldUILayer:
-		ui2 = PropertySchemaFieldUILayer
 	case property.SchemaFieldUICameraPose:
 		ui2 = PropertySchemaFieldUICameraPose
 	case property.SchemaFieldUIPadding:
@@ -325,72 +270,6 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		return &ui2
 	}
 	return nil
-}
-
-func ToMergedPropertyFromMetadata(m *property.MergedMetadata) *MergedProperty {
-	if m == nil {
-		return nil
-	}
-
-	return &MergedProperty{
-		OriginalID:      IDFromRef(m.Original),
-		ParentID:        IDFromRef(m.Parent),
-		LinkedDatasetID: IDFromRef(m.LinkedDataset),
-		Groups:          nil, // resolved by graphql resolver
-	}
-}
-
-func ToMergedProperty(m *property.Merged) *MergedProperty {
-	if m == nil {
-		return nil
-	}
-
-	return &MergedProperty{
-		OriginalID:      IDFromRef(m.Original),
-		ParentID:        IDFromRef(m.Parent),
-		SchemaID:        IDFromPropertySchemaIDRef(m.Schema.Ref()),
-		LinkedDatasetID: IDFromRef(m.LinkedDataset),
-		Groups: util.Map(m.Groups, func(g *property.MergedGroup) *MergedPropertyGroup {
-			return ToMergedPropertyGroup(g, m)
-		}),
-	}
-}
-
-func ToMergedPropertyGroup(f *property.MergedGroup, p *property.Merged) *MergedPropertyGroup {
-	if f == nil {
-		return nil
-	}
-
-	return &MergedPropertyGroup{
-		OriginalPropertyID: IDFromRef(p.Original),
-		ParentPropertyID:   IDFromRef(p.Parent),
-		OriginalID:         IDFromRef(f.Original),
-		SchemaGroupID:      ID(f.SchemaGroup),
-		ParentID:           IDFromRef(f.Parent),
-		SchemaID:           IDFromPropertySchemaIDRef(p.Schema.Ref()),
-		LinkedDatasetID:    IDFromRef(f.LinkedDataset),
-		Fields: util.Map(f.Fields, func(f *property.MergedField) *MergedPropertyField {
-			return ToMergedPropertyField(f, p.Schema)
-		}),
-		Groups: util.Map(f.Groups, func(g *property.MergedGroup) *MergedPropertyGroup {
-			return ToMergedPropertyGroup(g, p)
-		}),
-	}
-}
-
-func ToMergedPropertyField(f *property.MergedField, s id.PropertySchemaID) *MergedPropertyField {
-	if f == nil {
-		return nil
-	}
-
-	return &MergedPropertyField{
-		FieldID:    ID(f.ID),
-		SchemaID:   IDFromPropertySchemaID(s),
-		Links:      ToPropertyFieldLinks(f.Links),
-		Value:      ToPropertyValue(f.Value),
-		Type:       ToValueType(value.Type(f.Type)),
-		Overridden: f.Overridden,
-	}
 }
 
 func ToPropertySchemaGroup(g *property.SchemaGroup, s property.SchemaID) *PropertySchemaGroup {
