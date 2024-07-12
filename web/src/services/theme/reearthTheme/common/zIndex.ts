@@ -22,7 +22,7 @@ export const zIndex = {
       bg: 700,
       self: 705,
     },
-    popover: 800,
+    popover: 750,
     loading: 900,
     notificationBar: 1000,
   },

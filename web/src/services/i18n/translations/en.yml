@@ -70,37 +70,32 @@ Switch WorkSpace: Switch WorkSpace
 Account Settings: Account Settings
 Log Out: Log Out
 Page: Page
-File Format: File Format
-File format of the data source you want to add.: File format of the data source you want to add.
 From Assets: From Assets
 From Web: From Web
 From Value: From Value
+File Format: File Format
+File format of the data source you want to add.: File format of the data source you want to add.
 Source Type: Source Type
-Select the type of data source you want to add.: Select the type of data source you want to add.
+Asset: Asset
 Resource URL: Resource URL
-URL of the data source you want to add.: URL of the data source you want to add.
 Input Text: Input Text
 Value: Value
-Write syntactically correct data based on the file format you have selected above.: >-
-  Write syntactically correct data based on the file format you have selected
-  above.
 Input data here: Input data here
-Asset: Asset
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
-Point coordinates: Point coordinates
-Latitude Field: Latitude Field
-Longitude Field: Longitude Field
-Data Source Manager: Data Source Manager
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: 'Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.'
+Latitude Column Name: ''
+Column Name: ''
+Longitude Column Name: ''
 Common: Common
 CSV: CSV
 WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
+Data Source Manager: Data Source Manager
 Choose layer to add: Choose layer to add
-Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
-Layer: Layer
+Layer name: ''
 Inspector: Inspector
 Format: Format
 Unsupported custom field: Unsupported custom field
@@ -564,6 +559,7 @@ Successfully unpublished your project. Now nobody can access your project.: Succ
 Successfully copied to clipboard!: Successfully copied to clipboard!
 Outline: Outline
 Folder: Folder
+Layer: Layer
 Widget: Widget
 Infobox: Infobox
 Tag: Tag
