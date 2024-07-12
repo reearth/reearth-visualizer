@@ -52,6 +52,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
               placeholder={placeholders?.[index]}
               onChange={handleChange}
               onBlur={handleBlur}
+              extendWidth
               {...props}
             />
             <Typography size="body" color={theme.content.weak}>
@@ -70,6 +71,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: `${theme.spacing.smallest}px`,
   alignItems: "flex-start",
+  width: "100%",
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
@@ -77,4 +79,5 @@ const InputWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   gap: theme.spacing.smallest,
+  width: "100%",
 }));

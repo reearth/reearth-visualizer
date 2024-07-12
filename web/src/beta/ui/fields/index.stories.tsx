@@ -32,8 +32,9 @@ export const Components: Story = {
         display: "flex",
         flexDirection: "column",
         gap: "20px",
-        maxWidth: "850px",
+        maxWidth: "500px",
         padding: "24px",
+        margin: "0 auto",
       }}>
       <CommonField
         commonTitle="CommonField"
@@ -97,14 +98,12 @@ export const Components: Story = {
         commonTitle="ColorField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <div style={{ maxWidth: "350px" }}>
-        <AssetField
-          fileType="asset"
-          placeholder="Asset"
-          commonTitle="AssetField"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-        />
-      </div>
+      <AssetField
+        fileType="asset"
+        placeholder="Asset"
+        commonTitle="AssetField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
       <CameraField
         onSave={() => {}}
         commonTitle="CameraField"
