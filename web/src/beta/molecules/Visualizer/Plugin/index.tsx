@@ -1,4 +1,4 @@
-import P, { Props as PluginProps } from "@reearth/classic/components/atoms/Plugin";
+import P, { Props as PluginProps } from "@reearth/beta/components/Plugin";
 
 import useHooks from "./hooks";
 import type { PluginModalInfo } from "./ModalContainer";
@@ -45,10 +45,10 @@ export type Props = {
   onRender?: (
     options:
       | {
-          width?: string | number;
-          height?: string | number;
-          extended?: boolean;
-        }
+        width?: string | number;
+        height?: string | number;
+        extended?: boolean;
+      }
       | undefined,
   ) => void;
   onResize?: (

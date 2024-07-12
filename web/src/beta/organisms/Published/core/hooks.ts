@@ -1,22 +1,22 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
-import type { Block, ClusterProperty } from "@reearth/classic/components/molecules/Visualizer";
 import {
   InternalWidget,
   WidgetAlignSystem,
   WidgetAlignment,
   BuiltinWidgets,
   isBuiltinWidget,
-} from "@reearth/classic/core/Crust";
+} from "@reearth/beta/core/Crust";
 import {
   convertLegacyLayer,
   type Layer,
   type LegacyLayer,
   convertLegacyCluster,
-} from "@reearth/classic/core/mantle";
-import type { ComputedLayer } from "@reearth/classic/core/mantle/types";
-import type { LayerSelectionReason } from "@reearth/classic/core/Map/Layers/hooks";
+} from "@reearth/beta/core/mantle";
+import type { ComputedLayer } from "@reearth/beta/core/mantle/types";
+import type { LayerSelectionReason } from "@reearth/beta/core/Map/Layers/hooks";
+import type { Block, ClusterProperty } from "@reearth/beta/molecules/Visualizer";
 import { config } from "@reearth/services/config";
 import { useSelected } from "@reearth/services/state";
 
@@ -65,10 +65,10 @@ export default (alias?: string) => {
 
   const widgets = useMemo<
     | {
-        floatingWidgets: InternalWidget[];
-        alignSystem: WidgetAlignSystem | undefined;
-        ownBuiltinWidgets: (keyof BuiltinWidgets)[];
-      }
+      floatingWidgets: InternalWidget[];
+      alignSystem: WidgetAlignSystem | undefined;
+      ownBuiltinWidgets: (keyof BuiltinWidgets)[];
+    }
     | undefined
   >(() => {
     if (!data?.widgets) return undefined;
@@ -156,9 +156,9 @@ export default (alias?: string) => {
       floatingWidgets,
       alignSystem: data.widgetAlignSystem
         ? {
-            outer: widgetZone(data.widgetAlignSystem.outer),
-            inner: widgetZone(data.widgetAlignSystem.inner),
-          }
+          outer: widgetZone(data.widgetAlignSystem.outer),
+          inner: widgetZone(data.widgetAlignSystem.inner),
+        }
         : undefined,
       ownBuiltinWidgets,
     };
@@ -266,14 +266,14 @@ function processLayer(l: RawLayer): LegacyLayer {
     property: processProperty(l.property),
     infobox: l.infobox
       ? {
-          property: processProperty(l.infobox.property),
-          blocks: l.infobox.fields.map<Block>(f => ({
-            id: f.id,
-            pluginId: f.pluginId,
-            extensionId: f.extensionId,
-            property: processProperty(f.property),
-          })),
-        }
+        property: processProperty(l.infobox.property),
+        blocks: l.infobox.fields.map<Block>(f => ({
+          id: f.id,
+          pluginId: f.pluginId,
+          extensionId: f.extensionId,
+          property: processProperty(f.property),
+        })),
+      }
       : undefined,
     tags: l.tags, // Currently no need to convert tags
     children: l.children?.map(processLayer),

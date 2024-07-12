@@ -3,7 +3,7 @@ import React, { useMemo, useCallback, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { LatLng } from "@reearth/classic/util/value";
+import { LatLng } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { Props as BlockProps } from "..";
@@ -103,7 +103,7 @@ export default function LocationBlock({
   );
 }
 
-const Wrapper = styled(Border)<{
+const Wrapper = styled(Border) <{
   fullSize?: boolean;
 }>`
   margin: ${({ fullSize }) => (fullSize ? "0" : "0 8px")};

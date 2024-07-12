@@ -1,10 +1,10 @@
 import React from "react";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Divider from "@reearth/classic/components/atoms/Divider";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Button from "@reearth/beta/components/Button";
+import Divider from "@reearth/beta/components/Divider";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 import Icon from "@reearth/beta/components/Icon";
 import Loading from "@reearth/beta/components/Loading";
+import Header, { Props } from "@reearth/beta/molecules/Common/Header";
+import ProjectMenu from "@reearth/beta/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/beta/molecules/Settings/Navigation";
-import Header, { Props } from "@reearth/classic/components/molecules/Common/Header";
-import ProjectMenu from "@reearth/classic/components/molecules/Common/ProjectMenu";
-import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { styled } from "@reearth/services/theme";
 
 export type SettingPageProps = {

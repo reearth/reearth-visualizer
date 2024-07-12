@@ -1,9 +1,9 @@
 import React from "react";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type Asset = {
@@ -46,7 +46,7 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, icon, onChec
 
 export default AssetListItem;
 
-const ListItem = styled(Flex)<{ selected?: boolean }>`
+const ListItem = styled(Flex) <{ selected?: boolean }>`
   background: ${({ selected, theme }) =>
     selected ? theme.classic.assetCard.bgHover : theme.classic.assetCard.bg};
   box-shadow: 0 6px 6px -8px ${props => props.theme.classic.other.black};

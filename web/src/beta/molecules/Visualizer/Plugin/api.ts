@@ -1,5 +1,5 @@
-import type { Events } from "@reearth/classic/util/event";
-import { merge } from "@reearth/classic/util/object";
+import type { Events } from "@reearth/beta/utils/event";
+import { merge } from "@reearth/beta/utils/object";
 
 import type { LayerStore } from "../Layers";
 import type { ClientStorage } from "../useClientStorage";
@@ -117,8 +117,8 @@ export function exposed({
             html: string,
             options?:
               | {
-                  visible?: boolean | undefined;
-                }
+                visible?: boolean | undefined;
+              }
               | undefined,
           ) => {
             render(html, options);
@@ -185,8 +185,8 @@ export function exposed({
               (plugin?.extensionType === "widget"
                 ? widget?.()?.id
                 : plugin?.extensionType === "block"
-                ? block?.()?.id
-                : "") ?? "";
+                  ? block?.()?.id
+                  : "") ?? "";
             return (id: string, msg: any) => pluginPostMessage(id, msg, sender);
           },
           get instances() {
@@ -200,8 +200,8 @@ export function exposed({
                 (plugin?.extensionType === "widget"
                   ? widget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? block?.()?.id
-                  : "") ?? "",
+                    ? block?.()?.id
+                    : "") ?? "",
                 key,
               );
               promise.finally(() => {
@@ -218,8 +218,8 @@ export function exposed({
                 (plugin?.extensionType === "widget"
                   ? widget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? block?.()?.id
-                  : "") ?? "",
+                    ? block?.()?.id
+                    : "") ?? "",
                 key,
                 localValue,
               );
@@ -235,8 +235,8 @@ export function exposed({
                 (plugin?.extensionType === "widget"
                   ? widget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? block?.()?.id
-                  : "") ?? "",
+                    ? block?.()?.id
+                    : "") ?? "",
                 key,
               );
               promise.finally(() => {
@@ -251,8 +251,8 @@ export function exposed({
                 (plugin?.extensionType === "widget"
                   ? widget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? block?.()?.id
-                  : "") ?? "",
+                    ? block?.()?.id
+                    : "") ?? "",
               );
               promise.finally(() => {
                 startEventLoop?.();
@@ -265,27 +265,27 @@ export function exposed({
       },
       plugin?.extensionType === "block"
         ? {
-            get layer() {
-              return layer?.();
-            },
-            get block() {
-              return block?.();
-            },
-          }
+          get layer() {
+            return layer?.();
+          },
+          get block() {
+            return block?.();
+          },
+        }
         : {},
       plugin?.extensionType === "widget"
         ? {
-            get widget() {
-              return {
-                ...widget?.(),
-                moveTo: (options: WidgetLocationOptions) => {
-                  const widgetId = widget?.()?.id;
-                  if (!widgetId) return;
-                  moveWidget?.(widgetId, options);
-                },
-              };
-            },
-          }
+          get widget() {
+            return {
+              ...widget?.(),
+              moveTo: (options: WidgetLocationOptions) => {
+                const widgetId = widget?.()?.id;
+                if (!widgetId) return;
+                moveWidget?.(widgetId, options);
+              },
+            };
+          },
+        }
         : {},
     ),
   });

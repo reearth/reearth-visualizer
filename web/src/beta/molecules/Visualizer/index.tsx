@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import DropHolder from "@reearth/classic/components/atoms/DropHolder";
-import Filled from "@reearth/classic/components/atoms/Filled";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
-import { LatLng } from "@reearth/classic/util/value";
+import DropHolder from "@reearth/beta/components/DropHolder";
+import Filled from "@reearth/beta/components/Filled";
+import Loading from "@reearth/beta/components/Loading";
+import { LatLng } from "@reearth/beta/utils/value";
+import { WidgetAreaState } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";

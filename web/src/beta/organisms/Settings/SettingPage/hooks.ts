@@ -8,7 +8,7 @@ import {
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
 } from "@reearth/beta/graphql";
-import { User } from "@reearth/classic/components/molecules/Common/Header";
+import { User } from "@reearth/beta/molecules/Common/Header";
 import { useWorkspace, useProject } from "@reearth/services/state";
 
 type Params = {
@@ -74,12 +74,12 @@ export default (params: Params) => {
       p?.id !== project?.id
         ? project
           ? {
-              id: project.id,
-              name: project.name,
-              isArchived: project.isArchived,
-              sceneId: project.scene?.id,
-              projectType: project.coreSupport ? "beta" : "classic",
-            }
+            id: project.id,
+            name: project.name,
+            isArchived: project.isArchived,
+            sceneId: project.scene?.id,
+            projectType: project.coreSupport ? "beta" : "classic",
+          }
           : undefined
         : p,
     );

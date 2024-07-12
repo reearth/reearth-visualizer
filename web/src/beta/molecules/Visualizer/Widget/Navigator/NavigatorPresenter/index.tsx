@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
+import Icon from "@reearth/beta/components/Icon";
 import { useT } from "@reearth/services/i18n";
 import { PublishTheme, styled } from "@reearth/services/theme";
 
@@ -148,7 +148,7 @@ const CompassIcon = styled.div<{ publishedTheme?: PublishTheme }>`
   }
   & circle {
     stroke: ${({ theme, publishedTheme }) =>
-      publishedTheme?.background || theme.classic.main.deepBg};
+    publishedTheme?.background || theme.classic.main.deepBg};
   }
 `;
 

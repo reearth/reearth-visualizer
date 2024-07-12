@@ -10,8 +10,8 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
-import { useContext } from "@reearth/classic/components/molecules/Visualizer/Plugin";
-import { toColor } from "@reearth/classic/util/value";
+import { useContext } from "@reearth/beta/molecules/Visualizer/Plugin";
+import { toColor } from "@reearth/beta/utils/value";
 
 import { Property } from "..";
 import { SceneProperty } from "../../..";

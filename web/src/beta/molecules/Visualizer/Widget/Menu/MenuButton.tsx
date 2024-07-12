@@ -4,9 +4,9 @@ import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import { fonts } from "@reearth/classic/theme";
-import { Camera } from "@reearth/classic/util/value";
+import Icon from "@reearth/beta/components/Icon";
+import { Camera } from "@reearth/beta/utils/value";
+import fonts from "@reearth/services/fonts";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../Engine";
@@ -62,10 +62,10 @@ export default function MenuButton({
       pos === "topleft"
         ? "bottom-start"
         : pos === "topright"
-        ? "bottom-end"
-        : pos === "bottomleft"
-        ? "top-start"
-        : "top-end",
+          ? "bottom-end"
+          : pos === "bottomleft"
+            ? "top-start"
+            : "top-end",
     strategy: "fixed",
     modifiers: [
       {
@@ -167,7 +167,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const StyledIcon = styled(Icon)<{ margin: boolean }>`
+const StyledIcon = styled(Icon) <{ margin: boolean }>`
   vertical-align: middle;
   margin-right: ${({ margin }) => (margin ? "5px" : null)};
 `;

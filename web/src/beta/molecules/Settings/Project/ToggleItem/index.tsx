@@ -1,6 +1,6 @@
 import React from "react";
 
-import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
+import ToggleButton from "@reearth/beta/components/ToggleButton";
 
 import Field from "../../Field";
 

@@ -3,7 +3,7 @@ import { Cartesian3, Entity as CesiumEntity } from "cesium";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Entity, EllipsoidGraphics, CesiumComponentRef } from "resium";
 
-import { LatLng, toColor } from "@reearth/classic/util/value";
+import { LatLng, toColor } from "@reearth/beta/utils/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { attachTag, draggableTag, heightReference, shadowMode } from "../common";

@@ -4,8 +4,8 @@ import reactGA from "react-ga";
 import reactGA4 from "react-ga4";
 import { useSet } from "react-use";
 
-import { useDrop, DropOptions } from "@reearth/classic/util/use-dnd";
-import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/classic/util/value";
+import { useDrop, DropOptions } from "@reearth/beta/utils/use-dnd";
+import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/beta/utils/value";
 
 import type {
   OverriddenInfobox,
@@ -377,13 +377,13 @@ function useLayers({
     () =>
       selectedLayer || layerOverridenInfobox
         ? {
-            infoboxKey: selectedLayer?.id,
-            title: layerOverridenInfobox?.title || selectedLayer?.title,
-            isEditable: !layerOverridenInfobox && !!selectedLayer?.infobox,
-            visible: !!selectedLayer?.infobox,
-            layer: selectedLayer,
-            blocks,
-          }
+          infoboxKey: selectedLayer?.id,
+          title: layerOverridenInfobox?.title || selectedLayer?.title,
+          isEditable: !layerOverridenInfobox && !!selectedLayer?.infobox,
+          visible: !!selectedLayer?.infobox,
+          layer: selectedLayer,
+          blocks,
+        }
         : undefined,
     [selectedLayer, layerOverridenInfobox, blocks],
   );
@@ -474,37 +474,37 @@ function overridenInfoboxBlocks(
   if (overriddenInfobox?.content.type === "table") {
     return Array.isArray(overriddenInfobox?.content.value)
       ? [
-          {
-            id: "content",
-            pluginId: "reearth",
-            extensionId: "dlblock",
-            property: {
-              items: overriddenInfobox.content.value.map((c, i) => ({
-                id: i,
-                item_title: c.key,
-                item_datastr: String(c.value),
-                item_datatype: "string",
-              })),
-            },
+        {
+          id: "content",
+          pluginId: "reearth",
+          extensionId: "dlblock",
+          property: {
+            items: overriddenInfobox.content.value.map((c, i) => ({
+              id: i,
+              item_title: c.key,
+              item_datastr: String(c.value),
+              item_datatype: "string",
+            })),
           },
-        ]
+        },
+      ]
       : undefined;
   }
 
   if (overriddenInfobox?.content.type === "html") {
     return overriddenInfobox.content.value
       ? [
-          {
-            id: "content",
-            pluginId: "reearth",
-            extensionId: "htmlblock",
-            property: {
-              default: {
-                html: overriddenInfobox.content.value,
-              },
+        {
+          id: "content",
+          pluginId: "reearth",
+          extensionId: "htmlblock",
+          property: {
+            default: {
+              html: overriddenInfobox.content.value,
             },
           },
-        ]
+        },
+      ]
       : undefined;
   }
 

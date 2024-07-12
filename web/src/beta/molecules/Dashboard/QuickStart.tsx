@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from "react";
 import { useMedia } from "react-use";
 
-import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
-import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
-import { metrics, metricsSizes } from "@reearth/classic/theme";
+import DashboardBlock from "@reearth/beta/components/DashboardBlock";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import ProjectCreationModal from "@reearth/beta/molecules/Common/ProjectCreationModal";
+import WorkspaceCreationModal from "@reearth/beta/molecules/Common/WorkspaceCreationModal";
+import metrics, { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme, css } from "@reearth/services/theme";
@@ -211,7 +211,7 @@ const BannerButton = styled(Flex)`
   }
 `;
 
-const HeroBannerButton = styled(Flex)<{ linearGradient?: string }>`
+const HeroBannerButton = styled(Flex) <{ linearGradient?: string }>`
   ${BannerButtonStyles};
   position: relative;
   z-index: ${({ theme }) => theme.classic.zIndexes.base};
@@ -229,9 +229,9 @@ const HeroBannerButton = styled(Flex)<{ linearGradient?: string }>`
     width: 100%;
     height: 200%;
     background: ${({ linearGradient, theme }) =>
-      linearGradient
-        ? linearGradient
-        : `linear-gradient(140deg, ${theme.classic.main.brandRed} 20%, ${theme.classic.main.brandBlue} 60%)`};
+    linearGradient
+      ? linearGradient
+      : `linear-gradient(140deg, ${theme.classic.main.brandRed} 20%, ${theme.classic.main.brandBlue} 60%)`};
     background-size: cover;
     background-position: top;
     transition: transform 0.4s;

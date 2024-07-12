@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import Icon from "@reearth/beta/components/Icon";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -193,19 +193,19 @@ const HTMLBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled(Border)<{
+const Wrapper = styled(Border) <{
   isTemplate: boolean;
 }>`
   margin: 0 8px;
   border: 1px solid
     ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
-      (!isTemplate && !isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
+    (!isTemplate && !isHovered && !isSelected) || !isEditable
+      ? "transparent"
+      : isHovered
         ? theme.classic.infoBox.border
         : isSelected
-        ? theme.classic.infoBox.accent2
-        : theme.classic.infoBox.weakText};
+          ? theme.classic.infoBox.accent2
+          : theme.classic.infoBox.weakText};
   border-radius: 6px;
 `;
 
@@ -254,17 +254,17 @@ const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
     isHovered
       ? theme.classic.infoBox.border
       : isSelected
-      ? theme.classic.main.select
-      : theme.classic.infoBox.weakText};
+        ? theme.classic.main.select
+        : theme.classic.infoBox.weakText};
 `;
 
-const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
+const StyledIcon = styled(Icon) <{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
     isHovered
       ? theme.classic.infoBox.border
       : isSelected
-      ? theme.classic.main.select
-      : theme.classic.infoBox.weakText};
+        ? theme.classic.main.select
+        : theme.classic.infoBox.weakText};
 `;
 
 export default HTMLBlock;

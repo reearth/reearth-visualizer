@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from "react";
 
+import Avatar from "@reearth/beta/components/Avatar";
+import Icon from "@reearth/beta/components/Icon";
+import defaultProjectImage from "@reearth/beta/components/Icon/Icons/defaultProjectImage.jpg";
 import TextBox from "@reearth/beta/components/TextBox";
 import Field from "@reearth/beta/molecules/Settings/Field";
 import SelectField from "@reearth/beta/molecules/Settings/SelectField";
 import { metricsSizes } from "@reearth/beta/utils/metrics";
-import Avatar from "@reearth/classic/components/atoms/Avatar";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
 import { styled } from "@reearth/services/theme";
 
 export type Props<T extends string = string> = {

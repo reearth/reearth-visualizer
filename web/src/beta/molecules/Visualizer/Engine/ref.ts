@@ -1,6 +1,6 @@
 import { ComponentType, ReactNode } from "react";
 
-import { LatLngHeight, Camera, Typography, Rect } from "@reearth/classic/util/value";
+import { LatLngHeight, Camera, Typography, Rect } from "@reearth/beta/utils/value";
 
 import { Clock } from "../Plugin/types";
 import type { Component } from "../Primitive";

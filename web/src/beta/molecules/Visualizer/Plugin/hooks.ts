@@ -2,9 +2,9 @@ import { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 
-import type { API as IFrameAPI } from "@reearth/classic/components/atoms/Plugin";
-import { defaultIsMarshalable } from "@reearth/classic/components/atoms/Plugin";
-import events, { EventEmitter, Events, mergeEvents } from "@reearth/classic/util/event";
+import type { API as IFrameAPI } from "@reearth/beta/components/Plugin";
+import { defaultIsMarshalable } from "@reearth/beta/components/Plugin";
+import events, { EventEmitter, Events, mergeEvents } from "@reearth/beta/utils/event";
 
 import { useGet } from "../utils";
 
@@ -47,10 +47,10 @@ export default function ({
   onRender?: (
     options:
       | {
-          width?: string | number;
-          height?: string | number;
-          extended?: boolean;
-        }
+        width?: string | number;
+        height?: string | number;
+        extended?: boolean;
+      }
       | undefined,
   ) => void;
   onResize?: (
@@ -180,10 +180,10 @@ export function useAPI({
   onRender?: (
     options:
       | {
-          width?: string | number;
-          height?: string | number;
-          extended?: boolean;
-        }
+        width?: string | number;
+        height?: string | number;
+        extended?: boolean;
+      }
       | undefined,
   ) => void;
   onResize?: (

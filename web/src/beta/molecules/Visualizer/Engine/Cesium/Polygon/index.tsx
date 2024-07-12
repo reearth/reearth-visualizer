@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { PolygonGraphics, Entity } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
-import { Polygon as PolygonValue, toColor } from "@reearth/classic/util/value";
+import { Polygon as PolygonValue, toColor } from "@reearth/beta/utils/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { heightReference, shadowMode } from "../common";
@@ -42,14 +42,14 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     () =>
       polygon?.[0]
         ? new PolygonHierarchy(
-            polygon[0].map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
-            polygon
-              .slice(1)
-              .map(
-                p =>
-                  new PolygonHierarchy(p.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height))),
-              ),
-          )
+          polygon[0].map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
+          polygon
+            .slice(1)
+            .map(
+              p =>
+                new PolygonHierarchy(p.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height))),
+            ),
+        )
         : undefined,
     [polygon ?? []],
     isEqual,

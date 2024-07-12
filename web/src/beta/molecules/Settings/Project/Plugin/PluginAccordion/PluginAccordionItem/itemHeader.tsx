@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import Box from "@reearth/classic/components/atoms/Box";
-import Button from "@reearth/classic/components/atoms/Button";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Text from "@reearth/classic/components/atoms/Text";
-import { fonts } from "@reearth/classic/theme";
+import Box from "@reearth/beta/components/Box";
+import Button from "@reearth/beta/components/Button";
+import Flex from "@reearth/beta/components/Flex";
+import Text from "@reearth/beta/components/Text";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

@@ -1,14 +1,14 @@
 import { useFormik } from "formik";
 import React, { useCallback, useEffect } from "react";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Divider from "@reearth/classic/components/atoms/Divider";
-import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import Button from "@reearth/beta/components/Button";
+import Divider from "@reearth/beta/components/Divider";
+import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/beta/components/Icon/Icons/defaultProjectImage.jpg";
+import Loading from "@reearth/beta/components/Loading";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -174,8 +174,8 @@ const Thumbnail = styled.div<{ url: string; projectType?: ProjectType }>`
     props.url
       ? `url(${props.url})`
       : props.projectType === "beta"
-      ? `url(${defaultBetaProjectImage})`
-      : `url(${defaultProjectImage})`};
+        ? `url(${defaultBetaProjectImage})`
+        : `url(${defaultProjectImage})`};
   background-size: cover;
   background-position: center;
   height: 242px;

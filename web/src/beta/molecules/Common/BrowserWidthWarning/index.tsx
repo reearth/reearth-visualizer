@@ -1,6 +1,6 @@
 import { useMedia } from "react-use";
 
-import OverlayWithMessage from "@reearth/classic/components/atoms/OverlayWithMessage";
+import OverlayWithMessage from "@reearth/beta/components/OverlayWithMessage";
 import { useT } from "@reearth/services/i18n";
 
 const BrowserWidthWarning: React.FC = () => {

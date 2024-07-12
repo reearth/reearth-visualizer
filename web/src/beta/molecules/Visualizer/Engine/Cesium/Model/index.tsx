@@ -8,7 +8,7 @@ import {
 import { useEffect, useMemo, useRef } from "react";
 import { ModelGraphics, Entity, CesiumComponentRef } from "resium";
 
-import { toColor } from "@reearth/classic/util/value";
+import { toColor } from "@reearth/beta/utils/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { attachTag, colorBlendMode, draggableTag, heightReference, shadowMode } from "../common";
@@ -74,13 +74,13 @@ export default function Model({ layer }: PrimitiveProps<Property>) {
     () =>
       position
         ? Transforms.headingPitchRollQuaternion(
-            position,
-            new HeadingPitchRoll(
-              CesiumMath.toRadians(heading ?? 0),
-              CesiumMath.toRadians(pitch ?? 0),
-              CesiumMath.toRadians(roll ?? 0),
-            ),
-          )
+          position,
+          new HeadingPitchRoll(
+            CesiumMath.toRadians(heading ?? 0),
+            CesiumMath.toRadians(pitch ?? 0),
+            CesiumMath.toRadians(roll ?? 0),
+          ),
+        )
         : undefined,
     [heading, pitch, position, roll],
   );

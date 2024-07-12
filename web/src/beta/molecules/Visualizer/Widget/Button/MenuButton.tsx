@@ -1,11 +1,11 @@
 import { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
-import { Camera } from "@reearth/classic/util/value";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import metricsSizes from "@reearth/beta/utils/metrics";
+import { Camera } from "@reearth/beta/utils/value";
 import { styled, usePublishTheme, PublishTheme, mask } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../Engine";
@@ -64,16 +64,16 @@ export default function MenuButton({
           ? "top-start"
           : "top-end"
         : position?.area === "middle"
-        ? position?.section === "left"
-          ? align === "end"
-            ? "top-start"
-            : "bottom-start"
-          : align === "end"
-          ? "top-end"
-          : "bottom-end"
-        : position?.section === "right" || align === "end"
-        ? "bottom-end"
-        : "bottom-start",
+          ? position?.section === "left"
+            ? align === "end"
+              ? "top-start"
+              : "bottom-start"
+            : align === "end"
+              ? "top-end"
+              : "bottom-end"
+          : position?.section === "right" || align === "end"
+            ? "bottom-end"
+            : "bottom-start",
     modifiers: [
       {
         name: "eventListeners",
@@ -194,7 +194,7 @@ const Button = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
 
   &:hover {
     background: ${({ publishedTheme, button }) =>
-      mask(button?.buttonBgcolor) || publishedTheme.mask};
+    mask(button?.buttonBgcolor) || publishedTheme.mask};
   }
 `;
 
@@ -213,7 +213,7 @@ const MenuInnerWrapper = styled.div<{ button?: Button; publishedTheme: PublishTh
   white-space: nowrap;
 `;
 
-const MenuItem = styled(Flex)<{ item?: MenuItem; button?: Button; publishedTheme: PublishTheme }>`
+const MenuItem = styled(Flex) <{ item?: MenuItem; button?: Button; publishedTheme: PublishTheme }>`
   min-height: ${({ item }) => (item?.menuType === "border" ? null : "25px")};
   border-radius: ${({ item }) => (item?.menuType === "border" ? null : "3px")};
   padding: ${({ item }) => (item?.menuType === "border" ? "0 10px" : "2px 10px")};
@@ -228,6 +228,6 @@ const MenuItem = styled(Flex)<{ item?: MenuItem; button?: Button; publishedTheme
 
   &:hover {
     background: ${({ publishedTheme, item, button }) =>
-      item?.menuType === "border" ? null : mask(button?.buttonBgcolor) || publishedTheme.mask};
+    item?.menuType === "border" ? null : mask(button?.buttonBgcolor) || publishedTheme.mask};
   }
 `;

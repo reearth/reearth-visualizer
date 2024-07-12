@@ -1,4 +1,4 @@
-import type { SceneProperty } from "@reearth/classic/components/molecules/Visualizer";
+import type { SceneProperty } from "@reearth/beta/molecules/Visualizer";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -55,11 +55,11 @@ export type Widget = {
   property: any;
   extended?: boolean;
   extendable?:
-    | {
-        vertically?: boolean | undefined;
-        horizontally?: boolean | undefined;
-      }
-    | undefined;
+  | {
+    vertically?: boolean | undefined;
+    horizontally?: boolean | undefined;
+  }
+  | undefined;
   floating?: boolean;
 };
 

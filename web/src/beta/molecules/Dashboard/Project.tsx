@@ -4,13 +4,13 @@ import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
-import PublicationStatus from "@reearth/classic/components/atoms/PublicationStatus";
-import Text from "@reearth/classic/components/atoms/Text";
-import { Project as ProjectObjType } from "@reearth/classic/components/molecules/Dashboard/types";
+import Button from "@reearth/beta/components/Button";
+import Flex from "@reearth/beta/components/Flex";
+import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/beta/components/Icon/Icons/defaultProjectImage.jpg";
+import PublicationStatus from "@reearth/beta/components/PublicationStatus";
+import Text from "@reearth/beta/components/Text";
+import { Project as ProjectObjType } from "@reearth/beta/molecules/Dashboard/types";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -106,8 +106,8 @@ const Block = styled.div<{ projectImage?: string | null; projectType?: ProjectTy
     projectImage
       ? `url(${projectImage})`
       : projectType === "beta"
-      ? `url(${defaultBetaProjectImage})`
-      : `url(${defaultProjectImage})`};
+        ? `url(${defaultBetaProjectImage})`
+        : `url(${defaultProjectImage})`};
   background-size: cover;
   background-position: center;
   ${({ projectImage }) => !projectImage && "background-size: 560px 290px;"}

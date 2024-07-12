@@ -6,7 +6,8 @@ import Divider from "@reearth/beta/components/Divider";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import TextBox from "@reearth/beta/components/TextBox";
-import { fonts, metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

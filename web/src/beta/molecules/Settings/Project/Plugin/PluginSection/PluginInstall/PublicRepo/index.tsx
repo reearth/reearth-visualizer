@@ -1,12 +1,12 @@
 import React from "react";
 
+import Box from "@reearth/beta/components/Box";
+import Button from "@reearth/beta/components/Button";
+import { Icons } from "@reearth/beta/components/Icon";
+import Loading from "@reearth/beta/components/Loading";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
 import TextBox from "@reearth/beta/components/TextBox";
-import Box from "@reearth/classic/components/atoms/Box";
-import Button from "@reearth/classic/components/atoms/Button";
-import { Icons } from "@reearth/classic/components/atoms/Icon";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 

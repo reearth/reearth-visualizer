@@ -1,7 +1,7 @@
 import React from "react";
 
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled } from "@reearth/services/theme";
 
 type Props = {

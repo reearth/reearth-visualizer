@@ -11,7 +11,7 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/beta/graphql";
-import { Project } from "@reearth/classic/components/molecules/Dashboard/types";
+import { Project } from "@reearth/beta/molecules/Dashboard/types";
 import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
@@ -21,8 +21,8 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
     ? "published"
     : s === PublishmentStatus.Limited
-    ? "limited"
-    : "unpublished";
+      ? "limited"
+      : "unpublished";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
@@ -89,15 +89,15 @@ export default (workspaceId: string) => {
     .map<Project | undefined>(project =>
       project
         ? {
-            id: project.id,
-            description: project.description,
-            name: project.name,
-            imageUrl: project.imageUrl,
-            isArchived: project.isArchived,
-            status: toPublishmentStatus(project.publishmentStatus),
-            sceneId: project.scene?.id,
-            projectType: project.coreSupport ? "beta" : "classic",
-          }
+          id: project.id,
+          description: project.description,
+          name: project.name,
+          imageUrl: project.imageUrl,
+          isArchived: project.isArchived,
+          status: toPublishmentStatus(project.publishmentStatus),
+          sceneId: project.scene?.id,
+          projectType: project.coreSupport ? "beta" : "classic",
+        }
         : undefined,
     )
     .filter((project): project is Project => !!project);

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
-import { TimeEventHandler } from "@reearth/classic/components/atoms/Timeline/types";
-import { Widget } from "@reearth/classic/components/molecules/Visualizer/Plugin";
+import { TimeEventHandler } from "@reearth/beta/components/Timeline/types";
+import { Widget } from "@reearth/beta/molecules/Visualizer/Plugin";
 
 import { useContext } from "../../Plugin";
 
@@ -55,10 +55,10 @@ export const useTimeline = ({
       const cur = isRangeChanged
         ? t
         : range.end && t > range.end
-        ? range.start
-        : range.start && t < range.start
-        ? range.end
-        : t;
+          ? range.start
+          : range.start && t < range.start
+            ? range.end
+            : t;
       if (cur) {
         clock.currentTime = new Date(cur);
       }

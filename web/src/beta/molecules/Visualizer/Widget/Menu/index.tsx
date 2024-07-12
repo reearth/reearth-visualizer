@@ -1,7 +1,7 @@
 import { groupBy } from "lodash-es";
 import { useMemo } from "react";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
+import Flex from "@reearth/beta/components/Flex";
 import { styled } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
@@ -51,7 +51,7 @@ const Menu = ({ widget, sceneProperty }: Props): JSX.Element => {
   );
 };
 
-const Wrapper = styled(Flex)<{ position?: "topleft" | "topright" | "bottomleft" | "bottomright" }>`
+const Wrapper = styled(Flex) <{ position?: "topleft" | "topright" | "bottomleft" | "bottomright" }>`
   position: absolute;
   max-width: 100vw;
   padding: 2.5px;

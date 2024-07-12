@@ -1,14 +1,10 @@
 import React, { useCallback, useRef } from "react";
 
-import Dropdown, { Ref as DropDownRef } from "@reearth/classic/components/atoms/Dropdown";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Text from "@reearth/classic/components/atoms/Text";
-import { Workspace } from "@reearth/classic/components/molecules/Common/Header";
-import {
-  MenuListItemLabel,
-  MenuList,
-  MenuListItem,
-} from "@reearth/classic/components/molecules/Common/MenuList";
+import Dropdown, { Ref as DropDownRef } from "@reearth/beta/components/Dropdown";
+import Flex from "@reearth/beta/components/Flex";
+import Text from "@reearth/beta/components/Text";
+import { Workspace } from "@reearth/beta/molecules/Common/Header";
+import { MenuListItemLabel, MenuList, MenuListItem } from "@reearth/beta/molecules/Common/MenuList";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

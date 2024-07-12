@@ -2,7 +2,7 @@ import React from "react";
 
 import Text from "@reearth/beta/components/Text";
 // Theme
-import { metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -58,10 +58,10 @@ const StatusCircle = styled.div<PublishStatusProps>`
     status === "published" || status === "limited"
       ? theme.classic.publishStatus.published
       : status === "unpublished"
-      ? theme.classic.publishStatus.unpublished
-      : status === "building"
-      ? theme.classic.publishStatus.building
-      : null};
+        ? theme.classic.publishStatus.unpublished
+        : status === "building"
+          ? theme.classic.publishStatus.building
+          : null};
   border-radius: 50px;
   margin: auto ${metricsSizes["s"]}px auto 0;
 `;

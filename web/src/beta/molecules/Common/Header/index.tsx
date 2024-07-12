@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
-import { metrics } from "@reearth/classic/theme";
+import Icon from "@reearth/beta/components/Icon";
+import WorkspaceCreationModal from "@reearth/beta/molecules/Common/WorkspaceCreationModal";
+import metrics from "@reearth/beta/utils/metrics";
 import { styled, css } from "@reearth/services/theme";
 
 import Profile from "./profile";

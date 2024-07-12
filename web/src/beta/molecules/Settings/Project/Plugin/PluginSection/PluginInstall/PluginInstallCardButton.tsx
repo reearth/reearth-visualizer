@@ -1,9 +1,9 @@
 import React from "react";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon, { Icons } from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Flex from "@reearth/beta/components/Flex";
+import Icon, { Icons } from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {

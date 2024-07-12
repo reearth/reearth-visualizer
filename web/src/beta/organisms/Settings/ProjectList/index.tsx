@@ -1,14 +1,14 @@
 import React from "react";
 
+import Button from "@reearth/beta/components/Button";
+import Loading from "@reearth/beta/components/Loading";
+import TabSection from "@reearth/beta/components/TabSection";
+import AssetModal from "@reearth/beta/features/Modals/AssetModal";
+import ProjectCreationModal from "@reearth/beta/molecules/Common/ProjectCreationModal";
+import ProjectTypeSelectionModal from "@reearth/beta/molecules/Common/ProjectTypeSelectionModal";
 import MoleculeProjectList from "@reearth/beta/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/beta/molecules/Settings/SettingsHeader";
 import SettingPage from "@reearth/beta/organisms/Settings/SettingPage";
-import Button from "@reearth/classic/components/atoms/Button";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import TabSection from "@reearth/classic/components/atoms/TabSection";
-import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
-import ProjectTypeSelectionModal from "@reearth/classic/components/molecules/Common/ProjectTypeSelectionModal";
-import AssetModal from "@reearth/beta/organisms/AssetModal";
 import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { ValueTypes, ValueType } from "@reearth/classic/util/value";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

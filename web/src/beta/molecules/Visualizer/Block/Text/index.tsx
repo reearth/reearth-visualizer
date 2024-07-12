@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import nl2br from "react-nl2br";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Markdown from "@reearth/classic/components/atoms/Markdown";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
-import { Typography, typographyStyles } from "@reearth/classic/util/value";
+import Icon from "@reearth/beta/components/Icon";
+import Markdown from "@reearth/beta/components/Markdown";
+import { Typography, typographyStyles } from "@reearth/beta/utils/value";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -153,7 +153,7 @@ const TextBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled(Border)<{
+const Wrapper = styled(Border) <{
   isTemplate: boolean;
   paddingTop?: number;
   paddingBottom?: number;
@@ -167,13 +167,13 @@ const Wrapper = styled(Border)<{
   margin: 0 8px;
   border: 1px solid
     ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
-      (!isTemplate && !isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
+    (!isTemplate && !isHovered && !isSelected) || !isEditable
+      ? "transparent"
+      : isHovered
         ? theme.classic.infoBox.border
         : isSelected
-        ? theme.classic.infoBox.accent2
-        : theme.classic.infoBox.weakText};
+          ? theme.classic.infoBox.accent2
+          : theme.classic.infoBox.weakText};
   border-radius: 6px;
 `;
 
@@ -218,17 +218,17 @@ const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
     isHovered
       ? theme.classic.infoBox.border
       : isSelected
-      ? theme.classic.main.select
-      : theme.classic.infoBox.weakText};
+        ? theme.classic.main.select
+        : theme.classic.infoBox.weakText};
 `;
 
-const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
+const StyledIcon = styled(Icon) <{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
     isHovered
       ? theme.classic.infoBox.border
       : isSelected
-      ? theme.classic.main.select
-      : theme.classic.infoBox.weakText};
+        ? theme.classic.main.select
+        : theme.classic.infoBox.weakText};
 `;
 
 export default TextBlock;

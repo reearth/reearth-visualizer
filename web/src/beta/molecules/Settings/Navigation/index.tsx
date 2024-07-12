@@ -5,7 +5,7 @@ import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
 import NavigationItem from "@reearth/beta/molecules/Settings/NavigationItem";
 import { metricsSizes } from "@reearth/beta/utils/metrics";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

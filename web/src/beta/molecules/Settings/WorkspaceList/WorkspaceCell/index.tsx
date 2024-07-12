@@ -3,7 +3,7 @@ import React from "react";
 import Avatar from "@reearth/beta/components/Avatar";
 import Flex from "@reearth/beta/components/Flex";
 import Text from "@reearth/beta/components/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

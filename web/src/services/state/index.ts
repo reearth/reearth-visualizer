@@ -1,8 +1,8 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
+import { Clock } from "@reearth/beta//molecules/Visualizer/Plugin/types";
 import type { Camera } from "@reearth/beta/utils/value";
-import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
 import type { LayerSelectionReason } from "@reearth/core";
 import { ProjectType } from "@reearth/types";
 
@@ -100,11 +100,11 @@ export const useRootLayerId = () => useAtom(rootLayerId);
 export type Selected =
   | { type: "scene" }
   | {
-      type: "layer";
-      layerId: string;
-      featureId?: string;
-      layerSelectionReason?: LayerSelectionReason;
-    }
+    type: "layer";
+    layerId: string;
+    featureId?: string;
+    layerSelectionReason?: LayerSelectionReason;
+  }
   | { type: "widgets" }
   | { type: "cluster"; clusterId: string }
   | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }

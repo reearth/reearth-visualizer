@@ -1,9 +1,9 @@
 import React from "react";
 
-import Box from "@reearth/classic/components/atoms/Box";
-import ConfirmationModal from "@reearth/classic/components/atoms/ConfirmationModal";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
+import Box from "@reearth/beta/components/Box";
+import ConfirmationModal from "@reearth/beta/components/ConfirmationModal";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 

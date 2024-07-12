@@ -1,8 +1,8 @@
 import React from "react";
 import useFileInput from "use-file-input";
 
-import { Icons } from "@reearth/classic/components/atoms/Icon";
-import Loading from "@reearth/classic/components/atoms/Loading";
+import { Icons } from "@reearth/beta/components/Icon";
+import Loading from "@reearth/beta/components/Loading";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 

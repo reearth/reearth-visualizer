@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type Item<Value extends string | number = string> = {

@@ -1,13 +1,9 @@
 import React from "react";
 
-import Dropdown from "@reearth/classic/components/atoms/Dropdown";
-import Text from "@reearth/classic/components/atoms/Text";
-import { Project } from "@reearth/classic/components/molecules/Common/Header";
-import {
-  MenuListItemLabel,
-  MenuList,
-  MenuListItem,
-} from "@reearth/classic/components/molecules/Common/MenuList";
+import Dropdown from "@reearth/beta/components/Dropdown";
+import Text from "@reearth/beta/components/Text";
+import { Project } from "@reearth/beta/molecules/Common/Header";
+import { MenuListItemLabel, MenuList, MenuListItem } from "@reearth/beta/molecules/Common/MenuList";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

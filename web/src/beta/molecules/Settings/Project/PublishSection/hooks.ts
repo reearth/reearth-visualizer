@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 
-import { Status as StatusType } from "@reearth/classic/components/atoms/PublicationStatus";
-import generateRandomString from "@reearth/classic/util/generate-random-string";
+import { Status as StatusType } from "@reearth/beta/components/PublicationStatus";
+import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useAuth } from "@reearth/services/auth";
 
 export type Validation = "too short" | "not match";

@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled, fonts, useTheme } from "@reearth/services/theme";
 
 export type Props = {
@@ -23,9 +23,9 @@ const NavigationItem: React.FC<Props> = ({ name, to, level, children }) => {
         style={({ isActive }) =>
           isActive
             ? {
-                background: theme.classic.main.select,
-                color: theme.classic.main.strongText,
-              }
+              background: theme.classic.main.select,
+              color: theme.classic.main.strongText,
+            }
             : {}
         }>
         <StyledText size="m" customColor level={level}>
@@ -48,7 +48,7 @@ const LinkItem = styled(NavLink)`
   }
 `;
 
-const StyledText = styled(Text)<{ level?: 1 | 2 | 3 }>`
+const StyledText = styled(Text) <{ level?: 1 | 2 | 3 }>`
   overflow: hidden;
   text-overflow: ellipsis;
   padding-left: ${({ level }) =>

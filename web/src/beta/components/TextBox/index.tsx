@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import { metrics, metricsSizes } from "@reearth/classic/theme";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import Flex from "@reearth/beta/components/Flex";
+import metrics, { metricsSizes } from "@reearth/beta/utils/metrics";
+import fonts from "@reearth/services/fonts";
 import { styled } from "@reearth/services/theme";
 
 export type Props<T extends string = string> = {
@@ -152,7 +152,7 @@ export default function TextBox<T extends string = string>({
 
 type InputProps = Pick<Props, "color" | "backgroundColor" | "borderColor" | "floatedTextColor">;
 
-const FormWrapper = styled(Flex)<InputProps>`
+const FormWrapper = styled(Flex) <InputProps>`
   box-sizing: border-box;
 `;
 

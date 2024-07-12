@@ -2,7 +2,7 @@ import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 import React, { useMemo } from "react";
 import { RectangleGraphics, Entity } from "resium";
 
-import { Rect as RectValue } from "@reearth/classic/util/value";
+import { Rect as RectValue } from "@reearth/beta/utils/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { heightReference, shadowMode } from "../common";
@@ -42,19 +42,19 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
   const coordinates = useMemo(
     () =>
       typeof rect?.east === "number" &&
-      typeof rect?.north === "number" &&
-      typeof rect?.south === "number" &&
-      typeof rect?.west === "number" &&
-      rect.west <= rect.east &&
-      rect.south <= rect.north &&
-      rect.east >= -180 &&
-      rect.east <= 180 &&
-      rect.west >= -180 &&
-      rect.west <= 180 &&
-      rect.south >= -90 &&
-      rect.south <= 90 &&
-      rect.north >= -90 &&
-      rect.north <= 90
+        typeof rect?.north === "number" &&
+        typeof rect?.south === "number" &&
+        typeof rect?.west === "number" &&
+        rect.west <= rect.east &&
+        rect.south <= rect.north &&
+        rect.east >= -180 &&
+        rect.east <= 180 &&
+        rect.west >= -180 &&
+        rect.west <= 180 &&
+        rect.south >= -90 &&
+        rect.south <= 90 &&
+        rect.north >= -90 &&
+        rect.north <= 90
         ? Rectangle.fromDegrees(rect.west, rect.south, rect.east, rect.north)
         : undefined,
     [rect?.east, rect?.north, rect?.south, rect?.west],
@@ -65,12 +65,12 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
       style === "image"
         ? image
           ? new ImageMaterialProperty({
-              image,
-            })
+            image,
+          })
           : undefined
         : fillColor
-        ? Color.fromCssColorString(fillColor)
-        : undefined,
+          ? Color.fromCssColorString(fillColor)
+          : undefined,
     [style, image, fillColor],
   );
 

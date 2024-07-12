@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { GridWrapper } from "react-align";
 
-import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
+import { WidgetAreaState } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import { Viewport } from "../hooks";

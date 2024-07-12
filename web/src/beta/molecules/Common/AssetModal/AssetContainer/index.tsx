@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Divider from "@reearth/classic/components/atoms/Divider";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import SearchBar from "@reearth/classic/components/atoms/SearchBar";
-import Text from "@reearth/classic/components/atoms/Text";
-import AssetDeleteModal from "@reearth/classic/components/molecules/Common/AssetModal/AssetDeleteModal";
-import { metricsSizes } from "@reearth/classic/theme";
-import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
+import Button from "@reearth/beta/components/Button";
+import Divider from "@reearth/beta/components/Divider";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Loading from "@reearth/beta/components/Loading";
+import SearchBar from "@reearth/beta/components/SearchBar";
+import Text from "@reearth/beta/components/Text";
+import AssetDeleteModal from "@reearth/beta/molecules/Common/AssetModal/AssetDeleteModal";
+import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -174,8 +174,8 @@ const AssetContainer: React.FC<Props> = ({
               {searchTerm
                 ? t("No assets match your search.")
                 : t(
-                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
-                  )}
+                  "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
+                )}
             </TemplateText>
           </Template>
         ) : (
@@ -185,39 +185,39 @@ const AssetContainer: React.FC<Props> = ({
             <AssetList layoutType={layoutType}>
               {layoutType === "list"
                 ? assets?.map(a => (
-                    <AssetListItem
-                      key={a.id}
-                      asset={a}
-                      icon={
-                        checkIfFileType(a.url, fileFormats)
-                          ? "file"
-                          : checkIfFileType(a.url, imageFormats)
+                  <AssetListItem
+                    key={a.id}
+                    asset={a}
+                    icon={
+                      checkIfFileType(a.url, fileFormats)
+                        ? "file"
+                        : checkIfFileType(a.url, imageFormats)
                           ? "image"
                           : "assetNoSupport"
-                      }
-                      onCheck={() => onSelect?.(a)}
-                      selected={selectedAssets?.includes(a)}
-                      checked={initialAsset === a}
-                    />
-                  ))
+                    }
+                    onCheck={() => onSelect?.(a)}
+                    selected={selectedAssets?.includes(a)}
+                    checked={initialAsset === a}
+                  />
+                ))
                 : assets?.map(a => (
-                    <AssetCard
-                      key={a.id}
-                      name={a.name}
-                      cardSize={layoutType}
-                      icon={
-                        checkIfFileType(a.url, fileFormats)
-                          ? "file"
-                          : checkIfFileType(a.url, imageFormats)
+                  <AssetCard
+                    key={a.id}
+                    name={a.name}
+                    cardSize={layoutType}
+                    icon={
+                      checkIfFileType(a.url, fileFormats)
+                        ? "file"
+                        : checkIfFileType(a.url, imageFormats)
                           ? undefined
                           : "assetNoSupport"
-                      }
-                      url={a.url}
-                      onCheck={() => onSelect?.(a)}
-                      selected={selectedAssets?.includes(a)}
-                      checked={initialAsset === a}
-                    />
-                  ))}
+                    }
+                    url={a.url}
+                    onCheck={() => onSelect?.(a)}
+                    selected={selectedAssets?.includes(a)}
+                    checked={initialAsset === a}
+                  />
+                ))}
             </AssetList>
             {isLoading && <StyledLoading relative />}
           </AssetListWrapper>
@@ -291,7 +291,7 @@ const LayoutButtons = styled(Flex)`
   flex: 3;
 `;
 
-const StyledIcon = styled(Icon)<{ selected?: boolean }>`
+const StyledIcon = styled(Icon) <{ selected?: boolean }>`
   margin-left: ${metricsSizes["m"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;

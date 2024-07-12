@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
 // Components
+import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
+import defaultProjectImage from "@reearth/beta/components/Icon/Icons/defaultProjectImage.jpg";
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/beta/components/PublicationStatus";
-import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -71,8 +71,8 @@ const StyledWrapper = styled.div<{ project: Project }>`
     props.project.imageUrl
       ? `url(${props.project.imageUrl})`
       : props.project.projectType === "beta"
-      ? `url(${defaultBetaProjectImage})`
-      : `url(${defaultProjectImage})`};
+        ? `url(${defaultBetaProjectImage})`
+        : `url(${defaultProjectImage})`};
   background-size: ${props => (props.project.imageUrl ? "cover" : "400px 240px")};
   background-position: center;
   box-shadow: 0 0 5px ${props => props.theme.classic.projectCell.shadow};
@@ -87,9 +87,9 @@ const Wrapper = styled.div<{ isHover?: boolean }>`
   background-color: ${props => (props.isHover ? props.theme.classic.main.lightTransparentBg : "")};
   border: 1px solid
     ${props =>
-      props.isHover
-        ? props.theme.classic.main.select
-        : props.theme.classic.main.lightTransparentBg};
+    props.isHover
+      ? props.theme.classic.main.select
+      : props.theme.classic.main.lightTransparentBg};
   display: flex;
   flex-direction: column;
   justify-content: space-between;

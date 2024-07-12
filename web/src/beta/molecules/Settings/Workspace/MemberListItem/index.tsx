@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import Avatar from "@reearth/beta/components/Avatar";
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
-import { metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

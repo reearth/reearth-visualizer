@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
-import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
+import { WidgetAreaState } from "@reearth/services/state";
 
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";

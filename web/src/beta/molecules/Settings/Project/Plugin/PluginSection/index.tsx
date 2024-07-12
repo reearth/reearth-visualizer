@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 
-import Box from "@reearth/classic/components/atoms/Box";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import TabSection from "@reearth/classic/components/atoms/TabSection";
-import { PluginItem as PluginItemType } from "@reearth/classic/components/molecules/Settings/Project/Plugin/PluginAccordion";
+import Box from "@reearth/beta/components/Box";
+import Loading from "@reearth/beta/components/Loading";
+import TabSection from "@reearth/beta/components/TabSection";
+import { PluginItem as PluginItemType } from "@reearth/beta/molecules/Settings/Project/Plugin/PluginAccordion";
 import { Extension } from "@reearth/services/config/extensions";
 import { useT } from "@reearth/services/i18n";
 
@@ -15,14 +15,14 @@ export type Props = {
   title?: string;
   loading?: boolean;
   marketplacePlugins?:
-    | {
-        fullId: string;
-        id: string;
-        version: string;
-        title?: string;
-        author?: string;
-      }[]
-    | undefined;
+  | {
+    fullId: string;
+    id: string;
+    version: string;
+    title?: string;
+    author?: string;
+  }[]
+  | undefined;
   personalPlugins?: PluginItem[];
   extensions?: {
     library: Extension<"plugin-library">[] | undefined;

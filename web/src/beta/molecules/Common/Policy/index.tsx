@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
+import Button from "@reearth/beta/components/Button";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
 import { useLang, useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -80,7 +80,7 @@ const Policy: React.FC<Props> = ({ policy, modalOpen, onModalOpen, onModalClose 
 
 export default Policy;
 
-const PolicyText = styled(Text)<{ clickable?: boolean }>`
+const PolicyText = styled(Text) <{ clickable?: boolean }>`
   background: #2b2a2f;
   padding: 4px 20px;
   border-radius: 12px;

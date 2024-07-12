@@ -1,9 +1,9 @@
 import React from "react";
 
-import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Project from "@reearth/classic/components/molecules/Dashboard/Project";
-import { Project as ProjectType } from "@reearth/classic/components/molecules/Dashboard/types";
+import DashboardBlock from "@reearth/beta/components/DashboardBlock";
+import Icon from "@reearth/beta/components/Icon";
+import Project from "@reearth/beta/molecules/Dashboard/Project";
+import { Project as ProjectType } from "@reearth/beta/molecules/Dashboard/types";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

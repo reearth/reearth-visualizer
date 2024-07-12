@@ -9,7 +9,7 @@ import { pick } from "lodash-es";
 import { useMemo } from "react";
 import { Globe as CesiumGlobe } from "resium";
 
-import { objKeys } from "@reearth/classic/util/util";
+import { objKeys } from "@reearth/beta/utils/util";
 
 import type { SceneProperty, TerrainProperty } from "../../ref";
 
@@ -76,13 +76,13 @@ const defaultTerrainProvider = new EllipsoidTerrainProvider();
 
 const terrainProviders: {
   [k in NonNullable<TerrainProperty["terrainType"]>]:
-    | TerrainProvider
-    | ((
-        opts: Pick<
-          TerrainProperty,
-          "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
-        >,
-      ) => Promise<TerrainProvider> | TerrainProvider | null);
+  | TerrainProvider
+  | ((
+    opts: Pick<
+      TerrainProperty,
+      "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
+    >,
+  ) => Promise<TerrainProvider> | TerrainProvider | null);
 } = {
   cesium: ({ terrainCesiumIonAccessToken }) =>
     // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
@@ -103,13 +103,13 @@ const terrainProviders: {
   cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
     terrainCesiumIonAsset
       ? CesiumTerrainProvider.fromUrl(
-          terrainCesiumIonUrl ||
-            IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
-              accessToken: terrainCesiumIonAccessToken,
-            }),
-          {
-            requestVertexNormals: true,
-          },
-        )
+        terrainCesiumIonUrl ||
+        IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
+          accessToken: terrainCesiumIonAccessToken,
+        }),
+        {
+          requestVertexNormals: true,
+        },
+      )
       : null,
 };

@@ -3,9 +3,9 @@ import React, { useEffect, useMemo, useRef } from "react";
 import nl2br from "react-nl2br";
 import { Entity, BillboardGraphics, CesiumComponentRef } from "resium";
 
-import defaultImage from "@reearth/classic/components/atoms/Icon/Icons/primPhotoIcon.svg";
-import Text from "@reearth/classic/components/atoms/Text";
-import { Camera, LatLng } from "@reearth/classic/util/value";
+import defaultImage from "@reearth/beta/components/Icon/Icons/primPhotoIcon.svg";
+import Text from "@reearth/beta/components/Text";
+import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";

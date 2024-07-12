@@ -1,8 +1,8 @@
-import DashboardBlock from "@reearth/classic/components/atoms/DashboardBlock";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metrics, metricsSizes } from "@reearth/classic/theme";
+import DashboardBlock from "@reearth/beta/components/DashboardBlock";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import metrics, { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -59,7 +59,7 @@ const Wrapper = styled(Flex)`
     width: 200%;
     height: 100%;
     background: ${({ theme }) =>
-      `linear-gradient(46.66deg, ${theme.classic.dashboard.itemBg} 22.94%, ${theme.classic.main.brandBlue} 72.25%)`};
+    `linear-gradient(46.66deg, ${theme.classic.dashboard.itemBg} 22.94%, ${theme.classic.main.brandBlue} 72.25%)`};
     background-size: cover;
     background-position: top;
     transition: transform 0.4s;

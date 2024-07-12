@@ -11,8 +11,8 @@ import {
 } from "cesium";
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 
-import { useContext } from "@reearth/classic/components/molecules/Visualizer/Plugin";
-import { EventCallback } from "@reearth/classic/util/event";
+import { useContext } from "@reearth/beta/molecules/Visualizer/Plugin";
+import { EventCallback } from "@reearth/beta/utils/event";
 
 import { PointEventCallback, ScalePointProperties } from "../ScalePoints";
 

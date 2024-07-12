@@ -1,13 +1,13 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import FloatedPanel from "@reearth/classic/components/atoms/FloatedPanel";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
-import { Typography, typographyStyles } from "@reearth/classic/util/value";
+import Flex from "@reearth/beta/components/Flex";
+import FloatedPanel from "@reearth/beta/components/FloatedPanel";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
+import { Typography, typographyStyles } from "@reearth/beta/utils/value";
+import fonts from "@reearth/services/fonts";
 import { styled, css, usePublishTheme } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../Engine";
@@ -186,7 +186,7 @@ const Mask = styled.div<{ activate?: boolean }>`
   overflow-x: hidden;
 `;
 
-const StyledFloatedPanel = styled(FloatedPanel)<{
+const StyledFloatedPanel = styled(FloatedPanel) <{
   floated?: boolean;
   open?: boolean;
   position?: "right" | "middle" | "left";
@@ -205,8 +205,8 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   margin-left: auto;
   margin-right: auto;`
         : position === "left"
-        ? "left: 30px"
-        : `right: 30px`
+          ? "left: 30px"
+          : `right: 30px`
       : "right: -6px"};
   ${({ heightType, height, open }) =>
     heightType === "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
@@ -251,7 +251,7 @@ const IconWrapper = styled(Flex)`
   }
 `;
 
-const TitleFlex = styled(Flex)<{ open?: boolean }>`
+const TitleFlex = styled(Flex) <{ open?: boolean }>`
   margin: ${({ open }) => (!open ? metricsSizes["s"] : metricsSizes["m"]) + "px auto"};
   text-align: center;
   box-sizing: border-box;
@@ -259,7 +259,7 @@ const TitleFlex = styled(Flex)<{ open?: boolean }>`
   width: 75%;
 `;
 
-const StyledIcon = styled(Icon)<{ open?: boolean; color: string }>`
+const StyledIcon = styled(Icon) <{ open?: boolean; color: string }>`
   display: ${({ open }) => (open ? "none" : "block")};
   color: ${({ color }) => color};
 `;
@@ -271,7 +271,7 @@ const TitleText = styled.span<{
   display: ${({ show }) => (show ? "block" : "none")};
 `;
 
-const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
+const CloseBtn = styled(Icon) <{ open?: boolean; color: string }>`
   position: absolute;
   top: 10px;
   right: 10px;

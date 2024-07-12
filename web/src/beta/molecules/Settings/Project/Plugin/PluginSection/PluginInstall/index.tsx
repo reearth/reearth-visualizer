@@ -1,9 +1,9 @@
 import React from "react";
 
-import Box from "@reearth/classic/components/atoms/Box";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import { Icons } from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
+import Box from "@reearth/beta/components/Box";
+import Flex from "@reearth/beta/components/Flex";
+import { Icons } from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

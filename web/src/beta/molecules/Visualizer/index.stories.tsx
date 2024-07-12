@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { useMemo, useState } from "react";
 
-import type { WidgetAlignSystem } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import type { WidgetAlignSystem } from "@reearth/beta/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 import Component, { Widget, Props, Layer } from ".";
 
@@ -266,23 +266,23 @@ export const Plugin: Story<Props> = args => {
       widgets: {
         ...(mode === "widget"
           ? {
-              alignSystem: {
-                inner: {
-                  center: {
-                    bottom: {
-                      align: "start",
-                      widgets: [
-                        {
-                          id: "xxx",
-                          extended: true,
-                          __REEARTH_SOURCECODE: sourceCode,
-                        },
-                      ],
-                    },
+            alignSystem: {
+              inner: {
+                center: {
+                  bottom: {
+                    align: "start",
+                    widgets: [
+                      {
+                        id: "xxx",
+                        extended: true,
+                        __REEARTH_SOURCECODE: sourceCode,
+                      },
+                    ],
                   },
                 },
               },
-            }
+            },
+          }
           : {}),
       },
       rootLayer: {
@@ -304,11 +304,11 @@ export const Plugin: Story<Props> = args => {
               blocks: [
                 ...(mode === "block"
                   ? [
-                      {
-                        id: "xxx",
-                        __REEARTH_SOURCECODE: sourceCode,
-                      } as any,
-                    ]
+                    {
+                      id: "xxx",
+                      __REEARTH_SOURCECODE: sourceCode,
+                    } as any,
+                  ]
                   : []),
                 {
                   id: "yyy",
@@ -323,15 +323,15 @@ export const Plugin: Story<Props> = args => {
           },
           ...(mode === "primitive"
             ? [
-                {
-                  id: "xxx",
-                  __REEARTH_SOURCECODE: sourceCode,
-                  isVisible: true,
-                  property: {
-                    location: { lat: 0, lng: 130 },
-                  },
-                } as any,
-              ]
+              {
+                id: "xxx",
+                __REEARTH_SOURCECODE: sourceCode,
+                isVisible: true,
+                property: {
+                  location: { lat: 0, lng: 130 },
+                },
+              } as any,
+            ]
             : []),
         ],
       },

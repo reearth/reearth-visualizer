@@ -1,4 +1,4 @@
-import { objectFromGetter } from "@reearth/classic/util/object";
+import { objectFromGetter } from "@reearth/beta/utils/object";
 
 import type { Layer } from "../Primitive";
 
@@ -37,11 +37,10 @@ export class LayerStore {
 
         if (key === "type") {
           return target
-            ? `${
-                !target.pluginId || target.pluginId === "reearth"
-                  ? ""
-                  : `${target.pluginId.replace(/#.*?$|^.*~/g, "")}/`
-              }${target.extensionId || ""}`
+            ? `${!target.pluginId || target.pluginId === "reearth"
+              ? ""
+              : `${target.pluginId.replace(/#.*?$|^.*~/g, "")}/`
+            }${target.extensionId || ""}`
             : undefined;
         }
 
@@ -105,11 +104,11 @@ export class LayerStore {
       ...self,
       ...(self.infobox
         ? {
-            infobox: {
-              ...self.infobox,
-              blocks: self.infobox.blocks?.map(b => ({ ...b, id: this.#newId() })),
-            },
-          }
+          infobox: {
+            ...self.infobox,
+            blocks: self.infobox.blocks?.map(b => ({ ...b, id: this.#newId() })),
+          },
+        }
         : {}),
       id: this.#newId(),
       pluginId: "reearth",

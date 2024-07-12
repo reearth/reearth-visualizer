@@ -1,11 +1,11 @@
 import { useFormik } from "formik";
 import React, { useCallback } from "react";
 
-import Button from "@reearth/classic/components/atoms/Button";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import Button from "@reearth/beta/components/Button";
+import Loading from "@reearth/beta/components/Loading";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

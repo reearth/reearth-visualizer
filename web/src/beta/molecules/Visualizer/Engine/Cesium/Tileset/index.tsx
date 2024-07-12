@@ -17,7 +17,7 @@ import {
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
-import { EXPERIMENTAL_clipping, toColor } from "@reearth/classic/util/value";
+import { EXPERIMENTAL_clipping, toColor } from "@reearth/beta/utils/value";
 
 import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";
@@ -223,13 +223,13 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
       ? IonResource.fromAssetId(96188, {
-          accessToken: meta?.cesiumIonAccessToken as string | undefined,
-        }) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
+        accessToken: meta?.cesiumIonAccessToken as string | undefined,
+      }) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
       : googleMapResource
-      ? googleMapResource
-      : isVisible && tileset
-      ? tileset
-      : null;
+        ? googleMapResource
+        : isVisible && tileset
+          ? tileset
+          : null;
   }, [isVisible, sourceType, tileset, meta, googleMapResource]);
 
   const handleOnReady = useCallback(

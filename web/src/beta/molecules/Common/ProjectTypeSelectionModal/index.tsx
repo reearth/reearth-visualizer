@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Modal from "@reearth/classic/components/atoms/Modal";
-import Text from "@reearth/classic/components/atoms/Text";
+import Icon from "@reearth/beta/components/Icon";
+import Modal from "@reearth/beta/components/Modal";
+import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";

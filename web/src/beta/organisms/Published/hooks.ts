@@ -8,7 +8,7 @@ import type {
   WidgetAlignSystem,
   Alignment,
   ClusterProperty,
-} from "@reearth/classic/components/molecules/Visualizer";
+} from "@reearth/beta/molecules/Visualizer";
 import { config } from "@reearth/services/config";
 
 import {
@@ -136,9 +136,9 @@ export default (alias?: string) => {
       floatingWidgets,
       alignSystem: data.widgetAlignSystem
         ? {
-            outer: widgetZone(data.widgetAlignSystem.outer),
-            inner: widgetZone(data.widgetAlignSystem.inner),
-          }
+          outer: widgetZone(data.widgetAlignSystem.outer),
+          inner: widgetZone(data.widgetAlignSystem.inner),
+        }
         : undefined,
     };
   }, [data]);
@@ -216,14 +216,14 @@ function processLayer(l: RawLayer): Layer {
     property: processProperty(l.property),
     infobox: l.infobox
       ? {
-          property: processProperty(l.infobox.property),
-          blocks: l.infobox.fields.map<Block>(f => ({
-            id: f.id,
-            pluginId: f.pluginId,
-            extensionId: f.extensionId,
-            property: processProperty(f.property),
-          })),
-        }
+        property: processProperty(l.infobox.property),
+        blocks: l.infobox.fields.map<Block>(f => ({
+          id: f.id,
+          pluginId: f.pluginId,
+          extensionId: f.extensionId,
+          property: processProperty(f.property),
+        })),
+      }
       : undefined,
     tags: l.tags, // Currently no need to convert tags
     children: l.children?.map(processLayer),

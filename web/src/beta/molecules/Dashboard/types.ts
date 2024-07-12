@@ -1,4 +1,4 @@
-import { Status as StatusType } from "@reearth/classic/components/atoms/PublicationStatus";
+import { Status as StatusType } from "@reearth/beta/components/PublicationStatus";
 import { ProjectType } from "@reearth/types";
 
 export type User = {

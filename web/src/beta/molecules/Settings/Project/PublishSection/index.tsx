@@ -6,7 +6,7 @@ import Text from "@reearth/beta/components/Text";
 import Field from "@reearth/beta/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/beta/molecules/Settings/Project/ChangeSiteNameModal";
 import Section from "@reearth/beta/molecules/Settings/Section";
-import { metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

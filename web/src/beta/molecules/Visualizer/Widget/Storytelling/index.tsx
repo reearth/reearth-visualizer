@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
-import { Camera as CameraValue } from "@reearth/classic/util/value";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
+import { Camera as CameraValue } from "@reearth/beta/utils/value";
 import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
@@ -191,7 +191,7 @@ const Current = styled(Flex)`
   }
 `;
 
-const Title = styled(Text)<{ color: string }>`
+const Title = styled(Text) <{ color: string }>`
   color: ${({ color }) => color};
   text-overflow: ellipsis;
   overflow: hidden;
@@ -205,13 +205,13 @@ const Title = styled(Text)<{ color: string }>`
   }
 `;
 
-const StyledIcon = styled(Icon)<{ iconColor: string }>`
+const StyledIcon = styled(Icon) <{ iconColor: string }>`
   color: ${({ color }) => color};
   margin-right: ${metricsSizes["l"]}px;
   flex-shrink: 0;
 `;
 
-const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
+const MenuIcon = styled(Icon) <{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
   background: ${props => (props.menuOpen ? props.publishedTheme.select : "unset")};
   border-radius: 25px;
   padding: ${metricsSizes["xs"]}px;
@@ -244,16 +244,16 @@ const Menu = styled.div<{
   @media (max-width: 560px) {
     width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
     max-height: ${({ area, align }) =>
-      area === "middle" && align === "centered" ? "30vh" : "70vh"};
+    area === "middle" && align === "centered" ? "30vh" : "70vh"};
     border: 1px solid ${props => props.theme.classic.main.text};
     top: ${({ area, align }) =>
-      area === "top" || (area === "middle" && align === "start") ? "60px" : null};
+    area === "top" || (area === "middle" && align === "start") ? "60px" : null};
     bottom: ${({ area, align }) =>
-      (area === "middle" && align !== "start") || area !== "top" ? "60px" : null};
+    (area === "middle" && align !== "start") || area !== "top" ? "60px" : null};
   }
 `;
 
-const MenuItem = styled(Flex)<{ selected?: boolean; publishedTheme: PublishTheme }>`
+const MenuItem = styled(Flex) <{ selected?: boolean; publishedTheme: PublishTheme }>`
   border-radius: ${metricsSizes["m"]}px;
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
   background: ${({ publishedTheme, selected }) => (selected ? publishedTheme.select : "inherit")};

@@ -1,7 +1,7 @@
 import { Math as CesiumMath } from "cesium";
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 
-import { Camera as CameraValue } from "@reearth/classic/util/value";
+import { Camera as CameraValue } from "@reearth/beta/utils/value";
 
 import { useContext } from "../../Plugin";
 import type { Layer } from "../../Plugin";
@@ -139,14 +139,14 @@ export default function ({
     select(
       typeof index === "number" && index >= 0
         ? {
-            index,
-            story: stories[index],
-            layer: selectedLayer,
-            duration,
-            camera,
-            range,
-            noCameraFlight: true,
-          }
+          index,
+          story: stories[index],
+          layer: selectedLayer,
+          duration,
+          camera,
+          range,
+          noCameraFlight: true,
+        }
         : undefined,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

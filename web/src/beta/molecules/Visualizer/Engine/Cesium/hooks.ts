@@ -14,7 +14,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
-import { Camera, LatLng } from "@reearth/classic/util/value";
+import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
@@ -225,11 +225,11 @@ export default ({
       mouseEvents[type] =
         type === "wheel"
           ? (delta: number) => {
-              handleMouseWheel(delta);
-            }
+            handleMouseWheel(delta);
+          }
           : (e: CesiumMovementEvent, target: RootEventTarget) => {
-              handleMouseEvent(type as keyof MouseEvents, e, target);
-            };
+            handleMouseEvent(type as keyof MouseEvents, e, target);
+          };
     });
     return mouseEvents;
   }, [handleMouseEvent, handleMouseWheel]);

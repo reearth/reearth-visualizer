@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 
-import { LatLngHeight } from "@reearth/classic/util/value";
+import { LatLngHeight } from "@reearth/beta/utils/value";
 
 import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";

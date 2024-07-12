@@ -1,6 +1,6 @@
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
-import { typographyStyles } from "@reearth/classic/util/value";
+import { typographyStyles } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
+import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
 import type { InfoboxProperty } from "../Infobox";
 
@@ -17,12 +17,12 @@ export const Border = styled.div<{
 }>`
   border: 1px solid
     ${({ isSelected, isHovered, isEditable, theme }) =>
-      (!isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
+    (!isHovered && !isSelected) || !isEditable
+      ? "transparent"
+      : isHovered
         ? theme.classic.infoBox.border
         : isSelected
-        ? theme.classic.infoBox.accent2
-        : theme.classic.infoBox.weakText};
+          ? theme.classic.infoBox.accent2
+          : theme.classic.infoBox.weakText};
   border-radius: 6px;
 `;

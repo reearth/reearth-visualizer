@@ -1,8 +1,8 @@
 import React from "react";
 
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
+import Flex from "@reearth/beta/components/Flex";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 type CardSize = "small" | "medium" | "large";
@@ -56,7 +56,7 @@ const AssetCard: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
+const Wrapper = styled(Flex) <{ selected?: boolean; cardSize?: CardSize }>`
   background: ${({ selected, theme }) =>
     selected ? theme.classic.assetCard.bgHover : theme.classic.assetCard.bg};
   box-shadow: 0 6px 6px -6px ${props => props.theme.classic.other.black};
@@ -96,7 +96,7 @@ const PreviewImage = styled.div<{ url?: string }>`
   background-position: center;
 `;
 
-const FileName = styled(Text)<{ cardSize?: CardSize }>`
+const FileName = styled(Text) <{ cardSize?: CardSize }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -1,10 +1,10 @@
 import React from "react";
 
+import Loading from "@reearth/beta/components/Loading";
 import ProjectCell, {
   Project as ProjectType,
 } from "@reearth/beta/molecules/Settings/ProjectList/ProjectCell";
-import Loading from "@reearth/classic/components/atoms/Loading";
-import { metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled } from "@reearth/services/theme";
 
 export type Project = ProjectType;

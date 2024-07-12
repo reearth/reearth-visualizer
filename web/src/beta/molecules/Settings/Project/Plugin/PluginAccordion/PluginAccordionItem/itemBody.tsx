@@ -1,5 +1,5 @@
-import Box from "@reearth/classic/components/atoms/Box";
-import Markdown from "@reearth/classic/components/atoms/Markdown";
+import Box from "@reearth/beta/components/Box";
+import Markdown from "@reearth/beta/components/Markdown";
 import { useTheme } from "@reearth/services/theme";
 
 export type Props = {

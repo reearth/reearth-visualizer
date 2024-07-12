@@ -33,9 +33,9 @@ import {
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
-import { useCanvas, useImage } from "@reearth/classic/util/image";
-import { tweenInterval } from "@reearth/classic/util/raf";
-import { Camera } from "@reearth/classic/util/value";
+import { useCanvas, useImage } from "@reearth/beta/utils/image";
+import { tweenInterval } from "@reearth/beta/utils/raf";
+import { Camera } from "@reearth/beta/utils/value";
 
 import { CameraOptions, Clock } from "../../Plugin/types";
 import { FlyToDestination } from "../ref";
@@ -118,13 +118,13 @@ export const useIcon = ({
   const w = !img
     ? 0
     : typeof imageSize === "number"
-    ? Math.floor(img.width * imageSize)
-    : Math.min(defaultImageSize, img.width);
+      ? Math.floor(img.width * imageSize)
+      : Math.min(defaultImageSize, img.width);
   const h = !img
     ? 0
     : typeof imageSize === "number"
-    ? Math.floor(img.height * imageSize)
-    : Math.floor((w / img.width) * img.height);
+      ? Math.floor(img.height * imageSize)
+      : Math.floor((w / img.width) * img.height);
 
   const draw = useCallback(
     (can: HTMLCanvasElement) =>
@@ -136,23 +136,23 @@ export const useIcon = ({
 };
 
 export const ho = (o: "left" | "center" | "right" | undefined): HorizontalOrigin | undefined =>
-  ({
-    left: HorizontalOrigin.LEFT,
-    center: HorizontalOrigin.CENTER,
-    right: HorizontalOrigin.RIGHT,
-    [""]: undefined,
-  }[o || ""]);
+({
+  left: HorizontalOrigin.LEFT,
+  center: HorizontalOrigin.CENTER,
+  right: HorizontalOrigin.RIGHT,
+  [""]: undefined,
+}[o || ""]);
 
 export const vo = (
   o: "top" | "center" | "baseline" | "bottom" | undefined,
 ): VerticalOrigin | undefined =>
-  ({
-    top: VerticalOrigin.TOP,
-    center: VerticalOrigin.CENTER,
-    baseline: VerticalOrigin.BASELINE,
-    bottom: VerticalOrigin.BOTTOM,
-    [""]: undefined,
-  }[o || ""]);
+({
+  top: VerticalOrigin.TOP,
+  center: VerticalOrigin.CENTER,
+  baseline: VerticalOrigin.BASELINE,
+  bottom: VerticalOrigin.BOTTOM,
+  [""]: undefined,
+}[o || ""]);
 
 export const getLocationFromScreen = (
   scene: Scene | undefined | null,
@@ -206,7 +206,7 @@ export const flyTo = (
     easing?: (time: number) => number;
   },
 ) => {
-  if (!cesiumCamera || !camera) return () => {};
+  if (!cesiumCamera || !camera) return () => { };
 
   const cancelFov = animateFOV({
     fov: camera.fov,
@@ -217,8 +217,8 @@ export const flyTo = (
 
   const position =
     typeof camera.lat === "number" &&
-    typeof camera.lng === "number" &&
-    typeof camera.height === "number"
+      typeof camera.lng === "number" &&
+      typeof camera.height === "number"
       ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
       : undefined;
 
@@ -265,7 +265,7 @@ export const lookAt = (
     easing?: (time: number) => number;
   },
 ) => {
-  if (!cesiumCamera || !camera) return () => {};
+  if (!cesiumCamera || !camera) return () => { };
 
   const cancelFov = animateFOV({
     fov: camera.fov,
@@ -276,8 +276,8 @@ export const lookAt = (
 
   const position =
     typeof camera.lat === "number" &&
-    typeof camera.lng === "number" &&
-    typeof camera.height === "number"
+      typeof camera.lng === "number" &&
+      typeof camera.height === "number"
       ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
       : undefined;
 
@@ -320,8 +320,8 @@ export const lookAtWithoutAnimation = (
 
   const position =
     typeof camera.lat === "number" &&
-    typeof camera.lng === "number" &&
-    typeof camera.height === "number"
+      typeof camera.lng === "number" &&
+      typeof camera.height === "number"
       ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
       : undefined;
 
@@ -512,39 +512,39 @@ export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
-  ((
-    {
-      highlight: ColorBlendMode.HIGHLIGHT,
-      replace: ColorBlendMode.REPLACE,
-      mix: ColorBlendMode.MIX,
-    } as { [key in string]?: ColorBlendMode }
-  )[colorBlendMode || ""]);
+((
+  {
+    highlight: ColorBlendMode.HIGHLIGHT,
+    replace: ColorBlendMode.REPLACE,
+    mix: ColorBlendMode.MIX,
+  } as { [key in string]?: ColorBlendMode }
+)[colorBlendMode || ""]);
 
 export const heightReference = (
   heightReference?: "none" | "clamp" | "relative",
 ): HeightReference | undefined =>
-  ((
-    {
-      clamp: HeightReference.CLAMP_TO_GROUND,
-      relative: HeightReference.RELATIVE_TO_GROUND,
-      none: HeightReference.NONE,
-    } as {
-      [key in string]?: HeightReference;
-    }
-  )[heightReference || ""]);
+((
+  {
+    clamp: HeightReference.CLAMP_TO_GROUND,
+    relative: HeightReference.RELATIVE_TO_GROUND,
+    none: HeightReference.NONE,
+  } as {
+    [key in string]?: HeightReference;
+  }
+)[heightReference || ""]);
 
 export const shadowMode = (
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only",
 ): ShadowMode | undefined =>
-  ((
-    {
-      enabled: ShadowMode.ENABLED,
-      cast_only: ShadowMode.CAST_ONLY,
-      receive_only: ShadowMode.RECEIVE_ONLY,
-    } as {
-      [key in string]?: ShadowMode;
-    }
-  )[shadows || ""]);
+((
+  {
+    enabled: ShadowMode.ENABLED,
+    cast_only: ShadowMode.CAST_ONLY,
+    receive_only: ShadowMode.RECEIVE_ONLY,
+  } as {
+    [key in string]?: ShadowMode;
+  }
+)[shadows || ""]);
 
 export const unselectableTag = "reearth_unselectable";
 export const draggableTag = "reearth_draggable";

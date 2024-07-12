@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { PolylineGraphics, Entity } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
-import { Coordinates, toColor } from "@reearth/classic/util/value";
+import { Coordinates, toColor } from "@reearth/beta/utils/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode } from "../common";

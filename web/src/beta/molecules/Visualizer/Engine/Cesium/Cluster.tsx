@@ -2,7 +2,7 @@ import { Cartesian3, Color, EntityCluster, HorizontalOrigin, VerticalOrigin } fr
 import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
-import { toCSSFont } from "@reearth/classic/util/value";
+import { toCSSFont } from "@reearth/beta/utils/value";
 
 import { ClusterProps } from "../ref";
 
@@ -45,8 +45,8 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
           clusterLabelTypography.textAlign === "right"
             ? HorizontalOrigin.LEFT
             : clusterLabelTypography.textAlign === "left"
-            ? HorizontalOrigin.RIGHT
-            : HorizontalOrigin.CENTER;
+              ? HorizontalOrigin.RIGHT
+              : HorizontalOrigin.CENTER;
         clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
         clusterParam.label.fillColor = Color.fromCssColorString(
           clusterLabelTypography.color ?? "#FFF",

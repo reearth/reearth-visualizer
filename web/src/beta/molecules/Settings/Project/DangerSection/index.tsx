@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Button from "@reearth/beta/components/Button";
 import Field from "@reearth/beta/molecules/Settings/Field";
 import Section from "@reearth/beta/molecules/Settings/Section";
-import { metricsSizes } from "@reearth/classic/theme";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

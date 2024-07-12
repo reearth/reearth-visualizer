@@ -7,7 +7,7 @@ import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import TextBox from "@reearth/beta/components/TextBox";
 import { metricsSizes } from "@reearth/beta/utils/metrics";
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
+import fonts from "@reearth/services/fonts";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

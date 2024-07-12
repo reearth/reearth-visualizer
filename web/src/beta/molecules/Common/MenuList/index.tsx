@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
-import Text from "@reearth/classic/components/atoms/Text";
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export const MenuListItemLabel: React.FC<{
@@ -49,8 +49,8 @@ export const MenuListItem = styled.li<{ noHover?: boolean }>`
   display: flex;
   &:hover {
     ${props =>
-      !props.noHover &&
-      `
+    !props.noHover &&
+    `
       background-color: ${props.theme.classic.main.bg};
     `}
   }
@@ -67,7 +67,7 @@ const MenuItemWrapper = styled.div<{ disabled?: boolean }>`
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
 `;
 
-const StyledLabel = styled(Text)<{ center?: boolean }>`
+const StyledLabel = styled(Text) <{ center?: boolean }>`
   flex: auto;
   text-align: ${({ center }) => (center ? "center" : "left")};
 `;
@@ -81,7 +81,7 @@ const StyledLinkButton = styled(Link)`
   }
 `;
 
-const StyledIcon = styled(Icon)<{ color?: string; disabled?: boolean }>`
+const StyledIcon = styled(Icon) <{ color?: string; disabled?: boolean }>`
   margin-right: 10px;
   color: ${({ disabled, color, theme }) =>
     disabled ? theme.classic.properties.text : color ? color : theme.classic.main.text};

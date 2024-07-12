@@ -16,7 +16,7 @@ import {
   CesiumComponentRef,
 } from "resium";
 
-import { Typography, toCSSFont, toColor } from "@reearth/classic/util/value";
+import { Typography, toCSSFont, toColor } from "@reearth/beta/utils/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import {
@@ -58,14 +58,14 @@ type Property = {
     label?: boolean;
     labelText?: string;
     labelPosition?:
-      | "left"
-      | "right"
-      | "top"
-      | "bottom"
-      | "lefttop"
-      | "leftbottom"
-      | "righttop"
-      | "rightbottom";
+    | "left"
+    | "right"
+    | "top"
+    | "bottom"
+    | "lefttop"
+    | "leftbottom"
+    | "righttop"
+    | "rightbottom";
     labelTypography?: Typography;
     labelBackground?: boolean;
     labelBackgroundColor?: string;
@@ -116,9 +116,9 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
   const extrudePoints = useMemo(() => {
     return extrude && location
       ? [
-          Cartesian3.fromDegrees(location.lng, location.lat, height),
-          Cartesian3.fromDegrees(location.lng, location.lat, 0),
-        ]
+        Cartesian3.fromDegrees(location.lng, location.lat, height),
+        Cartesian3.fromDegrees(location.lng, location.lat, 0),
+      ]
       : undefined;
   }, [extrude, location, height]);
 
@@ -215,15 +215,15 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
               labelPos === "right" || labelPos == "righttop" || labelPos === "rightbottom"
                 ? HorizontalOrigin.LEFT
                 : labelPos === "left" || labelPos === "lefttop" || labelPos === "leftbottom"
-                ? HorizontalOrigin.RIGHT
-                : HorizontalOrigin.CENTER
+                  ? HorizontalOrigin.RIGHT
+                  : HorizontalOrigin.CENTER
             }
             verticalOrigin={
               labelPos === "bottom" || labelPos === "rightbottom" || labelPos === "leftbottom"
                 ? VerticalOrigin.TOP
                 : labelPos === "top" || labelPos === "righttop" || labelPos === "lefttop"
-                ? VerticalOrigin.BOTTOM
-                : VerticalOrigin.CENTER
+                  ? VerticalOrigin.BOTTOM
+                  : VerticalOrigin.CENTER
             }
             pixelOffset={pixelOffset}
             fillColor={labelColorCesium}

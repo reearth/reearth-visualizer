@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
-import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
+import { WidgetAreaState } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/theme";
 
 import { Viewport } from "../hooks";
@@ -92,8 +92,8 @@ export default function Area({
           ? area === "middle" || section === "center"
             ? align
             : section === "right"
-            ? "end"
-            : undefined
+              ? "end"
+              : undefined
           : undefined
       }
       style={{
@@ -118,15 +118,15 @@ export default function Area({
           backgroundColor && !isMobileZone
             ? backgroundColor
             : area === "middle"
-            ? theme.classic.alignSystem.blueBg
-            : theme.classic.alignSystem.orangeBg,
+              ? theme.classic.alignSystem.blueBg
+              : theme.classic.alignSystem.orangeBg,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
-          `${zone}/${section}/${area}`
+            `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.classic.alignSystem.blueHighlight}`
-            : `1px solid ${theme.classic.alignSystem.orangeHighlight}`,
+              ? `1px solid ${theme.classic.alignSystem.blueHighlight}`
+              : `1px solid ${theme.classic.alignSystem.orangeHighlight}`,
         cursor: "pointer",
         gap: isMobileZone ? "inherit" : gap,
         alignItems: centered && !isMobileZone ? "center" : "inherit",
@@ -190,9 +190,9 @@ function useOverriddenExtended({
         oe[id] === extended
           ? oe
           : {
-              ...omit(oe, id),
-              ...(typeof extended === "undefined" || !extendable ? {} : { [id]: extended }),
-            },
+            ...omit(oe, id),
+            ...(typeof extended === "undefined" || !extendable ? {} : { [id]: extended }),
+          },
       );
     },
     [extendable],
@@ -215,9 +215,9 @@ export function getLocationFromId(id: string): Location | undefined {
     (s === "left" || s === "center" || s === "right") &&
     (a === "top" || a === "middle" || a === "bottom")
     ? {
-        zone: z,
-        section: s,
-        area: a,
-      }
+      zone: z,
+      section: s,
+      area: a,
+    }
     : undefined;
 }

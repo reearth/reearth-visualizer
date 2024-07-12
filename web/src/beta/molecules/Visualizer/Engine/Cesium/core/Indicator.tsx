@@ -3,7 +3,7 @@ import { BoundingSphere, Cartesian3, SceneTransforms, Cartesian2 } from "cesium"
 import { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
-import Icon from "@reearth/classic/components/atoms/Icon";
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 import { SceneProperty } from "../../ref";
@@ -29,9 +29,9 @@ export default function Indicator({ className, property }: Props): JSX.Element |
   useEffect(() => {
     !(!indicator_type || indicator_type === "default")
       ? viewer?.selectionIndicator.viewModel.selectionIndicatorElement.setAttribute(
-          "hidden",
-          "true",
-        )
+        "hidden",
+        "true",
+      )
       : viewer?.selectionIndicator.viewModel.selectionIndicatorElement.removeAttribute("hidden");
   }, [indicator_type, viewer, viewer?.selectionIndicator]);
 
@@ -112,7 +112,7 @@ const StyledIndicator = styled.div<{ transition: TransitionStatus }>`
   pointer-events: none;
 `;
 
-const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
+const StyledIcon = styled(Icon) <{ transition: TransitionStatus }>`
   position: absolute;
   transform: translate(-50%, -50%);
   transition: ${({ transition }) =>

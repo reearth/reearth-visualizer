@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
-import Divider from "@reearth/classic/components/atoms/Divider";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Text from "@reearth/classic/components/atoms/Text";
-import { metricsSizes } from "@reearth/classic/theme";
+import Divider from "@reearth/beta/components/Divider";
+import Flex from "@reearth/beta/components/Flex";
+import Text from "@reearth/beta/components/Text";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled, useTheme } from "@reearth/services/theme";
 
 export type Props = {

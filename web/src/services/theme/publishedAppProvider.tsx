@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
 import { ReactNode } from "react";
 
-import classicTheme from "@reearth/classic/theme/reearthTheme/darkTheme";
+import classicTheme from "@reearth/services/reearthTheme/darkTheme";
 
 import GlobalStyle from "./reearthTheme/common/globalStyles";
 import betaTheme from "./reearthTheme/darkTheme";
