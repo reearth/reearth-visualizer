@@ -22,7 +22,7 @@ import { Story } from "../StoryPanel";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
-import type { CommonReearth } from "./api";
+import type { CommonReearth } from "./pluginAPI/commonReearth";
 import type { ClientStorage } from "./useClientStorage";
 import type { PluginInstances } from "./usePluginInstances";
 
@@ -41,7 +41,7 @@ export type Props = PropsWithChildren<{
   floatingWidgets?: InternalWidget[];
   timelineManagerRef?: TimelineManagerRef;
   selectedStory?: Story;
-  interactionMode: InteractionModeType;
+  interactionMode?: InteractionModeType;
   overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onLayerEdit?: (cb: (e: LayerEditEvent) => void) => void;

@@ -37,7 +37,7 @@ import {
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 
-import { CommonReearth } from "./api";
+import { CommonReearth } from "./pluginAPI/commonReearth";
 import { ClientStorage } from "./useClientStorage";
 
 declare global {

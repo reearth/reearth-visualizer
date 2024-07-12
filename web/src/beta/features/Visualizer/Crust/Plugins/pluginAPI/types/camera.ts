@@ -4,7 +4,7 @@ import { LayerId } from "./layers";
 export declare type Camera = {
   readonly position: CameraPosition | undefined;
   readonly fov: number | undefined;
-  readonly viewport: GeoRect;
+  readonly viewport: GeoRect | undefined;
   // TODO: breaking change. fov is moved to options.
   readonly flyTo: (
     destination: LayerId | CameraPosition,
@@ -38,8 +38,10 @@ export declare type Camera = {
   readonly rotateRight: (radian: number) => void;
   // TODO: refine on core: add options as amount, currently is hardcoded
   readonly orbit: (radian: number) => void;
-  readonly enableScreenSpaceController: (enabled: boolean) => void;
-  readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
+  readonly enableScreenSpaceCameraController: (enabled: boolean) => void;
+  readonly overrideScreenSpaceCameraController: (
+    options: ScreenSpaceCameraControllerOptions,
+  ) => void;
   // TODO: breaking change. lookHorizontal lookVertical removed.
   // TODO: breaking change. merged functions.
   readonly move: (
@@ -48,8 +50,8 @@ export declare type Camera = {
   ) => void;
   readonly moveOverTerrain: (offset?: number) => void;
   // TODO: breaking change. flyToGround removed.
-  readonly setView: (view: CameraPosition & { fov?: number }) => void;
-  readonly forceHorizontalRoll: (enable: boolean) => void;
+  readonly setView: (view: CameraPosition & { fov: number }) => void;
+  readonly enableForceHorizontalRoll: (enable: boolean) => void;
 };
 
 export declare type CameraPosition = {

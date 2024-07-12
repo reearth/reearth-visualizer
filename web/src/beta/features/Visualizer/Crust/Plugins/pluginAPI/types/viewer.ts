@@ -3,9 +3,9 @@ import { InteractionModeType, ViewerProperty } from "@reearth/core";
 import { LatLngHeight } from "./common";
 
 export declare type Viewer = {
-  readonly property: ViewerProperty;
+  readonly property: ViewerProperty | undefined;
   readonly overrideProperty: (property: ViewerProperty) => void;
-  readonly viewPort: Viewport;
+  readonly viewport: Viewport;
   readonly interactionMode: InteractionMode;
   readonly env: Env;
   readonly tools: Tools;
@@ -29,16 +29,21 @@ export declare type InteractionMode = {
 
 export declare type Env = {
   readonly inEditor: boolean;
+  readonly isBuilt: boolean;
 };
 
 export declare type Tools = {
-  readonly getLocationFromScreen: (
+  readonly getLocationFromScreenCoordinate: (
     x: number,
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
+  readonly getScreenCoordinateFromPosition: (
+    position: [x: number, y: number, z: number],
+  ) => [x: number, y: number] | undefined;
   readonly getTerrainHeightAsync: (lng: number, lat: number) => Promise<number | undefined>;
   readonly getGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly getGlobeHeightByCamera: () => number | undefined;
   readonly cartographicToCartesian: (
     lng: number,
     lat: number,
@@ -51,12 +56,9 @@ export declare type Tools = {
     z: number,
     options?: { useGlobeEllipsoid?: boolean },
   ) => [lng: number, lat: number, height: number] | undefined;
-  readonly transformWithOffsetInScreen: (
+  readonly transformByOffsetOnScreen: (
     rawPosition: [x: number, y: number, z: number],
     screenOffset: [x: number, y: number],
   ) => [x: number, y: number, z: number] | undefined;
   readonly isPositionVisibleOnGlobe: (position: [x: number, y: number, z: number]) => boolean;
-  readonly getScreenCoordinatesFromPosition: (
-    position: [x: number, y: number, z: number],
-  ) => [x: number, y: number] | undefined;
 };

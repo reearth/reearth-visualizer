@@ -2,8 +2,7 @@ export declare type Timeline = {
   startTime?: Date;
   stopTime?: Date;
   currentTime?: Date;
-  playing?: boolean;
-  paused?: boolean;
+  isPlaying?: boolean;
   speed?: number;
   stepType?: "rate" | "fixed";
   rangeType?: "unbounded" | "clamped" | "bounced";

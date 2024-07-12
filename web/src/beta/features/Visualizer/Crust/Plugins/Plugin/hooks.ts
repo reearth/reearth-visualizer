@@ -14,9 +14,10 @@ import {
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
 import type { Widget, WidgetLocationOptions } from "../../Widgets";
-import { exposed } from "../api";
 import { usePluginContext } from "../context";
-import type { GlobalThis, ReearthEventType } from "../plugin_types";
+import { CommonReearthEventType } from "../hooks/useCommonEvents";
+import { exposed } from "../pluginAPI/exposedReearth";
+import type { GlobalThis, ReearthEventType } from "../pluginAPI/types";
 import { defaultIsMarshalable } from "../PluginFrame";
 import type { API as IFrameAPI } from "../PluginFrame";
 
@@ -248,7 +249,7 @@ export function useAPI({
     let cancel: (() => void) | undefined;
 
     if (ctx?.reearth.on && ctx.reearth.off && ctx.reearth.once) {
-      const source: Events<ReearthEventType> = {
+      const source: Events<CommonReearthEventType> = {
         on: ctx.reearth.on,
         off: ctx.reearth.off,
         once: ctx.reearth.once,
@@ -271,12 +272,16 @@ export function useAPI({
         "mouseleave",
         "wheel",
         "tick",
+        "timelinecommit",
         "resize",
         "layeredit",
-        "timelinecommit",
         "sketchfeaturecreated",
-        "sketchtypechange",
+        "sketchtoolchange",
         "layerVisibility",
+        "layerload",
+        "layerSelectWithRectStart",
+        "layerSelectWithRectMove",
+        "layerSelectWithRectEnd",
       ]);
     }
 
@@ -323,38 +328,15 @@ export function useAPI({
     return ({ main, modal, popup, messages, startEventLoop }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
-        events: {
-          on: (type, e) => {
-            if (type === "message") {
-              messages.on(e as (msg: any) => void);
-              return;
-            }
-            event.current?.[0]?.on(type, e);
-          },
-          off: (type, e) => {
-            if (type === "message") {
-              messages.off(e as (msg: any) => void);
-              return;
-            }
-            event.current?.[0]?.on(type, e);
-          },
-          once: (type, e) => {
-            if (type === "message") {
-              messages.once(e as (msg: any) => void);
-              return;
-            }
-            event.current?.[0]?.on(type, e);
-          },
-        },
         plugin: {
           id: pluginId,
           extensionType,
           extensionId,
           property: pluginProperty,
         },
-        block: getBlock,
+        getBlock,
         layer: getLayer,
-        widget: getWidget,
+        getWidget,
         postMessage: main.postMessage,
         render: (html, { extended, ...options } = {}) => {
           main.render(html, options);
@@ -429,6 +411,29 @@ export function useAPI({
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
         timelineManagerRef: ctx.timelineManagerRef,
+        events: {
+          on: (type, e) => {
+            if (type === "message") {
+              messages.on(e as (msg: any) => void);
+              return;
+            }
+            event.current?.[0]?.on(type, e);
+          },
+          off: (type, e) => {
+            if (type === "message") {
+              messages.off(e as (msg: any) => void);
+              return;
+            }
+            event.current?.[0]?.on(type, e);
+          },
+          once: (type, e) => {
+            if (type === "message") {
+              messages.once(e as (msg: any) => void);
+              return;
+            }
+            event.current?.[0]?.on(type, e);
+          },
+        },
       });
     };
   }, [

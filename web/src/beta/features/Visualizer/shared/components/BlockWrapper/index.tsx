@@ -1,9 +1,9 @@
-import { ReactNode, createContext, memo, useCallback } from "react";
+import { ReactNode, createContext, memo } from "react";
 
 import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
-import { FlyTo, useVisualizer } from "@reearth/core";
+import { FlyTo } from "@reearth/core";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
@@ -59,6 +59,7 @@ type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  onFlyTo?: FlyTo;
 };
 
 const BlockWrapper: React.FC<Props> = ({
@@ -82,6 +83,7 @@ const BlockWrapper: React.FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
+  onFlyTo,
 }) => {
   const {
     title,
@@ -104,14 +106,6 @@ const BlockWrapper: React.FC<Props> = ({
     onClick,
     onBlockDoubleClick,
   });
-
-  const visualizerRef = useVisualizer();
-  const handleFlyTo: FlyTo = useCallback(
-    (target, options) => {
-      visualizerRef.current?.engine.flyTo(target, options);
-    },
-    [visualizerRef],
-  );
 
   return (
     <BlockContext.Provider value={{ editMode }}>
@@ -172,7 +166,7 @@ const BlockWrapper: React.FC<Props> = ({
           <EditorPanel onClick={stopClickPropagation}>
             {pluginBlockPropertyItems?.map((i, idx) => (
               <SidePanelSectionField title={i.title} key={idx}>
-                <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={handleFlyTo} />
+                <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={onFlyTo} />
               </SidePanelSectionField>
             ))}
           </EditorPanel>

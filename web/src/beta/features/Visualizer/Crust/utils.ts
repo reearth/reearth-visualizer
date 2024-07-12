@@ -1,3 +1,5 @@
+import { useCallback, useRef } from "react";
+
 import { css } from "@reearth/services/theme";
 
 import { Typography } from "./types";
@@ -34,3 +36,9 @@ export const toCSSFont = (t?: Typography, d?: Typography) => {
 };
 
 export const toTextDecoration = (t?: Typography) => (t?.underline ? "underline" : "none");
+
+export function useGet<T>(value: T): () => T {
+  const ref = useRef<T>(value);
+  ref.current = value;
+  return useCallback(() => ref.current, []);
+}

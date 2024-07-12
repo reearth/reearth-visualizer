@@ -5,7 +5,7 @@ import { StoryBlock } from "../StoryPanel/types";
 import type { WidgetAlignSystem } from "../Widgets";
 import type { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
 
-import type { PluginExtensionInstance } from "./plugin_types";
+import type { PluginExtensionInstance } from "./pluginAPI/types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystem;

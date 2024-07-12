@@ -15,8 +15,8 @@ export declare type Layers = {
   readonly hide: (...layerIds: string[]) => void;
   readonly show: (...layerIds: string[]) => void;
   readonly add: (layer: NaiveLayer) => string | undefined;
-  readonly delete: (...layerIds: string[]) => void;
-  readonly override: (
+  readonly delete?: (...layerIds: string[]) => void;
+  readonly override?: (
     id: string,
     layer?:
       | (Partial<Layer> & {
@@ -25,17 +25,17 @@ export declare type Layers = {
       | null,
   ) => void;
   readonly overridden?: OverriddenLayer[];
-  readonly overriddenProperties?: { [id: string]: any };
   readonly find: (
     fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
   ) => LazyLayer | undefined;
   readonly findAll: (
     fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
-  ) => LazyLayer[];
+  ) => LazyLayer[] | undefined;
   readonly findById: (layerId: string) => LazyLayer | undefined;
-  readonly findByIds: (...layerIds: string[]) => (LazyLayer | undefined)[];
+  readonly findByIds: (...layerIds: string[]) => (LazyLayer | undefined)[] | undefined;
   readonly findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
   readonly findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+  readonly layersInViewport?: () => LazyLayer[] | undefined;
   readonly select?: (layerId: string | undefined) => void;
   readonly selectFeature?: (layerId?: string, featureId?: string) => void;
   readonly selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
@@ -45,9 +45,7 @@ export declare type Layers = {
   readonly sendToBack?: (layerId: string) => void;
   readonly getLayersInViewport?: () => LazyLayer[] | undefined;
   readonly getFeaturesInScreenRect: (
-    windowPosition: [x: number, y: number],
-    windowWidth: number,
-    windowHeight: number,
+    rect: [x: number, y: number, width: number, height: number],
     // TODO: Get condition as expression for plugin
     condition?: (f: ComputedFeature) => boolean,
   ) => ComputedFeature[] | undefined;
