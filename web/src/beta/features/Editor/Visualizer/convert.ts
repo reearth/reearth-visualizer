@@ -13,7 +13,7 @@ import {
 } from "@reearth/beta/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
-import { LayerAppearanceTypes, Feature } from "@reearth/core";
+import { LayerAppearanceTypes } from "@reearth/core";
 import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
@@ -32,7 +32,6 @@ import {
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
-import { Geometry } from "@reearth/services/gql/__gen__/graphql";
 
 import convertInfobox from "./convert-infobox";
 
@@ -57,23 +56,6 @@ export type Datasets = {
 
 export type Widget = Omit<RawWidget, "layout" | "extended"> & {
   extended?: boolean;
-};
-
-export const getGeometryCoordinates = (geometry?: Geometry) => {
-  switch (geometry?.type) {
-    case "Polygon":
-      return "polygonCoordinates" in geometry && geometry.polygonCoordinates;
-    case "MultiPolygon":
-      return "multiPolygonCoordinates" in geometry && geometry.multiPolygonCoordinates;
-    case "LineString":
-      return "lineStringCoordinates" in geometry && geometry.lineStringCoordinates;
-    case "Point":
-      return "pointCoordinates" in geometry && geometry.pointCoordinates;
-    case "GeometryCollection":
-      return "geometries" in geometry && geometry.geometries;
-    default:
-      return geometry;
-  }
 };
 
 export const convertWidgets = (
@@ -391,19 +373,10 @@ export function processLayers(
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
-        features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
-          const geometryType = feature.geometry?.type;
-          if (geometryType) return;
-          const cleanedFeatures = {
-            ...feature,
-            geometry: {
-              type: geometryType,
-              coordinates: getGeometryCoordinates(feature.geometry),
-            },
-          };
-
-          return cleanedFeatures;
-        }),
+        features: nlsLayer.sketch?.featureCollection?.features.map(f => ({
+          ...f,
+          geometry: f.geometry[0],
+        })),
       },
     };
 
