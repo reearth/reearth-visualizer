@@ -20,5 +20,6 @@ export const projectFragment = gql`
     updatedAt
     createdAt
     coreSupport
+    starred
   }
 `;

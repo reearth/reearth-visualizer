@@ -15,7 +15,6 @@ export type ButtonProps = {
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
-  shadow?: boolean;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
 };
 
@@ -30,7 +29,6 @@ export const Button: FC<ButtonProps> = ({
   iconColor,
   extendWidth,
   minWidth,
-  shadow = true,
   onClick,
 }) => {
   return (
@@ -41,7 +39,6 @@ export const Button: FC<ButtonProps> = ({
       iconButton={iconButton}
       extendWidth={extendWidth}
       minWidth={minWidth}
-      shadow={shadow}
       onClick={onClick}>
       {icon && <Icon icon={icon} color={iconColor} />}
       {!iconButton && title}
@@ -56,8 +53,7 @@ const StyledButton = styled("button")<{
   iconButton?: boolean;
   extendWidth?: boolean;
   minWidth?: number;
-  shadow?: boolean;
-}>(({ appearance, size, iconButton, extendWidth, minWidth, shadow, theme }) => ({
+}>(({ appearance, size, iconButton, extendWidth, minWidth, theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -91,7 +87,7 @@ const StyledButton = styled("button")<{
   backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
   width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
-  boxShadow: shadow ? theme.shadow.button : "none",
+  boxShadow: appearance === "simple" ? "none" : theme.shadow.button,
   ["&:hover"]: {
     borderColor: "transparent",
     color: `${theme.content.withBackground}`,
@@ -108,6 +104,7 @@ const StyledButton = styled("button")<{
     borderColor: "transparent",
     color: `${theme.content.weaker}`,
     backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
+    border: appearance === "simple" ? `1px solid transparent` : `1px solid ${theme.content.weaker}`,
     boxShadow: "none",
   },
   ["& svg"]: {

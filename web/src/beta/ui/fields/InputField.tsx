@@ -7,9 +7,9 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type InputFieldProps = CommonFieldProps &
   Pick<TextInputProps, "value" | "placeholder" | "onChange" | "onBlur" | "disabled">;
 
-const InputField: FC<InputFieldProps> = ({ title, description, ...props }) => {
+const InputField: FC<InputFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <TextInput {...props} />
     </CommonField>
   );

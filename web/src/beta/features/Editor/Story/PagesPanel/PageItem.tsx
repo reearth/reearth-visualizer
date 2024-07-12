@@ -1,141 +1,140 @@
-import { MouseEvent, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import ListItem from "@reearth/beta/components/ListItem";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import Text from "@reearth/beta/components/Text";
-import useDoubleClick from "@reearth/beta/utils/use-double-click";
-import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import type { Page } from "@reearth/services/api/storytellingApi/utils";
+import { getFieldValue } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
+import { TextInput } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem } from "@reearth/beta/ui/components";
+import { isEmptyString } from "@reearth/beta/utils/util";
+import { Page } from "@reearth/services/api/storytellingApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-type PageItemProps = {
-  isSelected?: boolean;
-  title?: string;
-  isOpenAction?: boolean;
-  propertyId: string;
+import { useStoryPage } from "../context";
+
+interface PageItemProps {
   storyPage: Page;
-  onItemClick: (e?: MouseEvent<Element>) => void;
-  onActionClick?: () => void;
-  onOpenChange?: (isOpen: boolean) => void;
-  setOpenedPageId?: (pageId: string | undefined) => void;
-  onPageDelete?: () => void;
-  onPropertyUpdate?: (
-    propertyId?: string,
-    schemaItemId?: string,
-    fieldId?: string,
-    itemId?: string,
-    vt?: ValueType,
-    v?: ValueTypes[ValueType],
-  ) => Promise<void>;
-};
+  dragHandleClassName?: string;
+  isDragging?: boolean;
+  pageCount?: number;
+}
 
-const PageItem = ({
-  isSelected,
-  isOpenAction,
-  title,
-  propertyId,
-  storyPage,
-  onItemClick,
-  onActionClick,
-  onOpenChange,
-  setOpenedPageId,
-  onPageDelete,
-  onPropertyUpdate,
-}: PageItemProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [newValue, setNewValue] = useState(title);
+const PageItem: FC<PageItemProps> = ({ storyPage, pageCount, dragHandleClassName, isDragging }) => {
+  const t = useT();
+  const {
+    selectedStoryPage,
+    handleStoryPageSelect,
+    handleStoryPageDelete,
+    handlePropertyValueUpdate,
+  } = useStoryPage();
 
-  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
-    () => onItemClick?.(),
-    () => setIsEditing(true),
-  );
+  const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
+    t("Untitled")) as string;
+  const hasEmptySpace = isEmptyString(title);
 
-  useEffect(() => {
-    setNewValue(title);
-  }, [title]);
+  const [editingPageNameId, setEditingPageNameId] = useState("");
+  const [localTitle, setLocalTitle] = useState(title);
 
-  const handleTitleSubmit = useCallback(
-    (newTitle: string) => {
-      setIsEditing(false);
-      setNewValue(newTitle);
-      if (newValue?.trim() !== "") {
-        const schemaGroupId = storyPage.property.items?.[1]?.schemaGroup;
-        onPropertyUpdate?.(propertyId, schemaGroupId, "title", undefined, "string", newTitle);
-      }
-    },
-    [newValue, onPropertyUpdate, propertyId, storyPage.property.items],
-  );
+  const handleStoryPageItemClick = useCallback(() => {
+    if (storyPage.id === selectedStoryPage?.id) return;
+    handleStoryPageSelect(storyPage.id);
+    setEditingPageNameId("");
+  }, [storyPage.id, selectedStoryPage?.id, handleStoryPageSelect]);
 
-  const handleEditExit = useCallback(
-    (e?: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!!newValue && title !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit(newValue);
-      } else {
-        setNewValue(title);
-      }
-      setIsEditing(false);
-    },
-    [title, newValue, handleTitleSubmit],
+  const handleTitleUpdate = useCallback(() => {
+    setEditingPageNameId("");
+    if (!localTitle || localTitle === storyPage.title) return;
+    const schemaGroupId = storyPage.property.items?.[1]?.schemaGroup;
+    handlePropertyValueUpdate?.(
+      storyPage.property.id,
+      schemaGroupId,
+      "title",
+      undefined,
+      "string",
+      localTitle,
+    );
+  }, [
+    handlePropertyValueUpdate,
+    localTitle,
+    storyPage.property.id,
+    storyPage.property.items,
+    storyPage.title,
+  ]);
+
+  const optionsMenu = useMemo(
+    () => [
+      {
+        id: "rename",
+        title: "Rename",
+        icon: "pencilSimple" as const,
+        onClick: () => setEditingPageNameId(storyPage.id),
+      },
+      {
+        id: "delete",
+        title: "Delete",
+        icon: "trash" as const,
+        onClick: () => handleStoryPageDelete(storyPage.id),
+      },
+    ],
+    [storyPage.id, handleStoryPageDelete],
   );
 
   return (
-    <ListItem
-      border
-      actionPlacement="bottom-start"
-      isSelected={isSelected}
-      isOpenAction={isOpenAction}
-      onItemClick={handleSingleClick}
-      onActionClick={onActionClick}
-      onOpenChange={onOpenChange}
-      actionContent={
-        <PopoverMenuContent
-          size="sm"
-          items={[
-            // {
-            //   icon: "copy",
-            //   name: "Duplicate",
-            //   onClick: () => {
-            //     setOpenedPageId(undefined);
-            //     onPageDuplicate(storyPage.id);
-            //   },
-            // },
-            {
-              icon: "trash",
-              name: "Delete",
-              onClick: () => {
-                setOpenedPageId?.(undefined);
-                onPageDelete?.();
-              },
-            },
-          ]}
+    <Wrapper>
+      <PageCount>{pageCount}.</PageCount>
+      <EntryItemWrapper>
+        <EntryItem
+          title={
+            editingPageNameId === storyPage.id ? (
+              <TextInput
+                size="small"
+                extendWidth
+                autoFocus
+                value={localTitle}
+                onChange={setLocalTitle}
+                onBlur={handleTitleUpdate}
+              />
+            ) : (
+              <TitleWrapper onDoubleClick={() => setEditingPageNameId(storyPage.id)}>
+                {hasEmptySpace || !title ? t("Untitled") : title}
+              </TitleWrapper>
+            )
+          }
+          dragHandleClassName={dragHandleClassName}
+          highlighted={selectedStoryPage?.id === storyPage.id}
+          disableHover={isDragging}
+          onClick={handleStoryPageItemClick}
+          optionsMenu={optionsMenu}
+          optionsMenuWidth={100}
         />
-      }>
-      {isEditing ? (
-        <StyledTextInput
-          value={newValue}
-          autoFocus
-          onChange={handleTitleSubmit}
-          onExit={handleEditExit}
-          onBlur={handleEditExit}
-        />
-      ) : (
-        <PageTitle size="footnote" onDoubleClick={handleDoubleClick}>
-          {title}
-        </PageTitle>
-      )}
-    </ListItem>
+      </EntryItemWrapper>
+    </Wrapper>
   );
 };
 
-const StyledTextInput = styled(TextInput)`
-  width: 100%;
-`;
-
-const PageTitle = styled(Text)`
-  overflow: hidden;
-  width: 100%;
-  text-overflow: ellipsis;
-`;
-
 export default PageItem;
+
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.micro,
+}));
+
+const EntryItemWrapper = styled("div")(() => ({
+  flex: 1,
+}));
+
+const PageCount = styled("div")(({ theme }) => ({
+  minWidth: "17px",
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+}));
+
+const TitleWrapper = styled("div")(({ theme }) => ({
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+}));

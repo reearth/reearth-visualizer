@@ -53,7 +53,6 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
             onClick={e => onProjectStarClick?.(e, project.id)}
             iconColor={isStarred ? theme.warning.main : theme.content.main}
             appearance="simple"
-            shadow={false}
           />
         </StarButtonWrapper>
       </CardImage>
@@ -73,7 +72,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         </CardTitleWrapper>
         <PopupMenu
           menu={popupMenu}
-          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" shadow={false} />}
+          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
         />
       </CardFooter>
     </Card>

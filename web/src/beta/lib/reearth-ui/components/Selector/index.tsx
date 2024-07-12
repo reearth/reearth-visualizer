@@ -13,6 +13,7 @@ export type SelectorProps = {
   options: { value: string; label?: string }[];
   disabled?: boolean;
   placeholder?: string;
+  maxHeight?: number;
   onChange?: (value: string | string[]) => void;
 };
 
@@ -22,6 +23,7 @@ export const Selector: FC<SelectorProps> = ({
   options,
   placeholder = "Please select",
   disabled,
+  maxHeight,
   onChange,
 }) => {
   const theme = useTheme();
@@ -83,8 +85,9 @@ export const Selector: FC<SelectorProps> = ({
   };
 
   const handleUnselect = useCallback(
-    (e: MouseEvent<HTMLElement>, value: string) => {
+    (e: MouseEvent<HTMLElement>, value: string | undefined) => {
       e.stopPropagation();
+      if (value === undefined) return;
       if (Array.isArray(selectedValue) && selectedValue.length) {
         const newSelectedArr = selectedValue.filter(val => val !== value);
         setSelectedValue(newSelectedArr);
@@ -94,13 +97,11 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange],
   );
 
-  const selectedLabel = useMemo(() => {
+  const selectedLabels = useMemo(() => {
     if (Array.isArray(selectedValue)) {
-      return selectedValue
-        .map(val => optionValues.find(item => item.value === val)?.label)
-        .join(", ");
+      return selectedValue.map(val => optionValues.find(item => item.value === val)?.label);
     }
-    return optionValues.find(item => item.value === selectedValue)?.label;
+    return [optionValues.find(item => item.value === selectedValue)?.label];
   }, [optionValues, selectedValue]);
 
   const renderTrigger = () => {
@@ -112,29 +113,28 @@ export const Selector: FC<SelectorProps> = ({
           </Typography>
         ) : multiple ? (
           <SelectedItems>
-            {(typeof selectedLabel === "string" ? [selectedLabel] : selectedLabel) ??
-              [].map(val => (
-                <SelectedItem key={val}>
-                  <Typography
-                    size="body"
-                    color={disabled ? theme.content.weaker : theme.content.main}>
-                    {val}
-                  </Typography>
-                  {!disabled && (
-                    <Button
-                      iconButton
-                      icon="close"
-                      appearance="simple"
-                      size="small"
-                      onClick={(e: MouseEvent<HTMLElement>) => handleUnselect(e, val)}
-                    />
-                  )}
-                </SelectedItem>
-              ))}
+            {selectedLabels.map(val => (
+              <SelectedItem key={val}>
+                <Typography
+                  size="body"
+                  color={disabled ? theme.content.weaker : theme.content.main}>
+                  {val}
+                </Typography>
+                {!disabled && (
+                  <Button
+                    iconButton
+                    icon="close"
+                    appearance="simple"
+                    size="small"
+                    onClick={(e: MouseEvent<HTMLElement>) => handleUnselect(e, val)}
+                  />
+                )}
+              </SelectedItem>
+            ))}
           </SelectedItems>
         ) : (
           <Typography size="body" color={disabled ? theme.content.weaker : ""}>
-            {selectedLabel}
+            {selectedLabels[0]}
           </Typography>
         )}
         <Icon
@@ -153,7 +153,7 @@ export const Selector: FC<SelectorProps> = ({
         onOpenChange={setIsOpen}
         disabled={disabled}
         placement="bottom-start">
-        <DropDownWrapper width={selectorWidth}>
+        <DropDownWrapper maxHeight={maxHeight} width={selectorWidth}>
           {optionValues.length === 0 ? (
             <DropDownItem>
               <Typography size="body" color={theme.content.weaker}>
@@ -205,7 +205,7 @@ const SelectInput = styled("div")<{
   }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  minHeight: "32px",
+  height: "32px",
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
@@ -227,7 +227,8 @@ const SelectedItem = styled("div")(({ theme }) => ({
 
 const DropDownWrapper = styled("div")<{
   width?: number;
-}>(({ width, theme }) => ({
+  maxHeight?: number;
+}>(({ width, maxHeight, theme }) => ({
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
@@ -238,6 +239,8 @@ const DropDownWrapper = styled("div")<{
   borderRadius: `${theme.radius.small}px`,
   width: width ? `${width}px` : "",
   border: `1px solid ${theme.outline.weaker}`,
+  maxHeight: maxHeight ? `${maxHeight}px` : "",
+  overflowY: maxHeight ? "auto" : "hidden",
 }));
 
 const DropDownItem = styled("div")<{

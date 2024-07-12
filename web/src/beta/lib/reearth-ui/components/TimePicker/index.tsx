@@ -22,9 +22,9 @@ export const TimePicker: FC<TimePickerProps> = ({ value, disabled, onChange, onB
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
       setCurrentValue(newValue ?? "");
-      onChange?.(currentValue);
+      onChange?.(newValue);
     },
-    [currentValue, onChange],
+    [onChange],
   );
 
   const handleBlur = useCallback(() => {

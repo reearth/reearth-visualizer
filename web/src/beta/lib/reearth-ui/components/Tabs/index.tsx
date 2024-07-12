@@ -116,7 +116,6 @@ const Tab = styled("div")<{
 
 const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
-  height: "100%",
-  width: "100%",
   minHeight: 0,
+  flex: 1,
 }));
