@@ -1,7 +1,7 @@
+//This file will be removed later
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { styled } from "@reearth/services/theme";
 
 export const InputGroup: React.FC<{
@@ -194,36 +194,3 @@ export const HandleIcon = styled(Icon)`
     color: ${({ theme }) => theme.content.main};
   }
 `;
-
-export const generateTitle = (url: string, layerName?: string): string => {
-  if (layerName && layerName.trim() !== "") return layerName;
-  if (url.trim() !== "") {
-    try {
-      const urlObject = new URL(url);
-      const pathParts = urlObject.pathname.split("/");
-      const lastPart = pathParts.pop() || "";
-      const fileName = lastPart.split(".")[0];
-      return fileName;
-    } catch (error) {
-      console.error("Invalid URL", error);
-    }
-  }
-  return generateRandomString(5);
-};
-
-export const handleCoordinate = (geomery: any) => {
-  switch (geomery.type) {
-    case "Polygon":
-      return geomery.polygonCoordinates;
-    case "MultiPolygon":
-      return geomery.multiPolygonCoordinates;
-    case "LineString":
-      return geomery.lineStringCoordinates;
-    case "Point":
-      return geomery.pointCoordinates;
-    case "GeometryCollection":
-      return geomery.geometries;
-    default:
-      return geomery;
-  }
-};

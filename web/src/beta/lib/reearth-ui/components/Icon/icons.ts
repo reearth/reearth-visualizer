@@ -64,6 +64,7 @@ import ImageFilled from "./Icons/ImageFilled.svg?react";
 import ImageSquare from "./Icons/ImageSquare.svg?react";
 import LayerFilled from "./Icons/LayerFilled.svg?react";
 import Layers from "./Icons/Layers.svg?react";
+import LightBulb from "./Icons/LightBult.svg?react";
 import LineHeight from "./Icons/LineHeight.svg?react";
 import LineSegments from "./Icons/LineSegments.svg?react";
 import LinkSimple from "./Icons/LinkSimple.svg?react";
@@ -191,6 +192,7 @@ export default {
   imageSquare: ImageSquare,
   layers: Layers,
   layerFilled: LayerFilled,
+  lightBulb: LightBulb,
   lineHeight: LineHeight,
   lineSegments: LineSegments,
   linkSimple: LinkSimple,

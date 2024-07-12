@@ -32,8 +32,7 @@ import {
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
-
-import { handleCoordinate } from "../utils";
+import { Geometry } from "@reearth/services/gql/__gen__/graphql";
 
 import convertInfobox from "./convert-infobox";
 
@@ -58,6 +57,23 @@ export type Datasets = {
 
 export type Widget = Omit<RawWidget, "layout" | "extended"> & {
   extended?: boolean;
+};
+
+export const getGeometryCoordinates = (geometry?: Geometry) => {
+  switch (geometry?.type) {
+    case "Polygon":
+      return "polygonCoordinates" in geometry && geometry.polygonCoordinates;
+    case "MultiPolygon":
+      return "multiPolygonCoordinates" in geometry && geometry.multiPolygonCoordinates;
+    case "LineString":
+      return "lineStringCoordinates" in geometry && geometry.lineStringCoordinates;
+    case "Point":
+      return "pointCoordinates" in geometry && geometry.pointCoordinates;
+    case "GeometryCollection":
+      return "geometries" in geometry && geometry.geometries;
+    default:
+      return geometry;
+  }
 };
 
 export const convertWidgets = (
@@ -370,16 +386,19 @@ export function processLayers(
 
   return newLayers?.map(nlsLayer => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
         features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
+          const geometryType = feature.geometry?.type;
+          if (geometryType) return;
           const cleanedFeatures = {
             ...feature,
             geometry: {
-              type: feature.geometry?.type,
-              coordinates: handleCoordinate(feature.geometry),
+              type: geometryType,
+              coordinates: getGeometryCoordinates(feature.geometry),
             },
           };
 

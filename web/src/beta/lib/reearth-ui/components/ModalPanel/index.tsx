@@ -37,6 +37,7 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.normal}px`,
   color: theme.content.main,
   background: theme.bg[1],
+  borderBottom: `1px solid ${theme.outline.weaker}`,
   borderTopRightRadius: theme.radius.large,
   borderTopLeftRadius: theme.radius.large,
 }));

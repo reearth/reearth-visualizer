@@ -51,7 +51,6 @@ const CommonHeader: FC<HeaderProps> = ({
           iconColor={viewState === "grid" ? theme.content.main : theme.content.weak}
           appearance="simple"
           onClick={() => onChangeView?.("grid")}
-          shadow={false}
           size="small"
         />
         <Button
@@ -61,7 +60,6 @@ const CommonHeader: FC<HeaderProps> = ({
           appearance="simple"
           disabled={icon === "uploadSimple" ? true : false}
           onClick={() => onChangeView?.("list")}
-          shadow={false}
           size="small"
         />
       </Actions>
