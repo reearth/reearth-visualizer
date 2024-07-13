@@ -1,9 +1,4 @@
-import { Theme as ClassicTheme } from "@reearth/services/theme";
 import { Common } from "@reearth/services/theme/reearthTheme/common";
-
-export type TempTheme = Theme & {
-  classic: ClassicTheme;
-};
 
 export type Theme = Common & {
   bg: {

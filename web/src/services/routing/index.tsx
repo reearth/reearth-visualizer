@@ -1,8 +1,8 @@
 import { lazy } from "react";
 import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import RootPage from "@reearth/beta/pages/Authentication/RootPage";
 import Dashboard from "@reearth/beta/pages/Dashboard";
+import RootPage from "@reearth/beta/pages/RootPage";
 import AccountSettings from "@reearth/beta/pages/Settings/Account";
 import { styled } from "@reearth/services/theme";
 
