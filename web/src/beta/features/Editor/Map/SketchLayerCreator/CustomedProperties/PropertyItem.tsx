@@ -1,111 +1,126 @@
-import React, { useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
-import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import { styled } from "@reearth/services/theme";
+import { Button, Selector, TextInput, Icon } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 
-import { PropertyProps, dataTypes } from "..";
-import {
-  DeleteButton,
-  HandleIcon,
-  PropertyField,
-  PropertyFieldContanier,
-  SelectWrapper,
-  StyledText,
-} from "../../../utils";
+import { dataTypes } from "..";
+import { PropertyListProp } from "../type";
 
-type Props = {
-  property: PropertyProps;
-  onKeyChange: (newValue?: string) => void;
-  onValueChange: (newValue?: string) => void;
+type PropertyItemProps = {
+  propertyItem: PropertyListProp;
+  isEditTitle?: boolean;
+  isEditType?: boolean;
+  handleClassName?: string;
+  onTypeChange?: (v?: string | string[]) => void;
+  onBlur?: (v?: string) => void;
+  onDoubleClick?: (field: string) => void;
   onRemovePropertyItem: () => void;
 };
 
-const PropertyItem: React.FC<Props> = ({
-  property,
-  onKeyChange,
-  onValueChange,
+const PropertyItem: FC<PropertyItemProps> = ({
+  propertyItem,
+  isEditTitle,
+  isEditType,
+  handleClassName,
+  onTypeChange,
+  onBlur,
+  onDoubleClick,
   onRemovePropertyItem,
 }) => {
-  const [propertyName, setPropertyName] = useState<string>(property.key);
-  const [dataType, setDataType] = useState<string>(property.value);
-  const [isEditName, setIsEditName] = useState(false);
-  const [isEditType, setIsEditType] = useState(false);
+  const t = useT();
+  const theme = useTheme();
 
-  const handleKeyChange = useCallback(
-    (newValue: string) => {
-      setPropertyName(newValue);
-      onKeyChange(newValue);
-      if (isEditName) setIsEditName(value => !value);
-    },
-    [isEditName, onKeyChange],
-  );
+  const [customPropertyTitle, setCustomPropertyTitle] = useState(propertyItem.key);
+  const [dataType, setDataType] = useState(propertyItem.value);
 
-  const handleValueChange = useCallback(
-    (newValue: string) => {
-      setDataType(newValue);
-      onValueChange(newValue);
-      if (isEditType) setIsEditType(value => !value);
-    },
-    [isEditType, onValueChange],
-  );
-
-  const handleDoubleClick = useCallback((field: string) => {
-    if (field === "name") {
-      setIsEditName(true);
-    } else if (field === "type") {
-      setIsEditType(true);
-    }
+  const handleTitleChange = useCallback((value: string) => {
+    setCustomPropertyTitle(value);
   }, []);
 
-  const handleOnBlur = useCallback(() => {
-    setIsEditName(false);
-  }, []);
+  const handleTypeChange = useCallback(
+    (value: string | string[]) => {
+      setDataType(value as string);
+      onTypeChange?.(value as string);
+    },
+    [onTypeChange],
+  );
 
   return (
-    <PropertyFieldContanier>
-      <PropertyField>
-        <HandleIcon icon="dndHandle" size={24} />
-        {propertyName.trim() === "" || isEditName ? (
-          <StyledTextInput value={propertyName} onChange={handleKeyChange} onBlur={handleOnBlur} />
+    <PropertyFieldWrapper>
+      <Icon
+        className={handleClassName}
+        icon="dotsSixVertical"
+        color={theme.content.weak}
+        size="small"
+      />
+      <ProjectItemCol>
+        {propertyItem.key.trim() === "" || isEditTitle ? (
+          <TextInput
+            size="small"
+            value={customPropertyTitle}
+            onChange={handleTitleChange}
+            onBlur={onBlur}
+            placeholder={t("Type Title here")}
+          />
         ) : (
-          <StyledText onDoubleClick={() => handleDoubleClick("name")} size="footnote">
-            {propertyName}
-          </StyledText>
+          <TitleWrapper onDoubleClick={() => onDoubleClick?.("name")}>
+            {customPropertyTitle}
+          </TitleWrapper>
         )}
-      </PropertyField>
-      <PropertyField
+      </ProjectItemCol>
+      <ProjectItemCol
         style={{
           justifyContent: "space-between",
         }}>
-        {dataType.trim() === "" || isEditType ? (
-          <StyledSelect
+        {propertyItem.value.trim() === "" || isEditType ? (
+          <Selector
+            size="small"
             value={dataType}
-            options={dataTypes.map(v => ({ key: v, label: v }))}
-            attachToRoot
-            onChange={handleValueChange}
+            placeholder={t("Please select one type")}
+            options={dataTypes.map(v => ({ value: v, label: v }))}
+            onChange={handleTypeChange}
           />
         ) : (
-          <StyledText onDoubleClick={() => handleDoubleClick("type")} size="footnote">
-            {dataType}
-          </StyledText>
+          <TitleWrapper onDoubleClick={() => onDoubleClick?.("type")}>{dataType}</TitleWrapper>
         )}
-
-        <DeleteButton icon="trash" size={16} onClick={onRemovePropertyItem} />
-      </PropertyField>
-    </PropertyFieldContanier>
+      </ProjectItemCol>
+      <Button
+        icon="trash"
+        iconButton
+        appearance="simple"
+        size="small"
+        onClick={onRemovePropertyItem}
+      />
+    </PropertyFieldWrapper>
   );
 };
 
+const PropertyFieldWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  alignSelf: "stretch",
+  width: "100%",
+  background: theme.bg[2],
+  color: theme.content.main,
+  gap: theme.spacing.micro,
+  padding: theme.spacing.micro,
+  borderRadius: theme.radius.smallest,
+}));
+
+const ProjectItemCol = styled("div")(() => ({
+  flex: 1,
+}));
+
+const TitleWrapper = styled("div")(({ theme }) => ({
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  padding: theme.spacing.micro,
+
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+}));
+
 export default PropertyItem;
-
-const StyledSelect = styled(SelectWrapper)`
-  margin-top: 0;
-  padding: 8px 0;
-`;
-
-const StyledTextInput = styled(TextInput)`
-  width: 100%;
-  &:focus {
-    border: 1px solid ${({ theme }) => theme.select.strong};
-  }
-`;

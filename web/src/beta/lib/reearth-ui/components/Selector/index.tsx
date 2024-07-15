@@ -14,6 +14,7 @@ export type SelectorProps = {
   disabled?: boolean;
   placeholder?: string;
   maxHeight?: number;
+  size?: "normal" | "small";
   onChange?: (value: string | string[]) => void;
 };
 
@@ -21,6 +22,7 @@ export const Selector: FC<SelectorProps> = ({
   multiple,
   value,
   options,
+  size = "normal",
   placeholder = "Please select",
   disabled,
   maxHeight,
@@ -106,7 +108,12 @@ export const Selector: FC<SelectorProps> = ({
 
   const renderTrigger = () => {
     return (
-      <SelectInput isMultiple={multiple} isOpen={isOpen} disabled={disabled} width={selectorWidth}>
+      <SelectInput
+        size={size}
+        isMultiple={multiple}
+        isOpen={isOpen}
+        disabled={disabled}
+        width={selectorWidth}>
         {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>
             {placeholder}
@@ -190,7 +197,8 @@ const SelectInput = styled("div")<{
   isOpen?: boolean;
   disabled?: boolean;
   width?: number;
-}>(({ isMultiple, isOpen, disabled, width, theme }) => ({
+  size: "normal" | "small";
+}>(({ isMultiple, isOpen, disabled, width, size, theme }) => ({
   boxSizing: "border-box",
   backgroundColor: `${theme.bg[1]}`,
   display: "flex",
@@ -200,12 +208,15 @@ const SelectInput = styled("div")<{
   borderRadius: `${theme.radius.small}px`,
   border: `1px solid ${!disabled && isOpen ? theme.select.strong : theme.outline.weak}`,
   boxShadow: `${theme.shadow.input}`,
-  padding: `${theme.spacing.smallest}px ${
-    isMultiple ? theme.spacing.smallest : theme.spacing.small
-  }px`,
+  padding:
+    size === "small"
+      ? `0 ${theme.spacing.smallest}px`
+      : `${theme.spacing.smallest}px ${
+          isMultiple ? theme.spacing.smallest : theme.spacing.small
+        }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  height: "32px",
+  height: size == "small" ? "21px" : "32px",
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
