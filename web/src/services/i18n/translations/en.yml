@@ -53,6 +53,7 @@ Sort: Sort
 Use Name or Email: Use Name or Email
 Find Member: Find Member
 No Member match your search.: ''
+Created At: 'Created At'
 New Project: New Project
 Project Name: Project Name
 Last modified: Last modified
@@ -83,7 +84,9 @@ Value: Value
 Input data here: Input data here
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: 'Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.'
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: >-
+  Visualizer currently only supports CSV point data. Please specify the column
+  names for latitude and longitude in your data below.
 Latitude Column Name: ''
 Column Name: ''
 Longitude Column Name: ''
