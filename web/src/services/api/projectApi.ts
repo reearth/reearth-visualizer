@@ -2,6 +2,7 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
+import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
   UpdateProjectInput,
   ProjectPayload,
@@ -53,16 +54,24 @@ export default () => {
     return { project, ...rest };
   }, []);
 
-  const useProjectsQuery = useCallback((teamId?: string) => {
+  const useProjectsQuery = useCallback((input: GetProjectsQueryVariables) => {
     const { data, ...rest } = useQuery(GET_PROJECTS, {
-      variables: { teamId: teamId ?? "", last: 16 },
-      skip: !teamId,
+      variables: input,
+      skip: !input.teamId,
       notifyOnNetworkStatusChange: true,
     });
 
     const projects = useMemo(() => data?.projects, [data?.projects]);
+    const hasMoreProjects = useMemo(
+      () => data?.projects.pageInfo?.hasNextPage || data?.projects.pageInfo?.hasPreviousPage,
+      [data?.projects.pageInfo?.hasNextPage, data?.projects.pageInfo?.hasPreviousPage],
+    );
+    const endCursor = useMemo(
+      () => data?.projects.pageInfo?.endCursor,
+      [data?.projects.pageInfo?.endCursor],
+    );
 
-    return { projects, ...rest };
+    return { projects, hasMoreProjects, endCursor, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {

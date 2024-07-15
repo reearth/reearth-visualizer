@@ -19,6 +19,7 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
+  const [isStarred, setIsStarred] = useState(project.starred);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -70,15 +71,29 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     },
     [handleDoubleClick],
   );
+  const handleProjectStarClick = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      setIsStarred(!isStarred);
+      const updatedProject: ProjectType = {
+        ...project,
+        starred: !isStarred,
+      };
+      onProjectUpdate?.(updatedProject, project.id);
+    },
+    [isStarred, onProjectUpdate, project],
+  );
 
   return {
     isEditing,
     projectName,
     isHovered,
     popupMenu,
+    isStarred,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleProjectStarClick,
   };
 };

@@ -10,11 +10,9 @@ import { ProjectProps } from "./types";
 const ProjectListViewItem: FC<ProjectProps> = ({
   project,
   selectedProjectId,
-  isStarred,
   onProjectOpen,
   onProjectSelect,
   onProjectUpdate,
-  onProjectStarClick,
 }) => {
   const theme = useTheme();
 
@@ -32,10 +30,12 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     popupMenu,
     isEditing,
     isHovered,
+    isStarred,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleProjectStarClick,
   } = useHooks({
     project,
     selectedProjectId,
@@ -60,7 +60,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
-              onClick={e => onProjectStarClick?.(e, project.id)}
+              onClick={e => handleProjectStarClick?.(e)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
             />
