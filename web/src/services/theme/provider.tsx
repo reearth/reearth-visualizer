@@ -3,8 +3,6 @@ import { ReactNode, useEffect } from "react";
 
 import { useAuth } from "@reearth/services/auth";
 import { Theme } from "@reearth/services/gql";
-import classicDarkTheme from "@reearth/services/reearthTheme/darkTheme"; // temp classic imports
-import classicLightTheme from "@reearth/services/reearthTheme/lightTheme"; // temp classic imports
 import { useCurrentTheme } from "@reearth/services/state";
 
 import { useMeFetcher } from "../api";
@@ -26,16 +24,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     setThemeType(actualThemeType);
   }, [actualThemeType, setThemeType]);
 
-  const theme =
-    actualThemeType === "light"
-      ? {
-        classic: classicLightTheme,
-        ...lightTheme,
-      }
-      : {
-        classic: classicDarkTheme,
-        ...darkTheme,
-      };
+  const theme = actualThemeType === "light" ? lightTheme : darkTheme;
 
   return (
     <ThemeProvider theme={theme}>

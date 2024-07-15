@@ -1,15 +1,14 @@
 import { ThemeProvider } from "@emotion/react";
 import { ReactNode } from "react";
 
-import classicTheme from "@reearth/services/reearthTheme/darkTheme";
-
 import GlobalStyle from "./reearthTheme/common/globalStyles";
-import betaTheme from "./reearthTheme/darkTheme";
+import darkTheme from "./reearthTheme/darkTheme";
+import lightTheme from "./reearthTheme/lightTheme";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const theme = {
-    classic: classicTheme,
-    ...betaTheme,
+    light: lightTheme,
+    dark: darkTheme,
   };
   return (
     <ThemeProvider theme={theme}>

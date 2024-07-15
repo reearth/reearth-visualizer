@@ -56,7 +56,7 @@ const StatusCircle = styled.div<PublishStatusProps>`
   height: ${({ size }) => (size === "lg" || size === "md" ? "10px" : "9px")};
   background: ${({ theme, status }) =>
     status === "published" || status === "limited"
-      ? theme.classic.publishStatus.published
+      ? theme.publishStatus.published
       : status === "unpublished"
         ? theme.classic.publishStatus.unpublished
         : status === "building"
@@ -67,7 +67,7 @@ const StatusCircle = styled.div<PublishStatusProps>`
 `;
 
 const PublishLink = styled.a`
-  color: ${({ theme }) => theme.classic.main.strongText};
+  color: ${({ theme }) => theme.primary.strong};
   text-decoration: none;
 `;
 

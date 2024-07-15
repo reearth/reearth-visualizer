@@ -1,7 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { Clock } from "@reearth/beta//molecules/Visualizer/Plugin/types";
+import { Clock } from "@reearth/beta/features/Visualizer/Crust/Plugins/plugin_types";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { LayerSelectionReason } from "@reearth/core";
 import { ProjectType } from "@reearth/types";

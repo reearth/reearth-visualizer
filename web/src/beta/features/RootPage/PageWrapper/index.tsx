@@ -4,6 +4,7 @@ import { RingLoader } from "react-spinners";
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
 import { styled, useTheme } from "@reearth/services/theme";
+import { brandBlue, brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 
 export type Props = {
   loading?: boolean;
@@ -11,6 +12,7 @@ export type Props = {
 
 const RootPage: React.FC<Props> = ({ loading }) => {
   const theme = useTheme();
+
   return (
     <Wrapper
       justify="center"
@@ -30,9 +32,8 @@ const RootPage: React.FC<Props> = ({ loading }) => {
 
 const Wrapper = styled(Flex) <{ bg?: string }>`
   height: 100%;
-  background: ${({ theme, bg }) =>
-    bg ||
-    `linear-gradient(70deg, ${theme.classic.main.brandBlue} 10%, ${theme.classic.main.brandRed} 60%, ${theme.classic.main.brandBlue} 90%)`};
+  background: ${({ bg }) =>
+    bg || `linear-gradient(70deg, ${brandBlue} 10%, ${brandRed} 60%, ${brandBlue} 90%)`};
 `;
 
 export default RootPage;
