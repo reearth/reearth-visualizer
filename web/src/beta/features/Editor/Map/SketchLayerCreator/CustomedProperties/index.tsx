@@ -7,8 +7,8 @@ import { styled } from "@reearth/services/theme";
 import { ContentWrapper } from "../../SharedComponent";
 import { CustomPropertyProps } from "../type";
 
+import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
-import PropertyItem from "./PropertyItem";
 
 const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
   "reearth-visualizer-editor-custom-properties-drag-handle";
@@ -24,13 +24,13 @@ const CustomedProperties: FC<CustomPropertyProps> = ({
   const {
     editTitleIndex,
     editTypeIndex,
-    handlePropertyAdd,
+    handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,
     handleDoubleClick,
     handleMoveStart,
     handleMoveEnd,
-    handlePropertyItemDelete,
+    handleCustomPropertyDelete,
   } = useHooks({
     customProperties,
     propertiesList,
@@ -43,16 +43,16 @@ const CustomedProperties: FC<CustomPropertyProps> = ({
       propertiesList?.map((item, idx) => ({
         id: item.id,
         content: (
-          <PropertyItem
+          <CustomPropertyItem
             key={item.id}
             isEditTitle={editTitleIndex === idx}
             isEditType={editTypeIndex === idx}
-            propertyItem={item}
+            customPropertyItem={item}
             handleClassName={CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME}
             onBlur={handleTitleBlur(idx)}
             onDoubleClick={(field: string) => handleDoubleClick(idx, field)}
             onTypeChange={handleTypeChange(idx)}
-            onRemovePropertyItem={() => handlePropertyItemDelete(idx)}
+            onCustomPropertyDelete={() => handleCustomPropertyDelete(idx)}
           />
         ),
       })),
@@ -63,7 +63,7 @@ const CustomedProperties: FC<CustomPropertyProps> = ({
       handleTitleBlur,
       handleDoubleClick,
       handleTypeChange,
-      handlePropertyItemDelete,
+      handleCustomPropertyDelete,
     ],
   );
 
@@ -93,7 +93,7 @@ const CustomedProperties: FC<CustomPropertyProps> = ({
           icon="plus"
           title={t("New Property")}
           size="small"
-          onClick={handlePropertyAdd}
+          onClick={handleCustomPropertyAdd}
           appearance="primary"
         />
       </PropertyTable>

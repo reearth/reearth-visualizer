@@ -46,7 +46,7 @@ export default function useHooks({
     }
   }, []);
 
-  const handlePropertyAdd = useCallback(() => {
+  const handleCustomPropertyAdd = useCallback(() => {
     if (!propertiesList) return;
     const newPropertiesList = [
       ...propertiesList,
@@ -59,7 +59,7 @@ export default function useHooks({
     setPropertiesList?.(newPropertiesList);
   }, [propertiesList, setPropertiesList]);
 
-  const handlePropertyItemDelete = useCallback(
+  const handleCustomPropertyDelete = useCallback(
     (idx: number) => {
       if (!customProperties || !propertiesList) return;
       const updatedPropertiesList = [...propertiesList];
@@ -118,11 +118,11 @@ export default function useHooks({
     isDragging,
     editTitleIndex,
     editTypeIndex,
-    handlePropertyAdd,
+    handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,
     handleDoubleClick,
-    handlePropertyItemDelete,
+    handleCustomPropertyDelete,
     handlePropertyDrop,
     handleMoveStart,
     handleMoveEnd,

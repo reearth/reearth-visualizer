@@ -25,3 +25,14 @@ export type SketchLayerProps = {
   onClose: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
 };
+
+export type CustomPropertyItemProps = {
+  customPropertyItem: PropertyListProp;
+  isEditTitle?: boolean;
+  isEditType?: boolean;
+  handleClassName?: string;
+  onTypeChange?: (v?: string | string[]) => void;
+  onBlur?: (v?: string) => void;
+  onDoubleClick?: (field: string) => void;
+  onCustomPropertyDelete: () => void;
+};

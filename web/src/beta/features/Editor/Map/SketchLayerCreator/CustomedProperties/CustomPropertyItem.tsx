@@ -5,34 +5,23 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import { dataTypes } from "..";
-import { PropertyListProp } from "../type";
+import { CustomPropertyItemProps } from "../type";
 
-type PropertyItemProps = {
-  propertyItem: PropertyListProp;
-  isEditTitle?: boolean;
-  isEditType?: boolean;
-  handleClassName?: string;
-  onTypeChange?: (v?: string | string[]) => void;
-  onBlur?: (v?: string) => void;
-  onDoubleClick?: (field: string) => void;
-  onRemovePropertyItem: () => void;
-};
-
-const PropertyItem: FC<PropertyItemProps> = ({
-  propertyItem,
+const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
+  customPropertyItem,
   isEditTitle,
   isEditType,
   handleClassName,
   onTypeChange,
   onBlur,
   onDoubleClick,
-  onRemovePropertyItem,
+  onCustomPropertyDelete,
 }) => {
   const t = useT();
   const theme = useTheme();
 
-  const [customPropertyTitle, setCustomPropertyTitle] = useState(propertyItem.key);
-  const [dataType, setDataType] = useState(propertyItem.value);
+  const [customPropertyTitle, setCustomPropertyTitle] = useState(customPropertyItem.key);
+  const [dataType, setDataType] = useState(customPropertyItem.value);
 
   const handleTitleChange = useCallback((value: string) => {
     setCustomPropertyTitle(value);
@@ -55,7 +44,7 @@ const PropertyItem: FC<PropertyItemProps> = ({
         size="small"
       />
       <ProjectItemCol>
-        {propertyItem.key.trim() === "" || isEditTitle ? (
+        {customPropertyItem.key.trim() === "" || isEditTitle ? (
           <TextInput
             size="small"
             value={customPropertyTitle}
@@ -73,7 +62,7 @@ const PropertyItem: FC<PropertyItemProps> = ({
         style={{
           justifyContent: "space-between",
         }}>
-        {propertyItem.value.trim() === "" || isEditType ? (
+        {customPropertyItem.value.trim() === "" || isEditType ? (
           <Selector
             size="small"
             value={dataType}
@@ -90,7 +79,7 @@ const PropertyItem: FC<PropertyItemProps> = ({
         iconButton
         appearance="simple"
         size="small"
-        onClick={onRemovePropertyItem}
+        onClick={onCustomPropertyDelete}
       />
     </PropertyFieldWrapper>
   );
@@ -117,10 +106,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   padding: theme.spacing.micro,
-
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 }));
 
-export default PropertyItem;
+export default CustomPropertyItem;
