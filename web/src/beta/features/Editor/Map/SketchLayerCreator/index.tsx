@@ -53,8 +53,8 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({ sceneId, layerStyles, onClos
       config: {
         properties: {
           name: layerName,
-          layerStyle: layerStyle,
         },
+        layerStyleId: layerStyle,
         data: {
           type: "geojson",
         },
