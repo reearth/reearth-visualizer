@@ -124,15 +124,15 @@ Sky: 空
 Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
-Name: 名前
+Type Title here: ''
+Please select one type: ''
+Title: ページタイトル
 Type: ''
 New Property: ''
 Layer Name: ''
-Layer name you want to add.: ''
-Layer style you want to add.: ''
+' Text': ''
 General: ''
 New Sketch Layer: ''
-Create: 作成
 Published: 一般公開
 Unpublished: 非公開
 Story: ストーリー
@@ -187,6 +187,7 @@ Select Layer Style: レイヤースタイル選択
 No layerStyle match your search.: 検索からレイヤースタイルを見つけられません。
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルをまだ作成していません。「レイヤースタイル」パネルの＋ボタンをクリックし作成してください。
 Create New Workspace: 新規ワークスペース作成
+Create: 作成
 Workspace Name: ワークスペース名
 Workspaces: ワークスペース
 Unknown: 不明
@@ -212,6 +213,7 @@ You are about to delete one or more assets from the current workspace.: 1つま�
 Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
+Name: 名前
 Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
@@ -247,7 +249,6 @@ Publish your plugin in the Marketplace: マーケットプレイスでプラグ�
 Import GitHub repository: GitHubレポジトリからインポート
 'Repository url:': 'レポジトリURL:'
 Public Info: 公開詳細設定
-Title: ページタイトル
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効化
 Username: ユーザー名

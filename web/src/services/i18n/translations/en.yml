@@ -125,15 +125,15 @@ Sky: Sky
 Camera: Camera
 Unknown scene setting: Unknown scene setting
 Scene: Scene
-Name: Name
+Type Title here: Type Title here
+Please select one type: Please select one type
+Title: Title
 Type: Type
 New Property: New Property
 Layer Name: Layer Name
-Layer name you want to add.: Layer name you want to add.
-Layer style you want to add.: Layer style you want to add.
+' Text': Text
 General: General
 New Sketch Layer: New Sketch Layer
-Create: Create
 Published: Published
 Unpublished: Unpublished
 Story: Story
@@ -194,6 +194,7 @@ Select Layer Style: Select Layer Style
 No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
+Create: Create
 Workspace Name: Workspace Name
 Workspaces: Workspaces
 Unknown: Unknown
@@ -221,6 +222,7 @@ Most project settings are hidden when the project is archived. Please unarchive 
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
 Project Info: Project Info
+Name: Name
 Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
@@ -265,7 +267,6 @@ Publish your plugin in the Marketplace: Publish your plugin in the Marketplace
 Import GitHub repository: Import GitHub repository
 'Repository url:': 'Repository url:'
 Public Info: Public Info
-Title: Title
 Basic Authorization: Basic Authorization
 Enable Basic Authorization: ''
 Username: Username
