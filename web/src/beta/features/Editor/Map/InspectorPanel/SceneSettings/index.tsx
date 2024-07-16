@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
 import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import type { FlyTo } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";

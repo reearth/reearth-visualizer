@@ -1,0 +1,143 @@
+import { FC, useMemo } from "react";
+
+import { Camera, LatLng } from "@reearth/beta/utils/value";
+import { FlyTo } from "@reearth/core";
+import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+
+import {
+  AssetField,
+  CameraField,
+  ColorField,
+  InputField,
+  NumberField,
+  SelectField,
+  SpacingField,
+  SwitchField,
+  TimePointField,
+  TwinInputField,
+} from "..";
+import { SpacingValues } from "../SpacingField";
+
+import useHooks from "./hooks";
+
+type Props = {
+  propertyId: string;
+  itemId?: string;
+  schemaGroup: string;
+  schema: SchemaField;
+  field?: Field;
+  onFlyTo?: FlyTo;
+};
+
+const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, schema, onFlyTo }) => {
+  const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
+
+  const value = useMemo(
+    () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
+    [field?.mergedValue, field?.value, schema.defaultValue],
+  );
+
+  const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
+  return (
+    <>
+      {schema.type === "string" ? (
+        schema.ui === "datetime" ? (
+          <TimePointField
+            key={schema.id}
+            commonTitle={schema.name}
+            value={(value as string) ?? ""}
+            description={schema.description}
+            onChange={handleChange}
+          />
+        ) : schema.ui === "color" ? (
+          <ColorField
+            key={schema.id}
+            commonTitle={schema.name}
+            value={(value as string) ?? ""}
+            description={schema.description}
+            onChange={handleChange}
+          />
+        ) : schema.ui === "selection" || schema.choices ? (
+          <SelectField
+            key={schema.id}
+            commonTitle={schema.name}
+            value={(value as string) ?? ""}
+            description={schema.description}
+            options={schema?.choices?.map(({ key, label }) => ({ value: key, label: label })) || []}
+            onChange={handleChange}
+          />
+        ) : schema.ui === "buttons" ? (
+          <p key={schema.id}>Button radio field</p>
+        ) : (
+          <InputField
+            key={schema.id}
+            commonTitle={schema.name}
+            value={(value as string) ?? ""}
+            description={schema.description}
+            onChange={handleChange}
+          />
+        )
+      ) : schema.type === "url" ? (
+        <AssetField
+          key={schema.id}
+          commonTitle={schema.name}
+          entityType={schema.ui === "image" ? "image" : schema.ui === "file" ? "file" : undefined}
+          fileType={schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"}
+          value={(value as string) ?? ""}
+          description={schema.description}
+          onChange={handleChange}
+        />
+      ) : schema.type === "spacing" ? (
+        <SpacingField
+          key={schema.id}
+          commonTitle={schema.name}
+          value={(value as SpacingValues) ?? ""}
+          description={schema.description}
+          min={schema.min}
+          max={schema.max}
+          onChange={handleChange}
+        />
+      ) : schema.type === "bool" ? (
+        <SwitchField
+          key={schema.id}
+          commonTitle={schema.name}
+          value={!!value}
+          description={schema.description}
+          onChange={handleChange}
+        />
+      ) : schema.type === "number" ? (
+        <NumberField
+          key={schema.id}
+          commonTitle={schema.name}
+          value={(value as number) ?? ""}
+          unit={schema.suffix}
+          min={schema.min}
+          max={schema.max}
+          description={schema.description}
+          onChange={handleChange}
+        />
+      ) : schema.type === "latlng" ? (
+        <TwinInputField
+          key={schema.id}
+          commonTitle={schema.name}
+          values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
+          description={schema.description}
+          onChange={handleChange}
+        />
+      ) : schema.type === "camera" ? (
+        <CameraField
+          key={schema.id}
+          commonTitle={schema.name}
+          value={value as Camera}
+          description={schema.description}
+          onSave={handleChange}
+          onFlyTo={onFlyTo}
+        />
+      ) : (
+        <p key={schema.id}>{schema.name} field</p>
+      )}
+    </>
+  );
+};
+
+export default PropertyField;

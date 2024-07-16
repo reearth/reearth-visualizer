@@ -14,3 +14,4 @@ export { default as SpacingField } from "./SpacingField";
 export { default as TimePeriodField } from "./TimePeriodField";
 export { default as ListField } from "./ListField";
 export { default as TimePointField } from "./TimePointField";
+export { default as NumberField } from "./NumberField";
