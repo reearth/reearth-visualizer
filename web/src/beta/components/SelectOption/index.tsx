@@ -1,6 +1,6 @@
 import Text from "@reearth/beta/components/Text";
-import fonts from "@reearth/services/fonts";
 import { styled } from "@reearth/services/theme";
+import fonts from "@reearth/services/theme/fonts";
 
 export type Props = {
   label: string;

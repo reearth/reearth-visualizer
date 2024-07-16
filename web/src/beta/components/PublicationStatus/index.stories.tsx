@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import PublicationStatus from ".";
 
 export default {
-  title: "classic/atoms/PublicationStatus",
+  title: "beta/components/PublicationStatus",
   component: PublicationStatus,
 } as Meta;
 

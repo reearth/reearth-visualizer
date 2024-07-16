@@ -5,7 +5,7 @@ import { useRef } from "react";
 import Component, { Props, Ref } from ".";
 
 export default {
-  title: "classic/atoms/Plugin(classic)",
+  title: "beta/components/Plugin",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

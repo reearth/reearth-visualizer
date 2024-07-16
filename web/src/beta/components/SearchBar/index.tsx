@@ -3,8 +3,8 @@ import React from "react";
 import Box from "@reearth/beta/components/Box";
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
-import fonts from "@reearth/services/fonts";
 import { styled, useTheme } from "@reearth/services/theme";
+import fonts from "@reearth/services/theme/fonts";
 
 export type Props = {
   className?: string;

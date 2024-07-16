@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import RadioLabel from ".";
 
 export default {
-  title: "classic/atoms/RadioLabel",
+  title: "beta/components/RadioLabel",
   component: RadioLabel,
 } as Meta;
 

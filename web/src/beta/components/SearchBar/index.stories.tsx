@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  title: "classic/atoms/SearchBar",
+  title: "beta/components/SearchBar",
   component: Component,
 } as Meta;
 
