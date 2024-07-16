@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useMemo, useState } from "react";
 
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
@@ -84,12 +84,18 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     [isStarred, onProjectUpdate, project],
   );
 
+  const publishStatus = useMemo(
+    () => project.status === "published" || project.status === "limited",
+    [project.status],
+  );
+
   return {
     isEditing,
     projectName,
     isHovered,
     popupMenu,
     isStarred,
+    publishStatus,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,

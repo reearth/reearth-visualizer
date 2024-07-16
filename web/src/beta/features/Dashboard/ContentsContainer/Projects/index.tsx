@@ -172,9 +172,10 @@ const FlexTableBody = styled("div")(() => ({
   gap: "12px",
 }));
 
-const FlexTableRow = styled("div")(() => ({
+const FlexTableRow = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
+  gap: theme.spacing.large,
 }));
 
 const ActionCell = styled("div")(() => ({

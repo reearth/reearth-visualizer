@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
-import { ProjectSortType, Visualizer } from "@reearth/services/gql";
+import { ProjectSortType, PublishmentStatus, Visualizer } from "@reearth/services/gql";
 
 import { Project } from "../../type";
 
@@ -17,6 +17,13 @@ const enumTypeMapper: Partial<Record<ProjectSortType, string>> = {
   [ProjectSortType.Name]: "name",
   [ProjectSortType.Updatedat]: "date-updated",
 };
+
+const toPublishmentStatus = (s: PublishmentStatus) =>
+  s === PublishmentStatus.Public
+    ? "published"
+    : s === PublishmentStatus.Limited
+    ? "limited"
+    : "unpublished";
 
 function toGQLEnum(val?: SortType) {
   if (!val) return;
@@ -108,6 +115,7 @@ export default (workspaceId?: string) => {
               name: project.name,
               imageUrl: project.imageUrl,
               isArchived: project.isArchived,
+              status: toPublishmentStatus(project.publishmentStatus),
               sceneId: project.scene?.id,
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
@@ -116,7 +124,8 @@ export default (workspaceId?: string) => {
             }
           : undefined,
       )
-      .filter((project): project is Project => !!project);
+      .filter((project): project is Project => !!project)
+      .sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1));
   }, [projectNodes]);
 
   const isRefetchingProjects = useMemo(() => networkStatus === 3, [networkStatus]);

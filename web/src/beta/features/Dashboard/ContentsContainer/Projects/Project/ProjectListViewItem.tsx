@@ -31,6 +31,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     isEditing,
     isHovered,
     isStarred,
+    publishStatus,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
@@ -66,6 +67,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
+          <PublishStatus status={publishStatus} />
         </FlexItem>
       </ActionCell>
       <ProjectNameCell>
@@ -112,7 +114,6 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
       isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
     }`,
     padding: `${theme.spacing.small}px 0`,
-    gap: theme.spacing.small,
     alignItems: "center",
   }),
 );
@@ -138,6 +139,14 @@ const ActionCell = styled("div")(() => ({
 
 const ProjectNameCell = styled("div")(() => ({
   flex: 1,
+}));
+
+const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) => ({
+  height: "12px",
+  width: "12px",
+  borderRadius: "50%",
+  background: status ? theme.publish.main : "transparent",
+  marginTop: theme.spacing.smallest - 1,
 }));
 
 const TimeCell = styled("div")(() => ({
