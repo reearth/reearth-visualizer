@@ -7,7 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
-import { Geometry, Feature } from "@reearth/core";
+import { Geometry } from "@reearth/core";
+import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -22,7 +23,7 @@ type Props = {
   isSketchLayer?: boolean;
   customProperties?: any;
   layerId?: string;
-  sketchFeature?: Feature;
+  sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
