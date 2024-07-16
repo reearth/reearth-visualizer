@@ -25,7 +25,7 @@ const RootPage: React.FC<Props> = ({ loading }) => {
       ) : (
         <Icon icon="logo" size={200} />
       )}
-      {loading && <RingLoader size={35} color={theme.classic.main.strongText} />}
+      {loading && <RingLoader size={35} color={theme.primary.strong} />}
     </Wrapper>
   );
 };
