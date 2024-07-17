@@ -496,8 +496,6 @@ This is your personal workspace. Your projects and resources will be managed in 
 All workspaces: すべてのワークスペース
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
-Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
-Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
 Failed to add one or more assets.: アセットの作成に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しまたした。
@@ -574,27 +572,13 @@ Failed to update the layerStyle.: レイヤースタイルのアップデート�
 Successfully updated a the layerStyle!: レイヤースタイルのアップデートに成功しました！
 Failed to remove the layerStyle.: レイヤースタイルの削除に失敗しました。
 Successfully removed a the layerStyle!: レイヤースタイルの削除に成功しました！
-Failed to install plugin.: プラグインのインストールに失敗しました。
-Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
-Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Failed to create project.: プロジェクトの作成に失敗しました。
-Default: デフォルト
-Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
-Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。
-Successfully published your project!: プロジェクトの公開に成功しました！
-Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
-Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
-Failed to archive project.: プロジェクトの非編集状態に失敗しました。
-Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
 Successfully archive project!: プロジェクトのアーカイブに成功しました！
-Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
-Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: ''
@@ -619,5 +603,3 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
-Failed to create workspace.: ワークスペースの作成に失敗しました。
-Successfully created workspace!: 新しいワークスペースの作成に成功しました！

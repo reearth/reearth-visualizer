@@ -538,8 +538,6 @@ This is your personal workspace. Your projects and resources will be managed in 
 All workspaces: All workspaces
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
-Your account has been successfully verified! Feel free to login now.: Your account has been successfully verified! Feel free to login now.
-Could not verify your signup. Please start the process over.: Could not verify your signup. Please start the process over.
 Failed to add one or more assets.: Failed to add one or more assets.
 Successfully added one or more assets.: Successfully added one or more assets.
 Failed to delete one or more assets.: Failed to delete one or more assets.
@@ -616,27 +614,13 @@ Failed to update the layerStyle.: ''
 Successfully updated a the layerStyle!: ''
 Failed to remove the layerStyle.: ''
 Successfully removed a the layerStyle!: ''
-Failed to install plugin.: Failed to install plugin.
-Successfully installed plugin!: Successfully installed plugin!
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
-Failed to uninstall plugin.: Failed to uninstall plugin.
 Successfully uninstalled plugin.: ''
-Failed to create project.: Failed to create project.
-Default: Default
-Failed to create story page on project creation.: Failed to create story page on project creation.
-Successfully created project!: Successfully created project!
 Failed to publish project.: Failed to publish project.
-Successfully published your project!: Successfully published your project!
-Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
-Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
 Failed to update project.: ''
 Successfully updated project!: ''
-Failed to archive project.: Failed to archive project.
-Failed to unarchive project.: Failed to unarchive project.
 Successfully archive project!: ''
-Successfully unarchived the project. You can now edit this project.: Successfully unarchived the project. You can now edit this project.
-Failed to delete project.: Failed to delete project.
 Successfully delete project!: ''
 Failed to update property.: Failed to update property.
 Successfully updated the property value!: ''
@@ -661,5 +645,3 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
-Failed to create workspace.: Failed to create workspace.
-Successfully created workspace!: Successfully created workspace!
