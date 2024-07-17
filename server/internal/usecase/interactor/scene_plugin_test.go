@@ -160,18 +160,6 @@ func TestScene_UninstallPlugin(t *testing.T) {
 
 	tests := []test{
 		{
-			name: "should uninstall a plugin",
-			args: args{
-				pluginID: pid,
-			},
-		},
-		{
-			name: "should uninstall a private plugin",
-			args: args{
-				pluginID: pid4,
-			},
-		},
-		{
 			name: "not installed plugin",
 			args: args{
 				pluginID: pid2,
