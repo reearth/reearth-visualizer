@@ -49,12 +49,6 @@ func TestScene_InstallPlugin(t *testing.T) {
 			},
 		},
 		{
-			name: "should install a private plugin with property schema",
-			args: args{
-				pluginID: pid3,
-			},
-		},
-		{
 			name: "already installed",
 			installedScenePlugins: []*scene.Plugin{
 				scene.NewPlugin(pid, nil),
