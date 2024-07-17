@@ -16,6 +16,7 @@ func New() *repo.Container {
 		Plugin:         NewPlugin(),
 		Project:        NewProject(),
 		PropertySchema: NewPropertySchema(),
+		Property:       NewProperty(),
 		Scene:          NewScene(),
 		Workspace:      accountmemory.NewWorkspace(),
 		User:           accountmemory.NewUser(),

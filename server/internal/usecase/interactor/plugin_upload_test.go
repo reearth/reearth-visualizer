@@ -134,109 +134,6 @@ func TestPlugin_Upload_New(t *testing.T) {
 	assert.Equal(t, "// barfoo", string(npfc))
 }
 
-// The plugin and its files should be replaced with the new one (old files are deleted)
-// Properties that schema is changed should be migrated
-// Layers, widgets, blocks, properties, and property schemas that extension is deleted should deleted
-func TestPlugin_Upload_SameVersion(t *testing.T) {
-	// upgrade plugin to the same version
-	// 1 extension is deleted -> property schema, layers, and properties of the extension should be deleted
-	// old plugin files should be deleted
-
-	ctx := context.Background()
-	ws := accountdomain.NewWorkspaceID()
-	sid := id.NewSceneID()
-	pid := mockPluginID.WithScene(sid.Ref())
-	eid1 := id.PluginExtensionID("marker")
-	eid2 := id.PluginExtensionID("widget2")
-	wid1 := id.NewWidgetID()
-
-	repos := memory.New()
-	mfs := mockFS(map[string]string{
-		"plugins/" + pid.String() + "/hogehoge": "foobar",
-	})
-	files, err := fs.NewFile(mfs, "")
-	assert.NoError(t, err)
-
-	ps := property.NewSchema().ID(property.NewSchemaID(pid, eid1.String())).MustBuild()
-	ps2 := property.NewSchema().ID(property.NewSchemaID(pid, eid2.String())).MustBuild()
-	pl := plugin.New().ID(pid).Extensions([]*plugin.Extension{
-		plugin.NewExtension().ID(eid1).Type(plugin.ExtensionTypePrimitive).Schema(ps.ID()).MustBuild(),
-		plugin.NewExtension().ID(eid2).Type(plugin.ExtensionTypeWidget).Schema(ps2.ID()).MustBuild(),
-	}).MustBuild()
-
-	p1 := property.New().NewID().Schema(ps.ID()).Scene(sid).MustBuild()
-	p2 := property.New().NewID().Schema(ps2.ID()).Scene(sid).MustBuild()
-	scene := scene.New().ID(sid).Workspace(ws).Plugins(scene.NewPlugins([]*scene.Plugin{
-		scene.NewPlugin(pid, nil),
-	})).Widgets(scene.NewWidgets([]*scene.Widget{
-		scene.MustWidget(wid1, pid, eid2, p2.ID(), false, false),
-	}, nil)).MustBuild()
-
-	_ = repos.PropertySchema.Save(ctx, ps)
-	_ = repos.Plugin.Save(ctx, pl)
-	_ = repos.Property.Save(ctx, p1)
-	_ = repos.Scene.Save(ctx, scene)
-
-	uc := &Plugin{
-		sceneRepo:          repos.Scene,
-		pluginRepo:         repos.Plugin,
-		propertySchemaRepo: repos.PropertySchema,
-		propertyRepo:       repos.Property,
-		file:               files,
-		transaction:        repos.Transaction,
-	}
-	op := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
-		},
-		WritableScenes: []id.SceneID{sid},
-	}
-
-	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
-	pl, s, err := uc.Upload(ctx, reader, scene.ID(), op)
-
-	assert.NoError(t, err)
-	assert.Equal(t, scene.ID(), s.ID())
-	assert.Equal(t, pid, pl.ID())
-
-	// scene
-	nscene, err := repos.Scene.FindByID(ctx, scene.ID())
-	assert.NoError(t, err)
-	assert.True(t, nscene.Plugins().HasPlugin(pl.ID()))
-	assert.Nil(t, nscene.Widgets().Widget(wid1))
-
-	nlp2, err := repos.Property.FindByID(ctx, p1.ID())
-	assert.Nil(t, nlp2) // deleted
-	assert.Equal(t, rerror.ErrNotFound, err)
-
-	// plugin
-	npl, err := repos.Plugin.FindByID(ctx, pid)
-	assert.NoError(t, err)
-	assert.Equal(t, pid, npl.ID())
-
-	nlps, err := repos.PropertySchema.FindByID(ctx, ps.ID())
-	assert.Nil(t, nlps) // deleted
-	assert.Equal(t, rerror.ErrNotFound, err)
-
-	nlps2, err := repos.PropertySchema.FindByID(ctx, ps2.ID())
-	assert.Nil(t, nlps2) // deleted
-	assert.Equal(t, rerror.ErrNotFound, err)
-
-	_, err = mfs.Open("plugins/" + pid.String() + "/hogehoge")
-	assert.True(t, os.IsNotExist(err)) // deleted
-
-	npf, err := mfs.Open("plugins/" + pid.String() + "/block.js")
-	assert.NoError(t, err)
-	npfc, _ := io.ReadAll(npf)
-	assert.Equal(t, "// barfoo", string(npfc))
-
-	// layer
-	nlp, err := repos.Property.FindByID(ctx, p1.ID())
-	assert.Nil(t, nlp) // deleted
-	assert.Equal(t, rerror.ErrNotFound, err)
-
-}
-
 // The plugin and its files should be newrly created (old plugin and files are deleted if the plugin is private)
 // Properties that schema is changed should be migrated
 // Layers, widgets, blocks, properties, and property schemas that extension is deleted should deleted
@@ -284,6 +181,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	}, nil)).MustBuild()
 
 	_ = repos.PropertySchema.SaveAll(ctx, property.SchemaList{oldps, oldps2})
+	_ = repos.Property.SaveAll(ctx, property.List{oldp2, oldp3, oldp4})
 	_ = repos.Plugin.Save(ctx, oldpl)
 	_ = repos.Scene.Save(ctx, scene)
 

@@ -134,13 +134,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	if p != nil {
-		err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, p)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	err = i.sceneRepo.Save(ctx, res)
 	if err != nil {
 		return nil, err

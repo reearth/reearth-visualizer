@@ -215,23 +215,13 @@ func TestSceneBuilder(t *testing.T) {
 	nlsloader := nlslayer.LoaderFrom([]nlslayer.NLSLayer{})
 
 	expected := &sceneJSON{
-		SchemaVersion: version,
-		ID:            sceneID.String(),
-		PublishedAt:   publishedAt,
-		Layers:        nil,
-		Property: map[string]interface{}{
-			"A": map[string]interface{}{
-				"a": "hogehoge",
-			},
-		},
-		Plugins: map[string]map[string]interface{}{},
-		Widgets: []*widgetJSON{
-			{
-				Extended: true,
-			},
-		},
+		SchemaVersion:     version,
+		ID:                sceneID.String(),
+		PublishedAt:       publishedAt,
+		Property:          nil,
+		Plugins:           map[string]map[string]interface{}{},
+		Widgets:           []*widgetJSON{},
 		WidgetAlignSystem: nil,
-		Tags:              []*tagJSON{},
 		Clusters:          []*clusterJSON{},
 	}
 

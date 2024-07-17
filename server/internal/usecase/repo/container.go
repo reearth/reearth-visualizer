@@ -62,7 +62,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Storytelling:   c.Storytelling.Filtered(scene),
 		Project:        c.Project.Filtered(workspace),
 		PropertySchema: c.PropertySchema.Filtered(scene),
-		Property:       c.Property.Filtered(scene),
+		Property:       c.Property,
 		Scene:          c.Scene.Filtered(workspace),
 		SceneLock:      c.SceneLock,
 		Transaction:    c.Transaction,
