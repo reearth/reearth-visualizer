@@ -47,13 +47,6 @@ export const Profile: FC<ProfileProp> = ({
       }),
     },
     {
-      id: "accountSetting",
-      title: t("Account Settings"),
-      path: `/settings/account`,
-      icon: "user",
-    },
-
-    {
       id: "signOut",
       title: t("Log Out"),
       icon: "exit",

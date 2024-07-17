@@ -50,7 +50,7 @@ export default ({ projectId }: Props) => {
     async (archived: boolean) => {
       const { status } = await useArchiveProject({ projectId, archived });
       if (status === "success") {
-        navigate(`/settings/workspaces/${workspaceId}/projects`);
+        navigate(`/dashboard/${workspaceId}/`);
       }
     },
     [workspaceId, projectId, useArchiveProject, navigate],
@@ -59,7 +59,7 @@ export default ({ projectId }: Props) => {
   const handleDeleteProject = useCallback(async () => {
     const { status } = await useDeleteProject({ projectId });
     if (status === "success") {
-      navigate(`/settings/workspaces/${workspaceId}/projects`);
+      navigate(`/dashboard/${workspaceId}/`);
     }
   }, [workspaceId, projectId, useDeleteProject, navigate]);
 
