@@ -4,8 +4,6 @@ const metrics = {
   MenuIconBarWidth: 40,
   layerIconAndArrowWidth: 46,
   layerSidePadding: 10,
-  propertyMenuMinWidthClassic: 264, // REMOVE WITH CLASSIC
-  propertyMenuMaxWidthClassic: 346, // REMOVE WITH CLASSIC
   propertyMenuMinWidth: 272,
   propertyMenuMaxWidth: 336,
   propertyTextInputHeight: 30,
