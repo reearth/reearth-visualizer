@@ -102,6 +102,7 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
           onItemDelete={handlePropertyItemDelete}
           onItemMove={handlePropertyItemMove}
           atLeastOneItem
+          isEditable={false}
         />
       )}
       {!!item &&

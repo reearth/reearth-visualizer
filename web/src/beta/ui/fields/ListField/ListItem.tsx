@@ -1,6 +1,6 @@
 import { FC, useCallback, useMemo, useState } from "react";
 
-import { TextInput } from "@reearth/beta/lib/reearth-ui";
+import { PopupMenuItem, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/theme";
 
@@ -11,6 +11,7 @@ type ItemProps = {
   selectedItem?: string;
   dragHandleClassName?: string;
   isDragging?: boolean;
+  isEditable?: boolean;
   onItemDelete?: (id: string) => void;
   onItemSelect?: (id: string) => void;
   onItemNameUpdate?: (id: string, value: string) => void;
@@ -21,6 +22,7 @@ const ListItem: FC<ItemProps> = ({
   dragHandleClassName,
   isDragging,
   selectedItem,
+  isEditable,
   onItemDelete,
   onItemSelect,
   onItemNameUpdate,
@@ -33,23 +35,27 @@ const ListItem: FC<ItemProps> = ({
     onItemDelete?.(selectedItem);
   }, [selectedItem, onItemDelete]);
 
-  const optionsMenu = useMemo(
-    () => [
-      {
-        id: "rename",
-        title: "Rename",
-        icon: "pencilSimple" as const,
-        onClick: () => setItemNameRenameId(item.id),
-      },
+  const optionsMenu = useMemo<PopupMenuItem[]>(() => {
+    const menu: PopupMenuItem[] = [
       {
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
         onClick: handleItemDelete,
       },
-    ],
-    [handleItemDelete, item.id],
-  );
+    ];
+
+    if (isEditable) {
+      menu.unshift({
+        id: "rename",
+        title: "Rename",
+        icon: "pencilSimple" as const,
+        onClick: () => setItemNameRenameId(item.id),
+      });
+    }
+
+    return menu;
+  }, [handleItemDelete, item.id, isEditable]);
 
   const handleTitleUpdate = useCallback(() => {
     setItemNameRenameId("");
@@ -62,7 +68,7 @@ const ListItem: FC<ItemProps> = ({
       <EntryItemWrapper>
         <EntryItem
           title={
-            itemNameRenameId === item.id ? (
+            itemNameRenameId === item.id && isEditable ? (
               <TextInput
                 size="small"
                 extendWidth
@@ -72,7 +78,8 @@ const ListItem: FC<ItemProps> = ({
                 onBlur={handleTitleUpdate}
               />
             ) : (
-              <TitleWrapper onDoubleClick={() => setItemNameRenameId(item.id)}>
+              <TitleWrapper
+                onDoubleClick={isEditable ? () => setItemNameRenameId(item.id) : undefined}>
                 {item.title}
               </TitleWrapper>
             )
