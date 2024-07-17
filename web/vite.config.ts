@@ -68,7 +68,6 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
-        "src/beta/grapql/graphql-client-api.tsx",
         "src/beta/services/gql/__gen__/**/*",
         "src/test/**/*",
       ],
