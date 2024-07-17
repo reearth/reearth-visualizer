@@ -74,7 +74,7 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
             commonTitle={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
-            onChange={handleChange}
+            onBlur={handleChange}
           />
         )
       ) : schema.type === "url" ? (
