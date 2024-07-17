@@ -1,47 +1,13 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
-import Button from "@reearth/beta/components/Button";
-import Modal from "@reearth/beta/components/Modal";
-import TabMenu from "@reearth/beta/components/TabMenu";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { Button, Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-
-import { LayerAddProps } from "../../hooks/useLayers";
+import { styled } from "@reearth/services/theme";
 
 import CustomedProperties from "./CustomedProperties";
 import General from "./General";
+import { CustomPropertyProp, PropertyListProp, SketchLayerProps } from "./type";
 import { SketchLayerDataType } from "./types";
-
-export type Property = {
-  [key: string]: string;
-};
-
-export type PropertyProps = {
-  id: string;
-  key: string;
-  value: string;
-};
-
-export interface SketchProps {
-  sceneId?: string;
-  layerStyles?: LayerStyle[];
-  customPropertyList?: Property[];
-  currentProperties?: PropertyProps[];
-  layerName?: string;
-  layerStyle?: string;
-  setLayerName?: (value: string) => void;
-  setLayerStyle?: (value: string) => void;
-  onClose?: () => void;
-  onSubmit?: (layerAddInp: LayerAddProps) => void;
-  setCustomPropertyList?: (prev: Property[]) => void;
-  setCurrentProperties?: (prev: PropertyProps[]) => void;
-}
-
-interface TabObject {
-  id: string;
-  name?: string;
-  component?: JSX.Element;
-}
 
 export const dataTypes: SketchLayerDataType[] = [
   "Text",
@@ -53,20 +19,23 @@ export const dataTypes: SketchLayerDataType[] = [
   "Boolean",
 ];
 
-const SketchLayerCreator: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
+const SketchLayerCreator: FC<SketchLayerProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
-  const [selectedTab, setSelectedTab] = useState("general");
-  const [customPropertyList, setCustomPropertyList] = useState<Property[]>([]);
-  const [currentProperties, setCurrentProperties] = useState<PropertyProps[]>([]);
+  const [customProperties, setCustomProperties] = useState<CustomPropertyProp[]>([]);
+  const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
 
-  const handleTabChange = useCallback((newTab: string) => {
-    setSelectedTab(newTab);
+  const handleLayerStyleChange = useCallback((value?: string | string[]) => {
+    setLayerStyle(value as string);
+  }, []);
+
+  const handleLayerNameChange = useCallback((value?: string) => {
+    setLayerName(value || "");
   }, []);
 
   const handleSubmit = () => {
-    const schemaJSON = customPropertyList.reduce((acc, property, index) => {
+    const schemaJSON = customProperties.reduce((acc, property, index) => {
       const [key] = Object.keys(property);
 
       // Appending index + 1 to the value for sorting later
@@ -84,8 +53,8 @@ const SketchLayerCreator: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
       config: {
         properties: {
           name: layerName,
-          layerStyle: layerStyle,
         },
+        layerStyleId: layerStyle,
         data: {
           type: "geojson",
         },
@@ -94,62 +63,63 @@ const SketchLayerCreator: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
     onClose?.();
   };
 
-  const tabs: TabObject[] = useMemo(
-    () => [
-      {
-        id: "general",
-        name: t("General"),
-        component: (
-          <General
-            layerStyles={layerStyles}
-            layerName={layerName}
-            layerStyle={layerStyle}
-            setLayerName={setLayerName}
-            setLayerStyle={setLayerStyle}
-          />
-        ),
-      },
-      {
-        id: "customProperties",
-        name: t("Custom Properties"),
-        component: (
-          <CustomedProperties
-            customPropertyList={customPropertyList}
-            currentProperties={currentProperties}
-            setCustomPropertyList={setCustomPropertyList}
-            setCurrentProperties={setCurrentProperties}
-          />
-        ),
-      },
-    ],
-    [currentProperties, customPropertyList, layerName, layerStyle, layerStyles, t],
-  );
+  const tabsItem: TabItem[] = [
+    {
+      id: "general",
+      name: t("General"),
+      children: (
+        <General
+          layerStyles={layerStyles}
+          layerName={layerName}
+          layerStyle={layerStyle}
+          onLayerStyleChange={handleLayerStyleChange}
+          onLayerNameChange={handleLayerNameChange}
+        />
+      ),
+    },
+    {
+      id: "customProperties",
+      name: t("Custom Properties"),
+      children: (
+        <CustomedProperties
+          customProperties={customProperties}
+          propertiesList={propertiesList}
+          setCustomProperties={setCustomProperties}
+          setPropertiesList={setPropertiesList}
+        />
+      ),
+    },
+  ];
 
   return (
-    <Modal
-      size="md"
-      isVisible={true}
-      title={t("New Sketch Layer")}
-      onClose={onClose}
-      button1={<Button text={t("Cancel")} onClick={onClose} />}
-      button2={
-        <Button
-          text={t("Create")}
-          buttonType="primary"
-          size="medium"
-          disabled={!layerName}
-          onClick={handleSubmit}
-        />
-      }
-      isContent={true}>
-      <TabMenu
-        menuAlignment="top"
-        tabs={tabs}
-        selectedTab={selectedTab}
-        onSelectedTabChange={handleTabChange}
-      />
+    <Modal size="medium" visible={true}>
+      <ModalPanel
+        title={t("New Sketch Layer")}
+        onCancel={onClose}
+        actions={
+          <>
+            <Button onClick={onClose} size="normal" title="Cancel" />
+            <Button
+              size="normal"
+              title="Create"
+              appearance="primary"
+              onClick={handleSubmit}
+              disabled={!layerName}
+            />
+          </>
+        }>
+        <Wrapper>
+          <Tabs tabs={tabsItem} />
+        </Wrapper>
+      </ModalPanel>
     </Modal>
   );
 };
+
+const Wrapper = styled("div")(({ theme }) => ({
+  height: "440px",
+  padding: theme.spacing.normal,
+  background: theme.bg[0],
+}));
 
 export default SketchLayerCreator;

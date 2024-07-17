@@ -1,6 +1,5 @@
 import { FC } from "react";
 
-import URLField from "@reearth/beta/components/fields/URLField";
 import {
   InputGroup,
   SubmitWrapper,
@@ -16,6 +15,7 @@ import {
   TextInput,
   TextArea,
 } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -53,16 +53,19 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceTypeOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup
+            value={sourceType}
+            options={dataSourceTypeOptions}
+            onChange={handleDataSourceTypeChange}
+          />
         </InputGroup>
 
         {sourceType == "local" && (
-          //this Url field component will be replaced with new ui/fields
           <InputsWrapper>
-            <URLField
+            <AssetField
               fileType="asset"
               entityType="file"
-              name={t("Asset")}
+              commonTitle={t("Asset")}
               value={value}
               fileFormat={fileFormat}
               onChange={handleValueChange}
