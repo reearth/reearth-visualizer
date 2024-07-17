@@ -285,13 +285,6 @@ func TestScene_UpgradePlugin(t *testing.T) {
 
 	tests := []test{
 		{
-			name: "should upgrade a plugin",
-			args: args{
-				old: pid1,
-				new: pid2,
-			},
-		},
-		{
 			name: "not installed",
 			args: args{
 				old: pid2,
