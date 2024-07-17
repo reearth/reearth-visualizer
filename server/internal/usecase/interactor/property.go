@@ -44,18 +44,6 @@ func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, o
 	return i.propertySchemaRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, linked *id.DatasetID, operator *usecase.Operator) error {
-	ids := []id.PropertyID{}
-	if org != nil {
-		ids = append(ids, *org)
-	}
-	if parent != nil {
-		ids = append(ids, *parent)
-	}
-
-	return nil
-}
-
 func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, _ *property.Field, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {

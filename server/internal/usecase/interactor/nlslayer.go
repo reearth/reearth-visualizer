@@ -250,14 +250,12 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 		return nil, err
 	}
 
-	infobox := l.Infobox()
-
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
 	property, err := property.New().NewID().Schema(schema.ID()).Scene(l.Scene()).Build()
 	if err != nil {
 		return nil, err
 	}
-	infobox = nlslayer.NewInfobox(nil, property.ID())
+	infobox := nlslayer.NewInfobox(nil, property.ID())
 	l.SetInfobox(infobox)
 
 	err = i.propertyRepo.Save(ctx, property)
