@@ -133,6 +133,18 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
           onSave={handleChange}
           onFlyTo={onFlyTo}
         />
+      ) : schema.type === "array" && schema.ui === "range" ? (
+        //will be replaced by range field when created
+        <NumberField
+          key={schema.id}
+          commonTitle={schema.name}
+          value={(value as number) ?? ""}
+          unit={schema.suffix}
+          min={schema.min}
+          max={schema.max}
+          description={schema.description}
+          onChange={handleChange}
+        />
       ) : (
         <p key={schema.id}>{schema.name} field</p>
       )}
