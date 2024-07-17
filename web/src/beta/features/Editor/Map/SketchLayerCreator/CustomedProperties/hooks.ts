@@ -1,94 +1,130 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { Property, PropertyProps } from "..";
+import { CustomPropertyProps, PropertyListProp } from "../type";
 
 export default function useHooks({
-  customPropertyList,
-  currentProperties,
-  setCurrentProperties,
-  setCustomPropertyList,
-}: {
-  customPropertyList?: Property[];
-  currentProperties?: PropertyProps[];
-  setCustomPropertyList?: (inp: Property[]) => void;
-  setCurrentProperties?: (prev: PropertyProps[]) => void;
-}) {
-  const handleValueChange = useCallback(
-    (idx: number) => (newValue?: string) => {
-      if (!currentProperties) return;
-      const newList = currentProperties?.map(i => ({ ...i } as PropertyProps));
-      newList[idx].value = newValue ?? "";
-      setCurrentProperties?.(newList);
-    },
-    [currentProperties, setCurrentProperties],
-  );
+  customProperties,
+  propertiesList,
+  setPropertiesList,
+  setCustomProperties,
+}: CustomPropertyProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [editTitleIndex, setEditTitleIndex] = useState<number | null>(null);
+  const [editTypeIndex, setEditTypeIndex] = useState<number | null>(null);
 
-  const handleKeyChange = useCallback(
+  const handleTitleBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
-      if (!currentProperties) return;
+      if (!propertiesList) return;
 
-      const newList = currentProperties.map(i => ({ ...i } as PropertyProps));
+      const newList = propertiesList.map(i => ({ ...i } as PropertyListProp));
       newList[idx].key = newKeyValue ?? "";
-      setCurrentProperties?.(newList);
+      setPropertiesList?.(newList);
+      if (editTitleIndex === idx) setEditTitleIndex(null);
     },
-    [currentProperties, setCurrentProperties],
+    [editTitleIndex, propertiesList, setPropertiesList],
   );
 
-  const handlePropertyAdd = useCallback(() => {
-    if (!currentProperties) return;
-    const newList = [
-      ...currentProperties,
+  const handleTypeChange = useCallback(
+    (idx: number) => (value?: string | string[]) => {
+      if (!propertiesList) return;
+      const newList = propertiesList?.map(i => ({ ...i } as PropertyListProp));
+      newList[idx].value = (value as string) ?? "";
+      setPropertiesList?.(newList);
+      if (editTypeIndex === idx) setEditTypeIndex(null);
+    },
+    [editTypeIndex, propertiesList, setPropertiesList],
+  );
+
+  const handleDoubleClick = useCallback((idx: number, field: string) => {
+    if (field === "name") {
+      setEditTitleIndex(idx);
+      setEditTypeIndex(null);
+    } else if (field === "type") {
+      setEditTypeIndex(idx);
+      setEditTitleIndex(null);
+    }
+  }, []);
+
+  const handleCustomPropertyAdd = useCallback(() => {
+    if (!propertiesList) return;
+    const newPropertiesList = [
+      ...propertiesList,
       {
         id: uuidv4(),
         key: "",
         value: "",
       },
     ];
-    setCurrentProperties?.(newList);
-  }, [currentProperties, setCurrentProperties]);
+    setPropertiesList?.(newPropertiesList);
+  }, [propertiesList, setPropertiesList]);
 
-  const handleRemovePropertyToList = useCallback(
+  const handleCustomPropertyDelete = useCallback(
     (idx: number) => {
-      if (!customPropertyList || !currentProperties) return;
-      const updatedPropertiesList = [...currentProperties];
+      if (!customProperties || !propertiesList) return;
+      const updatedPropertiesList = [...propertiesList];
       updatedPropertiesList.splice(idx, 1);
-      setCurrentProperties?.(updatedPropertiesList);
+      setPropertiesList?.(updatedPropertiesList);
     },
-    [customPropertyList, currentProperties, setCurrentProperties],
+    [customProperties, propertiesList, setPropertiesList],
   );
 
-  const handlePropertyDrop: (item: PropertyProps, targetIndex: number) => void = useCallback(
-    (item, index) => {
-      if (!currentProperties) return;
-      const newList: PropertyProps[] = [...currentProperties];
-      newList.splice(
-        currentProperties?.findIndex(li => li.id === item.id),
-        1,
-      );
-      newList.splice(index, 0, item);
+  const handlePropertyDrop = useCallback(
+    (item: PropertyListProp, targetIndex: number) => {
+      if (!propertiesList || targetIndex < 0 || targetIndex >= propertiesList.length) return;
 
-      if (newList.length < 1 || !currentProperties) return;
-      setCurrentProperties?.(newList);
+      const newList = [...propertiesList];
+      const currentIndex = newList.findIndex(li => li.id === item.id);
+      if (currentIndex === -1) return; // Item not found
+
+      // Remove the item from its current position
+      const [draggedItem] = newList.splice(currentIndex, 1);
+
+      // Insert the item at the target index
+      newList.splice(targetIndex, 0, draggedItem);
+
+      setPropertiesList?.(newList);
     },
-    [currentProperties, setCurrentProperties],
+    [propertiesList, setPropertiesList],
   );
 
   useEffect(() => {
-    if (setCustomPropertyList) {
-      if (!currentProperties) return;
-      const filteredList = currentProperties.filter(item => item.key !== "" && item.value !== "");
+    if (setCustomProperties) {
+      if (!propertiesList) return;
+      const filteredList = propertiesList.filter(item => item.key !== "" && item.value !== "");
       const propertyList = filteredList.map(item => ({ [item.key]: item.value }));
-      setCustomPropertyList(propertyList);
+      setCustomProperties(propertyList);
     }
-  }, [currentProperties, setCustomPropertyList]);
+  }, [propertiesList, setCustomProperties]);
+
+  const handleMoveStart = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleMoveEnd = useCallback(
+    (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        const itemToMove = propertiesList?.find(item => item.id === itemId);
+        if (itemToMove) {
+          handlePropertyDrop(itemToMove, newIndex);
+        }
+      }
+      setIsDragging(false);
+    },
+    [handlePropertyDrop, propertiesList],
+  );
 
   return {
-    currentProperties,
-    handlePropertyAdd,
-    handleKeyChange,
-    handleValueChange,
-    handleRemovePropertyToList,
+    isDragging,
+    editTitleIndex,
+    editTypeIndex,
+    handleCustomPropertyAdd,
+    handleTitleBlur,
+    handleTypeChange,
+    handleDoubleClick,
+    handleCustomPropertyDelete,
     handlePropertyDrop,
+    handleMoveStart,
+    handleMoveEnd,
   };
 }

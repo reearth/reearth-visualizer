@@ -1,74 +1,139 @@
-import Button from "@reearth/beta/components/Button";
-import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import {
-  ColJustifyBetween,
-  AddButtonWrapper,
-  PropertyListHeader,
-  TitledText,
-} from "@reearth/beta/features/Editor/utils";
+import { FC, useMemo } from "react";
+
+import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
-import { PropertyProps, SketchProps } from "..";
+import { ContentWrapper } from "../../SharedComponent";
+import { CustomPropertyProps } from "../type";
 
+import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
-import PropertyItem from "./PropertyItem";
 
-const CustomedProperties: React.FC<SketchProps> = ({
-  customPropertyList,
-  currentProperties,
-  setCurrentProperties,
-  setCustomPropertyList,
+const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-custom-properties-drag-handle";
+
+const CustomedProperties: FC<CustomPropertyProps> = ({
+  customProperties,
+  propertiesList,
+  setPropertiesList,
+  setCustomProperties,
 }) => {
   const t = useT();
-  const theme = useTheme();
 
   const {
-    handleRemovePropertyToList,
-    handlePropertyDrop,
-    handlePropertyAdd,
-    handleKeyChange,
-    handleValueChange,
+    editTitleIndex,
+    editTypeIndex,
+    handleCustomPropertyAdd,
+    handleTitleBlur,
+    handleTypeChange,
+    handleDoubleClick,
+    handleMoveStart,
+    handleMoveEnd,
+    handleCustomPropertyDelete,
   } = useHooks({
-    customPropertyList,
-    currentProperties,
-    setCurrentProperties,
-    setCustomPropertyList,
+    customProperties,
+    propertiesList,
+    setPropertiesList,
+    setCustomProperties,
   });
 
+  const DraggableCustomPropertyItems = useMemo(
+    () =>
+      propertiesList?.map((item, idx) => ({
+        id: item.id,
+        content: (
+          <CustomPropertyItem
+            key={item.id}
+            isEditTitle={editTitleIndex === idx}
+            isEditType={editTypeIndex === idx}
+            customPropertyItem={item}
+            handleClassName={CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME}
+            onBlur={handleTitleBlur(idx)}
+            onDoubleClick={(field: string) => handleDoubleClick(idx, field)}
+            onTypeChange={handleTypeChange(idx)}
+            onCustomPropertyDelete={() => handleCustomPropertyDelete(idx)}
+          />
+        ),
+      })),
+    [
+      propertiesList,
+      editTitleIndex,
+      editTypeIndex,
+      handleTitleBlur,
+      handleDoubleClick,
+      handleTypeChange,
+      handleCustomPropertyDelete,
+    ],
+  );
+
   return (
-    <ColJustifyBetween>
-      <PropertyListHeader>
-        <TitledText size="footnote" color={theme.content.weaker}>
-          {t("Name")}
-        </TitledText>
-        <TitledText size="footnote" color={theme.content.weaker}>
-          {t("Type")}
-        </TitledText>
-      </PropertyListHeader>
-      {currentProperties && currentProperties?.length > 0 && (
-        <DragAndDropList<PropertyProps>
-          uniqueKey="custom-property"
-          gap={8}
-          items={(currentProperties as PropertyProps[]) || []}
-          getId={item => item.id}
-          onItemDrop={handlePropertyDrop}
-          renderItem={(property, idx) => (
-            <PropertyItem
-              key={property.id}
-              property={property}
-              onKeyChange={handleKeyChange(idx)}
-              onValueChange={handleValueChange(idx)}
-              onRemovePropertyItem={() => handleRemovePropertyToList(idx)}
+    <ContentWrapper>
+      <PropertyTable>
+        <PropertyTableRow>
+          <ActionCol />
+          <PropertyHeaderCol>
+            <Title>{t("Title")}</Title>
+          </PropertyHeaderCol>
+          <PropertyHeaderCol>
+            <Title>{t("Type")}</Title>
+          </PropertyHeaderCol>
+          <ActionCol />
+        </PropertyTableRow>
+        <PropertyTableBody>
+          {propertiesList && propertiesList.length > 0 && (
+            <DragAndDropList
+              items={DraggableCustomPropertyItems}
+              onMoveStart={handleMoveStart}
+              onMoveEnd={handleMoveEnd}
             />
           )}
+        </PropertyTableBody>
+        <Button
+          icon="plus"
+          title={t("New Property")}
+          size="small"
+          onClick={handleCustomPropertyAdd}
+          appearance="primary"
         />
-      )}
-      <AddButtonWrapper>
-        <Button icon="plus" text={t("New Property")} size="small" onClick={handlePropertyAdd} />
-      </AddButtonWrapper>
-    </ColJustifyBetween>
+      </PropertyTable>
+    </ContentWrapper>
   );
 };
+
+const Title = styled("div")(({ theme }) => ({
+  color: theme.content.weak,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+}));
+
+const PropertyTable = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  width: "100%",
+}));
+
+const PropertyTableBody = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.normal,
+  maxHeight: "320px",
+  overflowY: "auto",
+}));
+
+const PropertyTableRow = styled("div")(({ theme }) => ({
+  display: "flex",
+  width: "100%",
+  gap: theme.spacing.smallest,
+}));
+
+const ActionCol = styled("div")(() => ({
+  marginRight: "12px",
+}));
+
+const PropertyHeaderCol = styled("div")(() => ({
+  flex: 1,
+}));
 
 export default CustomedProperties;

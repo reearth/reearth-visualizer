@@ -1,6 +1,5 @@
 import { FC, useCallback, useMemo, useState } from "react";
 
-import URLField from "@reearth/beta/components/fields/URLField";
 import {
   InputGroup,
   SubmitWrapper,
@@ -9,6 +8,7 @@ import {
   ContentWrapper,
 } from "@reearth/beta/features/Editor/Map/SharedComponent";
 import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -66,16 +66,19 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <Wrapper>
       <ContentWrapper>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup
+            value={sourceType}
+            options={dataSourceOptions}
+            onChange={handleDataSourceTypeChange}
+          />
         </InputGroup>
 
         {sourceType == "local" && (
-          //this Url field component will be replaced with new ui/fields
           <InputsWrapper>
-            <URLField
+            <AssetField
               fileType="asset"
               entityType="file"
-              name={t("Asset")}
+              commonTitle={t("Asset")}
               value={value}
               fileFormat="CSV"
               onChange={handleValueChange}
