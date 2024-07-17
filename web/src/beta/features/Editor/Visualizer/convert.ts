@@ -13,7 +13,7 @@ import {
 } from "@reearth/beta/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
-import { LayerAppearanceTypes, Feature } from "@reearth/core";
+import { LayerAppearanceTypes } from "@reearth/core";
 import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
@@ -32,8 +32,6 @@ import {
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
-
-import { handleCoordinate } from "../utils";
 
 import convertInfobox from "./convert-infobox";
 
@@ -370,21 +368,15 @@ export function processLayers(
 
   return newLayers?.map(nlsLayer => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
-        features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
-          const cleanedFeatures = {
-            ...feature,
-            geometry: {
-              type: feature.geometry?.type,
-              coordinates: handleCoordinate(feature.geometry),
-            },
-          };
-
-          return cleanedFeatures;
-        }),
+        features: nlsLayer.sketch?.featureCollection?.features.map(f => ({
+          ...f,
+          geometry: f.geometry[0],
+        })),
       },
     };
 

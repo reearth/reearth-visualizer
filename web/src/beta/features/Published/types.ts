@@ -1,4 +1,5 @@
 import type { DataRange, DataType, Geometry, SceneProperty, TimeInterval } from "@reearth/core";
+import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {
@@ -62,8 +63,17 @@ export type NLSLayer = {
     };
   };
   isSketch?: boolean;
-  sketchInfo?: any;
+  sketchInfo?: SketchInfo;
   nlsInfobox?: any;
+};
+
+export type SketchInfo = {
+  propertySchema?: any;
+  title?: string;
+  featureCollection: {
+    type: string;
+    features: SketchFeature[];
+  };
 };
 
 export type NLSInfobox = {

@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 
-import Button from "@reearth/beta/components/Button";
 import {
-  ColJustifyBetween,
-  AssetWrapper,
   InputGroup,
-  Input,
   SubmitWrapper,
-  generateTitle,
-} from "@reearth/beta/features/Editor/utils";
+  Wrapper,
+  InputsWrapper,
+  ContentWrapper,
+} from "@reearth/beta/features/Editor/Map/SharedComponent";
+import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
+import { generateTitle } from "../util";
 
-const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const [value, setValue] = useState("");
 
@@ -34,29 +34,24 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustifyBetween>
-      <AssetWrapper>
-        <InputGroup
-          label={t("Resource URL")}
-          description={t("URL of the data source you want to add.")}>
-          <Input
-            type="text"
-            placeholder={t("Input Text")}
-            value={value}
-            onChange={e => setValue(e.target.value)}
-          />
+    <Wrapper>
+      <ContentWrapper>
+        <InputGroup label={t("Resource URL")}>
+          <InputsWrapper>
+            <TextInput placeholder="https://" value={value} onChange={value => setValue(value)} />
+          </InputsWrapper>
         </InputGroup>
-      </AssetWrapper>
+      </ContentWrapper>
+
       <SubmitWrapper>
         <Button
-          text={t("Add to Layer")}
-          buttonType="primary"
-          size="medium"
+          title={t("Add to Layer")}
+          appearance="primary"
           onClick={handleSubmit}
           disabled={!value}
         />
       </SubmitWrapper>
-    </ColJustifyBetween>
+    </Wrapper>
   );
 };
 

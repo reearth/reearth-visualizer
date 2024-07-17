@@ -54,7 +54,7 @@ export const UsecaseReadonly: Story = {
   },
 };
 // TODO: use IconButton instead of MockButton
-const MockButton: FC = () => <Icon icon="settings" size={12} />;
+const MockButton: FC = () => <Icon icon="settings" size={12} color="#525252" />;
 
 export const Actions: Story = {
   args: {

@@ -4,12 +4,11 @@ import { Switcher, SwitcherProps } from "@reearth/beta/lib/reearth-ui";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
-export type SwitchFieldProps = CommonFieldProps &
-  Pick<SwitcherProps, "value" | "onChange" | "disabled">;
+export type SwitchFieldProps = CommonFieldProps & SwitcherProps;
 
-const SwitchField: FC<SwitchFieldProps> = ({ title, description, ...props }) => {
+const SwitchField: FC<SwitchFieldProps> = ({ commonTitle, description, ...props }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField commonTitle={commonTitle} description={description}>
       <Switcher {...props} />
     </CommonField>
   );

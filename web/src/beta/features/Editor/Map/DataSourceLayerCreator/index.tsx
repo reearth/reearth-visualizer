@@ -1,12 +1,13 @@
-import React from "react";
+import { FC } from "react";
 
-import Modal from "@reearth/beta/components/Modal";
+import { Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
-import Asset from "./Common";
-import DelimitedText from "./DelimitedText";
+import CommonAsset from "./Common";
+import CSV from "./CSV";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
 import WmsTiles from "./WmsTiles";
@@ -21,46 +22,52 @@ export type SourceType = "url" | "local" | "value";
 
 export type DataSourceOptType = {
   label: string;
-  keyValue: SourceType;
+  value: SourceType;
 }[];
 
-const DataSourceLayerCreator: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
+const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
   const t = useT();
+
+  const tabsItem: TabItem[] = [
+    {
+      id: "asset",
+      name: t("Common"),
+      children: <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+    },
+    {
+      id: "csv",
+      name: t("CSV"),
+      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+    },
+    {
+      id: "wms",
+      name: t("WMS"),
+      children: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+    },
+    {
+      id: "vectorTiles",
+      name: t("Vector Tile"),
+      children: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+    },
+    {
+      id: "threeDTiles",
+      name: t("3D Tiles"),
+      children: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+    },
+  ];
+
   return (
-    <Modal
-      size="md"
-      isVisible={true}
-      title={t("Data Source Manager")}
-      onClose={onClose}
-      sidebarTabs={[
-        {
-          content: <Asset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-          id: "asset",
-          label: t("Common"),
-        },
-        {
-          content: <DelimitedText sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-          id: "delimitedText",
-          label: t("CSV"),
-        },
-        {
-          content: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-          id: "wms",
-          label: t("WMS"),
-        },
-        {
-          content: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-          id: "vectorTiles",
-          label: t("Vector Tile"),
-        },
-        {
-          content: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-          id: "threeDTiles",
-          label: t("3D Tiles"),
-        },
-      ]}
-    />
+    <Modal size="medium" visible={true}>
+      <ModalPanel title={t("Data Source Manager")} onCancel={onClose}>
+        <Wrapper>
+          <Tabs tabs={tabsItem} position="left" tabStyle="separated" />
+        </Wrapper>
+      </ModalPanel>
+    </Modal>
   );
 };
+const Wrapper = styled("div")(() => ({
+  height: "440px",
+}));
 
 export default DataSourceLayerCreator;

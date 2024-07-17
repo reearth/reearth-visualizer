@@ -38,7 +38,6 @@ type Project struct {
 	file              gateway.File
 	nlsLayerRepo      repo.NLSLayer
 	layerStyles       repo.Style
-	repos             *repo.Container
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
@@ -67,17 +66,11 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 }
 
 func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
-	return Run2(
-		ctx, operator, i.repos,
-		Usecase().WithReadableWorkspaces(id),
-		func(ctx context.Context) ([]*project.Project, *usecasex.PageInfo, error) {
-			return i.repos.Project.FindByWorkspace(ctx, id, repo.ProjectFilter{
-				Sort:       sort,
-				Keyword:    keyword,
-				Pagination: p,
-			})
-		},
-	)
+	return i.projectRepo.FindByWorkspace(ctx, id, repo.ProjectFilter{
+		Pagination: p,
+		Sort:       sort,
+		Keyword:    keyword,
+	})
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
