@@ -83,8 +83,9 @@ Value: Value
 Input data here: Input data here
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.:
-  Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: >-
+  Visualizer currently only supports CSV point data. Please specify the column
+  names for latitude and longitude in your data below.
 Latitude Column Name: ''
 Column Name: ''
 Longitude Column Name: ''
@@ -332,269 +333,10 @@ Clear Formatting: Clear Formatting
 Position Capture: ''
 value: ''
 Time Period Settings: Time Period Settings
-Drop here: Drop here
-Close timeline: Close timeline
-Playback timeline: Playback timeline
-Play timeline: Play timeline
-ellipse: ellipse
-Open timeline: Open timeline
-Welcome: Welcome
-Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
-Username or email: Username or email
-Forgot password?: Forgot password?
-Don't have an account?: Don't have an account?
-Sign up: Sign up
-Check Your Email: Check Your Email
-Please check your inbox for instructions on how to verify your account.: Please check your inbox for instructions on how to verify your account.
-Resend email: Resend email
-Go to log in page.: Go to log in page.
-Forgot Your Password?: Forgot Your Password?
-Enter your email address and we will send you instructions to reset your password.: >-
-  Enter your email address and we will send you instructions to reset your
-  password.
-Email address: Email address
-Go back to log in page: Go back to log in page
-No whitespace is allowed.: No whitespace is allowed.
-Too short.: Too short.
-That is terribly long.: That is terribly long.
-That password is great!: That password is great!
-That password is better.: That password is better.
-That password is okay.: That password is okay.
-That password confuses me, but might be okay.: That password confuses me, but might be okay.
-Change Your Password: Change Your Password
-Enter a new password below to change your password.: Enter a new password below to change your password.
-New password: New password
-Reset password: Reset password
-Create your Account: Create your Account
-Already have an account?: Already have an account?
-Log in: Log in
-File size: File size
-Alphabetical: Alphabetical
-Assets Library: Assets Library
-Use URL: Use URL
-Add video URL: Add video URL
-Select Asset: Select Asset
-Your browser is too small: Your browser is too small
-Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
-  Re:Earth needs at least 900px width to be used effectively. Please resize your
-  browser window.
-OK: OK
-Click here for more details.: ''
-Create New Project: Create New Project
-Select thumbnail image: Select thumbnail image
-Datasets: Datasets
-Plugins: Plugins
-Choose Project Type: Choose Project Type
-classic: classic
-Create project with classic UI: Create project with classic UI
-Beta: Beta
-Create project with the latest features and UI system (projects might break without prior notice): >-
-  Create project with the latest features and UI system (projects might break
-  without prior notice)
-timeSince: Edited {{timeSince}}
-You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
-  You have no projects in your workspace. Click the button above in the Quick
-  Start to create a project now!
-Quick Start: Quick Start
-User guide: User guide
-New project: New project
-New workspace: New workspace
-'''s workspace': '''s workspace'
-Layer style: Layer style
-import: import
-Import to scene: Import to scene
-You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
-  You are deleting a dataset. Layers that are linked to this dataset might show
-  errors.
-Please make sure your project doesn't rely on this dataset before proceeding.: Please make sure your project doesn't rely on this dataset before proceeding.
-Connect with Google Drive: Connect with Google Drive
-Re:Earth supports uploading Google Sheets and CSV files.: Re:Earth supports uploading Google Sheets and CSV files.
-sending...: sending...
-Add Dataset: Add Dataset
-Add dataset: Add dataset
-Upload from your device: Upload from your device
-Supports CSV, JSON, GIS files: Supports CSV, JSON, GIS files
-Google Drive: Google Drive
-Upload CSV file: Upload CSV file
-Sorry, that service is unavailable at this time.: Sorry, that service is unavailable at this time.
-Other Source: Other Source
-No Dataset is here: No Dataset is here
-Export type: Export type
-Export: Export
-Preview: Preview
-Layer selection: Layer selection
-Selectable Layers: Selectable Layers
-Stories: Stories
-Delete Selected Layer: Delete Selected Layer
-Create New Folder: Create New Folder
-Add Layer: Add Layer
-Zoom To Layer: Zoom To Layer
-Delete the selected item.: Delete the selected item.
-Clusters: Clusters
-Delete widget: Delete widget
-You are about to delete the selected widget. You will lose all data tied to this widget.: >-
-  You are about to delete the selected widget. You will lose all data tied to
-  this widget.
-Are you sure you would like to delete this widget?: Are you sure you would like to delete this widget?
-Container: ''
-Create Infobox: Create Infobox
-Dataset: Dataset
-Pose Set: Pose Set
-Not Set: Not Set
-Altitude: Altitude
-Check Pose: Check Pose
-Jump: Jump
-Edit Pose: Edit Pose
-Edit Position: Edit Position
-'#RRGGBBAA': '#RRGGBBAA'
-Red: Red
-Green: Green
-Blue: Blue
-Alpha: Alpha
-This field is linked to {{datasetField}}.: This field is linked to {{datasetField}}.
-This field is not editable currently.: This field is not editable currently.
-Linkable data: Linkable data
-Link to dataset: Link to dataset
-No linked data: No linked data
-From: From
-Overridden: Overridden
-Parent.: Parent.
-Reset this field: Reset this field
-Clear this field: Clear this field
-No selectable items: No selectable items
-Font family: Font family
-Font size: Font size
-Field set: Field set
-Basic: Basic
-Template: Template
-template: template
-You are deleting the infobox and all its contents. Are you sure you want to do that?: >-
-  You are deleting the infobox and all its contents. Are you sure you want to do
-  that?
-List: List
-Padding: Padding
-Gap Spacing: Gap Spacing
-Align Center: ''
-Enable Editor Mode: Enable Editor Mode
-Close: Close
-more options: more options
-Add a tag group: Add a tag group
-Add a tag: Add a tag
-Auto: Auto
-Dark theme: Dark theme
-Light theme: Light theme
-Account: Account
-Service language: Service language
-Color theme: Color theme
-Change Password: Change Password
-Change password: Change password
-In order to protect your account, make sure your password is unique and strong.: >-
-  In order to protect your account, make sure your password is unique and
-  strong.
-New password (for confirmation): New password (for confirmation)
-Set your password now: Set your password now
-Profile: Profile
-Profile picture: Profile picture
-Workspace List: Workspace List
-Assets: Assets
-Project List: Project List
-Enable basic authorization: Enable basic authorization
-Change site name: Change site name
-Delete this dataset: Delete this dataset
-Are you sure you want to delete it?: Are you sure you want to delete it?
-(These fields will be used for OGP as well as metadata for the public project): (These fields will be used for OGP as well as metadata for the public project)
-Site settings: Site settings
-Access your project, copy or edit the URL below.: Access your project, copy or edit the URL below.
-Once your project is published from the editor page the URL details will be shown here.: >-
-  Once your project is published from the editor page the URL details will be
-  shown here.
-This project is published with search engine indexing enabled.: This project is published with search engine indexing enabled.
-This project is published with search engine indexing disabled.: This project is published with search engine indexing disabled.
-This project is not published.: This project is not published.
-No Title Project: No Title Project
-No Description...: No Description...
-(Your personal workspace): (Your personal workspace)
-Add a team member: Add a team member
-Input an email address or a user name: Input an email address or a user name
-Delete this workspace: Delete this workspace
-Once you delete a workspace, there is no going back. Please be certain.: Once you delete a workspace, there is no going back. Please be certain.
-Delete workspace: Delete workspace
-This will permanently delete the workspace and all related projects, assets and datasets for all team members.: >-
-  This will permanently delete the workspace and all related projects, assets
-  and datasets for all team members.
-Please type your workspace name to continue.: Please type your workspace name to continue.
-I am sure I want to delete this workspace.: I am sure I want to delete this workspace.
-Reader: Reader
-Writer: Writer
-Maintainer: Maintainer
-Owner: Owner
-Members: Members
-New member: New member
-Workspace name: Workspace name
-No Title Workspace: No Title Workspace
-This is your personal workspace. Your projects and resources will be managed in this workspace.: >-
-  This is your personal workspace. Your projects and resources will be managed
-  in this workspace.
-All workspaces: All workspaces
-Double click here to write.: Double click here to write.
-Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 Failed to add one or more assets.: Failed to add one or more assets.
 Successfully added one or more assets.: Successfully added one or more assets.
 Failed to delete one or more assets.: Failed to delete one or more assets.
 One or more assets were successfully deleted.: One or more assets were successfully deleted.
-Successfully created workspace!: Successfully created workspace!
-Failed to create project.: Failed to create project.
-Default: Default
-Failed to create story page on project creation.: Failed to create story page on project creation.
-Successfully created project!: Successfully created project!
-Successfully created layer group: Successfully created layer group
-Failed to create layer group: Failed to create layer group
-Successfully added the dataset!: Successfully added the dataset!
-Failed to add the dataset.: Failed to add the dataset.
-Successfully deleted the dataset!: Successfully deleted the dataset!
-Failed to delete the dataset.: Failed to delete the dataset.
-Failed to publish your project.: Failed to publish your project.
-Successfully published your project!: Successfully published your project!
-Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
-Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
-Successfully copied to clipboard!: Successfully copied to clipboard!
-Outline: Outline
-Folder: Folder
-Layer: Layer
-Widget: Widget
-Infobox: Infobox
-Tag: Tag
-Same label tag already exist. Please type different label.: Same label tag already exist. Please type different label.
-Tag group has tags, you need to remove all tags under the tag group: Tag group has tags, you need to remove all tags under the tag group
-Failed to update account name.: Failed to update account name.
-Failed to update password.: Failed to update password.
-Successfully updated password!: Successfully updated password!
-Failed to change language.: Failed to change language.
-Failed to change theme.: Failed to change theme.
-Failed to delete dataset.: Failed to delete dataset.
-Dataset was successfully deleted.: Dataset was successfully deleted.
-Failed to archive project.: Failed to archive project.
-Failed to unarchive project.: Failed to unarchive project.
-Successfully archived the project.: Successfully archived the project.
-Successfully unarchived the project. You can now edit this project.: Successfully unarchived the project. You can now edit this project.
-Failed to delete project.: Failed to delete project.
-Project was successfully deleted.: Project was successfully deleted.
-Failed to install plugin.: Failed to install plugin.
-Successfully installed plugin!: Successfully installed plugin!
-Failed to uninstall plugin.: Failed to uninstall plugin.
-Successfully removed plugin.: Successfully removed plugin.
-Total Projects: Total Projects
-Failed to create workspace.: Failed to create workspace.
-Sucessfully created a workspace!: Sucessfully created a workspace!
-Failed to update workspace name.: Failed to update workspace name.
-You have changed the workspace's name.: You have changed the workspace's name.
-Failed to delete workspace.: Failed to delete workspace.
-Workspace was successfully deleted.: Workspace was successfully deleted.
-Failed to add one or more members.: Failed to add one or more members.
-Successfully added member(s) to the workspace!: Successfully added member(s) to the workspace!
-Failed to delete member from the workspace.: Failed to delete member from the workspace.
-Successfully removed member from the workspace.: Successfully removed member from the workspace.
-Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
 Failed to add layer.: ''
 Successfully added a new layer: ''
 Failed to update the layer.: ''
@@ -614,13 +356,27 @@ Failed to update the layerStyle.: ''
 Successfully updated a the layerStyle!: ''
 Failed to remove the layerStyle.: ''
 Successfully removed a the layerStyle!: ''
+Failed to install plugin.: Failed to install plugin.
+Successfully installed plugin!: Successfully installed plugin!
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
+Failed to uninstall plugin.: Failed to uninstall plugin.
 Successfully uninstalled plugin.: ''
+Failed to create project.: Failed to create project.
+Default: Default
+Failed to create story page on project creation.: Failed to create story page on project creation.
+Successfully created project!: Successfully created project!
 Failed to publish project.: Failed to publish project.
+Successfully published your project!: Successfully published your project!
+Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
+Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
 Failed to update project.: ''
 Successfully updated project!: ''
+Failed to archive project.: Failed to archive project.
+Failed to unarchive project.: Failed to unarchive project.
 Successfully archive project!: ''
+Successfully unarchived the project. You can now edit this project.: Successfully unarchived the project. You can now edit this project.
+Failed to delete project.: Failed to delete project.
 Successfully delete project!: ''
 Failed to update property.: Failed to update property.
 Successfully updated the property value!: ''
@@ -645,3 +401,5 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
+Failed to create workspace.: Failed to create workspace.
+Successfully created workspace!: Successfully created workspace!
