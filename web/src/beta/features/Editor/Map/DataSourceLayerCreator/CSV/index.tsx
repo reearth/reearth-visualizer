@@ -66,7 +66,11 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <Wrapper>
       <ContentWrapper>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup
+            value={sourceType}
+            options={dataSourceOptions}
+            onChange={handleDataSourceTypeChange}
+          />
         </InputGroup>
 
         {sourceType == "local" && (

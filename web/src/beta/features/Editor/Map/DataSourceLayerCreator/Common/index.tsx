@@ -53,7 +53,11 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceTypeOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup
+            value={sourceType}
+            options={dataSourceTypeOptions}
+            onChange={handleDataSourceTypeChange}
+          />
         </InputGroup>
 
         {sourceType == "local" && (
