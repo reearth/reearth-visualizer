@@ -3,13 +3,9 @@ import { ReactNode } from "react";
 
 import GlobalStyle from "./reearthTheme/common/globalStyles";
 import darkTheme from "./reearthTheme/darkTheme";
-import lightTheme from "./reearthTheme/lightTheme";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
-  const theme = {
-    ...lightTheme,
-    ...darkTheme,
-  };
+  const theme = darkTheme
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
