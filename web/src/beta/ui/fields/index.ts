@@ -15,3 +15,4 @@ export { default as TimePeriodField } from "./TimePeriodField";
 export { default as ListField } from "./ListField";
 export { default as TimePointField } from "./TimePointField";
 export { default as NumberField } from "./NumberField";
+export { default as RangeField } from "./RangeField";

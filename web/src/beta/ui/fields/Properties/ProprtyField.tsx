@@ -10,6 +10,7 @@ import {
   ColorField,
   InputField,
   NumberField,
+  RangeField,
   SelectField,
   SpacingField,
   SwitchField,
@@ -134,16 +135,16 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
           onFlyTo={onFlyTo}
         />
       ) : schema.type === "array" && schema.ui === "range" ? (
-        //will be replaced by range field when created
-        <NumberField
+        <RangeField
           key={schema.id}
           commonTitle={schema.name}
-          value={(value as number) ?? ""}
+          values={value as number[]}
           unit={schema.suffix}
           min={schema.min}
           max={schema.max}
+          content={["min", "max"]}
           description={schema.description}
-          onChange={handleChange}
+          onBlur={handleChange}
         />
       ) : (
         <p key={schema.id}>{schema.name} field</p>
