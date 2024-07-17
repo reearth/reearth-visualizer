@@ -7,8 +7,8 @@ import lightTheme from "./reearthTheme/lightTheme";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const theme = {
-    light: lightTheme,
-    dark: darkTheme,
+    ...lightTheme,
+    ...darkTheme,
   };
   return (
     <ThemeProvider theme={theme}>

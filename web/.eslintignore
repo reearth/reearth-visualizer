@@ -4,5 +4,4 @@
 /storybook-static
 !/.storybook
 /.storybook/public
-/src/beta/graphql/graphql-client-api.tsx
 /src/services/gql/__gen__

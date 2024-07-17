@@ -51,7 +51,7 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
             id: project.id,
             name: project.name,
             sceneId: project.scene?.id,
-            projectType: project.coreSupport ? "beta" : "classic",
+            projectType: "beta",
           }
         : undefined,
     [project],
