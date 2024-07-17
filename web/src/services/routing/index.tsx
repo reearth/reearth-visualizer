@@ -1,27 +1,20 @@
 import { lazy } from "react";
-import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Navigate, createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Dashboard from "@reearth/beta/pages/Dashboard";
 import RootPage from "@reearth/beta/pages/RootPage";
-import AccountSettings from "@reearth/beta/pages/Settings/Account";
 import { styled } from "@reearth/services/theme";
 
-const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
+const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
+const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
 const PluginPlaygroundPage = lazy(() => import("@reearth/beta/pages/PluginPlaygroundPage"));
-
 const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
-
 const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlayground"));
+// Note: not in use
+const AccountSettings = lazy(() => import("@reearth/beta/pages/AccountSettingsPage"));
 
 export const AppRoutes = () => {
-  const redirectRoutes = redirects.map(([from, to]) => ({
-    path: from,
-    element: <Redirect to={to} />,
-  }));
-
   const router = createBrowserRouter([
-    /* Beta routes - start */
     {
       path: "dashboard/:workspaceId/",
       element: <Dashboard />,
@@ -32,7 +25,7 @@ export const AppRoutes = () => {
     },
     {
       path: "scene/:sceneId/:tab",
-      element: <BetaEditor />,
+      element: <Editor />,
     },
     {
       path: "settings/project/:projectId/:tab?/:subId?",
@@ -42,7 +35,6 @@ export const AppRoutes = () => {
       path: "graphql",
       element: <GraphQLPlayground />,
     },
-    /* Beta routes - end */
     {
       index: true,
       element: <RootPage />,
@@ -63,7 +55,6 @@ export const AppRoutes = () => {
         { path: "*", element: <Navigate to="/settings/account" /> },
       ],
     },
-    ...redirectRoutes,
     {
       path: "*",
       element: <NotFound />,
@@ -76,20 +67,3 @@ export const AppRoutes = () => {
 const StyledRouter = styled(RouterProvider)`
   height: 100%;
 `;
-
-// Redirections for breaking changes in URLs
-const redirects = [
-  ["/settings/workspace/:workspaceId", "/settings/workspaces/:workspaceId"],
-  ["/settings/workspace/:workspaceId/projects", "/settings/workspaces/:workspaceId/projects"],
-  ["/settings/workspace/:workspaceId/asset", "/settings/workspaces/:workspaceId/asset"],
-  ["/settings/project/:projectId/dataset", "/settings/projects/:projectId/dataset"],
-];
-
-function Redirect({ to }: { to: string }) {
-  const { teamId, projectId } = useParams();
-  return (
-    <Navigate
-      to={`${to.replace(":teamId", teamId ?? "").replace(":projectId", projectId ?? "")}`}
-    />
-  );
-}

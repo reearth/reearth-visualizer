@@ -15,15 +15,12 @@ import {
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
-import { projectSettingsTab } from ".";
-
 type Props = {
   projectId: string;
-  tab?: projectSettingsTab;
   subId?: string;
 };
 
-export default ({ projectId, tab }: Props) => {
+export default ({ projectId }: Props) => {
   const navigate = useNavigate();
 
   const {
@@ -133,29 +130,6 @@ export default ({ projectId, tab }: Props) => {
     }),
     [],
   );
-
-  // Redirection for classic projects
-  useEffect(() => {
-    if (!project) return;
-    if (!project.coreSupport) {
-      switch (tab) {
-        case "general":
-          navigate(`/settings/projects/${projectId}`);
-          break;
-        case "public":
-          navigate(`/settings/projects/${projectId}/public`);
-          break;
-        case "asset":
-          navigate(`/settings/workspaces/${workspaceId}/asset`);
-          break;
-        case "plugins":
-          navigate(`/settings/projects/${projectId}/plugins`);
-          break;
-        default:
-          navigate(`/settings/projects/${projectId}`);
-      }
-    }
-  }, [project, projectId, tab, workspaceId, navigate]);
 
   return {
     sceneId: scene?.id,
