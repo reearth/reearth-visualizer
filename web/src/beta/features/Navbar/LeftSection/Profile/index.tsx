@@ -93,7 +93,6 @@ const HeaderProfile: React.FC<Props> = ({
   );
 
   const menuItems: ListItem[] = [
-    { text: t("Account Settings"), linkTo: "/settings/account" },
     {
       text: t("Workspaces"),
       items: [
@@ -104,7 +103,6 @@ const HeaderProfile: React.FC<Props> = ({
             onClick: () => w.id && handleWorkspaceChange(w.id),
           };
         }),
-        { text: t("Manage Workspaces"), icon: "workspaces", linkTo: "/settings/workspaces" },
         { text: t("New Workspace"), icon: "workspaceAdd", onClick: openModal },
       ],
     },

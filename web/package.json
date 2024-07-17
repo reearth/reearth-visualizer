@@ -21,9 +21,7 @@
         "format": "eslint --fix .",
         "storybook": "storybook dev -p 9001",
         "storybook:build": "storybook build --quiet -o dist/storybook",
-        "gql": "run-s gql:beta gql:classic",
-        "gql:beta": "graphql-codegen",
-        "gql:classic": "graphql-codegen -c codegen-classic.ts",
+        "gql": "graphql-codegen",
         "i18n": "i18next",
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
