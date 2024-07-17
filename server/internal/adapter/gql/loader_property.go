@@ -87,22 +87,3 @@ type PropertySchemaDataLoader interface {
 	Load(gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	LoadAll([]gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error)
 }
-
-type ordinaryPropertySchemaLoader struct {
-	fetch func(keys []gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error)
-}
-
-func (l *ordinaryPropertySchemaLoader) Load(key gqlmodel.ID) (*gqlmodel.PropertySchema, error) {
-	res, errs := l.fetch([]gqlmodel.ID{key})
-	if len(errs) > 0 {
-		return nil, errs[0]
-	}
-	if len(res) > 0 {
-		return res[0], nil
-	}
-	return nil, nil
-}
-
-func (l *ordinaryPropertySchemaLoader) LoadAll(keys []gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error) {
-	return l.fetch(keys)
-}

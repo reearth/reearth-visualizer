@@ -7,9 +7,6 @@ import (
 )
 
 var (
-	sid    = NewSceneID()
-	ds     = NewDatasetSchemaID()
-	df     = NewDatasetFieldID()
 	d      = NewDatasetID()
 	opid   = NewID()
 	ppid   = NewID()

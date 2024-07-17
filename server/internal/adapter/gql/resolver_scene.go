@@ -112,9 +112,3 @@ func (r *sceneWidgetResolver) Extension(ctx context.Context, obj *gqlmodel.Scene
 func (r *sceneWidgetResolver) Property(ctx context.Context, obj *gqlmodel.SceneWidget) (*gqlmodel.Property, error) {
 	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
-
-type clusterResolver struct{ *Resolver }
-
-func (r *clusterResolver) Property(ctx context.Context, obj *gqlmodel.Cluster) (*gqlmodel.Property, error) {
-	return dataloaders(ctx).Property.Load(obj.PropertyID)
-}

@@ -54,8 +54,6 @@ func (r *propertyFieldResolver) Field(ctx context.Context, obj *gqlmodel.Propert
 	return schema.Field(obj.FieldID), nil
 }
 
-type propertyFieldLinkResolver struct{ *Resolver }
-
 type mergedPropertyResolver struct{ *Resolver }
 
 func (r *mergedPropertyResolver) Original(ctx context.Context, obj *gqlmodel.MergedProperty) (*gqlmodel.Property, error) {
@@ -155,17 +153,6 @@ func (r *mergedPropertyGroupResolver) Schema(ctx context.Context, obj *gqlmodel.
 		return nil, nil
 	}
 	return dataloaders(ctx).PropertySchema.Load(*obj.SchemaID)
-}
-
-type mergedPropertyFieldResolver struct{ *Resolver }
-
-func (r *mergedPropertyFieldResolver) Schema(ctx context.Context, obj *gqlmodel.MergedPropertyField) (*gqlmodel.PropertySchema, error) {
-	return dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
-}
-
-func (r *mergedPropertyFieldResolver) Field(ctx context.Context, obj *gqlmodel.MergedPropertyField) (*gqlmodel.PropertySchemaField, error) {
-	s, err := dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
-	return s.Field(obj.FieldID), err
 }
 
 type propertyGroupListResolver struct{ *Resolver }

@@ -1,9 +1,5 @@
 package builder
 
-import (
-	"github.com/reearth/reearth/server/pkg/property"
-)
-
 type encoder struct {
 	res *layerJSON
 }
@@ -17,10 +13,6 @@ func (e *encoder) Result() []*layerJSON {
 		return nil
 	}
 	return e.res.Children
-}
-
-func (e *encoder) property(p *property.Sealed) propertyJSON {
-	return p.Interface()
 }
 
 type layerJSON struct {
