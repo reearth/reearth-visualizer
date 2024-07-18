@@ -248,7 +248,6 @@ export default (alias?: string) => {
             tiles: [{ id: "___default_tile___" }],
           };
         }
-
         setData(d);
       } catch (e) {
         // TODO: display error for users

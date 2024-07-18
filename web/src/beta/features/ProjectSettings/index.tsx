@@ -55,7 +55,6 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     handleUpdateStoryAlias,
   } = useHooks({
     projectId,
-    tab,
     subId,
   });
 

@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import TabMenu, { TabObject } from "@reearth/beta/components/TabMenu";
 import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
-import { Feature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n"; // If needed
@@ -61,13 +60,13 @@ const InspectorTabs: React.FC<Props> = ({
     if (!selectedLayer?.layer?.sketch) return;
 
     const { sketch } = selectedLayer.layer;
-    const features = sketch.featureCollection.features;
+    const features = sketch?.featureCollection?.features;
 
     if (!selectedFeature?.properties?.id) return;
 
     const selectedFeatureId = selectedFeature.properties.id;
 
-    return features.find((feature: Feature) => feature.properties.id === selectedFeatureId);
+    return features?.find(feature => feature.properties.id === selectedFeatureId);
   }, [selectedLayer, selectedFeature]);
 
   const tabs: TabObject[] = useMemo(
