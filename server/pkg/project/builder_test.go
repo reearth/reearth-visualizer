@@ -302,6 +302,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		publishmentStatus  PublishmentStatus
 		trackingId         string
 		enableGa           bool
+		starred            bool
 	}
 
 	tests := []struct {
@@ -330,6 +331,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publishmentStatus: "ppp",
 				trackingId:        "dfdfdfd",
 				enableGa:          true,
+				starred:           true,
 			},
 			expected: &Project{
 				id:                pid,
@@ -349,6 +351,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publishmentStatus: "ppp",
 				trackingId:        "dfdfdfd",
 				enableGa:          true,
+				starred:           true,
 			},
 		},
 		{
@@ -400,6 +403,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					Description(tt.args.description).
 					EnableGA(tt.args.enableGa).
 					TrackingID(tt.args.trackingId).
+					Starred(tt.args.starred).
 					MustBuild()
 			}
 

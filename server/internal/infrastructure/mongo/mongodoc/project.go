@@ -34,6 +34,7 @@ type ProjectDocument struct {
 	EnableGA          bool
 	TrackingID        string
 	// Scene             string
+	Starred bool
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -75,6 +76,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		EnableGA:          project.EnableGA(),
 		TrackingID:        project.TrackingID(),
 		// Scene:             project.Scene().String(),
+		Starred: project.Starred(),
 	}, pid
 }
 
@@ -123,5 +125,6 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
 		// Scene(scene).
+		Starred(d.Starred).
 		Build()
 }

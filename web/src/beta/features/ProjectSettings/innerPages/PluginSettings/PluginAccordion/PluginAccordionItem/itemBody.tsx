@@ -8,11 +8,12 @@ export type Props = {
 const PluginAccordionItemBody: React.FC<Props> = ({ children }) => {
   const theme = useTheme();
   const markdownTypographyStyle = {
-    color: theme.classic.text.default,
+    color: theme.content.main,
   };
+
   return (
     <Wrapper>
-      <Markdown backgroundColor={theme.classic.pluginList.bg} styles={markdownTypographyStyle}>
+      <Markdown backgroundColor={theme.bg.base} styles={markdownTypographyStyle}>
         {children}
       </Markdown>
     </Wrapper>

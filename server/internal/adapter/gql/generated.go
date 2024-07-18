@@ -528,6 +528,7 @@ type ComplexityRoot struct {
 		PublishedAt       func(childComplexity int) int
 		PublishmentStatus func(childComplexity int) int
 		Scene             func(childComplexity int) int
+		Starred           func(childComplexity int) int
 		Team              func(childComplexity int) int
 		TeamID            func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
@@ -675,7 +676,7 @@ type ComplexityRoot struct {
 		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Plugin            func(childComplexity int, id gqlmodel.ID) int
 		Plugins           func(childComplexity int, id []gqlmodel.ID) int
-		Projects          func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		Projects          func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor, keyword *string, sort *gqlmodel.ProjectSortType) int
 		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
 		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
 		Scene             func(childComplexity int, projectID gqlmodel.ID) int
@@ -1153,7 +1154,7 @@ type QueryResolver interface {
 	Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
-	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
+	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor, keyword *string, sort *gqlmodel.ProjectSortType) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
@@ -3666,6 +3667,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.Scene(childComplexity), true
 
+	case "Project.starred":
+		if e.complexity.Project.Starred == nil {
+			break
+		}
+
+		return e.complexity.Project.Starred(childComplexity), true
+
 	case "Project.team":
 		if e.complexity.Project.Team == nil {
 			break
@@ -4398,7 +4406,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
+		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSortType)), true
 
 	case "Query.propertySchema":
 		if e.complexity.Query.PropertySchema == nil {
@@ -6446,6 +6454,13 @@ extend type Mutation {
   coreSupport: Boolean!
   enableGa: Boolean!
   trackingId: String!
+  starred: Boolean!
+}
+
+enum ProjectSortType {
+  CREATEDAT
+  UPDATEDAT
+  NAME
 }
 
 type ProjectAliasAvailability {
@@ -6495,6 +6510,7 @@ input UpdateProjectInput {
   enableGa: Boolean
   trackingId: String
   sceneId: ID
+  starred: Boolean
 }
 
 input PublishProjectInput {
@@ -6532,7 +6548,7 @@ type ProjectEdge {
 }
 
 extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor, keyword: String, sort: ProjectSortType): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
 }
 
@@ -8896,6 +8912,24 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 		}
 	}
 	args["before"] = arg5
+	var arg6 *string
+	if tmp, ok := rawArgs["keyword"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+		arg6, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keyword"] = arg6
+	var arg7 *gqlmodel.ProjectSortType
+	if tmp, ok := rawArgs["sort"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sort"))
+		arg7, err = ec.unmarshalOProjectSortType2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSortType(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["sort"] = arg7
 	return args, nil
 }
 
@@ -24584,6 +24618,50 @@ func (ec *executionContext) fieldContext_Project_trackingId(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_starred(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_starred(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Starred, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_starred(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectAliasAvailability) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
 	if err != nil {
@@ -24809,6 +24887,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(ctx context.Con
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
 				return ec.fieldContext_Project_trackingId(ctx, field)
+			case "starred":
+				return ec.fieldContext_Project_starred(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -25042,6 +25122,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
 				return ec.fieldContext_Project_trackingId(ctx, field)
+			case "starred":
+				return ec.fieldContext_Project_starred(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -25136,6 +25218,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(ctx context.Cont
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
 				return ec.fieldContext_Project_trackingId(ctx, field)
+			case "starred":
+				return ec.fieldContext_Project_starred(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -29183,7 +29267,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
+		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSortType))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -31154,6 +31238,8 @@ func (ec *executionContext) fieldContext_Scene_project(ctx context.Context, fiel
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
 				return ec.fieldContext_Project_trackingId(ctx, field)
+			case "starred":
+				return ec.fieldContext_Project_starred(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -42507,7 +42593,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42640,6 +42726,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.SceneID = data
+		case "starred":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("starred"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Starred = data
 		}
 	}
 
@@ -47585,6 +47678,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "trackingId":
 			out.Values[i] = ec._Project_trackingId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "starred":
+			out.Values[i] = ec._Project_starred(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -55880,6 +55978,22 @@ func (ec *executionContext) marshalOProjectPayload2ᚖgithubᚗcomᚋreearthᚋr
 		return graphql.Null
 	}
 	return ec._ProjectPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOProjectSortType2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSortType(ctx context.Context, v interface{}) (*gqlmodel.ProjectSortType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.ProjectSortType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOProjectSortType2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSortType(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectSortType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOProperty2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProperty(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Property) graphql.Marshaler {

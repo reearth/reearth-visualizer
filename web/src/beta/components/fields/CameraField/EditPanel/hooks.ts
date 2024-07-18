@@ -44,7 +44,7 @@ export default ({
         { id: "lat", description: t("Latitude") },
         { id: "lng", description: t("Longitude") },
       ],
-      [t("Height")]: [{ id: "height", suffix: "km" }],
+      [t("Height")]: [{ id: "height", unit: "km", description: t("Height") }],
       [t("Rotation")]: [
         { id: "heading", description: t("Heading") },
         { id: "pitch", description: t("Pitch") },

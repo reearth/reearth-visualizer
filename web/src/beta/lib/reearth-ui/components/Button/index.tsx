@@ -11,6 +11,7 @@ export type ButtonProps = {
   iconButton?: boolean;
   icon?: IconName;
   iconRight?: IconName;
+  iconColor?: string;
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
@@ -25,6 +26,7 @@ export const Button: FC<ButtonProps> = ({
   iconButton,
   title,
   iconRight,
+  iconColor,
   extendWidth,
   minWidth,
   onClick,
@@ -38,7 +40,7 @@ export const Button: FC<ButtonProps> = ({
       extendWidth={extendWidth}
       minWidth={minWidth}
       onClick={onClick}>
-      {icon && <Icon icon={icon} />}
+      {icon && <Icon icon={icon} color={iconColor} />}
       {!iconButton && title}
       {iconRight && <Icon icon={iconRight} />}
     </StyledButton>
@@ -85,7 +87,7 @@ const StyledButton = styled("button")<{
   backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
   width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
-  boxShadow: theme.shadow.button,
+  boxShadow: appearance === "simple" ? "none" : theme.shadow.button,
   ["&:hover"]: {
     borderColor: "transparent",
     color: `${theme.content.withBackground}`,
@@ -102,6 +104,7 @@ const StyledButton = styled("button")<{
     borderColor: "transparent",
     color: `${theme.content.weaker}`,
     backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
+    border: appearance === "simple" ? `1px solid transparent` : `1px solid ${theme.content.weaker}`,
     boxShadow: "none",
   },
   ["& svg"]: {

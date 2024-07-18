@@ -5,14 +5,14 @@ import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
-import { Feature } from "@reearth/core";
+import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { FieldProp, ValueProp } from ".";
 
 type Props = {
   field: any;
-  selectedFeature?: Feature;
+  selectedFeature?: SketchFeature;
   setField?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
   onSubmit?: (inp: any) => void;
 };
@@ -50,7 +50,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
   );
 
   const getDynamicValue = useCallback(
-    (selectedFeature: Feature | undefined, fieldTitle: string, fieldValue: any) => {
+    (selectedFeature: SketchFeature | undefined, fieldTitle: string, fieldValue: any) => {
       return selectedFeature?.properties && fieldTitle in selectedFeature.properties
         ? selectedFeature.properties[fieldTitle]
         : fieldValue;

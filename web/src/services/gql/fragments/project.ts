@@ -18,6 +18,8 @@ export const projectFragment = gql`
     trackingId
     publishmentStatus
     updatedAt
+    createdAt
     coreSupport
+    starred
   }
 `;

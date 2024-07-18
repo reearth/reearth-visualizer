@@ -2,8 +2,8 @@ package mongo
 
 import (
 	"context"
-
-	"go.mongodb.org/mongo-driver/bson"
+	"fmt"
+	"regexp"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -13,6 +13,8 @@ import (
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -75,13 +77,22 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 	return filterProjects(ids, res), nil
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
-	return r.paginate(ctx, bson.M{
+
+	var filter any = bson.M{
 		"team": id.String(),
-	}, pagination)
+	}
+
+	if uFilter.Keyword != nil {
+		filter = mongox.And(filter, "name", bson.M{
+			"$regex": primitive.Regex{Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword)), Options: "i"},
+		})
+	}
+
+	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
@@ -159,9 +170,16 @@ func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bo
 	return c.Result[0], nil
 }
 
-func (r *Project) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+	var usort *usecasex.Sort
+	if sort != nil {
+		usort = &usecasex.Sort{
+			Key: string(*sort),
+		}
+	}
+
 	c := mongodoc.NewProjectConsumer(r.f.Readable)
-	pageInfo, err := r.client.Paginate(ctx, filter, nil, pagination, c)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}

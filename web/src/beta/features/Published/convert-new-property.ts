@@ -3,10 +3,8 @@ import { mapValues } from "lodash-es";
 import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
 import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
 import { Layer, LayerAppearanceTypes } from "@reearth/core";
-import { NLSInfobox, NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { NLSInfobox, NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
-
-import { Feature } from "./types";
 
 export const processNewProperty = (p: any): any => {
   if (typeof p !== "object") return p;
@@ -69,10 +67,10 @@ export function processLayers(
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
-        features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
+        features: nlsLayer.sketch?.featureCollection?.features.map((feature: SketchFeature) => {
           return {
             ...feature,
-            geometry: feature.geometry?.[0],
+            geometry: feature.geometry[0],
           };
         }),
       },

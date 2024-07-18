@@ -673,6 +673,7 @@ type Project struct {
 	CoreSupport       bool              `json:"coreSupport"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
+	Starred           bool              `json:"starred"`
 }
 
 func (Project) IsNode()        {}
@@ -1203,6 +1204,7 @@ type UpdateProjectInput struct {
 	EnableGa          *bool    `json:"enableGa,omitempty"`
 	TrackingID        *string  `json:"trackingId,omitempty"`
 	SceneID           *ID      `json:"sceneId,omitempty"`
+	Starred           *bool    `json:"starred,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1650,6 +1652,49 @@ func (e *Position) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Position) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ProjectSortType string
+
+const (
+	ProjectSortTypeCreatedat ProjectSortType = "CREATEDAT"
+	ProjectSortTypeUpdatedat ProjectSortType = "UPDATEDAT"
+	ProjectSortTypeName      ProjectSortType = "NAME"
+)
+
+var AllProjectSortType = []ProjectSortType{
+	ProjectSortTypeCreatedat,
+	ProjectSortTypeUpdatedat,
+	ProjectSortTypeName,
+}
+
+func (e ProjectSortType) IsValid() bool {
+	switch e {
+	case ProjectSortTypeCreatedat, ProjectSortTypeUpdatedat, ProjectSortTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ProjectSortType) String() string {
+	return string(e)
+}
+
+func (e *ProjectSortType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProjectSortType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProjectSortType", str)
+	}
+	return nil
+}
+
+func (e ProjectSortType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
