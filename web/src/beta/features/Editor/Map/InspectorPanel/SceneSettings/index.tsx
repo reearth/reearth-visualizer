@@ -21,7 +21,7 @@ const Settings: FC<Props> = ({ propertyId, propertyItems, onFlyTo }) => {
   return (
     <Wrapper>
       {visibleItems?.map((i, idx) => (
-        <Collapse key={idx} title={i.title ?? t("Settings")}>
+        <Collapse key={idx} title={i.title ?? t("Settings")} size="small">
           <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={onFlyTo} />
         </Collapse>
       ))}
