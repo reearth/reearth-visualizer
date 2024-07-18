@@ -35,7 +35,6 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
       extend
       alwaysOpen
       noPadding={!!selectedLayer}
-      background="normal"
       areaRef={areaRef}
       showCollapseArea={showCollapseArea}>
       {!!selectedSceneSetting && scenePropertyId && (
