@@ -96,7 +96,7 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
           description={schema.description}
           min={schema.min}
           max={schema.max}
-          onChange={handleChange}
+          onBlur={handleChange}
         />
       ) : schema.type === "bool" ? (
         <SwitchField
@@ -115,7 +115,7 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
           min={schema.min}
           max={schema.max}
           description={schema.description}
-          onChange={handleChange}
+          onBlur={handleChange}
         />
       ) : schema.type === "latlng" ? (
         <TwinInputField
@@ -123,7 +123,7 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
           commonTitle={schema.name}
           values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
           description={schema.description}
-          onChange={handleChange}
+          onBlur={handleChange}
         />
       ) : schema.type === "camera" ? (
         <CameraField
