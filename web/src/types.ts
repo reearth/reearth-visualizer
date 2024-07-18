@@ -55,4 +55,4 @@ export type OmitFuncProps3<P extends { [key in string]?: (...args: any) => any }
   [K in keyof P]?: OmitFunc3<NonNullable<P[K]>>;
 };
 
-export type ProjectType = "classic" | "beta";
+export type ProjectType = "beta";

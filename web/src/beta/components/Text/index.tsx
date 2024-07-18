@@ -43,11 +43,11 @@ const Text: React.FC<Props> = ({
 
   const Typography = useMemo(
     () =>
-      trait && trait in typographyBySize
+      trait && typographyBySize && trait in typographyBySize
         ? typographyBySize[trait]
-        : weight in typographyBySize
+        : typographyBySize && weight in typographyBySize
         ? typographyBySize[weight]
-        : typographyBySize[size === "h1" ? "medium" : "regular"],
+        : typographyBySize && typographyBySize[size === "h1" ? "medium" : "regular"],
     [trait, size, typographyBySize, weight],
   );
 

@@ -52,7 +52,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
     { breakpoint: true },
     {
       text: t("Manage projects"),
-      linkTo: `/settings/workspaces/${workspaceId}/projects`,
+      linkTo: `/dashboard/${workspaceId}/`,
     },
   ];
 
