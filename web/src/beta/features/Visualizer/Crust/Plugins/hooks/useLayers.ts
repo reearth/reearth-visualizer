@@ -150,7 +150,7 @@ export default ({
     <T extends keyof LayersEventType>(
       type: T,
       callback: (...args: LayersEventType[T]) => void,
-      options: { once?: boolean },
+      options?: { once?: boolean },
     ) => {
       return options?.once ? layersEvents.once(type, callback) : layersEvents.on(type, callback);
     },

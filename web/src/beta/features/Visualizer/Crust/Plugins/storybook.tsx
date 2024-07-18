@@ -131,6 +131,7 @@ export const context: Context = {
     camera: {
       position: { lat: 0, lng: 0, height: 0, heading: 0, pitch: 0, roll: 0 },
       fov: Math.PI * (60 / 180),
+      aspectRatio: 16 / 9,
       viewport: { west: 0, east: 0, north: 0, south: 0 },
       flyTo: act("flyTo"),
       flyToBoundingBox: act("flyToBoundingBox"),

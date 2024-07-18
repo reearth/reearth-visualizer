@@ -37,6 +37,7 @@ export default ({
   const getCameraPosition = useGet(cameraPosition);
 
   const getCameraFov = useGet(camera?.fov);
+  const getCameraAspectRatio = useGet(camera?.aspectRatio);
 
   const getCameraViewport = useCallback(() => engineRef?.getViewport(), [engineRef]);
 
@@ -90,13 +91,13 @@ export default ({
   );
 
   const enableScreenSpaceCameraController = useCallback(
-    (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
+    (enabled?: boolean) => engineRef?.enableScreenSpaceCameraController(!!enabled),
     [engineRef],
   );
 
   const overrideScreenSpaceCameraController = useCallback(
-    (options: ScreenSpaceCameraControllerOptions) => {
-      return engineRef?.overrideScreenSpaceController(options);
+    (options?: ScreenSpaceCameraControllerOptions) => {
+      return engineRef?.overrideScreenSpaceController(options ?? {});
     },
     [engineRef],
   );
@@ -179,7 +180,7 @@ export default ({
     <T extends keyof CameraEventType>(
       type: T,
       callback: (...args: CameraEventType[T]) => void,
-      options: { once?: boolean },
+      options?: { once?: boolean },
     ) => {
       return options?.once ? cameraEvents.once(type, callback) : cameraEvents.on(type, callback);
     },
@@ -196,6 +197,7 @@ export default ({
   return {
     getCameraPosition,
     getCameraFov,
+    getCameraAspectRatio,
     getCameraViewport,
     zoomIn,
     zoomOut,

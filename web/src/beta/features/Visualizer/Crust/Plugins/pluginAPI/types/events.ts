@@ -32,7 +32,7 @@
 //   readonly on: <T extends E>(
 //     type: T,
 //     callback: (...args: ReearthEventType[T]) => void,
-//     options: { once?: boolean },
+//     options?: { once?: boolean },
 //   ) => void;
 //   readonly off: <T extends E>(type: T, callback: (...args: ReearthEventType[T]) => void) => void;
 // };

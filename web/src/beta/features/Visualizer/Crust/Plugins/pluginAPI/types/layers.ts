@@ -67,7 +67,7 @@ export declare type LayersEvents = {
   readonly on: <T extends keyof LayersEventType>(
     type: T,
     callback: (...args: LayersEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof LayersEventType>(
     type: T,

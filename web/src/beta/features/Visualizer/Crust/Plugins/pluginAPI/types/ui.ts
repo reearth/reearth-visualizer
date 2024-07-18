@@ -28,7 +28,7 @@ export declare type UIEvents = {
   readonly on: <T extends keyof UIEventType>(
     type: T,
     callback: (...args: UIEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof UIEventType>(
     type: T,

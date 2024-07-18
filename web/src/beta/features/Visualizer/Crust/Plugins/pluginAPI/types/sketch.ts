@@ -1,4 +1,21 @@
-import { SketchAppearance, SketchEventProps, SketchType } from "@reearth/core";
+import { LayerAppearanceTypes, SketchFeature } from "@reearth/core";
+
+export declare type SketchAppearance = Partial<LayerAppearanceTypes>;
+export declare type SketchEventProps = {
+  layerId?: string;
+  featureId?: string;
+  feature?: SketchFeature;
+};
+
+export declare type SketchType =
+  | "marker"
+  | "polyline"
+  | "circle"
+  | "rectangle"
+  | "polygon"
+  | "extrudedCircle"
+  | "extrudedRectangle"
+  | "extrudedPolygon";
 
 export declare type Sketch = {
   readonly tool: SketchType | undefined;
@@ -10,13 +27,13 @@ export declare type Sketch = {
 };
 
 export declare type SketchOptions = {
-  readonly color: string;
-  readonly appearance: SketchAppearance;
-  readonly dataOnly: boolean;
-  readonly disableShadow: boolean;
-  readonly enableRelativeHeight: boolean;
-  readonly rightClickToAbort: boolean;
-  readonly autoResetInteractionMode: boolean;
+  readonly color?: string;
+  readonly appearance?: SketchAppearance;
+  readonly dataOnly?: boolean;
+  readonly disableShadow?: boolean;
+  readonly enableRelativeHeight?: boolean;
+  readonly rightClickToAbort?: boolean;
+  readonly autoResetInteractionMode?: boolean;
 };
 
 export declare type SketchEventType = {
@@ -28,7 +45,7 @@ export declare type SketchEvents = {
   readonly on: <T extends keyof SketchEventType>(
     type: T,
     callback: (...args: SketchEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof SketchEventType>(
     type: T,

@@ -87,7 +87,7 @@ export default ({
     <T extends keyof SelectionModeEventType>(
       type: T,
       callback: (...args: SelectionModeEventType[T]) => void,
-      options: { once?: boolean },
+      options?: { once?: boolean },
     ) => {
       return options?.once
         ? selectiomModeEvents.once(type, callback)
@@ -260,7 +260,7 @@ export default ({
     <T extends keyof ViewerEventType>(
       type: T,
       callback: (...args: ViewerEventType[T]) => void,
-      options: { once?: boolean },
+      options?: { once?: boolean },
     ) => {
       return options?.once ? viewerEvents.once(type, callback) : viewerEvents.on(type, callback);
     },

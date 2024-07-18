@@ -40,7 +40,7 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
     <T extends keyof TimelineEventType>(
       type: T,
       callback: (...args: TimelineEventType[T]) => void,
-      options: { once?: boolean },
+      options?: { once?: boolean },
     ) => {
       return options?.once
         ? timelineEvents.once(type, callback)

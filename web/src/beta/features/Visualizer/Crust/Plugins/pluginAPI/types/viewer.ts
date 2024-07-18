@@ -99,7 +99,7 @@ export declare type ViewerEvents = {
   readonly on: <T extends keyof ViewerEventType>(
     type: T,
     callback: (...args: ViewerEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof ViewerEventType>(
     type: T,
@@ -117,7 +117,7 @@ export declare type SelectionModeEvents = {
   readonly on: <T extends keyof SelectionModeEventType>(
     type: T,
     callback: (...args: SelectionModeEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof SelectionModeEventType>(
     type: T,

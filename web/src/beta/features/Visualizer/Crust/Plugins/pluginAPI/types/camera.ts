@@ -4,13 +4,12 @@ import { LayerId } from "./layers";
 export declare type Camera = {
   readonly position: CameraPosition | undefined;
   readonly fov: number | undefined;
+  readonly aspectRatio: number | undefined;
   readonly viewport: GeoRect | undefined;
-  // TODO: breaking change. fov is moved to options.
   readonly flyTo: (
     destination: LayerId | CameraPosition,
     options?: CameraMoveOptions & { fov?: number },
   ) => void;
-  // TODO: breaking change. renamed.
   readonly flyToBoundingBox: (
     boundingBox: GeoRect,
     options?: CameraMoveOptions & {
@@ -21,48 +20,41 @@ export declare type Camera = {
   ) => void;
   readonly zoomIn: (amount: number, options?: CameraMoveOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraMoveOptions) => void;
-  // TODO: breaking change. fov is moved to options.
   readonly lookAt: (
     destination: LookAtDestination,
     options?: CameraMoveOptions & { fov?: number },
   ) => void;
-  // TODO: breaking change. viewSize is removed
-  readonly getGlobeIntersection: (options: { withTerrain?: boolean }) =>
+  readonly getGlobeIntersection: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
     | {
         center?: LatLngHeight;
-        distance?: number;
+        viewSize?: number;
       }
     | undefined;
-  // TODO: breaking change. renamed.
   readonly rotateAround: (radian: number) => void;
   readonly rotateRight: (radian: number) => void;
-  // TODO: refine on core: add options as amount, currently is hardcoded
   readonly orbit: (radian: number) => void;
-  readonly enableScreenSpaceCameraController: (enabled: boolean) => void;
+  readonly enableScreenSpaceCameraController: (enabled?: boolean) => void;
   readonly overrideScreenSpaceCameraController: (
-    options: ScreenSpaceCameraControllerOptions,
+    options?: ScreenSpaceCameraControllerOptions,
   ) => void;
-  // TODO: breaking change. lookHorizontal lookVertical removed.
-  // TODO: breaking change. merged functions.
   readonly move: (
     direction: "forward" | "backward" | "up" | "down" | "left" | "right",
     amount: number,
   ) => void;
   readonly moveOverTerrain: (offset?: number) => void;
-  // TODO: breaking change. flyToGround removed.
-  readonly setView: (view: CameraPosition & { fov: number }) => void;
+  readonly setView: (view: CameraPosition & { fov?: number }) => void;
   readonly enableForceHorizontalRoll: (enable: boolean) => void;
   readonly on: CameraEvents["on"];
   readonly off: CameraEvents["off"];
 };
 
 export declare type CameraPosition = {
-  lat: number;
-  lng: number;
-  height: number;
-  heading: number;
-  pitch: number;
-  roll: number;
+  lat?: number;
+  lng?: number;
+  height?: number;
+  heading?: number;
+  pitch?: number;
+  roll?: number;
 };
 
 export declare type LookAtDestination = {
@@ -114,7 +106,7 @@ export declare type CameraEvents = {
   readonly on: <T extends keyof CameraEventType>(
     type: T,
     callback: (...args: CameraEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof CameraEventType>(
     type: T,

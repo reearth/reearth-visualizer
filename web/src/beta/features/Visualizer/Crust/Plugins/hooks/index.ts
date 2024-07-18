@@ -74,6 +74,7 @@ export default function ({
   const {
     getCameraPosition,
     getCameraFov,
+    getCameraAspectRatio,
     getCameraViewport,
     zoomIn,
     zoomOut,
@@ -180,6 +181,7 @@ export default function ({
         // camera
         getCameraPosition,
         getCameraFov,
+        getCameraAspectRatio,
         getCameraViewport,
         zoomIn,
         zoomOut,
@@ -267,6 +269,7 @@ export default function ({
       // camera
       getCameraPosition,
       getCameraFov,
+      getCameraAspectRatio,
       getCameraViewport,
       zoomIn,
       zoomOut,

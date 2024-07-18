@@ -55,7 +55,7 @@ export declare type ExtensionEvents = {
   readonly on: <T extends keyof ExtensionEventType>(
     type: T,
     callback: (...args: ExtensionEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof ExtensionEventType>(
     type: T,

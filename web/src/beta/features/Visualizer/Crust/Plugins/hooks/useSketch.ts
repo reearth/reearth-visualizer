@@ -51,7 +51,7 @@ export default ({
     <T extends keyof SketchEventType>(
       type: T,
       callback: (...args: SketchEventType[T]) => void,
-      options: { once?: boolean },
+      options?: { once?: boolean },
     ) => {
       return options?.once ? sketchEvents.once(type, callback) : sketchEvents.on(type, callback);
     },

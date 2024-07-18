@@ -26,7 +26,7 @@ export declare type ModalEvents = {
   readonly on: <T extends keyof ModalEventType>(
     type: T,
     callback: (...args: ModalEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof ModalEventType>(
     type: T,

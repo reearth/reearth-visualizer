@@ -260,7 +260,7 @@ const deprecatedMap = {
   "event popupclose": "close event on reearth.popup",
   "event pluginmessage": "extensionMessage event on reearth.extension",
   "event sketchfeaturecreated": "create event on reearth.sketch",
-  "event sketchtypechange": "toolChanged event on reearth.sketch",
+  "event sketchtypechange": "toolChange event on reearth.sketch",
   "event layerVisibility": "visible event on reearth.layer",
   "event layerload": "load event on reearth.layer",
   "event layerSelectWithRectStart":

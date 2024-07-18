@@ -50,7 +50,7 @@ export declare type PopupEvents = {
   readonly on: <T extends keyof PopupEventType>(
     type: T,
     callback: (...args: PopupEventType[T]) => void,
-    options: { once?: boolean },
+    options?: { once?: boolean },
   ) => void;
   readonly off: <T extends keyof PopupEventType>(
     type: T,

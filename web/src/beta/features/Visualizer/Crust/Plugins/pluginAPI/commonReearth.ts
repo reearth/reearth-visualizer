@@ -37,6 +37,7 @@ export function commonReearth({
   // camera
   getCameraPosition,
   getCameraFov,
+  getCameraAspectRatio,
   getCameraViewport,
   zoomIn,
   zoomOut,
@@ -118,6 +119,7 @@ export function commonReearth({
   // camera
   getCameraPosition: () => GlobalThis["reearth"]["camera"]["position"];
   getCameraFov: () => GlobalThis["reearth"]["camera"]["fov"];
+  getCameraAspectRatio: () => GlobalThis["reearth"]["camera"]["aspectRatio"];
   getCameraViewport: () => GlobalThis["reearth"]["camera"]["viewport"];
   zoomIn: GlobalThis["reearth"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["camera"]["zoomOut"];
@@ -221,6 +223,9 @@ export function commonReearth({
       },
       get fov() {
         return getCameraFov();
+      },
+      get aspectRatio() {
+        return getCameraAspectRatio();
       },
       get viewport() {
         return getCameraViewport();
