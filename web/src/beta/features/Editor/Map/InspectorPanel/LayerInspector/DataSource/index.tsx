@@ -1,50 +1,51 @@
-import Text from "@reearth/beta/components/Text";
+import { FC } from "react";
+
+import { TextArea, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import { InputGroup, InputsWrapper } from "../../../SharedComponent";
 
 type Props = {
   selectedLayer: NLSLayer;
 };
 
-const LayerData: React.FC<Props> = ({ selectedLayer }) => {
+const DataSource: FC<Props> = ({ selectedLayer }) => {
   const t = useT();
   return (
     <Wrapper>
-      <Text size="body">{t("Format")}</Text>
-      <ValueWrapper>
-        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-          {selectedLayer.config?.data?.type}
-        </StyledText>
-      </ValueWrapper>
-      {!!selectedLayer.config?.data?.url && (
-        <>
-          <Text size="body">{t("Resource URL")}</Text>
-          <ValueWrapper>
-            <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-              {selectedLayer.config?.data?.url}
-            </StyledText>
-          </ValueWrapper>
-        </>
+      <InputGroup label={t("Layer Name")}>
+        <InputsWrapper>
+          <TextInput appearance="readonly" value={selectedLayer.title} disabled />
+        </InputsWrapper>
+      </InputGroup>
+      <InputGroup label={t("Format")}>
+        <InputsWrapper>
+          <TextInput appearance="readonly" value={selectedLayer.config?.data?.type} disabled />
+        </InputsWrapper>
+      </InputGroup>
+
+      {selectedLayer.config?.data?.url && (
+        <InputGroup label={t("Resource URL")}>
+          <InputsWrapper>
+            <TextArea
+              rows={3}
+              value={selectedLayer.config?.data?.url}
+              appearance="readonly"
+              disabled
+            />
+          </InputsWrapper>
+        </InputGroup>
       )}
     </Wrapper>
   );
 };
 
-export default LayerData;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+}));
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const ValueWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-`;
-
-const StyledText = styled(Text)`
-  word-break: break-all;
-`;
+export default DataSource;

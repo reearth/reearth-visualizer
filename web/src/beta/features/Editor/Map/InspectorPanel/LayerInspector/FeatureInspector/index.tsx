@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import "react18-json-view/src/style.css";
-import "react18-json-view/src/dark.css";
-import JsonView from "react18-json-view";
 import { v4 as uuidv4 } from "uuid";
 
-import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import Text from "@reearth/beta/components/Text";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
+import { CodeInput, Collapse } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { FieldComponent } from "./CustomPropertField";
 
@@ -35,6 +31,10 @@ export type FieldProp = {
   value?: ValueProp;
 };
 
+const handleFormatJSON = (val = {}) => {
+  return JSON.stringify(val, null, 2);
+};
+
 const FeatureData: React.FC<Props> = ({
   selectedFeature,
   isSketchLayer,
@@ -44,7 +44,7 @@ const FeatureData: React.FC<Props> = ({
   onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
-
+  const theme = useTheme();
   const [field, setField] = useState<FieldProp[]>([]);
 
   useEffect(() => {
@@ -83,29 +83,12 @@ const FeatureData: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Text size="body">{t("ID")}</Text>
-      <ValueWrapper>
-        <Text size="body" otherProperties={{ userSelect: "auto" }}>
-          {selectedFeature?.id}
-        </Text>
-      </ValueWrapper>
-      <StyledSidePanelSectionField title={t("Geometry")} border="1">
-        <ValueWrapper>
-          <JsonView
-            src={selectedFeature?.geometry}
-            theme="a11y"
-            dark
-            style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
-          />
-        </ValueWrapper>
-      </StyledSidePanelSectionField>
-      <StyledSidePanelSectionField title={t("Properties")} border="1">
-        <ValueWrapper>
-          <JsonView src={selectedFeature?.properties} theme="a11y" dark />
-        </ValueWrapper>
-      </StyledSidePanelSectionField>
       {isSketchLayer && (
-        <StyledSidePanelSectionField title={t("Custom Properties")} border="1">
+        <Collapse
+          title={t("Custom Properties")}
+          size="small"
+          background={theme.bg[2]}
+          headerBg={theme.bg[2]}>
           {field.map(f => (
             <FieldComponent
               field={f}
@@ -115,27 +98,36 @@ const FeatureData: React.FC<Props> = ({
               onSubmit={handleSubmit}
             />
           ))}
-        </StyledSidePanelSectionField>
+        </Collapse>
       )}
+      <Collapse title={t("Geometry")} size="small" background={theme.bg[2]} headerBg={theme.bg[2]}>
+        <CodeInput
+          value={handleFormatJSON(selectedFeature?.geometry)}
+          showLines={false}
+          height={130}
+          disabled
+        />
+      </Collapse>
+      <Collapse
+        title={t("Properties")}
+        size="small"
+        background={theme.bg[2]}
+        headerBg={theme.bg[2]}>
+        <CodeInput
+          value={handleFormatJSON(selectedFeature?.properties)}
+          showLines={false}
+          disabled
+          height={560}
+        />
+      </Collapse>
     </Wrapper>
   );
 };
 
 export default FeatureData;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  word-break: break-all;
-`;
-
-const ValueWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-`;
-
-const StyledSidePanelSectionField = styled(SidePanelSectionField)`
-  background: ${({ theme }) => theme.outline.weaker};
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+}));
