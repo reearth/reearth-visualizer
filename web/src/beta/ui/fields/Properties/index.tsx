@@ -4,6 +4,7 @@ import { ValueType, ValueTypes, zeroValues } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Group, GroupListItem, Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import ListField, { ListItemProps } from "../ListField";
 
@@ -91,7 +92,7 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
   );
 
   return (
-    <>
+    <FieldsWrapper>
       {isList && !!item && (
         <ListField
           commonTitle={item.title || (item.id === "default" ? "defaultItemName" : "")}
@@ -120,7 +121,7 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
             />
           );
         })}
-    </>
+    </FieldsWrapper>
   );
 };
 
@@ -132,3 +133,9 @@ const valueToString = (v: ValueTypes[ValueType] | undefined): string | undefined
   }
   return undefined;
 };
+
+const FieldsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+}));
