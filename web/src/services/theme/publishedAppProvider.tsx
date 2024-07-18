@@ -5,7 +5,7 @@ import GlobalStyle from "./reearthTheme/common/globalStyles";
 import darkTheme from "./reearthTheme/darkTheme";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
-  const theme = darkTheme
+  const theme = darkTheme;
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

@@ -16,6 +16,8 @@ import {
   CameraField,
   TimePeriodField,
   TimePointField,
+  NumberField,
+  RangeField,
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
@@ -44,6 +46,12 @@ export const Components: Story = {
       <InputField
         placeholder="Text"
         commonTitle="InputField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <NumberField
+        placeholder="Value"
+        value={2}
+        commonTitle="NumberField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TwinInputField
@@ -126,6 +134,12 @@ export const Components: Story = {
         }}
         onChange={() => {}}
         commonTitle="TimePeriodField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <RangeField
+        values={[3, 15]}
+        content={["min", "max"]}
+        commonTitle="RangeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>
