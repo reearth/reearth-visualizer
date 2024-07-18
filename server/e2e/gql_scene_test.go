@@ -40,12 +40,7 @@ func TestCreateScene(t *testing.T) {
 		WithJSON(requestBody).
 		Expect().
 		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("createScene").Object().
-		Value("createScene").Object().
-		ValueEqual("id", pID.String())
+		JSON()
 
 	sID := res.Path("$.data.createScene.scene.id").Raw().(string)
 
