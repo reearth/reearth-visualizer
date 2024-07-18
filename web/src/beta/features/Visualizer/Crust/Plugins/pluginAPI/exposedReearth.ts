@@ -1,14 +1,14 @@
 import { merge } from "@reearth/beta/utils/object";
-import type { Events, Layer, TimelineManagerRef, ViewerProperty } from "@reearth/core";
+import type { Layer, TimelineManagerRef, ViewerProperty } from "@reearth/core";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { Widget, WidgetLocationOptions } from "../../Widgets";
 import type { ClientStorage } from "../useClientStorage";
 
 import { CommonReearth } from "./commonReearth";
-import type { GlobalThis, ReearthEventType, Reearth, PopupPosition } from "./types";
+import type { GlobalThis, Reearth } from "./types";
 
-export function exposed({
+export function exposedReearth({
   commonReearth,
   plugin,
   // timeline
@@ -18,30 +18,37 @@ export function exposed({
   closeUI,
   postMessage,
   resize,
+  uiEventsOn,
+  uiEventsOff,
   // modal
   renderModal,
   closeModal,
   updateModal,
   postMessageModal,
+  modalEventsOn,
+  modalEventsOff,
   // popup
   renderPopup,
   closePopup,
   updatePopup,
   postMessagePopup,
+  popupEventsOn,
+  popupEventsOff,
+  // extension
+  extensionEventsOn,
+  extensionEventsOff,
   // viewer
   overrideViewerProperty,
   // extension
   getWidget,
   getBlock,
+  getLayer,
   moveWidget,
   startEventLoop,
   pluginPostMessage,
   // data
   clientStorage,
-
-  events,
-}: // layer,
-{
+}: {
   commonReearth: CommonReearth;
   plugin?: {
     id: string;
@@ -51,50 +58,40 @@ export function exposed({
   };
   // timeline
   timelineManagerRef?: TimelineManagerRef;
-
   // ui
-  render: (
-    html: string,
-    options?: {
-      visible?: boolean;
-      width?: string | number;
-      height?: string | number;
-      extended?: boolean;
-    },
-  ) => void;
+  render: Reearth["ui"]["show"];
   closeUI: Reearth["ui"]["close"];
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
+  uiEventsOn: Reearth["ui"]["on"];
+  uiEventsOff: Reearth["ui"]["off"];
   // modal
-  renderModal: (
-    html: string,
-    options?: {
-      width?: string | number;
-      height?: string | number;
-      background?: string;
-    },
-  ) => void;
+  renderModal: Reearth["modal"]["show"];
   closeModal: Reearth["modal"]["close"];
   updateModal: Reearth["modal"]["update"];
   postMessageModal: Reearth["modal"]["postMessage"];
+  modalEventsOn: Reearth["modal"]["on"];
+  modalEventsOff: Reearth["modal"]["off"];
   // popup
   renderPopup: Reearth["popup"]["show"];
   closePopup: Reearth["popup"]["close"];
   updatePopup: Reearth["popup"]["update"];
   postMessagePopup: Reearth["popup"]["postMessage"];
+  popupEventsOn: Reearth["popup"]["on"];
+  popupEventsOff: Reearth["popup"]["off"];
   // viewer
   overrideViewerProperty?: (pluginId: string, property: ViewerProperty) => void;
   // extension
   getWidget?: () => Widget | undefined;
   getBlock?: () => Block | undefined;
+  getLayer?: () => Layer | undefined;
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   startEventLoop?: () => void;
-  pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
+  pluginPostMessage: (extentionId: string, msg: unknown, sender: string) => void;
+  extensionEventsOn: Reearth["extension"]["on"];
+  extensionEventsOff: Reearth["extension"]["off"];
   // data
   clientStorage: ClientStorage;
-
-  events: Events<ReearthEventType>;
-  layer?: () => Layer | undefined;
 }): GlobalThis {
   return merge({
     console: {
@@ -214,50 +211,28 @@ export function exposed({
         },
       }),
       ui: {
-        show: (
-          html: string,
-          options?:
-            | {
-                visible?: boolean | undefined;
-              }
-            | undefined,
-        ) => {
-          render(html, options);
-        },
+        show: render,
         postMessage,
         resize,
         close: closeUI,
+        on: uiEventsOn,
+        off: uiEventsOff,
       },
       modal: {
-        show: (
-          html: string,
-          options?: {
-            width?: number | string;
-            height?: number | string;
-            background?: string;
-          },
-        ) => {
-          renderModal(html, options);
-        },
+        show: renderModal,
         postMessage: postMessageModal,
         update: updateModal,
         close: closeModal,
+        on: modalEventsOn,
+        off: modalEventsOff,
       },
       popup: {
-        show: (
-          html: string,
-          options?: {
-            width?: number | string;
-            height?: number | string;
-            position?: PopupPosition;
-            offset?: number;
-          },
-        ) => {
-          renderPopup(html, options);
-        },
+        show: renderPopup,
         postMessage: postMessagePopup,
         update: updatePopup,
         close: closePopup,
+        on: popupEventsOn,
+        off: popupEventsOff,
       },
       extension: merge(
         commonReearth.extension,
@@ -271,6 +246,8 @@ export function exposed({
                 : "") ?? "";
             return (id: string, msg: unknown) => pluginPostMessage(id, msg, sender);
           },
+          on: extensionEventsOn,
+          off: extensionEventsOff,
         },
         plugin?.extensionType === "widget"
           ? {
@@ -289,7 +266,10 @@ export function exposed({
         plugin?.extensionType === "block"
           ? {
               get block() {
-                return getBlock?.();
+                return {
+                  ...getBlock?.(),
+                  layer: getLayer?.(),
+                };
               },
             }
           : {},
@@ -313,7 +293,7 @@ export function exposed({
             };
           },
           get setAsync() {
-            return (key: string, value: any) => {
+            return (key: string, value: unknown) => {
               const localValue =
                 typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
               const promise = clientStorage.setAsync(
@@ -379,8 +359,6 @@ export function exposed({
           },
         },
       },
-
-      ...events,
     }),
   });
 }

@@ -1,4 +1,10 @@
-import { InteractionModeType, ViewerProperty } from "@reearth/core";
+import {
+  InteractionModeType,
+  LayerSelectWithRectEnd,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectStart,
+  ViewerProperty,
+} from "@reearth/core";
 
 import { LatLngHeight } from "./common";
 
@@ -9,6 +15,8 @@ export declare type Viewer = {
   readonly interactionMode: InteractionMode;
   readonly env: Env;
   readonly tools: Tools;
+  readonly on: ViewerEvents["on"];
+  readonly off: ViewerEvents["off"];
 };
 
 export declare type ViewportSize = {
@@ -25,6 +33,12 @@ export declare type Viewport = ViewportSize & {
 export declare type InteractionMode = {
   readonly mode: InteractionModeType;
   readonly override?: (mode: InteractionModeType) => void;
+  readonly selectionMode: SelectionMode;
+};
+
+export declare type SelectionMode = {
+  readonly on: SelectionModeEvents["on"];
+  readonly off: SelectionModeEvents["off"];
 };
 
 export declare type Env = {
@@ -61,4 +75,52 @@ export declare type Tools = {
     screenOffset: [x: number, y: number],
   ) => [x: number, y: number, z: number] | undefined;
   readonly isPositionVisibleOnGlobe: (position: [x: number, y: number, z: number]) => boolean;
+};
+
+export declare type ViewerEventType = {
+  click: [e: MouseEvent];
+  doubleClick: [e: MouseEvent];
+  mouseDown: [e: MouseEvent];
+  mouseUp: [e: MouseEvent];
+  rightClick: [e: MouseEvent];
+  rightDown: [e: MouseEvent];
+  rightUp: [e: MouseEvent];
+  middleClick: [e: MouseEvent];
+  middleDown: [e: MouseEvent];
+  middleUp: [e: MouseEvent];
+  mouseMove: [e: MouseEvent];
+  mouseEnter: [e: MouseEvent];
+  mouseLeave: [e: MouseEvent];
+  wheel: [e: MouseEvent];
+  resize: [e: ViewportSize];
+};
+
+export declare type ViewerEvents = {
+  readonly on: <T extends keyof ViewerEventType>(
+    type: T,
+    callback: (...args: ViewerEventType[T]) => void,
+    options: { once?: boolean },
+  ) => void;
+  readonly off: <T extends keyof ViewerEventType>(
+    type: T,
+    callback: (...args: ViewerEventType[T]) => void,
+  ) => void;
+};
+
+export declare type SelectionModeEventType = {
+  marqueeStart: [e: LayerSelectWithRectStart];
+  marqueeMove: [e: LayerSelectWithRectMove];
+  marqueeEnd: [e: LayerSelectWithRectEnd];
+};
+
+export declare type SelectionModeEvents = {
+  readonly on: <T extends keyof SelectionModeEventType>(
+    type: T,
+    callback: (...args: SelectionModeEventType[T]) => void,
+    options: { once?: boolean },
+  ) => void;
+  readonly off: <T extends keyof SelectionModeEventType>(
+    type: T,
+    callback: (...args: SelectionModeEventType[T]) => void,
+  ) => void;
 };

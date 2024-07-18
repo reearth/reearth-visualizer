@@ -52,6 +52,8 @@ export declare type Camera = {
   // TODO: breaking change. flyToGround removed.
   readonly setView: (view: CameraPosition & { fov: number }) => void;
   readonly enableForceHorizontalRoll: (enable: boolean) => void;
+  readonly on: CameraEvents["on"];
+  readonly off: CameraEvents["off"];
 };
 
 export declare type CameraPosition = {
@@ -102,4 +104,20 @@ export declare type ScreenSpaceCameraControllerOptions = {
   minimumZoomDistance?: number;
   maximumZoomDistance?: number;
   enableCollisionDetection?: boolean;
+};
+
+export declare type CameraEventType = {
+  move: [camera: CameraPosition];
+};
+
+export declare type CameraEvents = {
+  readonly on: <T extends keyof CameraEventType>(
+    type: T,
+    callback: (...args: CameraEventType[T]) => void,
+    options: { once?: boolean },
+  ) => void;
+  readonly off: <T extends keyof CameraEventType>(
+    type: T,
+    callback: (...args: CameraEventType[T]) => void,
+  ) => void;
 };

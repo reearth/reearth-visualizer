@@ -3,6 +3,9 @@ import {
   ComputedLayer,
   Feature,
   Layer,
+  LayerEditEvent,
+  LayerLoadEvent,
+  LayerVisibilityEvent,
   LazyLayer,
   NaiveLayer,
   OverriddenLayer,
@@ -20,7 +23,7 @@ export declare type Layers = {
     id: string,
     layer?:
       | (Partial<Layer> & {
-          property?: any;
+          property?: unknown;
         })
       | null,
   ) => void;
@@ -49,4 +52,25 @@ export declare type Layers = {
     // TODO: Get condition as expression for plugin
     condition?: (f: ComputedFeature) => boolean,
   ) => ComputedFeature[] | undefined;
+  readonly on: LayersEvents["on"];
+  readonly off: LayersEvents["off"];
+};
+
+export declare type LayersEventType = {
+  select: [layerId: string | undefined, featureId: string | undefined];
+  edit: [e: LayerEditEvent];
+  load: [e: LayerLoadEvent];
+  visible: [e: LayerVisibilityEvent];
+};
+
+export declare type LayersEvents = {
+  readonly on: <T extends keyof LayersEventType>(
+    type: T,
+    callback: (...args: LayersEventType[T]) => void,
+    options: { once?: boolean },
+  ) => void;
+  readonly off: <T extends keyof LayersEventType>(
+    type: T,
+    callback: (...args: LayersEventType[T]) => void,
+  ) => void;
 };

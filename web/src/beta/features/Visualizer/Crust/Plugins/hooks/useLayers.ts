@@ -1,15 +1,28 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { ComputedFeature, NaiveLayer } from "@reearth/core";
 
 import { useGet } from "../../utils";
+import { LayersEventType } from "../pluginAPI/types";
 import { Props } from "../types";
+import { events, useEmit } from "../utils/events";
 
 export default ({
   mapRef,
   selectedLayer,
   selectedFeature,
-}: Pick<Props, "mapRef" | "selectedLayer" | "selectedFeature">) => {
+  onLayerEdit,
+  onLayerVisibility,
+  onLayerLoad,
+}: Pick<
+  Props,
+  | "mapRef"
+  | "selectedLayer"
+  | "selectedFeature"
+  | "onLayerEdit"
+  | "onLayerVisibility"
+  | "onLayerLoad"
+>) => {
   const layersRef = mapRef?.current?.layers;
   const engineRef = mapRef?.current?.engine;
 
@@ -102,6 +115,55 @@ export default ({
     [engineRef],
   );
 
+  // events
+  const [layersEvents, emit] = useMemo(() => events<LayersEventType>(), []);
+
+  useEmit<LayersEventType>(
+    {
+      select: useMemo<[layerId: string | undefined, featureId: string | undefined]>(
+        () => (selectedLayer ? [selectedLayer.id, selectedFeature?.id] : [undefined, undefined]),
+        [selectedLayer, selectedFeature],
+      ),
+    },
+    emit,
+  );
+
+  useEffect(() => {
+    onLayerEdit?.(e => {
+      emit("edit", e);
+    });
+  }, [emit, onLayerEdit]);
+
+  useEffect(() => {
+    onLayerVisibility?.(e => {
+      emit("visible", e);
+    });
+  }, [emit, onLayerVisibility]);
+
+  useEffect(() => {
+    onLayerLoad?.(e => {
+      emit("load", e);
+    });
+  }, [emit, onLayerLoad]);
+
+  const layersEventsOn = useCallback(
+    <T extends keyof LayersEventType>(
+      type: T,
+      callback: (...args: LayersEventType[T]) => void,
+      options: { once?: boolean },
+    ) => {
+      return options?.once ? layersEvents.once(type, callback) : layersEvents.on(type, callback);
+    },
+    [layersEvents],
+  );
+
+  const layersEventsOff = useCallback(
+    <T extends keyof LayersEventType>(type: T, callback: (...args: LayersEventType[T]) => void) => {
+      return layersEvents.off(type, callback);
+    },
+    [layersEvents],
+  );
+
   return {
     getLayers,
     hideLayer,
@@ -118,5 +180,7 @@ export default ({
     getFeaturesInScreenRect,
     bringToFront,
     sendToBack,
+    layersEventsOn,
+    layersEventsOff,
   };
 };

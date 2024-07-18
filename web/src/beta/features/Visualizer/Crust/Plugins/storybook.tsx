@@ -105,6 +105,10 @@ export const context: Context = {
       interactionMode: {
         mode: "default",
         override: act("overrideInteractionMode"),
+        selectionMode: {
+          on: act("selectionMode.on"),
+          off: act("selectionMode.off"),
+        },
       },
       env: {
         inEditor: true,
@@ -121,6 +125,8 @@ export const context: Context = {
         transformByOffsetOnScreen: act("transformByOffsetOnScreen"),
         isPositionVisibleOnGlobe: act("isPositionVisibleOnGlobe"),
       },
+      on: act("on"),
+      off: act("off"),
     },
     camera: {
       position: { lat: 0, lng: 0, height: 0, heading: 0, pitch: 0, roll: 0 },
@@ -141,6 +147,8 @@ export const context: Context = {
       moveOverTerrain: act("moveOverTerrain"),
       setView: act("setView"),
       enableForceHorizontalRoll: act("enableForceHorizontalRoll"),
+      on: act("on"),
+      off: act("off"),
     },
     timeline: {
       startTime: new Date("2022-06-01"),
@@ -155,12 +163,16 @@ export const context: Context = {
       setSpeed: act("setSpeed"),
       setStepType: act("setStepType"),
       setRangeType: act("setRangeType"),
+      on: act("on"),
+      off: act("off"),
     },
     sketch: {
       tool: undefined,
       options: undefined,
       setTool: act("setTool"),
       overrideOptions: act("overrideOptions"),
+      on: act("on"),
+      off: act("off"),
     },
     layers: {
       layers,
@@ -185,15 +197,14 @@ export const context: Context = {
       sendToBack: act("layers.sendToBack"),
       getLayersInViewport: act("layers.getLayersInViewport"),
       getFeaturesInScreenRect: act("layers.getFeaturesInScreenRect"),
+      on: act("layers.on"),
+      off: act("layers.off"),
     },
     extension: {
       get list() {
         return [];
       },
     },
-    on: act("on"),
-    off: act("off"),
-    once: act("once"),
   },
   pluginInstances: {
     meta: {

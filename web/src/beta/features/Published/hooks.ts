@@ -57,8 +57,6 @@ export default (alias?: string) => {
     setCurrentCamera(initialCamera);
   }, [initialCamera]);
 
-  console.log(currentCamera);
-
   const pluginProperty = useMemo(
     () =>
       Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(

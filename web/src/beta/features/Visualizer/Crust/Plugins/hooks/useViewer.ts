@@ -1,8 +1,17 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+
+import { MouseEventHandles, MouseEvents } from "@reearth/core";
 
 import { useGet } from "../../utils";
-import { InteractionMode, Viewport } from "../pluginAPI/types";
+import {
+  InteractionMode,
+  SelectionModeEventType,
+  ViewerEventType,
+  Viewport,
+  ViewportSize,
+} from "../pluginAPI/types";
 import { Props } from "../types";
+import { events, useEmit } from "../utils/events";
 
 export default ({
   viewerProperty,
@@ -13,6 +22,9 @@ export default ({
   overrideInteractionMode,
   inEditor,
   built,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
 }: Pick<
   Props,
   | "viewerProperty"
@@ -23,6 +35,9 @@ export default ({
   | "overrideInteractionMode"
   | "inEditor"
   | "built"
+  | "onLayerSelectWithRectStart"
+  | "onLayerSelectWithRectMove"
+  | "onLayerSelectWithRectEnd"
 >) => {
   const engineRef = mapRef?.current?.engine;
 
@@ -44,10 +59,64 @@ export default ({
     [engineRef],
   );
 
+  // selection mode events
+  const [selectiomModeEvents, emitSelectionModeEvent] = useMemo(
+    () => events<SelectionModeEventType>(),
+    [],
+  );
+
+  useEffect(() => {
+    onLayerSelectWithRectStart?.(e => {
+      emitSelectionModeEvent("marqueeStart", e);
+    });
+  }, [emitSelectionModeEvent, onLayerSelectWithRectStart]);
+
+  useEffect(() => {
+    onLayerSelectWithRectMove?.(e => {
+      emitSelectionModeEvent("marqueeMove", e);
+    });
+  }, [emitSelectionModeEvent, onLayerSelectWithRectMove]);
+
+  useEffect(() => {
+    onLayerSelectWithRectEnd?.(e => {
+      emitSelectionModeEvent("marqueeEnd", e);
+    });
+  }, [emitSelectionModeEvent, onLayerSelectWithRectEnd]);
+
+  const selectionModeEventsOn = useCallback(
+    <T extends keyof SelectionModeEventType>(
+      type: T,
+      callback: (...args: SelectionModeEventType[T]) => void,
+      options: { once?: boolean },
+    ) => {
+      return options?.once
+        ? selectiomModeEvents.once(type, callback)
+        : selectiomModeEvents.on(type, callback);
+    },
+    [selectiomModeEvents],
+  );
+
+  const selectionModeEventsOff = useCallback(
+    <T extends keyof SelectionModeEventType>(
+      type: T,
+      callback: (...args: SelectionModeEventType[T]) => void,
+    ) => {
+      return selectiomModeEvents.off(type, callback);
+    },
+    [selectiomModeEvents],
+  );
+
   const getInteractionMode = useGet(
     useMemo<InteractionMode>(
-      () => ({ mode: interactionMode ?? "default", override: overrideInteractionMode }),
-      [interactionMode, overrideInteractionMode],
+      () => ({
+        mode: interactionMode ?? "default",
+        override: overrideInteractionMode,
+        selectionMode: {
+          on: selectionModeEventsOn,
+          off: selectionModeEventsOff,
+        },
+      }),
+      [interactionMode, overrideInteractionMode, selectionModeEventsOn, selectionModeEventsOff],
     ),
   );
 
@@ -133,6 +202,78 @@ export default ({
     [engineRef],
   );
 
+  // events
+  const [viewerEvents, emit] = useMemo(() => events<ViewerEventType>(), []);
+
+  useEmit<Pick<ViewerEventType, "resize">>(
+    {
+      resize: useMemo<[viewport: ViewportSize] | undefined>(
+        () => [
+          {
+            width: viewport?.width,
+            height: viewport?.height,
+            isMobile: viewport?.isMobile,
+          } as ViewportSize,
+        ],
+        [viewport?.width, viewport?.height, viewport?.isMobile],
+      ),
+    },
+    emit,
+  );
+
+  const onMouseEvent = useCallback(
+    (eventType: keyof MouseEventHandles, fn: any) => {
+      mapRef?.current?.engine[eventType]?.(fn);
+    },
+    [mapRef],
+  );
+
+  useEffect(() => {
+    const mouseEventHandles: {
+      [index in keyof MouseEvents]: keyof MouseEventHandles;
+    } = {
+      click: "onClick",
+      doubleClick: "onDoubleClick",
+      mouseDown: "onMouseDown",
+      mouseUp: "onMouseUp",
+      rightClick: "onRightClick",
+      rightDown: "onRightDown",
+      rightUp: "onRightUp",
+      middleClick: "onMiddleClick",
+      middleDown: "onMiddleDown",
+      middleUp: "onMiddleUp",
+      mouseMove: "onMouseMove",
+      mouseEnter: "onMouseEnter",
+      mouseLeave: "onMouseLeave",
+      wheel: "onWheel",
+    };
+    (Object.keys(mouseEventHandles) as (keyof MouseEvents)[]).forEach(
+      (event: keyof MouseEvents) => {
+        onMouseEvent(mouseEventHandles[event], (props: MouseEvent) => {
+          emit(event, props);
+        });
+      },
+    );
+  }, [emit, onMouseEvent]);
+
+  const viewerEventsOn = useCallback(
+    <T extends keyof ViewerEventType>(
+      type: T,
+      callback: (...args: ViewerEventType[T]) => void,
+      options: { once?: boolean },
+    ) => {
+      return options?.once ? viewerEvents.once(type, callback) : viewerEvents.on(type, callback);
+    },
+    [viewerEvents],
+  );
+
+  const viewerEventsOff = useCallback(
+    <T extends keyof ViewerEventType>(type: T, callback: (...args: ViewerEventType[T]) => void) => {
+      return viewerEvents.off(type, callback);
+    },
+    [viewerEvents],
+  );
+
   return {
     getViewerProperty,
     overrideViewerPropertyCommon,
@@ -150,5 +291,7 @@ export default ({
     cartesianToCartographic,
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
+    viewerEventsOn,
+    viewerEventsOff,
   };
 };

@@ -1,8 +1,6 @@
 import { Camera } from "./camera";
 import { Data } from "./data";
-import { Deprecated } from "./deprecated";
 import { Engine } from "./engine";
-import { Events } from "./events";
 import { Extension } from "./extension";
 import { Layers } from "./layers";
 import { Modal } from "./modal";
@@ -33,5 +31,4 @@ export declare type Reearth = {
   readonly extension: Extension;
   // data
   readonly data: Data;
-} & Events &
-  Deprecated;
+};

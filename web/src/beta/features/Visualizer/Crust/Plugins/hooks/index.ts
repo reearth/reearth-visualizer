@@ -4,8 +4,8 @@ import { commonReearth } from "../pluginAPI/commonReearth";
 import { Context, Props } from "../types";
 
 import useCamera from "./useCamera";
-import useCommonEvents from "./useCommonEvents";
 import useData from "./useData";
+import useDeprecated from "./useDeprecated";
 import useExtension from "./useExtension";
 import useLayers from "./useLayers";
 import useSketch from "./useSketch";
@@ -55,6 +55,8 @@ export default function ({
     cartesianToCartographic,
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
+    viewerEventsOn,
+    viewerEventsOff,
   } = useViewer({
     viewerProperty,
     overrideViewerProperty,
@@ -64,6 +66,9 @@ export default function ({
     overrideInteractionMode,
     inEditor,
     built,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
   });
 
   const {
@@ -85,6 +90,8 @@ export default function ({
     move,
     moveOverTerrain,
     enableForceHorizontalRoll,
+    cameraEventsOn,
+    cameraEventsOff,
   } = useCamera({
     mapRef,
     onCameraForceHorizontalRollChange,
@@ -108,10 +115,28 @@ export default function ({
     getFeaturesInScreenRect,
     bringToFront,
     sendToBack,
-  } = useLayers({ mapRef, selectedLayer, selectedFeature });
-
-  const { getSketchTool, setSketchTool, getSketchOptions, overrideSketchOptions } = useSketch({
+    layersEventsOn,
+    layersEventsOff,
+  } = useLayers({
     mapRef,
+    selectedLayer,
+    selectedFeature,
+    onLayerEdit,
+    onLayerVisibility,
+    onLayerLoad,
+  });
+
+  const {
+    getSketchTool,
+    setSketchTool,
+    getSketchOptions,
+    overrideSketchOptions,
+    sketchEventsOn,
+    sketchEventsOff,
+  } = useSketch({
+    mapRef,
+    onSketchPluginFeatureCreate,
+    onSketchTypeChange,
   });
 
   const { pluginInstances, getExtensionList } = useExtension({
@@ -121,23 +146,11 @@ export default function ({
     selectedStory,
   });
 
-  const { commonEvents } = useCommonEvents({
-    mapRef,
-    timelineManagerRef,
-    selectedLayer,
-    selectedFeature,
-    viewport,
-    onLayerEdit,
-    onLayerVisibility,
-    onLayerLoad,
-    onLayerSelectWithRectStart,
-    onLayerSelectWithRectMove,
-    onLayerSelectWithRectEnd,
-    onSketchPluginFeatureCreate,
-    onSketchTypeChange,
-  });
-
   const { clientStorage } = useData();
+
+  const { deprecated, cameraDeprecated, layersDeprecated, sketchDeprecated } = useDeprecated({
+    built,
+  });
 
   const value = useMemo<Context>(
     () => ({
@@ -161,6 +174,9 @@ export default function ({
         cartesianToCartographic,
         transformByOffsetOnScreen,
         isPositionVisibleOnGlobe,
+        // viewer events
+        viewerEventsOn,
+        viewerEventsOff,
         // camera
         getCameraPosition,
         getCameraFov,
@@ -180,6 +196,9 @@ export default function ({
         move,
         moveOverTerrain,
         enableForceHorizontalRoll,
+        // camera events
+        cameraEventsOn,
+        cameraEventsOff,
         // timeline
         getTimeline,
         // layers,
@@ -198,15 +217,24 @@ export default function ({
         getFeaturesInScreenRect,
         bringToFront,
         sendToBack,
+        // layers events
+        layersEventsOn,
+        layersEventsOff,
         // sketch
         getSketchTool,
         setSketchTool,
         getSketchOptions,
         overrideSketchOptions,
+        // sketch events
+        sketchEventsOn,
+        sketchEventsOff,
         // extension
         getExtensionList,
-
-        events: commonEvents,
+        // deprecated
+        deprecated,
+        cameraDeprecated,
+        layersDeprecated,
+        sketchDeprecated,
       }),
       overrideViewerProperty,
       pluginInstances,
@@ -233,6 +261,9 @@ export default function ({
       cartesianToCartographic,
       transformByOffsetOnScreen,
       isPositionVisibleOnGlobe,
+      // viewer events
+      viewerEventsOn,
+      viewerEventsOff,
       // camera
       getCameraPosition,
       getCameraFov,
@@ -252,6 +283,9 @@ export default function ({
       move,
       moveOverTerrain,
       enableForceHorizontalRoll,
+      // camera events
+      cameraEventsOn,
+      cameraEventsOff,
       // timeline
       getTimeline,
       // layers
@@ -270,15 +304,24 @@ export default function ({
       getFeaturesInScreenRect,
       bringToFront,
       sendToBack,
+      // layers events
+      layersEventsOn,
+      layersEventsOff,
       // sketch
       getSketchTool,
       setSketchTool,
       getSketchOptions,
       overrideSketchOptions,
+      // sketch events
+      sketchEventsOn,
+      sketchEventsOff,
       // extension
       getExtensionList,
-      // events
-      commonEvents,
+      // deprecated
+      deprecated,
+      cameraDeprecated,
+      layersDeprecated,
+      sketchDeprecated,
       // others
       overrideViewerProperty,
       pluginInstances,

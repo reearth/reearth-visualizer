@@ -5,6 +5,7 @@ import { CameraPosition as CoreCameraPosition, CameraOptions, FlyTo } from "@ree
 import { useVisualizerCamera } from "../../../atoms";
 import { useGet } from "../../utils";
 import {
+  CameraEventType,
   CameraMoveOptions,
   CameraPosition,
   LookAtDestination,
@@ -12,6 +13,7 @@ import {
 } from "../pluginAPI/types";
 import { GeoRect } from "../pluginAPI/types/common";
 import { Props } from "../types";
+import { events, useEmit } from "../utils/events";
 
 export default ({
   mapRef,
@@ -160,6 +162,37 @@ export default ({
     [onCameraForceHorizontalRollChange],
   );
 
+  // events
+  const [cameraEvents, emit] = useMemo(() => events<CameraEventType>(), []);
+
+  useEmit<Pick<CameraEventType, "move">>(
+    {
+      move: useMemo<[camera: CameraPosition] | undefined>(
+        () => (camera ? [camera] : undefined),
+        [camera],
+      ),
+    },
+    emit,
+  );
+
+  const cameraEventsOn = useCallback(
+    <T extends keyof CameraEventType>(
+      type: T,
+      callback: (...args: CameraEventType[T]) => void,
+      options: { once?: boolean },
+    ) => {
+      return options?.once ? cameraEvents.once(type, callback) : cameraEvents.on(type, callback);
+    },
+    [cameraEvents],
+  );
+
+  const cameraEventsOff = useCallback(
+    <T extends keyof CameraEventType>(type: T, callback: (...args: CameraEventType[T]) => void) => {
+      return cameraEvents.off(type, callback);
+    },
+    [cameraEvents],
+  );
+
   return {
     getCameraPosition,
     getCameraFov,
@@ -179,5 +212,7 @@ export default ({
     move,
     moveOverTerrain,
     enableForceHorizontalRoll,
+    cameraEventsOn,
+    cameraEventsOff,
   };
 };

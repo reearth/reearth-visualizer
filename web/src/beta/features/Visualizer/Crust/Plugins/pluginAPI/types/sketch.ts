@@ -1,10 +1,12 @@
-import { SketchAppearance, SketchType } from "@reearth/core";
+import { SketchAppearance, SketchEventProps, SketchType } from "@reearth/core";
 
 export declare type Sketch = {
   readonly tool: SketchType | undefined;
   readonly setTool?: (type: SketchType | undefined) => void;
   readonly options: SketchOptions | undefined;
   readonly overrideOptions?: (options: SketchOptions) => void;
+  readonly on: SketchEvents["on"];
+  readonly off: SketchEvents["off"];
 };
 
 export declare type SketchOptions = {
@@ -15,4 +17,21 @@ export declare type SketchOptions = {
   readonly enableRelativeHeight: boolean;
   readonly rightClickToAbort: boolean;
   readonly autoResetInteractionMode: boolean;
+};
+
+export declare type SketchEventType = {
+  create: [props: SketchEventProps];
+  toolChange: [props: SketchType | undefined];
+};
+
+export declare type SketchEvents = {
+  readonly on: <T extends keyof SketchEventType>(
+    type: T,
+    callback: (...args: SketchEventType[T]) => void,
+    options: { once?: boolean },
+  ) => void;
+  readonly off: <T extends keyof SketchEventType>(
+    type: T,
+    callback: (...args: SketchEventType[T]) => void,
+  ) => void;
 };

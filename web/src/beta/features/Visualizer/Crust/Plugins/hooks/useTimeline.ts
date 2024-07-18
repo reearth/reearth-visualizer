@@ -1,8 +1,65 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
+import { TickEventCallback, TimelineCommitter } from "@reearth/core";
+
+import { TimelineEventType } from "../pluginAPI/types";
 import { Props } from "../types";
+import { events } from "../utils/events";
 
 export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
+  // events
+  const [timelineEvents, emit] = useMemo(() => events<TimelineEventType>(), []);
+
+  const onTickEvent = useCallback(
+    (fn: TickEventCallback) => {
+      timelineManagerRef?.current?.onTick(fn);
+    },
+    [timelineManagerRef],
+  );
+
+  const onTimelineCommitEvent = useCallback(
+    (fn: (committer: TimelineCommitter) => void) => {
+      timelineManagerRef?.current?.onCommit(fn);
+    },
+    [timelineManagerRef],
+  );
+
+  useEffect(() => {
+    onTickEvent(e => {
+      emit("tick", e);
+    });
+  }, [emit, onTickEvent]);
+
+  useEffect(() => {
+    onTimelineCommitEvent(e => {
+      emit("commit", e);
+    });
+  }, [emit, onTimelineCommitEvent]);
+
+  const timelineEventsOn = useCallback(
+    <T extends keyof TimelineEventType>(
+      type: T,
+      callback: (...args: TimelineEventType[T]) => void,
+      options: { once?: boolean },
+    ) => {
+      return options?.once
+        ? timelineEvents.once(type, callback)
+        : timelineEvents.on(type, callback);
+    },
+    [timelineEvents],
+  );
+
+  const timelineEventsOff = useCallback(
+    <T extends keyof TimelineEventType>(
+      type: T,
+      callback: (...args: TimelineEventType[T]) => void,
+    ) => {
+      return timelineEvents.off(type, callback);
+    },
+    [timelineEvents],
+  );
+
+  // timeline
   const getTimeline = useCallback(() => {
     return {
       get startTime() {
@@ -67,8 +124,10 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
         });
       },
       tick: timelineManagerRef?.current?.tick,
+      on: timelineEventsOn,
+      off: timelineEventsOff,
     };
-  }, [timelineManagerRef]);
+  }, [timelineManagerRef, timelineEventsOn, timelineEventsOff]);
 
   return {
     getTimeline,
