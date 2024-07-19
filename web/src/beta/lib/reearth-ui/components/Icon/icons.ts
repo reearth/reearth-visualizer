@@ -85,6 +85,8 @@ import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
 import Play from "./Icons/Play.svg?react";
+import PluginInstall from "./Icons/PluginInstall.svg?react";
+import PluginUpdate from "./Icons/PluginUpdate.svg?react";
 import Plus from "./Icons/Plus.svg?react";
 import Points from "./Icons/Points.svg?react";
 import Polygon from "./Icons/Polygon.svg?react";
@@ -213,6 +215,8 @@ export default {
   pencilSimple: PencilSimple,
   play: Play,
   plus: Plus,
+  pluginInstall: PluginInstall,
+  pluginUpdate: PluginUpdate,
   points: Points,
   polygon: Polygon,
   polygone: Polygone,
