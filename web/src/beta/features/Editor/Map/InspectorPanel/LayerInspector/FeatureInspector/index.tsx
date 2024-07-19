@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
+import "react18-json-view/src/style.css";
+import "react18-json-view/src/dark.css";
+import JsonView from "react18-json-view";
 import { v4 as uuidv4 } from "uuid";
 
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
-import { CodeInput, Collapse } from "@reearth/beta/lib/reearth-ui";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -30,11 +33,6 @@ export type FieldProp = {
   title: string;
   value?: ValueProp;
 };
-
-const handleFormatJSON = (val = {}) => {
-  return JSON.stringify(val, null, 2);
-};
-
 const FeatureData: React.FC<Props> = ({
   selectedFeature,
   isSketchLayer,
@@ -101,24 +99,23 @@ const FeatureData: React.FC<Props> = ({
         </Collapse>
       )}
       <Collapse title={t("Geometry")} size="small" background={theme.bg[2]} headerBg={theme.bg[2]}>
-        <CodeInput
-          value={handleFormatJSON(selectedFeature?.geometry)}
-          showLines={false}
-          height={130}
-          disabled
-        />
+        <ValueWrapper>
+          <JsonView
+            src={selectedFeature?.geometry}
+            theme="a11y"
+            dark
+            style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
+          />
+        </ValueWrapper>
       </Collapse>
       <Collapse
         title={t("Properties")}
         size="small"
         background={theme.bg[2]}
         headerBg={theme.bg[2]}>
-        <CodeInput
-          value={handleFormatJSON(selectedFeature?.properties)}
-          showLines={false}
-          disabled
-          height={560}
-        />
+        <ValueWrapper>
+          <JsonView src={selectedFeature?.properties} theme="a11y" dark />
+        </ValueWrapper>
       </Collapse>
     </Wrapper>
   );
@@ -130,4 +127,12 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
+  wordBreak: "break-all",
+}));
+
+const ValueWrapper = styled("div")(({ theme }) => ({
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: theme.radius.small,
+  background: theme.bg[1],
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
 }));
