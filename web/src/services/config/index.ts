@@ -47,6 +47,7 @@ export type Config = {
   extensions?: Extensions;
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
   multiTenant?: Record<string, AuthInfo>;
+  devPluginUrls?: string[];
 } & AuthInfo;
 
 declare global {
