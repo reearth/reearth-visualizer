@@ -98,15 +98,12 @@ Choose layer to add: Choose layer to add
 layer name: Layer name
 Layer name: ''
 Inspector: Inspector
+Layer Name: Layer Name
 Format: Format
 Unsupported custom field: Unsupported custom field
-ID: ID
+Custom Properties: Custom Properties
 Geometry: Geometry
 Properties: Properties
-Custom Properties: Custom Properties
-Data: Data
-Feature: Feature
-Styling: Styling
 Enable Infobox: Enable Infobox
 Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
 Add Layer from Resource: Add Layer from Resource
@@ -130,7 +127,6 @@ Please select one type: Please select one type
 Title: Title
 Type: Type
 New Property: New Property
-Layer Name: Layer Name
 ' Text': Text
 General: General
 New Sketch Layer: New Sketch Layer

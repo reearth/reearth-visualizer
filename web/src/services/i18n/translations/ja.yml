@@ -96,15 +96,12 @@ Choose layer to add: レイヤーの選択
 layer name: レイヤー名
 Layer name: ''
 Inspector: インスペクター
+Layer Name: ''
 Format: フォーマット
 Unsupported custom field: ''
-ID: ID
+Custom Properties: ''
 Geometry: ジオメトリ
 Properties: プロパティ
-Custom Properties: ''
-Data: データ
-Feature: フィーチャー
-Styling: スタイリング
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
 Add Layer from Resource: リソースからレイヤーを追加
@@ -128,7 +125,6 @@ Please select one type: ''
 Title: ページタイトル
 Type: ''
 New Property: ''
-Layer Name: ''
 ' Text': ''
 General: ''
 New Sketch Layer: ''
