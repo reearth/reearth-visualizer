@@ -2,8 +2,11 @@ import { useMemo } from "react";
 
 import TabButton from "@reearth/beta/components/TabButton";
 import { useEditorNavigation } from "@reearth/beta/hooks/navigationHooks";
+import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import useDevPlugins from "./useDevPlugins";
 
 import { Tab } from ".";
 
@@ -16,6 +19,8 @@ type Props = {
 const useRightSide = ({ currentTab, page, sceneId }: Props) => {
   const t = useT();
   const handleEditorNavigation = useEditorNavigation({ sceneId });
+  const { devPluginExtensions, handleDevPluginsInstall, handleDevPluginExtensionsReload } =
+    useDevPlugins({ sceneId });
 
   const rightSide = useMemo(() => {
     if (page === "editor") {
@@ -41,12 +46,34 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
             selected={currentTab === "publish"}
             label={t("Publish")}
           />
+          {!!devPluginExtensions && (
+            <IconButton
+              icon="pluginInstall"
+              appearance="simple"
+              onClick={handleDevPluginsInstall}
+            />
+          )}
+          {!!devPluginExtensions && (
+            <IconButton
+              icon="pluginUpdate"
+              appearance="simple"
+              onClick={handleDevPluginExtensionsReload}
+            />
+          )}
         </RightSection>
       );
     } else {
       return null;
     }
-  }, [currentTab, handleEditorNavigation, page, t]);
+  }, [
+    currentTab,
+    handleEditorNavigation,
+    page,
+    t,
+    devPluginExtensions,
+    handleDevPluginsInstall,
+    handleDevPluginExtensionsReload,
+  ]);
 
   return {
     rightSide,
@@ -56,6 +83,7 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
 const RightSection = styled.div`
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 4px;
 `;
 
