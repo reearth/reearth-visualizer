@@ -10,6 +10,7 @@ import {
   type Events,
   useGet,
 } from "@reearth/core";
+import { useDevPluginExtensionRenderKey, useDevPluginExtensions } from "@reearth/services/state";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
@@ -155,10 +156,27 @@ export default function ({
     [pluginId, extensionId],
   );
 
-  const src =
-    pluginId && extensionId
-      ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
-      : undefined;
+  const [devPluginExtensions] = useDevPluginExtensions();
+
+  const devPluginExtensionSrc = useMemo(() => {
+    if (!devPluginExtensions) return;
+    return devPluginExtensions.find(e => e.id === extensionId)?.url;
+  }, [devPluginExtensions, extensionId]);
+
+  const src = useMemo(
+    () =>
+      pluginId && extensionId
+        ? devPluginExtensionSrc ??
+          `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
+        : undefined,
+    [devPluginExtensionSrc, pluginBaseUrl, pluginId, extensionId],
+  );
+  const [devPluginExtensionRenderKey] = useDevPluginExtensionRenderKey();
+
+  const renderKey = useMemo(
+    () => (devPluginExtensionSrc ? devPluginExtensionRenderKey : undefined),
+    [devPluginExtensionRenderKey, devPluginExtensionSrc],
+  );
 
   return {
     skip: !staticExposed,
@@ -168,6 +186,7 @@ export default function ({
     modalVisible,
     popupVisible,
     externalRef,
+    renderKey,
     exposed: staticExposed,
     onError,
     onPreInit,

@@ -95,6 +95,7 @@ export default function Plugin({
     modalVisible,
     popupVisible,
     externalRef,
+    renderKey,
     onPreInit,
     onDispose,
     exposed,
@@ -124,6 +125,7 @@ export default function Plugin({
     <P
       className={className}
       src={src}
+      key={renderKey}
       sourceCode={sourceCode}
       autoResize={autoResize}
       iFrameProps={iFrameProps}
