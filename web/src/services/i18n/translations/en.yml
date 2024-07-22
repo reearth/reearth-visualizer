@@ -353,8 +353,8 @@ Failed to add layer style.: ''
 Successfully added a new layer style!: ''
 Failed to update the layerStyle.: ''
 Successfully updated a the layerStyle!: ''
-Failed to remove the layer style.: ''
-Successfully removed the layer style!: ''
+Failed to delete the layer style.: ''
+Successfully deleted the layer style!: ''
 Failed to install plugin.: Failed to install plugin.
 Successfully installed plugin!: Successfully installed plugin!
 Failed to upgrade plugin.: ''

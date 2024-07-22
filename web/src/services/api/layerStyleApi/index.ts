@@ -90,11 +90,11 @@ export default () => {
       if (!input.styleId) return { status: "error" };
       const { data, errors } = await removeLayerStyleMutation({ variables: { input } });
       if (errors || !data?.removeStyle) {
-        setNotification({ type: "error", text: t("Failed to remove the layer style.") });
+        setNotification({ type: "error", text: t("Failed to delete the layer style.") });
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully removed the layer style!") });
+      setNotification({ type: "success", text: t("Successfully deleted the layer style!") });
 
       return { data, status: "success" };
     },
