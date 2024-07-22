@@ -52,11 +52,11 @@ export default () => {
     async (input: AddStyleInput): Promise<MutationReturn<AddStyleMutation>> => {
       const { data, errors } = await addLayerStyleMutation({ variables: { input } });
       if (errors || !data?.addStyle?.style?.id) {
-        setNotification({ type: "error", text: t("Failed to add layerStyle.") });
+        setNotification({ type: "error", text: t("Failed to add layer style.") });
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully added a new layerStyle!") });
+      setNotification({ type: "success", text: t("Successfully added a new layer style!") });
 
       return { data, status: "success" };
     },
@@ -90,11 +90,11 @@ export default () => {
       if (!input.styleId) return { status: "error" };
       const { data, errors } = await removeLayerStyleMutation({ variables: { input } });
       if (errors || !data?.removeStyle) {
-        setNotification({ type: "error", text: t("Failed to remove the layerStyle.") });
+        setNotification({ type: "error", text: t("Failed to remove the layer style.") });
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully removed a the layerStyle!") });
+      setNotification({ type: "success", text: t("Successfully removed the layer style!") });
 
       return { data, status: "success" };
     },
