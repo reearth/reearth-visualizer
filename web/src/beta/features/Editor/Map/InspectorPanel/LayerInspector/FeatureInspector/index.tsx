@@ -97,15 +97,17 @@ const FeatureData: React.FC<Props> = ({
           size="small"
           background={theme.bg[2]}
           headerBg={theme.bg[2]}>
-          {field.map(f => (
-            <FieldComponent
-              field={f}
-              key={f.id}
-              selectedFeature={sketchFeature}
-              setField={setField}
-              onSubmit={handleSubmit}
-            />
-          ))}
+          <FieldsWrapper>
+            {field.map(f => (
+              <FieldComponent
+                field={f}
+                key={f.id}
+                selectedFeature={sketchFeature}
+                setField={setField}
+                onSubmit={handleSubmit}
+              />
+            ))}
+          </FieldsWrapper>
         </Collapse>
       )}
       <Collapse title={t("Geometry")} size="small" background={theme.bg[2]} headerBg={theme.bg[2]}>
@@ -132,7 +134,14 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
+  padding: `${theme.spacing.small}px 0`,
   wordBreak: "break-all",
+}));
+
+const FieldsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
 }));
 
 const ValueWrapper = styled("div")(({ theme }) => ({
