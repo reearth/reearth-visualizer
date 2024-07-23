@@ -1,8 +1,8 @@
 import { FC } from "react";
 
-import CheckBoxField from "@reearth/beta/components/CheckboxField";
-import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
-import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import CheckBoxField from "@reearth/beta/ui/fields/CheckboxField";
+import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -36,12 +36,12 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       {selectedStoryPage && (
         <Wrapper>
           {tab == "story" && (
-            <SidePanelSectionField title={t("Layers")} storageKey="storyLayer">
+            <Collapse title={t("Layers")} size="small">
               {layers && layers?.length > 0 && (
                 <LayerWrapper>
                   <AllLayers>
                     <CheckBoxField
-                      label={t("All Layers")}
+                      title={t("All Layers")}
                       onClick={handleAllLayersCheck}
                       checked={allCheckedLayers}
                     />
@@ -51,24 +51,25 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                       <CheckBoxField
                         onClick={() => handleLayerCheck(layer.id)}
                         checked={checkedLayers.includes(layer.id)}
-                        label={layer.title}
+                        title={layer.title}
+                        isIcon
                       />
                     </Layer>
                   ))}
                 </LayerWrapper>
               )}
-            </SidePanelSectionField>
+            </Collapse>
           )}
 
           {visibleItems?.map((i, idx) => (
-            <SidePanelSectionField title={i.title ?? t("Settings")} key={idx}>
+            <Collapse key={idx} title={i.title ?? t("Settings")} size="small">
               <PropertyItem
                 key={i.id}
                 propertyId={selectedStoryPage.property.id}
                 item={i}
                 onFlyTo={handleFlyTo}
               />
-            </SidePanelSectionField>
+            </Collapse>
           ))}
         </Wrapper>
       )}

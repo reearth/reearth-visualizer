@@ -150,8 +150,9 @@ const OptionsWrapper = styled("div")(() => ({
   flexShrink: 0,
 }));
 
-const IconWrapper = styled("div")(() => ({
+const IconWrapper = styled("div")(({ theme }) => ({
   height: 12,
   flexShrink: 0,
   fontSize: 0,
+  color: theme.content.main,
 }));

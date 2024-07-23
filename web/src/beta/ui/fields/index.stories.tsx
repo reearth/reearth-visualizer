@@ -18,6 +18,7 @@ import {
   TimePointField,
   NumberField,
   RangeField,
+  CheckboxField,
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
@@ -140,6 +141,14 @@ export const Components: Story = {
         values={[3, 15]}
         content={["min", "max"]}
         commonTitle="RangeField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <CheckboxField
+        onClick={() => {}}
+        checked={true}
+        isIcon={true}
+        title="item"
+        commonTitle="CheckboxField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>
