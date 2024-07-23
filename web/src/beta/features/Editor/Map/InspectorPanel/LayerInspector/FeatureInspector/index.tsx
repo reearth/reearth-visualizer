@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import JsonView from "react18-json-view";
@@ -79,6 +79,16 @@ const FeatureData: React.FC<Props> = ({
     [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id],
   );
 
+  const jsonStyle = useMemo(
+    () => ({
+      wordWrap: "break-word" as const,
+      minWidth: 0,
+      lineHeight: "1.5em",
+      fontSize: theme.fonts.sizes.body,
+    }),
+    [theme.fonts.sizes.body],
+  );
+
   return (
     <Wrapper>
       {isSketchLayer && (
@@ -100,12 +110,7 @@ const FeatureData: React.FC<Props> = ({
       )}
       <Collapse title={t("Geometry")} size="small" background={theme.bg[2]} headerBg={theme.bg[2]}>
         <ValueWrapper>
-          <JsonView
-            src={selectedFeature?.geometry}
-            theme="a11y"
-            dark
-            style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
-          />
+          <JsonView src={selectedFeature?.geometry} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
       </Collapse>
       <Collapse
@@ -114,7 +119,7 @@ const FeatureData: React.FC<Props> = ({
         background={theme.bg[2]}
         headerBg={theme.bg[2]}>
         <ValueWrapper>
-          <JsonView src={selectedFeature?.properties} theme="a11y" dark />
+          <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
       </Collapse>
     </Wrapper>
