@@ -26,7 +26,9 @@ const CheckBoxField: FC<CheckBoxFieldProps> = ({
     <CommonField commonTitle={commonTitle} description={description}>
       <Field onClick={() => onClick?.(!checked)}>
         <CheckBox checked={checked} />
-        <EntryItem icon={isIcon ? "file" : undefined} title={title} disableHover={true} />
+        <EntryItemWrapper>
+          <EntryItem icon={isIcon ? "file" : undefined} title={title} disableHover={true} />
+        </EntryItemWrapper>
       </Field>
     </CommonField>
   );
@@ -37,6 +39,10 @@ const Field = styled.button`
   align-items: center;
   width: 100%;
   min-height: 20px;
+`;
+
+const EntryItemWrapper = styled.div`
+  width: auto;
 `;
 
 export default CheckBoxField;

@@ -24,7 +24,6 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     });
 
   const t = useT();
-
   return (
     <Panel
       title={t("Page Settings")}
@@ -38,7 +37,7 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           {tab == "story" && (
             <Collapse title={t("Layers")} size="small">
               {layers && layers?.length > 0 && (
-                <LayerWrapper>
+                <>
                   <AllLayers>
                     <CheckBoxField
                       title={t("All Layers")}
@@ -46,17 +45,19 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                       checked={allCheckedLayers}
                     />
                   </AllLayers>
-                  {layers?.map((layer, idx) => (
-                    <Layer key={idx}>
-                      <CheckBoxField
-                        onClick={() => handleLayerCheck(layer.id)}
-                        checked={checkedLayers.includes(layer.id)}
-                        title={layer.title}
-                        isIcon
-                      />
-                    </Layer>
-                  ))}
-                </LayerWrapper>
+                  <LayerList>
+                    {layers?.map((layer, idx) => (
+                      <Layer key={idx}>
+                        <CheckBoxField
+                          onClick={() => handleLayerCheck(layer.id)}
+                          checked={checkedLayers.includes(layer.id)}
+                          title={layer.title}
+                          isIcon
+                        />
+                      </Layer>
+                    ))}
+                  </LayerList>
+                </>
               )}
             </Collapse>
           )}
@@ -79,22 +80,22 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 
 export default PageSettingsPanel;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  padding: theme.spacing.smallest,
+}));
 
-const LayerWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-`;
+const Layer = styled.div``;
 
-const Layer = styled.div`
-  padding: 6px 4px;
-`;
+const AllLayers = styled("div")(({ theme }) => ({
+  borderBottom: `1px solid ${theme.outline.weak}`,
+  marginBottom: theme.spacing.small,
+  paddingBottom: theme.spacing.small,
+}));
 
-const AllLayers = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
-  padding: 6px 4px;
+const LayerList = styled("div")`
+  max-height: 136px;
+  overflow-y: auto;
 `;

@@ -16,8 +16,8 @@ const BoxField = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   boxSizing: "border-box",
-  width: "20px",
-  height: "20px",
+  width: "16px",
+  height: "16px",
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: "4px",
 }));
