@@ -34,25 +34,25 @@ const ActionArea: FC<ActionAreaProps> = ({ installableWidgets, onWidgetAdd }) =>
   );
 
   return (
-    <ActionAreaWrapper>
-      <PopupMenu
-        label={
+    <PopupMenu
+      label={
+        <ButtonWrapper>
           <Button
             icon="folderSimplePlus"
-            appearance="simple"
-            iconButton
+            title="Add Widget"
+            size="small"
+            extendWidth
             onClick={() => setOpen(!open)}
           />
-        }
-        menu={items}
-      />
-    </ActionAreaWrapper>
+        </ButtonWrapper>
+      }
+      menu={items}
+    />
   );
 };
 
-const ActionAreaWrapper = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "flex-end",
+const ButtonWrapper = styled("div")(() => ({
+  width: "100%",
 }));
 
 export default ActionArea;
