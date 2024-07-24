@@ -1,10 +1,13 @@
 import { useMemo } from "react";
 
-import Button from "@reearth/beta/components/Button";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import Icon from "@reearth/beta/components/Icon";
-import Modal from "@reearth/beta/components/Modal";
-import Text from "@reearth/beta/components/Text";
+import {
+  Button,
+  Icon,
+  Typography,
+  ModalPanel,
+  Modal,
+} from "@reearth/beta/lib/reearth-ui/components";
+import { SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
@@ -54,7 +57,6 @@ const PublishModal: React.FC<Props> = ({
     alias,
     validation,
     showOptions,
-    searchIndex,
     handlePublish,
     handleClose,
     handleCopyToClipBoard,
@@ -119,120 +121,134 @@ const PublishModal: React.FC<Props> = ({
         );
   }, [t, publishing]);
 
-  return (
-    <Modal
-      isVisible={isVisible}
-      size="sm"
-      title={modalTitleText}
-      button1={
+  const actions = useMemo(
+    () => (
+      <>
         <Button
-          text={secondaryButtonText}
-          buttonType={statusChanged ? "primary" : "secondary"}
+          title={secondaryButtonText}
+          appearance={statusChanged ? "primary" : "secondary"}
           onClick={handleClose}
         />
-      }
-      button2={
-        !statusChanged && (
+        {!statusChanged && (
           <Button
-            text={primaryButtonText}
-            buttonType="primary"
+            title={primaryButtonText}
+            appearance="primary"
             disabled={publishDisabled}
             onClick={handlePublish}
           />
-        )
-      }
-      onClose={handleClose}>
-      {statusChanged ? (
-        <Section>
-          <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
-          <Subtitle size="footnote">{t("Public URL")}</Subtitle>
-          <div>
-            <UrlWrapper justify="space-between">
-              <Text
-                size="body"
-                weight="bold"
-                color={theme.primary.main}
-                onClick={() => window.open(purl, "_blank")}>
-                {purl}
-              </Text>
-              <Text
-                size="body"
-                color={theme.primary.main}
-                onClick={handleCopyToClipBoard("url", purl)}>
-                {t("Copy")}
-              </Text>
-            </UrlWrapper>
-            <Text size="footnote">{t("* Anyone can see your project with this URL")}</Text>
-          </div>
-          <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
-          <div>
-            <UrlWrapper justify="space-between">
-              <Text size="footnote">{embedCode}</Text>
-              <Text
-                size="body"
-                color={theme.primary.main}
-                onClick={handleCopyToClipBoard("embedCode", embedCode)}>
-                {t("Copy")}
-              </Text>
-            </UrlWrapper>
-            <Text size="footnote">
-              {t("* Please use this code if you want to embed your project into a webpage")}
-            </Text>
-          </div>
-        </Section>
-      ) : publishing !== "unpublishing" ? (
-        <>
+        )}
+      </>
+    ),
+    [
+      handleClose,
+      handlePublish,
+      publishDisabled,
+      primaryButtonText,
+      secondaryButtonText,
+      statusChanged,
+    ],
+  );
+
+  return (
+    <Modal size="small" visible={isVisible}>
+      <ModalPanel title={modalTitleText} actions={actions} onCancel={handleClose}>
+        {statusChanged ? (
           <Section>
-            <Text size="body">{updateDescriptionText}</Text>
-          </Section>
-          <Section>
-            <Text size="footnote">{t("Publish domain")}</Text>
-            {url && alias && (
-              <UrlWrapper onClick={() => window.open(purl, "_blank")}>
-                <Text size="body" weight="bold" color={theme.primary.main}>
-                  {purl}
-                </Text>
-              </UrlWrapper>
-            )}
-          </Section>
-          <OptionsToggle onClick={() => setOptions(!showOptions)}>
-            <Text size="footnote">{t("More options")}</Text>
-            <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
-          </OptionsToggle>
-          <HideableSection showOptions={showOptions}>
+            <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
+            <Subtitle size="footnote">{t("Public URL")}</Subtitle>
             <div>
-              <DomainText size="footnote">
-                {t("Need to change domain related settings?")}
-              </DomainText>
-              <Button size="small" onClick={() => onNavigateToSettings?.("public")}>
-                {t("Go to settings")}
-              </Button>
+              <UrlWrapper justify="space-between">
+                <Typography
+                  size="body"
+                  weight="bold"
+                  color={theme.primary.main}
+                  onClick={() => window.open(purl, "_blank")}>
+                  {purl}
+                </Typography>
+                <Typography
+                  size="body"
+                  color={theme.primary.main}
+                  onClick={handleCopyToClipBoard("url", purl)}>
+                  {t("Copy")}
+                </Typography>
+              </UrlWrapper>
+              <Typography size="footnote">
+                {t("* Anyone can see your project with this URL")}
+              </Typography>
             </div>
-            <ToggleField
-              name={t("Search engine indexing")}
-              description={t("Page will be available as result on search engines")}
-              checked={searchIndex}
-              onChange={handleSearchIndexChange}
-            />
-          </HideableSection>
-        </>
-      ) : (
-        <Section>
-          <Header>
-            <Icon icon="alert" />
-            <Text size="h5" weight="bold">
-              {t("Unpublishing")}
-            </Text>
-          </Header>
-          <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
-          <Subtitle size="body">
-            {t("This means that anybody with the URL will become unable to view this project.")}
-          </Subtitle>
-          <Text size="body" color={theme.warning.main}>
-            {t("**Warning**: This includes websites where this project is embedded.")}
-          </Text>
-        </Section>
-      )}
+            <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
+            <div>
+              <UrlWrapper justify="space-between">
+                <Typography size="footnote">{embedCode}</Typography>
+                <Typography
+                  size="body"
+                  color={theme.primary.main}
+                  onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                  {t("Copy")}
+                </Typography>
+              </UrlWrapper>
+              <Typography size="footnote">
+                {t("* Please use this code if you want to embed your project into a webpage")}
+              </Typography>
+            </div>
+          </Section>
+        ) : publishing !== "unpublishing" ? (
+          <>
+            <Section>
+              <Typography size="body">{updateDescriptionText}</Typography>
+            </Section>
+            <Section>
+              <Typography size="footnote">{t("Publish domain")}</Typography>
+              {url && alias && (
+                <UrlWrapper onClick={() => window.open(purl, "_blank")}>
+                  <Typography size="body" weight="bold" color={theme.primary.main}>
+                    {purl}
+                  </Typography>
+                </UrlWrapper>
+              )}
+            </Section>
+            <OptionsToggle onClick={() => setOptions(!showOptions)}>
+              <Typography size="footnote">{t("More options")}</Typography>
+              <ArrowIcon icon="triangle" size="small" open={showOptions} />
+            </OptionsToggle>
+            <HideableSection showOptions={showOptions}>
+              <div>
+                <DomainText>
+                  <Typography size="footnote">
+                    {t("Need to change domain related settings?")}
+                  </Typography>
+                </DomainText>
+                <Button
+                  size="small"
+                  onClick={() => onNavigateToSettings?.("public")}
+                  title={t("Go to settings")}
+                />
+              </div>
+              <SwitchField
+                commonTitle={t("Search engine indexing")}
+                description={t("Page will be available as result on search engines")}
+                onChange={handleSearchIndexChange}
+              />
+            </HideableSection>
+          </>
+        ) : (
+          <Section>
+            <Header>
+              <WarningIcon icon="warning" />
+              <Typography size="h5" weight="bold">
+                {t("Unpublishing")}
+              </Typography>
+            </Header>
+            <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
+            <Subtitle size="body">
+              {t("This means that anybody with the URL will become unable to view this project.")}
+            </Subtitle>
+            <Typography size="body" color={theme.warning.main}>
+              {t("**Warning**: This includes websites where this project is embedded.")}
+            </Typography>
+          </Section>
+        )}
+      </ModalPanel>
     </Modal>
   );
 };
@@ -242,13 +258,14 @@ export default PublishModal;
 const Section = styled.div<{ disabled?: boolean }>`
   display: flex;
   flex-direction: column;
+  padding: 16px;
   gap: 8px;
   margin-bottom: ${`${spacingSizes["normal"]}px`};
   opacity: ${({ disabled }) => disabled && "0.6"};
   cursor: ${({ disabled }) => disabled && "not-allowed"};
 `;
 
-const Subtitle = styled(Text)`
+const Subtitle = styled(Typography)`
   text-align: left;
 `;
 
@@ -266,6 +283,7 @@ const OptionsToggle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 8px 16px;
   color: ${({ theme }) => theme.content.main};
   cursor: pointer;
   user-select: none;
@@ -274,14 +292,14 @@ const OptionsToggle = styled.div`
 const ArrowIcon = styled(Icon)<{ open?: boolean }>`
   transition: transform 0.15s ease;
   transform: ${({ open }) =>
-    open ? "translateY(10%) rotate(90deg)" : "translateY(0) rotate(180deg)"};
+    open ? "translateY(10%) rotate(270deg)" : "translateY(0) rotate(0deg)"};
 `;
 
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`
   display: ${props => (props.showOptions ? null : "none")};
 `;
 
-const DomainText = styled(Text)`
+const DomainText = styled.div`
   margin-bottom: 8px;
 `;
 
@@ -290,4 +308,9 @@ const Header = styled.div`
   gap: 12px;
   color: ${({ theme }) => theme.warning.main};
   margin-bottom: 12px;
+`;
+
+const WarningIcon = styled(Icon)`
+  width: 24px;
+  height: 24px;
 `;
