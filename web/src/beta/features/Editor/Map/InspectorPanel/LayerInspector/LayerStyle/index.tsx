@@ -1,12 +1,11 @@
 import { FC, useCallback, useMemo } from "react";
 
-import { Selector } from "@reearth/beta/lib/reearth-ui/components/Selector";
+import { SelectField } from "@reearth/beta/ui/fields";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { LayerConfigUpdateProps } from "../../../../hooks/useLayers";
-import { InputGroup } from "../../../SharedComponent";
 
 type LayerStyleSelectorProps = {
   layerStyles?: LayerStyle[];
@@ -50,13 +49,12 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   );
 
   return (
-    <InputGroup label={t("Layer Style")}>
-      <Selector
-        options={layerStyleOptions}
-        value={currentValue}
-        onChange={handleLayerStyleChange}
-      />
-    </InputGroup>
+    <SelectField
+      commonTitle={t("Layer Style")}
+      options={layerStyleOptions}
+      value={currentValue}
+      onChange={handleLayerStyleChange}
+    />
   );
 };
 
