@@ -72,5 +72,6 @@ export default ({
     overrideSketchOptions,
     sketchEventsOn,
     sketchEventsOff,
+    sketchEvents,
   };
 };

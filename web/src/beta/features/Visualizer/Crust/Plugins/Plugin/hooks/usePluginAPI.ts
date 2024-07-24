@@ -1,25 +1,31 @@
 import type { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import type { RefObject } from "react";
+import type { MutableRefObject, RefObject } from "react";
 
 import { type Layer } from "@reearth/core";
 
 import type { InfoboxBlock as Block } from "../../../Infobox/types";
 import type { MapRef } from "../../../types";
 import { useGet } from "../../../utils";
-import type { Widget, WidgetLocationOptions } from "../../../Widgets";
+import type { Widget } from "../../../Widgets";
 import { usePluginContext } from "../../context";
 import { exposedReearth } from "../../pluginAPI/exposedReearth";
 import type {
+  CameraEventType,
   ExtensionEventType,
   GlobalThis,
+  LayersEventType,
   ModalEventType,
   PopupEventType,
+  SelectionModeEventType,
+  SketchEventType,
+  TimelineEventType,
   UIEventType,
+  ViewerEventType,
 } from "../../pluginAPI/types";
 import { defaultIsMarshalable } from "../../PluginFrame";
 import type { API as IFrameAPI } from "../../PluginFrame";
-import { EventEmitter, events, Events } from "../../utils/events";
+import { EventEmitter, events, Events, mergeEvents } from "../../utils/events";
 import { PluginModalInfo } from "../ModalContainer";
 import { PluginPopupInfo } from "../PopupContainer";
 
@@ -35,7 +41,6 @@ export function usePluginAPI({
   modalVisible,
   popupVisible,
   externalRef,
-  onWidgetMove,
   onPluginModalShow,
   onPluginPopupShow,
   setUIVisibility,
@@ -56,7 +61,6 @@ export function usePluginAPI({
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
   setUIVisibility: (visible: boolean) => void;
-  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
   onRender?: (
     options:
       | {
@@ -84,8 +88,26 @@ export function usePluginAPI({
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
 
-  // const event =
-  //   useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
+  const viewerEventsRef =
+    useRef<[Events<ViewerEventType>, EventEmitter<ViewerEventType>, (() => void) | undefined]>();
+  const selectionModeEventsRef =
+    useRef<
+      [
+        Events<SelectionModeEventType>,
+        EventEmitter<SelectionModeEventType>,
+        (() => void) | undefined,
+      ]
+    >();
+  const cameraEventsRef =
+    useRef<[Events<CameraEventType>, EventEmitter<CameraEventType>, (() => void) | undefined]>();
+  const timelineEventsRef =
+    useRef<
+      [Events<TimelineEventType>, EventEmitter<TimelineEventType>, (() => void) | undefined]
+    >();
+  const layersEventsRef =
+    useRef<[Events<LayersEventType>, EventEmitter<LayersEventType>, (() => void) | undefined]>();
+  const sketchEventsRef =
+    useRef<[Events<SketchEventType>, EventEmitter<SketchEventType>, (() => void) | undefined]>();
 
   const uiEvents = useRef<[Events<UIEventType>, EventEmitter<UIEventType>]>();
   const modalEvents = useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>();
@@ -97,52 +119,41 @@ export function usePluginAPI({
   }, []);
 
   const onPreInit = useCallback(() => {
-    // const e = events<ReearthEventType>();
-
     uiEvents.current = events<UIEventType>();
     modalEvents.current = events<ModalEventType>();
     popupEvents.current = events<PopupEventType>();
 
-    // let cancel: (() => void) | undefined;
+    initAndMergeEvents(ctx.viewerEvents, viewerEventsRef, [
+      "click",
+      "doubleClick",
+      "mouseDown",
+      "mouseUp",
+      "rightClick",
+      "rightDown",
+      "rightUp",
+      "middleClick",
+      "middleDown",
+      "middleUp",
+      "mouseMove",
+      "mouseEnter",
+      "mouseLeave",
+      "wheel",
+      "resize",
+    ]);
 
-    // if (ctx?.reearth.on && ctx.reearth.off && ctx.reearth.once) {
-    //   const source: Events<CommonReearthEventType> = {
-    //     on: ctx.reearth.on,
-    //     off: ctx.reearth.off,
-    //     once: ctx.reearth.once,
-    //   };
-    //   cancel = mergeEvents<ReearthEventType>(source, e[1], [
-    //     "cameramove",
-    //     "select",
-    //     "click",
-    //     "doubleclick",
-    //     "mousedown",
-    //     "mouseup",
-    //     "rightclick",
-    //     "rightdown",
-    //     "rightup",
-    //     "middleclick",
-    //     "middledown",
-    //     "middleup",
-    //     "mousemove",
-    //     "mouseenter",
-    //     "mouseleave",
-    //     "wheel",
-    //     "tick",
-    //     "timelinecommit",
-    //     "resize",
-    //     "layeredit",
-    //     "sketchfeaturecreated",
-    //     "sketchtoolchange",
-    //     "layerVisibility",
-    //     "layerload",
-    //     "layerSelectWithRectStart",
-    //     "layerSelectWithRectMove",
-    //     "layerSelectWithRectEnd",
-    //   ]);
-    // }
+    initAndMergeEvents(ctx.selectionModeEvents, selectionModeEventsRef, [
+      "marqueeStart",
+      "marqueeMove",
+      "marqueeEnd",
+    ]);
 
-    // event.current = [e[0], e[1], cancel];
+    initAndMergeEvents(ctx.cameraEvents, cameraEventsRef, ["move"]);
+
+    initAndMergeEvents(ctx.timelineEvents, timelineEventsRef, ["tick", "commit"]);
+
+    initAndMergeEvents(ctx.layersEvents, layersEventsRef, ["select", "edit", "visible", "load"]);
+
+    initAndMergeEvents(ctx.sketchEvents, sketchEventsRef, ["create", "toolChange"]);
 
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
@@ -150,9 +161,12 @@ export function usePluginAPI({
       ctx.pluginInstances.runTimesCache.increment(instanceId);
     }
   }, [
-    // ctx?.reearth.on,
-    // ctx?.reearth.off,
-    // ctx?.reearth.once,
+    ctx?.viewerEvents,
+    ctx?.selectionModeEvents,
+    ctx?.cameraEvents,
+    ctx?.timelineEvents,
+    ctx?.layersEvents,
+    ctx?.sketchEvents,
     ctx?.pluginInstances,
     widget?.id,
     block?.id,
@@ -166,9 +180,11 @@ export function usePluginAPI({
     popupEvents.current = undefined;
     extensionEvents.current = undefined;
 
-    // event.current?.[1]("close");
-    // event.current?.[2]?.();
-    // event.current = undefined;
+    viewerEventsRef.current?.[2]?.();
+    viewerEventsRef.current = undefined;
+    selectionModeEventsRef.current?.[2]?.();
+    selectionModeEventsRef.current = undefined;
+
     if (modalVisible) {
       onPluginModalShow?.();
     }
@@ -203,6 +219,16 @@ export function usePluginAPI({
           extensionType,
           extensionId,
           property: pluginProperty,
+        },
+        viewerEventsOn: (type, e, { once } = {}) => {
+          if (once) {
+            viewerEventsRef.current?.[0]?.once(type, e);
+          } else {
+            viewerEventsRef.current?.[0]?.on(type, e);
+          }
+        },
+        viewerEventsOff: (type, e) => {
+          viewerEventsRef.current?.[0]?.off(type, e);
         },
         getBlock,
         getLayer,
@@ -334,7 +360,6 @@ export function usePluginAPI({
         //
         startEventLoop,
         overrideViewerProperty: ctx.overrideViewerProperty,
-        moveWidget: onWidgetMove,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
         timelineManagerRef: ctx.timelineManagerRef,
@@ -361,7 +386,6 @@ export function usePluginAPI({
     setUIVisibility,
     onRender,
     onResize,
-    onWidgetMove,
   ]);
 
   useEffect(() => {
@@ -384,4 +408,22 @@ export function usePluginAPI({
     onModalClose,
     onPopupClose,
   };
+}
+
+function initAndMergeEvents<T extends { [x: string]: any[] }>(
+  ctxEvents: Events<T> | undefined,
+  eventsRef: MutableRefObject<[Events<T>, EventEmitter<T>, (() => void) | undefined] | undefined>,
+  eventKeys: (keyof T)[],
+) {
+  const e = events<T>();
+  let cancel: (() => void) | undefined;
+  if (ctxEvents?.on && ctxEvents?.off && ctxEvents?.once) {
+    const source: Events<T> = {
+      on: ctxEvents.on,
+      off: ctxEvents.off,
+      once: ctxEvents.once,
+    };
+    cancel = mergeEvents<T>(source, e[1], eventKeys);
+  }
+  eventsRef.current = [e[0], e[1], cancel];
 }

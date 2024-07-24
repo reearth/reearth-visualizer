@@ -100,7 +100,6 @@ export const context: Context = {
         height: 720,
         isMobile: false,
         query: {},
-        capture: act("captureScreen"),
       },
       interactionMode: {
         mode: "default",
@@ -114,6 +113,7 @@ export const context: Context = {
         inEditor: true,
         isBuilt: false,
       },
+      capture: act("captureScreen"),
       tools: {
         getLocationFromScreenCoordinate: act("getLocationFromScreenCoordinate"),
         getScreenCoordinateFromPosition: act("getScreenCoordinateFromPosition"),
@@ -230,6 +230,36 @@ export const context: Context = {
     dropStore: act("clientStorage.dropStoreAsync"),
   },
   overrideViewerProperty: act("overrideViewerProperty"),
+  viewerEvents: {
+    on: act("viewerEvents.on"),
+    off: act("viewerEvents.off"),
+    once: act("viewerEvents.once"),
+  },
+  selectionModeEvents: {
+    on: act("selectionModeEvents.on"),
+    off: act("selectionModeEvents.off"),
+    once: act("selectionModeEvents.once"),
+  },
+  cameraEvents: {
+    on: act("cameraEvents.on"),
+    off: act("cameraEvents.off"),
+    once: act("cameraEvents.once"),
+  },
+  timelineEvents: {
+    on: act("timelineEvents.on"),
+    off: act("timelineEvents.off"),
+    once: act("timelineEvents.once"),
+  },
+  layersEvents: {
+    on: act("layersEvents.on"),
+    off: act("layersEvents.off"),
+    once: act("layersEvents.once"),
+  },
+  sketchEvents: {
+    on: act("sketchEvents.on"),
+    off: act("sketchEvents.off"),
+    once: act("sketchEvents.once"),
+  },
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

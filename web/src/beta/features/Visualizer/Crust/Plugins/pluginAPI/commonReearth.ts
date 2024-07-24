@@ -4,10 +4,7 @@ import { LazyLayer, MapRef } from "@reearth/core";
 import { REEATH_PLUGIN_API_VERSION } from "./constaint";
 import { GlobalThis, Reearth } from "./types";
 
-export type CommonReearth = Omit<
-  Reearth,
-  "ui" | "modal" | "popup" | "extension" | "data" | "on" | "off" | "once"
-> & {
+export type CommonReearth = Omit<Reearth, "ui" | "modal" | "popup" | "extension" | "data"> & {
   extension: Pick<Reearth["extension"], "list">;
 };
 
@@ -99,7 +96,7 @@ export function commonReearth({
   getViewerProperty: () => GlobalThis["reearth"]["viewer"]["property"];
   overrideViewerProperty: GlobalThis["reearth"]["viewer"]["overrideProperty"];
   getViewport: () => GlobalThis["reearth"]["viewer"]["viewport"];
-  captureScreen: GlobalThis["reearth"]["viewer"]["viewport"]["capture"];
+  captureScreen: GlobalThis["reearth"]["viewer"]["capture"];
   getInteractionMode: () => GlobalThis["reearth"]["viewer"]["interactionMode"];
   getInEditor: () => GlobalThis["reearth"]["viewer"]["env"]["inEditor"];
   getIsBuilt: () => GlobalThis["reearth"]["viewer"]["env"]["isBuilt"];
@@ -190,7 +187,7 @@ export function commonReearth({
       },
       overrideProperty: overrideViewerProperty,
       get viewport() {
-        return { ...getViewport(), capture: captureScreen };
+        return getViewport();
       },
       get interactionMode() {
         return getInteractionMode();
@@ -203,6 +200,7 @@ export function commonReearth({
           return !!getIsBuilt();
         },
       },
+      capture: captureScreen,
       tools: {
         getLocationFromScreenCoordinate,
         getScreenCoordinateFromPosition,

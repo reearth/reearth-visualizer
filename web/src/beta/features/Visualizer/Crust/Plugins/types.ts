@@ -23,8 +23,17 @@ import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
 import type { CommonReearth } from "./pluginAPI/commonReearth";
+import {
+  CameraEventType,
+  LayersEventType,
+  SelectionModeEventType,
+  SketchEventType,
+  TimelineEventType,
+  ViewerEventType,
+} from "./pluginAPI/types";
 import type { ClientStorage } from "./useClientStorage";
 import type { PluginInstances } from "./usePluginInstances";
+import { Events } from "./utils/events";
 
 export type Props = PropsWithChildren<{
   engineName?: string;
@@ -61,4 +70,10 @@ export type Context = {
   clientStorage: ClientStorage;
   timelineManagerRef?: TimelineManagerRef;
   overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
+  viewerEvents: Events<ViewerEventType>;
+  selectionModeEvents: Events<SelectionModeEventType>;
+  cameraEvents: Events<CameraEventType>;
+  timelineEvents: Events<TimelineEventType>;
+  layersEvents: Events<LayersEventType>;
+  sketchEvents: Events<SketchEventType>;
 };

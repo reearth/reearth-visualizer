@@ -6,7 +6,7 @@ import { useDevPluginExtensionRenderKey, useDevPluginExtensions } from "@reearth
 
 import type { InfoboxBlock as Block } from "../../../Infobox/types";
 import type { MapRef } from "../../../types";
-import type { Widget, WidgetLocationOptions } from "../../../Widgets";
+import type { Widget } from "../../../Widgets";
 import type { PluginModalInfo } from "../ModalContainer";
 import type { PluginPopupInfo } from "../PopupContainer";
 
@@ -14,7 +14,6 @@ import { usePluginAPI } from "./usePluginAPI";
 
 export default function ({
   mapRef,
-  onWidgetMove,
   pluginId,
   extensionId,
   pluginBaseUrl,
@@ -33,7 +32,6 @@ export default function ({
   onResize,
 }: {
   mapRef?: RefObject<MapRef>;
-  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginId?: string;
   extensionId?: string;
   pluginBaseUrl?: string;
@@ -98,7 +96,6 @@ export default function ({
       onRender,
       onResize,
       mapRef,
-      onWidgetMove,
     }) ?? [];
 
   useEffect(() => {

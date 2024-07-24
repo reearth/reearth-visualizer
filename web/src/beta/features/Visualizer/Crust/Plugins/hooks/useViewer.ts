@@ -60,7 +60,7 @@ export default ({
   );
 
   // selection mode events
-  const [selectiomModeEvents, emitSelectionModeEvent] = useMemo(
+  const [selectionModeEvents, emitSelectionModeEvent] = useMemo(
     () => events<SelectionModeEventType>(),
     [],
   );
@@ -90,10 +90,10 @@ export default ({
       options?: { once?: boolean },
     ) => {
       return options?.once
-        ? selectiomModeEvents.once(type, callback)
-        : selectiomModeEvents.on(type, callback);
+        ? selectionModeEvents.once(type, callback)
+        : selectionModeEvents.on(type, callback);
     },
-    [selectiomModeEvents],
+    [selectionModeEvents],
   );
 
   const selectionModeEventsOff = useCallback(
@@ -101,9 +101,9 @@ export default ({
       type: T,
       callback: (...args: SelectionModeEventType[T]) => void,
     ) => {
-      return selectiomModeEvents.off(type, callback);
+      return selectionModeEvents.off(type, callback);
     },
-    [selectiomModeEvents],
+    [selectionModeEvents],
   );
 
   const getInteractionMode = useGet(
@@ -293,5 +293,7 @@ export default ({
     isPositionVisibleOnGlobe,
     viewerEventsOn,
     viewerEventsOff,
+    viewerEvents,
+    selectionModeEvents,
   };
 };

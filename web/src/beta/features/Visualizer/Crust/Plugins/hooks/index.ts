@@ -57,6 +57,8 @@ export default function ({
     isPositionVisibleOnGlobe,
     viewerEventsOn,
     viewerEventsOff,
+    viewerEvents,
+    selectionModeEvents,
   } = useViewer({
     viewerProperty,
     overrideViewerProperty,
@@ -93,12 +95,13 @@ export default function ({
     enableForceHorizontalRoll,
     cameraEventsOn,
     cameraEventsOff,
+    cameraEvents,
   } = useCamera({
     mapRef,
     onCameraForceHorizontalRollChange,
   });
 
-  const { getTimeline } = useTimeline({ timelineManagerRef });
+  const { getTimeline, timelineEvents } = useTimeline({ timelineManagerRef });
 
   const {
     getLayers,
@@ -118,6 +121,7 @@ export default function ({
     sendToBack,
     layersEventsOn,
     layersEventsOff,
+    layersEvents,
   } = useLayers({
     mapRef,
     selectedLayer,
@@ -134,6 +138,7 @@ export default function ({
     overrideSketchOptions,
     sketchEventsOn,
     sketchEventsOff,
+    sketchEvents,
   } = useSketch({
     mapRef,
     onSketchPluginFeatureCreate,
@@ -242,6 +247,12 @@ export default function ({
       pluginInstances,
       clientStorage,
       timelineManagerRef,
+      viewerEvents,
+      selectionModeEvents,
+      cameraEvents,
+      timelineEvents,
+      layersEvents,
+      sketchEvents,
     }),
     [
       engineName,
@@ -330,6 +341,12 @@ export default function ({
       pluginInstances,
       clientStorage,
       timelineManagerRef,
+      viewerEvents,
+      selectionModeEvents,
+      cameraEvents,
+      timelineEvents,
+      layersEvents,
+      sketchEvents,
     ],
   );
 

@@ -216,5 +216,6 @@ export default ({
     enableForceHorizontalRoll,
     cameraEventsOn,
     cameraEventsOff,
+    cameraEvents,
   };
 };

@@ -182,5 +182,6 @@ export default ({
     sendToBack,
     layersEventsOn,
     layersEventsOff,
+    layersEvents,
   };
 };

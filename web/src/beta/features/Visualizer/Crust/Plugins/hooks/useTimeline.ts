@@ -131,5 +131,6 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
 
   return {
     getTimeline,
+    timelineEvents,
   };
 };

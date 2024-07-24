@@ -1,7 +1,4 @@
-import {
-  WidgetLayout,
-  WidgetLocationOptions,
-} from "@reearth/beta/features/Visualizer/Crust/Widgets/types";
+import { WidgetLayout } from "@reearth/beta/features/Visualizer/Crust/Widgets/types";
 import { Layer } from "@reearth/core";
 
 export declare type Extension = {
@@ -34,7 +31,6 @@ export declare type Widget = {
     vertically: boolean;
   };
   readonly layout?: WidgetLayout;
-  readonly moveTo?: (options: WidgetLocationOptions) => void;
 };
 
 export declare type PluginExtensionInstance = {

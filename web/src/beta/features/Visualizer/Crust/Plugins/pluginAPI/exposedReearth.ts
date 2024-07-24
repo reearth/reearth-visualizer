@@ -2,7 +2,7 @@ import { merge } from "@reearth/beta/utils/object";
 import type { Layer, TimelineManagerRef, ViewerProperty } from "@reearth/core";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
-import type { Widget, WidgetLocationOptions } from "../../Widgets";
+import type { Widget } from "../../Widgets";
 import type { ClientStorage } from "../useClientStorage";
 
 import { CommonReearth } from "./commonReearth";
@@ -11,6 +11,9 @@ import type { GlobalThis, Reearth } from "./types";
 export function exposedReearth({
   commonReearth,
   plugin,
+  // viewer events
+  viewerEventsOn,
+  viewerEventsOff,
   // timeline
   timelineManagerRef,
   // ui
@@ -43,7 +46,6 @@ export function exposedReearth({
   getWidget,
   getBlock,
   getLayer,
-  moveWidget,
   startEventLoop,
   pluginPostMessage,
   // data
@@ -56,6 +58,9 @@ export function exposedReearth({
     extensionId: string;
     property: unknown;
   };
+  // viewer events
+  viewerEventsOn: Reearth["viewer"]["on"];
+  viewerEventsOff: Reearth["viewer"]["off"];
   // timeline
   timelineManagerRef?: TimelineManagerRef;
   // ui
@@ -85,7 +90,6 @@ export function exposedReearth({
   getWidget?: () => Widget | undefined;
   getBlock?: () => Block | undefined;
   getLayer?: () => Layer | undefined;
-  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   startEventLoop?: () => void;
   pluginPostMessage: (extentionId: string, msg: unknown, sender: string) => void;
   extensionEventsOn: Reearth["extension"]["on"];
@@ -105,13 +109,17 @@ export function exposedReearth({
             overrideViewerProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
           };
         },
-        get getTerrainHeightAsync() {
-          return async (lng: number, lat: number) => {
-            const result = await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(lng, lat);
-            startEventLoop?.();
-            return result;
-          };
-        },
+        tools: merge(commonReearth.viewer.tools, {
+          get getTerrainHeightAsync() {
+            return async (lng: number, lat: number) => {
+              const result = await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(lng, lat);
+              startEventLoop?.();
+              return result;
+            };
+          },
+        }),
+        on: viewerEventsOn,
+        off: viewerEventsOff,
       }),
       timeline: merge(commonReearth.timeline, {
         get play() {
@@ -252,14 +260,7 @@ export function exposedReearth({
         plugin?.extensionType === "widget"
           ? {
               get widget() {
-                return {
-                  ...getWidget?.(),
-                  moveTo: (options: WidgetLocationOptions) => {
-                    const widgetId = getWidget?.()?.id;
-                    if (!widgetId) return;
-                    moveWidget?.(widgetId, options);
-                  },
-                };
+                return getWidget?.();
               },
             }
           : {},

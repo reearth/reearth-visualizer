@@ -15,6 +15,7 @@ export declare type Viewer = {
   readonly interactionMode: InteractionMode;
   readonly env: Env;
   readonly tools: Tools;
+  readonly capture: (type?: string, encoderOptions?: number) => string | undefined;
   readonly on: ViewerEvents["on"];
   readonly off: ViewerEvents["off"];
 };
@@ -27,7 +28,6 @@ export declare type ViewportSize = {
 
 export declare type Viewport = ViewportSize & {
   readonly query: Record<string, string>;
-  readonly capture: (type?: string, encoderOptions?: number) => string | undefined;
 };
 
 export declare type InteractionMode = {
