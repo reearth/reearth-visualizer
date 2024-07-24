@@ -118,6 +118,7 @@ const StyledTextArea = styled.textarea<{
   minHeight: fonts.lineHeights.body * 2 + theme.spacing.smallest * 2,
   overflowX: "hidden",
   boxSizing: "border-box",
+  pointerEvents: disabled ? "none" : "inherit",
   "::placeholder": {
     color: theme.content.weak,
   },
