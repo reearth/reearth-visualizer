@@ -42,7 +42,7 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.large,
 }));
 
 export default Infobox;

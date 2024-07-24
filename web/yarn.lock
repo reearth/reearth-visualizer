@@ -8131,7 +8131,7 @@ __metadata:
     i18next: "npm:22.4.15"
     i18next-browser-languagedetector: "npm:7.0.1"
     i18next-parser: "npm:8.9.0"
-    jotai: "npm:1.12.1"
+    jotai: "npm:2.9.0"
     js-file-download: "npm:0.4.12"
     js-md5: "npm:0.7.3"
     jsdom: "npm:22.1.0"
@@ -19651,6 +19651,21 @@ __metadata:
     jotai-zustand:
       optional: true
   checksum: 10c0/8ee8305500e73fb218678d7e354c52cc2899ab8010431b004f48277404d33d0680e643c775a40997f52df05b876c632174af356a539153bbb638cc0c350ffe59
+  languageName: node
+  linkType: hard
+
+"jotai@npm:2.9.0":
+  version: 2.9.0
+  resolution: "jotai@npm:2.9.0"
+  peerDependencies:
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/c5551fb90933bcbc28b11cdb4af681398a12f8eb39a4a49568ec6ce5062c2257dd84a85cbfd7ec7d970d56dfa5023d16a0ec7056bc2697fdf9b3ec94da67c9d1
   languageName: node
   linkType: hard
 
