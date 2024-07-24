@@ -327,13 +327,13 @@ Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
 Successfully updated the layer!: ''
 Failed to remove the layer.: レイヤーの削除に失敗しました。
-Successfully removed a the layer!: レイヤーの削除に成功しました！
-Failed to add layerStyle.: レイヤースタイルの追加に失敗しました。
-Successfully added a new layerStyle!: 新しいレイヤースタイルの追加に成功しました！
+Successfully removed the layer!: ''
+Failed to add layer style.: ''
+Successfully added a new layer style!: ''
 Failed to update the layerStyle.: レイヤースタイルのアップデートに失敗しました。
 Successfully updated a the layerStyle!: レイヤースタイルのアップデートに成功しました！
-Failed to remove the layerStyle.: レイヤースタイルの削除に失敗しました。
-Successfully removed a the layerStyle!: レイヤースタイルの削除に成功しました！
+Failed to delete the layer style.: ''
+Successfully deleted the layer style!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
