@@ -107,10 +107,14 @@ const Wrapper = styled("div")<{
     backgroundColor: theme.bg[1],
   }),
   ...(highlight && {
-    backgroundColor: theme.select.weak,
+    backgroundColor: theme.select.main,
   }),
   ["&:active"]: {
-    backgroundColor: highlight ? theme.select.main : hovered ? theme.relative.light : "transparent",
+    backgroundColor: highlight
+      ? theme.select.strong
+      : hovered
+      ? theme.relative.light
+      : "transparent",
   },
 }));
 
