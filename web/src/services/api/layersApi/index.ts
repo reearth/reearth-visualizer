@@ -89,7 +89,7 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully removed a the layer!") });
+      setNotification({ type: "success", text: t("Successfully removed the layer!") });
 
       return { data, status: "success" };
     },
