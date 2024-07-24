@@ -1,7 +1,7 @@
 import { FC } from "react";
 
-import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
-import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -22,14 +22,14 @@ const WidgetInspectorPanel: FC = () => {
       {selectedWidget && (
         <Wrapper>
           {visibleItems?.map((i, idx) => (
-            <SidePanelSectionField title={i.title ?? t("Settings")} key={idx}>
+            <Collapse title={i.title ?? t("Settings")} key={idx}>
               <PropertyItem
                 key={i.id}
                 propertyId={selectedWidget.propertyId}
                 item={i}
                 onFlyTo={handleFlyTo}
               />
-            </SidePanelSectionField>
+            </Collapse>
           ))}
         </Wrapper>
       )}
@@ -39,8 +39,8 @@ const WidgetInspectorPanel: FC = () => {
 
 export default WidgetInspectorPanel;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+}));
