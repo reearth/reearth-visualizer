@@ -28,6 +28,7 @@
       "@reearth/*": [
         "src/*"
       ],
+      "react": [ "./node_modules/@types/react" ]
     },
     "plugins": [
       {
