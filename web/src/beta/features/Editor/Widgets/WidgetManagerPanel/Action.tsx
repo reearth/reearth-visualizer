@@ -2,7 +2,6 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import { Button, IconName, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { InstallableWidget } from "@reearth/services/api/widgetsApi/utils";
-import { styled } from "@reearth/services/theme";
 
 type ActionAreaProps = {
   installableWidgets?: InstallableWidget[];
@@ -36,23 +35,18 @@ const ActionArea: FC<ActionAreaProps> = ({ installableWidgets, onWidgetAdd }) =>
   return (
     <PopupMenu
       label={
-        <ButtonWrapper>
-          <Button
-            icon="folderSimplePlus"
-            title="Add Widget"
-            size="small"
-            extendWidth
-            onClick={() => setOpen(!open)}
-          />
-        </ButtonWrapper>
+        <Button
+          icon="folderSimplePlus"
+          title="Add Widget"
+          size="small"
+          extendWidth
+          onClick={() => setOpen(!open)}
+        />
       }
       menu={items}
+      extendTriggerWidth
     />
   );
 };
-
-const ButtonWrapper = styled("div")(() => ({
-  width: "100%",
-}));
 
 export default ActionArea;
