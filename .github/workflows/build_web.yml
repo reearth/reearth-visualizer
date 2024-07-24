@@ -34,17 +34,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      - name: Install Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.3.1 --activate
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install
+      - name: Install dependencies
         run: yarn install
       - name: Build
         run: yarn build
@@ -54,6 +58,7 @@ jobs:
         with:
           name: reearth-web
           path: web/reearth-web.tar.gz
+
 
   release-nightly:
     name: Release nightly/rc
