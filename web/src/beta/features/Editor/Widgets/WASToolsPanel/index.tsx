@@ -1,7 +1,6 @@
 import { FC, useEffect } from "react";
 
-import Text from "@reearth/beta/components/Text";
-import Toggle from "@reearth/beta/components/Toggle";
+import { Switcher, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -32,8 +31,8 @@ const WASToolsPanel: FC = () => {
       <StyledSecondaryNav>
         <Devices selectedDevice={selectedDevice} onDeviceChange={handleDeviceChange} />
         <AlignSystem>
-          <Text size="body">{t("Align System")}</Text>
-          <Toggle checked={!!showWASEditor} onChange={handleShowWASEditorToggle} />
+          <Typography size="body">{t("Align System")}</Typography>
+          <Switcher value={showWASEditor} onChange={handleShowWASEditorToggle} />
         </AlignSystem>
       </StyledSecondaryNav>
     </Panel>
@@ -51,7 +50,7 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
   padding: theme.spacing.small,
 }));
 
-const AlignSystem = styled.div`
-  display: flex;
-  gap: 10px;
-`;
+const AlignSystem = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small + 2,
+}));

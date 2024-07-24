@@ -1,5 +1,7 @@
 // import TabButton from "@reearth/beta/components/TabButton";
 // import { useT } from "@reearth/services/i18n";
+import { FC } from "react";
+
 import { styled } from "@reearth/services/theme";
 
 export type Device = "desktop" | "mobile";
@@ -18,7 +20,7 @@ type Props = {
   onDeviceChange: (device: Device) => void;
 };
 
-const Devices: React.FC<Props> = () => {
+const Devices: FC<Props> = () => {
   // const t = useT();
   return (
     <DeviceWrapper>
@@ -40,9 +42,9 @@ const Devices: React.FC<Props> = () => {
 
 export default Devices;
 
-const DeviceWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-  flex: 1;
-`;
+const DeviceWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  flex: 1,
+  gap: theme.spacing.micro,
+}));
