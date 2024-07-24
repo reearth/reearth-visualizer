@@ -55,6 +55,7 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
         options={layerStyleOptions}
         value={currentValue}
         onChange={handleLayerStyleChange}
+        maxHeight={250}
       />
     </InputGroup>
   );
