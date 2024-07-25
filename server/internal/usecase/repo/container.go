@@ -17,29 +17,28 @@ var (
 )
 
 type Container struct {
-	Asset               Asset
-	AuthRequest         authserver.RequestRepo
-	Config              Config
-	DatasetSchema       DatasetSchema
-	Dataset             Dataset
-	Layer               Layer
-	NLSLayer            NLSLayer
-	Style               Style
-	GroupRoleAssignment GroupRoleAssignment
-	Lock                Lock
-	Plugin              Plugin
-	Project             Project
-	PropertySchema      PropertySchema
-	Property            Property
-	Scene               Scene
-	SceneLock           SceneLock
-	Tag                 Tag
-	Workspace           accountrepo.Workspace
-	User                accountrepo.User
-	Policy              Policy
-	Storytelling        Storytelling
-	Transaction         usecasex.Transaction
-	Extensions          []plugin.ID
+	Asset          Asset
+	AuthRequest    authserver.RequestRepo
+	Config         Config
+	DatasetSchema  DatasetSchema
+	Dataset        Dataset
+	Layer          Layer
+	NLSLayer       NLSLayer
+	Style          Style
+	Lock           Lock
+	Plugin         Plugin
+	Project        Project
+	PropertySchema PropertySchema
+	Property       Property
+	Scene          Scene
+	SceneLock      SceneLock
+	Tag            Tag
+	Workspace      accountrepo.Workspace
+	User           accountrepo.User
+	Policy         Policy
+	Storytelling   Storytelling
+	Transaction    usecasex.Transaction
+	Extensions     []plugin.ID
 }
 
 func (c *Container) AccountRepos() *accountrepo.Container {
@@ -56,29 +55,28 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		return c
 	}
 	return &Container{
-		Asset:               c.Asset.Filtered(workspace),
-		AuthRequest:         c.AuthRequest,
-		Config:              c.Config,
-		DatasetSchema:       c.DatasetSchema.Filtered(scene),
-		Dataset:             c.Dataset.Filtered(scene),
-		Layer:               c.Layer.Filtered(scene),
-		NLSLayer:            c.NLSLayer.Filtered(scene),
-		Style:               c.Style.Filtered(scene),
-		GroupRoleAssignment: c.GroupRoleAssignment,
-		Lock:                c.Lock,
-		Plugin:              c.Plugin.Filtered(scene),
-		Policy:              c.Policy,
-		Storytelling:        c.Storytelling.Filtered(scene),
-		Project:             c.Project.Filtered(workspace),
-		PropertySchema:      c.PropertySchema.Filtered(scene),
-		Property:            c.Property.Filtered(scene),
-		Scene:               c.Scene.Filtered(workspace),
-		SceneLock:           c.SceneLock,
-		Tag:                 c.Tag.Filtered(scene),
-		Transaction:         c.Transaction,
-		User:                c.User,
-		Workspace:           c.Workspace,
-		Extensions:          c.Extensions,
+		Asset:          c.Asset.Filtered(workspace),
+		AuthRequest:    c.AuthRequest,
+		Config:         c.Config,
+		DatasetSchema:  c.DatasetSchema.Filtered(scene),
+		Dataset:        c.Dataset.Filtered(scene),
+		Layer:          c.Layer.Filtered(scene),
+		NLSLayer:       c.NLSLayer.Filtered(scene),
+		Style:          c.Style.Filtered(scene),
+		Lock:           c.Lock,
+		Plugin:         c.Plugin.Filtered(scene),
+		Policy:         c.Policy,
+		Storytelling:   c.Storytelling.Filtered(scene),
+		Project:        c.Project.Filtered(workspace),
+		PropertySchema: c.PropertySchema.Filtered(scene),
+		Property:       c.Property.Filtered(scene),
+		Scene:          c.Scene.Filtered(workspace),
+		SceneLock:      c.SceneLock,
+		Tag:            c.Tag.Filtered(scene),
+		Transaction:    c.Transaction,
+		User:           c.User,
+		Workspace:      c.Workspace,
+		Extensions:     c.Extensions,
 	}
 }
 
