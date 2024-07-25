@@ -104,11 +104,11 @@ Geometry: ジオメトリ
 Properties: プロパティ
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
+Layer Style: レイヤースタイル
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 Style_: スタイル_
-Layer Style: レイヤースタイル
 New Style: ''
 Delete: 削除
 Save: 保存
