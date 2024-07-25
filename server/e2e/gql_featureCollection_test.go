@@ -204,7 +204,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
