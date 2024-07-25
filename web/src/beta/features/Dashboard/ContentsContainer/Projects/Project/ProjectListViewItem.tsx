@@ -10,11 +10,9 @@ import { ProjectProps } from "./types";
 const ProjectListViewItem: FC<ProjectProps> = ({
   project,
   selectedProjectId,
-  isStarred,
   onProjectOpen,
   onProjectSelect,
   onProjectUpdate,
-  onProjectStarClick,
 }) => {
   const theme = useTheme();
 
@@ -32,10 +30,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     popupMenu,
     isEditing,
     isHovered,
+    isStarred,
+    publishStatus,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleProjectStarClick,
   } = useHooks({
     project,
     selectedProjectId,
@@ -60,12 +61,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
-              onClick={e => onProjectStarClick?.(e, project.id)}
+              onClick={e => handleProjectStarClick?.(e)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
+          <PublishStatus status={publishStatus} />
         </FlexItem>
       </ActionCell>
       <ProjectNameCell>
@@ -112,7 +114,6 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
       isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
     }`,
     padding: `${theme.spacing.small}px 0`,
-    gap: theme.spacing.small,
     alignItems: "center",
   }),
 );
@@ -138,6 +139,14 @@ const ActionCell = styled("div")(() => ({
 
 const ProjectNameCell = styled("div")(() => ({
   flex: 1,
+}));
+
+const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) => ({
+  height: "12px",
+  width: "12px",
+  borderRadius: "50%",
+  background: status ? theme.publish.main : "transparent",
+  marginTop: theme.spacing.smallest - 1,
 }));
 
 const TimeCell = styled("div")(() => ({

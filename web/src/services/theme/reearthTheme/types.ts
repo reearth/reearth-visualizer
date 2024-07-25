@@ -65,4 +65,7 @@ export type Theme = Common & {
     main_2: string;
   };
   colorSchema: string;
+  publish: {
+    main: string;
+  };
 };

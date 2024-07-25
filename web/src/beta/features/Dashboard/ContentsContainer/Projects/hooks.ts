@@ -1,27 +1,58 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback, useMemo, useState, MouseEvent, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
-import { Visualizer } from "@reearth/services/gql";
+import { ProjectSortType, PublishmentStatus, Visualizer } from "@reearth/services/gql";
 
 import { Project } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
 
+export type SortType = "date" | "name";
+const projectsPerPage = 16;
+const enumTypeMapper: Partial<Record<ProjectSortType, string>> = {
+  [ProjectSortType.Createdat]: "date",
+  [ProjectSortType.Name]: "name",
+  [ProjectSortType.Updatedat]: "date-updated",
+};
+
+const toPublishmentStatus = (s: PublishmentStatus) =>
+  s === PublishmentStatus.Public
+    ? "published"
+    : s === PublishmentStatus.Limited
+    ? "limited"
+    : "unpublished";
+
+function toGQLEnum(val?: SortType) {
+  if (!val) return;
+  return (Object.keys(enumTypeMapper) as ProjectSortType[]).find(k => enumTypeMapper[k] === val);
+}
+const pagination = (sort?: SortType) => {
+  const reverseOrder = sort === "date" || sort === undefined;
+
+  return {
+    first: reverseOrder ? undefined : projectsPerPage,
+    last: reverseOrder ? projectsPerPage : undefined,
+  };
+};
+
 export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
+  const gqlCache = useApolloClient().cache;
+
   const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
-  const [isStarred, setIsStarred] = useState<Record<string, boolean>>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
-
+  const [sort, setSort] = useState<SortType>();
   const [viewState, setViewState] = useState(
     localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
       ? localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
       : "grid",
   );
+
   const handleViewStateChange = useCallback((newView?: string) => {
     if (!newView) return;
     localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
@@ -50,12 +81,26 @@ export default (workspaceId?: string) => {
     [useUpdateProject],
   );
 
+  const { first, last } = useMemo(() => pagination(sort), [sort]);
+
   const {
     projects: projectsData,
     loading,
-    fetchMore,
     networkStatus,
-  } = useProjectsQuery(workspaceId);
+    hasMoreProjects,
+    endCursor,
+    fetchMore,
+    refetch,
+  } = useProjectsQuery({
+    teamId: workspaceId || "",
+    first,
+    last,
+    sort: toGQLEnum(sort),
+  });
+
+  useEffect(() => {
+    gqlCache.evict({ fieldName: "projects" });
+  }, [gqlCache]);
 
   const projectNodes = projectsData?.edges.map(e => e.node);
 
@@ -70,26 +115,26 @@ export default (workspaceId?: string) => {
               name: project.name,
               imageUrl: project.imageUrl,
               isArchived: project.isArchived,
+              status: toPublishmentStatus(project.publishmentStatus),
               sceneId: project.scene?.id,
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
+              starred: project.starred,
             }
           : undefined,
       )
-      .filter((project): project is Project => !!project);
+      .filter((project): project is Project => !!project)
+      .sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1));
   }, [projectNodes]);
 
-  const hasMoreProjects =
-    projectsData?.pageInfo?.hasNextPage || projectsData?.pageInfo?.hasPreviousPage;
-
-  const isRefetchingProjects = networkStatus === 3;
+  const isRefetchingProjects = useMemo(() => networkStatus === 3, [networkStatus]);
 
   const handleGetMoreProjects = useCallback(() => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
-          before: projectsData?.pageInfo?.endCursor,
+          before: endCursor,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -97,7 +142,7 @@ export default (workspaceId?: string) => {
         },
       });
     }
-  }, [hasMoreProjects, fetchMore, projectsData?.pageInfo?.endCursor]);
+  }, [hasMoreProjects, fetchMore, endCursor]);
 
   const handleProjectSelect = useCallback(
     (e?: MouseEvent, projectId?: string) => {
@@ -127,14 +172,6 @@ export default (workspaceId?: string) => {
     [navigate],
   );
 
-  const handleProjectStarClick = useCallback((e: MouseEvent, projectId: string) => {
-    e.stopPropagation();
-    setIsStarred(prev => ({
-      ...prev,
-      [projectId]: !prev[projectId],
-    }));
-  }, []);
-
   const isLoading = useMemo(() => {
     return loading ?? isRefetchingProjects;
   }, [isRefetchingProjects, loading]);
@@ -144,12 +181,24 @@ export default (workspaceId?: string) => {
       autoFillPage(wrapperRef, handleGetMoreProjects);
   }, [handleGetMoreProjects, hasMoreProjects, isLoading]);
 
+  useEffect(() => {
+    if (!sort) return;
+    refetch();
+  }, [sort, refetch]);
+
+  const handleProjectSortChange = useCallback(
+    (value?: string) => {
+      if (!value) return;
+      setSort((value as SortType) ?? sort);
+    },
+    [sort],
+  );
+
   return {
     projects,
     hasMoreProjects,
     isLoading,
     selectedProject,
-    isStarred,
     wrapperRef,
     viewState,
     projectCreatorVisible,
@@ -160,8 +209,8 @@ export default (workspaceId?: string) => {
     handleProjectOpen,
     handleProjectCreate,
     handleProjectSelect,
-    handleProjectStarClick,
     handleScrollToBottom: onScrollToBottom,
     handleViewStateChange,
+    handleProjectSortChange,
   };
 };

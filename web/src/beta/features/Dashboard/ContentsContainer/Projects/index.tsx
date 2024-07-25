@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import { Loading, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -11,8 +11,6 @@ import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
 import ProjectCreatorModal from "./ProjectCreatorModal";
 
-const options = [{ value: "date", label: "Created Time" }];
-
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
     projects,
@@ -20,7 +18,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     hasMoreProjects,
     selectedProject,
     projectCreatorVisible,
-    isStarred,
     wrapperRef,
     viewState,
     showProjectCreator,
@@ -30,14 +27,22 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleProjectCreate,
     handleProjectOpen,
     handleProjectSelect,
-    handleProjectStarClick,
     handleScrollToBottom,
     handleViewStateChange,
+    handleProjectSortChange,
   } = useHooks(workspaceId);
 
   const theme = useTheme();
   const t = useT();
-
+  const sortOptions: { value: string; label: string }[] = useMemo(
+    () => [
+      { value: "date", label: t("Created At") },
+      { value: "date-updated", label: t("Last Uploaded") },
+      { value: "name", label: t("A To Z") },
+      { value: "name-reverse", label: t("Z To A") },
+    ],
+    [t],
+  );
   return (
     <Wrapper onClick={() => handleProjectSelect(undefined)}>
       <CommonHeader
@@ -45,9 +50,10 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         title={t("New Project")}
         appearance="primary"
         icon="plus"
-        options={options}
+        options={sortOptions}
         onChangeView={handleViewStateChange}
         onClick={showProjectCreator}
+        onSortChange={handleProjectSortChange}
       />
       <ProjectsWrapper
         ref={wrapperRef}
@@ -60,9 +66,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               <ProjectGridViewItem
                 key={project.id}
                 project={project}
-                isStarred={isStarred[project.id] || false}
                 selectedProjectId={selectedProject?.id}
-                onProjectStarClick={handleProjectStarClick}
                 onProjectUpdate={handleProjectUpdate}
                 onProjectSelect={handleProjectSelect}
                 onProjectOpen={() => handleProjectOpen(project.sceneId)}
@@ -97,9 +101,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   <ProjectListViewItem
                     key={project.id}
                     project={project}
-                    isStarred={isStarred[project.id] || false}
                     selectedProjectId={selectedProject?.id}
-                    onProjectStarClick={handleProjectStarClick}
                     onProjectUpdate={handleProjectUpdate}
                     onProjectSelect={handleProjectSelect}
                     onProjectOpen={() => handleProjectOpen(project.sceneId)}
@@ -109,7 +111,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             </FlexTableBody>
           </FlexTable>
         )}
-        {isLoading && hasMoreProjects && <Loading relative />}
+        {isLoading && hasMoreProjects && (
+          <StyledLoading>
+            <Loading relative />
+          </StyledLoading>
+        )}
       </ProjectsWrapper>
       {projectCreatorVisible && (
         <ProjectCreatorModal
@@ -166,9 +172,10 @@ const FlexTableBody = styled("div")(() => ({
   gap: "12px",
 }));
 
-const FlexTableRow = styled("div")(() => ({
+const FlexTableRow = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
+  gap: theme.spacing.large,
 }));
 
 const ActionCell = styled("div")(() => ({
@@ -181,4 +188,8 @@ const ProjectNameCell = styled("div")(() => ({
 
 const TimeCell = styled("div")(() => ({
   flex: 0.5,
+}));
+
+const StyledLoading = styled("div")(() => ({
+  margin: "52px auto",
 }));

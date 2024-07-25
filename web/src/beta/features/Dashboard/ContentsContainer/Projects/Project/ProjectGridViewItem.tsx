@@ -9,10 +9,8 @@ import { ProjectProps } from "./types";
 const ProjectGridViewItem: FC<ProjectProps> = ({
   project,
   selectedProjectId,
-  isStarred,
   onProjectOpen,
   onProjectSelect,
-  onProjectStarClick,
   onProjectUpdate,
 }) => {
   const theme = useTheme();
@@ -22,10 +20,13 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     popupMenu,
     isEditing,
     isHovered,
+    isStarred,
+    publishStatus,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleProjectStarClick,
   } = useHooks({
     project,
     selectedProjectId,
@@ -50,13 +51,14 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           <Button
             iconButton
             icon={isStarred ? "starFilled" : "star"}
-            onClick={e => onProjectStarClick?.(e, project.id)}
+            onClick={e => handleProjectStarClick?.(e)}
             iconColor={isStarred ? theme.warning.main : theme.content.main}
             appearance="simple"
           />
         </StarButtonWrapper>
       </CardImage>
       <CardFooter>
+        {publishStatus && <PublishStatus />}
         <CardTitleWrapper>
           {!isEditing ? (
             <CardTitle onDoubleClick={handleProjectNameDoubleClick}>{projectName}</CardTitle>
@@ -117,9 +119,19 @@ const StarButtonWrapper = styled("div")<{
   opacity: isSelected || isStarred || isHovered ? 1 : 0,
 }));
 
-const CardFooter = styled("div")(() => ({
+const CardFooter = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
+  gap: theme.spacing.smallest,
+  padding: `0 ${theme.spacing.smallest}`,
+}));
+
+const PublishStatus = styled("div")(({ theme }) => ({
+  height: "12px",
+  width: "12px",
+  borderRadius: "50%",
+  background: theme.publish.main,
+  marginTop: theme.spacing.smallest - 1,
 }));
 
 const CardTitleWrapper = styled("div")(() => ({
