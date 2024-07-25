@@ -36,13 +36,16 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const sortOptions: { value: string; label: string }[] = useMemo(
     () => [
-      { value: "date", label: t("Created At") },
-      { value: "date-updated", label: t("Last Uploaded") },
+      { value: "date-reversed", label: t("First created") },
+      { value: "date", label: t("Last created") },
+      { value: "date-updated", label: t("First Updated") },
+      { value: "date-updated-reverse", label: t("Last Updated") },
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
     ],
     [t],
   );
+
   return (
     <Wrapper onClick={() => handleProjectSelect(undefined)}>
       <CommonHeader

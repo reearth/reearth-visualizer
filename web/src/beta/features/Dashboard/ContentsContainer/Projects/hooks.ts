@@ -10,13 +10,14 @@ import { Project } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
 
-export type SortType = "date" | "name";
+export type SortType =
+  | "date"
+  | "name"
+  | "date-updated"
+  | "date-reversed"
+  | "date-updated-reverse"
+  | "name-reverse";
 const projectsPerPage = 16;
-const enumTypeMapper: Partial<Record<ProjectSortType, string>> = {
-  [ProjectSortType.Createdat]: "date",
-  [ProjectSortType.Name]: "name",
-  [ProjectSortType.Updatedat]: "date-updated",
-};
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -25,17 +26,41 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     ? "limited"
     : "unpublished";
 
-function toGQLEnum(val?: SortType) {
-  if (!val) return;
-  return (Object.keys(enumTypeMapper) as ProjectSortType[]).find(k => enumTypeMapper[k] === val);
-}
 const pagination = (sort?: SortType) => {
-  const reverseOrder = sort === "date" || sort === undefined;
+  let first, last;
+  let sortBy;
 
-  return {
-    first: reverseOrder ? undefined : projectsPerPage,
-    last: reverseOrder ? projectsPerPage : undefined,
-  };
+  switch (sort) {
+    case "date":
+      last = projectsPerPage;
+      sortBy = ProjectSortType.Createdat;
+      break;
+    case "date-reversed":
+      first = projectsPerPage;
+      sortBy = ProjectSortType.Createdat;
+      break;
+    case "date-updated":
+      last = projectsPerPage;
+      sortBy = ProjectSortType.Updatedat;
+      break;
+    case "date-updated-reverse":
+      first = projectsPerPage;
+      sortBy = ProjectSortType.Updatedat;
+      break;
+    case "name":
+      first = projectsPerPage;
+      sortBy = ProjectSortType.Name;
+      break;
+    case "name-reverse":
+      last = projectsPerPage;
+      sortBy = ProjectSortType.Name;
+      break;
+    default:
+      last = projectsPerPage;
+      sortBy;
+  }
+
+  return { first, last, sortBy };
 };
 
 export default (workspaceId?: string) => {
@@ -81,7 +106,7 @@ export default (workspaceId?: string) => {
     [useUpdateProject],
   );
 
-  const { first, last } = useMemo(() => pagination(sort), [sort]);
+  const { first, last, sortBy } = useMemo(() => pagination(sort), [sort]);
 
   const {
     projects: projectsData,
@@ -95,7 +120,7 @@ export default (workspaceId?: string) => {
     teamId: workspaceId || "",
     first,
     last,
-    sort: toGQLEnum(sort),
+    sort: sortBy,
   });
 
   useEffect(() => {
@@ -134,7 +159,8 @@ export default (workspaceId?: string) => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
-          before: endCursor,
+          before: last ? endCursor : undefined,
+          after: first ? endCursor : undefined,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -142,7 +168,7 @@ export default (workspaceId?: string) => {
         },
       });
     }
-  }, [hasMoreProjects, fetchMore, endCursor]);
+  }, [hasMoreProjects, fetchMore, last, endCursor, first]);
 
   const handleProjectSelect = useCallback(
     (e?: MouseEvent, projectId?: string) => {
