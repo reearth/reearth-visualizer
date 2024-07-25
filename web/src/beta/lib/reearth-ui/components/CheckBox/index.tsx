@@ -1,18 +1,44 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { Icon } from "@reearth/beta/lib/reearth-ui/components/Icon/index";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 export type CheckBoxProps = {
-  checked?: boolean;
-  onClick?: () => void;
+  value?: boolean;
+  disabled?: boolean;
+  onChange?: (value: boolean) => void;
 };
 
-const CheckBox: FC<CheckBoxProps> = ({ checked = false, onClick }) => {
-  return <BoxField onClick={onClick}>{checked && <CheckMark icon="check" />}</BoxField>;
+export const CheckBox: FC<CheckBoxProps> = ({ value, disabled, onChange }) => {
+  const [isChecked, setIsChecked] = useState(value);
+
+  const theme = useTheme();
+
+  const handleClick = () => {
+    if (disabled) return;
+    const newValue = !isChecked;
+    setIsChecked(newValue);
+    onChange?.(newValue);
+  };
+
+  useEffect(() => {
+    setIsChecked(value);
+  }, [value]);
+
+  return (
+    <BoxField onClick={handleClick} disabled={disabled}>
+      {isChecked && (
+        <Icon
+          icon="check"
+          size="large"
+          color={disabled ? theme.content.weak : theme.content.main}
+        />
+      )}
+    </BoxField>
+  );
 };
 
-const BoxField = styled("div")(({ theme }) => ({
+const BoxField = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -21,10 +47,5 @@ const BoxField = styled("div")(({ theme }) => ({
   height: "16px",
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: "4px",
+  cursor: disabled ? "not-allowed" : "pointer",
 }));
-
-const CheckMark = styled(Icon)(({ theme }) => ({
-  color: theme.content.main,
-}));
-
-export default CheckBox;

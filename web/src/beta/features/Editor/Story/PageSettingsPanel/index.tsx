@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem } from "@reearth/beta/ui/components";
 import CheckBoxField from "@reearth/beta/ui/fields/CheckboxField";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
@@ -37,27 +38,23 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           {tab == "story" && (
             <Collapse title={t("Layers")} size="small">
               {layers && layers?.length > 0 && (
-                <>
+                <LayerWrapper>
                   <AllLayers>
-                    <CheckBoxField
-                      title={t("All Layers")}
-                      onClick={handleAllLayersCheck}
-                      checked={allCheckedLayers}
-                    />
+                    <CheckBoxField onChange={handleAllLayersCheck} value={allCheckedLayers} />
+                    <Title>{t("All Layers")}</Title>
                   </AllLayers>
                   <LayerList>
                     {layers?.map((layer, idx) => (
                       <Layer key={idx}>
                         <CheckBoxField
-                          onClick={() => handleLayerCheck(layer.id)}
-                          checked={checkedLayers.includes(layer.id)}
-                          title={layer.title}
-                          isIcon
+                          onChange={() => handleLayerCheck(layer.id)}
+                          value={checkedLayers.includes(layer.id)}
                         />
+                        <EntryItem icon="file" title={layer.title} disableHover={true} />
                       </Layer>
                     ))}
                   </LayerList>
-                </>
+                </LayerWrapper>
               )}
             </Collapse>
           )}
@@ -87,15 +84,37 @@ const Wrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.smallest,
 }));
 
-const Layer = styled.div``;
+const LayerWrapper = styled("div")(() => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+}));
 
 const AllLayers = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
   borderBottom: `1px solid ${theme.outline.weak}`,
   marginBottom: theme.spacing.small,
   paddingBottom: theme.spacing.small,
+  gap: theme.spacing.small,
 }));
 
-const LayerList = styled("div")`
-  max-height: 136px;
-  overflow-y: auto;
-`;
+const LayerList = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  maxHeight: "136px",
+  overflowY: "auto",
+  overflowX: "hidden",
+  width: "100%",
+}));
+
+const Layer = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+}));
+
+const Title = styled("div")(({ theme }) => ({
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+}));
