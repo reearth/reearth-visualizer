@@ -85,9 +85,9 @@ Add to Layer: Add to Layer
 Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: >-
   Visualizer currently only supports CSV point data. Please specify the column
   names for latitude and longitude in your data below.
-Latitude Column Name: ''
-Column Name: ''
-Longitude Column Name: ''
+Latitude Column Name: Latitude Column Name
+Column Name: Column Name
+Longitude Column Name: Longitude Column Name
 Common: Common
 CSV: CSV
 WMS: WMS
@@ -95,25 +95,22 @@ Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
 Data Source Manager: Data Source Manager
 Choose layer to add: Choose layer to add
-layer name: Layer name
-Layer name: ''
+layer name: layer name
+Layer name: Layer Name
 Inspector: Inspector
+Layer Name: Layer Name
 Format: Format
 Unsupported custom field: Unsupported custom field
-ID: ID
+Custom Properties: Custom Properties
 Geometry: Geometry
 Properties: Properties
-Custom Properties: Custom Properties
-Data: Data
-Feature: Feature
-Styling: Styling
 Enable Infobox: Enable Infobox
 Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
+Layer Style: Layer Style
 Add Layer from Resource: Add Layer from Resource
 Add Sketch Layer: ''
 Layers: Layers
 Style_: Style_
-Layer Style: Layer Style
 New Style: New Style
 Delete: Delete
 Save: Save
@@ -130,7 +127,6 @@ Please select one type: Please select one type
 Title: Title
 Type: Type
 New Property: New Property
-Layer Name: Layer Name
 ' Text': Text
 General: General
 New Sketch Layer: New Sketch Layer
