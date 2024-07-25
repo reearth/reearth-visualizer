@@ -41,7 +41,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const { checkPermission, data, loading, error } = useCerbosFetcher();
 
   useEffect(() => {
-    checkPermission(["writer"], "read");
+    checkPermission("dashboard", "read");
   }, [checkPermission]);
 
   if (loading) {
