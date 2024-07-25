@@ -43,13 +43,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
 
   const client = new ApolloClient({
     uri: endpoint,
-    link: ApolloLink.from([
-      errorLink(),
-      sentryLink(endpoint),
-      authLink(),
-      // workaround
-      uploadLink(endpoint) as unknown as ApolloLink,
-    ]),
+    link: ApolloLink.from([errorLink(), sentryLink(endpoint), authLink(), uploadLink(endpoint)]),
     cache,
     connectToDevTools: import.meta.env.DEV,
   });
