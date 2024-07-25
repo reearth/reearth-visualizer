@@ -22,10 +22,14 @@ const CheckBoxField: FC<CheckBoxFieldProps> = ({
   title,
   isIcon,
 }) => {
+  const handleClick = () => {
+    onClick?.(!checked);
+  };
+
   return (
     <CommonField commonTitle={commonTitle} description={description}>
-      <Field onClick={() => onClick?.(!checked)}>
-        <CheckBox checked={checked} />
+      <Field>
+        <CheckBox checked={checked} onClick={handleClick} />
         <EntryItemWrapper>
           <EntryItem icon={isIcon ? "file" : undefined} title={title} disableHover={true} />
         </EntryItemWrapper>

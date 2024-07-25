@@ -5,10 +5,11 @@ import { styled } from "@reearth/services/theme";
 
 export type CheckBoxProps = {
   checked?: boolean;
+  onClick?: () => void;
 };
 
-const CheckBox: FC<CheckBoxProps> = ({ checked = false }) => {
-  return <BoxField>{checked && <CheckMark icon="check" />}</BoxField>;
+const CheckBox: FC<CheckBoxProps> = ({ checked = false, onClick }) => {
+  return <BoxField onClick={onClick}>{checked && <CheckMark icon="check" />}</BoxField>;
 };
 
 const BoxField = styled("div")(({ theme }) => ({
