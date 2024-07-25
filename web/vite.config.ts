@@ -8,7 +8,7 @@ import { resolve } from "path";
 import yaml from "@rollup/plugin-yaml";
 import react from "@vitejs/plugin-react-swc";
 import { readEnv } from "read-env";
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, loadEnv, PluginOption, UserConfig, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -78,7 +78,7 @@ export default defineConfig({
       { find: "csv-parse", replacement: "csv-parse" },
     ],
   },
-});
+} as UserConfig);
 
 function serverHeaders(): Plugin {
   return {
