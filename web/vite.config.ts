@@ -13,7 +13,6 @@ import cesium from "vite-plugin-cesium";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
-
 import pkg from "./package.json";
 
 const NO_MINIFY = !!process.env.NO_MINIFY;
