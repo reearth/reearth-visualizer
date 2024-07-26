@@ -25,6 +25,7 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     });
 
   const t = useT();
+
   return (
     <Panel
       title={t("Page Settings")}
@@ -37,20 +38,20 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
         <Wrapper>
           {tab == "story" && (
             <Collapse title={t("Layers")} size="small">
-              {layers && layers?.length > 0 && (
+              {layers && layers.length > 0 && (
                 <LayerWrapper>
                   <AllLayers>
                     <CheckBoxField onChange={handleAllLayersCheck} value={allCheckedLayers} />
                     <Title>{t("All Layers")}</Title>
                   </AllLayers>
                   <LayerList>
-                    {layers?.map((layer, idx) => (
-                      <Layer key={idx}>
+                    {layers.map(layer => (
+                      <Layer key={layer.id}>
                         <CheckBoxField
                           onChange={() => handleLayerCheck(layer.id)}
                           value={checkedLayers.includes(layer.id)}
                         />
-                        <EntryItem icon="file" title={layer.title} disableHover={true} />
+                        <EntryItem icon="file" title={<Title>{layer.title}</Title>} disableHover />
                       </Layer>
                     ))}
                   </LayerList>
@@ -117,4 +118,8 @@ const Title = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  maxWidth: "245px",
 }));
