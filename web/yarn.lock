@@ -6330,12 +6330,12 @@ __metadata:
   linkType: hard
 
 "@maxim_mazurok/gapi.client.sheets-v4@npm:latest":
-  version: 0.0.20240716
-  resolution: "@maxim_mazurok/gapi.client.sheets-v4@npm:0.0.20240716"
+  version: 0.0.20240712
+  resolution: "@maxim_mazurok/gapi.client.sheets-v4@npm:0.0.20240712"
   dependencies:
     "@types/gapi.client": "npm:*"
     "@types/gapi.client.discovery-v1": "npm:*"
-  checksum: 10c0/1b3932474a519fce7be1494c9267da149e18949028de04f37b72796ef3cf788e18bcfbc6b4c1ccd59e6b2568d1d64a3226640a668231b7d37b18885c3de6fd6c
+  checksum: 10c0/6915198dd16d87b0f03fbd9dcb82c6c7d2589c8d14cec184aeaad2edbf7e9c25af1dc4eca7c187adf3635af40cd5ecbb2726d773d33d014e713df0e7c9d560a8
   languageName: node
   linkType: hard
 
