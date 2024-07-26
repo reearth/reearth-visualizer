@@ -39,7 +39,7 @@ export default function StoryBlockComponent({
       isSelected={props.isSelected}
       property={props.block.property}
       propertyId={props.block.propertyId}
-      pluginBlockPropertyItems={props.block.pluginBlockPropertyItems}
+      propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
       onRemove={onRemove ? handleRemove : undefined}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
     </BlockWrapper>

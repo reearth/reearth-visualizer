@@ -1,23 +1,16 @@
 import { WidgetLayout } from "@reearth/beta/features/Visualizer/Crust/Widgets/types";
 import { Layer } from "@reearth/core";
 
+import { PluginInfoboxBlock } from "../../../Infobox/types";
+import { PluginStoryBlock } from "../../../StoryPanel/types";
+
 export declare type Extension = {
-  readonly block?: Block;
+  readonly block?: PluginStoryBlock | (PluginInfoboxBlock & { layer?: Layer });
   readonly widget?: Widget;
   readonly list: PluginExtensionInstance[];
   readonly postMessage?: (id: string, message: unknown) => void;
   readonly on: ExtensionEvents["on"];
   readonly off: ExtensionEvents["off"];
-};
-
-export declare type Block = {
-  readonly id: string;
-  readonly name?: string | null;
-  readonly pluginId: string;
-  readonly extensionId: string;
-  readonly propertyId?: string;
-  readonly property?: unknown;
-  readonly layer?: Layer;
 };
 
 export declare type Widget = {

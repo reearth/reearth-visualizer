@@ -4,7 +4,8 @@ import type { MutableRefObject, RefObject } from "react";
 
 import { type Layer } from "@reearth/core";
 
-import type { InfoboxBlock as Block } from "../../../Infobox/types";
+import type { InfoboxBlock as Block, InfoboxBlock } from "../../../Infobox/types";
+import { StoryBlock } from "../../../StoryPanel/types";
 import type { MapRef } from "../../../types";
 import { useGet } from "../../../utils";
 import type { Widget } from "../../../Widgets";
@@ -230,7 +231,16 @@ export function usePluginAPI({
         viewerEventsOff: (type, e) => {
           viewerEventsRef.current?.[0]?.off(type, e);
         },
-        getBlock,
+        getBlock: () => {
+          const rawBlock = getBlock() as InfoboxBlock | StoryBlock;
+          const block = {
+            ...rawBlock,
+            property: rawBlock.propertyForPluginAPI,
+          };
+          delete block.propertyForPluginAPI;
+          delete block.propertyItemsForPluginBlock;
+          return block;
+        },
         getLayer,
         getWidget,
         // ui

@@ -1,4 +1,4 @@
-import { useMemo, type RefObject, useContext, useEffect } from "react";
+import { useMemo, type RefObject, useContext } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
@@ -202,10 +202,6 @@ export default function Crust({
     onLayerSelectWithRectEnd,
   } = useContext(coreContext);
 
-  useEffect(() => {
-    console.log(selectedLayer);
-  }, [selectedLayer]);
-
   const widgetTheme = usePublishTheme(widgetThemeOptions);
 
   const selectedLayerId = useMemo(
@@ -233,15 +229,10 @@ export default function Crust({
 
   const featuredInfobox = useMemo(() => {
     const selected = layers?.find(l => l.id === selectedLayer?.layerId);
-    const infobox = selectedLayer?.layer?.layer.infobox
+    return selectedLayerId?.featureId && selectedLayer?.layer?.layer.infobox
       ? {
           property: selected?.infobox?.property,
           blocks: [...(selected?.infobox?.blocks ?? [])],
-        }
-      : undefined;
-    return selectedLayerId?.featureId && infobox
-      ? {
-          ...infobox,
           featureId: selectedLayerId.featureId,
         }
       : undefined;

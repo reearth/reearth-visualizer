@@ -1,7 +1,6 @@
 import { merge } from "@reearth/beta/utils/object";
 import type { Layer, TimelineManagerRef, ViewerProperty } from "@reearth/core";
 
-import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { Widget } from "../../Widgets";
 import type { ClientStorage } from "../useClientStorage";
 
@@ -88,7 +87,7 @@ export function exposedReearth({
   overrideViewerProperty?: (pluginId: string, property: ViewerProperty) => void;
   // extension
   getWidget?: () => Widget | undefined;
-  getBlock?: () => Block | undefined;
+  getBlock?: () => Reearth["extension"]["block"] | undefined;
   getLayer?: () => Layer | undefined;
   startEventLoop?: () => void;
   pluginPostMessage: (extentionId: string, msg: unknown, sender: string) => void;
@@ -264,7 +263,7 @@ export function exposedReearth({
               },
             }
           : {},
-        plugin?.extensionType === "block"
+        plugin?.extensionType === "infoboxBlock" || plugin?.extensionType === "storyBlock"
           ? {
               get block() {
                 return {

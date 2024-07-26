@@ -30,7 +30,7 @@ type Props = {
   children?: ReactNode;
   propertyId?: string;
   property?: any;
-  pluginBlockPropertyItems?: Item[];
+  propertyItemsForPluginBlock?: Item[];
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   minHeight?: number;
@@ -70,7 +70,7 @@ const BlockWrapper: React.FC<Props> = ({
   children,
   propertyId,
   property,
-  pluginBlockPropertyItems,
+  propertyItemsForPluginBlock,
   dndEnabled = true,
   settingsEnabled = true,
   minHeight,
@@ -164,7 +164,7 @@ const BlockWrapper: React.FC<Props> = ({
         )}
         {editMode && propertyId && settingsEnabled && isPluginBlock && (
           <EditorPanel onClick={stopClickPropagation}>
-            {pluginBlockPropertyItems?.map((i, idx) => (
+            {propertyItemsForPluginBlock?.map((i, idx) => (
               <SidePanelSectionField title={i.title} key={idx}>
                 <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={onFlyTo} />
               </SidePanelSectionField>

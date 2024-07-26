@@ -13,7 +13,7 @@ export default ({
   const pluginInstances = usePluginInstances({
     alignSystem,
     floatingWidgets,
-    blocks: selectedLayer?.layer?.infobox?.blocks,
+    infoboxBlocks: selectedLayer?.layer?.infobox?.blocks,
     storyBlocks: selectedStory?.pages.flatMap(p => p.blocks),
   });
 

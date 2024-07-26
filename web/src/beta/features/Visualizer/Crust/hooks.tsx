@@ -139,7 +139,7 @@ const Block: FC<{
       pluginId={blockProps.block?.pluginId}
       extensionId={blockProps.block?.extensionId}
       sourceCode={(blockProps.block as any)?.__REEARTH_SOURCECODE} // for debugging
-      extensionType="block"
+      extensionType={blockProps.block?.extensionType}
       visible
       layer={blockProps.layer}
       block={blockProps.block}
