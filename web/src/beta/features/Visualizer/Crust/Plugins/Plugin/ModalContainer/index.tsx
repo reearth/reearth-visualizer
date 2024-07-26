@@ -11,6 +11,7 @@ import { styled } from "@reearth/services/theme";
 export type PluginModalInfo = {
   id?: string;
   background?: string;
+  clickBgToClose?: boolean;
 };
 
 type Props = {
@@ -27,8 +28,10 @@ const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
   useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
 
   const handleModalClose = useCallback(() => {
-    onPluginModalShow?.();
-  }, [onPluginModalShow]);
+    if (shownPluginModalInfo?.clickBgToClose) {
+      onPluginModalShow?.();
+    }
+  }, [shownPluginModalInfo?.clickBgToClose, onPluginModalShow]);
 
   return (
     <>

@@ -1,12 +1,40 @@
-import {
-  InteractionModeType,
-  LayerSelectWithRectEnd,
-  LayerSelectWithRectMove,
-  LayerSelectWithRectStart,
-  ViewerProperty,
-} from "@reearth/core";
+import { ViewerProperty, ComputedFeature } from "@reearth/core";
 
 import { LatLngHeight } from "./common";
+
+export declare type MouseEventProps = {
+  x?: number;
+  y?: number;
+  lat?: number;
+  lng?: number;
+  height?: number;
+  layerId?: string;
+  delta?: number;
+};
+
+export declare type LayerSelectWithRect = MouseEventProps & {
+  pressedKey?: "shift";
+};
+
+export declare type PickedFeature = ComputedFeature & {
+  layerId?: string;
+};
+
+export declare type LayerSelectWithRectEnd = LayerSelectWithRect & {
+  features: PickedFeature[] | undefined;
+  isClick: boolean;
+};
+
+export declare type LayerSelectWithRectMove = LayerSelectWithRect & {
+  startX?: number;
+  startY?: number;
+  width?: number;
+  height?: number;
+};
+
+export declare type LayerSelectWithRectStart = LayerSelectWithRect;
+
+export declare type InteractionModeType = "default" | "move" | "selection" | "sketch";
 
 export declare type Viewer = {
   readonly property: ViewerProperty | undefined;

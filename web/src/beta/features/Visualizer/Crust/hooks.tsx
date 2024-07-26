@@ -36,11 +36,11 @@ export default function useHook({
   const commonPluginProps = useMemo(
     () => ({
       pluginModalContainer: pluginModalContainerRef.current,
-      shownPluginModalInfo: shownPluginModalInfo,
-      onPluginModalShow: onPluginModalShow,
+      shownPluginModalInfo,
+      onPluginModalShow,
       pluginPopupContainer: pluginPopupContainerRef.current,
-      shownPluginPopupInfo: shownPluginPopupInfo,
-      onPluginPopupShow: onPluginPopupShow,
+      shownPluginPopupInfo,
+      onPluginPopupShow,
       pluginBaseUrl,
       pluginProperty,
       property: pluginProperty,

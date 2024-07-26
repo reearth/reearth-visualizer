@@ -5,6 +5,7 @@ export declare type Modal = {
       width?: number | string;
       height?: number | string;
       background?: string;
+      clickBgToClose?: boolean;
     },
   ) => void;
   readonly postMessage: (message: unknown) => void;
@@ -12,6 +13,7 @@ export declare type Modal = {
     width?: number | string;
     height?: number | string;
     background?: string;
+    clickBgToClose?: boolean;
   }) => void;
   readonly close: () => void;
   readonly on: ModalEvents["on"];

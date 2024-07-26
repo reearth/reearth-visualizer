@@ -265,6 +265,7 @@ export function usePluginAPI({
           onPluginModalShow?.({
             id: widget?.id ?? block?.id,
             background: options?.background,
+            clickBgToClose: options?.clickBgToClose,
           });
         },
         closeModal: () => {
@@ -275,6 +276,7 @@ export function usePluginAPI({
           onPluginModalShow?.({
             id: widget?.id ?? block?.id,
             background: options.background,
+            clickBgToClose: options.clickBgToClose,
           });
         },
         postMessageModal: modal.postMessage,
@@ -291,14 +293,15 @@ export function usePluginAPI({
         // popup
         renderPopup: (html, { ...options } = {}) => {
           let rendered = false;
+          const opt = { ...options, position: options?.position ?? "bottom" };
           popup.render(html, {
-            ...options,
+            ...opt,
             onAutoResized: () => {
               if (!rendered) {
                 onPluginPopupShow?.({
                   id: widget?.id ?? block?.id,
                   ref: externalRef,
-                  ...options,
+                  ...opt,
                 });
                 rendered = true;
               }
@@ -307,19 +310,20 @@ export function usePluginAPI({
           onPluginPopupShow?.({
             id: widget?.id ?? block?.id,
             ref: externalRef,
-            ...options,
+            ...opt,
           });
         },
         closePopup: () => {
           onPluginPopupShow?.();
         },
         updatePopup: options => {
+          const opt = { ...options, position: options?.position ?? "bottom" };
           if (options.width !== undefined || options.height !== undefined) {
             popup.resize(options.width, options.height);
           }
           onPluginPopupShow?.({
             id: widget?.id ?? block?.id,
-            ...options,
+            ...opt,
             ref: externalRef,
           });
         },

@@ -3,9 +3,9 @@ export declare type Data = {
 };
 
 export declare type ClientStorage = {
-  readonly getAsync: (extensionInstanceId: string, key: string) => Promise<any>;
-  readonly setAsync: (extensionInstanceId: string, key: string, value: any) => Promise<void>;
-  readonly deleteAsync: (extensionInstanceId: string, key: string) => Promise<void>;
-  readonly keysAsync: (extensionInstanceId: string) => Promise<string[]>;
-  readonly dropStoreAsync: (extensionInstanceId: string) => Promise<void>;
+  readonly getAsync: (key: string) => Promise<any>;
+  readonly setAsync: (key: string, value: any) => Promise<void>;
+  readonly deleteAsync: (key: string) => Promise<void>;
+  readonly keysAsync: () => Promise<string[]>;
+  readonly dropStoreAsync: () => Promise<void>;
 };

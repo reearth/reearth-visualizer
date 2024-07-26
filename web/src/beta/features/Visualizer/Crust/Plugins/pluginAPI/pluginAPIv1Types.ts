@@ -1,3 +1,5 @@
+// NOTE: This type is for the plugin API v1, which is not used anymore.
+
 import type {
   LayerEditEvent,
   LayersRef,
@@ -32,13 +34,12 @@ import {
   FlyToDestination,
   LookAtDestination,
   ScreenSpaceCameraControllerOptions,
+  InteractionModeType,
 } from "@reearth/core";
 
-import { InteractionModeType } from "../types";
-import { Widget } from "../Widgets";
-
-import { CommonReearth } from "./pluginAPI/commonReearth";
-import { ClientStorage } from "./useClientStorage";
+import { Widget } from "../../Widgets";
+import { CommonReearth } from "../pluginAPI/commonReearth";
+import { ClientStorage } from "../useClientStorage";
 
 declare global {
   interface Window {

@@ -1,4 +1,4 @@
-import { useMemo, type RefObject, useContext } from "react";
+import { useMemo, type RefObject, useContext, useEffect } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
@@ -201,6 +201,10 @@ export default function Crust({
     onLayerSelectWithRectMove,
     onLayerSelectWithRectEnd,
   } = useContext(coreContext);
+
+  useEffect(() => {
+    console.log(selectedLayer);
+  }, [selectedLayer]);
 
   const widgetTheme = usePublishTheme(widgetThemeOptions);
 
