@@ -143,6 +143,7 @@
         "fast-xml-parser": "4.3.2",
         "formik": "2.4.5",
         "framer-motion": "10.18.0",
+        "fuse": "^0.12.1",
         "github-markdown-css": "5.4.0",
         "graphiql": "2.4.4",
         "graphql": "16.6.0",
