@@ -144,10 +144,8 @@ export const Components: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <CheckboxField
-        onClick={() => {}}
-        checked={true}
-        isIcon={true}
-        title="item"
+        onChange={() => {}}
+        value={true}
         commonTitle="CheckboxField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
