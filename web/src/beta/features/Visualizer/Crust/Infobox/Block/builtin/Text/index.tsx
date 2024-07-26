@@ -14,7 +14,7 @@ const TextBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...p
 
   return (
     <BlockWrapper
-      minHeight={28}
+      minHeight={props.isEditable ? 28 : 0}
       name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
