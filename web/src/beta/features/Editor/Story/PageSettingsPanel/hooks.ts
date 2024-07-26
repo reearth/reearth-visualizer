@@ -21,27 +21,31 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
   }, [layers, selectedLayerIds.length]);
 
   const [allCheckedLayers, setAllCheckedLayers] = useState(false);
+  const [checkedLayers, setCheckedLayers] = useState<string[]>([]);
 
   useEffect(() => {
     setAllCheckedLayers(allLayersSelected);
+    setCheckedLayers(selectedLayerIds);
   }, [selectedLayerIds, allLayersSelected]);
 
   const handleLayerCheck = useCallback(
     (layerId: string) => {
       if (!pageId) return;
-      const updatedLayers = selectedLayerIds.includes(layerId)
-        ? selectedLayerIds.filter(id => id !== layerId)
-        : [...selectedLayerIds, layerId];
+      const updatedLayers = checkedLayers.includes(layerId)
+        ? checkedLayers.filter(id => id !== layerId)
+        : [...checkedLayers, layerId];
 
+      setCheckedLayers(updatedLayers);
       onPageUpdate?.(pageId, updatedLayers);
     },
-    [onPageUpdate, pageId, selectedLayerIds],
+    [checkedLayers, onPageUpdate, pageId],
   );
 
   const handleAllLayersCheck = useCallback(() => {
     if (!pageId) return;
     const updatedCheckedLayers = allCheckedLayers ? [] : layers?.map(layer => layer.id) || [];
     setAllCheckedLayers(!allCheckedLayers);
+    setCheckedLayers(updatedCheckedLayers);
     onPageUpdate?.(pageId, updatedCheckedLayers);
   }, [allCheckedLayers, layers, onPageUpdate, pageId]);
 
@@ -56,7 +60,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
   );
 
   return {
-    checkedLayers: selectedLayerIds,
+    checkedLayers,
     allCheckedLayers,
     visibleItems,
     handleLayerCheck,
