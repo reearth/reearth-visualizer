@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -13,7 +13,7 @@ export type IconProps = {
   className?: string;
 };
 
-export const Icon: React.FC<IconProps> = ({ icon, size = "normal", color, className }) => {
+export const Icon: FC<IconProps> = ({ icon, size = "normal", color, className }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
     const SvgComponent = Icons[icon as IconName];

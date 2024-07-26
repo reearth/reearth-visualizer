@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import JsonView from "react18-json-view";
 import { v4 as uuidv4 } from "uuid";
 
-import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import Text from "@reearth/beta/components/Text";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { FieldComponent } from "./CustomPropertField";
 
@@ -34,7 +33,6 @@ export type FieldProp = {
   title: string;
   value?: ValueProp;
 };
-
 const FeatureData: React.FC<Props> = ({
   selectedFeature,
   isSketchLayer,
@@ -44,7 +42,7 @@ const FeatureData: React.FC<Props> = ({
   onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
-
+  const theme = useTheme();
   const [field, setField] = useState<FieldProp[]>([]);
 
   useEffect(() => {
@@ -81,61 +79,74 @@ const FeatureData: React.FC<Props> = ({
     [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id],
   );
 
+  const jsonStyle = useMemo(
+    () => ({
+      wordWrap: "break-word" as const,
+      minWidth: 0,
+      lineHeight: "1.5em",
+      fontSize: theme.fonts.sizes.body,
+    }),
+    [theme.fonts.sizes.body],
+  );
+
   return (
     <Wrapper>
-      <Text size="body">{t("ID")}</Text>
-      <ValueWrapper>
-        <Text size="body" otherProperties={{ userSelect: "auto" }}>
-          {selectedFeature?.id}
-        </Text>
-      </ValueWrapper>
-      <StyledSidePanelSectionField title={t("Geometry")} border="1">
-        <ValueWrapper>
-          <JsonView
-            src={selectedFeature?.geometry}
-            theme="a11y"
-            dark
-            style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
-          />
-        </ValueWrapper>
-      </StyledSidePanelSectionField>
-      <StyledSidePanelSectionField title={t("Properties")} border="1">
-        <ValueWrapper>
-          <JsonView src={selectedFeature?.properties} theme="a11y" dark />
-        </ValueWrapper>
-      </StyledSidePanelSectionField>
       {isSketchLayer && (
-        <StyledSidePanelSectionField title={t("Custom Properties")} border="1">
-          {field.map(f => (
-            <FieldComponent
-              field={f}
-              key={f.id}
-              selectedFeature={sketchFeature}
-              setField={setField}
-              onSubmit={handleSubmit}
-            />
-          ))}
-        </StyledSidePanelSectionField>
+        <Collapse
+          title={t("Custom Properties")}
+          size="small"
+          background={theme.bg[2]}
+          headerBg={theme.bg[2]}>
+          <FieldsWrapper>
+            {field.map(f => (
+              <FieldComponent
+                field={f}
+                key={f.id}
+                selectedFeature={sketchFeature}
+                setField={setField}
+                onSubmit={handleSubmit}
+              />
+            ))}
+          </FieldsWrapper>
+        </Collapse>
       )}
+      <Collapse title={t("Geometry")} size="small" background={theme.bg[2]} headerBg={theme.bg[2]}>
+        <ValueWrapper>
+          <JsonView src={selectedFeature?.geometry} theme="vscode" dark style={jsonStyle} />
+        </ValueWrapper>
+      </Collapse>
+      <Collapse
+        title={t("Properties")}
+        size="small"
+        background={theme.bg[2]}
+        headerBg={theme.bg[2]}>
+        <ValueWrapper>
+          <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
+        </ValueWrapper>
+      </Collapse>
     </Wrapper>
   );
 };
 
 export default FeatureData;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  word-break: break-all;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  padding: `${theme.spacing.small}px 0`,
+  wordBreak: "break-all",
+}));
 
-const ValueWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-`;
+const FieldsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+}));
 
-const StyledSidePanelSectionField = styled(SidePanelSectionField)`
-  background: ${({ theme }) => theme.outline.weaker};
-`;
+const ValueWrapper = styled("div")(({ theme }) => ({
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: theme.radius.small,
+  background: theme.bg[1],
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+}));
