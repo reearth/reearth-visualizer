@@ -5,7 +5,7 @@ import { TextInput, TextInputProps } from "@reearth/beta/lib/reearth-ui";
 import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type InputFieldProps = CommonFieldProps &
-  Pick<TextInputProps, "value" | "placeholder" | "onChange" | "onBlur" | "disabled">;
+  Pick<TextInputProps, "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance">;
 
 const InputField: FC<InputFieldProps> = ({ commonTitle, description, ...props }) => {
   return (

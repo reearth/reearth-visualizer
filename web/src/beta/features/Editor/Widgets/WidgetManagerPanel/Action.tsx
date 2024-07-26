@@ -1,66 +1,52 @@
-import { useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import Icon, { type Icons } from "@reearth/beta/components/Icon";
-import * as Popover from "@reearth/beta/components/Popover";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import { type InstallableWidget } from "@reearth/services/api/widgetsApi/utils";
-import { styled } from "@reearth/services/theme";
+import { Button, IconName, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import { InstallableWidget } from "@reearth/services/api/widgetsApi/utils";
 
 type ActionAreaProps = {
   installableWidgets?: InstallableWidget[];
   onWidgetAdd: (id?: string | undefined) => Promise<void>;
 };
 
-const ActionArea: React.FC<ActionAreaProps> = ({ installableWidgets, onWidgetAdd }) => {
-  const [popoverOpen, setPopover] = useState(false);
+const ActionArea: FC<ActionAreaProps> = ({ installableWidgets, onWidgetAdd }) => {
+  const [open, setOpen] = useState(false);
 
   const handleWidgetAdd = useCallback(
     (widgetId: string) => {
       onWidgetAdd(widgetId);
-      setPopover(!popoverOpen);
+      setOpen(false);
     },
-    [popoverOpen, onWidgetAdd],
+    [onWidgetAdd],
   );
 
-  const items = useMemo(
+  const items: PopupMenuItem[] = useMemo(
     () =>
-      installableWidgets
-        ?.filter(w => !w.disabled)
-        .map(w => {
-          return {
-            name: w.title,
-            icon: w.icon as Icons,
-            onClick: () => handleWidgetAdd(`${w.pluginId}/${w.extensionId}`),
-          };
-        }),
+      (installableWidgets ?? [])
+        .filter(w => !w.disabled)
+        .map(w => ({
+          id: `${w.pluginId}/${w.extensionId}`,
+          title: w.title,
+          icon: w.icon as IconName,
+          onClick: () => handleWidgetAdd(`${w.pluginId}/${w.extensionId}`),
+        })),
     [installableWidgets, handleWidgetAdd],
   );
 
   return (
-    <ActionAreaWrapper>
-      <Popover.Provider
-        open={popoverOpen}
-        placement="bottom-start"
-        onOpenChange={() => setPopover(!popoverOpen)}>
-        <Popover.Trigger>
-          <StyledIcon icon="folderPlus" size={16} onClick={() => setPopover(!popoverOpen)} />
-        </Popover.Trigger>
-        <Popover.Content>{items && <PopoverMenuContent size="sm" items={items} />}</Popover.Content>
-      </Popover.Provider>
-    </ActionAreaWrapper>
+    <PopupMenu
+      label={
+        <Button
+          icon="folderSimplePlus"
+          title="Add Widget"
+          size="small"
+          extendWidth
+          onClick={() => setOpen(!open)}
+        />
+      }
+      menu={items}
+      extendTriggerWidth
+    />
   );
 };
 
 export default ActionArea;
-
-const ActionAreaWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
-  align-self: center;
-  height: 100%;
-  color: ${({ theme }) => theme.content.main};
-`;

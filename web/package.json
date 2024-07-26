@@ -202,5 +202,6 @@
         "use-file-input": "1.0.0",
         "uuid": "9.0.1",
         "xstate": "4.38.2"
-    }
+    },
+    "packageManager": "yarn@4.3.1"
 }
