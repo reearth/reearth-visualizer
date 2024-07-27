@@ -16,6 +16,8 @@ type Style struct {
 	common
 	commonSceneLock
 	styleRepo     repo.Style
+	projectRepo   repo.Project
+	sceneRepo     repo.Scene
 	sceneLockRepo repo.SceneLock
 	transaction   usecasex.Transaction
 }
@@ -24,6 +26,8 @@ func NewStyle(r *repo.Container) interfaces.Style {
 	return &Style{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		styleRepo:       r.Style,
+		projectRepo:     r.Project,
+		sceneRepo:       r.Scene,
 		sceneLockRepo:   r.SceneLock,
 		transaction:     r.Transaction,
 	}
@@ -67,6 +71,20 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		return nil, err
 	}
 
+	s, err := i.sceneRepo.FindByID(ctx, style.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	if err != nil {
+		return nil, err
+	}
+
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return style, nil
 }
@@ -101,6 +119,20 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 	}
 
 	if err := i.styleRepo.Save(ctx, *style); err != nil {
+		return nil, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, style.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	if err != nil {
+		return nil, err
+	}
+
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -139,6 +171,20 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		return
 	}
 
+	scene, err := i.sceneRepo.FindByID(ctx, s.Scene())
+	if err != nil {
+		return styleID, err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, scene.Project())
+	if err != nil {
+		return styleID, err
+	}
+
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		return styleID, err
+	}
+
 	tx.Commit()
 	return styleID, nil
 }
@@ -168,6 +214,20 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	duplicatedStyle := style.Duplicate()
 
 	if err := i.styleRepo.Save(ctx, *duplicatedStyle); err != nil {
+		return nil, err
+	}
+
+	scene, err := i.sceneRepo.FindByID(ctx, style.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := i.projectRepo.FindByID(ctx, scene.Project())
+	if err != nil {
+		return nil, err
+	}
+
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 

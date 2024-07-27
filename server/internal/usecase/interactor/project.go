@@ -479,3 +479,13 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	tx.Commit()
 	return nil
 }
+
+func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
+
+	if err := r.Save(ctx, prj); err != nil {
+		return err
+	}
+	return nil
+}
