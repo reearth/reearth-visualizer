@@ -40,7 +40,7 @@ jobs:
           cache-dependency-path: server/go.sum
       - name: test
         run: |
-            go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m -json > report.json
+            go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m -json
             | tee ./go-test.out
             | go run github.com/mfridman/tparse -all
         env:
