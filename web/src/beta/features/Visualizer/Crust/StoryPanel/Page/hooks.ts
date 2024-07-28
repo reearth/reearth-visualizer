@@ -12,6 +12,7 @@ export default ({
   page,
   isEditable,
   onBlockCreate,
+  onBlockMove,
 }: {
   page?: StoryPage;
   isEditable?: boolean;
@@ -20,11 +21,13 @@ export default ({
     pluginId?: string | undefined,
     index?: number | undefined,
   ) => Promise<void> | undefined;
+  onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
 }) => {
   const editModeContext = useEditModeContext();
 
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
   const [storyBlocks, setStoryBlocks] = useState(page?.blocks ?? []);
+  const [isDragging, setIsDragging] = useState(false);
 
   const disableSelection = useMemo(
     () => editModeContext?.disableSelection,
@@ -84,6 +87,25 @@ export default ({
     [onBlockCreate],
   );
 
+  const handleMoveEnd = useCallback(
+    async (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        setStoryBlocks(old => {
+          const items = [...old];
+          const currentIndex = old.findIndex(o => o.id === itemId);
+          if (currentIndex !== -1) {
+            const [movedItem] = items.splice(currentIndex, 1);
+            items.splice(newIndex, 0, movedItem);
+          }
+          return items;
+        });
+        await onBlockMove?.(page?.id || "", newIndex, itemId);
+      }
+      setIsDragging(false);
+    },
+    [onBlockMove, page?.id],
+  );
+
   return {
     openBlocksIndex,
     titleId,
@@ -93,8 +115,10 @@ export default ({
     panelSettings,
     storyBlocks,
     disableSelection,
+    isDragging,
     setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
+    handleMoveEnd,
   };
 };

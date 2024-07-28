@@ -1,4 +1,4 @@
-import { MutableRefObject, ReactNode } from "react";
+import { FC, MutableRefObject, ReactNode } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
@@ -55,7 +55,7 @@ export type Props = {
   renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
 };
 
-const StoryContent: React.FC<Props> = ({
+const StoryContent: FC<Props> = ({
   pages,
   selectedPageId,
   installableStoryBlocks,
@@ -122,18 +122,19 @@ const StoryContent: React.FC<Props> = ({
 
 export default StoryContent;
 
-const PagesWrapper = styled.div<{ showingIndicator?: boolean; isEditable?: boolean }>`
-  height: ${({ showingIndicator }) => (showingIndicator ? "calc(100% - 8px)" : "100%")};
-  overflow-y: auto;
-  cursor: ${({ isEditable }) => (isEditable ? "pointer" : "default")};
+const PagesWrapper = styled("div")<{ showingIndicator?: boolean; isEditable?: boolean }>(
+  ({ showingIndicator, isEditable }) => ({
+    height: showingIndicator ? "calc(100% - 8px)" : "100%",
+    overflowY: "auto",
+    cursor: isEditable ? "pointer" : "default",
+    ["::-webkit-scrollbar"]: {
+      display: "none",
+    },
+    scrollbarWidth: "none",
+    msOverflowStyle: "none",
+  }),
+);
 
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-`;
-
-const PageGap = styled.div<{ height?: number }>`
-  height: ${({ height }) => (height ? height + "px" : "70vh")};
-`;
+const PageGap = styled("div")<{ height?: number }>(({ height }) => ({
+  height: height ? height + "px" : "70vh",
+}));

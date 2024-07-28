@@ -1,14 +1,14 @@
 import { Dispatch, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
-import { useItemContext as useDnDItemContext } from "@reearth/beta/components/DragAndDropList/Item";
-import type { Icons } from "@reearth/beta/components/Icon";
+import { getIcon } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
+import { IconName } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 
 import type { ActionItem } from "../../ActionPanel";
 
 type Props = {
   title?: string;
-  icon?: string;
+  icon?: string | IconName;
   isSelected?: boolean;
   editMode?: boolean;
   contentSettings?: any;
@@ -32,8 +32,6 @@ export default ({
   onSettingsToggle,
 }: Props) => {
   const t = useT();
-  const { customDragSource } = useDnDItemContext() ?? {};
-
   const handleRemove = useCallback(() => {
     onRemove?.();
     onSettingsToggle?.();
@@ -41,8 +39,8 @@ export default ({
 
   const settingsTitle = useMemo(() => t("Spacing settings"), [t]);
 
-  const popoverContent = useMemo(() => {
-    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [];
+  const popupItem = useMemo(() => {
+    const menuItems: { name: string; icon: IconName; onClick: () => void }[] = [];
     if (!isPluginBlock && contentSettings) {
       menuItems.push({
         name: settingsTitle,
@@ -61,16 +59,17 @@ export default ({
   }, [isPluginBlock, settingsTitle, contentSettings, t, setShowPadding, onRemove, handleRemove]);
 
   const actionItems: ActionItem[] = useMemo(() => {
+    const iconName = getIcon(icon);
     const menuItems: ActionItem[] = [
       {
         name: title ?? t("Block"),
-        icon: icon ?? "plugin",
+        icon: iconName,
       },
     ];
 
     if (onEditModeToggle && !!contentSettings && Object.keys(contentSettings).length !== 0) {
       menuItems.push({
-        icon: editMode ? "exit" : "storyBlockEdit",
+        icon: editMode ? "exit" : "editMode",
         hide: !isSelected,
         onClick: () => onEditModeToggle?.(!editMode),
       });
@@ -78,7 +77,7 @@ export default ({
 
     if (onSettingsToggle) {
       menuItems.push({
-        icon: "settings",
+        icon: "settingFilled",
         hide: !isSelected,
         onClick: onSettingsToggle,
       });
@@ -88,9 +87,8 @@ export default ({
   }, [title, icon, isSelected, editMode, contentSettings, t, onEditModeToggle, onSettingsToggle]);
 
   return {
-    customDragSource,
     settingsTitle,
-    popoverContent,
+    popupItem,
     actionItems,
   };
 };
