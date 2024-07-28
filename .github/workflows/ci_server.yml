@@ -51,6 +51,7 @@ jobs:
         run: |
             go install github.com/mfridman/tparse@latest &&
             go run github.com/mfridman/tparse -file ./go-test.out -format markdown >> $GITHUB_STEP_SUMMARY
+        working-directory: server
       - name: Send coverage report
         uses: codecov/codecov-action@v2
         with:
