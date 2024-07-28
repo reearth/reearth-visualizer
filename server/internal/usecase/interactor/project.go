@@ -489,3 +489,23 @@ func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Pr
 	}
 	return nil
 }
+
+func updateProjectUpdatedAtByID(ctx context.Context, projectID id.ProjectID, r repo.Project) error {
+	prj, err := r.FindByID(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	return updateProjectUpdatedAt(ctx, prj, r)
+}
+
+func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r repo.Project, s repo.Scene) error {
+	scene, err := s.FindByID(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), r)
+	if err != nil {
+		return err
+	}
+	return nil
+}

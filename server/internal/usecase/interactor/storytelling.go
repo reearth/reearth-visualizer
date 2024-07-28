@@ -115,17 +115,8 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -211,17 +202,8 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		}
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -256,17 +238,8 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -425,17 +398,8 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -510,17 +474,8 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -577,17 +532,8 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -628,17 +574,8 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -679,17 +616,8 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 		return nil, nil, 0, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, 0, err
 	}
 
@@ -731,17 +659,8 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -790,17 +709,8 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -849,17 +759,8 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -933,17 +834,8 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 		return nil, nil, nil, -1, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, nil, -1, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, nil, -1, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, nil, -1, err
 	}
 
@@ -992,17 +884,8 @@ func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlo
 		return nil, nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, nil, err
 	}
 
@@ -1046,17 +929,8 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 		return nil, nil, nil, inp.Index, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, nil, inp.Index, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, nil, inp.Index, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, nil, inp.Index, err
 	}
 

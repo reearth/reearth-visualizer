@@ -106,14 +106,8 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, *inp.SceneID.Ref())
+	err = updateProjectUpdatedAtByScene(ctx, layerSimple.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -196,17 +190,8 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 		return lid, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, l.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return lid, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return lid, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return lid, nil, err
 	}
 
@@ -252,17 +237,8 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -318,17 +294,8 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, l.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -380,17 +347,8 @@ func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, 
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -492,17 +450,8 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 		return nil, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, l.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -548,17 +497,8 @@ func (i *NLSLayer) MoveNLSInfoboxBlock(ctx context.Context, inp interfaces.MoveN
 		return inp.InfoboxBlockID, nil, -1, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return inp.InfoboxBlockID, nil, -1, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return inp.InfoboxBlockID, nil, -1, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return inp.InfoboxBlockID, nil, -1, err
 	}
 
@@ -604,17 +544,8 @@ func (i *NLSLayer) RemoveNLSInfoboxBlock(ctx context.Context, inp interfaces.Rem
 		return inp.InfoboxBlockID, nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return inp.InfoboxBlockID, nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return inp.InfoboxBlockID, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return inp.InfoboxBlockID, nil, err
 	}
 
@@ -650,17 +581,8 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -707,17 +629,8 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -782,17 +695,8 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nlslayer.Feature{}, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nlslayer.Feature{}, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nlslayer.Feature{}, err
 	}
 
@@ -848,17 +752,8 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 		return nlslayer.Feature{}, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nlslayer.Feature{}, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nlslayer.Feature{}, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nlslayer.Feature{}, err
 	}
 
@@ -898,17 +793,8 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 		return id.FeatureID{}, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, layer.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return id.FeatureID{}, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return id.FeatureID{}, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return id.FeatureID{}, err
 	}
 

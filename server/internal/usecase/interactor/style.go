@@ -71,17 +71,8 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, style.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, style.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -122,17 +113,8 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 		return nil, err
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, style.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, style.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -171,17 +153,8 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		return
 	}
 
-	scene, err := i.sceneRepo.FindByID(ctx, s.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, s.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return styleID, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, scene.Project())
-	if err != nil {
-		return styleID, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return styleID, err
 	}
 
@@ -217,17 +190,8 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 		return nil, err
 	}
 
-	scene, err := i.sceneRepo.FindByID(ctx, style.Scene())
+	err = updateProjectUpdatedAtByScene(ctx, style.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	prj, err := i.projectRepo.FindByID(ctx, scene.Project())
-	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 

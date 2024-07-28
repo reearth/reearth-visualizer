@@ -265,12 +265,8 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -358,12 +354,8 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		return nil, nil, err2
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, scene.Project())
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), i.projectRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -419,12 +411,8 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -473,12 +461,8 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 		return nil, err2
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, scene.Project())
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), i.projectRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
@@ -528,12 +512,8 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		return nil, nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -577,12 +557,8 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 		return nil, nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, nil, err
 	}
 
@@ -617,12 +593,8 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 		return nil, err
 	}
 
-	prj, err := i.projectRepo.FindByID(ctx, s.Project())
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
 	if err != nil {
-		return nil, err
-	}
-
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
 		return nil, err
 	}
 
