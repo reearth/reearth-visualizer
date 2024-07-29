@@ -8,15 +8,24 @@ export type ModalPanelProps = {
   children: ReactNode;
   actions?: ReactNode;
   onCancel?: () => void;
+  isHeader?: boolean;
 };
 
-export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, onCancel }) => {
+export const ModalPanel: FC<ModalPanelProps> = ({
+  title,
+  children,
+  actions,
+  onCancel,
+  isHeader,
+}) => {
   return (
     <Wrapper>
-      <HeaderWrapper>
-        <Title>{title}</Title>
-        <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
-      </HeaderWrapper>
+      {isHeader && (
+        <HeaderWrapper>
+          <Title>{title}</Title>
+          <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
+        </HeaderWrapper>
+      )}
       <Content>{children}</Content>
       {actions && <ActionWrapper>{actions}</ActionWrapper>}
     </Wrapper>
@@ -63,3 +72,5 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   alignItems: "flex-start",
   gap: theme.spacing.normal,
 }));
+
+export default ModalPanel;

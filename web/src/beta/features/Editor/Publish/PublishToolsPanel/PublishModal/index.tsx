@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, FC } from "react";
 
 import {
   Button,
@@ -34,7 +34,7 @@ type Props = {
   onNavigateToSettings?: (page?: "story" | "public" | "asset" | "plugin" | undefined) => void;
 };
 
-const PublishModal: React.FC<Props> = ({
+const PublishModal: FC<Props> = ({
   isVisible,
   loading,
   publishing,
@@ -149,9 +149,15 @@ const PublishModal: React.FC<Props> = ({
     ],
   );
 
+  const isHeader = publishing !== "unpublishing";
+
   return (
     <Modal size="small" visible={isVisible}>
-      <ModalPanel title={modalTitleText} actions={actions} onCancel={handleClose}>
+      <ModalPanel
+        title={modalTitleText}
+        actions={actions}
+        onCancel={handleClose}
+        isHeader={isHeader}>
         {statusChanged ? (
           <Section>
             <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
@@ -255,62 +261,61 @@ const PublishModal: React.FC<Props> = ({
 
 export default PublishModal;
 
-const Section = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  gap: 8px;
-  margin-bottom: ${`${spacingSizes["normal"]}px`};
-  opacity: ${({ disabled }) => disabled && "0.6"};
-  cursor: ${({ disabled }) => disabled && "not-allowed"};
-`;
+const Section = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  padding: theme.spacing.super,
+  gap: theme.spacing.small,
+  marginBottom: `${spacingSizes["normal"]}px`,
+  opacity: disabled ? 0.6 : 1,
+  cursor: disabled ? "not-allowed" : "auto",
+}));
 
-const Subtitle = styled(Typography)`
-  text-align: left;
-`;
+const Subtitle = styled(Typography)({
+  textAlign: "left",
+});
 
-const UrlWrapper = styled.div<{ justify?: string }>`
-  display: flex;
-  justify-content: ${({ justify }) => justify ?? "center"};
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-`;
+const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => ({
+  display: "flex",
+  justifyContent: justify ?? "center",
+  alignItems: "center",
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: "4px",
+  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
+  cursor: "pointer",
+}));
 
-const OptionsToggle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 16px;
-  color: ${({ theme }) => theme.content.main};
-  cursor: pointer;
-  user-select: none;
-`;
+const OptionsToggle = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
+  color: theme.content.main,
+  cursor: "pointer",
+  userSelect: "none",
+}));
 
-const ArrowIcon = styled(Icon)<{ open?: boolean }>`
-  transition: transform 0.15s ease;
-  transform: ${({ open }) =>
-    open ? "translateY(10%) rotate(270deg)" : "translateY(0) rotate(0deg)"};
-`;
+const ArrowIcon = styled(Icon)<{ open?: boolean }>(({ open }) => ({
+  transition: "transform 0.15s ease",
+  transform: open ? "translateY(10%) rotate(270deg)" : "translateY(0) rotate(0deg)",
+}));
 
-const HideableSection = styled(Section)<{ showOptions?: boolean }>`
-  display: ${props => (props.showOptions ? null : "none")};
-`;
+const HideableSection = styled(Section)<{ showOptions?: boolean }>(({ showOptions }) => ({
+  display: showOptions ? "flex" : "none",
+}));
 
-const DomainText = styled.div`
-  margin-bottom: 8px;
-`;
+const DomainText = styled("div")(({ theme }) => ({
+  marginBottom: `${theme.spacing.small}px`,
+}));
 
-const Header = styled.div`
-  display: flex;
-  gap: 12px;
-  color: ${({ theme }) => theme.warning.main};
-  margin-bottom: 12px;
-`;
+const Header = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: "12px",
+  color: theme.warning.main,
+  marginBottom: "12px",
+}));
 
-const WarningIcon = styled(Icon)`
-  width: 24px;
-  height: 24px;
-`;
+const WarningIcon = styled(Icon)({
+  width: "24px",
+  height: "24px",
+});
