@@ -35,6 +35,7 @@ const General: FC<Props> = ({
         <InputGroup label={t("Layer Style")}>
           <Selector
             value={layerStyle}
+            maxHeight={250}
             options={layerStyleOption?.map(v => ({ label: v.name, value: v.id }))}
             onChange={onLayerStyleChange}
           />

@@ -188,6 +188,7 @@ const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelec
     isEditable && !disableSelection ? "pointer" : "default"};
   color: black;
   position: relative;
+  min-height: ${({ isEditable }) => (isEditable ? "28px" : 0)};
 `;
 
 const EditorPanel = styled.div`
