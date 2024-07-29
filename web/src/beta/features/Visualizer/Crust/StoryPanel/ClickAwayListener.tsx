@@ -20,7 +20,7 @@ interface Props extends HTMLAttributes<HTMLElement> {
   focusEvent?: FocusEvents;
   mouseEvent?: MouseEvents;
   touchEvent?: TouchEvents;
-  children: ReactElement<any>;
+  children: ReactElement;
 }
 
 const eventTypeMapping = {
@@ -94,7 +94,7 @@ const ClickAwayListener: FunctionComponent<Props> = ({
       if (!mountedRef.current) return;
 
       if (
-        (node.current && node.current.contains(event.target as Node)) ||
+        (node?.current && node.current.contains(event.target as Node)) ||
         bubbledEventTarget.current === event.target ||
         !nodeDocument.contains(event.target as Node)
       ) {
@@ -120,7 +120,7 @@ const ClickAwayListener: FunctionComponent<Props> = ({
 
   return enabled
     ? React.Children.only(
-        cloneElement(children as ReactElement<any>, {
+        cloneElement(children, {
           ref: handleChildRef,
           [mappedFocusEvent]: handleBubbledEvents(mappedFocusEvent),
           [mappedMouseEvent]: handleBubbledEvents(mappedMouseEvent),

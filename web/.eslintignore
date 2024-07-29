@@ -5,3 +5,4 @@
 !/.storybook
 /.storybook/public
 /src/services/gql/__gen__
+**.d.ts
