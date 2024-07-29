@@ -215,7 +215,13 @@ export function usePluginAPI({
   ]);
 
   const isMarshalable = useCallback(
-    (target: any) => defaultIsMarshalable(target) || !!mapRef?.current?.layers?.isLayer(target),
+    (target: any) => {
+      return (
+        defaultIsMarshalable(target) ||
+        !!mapRef?.current?.layers?.isLayer(target) ||
+        !!mapRef?.current?.layers?.isComputedLayer(target)
+      );
+    },
     [mapRef],
   );
 
