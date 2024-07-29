@@ -32,14 +32,6 @@ func NewPropertyWith(items ...*property.Property) *Property {
 	return r
 }
 
-func (r *Property) Filtered(f repo.SceneFilter) repo.Property {
-	return &Property{
-		// note data is shared between the source repo and mutex cannot work well
-		data: r.data,
-		f:    r.f.Merge(f),
-	}
-}
-
 func (r *Property) FindByID(ctx context.Context, id id.PropertyID) (*property.Property, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
@@ -61,36 +53,6 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 			continue
 		}
 		result = append(result, nil)
-	}
-	return result, nil
-}
-
-func (r *Property) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := property.List{}
-	for _, p := range r.data {
-		if p.IsDatasetLinked(sid, did) && r.f.CanRead(p.Scene()) {
-			result = append(result, p)
-		}
-	}
-	return result, nil
-}
-
-func (r *Property) FindLinkedAll(ctx context.Context, s id.SceneID) (property.List, error) {
-	if !r.f.CanRead(s) {
-		return nil, nil
-	}
-
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := property.List{}
-	for _, p := range r.data {
-		if p.Scene() == s && p.HasLinkedField() {
-			result = append(result, p)
-		}
 	}
 	return result, nil
 }

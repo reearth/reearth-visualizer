@@ -22,14 +22,12 @@ type nlsLayerJSON struct {
 type configJSON map[string]any
 
 type nlsInfoboxJSON struct {
-	ID       string                `json:"id"`
-	Property propertyJSON          `json:"property"`
-	Blocks   []nlsInfoboxBlockJSON `json:"blocks"`
+	ID     string                `json:"id"`
+	Blocks []nlsInfoboxBlockJSON `json:"blocks"`
 }
 
 type nlsInfoboxBlockJSON struct {
 	ID          string                  `json:"id"`
-	Property    propertyJSON            `json:"property"`
 	Plugins     map[string]propertyJSON `json:"plugins"`
 	ExtensionId string                  `json:"extensionId"`
 	PluginId    string                  `json:"pluginId"`
@@ -129,11 +127,8 @@ func (b *Builder) nlsInfoboxJSON(ctx context.Context, infobox *nlslayer.Infobox)
 		return nil
 	}
 
-	p, _ := b.ploader(ctx, infobox.Property())
-
 	return &nlsInfoboxJSON{
-		ID:       infobox.Id().String(),
-		Property: b.property(ctx, findProperty(p, infobox.Property())),
+		ID: infobox.Id().String(),
 		Blocks: lo.FilterMap(infobox.Blocks(), func(block *nlslayer.InfoboxBlock, _ int) (nlsInfoboxBlockJSON, bool) {
 			if block == nil {
 				return nlsInfoboxBlockJSON{}, false
@@ -144,10 +139,8 @@ func (b *Builder) nlsInfoboxJSON(ctx context.Context, infobox *nlslayer.Infobox)
 }
 
 func (b *Builder) nlsInfoboxBlockJSON(ctx context.Context, block nlslayer.InfoboxBlock) nlsInfoboxBlockJSON {
-	p, _ := b.ploader(ctx, block.Property())
 	return nlsInfoboxBlockJSON{
 		ID:          block.ID().String(),
-		Property:    b.property(ctx, findProperty(p, block.Property())),
 		Plugins:     nil,
 		ExtensionId: block.Extension().String(),
 		PluginId:    block.Plugin().String(),

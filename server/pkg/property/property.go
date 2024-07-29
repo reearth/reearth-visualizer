@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 type Property struct {
@@ -145,36 +143,6 @@ func (p *Property) ListItem(ptr *Pointer) (*Group, *GroupList) {
 	return nil, nil
 }
 
-func (p *Property) HasLinkedField() bool {
-	if p == nil {
-		return false
-	}
-	for _, f := range p.items {
-		if f.HasLinkedField() {
-			return true
-		}
-	}
-	return false
-}
-
-func (p *Property) Clone() *Property {
-	if p == nil {
-		return nil
-	}
-
-	items := make([]Item, 0, len(p.items))
-	for _, i := range p.items {
-		items = append(items, i.CloneItem())
-	}
-
-	return &Property{
-		id:     p.id,
-		schema: p.schema,
-		scene:  p.scene,
-		items:  items,
-	}
-}
-
 func (p *Property) Fields(ptr *Pointer) []*Field {
 	if p == nil || len(p.items) == 0 {
 		return nil
@@ -196,42 +164,6 @@ func (p *Property) RemoveFields(ptr *Pointer) (res bool) {
 		}
 	}
 	return
-}
-
-func (p *Property) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Field {
-	if p == nil {
-		return nil
-	}
-	res := []*Field{}
-	for _, g := range p.items {
-		res = append(res, g.FieldsByLinkedDataset(s, i)...)
-	}
-	return res
-}
-
-func (p *Property) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
-	if p == nil {
-		return false
-	}
-	for _, g := range p.items {
-		if g.IsDatasetLinked(s, i) {
-			return true
-		}
-	}
-	return false
-}
-
-func (p *Property) Datasets() []DatasetID {
-	if p == nil {
-		return nil
-	}
-	res := []DatasetID{}
-
-	for _, f := range p.items {
-		res = append(res, f.Datasets()...)
-	}
-
-	return res
 }
 
 func (p *Property) AddItem(i Item) bool {
@@ -310,13 +242,6 @@ func (p *Property) UpdateValue(ps *Schema, ptr *Pointer, v *Value) (*Field, *Gro
 	}
 
 	return field, gl, g, nil
-}
-
-func (p *Property) UnlinkAllByDataset(s DatasetSchemaID, ds DatasetID) {
-	fields := p.FieldsByLinkedDataset(s, ds)
-	for _, f := range fields {
-		f.Unlink()
-	}
 }
 
 func (p *Property) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, *GroupList, *Group, bool) {
@@ -503,25 +428,18 @@ func (p *Property) AutoLinkField(s *Schema, v ValueType, d DatasetSchemaID, df *
 		return
 	}
 
-	f, _, _, ok := p.GetOrCreateField(s, sf.Pointer())
-	if ok {
-		if ds == nil {
-			f.Link(NewLinks([]*Link{NewLinkFieldOnly(d, *df)}))
-		} else {
-			f.Link(NewLinks([]*Link{NewLink(*ds, d, *df)}))
-		}
-	}
+	p.GetOrCreateField(s, sf.Pointer())
 }
 
 // TODO: group migration
-func (p *Property) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset.Loader) {
-	if p == nil || dl == nil {
+func (p *Property) MigrateSchema(ctx context.Context, newSchema *Schema) {
+	if p == nil {
 		return
 	}
 	p.schema = newSchema.ID()
 
 	for _, f := range p.items {
-		f.MigrateSchema(ctx, newSchema, dl)
+		f.MigrateSchema(ctx, newSchema)
 	}
 
 	p.Prune()
@@ -530,9 +448,6 @@ func (p *Property) MigrateSchema(ctx context.Context, newSchema *Schema, dl data
 func (p *Property) MigrateDataset(q DatasetMigrationParam) {
 	if p == nil {
 		return
-	}
-	for _, f := range p.items {
-		f.MigrateDataset(q)
 	}
 	p.Prune()
 }

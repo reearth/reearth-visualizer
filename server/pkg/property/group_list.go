@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -48,54 +47,6 @@ func (g *GroupList) SchemaGroupRef() *SchemaGroupID {
 	return g.itemBase.SchemaGroup.Ref()
 }
 
-func (g *GroupList) HasLinkedField() bool {
-	if g == nil {
-		return false
-	}
-	for _, f := range g.groups {
-		if f.HasLinkedField() {
-			return true
-		}
-	}
-	return false
-}
-
-func (g *GroupList) Datasets() []DatasetID {
-	if g == nil {
-		return nil
-	}
-	res := []DatasetID{}
-
-	for _, f := range g.groups {
-		res = append(res, f.Datasets()...)
-	}
-
-	return res
-}
-
-func (g *GroupList) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Field {
-	if g == nil {
-		return nil
-	}
-	res := []*Field{}
-	for _, g := range g.groups {
-		res = append(res, g.FieldsByLinkedDataset(s, i)...)
-	}
-	return res
-}
-
-func (g *GroupList) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
-	if g == nil {
-		return false
-	}
-	for _, d := range g.groups {
-		if d.IsDatasetLinked(s, i) {
-			return true
-		}
-	}
-	return false
-}
-
 func (g *GroupList) IsEmpty() bool {
 	return g != nil && (g.groups == nil || len(g.groups) == 0)
 }
@@ -112,13 +63,13 @@ func (g *GroupList) Prune() (res bool) {
 	return
 }
 
-func (g *GroupList) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset.Loader) {
-	if g == nil || dl == nil {
+func (g *GroupList) MigrateSchema(ctx context.Context, newSchema *Schema) {
+	if g == nil {
 		return
 	}
 
 	for _, f := range g.groups {
-		f.MigrateSchema(ctx, newSchema, dl)
+		f.MigrateSchema(ctx, newSchema)
 	}
 
 	g.Prune()
@@ -437,15 +388,6 @@ func (g *GroupList) CreateAndAddListItem(ps *Schema, index *int) *Group {
 	}
 
 	return nil
-}
-
-func (g *GroupList) MigrateDataset(q DatasetMigrationParam) {
-	if g == nil {
-		return
-	}
-	for _, f := range g.groups {
-		f.MigrateDataset(q)
-	}
 }
 
 func (p *GroupList) ValidateSchema(ps *SchemaGroup) error {
