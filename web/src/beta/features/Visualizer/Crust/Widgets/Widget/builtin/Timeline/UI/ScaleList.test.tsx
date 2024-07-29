@@ -26,7 +26,6 @@ test("it should render memory and date label", () => {
     />,
   );
 
-  // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
   const children = Array.from(container.querySelector("div")?.children || []);
   expect(children.length).toBe(scaleCount + 1);
 
@@ -68,7 +67,6 @@ test("it should render memory and date label when scaleInterval is changed", () 
     />,
   );
 
-  // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
   const children = Array.from(container.querySelector("div")?.children || []);
   expect(children.length).toBe(scaleCount + 1);
 
@@ -107,7 +105,6 @@ test("it should render memory and date label when strongScaleMinutes is changed"
     />,
   );
 
-  // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
   const children = Array.from(container.querySelector("div")?.children || []);
   expect(children.length).toBe(scaleCount + 1);
 
