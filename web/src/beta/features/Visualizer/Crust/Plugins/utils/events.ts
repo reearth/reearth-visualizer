@@ -89,15 +89,12 @@ export function mergeEvents<E extends { [x: string]: any[] } = { [x: string]: an
   dest: EventEmitter<E>,
   types: (keyof E)[],
 ): () => void {
-  const cbs = types.reduce<{ [T in keyof E]: EventCallback<E[T]> }>(
-    (a, b) => ({
-      ...a,
-      [b]: (...args: E[typeof b]) => {
-        dest(b, ...args);
-      },
-    }),
-    {} as any,
-  );
+  const cbs = types.reduce<{ [T in keyof E]: EventCallback<E[T]> }>((a, b) => {
+    a[b] = (...args: E[typeof b]) => {
+      dest(b, ...args);
+    };
+    return a;
+  }, {} as any);
 
   for (const t of Object.keys(cbs)) {
     source.on(t, cbs[t]);
