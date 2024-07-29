@@ -5866,10 +5866,10 @@
     pbf "3.2.1"
     threads "1.7.0"
 
-"@reearth/core@0.0.7-alpha.3":
-  version "0.0.7-alpha.3"
-  resolved "https://registry.yarnpkg.com/@reearth/core/-/core-0.0.7-alpha.3.tgz#d752cca0257a823446490b13916b5c12d944a186"
-  integrity sha512-rGwEOHGqRTvBcg3JV14HlOynH6tApMd8vRfelw1sSdANp/PZ46xYrx4pyygLx/DTCPCXiKvaQxV4DPsg2F655g==
+"@reearth/core@0.0.7-alpha.4":
+  version "0.0.7-alpha.4"
+  resolved "https://registry.yarnpkg.com/@reearth/core/-/core-0.0.7-alpha.4.tgz#866d628320649f5f5aff6331663d27c7c092ae96"
+  integrity sha512-p4BYBdWHJ7JA8YImJ8s+EkEB5QEAieUfj8JiS6HHoqwdMhVTBNFW2wS3yxVuUh8hbCjCazPjtUbi9cgcLoS8ZA==
   dependencies:
     "@reearth/cesium-mvt-imagery-provider" "1.5.4"
     "@rot1024/use-transition" "1.0.0"
