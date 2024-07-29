@@ -6,7 +6,7 @@ export declare type Timeline = {
   speed?: number;
   stepType?: "rate" | "fixed";
   rangeType?: "unbounded" | "clamped" | "bounced";
-  readonly tick?: () => Date | void;
+  readonly tick?: () => Date | undefined;
   readonly play?: () => void;
   readonly pause?: () => void;
   readonly setTime?: (time: {

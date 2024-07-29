@@ -354,7 +354,7 @@ export default function ({
   useEffect(() => {
     window.reearth = value.reearth;
     return () => {
-      delete window.reearth;
+      window.reearth = undefined;
     };
   }, [value]);
 

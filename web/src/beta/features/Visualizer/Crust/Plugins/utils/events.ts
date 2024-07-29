@@ -42,7 +42,13 @@ export function events<E extends { [P in string]: any[] } = { [P in string]: any
     return ecb;
   };
   const deleteEventCallback = (type: keyof E, cb: EventCallback): void => {
-    callbacks.get(type)?.delete(cb);
+    const ecbs = callbacks.get(type);
+    if (ecbs) {
+      ecbs.delete(cb);
+      if (ecbs.size === 0) {
+        callbacks.delete(type);
+      }
+    }
   };
 
   const on = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {

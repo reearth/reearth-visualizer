@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import { TickEventCallback, TimelineCommitter } from "@reearth/core";
-
 import { TimelineEventType } from "../pluginAPI/types";
 import { Props } from "../types";
 import { events } from "../utils/events";
@@ -10,31 +8,17 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
   // events
   const [timelineEvents, emit] = useMemo(() => events<TimelineEventType>(), []);
 
-  const onTickEvent = useCallback(
-    (fn: TickEventCallback) => {
-      timelineManagerRef?.current?.onTick(fn);
-    },
-    [timelineManagerRef],
-  );
-
-  const onTimelineCommitEvent = useCallback(
-    (fn: (committer: TimelineCommitter) => void) => {
-      timelineManagerRef?.current?.onCommit(fn);
-    },
-    [timelineManagerRef],
-  );
-
   useEffect(() => {
-    onTickEvent(e => {
+    timelineManagerRef?.current?.onTick(e => {
       emit("tick", e);
     });
-  }, [emit, onTickEvent]);
+  }, [timelineManagerRef, emit]);
 
   useEffect(() => {
-    onTimelineCommitEvent(e => {
+    timelineManagerRef?.current?.onCommit(e => {
       emit("commit", e);
     });
-  }, [emit, onTimelineCommitEvent]);
+  }, [timelineManagerRef, emit]);
 
   const timelineEventsOn = useCallback(
     <T extends keyof TimelineEventType>(
@@ -123,7 +107,7 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
           committer: { source: "pluginAPI", id: "window" },
         });
       },
-      tick: timelineManagerRef?.current?.tick,
+      tick: timelineManagerRef?.current?.tick as (() => Date | undefined) | undefined,
       on: timelineEventsOn,
       off: timelineEventsOff,
     };

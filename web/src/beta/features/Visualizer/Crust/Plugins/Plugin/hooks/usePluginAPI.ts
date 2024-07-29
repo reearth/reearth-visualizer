@@ -89,26 +89,14 @@ export function usePluginAPI({
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
 
-  const viewerEventsRef =
-    useRef<[Events<ViewerEventType>, EventEmitter<ViewerEventType>, (() => void) | undefined]>();
-  const selectionModeEventsRef =
-    useRef<
-      [
-        Events<SelectionModeEventType>,
-        EventEmitter<SelectionModeEventType>,
-        (() => void) | undefined,
-      ]
-    >();
-  const cameraEventsRef =
-    useRef<[Events<CameraEventType>, EventEmitter<CameraEventType>, (() => void) | undefined]>();
-  const timelineEventsRef =
-    useRef<
-      [Events<TimelineEventType>, EventEmitter<TimelineEventType>, (() => void) | undefined]
-    >();
-  const layersEventsRef =
-    useRef<[Events<LayersEventType>, EventEmitter<LayersEventType>, (() => void) | undefined]>();
-  const sketchEventsRef =
-    useRef<[Events<SketchEventType>, EventEmitter<SketchEventType>, (() => void) | undefined]>();
+  const useEventRef = <T extends { [x: string]: any[] }>() =>
+    useRef<[Events<T>, EventEmitter<T>, (() => void) | undefined]>();
+  const viewerEventsRef = useEventRef<ViewerEventType>();
+  const selectionModeEventsRef = useEventRef<SelectionModeEventType>();
+  const cameraEventsRef = useEventRef<CameraEventType>();
+  const timelineEventsRef = useEventRef<TimelineEventType>();
+  const layersEventsRef = useEventRef<LayersEventType>();
+  const sketchEventsRef = useEventRef<SketchEventType>();
 
   const uiEvents = useRef<[Events<UIEventType>, EventEmitter<UIEventType>]>();
   const modalEvents = useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>();
@@ -171,6 +159,12 @@ export function usePluginAPI({
     ctx?.pluginInstances,
     widget?.id,
     block?.id,
+    viewerEventsRef,
+    selectionModeEventsRef,
+    cameraEventsRef,
+    timelineEventsRef,
+    layersEventsRef,
+    sketchEventsRef,
     pluginMessageSender,
   ]);
 
@@ -185,6 +179,14 @@ export function usePluginAPI({
     viewerEventsRef.current = undefined;
     selectionModeEventsRef.current?.[2]?.();
     selectionModeEventsRef.current = undefined;
+    cameraEventsRef.current?.[2]?.();
+    cameraEventsRef.current = undefined;
+    timelineEventsRef.current?.[2]?.();
+    timelineEventsRef.current = undefined;
+    layersEventsRef.current?.[2]?.();
+    layersEventsRef.current = undefined;
+    sketchEventsRef.current?.[2]?.();
+    sketchEventsRef.current = undefined;
 
     if (modalVisible) {
       onPluginModalShow?.();
@@ -204,6 +206,12 @@ export function usePluginAPI({
     widget?.id,
     block?.id,
     ctx?.pluginInstances,
+    viewerEventsRef,
+    selectionModeEventsRef,
+    cameraEventsRef,
+    timelineEventsRef,
+    layersEventsRef,
+    sketchEventsRef,
   ]);
 
   const isMarshalable = useCallback(
@@ -237,8 +245,8 @@ export function usePluginAPI({
             ...rawBlock,
             property: rawBlock.propertyForPluginAPI,
           };
-          delete block.propertyForPluginAPI;
-          delete block.propertyItemsForPluginBlock;
+          block.propertyForPluginAPI = undefined;
+          block.propertyItemsForPluginBlock = undefined;
           return block;
         },
         getLayer,
@@ -392,6 +400,7 @@ export function usePluginAPI({
     widget?.id,
     block?.id,
     externalRef,
+    viewerEventsRef,
     getBlock,
     getLayer,
     getWidget,
