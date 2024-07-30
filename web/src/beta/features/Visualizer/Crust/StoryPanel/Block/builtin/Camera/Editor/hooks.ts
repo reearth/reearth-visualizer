@@ -83,7 +83,7 @@ export default ({
   const debounceOnUpdate = useMemo(() => debounce(handleUpdate, 500), [handleUpdate]);
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, value: title?.value ?? t("New Camera Button") })),
+    () => items.map(({ id, title }) => ({ id, title: title?.value ?? t("New Camera Button") })),
     [items, t],
   );
 
@@ -102,7 +102,7 @@ export default ({
   );
 
   const handleItemMove = useCallback(
-    ({ id }: { id: string }, index: number) => {
+    (id: string, index: number) => {
       if (!propertyId || !id) return;
 
       onPropertyItemMove?.(propertyId, "default", id, index);

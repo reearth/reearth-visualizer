@@ -1,5 +1,5 @@
 import { debounce } from "lodash-es";
-import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState } from "react";
+import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState, FC } from "react";
 
 import Markdown from "@reearth/beta/components/Markdown";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
@@ -11,7 +11,7 @@ export type Props = {
   onUpdate: (text: string) => void;
 };
 
-const MdBlockEditor: React.FC<Props> = ({ text, onUpdate }) => {
+const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const t = useT();
   const context = useContext(BlockContext);
@@ -37,12 +37,7 @@ const MdBlockEditor: React.FC<Props> = ({ text, onUpdate }) => {
   }, [value, context?.editMode]);
 
   return context?.editMode ? (
-    <StyledTextArea
-      ref={textareaRef}
-      placeholder={t("Add markdown text here")}
-      value={value}
-      onChange={onChange}
-    />
+    <StyledTextArea placeholder={t("Add markdown text here")} value={value} onChange={onChange} />
   ) : (
     <StyledMarkdown empty={!value}>{value || t("Add markdown text here")}</StyledMarkdown>
   );

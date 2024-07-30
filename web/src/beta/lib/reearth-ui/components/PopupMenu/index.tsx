@@ -20,6 +20,7 @@ export type PopupMenuItem = {
 export type PopupMenuProps = {
   label?: string | ReactNode;
   icon?: IconName;
+  iconColor?: string;
   menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
@@ -37,6 +38,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   extendTriggerWidth,
   placement,
   triggerOnHover,
+  iconColor,
   icon,
   size = "normal",
 }) => {
@@ -69,7 +71,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
               onClick?.(id);
               handlePopOver(false);
             }}>
-            {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
+            {icon && (
+              <Icon icon={icon} size="small" color={iconColor ? iconColor : theme.content.weak} />
+            )}
             {subItem ? (
               <PopupMenu label={title} menu={subItem} width={width} nested />
             ) : path ? (
@@ -139,7 +143,7 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
     borderRadius: `${theme.radius.small}px`,
     border: `1px solid ${theme.outline.weaker}`,
     width: width ? `${width}px` : DEFAULT_MENU_WIDTH,
-    maxHeight: "238px",
+    maxHeight: "250px",
     overflowY: "auto",
     margin: nested ? "-7px 0 0 2px" : "inherit",
   }),

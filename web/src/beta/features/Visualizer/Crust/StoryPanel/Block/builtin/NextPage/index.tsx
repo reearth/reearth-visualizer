@@ -1,16 +1,18 @@
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import { styled } from "@reearth/services/theme";
+import { Button } from "@reearth/beta/lib/reearth-ui";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { usePanelContext } from "../../../context";
 import { StoryBlock } from "../../../types";
+import { getIconName } from "../../../utils";
 
-const NextPage: React.FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected, ...props }) => {
+const NextPage: FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected, ...props }) => {
   const { pageIds, onJumpToPage } = usePanelContext();
 
+  const theme = useTheme();
   const handlePageChange = useCallback(() => {
     if (!pageId) return;
     const pageIndex = pageIds?.findIndex(id => id === pageId);
@@ -27,9 +29,12 @@ const NextPage: React.FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected,
       property={block?.property}
       {...props}>
       <Wrapper>
-        <Button onClick={handlePageChange}>
-          <StyledIcon icon={block?.extensionId} size={16} />
-        </Button>
+        <Button
+          icon={getIconName(block?.extensionId)}
+          iconButton
+          iconColor={theme.content.strong}
+          onClick={handlePageChange}
+        />
       </Wrapper>
     </BlockWrapper>
   );
@@ -37,29 +42,8 @@ const NextPage: React.FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected,
 
 export default NextPage;
 
-const Wrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: center;
-`;
-
-const StyledIcon = styled(Icon)`
-  transition: none;
-`;
-
-const Button = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px 12px;
-  border: 1px solid #2c2c2c;
-  border-radius: 6px;
-  transition: none;
-  cursor: pointer;
-
-  :hover {
-    background: #8d8d8d;
-    border: 1px solid #8d8d8d;
-    color: ${({ theme }) => theme.content.strong};
-  }
-`;
+const Wrapper = styled("div")(() => ({
+  display: "flex",
+  width: "100%",
+  justifyContent: "center",
+}));

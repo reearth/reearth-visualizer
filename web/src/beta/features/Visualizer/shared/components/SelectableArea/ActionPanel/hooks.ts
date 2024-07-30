@@ -1,6 +1,6 @@
 import { Dispatch, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
-import { getIcon } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
+import { getIconName } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { IconName } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 
@@ -59,7 +59,7 @@ export default ({
   }, [isPluginBlock, settingsTitle, contentSettings, t, setShowPadding, onRemove, handleRemove]);
 
   const actionItems: ActionItem[] = useMemo(() => {
-    const iconName = getIcon(icon);
+    const iconName = getIconName(icon);
     const menuItems: ActionItem[] = [
       {
         name: title ?? t("Block"),

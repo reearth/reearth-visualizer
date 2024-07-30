@@ -130,19 +130,14 @@ export const FieldComponent = ({
       />
     ) : field?.ui === "selection" || field?.choices ? (
       <SelectField
-        // options={field?.choices.map(({ key, title }: { key: string; title: string }) => ({
-        //   key,
-        //   label: title,
-        // }))}
-
         key={field.id}
         commonTitle={field.name}
         value={field?.value}
         description={field.description}
         options={
-          field?.choices?.map(({ key, label }: { key: string; label: string }) => ({
+          field?.choices.map(({ key, title }: { key: string; title: string }) => ({
             value: key,
-            label: label,
+            label: title,
           })) || []
         }
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}

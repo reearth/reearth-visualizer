@@ -30,10 +30,12 @@ const ListItem: FC<ItemProps> = ({
   const [localTitle, setLocalTitle] = useState(item.title);
   const [itemNameRenameId, setItemNameRenameId] = useState("");
 
-  const handleItemDelete = useCallback(() => {
-    if (!selectedItem) return;
-    onItemDelete?.(selectedItem);
-  }, [selectedItem, onItemDelete]);
+  const handleItemDelete = useCallback(
+    (id: string) => {
+      onItemDelete?.(id);
+    },
+    [onItemDelete],
+  );
 
   const optionsMenu = useMemo<PopupMenuItem[]>(() => {
     const menu: PopupMenuItem[] = [
@@ -41,7 +43,7 @@ const ListItem: FC<ItemProps> = ({
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
-        onClick: handleItemDelete,
+        onClick: () => handleItemDelete(item.id),
       },
     ];
 

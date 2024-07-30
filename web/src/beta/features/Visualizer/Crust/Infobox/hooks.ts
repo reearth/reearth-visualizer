@@ -8,6 +8,7 @@ export default ({
   infobox,
   isEditable,
   onBlockCreate,
+  onBlockMove,
 }: {
   infobox?: Infobox;
   isEditable?: boolean;
@@ -16,6 +17,7 @@ export default ({
     extensionId: string,
     index?: number | undefined,
   ) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number, blockId?: string) => void;
 }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [disableSelection, setDisableSelection] = useState(false);
@@ -23,6 +25,7 @@ export default ({
   const [infoboxBlocks, setInfoboxBlocks] = useState(infobox?.blocks ?? []);
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
+  const [isDragging, setIsDragging] = useState(false);
 
   // Will only be undefined when infobox is first created, so default to true
   const showInfobox = useMemo(
@@ -115,6 +118,25 @@ export default ({
     }
   }, [infobox?.featureId]);
 
+  const handleMoveEnd = useCallback(
+    async (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        setInfoboxBlocks(old => {
+          const items = [...old];
+          const currentIndex = old.findIndex(o => o.id === itemId);
+          if (currentIndex !== -1) {
+            const [movedItem] = items.splice(currentIndex, 1);
+            items.splice(newIndex, 0, movedItem);
+          }
+          return items;
+        });
+        await onBlockMove?.(itemId, newIndex);
+      }
+      setIsDragging(false);
+    },
+    [onBlockMove],
+  );
+
   return {
     wrapperRef,
     disableSelection,
@@ -126,10 +148,12 @@ export default ({
     gapField,
     positionField,
     editModeContext,
+    isDragging,
     setInfoboxBlocks,
     handleBlockOpen,
     handleBlockCreate,
     handleBlockSelect,
     handleBlockDoubleClick,
+    handleMoveEnd,
   };
 };

@@ -194,9 +194,10 @@ export const formatISO8601 = (time: string) => {
   return time.replace(" ", "");
 };
 
-export const getIcon = (icon?: string | IconName): IconName => {
+export const getIconName = (icon?: string | IconName): IconName => {
   switch (icon) {
     case "textStoryBlock":
+    case "textInfoboxBetaBlock":
       return "text";
     case "mdTextStoryBlock":
       return "fileMD";
@@ -216,6 +217,10 @@ export const getIcon = (icon?: string | IconName): IconName => {
       return "textT";
     case "storyPage":
       return "page";
+    case "propertyInfoboxBetaBlock":
+      return "listDashes";
+    case "imageInfoboxBetaBlock":
+      return "imageFilled";
     default:
       return "puzzlePiece";
   }
