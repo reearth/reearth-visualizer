@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useState } from "react";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Popup, Icon, Typography, IconName, PopupProps } from "@reearth/beta/lib/reearth-ui";
@@ -28,6 +28,8 @@ export type PopupMenuProps = {
   size?: "small" | "normal";
   placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
+  openMenu?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export const PopupMenu: FC<PopupMenuProps> = ({
@@ -40,21 +42,29 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   triggerOnHover,
   iconColor,
   icon,
+  openMenu = false,
   size = "normal",
+  onOpenChange,
 }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(openMenu);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
   const theme = useTheme();
+
+  useEffect(() => {
+    setOpen(openMenu);
+  }, [openMenu]);
 
   const handlePopOver = useCallback(
     (state?: boolean) => {
       if (state === undefined) {
         setOpen(!open);
+        onOpenChange?.(!open);
       } else {
         setOpen(state);
+        onOpenChange?.(state);
       }
     },
-    [open],
+    [onOpenChange, open],
   );
 
   const renderMenuItems = (menuItems: PopupMenuItem[]) => {

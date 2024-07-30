@@ -1,7 +1,13 @@
 import { Dispatch, FC, Fragment, MouseEvent, SetStateAction } from "react";
 
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import { Icon, IconName, Popup, PopupPanel } from "@reearth/beta/lib/reearth-ui";
+import {
+  Icon,
+  IconName,
+  Popup,
+  PopupMenu,
+  PopupMenuItem,
+  PopupPanel,
+} from "@reearth/beta/lib/reearth-ui";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
@@ -28,12 +34,10 @@ type Props = {
   overrideGroupId?: string;
   settingsTitle?: string;
   dragHandleClassName?: string;
-  popupItem: {
-    name: string;
-    icon: IconName;
-    onClick: () => void;
-  }[];
+  popupMenuItem: PopupMenuItem[];
+  openMenu?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
+  setOpenMenu: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onClick?: (e: any) => void;
   onPropertyUpdate?: (
@@ -57,6 +61,7 @@ type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  onPopupMenuClick?: (e: MouseEvent<Element, globalThis.MouseEvent>) => void;
 };
 
 const ActionPanel: FC<Props> = ({
@@ -70,15 +75,18 @@ const ActionPanel: FC<Props> = ({
   position,
   overrideGroupId,
   settingsTitle,
-  popupItem,
+  popupMenuItem,
   dragHandleClassName,
+  openMenu,
   setShowPadding,
+  setOpenMenu,
   onSettingsToggle,
   onClick,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
+  onPopupMenuClick,
 }) => (
   <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
     {dndEnabled && (
@@ -92,53 +100,65 @@ const ActionPanel: FC<Props> = ({
           !a.hide && (
             <Fragment key={idx}>
               {a.icon === "settingFilled" ? (
-                <Popup
-                  open={showSettings && isSelected}
-                  onOpenChange={onSettingsToggle}
-                  placement="bottom-start"
-                  offset={4}
-                  trigger={
-                    <OptionWrapper showPointer={!isSelected || !!a.onClick}>
-                      <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
-                      {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
-                    </OptionWrapper>
-                  }>
-                  <PopupContent>
-                    {showPadding ? (
-                      <PopupPanel
-                        title={settingsTitle}
-                        onCancel={() => setShowPadding(false)}
-                        width={200}>
-                        {propertyId && contentSettings && (
-                          <SettingsContent>
-                            <FieldsWrapper>
-                              {Object.keys(contentSettings).map((fieldId, index) => {
-                                const field = contentSettings[fieldId];
-                                const groupId = overrideGroupId || "panel";
-                                return (
-                                  <FieldComponent
-                                    key={index}
-                                    propertyId={propertyId}
-                                    groupId={groupId}
-                                    fieldId={fieldId}
-                                    field={field}
-                                    onPropertyUpdate={onPropertyUpdate}
-                                    onPropertyItemAdd={onPropertyItemAdd}
-                                    onPropertyItemMove={onPropertyItemMove}
-                                    onPropertyItemDelete={onPropertyItemDelete}
-                                  />
-                                );
-                              })}
-                            </FieldsWrapper>
-                          </SettingsContent>
-                        )}
-                      </PopupPanel>
-                    ) : (
-                      //need to use PopupMenu
-                      <PopoverMenuContent size="sm" items={popupItem} />
-                    )}
-                  </PopupContent>
-                </Popup>
+                <>
+                  <OptionsWrapper onClick={onPopupMenuClick}>
+                    <PopupMenu
+                      label={
+                        <OptionWrapper showPointer={!isSelected || !!a.onClick}>
+                          <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
+                          {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
+                        </OptionWrapper>
+                      }
+                      placement="bottom-end"
+                      menu={popupMenuItem}
+                      width={150}
+                      openMenu={openMenu}
+                      onOpenChange={setOpenMenu}
+                    />
+                  </OptionsWrapper>
+                  {showPadding && !openMenu && (
+                    <Popup
+                      open={showSettings && isSelected}
+                      onOpenChange={onSettingsToggle}
+                      placement="bottom-end"
+                      offset={16}>
+                      <PopupContent>
+                        <PopupPanel
+                          title={settingsTitle}
+                          onCancel={() => {
+                            setShowPadding(false);
+                            setOpenMenu(true);
+                            onSettingsToggle?.();
+                          }}
+                          width={200}>
+                          {propertyId && contentSettings && (
+                            <SettingsContent>
+                              <FieldsWrapper>
+                                {Object.keys(contentSettings).map((fieldId, index) => {
+                                  const field = contentSettings[fieldId];
+                                  const groupId = overrideGroupId || "panel";
+                                  return (
+                                    <FieldComponent
+                                      key={index}
+                                      propertyId={propertyId}
+                                      groupId={groupId}
+                                      fieldId={fieldId}
+                                      field={field}
+                                      onPropertyUpdate={onPropertyUpdate}
+                                      onPropertyItemAdd={onPropertyItemAdd}
+                                      onPropertyItemMove={onPropertyItemMove}
+                                      onPropertyItemDelete={onPropertyItemDelete}
+                                    />
+                                  );
+                                })}
+                              </FieldsWrapper>
+                            </SettingsContent>
+                          )}
+                        </PopupPanel>
+                      </PopupContent>
+                    </Popup>
+                  )}
+                </>
               ) : (
                 <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
                   <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
@@ -186,6 +206,10 @@ const BlockOptions = styled("div")<{
   display: "flex",
   alignItems: "center",
   height: "24px",
+}));
+
+const OptionsWrapper = styled("div")(() => ({
+  flexShrink: 0,
 }));
 
 const PopupContent = styled("div")(({ theme }) => ({

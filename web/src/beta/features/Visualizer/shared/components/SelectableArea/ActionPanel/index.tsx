@@ -63,18 +63,19 @@ const ActionPanel: FC<Props> = ({
   onRemove,
   ...actionProps
 }) => {
-  const { settingsTitle, popupItem, actionItems } = useHooks({
-    title,
-    icon,
-    isSelected,
-    editMode,
-    contentSettings,
-    isPluginBlock,
-    setShowPadding,
-    onEditModeToggle,
-    onSettingsToggle,
-    onRemove,
-  });
+  const { settingsTitle, popupMenuItem, actionItems, openMenu, setOpenMenu, handlePopupMenuClick } =
+    useHooks({
+      title,
+      icon,
+      isSelected,
+      editMode,
+      contentSettings,
+      isPluginBlock,
+      setShowPadding,
+      onEditModeToggle,
+      onSettingsToggle,
+      onRemove,
+    });
 
   return (
     <ActionPanelUI
@@ -84,7 +85,10 @@ const ActionPanel: FC<Props> = ({
       dragHandleClassName={dragHandleClassName}
       contentSettings={contentSettings}
       settingsTitle={settingsTitle}
-      popupItem={popupItem}
+      popupMenuItem={popupMenuItem}
+      openMenu={openMenu}
+      onPopupMenuClick={handlePopupMenuClick}
+      setOpenMenu={setOpenMenu}
       setShowPadding={setShowPadding}
       onSettingsToggle={onSettingsToggle}
       {...actionProps}

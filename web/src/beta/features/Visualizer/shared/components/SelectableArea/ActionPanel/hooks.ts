@@ -1,7 +1,7 @@
-import { Dispatch, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useCallback, useMemo, useState } from "react";
 
 import { getIconName } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
-import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { IconName, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 
 import type { ActionItem } from "../../ActionPanel";
@@ -38,25 +38,40 @@ export default ({
   }, [onRemove, onSettingsToggle]);
 
   const settingsTitle = useMemo(() => t("Spacing settings"), [t]);
+  const [openMenu, setOpenMenu] = useState(false);
 
-  const popupItem = useMemo(() => {
-    const menuItems: { name: string; icon: IconName; onClick: () => void }[] = [];
+  const popupMenuItem: PopupMenuItem[] = useMemo(() => {
+    const menuItems: PopupMenuItem[] = [];
     if (!isPluginBlock && contentSettings) {
       menuItems.push({
-        name: settingsTitle,
+        id: "padding",
+        title: settingsTitle,
         icon: "padding",
-        onClick: () => setShowPadding(true),
+        onClick: () => {
+          setShowPadding(true);
+          onSettingsToggle?.();
+        },
       });
     }
     if (onRemove) {
       menuItems.push({
-        name: t("Remove"),
+        id: "delete",
+        title: t("Remove"),
         icon: "trash",
         onClick: handleRemove,
       });
     }
     return menuItems;
-  }, [isPluginBlock, settingsTitle, contentSettings, t, setShowPadding, onRemove, handleRemove]);
+  }, [
+    isPluginBlock,
+    contentSettings,
+    onRemove,
+    settingsTitle,
+    setShowPadding,
+    onSettingsToggle,
+    t,
+    handleRemove,
+  ]);
 
   const actionItems: ActionItem[] = useMemo(() => {
     const iconName = getIconName(icon);
@@ -86,9 +101,16 @@ export default ({
     return menuItems;
   }, [title, icon, isSelected, editMode, contentSettings, t, onEditModeToggle, onSettingsToggle]);
 
+  const handlePopupMenuClick = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+  }, []);
+
   return {
     settingsTitle,
-    popupItem,
+    popupMenuItem,
     actionItems,
+    openMenu,
+    handlePopupMenuClick,
+    setOpenMenu,
   };
 };
