@@ -9,6 +9,8 @@ export type ModalPanelProps = {
   actions?: ReactNode;
   onCancel?: () => void;
   isHeader?: boolean;
+  darkGrayBgColor?: boolean;
+  showBorder?: boolean;
 };
 
 export const ModalPanel: FC<ModalPanelProps> = ({
@@ -17,9 +19,11 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   actions,
   onCancel,
   isHeader,
+  darkGrayBgColor = false,
+  showBorder = true,
 }) => {
   return (
-    <Wrapper>
+    <Wrapper darkGrayBgColor={darkGrayBgColor}>
       {isHeader && (
         <HeaderWrapper>
           <Title>{title}</Title>
@@ -27,15 +31,16 @@ export const ModalPanel: FC<ModalPanelProps> = ({
         </HeaderWrapper>
       )}
       <Content>{children}</Content>
-      {actions && <ActionWrapper>{actions}</ActionWrapper>}
+      {actions && <ActionWrapper showBorder={showBorder}>{actions}</ActionWrapper>}
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")<{ darkGrayBgColor: boolean }>(({ theme, darkGrayBgColor }) => ({
   display: "flex",
   flexDirection: "column",
-  background: theme.bg.transparentBlack,
+  background: darkGrayBgColor ? theme.bg[1] : theme.bg.transparentBlack,
+  borderRadius: theme.radius.large,
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
@@ -62,7 +67,7 @@ const Content = styled("div")(() => ({
   userSelect: "none",
 }));
 
-const ActionWrapper = styled("div")(({ theme }) => ({
+const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorder }) => ({
   padding: theme.spacing.normal,
   background: theme.bg[1],
   borderBottomRightRadius: theme.radius.large,
@@ -70,6 +75,7 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   display: "flex",
   alignItems: "flex-start",
+  borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
   gap: theme.spacing.normal,
 }));
 

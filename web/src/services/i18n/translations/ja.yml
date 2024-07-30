@@ -163,8 +163,7 @@ Search engine indexing: 検索可能にする
 Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
 Unpublishing: 非公開
 Your project will be unpublished.: プロジェクトを非公開にする
-This means that anybody with the URL will become unable to view this project.: URLを知っている人でもこのプロジェクトを見ることができなくなります。
-'**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
+This means that anybody with the URL will become unable to view this project. This includes websites where this project is embedded.: URLを知っている人でもこのプロジェクトを見ることができなくなります。このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。
 Page Settings: ページ設定
 All Layers: 全てのレイヤー
 Untitled: タイトルなし

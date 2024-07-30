@@ -56,12 +56,10 @@ const PublishModal: FC<Props> = ({
     statusChanged,
     alias,
     validation,
-    showOptions,
     handlePublish,
     handleClose,
     handleCopyToClipBoard,
     handleSearchIndexChange,
-    setOptions,
   } = useHooks(
     publishing,
     publishStatus,
@@ -149,7 +147,7 @@ const PublishModal: FC<Props> = ({
     ],
   );
 
-  const isHeader = publishing !== "unpublishing";
+  const isPublishing = publishing !== "unpublishing";
 
   return (
     <Modal size="small" visible={isVisible}>
@@ -157,7 +155,9 @@ const PublishModal: FC<Props> = ({
         title={modalTitleText}
         actions={actions}
         onCancel={handleClose}
-        isHeader={isHeader}>
+        darkGrayBgColor={true}
+        showBorder={isPublishing}
+        isHeader={isPublishing}>
         {statusChanged ? (
           <Section>
             <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
@@ -199,11 +199,9 @@ const PublishModal: FC<Props> = ({
             </div>
           </Section>
         ) : publishing !== "unpublishing" ? (
-          <>
-            <Section>
-              <Typography size="body">{updateDescriptionText}</Typography>
-            </Section>
-            <Section>
+          <Section>
+            <Typography size="body">{updateDescriptionText}</Typography>
+            <DomainWrapper>
               <Typography size="footnote">{t("Publish domain")}</Typography>
               {url && alias && (
                 <UrlWrapper onClick={() => window.open(purl, "_blank")}>
@@ -212,46 +210,36 @@ const PublishModal: FC<Props> = ({
                   </Typography>
                 </UrlWrapper>
               )}
-            </Section>
-            <OptionsToggle onClick={() => setOptions(!showOptions)}>
-              <Typography size="footnote">{t("More options")}</Typography>
-              <ArrowIcon icon="triangle" size="small" open={showOptions} />
-            </OptionsToggle>
-            <HideableSection showOptions={showOptions}>
-              <div>
-                <DomainText>
-                  <Typography size="footnote">
-                    {t("Need to change domain related settings?")}
-                  </Typography>
-                </DomainText>
-                <Button
-                  size="small"
-                  onClick={() => onNavigateToSettings?.("public")}
-                  title={t("Go to settings")}
-                />
-              </div>
-              <SwitchField
-                commonTitle={t("Search engine indexing")}
-                description={t("Page will be available as result on search engines")}
-                onChange={handleSearchIndexChange}
+            </DomainWrapper>
+            <div>
+              <DomainText>
+                <Typography size="footnote">
+                  {t("Need to change domain related settings?")}
+                </Typography>
+              </DomainText>
+              <Button
+                size="small"
+                onClick={() => onNavigateToSettings?.("public")}
+                title={t("Go to settings")}
               />
-            </HideableSection>
-          </>
+            </div>
+            <SwitchField
+              commonTitle={t("Search engine indexing")}
+              description={t("Page will be available as result on search engines")}
+              onChange={handleSearchIndexChange}
+            />
+          </Section>
         ) : (
           <Section>
             <Header>
               <WarningIcon icon="warning" />
-              <Typography size="h5" weight="bold">
-                {t("Unpublishing")}
-              </Typography>
             </Header>
             <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
             <Subtitle size="body">
-              {t("This means that anybody with the URL will become unable to view this project.")}
+              {t(
+                "This means that anybody with the URL will become unable to view this project. This includes websites where this project is embedded.",
+              )}
             </Subtitle>
-            <Typography size="body" color={theme.warning.main}>
-              {t("**Warning**: This includes websites where this project is embedded.")}
-            </Typography>
           </Section>
         )}
       </ModalPanel>
@@ -264,8 +252,8 @@ export default PublishModal;
 const Section = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: theme.spacing.super,
-  gap: theme.spacing.small,
+  padding: theme.spacing.normal,
+  gap: theme.spacing.large,
   marginBottom: `${spacingSizes["normal"]}px`,
   opacity: disabled ? 0.6 : 1,
   cursor: disabled ? "not-allowed" : "auto",
@@ -274,6 +262,12 @@ const Section = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => (
 const Subtitle = styled(Typography)({
   textAlign: "left",
 });
+
+const DomainWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+}));
 
 const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => ({
   display: "flex",
@@ -285,34 +279,14 @@ const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => (
   cursor: "pointer",
 }));
 
-const OptionsToggle = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-  color: theme.content.main,
-  cursor: "pointer",
-  userSelect: "none",
-}));
-
-const ArrowIcon = styled(Icon)<{ open?: boolean }>(({ open }) => ({
-  transition: "transform 0.15s ease",
-  transform: open ? "translateY(10%) rotate(270deg)" : "translateY(0) rotate(0deg)",
-}));
-
-const HideableSection = styled(Section)<{ showOptions?: boolean }>(({ showOptions }) => ({
-  display: showOptions ? "flex" : "none",
-}));
-
 const DomainText = styled("div")(({ theme }) => ({
   marginBottom: `${theme.spacing.small}px`,
 }));
 
 const Header = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: "12px",
+  gap: theme.spacing.normal,
   color: theme.warning.main,
-  marginBottom: "12px",
 }));
 
 const WarningIcon = styled(Icon)({

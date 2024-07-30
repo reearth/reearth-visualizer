@@ -58,3 +58,24 @@ export const MultipleActions: Story = {
     ),
   },
 };
+
+export const DarkGrayBackground: Story = {
+  render: args => {
+    return (
+      <div style={{ width: "490px" }}>
+        <ModalPanel {...args} />
+      </div>
+    );
+  },
+  args: {
+    title: "Modal Panel Title",
+    darkGrayBgColor: true,
+    children: <MockChild />,
+    actions: (
+      <>
+        <Button size="normal" title="Cancel" />
+        <Button size="normal" title="Apply" appearance="primary" />
+      </>
+    ),
+  },
+};
