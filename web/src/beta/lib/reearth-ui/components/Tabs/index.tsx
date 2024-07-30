@@ -118,4 +118,6 @@ const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
   minHeight: 0,
   flex: 1,
+  height: "auto",
+  overflowY: "auto",
 }));

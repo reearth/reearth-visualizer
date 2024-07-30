@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import NumberField from "@reearth/beta/components/fields/NumberField";
-import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
-import TextField from "@reearth/beta/components/fields/TextField";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import URLField from "@reearth/beta/components/fields/URLField";
+import { AssetField, InputField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
+import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
@@ -58,32 +55,32 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     [],
   );
   return field?.type === "Text" ? (
-    <TextField
+    <InputField
       key={field?.id}
-      name={field?.title}
+      commonTitle={field?.title}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
-      onChange={handleChange}
+      onBlur={handleChange}
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
       key={field?.id}
-      name={field?.title}
+      commonTitle={field?.title}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
-      onChange={handleChange}
+      onBlur={handleChange}
     />
   ) : field?.type === "Asset" ? (
-    <URLField
+    <AssetField
       key={field?.id}
-      name={field?.title}
+      commonTitle={field?.title}
       entityType="image"
       fileType={"asset"}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
-    <URLField
+    <AssetField
       key={field?.id}
-      name={field?.title}
+      commonTitle={field?.title}
       entityType="file"
       fileType={"URL"}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
@@ -92,15 +89,15 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
       key={field?.id}
-      name={field?.title}
+      commonTitle={field?.title}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
-      onChange={handleChange}
+      onBlur={handleChange}
     />
   ) : field?.type === "Boolean" ? (
-    <ToggleField
+    <SwitchField
       key={field?.id}
-      name={field?.title}
-      checked={getDynamicValue(selectedFeature, field.title, field.value)}
+      commonTitle={field?.title}
+      value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : (
