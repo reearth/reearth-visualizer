@@ -1,7 +1,7 @@
-import { ReactNode, createContext, memo, useCallback } from "react";
+import { FC, ReactNode, createContext, memo, useCallback } from "react";
 
-import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
-import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { FlyTo, useVisualizer } from "@reearth/core";
 import { Item } from "@reearth/services/api/propertyApi/utils";
@@ -30,6 +30,7 @@ type Props = {
   children?: ReactNode;
   propertyId?: string;
   property?: any;
+  dragHandleClassName?: string;
   pluginBlockPropertyItems?: Item[];
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
@@ -61,7 +62,7 @@ type Props = {
   ) => Promise<void>;
 };
 
-const BlockWrapper: React.FC<Props> = ({
+const BlockWrapper: FC<Props> = ({
   name,
   icon,
   isSelected,
@@ -74,6 +75,7 @@ const BlockWrapper: React.FC<Props> = ({
   settingsEnabled = true,
   minHeight,
   isPluginBlock,
+  dragHandleClassName,
   onClick,
   onBlockDoubleClick,
   onClickAway,
@@ -122,6 +124,7 @@ const BlockWrapper: React.FC<Props> = ({
         isSelected={isSelected}
         propertyId={propertyId}
         dndEnabled={dndEnabled}
+        dragHandleClassName={dragHandleClassName}
         showSettings={showSettings}
         contentSettings={isPluginBlock ? pluginBlockSettings : generalBlockSettings}
         isPluginBlock={isPluginBlock}
@@ -150,30 +153,32 @@ const BlockWrapper: React.FC<Props> = ({
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && !isPluginBlock && (
           <EditorPanel onClick={stopClickPropagation}>
-            {Object.keys(defaultSettings).map((fieldId, idx) => {
-              const field = defaultSettings[fieldId];
-              return (
-                <FieldComponent
-                  key={groupId + propertyId + idx}
-                  propertyId={propertyId}
-                  groupId={groupId}
-                  fieldId={fieldId}
-                  field={field}
-                  onPropertyUpdate={onPropertyUpdate}
-                  onPropertyItemAdd={onPropertyItemAdd}
-                  onPropertyItemMove={onPropertyItemMove}
-                  onPropertyItemDelete={onPropertyItemDelete}
-                />
-              );
-            })}
+            <FieldsWrapper>
+              {Object.keys(defaultSettings).map((fieldId, idx) => {
+                const field = defaultSettings[fieldId];
+                return (
+                  <FieldComponent
+                    key={groupId + propertyId + idx}
+                    propertyId={propertyId}
+                    groupId={groupId}
+                    fieldId={fieldId}
+                    field={field}
+                    onPropertyUpdate={onPropertyUpdate}
+                    onPropertyItemAdd={onPropertyItemAdd}
+                    onPropertyItemMove={onPropertyItemMove}
+                    onPropertyItemDelete={onPropertyItemDelete}
+                  />
+                );
+              })}
+            </FieldsWrapper>
           </EditorPanel>
         )}
         {editMode && propertyId && settingsEnabled && isPluginBlock && (
           <EditorPanel onClick={stopClickPropagation}>
             {pluginBlockPropertyItems?.map((i, idx) => (
-              <SidePanelSectionField title={i.title} key={idx}>
+              <Collapse title={i.title} key={idx}>
                 <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={handleFlyTo} />
-              </SidePanelSectionField>
+              </Collapse>
             ))}
           </EditorPanel>
         )}
@@ -184,28 +189,38 @@ const BlockWrapper: React.FC<Props> = ({
 
 export default memo(BlockWrapper);
 
-const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelection?: boolean }>`
-  display: flex;
-  padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
-  padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
-  padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
-  padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: ${({ isEditable, disableSelection }) =>
-    isEditable && !disableSelection ? "pointer" : "default"};
-  color: black;
-  position: relative;
-  min-height: ${({ isEditable }) => (isEditable ? "28px" : 0)};
-`;
+const Block = styled("div")<{
+  padding?: Spacing;
+  isEditable?: boolean;
+  disableSelection?: boolean;
+}>(({ padding, isEditable, disableSelection }) => ({
+  display: "flex",
+  paddingTop: padding?.top ? `${padding.top}px` : 0,
+  paddingBottom: padding?.bottom ? `${padding.bottom}px` : 0,
+  paddingLeft: padding?.left ? `${padding.left}px` : 0,
+  paddingRight: padding?.right ? `${padding.right}px` : 0,
+  cursor: isEditable && !disableSelection ? "pointer" : "default",
+  color: "black",
+  position: "relative",
+  minHeight: isEditable ? "28px" : 0,
+}));
 
-const EditorPanel = styled.div`
-  background: ${({ theme }) => theme.bg[1]};
-  color: ${({ theme }) => theme.content.main};
-  padding: 12px;
-`;
+const EditorPanel = styled("div")(({ theme }) => ({
+  padding: theme.spacing.normal,
+  color: theme.content.main,
+  background: theme.bg[1],
+}));
 
-const Overlay = styled.div<{ disableSelection?: boolean }>`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  ${({ disableSelection }) => !disableSelection && "cursor: pointer;"}
-`;
+const Overlay = styled("div")<{ disableSelection?: boolean }>(({ disableSelection }) => ({
+  position: "absolute",
+  height: "100%",
+  width: "100%",
+  cursor: !disableSelection ? "pointer" : "none",
+}));
+
+const FieldsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+  userSelect: "none",
+}));

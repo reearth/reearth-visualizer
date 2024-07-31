@@ -142,6 +142,7 @@ const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large,
+  userSelect: "none",
 }));
 
 const ValueWrapper = styled("div")(({ theme }) => ({

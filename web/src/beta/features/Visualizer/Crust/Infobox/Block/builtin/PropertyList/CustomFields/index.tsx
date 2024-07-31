@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import Template from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/Template";
 
 import { PropertyListItem } from "../ListEditor";
@@ -10,7 +12,7 @@ type Props = {
   properties?: PropertyListItem[];
 };
 
-const CustomFields: React.FC<Props> = ({ extensionId, properties }) => {
+const CustomFields: FC<Props> = ({ extensionId, properties }) => {
   const evaluatedProperties = useEvaluateProperties(properties);
 
   return (

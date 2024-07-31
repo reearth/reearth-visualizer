@@ -1,76 +1,82 @@
-import { useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
-import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import Icon from "@reearth/beta/components/Icon";
+import { Button, Icon, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 import { PropertyListItem } from ".";
 
 type Props = {
   item: PropertyListItem;
-  onKeyChange: (newValue?: string) => void;
-  onValueChange: (newValue?: string) => void;
+  handleClassName?: string;
+  onKeyBlur: (newValue?: string) => void;
+  onValueBlur: (newValue?: string) => void;
   onItemRemove: () => void;
 };
 
-const EditorItem: React.FC<Props> = ({ item, onKeyChange, onValueChange, onItemRemove }) => {
+const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, onItemRemove }) => {
   const [currentKeyValue, setCurrentKeyValue] = useState<string>(item.key);
   const [currentValue, setCurrentValue] = useState<string>(item.value);
 
-  const handleKeyChange = useCallback(
+  const handleKeyChange = useCallback((newValue: string) => {
+    setCurrentKeyValue(newValue);
+  }, []);
+
+  const handleKeyBlur = useCallback(
     (newValue: string) => {
-      setCurrentKeyValue(newValue);
-      onKeyChange(newValue);
+      onKeyBlur(newValue);
     },
-    [onKeyChange],
+    [onKeyBlur],
   );
 
-  const handleValueChange = useCallback(
+  const handleValueChange = useCallback((newValue: string) => {
+    setCurrentValue(newValue);
+  }, []);
+
+  const handleValueBlur = useCallback(
     (newValue: string) => {
-      setCurrentValue(newValue);
-      onValueChange(newValue);
+      onValueBlur(newValue);
     },
-    [onValueChange],
+    [onValueBlur],
   );
 
   return (
     <Field>
-      <HandleIcon icon="dndHandle" />
-      <StyledTextField value={currentKeyValue} onChange={handleKeyChange} />
-      <StyledTextField value={currentValue} onChange={handleValueChange} />
-      <StyledIcon icon="trash" onClick={onItemRemove} />
+      <HandleIcon icon="dotsSixVertical" className={handleClassName} />
+      <TextInput
+        size="small"
+        value={currentKeyValue}
+        onChange={handleKeyChange}
+        onBlur={handleKeyBlur}
+      />
+      <TextInput
+        size="small"
+        value={currentValue}
+        onChange={handleValueChange}
+        onBlur={handleValueBlur}
+      />
+      <Button icon="trash" iconButton appearance="simple" size="small" onClick={onItemRemove} />
     </Field>
   );
 };
 
 export default EditorItem;
 
-const Field = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-  width: 100%;
-  background: ${({ theme }) => theme.bg[2]};
-  color: ${({ theme }) => theme.content.main};
-  padding: 8px 4px;
-  border-radius: 4px;
-  box-sizing: border-box;
-`;
+const Field = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  alignSelf: "stretch",
+  width: "100%",
+  background: theme.bg[2],
+  color: theme.content.main,
+  gap: theme.spacing.micro,
+  padding: theme.spacing.micro,
+  borderRadius: theme.radius.smallest,
+}));
 
-const HandleIcon = styled(Icon)`
-  color: ${({ theme }) => theme.content.weak};
-  cursor: move;
-
-  &:hover {
-    color: ${({ theme }) => theme.content.main};
-  }
-`;
-
-const StyledTextField = styled(TextInput)`
-  width: 100%;
-`;
-
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
-`;
+const HandleIcon = styled(Icon)(({ theme }) => ({
+  color: theme.content.weak,
+  cursor: "move",
+  "&:hover": {
+    color: theme.content.main,
+  },
+}));

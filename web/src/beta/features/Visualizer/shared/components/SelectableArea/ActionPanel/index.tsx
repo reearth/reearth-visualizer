@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, SetStateAction } from "react";
+import { Dispatch, FC, MouseEvent, SetStateAction } from "react";
 
 import ActionPanelUI, { type ActionPosition } from "../../ActionPanel";
 
@@ -15,6 +15,7 @@ type Props = {
   editMode?: boolean;
   propertyId?: string;
   contentSettings?: any;
+  dragHandleClassName?: string;
   isPluginBlock?: boolean;
   dndEnabled?: boolean;
   position?: ActionPosition;
@@ -47,7 +48,7 @@ type Props = {
   ) => Promise<void>;
 };
 
-const ActionPanel: React.FC<Props> = ({
+const ActionPanel: FC<Props> = ({
   title,
   icon,
   isSelected,
@@ -55,34 +56,39 @@ const ActionPanel: React.FC<Props> = ({
   dndEnabled,
   contentSettings,
   isPluginBlock,
+  dragHandleClassName,
   setShowPadding,
   onEditModeToggle,
   onSettingsToggle,
   onRemove,
   ...actionProps
 }) => {
-  const { customDragSource, settingsTitle, popoverContent, actionItems } = useHooks({
-    title,
-    icon,
-    isSelected,
-    editMode,
-    contentSettings,
-    isPluginBlock,
-    setShowPadding,
-    onEditModeToggle,
-    onSettingsToggle,
-    onRemove,
-  });
+  const { settingsTitle, popupMenuItem, actionItems, openMenu, setOpenMenu, handlePopupMenuClick } =
+    useHooks({
+      title,
+      icon,
+      isSelected,
+      editMode,
+      contentSettings,
+      isPluginBlock,
+      setShowPadding,
+      onEditModeToggle,
+      onSettingsToggle,
+      onRemove,
+    });
 
   return (
     <ActionPanelUI
-      ref={customDragSource}
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
+      dragHandleClassName={dragHandleClassName}
       contentSettings={contentSettings}
       settingsTitle={settingsTitle}
-      popoverContent={popoverContent}
+      popupMenuItem={popupMenuItem}
+      openMenu={openMenu}
+      onPopupMenuClick={handlePopupMenuClick}
+      setOpenMenu={setOpenMenu}
       setShowPadding={setShowPadding}
       onSettingsToggle={onSettingsToggle}
       {...actionProps}

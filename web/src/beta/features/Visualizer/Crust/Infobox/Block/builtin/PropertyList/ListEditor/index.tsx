@@ -1,11 +1,11 @@
-import Button from "@reearth/beta/components/Button";
-import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import SelectField from "@reearth/beta/components/fields/SelectField";
-import Text from "@reearth/beta/components/Text";
+import { FC, useMemo } from "react";
+
+import { Button, DragAndDropList, Typography } from "@reearth/beta/lib/reearth-ui";
+import { SelectField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import useHooks, { ListItem } from "./hooks";
+import useHooks from "./hooks";
 import EditorItem from "./Item";
 
 export type DisplayTypeField = {
@@ -50,7 +50,10 @@ type Props = {
   ) => Promise<void>;
 };
 
-const ListEditor: React.FC<Props> = ({
+const CURRENT_PROPERTY_LIST_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-custom-properties-drag-handle";
+
+const ListEditor: FC<Props> = ({
   propertyId,
   displayTypeField,
   propertyListField,
@@ -61,52 +64,61 @@ const ListEditor: React.FC<Props> = ({
   const {
     displayOptions,
     currentPropertyList,
-    handleKeyChange,
-    handleValueChange,
+    handleKeyBlur,
+    handleValueBlur,
     handleDisplayTypeUpdate,
     handleItemAdd,
-    handleItemDrop,
+    handleMoveStart,
+    handleMoveEnd,
     handlePropertyValueRemove,
   } = useHooks({ propertyId, propertyListField, displayTypeField, onPropertyUpdate });
+
+  const DraggableCurrentPropertyList = useMemo(
+    () =>
+      currentPropertyList?.map((item, idx) => ({
+        id: item.id,
+        content: (
+          <EditorItem
+            key={item.id}
+            item={item}
+            onKeyBlur={handleKeyBlur(idx)}
+            handleClassName={CURRENT_PROPERTY_LIST_DRAG_HANDLE_CLASS_NAME}
+            onValueBlur={handleValueBlur(idx)}
+            onItemRemove={() => handlePropertyValueRemove(idx)}
+          />
+        ),
+      })),
+    [currentPropertyList, handleKeyBlur, handleValueBlur, handlePropertyValueRemove],
+  );
 
   return (
     <Wrapper>
       <SelectField
-        name={displayTypeField?.title}
+        commonTitle={displayTypeField?.title}
         value={displayTypeField?.value}
-        options={displayOptions}
+        options={displayOptions || []}
         onChange={handleDisplayTypeUpdate}
       />
       {propertyListField && currentPropertyList && currentPropertyList.length > 0 && (
         <>
-          <Text size="footnote">{propertyListField.title}</Text>
+          <Typography size="footnote">{propertyListField.title}</Typography>
           <FieldWrapper>
-            <DragAndDropList<ListItem>
-              uniqueKey="property-block"
-              gap={5}
-              items={currentPropertyList}
-              getId={item => item.id}
-              onItemDrop={handleItemDrop}
-              renderItem={(item, idx) => {
-                if (!currentPropertyList) return null;
-                return (
-                  <EditorItem
-                    key={item.id}
-                    item={item}
-                    onKeyChange={handleKeyChange(idx)}
-                    onValueChange={handleValueChange(idx)}
-                    onItemRemove={() => handlePropertyValueRemove(idx)}
-                  />
-                );
-              }}
+            <DragAndDropList
+              items={DraggableCurrentPropertyList}
+              onMoveStart={handleMoveStart}
+              onMoveEnd={handleMoveEnd}
             />
           </FieldWrapper>
         </>
       )}
       {displayTypeField?.value === "custom" && (
-        <StyledButton icon="plus" size="small" onClick={handleItemAdd}>
-          {t("New Field")}
-        </StyledButton>
+        <Button
+          title={t("New Field")}
+          icon="plus"
+          size="small"
+          onClick={handleItemAdd}
+          extendWidth
+        />
       )}
     </Wrapper>
   );
@@ -114,23 +126,19 @@ const ListEditor: React.FC<Props> = ({
 
 export default ListEditor;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: ${({ theme }) => theme.bg[1]};
-  padding: 12px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  background: theme.bg[1],
+  gap: theme.spacing.small,
+  padding: theme.spacing.normal,
+}));
 
-const FieldWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 4px;
-  align-items: center;
-  box-sizing: border-box;
-`;
-
-const StyledButton = styled(Button)`
-  box-sizing: border-box;
-`;
+const FieldWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  gap: theme.spacing.smallest,
+  alignItems: "center",
+  boxsizing: "border-box",
+}));
