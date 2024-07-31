@@ -43,21 +43,21 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
   );
 };
 
-const StyledTextArea = styled.textarea`
-  width: 100%;
-  resize: none;
-  overflow: hidden;
-  ${({ value }) => !value && "min-height: 115px;"}
-  border: none;
-  font-size: 14px;
-  padding: 0px;
-  outline: none;
-`;
+const StyledTextArea = styled("textarea")(() => ({
+  width: "100%",
+  resize: "none",
+  overflow: "hidden",
+  minHeight: "115px",
+  border: "none",
+  fontSize: "14px",
+  padding: 0,
+  outline: "none",
+}));
 
-const StyledMarkdown = styled(Markdown)<{ empty: boolean }>`
-  ${({ empty }) => empty && "min-height: 115px;"}
-  font-size: 14px;
-  opacity: ${({ empty }) => (!empty ? 1 : 0.6)};
-`;
+const StyledMarkdown = styled(Markdown)<{ empty: boolean }>(({ empty }) => ({
+  minHeight: empty ? "115px" : "0",
+  fontSize: "14px",
+  opacity: !empty ? 1 : 0.6,
+}));
 
 export default MdBlockEditor;

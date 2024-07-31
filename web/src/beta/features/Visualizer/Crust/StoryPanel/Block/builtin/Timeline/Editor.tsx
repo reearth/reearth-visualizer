@@ -1,6 +1,7 @@
+import Icon from "@reearth/beta/components/Icon";
 import useHooks from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
-import { Icon, Popup } from "@reearth/beta/lib/reearth-ui";
+import { Popup } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -94,20 +95,19 @@ const TimelineEditor = ({
     timelineValues,
   });
 
-  //need to change the icons
   return (
     <Wrapper ref={blockRef}>
       <TimelineWrapper isMinimized={isMinimized}>
         <TimelineControl isMinimized={isMinimized}>
           <StyledIcon activeBlock={isActive}>
-            <Icon icon="time" size="normal" />
+            <Icon icon="timelineStoryBlockSolid" size={16} />
           </StyledIcon>
           <PlayControl isMinimized={isMinimized}>
             <PlayButton
               isClicked={true}
               isPlaying={isPlayingReversed}
               onClick={toggleIsPlayingReversed}>
-              <Icon icon="triangle" size="normal" />
+              <Icon icon="timelinePlayLeft" size={14} />
             </PlayButton>
             <PlayButton
               isPlaying={isPause}
@@ -117,10 +117,10 @@ const TimelineEditor = ({
                   toggleIsPause();
                 }
               }}>
-              <Icon icon="rows" size="normal" />
+              <Icon icon="pause" size={14} />
             </PlayButton>
             <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
-              <Icon icon="triangle" size="normal" />
+              <Icon icon="timelinePlayRight" size={14} />
             </PlayButton>
           </PlayControl>
           <PopoverWrapper isMinimized={isMinimized}>
@@ -132,7 +132,7 @@ const TimelineEditor = ({
               trigger={
                 <InputWrapper onClick={handlePopOver}>
                   <Select>{selected && t(`${selected}`)}</Select>
-                  <ArrowIcon icon="caretDown" open={isOpen} size="normal" />
+                  <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
                 </InputWrapper>
               }>
               <SelectorWrapper>
@@ -187,7 +187,7 @@ const TimelineEditor = ({
           style={{
             left: `${sliderPosition}%`,
           }}>
-          <Icon icon="pencilFilled" />
+          <Icon icon="slider" />
         </IconWrapper>
       </TimelineSlider>
       <div />
