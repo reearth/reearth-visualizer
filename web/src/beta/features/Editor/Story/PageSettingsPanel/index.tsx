@@ -51,7 +51,7 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
                           onChange={() => handleLayerCheck(layer.id)}
                           value={checkedLayers.includes(layer.id)}
                         />
-                        <EntryItem icon="file" title={<Title>{layer.title}</Title>} disableHover />
+                        <EntryItem icon="file" title={layer.title} disableHover />
                       </Layer>
                     ))}
                   </LayerList>
@@ -121,5 +121,4 @@ const Title = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
-  maxWidth: "245px",
 }));
