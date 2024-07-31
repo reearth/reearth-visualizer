@@ -33,7 +33,7 @@
       {
         "name": "typescript-styled-plugin"
       }
-    ]
+    ],
   },
   "exclude":[
     "src/beta/lib/unsafeBuiltinPlugins"

@@ -1,4 +1,4 @@
-import { createUploadLink } from "apollo-upload-client";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 export default (endpoint: string) => {
   return createUploadLink({
