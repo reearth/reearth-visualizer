@@ -1,5 +1,4 @@
 import { AriaAttributes, AriaRole, CSSProperties, MouseEvent, memo, useMemo } from "react";
-// import SVG from "react-inlinesvg";
 
 import { ariaProps } from "@reearth/beta/utils/aria";
 import { styled } from "@reearth/services/theme";

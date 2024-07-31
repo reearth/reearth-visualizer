@@ -202,6 +202,7 @@ const Block = styled("div")<{
   cursor: isEditable && !disableSelection ? "pointer" : "default",
   color: "black",
   position: "relative",
+  minHeight: isEditable ? "28px" : 0,
 }));
 
 const EditorPanel = styled("div")(({ theme }) => ({
