@@ -307,7 +307,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)
 
 	// fetch scene
@@ -661,7 +661,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)
 
 	// fetch scene
@@ -762,7 +762,7 @@ func TestCustomProperties(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)

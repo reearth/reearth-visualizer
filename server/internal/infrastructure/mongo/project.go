@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"sort"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -92,7 +94,28 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 		})
 	}
 
-	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
+	projects, pageInfo, err := r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
+
+	if err != nil {
+		return projects, pageInfo, err
+	}
+
+	if uFilter.Sort != nil {
+		s := *uFilter.Sort
+		sort.SliceStable(projects, func(i, j int) bool {
+			switch s {
+			case project.SortTypeID:
+				return projects[i].ID().Compare(projects[j].ID()) < 0
+			case project.SortTypeUpdatedAt:
+				return projects[i].UpdatedAt().Before(projects[j].UpdatedAt())
+			case project.SortTypeName:
+				return strings.Compare(strings.ToLower(projects[i].Name()), strings.ToLower(projects[j].Name())) < 0
+			}
+			return false
+		})
+	}
+
+	return projects, pageInfo, err
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
