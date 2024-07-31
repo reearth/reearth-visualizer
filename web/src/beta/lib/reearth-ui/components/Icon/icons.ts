@@ -15,6 +15,7 @@ import Capture from "./Icons/Capture.svg?react";
 import CaretDoubleDown from "./Icons/CaretDoubleDown.svg?react";
 import CaretDoubleLeft from "./Icons/CaretDoubleLeft.svg?react";
 import CaretDoubleRight from "./Icons/CaretDoubleRight.svg?react";
+import CaretDoubleUp from "./Icons/CaretDoubleUp.svg?react";
 import CaretDown from "./Icons/CaretDown.svg?react";
 import CaretLeft from "./Icons/CaretLeft.svg?react";
 import CaretRight from "./Icons/CaretRight.svg?react";
@@ -71,6 +72,7 @@ import LinkSimple from "./Icons/LinkSimple.svg?react";
 import List from "./Icons/List.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
+import Lock from "./Icons/Lock.svg?react";
 import LToS from "./Icons/LToS.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
 import MapPin from "./Icons/MapPin.svg?react";
@@ -81,6 +83,7 @@ import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
 import Palette from "./Icons/Palette.svg?react";
 import Paperclip from "./Icons/Paperclip.svg?react";
+import PaperPlaneTilt from "./Icons/PaperPlaneTilt.svg?react";
 import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
@@ -143,6 +146,7 @@ export default {
   camera: Camera,
   cameraFilled: CameraFilled,
   capture: Capture,
+  caretDoubleUp: CaretDoubleUp,
   caretDoubleDown: CaretDoubleDown,
   caretDoubleLeft: CaretDoubleLeft,
   caretDoubleRight: CaretDoubleRight,
@@ -202,6 +206,7 @@ export default {
   listDashes: ListDashes,
   listDashesFilled: ListDashesFilled,
   list: List,
+  lock: Lock,
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,
   mapTrifold: MapTrifold,
@@ -211,6 +216,7 @@ export default {
   page: Page,
   palette: Palette,
   paperclip: Paperclip,
+  paperPlaneTilt: PaperPlaneTilt,
   pencilFilled: PencilFilled,
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,

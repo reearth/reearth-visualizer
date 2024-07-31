@@ -10,7 +10,6 @@ import {
 import { SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 
 import useHooks, { type PublishStatus } from "./hooks";
 
@@ -254,7 +253,6 @@ const Section = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => (
   flexDirection: "column",
   padding: theme.spacing.normal,
   gap: theme.spacing.large,
-  marginBottom: `${spacingSizes["normal"]}px`,
   opacity: disabled ? 0.6 : 1,
   cursor: disabled ? "not-allowed" : "auto",
 }));
