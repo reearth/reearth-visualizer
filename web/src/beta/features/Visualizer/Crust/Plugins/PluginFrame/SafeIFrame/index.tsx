@@ -1,5 +1,5 @@
 import composeRefs from "@seznam/compose-react-refs";
-import React, { IframeHTMLAttributes } from "react";
+import { IframeHTMLAttributes, ForwardRefRenderFunction, forwardRef } from "react";
 import type { RefObject } from "react";
 
 import useHook, { RefType, AutoResize as AutoResizeType } from "./hooks";
@@ -23,7 +23,7 @@ export type Props = {
   onAutoResized?: () => void;
 };
 
-const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
+const IFrame: ForwardRefRenderFunction<Ref, Props> = (
   {
     autoResize,
     className,
@@ -76,4 +76,4 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   ) : null;
 };
 
-export default React.forwardRef(IFrame);
+export default forwardRef(IFrame);

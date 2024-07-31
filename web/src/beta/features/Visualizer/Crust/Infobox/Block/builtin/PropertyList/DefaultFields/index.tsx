@@ -34,6 +34,6 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
 
 export default DefaultFields;
 
-const ObjectWrapper = styled.div`
-  margin-top: 8px;
-`;
+const ObjectWrapper = styled("div")(() => ({
+  marginTop: "8px",
+}));
