@@ -71,7 +71,7 @@ const BlockAddBar: FC<Props> = ({
           onOpenChange={onBlockOpen}
           label={<StyledIcon icon="plus" size="normal" />}
           size="normal"
-          width={150}
+          width={200}
           iconColor={theme.content.main}
           menu={items}
         />
