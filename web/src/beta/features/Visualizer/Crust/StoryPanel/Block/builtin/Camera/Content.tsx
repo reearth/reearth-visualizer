@@ -68,7 +68,7 @@ const Content: FC<Props> = ({
       <ButtonWrapper>
         {cameraButtons.map(({ title, color, bgColor, id }) => {
           return (
-            //This button will be updated later
+            //The button will be updated in future
             <StyledButton
               key={id}
               color={color?.value}

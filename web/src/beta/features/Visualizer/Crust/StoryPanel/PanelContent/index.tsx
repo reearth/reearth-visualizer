@@ -136,5 +136,5 @@ const PagesWrapper = styled("div")<{ showingIndicator?: boolean; isEditable?: bo
 );
 
 const PageGap = styled("div")<{ height?: number }>(({ height }) => ({
-  height: height ? height + "px" : "70vh",
+  height: height ? `${height}px` : "70vh",
 }));

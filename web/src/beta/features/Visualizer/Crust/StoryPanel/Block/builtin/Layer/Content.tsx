@@ -72,7 +72,7 @@ const Content: FC<Props> = ({
           const userSelected = id === blockContext.layerOverride?.extensionId;
           const buttonText = title?.value ?? t("New Layers Button");
           return (
-            //need to be updated
+            //will to be updated in future
             <StyledButton
               key={id}
               color={color?.value}
