@@ -1,3 +1,4 @@
+import { IconName } from "@reearth/beta/lib/reearth-ui";
 import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
 import type { Spacing } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
@@ -191,4 +192,36 @@ export const formatISO8601 = (time: string) => {
       .replace(" ", "");
   }
   return time.replace(" ", "");
+};
+
+export const getIconName = (icon?: string | IconName): IconName => {
+  switch (icon) {
+    case "textStoryBlock":
+    case "textInfoboxBetaBlock":
+      return "text";
+    case "mdTextStoryBlock":
+      return "fileMD";
+    case "imageStoryBlock":
+      return "image";
+    case "videoStoryBlock":
+      return "play";
+    case "cameraButtonStoryBlock":
+      return "camera";
+    case "showLayersStoryBlock":
+      return "layers";
+    case "timelineStoryBlock":
+      return "clock";
+    case "nextPageStoryBlock":
+      return "caretDoubleDown";
+    case "titleStoryBlock":
+      return "textT";
+    case "storyPage":
+      return "page";
+    case "propertyInfoboxBetaBlock":
+      return "listDashes";
+    case "imageInfoboxBetaBlock":
+      return "imageFilled";
+    default:
+      return "puzzlePiece";
+  }
 };

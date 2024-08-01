@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
@@ -10,7 +10,7 @@ import MdEditor from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
+const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
     [block?.property?.default?.text?.value],

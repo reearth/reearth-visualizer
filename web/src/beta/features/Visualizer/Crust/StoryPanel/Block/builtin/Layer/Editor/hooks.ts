@@ -52,12 +52,11 @@ export default ({
   const layers = useMemo(
     () =>
       visualizer.current?.layers?.layers()?.map(({ id, title }) => ({
-        key: id,
+        value: id,
         label: title ?? `Layer: ${id}`,
-      })),
+      })) || [],
     [visualizer],
   );
-
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
   const handlePropertyValueUpdate = useCallback(
@@ -81,7 +80,7 @@ export default ({
   const debounceOnUpdate = useMemo(() => debounce(handleUpdate, 500), [handleUpdate]);
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, value: title?.value ?? t("New Layers Button") })),
+    () => items.map(({ id, title }) => ({ id, title: title?.value ?? t("New Layers Button") })),
     [items, t],
   );
 
@@ -100,7 +99,7 @@ export default ({
   );
 
   const handleItemMove = useCallback(
-    ({ id }: { id: string }, index: number) => {
+    (id: string, index: number) => {
       if (!propertyId || !id) return;
 
       onPropertyItemMove?.(propertyId, "default", id, index);

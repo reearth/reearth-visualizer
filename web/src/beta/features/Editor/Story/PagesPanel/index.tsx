@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
@@ -17,10 +17,11 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
   const [isDragging, setIsDragging] = useState(false);
+  const [storyPageitems, setStoryPageitems] = useState(storyPages ?? []);
 
   const DraggableStoryPageItems = useMemo(
     () =>
-      storyPages?.map((storyPage, index) => ({
+      storyPageitems?.map((storyPage, index) => ({
         id: storyPage.id,
         content: (
           <PageItem
@@ -31,7 +32,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           />
         ),
       })),
-    [storyPages, isDragging],
+    [storyPageitems, isDragging],
   );
 
   const handleMoveStart = useCallback(() => {
@@ -39,14 +40,27 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   }, []);
 
   const handleMoveEnd = useCallback(
-    (itemId?: string, newIndex?: number) => {
+    async (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        handleStoryPageMove?.(itemId, newIndex);
+        setStoryPageitems(old => {
+          const items = [...old];
+          const currentIndex = old.findIndex(o => o.id === itemId);
+          if (currentIndex !== -1) {
+            const [movedItem] = items.splice(currentIndex, 1);
+            items.splice(newIndex, 0, movedItem);
+          }
+          return items;
+        });
+        await handleStoryPageMove?.(itemId, newIndex);
       }
       setIsDragging(false);
     },
     [handleStoryPageMove],
   );
+
+  useEffect(() => {
+    setStoryPageitems(storyPages ?? []);
+  }, [storyPages]);
 
   return (
     <Panel

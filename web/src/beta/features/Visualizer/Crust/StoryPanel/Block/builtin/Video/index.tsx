@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import VideoPlayer from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/builtin/Video/VideoPlayer";
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
@@ -7,7 +7,7 @@ import type { ValueTypes } from "@reearth/beta/utils/value";
 
 import { StoryBlock } from "../../../types";
 
-const VideoBlock: React.FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
+const VideoBlock: FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src?.value],

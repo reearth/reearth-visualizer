@@ -49,29 +49,29 @@ const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
   );
 };
 
-const Wrapper = styled.div<{ visible: boolean }>`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-  z-index: ${({ visible, theme }) =>
-    visible ? theme.zIndexes.visualizer.pluginModal : theme.zIndexes.hidden};
-  transition: opacity 0.25s;
-  opacity: ${({ visible }) => (visible ? "1" : "0")};
-`;
+const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
+  position: "absolute",
+  left: "50%",
+  top: " 50%",
+  transform: "translate(-50%, -50%)",
+  visibility: visible ? "visible" : "hidden",
+  zIndex: visible ? theme.zIndexes.visualizer.pluginModal : theme.zIndexes.hidden,
+  transition: "opacity 0.25s",
+  opacity: visible ? "1" : "0",
+}));
 
-const Background = styled.div<{ visible: boolean; background?: string }>`
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: ${({ background }) => background};
-  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-  z-index: ${({ visible, theme }) =>
-    visible ? theme.zIndexes.visualizer.pluginModal - 1 : theme.zIndexes.hidden};
-`;
+const Background = styled("div")<{ visible: boolean; background?: string }>(
+  ({ visible, background, theme }) => ({
+    display: "block",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: "100%",
+    height: "100%",
+    background: background,
+    visibility: visible ? "visible" : "hidden",
+    zIndex: visible ? theme.zIndexes.visualizer.pluginModal : theme.zIndexes.hidden,
+  }),
+);
 
 export default forwardRef(ModalContainer);

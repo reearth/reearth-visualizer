@@ -267,21 +267,21 @@ const Visualizer: FC<VisualizerProps> = ({
 
 export default Visualizer;
 
-const Wrapper = styled("div")<{ storyPanelPosition?: Position }>`
-  display: flex;
-  position: relative;
-  flex-direction: ${({ storyPanelPosition }) =>
-    storyPanelPosition === "right" ? "row-reverse" : "row"};
-  position: relative;
-  background: ${({ theme }) => theme.bg[0]};
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-`;
+const Wrapper = styled("div")<{ storyPanelPosition?: Position }>(
+  ({ storyPanelPosition, theme }) => ({
+    display: "flex",
+    position: "relative",
+    flexDirection: storyPanelPosition === "right" ? "row-reverse" : "row",
+    background: theme.bg[0],
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+  }),
+);
 
-const StoryWrapper = styled("div")`
-  position: relative;
-  display: flex;
-  height: 100%;
-  flex-shrink: 0;
-`;
+const StoryWrapper = styled("div")(() => ({
+  display: "flex",
+  position: "relative",
+  flexShrink: 0,
+  height: "100%",
+}));

@@ -1,7 +1,6 @@
-import ColorField from "@reearth/beta/components/fields/ColorField";
-import ListField from "@reearth/beta/components/fields/ListField";
-import SelectField from "@reearth/beta/components/fields/SelectField";
-import TextField from "@reearth/beta/components/fields/TextField";
+import { FC } from "react";
+
+import { ColorField, InputField, ListField, SelectField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -36,7 +35,7 @@ export type Props = {
   ) => Promise<void>;
 };
 
-const CameraBlockEditor: React.FC<Props> = ({
+const CameraBlockEditor: FC<Props> = ({
   items,
   propertyId,
   selected,
@@ -69,30 +68,31 @@ const CameraBlockEditor: React.FC<Props> = ({
     <EditorWrapper>
       <GroupWrapper>
         <ListField
-          name={t("Buttons List")}
+          commonTitle={t("Buttons List")}
           items={listItems}
-          addItem={handleItemAdd}
-          removeItem={handleItemRemove}
-          onItemDrop={handleItemMove}
           selected={selected}
-          onSelect={setSelected}
+          onItemAdd={handleItemAdd}
+          onItemDelete={handleItemRemove}
+          onItemMove={handleItemMove}
+          onItemSelect={setSelected}
+          isEditable={false}
           atLeastOneItem
         />
         <FieldGroup disabled={!editorProperties}>
-          <TextField
-            name={editorProperties?.title?.title}
+          <InputField
+            commonTitle={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
-            onChange={value => debounceOnUpdate(selected, "title", "string", value)}
+            onBlur={value => debounceOnUpdate(selected, "title", "string", value)}
           />
           <ColorField
-            name={editorProperties?.color?.title}
+            commonTitle={editorProperties?.color?.title}
             description={editorProperties?.color?.description}
             value={editorProperties?.color?.value}
             onChange={value => debounceOnUpdate(selected, "color", "string", value)}
           />
           <ColorField
-            name={editorProperties?.bgColor?.title}
+            commonTitle={editorProperties?.bgColor?.title}
             description={editorProperties?.bgColor?.description}
             value={editorProperties?.bgColor?.value}
             onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
@@ -102,37 +102,36 @@ const CameraBlockEditor: React.FC<Props> = ({
 
       <FieldGroup disabled={!editorProperties}>
         <SelectField
-          name={editorProperties?.showLayers?.title}
+          commonTitle={editorProperties?.showLayers?.title}
           description={editorProperties?.showLayers?.description}
           options={layers}
           value={editorProperties?.showLayers?.value}
           onChange={value => debounceOnUpdate(selected, "showLayers", "array", value)}
-          multiSelect
+          multiple
         />
       </FieldGroup>
     </EditorWrapper>
   );
 };
 
-const EditorWrapper = styled.div`
-  padding: 12px;
-  margin: 2px 0;
-  background: ${({ theme }) => theme.bg[1]};
-`;
+const EditorWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing.normal,
+  margin: `${theme.spacing.micro}px 0`,
+  background: theme.bg[1],
+}));
 
-const GroupWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 55% 42%;
-  grid-gap: 10px;
-`;
+const GroupWrapper = styled("div")(() => ({
+  display: "grid",
+  gridTemplateColumns: "55% 42%",
+  gridGap: "10px",
+}));
 
-const FieldGroup = styled.div<{ disabled: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
-  pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
-`;
-
+const FieldGroup = styled("div")<{ disabled: boolean }>(({ theme, disabled }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  opacity: disabled ? 0.6 : 1,
+  cursor: disabled ? "not-allowed" : "inherit",
+  pointerEvents: disabled ? "none" : "inherit",
+}));
 export default CameraBlockEditor;

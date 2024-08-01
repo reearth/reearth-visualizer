@@ -93,7 +93,7 @@ const TextAreaWrapper = styled("div")<{
       ? `1px solid ${theme.outline.weak}`
       : `1px solid ${theme.select.main}`,
   borderRadius: theme.radius.small,
-  background: theme.bg[1],
+  background: "transparent",
   display: "flex",
   boxShadow: theme.shadow.input,
 }));
