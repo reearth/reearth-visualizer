@@ -34,11 +34,11 @@ const config: StorybookConfig = {
             find: "crypto",
             replacement: "crypto-js",
           },
-          // quickjs-emscripten
           {
             find: "@reearth/core",
             replacement: resolve(__dirname, "..", "node_modules/@reearth/core"),
           },
+          // quickjs-emscripten
           {
             find: "@reearth",
             replacement: resolve(__dirname, "..", "src"),
