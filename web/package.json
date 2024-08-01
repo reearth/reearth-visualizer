@@ -115,6 +115,7 @@
         "aws-amplify": "5.3.11",
         "axios": "1.6.0",
         "cesium": "1.118.0",
+        "core-js": "3.33.2",
         "crypto-js": "4.2.0",
         "dayjs": "1.11.10",
         "formik": "2.4.5",

@@ -7962,6 +7962,7 @@ __metadata:
     aws-amplify: "npm:5.3.11"
     axios: "npm:1.6.0"
     cesium: "npm:1.118.0"
+    core-js: "npm:3.33.2"
     crypto-js: "npm:4.2.0"
     dayjs: "npm:1.11.10"
     del-cli: "npm:5.1.0"
@@ -14062,6 +14063,13 @@ __metadata:
   dependencies:
     browserslist: "npm:^4.23.0"
   checksum: 10c0/4e2da9c900f2951a57947af7aeef4d16f2c75d7f7e966c0d0b62953f65225003ade5e84d3ae98847f65b24c109c606821d9dc925db8ca418fb761e7c81963c2a
+  languageName: node
+  linkType: hard
+
+"core-js@npm:3.33.2":
+  version: 3.33.2
+  resolution: "core-js@npm:3.33.2"
+  checksum: 10c0/d6a56ad3e134846c805ce936788dd58cb51e861f173ed1f830979735d7865ea6f6a5a437076c36c8d8b842ba0384d052998f160774a8da7712f0f51df60167fe
   languageName: node
   linkType: hard
 
