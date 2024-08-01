@@ -1,5 +1,5 @@
 import { debounce } from "lodash-es";
-import { useMemo, useContext, useCallback } from "react";
+import { useMemo, useContext, useCallback, FC } from "react";
 
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
@@ -18,7 +18,7 @@ export type Props = {
   ) => Promise<void>;
 };
 
-const TextBlockEditor: React.FC<Props> = ({ text, propertyId, isEditable, onPropertyUpdate }) => {
+const TextBlockEditor: FC<Props> = ({ text, propertyId, isEditable, onPropertyUpdate }) => {
   const context = useContext(BlockContext);
 
   const handlePropertyValueUpdate = useCallback(

@@ -186,9 +186,9 @@ export const StoryPanel = memo(
 
 export default StoryPanel;
 
-const PanelWrapper = styled.div<{ bgColor?: string }>`
-  flex: 0 0 ${STORY_PANEL_WIDTH}px;
-  width: ${STORY_PANEL_WIDTH}px;
-  background: ${({ bgColor }) => bgColor};
-  color: ${({ theme }) => theme.content.weak};
-`;
+const PanelWrapper = styled("div")<{ bgColor?: string }>(({ bgColor, theme }) => ({
+  flex: `0 0 ${STORY_PANEL_WIDTH}px`,
+  background: bgColor,
+  width: `${STORY_PANEL_WIDTH}px`,
+  color: theme.content.weak,
+}));
