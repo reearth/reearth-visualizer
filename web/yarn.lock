@@ -3797,12 +3797,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.11.1, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.19.4, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.11.1, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.19.4, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.24.8
   resolution: "@babel/runtime@npm:7.24.8"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
   checksum: 10c0/f24b30af6b3ecae19165b3b032f9bc37b2d1769677bd63b69a6f81061967cfc847aa822518402ea6616b1d301d7eb46986b99c9f69cdb5880834fca2e6b34881
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.15.4":
+  version: 7.25.0
+  resolution: "@babel/runtime@npm:7.25.0"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 10c0/bd3faf246170826cef2071a94d7b47b49d532351360ecd17722d03f6713fd93a3eb3dbd9518faa778d5e8ccad7392a7a604e56bd37aaad3f3aa68d619ccd983d
   languageName: node
   linkType: hard
 
@@ -6040,26 +6049,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@maxim_mazurok/gapi.client.discovery-v1@npm:latest":
-  version: 0.1.20200806
-  resolution: "@maxim_mazurok/gapi.client.discovery-v1@npm:0.1.20200806"
-  dependencies:
-    "@types/gapi.client": "npm:*"
-    "@types/gapi.client.discovery-v1": "npm:*"
-  checksum: 10c0/5c01df9bd9baaa0f94760d40033868111721da86bef3e4d77e7de64cdf28fc1a513c5daf9b270aa63d2208f20b43cd172a84d5c88a627bb452e7a93400e9488e
-  languageName: node
-  linkType: hard
-
-"@maxim_mazurok/gapi.client.sheets-v4@npm:latest":
-  version: 0.0.20240716
-  resolution: "@maxim_mazurok/gapi.client.sheets-v4@npm:0.0.20240716"
-  dependencies:
-    "@types/gapi.client": "npm:*"
-    "@types/gapi.client.discovery-v1": "npm:*"
-  checksum: 10c0/1b3932474a519fce7be1494c9267da149e18949028de04f37b72796ef3cf788e18bcfbc6b4c1ccd59e6b2568d1d64a3226640a668231b7d37b18885c3de6fd6c
-  languageName: node
-  linkType: hard
-
 "@mdx-js/react@npm:^2.1.5":
   version: 2.3.0
   resolution: "@mdx-js/react@npm:2.3.0"
@@ -7846,17 +7835,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-leaflet/core@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@react-leaflet/core@npm:2.1.0"
-  peerDependencies:
-    leaflet: ^1.9.0
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 10c0/d5218c79ab9decd458e1fa8a0ec3757542e3ea4e569afa151a32ef0e9ceb63a13174f3fbc740fe0d514df8b0b3e30d913bfb0b8b661dac13924934d7e430bfc9
-  languageName: node
-  linkType: hard
-
 "@reearth/cesium-mvt-imagery-provider@npm:1.5.4":
   version: 1.5.4
   resolution: "@reearth/cesium-mvt-imagery-provider@npm:1.5.4"
@@ -7945,11 +7923,9 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:4.0.1"
     "@graphql-codegen/typescript-react-apollo": "npm:3.3.7"
     "@lexical/react": "npm:0.12.2"
-    "@mapbox/vector-tile": "npm:1.3.1"
     "@monaco-editor/react": "npm:4.6.0"
     "@playwright/test": "npm:1.39.0"
     "@popperjs/core": "npm:2.11.8"
-    "@reearth/cesium-mvt-imagery-provider": "npm:1.5.4"
     "@reearth/core": "npm:0.0.7-beta.1"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
@@ -7965,22 +7941,15 @@ __metadata:
     "@testing-library/dom": "npm:10.4.0"
     "@testing-library/jest-dom": "npm:6.4.8"
     "@testing-library/react": "npm:16.0.0"
-    "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/carbon__colors": "npm:10.31.2"
-    "@types/escape-string-regexp": "npm:2.0.1"
-    "@types/gapi.auth2": "npm:0.0.59"
-    "@types/gapi.client": "npm:1.0.7"
-    "@types/gapi.client.sheets": "npm:4.0.20201031"
-    "@types/google.picker": "npm:0.0.41"
+    "@types/crypto-js": "npm:4.2.2"
     "@types/lodash-es": "npm:4.17.10"
-    "@types/mapbox__vector-tile": "npm:1.3.3"
     "@types/node": "npm:20.14.12"
     "@types/react": "npm:18.3.3"
     "@types/react-beautiful-dnd": "npm:13.1.8"
     "@types/react-dom": "npm:18.2.6"
     "@types/react-ga": "npm:2.3.0"
-    "@types/react-leaflet": "npm:2.8.2"
     "@types/sortablejs": "npm:1.15.8"
     "@types/styled-components": "npm:5.1.29"
     "@types/tinycolor2": "npm:1.4.5"
@@ -7990,21 +7959,14 @@ __metadata:
     "@welldone-software/why-did-you-render": "npm:7.0.1"
     apollo-link-sentry: "npm:3.2.3"
     apollo-upload-client: "npm:18.0.1"
-    array-move: "npm:4.0.0"
     aws-amplify: "npm:5.3.11"
     axios: "npm:1.6.0"
     cesium: "npm:1.118.0"
-    cesium-dnd: "npm:1.1.0"
-    cesium-mvt-imagery-provider: "npm:1.4.0"
     core-js: "npm:3.33.2"
     crypto-js: "npm:4.2.0"
-    csv-parse: "npm:5.5.2"
-    date-fns: "npm:2.30.0"
     dayjs: "npm:1.11.10"
     del-cli: "npm:5.1.0"
-    detect-browser: "npm:5.3.0"
     dotenv: "npm:16.3.1"
-    escape-string-regexp: "npm:5.0.0"
     eslint: "npm:8.40.0"
     eslint-config-reearth: "npm:0.2.2"
     eslint-plugin-playwright: "npm:0.12.0"
@@ -8018,19 +7980,14 @@ __metadata:
     i18next-browser-languagedetector: "npm:7.0.1"
     i18next-parser: "npm:8.9.0"
     jotai: "npm:2.9.0"
-    js-file-download: "npm:0.4.12"
     jsdom: "npm:22.1.0"
-    jsep: "npm:1.3.8"
     jszip: "npm:3.10.1"
-    leaflet: "npm:1.9.4"
     lexical: "npm:0.12.2"
     lint-staged: "npm:13.2.2"
     localforage: "npm:1.10.0"
     lodash-es: "npm:4.17.21"
-    mini-svg-data-uri: "npm:1.4.4"
     moment-timezone: "npm:0.5.43"
     npm-run-all: "npm:4.1.5"
-    parse-domain: "npm:7.0.1"
     prettier: "npm:2.8.8"
     quickjs-emscripten: "npm:0.23.0"
     quickjs-emscripten-sync: "npm:1.5.2"
@@ -8043,11 +8000,9 @@ __metadata:
     react-dnd: "npm:16.0.1"
     react-dnd-html5-backend: "npm:16.0.1"
     react-dom: "npm:18.3.1"
-    react-dropzone: "npm:14.2.3"
     react-ga: "npm:3.3.1"
     react-ga4: "npm:2.1.0"
     react-i18next: "npm:12.2.2"
-    react-leaflet: "npm:4.2.1"
     react-markdown: "npm:8.0.7"
     react-player: "npm:2.13.0"
     react-popper: "npm:2.3.0"
@@ -9736,15 +9691,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:14.5.2":
-  version: 14.5.2
-  resolution: "@testing-library/user-event@npm:14.5.2"
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 10c0/68a0c2aa28a3c8e6eb05cafee29705438d7d8a9427423ce5064d44f19c29e89b5636de46dd2f28620fb10abba75c67130185bbc3aa23ac1163a227a5f36641e1
-  languageName: node
-  linkType: hard
-
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -11287,6 +11233,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/crypto-js@npm:4.2.2":
+  version: 4.2.2
+  resolution: "@types/crypto-js@npm:4.2.2"
+  checksum: 10c0/760a2078f36f2a3a1089ef367b0d13229876adcf4bcd6e8824d00d9e9bfad8118dc7e6a3cc66322b083535e12be3a29044ccdc9603bfb12519ff61551a3322c6
+  languageName: node
+  linkType: hard
+
 "@types/css-font-loading-module@npm:^0.0.7":
   version: 0.0.7
   resolution: "@types/css-font-loading-module@npm:0.0.7"
@@ -11335,15 +11288,6 @@ __metadata:
   version: 1.39.13
   resolution: "@types/emscripten@npm:1.39.13"
   checksum: 10c0/99c314418b6fbe113c4c81dc89501bdf723020d1de262a36a4e45236b268dcec3deab104e3a7d3569e6d7c5c942de30c9c6d77b93170c1bcaa85620c7ee4c2ba
-  languageName: node
-  linkType: hard
-
-"@types/escape-string-regexp@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@types/escape-string-regexp@npm:2.0.1"
-  dependencies:
-    escape-string-regexp: "npm:*"
-  checksum: 10c0/9426ef9eb7b269d10db61a6c15d1bd0ecfd7a5bbbadf8280af049ab77b651968d1407ca6b16760451d20b88359ba8dbf0a8b149abfc7a500506874c4252d61f0
   languageName: node
   linkType: hard
 
@@ -11406,61 +11350,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gapi.auth2@npm:0.0.59":
-  version: 0.0.59
-  resolution: "@types/gapi.auth2@npm:0.0.59"
-  dependencies:
-    "@types/gapi": "npm:*"
-  checksum: 10c0/ca34ac40708de4d364445b8a900e567d80974bde13474db2120fed6f9848ddde2c4e895ff0f27dab8cf102a8a5e50d55a5c01cd4384413a282c417ede40b82b0
-  languageName: node
-  linkType: hard
-
-"@types/gapi.client.discovery-v1@npm:*":
-  version: 0.0.4
-  resolution: "@types/gapi.client.discovery-v1@npm:0.0.4"
-  dependencies:
-    "@maxim_mazurok/gapi.client.discovery-v1": "npm:latest"
-  checksum: 10c0/52df0216b67cd40b97de9334fbcca4be5eae47ec8fd8159d5e2a9e0bc3ad4ea365ffde60f6ce9095e7082f68a884cade0e9c627e66284123e383d93ce8a2651d
-  languageName: node
-  linkType: hard
-
-"@types/gapi.client.sheets@npm:4.0.20201031":
-  version: 4.0.20201031
-  resolution: "@types/gapi.client.sheets@npm:4.0.20201031"
-  dependencies:
-    "@maxim_mazurok/gapi.client.sheets-v4": "npm:latest"
-  checksum: 10c0/cc2436ac6d220868e1e7f2b08ec85fbe867d25be1b08a1e937149ccae767c1fad7b07d11f60025e0af8110ff67ecde05b65886687f19e8845b7c46b19a35abca
-  languageName: node
-  linkType: hard
-
-"@types/gapi.client@npm:*":
-  version: 1.0.8
-  resolution: "@types/gapi.client@npm:1.0.8"
-  checksum: 10c0/5b9a26ad4ae7d915c7711ee0084dddcc9d143c9f8ff4b7aba8811f8e94af0140639e9093ada17f8146c3a07f9a189c72fb9ae29d4c8108e330a65de3319a32f8
-  languageName: node
-  linkType: hard
-
-"@types/gapi.client@npm:1.0.7":
-  version: 1.0.7
-  resolution: "@types/gapi.client@npm:1.0.7"
-  checksum: 10c0/93f2e766091b4fc26c309594e142ba4e22873d39054aee979766f771951c40954b6ebe2a56f293c2e4be27a426539fc25f9c7849afd654d64585fbb20e45abdb
-  languageName: node
-  linkType: hard
-
-"@types/gapi@npm:*":
-  version: 0.0.47
-  resolution: "@types/gapi@npm:0.0.47"
-  checksum: 10c0/014d7326b6182d260c33ae5b7317d7c0271263dde83b9d24fccd78481dce8877f0ec7a110467a626bf9e1c0b73f2b1935c31f5ef66f71f1328ae0926f6e8b0fe
-  languageName: node
-  linkType: hard
-
-"@types/geojson@npm:*":
-  version: 7946.0.14
-  resolution: "@types/geojson@npm:7946.0.14"
-  checksum: 10c0/54f3997708fa2970c03eeb31f7e4540a0eb6387b15e9f8a60513a1409c23cafec8d618525404573468b59c6fecbfd053724b3327f7fca416729c26271d799f55
-  languageName: node
-  linkType: hard
-
 "@types/geojson@npm:7946.0.8":
   version: 7946.0.8
   resolution: "@types/geojson@npm:7946.0.8"
@@ -11475,13 +11364,6 @@ __metadata:
     "@types/minimatch": "npm:*"
     "@types/node": "npm:*"
   checksum: 10c0/a8eb5d5cb5c48fc58c7ca3ff1e1ddf771ee07ca5043da6e4871e6757b4472e2e73b4cfef2644c38983174a4bc728c73f8da02845c28a1212f98cabd293ecae98
-  languageName: node
-  linkType: hard
-
-"@types/google.picker@npm:0.0.41":
-  version: 0.0.41
-  resolution: "@types/google.picker@npm:0.0.41"
-  checksum: 10c0/6f70ee87250c3724e9bb04e178abf54cdf7aba30c083e000390237e419d6e144e5ff488d0159ad22bc8788a53c8bc996daba42b9aca67e83cef3cfde8cb522b8
   languageName: node
   linkType: hard
 
@@ -11587,15 +11469,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet@npm:*":
-  version: 1.9.12
-  resolution: "@types/leaflet@npm:1.9.12"
-  dependencies:
-    "@types/geojson": "npm:*"
-  checksum: 10c0/067f6c91cd5b97b0bf234e5a2847bd8d00e0333f017451eb646ac2ccb9766c55ad9bd92787877b660bb62890d5ab3af408550b6d56bc5f7e36331f4f460e86bd
-  languageName: node
-  linkType: hard
-
 "@types/lodash-es@npm:4.17.10":
   version: 4.17.10
   resolution: "@types/lodash-es@npm:4.17.10"
@@ -11618,24 +11491,6 @@ __metadata:
   version: 4.17.7
   resolution: "@types/lodash@npm:4.17.7"
   checksum: 10c0/40c965b5ffdcf7ff5c9105307ee08b782da228c01b5c0529122c554c64f6b7168fc8f11dc79aa7bae4e67e17efafaba685dc3a47e294dbf52a65ed2b67100561
-  languageName: node
-  linkType: hard
-
-"@types/mapbox__point-geometry@npm:*":
-  version: 0.1.4
-  resolution: "@types/mapbox__point-geometry@npm:0.1.4"
-  checksum: 10c0/670191664ea0a6ccb4563500fe815a9aba029ba2f0528d42f9eb560ccb44f6542ba8674e2a3f6d41bd10ad8855b4df4782b5340c980ca182ef9fe6752f2737b8
-  languageName: node
-  linkType: hard
-
-"@types/mapbox__vector-tile@npm:1.3.3":
-  version: 1.3.3
-  resolution: "@types/mapbox__vector-tile@npm:1.3.3"
-  dependencies:
-    "@types/geojson": "npm:*"
-    "@types/mapbox__point-geometry": "npm:*"
-    "@types/pbf": "npm:*"
-  checksum: 10c0/4e53c811af48799ce93800a57527ba797727653d9aa454a4af5a77ca40625160cd943cc36da4bcf482097afb6808ac2a926bf8483014bfb9801f6c3c657ecc90
   languageName: node
   linkType: hard
 
@@ -11756,13 +11611,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/pbf@npm:*":
-  version: 3.0.5
-  resolution: "@types/pbf@npm:3.0.5"
-  checksum: 10c0/c32348c6c81e6c31fe4a1f59983e3a9904727b809fb1e5ddec4fad49abaf93070ec26ee0c04c6516536c181c945b3c7d9e226549eaac3b2e12cb7b57f549a49c
-  languageName: node
-  linkType: hard
-
 "@types/pretty-hrtime@npm:^1.0.0":
   version: 1.0.3
   resolution: "@types/pretty-hrtime@npm:1.0.3"
@@ -11822,16 +11670,6 @@ __metadata:
   dependencies:
     react-ga: "npm:*"
   checksum: 10c0/68515ce7e92bf1259cd8f480a0101f6b1a4f997ff00ed4fdcfc5174db4f84f73b72f28650067bf5439214e91c90b7ac606c6c8335442c1245619552e755ed6a7
-  languageName: node
-  linkType: hard
-
-"@types/react-leaflet@npm:2.8.2":
-  version: 2.8.2
-  resolution: "@types/react-leaflet@npm:2.8.2"
-  dependencies:
-    "@types/leaflet": "npm:*"
-    "@types/react": "npm:*"
-  checksum: 10c0/59a13f841d0c2383d882b1055b73b57039792ef95a429c03c1b3c858a6c6bc544fc95116aa1c39c3a43ee4efd2553825ed6a34051d2b303e019a48ae5ed323c2
   languageName: node
   linkType: hard
 
@@ -12788,13 +12626,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-move@npm:4.0.0":
-  version: 4.0.0
-  resolution: "array-move@npm:4.0.0"
-  checksum: 10c0/056eaf4ceeabe6b275d2d96e8628d839a3bf53844f13070de74f73a035ace8f9160800e4288e5fb36226593d39b239f9b63c654a6bb95e05f18aeb345c886acf
-  languageName: node
-  linkType: hard
-
 "array-union@npm:^2.1.0":
   version: 2.1.0
   resolution: "array-union@npm:2.1.0"
@@ -12937,13 +12768,6 @@ __metadata:
   version: 1.0.0
   resolution: "at-least-node@npm:1.0.0"
   checksum: 10c0/4c058baf6df1bc5a1697cf182e2029c58cd99975288a13f9e70068ef5d6f4e1f1fd7c4d2c3c4912eae44797d1725be9700995736deca441b39f3e66d8dee97ef
-  languageName: node
-  linkType: hard
-
-"attr-accept@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "attr-accept@npm:2.2.2"
-  checksum: 10c0/f77c073ac9616a783f2df814a56f65f1c870193e8da6097139e30b3be84ecc19fb835b93e81315d1da4f19e80721f14e8c8075014205e00abd37b856fe030b80
   languageName: node
   linkType: hard
 
@@ -13577,18 +13401,6 @@ __metadata:
   peerDependencies:
     cesium: "*"
   checksum: 10c0/e20001fb628f6c877e1aca2a4deddbcac2339abd0b17e1fd1a735aa68a00849b495b9437f673d802903110f79ba1644c4b7e820b8e77608b1203dc04cdde18e1
-  languageName: node
-  linkType: hard
-
-"cesium-mvt-imagery-provider@npm:1.4.0":
-  version: 1.4.0
-  resolution: "cesium-mvt-imagery-provider@npm:1.4.0"
-  dependencies:
-    "@mapbox/vector-tile": "npm:1.3.1"
-    pbf: "npm:3.2.1"
-  peerDependencies:
-    cesium: 1.x
-  checksum: 10c0/7e020ae44e0c6f758c512c332022baa5f531056d09d134354c951313a65f7f29b5bd7e12bdf26e942c480c3267bc8059d845505043e499576450e562920db084
   languageName: node
   linkType: hard
 
@@ -14825,13 +14637,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"data-uri-to-buffer@npm:^4.0.0":
-  version: 4.0.1
-  resolution: "data-uri-to-buffer@npm:4.0.1"
-  checksum: 10c0/20a6b93107597530d71d4cb285acee17f66bcdfc03fd81040921a81252f19db27588d87fc8fc69e1950c55cfb0bf8ae40d0e5e21d907230813eb5d5a7f9eb45b
-  languageName: node
-  linkType: hard
-
 "data-urls@npm:^4.0.0":
   version: 4.0.0
   resolution: "data-urls@npm:4.0.0"
@@ -14880,15 +14685,6 @@ __metadata:
   version: 2.2.2
   resolution: "dataloader@npm:2.2.2"
   checksum: 10c0/125ec69f821478cf7c6b4360095db6cab939fe57876a0d2060c428091a8deee7152345189923b71a6afa694aaec463779f34b585317164016fd6f54f52cd94ba
-  languageName: node
-  linkType: hard
-
-"date-fns@npm:2.30.0":
-  version: 2.30.0
-  resolution: "date-fns@npm:2.30.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.21.0"
-  checksum: 10c0/e4b521fbf22bc8c3db332bbfb7b094fd3e7627de0259a9d17c7551e2d2702608a7307a449206065916538e384f37b181565447ce2637ae09828427aed9cb5581
   languageName: node
   linkType: hard
 
@@ -15208,13 +15004,6 @@ __metadata:
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
   checksum: 10c0/bd7633942f57418f5a3b80d5cb53898127bcf53e24cdf5d5f4396be471417671f0fee48a4ebe9a1e9defbde2a31280011af58a57e090ff822f589b443ed4e643
-  languageName: node
-  linkType: hard
-
-"detect-browser@npm:5.3.0":
-  version: 5.3.0
-  resolution: "detect-browser@npm:5.3.0"
-  checksum: 10c0/88d49b70ce3836e7971345b2ebdd486ad0d457d1e4f066540d0c12f9210c8f731ccbed955fcc9af2f048f5d4629702a8e46bedf5bcad42ad49a3a0927bfd5a76
   languageName: node
   linkType: hard
 
@@ -16051,7 +15840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:*, escape-string-regexp@npm:5.0.0, escape-string-regexp@npm:^5.0.0":
+"escape-string-regexp@npm:5.0.0, escape-string-regexp@npm:^5.0.0":
   version: 5.0.0
   resolution: "escape-string-regexp@npm:5.0.0"
   checksum: 10c0/6366f474c6f37a802800a435232395e04e9885919873e382b157ab7e8f0feb8fed71497f84a6f6a81a49aab41815522f5839112bd38026d203aea0c91622df95
@@ -16796,16 +16585,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.4":
-  version: 3.2.0
-  resolution: "fetch-blob@npm:3.2.0"
-  dependencies:
-    node-domexception: "npm:^1.0.0"
-    web-streams-polyfill: "npm:^3.0.3"
-  checksum: 10c0/60054bf47bfa10fb0ba6cb7742acec2f37c1f56344f79a70bb8b1c48d77675927c720ff3191fa546410a0442c998d27ab05e9144c32d530d8a52fbe68f843b69
-  languageName: node
-  linkType: hard
-
 "fetch-retry@npm:^5.0.2":
   version: 5.0.6
   resolution: "fetch-retry@npm:5.0.6"
@@ -16842,15 +16621,6 @@ __metadata:
   dependencies:
     flat-cache: "npm:^3.0.4"
   checksum: 10c0/58473e8a82794d01b38e5e435f6feaf648e3f36fdb3a56e98f417f4efae71ad1c0d4ebd8a9a7c50c3ad085820a93fc7494ad721e0e4ebc1da3573f4e1c3c7cdd
-  languageName: node
-  linkType: hard
-
-"file-selector@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "file-selector@npm:0.6.0"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  checksum: 10c0/477ca1b56274db9fee1a8a623c4bfef580389726a5fef843af8c1f2f17f70ec2d1e41b29115777c92e120a15f1cca734c6ef36bb48bfa2ee027c68da16cd0d28
   languageName: node
   linkType: hard
 
@@ -17044,15 +16814,6 @@ __metadata:
     combined-stream: "npm:^1.0.8"
     mime-types: "npm:^2.1.12"
   checksum: 10c0/cb6f3ac49180be03ff07ba3ff125f9eba2ff0b277fb33c7fc47569fc5e616882c5b1c69b9904c4c4187e97dd0419dd03b134174756f296dec62041e6527e2c6e
-  languageName: node
-  linkType: hard
-
-"formdata-polyfill@npm:^4.0.10":
-  version: 4.0.10
-  resolution: "formdata-polyfill@npm:4.0.10"
-  dependencies:
-    fetch-blob: "npm:^3.1.2"
-  checksum: 10c0/5392ec484f9ce0d5e0d52fb5a78e7486637d516179b0eb84d81389d7eccf9ca2f663079da56f761355c0a65792810e3b345dc24db9a8bbbcf24ef3c8c88570c6
   languageName: node
   linkType: hard
 
@@ -18332,13 +18093,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ip-regex@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "ip-regex@npm:5.0.0"
-  checksum: 10c0/23f07cf393436627b3a91f7121eee5bc831522d07c95ddd13f5a6f7757698b08551480f12e5dbb3bf248724da135d54405c9687733dba7314f74efae593bdf06
-  languageName: node
-  linkType: hard
-
 "ip@npm:^2.0.0":
   version: 2.0.1
   resolution: "ip@npm:2.0.1"
@@ -18532,15 +18286,6 @@ __metadata:
   version: 1.0.0
   resolution: "is-interactive@npm:1.0.0"
   checksum: 10c0/dd47904dbf286cd20aa58c5192161be1a67138485b9836d5a70433b21a45442e9611b8498b8ab1f839fc962c7620667a50535fdfb4a6bc7989b8858645c06b4d
-  languageName: node
-  linkType: hard
-
-"is-ip@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "is-ip@npm:4.0.0"
-  dependencies:
-    ip-regex: "npm:^5.0.0"
-  checksum: 10c0/ba72a1320b9dbefa5295fbc6a11371a97397422f7c2d24541d68344c54039ac8f735510d2d5a36cfc902041346b8336024c093278b01754e4703c54b6336bf15
   languageName: node
   linkType: hard
 
@@ -19118,13 +18863,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-file-download@npm:0.4.12":
-  version: 0.4.12
-  resolution: "js-file-download@npm:0.4.12"
-  checksum: 10c0/3caec1491fa744214409e0bcb1fb18d76e3d56715c477ee033cb7d8becb5cf777803409dc1995c913bf1a2270dac98d78f07d83bba319b8e800bc7bf2a7266a7
-  languageName: node
-  linkType: hard
-
 "js-md5@npm:0.7.3":
   version: 0.7.3
   resolution: "js-md5@npm:0.7.3"
@@ -19505,13 +19243,6 @@ __metadata:
   version: 4.0.0
   resolution: "lead@npm:4.0.0"
   checksum: 10c0/71d2509b3c921dc74c47561a3c7bf0b76ecb530af178c3e0f469f3bdf20940ca08bcb4f18bbcfde0619706c1e550d3ba67ea187407722304db8fd3bc13a4405d
-  languageName: node
-  linkType: hard
-
-"leaflet@npm:1.9.4":
-  version: 1.9.4
-  resolution: "leaflet@npm:1.9.4"
-  checksum: 10c0/f639441dbb7eb9ae3fcd29ffd7d3508f6c6106892441634b0232fafb9ffb1588b05a8244ec7085de2c98b5ed703894df246898477836cfd0ce5b96d4717b5ca1
   languageName: node
   linkType: hard
 
@@ -20762,15 +20493,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mini-svg-data-uri@npm:1.4.4":
-  version: 1.4.4
-  resolution: "mini-svg-data-uri@npm:1.4.4"
-  bin:
-    mini-svg-data-uri: cli.js
-  checksum: 10c0/24545fa30b5a45449241bf19c25b8bc37594b63ec06401b3d563bd1c2e8a6abb7c18741f8b354e0064baa63c291be214154bf3a66f201ae71dfab3cc1a5e3191
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:4.2.3":
   version: 4.2.3
   resolution: "minimatch@npm:4.2.3"
@@ -21097,13 +20819,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-domexception@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "node-domexception@npm:1.0.0"
-  checksum: 10c0/5e5d63cda29856402df9472335af4bb13875e1927ad3be861dc5ebde38917aecbf9ae337923777af52a48c426b70148815e890a5d72760f1b4d758cc671b1a2b
-  languageName: node
-  linkType: hard
-
 "node-fetch-native@npm:^1.6.3":
   version: 1.6.4
   resolution: "node-fetch-native@npm:1.6.4"
@@ -21122,17 +20837,6 @@ __metadata:
     encoding:
       optional: true
   checksum: 10c0/b55786b6028208e6fbe594ccccc213cab67a72899c9234eb59dba51062a299ea853210fcf526998eaa2867b0963ad72338824450905679ff0fa304b8c5093ae8
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^3.2.0":
-  version: 3.3.2
-  resolution: "node-fetch@npm:3.3.2"
-  dependencies:
-    data-uri-to-buffer: "npm:^4.0.0"
-    fetch-blob: "npm:^3.1.4"
-    formdata-polyfill: "npm:^4.0.10"
-  checksum: 10c0/f3d5e56190562221398c9f5750198b34cf6113aa304e34ee97c94fd300ec578b25b2c2906edba922050fce983338fde0d5d34fcb0fc3336ade5bd0e429ad7538
   languageName: node
   linkType: hard
 
@@ -21651,18 +21355,6 @@ __metadata:
   dependencies:
     callsites: "npm:^3.0.0"
   checksum: 10c0/c63d6e80000d4babd11978e0d3fee386ca7752a02b035fd2435960ffaa7219dc42146f07069fb65e6e8bf1caef89daf9af7535a39bddf354d78bf50d8294f556
-  languageName: node
-  linkType: hard
-
-"parse-domain@npm:7.0.1":
-  version: 7.0.1
-  resolution: "parse-domain@npm:7.0.1"
-  dependencies:
-    is-ip: "npm:^4.0.0"
-    node-fetch: "npm:^3.2.0"
-  bin:
-    parse-domain-update: bin/update.js
-  checksum: 10c0/359af3f9746bf590b91041b6de284d6cc49856642c0708a7c34fb8c01f67d08716b9afb94cece50055cf0f80261be75010c8a56b6a6de1225f0154ea5cf0389e
   languageName: node
   linkType: hard
 
@@ -22868,19 +22560,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dropzone@npm:14.2.3":
-  version: 14.2.3
-  resolution: "react-dropzone@npm:14.2.3"
-  dependencies:
-    attr-accept: "npm:^2.2.2"
-    file-selector: "npm:^0.6.0"
-    prop-types: "npm:^15.8.1"
-  peerDependencies:
-    react: ">= 16.8 || 18.0.0"
-  checksum: 10c0/6433517c53309aca1bb4f4a535aeee297345ca1e11b123676f46c7682ffab34a3428cbda106448fc92b5c9a5e0fa5d225bc188adebcd4d302366bf6b1f9c3fc1
-  languageName: node
-  linkType: hard
-
 "react-element-to-jsx-string@npm:^15.0.0":
   version: 15.0.0
   resolution: "react-element-to-jsx-string@npm:15.0.0"
@@ -23029,19 +22708,6 @@ __metadata:
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
   checksum: 10c0/f2f1e60010c683479e74c63f96b09fb41603527cd131a9959e2aee1e5a8b0caf270b365e5ca77d4a6b18aae659b60a86150bb3979073528877029b35aecd2072
-  languageName: node
-  linkType: hard
-
-"react-leaflet@npm:4.2.1":
-  version: 4.2.1
-  resolution: "react-leaflet@npm:4.2.1"
-  dependencies:
-    "@react-leaflet/core": "npm:^2.1.0"
-  peerDependencies:
-    leaflet: ^1.9.0
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 10c0/2e9d1687e883fd7d2e9798e51a04600e1b14784dc98b981a44507e65eb39a24f08c7f237c7522ae5667e999eb53b8d565ebd0f5baa25ef73a0278d6bfcc369e1
   languageName: node
   linkType: hard
 
@@ -26901,7 +26567,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-streams-polyfill@npm:^3.0.3, web-streams-polyfill@npm:^3.2.1":
+"web-streams-polyfill@npm:^3.2.1":
   version: 3.3.3
   resolution: "web-streams-polyfill@npm:3.3.3"
   checksum: 10c0/64e855c47f6c8330b5436147db1c75cb7e7474d924166800e8e2aab5eb6c76aac4981a84261dd2982b3e754490900b99791c80ae1407a9fa0dcff74f82ea3a7f
