@@ -28,8 +28,6 @@ export default function StoryBlockComponent({
     [props.block?.id, onRemove],
   );
 
-  console.log(props);
-
   return Builtin ? (
     <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
