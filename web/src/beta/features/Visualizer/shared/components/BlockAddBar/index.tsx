@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo } from "react";
 
 import { Icon, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import { getIconName } from "../../../Crust/StoryPanel/utils";
 import { InstallableBlock } from "../../types";
@@ -27,8 +27,6 @@ const BlockAddBar: FC<Props> = ({
   onBlockOpen,
   onBlockAdd,
 }) => {
-  const theme = useTheme();
-
   const items: PopupMenuItem[] = useMemo(
     () =>
       installableBlocks?.map?.(b => {
@@ -72,7 +70,6 @@ const BlockAddBar: FC<Props> = ({
           label={<StyledIcon icon="plus" size="normal" />}
           size="normal"
           width={200}
-          iconColor={theme.content.main}
           menu={items}
         />
         <Line />

@@ -114,7 +114,6 @@ const BlockWrapper: FC<Props> = ({
     },
     [visualizerRef],
   );
-
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea

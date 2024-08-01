@@ -28,12 +28,15 @@ export default function StoryBlockComponent({
     [props.block?.id, onRemove],
   );
 
+  console.log(props);
+
   return Builtin ? (
     <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
     <BlockWrapper
       {...props}
       isPluginBlock
+      icon={props.block.extensionId}
       name={props.block.name}
       isEditable={props.isEditable}
       isSelected={props.isSelected}
