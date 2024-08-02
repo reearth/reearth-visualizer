@@ -96,7 +96,7 @@
         "web-streams-polyfill": "3.2.1"
     },
     "dependencies": {
-        "@apollo/client": "3.11.1",
+        "@apollo/client": "3.11.2",
         "@auth0/auth0-react": "2.2.2",
         "@aws-amplify/ui-react": "5.3.1",
         "@carbon/colors": "11.20.1",
@@ -106,7 +106,7 @@
         "@lexical/react": "0.12.2",
         "@monaco-editor/react": "4.6.0",
         "@popperjs/core": "2.11.8",
-        "@reearth/core": "0.0.7-beta.1",
+        "@reearth/core": "0.0.7-alpha.6",
         "@rot1024/use-transition": "1.0.0",
         "@sentry/browser": "7.77.0",
         "@seznam/compose-react-refs": "1.0.6",

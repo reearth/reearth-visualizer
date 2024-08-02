@@ -1,9 +1,9 @@
-import { FC, ReactNode, createContext, memo, useCallback } from "react";
+import { FC, ReactNode, createContext, memo } from "react";
 
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
-import { FlyTo, useVisualizer } from "@reearth/core";
+import { FlyTo } from "@reearth/core";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
@@ -31,7 +31,7 @@ type Props = {
   propertyId?: string;
   property?: any;
   dragHandleClassName?: string;
-  pluginBlockPropertyItems?: Item[];
+  propertyItemsForPluginBlock?: Item[];
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   minHeight?: number;
@@ -60,6 +60,7 @@ type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  onFlyTo?: FlyTo;
 };
 
 const BlockWrapper: FC<Props> = ({
@@ -70,7 +71,7 @@ const BlockWrapper: FC<Props> = ({
   children,
   propertyId,
   property,
-  pluginBlockPropertyItems,
+  propertyItemsForPluginBlock,
   dndEnabled = true,
   settingsEnabled = true,
   minHeight,
@@ -84,6 +85,7 @@ const BlockWrapper: FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
+  onFlyTo,
 }) => {
   const {
     title,
@@ -106,14 +108,6 @@ const BlockWrapper: FC<Props> = ({
     onClick,
     onBlockDoubleClick,
   });
-
-  const visualizerRef = useVisualizer();
-  const handleFlyTo: FlyTo = useCallback(
-    (target, options) => {
-      visualizerRef.current?.engine.flyTo(target, options);
-    },
-    [visualizerRef],
-  );
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea
@@ -174,9 +168,9 @@ const BlockWrapper: FC<Props> = ({
         )}
         {editMode && propertyId && settingsEnabled && isPluginBlock && (
           <EditorPanel onClick={stopClickPropagation}>
-            {pluginBlockPropertyItems?.map((i, idx) => (
+            {propertyItemsForPluginBlock?.map((i, idx) => (
               <Collapse title={i.title} key={idx}>
-                <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={handleFlyTo} />
+                <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={onFlyTo} />
               </Collapse>
             ))}
           </EditorPanel>

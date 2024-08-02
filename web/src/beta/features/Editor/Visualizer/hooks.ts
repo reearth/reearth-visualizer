@@ -1,8 +1,12 @@
 import { useMemo, useEffect, useCallback, useState, MutableRefObject } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
+import {
+  convertData,
+  sceneProperty2ViewerPropertyMapping,
+} from "@reearth/beta/utils/convert-object";
 import { Camera } from "@reearth/beta/utils/value";
-import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
+import type { LatLng, ComputedLayer, ComputedFeature, ViewerProperty } from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -55,16 +59,39 @@ export default ({
     useMoveInfoboxBlock,
   } = useInfoboxFetcher();
 
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => {
+      setCurrentCamera(camera);
+    },
+    [setCurrentCamera],
+  );
+
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
 
-  // Scene property
-  // TODO: Fix to use exact type through GQL typing
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
+  const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
+    const sceneProperty = processProperty(scene?.property);
+    const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    if (sceneProperty?.camera?.camera) {
+      setInitialCamera(sceneProperty?.camera?.camera);
+    }
+    return {
+      viewerProperty: sceneProperty
+        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
+        : undefined,
+      cesiumIonAccessToken,
+    };
+  }, [scene?.property]);
+
+  useEffect(() => {
+    setCurrentCamera(initialCamera);
+  }, [initialCamera, setCurrentCamera]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
@@ -251,9 +278,12 @@ export default ({
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken:
+        typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
+          ? cesiumIonAccessToken
+          : config()?.cesiumIonAccessToken,
     }),
-    [],
+    [cesiumIonAccessToken],
   );
 
   // TODO: Use GQL value
@@ -265,17 +295,8 @@ export default ({
 
   const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
 
-  // Camera
-  const [currentCamera, setCurrentCamera] = useCurrentCamera();
-  const handleCameraUpdate = useCallback(
-    (camera: Camera) => {
-      setCurrentCamera(camera);
-    },
-    [setCurrentCamera],
-  );
-
   return {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
@@ -284,6 +305,7 @@ export default ({
     zoomedLayerId,
     installableInfoboxBlocks,
     currentCamera,
+    initialCamera,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,

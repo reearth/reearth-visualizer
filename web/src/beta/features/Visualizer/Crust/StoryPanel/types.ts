@@ -25,10 +25,17 @@ export type StoryBlock = {
   name?: string | null;
   pluginId: string;
   extensionId: string;
+  extensionType?: "storyBlock";
   propertyId?: string;
   property?: any;
-  pluginBlockPropertyItems?: Item[];
+  propertyForPluginAPI?: any;
+  propertyItemsForPluginBlock?: Item[];
 };
+
+export type PluginStoryBlock = Omit<
+  StoryBlock,
+  "propertyForPluginAPI" | "propertyItemsForPluginBlock"
+>;
 
 export type Field<V = any> = {
   type?: string;

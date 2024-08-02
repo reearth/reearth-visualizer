@@ -1,3 +1,5 @@
+// NOTE: This type is for the plugin API v1, which is not used anymore.
+
 import type {
   LayerEditEvent,
   LayersRef,
@@ -21,6 +23,7 @@ import type {
   Tag,
   NaiveLayer,
   LayerSimple,
+  ViewerProperty,
 } from "@reearth/core";
 import {
   SketchAppearance,
@@ -31,13 +34,12 @@ import {
   FlyToDestination,
   LookAtDestination,
   ScreenSpaceCameraControllerOptions,
+  InteractionModeType,
 } from "@reearth/core";
 
-import { InteractionModeType } from "../types";
-import { Widget } from "../Widgets";
-
-import { CommonReearth } from "./api";
-import { ClientStorage } from "./useClientStorage";
+import { Widget } from "../../Widgets";
+import { CommonReearth } from "../pluginAPI/commonReearth";
+import { ClientStorage } from "../useClientStorage";
 
 declare global {
   interface Window {
@@ -109,10 +111,11 @@ export type Reearth = {
       selectedFeature?: ComputedFeature;
     }
   >;
-  readonly layer?: LazyLayer;
+  readonly layer: LazyLayer;
   readonly widget?: Widget;
   readonly block?: CommonBlock;
   readonly scene: Undefinable<Scene>;
+  readonly viewer: Viewer;
   readonly viewport?: Viewport;
   readonly clientStorage: ClientStorage;
   readonly sketch: Sketch;
@@ -142,8 +145,6 @@ export type CommonBlock = {
 export type Scene = {
   readonly inEditor: boolean;
   readonly built: boolean;
-  readonly property?: any;
-  readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   readonly getLocationFromScreen: (
     x: number,
@@ -180,6 +181,11 @@ export type Scene = {
     // TODO: Get condition as expression for plugin
     condition?: (f: ComputedFeature) => boolean,
   ) => ComputedFeature[] | undefined;
+};
+
+export type Viewer = {
+  readonly property?: ViewerProperty;
+  readonly overrideProperty?: (property: ViewerProperty) => void;
 };
 
 export type Camera = {
