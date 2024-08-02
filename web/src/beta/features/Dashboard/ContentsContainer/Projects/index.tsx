@@ -1,6 +1,6 @@
 import { FC, useMemo } from "react";
 
-import { Loading, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -20,6 +20,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     projectCreatorVisible,
     wrapperRef,
     viewState,
+    favarateProjects,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
@@ -63,45 +64,45 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         onScroll={e => {
           !isLoading && hasMoreProjects && handleScrollToBottom(e, handleGetMoreProjects);
         }}>
-        {viewState === "grid" && (
-          <ProjectsGrid>
-            {projects.map(project => (
-              <ProjectGridViewItem
-                key={project.id}
-                project={project}
-                selectedProjectId={selectedProject?.id}
-                onProjectUpdate={handleProjectUpdate}
-                onProjectSelect={handleProjectSelect}
-                onProjectOpen={() => handleProjectOpen(project.sceneId)}
-              />
-            ))}
-          </ProjectsGrid>
-        )}
-        {viewState === "list" && (
-          <FlexTable>
-            <FlexTableRow>
-              <ActionCell />
-              <ProjectNameCell>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Project Name")}
-                </Typography>
-              </ProjectNameCell>
-              <TimeCell>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Last modified")}
-                </Typography>
-              </TimeCell>
-              <TimeCell>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Created time")}
-                </Typography>
-              </TimeCell>
-              <ActionCell />
-            </FlexTableRow>
-            <FlexTableBody>
-              {projects.map(project => (
-                <FlexTableRow key={project.id}>
-                  <ProjectListViewItem
+        <ProjectsContainer>
+          {favarateProjects.length > 0 && (
+            <Breadcrumb
+              items={[
+                {
+                  title: "Stars",
+                },
+              ]}
+            />
+          )}
+          {viewState === "grid" && (
+            <>
+              {favarateProjects.length > 0 && (
+                <>
+                  <ProjectsGrid>
+                    {favarateProjects.map(project => (
+                      <ProjectGridViewItem
+                        key={project.id}
+                        project={project}
+                        selectedProjectId={selectedProject?.id}
+                        onProjectUpdate={handleProjectUpdate}
+                        onProjectSelect={handleProjectSelect}
+                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                      />
+                    ))}
+                  </ProjectsGrid>
+                  <Breadcrumb
+                    items={[
+                      {
+                        title: "All Projects",
+                      },
+                    ]}
+                  />
+                </>
+              )}
+
+              <ProjectsGrid>
+                {projects.map(project => (
+                  <ProjectGridViewItem
                     key={project.id}
                     project={project}
                     selectedProjectId={selectedProject?.id}
@@ -109,11 +110,72 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     onProjectSelect={handleProjectSelect}
                     onProjectOpen={() => handleProjectOpen(project.sceneId)}
                   />
-                </FlexTableRow>
-              ))}
-            </FlexTableBody>
-          </FlexTable>
-        )}
+                ))}
+              </ProjectsGrid>
+            </>
+          )}
+          {viewState === "list" && (
+            <FlexTable>
+              <FlexTableRow>
+                <ActionCell />
+                <ProjectNameCell>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Project Name")}
+                  </Typography>
+                </ProjectNameCell>
+                <TimeCell>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Last modified")}
+                  </Typography>
+                </TimeCell>
+                <TimeCell>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Created time")}
+                  </Typography>
+                </TimeCell>
+                <ActionCell />
+              </FlexTableRow>
+              <FlexTableBody>
+                {favarateProjects.length > 0 && (
+                  <>
+                    {favarateProjects.map(project => (
+                      <FlexTableRow key={project.id}>
+                        <ProjectListViewItem
+                          key={project.id}
+                          project={project}
+                          selectedProjectId={selectedProject?.id}
+                          onProjectUpdate={handleProjectUpdate}
+                          onProjectSelect={handleProjectSelect}
+                          onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                        />
+                      </FlexTableRow>
+                    ))}
+                    <Breadcrumb
+                      items={[
+                        {
+                          title: "All Projects",
+                        },
+                      ]}
+                    />
+                  </>
+                )}
+
+                {projects.map(project => (
+                  <FlexTableRow key={project.id}>
+                    <ProjectListViewItem
+                      key={project.id}
+                      project={project}
+                      selectedProjectId={selectedProject?.id}
+                      onProjectUpdate={handleProjectUpdate}
+                      onProjectSelect={handleProjectSelect}
+                      onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                    />
+                  </FlexTableRow>
+                ))}
+              </FlexTableBody>
+            </FlexTable>
+          )}
+        </ProjectsContainer>
         {isLoading && hasMoreProjects && (
           <StyledLoading>
             <Loading relative />
@@ -144,6 +206,12 @@ const ProjectsWrapper = styled("div")(({ theme }) => ({
   overflowY: "auto",
   padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
   maxHeight: "calc(100vh - 76px)",
+}));
+
+const ProjectsContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.large,
+  flexDirection: "column",
 }));
 
 const ProjectsGrid = styled("div")(({ theme }) => ({

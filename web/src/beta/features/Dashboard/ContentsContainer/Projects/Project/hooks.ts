@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
@@ -39,6 +39,10 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     setIsEditing?.(true);
     if (selectedProjectId !== project.id || selectedProjectId) onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
+
+  useEffect(() => {
+    setIsStarred(project.starred);
+  }, [project.starred]);
 
   const popupMenu: PopupMenuItem[] = [
     {

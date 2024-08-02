@@ -27,7 +27,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", 
             {typeof item.title === "string" ? (
               <>
                 {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}
-                <Typography weight="bold" size="body">
+                <Typography weight="bold" size="body" color={theme.content.weak}>
                   {item.title}
                 </Typography>
               </>
@@ -35,7 +35,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", 
               item.title
             )}
           </Item>
-          {index < items.length - 1 && <Separator>{separator}</Separator>}
+          {index < items.length && <Separator>{separator}</Separator>}
         </ItemWrapper>
       ))}
     </Wrapper>

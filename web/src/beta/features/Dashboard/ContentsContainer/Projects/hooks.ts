@@ -149,9 +149,12 @@ export default (workspaceId?: string) => {
             }
           : undefined,
       )
-      .filter((project): project is Project => !!project)
-      .sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1));
+      .filter((project): project is Project => !!project);
   }, [projectNodes]);
+
+  const favarateProjects: Project[] = useMemo(() => {
+    return projects.filter(project => project.starred === true);
+  }, [projects]);
 
   const isRefetchingProjects = useMemo(() => networkStatus === 3, [networkStatus]);
 
@@ -228,6 +231,7 @@ export default (workspaceId?: string) => {
     wrapperRef,
     viewState,
     projectCreatorVisible,
+    favarateProjects,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
