@@ -114,7 +114,7 @@
         "apollo-upload-client": "18.0.1",
         "aws-amplify": "5.3.11",
         "axios": "1.6.0",
-        "cesium": "1.118.0",
+        "cesium": "1.120.0",
         "core-js": "3.33.2",
         "crypto-js": "4.2.0",
         "dayjs": "1.11.10",
