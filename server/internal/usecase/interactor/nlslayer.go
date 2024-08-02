@@ -22,6 +22,8 @@ type NLSLayer struct {
 	commonSceneLock
 	nlslayerRepo  repo.NLSLayer
 	sceneLockRepo repo.SceneLock
+	projectRepo   repo.Project
+	sceneRepo     repo.Scene
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	transaction   usecasex.Transaction
@@ -32,6 +34,8 @@ func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		nlslayerRepo:    r.NLSLayer,
 		sceneLockRepo:   r.SceneLock,
+		projectRepo:     r.Project,
+		sceneRepo:       r.Scene,
 		propertyRepo:    r.Property,
 		pluginRepo:      r.Plugin,
 		transaction:     r.Transaction,
@@ -98,6 +102,11 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layerSimple)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layerSimple.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -181,6 +190,11 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 		return lid, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return lid, nil, err
+	}
+
 	tx.Commit()
 	return lid, parentLayer, nil
 }
@@ -219,6 +233,11 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -275,6 +294,11 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 		return nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return l, nil
 }
@@ -319,6 +343,11 @@ func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, 
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -421,6 +450,11 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return block, l, err
 }
@@ -459,6 +493,11 @@ func (i *NLSLayer) MoveNLSInfoboxBlock(ctx context.Context, inp interfaces.MoveN
 	infobox.Move(inp.InfoboxBlockID, inp.Index)
 
 	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return inp.InfoboxBlockID, nil, -1, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return inp.InfoboxBlockID, nil, -1, err
 	}
@@ -505,6 +544,11 @@ func (i *NLSLayer) RemoveNLSInfoboxBlock(ctx context.Context, inp interfaces.Rem
 		return inp.InfoboxBlockID, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return inp.InfoboxBlockID, nil, err
+	}
+
 	tx.Commit()
 	return inp.InfoboxBlockID, layer, err
 }
@@ -533,6 +577,11 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	duplicatedLayer := layer.Duplicate()
 
 	err = i.nlslayerRepo.Save(ctx, duplicatedLayer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -576,6 +625,11 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -641,6 +695,11 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
 	tx.Commit()
 	return *feature, nil
 }
@@ -693,6 +752,11 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 		return nlslayer.Feature{}, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
 	tx.Commit()
 	return updatedFeature, nil
 }
@@ -725,6 +789,11 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return id.FeatureID{}, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return id.FeatureID{}, err
 	}

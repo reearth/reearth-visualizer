@@ -108,7 +108,6 @@ const BlockWrapper: FC<Props> = ({
     onClick,
     onBlockDoubleClick,
   });
-
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea

@@ -34,6 +34,7 @@ export default function StoryBlockComponent({
     <BlockWrapper
       {...props}
       isPluginBlock
+      icon={props.block.extensionId}
       name={props.block.name}
       isEditable={props.isEditable}
       isSelected={props.isSelected}
