@@ -21,7 +21,7 @@ type ListItem = {
   onClick?: () => void;
 };
 
-const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
+const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -34,25 +34,8 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
       linkTo: `/settings/project/${currentProject.id}`,
     },
     {
-      text: t("Story"),
-      linkTo: `/settings/project/${currentProject.id}/story`,
-    },
-    {
-      text: t("Public"),
-      linkTo: `/settings/project/${currentProject.id}/public`,
-    },
-    {
-      text: t("Workspace assets"),
-      linkTo: `/settings/project/${currentProject.id}/asset`,
-    },
-    {
       text: t("Plugin"),
       linkTo: `/settings/project/${currentProject.id}/plugins`,
-    },
-    { breakpoint: true },
-    {
-      text: t("Manage projects"),
-      linkTo: `/dashboard/${workspaceId}/`,
     },
   ];
 

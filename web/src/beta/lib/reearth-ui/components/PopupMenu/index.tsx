@@ -14,6 +14,7 @@ export type PopupMenuItem = {
   path?: string;
   icon?: IconName;
   subItem?: PopupMenuItem[];
+  tags?: "personal" | "team";
   onClick?: (id: string) => void;
 };
 
