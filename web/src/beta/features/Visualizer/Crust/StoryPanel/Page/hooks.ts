@@ -53,16 +53,19 @@ export default ({
   const panelSettings = useMemo(
     () => ({
       padding: {
-        ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_STORY_PAGE_PADDING,
-          property?.panel?.padding?.value,
+          property?.panel?.padding,
           isEditable,
         ),
+        title: "Padding",
+        type: "spacing",
+        ui: "padding",
       },
       gap: {
-        ...property?.panel?.gap,
-        value: property?.panel?.gap?.value ?? DEFAULT_STORY_PAGE_GAP,
+        value: property?.panel?.gap ?? DEFAULT_STORY_PAGE_GAP,
+        type: "number",
+        title: "Gap",
       },
     }),
     [property?.panel, isEditable],
