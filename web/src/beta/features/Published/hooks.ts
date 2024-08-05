@@ -186,7 +186,7 @@ export default (alias?: string) => {
               id: p.id,
               swipeable: p.swipeable,
               layerIds: p.layers,
-              property: processNewProperty(p.property),
+              property: processProperty(p.property),
               blocks: p.blocks.map(b => {
                 return {
                   id: b.id,

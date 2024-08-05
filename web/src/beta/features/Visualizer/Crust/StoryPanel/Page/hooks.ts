@@ -53,16 +53,19 @@ export default ({
   const panelSettings = useMemo(
     () => ({
       padding: {
-        ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_STORY_PAGE_PADDING,
-          property?.panel?.padding?.value,
+          property?.panel?.padding,
           isEditable,
         ),
+        title: "Padding",
+        type: "spacing",
+        ui: "padding",
       },
       gap: {
-        ...property?.panel?.gap,
-        value: property?.panel?.gap?.value ?? DEFAULT_STORY_PAGE_GAP,
+        value: property?.panel?.gap ?? DEFAULT_STORY_PAGE_GAP,
+        type: "number",
+        title: "Gap",
       },
     }),
     [property?.panel, isEditable],
@@ -71,10 +74,17 @@ export default ({
   const titleProperty = useMemo(
     () => ({
       title: {
-        title: property?.title?.title,
-        color: property?.title?.color,
+        title: { value: property?.title?.title, title: "Title", type: "string" },
+        color: { value: property?.title?.color, title: "Color", type: "string", ui: "color" },
       },
-      panel: { padding: property?.title?.padding },
+      panel: {
+        padding: {
+          value: property?.title?.padding,
+          title: "Padding",
+          type: "spacing",
+          ui: "padding",
+        },
+      },
     }),
     [property?.title],
   );
