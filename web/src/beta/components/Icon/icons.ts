@@ -44,7 +44,6 @@ import AddLayerStyleButtonIcon from "./Icons/addLayerStyleButton.svg?react";
 import LayerInspector from "./Icons/layerInspector.svg?react";
 import LayerIcon from "./Icons/layer.svg?react";
 import Clock from "./Icons/Clock.svg?react";
-import Switch from "./Icons/switch.svg?react";
 
 // MSIC
 import CheckCircle from "./Icons/checkCircle.svg?react";
@@ -237,5 +236,4 @@ export default {
   squareOutline: SquareOutline,
   circleOutline: CircleOutline,
   polygonExtruded: PolygonExtruded,
-  switch: Switch,
 };

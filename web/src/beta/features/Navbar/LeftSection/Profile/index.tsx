@@ -2,6 +2,8 @@ import { useCallback } from "react";
 // import { Link } from "react-router-dom";
 
 // import * as Popover from "@reearth/beta/components/Popover";
+import { useNavigate } from "react-router-dom";
+
 import Text from "@reearth/beta/components/Text";
 import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -94,10 +96,17 @@ const HeaderProfile: React.FC<Props> = ({
     [onWorkspaceChange],
   );
 
+  const navigate = useNavigate();
+  const handleAssetManager = useCallback(() => {
+    if (currentWorkspace?.id) {
+      navigate(`/dashboard/${currentWorkspace.id}/asset`);
+    }
+  }, [currentWorkspace.id, navigate]);
+
   const popupMenu: PopupMenuItem[] = [
     {
+      icon: "switch",
       id: "switchWorkspace",
-      title: t("Switch Workspace"),
       subItem: workspaces.map(w => {
         return {
           id: w.id as string,
@@ -106,18 +115,18 @@ const HeaderProfile: React.FC<Props> = ({
           onClick: () => w.id && handleWorkspaceChange(w.id),
         };
       }),
+      title: t("Switch workspace"),
     },
     {
-      id: "logOut",
       icon: "exit",
+      id: "logOut",
       onClick: onSignOut,
       title: t("Log out"),
     },
     {
-      id: "assetManagement",
-      path: `dashboard/${currentWorkspace.id}/asset`,
       icon: "file",
-      onClick: onSignOut, // TODO: handle asset management
+      id: "assetManagement",
+      onClick: handleAssetManager,
       title: t("Asset management"),
     },
   ];
@@ -154,14 +163,6 @@ const HeaderProfile: React.FC<Props> = ({
 //     color: ${({ theme }) => theme.content.main};
 //     background: ${({ theme }) => theme.bg[2]};
 //   }
-// `;
-
-// const ArrowIcon = styled(Icon)<{ open: boolean }>`
-//   position: absolute;
-//   right: 10px;
-//   top: 50%;
-//   transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
-//   color: ${({ theme }) => theme.content.weak};
 // `;
 
 // const PickerWrapper = styled(Popover.Content)`

@@ -13,8 +13,8 @@ export type PopupMenuItem = {
   title?: string;
   path?: string;
   icon?: IconName;
+  selected?: boolean;
   subItem?: PopupMenuItem[];
-  tags?: "personal" | "team";
   onClick?: (id: string) => void;
 };
 
@@ -42,7 +42,6 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   size = "normal",
 }) => {
   const [open, setOpen] = useState(false);
-  const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
   const theme = useTheme();
 
   const handlePopOver = useCallback(
@@ -56,32 +55,64 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     [open],
   );
 
+  const renderSingleItem = (item: PopupMenuItem, index: number) => {
+    const { icon, id, onClick, path, selected, subItem, title } = item;
+    return (
+      <Item
+        key={index}
+        size={size}
+        onClick={() => {
+          onClick?.(id);
+          handlePopOver(false);
+        }}>
+        {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            justifyItems: "center",
+            flexGrow: 1,
+          }}>
+          {subItem ? (
+            <PopupMenu label={title} menu={subItem} width={width} nested />
+          ) : path ? (
+            <StyledLink to={path}>
+              <Typography size="body">{title}</Typography>
+            </StyledLink>
+          ) : (
+            <Typography size="body">{title}</Typography>
+          )}
+          {selected && <Icon icon="check" size="small" color={theme.content.main} />}
+        </div>
+      </Item>
+    );
+  };
+
+  const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
+    // TODO: refactor logic
+    const personalWorkspaces = subMenuItems.filter(item => !!item.selected);
+    const teamWorkspaces = subMenuItems.filter(item => !item.selected);
+
+    return (
+      <PopupMenuWrapper width={width} nested={nested}>
+        <SubMenuHeader>Personal</SubMenuHeader>
+        {personalWorkspaces.map((item, index) => {
+          return renderSingleItem(item, index);
+        })}
+        <SubMenuHeader>Team</SubMenuHeader>
+        {teamWorkspaces.map((item, index) => {
+          return renderSingleItem(item, index);
+        })}
+      </PopupMenuWrapper>
+    );
+  };
+
   const renderMenuItems = (menuItems: PopupMenuItem[]) => {
     return (
       <PopupMenuWrapper width={width} nested={nested}>
-        {menuItems.map(({ title, path, icon, subItem, id, onClick }, index) => (
-          <Item
-            key={index}
-            onMouseEnter={() => setHoveredItemIndex(index)}
-            onMouseLeave={() => setHoveredItemIndex(null)}
-            isHovered={hoveredItemIndex === index}
-            size={size}
-            onClick={() => {
-              onClick?.(id);
-              handlePopOver(false);
-            }}>
-            {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
-            {subItem ? (
-              <PopupMenu label={title} menu={subItem} width={width} nested />
-            ) : path ? (
-              <StyledLink to={path}>
-                <Typography size="body">{title}</Typography>
-              </StyledLink>
-            ) : (
-              <Typography size="body">{title}</Typography>
-            )}
-          </Item>
-        ))}
+        {menuItems.map((item, index) => {
+          return renderSingleItem(item, index);
+        })}
       </PopupMenuWrapper>
     );
   };
@@ -90,7 +121,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     return typeof label === "string" ? (
       <>
         {icon && <Icon icon={icon} size="small" />}
-        <Typography size="body" weight="regular">
+        <Typography size="body" weight="bold">
           {label}
         </Typography>
         <Icon color={theme.content.weak} icon={nested ? "caretRight" : "caretDown"} size="small" />
@@ -116,7 +147,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           {renderTrigger()}
         </TriggerWrapper>
       }>
-      {renderMenuItems(menu)}
+      {nested ? renderSubMenuItems(menu) : renderMenuItems(menu)}
     </Popup>
   );
 };
@@ -146,21 +177,30 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
   }),
 );
 
-const Item = styled("div")<{ isHovered?: boolean; size?: "small" | "normal" }>(
-  ({ theme, isHovered, size }) => ({
-    display: "flex",
-    gap: theme.spacing.smallest,
-    alignItems: "center",
-    padding:
-      size === "small"
-        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
-        : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    borderRadius: `${theme.radius.smallest}px`,
-    cursor: "pointer",
-    backgroundColor: isHovered ? `${theme.bg[2]}` : "transparent",
-  }),
-);
+const Item = styled("div")<{ size?: "small" | "normal" }>(({ theme, size }) => ({
+  display: "flex",
+  gap: theme.spacing.smallest,
+  alignItems: "center",
+  padding:
+    size === "small"
+      ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  borderRadius: `${theme.radius.smallest}px`,
+  cursor: "pointer",
+  backgroundColor: "transparent",
+  "&:hover": {
+    backgroundColor: `${theme.bg[2]}`,
+  },
+}));
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",
+}));
+
+const SubMenuHeader = styled("div")(({ theme }) => ({
+  color: theme.content.weak,
+  fontSize: "11px",
+  fontWeight: 400,
+  lineHeight: "16px",
+  padding: "4px 8px 0px 8px",
 }));

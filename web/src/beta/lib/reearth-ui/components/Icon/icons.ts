@@ -104,6 +104,7 @@ import Star from "./Icons/Star.svg?react";
 import StarFilled from "./Icons/StarFilled.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
+import Switch from "./Icons/switch.svg?react";
 import Table from "./Icons/Table.svg?react";
 import Tag from "./Icons/Tag.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
@@ -234,6 +235,7 @@ export default {
   square: Square,
   squareFilled: SquareFilled,
   swiper: Swiper,
+  switch: Switch,
   table: Table,
   tag: Tag,
   terrian: Terrian,
