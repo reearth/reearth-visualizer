@@ -71,10 +71,17 @@ export default ({
   const titleProperty = useMemo(
     () => ({
       title: {
-        title: property?.title?.title,
-        color: property?.title?.color,
+        title: { value: property?.title?.title, title: "Title", type: "string" },
+        color: { value: property?.title?.color, title: "Color", type: "string", ui: "color" },
       },
-      panel: { padding: property?.title?.padding },
+      panel: {
+        padding: {
+          value: property?.title?.padding,
+          title: "Padding",
+          type: "spacing",
+          ui: "padding",
+        },
+      },
     }),
     [property?.title],
   );
