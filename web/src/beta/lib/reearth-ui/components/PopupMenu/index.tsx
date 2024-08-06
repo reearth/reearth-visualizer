@@ -82,13 +82,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         {icon && (
           <Icon icon={icon} size="small" color={iconColor ? iconColor : theme.content.weak} />
         )}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            justifyItems: "center",
-            flexGrow: 1,
-          }}>
+        <SubItem>
           {subItem ? (
             <PopupMenu label={title} menu={subItem} width={width} nested />
           ) : path ? (
@@ -99,7 +93,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             <Typography size="body">{title}</Typography>
           )}
           {selected && <Icon icon="check" size="small" color={theme.content.main} />}
-        </div>
+        </SubItem>
       </Item>
     );
   };
@@ -234,4 +228,11 @@ const SubMenuHeader = styled("div")(({ theme }) => ({
   fontWeight: 400,
   lineHeight: "16px",
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  0 ${theme.spacing.small}px`,
+}));
+
+const SubItem = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  justifyItems: "center",
+  flexGrow: 1,
 }));
