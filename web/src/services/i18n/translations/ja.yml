@@ -49,11 +49,15 @@ Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
 Upload File: ''
+Type key word to search: ''
 Sort: ''
 Use Name or Email: ''
 Find Member: ''
 No Member match your search.: ''
-Created At: ''
+First Created At: ''
+Last Created At: ''
+First Updated: ''
+Last Updated: ''
 New Project: 新規プロジェクト
 Project Name: プロジェクト名
 Last modified: ''

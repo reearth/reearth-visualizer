@@ -49,11 +49,15 @@ Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
 Upload File: Upload File
+Type key word to search: Type key word to search
 Sort: Sort
 Use Name or Email: Use Name or Email
 Find Member: Find Member
-No Member match your search.: ''
-Created At: 'Created At'
+No Member match your search.: No Member match your search.
+First Created At: First Created At
+Last Created At: Last Created At
+First Updated: First Updated
+Last Updated: Last Updated
 New Project: New Project
 Project Name: Project Name
 Last modified: Last modified
