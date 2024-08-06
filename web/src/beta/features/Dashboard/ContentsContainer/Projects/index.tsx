@@ -39,12 +39,14 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const sortOptions: { value: string; label: string }[] = useMemo(
     () => [
-      { value: "date-reversed", label: t("First created") },
-      { value: "date", label: t("Last created") },
+      { value: "date-reversed", label: t("First Created At") },
+      { value: "date", label: t("Last Created At") },
       { value: "date-updated", label: t("First Updated") },
       { value: "date-updated-reverse", label: t("Last Updated") },
-      { value: "name", label: t("A To Z") },
-      { value: "name-reverse", label: t("Z To A") },
+
+      /* TODO: waiting for the backend fix */
+      // { value: "name", label: t("A To Z") },
+      // { value: "name-reverse", label: t("Z To A") },
     ],
     [t],
   );
@@ -195,11 +197,14 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             </FlexTable>
           )}
         </ProjectsContainer>
-        {isLoading && hasMoreProjects && (
-          <StyledLoading>
+        {isLoading &&
+          (hasMoreProjects ? (
+            <StyledLoading>
+              <Loading relative />
+            </StyledLoading>
+          ) : (
             <Loading relative />
-          </StyledLoading>
-        )}
+          ))}
       </ProjectsWrapper>
       {projectCreatorVisible && (
         <ProjectCreatorModal

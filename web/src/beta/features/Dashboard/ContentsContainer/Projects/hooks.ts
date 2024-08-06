@@ -17,7 +17,7 @@ export type SortType =
   | "date-reversed"
   | "date-updated-reverse"
   | "name-reverse";
-const projectsPerPage = 16;
+const projectsPerPage = 76;
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -33,18 +33,17 @@ const pagination = (sort?: SortType) => {
   switch (sort) {
     case "date":
       last = projectsPerPage;
-      sortBy = ProjectSortType.Createdat;
       break;
     case "date-reversed":
       first = projectsPerPage;
       sortBy = ProjectSortType.Createdat;
       break;
     case "date-updated":
-      last = projectsPerPage;
+      first = projectsPerPage;
       sortBy = ProjectSortType.Updatedat;
       break;
     case "date-updated-reverse":
-      first = projectsPerPage;
+      last = projectsPerPage;
       sortBy = ProjectSortType.Updatedat;
       break;
     case "name":
@@ -100,13 +99,6 @@ export default (workspaceId?: string) => {
     [useCreateProject, workspaceId],
   );
 
-  const handleProjectUpdate = useCallback(
-    async (project: Project, projectId: string) => {
-      await useUpdateProject({ projectId, ...project });
-    },
-    [useUpdateProject],
-  );
-
   const { first, last, sortBy } = useMemo(() => pagination(sort), [sort]);
 
   const {
@@ -125,7 +117,14 @@ export default (workspaceId?: string) => {
     keyword: searchTerm,
   });
 
-  console.log("searchTerm", searchTerm);
+  const handleProjectUpdate = useCallback(
+    async (project: Project, projectId: string) => {
+      await useUpdateProject({ projectId, ...project });
+      if (sortBy) refetch();
+    },
+    [refetch, sortBy, useUpdateProject],
+  );
+
   useEffect(() => {
     gqlCache.evict({ fieldName: "projects" });
   }, [gqlCache]);
@@ -226,7 +225,6 @@ export default (workspaceId?: string) => {
   );
 
   const handleSearch = useCallback((value?: string) => {
-    console.log("called");
     if (!value || value.length < 1) {
       setSearchTerm?.(undefined);
     } else {
