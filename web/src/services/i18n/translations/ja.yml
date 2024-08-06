@@ -48,7 +48,14 @@ A To Z: 昇順（ファイル名）
 Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
+Select Asset: ''
 Upload File: ''
+Search in all assets library: ''
+Assets selected: ''
+Asset selected: ''
+Name: 名前
+Uploaded At: ''
+Size: ''
 Sort: ''
 Use Name or Email: ''
 Find Member: ''
@@ -204,7 +211,6 @@ You are about to delete one or more assets from the current workspace.: 1つま�
 Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
-Name: 名前
 Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
@@ -301,6 +307,7 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+'Sort:': ''
 Position Capture: ''
 value: ''
 Time Period Settings: ''

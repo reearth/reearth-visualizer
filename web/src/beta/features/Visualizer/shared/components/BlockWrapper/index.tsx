@@ -208,7 +208,7 @@ const Overlay = styled("div")<{ disableSelection?: boolean }>(({ disableSelectio
   position: "absolute",
   height: "100%",
   width: "100%",
-  cursor: !disableSelection ? "pointer" : "none",
+  cursor: !disableSelection ? "pointer" : undefined,
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
