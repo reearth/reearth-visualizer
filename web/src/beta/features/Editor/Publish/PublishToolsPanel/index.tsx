@@ -17,6 +17,7 @@ const PublishToolsPanel: FC = () => {
   const t = useT();
 
   const {
+    publishmentStatuses,
     publishing,
     publishStatus,
     modalOpen,
@@ -31,13 +32,20 @@ const PublishToolsPanel: FC = () => {
     handleNavigationToSettings,
   } = useHooks({ id, sceneId, selectedProjectType });
 
+  const sceneStatus = publishmentStatuses.find(status => status?.type === "default")?.published
+    ? "published"
+    : "unpublished";
+  const storyStatus = publishmentStatuses.find(status => status?.type === "story")?.published
+    ? "published"
+    : "unpublished";
+
   return (
     <Panel extend>
       <StyledSecondaryNav>
         <LeftSection>
           <TabButtonWrapper>
             <StatusWrapper>
-              <SceneStatus status={publishStatus} />
+              <PublishStatus status={sceneStatus} />
             </StatusWrapper>
             <TabButton
               highlighted={selectedProjectType === "default"}
@@ -47,7 +55,7 @@ const PublishToolsPanel: FC = () => {
           </TabButtonWrapper>
           <TabButtonWrapper>
             <StatusWrapper>
-              <StoryStatus status={publishStatus} />
+              <PublishStatus status={storyStatus} />
             </StatusWrapper>
             <TabButton
               highlighted={selectedProjectType === "story"}
@@ -140,14 +148,7 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   width: "116px",
 }));
 
-const SceneStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
-  width: "8px",
-  height: "8px",
-  backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,
-  borderRadius: "50%",
-}));
-
-const StoryStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
+const PublishStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
   width: "8px",
   height: "8px",
   backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,

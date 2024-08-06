@@ -25,6 +25,8 @@ export default ({
   selectedProjectType?: ProjectType;
 }) => {
   const handleNavigationToSettings = useSettingsNavigation({ projectId: id });
+  const [defaultProject, setDefaultProject] = useState<SelectedProject>();
+  const [storyProject, setStoryProject] = useState<SelectedProject>();
   const [project, setProject] = useState<SelectedProject>();
 
   // Regular Project
@@ -35,27 +37,46 @@ export default ({
     usePublishProject,
   } = useProjectFetcher();
 
-  const { project: defaultProject } = useProjectQuery(id);
+  const { project: fetchedDefaultProject } = useProjectQuery(id);
 
   // Storytelling Project
   const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
 
   const { stories } = useStoriesQuery({ sceneId });
 
-  // General
+  // Fetch and set the default project
   useEffect(() => {
-    setProject(() => {
-      const proj =
-        selectedProjectType === "story" ? stories?.find(s => s.id === id) : defaultProject;
-      return proj
-        ? {
-            id: proj.id,
-            alias: proj.alias,
-            publishmentStatus: proj.publishmentStatus,
-          }
-        : undefined;
-    });
-  }, [id, defaultProject, stories, selectedProjectType]);
+    if (fetchedDefaultProject) {
+      setDefaultProject({
+        id: fetchedDefaultProject.id,
+        alias: fetchedDefaultProject.alias,
+        publishmentStatus: fetchedDefaultProject.publishmentStatus,
+      });
+    }
+  }, [fetchedDefaultProject]);
+
+  // Fetch and set the story project
+  useEffect(() => {
+    if (stories) {
+      const storyProj = stories.find(s => s.id === id);
+      if (storyProj) {
+        setStoryProject({
+          id: storyProj.id,
+          alias: storyProj.alias,
+          publishmentStatus: storyProj.publishmentStatus,
+        });
+      }
+    }
+  }, [stories, id]);
+
+  // Set the current project based on the selectedProjectType
+  useEffect(() => {
+    if (selectedProjectType === "story" && storyProject) {
+      setProject(storyProject);
+    } else if (defaultProject) {
+      setProject(defaultProject);
+    }
+  }, [selectedProjectType, storyProject, defaultProject]);
 
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
   const [dropdownOpen, setDropdown] = useState(false);
@@ -68,6 +89,25 @@ export default ({
 
   const [checkProjectAlias, { loading: validatingAlias, data: checkProjectAliasData }] =
     useProjectAliasCheckLazyQuery();
+
+  const publishmentStatuses = useMemo(() => {
+    return [
+      {
+        id: "map",
+        title: "Scene",
+        type: "default",
+        published:
+          defaultProject?.publishmentStatus === "PUBLIC" ||
+          defaultProject?.publishmentStatus === "LIMITED",
+      },
+      ...(stories?.map(s => ({
+        id: s.id,
+        title: "Story",
+        type: "story",
+        published: s.publishmentStatus === "PUBLIC" || s.publishmentStatus === "LIMITED",
+      })) || []),
+    ];
+  }, [defaultProject, stories]);
 
   const handleProjectAliasCheck = useCallback(
     (a: string) => {
@@ -123,6 +163,7 @@ export default ({
   const handleModalClose = useCallback(() => setModal(false), []);
 
   return {
+    publishmentStatuses,
     publishing,
     publishStatus,
     publishProjectLoading,
