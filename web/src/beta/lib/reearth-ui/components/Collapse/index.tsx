@@ -9,7 +9,7 @@ export type CollapseProps = {
   title?: string;
   background?: string;
   headerBg?: string;
-  size?: "normal" | "small";
+  size?: "normal" | "small" | "large";
   collapsed?: boolean;
   noPadding?: boolean;
   disabled?: boolean;
@@ -82,7 +82,7 @@ const StyledWrapper = styled("div")<{
 }));
 
 const StyledHeader = styled("div")<{
-  size?: "normal" | "small";
+  size?: "normal" | "small" | "large";
   headerBg?: string;
   isCollapsed?: boolean;
   disabled?: boolean;
@@ -94,6 +94,8 @@ const StyledHeader = styled("div")<{
   padding:
     size === "normal"
       ? `${theme.spacing.small}px`
+      : size === "large"
+      ? `${theme.spacing.large}px`
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   minHeight: size === "normal" ? "34px" : "28px",
   justifyContent: "space-between",
@@ -112,7 +114,7 @@ const ActionsWapper = styled("div")(({ theme }) => ({
 }));
 
 const ChildWrapper = styled("div")<{
-  size?: "normal" | "small";
+  size?: "normal" | "small" | "large";
   background?: string;
   noPadding?: boolean;
 }>(({ size, background, noPadding, theme }) => ({
@@ -122,6 +124,8 @@ const ChildWrapper = styled("div")<{
     ? 0
     : size === "normal"
     ? `${theme.spacing.normal}px`
+    : size === "large"
+    ? `${theme.spacing.large}px`
     : `${theme.spacing.small}px`,
   borderRadius: `0px 0px ${theme.radius.small}px ${theme.radius.small}px`,
   flexGrow: 1,

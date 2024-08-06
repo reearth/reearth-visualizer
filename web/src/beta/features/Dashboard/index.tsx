@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -102,7 +103,7 @@ const LeftSideWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   display: "flex",
   flexDirection: "column",
-  width: "213px",
+  width: DEFAULT_SIDEBAR_WIDTH,
   gap: theme.spacing.super,
   boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)",
 }));

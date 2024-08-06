@@ -6,6 +6,7 @@ import { styled } from "@reearth/services/theme";
 import { MenuList } from "../MenuList";
 
 export const InnerPage = styled.div<{ wide?: boolean; transparent?: boolean }>`
+  box-sizing: border-box;
   display: flex;
   width: 100%;
   max-width: ${({ wide }) => (wide ? "950px" : "750px")};

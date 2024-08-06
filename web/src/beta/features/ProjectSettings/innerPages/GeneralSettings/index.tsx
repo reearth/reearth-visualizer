@@ -1,13 +1,15 @@
 import { useCallback, useState, useMemo } from "react";
 
-import Button from "@reearth/beta/components/Button";
-import Collapse from "@reearth/beta/components/Collapse";
-import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
-import TextInput from "@reearth/beta/components/fields/TextField";
-import URLField from "@reearth/beta/components/fields/URLField";
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
-import Modal from "@reearth/beta/components/Modal";
-import Text from "@reearth/beta/components/Text";
+import {
+  Collapse,
+  TextInput,
+  Modal,
+  Button,
+  ModalPanel,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
+import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -34,15 +36,9 @@ type Props = {
     isArchived: boolean;
   };
   onUpdateProject: (settings: GeneralSettingsType) => void;
-  onArchiveProject: (archive: boolean) => void;
   onDeleteProject: () => void;
 };
-const GeneralSettings: React.FC<Props> = ({
-  project,
-  onUpdateProject,
-  onArchiveProject,
-  onDeleteProject,
-}) => {
+const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
   const t = useT();
 
   const [localName, setLocalName] = useState(project?.name ?? "");
@@ -57,20 +53,6 @@ const GeneralSettings: React.FC<Props> = ({
     });
   }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
-  const [archiveModelVisible, setArchiveModelVisible] = useState(false);
-  const [archiveInputName, setArchiveInputName] = useState("");
-  const archiveDisabled = useMemo(
-    () => archiveInputName !== project?.name,
-    [archiveInputName, project?.name],
-  );
-
-  const [unarchiveModelVisible, setUnarchiveModelVisible] = useState(false);
-  const [unarchiveInputName, setUnarchiveInputName] = useState("");
-  const unarchiveDisabled = useMemo(
-    () => unarchiveInputName !== project?.name,
-    [unarchiveInputName, project?.name],
-  );
-
   const [deleteModelVisible, setDeleteModelVisible] = useState(false);
   const [deleteInputName, setDeleteInputName] = useState("");
   const deleteDisabled = useMemo(
@@ -84,89 +66,47 @@ const GeneralSettings: React.FC<Props> = ({
         {project.isArchived ? (
           <ArchivedSettingNotice />
         ) : (
-          <Collapse title={t("Project Info")}>
+          <Collapse size="large" title={t("Project Info")}>
             <SettingsFields>
-              <TextInput
-                name={t("Name")}
+              <InputField
+                commonTitle={t("Project Name")}
                 value={project.name}
                 onChange={name => setLocalName(name)}
               />
-              <TextAreaField
-                name={t("Description")}
+              <TextareaField
+                commonTitle={t("Description")}
                 value={localDescription}
                 onChange={setLocalDescription}
-                minHeight={108}
               />
-              <ThumbnailField>
-                <URLField
-                  name={t("Thumbnail")}
+              <Thumbnail>
+                <AssetField
+                  commonTitle={t("Thumbnail")}
                   fileType="asset"
                   entityType="image"
                   value={localImageUrl}
                   onChange={setLocalImageUrl}
                 />
                 <StyledImage src={!localImageUrl ? defaultBetaProjectImage : localImageUrl} />
-              </ThumbnailField>
+              </Thumbnail>
               <ButtonWrapper>
-                <Button
-                  text={t("Submit")}
-                  size="medium"
-                  margin="0"
-                  buttonType="primary"
-                  onClick={handleSubmit}
-                />
+                <Button title={t("Submit")} appearance="primary" onClick={handleSubmit} />
               </ButtonWrapper>
             </SettingsFields>
           </Collapse>
         )}
-        <Collapse title={t("Danger Zone")}>
+        <Collapse size="large" title={t("Danger Zone")}>
           <SettingsFields>
-            {!project.isArchived ? (
-              <DangerItem>
-                <Text size="body" weight="bold">
-                  {t("Archive this project")}
-                </Text>
-                <Text size="body">{t("Mark this project as archived and read-only")}</Text>
-                <ButtonWrapper>
-                  <Button
-                    text={t("Archive project")}
-                    size="medium"
-                    margin="0"
-                    buttonType="danger"
-                    onClick={() => setArchiveModelVisible(true)}
-                  />
-                </ButtonWrapper>
-              </DangerItem>
-            ) : (
-              <DangerItem>
-                <Text size="body" weight="bold">
-                  {t("Unarchive this project")}
-                </Text>
-                <Text size="body">{t("Unarchive this project to become editable again.")}</Text>
-                <ButtonWrapper>
-                  <Button
-                    text={t("Unarchive project")}
-                    size="medium"
-                    margin="0"
-                    buttonType="danger"
-                    onClick={() => setUnarchiveModelVisible(true)}
-                  />
-                </ButtonWrapper>
-              </DangerItem>
-            )}
             <DangerItem>
-              <Text size="body" weight="bold">
+              <Typography size="body" weight="bold">
                 {t("Delete this project")}
-              </Text>
-              <Text size="body">
-                {t("Once you delete a project, there is no going back. Please be sure.")}
-              </Text>
+              </Typography>
+              <Typography size="body">
+                {t("This process will remove this project to Recycle bin.")}
+              </Typography>
               <ButtonWrapper>
                 <Button
-                  text={t("Delete project")}
-                  size="medium"
-                  margin="0"
-                  buttonType="danger"
+                  title={t("Delete project")}
+                  appearance="dangerous"
                   onClick={() => setDeleteModelVisible(true)}
                 />
               </ButtonWrapper>
@@ -175,119 +115,41 @@ const GeneralSettings: React.FC<Props> = ({
         </Collapse>
       </SettingsWrapper>
 
-      <Modal
-        isVisible={archiveModelVisible}
-        title={t("Archive project")}
-        size="sm"
-        button1={
-          <Button
-            text={t("Cancel")}
-            buttonType="secondary"
-            onClick={() => {
-              setArchiveModelVisible(false);
-            }}
-          />
-        }
-        button2={
-          <Button
-            text={t("I am sure I want to archive this project.")}
-            buttonType="danger"
-            disabled={archiveDisabled}
-            onClick={() => {
-              onArchiveProject(true);
-            }}
-          />
-        }>
-        <Text size="body" weight="bold">
-          {project?.name}
-        </Text>
-        <Text size="body">
-          {t(
-            `Archiving your project will put it into a state where you cannot edit it or it's settings.`,
-          )}
-        </Text>
-        <Text size="body">{t("Once archived, you can unarchive the repository at any time.")}</Text>
-        <Divider />
-        <Text size="body" weight="bold">
-          {t("Please type your project name to continue.")}
-        </Text>
-        <TextInput name={" "} value={""} onChange={name => setArchiveInputName(name)} />
-      </Modal>
-
-      <Modal
-        isVisible={unarchiveModelVisible}
-        title={t("Unarchive project")}
-        size="sm"
-        button1={
-          <Button
-            text={t("Cancel")}
-            buttonType="secondary"
-            margin="0"
-            onClick={() => {
-              setUnarchiveModelVisible(false);
-            }}
-          />
-        }
-        button2={
-          <Button
-            text={t("I am sure I want to unarchive this project.")}
-            buttonType="danger"
-            disabled={unarchiveDisabled}
-            onClick={() => {
-              onArchiveProject(false);
-            }}
-          />
-        }>
-        <Text size="body" weight="bold">
-          {project?.name}
-        </Text>
-        <Text size="body">
-          {t(
-            "This will bring this repository back to a state it can be editted and worked on by you and your team.",
-          )}
-        </Text>
-        <Divider />
-        <Text size="body" weight="bold">
-          {t("Please type your project name to continue.")}
-        </Text>
-        <TextInput name={" "} value={""} onChange={name => setUnarchiveInputName(name)} />
-      </Modal>
-
-      <Modal
-        isVisible={deleteModelVisible}
-        title={t("Delete project")}
-        size="sm"
-        button1={
-          <Button
-            text={t("Cancel")}
-            buttonType="secondary"
-            onClick={() => {
-              setDeleteModelVisible(false);
-            }}
-          />
-        }
-        button2={
-          <Button
-            text={t("I am sure I want to delete this project.")}
-            buttonType="danger"
-            disabled={deleteDisabled}
-            onClick={onDeleteProject}
-          />
-        }>
-        <Text size="body" weight="bold">
-          {project?.name}
-        </Text>
-        <Text size="body">{t("This action cannot be undone.")}</Text>
-        <Text size="body">
-          {t(
-            "This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.",
-          )}
-        </Text>
-        <Divider />
-        <Text size="body" weight="bold">
-          {t("Please type your project name to continue.")}
-        </Text>
-        <TextInput name={" "} value={""} onChange={name => setDeleteInputName(name)} />
+      <Modal visible={deleteModelVisible} size="small">
+        <ModalPanel
+          title={t("Delete project")}
+          onCancel={() => setDeleteModelVisible(false)}
+          actions={[
+            <Button
+              key="cancel"
+              title={t("Cancel")}
+              appearance="secondary"
+              onClick={() => {
+                setDeleteModelVisible(false);
+              }}
+            />,
+            <Button
+              key="delete"
+              title={t("I am sure I want to delete this project.")}
+              appearance="dangerous"
+              disabled={deleteDisabled}
+              onClick={onDeleteProject}
+            />,
+          ]}>
+          <ModalContentWrapper>
+            <Typography size="body" weight="bold">
+              {project?.name}
+            </Typography>
+            <Typography size="body">
+              {t(
+                "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.",
+              )}
+            </Typography>
+            <Divider />
+            <Typography size="body">{t("Please type your project name to continue.")}</Typography>
+            <TextInput onChange={name => setDeleteInputName(name)} />
+          </ModalContentWrapper>
+        </ModalPanel>
       </Modal>
     </InnerPage>
   ) : null;
@@ -295,25 +157,33 @@ const GeneralSettings: React.FC<Props> = ({
 
 export default GeneralSettings;
 
-const DangerItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.largest}px;
-`;
+const ModalContentWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+  padding: theme.spacing.large,
+  background: theme.bg[1],
+}));
+
+const DangerItem = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+}));
 
 const Divider = styled.div`
   height: 1px;
   background-color: ${({ theme }) => theme.outline.weaker};
 `;
 
-const ThumbnailField = styled.div`
-  grid-template-rows: 100%;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 20px;
-  display: inline-grid;
-`;
+const Thumbnail = styled("div")(({ theme }) => ({
+  display: "inline-grid",
+  gridTemplateRows: "100%",
+  gridTemplateColumns: "1fr 1fr",
+  gridColumnGap: theme.spacing.large,
+}));
 
-const StyledImage = styled.img`
-  width: 100%;
-  border-radius: 4px;
-`;
+const StyledImage = styled("img")(({ theme }) => ({
+  width: "100%",
+  borderRadius: theme.radius.small,
+}));
