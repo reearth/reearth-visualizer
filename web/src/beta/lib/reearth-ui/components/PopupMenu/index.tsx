@@ -233,5 +233,5 @@ const SubMenuHeader = styled("div")(({ theme }) => ({
   fontSize: "11px",
   fontWeight: 400,
   lineHeight: "16px",
-  padding: "4px 8px 0px 8px",
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  0 ${theme.spacing.small}px`,
 }));
