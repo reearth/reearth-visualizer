@@ -202,6 +202,7 @@ export const getIconName = (icon?: string | IconName): IconName => {
     case "mdTextStoryBlock":
       return "fileMD";
     case "imageStoryBlock":
+    case "imageInfoboxBetaBlock":
       return "image";
     case "videoStoryBlock":
       return "play";
@@ -219,8 +220,8 @@ export const getIconName = (icon?: string | IconName): IconName => {
       return "page";
     case "propertyInfoboxBetaBlock":
       return "listDashes";
-    case "imageInfoboxBetaBlock":
-      return "imageFilled";
+    case "linkButtonStoryBlock":
+      return "linkSimple";
     default:
       return "puzzlePiece";
   }

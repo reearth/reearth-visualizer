@@ -1,14 +1,16 @@
 import { RefObject, useMemo } from "react";
 
-import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
+import { Camera } from "@reearth/beta/utils/value";
+import { TimelineManagerRef, TimelineCommitter, ViewerProperty } from "@reearth/core";
 
-import { MapRef, SceneProperty } from "./types";
+import { MapRef } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
 export const useWidgetContext = ({
   mapRef,
   selectedLayerId,
-  sceneProperty,
+  viewerProperty,
+  initialCamera,
   timelineManagerRef,
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
@@ -16,16 +18,18 @@ export const useWidgetContext = ({
       widgetContextFromMapRef({
         mapRef,
         selectedLayerId,
-        sceneProperty,
+        viewerProperty,
+        initialCamera,
         timelineManagerRef,
       }),
-    [mapRef, sceneProperty, selectedLayerId, timelineManagerRef],
+    [mapRef, viewerProperty, initialCamera, selectedLayerId, timelineManagerRef],
   );
 
 export function widgetContextFromMapRef({
   mapRef,
   selectedLayerId,
-  sceneProperty,
+  viewerProperty,
+  initialCamera,
   timelineManagerRef,
 }: {
   mapRef?: RefObject<MapRef>;
@@ -33,7 +37,8 @@ export function widgetContextFromMapRef({
     layerId?: string;
     featureId?: string;
   };
-  sceneProperty?: SceneProperty;
+  viewerProperty?: ViewerProperty;
+  initialCamera?: Camera;
   timelineManagerRef?: TimelineManagerRef;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
@@ -44,8 +49,8 @@ export function widgetContextFromMapRef({
       return engine()?.getClock();
     },
     timelineManagerRef,
-    initialCamera: sceneProperty?.default?.camera ?? sceneProperty?.camera?.camera,
-    is2d: sceneProperty?.default?.sceneMode === "2d",
+    initialCamera,
+    is2d: viewerProperty?.scene?.mode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);

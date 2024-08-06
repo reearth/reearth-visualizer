@@ -103,7 +103,7 @@ const AllLayers = styled("div")(({ theme }) => ({
 const LayerList = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  maxHeight: "136px",
+  height: "352px",
   overflowY: "auto",
   overflowX: "hidden",
   width: "100%",

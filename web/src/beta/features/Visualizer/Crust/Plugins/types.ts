@@ -12,21 +12,33 @@ import type {
   LayerSelectWithRectMove,
   LayerSelectWithRectStart,
   LayerVisibilityEvent,
+  ViewerProperty,
+  SketchEventCallback,
+  SketchType,
+  TimelineManagerRef,
 } from "@reearth/core";
-import { SketchEventCallback, SketchType, TimelineManagerRef } from "@reearth/core";
 
 import { Story } from "../StoryPanel";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
-import type { CommonReearth } from "./api";
+import type { CommonReearth } from "./pluginAPI/commonReearth";
+import {
+  CameraEventType,
+  LayersEventType,
+  SelectionModeEventType,
+  SketchEventType,
+  TimelineEventType,
+  ViewerEventType,
+} from "./pluginAPI/types";
 import type { ClientStorage } from "./useClientStorage";
 import type { PluginInstances } from "./usePluginInstances";
+import { Events } from "./utils/events";
 
 export type Props = PropsWithChildren<{
   engineName?: string;
   mapRef?: RefObject<MapRef>;
-  sceneProperty?: any;
+  viewerProperty?: ViewerProperty;
   inEditor?: boolean;
   built?: boolean;
   selectedLayer?: ComputedLayer;
@@ -38,8 +50,8 @@ export type Props = PropsWithChildren<{
   floatingWidgets?: InternalWidget[];
   timelineManagerRef?: TimelineManagerRef;
   selectedStory?: Story;
-  overrideSceneProperty?: (id: string, property: any) => void;
-  interactionMode: InteractionModeType;
+  interactionMode?: InteractionModeType;
+  overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onLayerEdit?: (cb: (e: LayerEditEvent) => void) => void;
   onLayerSelectWithRectStart?: (cb: (e: LayerSelectWithRectStart) => void) => void;
@@ -57,5 +69,11 @@ export type Context = {
   pluginInstances: PluginInstances;
   clientStorage: ClientStorage;
   timelineManagerRef?: TimelineManagerRef;
-  overrideSceneProperty?: (id: string, property: any) => void;
+  overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
+  viewerEvents: Events<ViewerEventType>;
+  selectionModeEvents: Events<SelectionModeEventType>;
+  cameraEvents: Events<CameraEventType>;
+  timelineEvents: Events<TimelineEventType>;
+  layersEvents: Events<LayersEventType>;
+  sketchEvents: Events<SketchEventType>;
 };

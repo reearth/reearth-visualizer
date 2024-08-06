@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Camera } from "@reearth/beta/utils/value";
-import { MapRef } from "@reearth/core";
+import { MapRef, ViewerProperty } from "@reearth/core";
 import { config } from "@reearth/services/config";
 
 export default () => {
@@ -17,7 +17,7 @@ export default () => {
     [],
   );
 
-  const sceneProperty = useMemo(
+  const viewerProperty: ViewerProperty = useMemo(
     () => ({
       tiles: [
         {
@@ -35,7 +35,7 @@ export default () => {
 
   return {
     visualizerRef,
-    sceneProperty,
+    viewerProperty,
     ready,
     engineMeta,
     currentCamera,
