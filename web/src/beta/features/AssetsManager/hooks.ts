@@ -1,4 +1,3 @@
-import { useApolloClient } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useFileInput from "use-file-input";
 
@@ -116,14 +115,6 @@ export default ({
       assetsExts.includes((a.url.split(".").pop()?.toLowerCase() as FileType) ?? ""),
     );
   }, [assets, assetsExts]);
-
-  const client = useApolloClient();
-  useEffect(() => {
-    return () => {
-      client.cache.evict({ fieldName: "assets" });
-      client.cache.gc();
-    };
-  }, [client.cache]);
 
   // get more assets
   const isLoadingMore = useRef(false);
