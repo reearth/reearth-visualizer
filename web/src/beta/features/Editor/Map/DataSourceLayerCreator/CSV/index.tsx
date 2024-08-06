@@ -15,6 +15,8 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { DataProps, SourceType, DataSourceOptType } from "..";
 import { generateTitle } from "../util";
 
+const assetsTypes = ["csv" as const];
+
 const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const theme = useTheme();
@@ -76,11 +78,10 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         {sourceType == "local" && (
           <InputsWrapper>
             <AssetField
-              fileType="asset"
-              entityType="file"
+              inputMethod="asset"
               commonTitle={t("Asset")}
               value={value}
-              fileFormat="CSV"
+              assetsTypes={assetsTypes}
               onChange={handleValueChange}
             />
           </InputsWrapper>

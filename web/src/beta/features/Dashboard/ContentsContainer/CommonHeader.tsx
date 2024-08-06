@@ -2,7 +2,6 @@ import { FC, useCallback, useState } from "react";
 
 import {
   Button,
-  Icon,
   IconName,
   PopupMenuItem,
   Selector,
@@ -58,12 +57,6 @@ const CommonHeader: FC<HeaderProps> = ({
     },
     [setSearchInputValue],
   );
-
-  const SearchIcon: FC = () => (
-    <IconWrepper onClick={() => onSearch?.(searchInputValue)}>
-      <Icon icon="magnifyingGlass" size="small" color={theme.content.weak} />
-    </IconWrepper>
-  );
   return (
     <Header>
       <Button title={title} icon={icon} appearance={appearance} onClick={onClick} />
@@ -73,7 +66,6 @@ const CommonHeader: FC<HeaderProps> = ({
           <SearchWrepper>
             <TextInput
               value={searchInputValue}
-              actions={[SearchIcon]}
               placeholder={t("Type key word to search")}
               onChange={handleSearchInputChange}
               onBlur={() => onSearch?.(searchInputValue)}
@@ -123,7 +115,3 @@ const Actions = styled("div")(({ theme }) => ({
 
 const SearchWrepper = styled("div")(() => ({ minWidth: "250px" }));
 const SelectorContainer = styled("div")(() => ({ minWidth: "130px" }));
-
-const IconWrepper = styled("div")(() => ({
-  cursor: "pointer",
-}));

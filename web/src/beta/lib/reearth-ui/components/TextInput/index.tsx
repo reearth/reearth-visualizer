@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
+import { FC, useCallback, useEffect, useState, ChangeEvent, ReactNode, KeyboardEvent } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -11,10 +11,11 @@ export type TextInputProps = {
   appearance?: "readonly" | "present";
   extendWidth?: boolean;
   autoFocus?: boolean;
-  actions?: FC[];
+  actions?: ReactNode[];
   leftAction?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const TextInput: FC<TextInputProps> = ({
@@ -30,6 +31,7 @@ export const TextInput: FC<TextInputProps> = ({
   autoFocus,
   onChange,
   onBlur,
+  onKeyDown,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -79,14 +81,9 @@ export const TextInput: FC<TextInputProps> = ({
         onFocus={handleFocus}
         appearance={appearance}
         autoFocus={autoFocus}
+        onKeyDown={onKeyDown}
       />
-      {actions && (
-        <ActionsWrapper>
-          {actions.map((Action, i) => (
-            <Action key={i} />
-          ))}
-        </ActionsWrapper>
-      )}
+      {actions && <ActionsWrapper>{actions}</ActionsWrapper>}
     </Wrapper>
   );
 };

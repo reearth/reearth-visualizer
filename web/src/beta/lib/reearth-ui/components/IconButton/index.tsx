@@ -6,7 +6,7 @@ import { IconName, Icon } from "../Icon";
 
 export type IconButtonProps = {
   icon: IconName;
-  size?: "normal" | "small" | "large";
+  size?: "normal" | "small" | "smallest" | "large";
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;
   disabled?: boolean;
@@ -37,7 +37,7 @@ export const IconButton: FC<IconButtonProps> = ({
 };
 
 const StyledButton = styled("button")<{
-  size: "normal" | "small" | "large";
+  size: "normal" | "small" | "smallest" | "large";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;
 }>(({ appearance, size, active, theme }) => ({
@@ -45,8 +45,10 @@ const StyledButton = styled("button")<{
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  width: size === "small" ? "20px" : size === "large" ? "36px" : "24px",
-  height: size === "small" ? "20px" : size === "large" ? "36px" : "24px",
+  width:
+    size === "smallest" ? "16px" : size === "small" ? "20px" : size === "large" ? "36px" : "24px",
+  height:
+    size === "smallest" ? "16px" : size === "small" ? "20px" : size === "large" ? "36px" : "24px",
   borderRadius: size === "small" ? `${theme.radius.small}px` : `${theme.radius.normal}px`,
   color: active
     ? `${theme.content.withBackground}`
@@ -62,8 +64,8 @@ const StyledButton = styled("button")<{
     : `${theme.bg[1]}`,
   boxShadow: appearance !== "simple" ? theme.shadow.button : "none",
   ["svg"]: {
-    width: size === "small" ? "12px" : size === "large" ? "20px" : "16px",
-    height: size === "small" ? "12px" : size === "large" ? "20px" : "16px",
+    width: size === "small" || size === "smallest" ? "12px" : size === "large" ? "20px" : "16px",
+    height: size === "small" || size === "smallest" ? "12px" : size === "large" ? "20px" : "16px",
   },
   ["&:hover"]: {
     color: `${theme.content.withBackground}`,

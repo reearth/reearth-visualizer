@@ -7,6 +7,8 @@ import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
+// TODO: Remove this file
+
 const assetsPerPage = 20;
 
 const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
