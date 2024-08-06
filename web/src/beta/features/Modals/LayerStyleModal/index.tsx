@@ -20,6 +20,7 @@ export type Props = {
   onClose: () => void;
 };
 
+// TODO: Remove this file
 const ChooseLayerStyleModal: React.FC<Props> = ({ open, sceneId, onClose, onSelect }) => {
   const t = useT();
   const [, setNotification] = useNotification();

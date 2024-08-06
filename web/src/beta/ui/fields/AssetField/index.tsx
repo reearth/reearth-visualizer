@@ -1,24 +1,25 @@
 import { FC, useCallback, useEffect, useState } from "react";
 
-import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
-import AssetModal from "@reearth/beta/features/Modals/AssetModal";
-import LayerStyleModal from "@reearth/beta/features/Modals/LayerStyleModal";
-import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
+import AssetsSelector from "@reearth/beta/features/AssetsManager/AssetsSelector";
+import {
+  AcceptedAssetsTypes,
+  type FileType,
+  GIS_FILE_TYPES,
+  IMAGE_FILE_TYPES,
+} from "@reearth/beta/features/AssetsManager/constants";
 import { TextInput, Button } from "@reearth/beta/lib/reearth-ui";
-import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
+import CommonField, { CommonFieldProps } from "../CommonField";
+
+import useAssetUpload from "./useAssetUpload";
 
 export type AssetFieldProps = CommonFieldProps & {
   value?: string;
-  fileType?: "asset" | "URL" | "layerStyle";
-  entityType?: "image" | "file" | "layerStyle";
-  fileFormat?: AcceptedFileFormat;
-  sceneId?: string;
+  inputMethod?: "asset" | "URL";
+  assetsTypes?: AcceptedAssetsTypes;
   placeholder?: string;
   onChange?: (value: string | undefined, name: string | undefined) => void;
 };
@@ -27,10 +28,8 @@ const AssetField: FC<AssetFieldProps> = ({
   commonTitle,
   description,
   value,
-  entityType,
-  fileType,
-  fileFormat,
-  sceneId,
+  inputMethod,
+  assetsTypes,
   placeholder,
   onChange,
 }) => {
@@ -41,13 +40,13 @@ const AssetField: FC<AssetFieldProps> = ({
   const [currentValue, setCurrentValue] = useState(value);
 
   const handleChange = useCallback(
-    (inputValue?: string, name?: string) => {
-      if (!inputValue) {
-        setCurrentValue(inputValue);
-        onChange?.(inputValue, name);
+    (url?: string, name?: string) => {
+      if (!url) {
+        setCurrentValue(url);
+        onChange?.(url, name);
       } else if (
-        fileType === "asset" &&
-        !(checkIfFileType(inputValue, FILE_FORMATS) || checkIfFileType(inputValue, IMAGE_FORMATS))
+        inputMethod === "asset" &&
+        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes((url.split(".").pop() as FileType) ?? "")
       ) {
         setNotification({
           type: "error",
@@ -55,18 +54,18 @@ const AssetField: FC<AssetFieldProps> = ({
         });
         setCurrentValue(undefined);
       } else {
-        setCurrentValue(inputValue);
-        onChange?.(inputValue, name);
+        setCurrentValue(url);
+        onChange?.(url, name);
       }
     },
-    [fileType, onChange, setNotification, t],
+    [inputMethod, onChange, setNotification, t],
   );
 
-  const { handleFileUpload } = useFileUploaderHook({
+  const { handleFileUpload } = useAssetUpload({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
-    assetType: entityType,
-    fileFormat,
+    assetsTypes,
+    multiple: false,
   });
 
   useEffect(() => {
@@ -84,7 +83,7 @@ const AssetField: FC<AssetFieldProps> = ({
           onChange={handleChange}
           placeholder={placeholder ?? t("Not set")}
         />
-        {fileType === "asset" && (
+        {inputMethod === "asset" && (
           <ButtonWrapper>
             <Button icon={"image"} size="small" title="Choose" onClick={handleClick} extendWidth />
             <Button
@@ -97,24 +96,23 @@ const AssetField: FC<AssetFieldProps> = ({
           </ButtonWrapper>
         )}
       </AssetWrapper>
-      {open && entityType !== "layerStyle" && (
-        <AssetModal
-          open={open}
-          onModalClose={handleModalClose}
-          assetType={entityType}
-          currentWorkspace={currentWorkspace}
-          currentValue={currentValue}
-          fileFormat={fileFormat}
-          onSelect={handleChange}
-        />
-      )}
-      {open && entityType === "layerStyle" && (
-        <LayerStyleModal
-          open={open}
-          sceneId={sceneId}
+      {open && (
+        <AssetsSelector
+          opened={open}
           onClose={handleModalClose}
-          onSelect={handleChange}
+          workspaceId={currentWorkspace?.id}
+          onAssetSelect={handleChange}
+          assetsTypes={assetsTypes}
         />
+        // <AssetModal
+        //   open={open}
+        //   onModalClose={handleModalClose}
+        //   assetType={entityType}
+        //   currentWorkspace={currentWorkspace}
+        //   currentValue={currentValue}
+        //   fileFormat={fileFormat}
+        //   onSelect={handleChange}
+        // />
       )}
     </CommonField>
   );

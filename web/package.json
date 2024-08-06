@@ -120,7 +120,7 @@
         "dayjs": "1.11.10",
         "formik": "2.4.5",
         "github-markdown-css": "5.4.0",
-        "graphiql": "2.4.4",
+        "graphiql": "3.4.0",
         "graphql": "16.6.0",
         "i18next": "22.4.15",
         "i18next-browser-languagedetector": "7.0.1",

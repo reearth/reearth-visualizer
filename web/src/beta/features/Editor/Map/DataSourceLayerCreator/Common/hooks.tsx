@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 
-import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
+import { GisType } from "@reearth/beta/features/AssetsManager/constants";
 import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
@@ -11,7 +11,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   const t = useT();
 
   const [sourceType, setSourceType] = useState<SourceType>("local");
-  const [fileFormat, setFileFormat] = useState<AcceptedFileFormat>("GeoJSON");
+  const [fileFormat, setFileFormat] = useState<GisType>("geojson");
 
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
@@ -27,15 +27,15 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
 
   const fileFormatOptions = [
     {
-      value: "GeoJSON",
+      value: "geojson",
       label: "GeoJSON",
     },
     {
-      value: "KML",
+      value: "kml",
       label: "KML",
     },
     {
-      value: "CZML",
+      value: "czml",
       label: "CZML",
     },
   ];
@@ -52,7 +52,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     let parsedValue = null;
 
     if (sourceType === "value" && value !== "") {
-      if (fileFormat === "GeoJSON") {
+      if (fileFormat === "geojson") {
         try {
           parsedValue = JSON.parse(value);
         } catch (error) {
@@ -73,7 +73,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
           url:
             (sourceType === "url" || sourceType === "local") && value !== ""
               ? value
-              : fileFormat === "CZML" || fileFormat === "KML"
+              : fileFormat === "czml" || fileFormat === "kml"
               ? parsedValue
               : undefined,
           type: fileFormat.toLowerCase() as DataType,
@@ -93,7 +93,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   }, []);
 
   const handleFileFormatChange = useCallback((value: string | string[]) => {
-    setFileFormat(value as AcceptedFileFormat);
+    setFileFormat(value as GisType);
   }, []);
 
   const handleDataSourceTypeChange = useCallback((newValue: string) => {
@@ -101,11 +101,14 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     setValue("");
   }, []);
 
+  const assetsTypes = useMemo(() => [fileFormat], [fileFormat]);
+
   return {
     value,
     dataSourceTypeOptions,
     fileFormatOptions,
     fileFormat,
+    assetsTypes,
     sourceType,
     prioritizePerformance,
     setPrioritizePerformance,

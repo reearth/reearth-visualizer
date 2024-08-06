@@ -89,18 +89,6 @@ const CameraField: FC<CameraFieldProps> = ({
     />
   );
 
-  const DeleteAction: FC = () => (
-    <Button
-      icon="trash"
-      size="small"
-      iconButton
-      appearance="simple"
-      disabled={!value}
-      onClick={handleCameraSettingDelete}
-      iconColor={value ? theme.content.main : theme.content.weak}
-    />
-  );
-
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
@@ -110,7 +98,18 @@ const CameraField: FC<CameraFieldProps> = ({
           appearance="readonly"
           disabled
           leftAction={value && [ZoomToPosition]}
-          actions={[DeleteAction]}
+          actions={[
+            <Button
+              key="delete"
+              icon="trash"
+              size="small"
+              iconButton
+              appearance="simple"
+              disabled={!value}
+              onClick={handleCameraSettingDelete}
+              iconColor={value ? theme.content.main : theme.content.weak}
+            />,
+          ]}
         />
         <Popup
           trigger={

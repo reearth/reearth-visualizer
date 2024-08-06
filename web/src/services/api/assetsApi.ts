@@ -26,7 +26,7 @@ export default () => {
       () => data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage,
       [data?.assets],
     );
-    const isRefetching = useMemo(() => networkStatus === 3, [networkStatus]);
+    const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
     const endCursor = useMemo(() => data?.assets.pageInfo?.endCursor, [data?.assets]);
 
     return { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore, ...rest };
