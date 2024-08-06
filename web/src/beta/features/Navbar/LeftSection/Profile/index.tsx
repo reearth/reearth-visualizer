@@ -17,7 +17,7 @@ export type Props = {
   openModal?: () => void;
 };
 
-const HeaderProfile: React.FC<Props> = ({
+const HeaderProfile: FC<Props> = ({
   currentWorkspace = { id: undefined, name: "" },
   workspaces = [],
   onSignOut,
