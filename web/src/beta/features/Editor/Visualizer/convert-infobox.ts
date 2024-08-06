@@ -3,6 +3,7 @@ import type { Layer } from "@reearth/core";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 
+import { processProperty } from "./convert";
 import { processProperty as processNewProperty } from "./processNewProperty";
 
 export default (
@@ -21,9 +22,11 @@ export default (
       name: blockNames?.[b.extensionId] ?? "Infobox Block",
       pluginId: b.pluginId,
       extensionId: b.extensionId,
+      extensionType: "infoboxBlock",
       property: processNewProperty(undefined, b.property),
+      propertyForPluginAPI: processProperty(b.property),
       propertyId: b.propertyId, // required by onBlockChange
-      pluginBlockPropertyItems: convert(b.property),
+      propertyItemsForPluginBlock: convert(b.property),
     })),
   };
 };

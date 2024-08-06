@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
@@ -14,7 +14,7 @@ export type Props = BlockProps<StoryBlock>;
 // Text block is very special, it will not edit values with field components
 // from the common editor panel, but manage it by itself directly.
 
-const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
+const TextBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
     [block?.property?.default?.text?.value],

@@ -30,10 +30,11 @@ export default ({
   const [currentPropertyList, setCurrentPropertyList] = useState<ListItem[]>(
     propertyListField?.value ?? [],
   );
+  const [isDragging, setIsDragging] = useState(false);
 
   const displayOptions = displayTypeField?.choices?.map(
     ({ key, title }: { key: string; title: string }) => ({
-      key,
+      value: key,
       label: title,
     }),
   );
@@ -69,7 +70,7 @@ export default ({
     [handlePropertyValueUpdate],
   );
 
-  const handleKeyChange = useCallback(
+  const handleKeyBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
       const newList = currentPropertyList.map(i => ({ ...i } as ListItem));
       newList[idx].key = newKeyValue ?? "";
@@ -79,7 +80,7 @@ export default ({
     [currentPropertyList, handlePropertyListUpdate],
   );
 
-  const handleValueChange = useCallback(
+  const handleValueBlur = useCallback(
     (idx: number) => (newValue?: string) => {
       const newList = currentPropertyList.map(i => ({ ...i } as ListItem));
       newList[idx].value = newValue ?? "";
@@ -90,7 +91,7 @@ export default ({
   );
 
   const handleDisplayTypeUpdate = useCallback(
-    (value?: string) => handlePropertyValueUpdate("displayType", "string")(value),
+    (value?: string | string[]) => handlePropertyValueUpdate("displayType", "string")(value),
     [handlePropertyValueUpdate],
   );
 
@@ -107,37 +108,55 @@ export default ({
     handlePropertyValueUpdate("propertyList", propertyListField.type)(newList);
   }, [currentPropertyList, propertyListField, handlePropertyValueUpdate]);
 
-  const handleItemDrop: (
-    item: {
-      id: string;
-      key: string;
-      value: string;
-    },
-    targetIndex: number,
-  ) => void = useCallback(
-    async (item, index) => {
-      const newList: ListItem[] = [...currentPropertyList];
-      newList.splice(
-        currentPropertyList.findIndex(li => li.id === item.id),
-        1,
-      );
-      newList.splice(index, 0, item);
+  const handleMoveStart = useCallback(() => {
+    setIsDragging(true);
+  }, []);
 
-      if (newList.length < 1 || !currentPropertyList) return;
+  const handleItemDrop = useCallback(
+    async (
+      item: {
+        id: string;
+        key: string;
+        value: string;
+      },
+      targetIndex: number,
+    ) => {
+      const itemIndex = currentPropertyList.findIndex(li => li.id === item.id);
+      if (itemIndex === -1) return;
+
+      const newList = [...currentPropertyList];
+      newList.splice(itemIndex, 1);
+      newList.splice(targetIndex, 0, item);
+      setCurrentPropertyList(newList);
       await onPropertyUpdate?.(propertyId, "default", "propertyList", undefined, "array", newList);
     },
     [currentPropertyList, onPropertyUpdate, propertyId],
   );
 
+  const handleMoveEnd = useCallback(
+    (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        const itemToMove = currentPropertyList?.find(item => item.id === itemId);
+        if (itemToMove) {
+          handleItemDrop(itemToMove, newIndex);
+        }
+      }
+      setIsDragging(false);
+    },
+    [currentPropertyList, handleItemDrop],
+  );
+
   return {
     displayOptions,
     currentPropertyList,
-    handleKeyChange,
-    handleValueChange,
+    isDragging,
+    handleKeyBlur,
+    handleValueBlur,
     handleDisplayTypeUpdate,
     handleItemAdd,
-    handleItemDrop,
     handlePropertyValueRemove,
+    handleMoveStart,
+    handleMoveEnd,
   };
 };
 

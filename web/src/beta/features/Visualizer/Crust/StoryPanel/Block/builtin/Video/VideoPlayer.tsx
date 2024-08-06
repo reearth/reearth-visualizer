@@ -1,3 +1,4 @@
+import { FC } from "react";
 import Player from "react-player";
 
 import { styled } from "@reearth/services/theme";
@@ -7,7 +8,7 @@ type Props = {
   src?: string;
   inEditor?: boolean;
 };
-const VideoPlayer: React.FC<Props> = ({ isSelected, src, inEditor }) => {
+const VideoPlayer: FC<Props> = ({ isSelected, src, inEditor }) => {
   return (
     <StyledWrapper>
       {inEditor && <Overlay />}
@@ -18,13 +19,13 @@ const VideoPlayer: React.FC<Props> = ({ isSelected, src, inEditor }) => {
 
 export default VideoPlayer;
 
-const StyledWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
+const StyledWrapper = styled("div")(() => ({
+  width: "100%",
+  position: "relative",
+}));
 
-const Overlay = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-`;
+const Overlay = styled("div")(() => ({
+  width: "100%",
+  height: "100%",
+  position: "absolute",
+}));

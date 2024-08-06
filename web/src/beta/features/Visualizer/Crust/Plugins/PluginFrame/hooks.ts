@@ -81,6 +81,9 @@ export default function useHook({
   const [loaded, setLoaded] = useState(false);
   const [code, setCode] = useState("");
 
+  const onDisposeRef = useRef(onDispose);
+  onDisposeRef.current = onDispose;
+
   const mainIFrameRef = useRef<IFrameRef>(null);
   const modalIFrameRef = useRef<IFrameRef>(null);
   const popupIFrameRef = useRef<IFrameRef>(null);
@@ -204,7 +207,7 @@ export default function useHook({
     const iframeRef = mainIFrameRef.current;
 
     return () => {
-      onDispose?.();
+      onDisposeRef.current?.();
       messageEvents.clear();
       messageOnceEvents.clear();
       iframeRef?.reset();
@@ -227,7 +230,6 @@ export default function useHook({
     code,
     evalCode,
     isMarshalable,
-    onDispose,
     onPreInit,
     skip,
     exposed,

@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -10,12 +12,7 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-const StoryPageIndicator: React.FC<Props> = ({
-  currentPage,
-  pageTitles,
-  maxPage,
-  onPageChange,
-}) => {
+const StoryPageIndicator: FC<Props> = ({ currentPage, pageTitles, maxPage, onPageChange }) => {
   const t = useT();
   return (
     <Wrapper>
@@ -36,9 +33,7 @@ const StoryPageIndicator: React.FC<Props> = ({
 
 export default StoryPageIndicator;
 
-const Wrapper = styled.div`
-  display: flex;
-  background-color: #78a9ff;
-  height: 8px;
-  }
-`;
+const Wrapper = styled("div")(() => ({
+  display: "flex",
+  height: "8px",
+}));

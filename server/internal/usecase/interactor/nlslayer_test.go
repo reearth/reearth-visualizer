@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,9 @@ func TestAddCustomProperties(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
+	prj, _ := project.New().NewID().Build()
+	_ = db.Project.Save(ctx, prj)
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db)
 
@@ -50,7 +53,9 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
+	prj, _ := project.New().NewID().Build()
+	_ = db.Project.Save(ctx, prj)
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db)
 
@@ -103,7 +108,9 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
+	prj, _ := project.New().NewID().Build()
+	_ = db.Project.Save(ctx, prj)
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db)
 
@@ -178,7 +185,9 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
+	prj, _ := project.New().NewID().Build()
+	_ = db.Project.Save(ctx, prj)
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db)
 

@@ -117,6 +117,7 @@ import TextBolder from "./Icons/TextBolder.svg?react";
 import TextItalic from "./Icons/TextItalic.svg?react";
 import TextT from "./Icons/TextT.svg?react";
 import TextUnderline from "./Icons/TextUnderline.svg?react";
+import Time from "./Icons/Time.svg?react";
 import TimeOrder from "./Icons/TimeOrder.svg?react";
 import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
@@ -248,6 +249,7 @@ export default {
   textItalic: TextItalic,
   textT: TextT,
   textUnderline: TextUnderline,
+  time: Time,
   timeOrder: TimeOrder,
   timeOrderInverse: TimeOrderInverse,
   trash: Trash,

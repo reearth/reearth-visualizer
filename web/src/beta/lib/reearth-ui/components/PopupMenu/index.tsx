@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useState } from "react";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Popup, Icon, Typography, IconName, PopupProps } from "@reearth/beta/lib/reearth-ui";
@@ -23,6 +23,7 @@ export type PopupMenuItem = {
 export type PopupMenuProps = {
   label?: string | ReactNode;
   icon?: IconName;
+  iconColor?: string;
   menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
@@ -30,6 +31,8 @@ export type PopupMenuProps = {
   size?: "small" | "normal";
   placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
+  openMenu?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export const PopupMenu: FC<PopupMenuProps> = ({
@@ -40,21 +43,30 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   extendTriggerWidth,
   placement,
   triggerOnHover,
+  iconColor,
   icon,
+  openMenu = false,
   size = "normal",
+  onOpenChange,
 }) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
+
+  useEffect(() => {
+    setOpen(openMenu);
+  }, [openMenu]);
 
   const handlePopOver = useCallback(
     (state?: boolean) => {
       if (state === undefined) {
         setOpen(!open);
+        onOpenChange?.(!open);
       } else {
         setOpen(state);
+        onOpenChange?.(state);
       }
     },
-    [open],
+    [onOpenChange, open],
   );
 
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
@@ -67,7 +79,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           onClick?.(id);
           handlePopOver(false);
         }}>
-        {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
+        {icon && (
+          <Icon icon={icon} size="small" color={iconColor ? iconColor : theme.content.weak} />
+        )}
         <div
           style={{
             display: "flex",
@@ -174,9 +188,23 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
     borderRadius: `${theme.radius.small}px`,
     border: `1px solid ${theme.outline.weaker}`,
     width: width ? `${width}px` : DEFAULT_MENU_WIDTH,
-    maxHeight: "238px",
+    maxHeight: "250px",
     overflowY: "auto",
     margin: nested ? "-7px 0 0 2px" : "inherit",
+    ["::-webkit-scrollbar"]: {
+      width: "8px",
+    },
+    ["::-webkit-scrollbar-track"]: {
+      background: theme.relative.darker,
+      borderRadius: "10px",
+    },
+    ["::-webkit-scrollbar-thumb"]: {
+      background: theme.relative.light,
+      borderRadius: "4px",
+    },
+    ["::-webkit-scrollbar-thumb:hover"]: {
+      background: theme.relative.lighter,
+    },
   }),
 );
 

@@ -10,7 +10,7 @@ import {
 
 import { styled } from "@reearth/services/theme";
 
-import type { PopupPosition } from "../../plugin_types";
+import type { PopupPosition } from "../../pluginAPI/types";
 
 type AxesOffsets = {
   mainAxis?: number;
@@ -56,13 +56,12 @@ const PopupContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
   return <Wrapper visible={!!shownPluginPopupInfo?.id} ref={innerRef} />;
 };
 
-const Wrapper = styled.div<{ visible: boolean }>`
-  position: absolute;
-  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
-  z-index: ${({ visible, theme }) =>
-    visible ? theme.zIndexes.visualizer.pluginPopup : theme.zIndexes.hidden};
-  transition: opacity 0.25s;
-  opacity: ${({ visible }) => (visible ? "1" : "0")};
-`;
+const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
+  position: "absolute",
+  visibility: visible ? "visible" : "hidden",
+  zIndex: visible ? theme.zIndexes.visualizer.pluginPopup : theme.zIndexes.hidden,
+  transition: "opacity 0.25s",
+  opacity: visible ? "1" : "0",
+}));
 
 export default forwardRef(PopupContainer);

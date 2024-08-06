@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
@@ -7,7 +7,7 @@ import { styled } from "@reearth/services/theme";
 
 import { StoryBlock } from "../../../types";
 
-const ImageBlock: React.FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
+const ImageBlock: FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src],

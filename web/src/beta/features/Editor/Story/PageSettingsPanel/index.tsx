@@ -1,8 +1,9 @@
 import { FC } from "react";
 
-import CheckBoxField from "@reearth/beta/components/CheckboxField";
-import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
-import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem } from "@reearth/beta/ui/components";
+import CheckBoxField from "@reearth/beta/ui/fields/CheckboxField";
+import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -36,39 +37,38 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       {selectedStoryPage && (
         <Wrapper>
           {tab == "story" && (
-            <SidePanelSectionField title={t("Layers")} storageKey="storyLayer">
-              {layers && layers?.length > 0 && (
+            <Collapse title={t("Layers")} size="small">
+              {layers && layers.length > 0 && (
                 <LayerWrapper>
                   <AllLayers>
-                    <CheckBoxField
-                      label={t("All Layers")}
-                      onClick={handleAllLayersCheck}
-                      checked={allCheckedLayers}
-                    />
+                    <CheckBoxField onChange={handleAllLayersCheck} value={allCheckedLayers} />
+                    <Title>{t("All Layers")}</Title>
                   </AllLayers>
-                  {layers?.map((layer, idx) => (
-                    <Layer key={idx}>
-                      <CheckBoxField
-                        onClick={() => handleLayerCheck(layer.id)}
-                        checked={checkedLayers.includes(layer.id)}
-                        label={layer.title}
-                      />
-                    </Layer>
-                  ))}
+                  <LayerList>
+                    {layers.map(layer => (
+                      <Layer key={layer.id}>
+                        <CheckBoxField
+                          onChange={() => handleLayerCheck(layer.id)}
+                          value={checkedLayers.includes(layer.id)}
+                        />
+                        <EntryItem icon="file" title={layer.title} disableHover />
+                      </Layer>
+                    ))}
+                  </LayerList>
                 </LayerWrapper>
               )}
-            </SidePanelSectionField>
+            </Collapse>
           )}
 
           {visibleItems?.map((i, idx) => (
-            <SidePanelSectionField title={i.title ?? t("Settings")} key={idx}>
+            <Collapse key={idx} title={i.title ?? t("Settings")} size="small">
               <PropertyItem
                 key={i.id}
                 propertyId={selectedStoryPage.property.id}
                 item={i}
                 onFlyTo={handleFlyTo}
               />
-            </SidePanelSectionField>
+            </Collapse>
           ))}
         </Wrapper>
       )}
@@ -78,22 +78,47 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 
 export default PageSettingsPanel;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  padding: theme.spacing.smallest,
+}));
 
-const LayerWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-`;
+const LayerWrapper = styled("div")(() => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+}));
 
-const Layer = styled.div`
-  padding: 6px 4px;
-`;
+const AllLayers = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  borderBottom: `1px solid ${theme.outline.weak}`,
+  marginBottom: theme.spacing.small,
+  paddingBottom: theme.spacing.small,
+  gap: theme.spacing.small,
+}));
 
-const AllLayers = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
-  padding: 6px 4px;
-`;
+const LayerList = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  height: "352px",
+  overflowY: "auto",
+  overflowX: "hidden",
+  width: "100%",
+}));
+
+const Layer = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+}));
+
+const Title = styled("div")(({ theme }) => ({
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+}));

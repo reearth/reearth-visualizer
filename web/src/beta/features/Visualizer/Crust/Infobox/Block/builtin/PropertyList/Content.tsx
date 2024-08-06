@@ -1,4 +1,4 @@
-import { memo, useContext, useMemo } from "react";
+import { FC, memo, useContext, useMemo } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
@@ -38,7 +38,7 @@ type Props = {
   ) => Promise<void>;
 };
 
-const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
+const Content: FC<Props> = ({ block, isEditable, ...props }) => {
   const context = useContext(BlockContext);
 
   const { selectedComputedFeature } = useContext(coreContext);
@@ -87,9 +87,9 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
 
 export default memo(Content);
 
-const Wrapper = styled.div`
-  width: 100%;
-`;
+const Wrapper = styled("div")(() => ({
+  width: "100%",
+}));
 
 function filterChildObjectsToEnd(inputObject?: any): any[] {
   if (!inputObject) return [];

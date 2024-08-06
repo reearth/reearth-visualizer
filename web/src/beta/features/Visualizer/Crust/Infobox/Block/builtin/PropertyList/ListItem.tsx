@@ -1,22 +1,25 @@
-import Text from "@reearth/beta/components/Text";
-import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
-const ListItem: React.FC<{ index?: number; keyValue?: string; value?: string }> = ({
+import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { styled, useTheme } from "@reearth/services/theme";
+
+const ListItem: FC<{ index?: number; keyValue?: string; value?: string }> = ({
   index,
   keyValue,
   value,
 }) => {
+  const theme = useTheme();
   return (
     <PropertyWrapper key={index} isEven={isEven(index ?? 0)}>
       <TextWrapper>
-        <StyledText size="body" customColor otherProperties={{ userSelect: "auto" }}>
+        <Typography size="body" color={theme.content.weaker}>
           {keyValue}
-        </StyledText>
+        </Typography>
       </TextWrapper>
       <TextWrapper>
-        <StyledText size="body" customColor otherProperties={{ userSelect: "auto" }}>
+        <Typography size="body" color={theme.content.weaker}>
           {value}
-        </StyledText>
+        </Typography>
       </TextWrapper>
     </PropertyWrapper>
   );
@@ -24,24 +27,20 @@ const ListItem: React.FC<{ index?: number; keyValue?: string; value?: string }> 
 
 export default ListItem;
 
-const PropertyWrapper = styled.div<{ isEven?: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  background: ${({ isEven }) => isEven && "#F4F4F4"};
-  padding: 8px 16px;
-  box-sizing: border-box;
-  word-break: break-word;
-  width: 100%;
-`;
+const PropertyWrapper = styled("div")<{ isEven?: boolean }>(({ isEven, theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  gap: theme.spacing.large,
+  background: isEven ? "#F4F4F4" : "#ffffff",
+  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
+  boxSizing: "border-box",
+  wordBreak: "break-word",
+  width: "100%",
+}));
 
-const TextWrapper = styled.div`
-  flex: 1;
-`;
-
-const StyledText = styled(Text)`
-  color: ${({ theme }) => theme.content.weaker};
-`;
+const TextWrapper = styled("div")(() => ({
+  flex: 1,
+}));
 
 function isEven(number: number) {
   return !!(number % 2 === 0);
