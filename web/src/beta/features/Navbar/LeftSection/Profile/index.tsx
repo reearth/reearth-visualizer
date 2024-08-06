@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Text from "@reearth/beta/components/Text";
 import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -17,7 +16,7 @@ export type Props = {
   openModal?: () => void;
 };
 
-const HeaderProfile: FC<Props> = ({
+const HeaderProfile: React.FC<Props> = ({
   currentWorkspace = { id: undefined, name: "" },
   workspaces = [],
   onSignOut,
@@ -70,26 +69,17 @@ const HeaderProfile: FC<Props> = ({
   ];
 
   return (
-    <Option size="body">
+    <Option>
       <PopupMenu label={currentWorkspace.name} menu={popupMenu} />
     </Option>
   );
 };
 
-const Option = styled("div")(({theme}) => ({
+const Option = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.small - 1}px ${theme.spacing.normal}px`,
   borderRadius: theme.radius.small,
   display: "flex",
-  alignItems: "center"
+  alignItems: "center",
 }));
-  padding: 7px 12px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  &:hover {
-    background: ${({ theme }) => theme.bg[2]};
-  }
-`;
 
 export default HeaderProfile;
