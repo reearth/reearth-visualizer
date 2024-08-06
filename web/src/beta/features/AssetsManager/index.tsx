@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { Breadcrumb, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
 import {
   ManagerContent,
   ManagerHeader,
@@ -55,6 +55,8 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     handleSearch,
     handleAssetUpload,
     contentWidth,
+    loading,
+    loadingMore,
   } = useHooks({
     allowMultipleSelection,
     workspaceId,
@@ -151,6 +153,11 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                     ),
                   )}
                 </AssetsGroup>
+                {(loading || loadingMore) && (
+                  <LoadingWrapper>
+                    <Loading relative />
+                  </LoadingWrapper>
+                )}
               </AssetsContent>
             </AssetsWrapper>
           </LayoutWrapper>
@@ -240,4 +247,9 @@ const Col = styled("div")<{ width: number }>(({ width }) => ({
   width: `${width}%`,
   flexGrow: 0,
   flexShrink: 0,
+}));
+
+const LoadingWrapper = styled("div")(() => ({
+  width: "100%",
+  height: 100,
 }));

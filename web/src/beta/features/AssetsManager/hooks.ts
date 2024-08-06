@@ -94,7 +94,7 @@ export default ({
 
   // assets
   const { useAssetsQuery, useRemoveAssets, useCreateAssets } = useAssetsFetcher();
-  const { assets, hasMoreAssets, isRefetching, endCursor, fetchMore } = useAssetsQuery({
+  const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } = useAssetsQuery({
     teamId: workspaceId ?? "",
     pagination: pagination(sort),
     sort: toGQLEnum(sort?.type),
@@ -117,15 +117,19 @@ export default ({
   }, [assets, assetsExts]);
 
   // get more assets
-  const isLoadingMore = useRef(false);
-  const loadMore = useCallback(() => {
-    if (!hasMoreAssets || isRefetching || isLoadingMore.current) return;
-    isLoadingMore.current = true;
-    fetchMore({
+  const isLoadingMoreRef = useRef(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMore = useCallback(async () => {
+    if (!hasMoreAssets || isRefetching || isLoadingMoreRef.current) return;
+    isLoadingMoreRef.current = true;
+    setLoadingMore(true);
+    await fetchMore({
       variables: {
         pagination: pagination(sort, endCursor),
       },
     });
+    setLoadingMore(false);
+    isLoadingMoreRef.current = false;
   }, [hasMoreAssets, isRefetching, fetchMore, sort, endCursor]);
 
   const loadMoreRef = useRef<() => void>(loadMore);
@@ -146,7 +150,6 @@ export default ({
   }, []);
 
   useEffect(() => {
-    isLoadingMore.current = false;
     checkSize();
   }, [assets, checkSize]);
 
@@ -302,6 +305,8 @@ export default ({
     handleSearch,
     handleAssetUpload,
     contentWidth,
+    loading,
+    loadingMore,
   };
 };
 
