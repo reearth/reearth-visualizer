@@ -2,6 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback, useMemo, useState, MouseEvent, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
 import { ProjectSortType, PublishmentStatus, Visualizer } from "@reearth/services/gql";
@@ -10,13 +11,7 @@ import { Project } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
 
-export type SortType =
-  | "date"
-  | "name"
-  | "date-updated"
-  | "date-reversed"
-  | "date-updated-reverse"
-  | "name-reverse";
+export type SortType = "date" | "date-reversed" | "name" | "name-reverse" | "date-updated";
 const projectsPerPage = 16;
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
@@ -29,9 +24,11 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
 const pagination = (sort?: SortType) => {
   let first, last;
   let sortBy;
-
   switch (sort) {
     case "date":
+      last = projectsPerPage;
+      break;
+    case "date-reversed":
       first = projectsPerPage;
       sortBy = ProjectSortType.Createdat;
       break;
@@ -63,17 +60,18 @@ export default (workspaceId?: string) => {
   const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
-  const [sort, setSort] = useState<SortType>();
-  const [viewState, setViewState] = useState(
-    localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
-      ? localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
+  const [sortValue, setSort] = useState<SortType>("date");
+
+  const [layout, setLayout] = useState(
+    ["grid", "list"].includes(localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "")
+      ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
       : "grid",
   );
 
-  const handleViewStateChange = useCallback((newView?: string) => {
+  const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
     if (!newView) return;
     localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
-    setViewState(newView);
+    setLayout(newView);
   }, []);
 
   const handleProjectCreate = useCallback(
@@ -91,7 +89,7 @@ export default (workspaceId?: string) => {
     [useCreateProject, workspaceId],
   );
 
-  const { first, last, sortBy } = useMemo(() => pagination(sort), [sort]);
+  const { first, last, sortBy } = useMemo(() => pagination(sortValue), [sortValue]);
 
   const {
     projects: projectsData,
@@ -150,7 +148,7 @@ export default (workspaceId?: string) => {
     return projects.filter(project => project.starred === true);
   }, [projects]);
 
-  const isRefetchingProjects = useMemo(() => networkStatus === 3, [networkStatus]);
+  const isRefetchingProjects = useMemo(() => networkStatus === 7, [networkStatus]);
 
   const handleGetMoreProjects = useCallback(() => {
     if (hasMoreProjects) {
@@ -206,14 +204,14 @@ export default (workspaceId?: string) => {
 
   useEffect(() => {
     refetch();
-  }, [sort, refetch, searchTerm]);
+  }, [sortValue, refetch, searchTerm]);
 
   const handleProjectSortChange = useCallback(
     (value?: string) => {
       if (!value) return;
-      setSort((value as SortType) ?? sort);
+      setSort((value as SortType) ?? sortValue);
     },
-    [sort],
+    [sortValue],
   );
 
   const handleSearch = useCallback((value?: string) => {
@@ -230,10 +228,11 @@ export default (workspaceId?: string) => {
     isLoading,
     selectedProject,
     wrapperRef,
-    viewState,
+    layout,
     projectCreatorVisible,
     favarateProjects,
     searchTerm,
+    sortValue,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
@@ -242,7 +241,7 @@ export default (workspaceId?: string) => {
     handleProjectCreate,
     handleProjectSelect,
     handleScrollToBottom: onScrollToBottom,
-    handleViewStateChange,
+    handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
   };

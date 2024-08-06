@@ -1,10 +1,9 @@
 import { FC, useMemo } from "react";
 
 import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
+import { ManagerHeader, ManagerHeaderButton } from "@reearth/beta/ui/components/ManagerBase";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-
-import CommonHeader from "../CommonHeader";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -19,9 +18,10 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     selectedProject,
     projectCreatorVisible,
     wrapperRef,
-    viewState,
+    layout,
     favarateProjects,
     searchTerm,
+    sortValue,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
@@ -30,7 +30,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleProjectOpen,
     handleProjectSelect,
     handleScrollToBottom,
-    handleViewStateChange,
+    handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
   } = useHooks(workspaceId);
@@ -39,28 +39,36 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const sortOptions: { value: string; label: string }[] = useMemo(
     () => [
-      { value: "date", label: t("Created At") },
+      { value: "date", label: t("Last Created") },
+      { value: "date-reversed", label: t("First Created ") },
       { value: "date-updated", label: t("Last Updated") },
       /* TODO: waiting for the backend fix */
-      // { value: "name", label: t("A To Z") },
-      // { value: "name-reverse", label: t("Z To A") },
+      { value: "name", label: t("A To Z") },
+      { value: "name-reverse", label: t("Z To A") },
     ],
     [t],
   );
 
   return (
     <Wrapper onClick={() => handleProjectSelect(undefined)}>
-      <CommonHeader
-        viewState={viewState || ""}
-        title={t("New Project")}
-        appearance="primary"
-        icon="plus"
-        options={sortOptions}
-        isSearch
-        searchTerm={searchTerm}
-        onChangeView={handleViewStateChange}
-        onClick={showProjectCreator}
+      <ManagerHeader
+        size="large"
+        actions={[
+          <ManagerHeaderButton
+            key={"create-project"}
+            title={t("New Project")}
+            managerSize="large"
+            icon="uploadSimple"
+            onClick={showProjectCreator}
+          />,
+        ]}
+        sortValue={sortValue}
+        sortOptions={sortOptions}
         onSortChange={handleProjectSortChange}
+        layout={layout}
+        onLayoutChange={handleLayoutChange}
+        showSearch
+        searchPlaceholder={t("Search in all assets library")}
         onSearch={handleSearch}
       />
       <ProjectsWrapper
@@ -94,7 +102,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             />
           )}
         </BreadcrumbContainer>
-        {viewState === "grid" && (
+        {layout === "grid" && (
           <ProjectsContainer>
             {favarateProjects.length > 0 && (
               <ProjectsGrid>
@@ -150,7 +158,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             </ProjectsGrid>
           </ProjectsContainer>
         )}
-        {viewState === "list" && (
+        {layout === "list" && (
           <FlexTable>
             <FlexTableRow>
               <ActionCell />
