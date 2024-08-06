@@ -133,6 +133,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         )}
         {!showDelete && showSearch && (
           <Search
+            size={size}
             onMouseEnter={() => setSearchHovered(true)}
             onMouseLeave={() => setSearchHovered(false)}>
             <TextInput
@@ -211,10 +212,10 @@ const Layouts = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
 }));
 
-const Search = styled("div")(({ theme }) => ({
+const Search = styled("div")<{ size: ManagerHeaderSize }>(({ theme, size }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  maxWidth: 250,
+  maxWidth: size === "large" ? 250 : undefined,
   flex: 1,
 }));
 
