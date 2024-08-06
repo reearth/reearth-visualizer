@@ -1,6 +1,14 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 
-import { Button, IconName, Selector, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  Icon,
+  IconName,
+  PopupMenuItem,
+  Selector,
+  TextInput,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -8,11 +16,15 @@ type HeaderProps = {
   viewState: string;
   title: string;
   icon?: IconName;
+  isSearch?: boolean;
+  searchTerm?: string;
+  searchResultItems?: PopupMenuItem[];
   options?: { value: string; label?: string }[];
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
   onClick: () => void;
   onChangeView?: (v?: string) => void;
   onSortChange?: (value?: string) => void;
+  onSearch?: (value?: string) => void;
 };
 
 const CommonHeader: FC<HeaderProps> = ({
@@ -21,12 +33,16 @@ const CommonHeader: FC<HeaderProps> = ({
   viewState,
   options,
   appearance,
+  isSearch,
+  searchTerm,
   onClick,
   onChangeView,
   onSortChange,
+  onSearch,
 }) => {
   const theme = useTheme();
   const t = useT();
+  const [searchInputValue, setSearchInputValue] = useState<string>(searchTerm ?? "");
 
   const onChange = useCallback(
     (value: string | string[]) => {
@@ -35,11 +51,34 @@ const CommonHeader: FC<HeaderProps> = ({
     [onSortChange],
   );
 
+  const handleSearchInputChange = useCallback(
+    (value: string) => {
+      setSearchInputValue(value);
+    },
+    [setSearchInputValue],
+  );
+
+  const SearchIcon: FC = () => (
+    <IconWrepper onClick={() => onSearch?.(searchInputValue)}>
+      <Icon icon="magnifyingGlass" size="small" color={theme.content.weak} />
+    </IconWrepper>
+  );
   return (
     <Header>
       <Button title={title} icon={icon} appearance={appearance} onClick={onClick} />
 
       <Actions>
+        {isSearch && (
+          <SearchWrepper>
+            <TextInput
+              value={searchInputValue}
+              actions={[SearchIcon]}
+              placeholder={t("Type key word to search")}
+              onChange={handleSearchInputChange}
+              onBlur={() => onSearch?.(searchInputValue)}
+            />
+          </SearchWrepper>
+        )}
         <Typography size="body">{t("Sort")}: </Typography>
         <SelectorContainer>
           <Selector options={options || []} onChange={onChange} />
@@ -81,4 +120,9 @@ const Actions = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
 }));
 
+const SearchWrepper = styled("div")(() => ({ minWidth: "250px" }));
 const SelectorContainer = styled("div")(() => ({ minWidth: "130px" }));
+
+const IconWrepper = styled("div")(() => ({
+  cursor: "pointer",
+}));

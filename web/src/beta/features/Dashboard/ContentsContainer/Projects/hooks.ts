@@ -67,6 +67,7 @@ export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
   const gqlCache = useApolloClient().cache;
+  const [searchTerm, setSearchTerm] = useState<string>();
 
   const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -121,8 +122,10 @@ export default (workspaceId?: string) => {
     first,
     last,
     sort: sortBy,
+    keyword: searchTerm,
   });
 
+  console.log("searchTerm", searchTerm);
   useEffect(() => {
     gqlCache.evict({ fieldName: "projects" });
   }, [gqlCache]);
@@ -211,9 +214,8 @@ export default (workspaceId?: string) => {
   }, [handleGetMoreProjects, hasMoreProjects, isLoading]);
 
   useEffect(() => {
-    if (!sort) return;
     refetch();
-  }, [sort, refetch]);
+  }, [sort, refetch, searchTerm]);
 
   const handleProjectSortChange = useCallback(
     (value?: string) => {
@@ -222,6 +224,15 @@ export default (workspaceId?: string) => {
     },
     [sort],
   );
+
+  const handleSearch = useCallback((value?: string) => {
+    console.log("called");
+    if (!value || value.length < 1) {
+      setSearchTerm?.(undefined);
+    } else {
+      setSearchTerm?.(value);
+    }
+  }, []);
 
   return {
     projects,
@@ -232,6 +243,7 @@ export default (workspaceId?: string) => {
     viewState,
     projectCreatorVisible,
     favarateProjects,
+    searchTerm,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
@@ -242,5 +254,6 @@ export default (workspaceId?: string) => {
     handleScrollToBottom: onScrollToBottom,
     handleViewStateChange,
     handleProjectSortChange,
+    handleSearch,
   };
 };

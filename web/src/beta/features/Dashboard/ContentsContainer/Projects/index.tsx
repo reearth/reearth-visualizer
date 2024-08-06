@@ -21,6 +21,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     wrapperRef,
     viewState,
     favarateProjects,
+    searchTerm,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
@@ -31,6 +32,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleScrollToBottom,
     handleViewStateChange,
     handleProjectSortChange,
+    handleSearch,
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -55,9 +57,12 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         appearance="primary"
         icon="plus"
         options={sortOptions}
+        isSearch
+        searchTerm={searchTerm}
         onChangeView={handleViewStateChange}
         onClick={showProjectCreator}
         onSortChange={handleProjectSortChange}
+        onSearch={handleSearch}
       />
       <ProjectsWrapper
         ref={wrapperRef}
@@ -67,11 +72,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         <ProjectsContainer>
           {favarateProjects.length > 0 && (
             <Breadcrumb
-              items={[
-                {
-                  title: "Stars",
-                },
-              ]}
+              items={[{ title: "Stars" }, ...(searchTerm ? [{ title: searchTerm }] : [])]}
             />
           )}
           {viewState === "grid" && (
@@ -93,8 +94,17 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   <Breadcrumb
                     items={[
                       {
-                        title: "All Projects",
+                        title: (
+                          <Typography
+                            size="body"
+                            weight="bold"
+                            color={theme.content.weak}
+                            onClick={() => handleSearch(undefined)}>
+                            All Projects
+                          </Typography>
+                        ),
                       },
+                      ...(searchTerm ? [{ title: searchTerm }] : []),
                     ]}
                   />
                 </>
@@ -153,8 +163,17 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     <Breadcrumb
                       items={[
                         {
-                          title: "All Projects",
+                          title: (
+                            <Typography
+                              size="body"
+                              weight="bold"
+                              color={theme.content.weak}
+                              onClick={() => handleSearch(undefined)}>
+                              All Projects
+                            </Typography>
+                          ),
                         },
+                        ...(searchTerm ? [{ title: searchTerm }] : []),
                       ]}
                     />
                   </>

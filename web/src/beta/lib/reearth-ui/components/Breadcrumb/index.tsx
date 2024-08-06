@@ -35,7 +35,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", 
               item.title
             )}
           </Item>
-          {index < items.length && <Separator>{separator}</Separator>}
+          {(index < items.length - 1 || items.length === 1) && <Separator>{separator}</Separator>}
         </ItemWrapper>
       ))}
     </Wrapper>
