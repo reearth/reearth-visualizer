@@ -142,15 +142,44 @@ Publish: Publish
 Unpublish: Unpublish
 Update: Update
 Congratulations!: Congratulations!
+Publish your story: Publish your story
+Publish your scene: Publish your scene
+Update your story: Update your story
+Update your scene: Update your scene
 Ok: Ok
+Your published story will be updated. This means all current changes will overwrite the current published story.: >-
+  Your published story will be updated. This means all current changes will
+  overwrite the current published story.
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: >-
+  Your published scene will be updated. This means all current changes will
+  overwrite the current published scene.
+Your story will be published. This means anybody with the below URL will be able to view this story.: >-
+  Your story will be published. This means anybody with the below URL will be
+  able to view this story.
+Your scene will be published. This means anybody with the below URL will be able to view this scene.: >-
+  Your scene will be published. This means anybody with the below URL will be
+  able to view this scene.
+Your story has been published!: Your story has been published!
+Your scene has been published!: Your scene has been published!
 Public URL: Public URL
 Copy: Copy
+'* Anyone can see your story with this URL': '* Anyone can see your story with this URL'
+'* Anyone can see your scene with this URL': '* Anyone can see your scene with this URL'
 Embed Code: Embed Code
+'* Please use this code if you want to embed your story into a webpage': '* Please use this code if you want to embed your story into a webpage'
 Publish domain: Publish domain
 Need to change domain related settings?: Need to change domain related settings?
 Go to settings: Go to settings
 Search engine indexing: Search engine indexing
 Page will be available as result on search engines: Page will be available as result on search engines
+Your story will be unpublished.: Your story will be unpublished.
+Your scene will be unpublished.: Your scene will be unpublished.
+This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: >-
+  This means that anybody with the URL will become unable to view this story.
+  This includes websites where this story is embedded.
+This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: >-
+  This means that anybody with the URL will become unable to view this scene.
+  This includes websites where this scene is embedded.
 Page Settings: Page Settings
 All Layers: All Layers
 Untitled: Untitled
@@ -350,9 +379,9 @@ Default: Default
 Failed to create story page on project creation.: Failed to create story page on project creation.
 Successfully created project!: Successfully created project!
 Failed to publish project.: Failed to publish project.
-Successfully published your project!: Successfully published your project!
+Successfully published your scene!: Successfully published your scene!
 Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
-Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
+Successfully unpublished your scene. Now nobody can access your scene.: Successfully unpublished your scene. Now nobody can access your scene.
 Failed to update project.: ''
 Successfully updated project!: ''
 Failed to archive project.: Failed to archive project.

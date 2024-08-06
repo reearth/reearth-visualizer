@@ -55,7 +55,7 @@ const PublishModal: FC<Props> = ({
 
   const { selectedProjectType } = usePublishPage();
 
-  const projectTypeText = selectedProjectType === "story" ? "story" : "scene";
+  const isStory = selectedProjectType === "story";
 
   const {
     statusChanged,
@@ -96,11 +96,15 @@ const PublishModal: FC<Props> = ({
     return statusChanged
       ? t("Congratulations!")
       : publishing === "publishing"
-      ? t(`Publish your ${projectTypeText}`)
+      ? isStory
+        ? t(`Publish your story`)
+        : t(`Publish your scene`)
       : publishing === "updating"
-      ? t(`Update your ${projectTypeText}`)
+      ? isStory
+        ? t(`Update your story`)
+        : t(`Update your scene`)
       : "";
-  }, [t, statusChanged, publishing, projectTypeText]);
+  }, [t, statusChanged, publishing, isStory]);
 
   const primaryButtonText = useMemo(() => {
     return statusChanged
@@ -119,13 +123,21 @@ const PublishModal: FC<Props> = ({
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
+      ? isStory
+        ? t(
+            `Your published story will be updated. This means all current changes will overwrite the current published story.`,
+          )
+        : t(
+            `Your published scene will be updated. This means all current changes will overwrite the current published scene.`,
+          )
+      : isStory
       ? t(
-          `Your published ${projectTypeText} will be updated. This means all current changes will overwrite the current published ${projectTypeText}.`,
+          `Your story will be published. This means anybody with the below URL will be able to view this story.`,
         )
       : t(
-          `Your ${projectTypeText} will be published. This means anybody with the below URL will be able to view this ${projectTypeText}.`,
+          `Your scene will be published. This means anybody with the below URL will be able to view this scene.`,
         );
-  }, [t, publishing, projectTypeText]);
+  }, [t, publishing, isStory]);
 
   const actions = useMemo(
     () => (
@@ -168,47 +180,41 @@ const PublishModal: FC<Props> = ({
         isHeader={isPublishing}>
         {statusChanged ? (
           <Section>
-            <Subtitle size="body">{t(`Your ${projectTypeText} has been published!`)}</Subtitle>
+            <Subtitle size="body">
+              {isStory ? t(`Your story has been published!`) : t(`Your scene has been published!`)}
+            </Subtitle>
             <Subtitle size="footnote">{t("Public URL")}</Subtitle>
             <div>
               <UrlWrapper justify="space-between">
+                <UrlText publicUrl={true} onClick={() => window.open(purl, "_blank")}>
+                  {purl}
+                </UrlText>
                 <Typography
                   size="body"
-                  weight="bold"
                   color={theme.primary.main}
-                  onClick={() => window.open(purl, "_blank")}>
-                  {purl}
+                  onClick={handleCopyToClipBoard("url", purl)}>
+                  {t("Copy")}
                 </Typography>
-                <UrlText>
-                  <Typography
-                    size="body"
-                    color={theme.primary.main}
-                    onClick={handleCopyToClipBoard("url", purl)}>
-                    {t("Copy")}
-                  </Typography>
-                </UrlText>
               </UrlWrapper>
               <Typography size="footnote">
-                {t(`* Anyone can see your ${projectTypeText} with this URL`)}
+                {isStory
+                  ? t(`* Anyone can see your story with this URL`)
+                  : t(`* Anyone can see your scene with this URL`)}
               </Typography>
             </div>
             <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
             <div>
               <UrlWrapper justify="space-between">
-                <Typography size="footnote">{embedCode}</Typography>
-                <UrlText>
-                  <Typography
-                    size="body"
-                    color={theme.primary.main}
-                    onClick={handleCopyToClipBoard("embedCode", embedCode)}>
-                    {t("Copy")}
-                  </Typography>
-                </UrlText>
+                <UrlText>{embedCode}</UrlText>
+                <Typography
+                  size="body"
+                  color={theme.primary.main}
+                  onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                  {t("Copy")}
+                </Typography>
               </UrlWrapper>
               <Typography size="footnote">
-                {t(
-                  `* Please use this code if you want to embed your ${projectTypeText} into a webpage`,
-                )}
+                {t(`* Please use this code if you want to embed your story into a webpage`)}
               </Typography>
             </div>
           </Section>
@@ -248,11 +254,19 @@ const PublishModal: FC<Props> = ({
             <Header>
               <WarningIcon icon="warning" />
             </Header>
-            <Subtitle size="body">{t(`Your ${projectTypeText} will be unpublished.`)}</Subtitle>
             <Subtitle size="body">
-              {t(
-                `This means that anybody with the URL will become unable to view this ${projectTypeText}. This includes websites where this ${projectTypeText} is embedded.`,
-              )}
+              {isStory
+                ? t(`Your story will be unpublished.`)
+                : t(`Your scene will be unpublished.`)}
+            </Subtitle>
+            <Subtitle size="body">
+              {isStory
+                ? t(
+                    `This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.`,
+                  )
+                : t(
+                    `This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.`,
+                  )}
             </Subtitle>
           </Section>
         )}
@@ -292,13 +306,16 @@ const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => (
   cursor: "pointer",
 }));
 
-const UrlText = styled("div")({
+const UrlText = styled("div")<{ publicUrl?: boolean }>(({ publicUrl, theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   cursor: "pointer",
-  whiteSpace: "nowrap",
-});
+  fontSize: "12px",
+  whiteSpace: "break-spaces",
+  color: publicUrl ? theme.primary.main : "inherit",
+  fontWeight: publicUrl ? "bold" : "normal",
+}));
 
 const DomainText = styled("div")(({ theme }) => ({
   marginBottom: `${theme.spacing.small}px`,
