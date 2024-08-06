@@ -35,14 +35,17 @@ export default ({
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {
       if (!files) return;
-      const result = await useCreateAssets({
-        teamId: workspaceId ?? "",
-        file: files,
-      });
-      const assetUrl = result?.data[0].data?.createAsset?.asset.url;
-      const assetName = result?.data[0].data?.createAsset?.asset.name;
-
-      onAssetSelect?.(assetUrl, assetName);
+      try {
+        const result = await useCreateAssets({
+          teamId: workspaceId ?? "",
+          file: files,
+        });
+        const assetUrl = result?.data[0].data?.createAsset?.asset.url;
+        const assetName = result?.data[0].data?.createAsset?.asset.name;
+        onAssetSelect?.(assetUrl, assetName);
+      } catch (error) {
+        console.error("Error creating assets:", error);
+      }
     },
     [workspaceId, useCreateAssets, onAssetSelect],
   );
