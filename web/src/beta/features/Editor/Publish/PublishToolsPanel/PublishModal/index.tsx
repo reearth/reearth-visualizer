@@ -11,6 +11,8 @@ import { SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import { usePublishPage } from "../../context";
+
 import useHooks, { type PublishStatus } from "./hooks";
 
 export type publishingType = "publishing" | "updating" | "unpublishing";
@@ -51,6 +53,10 @@ const PublishModal: FC<Props> = ({
   const t = useT();
   const theme = useTheme();
 
+  const { selectedProjectType } = usePublishPage();
+
+  const projectTypeText = selectedProjectType === "story" ? "story" : "scene";
+
   const {
     statusChanged,
     alias,
@@ -90,11 +96,11 @@ const PublishModal: FC<Props> = ({
     return statusChanged
       ? t("Congratulations!")
       : publishing === "publishing"
-      ? t("Publish your project")
+      ? t(`Publish your ${projectTypeText}`)
       : publishing === "updating"
-      ? t("Update your project")
+      ? t(`Update your ${projectTypeText}`)
       : "";
-  }, [t, statusChanged, publishing]);
+  }, [t, statusChanged, publishing, projectTypeText]);
 
   const primaryButtonText = useMemo(() => {
     return statusChanged
@@ -103,20 +109,23 @@ const PublishModal: FC<Props> = ({
       ? t("Publish")
       : publishing === "updating"
       ? t("Update")
-      : t("Continue");
+      : t("Unpublish");
   }, [t, statusChanged, publishing]);
 
-  const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "OK"), [statusChanged]);
+  const secondaryButtonText = useMemo(
+    () => (!statusChanged ? t("Cancel") : t("Ok")),
+    [t, statusChanged],
+  );
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
       ? t(
-          "Your published project will be updated. This means all current changes will overwrite the current published project.",
+          `Your published ${projectTypeText} will be updated. This means all current changes will overwrite the current published ${projectTypeText}.`,
         )
       : t(
-          "Your project will be published. This means anybody with the below URL will be able to view this project.",
+          `Your ${projectTypeText} will be published. This means anybody with the below URL will be able to view this ${projectTypeText}.`,
         );
-  }, [t, publishing]);
+  }, [t, publishing, projectTypeText]);
 
   const actions = useMemo(
     () => (
@@ -159,7 +168,7 @@ const PublishModal: FC<Props> = ({
         isHeader={isPublishing}>
         {statusChanged ? (
           <Section>
-            <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
+            <Subtitle size="body">{t(`Your ${projectTypeText} has been published!`)}</Subtitle>
             <Subtitle size="footnote">{t("Public URL")}</Subtitle>
             <div>
               <UrlWrapper justify="space-between">
@@ -170,30 +179,36 @@ const PublishModal: FC<Props> = ({
                   onClick={() => window.open(purl, "_blank")}>
                   {purl}
                 </Typography>
-                <Typography
-                  size="body"
-                  color={theme.primary.main}
-                  onClick={handleCopyToClipBoard("url", purl)}>
-                  {t("Copy")}
-                </Typography>
+                <UrlText>
+                  <Typography
+                    size="body"
+                    color={theme.primary.main}
+                    onClick={handleCopyToClipBoard("url", purl)}>
+                    {t("Copy")}
+                  </Typography>
+                </UrlText>
               </UrlWrapper>
               <Typography size="footnote">
-                {t("* Anyone can see your project with this URL")}
+                {t(`* Anyone can see your ${projectTypeText} with this URL`)}
               </Typography>
             </div>
             <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
             <div>
               <UrlWrapper justify="space-between">
                 <Typography size="footnote">{embedCode}</Typography>
-                <Typography
-                  size="body"
-                  color={theme.primary.main}
-                  onClick={handleCopyToClipBoard("embedCode", embedCode)}>
-                  {t("Copy")}
-                </Typography>
+                <UrlText>
+                  <Typography
+                    size="body"
+                    color={theme.primary.main}
+                    onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                    {t("Copy")}
+                  </Typography>
+                </UrlText>
               </UrlWrapper>
               <Typography size="footnote">
-                {t("* Please use this code if you want to embed your project into a webpage")}
+                {t(
+                  `* Please use this code if you want to embed your ${projectTypeText} into a webpage`,
+                )}
               </Typography>
             </div>
           </Section>
@@ -233,10 +248,10 @@ const PublishModal: FC<Props> = ({
             <Header>
               <WarningIcon icon="warning" />
             </Header>
-            <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
+            <Subtitle size="body">{t(`Your ${projectTypeText} will be unpublished.`)}</Subtitle>
             <Subtitle size="body">
               {t(
-                "This means that anybody with the URL will become unable to view this project. This includes websites where this project is embedded.",
+                `This means that anybody with the URL will become unable to view this ${projectTypeText}. This includes websites where this ${projectTypeText} is embedded.`,
               )}
             </Subtitle>
           </Section>
@@ -276,6 +291,14 @@ const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => (
   padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
   cursor: "pointer",
 }));
+
+const UrlText = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+});
 
 const DomainText = styled("div")(({ theme }) => ({
   marginBottom: `${theme.spacing.small}px`,

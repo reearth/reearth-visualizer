@@ -36,9 +36,9 @@ const PublishToolsPanel: FC = () => {
       <StyledSecondaryNav>
         <LeftSection>
           <TabButtonWrapper>
-            <EllipseWrapper>
-              <Ellipse status={publishStatus} active={selectedProjectType === "default"} />
-            </EllipseWrapper>
+            <StatusWrapper>
+              <SceneStatus status={publishStatus} />
+            </StatusWrapper>
             <TabButton
               highlighted={selectedProjectType === "default"}
               title={t("Scene")}
@@ -46,9 +46,9 @@ const PublishToolsPanel: FC = () => {
             />
           </TabButtonWrapper>
           <TabButtonWrapper>
-            <EllipseWrapper>
-              <Ellipse status={publishStatus} active={selectedProjectType === "story"} />
-            </EllipseWrapper>
+            <StatusWrapper>
+              <StoryStatus status={publishStatus} />
+            </StatusWrapper>
             <TabButton
               highlighted={selectedProjectType === "story"}
               title={t("Story")}
@@ -113,7 +113,7 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
 
 const LeftSection = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.normal,
   height: "24px",
   width: "244px",
 }));
@@ -140,17 +140,20 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   width: "116px",
 }));
 
-const Ellipse = styled("div")<{ status: string; active: boolean }>(({ theme, status, active }) => ({
+const SceneStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
   width: "8px",
   height: "8px",
-  backgroundColor: active
-    ? status !== "unpublished"
-      ? "#24A148"
-      : theme.content.weaker
-    : theme.content.weaker,
+  backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,
   borderRadius: "50%",
 }));
 
-const EllipseWrapper = styled("div")({
+const StoryStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
+  width: "8px",
+  height: "8px",
+  backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,
+  borderRadius: "50%",
+}));
+
+const StatusWrapper = styled("div")({
   width: "8px",
 });

@@ -89,7 +89,8 @@ Value: Value
 Input data here: Input data here
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: >-
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.:
+  >-
   Visualizer currently only supports CSV point data. Please specify the column
   names for latitude and longitude in your data below.
 Latitude Column Name: Latitude Column Name
@@ -142,29 +143,46 @@ Unpublish: Unpublish
 Update: Update
 Publish: Publish
 Congratulations!: Congratulations!
-Publish your project: Publish your project
-Update your project: Update your project
+Publish your scene: Publish your scene
+Publish your story: Publish your story
+Update your scene: Update your scene
+Update your story: Update your story
 Ok: Ok
 Continue: Continue
-Your published project will be updated. This means all current changes will overwrite the current published project.: >-
-  Your published project will be updated. This means all current changes will
-  overwrite the current published project.
-Your project will be published. This means anybody with the below URL will be able to view this project.: >-
-  Your project will be published. This means anybody with the below URL will be
-  able to view this project.
-Your project has been published!: Your project has been published!
+Your published scene will be updated. This means all current changes will overwrite the current published scene.:
+  >-
+  Your published scene will be updated. This means all current changes will
+  overwrite the current published scene.
+Your published story will be updated. This means all current changes will overwrite the current published story.:
+  >-
+  Your published story will be updated. This means all current changes will
+  overwrite the current published story.
+Your scene will be published. This means anybody with the below URL will be able to view this scene.:
+  >-
+  Your scene will be published. This means anybody with the below URL will be
+  able to view this scene.
+Your story will be published. This means anybody with the below URL will be able to view this story.:
+  >-
+  Your story will be published. This means anybody with the below URL will be
+  able to view this story.
+Your scene has been published!: Your scene has been published!
+Your story has been published!: Your story has been published!
 Public URL: Public URL
 Copy: Copy
-'* Anyone can see your project with this URL': '* Anyone can see your project with this URL'
+'* Anyone can see your scene with this URL': '* Anyone can see your scene with this URL'
+'* Anyone can see your story with this URL': '* Anyone can see your story with this URL'
 Embed Code: Embed Code
-'* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
+'* Please use this code if you want to embed your scene into a webpage': '* Please use this code if you want to embed your scene into a webpage'
+'* Please use this code if you want to embed your story into a webpage': '* Please use this code if you want to embed your story into a webpage'
 Publish domain: Publish domain
 Need to change domain related settings?: Need to change domain related settings?
 Go to settings: Go to settings
 Search engine indexing: Search engine indexing
 Page will be available as result on search engines: Page will be available as result on search engines
-Your project will be unpublished.: Your project will be unpublished.
-This means that anybody with the URL will become unable to view this project. This includes websites where this project is embedded.: This means that anybody with the URL will become unable to view this project. This includes websites where this project is embedded.
+Your scene will be unpublished.: Your scene will be unpublished.
+Your story will be unpublished.: Your story will be unpublished.
+This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.
+This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.
 Page Settings: Page Settings
 All Layers: All Layers
 Untitled: Untitled
@@ -183,7 +201,8 @@ Select Image: Select Image
 Select: Select
 Sort By: Sort By
 No assets match your search.: No assets match your search.
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.:
+  >-
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
 Please select an layer style before clicking Select.: ''
@@ -214,7 +233,8 @@ Project Settings: Project Settings
 Upload file: Upload file
 You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
 Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.:
+  >-
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
 Project Info: Project Info
@@ -231,18 +251,21 @@ Delete this project: Delete this project
 Once you delete a project, there is no going back. Please be sure.: Once you delete a project, there is no going back. Please be sure.
 Delete project: Delete project
 I am sure I want to archive this project.: I am sure I want to archive this project.
-Archiving your project will put it into a state where you cannot edit it or it's settings.: >-
+Archiving your project will put it into a state where you cannot edit it or it's settings.:
+  >-
   Archiving your project will put it into a state where you cannot edit it or
   it's settings.
 Once archived, you can unarchive the repository at any time.: Once archived, you can unarchive the repository at any time.
 Please type your project name to continue.: Please type your project name to continue.
 I am sure I want to unarchive this project.: I am sure I want to unarchive this project.
-This will bring this repository back to a state it can be editted and worked on by you and your team.: >-
+This will bring this repository back to a state it can be editted and worked on by you and your team.:
+  >-
   This will bring this repository back to a state it can be editted and worked
   on by you and your team.
 I am sure I want to delete this project.: I am sure I want to delete this project.
 This action cannot be undone.: This action cannot be undone.
-This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: >-
+This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.:
+  >-
   This will permanently delete the project. If the project was published, this
   also means websites and domains referencing the project will not be able to
   access it anymore.
@@ -250,7 +273,8 @@ Plugin Marketplace: Plugin Marketplace
 Public Installed: Public Installed
 Personal Installed: Personal Installed
 Uninstall: Uninstall
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: >-
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.:
+  >-
   You are uninstalling the selected plugin. The data used by this plugin may
   also be deleted.
 Please be sure before uninstalling.: Please be sure before uninstalling.
@@ -268,7 +292,8 @@ Username: Username
 Password: Password
 Site Setting: Site Setting
 Site name: Site name
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.:
+  >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
 Google Analytics: ''
