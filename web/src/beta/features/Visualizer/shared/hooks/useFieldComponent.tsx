@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   AssetField,
@@ -58,6 +58,16 @@ export const FieldComponent = ({
     [onPropertyUpdate],
   );
 
+  const assetsTypes = useMemo(
+    () =>
+      field.ui === "image"
+        ? ["image" as const]
+        : field.ui === "file"
+        ? ["file" as const]
+        : undefined,
+    [field.ui],
+  );
+
   return field?.type === "spacing" ? (
     <SpacingField
       key={field?.id}
@@ -105,8 +115,8 @@ export const FieldComponent = ({
     <AssetField
       key={field.id}
       commonTitle={field.name}
-      entityType={field.ui === "image" ? "image" : field.ui === "file" ? "file" : undefined}
-      fileType={field.ui === "video" || field.ui === undefined ? "URL" : "asset"}
+      assetsTypes={assetsTypes}
+      inputMethod={field.ui === "video" || field.ui === undefined ? "URL" : "asset"}
       value={field.value}
       description={field.description}
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
