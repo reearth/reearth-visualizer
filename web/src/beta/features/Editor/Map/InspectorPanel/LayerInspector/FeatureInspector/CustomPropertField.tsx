@@ -14,6 +14,9 @@ type Props = {
   onSubmit?: (inp: any) => void;
 };
 
+const fileTypes = ["file" as const];
+const imageTypes = ["image" as const];
+
 export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: Props) => {
   const t = useT();
 
@@ -72,8 +75,8 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      entityType="image"
-      fileType={"asset"}
+      assetsTypes={imageTypes}
+      inputMethod={"asset"}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
@@ -81,8 +84,8 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      entityType="file"
-      fileType={"URL"}
+      assetsTypes={fileTypes}
+      inputMethod={"URL"}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />

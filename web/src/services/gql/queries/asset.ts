@@ -11,6 +11,7 @@ export const GET_ASSETS = gql(`
           name
           size
           url
+          createdAt
           contentType
         }
       }
@@ -20,6 +21,7 @@ export const GET_ASSETS = gql(`
         name
         size
         url
+        createdAt
         contentType
       }
       pageInfo {
