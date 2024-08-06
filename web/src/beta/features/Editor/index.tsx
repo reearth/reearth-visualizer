@@ -53,6 +53,8 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerAdd,
     sketchLayerCreatorShown,
     closeSketchLayerCreator,
+    customProperySchemaShown,
+    closeCustomProperySchema,
     layerStyles,
   } = useHooks({ sceneId, tab, projectId });
 
@@ -119,14 +121,17 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             onSubmit={handleLayerAdd}
           />
         )}
-        {sketchLayerCreatorShown && (
+        <MapPageProvider value={mapPageValue}>
           <SketchLayerCreator
             onSubmit={handleLayerAdd}
             sceneId={sceneId}
-            onClose={closeSketchLayerCreator}
+            onCloseSketchLayerCreator={closeSketchLayerCreator}
             layerStyles={layerStyles}
+            sketchLayerCreatorShown={sketchLayerCreatorShown}
+            customProperySchemaShown={customProperySchemaShown}
+            onClosCustomProperySchema={closeCustomProperySchema}
           />
-        )}
+        </MapPageProvider>
       </Wrapper>
     </DndProvider>
   );

@@ -34,6 +34,7 @@ export interface MapPageContextType {
   handleLayerSelect: (id?: string) => void;
   openDataSourceLayerCreator: () => void;
   openSketchLayerCreator: () => void;
+  openCustomProperySchema: () => void;
   handleLayerVisibilityUpdate: (inp: LayerVisibilityUpdateProps) => void;
   handleFlyTo?: FlyTo;
   sketchEnabled: boolean;

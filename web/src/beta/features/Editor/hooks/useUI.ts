@@ -82,6 +82,10 @@ export default ({
   const openSketchLayerCreator = useCallback(() => setSketchLayerCreatorShown(true), []);
   const closeSketchLayerCreator = useCallback(() => setSketchLayerCreatorShown(false), []);
 
+  const [customProperySchemaShown, setCustomProperySchemaShown] = useState(false);
+  const openCustomProperySchema = useCallback(() => setCustomProperySchemaShown(true), []);
+  const closeCustomProperySchema = useCallback(() => setCustomProperySchemaShown(false), []);
+
   // devices - not in use
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const handleDeviceChange = useCallback((newDevice: Device) => setDevice(newDevice), []);
@@ -104,5 +108,8 @@ export default ({
     closeSketchLayerCreator,
     selectedDevice,
     handleDeviceChange,
+    customProperySchemaShown,
+    openCustomProperySchema,
+    closeCustomProperySchema,
   };
 };
