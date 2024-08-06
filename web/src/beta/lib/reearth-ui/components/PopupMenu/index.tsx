@@ -9,9 +9,11 @@ const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 180;
 
 export type PopupMenuItem = {
+  hasCustomSubMenu?: boolean;
   id: string;
   title?: string;
   path?: string;
+  personal?: boolean;
   icon?: IconName;
   selected?: boolean;
   subItem?: PopupMenuItem[];
@@ -89,9 +91,8 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   };
 
   const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
-    // TODO: refactor logic
-    const personalWorkspaces = subMenuItems.filter(item => !!item.selected);
-    const teamWorkspaces = subMenuItems.filter(item => !item.selected);
+    const personalWorkspaces = subMenuItems.filter(item => !!item.personal);
+    const teamWorkspaces = subMenuItems.filter(item => !item.personal);
 
     return (
       <PopupMenuWrapper width={width} nested={nested}>
@@ -147,7 +148,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           {renderTrigger()}
         </TriggerWrapper>
       }>
-      {nested ? renderSubMenuItems(menu) : renderMenuItems(menu)}
+      {nested && !!menu.find(item => item.hasCustomSubMenu)
+        ? renderSubMenuItems(menu)
+        : renderMenuItems(menu)}
     </Popup>
   );
 };
