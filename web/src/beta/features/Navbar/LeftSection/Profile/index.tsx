@@ -76,7 +76,12 @@ const HeaderProfile: React.FC<Props> = ({
   );
 };
 
-const Option = styled(Text)`
+const Option = styled("div")(({theme}) => ({
+  padding: `${theme.spacing.small - 1}px ${theme.spacing.normal}px`,
+  borderRadius: theme.radius.small,
+  display: "flex",
+  alignItems: "center"
+}));
   padding: 7px 12px;
   border-radius: 4px;
   display: flex;
