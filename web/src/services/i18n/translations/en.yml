@@ -48,7 +48,14 @@ A To Z: A To Z
 Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
+Select Asset: ''
 Upload File: Upload File
+Search in all assets library: ''
+Assets selected: ''
+Asset selected: ''
+Name: Name
+Uploaded At: ''
+Size: ''
 Sort: Sort
 Use Name or Email: Use Name or Email
 Find Member: Find Member
@@ -217,7 +224,6 @@ Most project settings are hidden when the project is archived. Please unarchive 
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
 Project Info: Project Info
-Name: Name
 Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
@@ -325,6 +331,7 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
+'Sort:': ''
 Position Capture: ''
 value: ''
 Time Period Settings: Time Period Settings
