@@ -21,7 +21,7 @@ type ListItem = {
   onClick?: () => void;
 };
 
-const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
+const ProjectMenu: FC<Props> = ({ currentProject }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
   const theme = useTheme();
