@@ -46,6 +46,7 @@ const CommonHeader: FC<HeaderProps> = ({
 
   const onChange = useCallback(
     (value: string | string[]) => {
+      console.log("value", value);
       onSortChange?.(value as string);
     },
     [onSortChange],

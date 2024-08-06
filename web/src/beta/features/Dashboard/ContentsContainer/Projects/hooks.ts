@@ -17,7 +17,7 @@ export type SortType =
   | "date-reversed"
   | "date-updated-reverse"
   | "name-reverse";
-const projectsPerPage = 76;
+const projectsPerPage = 16;
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -32,17 +32,10 @@ const pagination = (sort?: SortType) => {
 
   switch (sort) {
     case "date":
-      last = projectsPerPage;
-      break;
-    case "date-reversed":
       first = projectsPerPage;
       sortBy = ProjectSortType.Createdat;
       break;
     case "date-updated":
-      first = projectsPerPage;
-      sortBy = ProjectSortType.Updatedat;
-      break;
-    case "date-updated-reverse":
       last = projectsPerPage;
       sortBy = ProjectSortType.Updatedat;
       break;
@@ -56,7 +49,6 @@ const pagination = (sort?: SortType) => {
       break;
     default:
       last = projectsPerPage;
-      sortBy;
   }
 
   return { first, last, sortBy };

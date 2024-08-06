@@ -39,11 +39,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const sortOptions: { value: string; label: string }[] = useMemo(
     () => [
-      { value: "date-reversed", label: t("First Created At") },
-      { value: "date", label: t("Last Created At") },
-      { value: "date-updated", label: t("First Updated") },
-      { value: "date-updated-reverse", label: t("Last Updated") },
-
+      { value: "date", label: t("Created At") },
+      { value: "date-updated", label: t("Last Updated") },
       /* TODO: waiting for the backend fix */
       // { value: "name", label: t("A To Z") },
       // { value: "name-reverse", label: t("Z To A") },
@@ -71,49 +68,37 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         onScroll={e => {
           !isLoading && hasMoreProjects && handleScrollToBottom(e, handleGetMoreProjects);
         }}>
-        <ProjectsContainer>
+        <BreadcrumbContainer>
           {favarateProjects.length > 0 && (
             <Breadcrumb
-              items={[{ title: "Stars" }, ...(searchTerm ? [{ title: searchTerm }] : [])]}
-            />
-          )}
-          {viewState === "grid" && (
-            <>
-              {favarateProjects.length > 0 && (
-                <>
-                  <ProjectsGrid>
-                    {favarateProjects.map(project => (
-                      <ProjectGridViewItem
-                        key={project.id}
-                        project={project}
-                        selectedProjectId={selectedProject?.id}
-                        onProjectUpdate={handleProjectUpdate}
-                        onProjectSelect={handleProjectSelect}
-                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                      />
-                    ))}
-                  </ProjectsGrid>
-                  <Breadcrumb
-                    items={[
+              items={[
+                {
+                  title: (
+                    <Typography size="h5" weight="bold" color={theme.content.weak}>
+                      Stars
+                    </Typography>
+                  ),
+                },
+                ...(searchTerm
+                  ? [
                       {
                         title: (
-                          <Typography
-                            size="body"
-                            weight="bold"
-                            color={theme.content.weak}
-                            onClick={() => handleSearch(undefined)}>
-                            All Projects
+                          <Typography size="h5" weight="bold" color={theme.content.weak}>
+                            {searchTerm}
                           </Typography>
                         ),
                       },
-                      ...(searchTerm ? [{ title: searchTerm }] : []),
-                    ]}
-                  />
-                </>
-              )}
-
+                    ]
+                  : []),
+              ]}
+            />
+          )}
+        </BreadcrumbContainer>
+        {viewState === "grid" && (
+          <ProjectsContainer>
+            {favarateProjects.length > 0 && (
               <ProjectsGrid>
-                {projects.map(project => (
+                {favarateProjects.map(project => (
                   <ProjectGridViewItem
                     key={project.id}
                     project={project}
@@ -124,63 +109,109 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   />
                 ))}
               </ProjectsGrid>
-            </>
-          )}
-          {viewState === "list" && (
-            <FlexTable>
-              <FlexTableRow>
-                <ActionCell />
-                <ProjectNameCell>
-                  <Typography size="body" color={theme.content.weak}>
-                    {t("Project Name")}
-                  </Typography>
-                </ProjectNameCell>
-                <TimeCell>
-                  <Typography size="body" color={theme.content.weak}>
-                    {t("Last modified")}
-                  </Typography>
-                </TimeCell>
-                <TimeCell>
-                  <Typography size="body" color={theme.content.weak}>
-                    {t("Created time")}
-                  </Typography>
-                </TimeCell>
-                <ActionCell />
-              </FlexTableRow>
-              <FlexTableBody>
-                {favarateProjects.length > 0 && (
-                  <>
-                    {favarateProjects.map(project => (
-                      <FlexTableRow key={project.id}>
-                        <ProjectListViewItem
-                          key={project.id}
-                          project={project}
-                          selectedProjectId={selectedProject?.id}
-                          onProjectUpdate={handleProjectUpdate}
-                          onProjectSelect={handleProjectSelect}
-                          onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                        />
-                      </FlexTableRow>
-                    ))}
-                    <Breadcrumb
-                      items={[
-                        {
-                          title: (
-                            <Typography
-                              size="body"
-                              weight="bold"
-                              color={theme.content.weak}
-                              onClick={() => handleSearch(undefined)}>
-                              All Projects
-                            </Typography>
-                          ),
-                        },
-                        ...(searchTerm ? [{ title: searchTerm }] : []),
-                      ]}
-                    />
-                  </>
-                )}
-
+            )}
+            <Breadcrumb
+              items={[
+                {
+                  title: (
+                    <Typography
+                      size="h5"
+                      weight="bold"
+                      color={theme.content.weak}
+                      onClick={() => handleSearch(undefined)}>
+                      All Projects
+                    </Typography>
+                  ),
+                },
+                ...(searchTerm
+                  ? [
+                      {
+                        title: (
+                          <Typography size="h5" weight="bold" color={theme.content.weak}>
+                            {searchTerm}
+                          </Typography>
+                        ),
+                      },
+                    ]
+                  : []),
+              ]}
+            />
+            <ProjectsGrid>
+              {projects.map(project => (
+                <ProjectGridViewItem
+                  key={project.id}
+                  project={project}
+                  selectedProjectId={selectedProject?.id}
+                  onProjectUpdate={handleProjectUpdate}
+                  onProjectSelect={handleProjectSelect}
+                  onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                />
+              ))}
+            </ProjectsGrid>
+          </ProjectsContainer>
+        )}
+        {viewState === "list" && (
+          <FlexTable>
+            <FlexTableRow>
+              <ActionCell />
+              <ProjectNameCell>
+                <Typography size="body" color={theme.content.weak}>
+                  {t("Project Name")}
+                </Typography>
+              </ProjectNameCell>
+              <TimeCell>
+                <Typography size="body" color={theme.content.weak}>
+                  {t("Last modified")}
+                </Typography>
+              </TimeCell>
+              <TimeCell>
+                <Typography size="body" color={theme.content.weak}>
+                  {t("Created time")}
+                </Typography>
+              </TimeCell>
+              <ActionCell />
+            </FlexTableRow>
+            <FlexTableBody>
+              <ProjectsContainer>
+                {favarateProjects.length > 0 &&
+                  favarateProjects.map(project => (
+                    <FlexTableRow key={project.id}>
+                      <ProjectListViewItem
+                        key={project.id}
+                        project={project}
+                        selectedProjectId={selectedProject?.id}
+                        onProjectUpdate={handleProjectUpdate}
+                        onProjectSelect={handleProjectSelect}
+                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                      />
+                    </FlexTableRow>
+                  ))}
+                <Breadcrumb
+                  items={[
+                    {
+                      title: (
+                        <Typography
+                          size="h5"
+                          weight="bold"
+                          color={theme.content.weak}
+                          onClick={() => handleSearch(undefined)}>
+                          All Projects
+                        </Typography>
+                      ),
+                    },
+                    ...(searchTerm
+                      ? [
+                          {
+                            title: (
+                              <Typography size="h5" weight="bold" color={theme.content.weak}>
+                                {searchTerm}
+                              </Typography>
+                            ),
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
                 {projects.map(project => (
                   <FlexTableRow key={project.id}>
                     <ProjectListViewItem
@@ -193,10 +224,10 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     />
                   </FlexTableRow>
                 ))}
-              </FlexTableBody>
-            </FlexTable>
-          )}
-        </ProjectsContainer>
+              </ProjectsContainer>
+            </FlexTableBody>
+          </FlexTable>
+        )}
         {isLoading &&
           (hasMoreProjects ? (
             <StyledLoading>
@@ -238,6 +269,9 @@ const ProjectsContainer = styled("div")(({ theme }) => ({
   flexDirection: "column",
 }));
 
+const BreadcrumbContainer = styled("div")(({ theme }) => ({
+  paddingBottom: theme.spacing.large,
+}));
 const ProjectsGrid = styled("div")(({ theme }) => ({
   display: "grid",
   gap: theme.spacing.normal,
