@@ -85,6 +85,7 @@ import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
 import Play from "./Icons/Play.svg?react";
+import Plugin from "./Icons/plugin.svg?react";
 import PluginInstall from "./Icons/PluginInstall.svg?react";
 import PluginUpdate from "./Icons/PluginUpdate.svg?react";
 import Plus from "./Icons/Plus.svg?react";
@@ -216,6 +217,7 @@ export default {
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,
   play: Play,
+  plugin: Plugin,
   plus: Plus,
   pluginInstall: PluginInstall,
   pluginUpdate: PluginUpdate,

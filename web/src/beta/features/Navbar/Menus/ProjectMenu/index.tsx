@@ -1,12 +1,12 @@
 import { useState, useCallback, Fragment } from "react";
 import { Link } from "react-router-dom";
 
-import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { Project } from "@reearth/beta/features/Navbar/types";
+import { Icon, IconName } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 type Props = {
   currentProject: Project;
@@ -17,23 +17,26 @@ type ListItem = {
   text?: string;
   linkTo?: string;
   breakpoint?: boolean;
-  icon?: Icons;
+  icon?: IconName;
   onClick?: () => void;
 };
 
 const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
   const menuItems: ListItem[] = [
     {
+      icon: "setting",
       text: t("Project settings"),
       linkTo: `/settings/project/${currentProject.id}`,
     },
     {
+      icon: "plugin",
       text: t("Plugin"),
       linkTo: `/settings/project/${currentProject.id}/plugins`,
     },
@@ -47,9 +50,9 @@ const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
         },
         {
           text: t("Documentation"),
-          icon: "help" as const,
+          icon: "book",
           onClick: () => window.open(documentationUrl, "_blank", "noopener"),
-        },
+        } as ListItem,
       ],
     );
   }
@@ -61,7 +64,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
           <Label size="body" weight="bold" open={open} customColor>
             {currentProject.name}
           </Label>
-          <ArrowIcon icon="arrowDown" open={open} size={15} />
+          <Icon icon="caretDown" size="normal" color={theme.content.weak} />
         </InputWrapper>
       </Popover.Trigger>
       <PickerWrapper attachToRoot>
@@ -71,12 +74,12 @@ const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
               <Spacer />
             ) : linkTo ? (
               <StyledLinkButton to={linkTo}>
-                {icon && <StyledIcon icon={icon} size={20} />}
+                {icon && <Icon icon={icon} size="normal" color={theme.content.weak} />}
                 {value}
               </StyledLinkButton>
             ) : (
               <Option size="body" onClick={onClick}>
-                {icon && <StyledIcon icon={icon} size={20} />}
+                {icon && <Icon icon={icon} size="normal" color={theme.content.weak} />}
                 {value}
               </Option>
             )}
@@ -117,19 +120,11 @@ const Label = styled(Text)<{ open: boolean }>`
   }
 `;
 
-const ArrowIcon = styled(Icon)<{ open: boolean }>`
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
-  color: ${({ theme }) => theme.content.weak};
-`;
-
 const PickerWrapper = styled(Popover.Content)`
   min-width: 180px;
   outline: none;
   border-radius: 4px;
-  background: ${({ theme }) => theme.bg[0]};
+  background: ${({ theme }) => theme.bg[1]};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -143,12 +138,13 @@ const Spacer = styled.div`
 const StyledLinkButton = styled(Link)`
   text-decoration: none;
   padding: 9px 12px;
-  font-size: 14px;
+  font-size: 12px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   gap: 5px;
   color: ${({ theme }) => theme.content.main};
+  background: "transparent";
   :hover {
     text-decoration: none;
     background: ${({ theme }) => theme.bg[2]};
@@ -164,10 +160,6 @@ const Option = styled(Text)`
   &:hover {
     background: ${({ theme }) => theme.bg[2]};
   }
-`;
-
-const StyledIcon = styled(Icon)`
-  color: ${({ theme }) => theme.content.main};
 `;
 
 export default ProjectMenu;
