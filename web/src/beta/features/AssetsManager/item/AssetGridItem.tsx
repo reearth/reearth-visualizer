@@ -32,7 +32,7 @@ const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
           ) : (
             <IconWrapper>
               <Icon icon="fileFilled" color={theme.content.weak} size={64} />
-              <StyledTypography size="h5">{ext?.toUpperCase()}</StyledTypography>
+              <StyledTypography size="body">{ext?.toUpperCase()}</StyledTypography>
             </IconWrapper>
           )}
         </Thumbnail>
