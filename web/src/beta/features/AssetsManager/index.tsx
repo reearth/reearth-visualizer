@@ -79,13 +79,6 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               onClick={handleAssetUpload}
             />
           ),
-          // TODO: support folder
-          // <ManagerHeaderButton
-          //   key={"add-floder"}
-          //   title="Add Folder"
-          //   managerSize={size}
-          //   icon="plus"
-          // />,
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}
