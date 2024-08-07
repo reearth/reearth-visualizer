@@ -163,10 +163,10 @@ export default () => {
         type: s === "limited" ? "success" : s == "published" ? "success" : "info",
         text:
           s === "limited"
-            ? t("Successfully published your project!")
+            ? t("Successfully published your scene!")
             : s == "published"
             ? t("Successfully published your project with search engine indexing!")
-            : t("Successfully unpublished your project. Now nobody can access your project."),
+            : t("Successfully unpublished your scene. Now nobody can access your scene."),
       });
       return { data: data.publishProject.project, status: "success" };
     },

@@ -273,7 +273,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
   const publishPageValue: PublishPageContextType = useMemo(
     () => ({
       handleVisualizerResize,
-      id: currentProjectType === "story" ? selectedStory?.id : projectId,
+      projectId,
+      storyId: currentProjectType === "story" ? selectedStory?.id : undefined,
       sceneId,
       selectedProjectType: currentProjectType,
       handleProjectTypeChange,
