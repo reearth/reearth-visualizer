@@ -126,15 +126,13 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     );
   };
 
-  const renderTrigger = () => {
+  const renderTrigger = (nested?: boolean) => {
     return typeof label === "string" ? (
-      <>
+      <LabelWrapper>
         {icon && <Icon icon={icon} size="small" />}
-        <Typography size="body" weight="bold">
-          {label}
-        </Typography>
+        <Label>{label}</Label>
         <Icon color={theme.content.weak} icon={nested ? "caretRight" : "caretDown"} size="small" />
-      </>
+      </LabelWrapper>
     ) : label ? (
       label
     ) : icon ? (
@@ -235,4 +233,26 @@ const SubItem = styled("div")(() => ({
   justifyContent: "space-between",
   justifyItems: "center",
   flexGrow: 1,
+}));
+
+const Label = styled("p")(({ theme }) => ({
+  paddingRight: "4px",
+  fontSize: "12px",
+  flex: 1,
+  color: theme.content.weak,
+  fontWeight: "bold",
+}));
+
+const LabelWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  padding: "7px 4px",
+  borderRadius: "4px",
+  flex: 1,
+  alignItems: "center",
+  "&:hover": {
+    background: theme.bg[2],
+    p: {
+      color: theme.content.main,
+    },
+  },
 }));
