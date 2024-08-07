@@ -137,7 +137,6 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
           setCustomProperties={setCustomProperties}
           setPropertiesList={setPropertiesList}
           onClose={onClosCustomProperySchema}
-          onSubmit={handleSubmit}
         />
       )}
     </>

@@ -1,20 +1,18 @@
-import { FC, useCallback, useEffect, useMemo } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { FC } from "react";
 
 import { Button, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { useMapPage } from "../../context";
 import CustomedProperties from "../CustomedProperties";
 import { CustomPropertyProps } from "../type";
 
+import useHooks from "./hooks";
+
 export type SourceType = "url" | "local" | "value";
 
-type CustomPropertyModalProp = {
+export type CustomPropertyModalProp = {
   onClose?: () => void;
-  onSubmit?: () => void;
 };
 
 const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProps> = ({
@@ -23,27 +21,14 @@ const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProp
   setCustomProperties,
   setPropertiesList,
   onClose,
-  onSubmit,
 }) => {
   const t = useT();
-  const { layers, layerId } = useMapPage();
 
-  const sketchLayers = useMemo(() => layers.filter(({ isSketch }) => isSketch), [layers]);
-
-  useEffect(() => {
-    if (setPropertiesList) {
-      const layer = sketchLayers.find(layer => layer.id === layerId);
-      if (layer) {
-        const newPropertiesList = processCustomProperties(layer);
-        setPropertiesList(newPropertiesList);
-      }
-    }
-  }, [setPropertiesList, sketchLayers, layerId]);
-
-  const handleClose = useCallback(() => {
-    if (onClose) setPropertiesList?.([]);
-    onClose?.();
-  }, [onClose, setPropertiesList]);
+  const { handleClose, handleSubmit } = useHooks({
+    customProperties,
+    setPropertiesList,
+    onClose,
+  });
 
   return (
     <Modal size="medium" visible={true}>
@@ -53,7 +38,7 @@ const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProp
         actions={
           <>
             <Button onClick={handleClose} size="normal" title="Cancel" />
-            <Button size="normal" title="Apply" appearance="primary" onClick={onSubmit} />
+            <Button size="normal" title="Apply" appearance="primary" onClick={handleSubmit} />
           </>
         }>
         <Wrapper>
@@ -76,22 +61,3 @@ const Wrapper = styled("div")(({ theme }) => ({
 }));
 
 export default CustomPropertySchemaModal;
-
-const processCustomProperties = (layer: NLSLayer) => {
-  const { customPropertySchema } = layer.sketch || {};
-  if (!customPropertySchema) return [];
-
-  const sortedEntries = Object.entries(customPropertySchema)
-    .map(([key, value]) => ({
-      key,
-      value: (value as string).replace(/_\d+$/, ""),
-      number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10),
-    }))
-    .sort((a, b) => a.number - b.number);
-
-  return sortedEntries.map(({ key, value }) => ({
-    id: uuidv4(),
-    key,
-    value,
-  }));
-};

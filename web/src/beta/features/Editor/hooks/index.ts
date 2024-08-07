@@ -49,6 +49,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerConfigUpdate,
     handleLayerMove,
     handleCustomProperySchemaClick,
+    handleCustomPropertySchemaUpdate,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -169,6 +170,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleSelect,
       layerId,
       handleCustomProperySchemaClick,
+      handleCustomPropertySchemaUpdate,
     }),
     [
       handleVisualizerResize,
@@ -202,6 +204,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleSelect,
       layerId,
       handleCustomProperySchemaClick,
+      handleCustomPropertySchemaUpdate,
     ],
   );
 

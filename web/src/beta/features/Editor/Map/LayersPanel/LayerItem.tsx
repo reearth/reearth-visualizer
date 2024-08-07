@@ -74,7 +74,7 @@ const LayerItem: FC<LayerItemProps> = ({
             icon: "listDashes" as const,
             onClick: () => {
               openCustomProperySchema();
-              handleCustomProperySchemaClick(layer.id);
+              handleCustomProperySchemaClick?.(layer.id);
             },
           },
         ]
