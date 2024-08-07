@@ -50,18 +50,17 @@ Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
 Select Asset: ''
 Upload File: ''
-Type key word to search: ''
 Search in all assets library: ''
 Assets selected: ''
 Asset selected: ''
 Name: 名前
 Uploaded At: ''
 Size: ''
-Sort: ''
 Use Name or Email: ''
 Find Member: ''
 No Member match your search.: ''
-Created At: ''
+Last Created: ''
+'First Created ': ''
 Last Updated: ''
 New Project: 新規プロジェクト
 Project Name: プロジェクト名
@@ -155,9 +154,9 @@ Your scene will be published. This means anybody with the below URL will be able
 Your story has been published!: ストーリーが公開されました。
 Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
-Copy: コピー
 '* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
 '* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+Copy: コピー
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 Publish domain: 公開ドメイン

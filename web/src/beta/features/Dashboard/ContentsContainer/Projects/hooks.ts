@@ -14,12 +14,16 @@ const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-vi
 export type SortType = "date" | "date-reversed" | "name" | "name-reverse" | "date-updated";
 const projectsPerPage = 16;
 
-const toPublishmentStatus = (s: PublishmentStatus) =>
-  s === PublishmentStatus.Public
-    ? "published"
-    : s === PublishmentStatus.Limited
-    ? "limited"
-    : "unpublished";
+const toPublishmentStatus = (s: PublishmentStatus) => {
+  switch (s) {
+    case PublishmentStatus.Public:
+      return "published";
+    case PublishmentStatus.Limited:
+      return "limited";
+    default:
+      return "unpublished";
+  }
+};
 
 const pagination = (sort?: SortType) => {
   let first, last;
@@ -27,6 +31,7 @@ const pagination = (sort?: SortType) => {
   switch (sort) {
     case "date":
       last = projectsPerPage;
+      sortBy = ProjectSortType.Createdat;
       break;
     case "date-reversed":
       first = projectsPerPage;

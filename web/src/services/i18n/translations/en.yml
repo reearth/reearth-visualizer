@@ -50,18 +50,17 @@ Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
 Select Asset: Select Asset
 Upload File: Upload File
-Type key word to search: Type key word to search
 Search in all assets library: Search in all assets library
 Assets selected: Assets selected
 Asset selected: Asset selected
 Name: Name
 Uploaded At: Uploaded At
 Size: Size
-Sort: Sort
 Use Name or Email: Use Name or Email
 Find Member: Find Member
 No Member match your search.: No Member match your search.
-Created At: Created At
+Last Created: Last Created
+First Created : First Created
 Last Updated: Last Updated
 New Project: New Project
 Project Name: Project Name
@@ -165,9 +164,9 @@ Your scene will be published. This means anybody with the below URL will be able
 Your story has been published!: Your story has been published!
 Your scene has been published!: Your scene has been published!
 Public URL: Public URL
-Copy: Copy
 '* Anyone can see your story with this URL': '* Anyone can see your story with this URL'
 '* Anyone can see your scene with this URL': '* Anyone can see your scene with this URL'
+Copy: Copy
 Embed Code: Embed Code
 '* Please use this code if you want to embed your story into a webpage': '* Please use this code if you want to embed your story into a webpage'
 Publish domain: Publish domain

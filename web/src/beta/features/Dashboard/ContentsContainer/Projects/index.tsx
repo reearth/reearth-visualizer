@@ -42,7 +42,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       { value: "date", label: t("Last Created") },
       { value: "date-reversed", label: t("First Created ") },
       { value: "date-updated", label: t("Last Updated") },
-      /* TODO: waiting for the backend fix */
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
     ],
