@@ -195,7 +195,26 @@ func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmod
 		return nil, err
 	}
 
-	layer, err := usecases(ctx).NLSLayer.AddCustomProperties(ctx, interfaces.AddCustomPropertiesInput{
+	layer, err := usecases(ctx).NLSLayer.AddOrUpdateCustomProperties(ctx, interfaces.AddOrUpdateCustomPropertiesInput{
+		LayerID: lid,
+		Schema:  input.Schema,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateNLSLayerPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) UpdateCustomProperties(ctx context.Context, input gqlmodel.UpdateCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.AddOrUpdateCustomProperties(ctx, interfaces.AddOrUpdateCustomPropertiesInput{
 		LayerID: lid,
 		Schema:  input.Schema,
 	}, getOperator(ctx))

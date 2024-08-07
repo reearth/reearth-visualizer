@@ -690,6 +690,7 @@ type ComplexityRoot struct {
 		UninstallPlugin              func(childComplexity int, input gqlmodel.UninstallPluginInput) int
 		UnlinkPropertyValue          func(childComplexity int, input gqlmodel.UnlinkPropertyValueInput) int
 		UpdateCluster                func(childComplexity int, input gqlmodel.UpdateClusterInput) int
+		UpdateCustomProperties       func(childComplexity int, input gqlmodel.UpdateCustomPropertySchemaInput) int
 		UpdateDatasetSchema          func(childComplexity int, input gqlmodel.UpdateDatasetSchemaInput) int
 		UpdateGeoJSONFeature         func(childComplexity int, input gqlmodel.UpdateGeoJSONFeatureInput) int
 		UpdateLayer                  func(childComplexity int, input gqlmodel.UpdateLayerInput) int
@@ -1547,6 +1548,7 @@ type MutationResolver interface {
 	RemoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.RemoveNLSInfoboxBlockInput) (*gqlmodel.RemoveNLSInfoboxBlockPayload, error)
 	DuplicateNLSLayer(ctx context.Context, input gqlmodel.DuplicateNLSLayerInput) (*gqlmodel.DuplicateNLSLayerPayload, error)
 	AddCustomProperties(ctx context.Context, input gqlmodel.AddCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error)
+	UpdateCustomProperties(ctx context.Context, input gqlmodel.UpdateCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error)
 	InstallPlugin(ctx context.Context, input gqlmodel.InstallPluginInput) (*gqlmodel.InstallPluginPayload, error)
 	UninstallPlugin(ctx context.Context, input gqlmodel.UninstallPluginInput) (*gqlmodel.UninstallPluginPayload, error)
 	UploadPlugin(ctx context.Context, input gqlmodel.UploadPluginInput) (*gqlmodel.UploadPluginPayload, error)
@@ -4770,6 +4772,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateCluster(childComplexity, args["input"].(gqlmodel.UpdateClusterInput)), true
+
+	case "Mutation.updateCustomProperties":
+		if e.complexity.Mutation.UpdateCustomProperties == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateCustomProperties_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateCustomProperties(childComplexity, args["input"].(gqlmodel.UpdateCustomPropertySchemaInput)), true
 
 	case "Mutation.updateDatasetSchema":
 		if e.complexity.Mutation.UpdateDatasetSchema == nil {
@@ -8206,6 +8220,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUninstallPluginInput,
 		ec.unmarshalInputUnlinkPropertyValueInput,
 		ec.unmarshalInputUpdateClusterInput,
+		ec.unmarshalInputUpdateCustomPropertySchemaInput,
 		ec.unmarshalInputUpdateDatasetSchemaInput,
 		ec.unmarshalInputUpdateGeoJSONFeatureInput,
 		ec.unmarshalInputUpdateLayerInput,
@@ -9202,6 +9217,11 @@ input AddCustomPropertySchemaInput {
   schema: JSON
 }
 
+input UpdateCustomPropertySchemaInput {
+  layerId: ID!
+  schema: JSON
+}
+
 # Payload
 
 type AddNLSLayerSimplePayload {
@@ -9259,6 +9279,7 @@ extend type Mutation {
   ): RemoveNLSInfoboxBlockPayload
   duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
   addCustomProperties(input: AddCustomPropertySchemaInput!): UpdateNLSLayerPayload!
+  updateCustomProperties(input: UpdateCustomPropertySchemaInput!): UpdateNLSLayerPayload!
 }`, BuiltIn: false},
 	{Name: "../../../gql/plugin.graphql", Input: `type Plugin {
   id: ID!
@@ -11796,6 +11817,21 @@ func (ec *executionContext) field_Mutation_updateCluster_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateClusterInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateClusterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateCustomProperties_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.UpdateCustomPropertySchemaInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateCustomPropertySchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateCustomPropertySchemaInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -30982,6 +31018,65 @@ func (ec *executionContext) fieldContext_Mutation_addCustomProperties(ctx contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_addCustomProperties_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateCustomProperties(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateCustomProperties(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateCustomProperties(rctx, fc.Args["input"].(gqlmodel.UpdateCustomPropertySchemaInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateNLSLayerPayload)
+	fc.Result = res
+	return ec.marshalNUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateCustomProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "layer":
+				return ec.fieldContext_UpdateNLSLayerPayload_layer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateNLSLayerPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateCustomProperties_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -61053,6 +61148,40 @@ func (ec *executionContext) unmarshalInputUpdateClusterInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateCustomPropertySchemaInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateCustomPropertySchemaInput, error) {
+	var it gqlmodel.UpdateCustomPropertySchemaInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"layerId", "schema"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
+		case "schema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schema"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Schema = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateDatasetSchemaInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateDatasetSchemaInput, error) {
 	var it gqlmodel.UpdateDatasetSchemaInput
 	asMap := map[string]interface{}{}
@@ -68644,6 +68773,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "addCustomProperties":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_addCustomProperties(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateCustomProperties":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateCustomProperties(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -79878,6 +80014,11 @@ func (ec *executionContext) unmarshalNUnlinkPropertyValueInput2githubᚗcomᚋre
 
 func (ec *executionContext) unmarshalNUpdateClusterInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateClusterInput(ctx context.Context, v interface{}) (gqlmodel.UpdateClusterInput, error) {
 	res, err := ec.unmarshalInputUpdateClusterInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateCustomPropertySchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateCustomPropertySchemaInput(ctx context.Context, v interface{}) (gqlmodel.UpdateCustomPropertySchemaInput, error) {
+	res, err := ec.unmarshalInputUpdateCustomPropertySchemaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

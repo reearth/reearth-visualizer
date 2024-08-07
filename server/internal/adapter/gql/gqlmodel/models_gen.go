@@ -1755,6 +1755,11 @@ type UpdateClusterPayload struct {
 	Cluster *Cluster `json:"cluster"`
 }
 
+type UpdateCustomPropertySchemaInput struct {
+	LayerID ID   `json:"layerId"`
+	Schema  JSON `json:"schema,omitempty"`
+}
+
 type UpdateDatasetSchemaInput struct {
 	SchemaID ID     `json:"schemaId"`
 	Name     string `json:"name"`
