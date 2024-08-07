@@ -19,6 +19,9 @@ import {
   SettingsFields,
   ButtonWrapper,
   ArchivedSettingNotice,
+  SettingsRow,
+  SettingsRowItem,
+  Thumbnail,
 } from "../common";
 
 export type GeneralSettingsType = {
@@ -38,6 +41,9 @@ type Props = {
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onDeleteProject: () => void;
 };
+
+const imageTypes = ["image" as const];
+
 const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
   const t = useT();
 
@@ -78,16 +84,20 @@ const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeletePr
                 value={localDescription}
                 onChange={setLocalDescription}
               />
-              <Thumbnail>
-                <AssetField
-                  commonTitle={t("Thumbnail")}
-                  fileType="asset"
-                  entityType="image"
-                  value={localImageUrl}
-                  onChange={setLocalImageUrl}
-                />
-                <StyledImage src={!localImageUrl ? defaultBetaProjectImage : localImageUrl} />
-              </Thumbnail>
+              <SettingsRow>
+                <SettingsRowItem>
+                  <AssetField
+                    commonTitle={t("Thumbnail")}
+                    inputMethod="asset"
+                    assetsTypes={imageTypes}
+                    value={localImageUrl}
+                    onChange={setLocalImageUrl}
+                  />
+                </SettingsRowItem>
+                <SettingsRowItem>
+                  <Thumbnail src={localImageUrl || defaultBetaProjectImage} />
+                </SettingsRowItem>
+              </SettingsRow>
               <ButtonWrapper>
                 <Button title={t("Submit")} appearance="primary" onClick={handleSubmit} />
               </ButtonWrapper>
@@ -175,15 +185,3 @@ const Divider = styled.div`
   height: 1px;
   background-color: ${({ theme }) => theme.outline.weaker};
 `;
-
-const Thumbnail = styled("div")(({ theme }) => ({
-  display: "inline-grid",
-  gridTemplateRows: "100%",
-  gridTemplateColumns: "1fr 1fr",
-  gridColumnGap: theme.spacing.large,
-}));
-
-const StyledImage = styled("img")(({ theme }) => ({
-  width: "100%",
-  borderRadius: theme.radius.small,
-}));

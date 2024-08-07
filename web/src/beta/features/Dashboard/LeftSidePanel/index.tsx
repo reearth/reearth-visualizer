@@ -53,6 +53,7 @@ const LeftSidePanel: FC<Props> = ({
               text={t(tab.text || "")}
               icon={tab.icon}
               active={tab.id === currentTab}
+              disabled={tab.disabled}
             />
           ))}
         </>
@@ -66,6 +67,7 @@ const LeftSidePanel: FC<Props> = ({
               text={t(tab.text || "")}
               icon={tab.icon}
               active={tab.id === currentTab}
+              disabled={tab.disabled}
             />
           ))}
         </>

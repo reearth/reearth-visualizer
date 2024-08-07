@@ -125,7 +125,7 @@ const ChildWrapper = styled("div")<{
     : size === "normal"
     ? `${theme.spacing.normal}px`
     : size === "large"
-    ? `${theme.spacing.large}px`
+    ? `${theme.spacing.super}px`
     : `${theme.spacing.small}px`,
   borderRadius: `0px 0px ${theme.radius.small}px ${theme.radius.small}px`,
   flexGrow: 1,

@@ -14,6 +14,7 @@ export type TabsProps = {
   tabs: TabItem[];
   position?: "top" | "left";
   tabStyle?: "normal" | "separated";
+  background?: string;
   currentTab?: string;
   onChange?: (tab: string) => void;
 };
@@ -22,6 +23,7 @@ export const Tabs: FC<TabsProps> = ({
   tabs,
   position = "top",
   tabStyle = "normal",
+  background,
   currentTab,
   onChange,
 }) => {
@@ -48,7 +50,7 @@ export const Tabs: FC<TabsProps> = ({
   }, [activeTab, tabs]);
 
   return (
-    <Wrapper position={position}>
+    <Wrapper position={position} background={background}>
       <TabsMenu position={position} tabStyle={tabStyle}>
         {tabs.map(({ id, icon, name }) => (
           <Tab
@@ -79,13 +81,15 @@ export const Tabs: FC<TabsProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{ position?: "top" | "left" }>(({ position, theme }) => ({
-  display: "flex",
-  flexFlow: position === "top" ? "column nowrap" : "row nowrap",
-  background: theme.bg[1],
-  height: "100%",
-  width: "100%",
-}));
+const Wrapper = styled("div")<{ position?: "top" | "left"; background?: string }>(
+  ({ position, background, theme }) => ({
+    display: "flex",
+    flexFlow: position === "top" ? "column nowrap" : "row nowrap",
+    background: background || theme.bg[1],
+    height: "100%",
+    width: "100%",
+  }),
+);
 
 const TabsMenu = styled("div")<{ position?: "top" | "left"; tabStyle?: "normal" | "separated" }>(
   ({ position, tabStyle, theme }) => ({

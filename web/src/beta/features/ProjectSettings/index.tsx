@@ -18,10 +18,10 @@ import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 
 export const projectSettingTabs = [
-  { id: "general", text: "General" },
-  { id: "story", text: "Story" },
-  { id: "public", text: "Public" },
-  { id: "plugins", text: "Plugin" },
+  { id: "general", text: "General", icon: "setting" },
+  { id: "story", text: "Story", icon: "sidebar" },
+  { id: "public", text: "Public", icon: "paperPlaneTilt" },
+  { id: "plugins", text: "Plugin", icon: "puzzlePiece" },
 ] as const;
 
 export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
@@ -64,6 +64,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     () =>
       projectSettingTabs.map(tab => ({
         id: tab.id,
+        icon: tab.icon,
         text: t(tab.text),
         path: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`,
       })),
@@ -78,7 +79,13 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           <SidebarWrapper>
             <SidebarSection>
               {tabs?.map(t => (
-                <SidebarMenuItem key={t.id} path={t.path} text={t.text} active={t.id === tab} />
+                <SidebarMenuItem
+                  key={t.id}
+                  path={t.path}
+                  text={t.text}
+                  active={t.id === tab}
+                  icon={t.icon}
+                />
               ))}
             </SidebarSection>
             <SidebarVersion />
@@ -94,8 +101,6 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           )}
           {tab === "story" && currentStory && (
             <StorySettings
-              projectId={projectId}
-              stories={stories}
               currentStory={currentStory}
               isArchived={!!project?.isArchived}
               onUpdateStory={handleUpdateStory}

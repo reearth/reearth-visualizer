@@ -22,10 +22,10 @@ export const topTabItems: Omit<TabItems[], "active"> = [
 ];
 
 export const bottomTabsItems: Omit<TabItems[], "active"> = [
-  { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", path: " " },
-  { id: "documentary", text: "Documentary", icon: "book", path: " " },
-  { id: "community", text: "Community", icon: "usersFour", path: " " },
-  { id: "help", text: "Help & Support", icon: "question", path: " " },
+  { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", disabled: true },
+  { id: "documentary", text: "Documentary", icon: "book", disabled: true },
+  { id: "community", text: "Community", icon: "usersFour", disabled: true },
+  { id: "help", text: "Help & Support", icon: "question", disabled: true },
 ];
 
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {

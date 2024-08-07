@@ -10,15 +10,24 @@ export type SidebarMenuItemProps = {
   icon?: IconName;
   path?: string;
   active?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
 };
 
 export const DEFAULT_SIDEBAR_WIDTH = 213;
 
-export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ icon, text, active, path }) => {
+export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
+  icon,
+  text,
+  active,
+  disabled,
+  path,
+  onClick,
+}) => {
   const theme = useTheme();
   return (
-    <StyledLinkButton to={path || ""}>
-      <MenuWrapper active={active} path={path}>
+    <StyledLinkButton to={path || ""} disabled={disabled}>
+      <MenuWrapper active={active} disabled={disabled} onClick={onClick}>
         {icon && (
           <Icon
             icon={icon}
@@ -26,7 +35,7 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ icon, text, active, 
             color={active ? theme.content.main : theme.content.weak}
           />
         )}
-        <Typography size="body" color={theme.content.main}>
+        <Typography size="body" color={disabled ? theme.content.weak : theme.content.main}>
           {text}
         </Typography>
       </MenuWrapper>
@@ -34,12 +43,13 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ icon, text, active, 
   );
 };
 
-const StyledLinkButton = styled(Link)(() => ({
+const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(({ disabled }) => ({
+  pointerEvents: disabled ? "none" : "auto",
   textDecoration: "none",
 }));
 
-const MenuWrapper = styled("div")<{ active?: boolean; path?: string }>(
-  ({ active, theme, path }) => ({
+const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
+  ({ active, theme, disabled }) => ({
     display: "flex",
     alignItems: "center",
     alignSelf: "stretch",
@@ -47,7 +57,7 @@ const MenuWrapper = styled("div")<{ active?: boolean; path?: string }>(
     background: active ? theme.select.main : "",
     borderRadius: active ? theme.radius.small : "",
     padding: theme.spacing.small,
-    cursor: path === " " ? "not-allowed" : "pointer", //Temporaly disable until when the links are added
+    cursor: disabled ? "default" : "pointer",
     ["&:hover"]: {
       background: active ? theme.select.main : theme.bg[2],
       borderRadius: theme.radius.small,

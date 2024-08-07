@@ -1,10 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 
+import {
+  SidebarMenuItem,
+  SidebarSection,
+  SidebarWrapper,
+} from "@reearth/beta/ui/components/Sidebar";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import { MenuItem } from "../../MenuList";
-import { InnerPage, InnerMenu, SettingsWrapper, ArchivedSettingNotice } from "../common";
+import { InnerPage, SettingsWrapper, ArchivedSettingNotice, InnerSidebar } from "../common";
 
 import PublicSettingsDetail from "./PublicSettingsDetail";
 
@@ -69,20 +73,22 @@ const PublicSettings: React.FC<Props> = ({
   onUpdateProjectGA,
 }) => {
   const t = useT();
-  const [selectedTab, selectTab] = useState(currentStory ? currentStory.id : "map");
+  const [selectedTab, selectTab] = useState("map");
 
   const menu = useMemo(
     () => [
       {
         id: "map",
         title: t("Map"),
-        linkTo: `/settings/project/${project.id}/public/`,
+        icon: "globeSimple" as const,
+        path: `/settings/project/${project.id}/public/`,
         active: selectedTab === "map",
       },
       ...stories.map(s => ({
         id: s.id,
-        title: s.title,
-        linkTo: `/settings/project/${project.id}/public/${s.id}`,
+        title: (!s.title || s.title) === "Default" ? t("Story") : s.title,
+        icon: "sidebar" as const,
+        path: `/settings/project/${project.id}/public/${s.id}`,
         active: selectedTab === s.id,
       })),
     ],
@@ -93,17 +99,22 @@ const PublicSettings: React.FC<Props> = ({
 
   return (
     <InnerPage wide>
-      <InnerMenu>
-        {menu.map(s => (
-          <MenuItem
-            key={s.id}
-            text={s.title}
-            active={s.active}
-            linkTo={s.linkTo}
-            onClick={() => handleTabChange(s.id)}
-          />
-        ))}
-      </InnerMenu>
+      <InnerSidebar>
+        <SidebarWrapper>
+          <SidebarSection>
+            {menu?.map(s => (
+              <SidebarMenuItem
+                key={s.id}
+                text={s.title}
+                icon={s.icon}
+                active={s.active}
+                path={s.path}
+                onClick={() => handleTabChange(s.id)}
+              />
+            ))}
+          </SidebarSection>
+        </SidebarWrapper>
+      </InnerSidebar>
       <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />

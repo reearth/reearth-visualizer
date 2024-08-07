@@ -20,6 +20,7 @@ export type TabItems = {
   icon?: IconName;
   path?: string;
   active?: boolean;
+  disabled?: boolean;
 };
 
 export type User = {

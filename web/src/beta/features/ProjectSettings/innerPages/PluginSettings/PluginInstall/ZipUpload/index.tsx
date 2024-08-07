@@ -1,13 +1,12 @@
 import React from "react";
 import useFileInput from "use-file-input";
 
-import { Icons } from "@reearth/beta/components/Icon";
-import Loading from "@reearth/beta/components/Loading";
+import { IconName, Loading } from "@reearth/beta/lib/reearth-ui";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
 export type Props = {
-  icon: Icons;
+  icon: IconName;
   buttonText: string;
   onSend?: (files: FileList) => void;
   loading?: boolean;

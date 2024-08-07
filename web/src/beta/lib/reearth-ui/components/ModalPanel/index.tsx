@@ -7,17 +7,23 @@ export type ModalPanelProps = {
   title?: string;
   children: ReactNode;
   actions?: ReactNode;
+  layout?: "common";
   onCancel?: () => void;
 };
 
-export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, onCancel }) => {
+export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, layout, onCancel }) => {
   return (
     <Wrapper>
       <HeaderWrapper>
         <Title>{title}</Title>
         <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
       </HeaderWrapper>
-      <Content>{children}</Content>
+      {layout === "common" ? (
+        <CommonLayout>{children}</CommonLayout>
+      ) : (
+        <Content>{children}</Content>
+      )}
+
       {actions && <ActionWrapper>{actions}</ActionWrapper>}
     </Wrapper>
   );
@@ -50,7 +56,6 @@ const Title = styled("div")(() => ({
 
 const Content = styled("div")(() => ({
   alignSelf: "stretch",
-  userSelect: "none",
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
@@ -62,4 +67,13 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
   gap: theme.spacing.normal,
+}));
+
+const CommonLayout = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+  padding: theme.spacing.large,
+  background: theme.bg[1],
 }));
