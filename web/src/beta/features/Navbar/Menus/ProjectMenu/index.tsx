@@ -64,7 +64,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
           <Label size="body" weight="bold" open={open} customColor>
             {currentProject.name}
           </Label>
-          <Icon icon="caretDown" size="normal" color={theme.content.weak} />
+          <Icon icon="caretDown" size="small" color={theme.content.weak} />
         </InputWrapper>
       </Popover.Trigger>
       <PickerWrapper attachToRoot>
@@ -92,19 +92,19 @@ const ProjectMenu: React.FC<Props> = ({ currentProject }) => {
 
 const InputWrapper = styled.div`
   display: flex;
-  position: relative;
   cursor: pointer;
+  padding: 7px 4px;
   align-items: center;
+  border-radius: 4px;
+  &:hover {
+    background: ${({ theme }) => theme.bg[2]};
+  }
 `;
 
 const Label = styled(Text)<{ open: boolean }>`
-  padding: 7px 12px;
-  /* The width + placement of the arrow icon */
-  padding-right: 30px;
-  width: 100%;
-  border-radius: 4px;
   color: ${({ theme }) => theme.content.weak};
-
+  padding-right: 4px;
+  font-size: 12px;
   &:focus {
     border: 1px solid ${({ theme }) => theme.select.strong};
   }
