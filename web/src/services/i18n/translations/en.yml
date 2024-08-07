@@ -162,9 +162,9 @@ Your scene will be published. This means anybody with the below URL will be able
 Your story has been published!: Your story has been published!
 Your scene has been published!: Your scene has been published!
 Public URL: Public URL
-Copy: Copy
 '* Anyone can see your story with this URL': '* Anyone can see your story with this URL'
 '* Anyone can see your scene with this URL': '* Anyone can see your scene with this URL'
+Copy: Copy
 Embed Code: Embed Code
 '* Please use this code if you want to embed your story into a webpage': '* Please use this code if you want to embed your story into a webpage'
 Publish domain: Publish domain
@@ -247,7 +247,6 @@ Installed Plugins: ''
 Uninstall: Uninstall
 Installed: Installed
 Install: Install
-Delete Plugin: ''
 You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: >-
   You are uninstalling the selected plugin. The data used by this plugin may
   also be deleted.
