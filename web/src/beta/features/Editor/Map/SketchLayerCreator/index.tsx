@@ -4,8 +4,8 @@ import { Button, Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reea
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import CustomedProperties from "./CustomedProperties";
-import CustomPropertySchemaModal from "./CustomPropertyModal";
+import SketchCustomProperties from "../shared/SketchCustomProperties";
+
 import General from "./General";
 import {
   CustomPropertyProp,
@@ -24,15 +24,7 @@ export const dataTypes: SketchLayerDataType[] = [
   "Boolean",
 ];
 
-const SketchLayerCreator: FC<SketchLayerProps> = ({
-  sceneId,
-  layerStyles,
-  onCloseSketchLayerCreator,
-  sketchLayerCreatorShown,
-  customProperySchemaShown,
-  onClosCustomProperySchema,
-  onSubmit,
-}) => {
+const SketchLayerCreator: FC<SketchLayerProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [customProperties, setCustomProperties] = useState<CustomPropertyProp[]>([]);
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
@@ -73,7 +65,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
         },
       },
     });
-    onCloseSketchLayerCreator?.();
+    onClose?.();
   };
 
   const tabsItem: TabItem[] = [
@@ -94,7 +86,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
       id: "customProperties",
       name: t("Custom Properties"),
       children: (
-        <CustomedProperties
+        <SketchCustomProperties
           customProperties={customProperties}
           propertiesList={propertiesList}
           setCustomProperties={setCustomProperties}
@@ -105,41 +97,27 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
   ];
 
   return (
-    <>
-      {sketchLayerCreatorShown && (
-        <Modal size="medium" visible={true}>
-          <ModalPanel
-            title={t("New Sketch Layer")}
-            onCancel={onCloseSketchLayerCreator}
-            actions={
-              <>
-                <Button onClick={onCloseSketchLayerCreator} size="normal" title="Cancel" />
-                <Button
-                  size="normal"
-                  title="Create"
-                  appearance="primary"
-                  onClick={handleSubmit}
-                  disabled={!layerName}
-                />
-              </>
-            }>
-            <Wrapper>
-              <Tabs tabs={tabsItem} />
-            </Wrapper>
-          </ModalPanel>
-        </Modal>
-      )}
-
-      {customProperySchemaShown && (
-        <CustomPropertySchemaModal
-          propertiesList={propertiesList}
-          customProperties={customProperties}
-          setCustomProperties={setCustomProperties}
-          setPropertiesList={setPropertiesList}
-          onClose={onClosCustomProperySchema}
-        />
-      )}
-    </>
+    <Modal size="medium" visible={true}>
+      <ModalPanel
+        title={t("New Sketch Layer")}
+        onCancel={onClose}
+        actions={
+          <>
+            <Button onClick={onClose} size="normal" title="Cancel" />
+            <Button
+              size="normal"
+              title="Create"
+              appearance="primary"
+              onClick={handleSubmit}
+              disabled={!layerName}
+            />
+          </>
+        }>
+        <Wrapper>
+          <Tabs tabs={tabsItem} />
+        </Wrapper>
+      </ModalPanel>
+    </Modal>
   );
 };
 

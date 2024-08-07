@@ -18,7 +18,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   children,
   actions,
   onCancel,
-  isHeader,
+  isHeader = true,
   darkGrayBgColor = false,
   showBorder = true,
 }) => {

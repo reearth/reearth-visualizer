@@ -30,10 +30,7 @@ export type CustomPropertyProps = {
 export type SketchLayerProps = {
   sceneId: string;
   layerStyles?: LayerStyle[];
-  sketchLayerCreatorShown?: boolean;
-  customProperySchemaShown?: boolean;
-  onCloseSketchLayerCreator: () => void;
-  onClosCustomProperySchema: () => void;
+  onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
 };
 

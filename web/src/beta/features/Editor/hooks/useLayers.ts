@@ -236,7 +236,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     });
   }, []);
 
-  const handleCustomProperySchemaClick = useCallback((id?: string) => {
+  const handleCustomPropertySchemaClick = useCallback((id?: string) => {
     if (!id) return;
     setLayerId(id);
   }, []);
@@ -264,7 +264,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
     handleLayerMove,
-    handleCustomProperySchemaClick,
+    handleCustomPropertySchemaClick,
     handleCustomPropertySchemaUpdate,
   };
 }

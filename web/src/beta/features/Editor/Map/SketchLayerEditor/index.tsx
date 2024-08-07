@@ -1,29 +1,24 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { Button, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import CustomedProperties from "../CustomedProperties";
-import { CustomPropertyProps } from "../type";
+import SketchCustomProperties from "../shared/SketchCustomProperties";
+import { CustomPropertyProp, PropertyListProp } from "../SketchLayerCreator/type";
 
 import useHooks from "./hooks";
 
 export type SourceType = "url" | "local" | "value";
 
-export type CustomPropertyModalProp = {
+export type SketchLayerEditorProp = {
   onClose?: () => void;
 };
 
-const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProps> = ({
-  propertiesList,
-  customProperties,
-  setCustomProperties,
-  setPropertiesList,
-  onClose,
-}) => {
+const SketchLayerEditor: FC<SketchLayerEditorProp> = ({ onClose }) => {
   const t = useT();
-
+  const [customProperties, setCustomProperties] = useState<CustomPropertyProp[]>([]);
+  const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const { handleClose, handleSubmit } = useHooks({
     customProperties,
     setPropertiesList,
@@ -42,7 +37,7 @@ const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProp
           </>
         }>
         <Wrapper>
-          <CustomedProperties
+          <SketchCustomProperties
             customProperties={customProperties}
             setCustomProperties={setCustomProperties}
             propertiesList={propertiesList}
@@ -60,4 +55,4 @@ const Wrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
 }));
 
-export default CustomPropertySchemaModal;
+export default SketchLayerEditor;

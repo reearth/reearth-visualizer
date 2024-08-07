@@ -4,16 +4,16 @@ import { v4 as uuidv4 } from "uuid";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 
-import { useMapPage } from "../../context";
-import { CustomPropertyProps } from "../type";
+import { useMapPage } from "../context";
+import { CustomPropertyProps } from "../SketchLayerCreator/type";
 
-import { CustomPropertyModalProp } from ".";
+import { SketchLayerEditorProp } from ".";
 
 export default function useHooks({
   customProperties,
   setPropertiesList,
   onClose,
-}: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> & CustomPropertyModalProp) {
+}: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> & SketchLayerEditorProp) {
   const { layers, layerId, handleCustomPropertySchemaUpdate } = useMapPage();
 
   const sketchLayers = useMemo(() => layers.filter(({ isSketch }) => isSketch), [layers]);

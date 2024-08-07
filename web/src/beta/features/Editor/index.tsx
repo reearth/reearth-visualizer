@@ -10,6 +10,7 @@ import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
+import SketchLayerEditor from "./Map/SketchLayerEditor";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
 import Story from "./Story";
@@ -53,8 +54,8 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerAdd,
     sketchLayerCreatorShown,
     closeSketchLayerCreator,
-    customProperySchemaShown,
-    closeCustomProperySchema,
+    customPropertySchemaShown,
+    closeCustomPropertySchema,
     layerStyles,
   } = useHooks({ sceneId, tab, projectId });
 
@@ -121,16 +122,16 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             onSubmit={handleLayerAdd}
           />
         )}
-        <MapPageProvider value={mapPageValue}>
+        {sketchLayerCreatorShown && (
           <SketchLayerCreator
             onSubmit={handleLayerAdd}
             sceneId={sceneId}
-            onCloseSketchLayerCreator={closeSketchLayerCreator}
+            onClose={closeSketchLayerCreator}
             layerStyles={layerStyles}
-            sketchLayerCreatorShown={sketchLayerCreatorShown}
-            customProperySchemaShown={customProperySchemaShown}
-            onClosCustomProperySchema={closeCustomProperySchema}
           />
+        )}
+        <MapPageProvider value={mapPageValue}>
+          {customPropertySchemaShown && <SketchLayerEditor onClose={closeCustomPropertySchema} />}
         </MapPageProvider>
       </Wrapper>
     </DndProvider>
