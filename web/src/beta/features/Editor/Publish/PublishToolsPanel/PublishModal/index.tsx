@@ -225,9 +225,7 @@ const PublishModal: FC<Props> = ({
               <Typography size="footnote">{t("Publish domain")}</Typography>
               {url && alias && (
                 <UrlWrapper onClick={() => window.open(purl, "_blank")}>
-                  <Typography size="body" weight="bold" color={theme.primary.main}>
-                    {purl}
-                  </Typography>
+                  <UrlText publicUrl={true}>{purl}</UrlText>
                 </UrlWrapper>
               )}
             </DomainWrapper>
