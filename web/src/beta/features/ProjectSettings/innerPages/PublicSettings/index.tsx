@@ -51,6 +51,7 @@ type Props = {
   };
   stories: Story[];
   currentStory?: Story;
+  subId?: string;
   onUpdateStory: (settings: PublicSettingsType) => void;
   onUpdateStoryBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateStoryAlias: (settings: PublicAliasSettingsType) => void;
@@ -64,6 +65,7 @@ const PublicSettings: React.FC<Props> = ({
   project,
   stories,
   currentStory,
+  subId,
   onUpdateStory,
   onUpdateStoryBasicAuth,
   onUpdateStoryAlias,
@@ -73,7 +75,7 @@ const PublicSettings: React.FC<Props> = ({
   onUpdateProjectGA,
 }) => {
   const t = useT();
-  const [selectedTab, selectTab] = useState("map");
+  const [selectedTab, selectTab] = useState(subId ? subId : "map");
 
   const menu = useMemo(
     () => [

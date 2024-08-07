@@ -111,6 +111,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               project={project}
               stories={stories}
               currentStory={currentStory}
+              subId={subId}
               onUpdateStory={handleUpdateStory}
               onUpdateStoryBasicAuth={handleUpdateStoryBasicAuth}
               onUpdateStoryAlias={handleUpdateStoryAlias}
