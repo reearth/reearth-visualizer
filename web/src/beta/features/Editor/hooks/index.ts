@@ -38,6 +38,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     nlsLayers,
     selectedLayer,
     ignoreCoreLayerUnselect,
+    layerId,
     handleCoreLayerSelect,
     // for layers tab
     handleLayerAdd,
@@ -47,6 +48,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerVisibilityUpdate,
     handleLayerConfigUpdate,
     handleLayerMove,
+    handleCustomProperySchemaClick,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -165,6 +167,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
       handleLayerStyleSelect,
+      layerId,
+      handleCustomProperySchemaClick,
     }),
     [
       handleVisualizerResize,
@@ -196,6 +200,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
       handleLayerStyleSelect,
+      layerId,
+      handleCustomProperySchemaClick,
     ],
   );
 

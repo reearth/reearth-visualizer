@@ -26,16 +26,19 @@ const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProp
   onSubmit,
 }) => {
   const t = useT();
-  const { layers } = useMapPage();
+  const { layers, layerId } = useMapPage();
 
   const sketchLayers = useMemo(() => layers.filter(({ isSketch }) => isSketch), [layers]);
 
   useEffect(() => {
     if (setPropertiesList) {
-      const newPropertiesList = processCustomProperties(sketchLayers);
-      setPropertiesList(newPropertiesList);
+      const layer = sketchLayers.find(layer => layer.id === layerId);
+      if (layer) {
+        const newPropertiesList = processCustomProperties(layer);
+        setPropertiesList(newPropertiesList);
+      }
     }
-  }, [setPropertiesList, sketchLayers]);
+  }, [setPropertiesList, sketchLayers, layerId]);
 
   const handleClose = useCallback(() => {
     if (onClose) setPropertiesList?.([]);
@@ -65,6 +68,7 @@ const CustomPropertySchemaModal: FC<CustomPropertyModalProp & CustomPropertyProp
     </Modal>
   );
 };
+
 const Wrapper = styled("div")(({ theme }) => ({
   height: "400px",
   background: theme.bg[0],
@@ -73,24 +77,21 @@ const Wrapper = styled("div")(({ theme }) => ({
 
 export default CustomPropertySchemaModal;
 
-const processCustomProperties = (sketchLayers: NLSLayer[]) => {
-  const propertListResult = sketchLayers.flatMap(layer => {
-    const { customPropertySchema } = layer.sketch || {};
-    if (!customPropertySchema) return [];
-    const sortedEntries = Object.entries(customPropertySchema)
-      .map(([key, value]) => ({
-        key,
-        value: (value as string).replace(/_\d+$/, ""),
-        number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10),
-      }))
-      .sort((a, b) => a.number - b.number);
+const processCustomProperties = (layer: NLSLayer) => {
+  const { customPropertySchema } = layer.sketch || {};
+  if (!customPropertySchema) return [];
 
-    return sortedEntries.map(({ key, value }) => ({
-      id: uuidv4(),
+  const sortedEntries = Object.entries(customPropertySchema)
+    .map(([key, value]) => ({
       key,
-      value,
-    }));
-  });
+      value: (value as string).replace(/_\d+$/, ""),
+      number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10),
+    }))
+    .sort((a, b) => a.number - b.number);
 
-  return propertListResult.flat();
+  return sortedEntries.map(({ key, value }) => ({
+    id: uuidv4(),
+    key,
+    value,
+  }));
 };

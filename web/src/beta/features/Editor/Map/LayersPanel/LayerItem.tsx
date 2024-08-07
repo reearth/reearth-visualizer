@@ -39,6 +39,7 @@ const LayerItem: FC<LayerItemProps> = ({
     handleLayerVisibilityUpdate,
     handleFlyTo,
     openCustomProperySchema,
+    handleCustomProperySchemaClick,
   } = useMapPage();
 
   const handleZoomToLayer = useCallback(() => {
@@ -71,13 +72,23 @@ const LayerItem: FC<LayerItemProps> = ({
             id: "customProperty",
             title: "Property Schema",
             icon: "listDashes" as const,
-            onClick: () => openCustomProperySchema(),
+            onClick: () => {
+              openCustomProperySchema();
+              handleCustomProperySchemaClick(layer.id);
+            },
           },
         ]
       : [];
 
     return [...sketchMenu, ...menu];
-  }, [layer.isSketch, layer.id, setEditingLayerNameId, handleLayerDelete, openCustomProperySchema]);
+  }, [
+    layer.isSketch,
+    layer.id,
+    setEditingLayerNameId,
+    handleLayerDelete,
+    openCustomProperySchema,
+    handleCustomProperySchemaClick,
+  ]);
 
   const hoverActions: EntryItemAction[] | undefined = useMemo(
     () =>

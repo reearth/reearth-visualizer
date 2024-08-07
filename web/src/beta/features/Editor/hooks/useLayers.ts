@@ -84,6 +84,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   );
 
   const [selectedLayer, setSelectedLayer] = useState<SelectedLayer | undefined>();
+  const [layerId, setLayerId] = useState<string | undefined>();
 
   const handleLayerSelect = useCallback(
     (props: LayerSelectProps) => {
@@ -229,10 +230,16 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     });
   }, []);
 
+  const handleCustomProperySchemaClick = useCallback((id?: string) => {
+    if (!id) return;
+    setLayerId(id);
+  }, []);
+
   return {
     nlsLayers,
     selectedLayer,
     ignoreCoreLayerUnselect,
+    layerId,
     handleLayerSelect,
     handleCoreLayerSelect,
     handleLayerAdd,
@@ -241,5 +248,6 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
     handleLayerMove,
+    handleCustomProperySchemaClick,
   };
 }
