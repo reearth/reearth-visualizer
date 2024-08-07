@@ -69,8 +69,8 @@ const PluginListItem: FC<PluginListItemProps> = ({
         />
         <Modal visible={isModalOpen} size="small">
           <ModalPanel
-            title={t("Delete Plugin")}
             layout="common"
+            appearance="simple"
             onCancel={() => setIsModalOpen(false)}
             actions={[
               <Button
