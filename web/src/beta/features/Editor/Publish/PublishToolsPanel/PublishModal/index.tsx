@@ -7,7 +7,7 @@ import {
   ModalPanel,
   Modal,
 } from "@reearth/beta/lib/reearth-ui/components";
-import { SwitchField } from "@reearth/beta/ui/fields";
+import { CommonField, SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -32,7 +32,10 @@ type Props = {
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
-  onNavigateToSettings?: (page?: "story" | "public" | "asset" | "plugin" | undefined) => void;
+  onNavigateToSettings?: (
+    page?: "story" | "public" | "asset" | "plugin" | undefined,
+    subId?: string,
+  ) => void;
 };
 
 const PublishModal: FC<Props> = ({
@@ -53,7 +56,7 @@ const PublishModal: FC<Props> = ({
   const t = useT();
   const theme = useTheme();
 
-  const { selectedProjectType } = usePublishPage();
+  const { selectedProjectType, storyId } = usePublishPage();
 
   const isStory = selectedProjectType === "story";
 
@@ -183,8 +186,13 @@ const PublishModal: FC<Props> = ({
             <Subtitle size="body">
               {isStory ? t(`Your story has been published!`) : t(`Your scene has been published!`)}
             </Subtitle>
-            <Subtitle size="footnote">{t("Public URL")}</Subtitle>
-            <div>
+            <CommonField
+              commonTitle={t("Public URL")}
+              description={
+                isStory
+                  ? t(`* Anyone can see your story with this URL`)
+                  : t(`* Anyone can see your scene with this URL`)
+              }>
               <UrlWrapper justify="space-between">
                 <UrlText publicUrl={true} onClick={() => window.open(purl, "_blank")}>
                   {purl}
@@ -196,14 +204,12 @@ const PublishModal: FC<Props> = ({
                   {t("Copy")}
                 </Typography>
               </UrlWrapper>
-              <Typography size="footnote">
-                {isStory
-                  ? t(`* Anyone can see your story with this URL`)
-                  : t(`* Anyone can see your scene with this URL`)}
-              </Typography>
-            </div>
-            <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
-            <div>
+            </CommonField>
+            <CommonField
+              commonTitle={t("Embed Code")}
+              description={t(
+                `* Please use this code if you want to embed your story into a webpage`,
+              )}>
               <UrlWrapper justify="space-between">
                 <UrlText>{embedCode}</UrlText>
                 <Typography
@@ -213,10 +219,7 @@ const PublishModal: FC<Props> = ({
                   {t("Copy")}
                 </Typography>
               </UrlWrapper>
-              <Typography size="footnote">
-                {t(`* Please use this code if you want to embed your story into a webpage`)}
-              </Typography>
-            </div>
+            </CommonField>
           </Section>
         ) : publishing !== "unpublishing" ? (
           <Section>
@@ -237,7 +240,7 @@ const PublishModal: FC<Props> = ({
               </DomainText>
               <Button
                 size="small"
-                onClick={() => onNavigateToSettings?.("public")}
+                onClick={() => onNavigateToSettings?.("public", isStory ? storyId : "")}
                 title={t("Go to settings")}
               />
             </div>

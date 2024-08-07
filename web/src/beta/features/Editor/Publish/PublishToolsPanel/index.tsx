@@ -13,7 +13,8 @@ import useHooks from "./hooks";
 import PublishModal from "./PublishModal";
 
 const PublishToolsPanel: FC = () => {
-  const { id, sceneId, selectedProjectType, handleProjectTypeChange } = usePublishPage();
+  const { storyId, projectId, sceneId, selectedProjectType, handleProjectTypeChange } =
+    usePublishPage();
   const t = useT();
 
   const {
@@ -30,7 +31,7 @@ const PublishToolsPanel: FC = () => {
     handleProjectPublish,
     handleProjectAliasCheck,
     handleNavigationToSettings,
-  } = useHooks({ id, sceneId, selectedProjectType });
+  } = useHooks({ storyId, projectId, sceneId, selectedProjectType });
 
   const sceneStatus = publishmentStatuses.find(status => status?.type === "default")?.published
     ? "published"

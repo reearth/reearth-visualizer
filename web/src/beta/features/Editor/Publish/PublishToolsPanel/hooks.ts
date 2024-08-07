@@ -16,18 +16,17 @@ type SelectedProject = {
 };
 
 export default ({
-  id,
+  storyId,
+  projectId,
   sceneId,
   selectedProjectType,
 }: {
-  id?: string;
+  storyId?: string;
+  projectId?: string;
   sceneId?: string;
   selectedProjectType?: ProjectType;
 }) => {
-  const handleNavigationToSettings = useSettingsNavigation({ projectId: id });
-  const [defaultProject, setDefaultProject] = useState<SelectedProject>();
-  const [storyProject, setStoryProject] = useState<SelectedProject>();
-  const [project, setProject] = useState<SelectedProject>();
+  const handleNavigationToSettings = useSettingsNavigation({ projectId });
 
   // Regular Project
   const {
@@ -37,49 +36,35 @@ export default ({
     usePublishProject,
   } = useProjectFetcher();
 
-  const { project: fetchedDefaultProject } = useProjectQuery(id);
+  const { project: mapProject } = useProjectQuery(projectId);
 
   // Storytelling Project
   const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
 
   const { stories } = useStoriesQuery({ sceneId });
 
-  // Fetch and set the default project
-  useEffect(() => {
-    if (fetchedDefaultProject) {
-      setDefaultProject({
-        id: fetchedDefaultProject.id,
-        alias: fetchedDefaultProject.alias,
-        publishmentStatus: fetchedDefaultProject.publishmentStatus,
-      });
+  const project: SelectedProject | undefined = useMemo(() => {
+    if (selectedProjectType === "story") {
+      const story = stories?.find(s => s.id === storyId);
+      return story
+        ? {
+            id: story.id,
+            alias: story.alias,
+            publishmentStatus: story.publishmentStatus,
+          }
+        : undefined;
+    } else {
+      return mapProject
+        ? {
+            id: mapProject.id,
+            alias: mapProject.alias,
+            publishmentStatus: mapProject.publishmentStatus,
+          }
+        : undefined;
     }
-  }, [fetchedDefaultProject]);
-
-  // Fetch and set the story project
-  useEffect(() => {
-    if (stories) {
-      const storyProj = stories.find(s => s.id === id);
-      if (storyProj) {
-        setStoryProject({
-          id: storyProj.id,
-          alias: storyProj.alias,
-          publishmentStatus: storyProj.publishmentStatus,
-        });
-      }
-    }
-  }, [stories, id]);
-
-  // Set the current project based on the selectedProjectType
-  useEffect(() => {
-    if (selectedProjectType === "story" && storyProject) {
-      setProject(storyProject);
-    } else if (defaultProject) {
-      setProject(defaultProject);
-    }
-  }, [selectedProjectType, storyProject, defaultProject]);
+  }, [stories, storyId, selectedProjectType, mapProject]);
 
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
-  const [dropdownOpen, setDropdown] = useState(false);
   const [modalOpen, setModal] = useState(false);
 
   const generateAlias = useCallback(() => generateRandomString(10), []);
@@ -96,18 +81,16 @@ export default ({
         id: "map",
         title: "Scene",
         type: "default",
-        published:
-          defaultProject?.publishmentStatus === "PUBLIC" ||
-          defaultProject?.publishmentStatus === "LIMITED",
+        published: isPublished(mapProject?.publishmentStatus),
       },
       ...(stories?.map(s => ({
         id: s.id,
         title: "Story",
         type: "story",
-        published: s.publishmentStatus === "PUBLIC" || s.publishmentStatus === "LIMITED",
+        published: isPublished(s.publishmentStatus),
       })) || []),
     ];
-  }, [defaultProject, stories]);
+  }, [mapProject, stories]);
 
   const handleProjectAliasCheck = useCallback(
     (a: string) => {
@@ -149,14 +132,8 @@ export default ({
     [project?.id, selectedProjectType, usePublishStory, usePublishProject],
   );
 
-  const handleOpenProjectSettings = useCallback(() => {
-    handleNavigationToSettings?.("public");
-    setDropdown(false);
-  }, [handleNavigationToSettings]);
-
   const handleModalOpen = useCallback((p: publishingType) => {
     setPublishing(p);
-    setDropdown(false);
     setModal(true);
   }, []);
 
@@ -167,17 +144,18 @@ export default ({
     publishing,
     publishStatus,
     publishProjectLoading,
-    dropdownOpen,
     modalOpen,
     alias,
     validAlias,
     validatingAlias,
     handleModalOpen,
     handleModalClose,
-    setDropdown,
     handleProjectPublish,
     handleProjectAliasCheck,
-    handleOpenProjectSettings,
     handleNavigationToSettings,
   };
 };
+
+function isPublished(publishmentStatus?: string) {
+  return publishmentStatus === "PUBLIC" || publishmentStatus === "LIMITED";
+}
