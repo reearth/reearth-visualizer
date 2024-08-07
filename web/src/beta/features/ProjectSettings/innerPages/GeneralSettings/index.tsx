@@ -1,6 +1,7 @@
 import { useCallback, useState, useMemo } from "react";
 
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   Collapse,
   TextInput,
@@ -41,8 +42,6 @@ type Props = {
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onDeleteProject: () => void;
 };
-
-const imageTypes = ["image" as const];
 
 const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
   const t = useT();
@@ -89,7 +88,7 @@ const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeletePr
                   <AssetField
                     commonTitle={t("Thumbnail")}
                     inputMethod="asset"
-                    assetsTypes={imageTypes}
+                    assetsTypes={IMAGE_TYPES}
                     value={localImageUrl}
                     onChange={setLocalImageUrl}
                   />

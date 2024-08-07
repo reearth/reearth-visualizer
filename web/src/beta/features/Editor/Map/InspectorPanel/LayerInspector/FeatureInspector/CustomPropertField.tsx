@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 
+import { FILE_TYPES, IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { AssetField, InputField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
@@ -13,9 +14,6 @@ type Props = {
   setField?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
   onSubmit?: (inp: any) => void;
 };
-
-const fileTypes = ["file" as const];
-const imageTypes = ["image" as const];
 
 export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: Props) => {
   const t = useT();
@@ -75,7 +73,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      assetsTypes={imageTypes}
+      assetsTypes={IMAGE_TYPES}
       inputMethod={"asset"}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
@@ -84,7 +82,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      assetsTypes={fileTypes}
+      assetsTypes={FILE_TYPES}
       inputMethod={"URL"}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
