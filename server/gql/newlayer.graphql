@@ -125,6 +125,11 @@ input AddCustomPropertySchemaInput {
   schema: JSON
 }
 
+input UpdateCustomPropertySchemaInput {
+  layerId: ID!
+  schema: JSON
+}
+
 # Payload
 
 type AddNLSLayerSimplePayload {
@@ -182,4 +187,5 @@ extend type Mutation {
   ): RemoveNLSInfoboxBlockPayload
   duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
   addCustomProperties(input: AddCustomPropertySchemaInput!): UpdateNLSLayerPayload!
+  updateCustomProperties(input: UpdateCustomPropertySchemaInput!): UpdateNLSLayerPayload!
 }

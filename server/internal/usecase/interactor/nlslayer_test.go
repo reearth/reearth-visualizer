@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddCustomProperties(t *testing.T) {
+func TestAddOrUpdateCustomProperties(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
@@ -28,11 +28,25 @@ func TestAddCustomProperties(t *testing.T) {
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
 
-	i, _ := il.AddCustomProperties(
+	initialSchema := map[string]any{"initialKey": "initialValue"}
+	i, _ := il.AddOrUpdateCustomProperties(
 		ctx,
-		interfaces.AddCustomPropertiesInput{
+		interfaces.AddOrUpdateCustomPropertiesInput{
 			LayerID: l.ID(),
-			Schema:  map[string]any{"key": "value"},
+			Schema:  initialSchema,
+		},
+		&usecase.Operator{
+			WritableScenes: []id.SceneID{scene.ID()},
+		},
+	)
+	assert.NotNil(t, i)
+
+	updateSchema := map[string]any{"key": "value"}
+	i, _ = il.AddOrUpdateCustomProperties(
+		ctx,
+		interfaces.AddOrUpdateCustomPropertiesInput{
+			LayerID: l.ID(),
+			Schema:  updateSchema,
 		},
 		&usecase.Operator{
 			WritableScenes: []id.SceneID{scene.ID()},
@@ -47,6 +61,7 @@ func TestAddCustomProperties(t *testing.T) {
 	assert.NotNil(t, res.Sketch().CustomPropertySchema())
 	schema := *(res.Sketch().CustomPropertySchema())
 	assert.Equal(t, "value", schema["key"])
+	assert.NotEqual(t, "initialValue", schema["key"])
 }
 
 func TestAddGeoJSONFeature(t *testing.T) {
