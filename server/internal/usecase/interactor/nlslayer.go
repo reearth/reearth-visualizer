@@ -590,7 +590,7 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	return duplicatedLayer, nil
 }
 
-func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCustomPropertiesInput, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+func (i *NLSLayer) AddOrUpdateCustomProperties(ctx context.Context, inp interfaces.AddOrUpdateCustomPropertiesInput, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
