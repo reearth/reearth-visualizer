@@ -9,22 +9,31 @@ export type ModalPanelProps = {
   actions?: ReactNode;
   layout?: "common";
   onCancel?: () => void;
+  appearance?: "simple" | "normal";
 };
 
-export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, layout, onCancel }) => {
+export const ModalPanel: FC<ModalPanelProps> = ({
+  title,
+  children,
+  actions,
+  layout,
+  onCancel,
+  appearance = "normal",
+}) => {
   return (
     <Wrapper>
-      <HeaderWrapper>
-        <Title>{title}</Title>
-        <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
-      </HeaderWrapper>
+      {appearance !== "simple" && (
+        <HeaderWrapper>
+          <Title>{title}</Title>
+          <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
+        </HeaderWrapper>
+      )}
       {layout === "common" ? (
         <CommonLayout>{children}</CommonLayout>
       ) : (
         <Content>{children}</Content>
       )}
-
-      {actions && <ActionWrapper>{actions}</ActionWrapper>}
+      {actions && <ActionWrapper showBorder={appearance !== "simple"}>{actions}</ActionWrapper>}
     </Wrapper>
   );
 };
@@ -32,7 +41,8 @@ export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, layo
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  background: theme.bg.transparentBlack,
+  background: theme.bg[1],
+  borderRadius: theme.radius.large,
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
@@ -58,7 +68,7 @@ const Content = styled("div")(() => ({
   alignSelf: "stretch",
 }));
 
-const ActionWrapper = styled("div")(({ theme }) => ({
+const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorder }) => ({
   padding: theme.spacing.normal,
   background: theme.bg[1],
   borderBottomRightRadius: theme.radius.large,
@@ -66,6 +76,7 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   display: "flex",
   alignItems: "flex-start",
+  borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
   gap: theme.spacing.normal,
 }));
 

@@ -6,7 +6,8 @@ import { ProjectType } from "./PublishToolsPanel/hooks";
 
 export interface PublishPageContextType {
   handleVisualizerResize?: (props: AreaSize) => void;
-  id?: string;
+  storyId?: string;
+  projectId?: string;
   sceneId?: string;
   selectedProjectType?: ProjectType;
   handleProjectTypeChange: (type: ProjectType) => void;

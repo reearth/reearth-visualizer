@@ -21,9 +21,9 @@ export const useSettingsNavigation = ({ projectId }: { projectId?: string }) => 
   const navigate = useNavigate();
 
   const handleNavigate = useCallback(
-    (page?: "public" | "story" | "asset" | "plugin") => {
+    (page?: "public" | "story" | "asset" | "plugin", subId?: string) => {
       if (!projectId || !page) return;
-      navigate(`/settings/project/${projectId}/${page}`);
+      navigate(`/settings/project/${projectId}/${page}${subId ? `/${subId}` : ""}`);
     },
     [projectId, navigate],
   );
