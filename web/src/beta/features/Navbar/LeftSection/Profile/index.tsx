@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 
 import { Workspace } from "../../types";
 
@@ -57,6 +56,7 @@ const HeaderProfile: React.FC<Props> = ({
     {
       icon: "exit",
       id: "logOut",
+      hasBorderBottom: true,
       onClick: onSignOut,
       title: t("Log out"),
     },
@@ -68,18 +68,7 @@ const HeaderProfile: React.FC<Props> = ({
     },
   ];
 
-  return (
-    <Option>
-      <PopupMenu label={currentWorkspace.name} menu={popupMenu} />
-    </Option>
-  );
+  return <PopupMenu label={currentWorkspace.name} menu={popupMenu} />;
 };
-
-const Option = styled("div")(({ theme }) => ({
-  padding: `${theme.spacing.small - 1}px ${theme.spacing.normal}px`,
-  borderRadius: theme.radius.small,
-  display: "flex",
-  alignItems: "center",
-}));
 
 export default HeaderProfile;

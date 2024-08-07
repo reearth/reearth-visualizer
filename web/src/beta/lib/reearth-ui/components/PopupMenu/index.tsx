@@ -9,15 +9,16 @@ const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 180;
 
 export type PopupMenuItem = {
-  hasCustomSubMenu?: boolean;
+  icon?: IconName;
   id: string;
-  title?: string;
+  hasCustomSubMenu?: boolean;
+  hasBorderBottom?: boolean;
+  onClick?: (id: string) => void;
   path?: string;
   personal?: boolean;
-  icon?: IconName;
   selected?: boolean;
   subItem?: PopupMenuItem[];
-  onClick?: (id: string) => void;
+  title?: string;
 };
 
 export type PopupMenuProps = {
@@ -70,9 +71,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   );
 
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
-    const { icon, id, onClick, path, selected, subItem, title } = item;
+    const { icon, id, hasBorderBottom, onClick, path, selected, subItem, title } = item;
     return (
       <Item
+        hasBorderBottom={!!hasBorderBottom}
         key={index}
         size={size}
         onClick={() => {
@@ -126,9 +128,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     );
   };
 
-  const renderTrigger = (nested?: boolean) => {
+  const renderTrigger = () => {
     return typeof label === "string" ? (
-      <LabelWrapper>
+      <LabelWrapper size={size}>
         {icon && <Icon icon={icon} size="small" />}
         <Label>{label}</Label>
         <Icon color={theme.content.weak} icon={nested ? "caretRight" : "caretDown"} size="small" />
@@ -200,21 +202,24 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
   }),
 );
 
-const Item = styled("div")<{ size?: "small" | "normal" }>(({ theme, size }) => ({
-  display: "flex",
-  gap: theme.spacing.smallest,
-  alignItems: "center",
-  padding:
-    size === "small"
-      ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
-      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  borderRadius: `${theme.radius.smallest}px`,
-  cursor: "pointer",
-  backgroundColor: "transparent",
-  "&:hover": {
-    backgroundColor: `${theme.bg[2]}`,
-  },
-}));
+const Item = styled("div")<{ hasBorderBottom: boolean; size?: "small" | "normal" }>(
+  ({ hasBorderBottom, size, theme }) => ({
+    display: "flex",
+    gap: theme.spacing.smallest,
+    alignItems: "center",
+    padding:
+      size === "small"
+        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+        : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    borderRadius: `${theme.radius.smallest}px`,
+    borderBottom: hasBorderBottom ? `1px solid ${theme.outline.weaker}` : "",
+    cursor: "pointer",
+    backgroundColor: "transparent",
+    "&:hover": {
+      backgroundColor: `${theme.bg[2]}`,
+    },
+  }),
+);
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",
@@ -236,16 +241,19 @@ const SubItem = styled("div")(() => ({
 }));
 
 const Label = styled("p")(({ theme }) => ({
-  paddingRight: "4px",
+  padding: "0px 4px 0px 0px",
   fontSize: "12px",
   flex: 1,
   color: theme.content.weak,
   fontWeight: "bold",
 }));
 
-const LabelWrapper = styled("div")(({ theme }) => ({
+const LabelWrapper = styled("div")<{ size?: "small" | "normal" }>(({ size, theme }) => ({
   display: "flex",
-  padding: "7px 4px",
+  padding:
+    size === "small"
+      ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: "4px",
   flex: 1,
   alignItems: "center",

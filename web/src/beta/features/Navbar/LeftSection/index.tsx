@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/beta/components/Icon";
+import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import WorkspaceCreationModal from "../../Modals/WorkspaceCreationModal";
-import ProjectMenu from "../Menus/ProjectMenu";
 import { Project, Workspace } from "../types";
 
 import Profile from "./Profile";
@@ -25,6 +26,7 @@ type Props = {
   openModal?: () => void;
   onModalClose?: (r?: boolean) => void;
 };
+
 const LeftSection: React.FC<Props> = ({
   dashboard,
   currentProject,
@@ -40,6 +42,36 @@ const LeftSection: React.FC<Props> = ({
   openModal,
   onModalClose,
 }) => {
+  const t = useT();
+  const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
+
+  const menuItems: PopupMenuItem[] = [
+    {
+      icon: "setting",
+      id: "setting",
+      title: t("Project settings"),
+      path: currentProject?.id ? `/settings/project/${currentProject.id}` : "",
+    },
+    {
+      icon: "plugin",
+      id: "plugin",
+      title: t("Plugin"),
+      path: currentProject?.id ? `/settings/project/${currentProject.id}/plugins` : "",
+    },
+  ];
+
+  if (documentationUrl) {
+    menuItems.push(
+      ...[
+        {
+          icon: "book",
+          id: "documentation",
+          title: t("Documentation"),
+          onClick: () => window.open(documentationUrl, "_blank", "noopener"),
+        } as PopupMenuItem,
+      ],
+    );
+  }
   return (
     <Wrapper>
       <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
@@ -62,9 +94,7 @@ const LeftSection: React.FC<Props> = ({
         onSubmit={onWorkspaceCreate}
       />
       <Separator>/</Separator>
-      {currentProject && (
-        <ProjectMenu currentProject={currentProject} workspaceId={currentWorkspace?.id} />
-      )}
+      {currentProject && <PopupMenu label={currentProject.name} menu={menuItems} />}
     </Wrapper>
   );
 };
