@@ -31,7 +31,8 @@ const pagination = (sort?: SortType) => {
   switch (sort) {
     case "date":
       last = projectsPerPage;
-      sortBy = ProjectSortType.Createdat;
+      //TODO: waiting BE fix
+      // sortBy = ProjectSortType.Createdat;
       break;
     case "date-reversed":
       first = projectsPerPage;
