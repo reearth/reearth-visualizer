@@ -37,6 +37,7 @@ export const GET_ME = gql(`
       teams {
         id
         name
+        personal
         members {
           user {
             id
