@@ -4,18 +4,18 @@ import { v4 as uuidv4 } from "uuid";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 
-import { useMapPage } from "../context";
 import { CustomPropertyProps } from "../SketchLayerCreator/type";
 
 import { SketchLayerEditorProp } from ".";
 
 export default function useHooks({
+  layers,
+  layerId,
   customProperties,
   setPropertiesList,
   onClose,
+  onCustomPropertySchemaUpdate,
 }: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> & SketchLayerEditorProp) {
-  const { layers, layerId, handleCustomPropertySchemaUpdate } = useMapPage();
-
   const sketchLayers = useMemo(() => layers.filter(({ isSketch }) => isSketch), [layers]);
 
   const handleClose = useCallback(() => {
@@ -36,9 +36,9 @@ export default function useHooks({
       schema: schemaJSON,
     };
 
-    handleCustomPropertySchemaUpdate?.(inp);
+    onCustomPropertySchemaUpdate?.(inp);
     handleClose();
-  }, [customProperties, handleClose, handleCustomPropertySchemaUpdate, layerId]);
+  }, [customProperties, handleClose, onCustomPropertySchemaUpdate, layerId]);
 
   const processCustomProperties = (layer: NLSLayer) => {
     const { customPropertySchema } = layer.sketch || {};

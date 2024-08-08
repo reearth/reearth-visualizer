@@ -319,5 +319,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
     closeSketchLayerCreator,
     closeCustomPropertySchema,
     layerStyles,
+    layers: nlsLayers,
+    layerId,
+    handleCustomPropertySchemaUpdate,
   };
 };

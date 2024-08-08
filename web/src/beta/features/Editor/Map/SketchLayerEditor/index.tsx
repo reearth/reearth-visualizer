@@ -1,6 +1,8 @@
 import { FC, useState } from "react";
 
 import { Button, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -12,17 +14,28 @@ import useHooks from "./hooks";
 export type SourceType = "url" | "local" | "value";
 
 export type SketchLayerEditorProp = {
+  layers: NLSLayer[];
+  layerId?: string;
   onClose?: () => void;
+  onCustomPropertySchemaUpdate?: (inp: UpdateCustomPropertySchemaInput) => void;
 };
 
-const SketchLayerEditor: FC<SketchLayerEditorProp> = ({ onClose }) => {
+const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
+  layers,
+  layerId,
+  onClose,
+  onCustomPropertySchemaUpdate,
+}) => {
   const t = useT();
   const [customProperties, setCustomProperties] = useState<CustomPropertyProp[]>([]);
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const { handleClose, handleSubmit } = useHooks({
+    layers,
+    layerId,
     customProperties,
     setPropertiesList,
     onClose,
+    onCustomPropertySchemaUpdate,
   });
 
   return (

@@ -57,6 +57,9 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     customPropertySchemaShown,
     closeCustomPropertySchema,
     layerStyles,
+    layers,
+    layerId,
+    handleCustomPropertySchemaUpdate,
   } = useHooks({ sceneId, tab, projectId });
 
   // TODO remove DndProvider, use DragAndDropContext instead
@@ -130,9 +133,14 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             layerStyles={layerStyles}
           />
         )}
-        <MapPageProvider value={mapPageValue}>
-          {customPropertySchemaShown && <SketchLayerEditor onClose={closeCustomPropertySchema} />}
-        </MapPageProvider>
+        {customPropertySchemaShown && (
+          <SketchLayerEditor
+            layers={layers}
+            layerId={layerId}
+            onClose={closeCustomPropertySchema}
+            onCustomPropertySchemaUpdate={handleCustomPropertySchemaUpdate}
+          />
+        )}
       </Wrapper>
     </DndProvider>
   );
