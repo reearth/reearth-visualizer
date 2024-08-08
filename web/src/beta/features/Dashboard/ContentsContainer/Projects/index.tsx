@@ -58,7 +58,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             key={"create-project"}
             title={t("New Project")}
             managerSize="large"
-            icon="uploadSimple"
+            icon="plus"
             appearance="primary"
             onClick={showProjectCreator}
           />,

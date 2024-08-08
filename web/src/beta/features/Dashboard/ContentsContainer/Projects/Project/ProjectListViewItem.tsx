@@ -67,10 +67,10 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
-          <PublishStatus status={publishStatus} />
         </FlexItem>
       </ActionCell>
       <ProjectNameCell>
+        <PublishStatus status={publishStatus} />
         {!isEditing ? (
           <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>{projectName}</TitleWrapper>
         ) : (
@@ -105,14 +105,12 @@ const ProjectListViewItem: FC<ProjectProps> = ({
 export default ProjectListViewItem;
 
 const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
-  ({ isSelected, theme, isHovered }) => ({
+  ({ theme, isHovered }) => ({
     display: "flex",
     width: "100%",
     cursor: "pointer",
     borderRadius: theme.radius.small,
-    border: `1px solid ${
-      isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
-    }`,
+    border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
     padding: `${theme.spacing.small}px 0`,
     alignItems: "center",
   }),
@@ -137,7 +135,10 @@ const ActionCell = styled("div")(() => ({
   flex: 0.2,
 }));
 
-const ProjectNameCell = styled("div")(() => ({
+const ProjectNameCell = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
   flex: 1,
 }));
 
@@ -146,7 +147,6 @@ const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) =>
   width: "12px",
   borderRadius: "50%",
   background: status ? theme.publish.main : "transparent",
-  marginTop: theme.spacing.smallest - 1,
 }));
 
 const TimeCell = styled("div")(() => ({

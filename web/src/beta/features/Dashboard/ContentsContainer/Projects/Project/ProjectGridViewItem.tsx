@@ -96,16 +96,14 @@ const CardImage = styled("div")<{
   backgroundImage?: string | null;
   isSelected: boolean;
   isHovered: boolean;
-}>(({ theme, backgroundImage, isSelected, isHovered }) => ({
+}>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
   position: "relative",
   background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
-  border: `1px solid ${
-    isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
-  }`,
+  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
 }));
 
 const StarButtonWrapper = styled("div")<{
@@ -131,7 +129,6 @@ const PublishStatus = styled("div")(({ theme }) => ({
   width: "12px",
   borderRadius: "50%",
   background: theme.publish.main,
-  marginTop: theme.spacing.smallest - 1,
 }));
 
 const CardTitleWrapper = styled("div")(() => ({
