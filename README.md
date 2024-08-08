@@ -14,7 +14,7 @@
 <p align="center">
   <a href="https://reearth.io">Website</a>
   ·
-  <a href="https://docs.reearth.io">Documentation</a>
+  <a href="https://help.reearth.io">Documentation</a>
   ·
   <a href="https://www.figma.com/community/file/1027048965458642686">Figma</a>
   ·
