@@ -12,6 +12,7 @@ export type Project = {
   updatedAt?: Date;
   createdAt?: Date;
   projectType?: ProjectType;
+  starred?: boolean;
 };
 
 export type TabItems = {
