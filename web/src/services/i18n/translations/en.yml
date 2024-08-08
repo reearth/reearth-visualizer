@@ -109,6 +109,8 @@ Layer Name: Layer Name
 Format: Format
 Unsupported custom field: Unsupported custom field
 Custom Properties: Custom Properties
+Save & Apply: ''
+No custom properties: ''
 Geometry: Geometry
 Properties: Properties
 Enable Infobox: Enable Infobox
@@ -137,6 +139,7 @@ New Property: New Property
 ' Text': Text
 General: General
 New Sketch Layer: New Sketch Layer
+Custom properties Schema Setting: Custom properties Schema Setting
 Story: Story
 Publish: Publish
 Unpublish: Unpublish
@@ -340,6 +343,8 @@ Block was successfully moved.: Block was successfully moved.
 Successfully updated the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed the layer!: ''
+Failed to update the custom property schema.: Failed to update the custom property schema
+Successfully updated the custom property schema!: Successfully updated the custom property schema!
 Failed to add layer style.: ''
 Successfully added a new layer style!: ''
 Failed to update the layerStyle.: ''

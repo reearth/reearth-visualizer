@@ -107,6 +107,8 @@ Layer Name: ''
 Format: フォーマット
 Unsupported custom field: ''
 Custom Properties: ''
+Save & Apply: ''
+No custom properties: ''
 Geometry: ジオメトリ
 Properties: プロパティ
 Enable Infobox: インフォボックスを有効化
@@ -135,6 +137,7 @@ New Property: ''
 ' Text': ''
 General: ''
 New Sketch Layer: ''
+Custom properties Schema Setting: ''
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
@@ -318,6 +321,8 @@ Block was successfully moved.: ブロックの移動に成功しました。
 Successfully updated the layer!: ''
 Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed the layer!: ''
+Failed to update the custom property schema.: ''
+Successfully updated the custom property schema!: ''
 Failed to add layer style.: ''
 Successfully added a new layer style!: ''
 Failed to update the layerStyle.: レイヤースタイルのアップデートに失敗しました。
