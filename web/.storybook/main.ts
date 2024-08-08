@@ -19,7 +19,6 @@ const config: StorybookConfig = {
       define: {
         "process.env.QTS_DEBUG": "false", // quickjs-emscripten
       },
-
       build:
         configType === "PRODUCTION"
           ? {
@@ -50,6 +49,9 @@ const config: StorybookConfig = {
           // https://github.com/storybookjs/storybook/issues/22253#issuecomment-1673229400
           ignored: ["**/.env"],
         },
+      },
+      optimizeDeps: {
+        exclude: ["storybook"],
       },
     });
   },

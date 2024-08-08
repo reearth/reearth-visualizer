@@ -4,8 +4,8 @@ import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { ContentWrapper } from "../../SharedComponent";
-import { CustomPropertyProps } from "../type";
+import { CustomPropertyProps } from "../../SketchLayerCreator/type";
+import { ContentWrapper } from "../SharedComponent";
 
 import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
@@ -13,7 +13,7 @@ import useHooks from "./hooks";
 const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
   "reearth-visualizer-editor-custom-properties-drag-handle";
 
-const CustomedProperties: FC<CustomPropertyProps> = ({
+const SketchCustomProperties: FC<CustomPropertyProps> = ({
   customProperties,
   propertiesList,
   setPropertiesList,
@@ -136,4 +136,4 @@ const PropertyHeaderCol = styled("div")(() => ({
   flex: 1,
 }));
 
-export default CustomedProperties;
+export default SketchCustomProperties;

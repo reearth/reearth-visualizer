@@ -105,7 +105,7 @@ const StyledTextArea = styled.textarea<{
 }>(({ theme, resizable, disabled, appearance }) => ({
   outline: "none",
   border: "none",
-  background: "none",
+  background: theme.bg[1],
   resize: resizable === "height" ? "vertical" : "none",
   overflow: resizable === "height" ? "scroll" : "auto",
   flex: 1,
