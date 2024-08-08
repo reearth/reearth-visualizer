@@ -8,7 +8,17 @@ const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 180;
 
+export type CustomSubMenu = {
+  title: string;
+  menuItem: PopupMenuItem;
+};
+
+interface Accumulator {
+  [key: string]: PopupMenuItem[];
+}
+
 export type PopupMenuItem = {
+  customSubMenuLabel?: string;
   icon?: IconName;
   id: string;
   hasCustomSubMenu?: boolean;
@@ -101,19 +111,26 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   };
 
   const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
-    const personalWorkspaces = subMenuItems.filter(item => !!item.personal);
-    const teamWorkspaces = subMenuItems.filter(item => !item.personal);
+    const customSubMenuArr = subMenuItems.reduce((acc: Accumulator, obj: PopupMenuItem) => {
+      const key = obj["customSubMenuLabel"] as string;
+
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj);
+      return acc;
+    }, {} as Accumulator);
+
+    const customSubMenu = Object.values(customSubMenuArr) as PopupMenuItem[][];
 
     return (
       <PopupMenuWrapper width={width} nested={nested}>
-        <SubMenuHeader>Personal</SubMenuHeader>
-        {personalWorkspaces.map((item, index) => {
-          return renderSingleItem(item, index);
-        })}
-        <SubMenuHeader>Team</SubMenuHeader>
-        {teamWorkspaces.map((item, index) => {
-          return renderSingleItem(item, index);
-        })}
+        {customSubMenu.map((item, index) => (
+          <div key={index}>
+            <SubMenuHeader>{customSubMenu[index][0].customSubMenuLabel}</SubMenuHeader>
+            {item.map((subItem, subIndex) => renderSingleItem(subItem, subIndex))}
+          </div>
+        ))}
       </PopupMenuWrapper>
     );
   };

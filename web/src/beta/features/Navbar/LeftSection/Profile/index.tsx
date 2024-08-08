@@ -43,6 +43,7 @@ const HeaderProfile: React.FC<Props> = ({
       id: "switchWorkspace",
       subItem: workspaces.map(w => {
         return {
+          customSubMenuLabel: w.personal ? "personal" : "team",
           id: w.id as string,
           title: w.name ?? t("Unknown"),
           hasCustomSubMenu: true,
