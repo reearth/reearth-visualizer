@@ -98,6 +98,7 @@ export const UPDATE_PROJECT = gql(`
     $deletePublicImage: Boolean
     $enableGa: Boolean
     $trackingId: String
+    $starred:Boolean
   ) {
     updateProject(
       input: {
@@ -112,6 +113,7 @@ export const UPDATE_PROJECT = gql(`
         deletePublicImage: $deletePublicImage
         enableGa: $enableGa
         trackingId: $trackingId
+        starred: $starred
       }
     ) {
       project {
