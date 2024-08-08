@@ -16,7 +16,10 @@ run-app:
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 
+run-redis:
+	docker compose -f ../docker-compose.yml up -d reearth-redis
+
 gql:
 	go generate ./internal/adapter/gql
 
-.PHONY: lint test e2e build run-app run-db gql
+.PHONY: lint test e2e build run-app run-db run-redis gql

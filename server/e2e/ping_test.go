@@ -4,15 +4,23 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/alicebob/miniredis/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func TestPingAPI(t *testing.T) {
+	mr, err := miniredis.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer mr.Close()
+
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
+		RedisHost: mr.Addr(),
 	}, false, nil)
 
 	e.OPTIONS("/api/ping").
