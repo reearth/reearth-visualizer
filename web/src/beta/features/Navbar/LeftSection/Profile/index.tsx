@@ -8,7 +8,6 @@ import { Workspace } from "../../types";
 
 export type Props = {
   workspaces?: Workspace[];
-  personalWorkspace?: boolean;
   currentWorkspace?: Workspace;
   onSignOut: () => void;
   onWorkspaceChange?: (workspaceId: string) => void;
@@ -16,7 +15,7 @@ export type Props = {
 };
 
 const HeaderProfile: React.FC<Props> = ({
-  currentWorkspace = { id: undefined, name: "" },
+  currentWorkspace,
   workspaces = [],
   onSignOut,
   onWorkspaceChange,
@@ -35,7 +34,7 @@ const HeaderProfile: React.FC<Props> = ({
     if (currentWorkspace?.id) {
       navigate(`/dashboard/${currentWorkspace.id}/asset`);
     }
-  }, [currentWorkspace.id, navigate]);
+  }, [currentWorkspace?.id, navigate]);
 
   const popupMenu: PopupMenuItem[] = [
     {
@@ -43,12 +42,13 @@ const HeaderProfile: React.FC<Props> = ({
       id: "switchWorkspace",
       subItem: workspaces.map(w => {
         return {
-          customSubMenuLabel: w.personal ? "personal" : "team",
+          customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
+          customSubMenuOrder: w.personal ? 0 : 1,
           id: w.id as string,
           title: w.name ?? t("Unknown"),
           hasCustomSubMenu: true,
           personal: w.personal,
-          selected: currentWorkspace.id === w.id,
+          selected: currentWorkspace?.id === w.id,
           onClick: () => w.id && handleWorkspaceChange(w.id),
         };
       }),
@@ -69,7 +69,7 @@ const HeaderProfile: React.FC<Props> = ({
     },
   ];
 
-  return <PopupMenu label={currentWorkspace.name} menu={popupMenu} />;
+  return <PopupMenu label={currentWorkspace?.name} menu={popupMenu} />;
 };
 
 export default HeaderProfile;

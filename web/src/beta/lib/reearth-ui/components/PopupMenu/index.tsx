@@ -19,6 +19,7 @@ interface Accumulator {
 
 export type PopupMenuItem = {
   customSubMenuLabel?: string;
+  customSubMenuOrder?: number;
   icon?: IconName;
   id: string;
   hasCustomSubMenu?: boolean;
@@ -111,9 +112,13 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   };
 
   const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
-    const customSubMenuArr = subMenuItems
-      .slice()
-      .reverse()
+    const groups = subMenuItems
+      .sort((a, b) => {
+        if (a.customSubMenuOrder !== undefined && b.customSubMenuOrder !== undefined) {
+          return a.customSubMenuOrder - b.customSubMenuOrder;
+        }
+        return 0;
+      })
       .reduce((acc: Accumulator, obj: PopupMenuItem) => {
         const key = obj["customSubMenuLabel"] as string;
 
@@ -124,15 +129,15 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         return acc;
       }, {} as Accumulator);
 
-    const customSubMenu = Object.values(customSubMenuArr) as PopupMenuItem[][];
+    const customSubMenu = Object.values(groups) as PopupMenuItem[][];
 
     return (
       <PopupMenuWrapper width={width} nested={nested}>
         {customSubMenu.map((item, index) => (
-          <div key={index}>
+          <Group key={index}>
             <SubMenuHeader>{customSubMenu[index][0].customSubMenuLabel}</SubMenuHeader>
             {item.map((subItem, subIndex) => renderSingleItem(subItem, subIndex))}
-          </div>
+          </Group>
         ))}
       </PopupMenuWrapper>
     );
@@ -225,7 +230,7 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
 const Item = styled("div")<{ hasBorderBottom: boolean; size?: "small" | "normal" }>(
   ({ hasBorderBottom, size, theme }) => ({
     display: "flex",
-    gap: theme.spacing.smallest,
+    gap: theme.spacing.small,
     alignItems: "center",
     padding:
       size === "small"
@@ -243,6 +248,7 @@ const Item = styled("div")<{ hasBorderBottom: boolean; size?: "small" | "normal"
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",
+  width: "100%",
 }));
 
 const SubMenuHeader = styled("div")(({ theme }) => ({
@@ -262,9 +268,9 @@ const SubItem = styled("div")(() => ({
 
 const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
   padding: "0px 4px 0px 0px",
-  fontSize: "12px",
+  fontSize: theme.fonts.sizes.body,
   flex: 1,
-  color: theme.content.weak,
+  color: nested ? theme.content.main : theme.content.weak,
   fontWeight: nested ? "normal" : "bold",
 }));
 
@@ -287,3 +293,9 @@ const LabelWrapper = styled("div")<{ size?: "small" | "normal"; nested: boolean 
     },
   }),
 );
+
+const Group = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: `${theme.spacing.micro}px`,
+}));
