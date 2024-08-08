@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import tinycolor from "tinycolor2";
@@ -17,7 +17,7 @@ export type Props = {
 
 const plugins = [gfm];
 
-export const Markdown: React.FC<Props> = ({
+export const Markdown: FC<Props> = ({
   className,
   styles,
   backgroundColor,

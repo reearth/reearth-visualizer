@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, FC } from "react";
 
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
@@ -43,7 +43,7 @@ type Props = {
   onDeleteProject: () => void;
 };
 
-const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
+const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
   const t = useT();
 
   const [localName, setLocalName] = useState(project?.name ?? "");
@@ -110,7 +110,7 @@ const GeneralSettings: React.FC<Props> = ({ project, onUpdateProject, onDeletePr
                 {t("Delete this project")}
               </Typography>
               <Typography size="body">
-                {t("This process will remove this project to Recycle bin.")}
+                {t("This process will remove this project to recycle bin.")}
               </Typography>
               <ButtonWrapper>
                 <Button
