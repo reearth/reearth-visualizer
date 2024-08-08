@@ -56,6 +56,7 @@ const lightTheme: Theme = {
     lightest: rgba("#ffffff", 0.2),
     lighter: rgba("#ffffff", 0.15),
     light: rgba("#ffffff", 0.1),
+    dim: rgba("#ffffff", 0.05),
     dark: rgba("#000000", 0.1),
     darker: rgba("#000000", 0.15),
     darkest: rgba("#000000", 0.2),

@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
@@ -12,6 +12,8 @@ import DataSource from "./DataSource";
 import FeatureInspector from "./FeatureInspector";
 import InfoboxSettings from "./InfoboxSettings";
 import LayerStyle from "./LayerStyle";
+
+const LAYER_INSPECTOR_TAB_STORAGE_KEY = "reearth-visualizer-map-layer-inspector-tab";
 
 type Props = {
   layerStyles?: LayerStyleType[];
@@ -74,9 +76,7 @@ const InspectorTabs: FC<Props> = ({
         children: selectedFeature && (
           <FeatureInspector
             selectedFeature={selectedFeature}
-            isSketchLayer={selectedLayer?.layer?.isSketch}
-            customProperties={selectedLayer?.layer?.sketch?.customPropertySchema}
-            layerId={selectedLayer?.layer?.id}
+            layer={selectedLayer?.layer}
             sketchFeature={selectedSketchFeature}
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
           />
@@ -118,7 +118,18 @@ const InspectorTabs: FC<Props> = ({
     ],
   );
 
-  return <Tabs tabs={tabItems} position="left" />;
+  const [currentTab, setCurrentTab] = useState(
+    localStorage.getItem(LAYER_INSPECTOR_TAB_STORAGE_KEY) ?? "dataSource",
+  );
+
+  const handleTabChange = useCallback((newTab: string) => {
+    setCurrentTab(newTab);
+    localStorage.setItem(LAYER_INSPECTOR_TAB_STORAGE_KEY, newTab);
+  }, []);
+
+  return (
+    <Tabs tabs={tabItems} currentTab={currentTab} position="left" onChange={handleTabChange} />
+  );
 };
 
 export default InspectorTabs;
