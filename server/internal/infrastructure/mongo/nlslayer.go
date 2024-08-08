@@ -136,6 +136,18 @@ func (r *NLSLayer) FindByScene(ctx context.Context, id id.SceneID) (nlslayer.NLS
 	})
 }
 
+func (r *NLSLayer) CountByScene(ctx context.Context, sid id.SceneID) (int, error) {
+	if !r.f.CanRead(sid) {
+		return 0, repo.ErrOperationDenied
+	}
+
+	c, err := r.client.Count(ctx, bson.M{
+		"scene":      sid.String(),
+		"group.root": bson.M{"$ne": true},
+	})
+	return int(c), err
+}
+
 func (r *NLSLayer) Save(ctx context.Context, layer nlslayer.NLSLayer) error {
 	if !r.f.CanWrite(layer.Scene()) {
 		return repo.ErrOperationDenied

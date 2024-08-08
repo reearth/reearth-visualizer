@@ -1742,12 +1742,15 @@ export type Point = {
 export type Policy = {
   __typename?: 'Policy';
   assetStorageSize?: Maybe<Scalars['FileSize']['output']>;
+  blocksCount?: Maybe<Scalars['Int']['output']>;
   datasetCount?: Maybe<Scalars['Int']['output']>;
   datasetSchemaCount?: Maybe<Scalars['Int']['output']>;
   id: Scalars['ID']['output'];
   layerCount?: Maybe<Scalars['Int']['output']>;
   memberCount?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
+  nlsLayersCount?: Maybe<Scalars['Int']['output']>;
+  pageCount?: Maybe<Scalars['Int']['output']>;
   projectCount?: Maybe<Scalars['Int']['output']>;
   publishedProjectCount?: Maybe<Scalars['Int']['output']>;
 };

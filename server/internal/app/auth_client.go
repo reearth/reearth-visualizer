@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 type contextKey string
@@ -122,7 +123,11 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 	writableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleWriter).IDs()
 	maintainingWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleMaintainer).IDs()
 	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
+	// FIXME: Temporarily apply 'free' policy
 	defaultPolicy := util.CloneRef(cfg.Config.Policy.Default)
+	if defaultPolicy == nil {
+		defaultPolicy = lo.ToPtr(workspace.PolicyID("free"))
+	}
 
 	return &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
