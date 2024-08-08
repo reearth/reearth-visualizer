@@ -40,6 +40,7 @@ const documents = {
     "\n  mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {\n    addNLSLayerSimple(input: $input) {\n      layers {\n        id\n      }\n    }\n  }\n": types.AddNlsLayerSimpleDocument,
     "\n  mutation UpdateNLSLayer($input: UpdateNLSLayerInput!) {\n    updateNLSLayer(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.UpdateNlsLayerDocument,
     "\n  mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {\n    removeNLSLayer(input: $input) {\n      layerId\n    }\n  }\n": types.RemoveNlsLayerDocument,
+    "\n  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {\n    updateCustomProperties(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.UpdateCustomPropertiesDocument,
     "\n  mutation AddStyle($input: AddStyleInput!) {\n    addStyle(input: $input) {\n      style {\n        id\n        name\n      }\n    }\n  }\n": types.AddStyleDocument,
     "\n  mutation UpdateStyle($input: UpdateStyleInput!) {\n    updateStyle(input: $input) {\n      style {\n        id\n        name\n      }\n    }\n  }\n": types.UpdateStyleDocument,
     "\n  mutation RemoveStyle($input: RemoveStyleInput!) {\n    removeStyle(input: $input) {\n      styleId\n    }\n  }\n": types.RemoveStyleDocument,
@@ -208,6 +209,10 @@ export function gql(source: "\n  mutation UpdateNLSLayer($input: UpdateNLSLayerI
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {\n    removeNLSLayer(input: $input) {\n      layerId\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {\n    removeNLSLayer(input: $input) {\n      layerId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {\n    updateCustomProperties(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {\n    updateCustomProperties(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

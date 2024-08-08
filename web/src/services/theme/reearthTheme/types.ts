@@ -56,6 +56,7 @@ export type Theme = Common & {
     lightest: string;
     lighter: string;
     light: string;
+    dim: string;
     dark: string;
     darker: string;
     darkest: string;

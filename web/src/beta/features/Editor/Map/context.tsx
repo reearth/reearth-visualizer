@@ -6,6 +6,7 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
+import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 
 import {
   LayerConfigUpdateProps,
@@ -34,6 +35,10 @@ export interface MapPageContextType {
   handleLayerSelect: (id?: string) => void;
   openDataSourceLayerCreator: () => void;
   openSketchLayerCreator: () => void;
+  openCustomPropertySchema: () => void;
+  layerId?: string;
+  handleCustomPropertySchemaClick?: (id?: string) => void;
+  handleCustomPropertySchemaUpdate?: (inp: UpdateCustomPropertySchemaInput) => void;
   handleLayerVisibilityUpdate: (inp: LayerVisibilityUpdateProps) => void;
   handleFlyTo?: FlyTo;
   sketchEnabled: boolean;

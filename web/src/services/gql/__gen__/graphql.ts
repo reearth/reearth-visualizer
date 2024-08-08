@@ -1052,6 +1052,7 @@ export type Mutation = {
   uninstallPlugin?: Maybe<UninstallPluginPayload>;
   unlinkPropertyValue?: Maybe<PropertyFieldPayload>;
   updateCluster?: Maybe<UpdateClusterPayload>;
+  updateCustomProperties: UpdateNlsLayerPayload;
   updateDatasetSchema?: Maybe<UpdateDatasetSchemaPayload>;
   updateGeoJSONFeature: Feature;
   updateLayer?: Maybe<UpdateLayerPayload>;
@@ -1446,6 +1447,11 @@ export type MutationUnlinkPropertyValueArgs = {
 
 export type MutationUpdateClusterArgs = {
   input: UpdateClusterInput;
+};
+
+
+export type MutationUpdateCustomPropertiesArgs = {
+  input: UpdateCustomPropertySchemaInput;
 };
 
 
@@ -2591,6 +2597,11 @@ export type UpdateClusterPayload = {
   scene: Scene;
 };
 
+export type UpdateCustomPropertySchemaInput = {
+  layerId: Scalars['ID']['input'];
+  schema?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type UpdateDatasetSchemaInput = {
   name: Scalars['String']['input'];
   schemaId: Scalars['ID']['input'];
@@ -3227,6 +3238,13 @@ export type RemoveNlsLayerMutationVariables = Exact<{
 
 export type RemoveNlsLayerMutation = { __typename?: 'Mutation', removeNLSLayer: { __typename?: 'RemoveNLSLayerPayload', layerId: string } };
 
+export type UpdateCustomPropertiesMutationVariables = Exact<{
+  input: UpdateCustomPropertySchemaInput;
+}>;
+
+
+export type UpdateCustomPropertiesMutation = { __typename?: 'Mutation', updateCustomProperties: { __typename?: 'UpdateNLSLayerPayload', layer: { __typename?: 'NLSLayerGroup', id: string } | { __typename?: 'NLSLayerSimple', id: string } } };
+
 export type AddStyleMutationVariables = Exact<{
   input: AddStyleInput;
 }>;
@@ -3667,6 +3685,7 @@ export const RemoveNlsInfoboxBlockDocument = {"kind":"Document","definitions":[{
 export const AddNlsLayerSimpleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddNLSLayerSimple"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddNLSLayerSimpleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addNLSLayerSimple"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<AddNlsLayerSimpleMutation, AddNlsLayerSimpleMutationVariables>;
 export const UpdateNlsLayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateNLSLayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateNLSLayerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateNLSLayer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateNlsLayerMutation, UpdateNlsLayerMutationVariables>;
 export const RemoveNlsLayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveNLSLayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveNLSLayerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeNLSLayer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layerId"}}]}}]}}]} as unknown as DocumentNode<RemoveNlsLayerMutation, RemoveNlsLayerMutationVariables>;
+export const UpdateCustomPropertiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCustomProperties"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCustomPropertySchemaInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCustomProperties"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCustomPropertiesMutation, UpdateCustomPropertiesMutationVariables>;
 export const AddStyleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddStyle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddStyleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addStyle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"style"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<AddStyleMutation, AddStyleMutationVariables>;
 export const UpdateStyleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStyle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateStyleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStyle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"style"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateStyleMutation, UpdateStyleMutationVariables>;
 export const RemoveStyleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveStyle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveStyleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeStyle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"styleId"}}]}}]}}]} as unknown as DocumentNode<RemoveStyleMutation, RemoveStyleMutationVariables>;
