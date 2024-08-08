@@ -10,11 +10,14 @@ import {
   UpdateNlsLayerMutation,
   RemoveNlsLayerMutation,
   RemoveNlsLayerInput,
+  UpdateCustomPropertySchemaInput,
+  UpdateCustomPropertiesMutation,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ADD_NLSLAYERSIMPLE,
   UPDATE_NLSLAYER,
   REMOVE_NLSLAYER,
+  UPDATE_CUSTOM_PROPERTY_SCHEMA,
 } from "@reearth/services/gql/queries/layer";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -96,10 +99,35 @@ export default () => {
     [removeNLSLayerMutation, t, setNotification],
   );
 
+  const [updateCustomPropertiesMutation] = useMutation(UPDATE_CUSTOM_PROPERTY_SCHEMA, {
+    refetchQueries: ["GetScene"],
+  });
+  const useUpdateCustomProperties = useCallback(
+    async (
+      input: UpdateCustomPropertySchemaInput,
+    ): Promise<MutationReturn<UpdateCustomPropertiesMutation>> => {
+      if (!input.layerId) return { status: "error" };
+      const { data, errors } = await updateCustomPropertiesMutation({ variables: { input } });
+      if (errors || !data?.updateCustomProperties) {
+        setNotification({ type: "error", text: t("Failed to update the custom property schema.") });
+
+        return { status: "error", errors };
+      }
+      setNotification({
+        type: "success",
+        text: t("Successfully updated the custom property schema!"),
+      });
+
+      return { data, status: "success" };
+    },
+    [updateCustomPropertiesMutation, setNotification, t],
+  );
+
   return {
     useGetLayersQuery,
     useAddNLSLayerSimple,
     useUpdateNLSLayer,
     useRemoveNLSLayer,
+    useUpdateCustomProperties,
   };
 };

@@ -6,7 +6,7 @@ import {
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/SharedComponent";
+} from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
   Selector,
   RadioGroup,

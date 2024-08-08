@@ -137,6 +137,7 @@ New Property: New Property
 ' Text': Text
 General: General
 New Sketch Layer: New Sketch Layer
+Custom properties Schema Setting: Custom properties Schema Setting
 Story: Story
 Publish: Publish
 Unpublish: Unpublish
@@ -162,9 +163,9 @@ Your scene will be published. This means anybody with the below URL will be able
 Your story has been published!: Your story has been published!
 Your scene has been published!: Your scene has been published!
 Public URL: Public URL
-Copy: Copy
 '* Anyone can see your story with this URL': '* Anyone can see your story with this URL'
 '* Anyone can see your scene with this URL': '* Anyone can see your scene with this URL'
+Copy: Copy
 Embed Code: Embed Code
 '* Please use this code if you want to embed your story into a webpage': '* Please use this code if you want to embed your story into a webpage'
 Publish domain: Publish domain
@@ -362,6 +363,8 @@ Block was successfully moved.: Block was successfully moved.
 Successfully updated the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed the layer!: ''
+Failed to update the custom property schema.: Failed to update the custom property schema
+Successfully updated the custom property schema!: Successfully updated the custom property schema!
 Failed to add layer style.: ''
 Successfully added a new layer style!: ''
 Failed to update the layerStyle.: ''

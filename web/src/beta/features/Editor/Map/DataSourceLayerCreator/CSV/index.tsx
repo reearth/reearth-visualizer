@@ -6,7 +6,7 @@ import {
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/SharedComponent";
+} from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
