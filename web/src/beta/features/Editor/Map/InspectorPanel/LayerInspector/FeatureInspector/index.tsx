@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import JsonView from "react18-json-view";
-import { v4 as uuidv4 } from "uuid";
 
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
-import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
-import { SketchFeature } from "@reearth/services/api/layersApi/utils";
+import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -19,9 +18,7 @@ type Props = {
     geometry: Geometry | undefined;
     properties: any;
   };
-  isSketchLayer?: boolean;
-  customProperties?: any;
-  layerId?: string;
+  layer?: NLSLayer;
   sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
@@ -33,51 +30,53 @@ export type FieldProp = {
   title: string;
   value?: ValueProp;
 };
-const FeatureData: React.FC<Props> = ({
+
+const FeatureData: FC<Props> = ({
   selectedFeature,
-  isSketchLayer,
-  customProperties,
-  layerId,
+  layer,
   sketchFeature,
   onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
   const theme = useTheme();
-  const [field, setField] = useState<FieldProp[]>([]);
+  const [fields, setFields] = useState<FieldProp[]>([]);
 
   useEffect(() => {
-    if (!customProperties) return;
-    const entries = Object.entries<string>(customProperties);
+    if (!layer?.sketch?.customPropertySchema) return;
+    const entries = Object.entries<string>(layer.sketch.customPropertySchema);
     const sortedValues = entries
       .map(([key, value]) => ({ key, value }))
       .sort((a, b) => {
+        // Note: value is a combine of type and index
+        // in format of fieldType_index
+        // eg. Text_0, Text_1, Number_2, Number_3
         const aIndex = parseInt(a.value.split("_")[1]);
         const bIndex = parseInt(b.value.split("_")[1]);
         return aIndex - bIndex;
       });
 
     const fieldArray = sortedValues.map(({ key, value }) => ({
-      id: uuidv4(),
+      id: key,
       type: value.replace(/_\d+$/, ""),
       title: key,
-      value: undefined,
+      value: selectedFeature?.properties?.[key],
     }));
 
-    setField(fieldArray);
-  }, [customProperties, selectedFeature?.properties]);
+    setFields(fieldArray);
+  }, [layer?.sketch?.customPropertySchema, selectedFeature?.properties]);
 
-  const handleSubmit = useCallback(
-    (p: any) => {
-      if (!selectedFeature) return;
-      onGeoJsonFeatureUpdate?.({
-        layerId: layerId ?? "",
-        featureId: sketchFeature?.id ?? "",
-        geometry: selectedFeature.geometry,
-        properties: p,
-      });
-    },
-    [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id],
-  );
+  const handleSubmit = useCallback(() => {
+    if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
+    onGeoJsonFeatureUpdate?.({
+      layerId: layer.id,
+      featureId: sketchFeature.id,
+      geometry: selectedFeature.geometry,
+      properties: {
+        ...selectedFeature.properties,
+        ...fields.reduce((acc, f) => ({ ...acc, [f.title]: f.value }), {}),
+      },
+    });
+  }, [layer?.id, fields, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id]);
 
   const jsonStyle = useMemo(
     () => ({
@@ -91,26 +90,38 @@ const FeatureData: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      {isSketchLayer && (
+      {!!layer?.isSketch && (
         <Collapse
           title={t("Custom Properties")}
           size="small"
-          background={theme.bg[2]}
-          headerBg={theme.bg[2]}>
+          background={theme.relative.dim}
+          headerBg={theme.relative.dim}>
           <FieldsWrapper>
-            {field.map(f => (
-              <FieldComponent
-                field={f}
-                key={f.id}
-                selectedFeature={sketchFeature}
-                setField={setField}
-                onSubmit={handleSubmit}
-              />
+            {fields.map(f => (
+              <FieldComponent field={f} key={f.id} setFields={setFields} />
             ))}
+            {fields.length > 0 && (
+              <Button
+                extendWidth
+                icon="return"
+                title={t("Save & Apply")}
+                size="small"
+                onClick={handleSubmit}
+              />
+            )}
           </FieldsWrapper>
+          {fields.length === 0 && (
+            <Typography size="body" color={theme.content.weak}>
+              {t("No custom properties")}
+            </Typography>
+          )}
         </Collapse>
       )}
-      <Collapse title={t("Geometry")} size="small" background={theme.bg[2]} headerBg={theme.bg[2]}>
+      <Collapse
+        title={t("Geometry")}
+        size="small"
+        background={theme.relative.dim}
+        headerBg={theme.relative.dim}>
         <ValueWrapper>
           <JsonView src={selectedFeature?.geometry} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
@@ -118,8 +129,8 @@ const FeatureData: React.FC<Props> = ({
       <Collapse
         title={t("Properties")}
         size="small"
-        background={theme.bg[2]}
-        headerBg={theme.bg[2]}>
+        background={theme.relative.dim}
+        headerBg={theme.relative.dim}>
         <ValueWrapper>
           <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
@@ -141,7 +152,7 @@ const Wrapper = styled("div")(({ theme }) => ({
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.normal,
   userSelect: "none",
 }));
 
