@@ -61,16 +61,12 @@ const LeftSection: React.FC<Props> = ({
   ];
 
   if (documentationUrl) {
-    menuItems.push(
-      ...[
-        {
-          icon: "book",
-          id: "documentation",
-          title: t("Documentation"),
-          onClick: () => window.open(documentationUrl, "_blank", "noopener"),
-        } as PopupMenuItem,
-      ],
-    );
+    menuItems.push({
+      icon: "book",
+      id: "documentation",
+      title: t("Documentation"),
+      onClick: () => window.open(documentationUrl, "_blank", "noopener"),
+    } as PopupMenuItem);
   }
   return (
     <Wrapper>
