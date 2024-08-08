@@ -54,16 +54,3 @@ jobs:
             test-results/
           if-no-files-found: ignore
           retention-days: 7
-  slack-notification:
-    if: success() || failure()
-    name: Slack Notification
-    needs:
-      - e2e
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
