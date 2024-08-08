@@ -39,11 +39,12 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const sortOptions: { value: string; label: string }[] = useMemo(
     () => [
-      { value: "date", label: t("Last Created") },
       { value: "date-reversed", label: t("First Created") },
-      { value: "date-updated", label: t("Last Updated") },
-      { value: "name", label: t("A To Z") },
-      { value: "name-reverse", label: t("Z To A") },
+      // TODO: After backend fix
+      // { value: "date", label: t("Last Created") },
+      // { value: "date-updated", label: t("Last Updated") },
+      // { value: "name", label: t("A To Z") },
+      // { value: "name-reverse", label: t("Z To A") },
     ],
     [t],
   );
