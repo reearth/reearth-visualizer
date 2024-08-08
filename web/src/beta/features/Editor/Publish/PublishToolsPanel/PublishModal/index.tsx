@@ -178,9 +178,7 @@ const PublishModal: FC<Props> = ({
         title={modalTitleText}
         actions={actions}
         onCancel={handleClose}
-        darkGrayBgColor={true}
-        showBorder={isPublishing}
-        isHeader={isPublishing}>
+        appearance={isPublishing ? "normal" : "simple"}>
         {statusChanged ? (
           <Section>
             <Subtitle size="body">

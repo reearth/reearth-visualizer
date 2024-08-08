@@ -208,44 +208,29 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
-Project Settings: プロジェクト設定
-Upload file: ファイルアップロード
-You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
-Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
-Archive this project: プロジェクトの非編集化
-Mark this project as archived and read-only: プロジェクトを編集できないようにします。この設定はいつでも戻すことができます。
-Archive project: プロジェクトを非編集化する
-Unarchive this project: 非編集化を解除
-Unarchive this project to become editable again.: プロジェクトを回復
-Unarchive project: 非編集化を解除
 Delete this project: プロジェクトを削除
-Once you delete a project, there is no going back. Please be sure.: プロジェクトを削除すると復元はできません。慎重に行ってください。
+This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
-I am sure I want to archive this project.: 本当に非編集化してもよいですか？
-Archiving your project will put it into a state where you cannot edit it or it's settings.: この操作をすると、プロジェクトの編集が行えなくなります。
-Once archived, you can unarchive the repository at any time.: この設定はいつでも戻すことができます。
-Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
-I am sure I want to unarchive this project.: 本当に非編集化を解除してもよろしいですか？
-This will bring this repository back to a state it can be editted and worked on by you and your team.: 非編集化を解除すると、チームの書き込み権限を持つユーザーによってプロジェクトの編集、設定変更が可能になります。
 I am sure I want to delete this project.: このプロジェクトを削除します。
-This action cannot be undone.: この操作は取り消すことができません。
-This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: 本当にプロジェクトを削除してもよろしいですか。
+This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
+Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
-Uninstall: アンインストール
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
-Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
-Installed: インストール済み
-Install: インストール
 Zip file from PC: PCからZipファイルをアップロード
 Public GitHub repository: GitHubパブリックレポジトリ
-Publish your plugin in the Marketplace: マーケットプレイスでプラグインを公開する
+Installed Plugins: ''
+Uninstall: アンインストール
+Installed: インストール済み
+Install: インストール
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
+Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
+No description.: ''
 Import GitHub repository: GitHubレポジトリからインポート
 Continue: 続ける
 'Repository url:': 'レポジトリURL:'

@@ -17,6 +17,8 @@ export type ButtonProps = {
   minWidth?: number;
   background?: string;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
+  onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
 };
 
 export const Button: FC<ButtonProps> = ({
@@ -32,6 +34,8 @@ export const Button: FC<ButtonProps> = ({
   minWidth,
   background,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   return (
     <StyledButton
@@ -42,7 +46,9 @@ export const Button: FC<ButtonProps> = ({
       extendWidth={extendWidth}
       minWidth={minWidth}
       background={background}
-      onClick={onClick}>
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}>
       {icon && <Icon icon={icon} color={iconColor} />}
       {!iconButton && title}
       {iconRight && <Icon icon={iconRight} />}

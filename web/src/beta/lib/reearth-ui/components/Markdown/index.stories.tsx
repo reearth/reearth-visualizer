@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { styled } from "@reearth/services/theme";
 
-import Markdown, { Props } from ".";
+import { Markdown, Props } from ".";
 
 const markdown = `
 > A block quote with ~strikethrough~ and a URL: https://reactjs.org.

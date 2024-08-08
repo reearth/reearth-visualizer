@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { FILE_TYPES, IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { AssetField, InputField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { useT } from "@reearth/services/i18n";
@@ -10,9 +11,6 @@ type Props = {
   field: FieldProp;
   setFields?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
 };
-
-const fileTypes = ["file" as const];
-const imageTypes = ["image" as const];
 
 export const FieldComponent = ({ field, setFields }: Props) => {
   const t = useT();
@@ -50,7 +48,7 @@ export const FieldComponent = ({ field, setFields }: Props) => {
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      assetsTypes={imageTypes}
+      assetsTypes={IMAGE_TYPES}
       inputMethod={"asset"}
       value={field.value as string}
       onChange={handleChange}
@@ -59,7 +57,7 @@ export const FieldComponent = ({ field, setFields }: Props) => {
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      assetsTypes={fileTypes}
+      assetsTypes={FILE_TYPES}
       inputMethod={"URL"}
       value={field.value as string}
       onChange={handleChange}

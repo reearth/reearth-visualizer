@@ -224,10 +224,6 @@ Warning: Warning
 Notice: Notice
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
-Project Settings: Project Settings
-Upload file: Upload file
-You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
-Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
@@ -235,44 +231,26 @@ Project Info: Project Info
 Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
-Archive this project: Archive this project
-Mark this project as archived and read-only: Mark this project as archived and read-only
-Archive project: Archive project
-Unarchive this project: Unarchive this project
-Unarchive this project to become editable again.: Unarchive this project to become editable again.
-Unarchive project: Unarchive project
 Delete this project: Delete this project
-Once you delete a project, there is no going back. Please be sure.: Once you delete a project, there is no going back. Please be sure.
+This process will remove this project to recycle bin.: ''
 Delete project: Delete project
-I am sure I want to archive this project.: I am sure I want to archive this project.
-Archiving your project will put it into a state where you cannot edit it or it's settings.: >-
-  Archiving your project will put it into a state where you cannot edit it or
-  it's settings.
-Once archived, you can unarchive the repository at any time.: Once archived, you can unarchive the repository at any time.
-Please type your project name to continue.: Please type your project name to continue.
-I am sure I want to unarchive this project.: I am sure I want to unarchive this project.
-This will bring this repository back to a state it can be editted and worked on by you and your team.: >-
-  This will bring this repository back to a state it can be editted and worked
-  on by you and your team.
 I am sure I want to delete this project.: I am sure I want to delete this project.
-This action cannot be undone.: This action cannot be undone.
-This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: >-
-  This will permanently delete the project. If the project was published, this
-  also means websites and domains referencing the project will not be able to
-  access it anymore.
+This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
+Please type your project name to continue.: Please type your project name to continue.
 Plugin Marketplace: Plugin Marketplace
 Public Installed: Public Installed
 Personal Installed: Personal Installed
+Zip file from PC: Zip file from PC
+Public GitHub repository: Public GitHub repository
+Installed Plugins: ''
 Uninstall: Uninstall
+Installed: Installed
+Install: Install
 You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: >-
   You are uninstalling the selected plugin. The data used by this plugin may
   also be deleted.
 Please be sure before uninstalling.: Please be sure before uninstalling.
-Installed: Installed
-Install: Install
-Zip file from PC: Zip file from PC
-Public GitHub repository: Public GitHub repository
-Publish your plugin in the Marketplace: Publish your plugin in the Marketplace
+No description.: ''
 Import GitHub repository: Import GitHub repository
 Continue: Continue
 'Repository url:': 'Repository url:'
