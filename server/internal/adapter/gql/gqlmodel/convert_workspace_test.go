@@ -36,6 +36,10 @@ func TestToPolicy(t *testing.T) {
 		AssetStorageSize:      lo.ToPtr(int64(5)),
 		DatasetCount:          lo.ToPtr(6),
 		DatasetSchemaCount:    lo.ToPtr(7),
+		NlsLayersCount:        lo.ToPtr(8),
+		PageCount:             lo.ToPtr(9),
+		StoryCount:            lo.ToPtr(10),
+		BlocksCount:           lo.ToPtr(6),
 	}, ToPolicy(policy.New(policy.Option{
 		ID:                    policy.ID("x"),
 		Name:                  "aaa",
@@ -46,6 +50,10 @@ func TestToPolicy(t *testing.T) {
 		AssetStorageSize:      lo.ToPtr(int64(5)),
 		DatasetCount:          lo.ToPtr(6),
 		DatasetSchemaCount:    lo.ToPtr(7),
+		NLSLayersCount:        lo.ToPtr(8),
+		PageCount:             lo.ToPtr(9),
+		StoryCount:            lo.ToPtr(10),
+		BlocksCount:           lo.ToPtr(6),
 	})))
 	assert.Nil(t, ToPolicy(nil))
 }

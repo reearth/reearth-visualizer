@@ -25,6 +25,10 @@ type Policy {
   assetStorageSize: FileSize
   datasetSchemaCount: Int
   datasetCount: Int
+  nlsLayersCount: Int
+  pageCount: Int
+  storyCount: Int
+  blocksCount: Int
 }
 
 enum Role {
