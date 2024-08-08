@@ -1,10 +1,10 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
-import Icon from "@reearth/beta/components/Icon";
+import { IconButton, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import WorkspaceCreationModal from "../../Modals/WorkspaceCreationModal";
-import ProjectMenu from "../Menus/ProjectMenu";
 import { Project, Workspace } from "../types";
 
 import Profile from "./Profile";
@@ -12,92 +12,84 @@ import Profile from "./Profile";
 type Props = {
   currentProject?: Project;
   currentWorkspace?: Workspace;
-  username?: string;
-  dashboard: boolean;
-  personalWorkspace: boolean;
   workspaces?: Workspace[];
-  modalShown: boolean;
   sceneId?: string;
   page: "editor" | "settings";
   onSignOut: () => void;
-  onWorkspaceCreate?: (data: { name: string }) => Promise<void>;
   onWorkspaceChange?: (workspaceId: string) => void;
-  openModal?: () => void;
-  onModalClose?: (r?: boolean) => void;
 };
+
 const LeftSection: React.FC<Props> = ({
-  dashboard,
   currentProject,
   currentWorkspace,
-  personalWorkspace,
   workspaces,
-  modalShown,
   sceneId,
   page,
   onSignOut,
-  onWorkspaceCreate,
   onWorkspaceChange,
-  openModal,
-  onModalClose,
 }) => {
+  const t = useT();
+
+  const menuItems: PopupMenuItem[] = useMemo(
+    () => [
+      {
+        icon: "setting",
+        id: "setting",
+        title: t("Project settings"),
+        path: currentProject?.id ? `/settings/project/${currentProject.id}` : "",
+      },
+      {
+        icon: "plugin",
+        id: "plugin",
+        title: t("Plugin"),
+        path: currentProject?.id ? `/settings/project/${currentProject.id}/plugins` : "",
+      },
+    ],
+    [currentProject?.id, t],
+  );
+
   return (
     <Wrapper>
       <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
-        {!dashboard && <StyledIcon icon="dashboard" size={20} />}
+        <IconButton icon="grid" appearance="simple" size="large" />
       </StyledLink>
-      <StyledLink to={`/scene/${sceneId}/map`}>
-        {page === "settings" && <StyledIcon icon="scene" size={20} />}
-      </StyledLink>
+      {page !== "editor" && (
+        <StyledLink to={`/scene/${sceneId}/map`}>
+          <IconButton icon="editor" appearance="simple" size="large" />
+        </StyledLink>
+      )}
       <Profile
         currentWorkspace={currentWorkspace}
-        personalWorkspace={personalWorkspace}
         workspaces={workspaces}
         onSignOut={onSignOut}
         onWorkspaceChange={onWorkspaceChange}
-        openModal={openModal}
-      />
-      <WorkspaceCreationModal
-        open={modalShown}
-        onClose={onModalClose}
-        onSubmit={onWorkspaceCreate}
       />
       <Separator>/</Separator>
-      {currentProject && (
-        <ProjectMenu currentProject={currentProject} workspaceId={currentWorkspace?.id} />
-      )}
+      {currentProject && <PopupMenu label={currentProject.name} menu={menuItems} />}
     </Wrapper>
   );
 };
 export default LeftSection;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 32px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  height: 32,
+  gap: theme.spacing.small,
+}));
 
-const StyledLink = styled(Link)`
-  display: flex;
-  margin-right: 10px;
-  color: ${props => props.theme.content.main};
-  text-decoration: none;
-  &:hover {
-    text-decoration: none;
-  }
-`;
+const StyledLink = styled(Link)(({ theme }) => ({
+  display: "flex",
+  color: theme.content.main,
+  textDecoration: "none",
+  "&:hover": {
+    textDecoration: "none",
+  },
+}));
 
-const StyledIcon = styled(Icon)`
-  border-radius: 5px;
-  padding: 5px;
-  color: ${props => props.theme.content.main};
-  &:hover {
-    background: ${props => props.theme.bg[3]};
-  }
-`;
-
-const Separator = styled.div`
-  color: ${props => props.theme.content.weak};
-  margin: 0px 4px;
-  user-select: none;
-`;
+const Separator = styled.div(({ theme }) => ({
+  color: theme.content.weak,
+  margin: `0 ${theme.spacing.smallest}px`,
+  userSelect: "none",
+}));

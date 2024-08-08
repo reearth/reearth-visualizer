@@ -104,7 +104,7 @@ export const Default: Story = {
   render: () => (
     <BrowserRouter>
       <div style={{ margin: "5px", height: "100px" }}>
-        <PopupMenu label="Dropsown Menu" menu={defaultItems} />
+        <PopupMenu label="Dropdown Menu" menu={defaultItems} />
       </div>
     </BrowserRouter>
   ),

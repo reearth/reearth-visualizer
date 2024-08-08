@@ -208,19 +208,14 @@ Please select an layer style before clicking Select.: ''
 Select Layer Style: Select Layer Style
 No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
-Create New Workspace: Create New Workspace
-Create: Create
-Workspace Name: Workspace Name
-Workspaces: Workspaces
-Unknown: Unknown
-New Workspace: New Workspace
-Log out: Log out
 Project settings: Project settings
-Public: Public
-Workspace assets: Workspace assets
 Plugin: Plugin
-Manage projects: Manage projects
-Documentation: Documentation
+Personal: ''
+Team Workspace: ''
+Unknown: Unknown
+Switch workspace: Switch workspace
+Log out: Log out
+Asset management: Asset management
 Map: Map
 Widgets: Widgets
 Error: Error
