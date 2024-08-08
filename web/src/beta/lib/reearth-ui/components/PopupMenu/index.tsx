@@ -111,15 +111,18 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   };
 
   const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
-    const customSubMenuArr = subMenuItems.reduce((acc: Accumulator, obj: PopupMenuItem) => {
-      const key = obj["customSubMenuLabel"] as string;
+    const customSubMenuArr = subMenuItems
+      .slice()
+      .reverse()
+      .reduce((acc: Accumulator, obj: PopupMenuItem) => {
+        const key = obj["customSubMenuLabel"] as string;
 
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(obj);
-      return acc;
-    }, {} as Accumulator);
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(obj);
+        return acc;
+      }, {} as Accumulator);
 
     const customSubMenu = Object.values(customSubMenuArr) as PopupMenuItem[][];
 
@@ -147,9 +150,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
 
   const renderTrigger = () => {
     return typeof label === "string" ? (
-      <LabelWrapper size={size}>
+      <LabelWrapper size={size} nested={!!nested}>
         {icon && <Icon icon={icon} size="small" />}
-        <Label>{label}</Label>
+        <Label nested={!!nested}>{label}</Label>
         <Icon color={theme.content.weak} icon={nested ? "caretRight" : "caretDown"} size="small" />
       </LabelWrapper>
     ) : label ? (
@@ -257,27 +260,30 @@ const SubItem = styled("div")(() => ({
   flexGrow: 1,
 }));
 
-const Label = styled("p")(({ theme }) => ({
+const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
   padding: "0px 4px 0px 0px",
   fontSize: "12px",
   flex: 1,
   color: theme.content.weak,
-  fontWeight: "bold",
+  fontWeight: nested ? "normal" : "bold",
 }));
 
-const LabelWrapper = styled("div")<{ size?: "small" | "normal" }>(({ size, theme }) => ({
-  display: "flex",
-  padding:
-    size === "small"
-      ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+const LabelWrapper = styled("div")<{ size?: "small" | "normal"; nested: boolean }>(
+  ({ size, nested, theme }) => ({
+    display: "flex",
+    padding: nested
+      ? "0px"
+      : size === "small"
+      ? `${theme.spacing.micro}px ${theme.spacing.small}px`
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  borderRadius: "4px",
-  flex: 1,
-  alignItems: "center",
-  "&:hover": {
-    background: theme.bg[2],
-    p: {
-      color: theme.content.main,
+    borderRadius: "4px",
+    flex: 1,
+    alignItems: "center",
+    "&:hover": {
+      background: theme.bg[2],
+      p: {
+        color: theme.content.main,
+      },
     },
-  },
-}));
+  }),
+);
