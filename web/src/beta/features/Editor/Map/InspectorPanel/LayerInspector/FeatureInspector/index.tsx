@@ -67,14 +67,13 @@ const FeatureData: FC<Props> = ({
 
   const handleSubmit = useCallback(() => {
     if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
+    const newProperties = { ...selectedFeature.properties };
+    Object.assign(newProperties, ...fields.map(f => ({ [f.title]: f.value })));
     onGeoJsonFeatureUpdate?.({
       layerId: layer.id,
       featureId: sketchFeature.id,
       geometry: selectedFeature.geometry,
-      properties: {
-        ...selectedFeature.properties,
-        ...fields.reduce((acc, f) => ({ ...acc, [f.title]: f.value }), {}),
-      },
+      properties: newProperties,
     });
   }, [layer?.id, fields, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id]);
 
