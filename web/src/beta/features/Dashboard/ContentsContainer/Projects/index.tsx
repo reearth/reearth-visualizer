@@ -19,7 +19,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     projectCreatorVisible,
     wrapperRef,
     layout,
-    favarateProjects,
+    favoriteProjects,
     searchTerm,
     sortValue,
     showProjectCreator,
@@ -77,7 +77,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           !isLoading && hasMoreProjects && handleScrollToBottom(e, handleGetMoreProjects);
         }}>
         <BreadcrumbContainer>
-          {favarateProjects.length > 0 && (
+          {favoriteProjects.length > 0 && (
             <Breadcrumb
               items={[
                 {
@@ -104,9 +104,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         </BreadcrumbContainer>
         {layout === "grid" && (
           <ProjectsContainer>
-            {favarateProjects.length > 0 && (
+            {favoriteProjects.length > 0 && (
               <ProjectsGrid>
-                {favarateProjects.map(project => (
+                {favoriteProjects.map(project => (
                   <ProjectGridViewItem
                     key={project.id}
                     project={project}
@@ -181,8 +181,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             </FlexTableRow>
             <FlexTableBody>
               <ProjectsContainer>
-                {favarateProjects.length > 0 &&
-                  favarateProjects.map(project => (
+                {favoriteProjects.length > 0 &&
+                  favoriteProjects.map(project => (
                     <FlexTableRow key={project.id}>
                       <ProjectListViewItem
                         key={project.id}

@@ -149,7 +149,7 @@ export default (workspaceId?: string) => {
       .filter((project): project is Project => !!project);
   }, [projectNodes]);
 
-  const favarateProjects: Project[] = useMemo(() => {
+  const favoriteProjects: Project[] = useMemo(() => {
     return projects.filter(project => project.starred === true);
   }, [projects]);
 
@@ -235,7 +235,7 @@ export default (workspaceId?: string) => {
     wrapperRef,
     layout,
     projectCreatorVisible,
-    favarateProjects,
+    favoriteProjects,
     searchTerm,
     sortValue,
     showProjectCreator,
