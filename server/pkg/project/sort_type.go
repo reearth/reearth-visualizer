@@ -1,37 +1,27 @@
 package project
 
-import (
-	"errors"
-	"strings"
-)
+import "strings"
 
-var (
-	SortTypeID        = SortType("id")
-	SortTypeUpdatedAt = SortType("updatedAt")
-	SortTypeName      = SortType("name")
-
-	ErrInvalidSortType = errors.New("invalid sort type")
-)
-
-type SortType string
-
-func check(role SortType) bool {
-	switch role {
-	case SortTypeID:
-		return true
-	case SortTypeUpdatedAt:
-		return true
-	case SortTypeName:
-		return true
-	}
-	return false
+type SortType struct {
+	Key  string
+	Desc bool
 }
 
-func SortTypeFromString(r string) (SortType, error) {
-	role := SortType(strings.ToLower(r))
+var (
+	SortTypeID        = SortType{Key: "id"}
+	SortTypeUpdatedAt = SortType{Key: "updatedAt"}
+	SortTypeName      = SortType{Key: "name"}
+)
 
-	if check(role) {
-		return role, nil
+func SortTypeFromString(r string, desc bool) SortType {
+	switch strings.ToLower(r) {
+	case "id":
+		return SortType{Key: "id", Desc: desc}
+	case "updatedAt":
+		return SortType{Key: "updatedAt", Desc: desc}
+	case "name":
+		return SortType{Key: "name", Desc: desc}
+	default:
+		return SortType{Key: "id", Desc: desc} // Default to ID sorting
 	}
-	return role, ErrInvalidSortType
 }
