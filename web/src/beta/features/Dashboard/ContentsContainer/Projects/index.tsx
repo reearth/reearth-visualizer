@@ -12,7 +12,7 @@ import ProjectCreatorModal from "./ProjectCreatorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
-    projects,
+    filtedProjects,
     isLoading,
     hasMoreProjects,
     selectedProject,
@@ -41,10 +41,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     () => [
       { value: "date", label: t("Last Created") },
       { value: "date-reversed", label: t("First Created") },
-      // TODO: After backend fix
-      // { value: "date-updated", label: t("Last Updated") },
-      // { value: "name", label: t("A To Z") },
-      // { value: "name-reverse", label: t("Z To A") },
+      { value: "date-updated", label: t("Last Updated") },
+      { value: "name", label: t("A To Z") },
+      { value: "name-reverse", label: t("Z To A") },
     ],
     [t],
   );
@@ -93,7 +92,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       {
                         title: (
                           <Typography size="h5" weight="bold" color={theme.content.weak}>
-                            {searchTerm}
+                            {`${t("Search Result for")} "${searchTerm}"`}
                           </Typography>
                         ),
                       },
@@ -137,7 +136,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       {
                         title: (
                           <Typography size="h5" weight="bold" color={theme.content.weak}>
-                            {searchTerm}
+                            {`${t("Search Result for")} "${searchTerm}"`}
                           </Typography>
                         ),
                       },
@@ -146,7 +145,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               ]}
             />
             <ProjectsGrid>
-              {projects.map(project => (
+              {filtedProjects.map(project => (
                 <ProjectGridViewItem
                   key={project.id}
                   project={project}
@@ -221,7 +220,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       : []),
                   ]}
                 />
-                {projects.map(project => (
+                {filtedProjects.map(project => (
                   <FlexTableRow key={project.id}>
                     <ProjectListViewItem
                       key={project.id}
