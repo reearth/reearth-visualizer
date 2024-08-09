@@ -22,6 +22,7 @@ export default () => {
       () => data?.assets.edges?.map(e => e.node) as AssetNodes,
       [data?.assets],
     );
+
     const hasMoreAssets = useMemo(
       () => data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage,
       [data?.assets],
