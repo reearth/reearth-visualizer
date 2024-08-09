@@ -16,7 +16,7 @@ jobs:
   pr_title:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v4
+      - uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: amannn/action-semantic-pull-request@v5

@@ -10,12 +10,12 @@ jobs:
       web: ${{ steps.web.outputs.any_changed }}
       server: ${{ steps.server.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: changed files for web
         id: web
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v44
         with:
           files: |
             web
@@ -27,7 +27,7 @@ jobs:
 
       - name: changed files for server
         id: server
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v44
         with:
           files: |
             server
@@ -64,7 +64,7 @@ jobs:
       name: ${{ steps.info.outputs.name || 'blank' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Fetch tags
         run: git fetch --prune --unshallow --tags
       - name: Get info

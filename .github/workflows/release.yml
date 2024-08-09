@@ -40,7 +40,7 @@ jobs:
           repo: ${{ github.repository }}
           latest: CHANGELOG_latest.md
       - name: Upload latest CHANGELOG
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: changelog-${{ steps.changelog.outputs.version }}
           path: CHANGELOG_latest.md
