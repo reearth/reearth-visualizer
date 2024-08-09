@@ -75,6 +75,8 @@ Write down your content: Write down your content
 Cover Image: Cover Image
 Re:Earth Visualizer: Re:Earth Visualizer
 Switch WorkSpace: Switch WorkSpace
+Personal: Personal
+Team Workspace: Team Workspace
 Log Out: Log Out
 Page: Page
 From Assets: From Assets
@@ -211,8 +213,6 @@ No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Project settings: Project settings
 Plugin: Plugin
-Personal: ''
-Team Workspace: ''
 Unknown: Unknown
 Switch workspace: Switch workspace
 Log out: Log out
@@ -281,6 +281,7 @@ New Camera: New Camera
 New Camera Button: New Camera Button
 Buttons List: Buttons List
 New Layers Button: New Layers Button
+New Link Button: New Link Button
 Add markdown text here: Add markdown text here
 aria-label-compass: compass
 aria-label-adjust-angle: adjust angle
