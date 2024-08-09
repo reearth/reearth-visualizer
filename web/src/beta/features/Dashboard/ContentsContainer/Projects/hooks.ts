@@ -1,134 +1,44 @@
-import { useApolloClient } from "@apollo/client";
 import { useCallback, useMemo, useState, MouseEvent, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
-import { ProjectSortType, PublishmentStatus, Visualizer } from "@reearth/services/gql";
+import {
+  ProjectSortField,
+  PublishmentStatus,
+  SortDirection,
+  Visualizer,
+} from "@reearth/services/gql";
 
 import { Project } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
 
+const PROJECTS_PER_PAGE = 16;
+
 export type SortType = "date" | "date-reversed" | "name" | "name-reverse" | "date-updated";
-const projectsPerPage = 16;
-
-const toPublishmentStatus = (s: PublishmentStatus) => {
-  switch (s) {
-    case PublishmentStatus.Public:
-      return "published";
-    case PublishmentStatus.Limited:
-      return "limited";
-    default:
-      return "unpublished";
-  }
-};
-
-const pagination = (sort?: SortType) => {
-  let first, last;
-  let sortBy;
-  switch (sort) {
-    case "date":
-      last = projectsPerPage;
-      //TODO: waiting BE fix
-      // sortBy = ProjectSortType.Createdat;
-      break;
-    case "date-reversed":
-      first = projectsPerPage;
-      sortBy = ProjectSortType.Createdat;
-      break;
-    case "date-updated":
-      last = projectsPerPage;
-      sortBy = ProjectSortType.Updatedat;
-      break;
-    case "name":
-      first = projectsPerPage;
-      sortBy = ProjectSortType.Name;
-      break;
-    case "name-reverse":
-      last = projectsPerPage;
-      sortBy = ProjectSortType.Name;
-      break;
-    default:
-      last = projectsPerPage;
-  }
-
-  return { first, last, sortBy };
-};
 
 export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
-  const gqlCache = useApolloClient().cache;
-  const [searchTerm, setSearchTerm] = useState<string>();
 
-  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
+  const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date");
 
-  const [layout, setLayout] = useState(
-    ["grid", "list"].includes(localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "")
-      ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
-      : "grid",
-  );
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
-    if (!newView) return;
-    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
-    setLayout(newView);
-  }, []);
+  const { projects, loading, isRefetching, hasMoreProjects, endCursor, fetchMore } =
+    useProjectsQuery({
+      teamId: workspaceId || "",
+      first: pagination(sortValue).first,
+      last: pagination(sortValue).last,
+      sort: pagination(sortValue).sortBy,
+      keyword: searchTerm,
+    });
 
-  const handleProjectCreate = useCallback(
-    async (data: Pick<Project, "name" | "description" | "imageUrl">) => {
-      if (!workspaceId) return;
-      await useCreateProject(
-        workspaceId,
-        Visualizer.Cesium,
-        data.name,
-        true,
-        data.description,
-        data.imageUrl || "",
-      );
-    },
-    [useCreateProject, workspaceId],
-  );
-
-  const { first, last, sortBy } = useMemo(() => pagination(sortValue), [sortValue]);
-
-  const {
-    projects: projectsData,
-    loading,
-    networkStatus,
-    hasMoreProjects,
-    endCursor,
-    fetchMore,
-    refetch,
-  } = useProjectsQuery({
-    teamId: workspaceId || "",
-    first,
-    last,
-    sort: sortBy,
-    keyword: searchTerm,
-  });
-
-  const handleProjectUpdate = useCallback(
-    async (project: Project, projectId: string) => {
-      await useUpdateProject({ projectId, ...project });
-      if (sortBy) refetch();
-    },
-    [refetch, sortBy, useUpdateProject],
-  );
-
-  useEffect(() => {
-    gqlCache.evict({ fieldName: "projects" });
-  }, [gqlCache]);
-
-  const projectNodes = projectsData?.edges.map(e => e.node);
-
-  const projects = useMemo(() => {
-    return (projectNodes ?? [])
+  const filtedProjects = useMemo(() => {
+    return (projects ?? [])
       .filter(project => project?.coreSupport === true)
       .map<Project | undefined>(project =>
         project
@@ -148,69 +58,34 @@ export default (workspaceId?: string) => {
           : undefined,
       )
       .filter((project): project is Project => !!project);
-  }, [projectNodes]);
-
-  const favoriteProjects: Project[] = useMemo(() => {
-    return projects.filter(project => project.starred === true);
   }, [projects]);
 
-  const isRefetchingProjects = useMemo(() => networkStatus === 7, [networkStatus]);
+  const isFetchingMore = useRef(false);
 
-  const handleGetMoreProjects = useCallback(() => {
+  const handleGetMoreProjects = useCallback(async () => {
+    if (isFetchingMore.current) return;
     if (hasMoreProjects) {
-      fetchMore({
+      isFetchingMore.current = true;
+      await fetchMore({
         variables: {
-          before: last ? endCursor : undefined,
-          after: first ? endCursor : undefined,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return fetchMoreResult;
+          after: endCursor,
+          first: PROJECTS_PER_PAGE,
         },
       });
+      isFetchingMore.current = false;
     }
-  }, [hasMoreProjects, fetchMore, last, endCursor, first]);
-
-  const handleProjectSelect = useCallback(
-    (e?: MouseEvent, projectId?: string) => {
-      e?.stopPropagation();
-      if (projectId) {
-        setSelectedProject(projects.find(project => project.id === projectId));
-      } else {
-        setSelectedProject(undefined);
-      }
-    },
-    [projects],
-  );
-
-  const showProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(true);
-  }, []);
-  const closeProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(false);
-  }, []);
-
-  const handleProjectOpen = useCallback(
-    (sceneId?: string) => {
-      if (sceneId) {
-        navigate(`/scene/${sceneId}/map`);
-      }
-    },
-    [navigate],
-  );
+  }, [hasMoreProjects, fetchMore, endCursor]);
 
   const isLoading = useMemo(() => {
-    return loading ?? isRefetchingProjects;
-  }, [isRefetchingProjects, loading]);
+    return loading || isRefetching;
+  }, [isRefetching, loading]);
 
   useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreProjects)
-      autoFillPage(wrapperRef, handleGetMoreProjects);
-  }, [handleGetMoreProjects, hasMoreProjects, isLoading]);
-
-  useEffect(() => {
-    refetch();
-  }, [sortValue, refetch, searchTerm]);
+    if (wrapperRef.current && !isLoading && hasMoreProjects) {
+      handleGetMoreProjects();
+    }
+    autoFillPage(wrapperRef, handleGetMoreProjects);
+  }, [handleGetMoreProjects, projects, hasMoreProjects, isLoading]);
 
   const handleProjectSortChange = useCallback(
     (value?: string) => {
@@ -220,6 +95,7 @@ export default (workspaceId?: string) => {
     [sortValue],
   );
 
+  // search
   const handleSearch = useCallback((value?: string) => {
     if (!value || value.length < 1) {
       setSearchTerm?.(undefined);
@@ -228,8 +104,86 @@ export default (workspaceId?: string) => {
     }
   }, []);
 
+  // favourite projects
+  const favoriteProjects: Project[] = useMemo(
+    () => (filtedProjects ? filtedProjects.filter(project => !!project?.starred) : []),
+    [filtedProjects],
+  );
+
+  // project create
+  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
+
+  const showProjectCreator = useCallback(() => {
+    setProjectCreatorVisible(true);
+  }, []);
+  const closeProjectCreator = useCallback(() => {
+    setProjectCreatorVisible(false);
+  }, []);
+
+  const handleProjectCreate = useCallback(
+    async (data: Pick<Project, "name" | "description" | "imageUrl">) => {
+      if (!workspaceId) return;
+      await useCreateProject(
+        workspaceId,
+        Visualizer.Cesium,
+        data.name,
+        true,
+        data.description,
+        data.imageUrl || "",
+      );
+    },
+    [useCreateProject, workspaceId],
+  );
+
+  // project update
+  const handleProjectUpdate = useCallback(
+    async (project: Project, projectId: string) => {
+      await useUpdateProject({ projectId, ...project });
+      // if (sortBy) refetch();
+    },
+    [useUpdateProject],
+  );
+
+  // project open
+  const handleProjectOpen = useCallback(
+    (sceneId?: string) => {
+      if (sceneId) {
+        navigate(`/scene/${sceneId}/map`);
+      }
+    },
+    [navigate],
+  );
+
+  // selection
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
+
+  const handleProjectSelect = useCallback(
+    (e?: MouseEvent, projectId?: string) => {
+      e?.stopPropagation();
+      if (projectId) {
+        setSelectedProject(filtedProjects.find(project => project.id === projectId));
+      } else {
+        setSelectedProject(undefined);
+      }
+    },
+    [filtedProjects],
+  );
+
+  // layout
+  const [layout, setLayout] = useState(
+    ["grid", "list"].includes(localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "")
+      ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
+      : "grid",
+  );
+
+  const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
+    if (!newView) return;
+    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
+    setLayout(newView);
+  }, []);
+
   return {
-    projects,
+    filtedProjects,
     hasMoreProjects,
     isLoading,
     selectedProject,
@@ -251,4 +205,61 @@ export default (workspaceId?: string) => {
     handleProjectSortChange,
     handleSearch,
   };
+};
+
+const toPublishmentStatus = (s: PublishmentStatus) => {
+  switch (s) {
+    case PublishmentStatus.Public:
+      return "published";
+    case PublishmentStatus.Limited:
+      return "limited";
+    default:
+      return "unpublished";
+  }
+};
+
+const pagination = (sort?: SortType) => {
+  let first, last;
+  let sortBy;
+  switch (sort) {
+    case "date":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Createdat,
+        direction: SortDirection.Desc,
+      };
+      break;
+    case "date-reversed":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Createdat,
+        direction: SortDirection.Asc,
+      };
+      break;
+    case "date-updated":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Updatedat,
+        direction: SortDirection.Desc,
+      };
+      break;
+    case "name":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Name,
+        direction: SortDirection.Asc,
+      };
+      break;
+    case "name-reverse":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Name,
+        direction: SortDirection.Desc,
+      };
+      break;
+    default:
+      first = PROJECTS_PER_PAGE;
+  }
+
+  return { first, last, sortBy };
 };
