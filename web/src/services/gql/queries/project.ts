@@ -15,8 +15,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor, $keyword: String, $sort: ProjectSort) {
-    projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before, keyword: $keyword, sort: $sort) {
+  query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+    projects(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         node {
           id
@@ -42,8 +42,6 @@ export const GET_PROJECTS = gql(`
       totalCount
     }
   }
-
-
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`

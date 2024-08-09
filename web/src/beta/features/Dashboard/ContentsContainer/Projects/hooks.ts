@@ -24,15 +24,16 @@ export default (workspaceId?: string) => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState<string>();
-  const [sortValue, setSort] = useState<SortType>("date");
+  const [sortValue, setSort] = useState<SortType>("date-updated");
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const { projects, loading, isRefetching, hasMoreProjects, endCursor, fetchMore } =
     useProjectsQuery({
       teamId: workspaceId || "",
-      first: pagination(sortValue).first,
-      last: pagination(sortValue).last,
+      pagination: {
+        first: pagination(sortValue).first,
+      },
       sort: pagination(sortValue).sortBy,
       keyword: searchTerm,
     });
@@ -68,8 +69,10 @@ export default (workspaceId?: string) => {
       isFetchingMore.current = true;
       await fetchMore({
         variables: {
-          after: endCursor,
-          first: PROJECTS_PER_PAGE,
+          pagination: {
+            after: endCursor,
+            first: PROJECTS_PER_PAGE,
+          },
         },
       });
       isFetchingMore.current = false;
