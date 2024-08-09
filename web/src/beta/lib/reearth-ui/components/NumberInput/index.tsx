@@ -8,6 +8,7 @@ export type NumberInputProps = {
   disabled?: boolean;
   placeholder?: string;
   appearance?: "readonly";
+  extendWidth?: boolean;
   unit?: string;
   min?: number;
   max?: number;
@@ -21,6 +22,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   disabled,
   placeholder,
   appearance,
+  extendWidth,
   unit,
   min,
   max,
@@ -50,9 +52,8 @@ export const NumberInput: FC<NumberInputProps> = ({
             validatedValue = currentValue;
           }
         }
-
         setCurrentValue(validatedValue);
-        onChange?.(parseFloat(validatedValue));
+        onChange?.(currentValue === "" ? undefined : parseFloat(validatedValue));
       }
     },
     [max, min, onChange],
@@ -76,7 +77,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   }, []);
 
   return (
-    <Wrapper size={size} status={isFocused ? "active" : "default"}>
+    <Wrapper size={size} status={isFocused ? "active" : "default"} extendWidth={extendWidth}>
       <StyledInput
         value={currentValue}
         disabled={disabled}
@@ -94,13 +95,15 @@ export const NumberInput: FC<NumberInputProps> = ({
 const Wrapper = styled("div")<{
   size: "normal" | "small";
   status: "default" | "active";
-}>(({ size, theme, status }) => {
+  extendWidth?: boolean;
+}>(({ size, theme, status, extendWidth }) => {
   return {
     border:
       status === "active" ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",
+    flex: 1,
     gap: theme.spacing.smallest,
     alignItems: "center",
     padding:
@@ -108,6 +111,8 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
+    width: !extendWidth ? "" : "100%",
+    boxSizing: "border-box",
   };
 });
 
@@ -124,6 +129,7 @@ const StyledInput = styled("input")<{
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
+  pointerEvents: disabled ? "none" : "inherit",
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,

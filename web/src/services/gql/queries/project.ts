@@ -15,8 +15,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
-    projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
+  query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor, $keyword: String, $sort: ProjectSort) {
+    projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before, keyword: $keyword, sort: $sort) {
       edges {
         node {
           id
@@ -98,6 +98,7 @@ export const UPDATE_PROJECT = gql(`
     $deletePublicImage: Boolean
     $enableGa: Boolean
     $trackingId: String
+    $starred:Boolean
   ) {
     updateProject(
       input: {
@@ -112,6 +113,7 @@ export const UPDATE_PROJECT = gql(`
         deletePublicImage: $deletePublicImage
         enableGa: $enableGa
         trackingId: $trackingId
+        starred: $starred
       }
     ) {
       project {

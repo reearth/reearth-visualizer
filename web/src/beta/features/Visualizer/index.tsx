@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { FC, MutableRefObject, SetStateAction, useRef } from "react";
+import { FC, MutableRefObject, SetStateAction } from "react";
 
 import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
@@ -8,8 +8,8 @@ import {
   type ComputedFeature,
   type ComputedLayer,
   type Layer,
-  type LayerSelectionReason,
   type EngineType,
+  type ViewerProperty,
   CoreVisualizer,
 } from "@reearth/core";
 import { config } from "@reearth/services/config";
@@ -17,12 +17,13 @@ import { WidgetAreaState } from "@reearth/services/state";
 
 import Crust from "./Crust";
 import { InstallableInfoboxBlock } from "./Crust/Infobox";
-import { InteractionModeType, MapRef, SceneProperty } from "./Crust/types";
+import { InstallableStoryBlock, StoryPanelRef } from "./Crust/StoryPanel";
+import { Position, Story } from "./Crust/StoryPanel/types";
+import { WidgetThemeOptions } from "./Crust/theme";
+import { InteractionModeType, MapRef } from "./Crust/types";
 import { Alignment, Widget, WidgetAlignSystem, WidgetLayoutConstraint } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
-import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
-import { Position, Story } from "./StoryPanel/types";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -45,7 +46,7 @@ type VisualizerProps = {
         }
       | undefined;
   };
-  sceneProperty?: SceneProperty;
+  viewerProperty?: ViewerProperty;
   pluginProperty?:
     | {
         [key: string]: any;
@@ -53,22 +54,23 @@ type VisualizerProps = {
     | undefined;
   story?: Story;
   zoomedLayerId?: string;
-  useExperimentalSandbox?: boolean;
   visualizerRef?: MutableRefObject<MapRef | null>;
   currentCamera?: Camera;
+  initialCamera?: Camera;
   interactionMode?: InteractionModeType;
   onCameraChange?: (camera: Camera) => void;
-  handleLayerSelect?: (
+  onCoreLayerSelect?: (
     layerId: string | undefined,
-    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+    layer: ComputedLayer | undefined,
     feature: ComputedFeature | undefined,
-    reason: LayerSelectionReason | undefined,
   ) => void;
   handleLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   handleZoomToLayer?: (layerId: string | undefined) => void;
   handleSketchTypeChange?: (type: SketchType | undefined) => void;
   handleSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   handleMount?: () => void;
+  //
+  widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignEditorActivated?: boolean;
   selectedWidgetArea?: WidgetAreaState;
   handleWidgetUpdate?: (
@@ -136,16 +138,16 @@ const Visualizer: FC<VisualizerProps> = ({
   ready,
   layers,
   widgets,
-  sceneProperty,
+  viewerProperty,
   pluginProperty,
   story,
   zoomedLayerId,
-  useExperimentalSandbox = true,
   visualizerRef,
   currentCamera,
+  initialCamera,
   interactionMode,
   onCameraChange,
-  handleLayerSelect,
+  onCoreLayerSelect,
   handleLayerDrop,
   handleZoomToLayer,
   handleSketchTypeChange,
@@ -160,6 +162,7 @@ const Visualizer: FC<VisualizerProps> = ({
   handleStoryBlockDelete,
   handleStoryBlockMove,
   // widget
+  widgetThemeOptions,
   widgetAlignEditorActivated,
   selectedWidgetArea,
   handleWidgetUpdate,
@@ -176,10 +179,19 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
 }) => {
-  const { shouldRender } = useHooks({
+  const {
+    shouldRender,
+    overriddenViewerProperty,
+    overrideViewerProperty,
+    storyWrapperRef,
+    visualizerCamera,
+    handleCoreLayerSelect,
+  } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
+    viewerProperty,
+    onCoreLayerSelect,
+    currentCamera,
   });
-  const storyWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
     <Wrapper storyPanelPosition={story?.position}>
@@ -191,49 +203,34 @@ const Visualizer: FC<VisualizerProps> = ({
         isEditable={!isBuilt}
         layers={layers}
         zoomedLayerId={zoomedLayerId}
-        sceneProperty={sceneProperty as SceneProperty}
+        viewerProperty={overriddenViewerProperty}
         ready={ready}
         meta={engineMeta}
-        camera={currentCamera}
+        camera={visualizerCamera}
         interactionMode={interactionMode}
         shouldRender={shouldRender}
         onCameraChange={onCameraChange}
-        onLayerSelect={handleLayerSelect}
+        onLayerSelect={handleCoreLayerSelect}
         onLayerDrop={handleLayerDrop}
         onZoomToLayer={handleZoomToLayer}
         onSketchTypeChangeProp={handleSketchTypeChange}
         onSketchFeatureCreate={handleSketchFeatureCreate}
         onMount={handleMount}>
-        {showStoryPanel && (
-          <StoryPanel
-            ref={storyPanelRef}
-            storyWrapperRef={storyWrapperRef}
-            selectedStory={story}
-            installableStoryBlocks={installableStoryBlocks}
-            isEditable={!!inEditor}
-            currentCamera={currentCamera}
-            onStoryPageChange={handleStoryPageChange}
-            onStoryBlockCreate={handleStoryBlockCreate}
-            onStoryBlockDelete={handleStoryBlockDelete}
-            onStoryBlockMove={handleStoryBlockMove}
-            onPropertyValueUpdate={handlePropertyValueUpdate}
-            onPropertyItemAdd={handlePropertyItemAdd}
-            onPropertyItemMove={handlePropertyItemMove}
-            onPropertyItemDelete={handlePropertyItemDelete}
-          />
-        )}
         <Crust
           engineName={engine}
           isBuilt={!!isBuilt}
           isEditable={!isBuilt}
           inEditor={inEditor}
-          camera={currentCamera}
           mapRef={visualizerRef}
           layers={layers}
-          useExperimentalSandbox={useExperimentalSandbox}
+          // Viewer
+          viewerProperty={overriddenViewerProperty}
+          overrideViewerProperty={overrideViewerProperty}
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
           // Widget
+          initialCamera={initialCamera}
+          widgetThemeOptions={widgetThemeOptions}
           widgetAlignSystem={widgets?.alignSystem}
           widgetAlignSystemEditing={widgetAlignEditorActivated}
           widgetLayoutConstraint={widgets?.layoutConstraint}
@@ -251,6 +248,17 @@ const Visualizer: FC<VisualizerProps> = ({
           onPropertyItemAdd={handlePropertyItemAdd}
           onPropertyItemMove={handlePropertyItemMove}
           onPropertyItemDelete={handlePropertyItemDelete}
+          // Story
+          showStoryPanel={showStoryPanel}
+          storyPanelRef={storyPanelRef}
+          storyWrapperRef={storyWrapperRef}
+          selectedStory={story}
+          installableStoryBlocks={installableStoryBlocks}
+          onStoryPageChange={handleStoryPageChange}
+          onStoryBlockCreate={handleStoryBlockCreate}
+          onStoryBlockMove={handleStoryBlockMove}
+          onStoryBlockDelete={handleStoryBlockDelete}
+          onPropertyValueUpdate={handlePropertyValueUpdate}
         />
       </CoreVisualizer>
     </Wrapper>
@@ -259,21 +267,21 @@ const Visualizer: FC<VisualizerProps> = ({
 
 export default Visualizer;
 
-const Wrapper = styled("div")<{ storyPanelPosition?: Position }>`
-  display: flex;
-  position: relative;
-  flex-direction: ${({ storyPanelPosition }) =>
-    storyPanelPosition === "right" ? "row-reverse" : "row"};
-  position: relative;
-  background: ${({ theme }) => theme.bg[0]};
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-`;
+const Wrapper = styled("div")<{ storyPanelPosition?: Position }>(
+  ({ storyPanelPosition, theme }) => ({
+    display: "flex",
+    position: "relative",
+    flexDirection: storyPanelPosition === "right" ? "row-reverse" : "row",
+    background: theme.bg[0],
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+  }),
+);
 
-const StoryWrapper = styled("div")`
-  position: relative;
-  display: flex;
-  height: 100%;
-  flex-shrink: 0;
-`;
+const StoryWrapper = styled("div")(() => ({
+  display: "flex",
+  position: "relative",
+  flexShrink: 0,
+  height: "100%",
+}));

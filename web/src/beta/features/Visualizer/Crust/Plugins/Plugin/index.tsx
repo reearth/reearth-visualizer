@@ -1,10 +1,10 @@
-import type { RefObject } from "react";
+import { type RefObject } from "react";
 
 import type { Layer } from "@reearth/core";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
-import type { Widget, WidgetLocationOptions } from "../../Widgets";
+import type { Widget } from "../../Widgets";
 import P, { type Props as PluginProps } from "../PluginFrame";
 
 import useHooks from "./hooks";
@@ -57,12 +57,10 @@ export type Props = {
     height: string | number | undefined,
     extended: boolean | undefined,
   ) => void;
-  onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
 } & CommonProps;
 
 export default function Plugin({
   mapRef,
-  onWidgetMove,
   className,
   sourceCode,
   pluginId,
@@ -95,13 +93,13 @@ export default function Plugin({
     modalVisible,
     popupVisible,
     externalRef,
+    renderKey,
     onPreInit,
     onDispose,
     exposed,
     onError,
   } = useHooks({
     mapRef,
-    onWidgetMove,
     pluginId,
     extensionId,
     extensionType,
@@ -124,6 +122,7 @@ export default function Plugin({
     <P
       className={className}
       src={src}
+      key={renderKey}
       sourceCode={sourceCode}
       autoResize={autoResize}
       iFrameProps={iFrameProps}

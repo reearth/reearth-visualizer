@@ -15,21 +15,17 @@ import {
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
-import { projectSettingsTab } from ".";
-
 type Props = {
   projectId: string;
-  tab?: projectSettingsTab;
   subId?: string;
 };
 
-export default ({ projectId, tab }: Props) => {
+export default ({ projectId }: Props) => {
   const navigate = useNavigate();
 
   const {
     useProjectQuery,
     useUpdateProject,
-    useArchiveProject,
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
@@ -49,20 +45,10 @@ export default ({ projectId, tab }: Props) => {
     [projectId, useUpdateProject],
   );
 
-  const handleArchiveProject = useCallback(
-    async (archived: boolean) => {
-      const { status } = await useArchiveProject({ projectId, archived });
-      if (status === "success") {
-        navigate(`/settings/workspaces/${workspaceId}/projects`);
-      }
-    },
-    [workspaceId, projectId, useArchiveProject, navigate],
-  );
-
   const handleDeleteProject = useCallback(async () => {
     const { status } = await useDeleteProject({ projectId });
     if (status === "success") {
-      navigate(`/settings/workspaces/${workspaceId}/projects`);
+      navigate(`/dashboard/${workspaceId}/`);
     }
   }, [workspaceId, projectId, useDeleteProject, navigate]);
 
@@ -134,29 +120,6 @@ export default ({ projectId, tab }: Props) => {
     [],
   );
 
-  // Redirection for classic projects
-  useEffect(() => {
-    if (!project) return;
-    if (!project.coreSupport) {
-      switch (tab) {
-        case "general":
-          navigate(`/settings/projects/${projectId}`);
-          break;
-        case "public":
-          navigate(`/settings/projects/${projectId}/public`);
-          break;
-        case "asset":
-          navigate(`/settings/workspaces/${workspaceId}/asset`);
-          break;
-        case "plugins":
-          navigate(`/settings/projects/${projectId}/plugins`);
-          break;
-        default:
-          navigate(`/settings/projects/${projectId}`);
-      }
-    }
-  }, [project, projectId, tab, workspaceId, navigate]);
-
   return {
     sceneId: scene?.id,
     workspaceId,
@@ -167,7 +130,6 @@ export default ({ projectId, tab }: Props) => {
     accessToken,
     extensions,
     handleUpdateProject,
-    handleArchiveProject,
     handleDeleteProject,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,

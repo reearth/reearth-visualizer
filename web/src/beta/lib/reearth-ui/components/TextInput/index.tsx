@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
+import { FC, useCallback, useEffect, useState, ChangeEvent, ReactNode, KeyboardEvent } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -10,9 +10,12 @@ export type TextInputProps = {
   disabled?: boolean;
   appearance?: "readonly" | "present";
   extendWidth?: boolean;
-  actions?: FC[];
+  autoFocus?: boolean;
+  actions?: ReactNode[];
+  leftAction?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const TextInput: FC<TextInputProps> = ({
@@ -24,8 +27,11 @@ export const TextInput: FC<TextInputProps> = ({
   appearance,
   extendWidth,
   actions,
+  leftAction,
+  autoFocus,
   onChange,
   onBlur,
+  onKeyDown,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -57,7 +63,14 @@ export const TextInput: FC<TextInputProps> = ({
       size={size}
       appearance={appearance}
       extendWidth={extendWidth}
-      status={isFocused ? "active" : "default"}>
+      status={isFocused || autoFocus ? "active" : "default"}>
+      {leftAction && (
+        <ActionsWrapper>
+          {leftAction.map((Action, i) => (
+            <Action key={i} />
+          ))}
+        </ActionsWrapper>
+      )}
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -67,14 +80,10 @@ export const TextInput: FC<TextInputProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         appearance={appearance}
+        autoFocus={autoFocus}
+        onKeyDown={onKeyDown}
       />
-      {actions && (
-        <ActionsWrapper>
-          {actions.map((Action, i) => (
-            <Action key={i} />
-          ))}
-        </ActionsWrapper>
-      )}
+      {actions && <ActionsWrapper>{actions}</ActionsWrapper>}
     </Wrapper>
   );
 };
@@ -97,8 +106,9 @@ const Wrapper = styled("div")<{
   return {
     border: borderStyle,
     borderRadius: theme.radius.small,
-    background: theme.bg[1],
+    background: appearance === "present" ? "" : theme.bg[1],
     display: "flex",
+    flex: 1,
     gap: `${theme.spacing.smallest}px`,
     alignItems: "center",
     padding:
@@ -106,7 +116,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
-    width: !extendWidth ? "fit-content" : "100%",
+    width: !extendWidth ? "" : "100%",
   };
 });
 
@@ -127,6 +137,8 @@ const StyledInput = styled("input")<{
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
+  pointerEvents: disabled ? "none" : "inherit",
+  width: "100%",
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,
@@ -138,6 +150,4 @@ const ActionsWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
   flexShrink: 0,
-  padding: theme.spacing.micro,
-  color: theme.content.weak,
 }));

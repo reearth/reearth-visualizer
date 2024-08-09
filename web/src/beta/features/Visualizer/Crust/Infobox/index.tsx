@@ -1,18 +1,16 @@
-import { Fragment, ReactNode, memo } from "react";
+import { FC, Fragment, ReactNode, memo, useMemo } from "react";
 
-import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
+import { InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
+import { DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
-import { InstallableBlock } from "../../shared/types";
-
 import InfoboxBlockComponent from "./Block";
 import {
   GAP_DEFAULT_VALUE,
-  INFOBOX_UNIQUE_KEY,
   INFOBOX_WIDTH,
   PADDING_DEFAULT_VALUE,
   POSITION_DEFAULT_VALUE,
@@ -26,6 +24,8 @@ export type InstallableInfoboxBlock = InstallableBlock & {
   type?: "InfoboxBlock";
 };
 
+const INFOBOX_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-infobox-drag-handle";
+
 export type Props = {
   infobox?: Infobox;
   isEditable?: boolean;
@@ -36,7 +36,7 @@ export type Props = {
     extensionId: string,
     index?: number | undefined,
   ) => Promise<void>;
-  onBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number, blockId?: string) => Promise<void>;
   onBlockDelete?: (id?: string) => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -60,7 +60,7 @@ export type Props = {
   ) => Promise<void>;
 };
 
-const Infobox: React.FC<Props> = ({
+const Infobox: FC<Props> = ({
   infobox,
   isEditable,
   installableInfoboxBlocks,
@@ -84,16 +84,76 @@ const Infobox: React.FC<Props> = ({
     gapField,
     positionField,
     editModeContext,
-    setInfoboxBlocks,
     handleBlockOpen,
     handleBlockCreate,
     handleBlockSelect,
     handleBlockDoubleClick,
+    handleMoveEnd,
   } = useHooks({
     infobox,
     isEditable,
     onBlockCreate,
+    onBlockMove,
   });
+
+  const DraggableInfoboxBlock = useMemo(
+    () =>
+      infoboxBlocks.map((b, idx) => ({
+        id: b.id,
+        content: (
+          <Fragment key={idx}>
+            <ItemWrapper>
+              <InfoboxBlockComponent
+                key={b.id}
+                block={b}
+                isEditable={isEditable}
+                renderBlock={renderBlock}
+                isSelected={b.id === selectedBlockId}
+                dragHandleClassName={INFOBOX_DRAG_HANDLE_CLASS_NAME}
+                onClick={() => handleBlockSelect(b.id)}
+                onBlockDoubleClick={() => handleBlockDoubleClick(b.id)}
+                onClickAway={handleBlockSelect}
+                onRemove={onBlockDelete}
+                onPropertyUpdate={onPropertyUpdate}
+                onPropertyItemAdd={onPropertyItemAdd}
+                onPropertyItemMove={onPropertyItemMove}
+                onPropertyItemDelete={onPropertyItemDelete}
+              />
+            </ItemWrapper>
+            {isEditable && !disableSelection && (
+              <BlockAddBar
+                id={b.id + "below-bar"}
+                openBlocks={openBlocksIndex === idx}
+                installableBlocks={installableInfoboxBlocks}
+                showAreaHeight={gapField?.value}
+                parentWidth={INFOBOX_WIDTH}
+                onBlockOpen={() => handleBlockOpen(idx)}
+                onBlockAdd={handleBlockCreate?.(idx + 1)}
+              />
+            )}
+          </Fragment>
+        ),
+      })),
+    [
+      infoboxBlocks,
+      isEditable,
+      renderBlock,
+      selectedBlockId,
+      handleBlockSelect,
+      onBlockDelete,
+      onPropertyUpdate,
+      onPropertyItemAdd,
+      onPropertyItemMove,
+      onPropertyItemDelete,
+      disableSelection,
+      openBlocksIndex,
+      installableInfoboxBlocks,
+      gapField?.value,
+      handleBlockCreate,
+      handleBlockDoubleClick,
+      handleBlockOpen,
+    ],
+  );
 
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
@@ -111,54 +171,11 @@ const Infobox: React.FC<Props> = ({
         )}
         {infoboxBlocks && infoboxBlocks.length > 0 && (
           <DragAndDropList
-            uniqueKey={INFOBOX_UNIQUE_KEY}
-            gap={gapField?.value ?? GAP_DEFAULT_VALUE}
-            items={infoboxBlocks}
-            getId={item => item.id}
-            onItemDrop={async (item, index) => {
-              setInfoboxBlocks(old => {
-                const items = [...old];
-                items.splice(
-                  old.findIndex(o => o.id === item.id),
-                  1,
-                );
-                items.splice(index, 0, item);
-                return items;
-              });
-              await onBlockMove?.(item.id, index);
-            }}
-            renderItem={(b, idx) => {
-              return (
-                <Fragment key={idx}>
-                  <InfoboxBlockComponent
-                    key={b.id}
-                    block={b}
-                    isEditable={isEditable}
-                    renderBlock={renderBlock}
-                    isSelected={b.id === selectedBlockId}
-                    onClick={() => handleBlockSelect(b.id)}
-                    onBlockDoubleClick={() => handleBlockDoubleClick(b.id)}
-                    onClickAway={handleBlockSelect}
-                    onRemove={onBlockDelete}
-                    onPropertyUpdate={onPropertyUpdate}
-                    onPropertyItemAdd={onPropertyItemAdd}
-                    onPropertyItemMove={onPropertyItemMove}
-                    onPropertyItemDelete={onPropertyItemDelete}
-                  />
-                  {isEditable && !disableSelection && (
-                    <BlockAddBar
-                      id={b.id + "below-bar"}
-                      openBlocks={openBlocksIndex === idx}
-                      installableBlocks={installableInfoboxBlocks}
-                      showAreaHeight={gapField?.value}
-                      parentWidth={INFOBOX_WIDTH}
-                      onBlockOpen={() => handleBlockOpen(idx)}
-                      onBlockAdd={handleBlockCreate?.(idx + 1)}
-                    />
-                  )}
-                </Fragment>
-              );
-            }}
+            items={DraggableInfoboxBlock}
+            handleClassName={INFOBOX_DRAG_HANDLE_CLASS_NAME}
+            onMoveEnd={handleMoveEnd}
+            dragDisabled={false}
+            gap={GAP_DEFAULT_VALUE}
           />
         )}
       </Wrapper>
@@ -168,24 +185,28 @@ const Infobox: React.FC<Props> = ({
 
 export default memo(Infobox);
 
-const Wrapper = styled.div<{
+const Wrapper = styled("div")<{
   position?: InfoboxPosition;
   padding?: Spacing;
-}>`
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 37px;
-  ${({ position }) => `${position ?? POSITION_DEFAULT_VALUE}: 13px`};
-  height: 515px;
-  width: ${INFOBOX_WIDTH}px;
-  background: #ffffff;
-  border-radius: 6px;
-  z-index: ${({ theme }) => theme.zIndexes.visualizer.infobox};
-  box-sizing: border-box;
-  overflow: auto;
-  padding-top: ${({ padding }) => padding?.top ?? PADDING_DEFAULT_VALUE}px;
-  padding-bottom: ${({ padding }) => padding?.bottom ?? PADDING_DEFAULT_VALUE}px;
-  padding-left: ${({ padding }) => padding?.left ?? PADDING_DEFAULT_VALUE}px;
-  padding-right: ${({ padding }) => padding?.right ?? PADDING_DEFAULT_VALUE}px;
-`;
+}>(({ position, padding, theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  position: "absolute",
+  top: "37px",
+  height: "515px",
+  width: `${INFOBOX_WIDTH}px`,
+  background: "#ffffff",
+  borderRadius: theme.radius.normal,
+  zIndex: theme.zIndexes.visualizer.infobox,
+  boxSizing: "border-box",
+  overflow: "auto",
+  paddingTop: padding?.top ?? `${PADDING_DEFAULT_VALUE}px`,
+  paddingBottom: padding?.bottom ?? `${PADDING_DEFAULT_VALUE}px`,
+  paddingLeft: padding?.left ?? `${PADDING_DEFAULT_VALUE}px`,
+  paddingRight: padding?.right ?? `${PADDING_DEFAULT_VALUE}px`,
+  [position ?? POSITION_DEFAULT_VALUE]: "13px",
+}));
+
+const ItemWrapper = styled("div")(() => ({
+  background: "#ffffff",
+}));

@@ -1,6 +1,5 @@
 import { Theme } from "@reearth/beta/features/Visualizer/Crust/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import type { Camera } from "@reearth/beta/utils/value";
 import type { Layer, FlyTo } from "@reearth/core";
 
 export type InstallableBlock = {
@@ -25,9 +24,9 @@ export type CommonBlockProps<T = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
+  dragHandleClassName?: string;
   block?: T;
   theme?: Theme;
-  currentCamera?: Camera | undefined;
   padding?: {
     bottom: number;
     top: number;

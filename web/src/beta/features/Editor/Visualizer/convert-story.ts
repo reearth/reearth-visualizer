@@ -1,8 +1,14 @@
-import { Story, StoryBlock, StoryPage } from "@reearth/beta/features/Visualizer/StoryPanel/types";
+import {
+  Story,
+  StoryBlock,
+  StoryPage,
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
+import { convert } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
 import { StoryPage as GqlStoryPage, StoryBlock as GqlStoryBlock } from "@reearth/services/gql";
 
-import { processProperty } from "./processNewProperty";
+import { processProperty } from "./convert";
+import { processProperty as processNewProperty } from "./processNewProperty";
 
 export const convertStory = (scene?: Scene, storyId?: string): Story | undefined => {
   const story = scene?.stories.find(s => s.id === storyId);
@@ -31,9 +37,12 @@ export const convertStory = (scene?: Scene, storyId?: string): Story | undefined
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
+      extensionType: "storyBlock",
       name: installedBlockNames?.[b.extensionId] ?? "Story Block",
       propertyId: b.property?.id,
-      property: processProperty(undefined, b.property),
+      property: processNewProperty(undefined, b.property),
+      propertyForPluginAPI: processProperty(b.property),
+      propertyItemsForPluginBlock: convert(b.property),
     }));
 
   return {

@@ -1,18 +1,17 @@
-import { MutableRefObject, SetStateAction, useCallback } from "react";
+import { MutableRefObject, SetStateAction } from "react";
 
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { type InteractionModeType } from "@reearth/beta/features/Visualizer/Crust";
 import {
   StoryPanelRef,
   type InstallableStoryBlock,
-} from "@reearth/beta/features/Visualizer/StoryPanel";
-import type { Camera } from "@reearth/beta/utils/value";
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { WidgetAreaState } from "@reearth/services/state";
 
-import type { SelectedLayer } from "../useLayers";
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import useHooks from "./hooks";
 
@@ -21,8 +20,8 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
-  currentCamera?: Camera;
   interactionMode?: InteractionModeType;
+  isVisualizerResizing?: MutableRefObject<boolean>;
   // story
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
@@ -32,13 +31,10 @@ export type Props = {
   selectedLayer: SelectedLayer | undefined;
   selectedWidgetArea: WidgetAreaState | undefined;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
-  onCameraChange: (camera: Camera) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
-  setIsVisualizerReady: (value: boolean) => void;
-  setSelectedLayer: (value: SelectedLayer | undefined) => void;
-  setSelectedLayerStyle: (value: string | undefined) => void;
-  setSelectedSceneSetting: (value: string | undefined) => void;
+  onVisualizerReady: (value: boolean) => void;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
   selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
@@ -48,8 +44,8 @@ const EditorVisualizer: React.FC<Props> = ({
   sceneId,
   isBuilt,
   inEditor,
-  currentCamera,
   interactionMode,
+  isVisualizerResizing,
   storyPanelRef,
   showStoryPanel,
   selectedStory,
@@ -58,18 +54,15 @@ const EditorVisualizer: React.FC<Props> = ({
   widgetAlignEditorActivated,
   selectedWidgetArea,
   onStoryBlockMove: handleStoryBlockMove,
-  onCameraChange,
   onSketchTypeChange,
   onSketchFeatureCreate,
-  setIsVisualizerReady,
-  setSelectedLayer,
-  setSelectedLayerStyle,
-  setSelectedSceneSetting,
+  onVisualizerReady,
+  onCoreLayerSelect,
   setSelectedStoryPageId,
   selectWidgetArea,
 }) => {
   const {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
@@ -77,7 +70,10 @@ const EditorVisualizer: React.FC<Props> = ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
-    handleLayerSelect,
+    currentCamera,
+    initialCamera,
+    handleCameraUpdate,
+    handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
@@ -91,6 +87,7 @@ const EditorVisualizer: React.FC<Props> = ({
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
+    handleMount,
     zoomToLayer,
   } = useHooks({
     sceneId,
@@ -98,13 +95,11 @@ const EditorVisualizer: React.FC<Props> = ({
     storyId: selectedStory?.id,
     showStoryPanel,
     selectedLayer,
-    setSelectedLayer,
-    setSelectedLayerStyle,
-    setSelectedSceneSetting,
+    isVisualizerResizing,
+    onCoreLayerSelect,
+    onVisualizerReady,
     setSelectedStoryPageId,
   });
-
-  const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
 
   return (
     <Visualizer
@@ -116,15 +111,16 @@ const EditorVisualizer: React.FC<Props> = ({
       layers={layers}
       widgets={widgets}
       story={story}
-      sceneProperty={sceneProperty}
+      viewerProperty={viewerProperty}
       pluginProperty={pluginProperty}
       // editor
       zoomedLayerId={zoomedLayerId}
       visualizerRef={visualizerRef}
       currentCamera={currentCamera}
+      initialCamera={initialCamera}
       interactionMode={interactionMode}
-      onCameraChange={onCameraChange}
-      handleLayerSelect={handleLayerSelect}
+      onCameraChange={handleCameraUpdate}
+      onCoreLayerSelect={handleCoreLayerSelect}
       handleLayerDrop={handleLayerDrop}
       handleZoomToLayer={zoomToLayer}
       handleSketchTypeChange={onSketchTypeChange}

@@ -26,7 +26,6 @@ type Props = {
   schemaGroup: string;
   schema: SchemaField;
   field?: Field;
-  currentCamera?: Camera;
   onFlyTo?: FlyTo;
 };
 
@@ -36,7 +35,6 @@ const PropertyField: React.FC<Props> = ({
   field,
   schemaGroup,
   schema,
-  currentCamera,
   onFlyTo,
 }) => {
   const { handlePropertyValueUpdate } = useHooks(propertyId, schemaGroup);
@@ -151,7 +149,6 @@ const PropertyField: React.FC<Props> = ({
           name={schema.name}
           value={value as Camera}
           description={schema.description}
-          currentCamera={currentCamera}
           onSave={handleChange}
           onFlyTo={onFlyTo}
         />

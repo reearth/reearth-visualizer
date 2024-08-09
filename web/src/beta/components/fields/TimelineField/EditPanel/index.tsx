@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
-import { getTimeZone } from "@reearth/beta/features/Visualizer/StoryPanel/utils";
+import { getTimeZone } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

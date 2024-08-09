@@ -65,8 +65,12 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
-	return i.projectRepo.FindByWorkspace(ctx, id, p)
+func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+	return i.projectRepo.FindByWorkspace(ctx, id, repo.ProjectFilter{
+		Pagination: p,
+		Sort:       sort,
+		Keyword:    keyword,
+	})
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -204,6 +208,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.SetBasicAuthPassword(*p.BasicAuthPassword)
 	}
 
+	if p.Starred != nil {
+		prj.SetStarred(*p.Starred)
+	}
+
 	if p.PublicTitle != nil {
 		prj.UpdatePublicTitle(*p.PublicTitle)
 	}
@@ -246,6 +254,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 			}
 		}
 	}
+
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -466,5 +477,35 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	}
 
 	tx.Commit()
+	return nil
+}
+
+func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
+
+	if err := r.Save(ctx, prj); err != nil {
+		return err
+	}
+	return nil
+}
+
+func updateProjectUpdatedAtByID(ctx context.Context, projectID id.ProjectID, r repo.Project) error {
+	prj, err := r.FindByID(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	return updateProjectUpdatedAt(ctx, prj, r)
+}
+
+func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r repo.Project, s repo.Scene) error {
+	scene, err := s.FindByID(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), r)
+	if err != nil {
+		return err
+	}
 	return nil
 }

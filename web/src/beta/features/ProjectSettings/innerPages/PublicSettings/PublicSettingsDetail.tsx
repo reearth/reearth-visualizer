@@ -1,16 +1,14 @@
 import { useCallback, useState } from "react";
 
-import Button from "@reearth/beta/components/Button";
-import Collapse from "@reearth/beta/components/Collapse";
-import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
-import TextInput from "@reearth/beta/components/fields/TextField";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import URLField from "@reearth/beta/components/fields/URLField";
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
+import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
+import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
+import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { useGA } from "../../../PublishedVisualizer/googleAnalytics/useGA";
+import { useGA } from "../../../Published/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
 
 import {
@@ -87,28 +85,27 @@ const PublicSettingsDetail: React.FC<Props> = ({
 
   return (
     <>
-      <Collapse title={t("Public Info")}>
+      <Collapse title={t("Public Info")} size="large">
         <SettingsFields>
-          <TextInput
-            name={t("Title")}
+          <InputField
+            commonTitle={t("Title")}
             value={settingsItem.publicTitle}
             onChange={(publicTitle: string) => {
               setLocalPublicInfo(s => ({ ...s, publicTitle }));
             }}
           />
           <TextAreaField
-            name={t("Description")}
+            commonTitle={t("Description")}
             value={localPublicInfo.publicDescription ?? ""}
             onChange={(publicDescription: string) => {
               setLocalPublicInfo(s => ({ ...s, publicDescription }));
             }}
-            minHeight={108}
           />
           <ThumbnailField>
-            <URLField
-              name={t("Thumbnail")}
-              fileType="asset"
-              entityType="image"
+            <AssetField
+              commonTitle={t("Thumbnail")}
+              inputMethod="asset"
+              assetsTypes={IMAGE_TYPES}
               value={localPublicInfo.publicImage}
               onChange={publicImage => {
                 setLocalPublicInfo(s => ({ ...s, publicImage }));
@@ -121,35 +118,29 @@ const PublicSettingsDetail: React.FC<Props> = ({
             />
           </ThumbnailField>
           <ButtonWrapper>
-            <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
-              onClick={handleSubmitPublicInfo}
-            />
+            <Button title={t("Submit")} appearance="primary" onClick={handleSubmitPublicInfo} />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Basic Authorization")}>
+      <Collapse title={t("Basic Authorization")} size="large">
         <SettingsFields>
-          <ToggleField
-            name={t("Enable Basic Authorization")}
-            checked={localBasicAuthorization.isBasicAuthActive}
+          <SwitchField
+            commonTitle={t("Enable Basic Authorization")}
+            value={localBasicAuthorization.isBasicAuthActive}
             onChange={isBasicAuthActive => {
               setBasicAuthorization(s => ({ ...s, isBasicAuthActive }));
             }}
           />
-          <TextInput
-            name={t("Username")}
+          <InputField
+            commonTitle={t("Username")}
             value={settingsItem.basicAuthUsername}
             onChange={(basicAuthUsername: string) => {
               setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
             }}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
-          <TextInput
-            name={t("Password")}
+          <InputField
+            commonTitle={t("Password")}
             value={settingsItem.basicAuthPassword}
             onChange={(basicAuthPassword: string) => {
               setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
@@ -158,19 +149,17 @@ const PublicSettingsDetail: React.FC<Props> = ({
           />
           <ButtonWrapper>
             <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
+              title={t("Submit")}
+              appearance="primary"
               onClick={handleSubmitBasicAuthorization}
             />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Site Setting")}>
+      <Collapse title={t("Site Setting")} size="large">
         <SettingsFields>
-          <TextInput
-            name={t("Site name")}
+          <InputField
+            commonTitle={t("Site name")}
             value={settingsItem.alias}
             onChange={(alias: string) => {
               setLocalAlias(alias);
@@ -180,40 +169,28 @@ const PublicSettingsDetail: React.FC<Props> = ({
             )}
           />
           <ButtonWrapper>
-            <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
-              onClick={handleSubmitAlias}
-            />
+            <Button title={t("Submit")} appearance="primary" onClick={handleSubmitAlias} />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Google Analytics")}>
+      <Collapse title={t("Google Analytics")} size="large">
         <SettingsFields>
-          <ToggleField
-            name={t("Enable Google Analytics")}
-            checked={localGA.enableGa ?? false}
+          <SwitchField
+            commonTitle={t("Enable Google Analytics")}
+            value={localGA.enableGa ?? false}
             onChange={(enableGa: boolean) => {
               setLocalGA(s => ({ ...s, enableGa }));
             }}
           />
-          <TextInput
-            name={t("Tracking ID")}
+          <InputField
+            commonTitle={t("Tracking ID")}
             value={settingsItem.trackingId}
             onChange={(trackingId: string) => {
               setLocalGA(s => ({ ...s, trackingId }));
             }}
           />
           <ButtonWrapper>
-            <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
-              onClick={handleSubmitGA}
-            />
+            <Button title={t("Submit")} appearance="primary" onClick={handleSubmitGA} />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>

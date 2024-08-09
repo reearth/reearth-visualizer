@@ -1,10 +1,10 @@
 import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 
+import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps, BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 // import { styled } from "@reearth/services/theme";
 
-import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { InfoboxBlock } from "../types";
 
 import builtin, { isBuiltinInfoboxBlock } from "./builtin";
@@ -28,7 +28,17 @@ const InfoboxBlockComponent = ({ renderBlock, onRemove, ...props }: Props): JSX.
   return Builtin ? (
     <Builtin {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
-    <BlockWrapper {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined}>
+    <BlockWrapper
+      {...props}
+      minHeight={120}
+      isPluginBlock
+      name={props.block.name}
+      isEditable={props.isEditable}
+      isSelected={props.isSelected}
+      property={props.block.property}
+      propertyId={props.block.propertyId}
+      propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
+      onRemove={onRemove ? handleRemove : undefined}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
     </BlockWrapper>
   ) : null;

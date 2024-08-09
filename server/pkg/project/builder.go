@@ -156,3 +156,8 @@ func (b *Builder) Scene(sceneId SceneID) *Builder {
 	b.p.sceneId = sceneId
 	return b
 }
+
+func (b *Builder) Starred(starred bool) *Builder {
+	b.p.starred = starred
+	return b
+}

@@ -1,7 +1,12 @@
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback, useState, MutableRefObject } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import type { LayerSelectionReason, LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
+import {
+  convertData,
+  sceneProperty2ViewerPropertyMapping,
+} from "@reearth/beta/utils/convert-object";
+import { Camera } from "@reearth/beta/utils/value";
+import type { LatLng, ComputedLayer, ComputedFeature, ViewerProperty } from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -13,7 +18,8 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 
-import type { SelectedLayer } from "../useLayers";
+import { useCurrentCamera } from "../atoms";
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -24,9 +30,9 @@ export default ({
   isBuilt,
   showStoryPanel,
   selectedLayer,
-  setSelectedLayer,
-  setSelectedLayerStyle,
-  setSelectedSceneSetting,
+  isVisualizerResizing,
+  onCoreLayerSelect,
+  onVisualizerReady,
   setSelectedStoryPageId,
 }: {
   sceneId?: string;
@@ -34,9 +40,9 @@ export default ({
   isBuilt?: boolean;
   showStoryPanel?: boolean;
   selectedLayer?: SelectedLayer | undefined;
-  setSelectedLayer: (value: SelectedLayer | undefined) => void;
-  setSelectedLayerStyle: (value: string | undefined) => void;
-  setSelectedSceneSetting: (value: string | undefined) => void;
+  isVisualizerResizing?: MutableRefObject<boolean>;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
+  onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
@@ -53,16 +59,39 @@ export default ({
     useMoveInfoboxBlock,
   } = useInfoboxFetcher();
 
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => {
+      setCurrentCamera(camera);
+    },
+    [setCurrentCamera],
+  );
+
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
 
-  // Scene property
-  // TODO: Fix to use exact type through GQL typing
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
+  const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
+    const sceneProperty = processProperty(scene?.property);
+    const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    if (sceneProperty?.camera?.camera) {
+      setInitialCamera(sceneProperty?.camera?.camera);
+    }
+    return {
+      viewerProperty: sceneProperty
+        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
+        : undefined,
+      cesiumIonAccessToken,
+    };
+  }, [scene?.property]);
+
+  useEffect(() => {
+    setCurrentCamera(initialCamera);
+  }, [initialCamera, setCurrentCamera]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
@@ -84,24 +113,21 @@ export default ({
     }));
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
-  const handleLayerSelect = useCallback(
-    async (
-      id?: string,
-      layer?: () => Promise<ComputedLayer | undefined>,
-      feature?: ComputedFeature,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => {
-      if ((!id && !feature && !selectedLayer) ?? (id === selectedLayer?.layerId || !feature))
+  const handleCoreLayerSelect = useCallback(
+    (layerId?: string, computedLayer?: ComputedLayer, computedFeature?: ComputedFeature) => {
+      if (
+        (!layerId && !computedFeature && !selectedLayer) ??
+        (layerId === selectedLayer?.layer?.id || !computedFeature)
+      )
         return;
-      if (id) {
-        setSelectedLayerStyle(undefined);
-        setSelectedSceneSetting(undefined);
+
+      if (layerId) {
+        onCoreLayerSelect({ layerId, computedLayer, computedFeature });
+      } else {
+        onCoreLayerSelect(undefined);
       }
-      setSelectedLayer(
-        id ? { layerId: id, layer: await layer?.(), feature, layerSelectionReason } : undefined,
-      );
     },
-    [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
+    [selectedLayer, onCoreLayerSelect],
   );
 
   const handleLayerDrop = useCallback(
@@ -113,7 +139,7 @@ export default ({
   );
 
   // Widgets
-  const widgets = convertWidgets(scene);
+  const widgets = useMemo(() => convertWidgets(scene), [scene]);
 
   const handleWidgetUpdate = useCallback(
     async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
@@ -144,9 +170,9 @@ export default ({
 
   const handleInfoboxBlockCreate = useCallback(
     async (pluginId: string, extensionId: string, index?: number) => {
-      if (!selectedLayer) return;
+      if (!selectedLayer?.layer?.id) return;
       await useCreateInfoboxBlock({
-        layerId: selectedLayer.layerId,
+        layerId: selectedLayer.layer.id,
         pluginId,
         extensionId,
         index,
@@ -157,9 +183,9 @@ export default ({
 
   const handleInfoboxBlockMove = useCallback(
     async (id: string, targetIndex: number) => {
-      if (!selectedLayer) return;
+      if (!selectedLayer?.layer?.id) return;
       await useMoveInfoboxBlock({
-        layerId: selectedLayer.layerId,
+        layerId: selectedLayer.layer.id,
         infoboxBlockId: id,
         index: targetIndex,
       });
@@ -169,9 +195,9 @@ export default ({
 
   const handleInfoboxBlockRemove = useCallback(
     async (id?: string) => {
-      if (!selectedLayer || !id) return;
+      if (!selectedLayer?.layer?.id || !id) return;
       await useDeleteInfoboxBlock({
-        layerId: selectedLayer.layerId,
+        layerId: selectedLayer.layer.id,
         infoboxBlockId: id,
       });
     },
@@ -182,8 +208,11 @@ export default ({
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
   const handleStoryPageChange = useCallback(
-    (pageId?: string) => setSelectedStoryPageId(pageId),
-    [setSelectedStoryPageId],
+    (pageId?: string) => {
+      if (isVisualizerResizing?.current) return;
+      setSelectedStoryPageId(pageId);
+    },
+    [isVisualizerResizing, setSelectedStoryPageId],
   );
 
   const handleStoryBlockCreate = useCallback(
@@ -249,9 +278,12 @@ export default ({
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken:
+        typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
+          ? cesiumIonAccessToken
+          : config()?.cesiumIonAccessToken,
     }),
-    [],
+    [cesiumIonAccessToken],
   );
 
   // TODO: Use GQL value
@@ -261,8 +293,10 @@ export default ({
     document.title = title;
   }, [isBuilt, title]);
 
+  const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
+
   return {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
@@ -270,7 +304,10 @@ export default ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
-    handleLayerSelect,
+    currentCamera,
+    initialCamera,
+    handleCameraUpdate,
+    handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
@@ -284,6 +321,7 @@ export default ({
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
+    handleMount,
     zoomToLayer,
   };
 };

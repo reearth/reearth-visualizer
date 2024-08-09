@@ -1,4 +1,5 @@
 import type { Layer, Spacing } from "@reearth/core";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 
 export type Infobox<BP = any> = {
   featureId?: string;
@@ -22,9 +23,17 @@ export type InfoboxBlock<P = any> = {
   name?: string;
   pluginId?: string;
   extensionId?: string;
-  property?: P;
+  extensionType?: "infoboxBlock";
   propertyId?: string;
+  property?: P;
+  propertyForPluginAPI?: any;
+  propertyItemsForPluginBlock?: Item[];
 };
+
+export type PluginInfoboxBlock = Omit<
+  InfoboxBlock,
+  "propertyForPluginAPI" | "propertyItemsForPluginBlock"
+>;
 
 export type InfoboxBlockProps<P = any> = {
   block?: InfoboxBlock<P>;

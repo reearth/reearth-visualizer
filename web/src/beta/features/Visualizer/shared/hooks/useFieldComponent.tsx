@@ -1,18 +1,19 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
-import CameraField from "@reearth/beta/components/fields/CameraField";
-import ColorField from "@reearth/beta/components/fields/ColorField";
-import DateTimeField from "@reearth/beta/components/fields/DateTimeField";
-import LocationField from "@reearth/beta/components/fields/LocationField";
-import NumberField from "@reearth/beta/components/fields/NumberField";
-import RangeField from "@reearth/beta/components/fields/RangeField";
-import SelectField from "@reearth/beta/components/fields/SelectField";
-import SliderField from "@reearth/beta/components/fields/SliderField";
-import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
-import TextField from "@reearth/beta/components/fields/TextField";
-import TimelineField from "@reearth/beta/components/fields/TimelineField";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import URLField from "@reearth/beta/components/fields/URLField";
+import {
+  AssetField,
+  CameraField,
+  ColorField,
+  InputField,
+  NumberField,
+  RangeField,
+  SelectField,
+  SpacingField,
+  SwitchField,
+  TimePeriodField,
+  TimePointField,
+  TwinInputField,
+} from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 
 export const FieldComponent = ({
@@ -57,123 +58,128 @@ export const FieldComponent = ({
     [onPropertyUpdate],
   );
 
+  const assetsTypes = useMemo(
+    () =>
+      field.ui === "image"
+        ? ["image" as const]
+        : field.ui === "file"
+        ? ["file" as const]
+        : undefined,
+    [field.ui],
+  );
+
   return field?.type === "spacing" ? (
-    <SpacingInput
+    <SpacingField
       key={field?.id}
-      name={field?.title}
+      commonTitle={field?.title}
       value={field?.value}
       description={field?.description}
       min={field?.min}
       max={field?.max}
-      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "bool" ? (
-    <ToggleField
+    <SwitchField
       key={field?.id}
-      name={field?.title}
-      checked={!!field?.value}
+      commonTitle={field?.title}
+      value={!!field?.value}
       description={field?.description}
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "latlng" ? (
-    <LocationField
+    <TwinInputField
       key={field?.id}
-      name={field?.title}
-      value={field?.value}
+      commonTitle={field?.title}
+      values={[field?.value?.lat, field?.value?.lng]}
       description={field?.description}
-      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "camera" ? (
     <CameraField
       key={field?.id}
-      name={field?.name}
+      commonTitle={field?.commonTitle}
       value={field?.value}
       description={field?.description}
-      // currentCamera={currentCamera}
       onSave={handlePropertyValueUpdate(propertyId, groupId, fieldId, field?.type)}
-      // onFlyTo={onFlyTo}
     />
   ) : field?.type === "number" ? (
-    field?.ui === "slider" ? (
-      <SliderField
-        name={field?.title}
-        value={field?.value}
-        min={field?.min}
-        max={field?.max}
-        description={field?.description}
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
-      />
-    ) : (
-      <NumberField
-        name={field?.title}
-        value={field?.value}
-        description={field?.description}
-        min={field?.min}
-        max={field?.max}
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
-      />
-    )
-  ) : field?.type === "url" ? (
-    <URLField
-      name={field?.title}
-      entityType={field?.ui === "image" ? "image" : field?.ui === "file" ? "file" : undefined}
-      fileType={field?.ui === "video" || field?.ui === undefined ? "URL" : "asset"}
+    <NumberField
+      commonTitle={field?.title}
       value={field?.value}
       description={field?.description}
+      min={field?.min}
+      max={field?.max}
+      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+    />
+  ) : field?.type === "url" ? (
+    <AssetField
+      key={field.id}
+      commonTitle={field.name}
+      assetsTypes={assetsTypes}
+      inputMethod={field.ui === "video" || field.ui === undefined ? "URL" : "asset"}
+      value={field.value}
+      description={field.description}
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "string" ? (
     field?.ui === "datetime" ? (
-      <DateTimeField
-        name={field?.title}
+      <TimePointField
+        key={field.id}
+        commonTitle={field?.title}
         description={field?.description}
         value={field?.value}
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     ) : field?.ui === "color" ? (
       <ColorField
-        name={field?.title}
+        key={field.id}
+        commonTitle={field?.title}
         description={field?.description}
         value={field?.value}
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     ) : field?.ui === "selection" || field?.choices ? (
       <SelectField
-        name={field?.title}
+        key={field.id}
+        commonTitle={field.name}
         value={field?.value}
-        description={field?.description}
-        options={field?.choices.map(({ key, title }: { key: string; title: string }) => ({
-          key,
-          label: title,
-        }))}
+        description={field.description}
+        options={
+          field?.choices.map(({ key, title }: { key: string; title: string }) => ({
+            value: key,
+            label: title,
+          })) || []
+        }
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
-    ) : field?.ui === "buttons" ? (
-      <p key={field?.id}>Button radio field</p>
     ) : (
-      <TextField
-        name={field?.title}
+      <InputField
+        key={field.id}
+        commonTitle={field?.title}
         value={field?.value}
         description={field?.description}
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+        onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     )
   ) : field?.type === "timeline" ? (
-    <TimelineField
-      name={field?.title}
+    <TimePeriodField
+      key={field.id}
+      commonTitle={field?.title}
       value={field?.value}
       description={field?.description}
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "array" && field?.ui === "range" ? (
     <RangeField
-      name={field?.title}
-      value={field?.value}
-      description={field?.description}
-      min={field?.min}
-      max={field?.max}
-      defaultValue={field?.defaultValue}
-      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      key={field.id}
+      commonTitle={field.name}
+      values={field?.value as number[]}
+      unit={field.suffix}
+      min={field.min}
+      max={field.max}
+      content={["min", "max"]}
+      description={field.description}
+      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : (
     <div>{t("Unsupported field type")}</div>

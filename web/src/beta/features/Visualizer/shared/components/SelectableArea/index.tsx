@@ -1,10 +1,9 @@
-import { MouseEvent, ReactNode } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
 
-import { useItemContext as useDnDItemContext } from "@reearth/beta/components/DragAndDropList/Item";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import ClickAwayListener from "../../../StoryPanel/ClickAwayListener";
+import ClickAwayListener from "../../../Crust/StoryPanel/ClickAwayListener";
 
 import ActionPanel, { type ActionPosition } from "./ActionPanel";
 import useHooks from "./hooks";
@@ -16,6 +15,7 @@ type Props = {
   children: ReactNode;
   propertyId?: string;
   contentSettings?: any;
+  isPluginBlock?: boolean;
   dndEnabled?: boolean;
   showSettings?: boolean;
   editMode?: boolean;
@@ -25,6 +25,7 @@ type Props = {
   hideHoverUI?: boolean;
   overrideGroupId?: string;
   domId?: string;
+  dragHandleClassName?: string;
   onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
   onClick?: (e: MouseEvent<Element>) => void;
@@ -53,7 +54,7 @@ type Props = {
   ) => Promise<void>;
 };
 
-const SelectableArea: React.FC<Props> = ({
+const SelectableArea: FC<Props> = ({
   title,
   icon,
   isSelected,
@@ -67,7 +68,9 @@ const SelectableArea: React.FC<Props> = ({
   isEditable,
   hideHoverUI,
   contentSettings,
+  isPluginBlock,
   overrideGroupId,
+  dragHandleClassName,
   domId,
   onEditModeToggle,
   onSettingsToggle,
@@ -86,7 +89,6 @@ const SelectableArea: React.FC<Props> = ({
     onEditModeToggle,
     onClickAway,
   });
-  const { customDragPreview } = useDnDItemContext() ?? {};
 
   return !isEditable ? (
     <div id={domId}>{children}</div>
@@ -99,7 +101,7 @@ const SelectableArea: React.FC<Props> = ({
         hideHoverUI={hideHoverUI}
         onMouseOver={handleHoverChange(true)}
         onMouseOut={handleHoverChange(false)}>
-        <div ref={customDragPreview} onClick={onClick} onDoubleClick={onDoubleClick}>
+        <div onClick={onClick} onDoubleClick={onDoubleClick}>
           {children}
         </div>
         {(isSelected || (!hideHoverUI && isHovered)) && (
@@ -112,8 +114,10 @@ const SelectableArea: React.FC<Props> = ({
             editMode={editMode}
             propertyId={propertyId}
             contentSettings={contentSettings}
+            isPluginBlock={isPluginBlock}
             dndEnabled={dndEnabled}
             position={position}
+            dragHandleClassName={dragHandleClassName}
             overrideGroupId={overrideGroupId}
             setShowPadding={setShowPadding}
             onEditModeToggle={onEditModeToggle}
@@ -133,15 +137,16 @@ const SelectableArea: React.FC<Props> = ({
 
 export default SelectableArea;
 
-const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean; hideHoverUI?: boolean }>`
-  ${({ noBorder, isSelected, theme }) =>
-    !noBorder && `border: 1px solid ${isSelected ? theme.select.main : "transparent"};`}
-  transition: all 0.3s;
-  padding: 1px;
-  position: relative;
-
-  :hover {
-    border-color: ${({ isSelected, hideHoverUI, theme }) =>
-      !hideHoverUI && !isSelected && theme.select.weaker};
-  }
-`;
+const Wrapper = styled("div")<{
+  isSelected?: boolean;
+  noBorder?: boolean;
+  hideHoverUI?: boolean;
+}>(({ isSelected, noBorder, hideHoverUI, theme }) => ({
+  border: !noBorder ? `1px solid ${isSelected ? theme.select.main : "transparent"}` : "none",
+  padding: "1px",
+  position: "relative",
+  transition: "all 0.3s",
+  "&:hover": {
+    borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none",
+  },
+}));

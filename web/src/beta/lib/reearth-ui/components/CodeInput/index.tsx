@@ -1,5 +1,5 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import { FC, useMemo, useRef, useCallback, useState, useEffect } from "react";
+import { FC, useMemo, useCallback, useState, useEffect } from "react";
 
 import { fonts, styled, useTheme } from "@reearth/services/theme";
 
@@ -8,6 +8,7 @@ export type CodeInputProps = {
   language?: string;
   showLines?: boolean;
   disabled?: boolean;
+  height?: number;
   onChange?: (val: string | undefined) => void;
   onBlur?: (val: string | undefined) => void;
 };
@@ -17,11 +18,12 @@ export const CodeInput: FC<CodeInputProps> = ({
   language = "json",
   showLines = true,
   disabled,
+  height,
   onChange,
   onBlur,
 }) => {
   const theme = useTheme();
-  const currentValue = useRef<string | undefined>(value);
+  const [currentValue, setCurrentValue] = useState<string | undefined>(value);
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const options = useMemo(
@@ -41,6 +43,9 @@ export const CodeInput: FC<CodeInputProps> = ({
       readOnlyMessage: {
         supportHtml: false,
       },
+      scrollbar: {
+        horizontal: "hidden",
+      },
     }),
     [disabled, showLines],
   );
@@ -55,10 +60,11 @@ export const CodeInput: FC<CodeInputProps> = ({
       },
     });
     monaco.editor.setTheme("myCustomTheme");
+    editor.getAction("editor.action.formatDocument").run();
 
     editor.onDidBlurEditorText(() => {
       setIsActive(false);
-      onBlur?.(currentValue.current);
+      onBlur?.(currentValue);
     });
 
     editor.onDidFocusEditorWidget(() => {
@@ -68,14 +74,14 @@ export const CodeInput: FC<CodeInputProps> = ({
 
   const handleChange = useCallback(
     (val: string | undefined) => {
-      currentValue.current = val;
+      setCurrentValue(val);
       onChange?.(val);
     },
     [onChange],
   );
 
   useEffect(() => {
-    currentValue.current = value;
+    setCurrentValue(value);
   }, [value]);
 
   return (
@@ -84,7 +90,8 @@ export const CodeInput: FC<CodeInputProps> = ({
         language={language}
         theme="vs-dark"
         options={options}
-        defaultValue={value}
+        value={value}
+        height={height}
         onChange={handleChange}
         onMount={handleEditorDidMount}
       />

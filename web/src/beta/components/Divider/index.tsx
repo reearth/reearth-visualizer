@@ -19,9 +19,7 @@ const StyledDivider = styled.div<{
 }>`
   margin: ${props => (props.margin ? props.margin : "35px")} auto;
   border-bottom: ${props =>
-    props.spaceOnly
-      ? "none"
-      : `1px solid ${props.color ? props.color : props.theme.classic.main.border}`};
+    props.spaceOnly ? "none" : `1px solid ${props.color ? props.color : props.theme.outline.main}`};
 `;
 
 export default Divider;

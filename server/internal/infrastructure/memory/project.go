@@ -2,6 +2,8 @@ package memory
 
 import (
 	"context"
+	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -33,19 +35,35 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, filter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	if !r.f.CanRead(id) {
-		return nil, nil, nil
+		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
 	result := []*project.Project{}
 	for _, d := range r.data {
-		if d.Workspace() == id {
+		if d.Workspace() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
 			result = append(result, d)
 		}
+	}
+
+	if filter.Sort != nil {
+		s := *filter.Sort
+		sort.SliceStable(result, func(i, j int) bool {
+			switch s {
+			case project.SortTypeID:
+				return result[i].ID().Compare(result[j].ID()) < 0
+			case project.SortTypeUpdatedAt:
+				return result[i].UpdatedAt().Before(result[j].UpdatedAt())
+			case project.SortTypeName:
+				return strings.Compare(strings.ToLower(result[i].Name()), strings.ToLower(result[j].Name())) < 0
+			default:
+				return false
+			}
+		})
 	}
 
 	var startCursor, endCursor *usecasex.Cursor
@@ -57,7 +75,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	}
 
 	return result, usecasex.NewPageInfo(
-		int64(len(r.data)),
+		int64(len(result)),
 		startCursor,
 		endCursor,
 		true,
