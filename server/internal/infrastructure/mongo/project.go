@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"regexp"
-	"sort"
-	"strings"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -94,28 +92,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 		})
 	}
 
-	projects, pageInfo, err := r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
-
-	if err != nil {
-		return projects, pageInfo, err
-	}
-
-	if uFilter.Sort != nil {
-		s := *uFilter.Sort
-		sort.SliceStable(projects, func(i, j int) bool {
-			switch s {
-			case project.SortTypeID:
-				return projects[i].ID().Compare(projects[j].ID()) < 0
-			case project.SortTypeUpdatedAt:
-				return projects[i].UpdatedAt().Before(projects[j].UpdatedAt())
-			case project.SortTypeName:
-				return strings.Compare(strings.ToLower(projects[i].Name()), strings.ToLower(projects[j].Name())) < 0
-			}
-			return false
-		})
-	}
-
-	return projects, pageInfo, err
+	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
@@ -196,8 +173,13 @@ func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bo
 func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	var usort *usecasex.Sort
 	if sort != nil {
-		usort = &usecasex.Sort{
-			Key: string(*sort),
+		switch *sort {
+		case project.SortTypeName:
+			usort = &usecasex.Sort{Key: "name", Reverted: false}
+		case project.SortTypeID:
+			usort = &usecasex.Sort{Key: "createdAt", Reverted: false}
+		case project.SortTypeUpdatedAt:
+			usort = &usecasex.Sort{Key: "updatedAt", Reverted: true}
 		}
 	}
 
