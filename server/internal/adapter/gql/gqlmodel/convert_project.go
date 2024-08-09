@@ -66,18 +66,26 @@ func ToProject(p *project.Project) *Project {
 		Starred:           p.Starred(),
 	}
 }
-func ProjectSortTypeFrom(pst *ProjectSortType) *project.SortType {
+
+func ProjectSortTypeFrom(pst *ProjectSort) *project.SortType {
 	if pst == nil {
 		return nil
 	}
 
-	switch *pst {
-	case ProjectSortTypeCreatedat:
-		return &project.SortTypeID
-	case ProjectSortTypeUpdatedat:
-		return &project.SortTypeUpdatedAt
-	case ProjectSortTypeName:
-		return &project.SortTypeName
+	var key string
+	switch pst.Field {
+	case ProjectSortFieldCreatedat:
+		key = "id"
+	case ProjectSortFieldUpdatedat:
+		key = "updatedAt"
+	case ProjectSortFieldName:
+		key = "name"
+	default:
+		key = "updatedAt"
 	}
-	return &project.SortTypeUpdatedAt
+
+	return &project.SortType{
+		Key:  key,
+		Desc: pst.Direction == SortDirectionDesc,
+	}
 }

@@ -173,13 +173,9 @@ func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bo
 func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	var usort *usecasex.Sort
 	if sort != nil {
-		switch *sort {
-		case project.SortTypeName:
-			usort = &usecasex.Sort{Key: "name", Reverted: false}
-		case project.SortTypeID:
-			usort = &usecasex.Sort{Key: "createdAt", Reverted: false}
-		case project.SortTypeUpdatedAt:
-			usort = &usecasex.Sort{Key: "updatedAt", Reverted: true}
+		usort = &usecasex.Sort{
+			Key:      sort.Key,
+			Reverted: sort.Desc,
 		}
 	}
 

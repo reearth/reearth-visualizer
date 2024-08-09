@@ -26,12 +26,6 @@ type Project implements Node {
   starred: Boolean!
 }
 
-enum ProjectSortType {
-  CREATEDAT
-  UPDATEDAT
-  NAME
-}
-
 type ProjectAliasAvailability {
   alias: String!
   available: Boolean!
@@ -45,6 +39,17 @@ enum PublishmentStatus {
   PUBLIC
   LIMITED
   PRIVATE
+}
+
+enum ProjectSortField {
+  CREATEDAT
+  UPDATEDAT
+  NAME
+}
+
+enum SortDirection {
+  ASC
+  DESC
 }
 
 # InputType
@@ -92,6 +97,11 @@ input DeleteProjectInput {
   projectId: ID!
 }
 
+input ProjectSort {
+  field: ProjectSortField!
+  direction: SortDirection!
+}
+
 # Payload
 
 type ProjectPayload {
@@ -117,7 +127,7 @@ type ProjectEdge {
 }
 
 extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor, keyword: String, sort: ProjectSortType): ProjectConnection!
+  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor, keyword: String, sort: ProjectSort): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
 }
 
