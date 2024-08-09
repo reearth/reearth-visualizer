@@ -135,36 +135,37 @@ New Property: ''
 ' Text': ''
 General: ''
 New Sketch Layer: ''
-Published: 一般公開
-Unpublished: 非公開
 Story: ストーリー
+Publish: 公開
 Unpublish: 非公開にする
 Update: 更新する
-Publish: 公開
-Publishing Settings: 公開設定
 Congratulations!: おめでとうございます！
-Publish your project: プロジェクトを公開する
-Update your project: プロジェクトを更新する
+Publish your story: ストーリーを公開する
+Publish your scene: シーンを公開する
+Update your story: ストーリーを更新する
+Update your scene: シーンを更新する
 Ok: 確認
-Continue: 続ける
-Your published project will be updated. This means all current changes will overwrite the current published project.: 公開されたプロジェクトが更新されます。公開されているプロジェクトへ現在の内容が上書きされます。
-Your project will be published. This means anybody with the below URL will be able to view this project.: プロジェクトが公開されます。URLを知っている人は誰でもこのプロジェクトを見ることができるようになります。
-Your project has been published!: プロジェクトが公開されました。
+Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
+Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
+Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
+Your story has been published!: ストーリーが公開されました。
+Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
 Copy: コピー
-'* Anyone can see your project with this URL': '*　このリンクを知っているインターネット上の全員が閲覧できます'
+'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
 Embed Code: 埋め込み用コード
-'* Please use this code if you want to embed your project into a webpage': その他のWebサイトでこのプロジェクトを埋め込む場合は、こちらのコードを使用してください
+'* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 Publish domain: 公開ドメイン
-More options: その他の設定
 Need to change domain related settings?: ドメイン設定を変更しますか？
 Go to settings: 設定へ
 Search engine indexing: 検索可能にする
 Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
-Unpublishing: 非公開
-Your project will be unpublished.: プロジェクトを非公開にする
-This means that anybody with the URL will become unable to view this project.: URLを知っている人でもこのプロジェクトを見ることができなくなります。
-'**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
+Your story will be unpublished.: ストーリーを非公開にする
+Your scene will be unpublished.: シーンを非公開にする
+This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: URLを知っている人でもこのストーリーを見ることができなくなります。このストーリーを埋め込んだWebサイトへ影響を及ぼす可能性があります。
+This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: URLを知っている人でもこのシーンを見ることができなくなります。このシーンを埋め込んだWebサイトへ影響を及ぼす可能性があります。
 Page Settings: ページ設定
 All Layers: 全てのレイヤー
 Untitled: タイトルなし
@@ -247,6 +248,7 @@ Zip file from PC: PCからZipファイルをアップロード
 Public GitHub repository: GitHubパブリックレポジトリ
 Publish your plugin in the Marketplace: マーケットプレイスでプラグインを公開する
 Import GitHub repository: GitHubレポジトリからインポート
+Continue: 続ける
 'Repository url:': 'レポジトリURL:'
 Public Info: 公開詳細設定
 Basic Authorization: ベーシック認証
@@ -348,9 +350,9 @@ Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。
-Successfully published your project!: プロジェクトの公開に成功しました！
+Successfully published your scene!: シーンの公開に成功しました！
 Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
-Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
+Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
 Failed to archive project.: プロジェクトの非編集状態に失敗しました。
