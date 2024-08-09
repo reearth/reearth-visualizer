@@ -127,6 +127,24 @@ func (r *NLSLayer) FindNLSLayerSimpleByID(ctx context.Context, id id.NLSLayerID)
 	return nil, rerror.ErrNotFound
 }
 
+func (r *NLSLayer) CountByScene(_ context.Context, sid id.SceneID) (n int, _ error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(sid) {
+		return
+	}
+
+	for _, d := range r.data {
+		if d.Scene() == sid {
+			if lg := nlslayer.ToNLSLayerGroup(d); lg == nil && !lg.IsRoot() {
+				n++
+			}
+		}
+	}
+	return
+}
+
 func (r *NLSLayer) Save(ctx context.Context, l nlslayer.NLSLayer) error {
 	if !r.f.CanWrite(l.Scene()) {
 		return repo.ErrOperationDenied
