@@ -1,16 +1,15 @@
-import { FC, useCallback, useContext, useMemo, useState } from "react";
+import { FC, useCallback, useContext, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
-import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import CameraEditor, { type CameraBlock as CameraBlockType } from "./Editor";
+import LinkEditor, { type LinkBlock as LinkBlockType } from "./Editor";
 
 type Props = {
   propertyId?: string;
-  cameraButtons: CameraBlockType[];
+  linkButtons: LinkBlockType[];
   isEditable?: boolean;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -36,7 +35,7 @@ type Props = {
 
 const Content: FC<Props> = ({
   propertyId,
-  cameraButtons,
+  linkButtons,
   isEditable,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -44,11 +43,8 @@ const Content: FC<Props> = ({
   onPropertyItemMove,
 }) => {
   const t = useT();
-  const context = useContext(BlockContext);
-  const visualizer = useVisualizer();
-  const [selected, setSelected] = useState<string>(cameraButtons[0]?.id);
-
-  const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
+  const blockContext = useContext(BlockContext);
+  const [selected, setSelected] = useState<string>(linkButtons[0]?.id);
 
   const handleClick = useCallback(
     (itemId: string) => {
@@ -56,35 +52,36 @@ const Content: FC<Props> = ({
         setSelected(itemId);
         return;
       }
-      const item = cameraButtons.find(i => i.id === itemId);
-      if (!item?.cameraPosition?.value) return;
-      handleFlyTo?.(item.cameraPosition?.value, { duration: item.cameraDuration?.value || 2 });
+      const item = linkButtons.find(i => i.id === itemId);
+
+      if (!item?.url?.value) return;
+      window.open(item.url.value, "_blank");
     },
-    [cameraButtons, isEditable, handleFlyTo],
+    [isEditable, linkButtons],
   );
 
   return (
     <Wrapper>
       <ButtonWrapper>
-        {cameraButtons.map(({ title, color, bgColor, id }) => {
+        {linkButtons.map(({ title, color, bgColor, id }) => {
           return (
             //The button will be updated in future
             <StyledButton
               key={id}
               color={color?.value}
               bgColor={bgColor?.value}
-              icon="cameraButtonStoryBlock"
+              icon="linkButtonStoryBlock"
               buttonType="primary"
-              text={title?.value ?? t("New Camera")}
+              text={title?.value ?? t("New Link Button")}
               size="small"
               onClick={() => handleClick(id)}
             />
           );
         })}
       </ButtonWrapper>
-      {context?.editMode && (
-        <CameraEditor
-          items={cameraButtons}
+      {blockContext?.editMode && (
+        <LinkEditor
+          items={linkButtons}
           propertyId={propertyId}
           selected={selected}
           setSelected={setSelected}

@@ -4,7 +4,7 @@ import useFileInput from "use-file-input";
 import { BreadcrumbItem } from "@reearth/beta/lib/reearth-ui";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useAssetsFetcher } from "@reearth/services/api";
-import { AssetSortType, Maybe } from "@reearth/services/gql";
+import { AssetSortField, SortDirection } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 import {
@@ -17,6 +17,12 @@ import { Asset, sortOptionValue, SortType } from "./types";
 
 const ASSETS_PER_PAGE = 20;
 const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
+
+const typeToGQLField = {
+  date: AssetSortField.Date,
+  name: AssetSortField.Name,
+  size: AssetSortField.Size,
+};
 
 export default ({
   workspaceId,
@@ -96,8 +102,13 @@ export default ({
   const { useAssetsQuery, useRemoveAssets, useCreateAssets } = useAssetsFetcher();
   const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } = useAssetsQuery({
     teamId: workspaceId ?? "",
-    pagination: pagination(sort),
-    sort: toGQLEnum(sort?.type),
+    pagination: {
+      first: ASSETS_PER_PAGE,
+    },
+    sort: {
+      direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
+      field: typeToGQLField[sort.type ?? "date"],
+    },
     keyword: searchTerm,
   });
 
@@ -125,12 +136,15 @@ export default ({
     setLoadingMore(true);
     await fetchMore({
       variables: {
-        pagination: pagination(sort, endCursor),
+        pagination: {
+          first: ASSETS_PER_PAGE,
+          after: endCursor,
+        },
       },
     });
     setLoadingMore(false);
     isLoadingMoreRef.current = false;
-  }, [hasMoreAssets, isRefetching, fetchMore, sort, endCursor]);
+  }, [hasMoreAssets, isRefetching, fetchMore, endCursor]);
 
   const loadMoreRef = useRef<() => void>(loadMore);
   loadMoreRef.current = loadMore;
@@ -309,28 +323,3 @@ export default ({
     loadingMore,
   };
 };
-
-const enumTypeMapper: Partial<Record<AssetSortType, string>> = {
-  [AssetSortType.Date]: "date",
-  [AssetSortType.Name]: "name",
-  [AssetSortType.Size]: "size",
-};
-
-function toGQLEnum(val?: SortType) {
-  if (!val) return;
-  return (Object.keys(enumTypeMapper) as AssetSortType[]).find(k => enumTypeMapper[k] === val);
-}
-
-function pagination(
-  sort?: { type?: Maybe<SortType>; reverse?: boolean },
-  endCursor?: string | null,
-) {
-  const reverseOrder = !sort?.type || sort?.type === "date" ? !sort?.reverse : !!sort?.reverse;
-
-  return {
-    after: !reverseOrder ? endCursor : undefined,
-    before: reverseOrder ? endCursor : undefined,
-    first: !reverseOrder ? ASSETS_PER_PAGE : undefined,
-    last: reverseOrder ? ASSETS_PER_PAGE : undefined,
-  };
-}

@@ -80,7 +80,7 @@ const AssetField: FC<AssetFieldProps> = ({
       <AssetWrapper>
         <TextInput
           value={currentValue}
-          onChange={handleChange}
+          onBlur={handleChange}
           placeholder={placeholder ?? t("Not set")}
         />
         {inputMethod === "asset" && (

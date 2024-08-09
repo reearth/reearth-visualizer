@@ -236,14 +236,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             </FlexTableBody>
           </FlexTable>
         )}
-        {isLoading &&
-          (hasMoreProjects ? (
-            <StyledLoading>
-              <Loading relative />
-            </StyledLoading>
-          ) : (
+        {isLoading && (
+          <LoadingWrapper>
             <Loading relative />
-          ))}
+          </LoadingWrapper>
+        )}
       </ProjectsWrapper>
       {projectCreatorVisible && (
         <ProjectCreatorModal
@@ -327,6 +324,7 @@ const TimeCell = styled("div")(() => ({
   flex: 0.5,
 }));
 
-const StyledLoading = styled("div")(() => ({
-  margin: "52px auto",
+const LoadingWrapper = styled("div")(() => ({
+  width: "100%",
+  height: 100,
 }));

@@ -93,6 +93,8 @@ import ShowLayersStoryBlock from "./Icons/showLayersStoryBlock.svg?react";
 import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg?react";
 import TimelineStoryBlockSolid from "./Icons/timelineStoryBlockSolid.svg?react";
 import NextPageStoryBlock from "./Icons/nextPageStoryBlock.svg?react";
+//TODO: will be not be use in future
+import LinkButtonStoryBlock from "./Icons/linkStoryBlockButton.svg?react";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg?react";
@@ -204,6 +206,7 @@ export default {
   timelineStoryBlock: TimelineStoryBlock,
   timelineStoryBlockSolid: TimelineStoryBlockSolid,
   nextPageStoryBlock: NextPageStoryBlock,
+  linkButtonStoryBlock: LinkButtonStoryBlock,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,
