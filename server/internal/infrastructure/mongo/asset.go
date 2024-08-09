@@ -77,6 +77,11 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 		})
 	}
 
+	// Classic's Assets shouldn't been shown @pyshx
+	filter = mongox.And(filter, "url", bson.M{
+		"$regex": primitive.Regex{Pattern: "visualizer", Options: "i"},
+	})
+
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
