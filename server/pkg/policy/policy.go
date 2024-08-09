@@ -25,6 +25,10 @@ type Option struct {
 	AssetStorageSize      *int64
 	DatasetSchemaCount    *int
 	DatasetCount          *int
+	NLSLayersCount        *int
+	PageCount             *int
+	StoryCount            *int
+	BlocksCount           *int
 }
 
 func New(opts Option) *Policy {
@@ -71,6 +75,22 @@ func (p *Policy) EnforceDatasetCount(count int) error {
 	return p.error(p == nil || p.opts.DatasetCount == nil || *p.opts.DatasetCount >= count)
 }
 
+func (p *Policy) EnforceNLSLayersCount(count int) error {
+	return p.error(p == nil || p.opts.NLSLayersCount == nil || *p.opts.NLSLayersCount >= count)
+}
+
+func (p *Policy) EnforcePageCount(count int) error {
+	return p.error(p == nil || p.opts.PageCount == nil || *p.opts.PageCount >= count)
+}
+
+func (p *Policy) EnforceStoryCount(count int) error {
+	return p.error(p == nil || p.opts.StoryCount == nil || *p.opts.StoryCount >= count)
+}
+
+func (p *Policy) EnforceBlocksCount(count int) error {
+	return p.error(p == nil || p.opts.BlocksCount == nil || *p.opts.BlocksCount >= count)
+}
+
 func (*Policy) error(ok bool) error {
 	if !ok {
 		return ErrPolicyViolation
@@ -96,5 +116,9 @@ func (p Option) Clone() Option {
 		AssetStorageSize:      util.CloneRef(p.AssetStorageSize),
 		DatasetSchemaCount:    util.CloneRef(p.DatasetSchemaCount),
 		DatasetCount:          util.CloneRef(p.DatasetCount),
+		NLSLayersCount:        util.CloneRef(p.NLSLayersCount),
+		PageCount:             util.CloneRef(p.PageCount),
+		StoryCount:            util.CloneRef(p.StoryCount),
+		BlocksCount:           util.CloneRef(p.DatasetCount),
 	}
 }

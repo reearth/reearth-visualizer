@@ -18,6 +18,7 @@ type NLSLayer interface {
 	FindParentByID(context.Context, id.NLSLayerID) (*nlslayer.NLSLayerGroup, error)
 	FindParentsByIDs(context.Context, id.NLSLayerIDList) (nlslayer.NLSLayerGroupList, error)
 	FindByScene(context.Context, id.SceneID) (nlslayer.NLSLayerList, error)
+	CountByScene(context.Context, id.SceneID) (int, error)
 	Save(context.Context, nlslayer.NLSLayer) error
 	SaveAll(context.Context, nlslayer.NLSLayerList) error
 	Remove(context.Context, id.NLSLayerID) error
