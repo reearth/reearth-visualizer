@@ -18,10 +18,13 @@ export default () => {
       skip: !input.teamId,
     });
 
-    const assets = useMemo(
-      () => data?.assets.edges?.map(e => e.node) as AssetNodes,
-      [data?.assets],
-    );
+    const assets = useMemo(() => {
+      return (data?.assets.edges?.map(e => e.node) as AssetNodes)?.filter(asset =>
+        // Show assets which belongs to Visualizer only @pyshx
+        asset.url.includes("visualizer"),
+      );
+    }, [data?.assets]);
+
     const hasMoreAssets = useMemo(
       () => data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage,
       [data?.assets],
