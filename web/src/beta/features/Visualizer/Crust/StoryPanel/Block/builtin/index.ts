@@ -11,11 +11,13 @@ import {
   VIDEO_BUILTIN_STORY_BLOCK_ID,
   LAYER_BUILTIN_STORY_BLOCK_ID,
   NEXT_PAGE_BUILTIN_STORY_BLOCK_ID,
+  LINK_BUILTIN_STORY_BLOCK_ID,
 } from "../../constants";
 
 import CameraBlock from "./Camera";
 import ImageBlock from "./Image";
 import LayerBlock from "./Layer";
+import LinkBlock from "./Link";
 import MdBlock from "./Markdown";
 import NextPageBlock from "./NextPage";
 import TextBlock from "./Text";
@@ -32,7 +34,8 @@ export type ReEarthBuiltinStoryBlocks<T = unknown> = Record<
   | typeof CAMERA_BUILTIN_STORY_BLOCK_ID
   | typeof LAYER_BUILTIN_STORY_BLOCK_ID
   | typeof TIMELINE_BUILTIN_STORY_BLOCK_ID
-  | typeof NEXT_PAGE_BUILTIN_STORY_BLOCK_ID,
+  | typeof NEXT_PAGE_BUILTIN_STORY_BLOCK_ID
+  | typeof LINK_BUILTIN_STORY_BLOCK_ID,
   T
 >;
 
@@ -49,6 +52,7 @@ const reearthBuiltin: BuiltinStoryBlocks<Component> = {
   [CAMERA_BUILTIN_STORY_BLOCK_ID]: CameraBlock,
   [LAYER_BUILTIN_STORY_BLOCK_ID]: LayerBlock,
   [NEXT_PAGE_BUILTIN_STORY_BLOCK_ID]: NextPageBlock,
+  [LINK_BUILTIN_STORY_BLOCK_ID]: LinkBlock,
 };
 
 const builtin = merge({}, reearthBuiltin);
