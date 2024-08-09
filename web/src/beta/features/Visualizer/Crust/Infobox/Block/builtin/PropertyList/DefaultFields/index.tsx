@@ -1,6 +1,7 @@
 import JsonView from "react18-json-view";
 
-import { styled } from "@reearth/services/theme";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import ListItem from "../ListItem";
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
+  const theme = useTheme();
   return (
     <>
       {properties?.map((field, idx) => {
@@ -17,11 +19,19 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
         if (value && typeof value === "object") {
           return (
             <ObjectWrapper key={key}>
+              <Typography size="body" color={theme.content.weaker}>
+                {key}
+              </Typography>
               <JsonView
                 src={value}
                 theme="a11y"
                 collapsed={!!isEditable}
-                style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
+                style={{
+                  wordWrap: "break-word",
+                  minWidth: 0,
+                  lineHeight: "1.5em",
+                  fontSize: theme.fonts.sizes.body,
+                }}
               />
             </ObjectWrapper>
           );
@@ -34,6 +44,4 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
 
 export default DefaultFields;
 
-const ObjectWrapper = styled("div")(() => ({
-  marginTop: "8px",
-}));
+const ObjectWrapper = styled("div")(() => ({}));

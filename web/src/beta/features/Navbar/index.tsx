@@ -69,4 +69,5 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.super,
   background: theme.bg[0],
   zIndex: theme.zIndexes.editor.navbar,
+  boxShadow: theme.shadow.card,
 }));

@@ -32,9 +32,5 @@ const Text = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   minWidth: 0,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
   wordWrap: "break-word",
-  padding: `${theme.spacing.small}px ${theme.spacing.smallest}px`,
 }));
