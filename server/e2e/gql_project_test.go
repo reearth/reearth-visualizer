@@ -101,13 +101,10 @@ func TestSortByName(t *testing.T) {
 	requestBody := GraphQLRequest{
 		OperationName: "GetProjects",
 		Query: `
-		query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor, $keyword: String, $sort: ProjectSort) {
+		query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
 			projects(
 				teamId: $teamId
-				first: $first
-				last: $last
-				after: $after
-				before: $before
+				pagination: $pagination
 				keyword: $keyword
 				sort: $sort
 			) {
@@ -167,7 +164,9 @@ func TestSortByName(t *testing.T) {
 			__typename
 		}`,
 		Variables: map[string]any{
-			"last":   5,
+			"pagination": map[string]any{
+				"last": 5,
+			},
 			"teamId": wID.String(),
 			"sort": map[string]string{
 				"field":     "NAME",
