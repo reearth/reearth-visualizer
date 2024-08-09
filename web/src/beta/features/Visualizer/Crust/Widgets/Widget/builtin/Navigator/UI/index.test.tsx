@@ -7,7 +7,7 @@ import Navigator from ".";
 test("it should rotate compass when degree props is changed", async () => {
   const { rerender } = render(<Navigator degree={0} />);
 
-  const compass = screen.getByLabelText("compass");
+  const compass = screen.getByLabelText("aria-label-compass");
 
   if (!compass.parentElement) {
     throw new Error("compass.parentElement should be exist");
@@ -26,7 +26,7 @@ test("it should rotate compass by mouse operation", async () => {
   const onRotateMock = vitest.fn();
   render(<Navigator degree={0} onRotate={onRotateMock} />);
 
-  const compass = screen.getByLabelText("compass");
+  const compass = screen.getByLabelText("aria-label-compass");
 
   if (!compass.parentElement) {
     throw new Error("compass.parentElement should be exist");
@@ -66,7 +66,7 @@ test("it should orbit by mouse operation", async () => {
     />,
   );
 
-  const angle = screen.getByLabelText("adjust angle");
+  const angle = screen.getByLabelText("aria-label-adjust-angle");
   if (!angle.parentElement) {
     throw new Error("angle.parentElement should be exist");
   }
