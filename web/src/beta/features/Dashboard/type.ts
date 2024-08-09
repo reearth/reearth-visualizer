@@ -12,6 +12,7 @@ export type Project = {
   updatedAt?: Date;
   createdAt?: Date;
   projectType?: ProjectType;
+  starred?: boolean;
 };
 
 export type TabItems = {
@@ -20,6 +21,7 @@ export type TabItems = {
   icon?: IconName;
   path?: string;
   active?: boolean;
+  disabled?: boolean;
 };
 
 export type User = {

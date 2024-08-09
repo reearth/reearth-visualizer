@@ -56,10 +56,11 @@ Asset selected: ''
 Name: 名前
 Uploaded At: ''
 Size: ''
-Sort: ''
 Use Name or Email: ''
 Find Member: ''
 No Member match your search.: ''
+Last Created: ''
+First Created: ''
 New Project: 新規プロジェクト
 Project Name: プロジェクト名
 Last modified: ''
@@ -107,6 +108,8 @@ Layer Name: ''
 Format: フォーマット
 Unsupported custom field: ''
 Custom Properties: ''
+Save & Apply: ''
+No custom properties: ''
 Geometry: ジオメトリ
 Properties: プロパティ
 Enable Infobox: インフォボックスを有効化
@@ -135,6 +138,7 @@ New Property: ''
 ' Text': ''
 General: ''
 New Sketch Layer: ''
+Custom properties Schema Setting: ''
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
@@ -152,9 +156,9 @@ Your scene will be published. This means anybody with the below URL will be able
 Your story has been published!: ストーリーが公開されました。
 Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
-Copy: コピー
 '* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
 '* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+Copy: コピー
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 Publish domain: 公開ドメイン
@@ -189,19 +193,14 @@ Please select an layer style before clicking Select.: レイヤースタイル�
 Select Layer Style: レイヤースタイル選択
 No layerStyle match your search.: 検索からレイヤースタイルを見つけられません。
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルをまだ作成していません。「レイヤースタイル」パネルの＋ボタンをクリックし作成してください。
-Create New Workspace: 新規ワークスペース作成
-Create: 作成
-Workspace Name: ワークスペース名
-Workspaces: ワークスペース
-Unknown: 不明
-New Workspace: 新規ワークスペース
-Log out: ログアウト
 Project settings: プロジェクト設定
-Public: 公開設定
-Workspace assets: ワークスペースのアセット
 Plugin: プラグイン
-Manage projects: プロジェクト管理
-Documentation: ヘルプ
+Personal: ''
+Team Workspace: ''
+Unknown: 不明
+Switch workspace: ''
+Log out: ログアウト
+Asset management: ''
 Map: マップ
 Widgets: ウィジェット
 Error: エラー
@@ -209,44 +208,29 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
-Project Settings: プロジェクト設定
-Upload file: ファイルアップロード
-You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
-Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
-Archive this project: プロジェクトの非編集化
-Mark this project as archived and read-only: プロジェクトを編集できないようにします。この設定はいつでも戻すことができます。
-Archive project: プロジェクトを非編集化する
-Unarchive this project: 非編集化を解除
-Unarchive this project to become editable again.: プロジェクトを回復
-Unarchive project: 非編集化を解除
 Delete this project: プロジェクトを削除
-Once you delete a project, there is no going back. Please be sure.: プロジェクトを削除すると復元はできません。慎重に行ってください。
+This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
-I am sure I want to archive this project.: 本当に非編集化してもよいですか？
-Archiving your project will put it into a state where you cannot edit it or it's settings.: この操作をすると、プロジェクトの編集が行えなくなります。
-Once archived, you can unarchive the repository at any time.: この設定はいつでも戻すことができます。
-Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
-I am sure I want to unarchive this project.: 本当に非編集化を解除してもよろしいですか？
-This will bring this repository back to a state it can be editted and worked on by you and your team.: 非編集化を解除すると、チームの書き込み権限を持つユーザーによってプロジェクトの編集、設定変更が可能になります。
 I am sure I want to delete this project.: このプロジェクトを削除します。
-This action cannot be undone.: この操作は取り消すことができません。
-This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: 本当にプロジェクトを削除してもよろしいですか。
+This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
+Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
-Uninstall: アンインストール
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
-Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
-Installed: インストール済み
-Install: インストール
 Zip file from PC: PCからZipファイルをアップロード
 Public GitHub repository: GitHubパブリックレポジトリ
-Publish your plugin in the Marketplace: マーケットプレイスでプラグインを公開する
+Installed Plugins: ''
+Uninstall: アンインストール
+Installed: インストール済み
+Install: インストール
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
+Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
+No description.: ''
 Import GitHub repository: GitHubレポジトリからインポート
 Continue: 続ける
 'Repository url:': 'レポジトリURL:'
@@ -333,6 +317,8 @@ Block was successfully moved.: ブロックの移動に成功しました。
 Successfully updated the layer!: ''
 Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed the layer!: ''
+Failed to update the custom property schema.: ''
+Successfully updated the custom property schema!: ''
 Failed to add layer style.: ''
 Successfully added a new layer style!: ''
 Failed to update the layerStyle.: レイヤースタイルのアップデートに失敗しました。

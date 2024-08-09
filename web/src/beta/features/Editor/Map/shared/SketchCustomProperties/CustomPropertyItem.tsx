@@ -4,8 +4,8 @@ import { Button, Selector, TextInput, Icon } from "@reearth/beta/lib/reearth-ui"
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { dataTypes } from "..";
-import { CustomPropertyItemProps } from "../type";
+import { dataTypes } from "../../SketchLayerCreator";
+import { CustomPropertyItemProps } from "../../SketchLayerCreator/type";
 
 const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
   customPropertyItem,

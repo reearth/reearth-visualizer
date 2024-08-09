@@ -7,39 +7,41 @@ export type ModalPanelProps = {
   title?: string;
   children: ReactNode;
   actions?: ReactNode;
+  layout?: "common";
   onCancel?: () => void;
-  isHeader?: boolean;
-  darkGrayBgColor?: boolean;
-  showBorder?: boolean;
+  appearance?: "simple" | "normal";
 };
 
 export const ModalPanel: FC<ModalPanelProps> = ({
   title,
   children,
   actions,
+  layout,
   onCancel,
-  isHeader,
-  darkGrayBgColor = false,
-  showBorder = true,
+  appearance = "normal",
 }) => {
   return (
-    <Wrapper darkGrayBgColor={darkGrayBgColor}>
-      {isHeader && (
+    <Wrapper>
+      {appearance !== "simple" && (
         <HeaderWrapper>
           <Title>{title}</Title>
           <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
         </HeaderWrapper>
       )}
-      <Content>{children}</Content>
-      {actions && <ActionWrapper showBorder={showBorder}>{actions}</ActionWrapper>}
+      {layout === "common" ? (
+        <CommonLayout>{children}</CommonLayout>
+      ) : (
+        <Content>{children}</Content>
+      )}
+      {actions && <ActionWrapper showBorder={appearance !== "simple"}>{actions}</ActionWrapper>}
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")<{ darkGrayBgColor: boolean }>(({ theme, darkGrayBgColor }) => ({
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  background: darkGrayBgColor ? theme.bg[1] : theme.bg.transparentBlack,
+  background: theme.bg[1],
   borderRadius: theme.radius.large,
 }));
 
@@ -64,7 +66,6 @@ const Title = styled("div")(() => ({
 
 const Content = styled("div")(() => ({
   alignSelf: "stretch",
-  userSelect: "none",
 }));
 
 const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorder }) => ({
@@ -79,4 +80,11 @@ const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorde
   gap: theme.spacing.normal,
 }));
 
-export default ModalPanel;
+const CommonLayout = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+  padding: theme.spacing.large,
+  background: theme.bg[1],
+}));

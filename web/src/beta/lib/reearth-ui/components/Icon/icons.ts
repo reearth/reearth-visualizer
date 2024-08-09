@@ -63,6 +63,7 @@ import If from "./Icons/If.svg?react";
 import Image from "./Icons/Image.svg?react";
 import ImageFilled from "./Icons/ImageFilled.svg?react";
 import ImageSquare from "./Icons/ImageSquare.svg?react";
+import Install from "./Icons/Install.svg?react";
 import LayerFilled from "./Icons/LayerFilled.svg?react";
 import Layers from "./Icons/Layers.svg?react";
 import LightBulb from "./Icons/LightBult.svg?react";
@@ -88,6 +89,7 @@ import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
 import Play from "./Icons/Play.svg?react";
+import Plugin from "./Icons/plugin.svg?react";
 import PluginInstall from "./Icons/PluginInstall.svg?react";
 import PluginUpdate from "./Icons/PluginUpdate.svg?react";
 import Plus from "./Icons/Plus.svg?react";
@@ -95,18 +97,21 @@ import Points from "./Icons/Points.svg?react";
 import Polygon from "./Icons/Polygon.svg?react";
 import Polygone from "./Icons/Polygone.svg?react";
 import Polyline from "./Icons/Polyline.svg?react";
+import PublicGitHubRepo from "./Icons/PublicGitHubRepo.svg?react";
 import PuzzlePiece from "./Icons/PuzzlePiece.svg?react";
 import Question from "./Icons/Question.svg?react";
 import Return from "./Icons/Return.svg?react";
 import Rows from "./Icons/Rows.svg?react";
 import Setting from "./Icons/Setting.svg?react";
 import SettingFilled from "./Icons/SettingFilled.svg?react";
+import Sidebar from "./Icons/Sidebar.svg?react";
 import Square from "./Icons/Square.svg?react";
 import SquareFilled from "./Icons/SquareFilled.svg?react";
 import Star from "./Icons/Star.svg?react";
 import StarFilled from "./Icons/StarFilled.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
+import Switch from "./Icons/switch.svg?react";
 import Table from "./Icons/Table.svg?react";
 import Tag from "./Icons/Tag.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
@@ -119,12 +124,12 @@ import TextBolder from "./Icons/TextBolder.svg?react";
 import TextItalic from "./Icons/TextItalic.svg?react";
 import TextT from "./Icons/TextT.svg?react";
 import TextUnderline from "./Icons/TextUnderline.svg?react";
-import Time from "./Icons/Time.svg?react";
 import TimeOrder from "./Icons/TimeOrder.svg?react";
 import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
 import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
+import UploadZipPlugin from "./Icons/UploadZipPlugin.svg?react";
 import User from "./Icons/User.svg?react";
 import Users from "./Icons/Users.svg?react";
 import UsersFour from "./Icons/UsersFour.svg?react";
@@ -197,6 +202,7 @@ export default {
   image: Image,
   imageFilled: ImageFilled,
   imageSquare: ImageSquare,
+  install: Install,
   layers: Layers,
   layerFilled: LayerFilled,
   lightBulb: LightBulb,
@@ -221,6 +227,7 @@ export default {
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,
   play: Play,
+  plugin: Plugin,
   plus: Plus,
   pluginInstall: PluginInstall,
   pluginUpdate: PluginUpdate,
@@ -228,12 +235,14 @@ export default {
   polygon: Polygon,
   polygone: Polygone,
   polyline: Polyline,
+  publicGitHubRepo: PublicGitHubRepo,
   puzzlePiece: PuzzlePiece,
   question: Question,
   return: Return,
   rows: Rows,
   setting: Setting,
   settingFilled: SettingFilled,
+  sidebar: Sidebar,
   sToL: SToL,
   lToS: LToS,
   star: Star,
@@ -241,6 +250,7 @@ export default {
   square: Square,
   squareFilled: SquareFilled,
   swiper: Swiper,
+  switch: Switch,
   table: Table,
   tag: Tag,
   terrian: Terrian,
@@ -253,12 +263,12 @@ export default {
   textItalic: TextItalic,
   textT: TextT,
   textUnderline: TextUnderline,
-  time: Time,
   timeOrder: TimeOrder,
   timeOrderInverse: TimeOrderInverse,
   trash: Trash,
   triangle: Triangle,
   uploadSimple: UploadSimple,
+  uploadZipPlugin: UploadZipPlugin,
   user: User,
   users: Users,
   usersFour: UsersFour,

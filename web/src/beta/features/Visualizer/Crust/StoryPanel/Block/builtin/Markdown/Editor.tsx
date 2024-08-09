@@ -1,8 +1,8 @@
 import { debounce } from "lodash-es";
 import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState, FC } from "react";
 
-import Markdown from "@reearth/beta/components/Markdown";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import { Markdown } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
