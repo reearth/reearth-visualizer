@@ -55,23 +55,25 @@ export default () => {
   }, []);
 
   const useProjectsQuery = useCallback((input: GetProjectsQueryVariables) => {
-    const { data, ...rest } = useQuery(GET_PROJECTS, {
+    const { data, networkStatus, ...rest } = useQuery(GET_PROJECTS, {
       variables: input,
       skip: !input.teamId,
       notifyOnNetworkStatusChange: true,
     });
 
-    const projects = useMemo(() => data?.projects, [data?.projects]);
+    const projects = useMemo(() => data?.projects?.edges.map(e => e.node), [data?.projects]);
+
     const hasMoreProjects = useMemo(
       () => data?.projects.pageInfo?.hasNextPage || data?.projects.pageInfo?.hasPreviousPage,
       [data?.projects.pageInfo?.hasNextPage, data?.projects.pageInfo?.hasPreviousPage],
     );
+    const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
     const endCursor = useMemo(
       () => data?.projects.pageInfo?.endCursor,
       [data?.projects.pageInfo?.endCursor],
     );
 
-    return { projects, hasMoreProjects, endCursor, ...rest };
+    return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
