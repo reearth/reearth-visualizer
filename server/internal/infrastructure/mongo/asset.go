@@ -133,7 +133,8 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 	var usort *usecasex.Sort
 	if sort != nil {
 		usort = &usecasex.Sort{
-			Key: string(*sort),
+			Key:      sort.Key,
+			Reverted: sort.Desc,
 		}
 	}
 
