@@ -43,7 +43,7 @@ const Content: FC<Props> = ({
   onPropertyItemMove,
 }) => {
   const t = useT();
-  const context = useContext(BlockContext);
+  const blockContext = useContext(BlockContext);
   const [selected, setSelected] = useState<string>(linkButtons[0]?.id);
 
   const handleClick = useCallback(
@@ -52,8 +52,12 @@ const Content: FC<Props> = ({
         setSelected(itemId);
         return;
       }
+      const item = linkButtons.find(i => i.id === itemId);
+
+      if (!item?.url?.value) return;
+      window.open(item.url.value, "_blank");
     },
-    [isEditable],
+    [isEditable, linkButtons],
   );
 
   return (
@@ -75,7 +79,7 @@ const Content: FC<Props> = ({
           );
         })}
       </ButtonWrapper>
-      {context?.editMode && (
+      {blockContext?.editMode && (
         <LinkEditor
           items={linkButtons}
           propertyId={propertyId}
@@ -105,12 +109,15 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   maxWidth: "400px",
 }));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string }>(({ color, bgColor }) => ({
-  color: color || color,
-  background: bgColor || bgColor,
-  borderColor: color || color,
-  ["&:hover"]: {
-    color: bgColor || bgColor,
-    background: color ? color : "inherit",
-  },
-}));
+const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
+  ({ color, bgColor, userSelected, theme }) => ({
+    color: userSelected ? bgColor ?? theme.content.strong : color,
+    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
+    borderColor: color,
+
+    ":hover": {
+      color: bgColor,
+      backgroundColor: color ?? theme.primary.main,
+    },
+  }),
+);

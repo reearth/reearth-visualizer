@@ -112,12 +112,15 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   maxWidth: "400px",
 }));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string }>(({ color, bgColor }) => ({
-  color: color || color,
-  background: bgColor || bgColor,
-  borderColor: color || color,
-  ["&:hover"]: {
-    color: bgColor || bgColor,
-    background: color ? color : "inherit",
-  },
-}));
+const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
+  ({ color, bgColor, userSelected, theme }) => ({
+    color: userSelected ? bgColor ?? theme.content.strong : color,
+    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
+    borderColor: color,
+
+    ":hover": {
+      color: bgColor,
+      backgroundColor: color ?? theme.primary.main,
+    },
+  }),
+);
