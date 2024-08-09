@@ -47,11 +47,6 @@ enum ProjectSortField {
   NAME
 }
 
-enum SortDirection {
-  ASC
-  DESC
-}
-
 # InputType
 
 input CreateProjectInput {
@@ -127,7 +122,7 @@ type ProjectEdge {
 }
 
 extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor, keyword: String, sort: ProjectSort): ProjectConnection!
+  projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
 }
 

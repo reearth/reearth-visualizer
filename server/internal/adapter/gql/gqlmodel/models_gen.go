@@ -240,6 +240,11 @@ type AssetEdge struct {
 	Node   *Asset          `json:"node,omitempty"`
 }
 
+type AssetSort struct {
+	Field     AssetSortField `json:"field"`
+	Direction SortDirection  `json:"direction"`
+}
+
 type AttachTagItemToGroupInput struct {
 	ItemID  ID `json:"itemID"`
 	GroupID ID `json:"groupID"`
@@ -2061,46 +2066,46 @@ type WidgetZone struct {
 	Right  *WidgetSection `json:"right,omitempty"`
 }
 
-type AssetSortType string
+type AssetSortField string
 
 const (
-	AssetSortTypeDate AssetSortType = "DATE"
-	AssetSortTypeSize AssetSortType = "SIZE"
-	AssetSortTypeName AssetSortType = "NAME"
+	AssetSortFieldDate AssetSortField = "DATE"
+	AssetSortFieldSize AssetSortField = "SIZE"
+	AssetSortFieldName AssetSortField = "NAME"
 )
 
-var AllAssetSortType = []AssetSortType{
-	AssetSortTypeDate,
-	AssetSortTypeSize,
-	AssetSortTypeName,
+var AllAssetSortField = []AssetSortField{
+	AssetSortFieldDate,
+	AssetSortFieldSize,
+	AssetSortFieldName,
 }
 
-func (e AssetSortType) IsValid() bool {
+func (e AssetSortField) IsValid() bool {
 	switch e {
-	case AssetSortTypeDate, AssetSortTypeSize, AssetSortTypeName:
+	case AssetSortFieldDate, AssetSortFieldSize, AssetSortFieldName:
 		return true
 	}
 	return false
 }
 
-func (e AssetSortType) String() string {
+func (e AssetSortField) String() string {
 	return string(e)
 }
 
-func (e *AssetSortType) UnmarshalGQL(v interface{}) error {
+func (e *AssetSortField) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = AssetSortType(str)
+	*e = AssetSortField(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AssetSortType", str)
+		return fmt.Errorf("%s is not a valid AssetSortField", str)
 	}
 	return nil
 }
 
-func (e AssetSortType) MarshalGQL(w io.Writer) {
+func (e AssetSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
