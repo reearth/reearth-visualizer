@@ -42,4 +42,5 @@ export type Workspace = {
   members?: Member[];
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
+  personal?: boolean;
 };
