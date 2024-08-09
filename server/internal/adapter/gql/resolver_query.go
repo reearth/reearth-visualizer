@@ -236,7 +236,7 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
-func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor, keyword *string, sortType *gqlmodel.ProjectSortType) (*gqlmodel.ProjectConnection, error) {
+func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), &gqlmodel.Pagination{
 		First:  first,
 		Last:   last,

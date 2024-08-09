@@ -171,24 +171,20 @@ func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bo
 }
 
 func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
-	var usort *usecasex.Sort
-	if sort != nil {
-		switch *sort {
-		case project.SortTypeName:
-			usort = &usecasex.Sort{Key: "name", Reverted: false}
-		case project.SortTypeID:
-			usort = &usecasex.Sort{Key: "createdAt", Reverted: false}
-		case project.SortTypeUpdatedAt:
-			usort = &usecasex.Sort{Key: "updatedAt", Reverted: true}
-		}
-	}
+    var usort *usecasex.Sort
+    if sort != nil {
+        usort = &usecasex.Sort{
+            Key:      sort.Key,
+            Reverted: sort.Desc,
+        }
+    }
 
-	c := mongodoc.NewProjectConsumer(r.f.Readable)
-	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
-	if err != nil {
-		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
-	}
-	return c.Result, pageInfo, nil
+    c := mongodoc.NewProjectConsumer(r.f.Readable)
+    pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
+    if err != nil {
+        return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
+    }
+    return c.Result, pageInfo, nil
 }
 
 func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Project {
