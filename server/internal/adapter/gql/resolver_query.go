@@ -13,7 +13,7 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort,) (*gqlmodel.AssetConnection, error) {
+func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
 	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
 }
 

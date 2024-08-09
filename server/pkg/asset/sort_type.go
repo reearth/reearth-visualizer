@@ -6,7 +6,7 @@ type SortType struct {
 }
 
 var (
-	SortTypeID        = SortType{Key: "id"}
+	SortTypeID   = SortType{Key: "id"}
 	SortTypeSize = SortType{Key: "size"}
-	SortTypeName      = SortType{Key: "name"}
+	SortTypeName = SortType{Key: "name"}
 )
