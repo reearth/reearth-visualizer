@@ -27,3 +27,6 @@ export const GIS_FILE_TYPE_ACCEPT_STRING = "." + GIS_FILE_TYPES.join(",");
 
 export const GENERAL_FILE_TYPE_ACCEPT_STRING =
   "." + [...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].join(",.");
+
+export const IMAGE_TYPES = ["image" as const];
+export const FILE_TYPES = ["file" as const];

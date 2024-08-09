@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import Text from "@reearth/beta/components/Text";
+import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { Extension } from "@reearth/services/config/extensions";
 import { ScenePlugin } from "@reearth/services/gql";
 import { useT, useLang } from "@reearth/services/i18n";
@@ -12,12 +12,6 @@ import useHooks from "./hooks";
 import PluginInstall from "./PluginInstall";
 
 export type PluginTabs = "Marketplace" | "Public" | "Personal";
-
-export type PluginActions =
-  | "install-zip"
-  | "install-public-repo"
-  | "install-private-repo"
-  | "market-publish";
 
 type Props = {
   sceneId?: string;
@@ -40,17 +34,6 @@ const PluginSettings: React.FC<Props> = ({
   const t = useT();
   const currentLang = useLang();
 
-  const tabs: { id: PluginTabs; label: string }[] = useMemo(
-    () => [
-      { id: "Marketplace", label: t("Plugin Marketplace") },
-      { id: "Public", label: t("Public Installed") },
-      { id: "Personal", label: t("Personal Installed") },
-    ],
-    [t],
-  );
-
-  const [currentTab, setCurrentTab] = useState<PluginTabs>("Marketplace");
-
   const {
     personalPlugins,
     marketplacePlugins,
@@ -60,66 +43,80 @@ const PluginSettings: React.FC<Props> = ({
     handleUninstallPlugin,
   } = useHooks({ sceneId, plugins });
 
+  const tabItems: TabItem[] = useMemo(
+    () => [
+      {
+        id: "Marketplace",
+        name: t("Plugin Marketplace"),
+        children: (
+          <>
+            {accessToken &&
+              extensions?.library?.map(ext => (
+                <ext.component
+                  key={ext.id}
+                  theme={"dark"}
+                  lang={currentLang}
+                  accessToken={accessToken}
+                  installedPlugins={marketplacePlugins}
+                  onInstall={handleInstallPluginByMarketplace}
+                  onUninstall={handleUninstallPlugin}
+                />
+              ))}
+          </>
+        ),
+      },
+      {
+        id: "Public",
+        name: t("Public Installed"),
+        children: (
+          <>
+            {accessToken &&
+              extensions?.installed?.map(ext => (
+                <ext.component
+                  key={ext.id}
+                  theme={"dark"}
+                  lang={currentLang}
+                  accessToken={accessToken}
+                  installedPlugins={marketplacePlugins}
+                  onInstall={handleInstallPluginByMarketplace}
+                  onUninstall={handleUninstallPlugin}
+                />
+              ))}
+          </>
+        ),
+      },
+      {
+        id: "Personal",
+        name: t("Personal Installed"),
+        children: (
+          <PluginInstall
+            installedPlugins={personalPlugins}
+            installFromPublicRepo={handleInstallPluginFromPublicRepo}
+            installByUploadingZipFile={handleInstallPluginFromFile}
+            uninstallPlugin={handleUninstallPlugin}
+          />
+        ),
+      },
+    ],
+    [
+      accessToken,
+      extensions,
+      currentLang,
+      marketplacePlugins,
+      personalPlugins,
+      t,
+      handleInstallPluginByMarketplace,
+      handleInstallPluginFromPublicRepo,
+      handleInstallPluginFromFile,
+      handleUninstallPlugin,
+    ],
+  );
+
   return (
     <InnerPage wide transparent>
       {!isArchived ? (
         <Wrapper>
-          <Tabs>
-            {tabs.map(tab => (
-              <Tab
-                key={tab.id}
-                size="body"
-                active={tab.id === currentTab}
-                onClick={() => {
-                  setCurrentTab(tab.id);
-                }}>
-                {tab.label}
-              </Tab>
-            ))}
-          </Tabs>
-
-          {currentTab === "Marketplace" && (
-            <>
-              {accessToken &&
-                extensions?.library?.map(ext => (
-                  <ext.component
-                    key={ext.id}
-                    theme={"dark"}
-                    lang={currentLang}
-                    accessToken={accessToken}
-                    installedPlugins={marketplacePlugins}
-                    onInstall={handleInstallPluginByMarketplace}
-                    onUninstall={handleUninstallPlugin}
-                  />
-                ))}
-            </>
-          )}
-
-          {currentTab === "Public" && (
-            <>
-              {accessToken &&
-                extensions?.installed?.map(ext => (
-                  <ext.component
-                    key={ext.id}
-                    theme={"dark"}
-                    lang={currentLang}
-                    accessToken={accessToken}
-                    installedPlugins={marketplacePlugins}
-                    onInstall={handleInstallPluginByMarketplace}
-                    onUninstall={handleUninstallPlugin}
-                  />
-                ))}
-            </>
-          )}
-
-          {currentTab === "Personal" && (
-            <PluginInstall
-              installedPlugins={personalPlugins}
-              installFromPublicRepo={handleInstallPluginFromPublicRepo}
-              installByUploadingZipFile={handleInstallPluginFromFile}
-              uninstallPlugin={handleUninstallPlugin}
-            />
-          )}
+          <Tabs tabStyle="separated" tabs={tabItems} background="transparent" />
         </Wrapper>
       ) : (
         <ArchivedSettingNotice />
@@ -130,24 +127,7 @@ const PluginSettings: React.FC<Props> = ({
 
 export default PluginSettings;
 
-const Wrapper = styled.div`
-  width: 100%;
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-
-const Tabs = styled.div`
-  display: flex;
-  gap: 4px;
-`;
-
-const Tab = styled(Text)<{ active?: boolean }>`
-  display: flex;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  background: ${({ active, theme }) => (active ? theme.bg[2] : "transparent")};
-  color: ${({ active, theme }) => (active ? theme.content.main : theme.bg[2])};
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  width: "100%",
+  padding: `${theme.spacing.largest}px 0`,
+}));

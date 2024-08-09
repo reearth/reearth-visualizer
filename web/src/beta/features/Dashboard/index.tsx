@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -21,10 +22,10 @@ export const topTabItems: Omit<TabItems[], "active"> = [
 ];
 
 export const bottomTabsItems: Omit<TabItems[], "active"> = [
-  { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", path: " " },
-  { id: "documentary", text: "Documentary", icon: "book", path: " " },
-  { id: "community", text: "Community", icon: "usersFour", path: " " },
-  { id: "help", text: "Help & Support", icon: "question", path: " " },
+  { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", disabled: true },
+  { id: "documentary", text: "Documentary", icon: "book", disabled: true },
+  { id: "community", text: "Community", icon: "usersFour", disabled: true },
+  { id: "help", text: "Help & Support", icon: "question", disabled: true },
 ];
 
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
@@ -102,7 +103,7 @@ const LeftSideWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   display: "flex",
   flexDirection: "column",
-  width: "213px",
+  width: DEFAULT_SIDEBAR_WIDTH,
   gap: theme.spacing.super,
   boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)",
 }));

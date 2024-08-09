@@ -5,6 +5,14 @@ import { LayerAddProps } from "../../hooks/useLayers";
 export type CustomPropertyProp = {
   [key: string]: string;
 };
+export type SketchLayerDataType =
+  | "Text"
+  | "TextArea"
+  | "URL"
+  | "Asset"
+  | "Float"
+  | "Int"
+  | "Boolean";
 
 export type PropertyListProp = {
   id: string;
@@ -22,7 +30,7 @@ export type CustomPropertyProps = {
 export type SketchLayerProps = {
   sceneId: string;
   layerStyles?: LayerStyle[];
-  onClose: () => void;
+  onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
 };
 
@@ -34,5 +42,5 @@ export type CustomPropertyItemProps = {
   onTypeChange?: (v?: string | string[]) => void;
   onBlur?: (v?: string) => void;
   onDoubleClick?: (field: string) => void;
-  onCustomPropertyDelete: () => void;
+  onCustomPropertyDelete?: () => void;
 };
