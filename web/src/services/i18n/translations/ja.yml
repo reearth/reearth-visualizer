@@ -61,7 +61,9 @@ Find Member: ''
 No Member match your search.: ''
 Last Created: ''
 First Created: ''
+Last Updated: ''
 New Project: 新規プロジェクト
+Search Result for: ''
 Project Name: プロジェクト名
 Last modified: ''
 Created time: ''
@@ -75,6 +77,8 @@ Write down your content: ''
 Cover Image: ''
 Re:Earth Visualizer: ''
 Switch WorkSpace: ''
+Personal: ''
+Team Workspace: ''
 Log Out: ''
 Page: ページ
 From Assets: アセットから追加
@@ -195,8 +199,6 @@ No layerStyle match your search.: 検索からレイヤースタイルを見つ�
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルをまだ作成していません。「レイヤースタイル」パネルの＋ボタンをクリックし作成してください。
 Project settings: プロジェクト設定
 Plugin: プラグイン
-Personal: ''
-Team Workspace: ''
 Unknown: 不明
 Switch workspace: ''
 Log out: ログアウト
