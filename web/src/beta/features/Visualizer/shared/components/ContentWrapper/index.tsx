@@ -31,38 +31,32 @@ const ContentWrapper: ForwardRefRenderFunction<HTMLDivElement, Props> = (
 
 export default forwardRef(ContentWrapper);
 
-const Wrapper = styled.div<{
+const Wrapper = styled("div")<{
   padding: Spacing;
   gap?: number;
   isEditable?: boolean;
   minPaddingInEditor: Spacing;
   minGapInEditor: number;
-}>`
-  display: flex;
-  flex-direction: column;
-  color: ${({ theme }) => theme.content.weaker};
-  ${({ gap, isEditable, minGapInEditor }) =>
-    gap && `gap: ${isEditable && gap < minGapInEditor ? minGapInEditor : gap}px;`}
-
-  ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-top: ${
-      isEditable && padding.top < minPaddingInEditor.top ? minPaddingInEditor.top : padding.top
-    }px;`}
-    ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-bottom: ${
-      isEditable && padding.bottom < minPaddingInEditor.bottom
-        ? minPaddingInEditor.bottom
-        : padding.bottom
-    }px;`}
-    ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-left: ${
-      isEditable && padding.left < minPaddingInEditor.left ? minPaddingInEditor.left : padding.left
-    }px;`}
-    ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-right: ${
-      isEditable && padding.right < minPaddingInEditor.right
-        ? minPaddingInEditor.right
-        : padding.right
-    }px;`}
-    box-sizing: border-box;
-`;
+}>(({ padding, gap, isEditable, minGapInEditor, minPaddingInEditor, theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  color: theme.content.weaker,
+  gap: gap !== undefined && isEditable && gap < minGapInEditor ? `${minGapInEditor}px` : `${gap}px`,
+  paddingTop:
+    isEditable && padding.top < minPaddingInEditor.top
+      ? `${minPaddingInEditor.top}px`
+      : `${padding.top}px`,
+  paddingBottom:
+    isEditable && padding.bottom < minPaddingInEditor.bottom
+      ? `${minPaddingInEditor.bottom}px`
+      : `${padding.bottom}px`,
+  paddingLeft:
+    isEditable && padding.left < minPaddingInEditor.left
+      ? `${minPaddingInEditor.left}px`
+      : `${padding.left}px`,
+  paddingRight:
+    isEditable && padding.right < minPaddingInEditor.right
+      ? `${minPaddingInEditor.right}px`
+      : `${padding.right}px`,
+  boxSizing: "border-box",
+}));

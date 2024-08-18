@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createProject(e *httpexpect.Expect) string {
+func createProject(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
@@ -28,7 +28,7 @@ func createProject(e *httpexpect.Expect) string {
 			}
 		}`,
 		Variables: map[string]any{
-			"name":        "test",
+			"name":        name,
 			"description": "abc",
 			"imageUrl":    "",
 			"teamId":      wID.String(),
@@ -749,7 +749,7 @@ func TestStoryCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -795,7 +795,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -881,6 +881,43 @@ func TestStoryPageCRUD(t *testing.T) {
 	pagesRes.Path("$[:].title").Equal([]string{"test 1"})
 }
 
+func TestStoryPageLayersCRUD(t *testing.T) {
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	pID := createProject(e, "test")
+
+	_, _, sID := createScene(e, pID)
+
+	// _, _, storyID := createStory(e, sID, "test", 0)
+
+	// _, _, pageID := createPage(e, sID, storyID, "test", true)
+
+	_, res := fetchSceneForStories(e, sID)
+	res.Object().
+		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
+
+	// rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
+
+	// _, _, layerID := addLayerItemFromPrimitive(e, rootLayerID)
+
+	// _, _, _ = addLayerToPage(e, sID, storyID, pageID, layerID, nil)
+
+	_, res = fetchSceneForStories(e, sID)
+	// res.Object().
+	// Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerID})
+
+	// _, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
+
+	// _, res = fetchSceneForStories(e, sID)
+	// res.Object().
+	// 	Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
+}
+
 func TestStoryPageBlocksCRUD(t *testing.T) {
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
@@ -889,7 +926,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -937,7 +974,7 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -974,7 +1011,7 @@ func TestStoryPublishing(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 

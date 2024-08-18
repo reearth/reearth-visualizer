@@ -3,6 +3,7 @@ import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } f
 import type { MapRef, ComputedFeature, ComputedLayer, LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 type LayerProps = {
@@ -57,8 +58,13 @@ export type SelectedLayer = {
 
 export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerProps) {
   const t = useT();
-  const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
-    useLayersFetcher();
+  const {
+    useGetLayersQuery,
+    useAddNLSLayerSimple,
+    useRemoveNLSLayer,
+    useUpdateNLSLayer,
+    useUpdateCustomProperties,
+  } = useLayersFetcher();
 
   const { nlsLayers: originNlsLayers } = useGetLayersQuery({ sceneId });
 
@@ -84,6 +90,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   );
 
   const [selectedLayer, setSelectedLayer] = useState<SelectedLayer | undefined>();
+  const [layerId, setLayerId] = useState<string | undefined>();
 
   const handleLayerSelect = useCallback(
     (props: LayerSelectProps) => {
@@ -229,10 +236,26 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     });
   }, []);
 
+  const handleCustomPropertySchemaClick = useCallback((id?: string) => {
+    if (!id) return;
+    setLayerId(id);
+  }, []);
+
+  const handleCustomPropertySchemaUpdate = useCallback(
+    async (inp: UpdateCustomPropertySchemaInput) => {
+      await useUpdateCustomProperties({
+        layerId: inp.layerId,
+        schema: inp.schema,
+      });
+    },
+    [useUpdateCustomProperties],
+  );
+
   return {
     nlsLayers,
     selectedLayer,
     ignoreCoreLayerUnselect,
+    layerId,
     handleLayerSelect,
     handleCoreLayerSelect,
     handleLayerAdd,
@@ -241,5 +264,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
     handleLayerMove,
+    handleCustomPropertySchemaClick,
+    handleCustomPropertySchemaUpdate,
   };
 }

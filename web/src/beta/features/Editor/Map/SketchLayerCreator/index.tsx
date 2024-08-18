@@ -4,10 +4,15 @@ import { Button, Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reea
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import CustomedProperties from "./CustomedProperties";
+import SketchCustomProperties from "../shared/SketchCustomProperties";
+
 import General from "./General";
-import { CustomPropertyProp, PropertyListProp, SketchLayerProps } from "./type";
-import { SketchLayerDataType } from "./types";
+import {
+  CustomPropertyProp,
+  PropertyListProp,
+  SketchLayerProps,
+  SketchLayerDataType,
+} from "./type";
 
 export const dataTypes: SketchLayerDataType[] = [
   "Text",
@@ -81,7 +86,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({ sceneId, layerStyles, onClos
       id: "customProperties",
       name: t("Custom Properties"),
       children: (
-        <CustomedProperties
+        <SketchCustomProperties
           customProperties={customProperties}
           propertiesList={propertiesList}
           setCustomProperties={setCustomProperties}

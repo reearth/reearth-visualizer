@@ -107,11 +107,11 @@ const Wrapper = styled("div")<{
     backgroundColor: theme.bg[1],
   }),
   ...(highlight && {
-    backgroundColor: theme.primary.weak,
+    backgroundColor: theme.select.main,
   }),
   ["&:active"]: {
     backgroundColor: highlight
-      ? theme.primary.main
+      ? theme.select.strong
       : hovered
       ? theme.relative.light
       : "transparent",
@@ -150,8 +150,9 @@ const OptionsWrapper = styled("div")(() => ({
   flexShrink: 0,
 }));
 
-const IconWrapper = styled("div")(() => ({
+const IconWrapper = styled("div")(({ theme }) => ({
   height: 12,
   flexShrink: 0,
   fontSize: 0,
+  color: theme.content.main,
 }));

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { FC, useCallback, useContext, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
@@ -34,7 +34,7 @@ type Props = {
   ) => Promise<void>;
 };
 
-const Content: React.FC<Props> = ({
+const Content: FC<Props> = ({
   propertyId,
   cameraButtons,
   isEditable,
@@ -68,6 +68,7 @@ const Content: React.FC<Props> = ({
       <ButtonWrapper>
         {cameraButtons.map(({ title, color, bgColor, id }) => {
           return (
+            //The button will be updated in future
             <StyledButton
               key={id}
               color={color?.value}
@@ -99,25 +100,27 @@ const Content: React.FC<Props> = ({
 
 export default Content;
 
-const Wrapper = styled.div`
-  width: 100%;
-`;
+const Wrapper = styled("div")(() => ({
+  width: "100%",
+}));
 
-const ButtonWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  gap: 4px;
-  max-width: 400px;
-  flex-wrap: wrap;
-`;
+const ButtonWrapper = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  flexWrap: "wrap",
+  gap: theme.spacing.smallest,
+  maxWidth: "400px",
+}));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string }>`
-  color: ${({ color }) => color};
-  background-color: ${({ bgColor }) => bgColor};
-  border-color: ${({ color }) => color};
+const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
+  ({ color, bgColor, userSelected, theme }) => ({
+    color: userSelected ? bgColor ?? theme.content.strong : color,
+    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
+    borderColor: color,
 
-  &:hover {
-    color: ${({ bgColor }) => bgColor};
-    background-color: ${({ color }) => color};
-  }
-`;
+    ":hover": {
+      color: bgColor,
+      backgroundColor: color ?? theme.primary.main,
+    },
+  }),
+);

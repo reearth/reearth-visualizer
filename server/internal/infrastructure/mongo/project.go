@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -174,12 +175,22 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 	var usort *usecasex.Sort
 	if sort != nil {
 		usort = &usecasex.Sort{
-			Key: string(*sort),
+			Key:      sort.Key,
+			Reverted: sort.Desc,
 		}
 	}
 
+	collation := options.Collation{
+		Locale:    "en",
+		Strength:  3,
+		CaseLevel: true,
+		Alternate: "shifted",
+	}
+
+	findOptions := options.Find().SetCollation(&collation)
+
 	c := mongodoc.NewProjectConsumer(r.f.Readable)
-	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c, findOptions)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}

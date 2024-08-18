@@ -139,6 +139,10 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		return nil, err
+	}
+
 	operator.AddNewScene(ws, sceneID)
 	tx.Commit()
 	return res, err
@@ -238,6 +242,11 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return s, widget, nil
 }
@@ -322,6 +331,11 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		return nil, nil, err2
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return scene, widget, nil
 }
@@ -374,6 +388,11 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return s, nil
 }
@@ -417,6 +436,11 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	err2 = i.sceneRepo.Save(ctx, scene)
 	if err2 != nil {
 		return nil, err2
+	}
+
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), i.projectRepo)
+	if err != nil {
+		return nil, err
 	}
 
 	tx.Commit()
@@ -465,6 +489,11 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return s, cluster, nil
 }
@@ -505,6 +534,11 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return s, cluster, nil
 }
@@ -533,6 +567,11 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 	s.Clusters().Remove(clusterID)
 
 	if err := i.sceneRepo.Save(ctx, s); err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
 		return nil, err
 	}
 

@@ -1,31 +1,126 @@
 import { useCallback, useMemo, useState, MouseEvent, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
-import { Visualizer } from "@reearth/services/gql";
+import {
+  ProjectSortField,
+  PublishmentStatus,
+  SortDirection,
+  Visualizer,
+} from "@reearth/services/gql";
 
 import { Project } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
 
+const PROJECTS_PER_PAGE = 16;
+
+export type SortType = "date" | "date-reversed" | "name" | "name-reverse" | "date-updated";
+
 export default (workspaceId?: string) => {
   const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
   const navigate = useNavigate();
-  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
-  const [isStarred, setIsStarred] = useState<Record<string, boolean>>({});
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
 
-  const [viewState, setViewState] = useState(
-    localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
-      ? localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY)
-      : "grid",
+  const [searchTerm, setSearchTerm] = useState<string>();
+  const [sortValue, setSort] = useState<SortType>("date-updated");
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const { projects, loading, isRefetching, hasMoreProjects, endCursor, fetchMore } =
+    useProjectsQuery({
+      teamId: workspaceId || "",
+      pagination: {
+        first: pagination(sortValue).first,
+      },
+      sort: pagination(sortValue).sortBy,
+      keyword: searchTerm,
+    });
+
+  const filtedProjects = useMemo(() => {
+    return (projects ?? [])
+      .filter(project => project?.coreSupport === true)
+      .map<Project | undefined>(project =>
+        project
+          ? {
+              id: project.id,
+              description: project.description,
+              name: project.name,
+              imageUrl: project.imageUrl,
+              isArchived: project.isArchived,
+              status: toPublishmentStatus(project.publishmentStatus),
+              sceneId: project.scene?.id,
+              updatedAt: new Date(project.updatedAt),
+              createdAt: new Date(project.createdAt),
+              coreSupport: project.coreSupport,
+              starred: project.starred,
+            }
+          : undefined,
+      )
+      .filter((project): project is Project => !!project);
+  }, [projects]);
+
+  const isFetchingMore = useRef(false);
+
+  const handleGetMoreProjects = useCallback(async () => {
+    if (isFetchingMore.current) return;
+    if (hasMoreProjects) {
+      isFetchingMore.current = true;
+      await fetchMore({
+        variables: {
+          pagination: {
+            after: endCursor,
+            first: PROJECTS_PER_PAGE,
+          },
+        },
+      });
+      isFetchingMore.current = false;
+    }
+  }, [hasMoreProjects, fetchMore, endCursor]);
+
+  const isLoading = useMemo(() => {
+    return loading || isRefetching;
+  }, [isRefetching, loading]);
+
+  useEffect(() => {
+    if (wrapperRef.current && !isLoading && hasMoreProjects) {
+      handleGetMoreProjects();
+    }
+    autoFillPage(wrapperRef, handleGetMoreProjects);
+  }, [handleGetMoreProjects, projects, hasMoreProjects, isLoading]);
+
+  const handleProjectSortChange = useCallback(
+    (value?: string) => {
+      if (!value) return;
+      setSort((value as SortType) ?? sortValue);
+    },
+    [sortValue],
   );
-  const handleViewStateChange = useCallback((newView?: string) => {
-    if (!newView) return;
-    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
-    setViewState(newView);
+
+  // search
+  const handleSearch = useCallback((value?: string) => {
+    if (!value || value.length < 1) {
+      setSearchTerm?.(undefined);
+    } else {
+      setSearchTerm?.(value);
+    }
+  }, []);
+
+  // favourite projects
+  const favoriteProjects: Project[] = useMemo(
+    () => (filtedProjects ? filtedProjects.filter(project => !!project?.starred) : []),
+    [filtedProjects],
+  );
+
+  // project create
+  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
+
+  const showProjectCreator = useCallback(() => {
+    setProjectCreatorVisible(true);
+  }, []);
+  const closeProjectCreator = useCallback(() => {
+    setProjectCreatorVisible(false);
   }, []);
 
   const handleProjectCreate = useCallback(
@@ -43,81 +138,16 @@ export default (workspaceId?: string) => {
     [useCreateProject, workspaceId],
   );
 
+  // project update
   const handleProjectUpdate = useCallback(
     async (project: Project, projectId: string) => {
       await useUpdateProject({ projectId, ...project });
+      // if (sortBy) refetch();
     },
     [useUpdateProject],
   );
 
-  const {
-    projects: projectsData,
-    loading,
-    fetchMore,
-    networkStatus,
-  } = useProjectsQuery(workspaceId);
-
-  const projectNodes = projectsData?.edges.map(e => e.node);
-
-  const projects = useMemo(() => {
-    return (projectNodes ?? [])
-      .filter(project => project?.coreSupport === true)
-      .map<Project | undefined>(project =>
-        project
-          ? {
-              id: project.id,
-              description: project.description,
-              name: project.name,
-              imageUrl: project.imageUrl,
-              isArchived: project.isArchived,
-              sceneId: project.scene?.id,
-              updatedAt: new Date(project.updatedAt),
-              createdAt: new Date(project.createdAt),
-              coreSupport: project.coreSupport,
-            }
-          : undefined,
-      )
-      .filter((project): project is Project => !!project);
-  }, [projectNodes]);
-
-  const hasMoreProjects =
-    projectsData?.pageInfo?.hasNextPage || projectsData?.pageInfo?.hasPreviousPage;
-
-  const isRefetchingProjects = networkStatus === 3;
-
-  const handleGetMoreProjects = useCallback(() => {
-    if (hasMoreProjects) {
-      fetchMore({
-        variables: {
-          before: projectsData?.pageInfo?.endCursor,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return fetchMoreResult;
-        },
-      });
-    }
-  }, [hasMoreProjects, fetchMore, projectsData?.pageInfo?.endCursor]);
-
-  const handleProjectSelect = useCallback(
-    (e?: MouseEvent, projectId?: string) => {
-      e?.stopPropagation();
-      if (projectId) {
-        setSelectedProject(projects.find(project => project.id === projectId));
-      } else {
-        setSelectedProject(undefined);
-      }
-    },
-    [projects],
-  );
-
-  const showProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(true);
-  }, []);
-  const closeProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(false);
-  }, []);
-
+  // project open
   const handleProjectOpen = useCallback(
     (sceneId?: string) => {
       if (sceneId) {
@@ -127,32 +157,45 @@ export default (workspaceId?: string) => {
     [navigate],
   );
 
-  const handleProjectStarClick = useCallback((e: MouseEvent, projectId: string) => {
-    e.stopPropagation();
-    setIsStarred(prev => ({
-      ...prev,
-      [projectId]: !prev[projectId],
-    }));
+  // selection
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
+
+  const handleProjectSelect = useCallback(
+    (e?: MouseEvent, projectId?: string) => {
+      e?.stopPropagation();
+      if (projectId) {
+        setSelectedProject(filtedProjects.find(project => project.id === projectId));
+      } else {
+        setSelectedProject(undefined);
+      }
+    },
+    [filtedProjects],
+  );
+
+  // layout
+  const [layout, setLayout] = useState(
+    ["grid", "list"].includes(localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "")
+      ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
+      : "grid",
+  );
+
+  const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
+    if (!newView) return;
+    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
+    setLayout(newView);
   }, []);
 
-  const isLoading = useMemo(() => {
-    return loading ?? isRefetchingProjects;
-  }, [isRefetchingProjects, loading]);
-
-  useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreProjects)
-      autoFillPage(wrapperRef, handleGetMoreProjects);
-  }, [handleGetMoreProjects, hasMoreProjects, isLoading]);
-
   return {
-    projects,
+    filtedProjects,
     hasMoreProjects,
     isLoading,
     selectedProject,
-    isStarred,
     wrapperRef,
-    viewState,
+    layout,
     projectCreatorVisible,
+    favoriteProjects,
+    searchTerm,
+    sortValue,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,
@@ -160,8 +203,66 @@ export default (workspaceId?: string) => {
     handleProjectOpen,
     handleProjectCreate,
     handleProjectSelect,
-    handleProjectStarClick,
     handleScrollToBottom: onScrollToBottom,
-    handleViewStateChange,
+    handleLayoutChange,
+    handleProjectSortChange,
+    handleSearch,
   };
+};
+
+const toPublishmentStatus = (s: PublishmentStatus) => {
+  switch (s) {
+    case PublishmentStatus.Public:
+      return "published";
+    case PublishmentStatus.Limited:
+      return "limited";
+    default:
+      return "unpublished";
+  }
+};
+
+const pagination = (sort?: SortType) => {
+  let first, last;
+  let sortBy;
+  switch (sort) {
+    case "date":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Createdat,
+        direction: SortDirection.Desc,
+      };
+      break;
+    case "date-reversed":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Createdat,
+        direction: SortDirection.Asc,
+      };
+      break;
+    case "date-updated":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Updatedat,
+        direction: SortDirection.Desc,
+      };
+      break;
+    case "name":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Name,
+        direction: SortDirection.Asc,
+      };
+      break;
+    case "name-reverse":
+      first = PROJECTS_PER_PAGE;
+      sortBy = {
+        field: ProjectSortField.Name,
+        direction: SortDirection.Desc,
+      };
+      break;
+    default:
+      first = PROJECTS_PER_PAGE;
+  }
+
+  return { first, last, sortBy };
 };

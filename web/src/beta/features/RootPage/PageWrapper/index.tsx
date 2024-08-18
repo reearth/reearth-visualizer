@@ -30,7 +30,7 @@ const RootPage: React.FC<Props> = ({ loading }) => {
   );
 };
 
-const Wrapper = styled(Flex) <{ bg?: string }>`
+const Wrapper = styled(Flex)<{ bg?: string }>`
   height: 100%;
   background: ${({ bg }) =>
     bg || `linear-gradient(70deg, ${brandBlue} 10%, ${brandRed} 60%, ${brandBlue} 90%)`};

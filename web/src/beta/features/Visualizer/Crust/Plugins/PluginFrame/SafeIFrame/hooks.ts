@@ -146,8 +146,10 @@ export default function useHook({
           const st = win.getComputedStyle(html, "");
           horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
           verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
-          const width = html.offsetWidth + horizontalMargin;
-          const height = html.offsetHeight + verticalMargin;
+          const horizontalScrollbarHeight = window.innerHeight - document.documentElement.clientHeight;
+          const verticalScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+          const width = html.offsetWidth + horizontalMargin + verticalScrollbarWidth;
+          const height = html.offsetHeight + verticalMargin + horizontalScrollbarHeight;
           if(parent){
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: { width, height }

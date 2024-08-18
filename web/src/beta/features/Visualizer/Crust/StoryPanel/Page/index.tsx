@@ -1,10 +1,10 @@
-import { Fragment, MutableRefObject, ReactNode, useEffect } from "react";
+import { FC, Fragment, MutableRefObject, ReactNode, useEffect, useMemo } from "react";
 
-import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import ContentWrapper from "@reearth/beta/features/Visualizer/shared/components/ContentWrapper";
 import SelectableArea from "@reearth/beta/features/Visualizer/shared/components/SelectableArea";
 import { useElementOnScreen } from "@reearth/beta/features/Visualizer/shared/hooks/useElementOnScreen";
+import { DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
@@ -66,8 +66,9 @@ type Props = {
   ) => Promise<void>;
   renderBlock?: (block: BlockProps<StoryBlockType>) => ReactNode;
 };
+const PAGE_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-page-drag-handle";
 
-const StoryPanel: React.FC<Props> = ({
+const StoryPanel: FC<Props> = ({
   page,
   selectedPageId,
   selectedStoryBlockId,
@@ -101,13 +102,14 @@ const StoryPanel: React.FC<Props> = ({
     panelSettings,
     storyBlocks,
     disableSelection,
-    setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
+    handleMoveEnd,
   } = useHooks({
     page,
     isEditable,
     onBlockCreate,
+    onBlockMove,
   });
 
   const { containerRef, isIntersecting } = useElementOnScreen({
@@ -135,6 +137,65 @@ const StoryPanel: React.FC<Props> = ({
     }
   }, [isIntersecting, containerRef, isAutoScrolling, scrollTimeoutRef, onCurrentPageChange]);
 
+  const DraggableStoryBlockItems = useMemo(
+    () =>
+      storyBlocks.map((b, idx) => ({
+        id: b.id,
+        content: (
+          <Fragment>
+            <StoryBlock
+              block={b}
+              pageId={page?.id}
+              isSelected={selectedStoryBlockId === b.id}
+              isEditable={isEditable}
+              dragHandleClassName={PAGE_DRAG_HANDLE_CLASS_NAME}
+              onClick={() => onBlockSelect?.(b.id)}
+              onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
+              onClickAway={onBlockSelect}
+              onRemove={onBlockDelete}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
+              renderBlock={renderBlock}
+              padding={panelSettings?.padding?.value}
+            />
+            {isEditable && !disableSelection && (
+              <BlockAddBar
+                id={b.id + "below-bar"}
+                openBlocks={openBlocksIndex === idx}
+                installableBlocks={installableStoryBlocks}
+                showAreaHeight={panelSettings?.gap?.value}
+                parentWidth={STORY_PANEL_WIDTH}
+                onBlockOpen={() => handleBlockOpen(idx)}
+                onBlockAdd={handleBlockCreate(idx + 1)}
+              />
+            )}
+          </Fragment>
+        ),
+      })),
+    [
+      storyBlocks,
+      page?.id,
+      selectedStoryBlockId,
+      isEditable,
+      onBlockSelect,
+      onBlockDelete,
+      onPropertyUpdate,
+      onPropertyItemAdd,
+      onPropertyItemMove,
+      onPropertyItemDelete,
+      renderBlock,
+      panelSettings?.padding?.value,
+      panelSettings?.gap?.value,
+      disableSelection,
+      openBlocksIndex,
+      installableStoryBlocks,
+      handleBlockCreate,
+      onBlockDoubleClick,
+      handleBlockOpen,
+    ],
+  );
   return (
     <SelectableArea
       title={page?.title !== "Untitled" ? page?.title : t("Page")}
@@ -205,55 +266,11 @@ const StoryPanel: React.FC<Props> = ({
 
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
-            uniqueKey="storyPanel"
-            gap={panelSettings?.gap?.value}
-            items={storyBlocks}
-            getId={item => item.id}
-            onItemDrop={async (item, index) => {
-              setStoryBlocks(old => {
-                const items = [...old];
-                items.splice(
-                  old.findIndex(o => o.id === item.id),
-                  1,
-                );
-                items.splice(index, 0, item);
-                return items;
-              });
-              await onBlockMove?.(page?.id || "", index, item.id);
-            }}
-            renderItem={(b, idx) => {
-              return (
-                <Fragment key={idx}>
-                  <StoryBlock
-                    block={b}
-                    pageId={page?.id}
-                    isSelected={selectedStoryBlockId === b.id}
-                    isEditable={isEditable}
-                    onClick={() => onBlockSelect?.(b.id)}
-                    onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
-                    onClickAway={onBlockSelect}
-                    onRemove={onBlockDelete}
-                    onPropertyUpdate={onPropertyUpdate}
-                    onPropertyItemAdd={onPropertyItemAdd}
-                    onPropertyItemMove={onPropertyItemMove}
-                    onPropertyItemDelete={onPropertyItemDelete}
-                    renderBlock={renderBlock}
-                    padding={panelSettings?.padding?.value}
-                  />
-                  {isEditable && !disableSelection && (
-                    <BlockAddBar
-                      id={b.id + "below-bar"}
-                      openBlocks={openBlocksIndex === idx}
-                      installableBlocks={installableStoryBlocks}
-                      showAreaHeight={panelSettings?.gap?.value}
-                      parentWidth={STORY_PANEL_WIDTH}
-                      onBlockOpen={() => handleBlockOpen(idx)}
-                      onBlockAdd={handleBlockCreate(idx + 1)}
-                    />
-                  )}
-                </Fragment>
-              );
-            }}
+            items={DraggableStoryBlockItems}
+            handleClassName={PAGE_DRAG_HANDLE_CLASS_NAME}
+            onMoveEnd={handleMoveEnd}
+            dragDisabled={false}
+            gap={20}
           />
         )}
       </ContentWrapper>
@@ -264,6 +281,6 @@ const StoryPanel: React.FC<Props> = ({
 
 export default StoryPanel;
 
-const PageTitleWrapper = styled.div`
-  position: relative;
-`;
+const PageTitleWrapper = styled("div")(() => ({
+  position: "relative",
+}));

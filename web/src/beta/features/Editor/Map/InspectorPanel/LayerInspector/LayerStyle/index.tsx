@@ -1,8 +1,9 @@
 import { FC, useCallback, useMemo } from "react";
 
-import { Selector } from "@reearth/beta/lib/reearth-ui/components/Selector";
+import { SelectField } from "@reearth/beta/ui/fields";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { useT } from "@reearth/services/i18n";
 
 import { LayerConfigUpdateProps } from "../../../../hooks/useLayers";
 
@@ -20,6 +21,7 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   selectedLayerId,
   onLayerConfigUpdate,
 }) => {
+  const t = useT();
   const layerStyleOptions = useMemo(
     () => [
       { value: "", label: "NO STYLE" },
@@ -47,7 +49,13 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   );
 
   return (
-    <Selector options={layerStyleOptions} value={currentValue} onChange={handleLayerStyleChange} />
+    <SelectField
+      commonTitle={t("Layer Style")}
+      options={layerStyleOptions}
+      value={currentValue}
+      maxHeight={250}
+      onChange={handleLayerStyleChange}
+    />
   );
 };
 

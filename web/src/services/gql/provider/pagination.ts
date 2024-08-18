@@ -10,7 +10,7 @@ export function paginationMerge(
 
   const merged = existing ? existing.edges.slice(0) : [];
 
-  let offset = offsetFromCursor(merged, existing?.pageInfo.endCursor, readField);
+  let offset = offsetFromCursor(merged, incoming?.pageInfo.startCursor, readField);
   if (offset < 0) offset = merged.length;
 
   for (let i = 0; i < incoming?.edges?.length; ++i) {
@@ -25,10 +25,9 @@ export function paginationMerge(
 
 function offsetFromCursor(items: any, cursor: string, readField: ReadFieldFunction) {
   if (items.length < 1) return -1;
-  for (let i = 0; i <= items.length; ++i) {
-    const item = items[i];
-    if (readField("cursor", item) === cursor) {
-      return i + 1;
+  for (let i = 0; i < items.length; ++i) {
+    if (readField("cursor", items[i]) === cursor) {
+      return i;
     }
   }
   return -1;

@@ -21,6 +21,7 @@ var (
 	uName  = "e2e"
 	wID    = accountdomain.NewWorkspaceID()
 	pID    = id.NewProjectID()
+	pName  = "p1"
 	pAlias = "PROJECT_ALIAS"
 
 	now = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -52,8 +53,8 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 	}
 
 	p := project.New().ID(pID).
-		Name("p1").
-		Description("p1 desc").
+		Name(pName).
+		Description(pName + " desc").
 		ImageURL(lo.Must(url.Parse("https://test.com"))).
 		Workspace(w.ID()).
 		Alias(pAlias).

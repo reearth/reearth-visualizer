@@ -82,3 +82,116 @@ func TestCreateProject(t *testing.T) {
 		ValueEqual("imageUrl", "").
 		ValueEqual("coreSupport", true)
 }
+
+func TestSortByName(t *testing.T) {
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	},
+		true, baseSeeder)
+
+	createProject(e, "a-project")
+	createProject(e, "b-project")
+	createProject(e, "A-project")
+	createProject(e, "B-project")
+	seedProjectName := pName
+
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query: `
+		query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+			projects(
+				teamId: $teamId
+				pagination: $pagination
+				keyword: $keyword
+				sort: $sort
+			) {
+				edges {
+					node {
+						id
+						...ProjectFragment
+						scene {
+							id
+							__typename
+						}
+						__typename
+					}
+					__typename
+				}
+				nodes {
+					id
+					...ProjectFragment
+					scene {
+						id
+						__typename
+					}
+					__typename
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
+					__typename
+				}
+				totalCount
+				__typename
+			}
+		}
+
+		fragment ProjectFragment on Project {
+			id
+			name
+			description
+			imageUrl
+			isArchived
+			isBasicAuthActive
+			basicAuthUsername
+			basicAuthPassword
+			publicTitle
+			publicDescription
+			publicImage
+			alias
+			enableGa
+			trackingId
+			publishmentStatus
+			updatedAt
+			createdAt
+			coreSupport
+			starred
+			__typename
+		}`,
+		Variables: map[string]any{
+			"pagination": map[string]any{
+				"last": 5,
+			},
+			"teamId": wID.String(),
+			"sort": map[string]string{
+				"field":     "NAME",
+				"direction": "ASC",
+			},
+		},
+	}
+
+	edges := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().
+		Value("data").Object().
+		Value("projects").Object().
+		Value("edges").Array()
+
+	edges.Length().Equal(5)
+	edges.Element(0).Object().Value("node").Object().Value("name").Equal("a-project")
+	edges.Element(1).Object().Value("node").Object().Value("name").Equal("A-project")
+	edges.Element(2).Object().Value("node").Object().Value("name").Equal("b-project")
+	edges.Element(3).Object().Value("node").Object().Value("name").Equal("B-project")
+	edges.Element(4).Object().Value("node").Object().Value("name").Equal(seedProjectName)
+}

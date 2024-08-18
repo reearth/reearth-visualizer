@@ -9,7 +9,7 @@ import {
   LayerWrapper,
   SubmitWrapper,
   Wrapper,
-} from "@reearth/beta/features/Editor/Map/SharedComponent";
+} from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
@@ -135,7 +135,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={!mvtUrlValue || !layerName}
+          disabled={!mvtUrlValue || !layerNameList.length}
         />
       </SubmitWrapper>
     </Wrapper>

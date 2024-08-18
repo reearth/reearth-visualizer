@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import { IconButton, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { IconButton, PopupMenuItem, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { styled } from "@reearth/services/theme";
@@ -38,6 +38,8 @@ const LayerItem: FC<LayerItemProps> = ({
     handleLayerNameUpdate,
     handleLayerVisibilityUpdate,
     handleFlyTo,
+    openCustomPropertySchema,
+    handleCustomPropertySchemaClick,
   } = useMapPage();
 
   const handleZoomToLayer = useCallback(() => {
@@ -48,8 +50,8 @@ const LayerItem: FC<LayerItemProps> = ({
     handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });
   }, [layer.id, layer.visible, handleLayerVisibilityUpdate]);
 
-  const optionsMenu = useMemo(
-    () => [
+  const optionsMenu: PopupMenuItem[] = useMemo(() => {
+    const menu = [
       {
         id: "rename",
         title: "Rename",
@@ -62,9 +64,31 @@ const LayerItem: FC<LayerItemProps> = ({
         icon: "trash" as const,
         onClick: () => handleLayerDelete(layer.id),
       },
-    ],
-    [layer.id, handleLayerDelete, setEditingLayerNameId],
-  );
+    ];
+
+    const sketchMenu = layer.isSketch
+      ? [
+          {
+            id: "customProperty",
+            title: "Property Schema",
+            icon: "listDashes" as const,
+            onClick: () => {
+              openCustomPropertySchema();
+              handleCustomPropertySchemaClick?.(layer.id);
+            },
+          },
+        ]
+      : [];
+
+    return [...sketchMenu, ...menu];
+  }, [
+    layer.isSketch,
+    layer.id,
+    setEditingLayerNameId,
+    handleLayerDelete,
+    openCustomPropertySchema,
+    handleCustomPropertySchemaClick,
+  ]);
 
   const hoverActions: EntryItemAction[] | undefined = useMemo(
     () =>
@@ -156,7 +180,7 @@ const LayerItem: FC<LayerItemProps> = ({
       highlighted={layer.id === selectedLayerId}
       disableHover={isDragging}
       optionsMenu={optionsMenu}
-      optionsMenuWidth={100}
+      optionsMenuWidth={150}
       actions={hoverActions}
     />
   );

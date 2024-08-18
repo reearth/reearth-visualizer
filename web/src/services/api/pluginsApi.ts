@@ -187,6 +187,29 @@ export default () => {
     [uploadPluginMutation, t, setNotification],
   );
 
+  const useUploadPluginWithFile = useCallback(
+    async (sceneId: string, file?: File) => {
+      if (!sceneId || !file) return;
+
+      const { errors } = await uploadPluginMutation({
+        variables: { sceneId: sceneId, file },
+      });
+
+      if (errors) {
+        setNotification({
+          type: "error",
+          text: t("Failed to install plugin."),
+        });
+      } else {
+        setNotification({
+          type: "success",
+          text: t("Successfully installed plugin!"),
+        });
+      }
+    },
+    [uploadPluginMutation, t, setNotification],
+  );
+
   const [uninstallPluginMutation] = useMutation(UNINSTALL_PLUGIN, {
     refetchQueries: ["GetScene"],
   });
@@ -219,6 +242,7 @@ export default () => {
     useInstallPlugin,
     useUpgradePlugin,
     useUploadPlugin,
+    useUploadPluginWithFile,
     useUninstallPlugin,
   };
 };

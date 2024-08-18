@@ -18,6 +18,7 @@ export type ListFieldProps = CommonFieldProps & {
   items: ListItemProps[];
   selected?: string;
   atLeastOneItem?: boolean;
+  isEditable?: boolean;
   onItemAdd?: () => void;
   onItemSelect?: (id: string) => void;
   onItemDelete?: (id: string) => void;
@@ -31,12 +32,15 @@ const ListField: FC<ListFieldProps> = ({
   items,
   selected,
   atLeastOneItem,
+  isEditable = true,
   onItemAdd,
   onItemSelect,
   onItemDelete,
   onItemMove,
   onItemNameUpdate,
 }) => {
+  const [listItems, setListItems] = useState(items ?? []);
+
   useEffect(() => {
     if (!atLeastOneItem) return;
     const updateSelected = !selected || !items.find(({ id }) => id === selected);
@@ -46,9 +50,32 @@ const ListField: FC<ListFieldProps> = ({
   }, [selected, items, atLeastOneItem, onItemSelect]);
   const [isDragging, setIsDragging] = useState(false);
 
+  const handleMoveEnd = useCallback(
+    (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        setListItems(old => {
+          const items = [...old];
+          const currentIndex = old.findIndex(o => o.id === itemId);
+          if (currentIndex !== -1) {
+            const [movedItem] = items.splice(currentIndex, 1);
+            items.splice(newIndex, 0, movedItem);
+          }
+          return items;
+        });
+        onItemMove?.(itemId, newIndex);
+      }
+      setIsDragging(false);
+    },
+    [onItemMove],
+  );
+
+  useEffect(() => {
+    setListItems(items ?? []);
+  }, [items]);
+
   const DraggableListItems = useMemo(
     () =>
-      items.map(item => ({
+      listItems.map(item => ({
         id: item.id,
         content: (
           <ListItem
@@ -56,28 +83,19 @@ const ListField: FC<ListFieldProps> = ({
             dragHandleClassName={LIST_FIELD_DRAG_HANDLE_CLASS_NAME}
             isDragging={isDragging}
             selectedItem={selected}
+            isEditable={isEditable}
             onItemDelete={onItemDelete}
             onItemSelect={onItemSelect}
             onItemNameUpdate={onItemNameUpdate}
           />
         ),
       })),
-    [items, isDragging, selected, onItemDelete, onItemSelect, onItemNameUpdate],
+    [listItems, isDragging, selected, isEditable, onItemDelete, onItemSelect, onItemNameUpdate],
   );
 
   const handleMoveStart = useCallback(() => {
     setIsDragging(true);
   }, []);
-
-  const handleMoveEnd = useCallback(
-    (itemId?: string, newIndex?: number) => {
-      if (itemId !== undefined && newIndex !== undefined) {
-        onItemMove?.(itemId, newIndex);
-      }
-      setIsDragging(false);
-    },
-    [onItemMove],
-  );
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
@@ -110,7 +128,7 @@ const FieldContainer = styled("div")(({ theme }) => ({
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
-  maxHeight: "136px",
+  height: "130px",
   borderRadius: theme.radius.small,
   padding: theme.spacing.smallest,
   border: `1px solid ${theme.outline.weak}`,

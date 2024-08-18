@@ -463,3 +463,33 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	tx.Commit()
 	return nil
 }
+
+func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
+
+	if err := r.Save(ctx, prj); err != nil {
+		return err
+	}
+	return nil
+}
+
+func updateProjectUpdatedAtByID(ctx context.Context, projectID id.ProjectID, r repo.Project) error {
+	prj, err := r.FindByID(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	return updateProjectUpdatedAt(ctx, prj, r)
+}
+
+func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r repo.Project, s repo.Scene) error {
+	scene, err := s.FindByID(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), r)
+	if err != nil {
+		return err
+	}
+	return nil
+}
