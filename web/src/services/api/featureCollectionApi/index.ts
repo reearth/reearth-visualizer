@@ -5,12 +5,14 @@ import { MutationReturn } from "@reearth/services/api/types";
 import {
   AddGeoJsonFeatureInput,
   AddGeoJsonFeatureMutation,
+  DeleteGeoJsonFeatureInput,
   MutationAddGeoJsonFeatureArgs,
   UpdateGeoJsonFeatureInput,
   UpdateGeoJsonFeatureMutation,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ADD_GEOJSON_FEATURE,
+  DELETE_GEOJSON_FEATURE,
   UPDATE_GEOJSON_FEATURE,
 } from "@reearth/services/gql/queries/featureCollection";
 import { useT } from "@reearth/services/i18n";
@@ -59,14 +61,35 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully updated a the layer!") });
+      setNotification({ type: "success", text: t("Successfully updated the layer!") });
 
       return { data, status: "success" };
     },
     [updateGeoJsonFeatureMutation, setNotification, t],
   );
+
+  const [deleteGeoJsonFeatureMutation] = useMutation(DELETE_GEOJSON_FEATURE, {
+    refetchQueries: ["GetScene"],
+  });
+
+  const useDeleteGeoJSONFeature = useCallback(
+    async (input: DeleteGeoJsonFeatureInput) => {
+      if (!input.layerId || !input.featureId) return { status: "error" };
+      const { data, errors } = await deleteGeoJsonFeatureMutation({ variables: { input } });
+      if (errors || !data?.deleteGeoJSONFeature) {
+        setNotification({ type: "error", text: t("Failed to delete the feature.") });
+        return { status: "error", errors };
+      }
+
+      setNotification({ type: "success", text: t("Successfully deleted the feature!") });
+      return { data, status: "success" };
+    },
+    [deleteGeoJsonFeatureMutation, t, setNotification],
+  );
+
   return {
     useAddGeoJsonFeature,
     useUpdateGeoJSONFeature,
+    useDeleteGeoJSONFeature,
   };
 };

@@ -29,6 +29,11 @@ export type GeoJsonFeatureUpdateProps = {
   properties?: any;
 };
 
+export type GeoJsonFeatureDeleteProps = {
+  layerId: string;
+  featureId: string;
+};
+
 export default ({
   tab,
   nlsLayers,
@@ -53,7 +58,8 @@ export default ({
     [visualizerRef],
   );
 
-  const { useAddGeoJsonFeature, useUpdateGeoJSONFeature } = useFeatureCollectionFetcher();
+  const { useAddGeoJsonFeature, useUpdateGeoJSONFeature, useDeleteGeoJSONFeature } =
+    useFeatureCollectionFetcher();
 
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
@@ -136,10 +142,21 @@ export default ({
     [useUpdateGeoJSONFeature],
   );
 
+  const handleGeoJsonFeatureDelete = useCallback(
+    async (inp: GeoJsonFeatureDeleteProps) => {
+      await useDeleteGeoJSONFeature({
+        layerId: inp.layerId,
+        featureId: inp.featureId,
+      });
+    },
+    [useDeleteGeoJSONFeature],
+  );
+
   return {
     sketchType,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
     handleGeoJsonFeatureUpdate,
+    handleGeoJsonFeatureDelete,
   };
 };

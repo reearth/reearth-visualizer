@@ -20,7 +20,7 @@ import {
   LayerStyleNameUpdateProps,
   LayerStyleValueUpdateProps,
 } from "../hooks/useLayerStyles";
-import { GeoJsonFeatureUpdateProps } from "../hooks/useSketch";
+import { GeoJsonFeatureDeleteProps, GeoJsonFeatureUpdateProps } from "../hooks/useSketch";
 
 export interface MapPageContextType {
   handleVisualizerResize?: (props: AreaSize) => void;
@@ -52,6 +52,7 @@ export interface MapPageContextType {
   handleLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   handleLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   handleGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  handleGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
   handleLayerStyleAdd: (inp: LayerStyleAddProps) => void;
   handleLayerStyleDelete: (id: string) => void;
   handleLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;

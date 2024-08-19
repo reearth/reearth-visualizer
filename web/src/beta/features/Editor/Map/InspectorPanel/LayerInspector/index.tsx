@@ -1,7 +1,10 @@
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
-import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
+import {
+  GeoJsonFeatureDeleteProps,
+  GeoJsonFeatureUpdateProps,
+} from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
@@ -22,6 +25,7 @@ type Props = {
   sceneId?: string;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
 };
 
 const InspectorTabs: FC<Props> = ({
@@ -31,6 +35,7 @@ const InspectorTabs: FC<Props> = ({
   sceneId,
   onLayerConfigUpdate,
   onGeoJsonFeatureUpdate,
+  onGeoJsonFeatureDelete,
 }) => {
   const selectedFeature = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
@@ -79,6 +84,7 @@ const InspectorTabs: FC<Props> = ({
             layer={selectedLayer?.layer}
             sketchFeature={selectedSketchFeature}
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
+            onGeoJsonFeatureDelete={onGeoJsonFeatureDelete}
           />
         ),
       },
@@ -115,6 +121,7 @@ const InspectorTabs: FC<Props> = ({
       sceneId,
       onLayerConfigUpdate,
       onGeoJsonFeatureUpdate,
+      onGeoJsonFeatureDelete,
     ],
   );
 
