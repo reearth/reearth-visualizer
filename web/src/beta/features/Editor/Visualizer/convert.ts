@@ -378,6 +378,8 @@ export function processLayers(
           geometry: f.geometry[0],
         })),
       },
+      isSketchLayer: true,
+      idProperty: "id",
     };
 
     return {
