@@ -61,6 +61,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleSketchFeatureCreate,
     sketchType,
     handleGeoJsonFeatureUpdate,
+    handleGeoJsonFeatureDelete,
   } = useSketch({
     tab,
     nlsLayers,
@@ -164,6 +165,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
+      handleGeoJsonFeatureDelete,
       handleLayerStyleAdd,
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
@@ -198,6 +200,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
+      handleGeoJsonFeatureDelete,
       handleLayerStyleAdd,
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,

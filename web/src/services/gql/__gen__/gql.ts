@@ -32,6 +32,7 @@ const documents = {
     "\n  mutation RemoveAsset($assetId: ID!) {\n    removeAsset(input: { assetId: $assetId }) {\n      assetId\n    }\n  }\n": types.RemoveAssetDocument,
     "\n  mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {\n    addGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n": types.AddGeoJsonFeatureDocument,
     "\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n": types.UpdateGeoJsonFeatureDocument,
+    "\n  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){\n    deleteGeoJSONFeature(input: $input) {\n\t\t  deletedFeatureId\n    }\n  }\n": types.DeleteGeoJsonFeatureDocument,
     "\n  mutation CreateNLSInfobox($input: CreateNLSInfoboxInput!) {\n    createNLSInfobox(input: $input) {\n      layer{\n        id\n      }\n    }\n  }\n": types.CreateNlsInfoboxDocument,
     "\n  mutation RemoveNLSInfobox($input: RemoveNLSInfoboxInput!) {\n    removeNLSInfobox(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.RemoveNlsInfoboxDocument,
     "\n  mutation AddNLSInfoboxBlock($input: AddNLSInfoboxBlockInput!) {\n    addNLSInfoboxBlock(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.AddNlsInfoboxBlockDocument,
@@ -177,6 +178,10 @@ export function gql(source: "\n  mutation AddGeoJSONFeature($input: AddGeoJSONFe
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){\n    deleteGeoJSONFeature(input: $input) {\n\t\t  deletedFeatureId\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){\n    deleteGeoJSONFeature(input: $input) {\n\t\t  deletedFeatureId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

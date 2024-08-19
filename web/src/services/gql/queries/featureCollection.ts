@@ -19,3 +19,11 @@ export const UPDATE_GEOJSON_FEATURE = gql(`
     }
   }
 `);
+
+export const DELETE_GEOJSON_FEATURE = gql(`
+  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){
+    deleteGeoJSONFeature(input: $input) {
+		  deletedFeatureId
+    }
+  }
+`);
