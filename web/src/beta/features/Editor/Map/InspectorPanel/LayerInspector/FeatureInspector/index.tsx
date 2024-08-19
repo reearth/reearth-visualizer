@@ -3,7 +3,10 @@ import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import JsonView from "react18-json-view";
 
-import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
+import {
+  GeoJsonFeatureDeleteProps,
+  GeoJsonFeatureUpdateProps,
+} from "@reearth/beta/features/Editor/hooks/useSketch";
 import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
@@ -21,6 +24,7 @@ type Props = {
   layer?: NLSLayer;
   sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
 };
 
 export type ValueProp = string | number | boolean | undefined;
@@ -36,6 +40,7 @@ const FeatureData: FC<Props> = ({
   layer,
   sketchFeature,
   onGeoJsonFeatureUpdate,
+  onGeoJsonFeatureDelete,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -87,6 +92,14 @@ const FeatureData: FC<Props> = ({
     [theme.fonts.sizes.body],
   );
 
+  const handleDeleteSketchFeature = useCallback(() => {
+    if (!layer?.id || !sketchFeature?.id) return;
+    onGeoJsonFeatureDelete?.({
+      layerId: layer.id,
+      featureId: sketchFeature.id,
+    });
+  }, [layer?.id, sketchFeature?.id, onGeoJsonFeatureDelete]);
+
   return (
     <Wrapper>
       {!!layer?.isSketch && (
@@ -134,6 +147,15 @@ const FeatureData: FC<Props> = ({
           <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
       </Collapse>
+      {!!layer?.isSketch && sketchFeature?.id && (
+        <Button
+          title={t("Delete Feature")}
+          onClick={handleDeleteSketchFeature}
+          size="small"
+          icon="trash"
+          extendWidth
+        />
+      )}
     </Wrapper>
   );
 };

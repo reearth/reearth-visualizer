@@ -116,6 +116,7 @@ Save & Apply: ''
 No custom properties: ''
 Geometry: ジオメトリ
 Properties: プロパティ
+Delete Feature: ''
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
 Layer Style: レイヤースタイル
@@ -310,14 +311,15 @@ One or more assets were successfully deleted.: アセットが削除されまし
 Failed to add layer.: レイヤーの追加に失敗しました。
 Successfully added a new layer: 新しいレイヤーの追加に成功しました。
 Failed to update the layer.: レイヤーのアップデートに失敗しました。
-Successfully updated a the layer!: レイヤーのアップデートに成功しました！
+Successfully updated the layer!: ''
+Failed to delete the feature.: ''
+Successfully deleted the feature!: ''
 Failed to create block.: ブロックの作成に失敗しました。
 Successfullly created a block!: ブロックの作成に成功しました！
 Failed to delete block.: ブロックの削除に失敗しました。
 Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
-Successfully updated the layer!: ''
 Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed the layer!: ''
 Failed to update the custom property schema.: ''
