@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
@@ -39,6 +39,7 @@ export type Project = ProjectPayload["project"];
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+  const apolloCache = useApolloClient().cache;
 
   const useProjectQuery = useCallback((projectId?: string) => {
     const { data, ...rest } = useQuery(GET_PROJECT, {
@@ -251,10 +252,12 @@ export default () => {
         return { status: "error" };
       }
 
+      apolloCache.evict({ fieldName: "projects" });
+
       setNotification({ type: "success", text: t("Successfully delete project!") });
       return { status: "success" };
     },
-    [deleteProjectMutation, t, setNotification],
+    [apolloCache, deleteProjectMutation, t, setNotification],
   );
 
   const [updateProjectBasicAuthMutation] = useMutation(UPDATE_PROJECT_BASIC_AUTH, {
