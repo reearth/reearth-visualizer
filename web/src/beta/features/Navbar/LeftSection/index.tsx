@@ -50,11 +50,11 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
+      <StyledLink to={`/dashboard/${currentWorkspace?.id}`} disabled={!currentWorkspace?.id}>
         <IconButton icon="grid" appearance="simple" size="large" />
       </StyledLink>
       {page !== "editor" && (
-        <StyledLink to={`/scene/${sceneId}/map`}>
+        <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
           <IconButton icon="editor" appearance="simple" size="large" />
         </StyledLink>
       )}
@@ -79,10 +79,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
 }));
 
-const StyledLink = styled(Link)(({ theme }) => ({
+const StyledLink = styled(Link)<{ disabled?: boolean }>(({ theme, disabled }) => ({
   display: "flex",
   color: theme.content.main,
   textDecoration: "none",
+  pointerEvents: disabled ? "none" : "all",
   "&:hover": {
     textDecoration: "none",
   },
