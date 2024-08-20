@@ -36,17 +36,13 @@ try {
   // noop
 }
 
-const cesiumPackageJson = JSON.parse(
-  readFileSync(resolve(__dirname, "node_modules", "cesium", "package.json"), "utf-8"),
-);
-
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
   plugins: [
     svgr(),
     react(),
     yaml(),
-    cesium({ cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumPackageJson.version}/` : undefined }),
+    cesium({ cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined }),
     serverHeaders(),
     config(),
     tsconfigPaths(),
