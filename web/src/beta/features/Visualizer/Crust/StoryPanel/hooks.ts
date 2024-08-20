@@ -129,12 +129,12 @@ export default (
       }
 
       handlePageTime(newPage);
-
       const cameraAnimation = newPage.property?.cameraAnimation;
-      const destination = cameraAnimation?.cameraPosition?.value;
+
+      const destination = cameraAnimation?.cameraPosition;
       if (!destination) return;
 
-      const duration = cameraAnimation?.cameraDuration?.value ?? DEFAULT_STORY_PAGE_DURATION;
+      const duration = cameraAnimation?.cameraDuration ?? DEFAULT_STORY_PAGE_DURATION;
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
