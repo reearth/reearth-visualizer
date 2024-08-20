@@ -26,22 +26,26 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   ...props
 }) => {
   const [inputValues, setInputValues] = useState<commonTurple>(values);
-
   const theme = useTheme();
-
-  const handleChange = useCallback(() => {
-    const newValues = [...inputValues] as commonTurple;
-    setInputValues(newValues);
-    onChange?.(newValues);
-  }, [inputValues, onChange]);
-
-  const handleBlur = useCallback(() => {
-    onBlur?.(inputValues);
-  }, [inputValues, onBlur]);
 
   useEffect(() => {
     setInputValues(values);
   }, [values]);
+
+  const handleChange = useCallback(
+    (index: number, value?: number) => {
+      if (value === undefined) return;
+      const newValues = [...inputValues] as commonTurple;
+      newValues[index] = value;
+      setInputValues(newValues);
+      onChange?.(newValues);
+    },
+    [inputValues, onChange],
+  );
+
+  const handleBlur = useCallback(() => {
+    onBlur?.(inputValues);
+  }, [inputValues, onBlur]);
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
@@ -51,7 +55,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
             <NumberInput
               value={value}
               placeholder={placeholders?.[index]}
-              onChange={handleChange}
+              onChange={newValue => handleChange(index, newValue)}
               onBlur={handleBlur}
               extendWidth
               {...props}
