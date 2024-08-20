@@ -26,9 +26,21 @@ try {
   // noop
 }
 
+const cesiumPackageJson = JSON.parse(
+  readFileSync(resolve(__dirname, "node_modules", "cesium", "package.json"), "utf-8"),
+);
+
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
-  plugins: [svgr(), react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
+  plugins: [
+    svgr(),
+    react(),
+    yaml(),
+    cesium({ cesiumBaseUrl: `cesium-${cesiumPackageJson.version}/` }),
+    serverHeaders(),
+    config(),
+    tsconfigPaths(),
+  ],
   // https://github.com/storybookjs/storybook/issues/25256
   assetsInclude: ["/sb-preview/runtime.js"],
   define: {
