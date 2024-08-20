@@ -26,6 +26,16 @@ try {
   // noop
 }
 
+let cesiumVersion = "";
+try {
+  const cesiumPackageJson = JSON.parse(
+    readFileSync(resolve(__dirname, "node_modules", "cesium", "package.json"), "utf-8"),
+  );
+  cesiumVersion = cesiumPackageJson.version;
+} catch {
+  // noop
+}
+
 const cesiumPackageJson = JSON.parse(
   readFileSync(resolve(__dirname, "node_modules", "cesium", "package.json"), "utf-8"),
 );
@@ -36,7 +46,7 @@ export default defineConfig({
     svgr(),
     react(),
     yaml(),
-    cesium({ cesiumBaseUrl: `cesium-${cesiumPackageJson.version}/` }),
+    cesium({ cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumPackageJson.version}/` : undefined }),
     serverHeaders(),
     config(),
     tsconfigPaths(),
