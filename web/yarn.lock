@@ -8036,9 +8036,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.9":
-  version: 0.0.7-alpha.9
-  resolution: "@reearth/core@npm:0.0.7-alpha.9"
+"@reearth/core@npm:0.0.7-alpha.11":
+  version: 0.0.7-alpha.11
+  resolution: "@reearth/core@npm:0.0.7-alpha.11"
   dependencies:
     "@reearth/cesium-mvt-imagery-provider": "npm:1.5.4"
     "@rot1024/use-transition": "npm:1.0.0"
@@ -8077,10 +8077,10 @@ __metadata:
     uuid: "npm:9.0.1"
     xstate: "npm:4.38.2"
   peerDependencies:
-    cesium: 1.x
+    cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/51e119e5e3df0411c0449e1fd908e1773446f668dc96b3db4357ee81f50a92ef90ef2d269799e090ddd6e5bbaf79cd8081cf59568c664e1a095b8221286ff4b9
+  checksum: 10c0/9efc7b5ef280d89ef4f039d82fa07fbf97c54cfcb321ecf9337e251f77a40313bd027554188f86089a314d3ca0084696358aee136c58fc66c8924a3e42d7f461
   languageName: node
   linkType: hard
 
@@ -8107,7 +8107,7 @@ __metadata:
     "@monaco-editor/react": "npm:4.6.0"
     "@playwright/test": "npm:1.39.0"
     "@popperjs/core": "npm:2.11.8"
-    "@reearth/core": "npm:0.0.7-alpha.9"
+    "@reearth/core": "npm:0.0.7-alpha.11"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
