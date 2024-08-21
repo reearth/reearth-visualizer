@@ -1,6 +1,6 @@
 // import "./wdyr"; // should be the first import
 
-import React from "react";
+import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { createRoot } from "react-dom/client";
 
@@ -21,5 +21,9 @@ loadConfig().finally(async () => {
   if (import.meta.env.DEV) await wdyr();
 
   const root = createRoot(element);
-  root.render(<App />);
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
 });

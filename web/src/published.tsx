@@ -1,6 +1,6 @@
 // import "./wdyr"; // should be the first import
 
-import React from "react";
+import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { createRoot } from "react-dom/client";
 
@@ -15,5 +15,9 @@ loadConfig().finally(() => {
   const element = document.getElementById("root");
   if (!element) throw new Error("root element is not found");
   const root = createRoot(element);
-  root.render(<App />);
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
 });
