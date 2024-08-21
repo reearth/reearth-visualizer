@@ -45,6 +45,51 @@ const FeatureData: FC<Props> = ({
   const t = useT();
   const theme = useTheme();
   const [fields, setFields] = useState<FieldProp[]>([]);
+  const [collapseState, setCollapseState] = useState<Record<string, boolean>>({});
+
+  const defaultCollapseState = useMemo(
+    () => ({
+      customProperties: false,
+      geometry: false,
+      properties: false,
+    }),
+    [],
+  );
+
+  const getCollapseState = useCallback((featureId: string) => {
+    const storedState = localStorage.getItem(`reearth-visualizer-collapse-feature-${featureId}`);
+    return storedState ? JSON.parse(storedState) : null;
+  }, []);
+
+  const saveCollapseState = useCallback((featureId: string, state: Record<string, boolean>) => {
+    localStorage.setItem(`reearth-visualizer-collapse-feature-${featureId}`, JSON.stringify(state));
+  }, []);
+
+  const handleCollapseChange = useCallback(
+    (collapseId: string, state: boolean) => {
+      if (selectedFeature) {
+        const currentState =
+          getCollapseState(selectedFeature.properties.id) || defaultCollapseState;
+        const updatedState = { ...currentState, [collapseId]: state };
+        saveCollapseState(selectedFeature.properties.id, updatedState);
+
+        setCollapseState(updatedState);
+      }
+    },
+    [getCollapseState, saveCollapseState, selectedFeature, defaultCollapseState],
+  );
+
+  useEffect(() => {
+    if (selectedFeature?.id) {
+      const currentState = getCollapseState(selectedFeature.properties.id);
+      if (!currentState) {
+        saveCollapseState(selectedFeature.properties.id, defaultCollapseState);
+        setCollapseState(defaultCollapseState);
+      } else {
+        setCollapseState(currentState);
+      }
+    }
+  }, [getCollapseState, saveCollapseState, selectedFeature, defaultCollapseState]);
 
   useEffect(() => {
     if (!layer?.sketch?.customPropertySchema) return;
@@ -107,7 +152,9 @@ const FeatureData: FC<Props> = ({
           title={t("Custom Properties")}
           size="small"
           background={theme.relative.dim}
-          headerBg={theme.relative.dim}>
+          headerBg={theme.relative.dim}
+          collapsed={collapseState.customProperties}
+          onCollapse={state => handleCollapseChange("customProperties", state)}>
           <FieldsWrapper>
             {fields.map(f => (
               <FieldComponent field={f} key={f.id} setFields={setFields} />
@@ -133,7 +180,9 @@ const FeatureData: FC<Props> = ({
         title={t("Geometry")}
         size="small"
         background={theme.relative.dim}
-        headerBg={theme.relative.dim}>
+        headerBg={theme.relative.dim}
+        collapsed={collapseState.geometry}
+        onCollapse={state => handleCollapseChange("geometry", state)}>
         <ValueWrapper>
           <JsonView src={selectedFeature?.geometry} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
@@ -142,9 +191,11 @@ const FeatureData: FC<Props> = ({
         title={t("Properties")}
         size="small"
         background={theme.relative.dim}
-        headerBg={theme.relative.dim}>
+        headerBg={theme.relative.dim}
+        collapsed={collapseState.properties}
+        onCollapse={state => handleCollapseChange("properties", state)}>
         <ValueWrapper>
-          <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
+          <JsonView src={selectedFeature?.properties} theme="vscode" dark />
         </ValueWrapper>
       </Collapse>
       {!!layer?.isSketch && sketchFeature?.id && (
