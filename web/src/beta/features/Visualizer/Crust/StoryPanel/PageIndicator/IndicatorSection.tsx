@@ -64,4 +64,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
+  cursor: "default",
 }));
