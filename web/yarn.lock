@@ -8036,9 +8036,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.6":
-  version: 0.0.7-alpha.6
-  resolution: "@reearth/core@npm:0.0.7-alpha.6"
+"@reearth/core@npm:0.0.7-alpha.11":
+  version: 0.0.7-alpha.11
+  resolution: "@reearth/core@npm:0.0.7-alpha.11"
   dependencies:
     "@reearth/cesium-mvt-imagery-provider": "npm:1.5.4"
     "@rot1024/use-transition": "npm:1.0.0"
@@ -8069,7 +8069,7 @@ __metadata:
     react-error-boundary: "npm:4.0.11"
     react-nl2br: "npm:1.0.4"
     react-use: "npm:17.5.0"
-    resium: "npm:^1.18.0"
+    resium: "npm:1.18.1"
     suspend-react: "npm:0.1.3"
     tiny-invariant: "npm:1.3.3"
     use-callback-ref: "npm:1.3.2"
@@ -8077,10 +8077,10 @@ __metadata:
     uuid: "npm:9.0.1"
     xstate: "npm:4.38.2"
   peerDependencies:
-    cesium: 1.x
+    cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/b8785d9a72076cdd0470d473ae9abd33107f2f8cf4f51dd6d233b8fa68870387c8aa2ddf8152d0405a6ea5a240fde747860ebc92aa04685b0f31d91123839a2e
+  checksum: 10c0/9efc7b5ef280d89ef4f039d82fa07fbf97c54cfcb321ecf9337e251f77a40313bd027554188f86089a314d3ca0084696358aee136c58fc66c8924a3e42d7f461
   languageName: node
   linkType: hard
 
@@ -8107,7 +8107,7 @@ __metadata:
     "@monaco-editor/react": "npm:4.6.0"
     "@playwright/test": "npm:1.39.0"
     "@popperjs/core": "npm:2.11.8"
-    "@reearth/core": "npm:0.0.7-alpha.6"
+    "@reearth/core": "npm:0.0.7-alpha.11"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -8207,7 +8207,7 @@ __metadata:
     use-file-input: "npm:1.0.0"
     uuid: "npm:9.0.1"
     vite: "npm:5.3.5"
-    vite-plugin-cesium: "npm:1.2.22"
+    vite-plugin-cesium: "npm:1.2.23"
     vite-plugin-svgr: "npm:4.2.0"
     vite-tsconfig-paths: "npm:4.2.1"
     vitest: "npm:1.6.0"
@@ -23770,14 +23770,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resium@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "resium@npm:1.18.0"
+"resium@npm:1.18.1":
+  version: 1.18.1
+  resolution: "resium@npm:1.18.1"
   peerDependencies:
     cesium: 1.x
     react: ">=18.2.0"
     react-dom: ">=18.2.0"
-  checksum: 10c0/c4693e4aae6002eca35bce9c5d81df3d013784f2344d5a8b76fb7213acf23b16a7c96e751bf9951ee5ca2bec8fca879f86dc12fad03d5b1f675bdde249b06b77
+  checksum: 10c0/52e29361e3f59469125293d203e8c68baea499338c5bb93d642225817ddafdb30d8874baabbf124a9fea6f3daa8ac13bec71db6d466d5d2c90d103ee1d78ea5f
   languageName: node
   linkType: hard
 
@@ -26712,9 +26712,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-cesium@npm:1.2.22":
-  version: 1.2.22
-  resolution: "vite-plugin-cesium@npm:1.2.22"
+"vite-plugin-cesium@npm:1.2.23":
+  version: 1.2.23
+  resolution: "vite-plugin-cesium@npm:1.2.23"
   dependencies:
     fs-extra: "npm:^9.1.0"
     rollup-plugin-external-globals: "npm:^0.6.1"
@@ -26722,7 +26722,7 @@ __metadata:
   peerDependencies:
     cesium: ^1.95.0
     vite: ">=2.7.1"
-  checksum: 10c0/3c660d45a72908e6293f0ebf86668fad235fa1cd355f9e5e95fb5584cf9ffac2e2fa54c4cbfb74817624ffab210233595f0bdf8378aa4869beb4c234bffdba04
+  checksum: 10c0/5e14c4135d39ce7e84ad12c8315410b4a4f43fc306877687397bf2ccbf783f4388f87619ce2d9374696b1205ffa86e5f3c23820d3214350f1aab5cf097ea44d7
   languageName: node
   linkType: hard
 
