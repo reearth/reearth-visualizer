@@ -1,9 +1,7 @@
 import { FC } from "react";
 
-import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
@@ -40,17 +38,9 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
     handleWorkspaceChange,
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
 
-  const t = useT();
-  const theme = useTheme();
-
   return (
     <Wrapper>
       <LeftSideWrapper>
-        <Header>
-          <Typography size="body" weight="bold" color={theme.dangerous.strong}>
-            {t("Re:Earth Visualizer")}
-          </Typography>
-        </Header>
         <LeftSidePanel
           tab={currentTab}
           isPersonal={isPersonal}
@@ -106,10 +96,4 @@ const LeftSideWrapper = styled("div")(({ theme }) => ({
   width: DEFAULT_SIDEBAR_WIDTH,
   gap: theme.spacing.super,
   boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)",
-}));
-
-const Header = styled("div")(({ theme }) => ({
-  borderBottom: `1px solid ${theme.outline.weaker}`,
-  alignContent: "center",
-  padding: theme.spacing.normal,
 }));

@@ -8,6 +8,7 @@ import {
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 
+import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
 import { Profile } from "./profile";
@@ -57,6 +58,7 @@ const LeftSidePanel: FC<Props> = ({
             />
           ))}
         </>
+        <StarredProject />
       </SidebarSection>
       <SidebarSection>
         <>

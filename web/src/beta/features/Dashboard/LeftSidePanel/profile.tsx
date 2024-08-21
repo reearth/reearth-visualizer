@@ -61,27 +61,38 @@ export const Profile: FC<ProfileProp> = ({
   ];
 
   return (
-    <ProfileWrapper>
-      {isPersonal && (
-        <Avatar>
-          <Typography size="body">{currentUser?.charAt(0).toUpperCase()}</Typography>
-        </Avatar>
-      )}
-      <Typography size="body" weight="bold">
-        {currentUser}
+    <Wrapper>
+      <Typography size="body" weight="bold" color={theme.dangerous.strong}>
+        {t("Re:Earth Visualizer")}
       </Typography>
-      <div>
-        <PopupMenu
-          label={<Icon color={theme.content.weak} icon="caretDown" size="small" />}
-          menu={popupMenu}
-        />
-      </div>
-    </ProfileWrapper>
+      <ProfileWrapper>
+        {isPersonal && (
+          <Avatar>
+            <Typography size="body">{currentUser?.charAt(0).toUpperCase()}</Typography>
+          </Avatar>
+        )}
+        <TitleWrapper>{currentUser}</TitleWrapper>
+        <PopupWrapper>
+          <PopupMenu
+            label={<Icon color={theme.content.weak} icon="caretDown" size="small" />}
+            menu={popupMenu}
+          />
+        </PopupWrapper>
+      </ProfileWrapper>
+    </Wrapper>
   );
 };
 
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.normal,
+  borderBottom: `1px solid ${theme.outline.weaker}`,
+  alignContent: "center",
+  padding: theme.spacing.normal,
+}));
+
 const ProfileWrapper = styled("div")(({ theme }) => ({
-  padding: `0 ${theme.spacing.small}px`,
   display: "flex",
   gap: theme.spacing.small,
   alignItems: "center",
@@ -95,4 +106,16 @@ const Avatar = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  flexShrink: 0,
 }));
+
+const TitleWrapper = styled("div")(({ theme }) => ({
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.bold,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+}));
+
+const PopupWrapper = styled("div")(() => ({}));
