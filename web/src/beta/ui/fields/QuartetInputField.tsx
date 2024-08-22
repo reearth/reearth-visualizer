@@ -5,14 +5,15 @@ import { styled, useTheme } from "@reearth/services/theme";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
-type commonTurple = [number, number, number, number];
+type CommonTuple = [number, number, number, number];
+
 export type TripletInputFieldProps = CommonFieldProps &
   Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
-    values: commonTurple;
+    values: CommonTuple;
     placeholders?: [string, string, string, string];
     content?: [string, string, string, string];
-    onChange?: (values: commonTurple) => void;
-    onBlur?: (values: commonTurple) => void;
+    onChange?: (values: CommonTuple) => void;
+    onBlur?: (values: CommonTuple) => void;
   };
 
 const TripletInputField: FC<TripletInputFieldProps> = ({
@@ -25,14 +26,21 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   onBlur,
   ...props
 }) => {
-  const [inputValues, setInputValues] = useState<commonTurple>(values);
+  const [inputValues, setInputValues] = useState<CommonTuple>(values);
 
   const theme = useTheme();
-  const handleChange = useCallback(() => {
-    const newValues = [...inputValues] as commonTurple;
-    setInputValues(newValues);
-    onChange?.(newValues);
-  }, [inputValues, onChange]);
+
+  const handleChange = useCallback(
+    (index: number, newValue: number | undefined) => {
+      if (newValue !== undefined) {
+        const newValues = [...inputValues] as CommonTuple;
+        newValues[index] = newValue;
+        setInputValues(newValues);
+        onChange?.(newValues);
+      }
+    },
+    [inputValues, onChange],
+  );
 
   const handleBlur = useCallback(() => {
     onBlur?.(inputValues);
@@ -50,7 +58,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
             <NumberInput
               value={value}
               placeholder={placeholders?.[index]}
-              onChange={handleChange}
+              onChange={newValue => handleChange(index, newValue)}
               onBlur={handleBlur}
               extendWidth
               {...props}
