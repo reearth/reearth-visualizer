@@ -1,13 +1,12 @@
 import { FC } from "react";
 
-import URLField from "@reearth/beta/components/fields/URLField";
 import {
   InputGroup,
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/SharedComponent";
+} from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
   Selector,
   RadioGroup,
@@ -16,6 +15,7 @@ import {
   TextInput,
   TextArea,
 } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -28,6 +28,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const {
     value,
     fileFormat,
+    assetsTypes,
     sourceType,
     dataSourceTypeOptions,
     fileFormatOptions,
@@ -53,18 +54,20 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceTypeOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup
+            value={sourceType}
+            options={dataSourceTypeOptions}
+            onChange={handleDataSourceTypeChange}
+          />
         </InputGroup>
 
         {sourceType == "local" && (
-          //this Url field component will be replaced with new ui/fields
           <InputsWrapper>
-            <URLField
-              fileType="asset"
-              entityType="file"
-              name={t("Asset")}
+            <AssetField
+              inputMethod="asset"
+              commonTitle={t("Asset")}
               value={value}
-              fileFormat={fileFormat}
+              assetsTypes={assetsTypes}
               onChange={handleValueChange}
             />
           </InputsWrapper>
@@ -88,7 +91,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             </InputsWrapper>
           </InputGroup>
         )}
-        {fileFormat === "GeoJSON" && (
+        {fileFormat === "geojson" && (
           <InputGroup label={t("Prioritize Performance")}>
             <Switcher value={prioritizePerformance} onChange={v => setPrioritizePerformance(v)} />
           </InputGroup>

@@ -1,49 +1,47 @@
-import {
-  ColJustifyBetween,
-  AssetWrapper,
-  InputGroup,
-  Input,
-  SubmitWrapper,
-  SelectWrapper,
-} from "@reearth/beta/features/Editor/utils";
+import { FC } from "react";
+
+import { Selector, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import { SketchProps } from "..";
+import { ContentWrapper, InputGroup, InputsWrapper, Wrapper } from "../../shared/SharedComponent";
 
-const General: React.FC<SketchProps> = ({
+export interface Props {
+  layerName?: string;
+  layerStyle?: string;
+  layerStyles?: LayerStyle[];
+  onLayerNameChange?: (value?: string) => void;
+  onLayerStyleChange?: (value?: string | string[]) => void;
+}
+const General: FC<Props> = ({
   layerStyles,
   layerName,
   layerStyle,
-  setLayerName,
-  setLayerStyle = () => {},
+  onLayerNameChange,
+  onLayerStyleChange,
 }) => {
   const t = useT();
   const layerStyleOption = layerStyles ? layerStyles : [];
 
   return (
-    <ColJustifyBetween>
-      <AssetWrapper>
-        <InputGroup label={t("Layer Name")} description={t("Layer name you want to add.")}>
-          <Input
-            type="text"
-            placeholder={t("Input Text")}
-            value={layerName}
-            onChange={e => setLayerName?.(e.target.value)}
-          />
+    <Wrapper>
+      <ContentWrapper>
+        <InputGroup label={t("Layer Name")}>
+          <InputsWrapper>
+            <TextInput placeholder={t(" Text")} value={layerName} onChange={onLayerNameChange} />
+          </InputsWrapper>
         </InputGroup>
 
-        <SelectWrapper
-          value={layerStyle}
-          name={t("Layer Style")}
-          description={t("Layer style you want to add.")}
-          options={layerStyleOption?.map(v => ({ key: v.id, label: v.name }))}
-          attachToRoot
-          onChange={setLayerStyle}
-        />
-      </AssetWrapper>
-
-      <SubmitWrapper />
-    </ColJustifyBetween>
+        <InputGroup label={t("Layer Style")}>
+          <Selector
+            value={layerStyle}
+            maxHeight={250}
+            options={layerStyleOption?.map(v => ({ label: v.name, value: v.id }))}
+            onChange={onLayerStyleChange}
+          />
+        </InputGroup>
+      </ContentWrapper>
+    </Wrapper>
   );
 };
 

@@ -6,7 +6,6 @@ export type {
   ValueTypes,
   ValueType,
   MapRef,
-  SceneProperty,
   InteractionModeType,
 } from "@reearth/core";
 export type { Theme } from "./theme";

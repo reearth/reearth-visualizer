@@ -8,6 +8,7 @@ export default ({
   infobox,
   isEditable,
   onBlockCreate,
+  onBlockMove,
 }: {
   infobox?: Infobox;
   isEditable?: boolean;
@@ -16,6 +17,7 @@ export default ({
     extensionId: string,
     index?: number | undefined,
   ) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number, blockId?: string) => void;
 }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [disableSelection, setDisableSelection] = useState(false);
@@ -23,6 +25,7 @@ export default ({
   const [infoboxBlocks, setInfoboxBlocks] = useState(infobox?.blocks ?? []);
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
+  const [isDragging, setIsDragging] = useState(false);
 
   // Will only be undefined when infobox is first created, so default to true
   const showInfobox = useMemo(
@@ -100,20 +103,39 @@ export default ({
 
   useEffect(() => {
     if (infobox) {
-      infobox.blocks && infobox.blocks.length > 0 && setInfoboxBlocks(infobox.blocks);
+      setInfoboxBlocks(infobox.blocks && infobox.blocks.length > 0 ? infobox.blocks : []);
     } else {
-      infoboxBlocks.length && setInfoboxBlocks([]);
-      selectedBlockId !== undefined && setSelectedBlockId(undefined);
-      openBlocksIndex !== undefined && setOpenBlocksIndex(undefined);
-      disableSelection !== undefined && setDisableSelection(false);
+      setInfoboxBlocks([]);
+      setSelectedBlockId(undefined);
+      setOpenBlocksIndex(undefined);
+      setDisableSelection(false);
     }
-  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex, disableSelection]);
+  }, [infobox]);
 
   useEffect(() => {
     if (wrapperRef.current) {
       wrapperRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [infobox?.featureId]);
+
+  const handleMoveEnd = useCallback(
+    async (itemId?: string, newIndex?: number) => {
+      if (itemId !== undefined && newIndex !== undefined) {
+        setInfoboxBlocks(old => {
+          const items = [...old];
+          const currentIndex = old.findIndex(o => o.id === itemId);
+          if (currentIndex !== -1) {
+            const [movedItem] = items.splice(currentIndex, 1);
+            items.splice(newIndex, 0, movedItem);
+          }
+          return items;
+        });
+        await onBlockMove?.(itemId, newIndex);
+      }
+      setIsDragging(false);
+    },
+    [onBlockMove],
+  );
 
   return {
     wrapperRef,
@@ -126,10 +148,12 @@ export default ({
     gapField,
     positionField,
     editModeContext,
+    isDragging,
     setInfoboxBlocks,
     handleBlockOpen,
     handleBlockCreate,
     handleBlockSelect,
     handleBlockDoubleClick,
+    handleMoveEnd,
   };
 };

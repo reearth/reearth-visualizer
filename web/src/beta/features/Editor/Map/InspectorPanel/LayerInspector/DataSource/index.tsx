@@ -1,4 +1,6 @@
-import Text from "@reearth/beta/components/Text";
+import { FC } from "react";
+
+import { InputField, TextareaField } from "@reearth/beta/ui/fields";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -7,44 +9,40 @@ type Props = {
   selectedLayer: NLSLayer;
 };
 
-const LayerData: React.FC<Props> = ({ selectedLayer }) => {
+const DataSource: FC<Props> = ({ selectedLayer }) => {
   const t = useT();
   return (
     <Wrapper>
-      <Text size="body">{t("Format")}</Text>
-      <ValueWrapper>
-        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-          {selectedLayer.config?.data?.type}
-        </StyledText>
-      </ValueWrapper>
-      {!!selectedLayer.config?.data?.url && (
-        <>
-          <Text size="body">{t("Resource URL")}</Text>
-          <ValueWrapper>
-            <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-              {selectedLayer.config?.data?.url}
-            </StyledText>
-          </ValueWrapper>
-        </>
+      <InputField
+        commonTitle={t("Layer Name")}
+        value={selectedLayer.title}
+        appearance="readonly"
+        disabled
+      />
+      <InputField
+        commonTitle={t("Format")}
+        value={selectedLayer.config?.data?.type}
+        appearance="readonly"
+        disabled
+      />
+
+      {selectedLayer.config?.data?.url && (
+        <TextareaField
+          commonTitle={t("Resource URL")}
+          value={selectedLayer.config?.data?.url}
+          appearance="readonly"
+          disabled
+          rows={3}
+        />
       )}
     </Wrapper>
   );
 };
 
-export default LayerData;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+}));
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const ValueWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-`;
-
-const StyledText = styled(Text)`
-  word-break: break-all;
-`;
+export default DataSource;

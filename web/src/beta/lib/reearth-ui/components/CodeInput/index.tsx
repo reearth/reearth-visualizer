@@ -8,6 +8,7 @@ export type CodeInputProps = {
   language?: string;
   showLines?: boolean;
   disabled?: boolean;
+  height?: number;
   onChange?: (val: string | undefined) => void;
   onBlur?: (val: string | undefined) => void;
 };
@@ -17,6 +18,7 @@ export const CodeInput: FC<CodeInputProps> = ({
   language = "json",
   showLines = true,
   disabled,
+  height,
   onChange,
   onBlur,
 }) => {
@@ -41,6 +43,9 @@ export const CodeInput: FC<CodeInputProps> = ({
       readOnlyMessage: {
         supportHtml: false,
       },
+      scrollbar: {
+        horizontal: "hidden",
+      },
     }),
     [disabled, showLines],
   );
@@ -55,6 +60,7 @@ export const CodeInput: FC<CodeInputProps> = ({
       },
     });
     monaco.editor.setTheme("myCustomTheme");
+    editor.getAction("editor.action.formatDocument").run();
 
     editor.onDidBlurEditorText(() => {
       setIsActive(false);
@@ -85,6 +91,7 @@ export const CodeInput: FC<CodeInputProps> = ({
         theme="vs-dark"
         options={options}
         value={value}
+        height={height}
         onChange={handleChange}
         onMount={handleEditorDidMount}
       />

@@ -1,19 +1,21 @@
 import { FC, useCallback, useMemo, useState } from "react";
 
-import URLField from "@reearth/beta/components/fields/URLField";
 import {
   InputGroup,
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/SharedComponent";
+} from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, Icon, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import { DataProps, SourceType, DataSourceOptType } from "..";
 import { generateTitle } from "../util";
+
+const assetsTypes = ["csv" as const];
 
 const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
@@ -66,18 +68,20 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <Wrapper>
       <ContentWrapper>
         <InputGroup label={t("Source Type")}>
-          <RadioGroup options={dataSourceOptions} onChange={handleDataSourceTypeChange} />
+          <RadioGroup
+            value={sourceType}
+            options={dataSourceOptions}
+            onChange={handleDataSourceTypeChange}
+          />
         </InputGroup>
 
         {sourceType == "local" && (
-          //this Url field component will be replaced with new ui/fields
           <InputsWrapper>
-            <URLField
-              fileType="asset"
-              entityType="file"
-              name={t("Asset")}
+            <AssetField
+              inputMethod="asset"
+              commonTitle={t("Asset")}
               value={value}
-              fileFormat="CSV"
+              assetsTypes={assetsTypes}
               onChange={handleValueChange}
             />
           </InputsWrapper>

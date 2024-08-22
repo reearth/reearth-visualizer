@@ -59,7 +59,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 			case project.SortTypeUpdatedAt:
 				return result[i].UpdatedAt().Before(result[j].UpdatedAt())
 			case project.SortTypeName:
-				return strings.Compare(result[i].Name(), result[j].Name()) < 0
+				return strings.Compare(strings.ToLower(result[i].Name()), strings.ToLower(result[j].Name())) < 0
 			default:
 				return false
 			}

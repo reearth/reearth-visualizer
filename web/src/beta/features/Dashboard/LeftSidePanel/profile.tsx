@@ -27,6 +27,7 @@ export const Profile: FC<ProfileProp> = ({
   currentUser,
   isPersonal,
   workspaces,
+  currentWorkspace,
   onWorkspaceChange,
   onSignOut,
 }) => {
@@ -38,21 +39,19 @@ export const Profile: FC<ProfileProp> = ({
       id: "workspace",
       title: t("Switch WorkSpace"),
       icon: "arrowLeftRight",
-      subItem: workspaces?.map(workspace => {
+      subItem: workspaces?.map(w => {
         return {
-          id: workspace.id || "",
-          title: workspace.name,
-          onClick: () => onWorkspaceChange?.(workspace.id),
+          customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
+          customSubMenuOrder: w.personal ? 0 : 1,
+          id: w.id || "",
+          title: w.name,
+          hasCustomSubMenu: true,
+          personal: w.personal,
+          selected: currentWorkspace?.id === w.id,
+          onClick: () => onWorkspaceChange?.(w.id),
         };
       }),
     },
-    {
-      id: "accountSetting",
-      title: t("Account Settings"),
-      path: `/settings/account`,
-      icon: "user",
-    },
-
     {
       id: "signOut",
       title: t("Log Out"),

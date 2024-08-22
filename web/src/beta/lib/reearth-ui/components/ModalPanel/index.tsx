@@ -7,18 +7,33 @@ export type ModalPanelProps = {
   title?: string;
   children: ReactNode;
   actions?: ReactNode;
+  layout?: "common";
   onCancel?: () => void;
+  appearance?: "simple" | "normal";
 };
 
-export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, onCancel }) => {
+export const ModalPanel: FC<ModalPanelProps> = ({
+  title,
+  children,
+  actions,
+  layout,
+  onCancel,
+  appearance = "normal",
+}) => {
   return (
     <Wrapper>
-      <HeaderWrapper>
-        <Title>{title}</Title>
-        <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
-      </HeaderWrapper>
-      <Content>{children}</Content>
-      {actions && <ActionWrapper>{actions}</ActionWrapper>}
+      {appearance !== "simple" && (
+        <HeaderWrapper>
+          <Title>{title}</Title>
+          <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
+        </HeaderWrapper>
+      )}
+      {layout === "common" ? (
+        <CommonLayout>{children}</CommonLayout>
+      ) : (
+        <Content>{children}</Content>
+      )}
+      {actions && <ActionWrapper showBorder={appearance !== "simple"}>{actions}</ActionWrapper>}
     </Wrapper>
   );
 };
@@ -26,7 +41,8 @@ export const ModalPanel: FC<ModalPanelProps> = ({ title, children, actions, onCa
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  background: theme.bg.transparentBlack,
+  background: theme.bg[1],
+  borderRadius: theme.radius.large,
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
@@ -50,10 +66,9 @@ const Title = styled("div")(() => ({
 
 const Content = styled("div")(() => ({
   alignSelf: "stretch",
-  userSelect: "none",
 }));
 
-const ActionWrapper = styled("div")(({ theme }) => ({
+const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorder }) => ({
   padding: theme.spacing.normal,
   background: theme.bg[1],
   borderBottomRightRadius: theme.radius.large,
@@ -61,5 +76,15 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   display: "flex",
   alignItems: "flex-start",
+  borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
   gap: theme.spacing.normal,
+}));
+
+const CommonLayout = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+  padding: theme.spacing.large,
+  background: theme.bg[1],
 }));

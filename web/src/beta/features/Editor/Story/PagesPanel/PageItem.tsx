@@ -80,32 +80,30 @@ const PageItem: FC<PageItemProps> = ({ storyPage, pageCount, dragHandleClassName
   return (
     <Wrapper>
       <PageCount>{pageCount}.</PageCount>
-      <EntryItemWrapper>
-        <EntryItem
-          title={
-            editingPageNameId === storyPage.id ? (
-              <TextInput
-                size="small"
-                extendWidth
-                autoFocus
-                value={localTitle}
-                onChange={setLocalTitle}
-                onBlur={handleTitleUpdate}
-              />
-            ) : (
-              <TitleWrapper onDoubleClick={() => setEditingPageNameId(storyPage.id)}>
-                {hasEmptySpace || !title ? t("Untitled") : title}
-              </TitleWrapper>
-            )
-          }
-          dragHandleClassName={dragHandleClassName}
-          highlighted={selectedStoryPage?.id === storyPage.id}
-          disableHover={isDragging}
-          onClick={handleStoryPageItemClick}
-          optionsMenu={optionsMenu}
-          optionsMenuWidth={100}
-        />
-      </EntryItemWrapper>
+      <EntryItem
+        title={
+          editingPageNameId === storyPage.id ? (
+            <TextInput
+              size="small"
+              extendWidth
+              autoFocus
+              value={localTitle}
+              onChange={setLocalTitle}
+              onBlur={handleTitleUpdate}
+            />
+          ) : (
+            <TitleWrapper onDoubleClick={() => setEditingPageNameId(storyPage.id)}>
+              {hasEmptySpace || !title ? t("Untitled") : title}
+            </TitleWrapper>
+          )
+        }
+        dragHandleClassName={dragHandleClassName}
+        highlighted={selectedStoryPage?.id === storyPage.id}
+        disableHover={isDragging}
+        onClick={handleStoryPageItemClick}
+        optionsMenu={optionsMenu}
+        optionsMenuWidth={100}
+      />
     </Wrapper>
   );
 };
@@ -116,10 +114,8 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.micro,
-}));
-
-const EntryItemWrapper = styled("div")(() => ({
-  flex: 1,
+  width: "100%",
+  overflowX: "hidden",
 }));
 
 const PageCount = styled("div")(({ theme }) => ({

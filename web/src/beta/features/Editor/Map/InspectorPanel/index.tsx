@@ -22,6 +22,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     handleFlyTo,
     handleLayerConfigUpdate,
     handleGeoJsonFeatureUpdate,
+    handleGeoJsonFeatureDelete,
   } = useMapPage();
 
   const t = useT();
@@ -35,7 +36,6 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
       extend
       alwaysOpen
       noPadding={!!selectedLayer}
-      background="normal"
       areaRef={areaRef}
       showCollapseArea={showCollapseArea}>
       {!!selectedSceneSetting && scenePropertyId && (
@@ -53,6 +53,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           selectedLayer={selectedLayer}
           onLayerConfigUpdate={handleLayerConfigUpdate}
           onGeoJsonFeatureUpdate={handleGeoJsonFeatureUpdate}
+          onGeoJsonFeatureDelete={handleGeoJsonFeatureDelete}
         />
       )}
     </Panel>

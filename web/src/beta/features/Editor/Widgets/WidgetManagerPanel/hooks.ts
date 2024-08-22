@@ -6,11 +6,10 @@ import { SelectedWidget } from "../../hooks/useWidgets";
 
 type Props = {
   sceneId?: string;
-  selectedWidget: SelectedWidget | undefined;
   selectWidget: (value: SelectedWidget | undefined) => void;
 };
 
-export default ({ sceneId, selectedWidget, selectWidget }: Props) => {
+export default ({ sceneId, selectWidget }: Props) => {
   const {
     useInstallableWidgetsQuery,
     useInstalledWidgetsQuery,
@@ -39,17 +38,12 @@ export default ({ sceneId, selectedWidget, selectWidget }: Props) => {
   const handleWidgetSelection = (id: string) => {
     const w = installedWidgets?.find(w => w.id === id);
     if (!w) return;
-
-    if (w.id === selectedWidget?.id) {
-      selectWidget(undefined);
-    } else {
-      selectWidget({
-        id: w.id,
-        pluginId: w.pluginId,
-        extensionId: w.extensionId,
-        propertyId: w.property.id,
-      });
-    }
+    selectWidget({
+      id: w.id,
+      pluginId: w.pluginId,
+      extensionId: w.extensionId,
+      propertyId: w.property.id,
+    });
   };
 
   return {

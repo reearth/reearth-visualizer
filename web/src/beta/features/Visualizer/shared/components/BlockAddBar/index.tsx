@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
-import * as Popover from "@reearth/beta/components/Popover";
-import PopoverMenuContent, { MenuItem } from "@reearth/beta/components/PopoverMenuContent";
+import { Icon, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
+import { getIconName } from "../../../Crust/StoryPanel/utils";
 import { InstallableBlock } from "../../types";
 
 type Props = {
@@ -18,7 +17,7 @@ type Props = {
   onBlockAdd?: (extensionId?: string, pluginId?: string) => void;
 };
 
-const BlockAddBar: React.FC<Props> = ({
+const BlockAddBar: FC<Props> = ({
   id,
   installableBlocks,
   openBlocks,
@@ -28,12 +27,13 @@ const BlockAddBar: React.FC<Props> = ({
   onBlockOpen,
   onBlockAdd,
 }) => {
-  const items: MenuItem[] = useMemo(
+  const items: PopupMenuItem[] = useMemo(
     () =>
       installableBlocks?.map?.(b => {
         return {
-          name: b.name,
-          icon: b.extensionId ?? "plugin",
+          id: `${b.extensionId}-${b.pluginId}`,
+          title: b.name,
+          icon: getIconName(b.extensionId),
           onClick: () => {
             onBlockAdd?.(b.extensionId, b.pluginId);
             onBlockOpen();
@@ -41,14 +41,6 @@ const BlockAddBar: React.FC<Props> = ({
         };
       }) ?? [],
     [installableBlocks, onBlockAdd, onBlockOpen],
-  );
-
-  const handleBlockOpen = useCallback(
-    (e: React.MouseEvent<Element> | undefined) => {
-      e?.stopPropagation();
-      onBlockOpen();
-    },
-    [onBlockOpen],
   );
 
   const persist = useMemo(() => alwaysShow || openBlocks, [alwaysShow, openBlocks]);
@@ -65,61 +57,65 @@ const BlockAddBar: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
-        <Popover.Trigger asChild>
-          <Bar
-            id={id}
-            persist={persist}
-            height={showAreaHeight}
-            onClick={e => e.stopPropagation()}
-            onMouseOver={e => e.stopPropagation()}>
-            <StyledIcon icon="plus" persist={persist} size={16} onClick={handleBlockOpen} />
-            <Line persist={persist} />
-          </Bar>
-        </Popover.Trigger>
-        <Popover.Content>
-          <PopoverMenuContent size="md" width="200px" items={items} />
-        </Popover.Content>
-      </Popover.Provider>
+      <Bar
+        id={id}
+        height={showAreaHeight}
+        persist={persist}
+        onClick={e => e.stopPropagation()}
+        onMouseOver={e => e.stopPropagation()}>
+        <PopupMenu
+          placement="bottom-start"
+          openMenu={openBlocks}
+          onOpenChange={onBlockOpen}
+          label={<StyledIcon icon="plus" size="normal" />}
+          size="normal"
+          width={200}
+          menu={items}
+        />
+        <Line />
+      </Bar>
     </Wrapper>
   );
 };
 
+const Wrapper = styled("div")(({ theme }) => ({
+  position: "relative",
+  padding: `${theme.spacing.micro}px 0`,
+  zIndex: theme.zIndexes.visualizer.storyBlockAddBar,
+}));
+
+const Bar = styled("div")<{ height?: number; persist?: boolean }>(({ height, persist, theme }) => ({
+  position: "absolute",
+  left: 0,
+  right: 0,
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small + 2,
+  height: height ? `${height}px` : "1px",
+  cursor: "pointer",
+  "&:hover > *": {
+    opacity: "100%",
+  },
+  "& > *": {
+    opacity: persist ? "100%" : "0%",
+    transition: "opacity 0.4s",
+  },
+}));
+
+const StyledIcon = styled(Icon)<{ persist?: boolean }>(({ theme }) => ({
+  color: theme.content.main,
+  background: theme.select.main,
+  padding: theme.spacing.micro,
+  borderRadius: theme.radius.small,
+}));
+
+const Line = styled("div")<{ persist?: boolean }>(({ theme }) => ({
+  height: "1px",
+  width: "100%",
+  background: theme.select.main,
+}));
+
 export default BlockAddBar;
-
-const Wrapper = styled.div`
-  position: relative;
-  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlockAddBar};
-`;
-
-const Bar = styled.div<{ persist?: boolean; height?: number }>`
-  position: absolute;
-  left: 0;
-  right: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: ${({ height }) => height ?? 1}px;
-`;
-
-const StyledIcon = styled(Icon)<{ persist?: boolean }>`
-  color: ${({ theme }) => theme.content.main};
-  background: ${({ theme }) => theme.select.main};
-  border-radius: 4px;
-  padding: 2px;
-  cursor: pointer;
-  transition: opacity 0.4s;
-  opacity: ${({ persist }) => (persist ? "100%" : "0%")};
-`;
-
-const Line = styled.div<{ persist?: boolean }>`
-  height: 1px;
-  width: 100%;
-  background: ${({ theme }) => theme.select.main};
-  transition: opacity 0.4s;
-  opacity: ${({ persist }) => (persist ? "100%" : "0%")};
-`;
 
 const showWhenCloseToElement =
   (id?: string, persist?: boolean, parentWidth?: number) => (event: MouseEvent) => {

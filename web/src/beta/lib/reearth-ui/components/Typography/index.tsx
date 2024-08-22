@@ -18,6 +18,7 @@ export type TypographyProps = {
   trait?: UniqueTraits;
   weight?: FontWeight;
   color?: string;
+  className?: string;
   otherProperties?: Partial<ChangeableProperties>;
   onClick?: () => void;
 };
@@ -28,6 +29,7 @@ export const Typography: FC<TypographyProps> = ({
   trait,
   weight = "regular",
   color,
+  className,
   otherProperties,
   onClick,
 }) => {
@@ -49,12 +51,13 @@ export const Typography: FC<TypographyProps> = ({
       color: color || theme.content.main,
       textOverflow: "ellipsis",
       overflow: "hidden",
+      flexShrink: 0,
     }),
     [otherProperties, theme.content.main, color],
   );
 
   return ThemeTypography ? (
-    <ThemeTypography style={memoizedStyle} onClick={onClick}>
+    <ThemeTypography style={memoizedStyle} onClick={onClick} className={className}>
       {children}
     </ThemeTypography>
   ) : null;

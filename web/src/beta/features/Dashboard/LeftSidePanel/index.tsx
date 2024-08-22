@@ -1,12 +1,15 @@
 import { FC } from "react";
 
-import { Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  SidebarMenuItem,
+  SidebarSection,
+  SidebarVersion,
+  SidebarWrapper,
+} from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
 
 import { TabItems, Workspace } from "../type";
 
-import { Menu } from "./menuItem";
 import { Profile } from "./profile";
 
 type Props = {
@@ -30,11 +33,10 @@ const LeftSidePanel: FC<Props> = ({
   onWorkspaceChange,
 }) => {
   const t = useT();
-  const theme = useTheme();
 
   return (
-    <Wrapper>
-      <Section>
+    <SidebarWrapper>
+      <SidebarSection>
         <Profile
           currentUser={currentWorkspace?.name}
           isPersonal={isPersonal}
@@ -45,54 +47,34 @@ const LeftSidePanel: FC<Props> = ({
         />
         <>
           {topTabs?.map(tab => (
-            <Menu
+            <SidebarMenuItem
               key={tab.id}
               path={tab.path}
               text={t(tab.text || "")}
               icon={tab.icon}
               active={tab.id === currentTab}
+              disabled={tab.disabled}
             />
           ))}
         </>
-      </Section>
-      <Section>
+      </SidebarSection>
+      <SidebarSection>
         <>
           {bottomTabs?.map(tab => (
-            <Menu
+            <SidebarMenuItem
               key={tab.id}
               path={tab.path}
               text={t(tab.text || "")}
               icon={tab.icon}
               active={tab.id === currentTab}
+              disabled={tab.disabled}
             />
           ))}
         </>
-        <Version>
-          <Typography size="body" color={theme.content.weak}>
-            {t(`Version ${__APP_VERSION__}`)}
-          </Typography>
-        </Version>
-      </Section>
-    </Wrapper>
+        <SidebarVersion />
+      </SidebarSection>
+    </SidebarWrapper>
   );
 };
-
-const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  padding: `0 ${theme.spacing.smallest}px`,
-  flex: 1,
-  justifyContent: "space-between",
-}));
-
-const Section = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.small,
-}));
-
-const Version = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small,
-}));
 
 export default LeftSidePanel;

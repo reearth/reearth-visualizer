@@ -1,4 +1,4 @@
-import { useCallback, useState, FC, useEffect } from "react";
+import { useCallback, useState, FC } from "react";
 
 import { useCurrentCamera } from "@reearth/beta/features/Editor/atoms";
 import { Button, ButtonProps, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
@@ -39,7 +39,7 @@ const CameraField: FC<CameraFieldProps> = ({
   const theme = useTheme();
   const t = useT();
   const [open, setOpen] = useState<"editor" | "capture" | null>(null);
-  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const [currentCamera] = useCurrentCamera();
 
   const handleClick = useCallback(
     (panel: "editor" | "capture") => setOpen(current => (current === panel ? null : panel)),
@@ -58,24 +58,18 @@ const CameraField: FC<CameraFieldProps> = ({
 
   const handleFlyto = useCallback(
     (c?: Partial<Camera>) => {
-      if (!value) return;
       const dest = c ?? currentCamera;
       if (dest) {
         onFlyTo?.(dest);
       }
     },
-    [currentCamera, onFlyTo, value],
+    [currentCamera, onFlyTo],
   );
 
   const handleCameraSettingDelete = useCallback(() => {
     if (!value) return;
     handleSave();
   }, [value, handleSave]);
-
-  useEffect(() => {
-    if (!value) return;
-    setCurrentCamera(value);
-  }, [setCurrentCamera, value]);
 
   const ZoomToPosition: FC = () => (
     <Button
@@ -89,18 +83,6 @@ const CameraField: FC<CameraFieldProps> = ({
     />
   );
 
-  const DeleteAction: FC = () => (
-    <Button
-      icon="trash"
-      size="small"
-      iconButton
-      appearance="simple"
-      disabled={!value}
-      onClick={handleCameraSettingDelete}
-      iconColor={value ? theme.content.main : theme.content.weak}
-    />
-  );
-
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <InputWrapper>
@@ -110,7 +92,18 @@ const CameraField: FC<CameraFieldProps> = ({
           appearance="readonly"
           disabled
           leftAction={value && [ZoomToPosition]}
-          actions={[DeleteAction]}
+          actions={[
+            <Button
+              key="delete"
+              icon="trash"
+              size="small"
+              iconButton
+              appearance="simple"
+              disabled={!value}
+              onClick={handleCameraSettingDelete}
+              iconColor={value ? theme.content.main : theme.content.weak}
+            />,
+          ]}
         />
         <Popup
           trigger={

@@ -1,7 +1,8 @@
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
+import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
   UpdateProjectInput,
   ProjectPayload,
@@ -38,6 +39,7 @@ export type Project = ProjectPayload["project"];
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+  const apolloCache = useApolloClient().cache;
 
   const useProjectQuery = useCallback((projectId?: string) => {
     const { data, ...rest } = useQuery(GET_PROJECT, {
@@ -53,16 +55,26 @@ export default () => {
     return { project, ...rest };
   }, []);
 
-  const useProjectsQuery = useCallback((teamId?: string) => {
-    const { data, ...rest } = useQuery(GET_PROJECTS, {
-      variables: { teamId: teamId ?? "", last: 16 },
-      skip: !teamId,
+  const useProjectsQuery = useCallback((input: GetProjectsQueryVariables) => {
+    const { data, networkStatus, ...rest } = useQuery(GET_PROJECTS, {
+      variables: input,
+      skip: !input.teamId,
       notifyOnNetworkStatusChange: true,
     });
 
-    const projects = useMemo(() => data?.projects, [data?.projects]);
+    const projects = useMemo(() => data?.projects?.edges.map(e => e.node), [data?.projects]);
 
-    return { projects, ...rest };
+    const hasMoreProjects = useMemo(
+      () => data?.projects.pageInfo?.hasNextPage || data?.projects.pageInfo?.hasPreviousPage,
+      [data?.projects.pageInfo?.hasNextPage, data?.projects.pageInfo?.hasPreviousPage],
+    );
+    const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
+    const endCursor = useMemo(
+      () => data?.projects.pageInfo?.endCursor,
+      [data?.projects.pageInfo?.endCursor],
+    );
+
+    return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
@@ -163,10 +175,10 @@ export default () => {
         type: s === "limited" ? "success" : s == "published" ? "success" : "info",
         text:
           s === "limited"
-            ? t("Successfully published your project!")
+            ? t("Successfully published your scene!")
             : s == "published"
             ? t("Successfully published your project with search engine indexing!")
-            : t("Successfully unpublished your project. Now nobody can access your project."),
+            : t("Successfully unpublished your scene. Now nobody can access your scene."),
       });
       return { data: data.publishProject.project, status: "success" };
     },
@@ -240,10 +252,12 @@ export default () => {
         return { status: "error" };
       }
 
+      apolloCache.evict({ fieldName: "projects" });
+
       setNotification({ type: "success", text: t("Successfully delete project!") });
       return { status: "success" };
     },
-    [deleteProjectMutation, t, setNotification],
+    [apolloCache, deleteProjectMutation, t, setNotification],
   );
 
   const [updateProjectBasicAuthMutation] = useMutation(UPDATE_PROJECT_BASIC_AUTH, {
