@@ -104,15 +104,6 @@ const AssetField: FC<AssetFieldProps> = ({
           onAssetSelect={handleChange}
           assetsTypes={assetsTypes}
         />
-        // <AssetModal
-        //   open={open}
-        //   onModalClose={handleModalClose}
-        //   assetType={entityType}
-        //   currentWorkspace={currentWorkspace}
-        //   currentValue={currentValue}
-        //   fileFormat={fileFormat}
-        //   onSelect={handleChange}
-        // />
       )}
     </CommonField>
   );

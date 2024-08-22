@@ -34,6 +34,8 @@ const AssetListItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
     [asset.createdAt],
   );
 
+  const formattedSize = useMemo(() => formatBytes(asset.size), [asset.size]);
+
   return (
     <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick}>
       <Thumbnail>
@@ -50,7 +52,7 @@ const AssetListItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
         <Typography size="body">{formattedDate}</Typography>
       </Col>
       <Col width={30}>
-        <Typography size="body">{asset.size}</Typography>
+        <Typography size="body">{formattedSize}</Typography>
       </Col>
     </Wrapper>
   );
@@ -98,3 +100,21 @@ const Col = styled("div")<{ width: number }>(({ width }) => ({
   flexGrow: 0,
   flexShrink: 0,
 }));
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 Bytes";
+
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  const value = bytes / Math.pow(1024, i);
+
+  let formattedValue;
+
+  if (i === 0) {
+    formattedValue = Math.floor(value).toLocaleString();
+  } else {
+    formattedValue = value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  return `${formattedValue} ${sizes[i]}`;
+}
