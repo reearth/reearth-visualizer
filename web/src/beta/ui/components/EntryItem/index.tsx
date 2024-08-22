@@ -101,7 +101,8 @@ const Wrapper = styled("div")<{
   borderRadius: theme.radius.small,
   backgroundColor: "transparent",
   minHeight: 28,
-  width: "100%",
+  flex: 1,
+  minWidth: 0,
   cursor: "pointer",
   ...(hovered && {
     backgroundColor: theme.bg[1],
