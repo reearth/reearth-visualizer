@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { Popup } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
@@ -11,14 +11,8 @@ type Props = {
 };
 
 const IndicatorSection: FC<Props> = ({ pageNumber, currentPageNumber, title, onPageChange }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  const handleMouseOut = useCallback(() => setIsHovered(false), []);
-
   const handleClick = useCallback(() => {
     onPageChange(pageNumber);
-    setIsHovered(false);
   }, [pageNumber, onPageChange]);
 
   const isHighlighted = useMemo(
@@ -33,12 +27,10 @@ const IndicatorSection: FC<Props> = ({ pageNumber, currentPageNumber, title, onP
         <Indicator
           highlighted={isHighlighted}
           onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseOut}
           isFirstChild={pageNumber === 1}
         />
       }
-      open={isHovered}
+      triggerOnHover
       placement="bottom"
       extendTriggerWidth>
       <PageNameWrapper isHighlighted={isHighlighted}>
@@ -72,4 +64,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
+  cursor: "default",
 }));

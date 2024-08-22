@@ -229,7 +229,7 @@ export default function Crust({
 
   const featuredInfobox = useMemo(() => {
     const selected = layers?.find(l => l.id === selectedLayer?.layerId);
-    return selectedLayerId?.featureId && selectedLayer?.layer?.layer.infobox
+    return selectedLayerId?.featureId && selected?.infobox
       ? {
           property: selected?.infobox?.property,
           blocks: [...(selected?.infobox?.blocks ?? [])],

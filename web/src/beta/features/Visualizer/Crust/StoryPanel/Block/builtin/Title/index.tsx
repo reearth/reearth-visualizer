@@ -2,11 +2,10 @@ import { FC, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { isEmptyString } from "@reearth/beta/utils/util";
 import { ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
-import { useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 
 import { StoryBlock } from "../../../types";
 
@@ -38,11 +37,20 @@ const TitleBlock: FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props })
       property={property}
       dndEnabled={false}
       {...props}>
-      <Typography size="h2" color={hasText ? color ?? "black" : theme.content.weak}>
+      <TitleWrapper color={hasText ? color ?? "black" : theme.content.weak}>
         {hasEmptySpace || !title ? t("Untitled") : title}
-      </Typography>
+      </TitleWrapper>
     </BlockWrapper>
   );
 };
 
 export default TitleBlock;
+
+const TitleWrapper = styled("div")<{ color?: string }>(({ color, theme }) => ({
+  color: color,
+  fontSize: theme.fonts.sizes.h2,
+  fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  wordBreak: "break-word",
+}));

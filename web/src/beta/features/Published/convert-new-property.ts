@@ -74,6 +74,8 @@ export function processLayers(
           };
         }),
       },
+      isSketchLayer: true,
+      idProperty: "id",
     };
 
     return {
