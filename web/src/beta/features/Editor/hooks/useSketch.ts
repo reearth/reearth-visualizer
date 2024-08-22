@@ -51,6 +51,9 @@ export default ({
     (type: SketchType | undefined, from: "editor" | "plugin" = "editor") => {
       setSketchType(type);
       if (from === "editor") visualizerRef.current?.sketch?.setType?.(type);
+      visualizerRef.current?.sketch?.overrideOptions?.({
+        autoResetInteractionMode: false,
+      });
     },
     [visualizerRef],
   );
@@ -75,12 +78,11 @@ export default ({
     async (feature: SketchFeature | null) => {
       // TODO: create a new layer if there is no selected sketch layer
       if (!feature || !selectedLayer?.id || !selectedLayer.isSketch) return;
-      // TODO: support custom properties
-      const customProperties = {};
+
       await handleSketchLayerAdd({
         type: feature.type,
         layerId: selectedLayer?.id,
-        properties: { ...feature.properties, ...customProperties },
+        properties: { ...feature.properties },
         geometry: feature.geometry,
       });
 
@@ -94,9 +96,9 @@ export default ({
     [selectedLayer?.id, selectedLayer?.isSketch, ignoreCoreLayerUnselect, handleSketchLayerAdd],
   );
 
-  // Workaround: we can't get an update from core after nlsLayers got updated.
-  // Therefore we need to get and select the latest sketch feature manually delayed.
   useEffect(() => {
+    // Workaround: we can't get an notice from core after nlsLayers got updated.
+    // Therefore we need to get and select the latest sketch feature manually delayed.
     setTimeout(() => {
       if (pendingSketchSelectionRef.current) {
         const { layerId, featureId } = pendingSketchSelectionRef.current;
@@ -110,12 +112,18 @@ export default ({
         pendingSketchSelectionRef.current = undefined;
         ignoreCoreLayerUnselect.current = false;
       }
-    }, 1);
+    }, 100);
   }, [nlsLayers, pendingSketchSelectionRef, visualizerRef, ignoreCoreLayerUnselect]);
 
   useEffect(() => {
-    setSketchType(undefined);
-  }, [tab]);
+    handleSketchTypeChange(undefined);
+  }, [tab, handleSketchTypeChange]);
+
+  useEffect(() => {
+    if (!selectedLayer?.isSketch) {
+      handleSketchTypeChange(undefined);
+    }
+  }, [selectedLayer, handleSketchTypeChange]);
 
   const handleGeoJsonFeatureUpdate = useCallback(
     async (inp: GeoJsonFeatureUpdateProps) => {

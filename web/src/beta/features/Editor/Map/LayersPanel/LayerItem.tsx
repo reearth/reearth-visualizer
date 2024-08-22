@@ -95,7 +95,7 @@ const LayerItem: FC<LayerItemProps> = ({
       editingLayerNameId !== layer.id
         ? [
             {
-              comp: !layer.isSketch && layer.visible && (
+              comp: layer.visible && (
                 <IconButton
                   key="zoom"
                   icon="crosshair"
@@ -119,14 +119,7 @@ const LayerItem: FC<LayerItemProps> = ({
             },
           ]
         : undefined,
-    [
-      layer.id,
-      layer.isSketch,
-      layer.visible,
-      editingLayerNameId,
-      handleZoomToLayer,
-      handleToggleLayerVisibility,
-    ],
+    [layer.id, layer.visible, editingLayerNameId, handleZoomToLayer, handleToggleLayerVisibility],
   );
 
   const [localTitle, setLocalTitle] = useState(layer.title);
