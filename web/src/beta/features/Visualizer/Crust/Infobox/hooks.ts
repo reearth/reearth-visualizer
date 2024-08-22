@@ -103,14 +103,14 @@ export default ({
 
   useEffect(() => {
     if (infobox) {
-      infobox.blocks && infobox.blocks.length > 0 && setInfoboxBlocks(infobox.blocks);
+      setInfoboxBlocks(infobox.blocks && infobox.blocks.length > 0 ? infobox.blocks : []);
     } else {
-      infoboxBlocks.length && setInfoboxBlocks([]);
-      selectedBlockId !== undefined && setSelectedBlockId(undefined);
-      openBlocksIndex !== undefined && setOpenBlocksIndex(undefined);
-      disableSelection !== undefined && setDisableSelection(false);
+      setInfoboxBlocks([]);
+      setSelectedBlockId(undefined);
+      setOpenBlocksIndex(undefined);
+      setDisableSelection(false);
     }
-  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex, disableSelection]);
+  }, [infobox]);
 
   useEffect(() => {
     if (wrapperRef.current) {
