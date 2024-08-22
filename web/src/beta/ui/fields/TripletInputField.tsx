@@ -34,7 +34,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
 
   const handleChange = useCallback(
     (index: number, value?: number) => {
-      if (value === undefined || isNaN(value)) return;
+      if (value === undefined || Number.isNaN(value)) return;
       const newValues = [...inputValues] as commonTurple;
       newValues[index] = value;
       setInputValues(newValues);
