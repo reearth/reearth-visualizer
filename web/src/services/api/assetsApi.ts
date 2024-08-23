@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { CreateAssetInput, GetAssetsQueryVariables, GetAssetsQuery } from "@reearth/services/gql";
@@ -11,6 +11,7 @@ export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+  const apolloCache = useApolloClient().cache;
 
   const useAssetsQuery = useCallback((input: GetAssetsQueryVariables) => {
     const { data, loading, networkStatus, fetchMore, ...rest } = useQuery(GET_ASSETS, {
@@ -56,9 +57,12 @@ export default () => {
           text: t("Successfully added one or more assets."),
         });
       }
+
+      apolloCache.evict({ fieldName: "assets" });
+
       return { data: results, result: "success" };
     },
-    [createAssetMutation, t, setNotification],
+    [apolloCache, createAssetMutation, t, setNotification],
   );
 
   const [removeAssetMutation] = useMutation(REMOVE_ASSET, {
