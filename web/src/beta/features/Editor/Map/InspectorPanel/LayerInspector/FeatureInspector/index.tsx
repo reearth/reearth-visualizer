@@ -46,16 +46,20 @@ const FeatureData: FC<Props> = ({
   const theme = useTheme();
   const [fields, setFields] = useState<FieldProp[]>([]);
 
-  const [collapsedStates, setCollapsedStates] = useState<Record<string, boolean>>({
-    customProperties: false,
-    geometry: false,
-    properties: false,
-  });
-
-  const getCollapseState = useCallback((storageId: string) => {
-    const storedState = localStorage.getItem(`reearth-visualizer-feature-${storageId}-collapsed`);
-    return storedState ? JSON.parse(storedState) : false;
+  // Initialize collapsed state from localStorage
+  const initialCollapsedStates = useMemo(() => {
+    const storedStates = ["customProperties", "geometry", "properties"].reduce(
+      (acc, id) => ({
+        ...acc,
+        [id]: localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) === "true",
+      }),
+      {},
+    );
+    return storedStates;
   }, []);
+
+  const [collapsedStates, setCollapsedStates] =
+    useState<Record<string, boolean>>(initialCollapsedStates);
 
   const saveCollapseState = useCallback((storageId: string, state: boolean) => {
     localStorage.setItem(
@@ -63,15 +67,6 @@ const FeatureData: FC<Props> = ({
       JSON.stringify(state),
     );
   }, []);
-
-  useEffect(() => {
-    const FeatureGroups = ["customProperties", "geometry", "properties"];
-    const states = FeatureGroups.reduce((acc, id) => {
-      acc[id] = getCollapseState(id);
-      return acc;
-    }, {} as Record<string, boolean>);
-    setCollapsedStates(states);
-  }, [getCollapseState]);
 
   const handleCollapse = useCallback(
     (storageId: string, state: boolean) => {
