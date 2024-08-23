@@ -57,17 +57,23 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       storageId="editor-map-scene-panel"
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}>
-      <LayerStyleManager>
+      <LayerStyleManager onClick={() => handleSelectLayerStyle(undefined)}>
         <ActionsWrapper>
-          <IconButton icon="plus" size="large" onClick={handleLayerStyleAddition} />
+          <IconButton
+            icon="plus"
+            size="large"
+            onClick={handleLayerStyleAddition}
+            stopPropagationOnClick
+          />
           <IconButton
             icon="return"
             size="large"
             disabled={!selectedLayer || !selectedLayerStyleId}
             onClick={handleApplyLayerStyle}
+            stopPropagationOnClick
           />
         </ActionsWrapper>
-        <StylesWrapper onClick={() => handleSelectLayerStyle(undefined)}>
+        <StylesWrapper>
           <StylesGrid>
             {layerStyles?.map(layerStyle => (
               <LayerStyleItem
