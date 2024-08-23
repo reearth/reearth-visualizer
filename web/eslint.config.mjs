@@ -42,7 +42,6 @@ export default [
       "node/no-unsupported-features/es-syntax": [
         "error",
         {
-          version: ">=20.11.0",
           ignores: ["dynamicImport", "modules"],
         },
       ],
@@ -50,11 +49,11 @@ export default [
         "error",
         {
           args: "all",
-          argsIgnorePattern: "^(_|e)",
+          argsIgnorePattern: "^_",
           caughtErrors: "all",
-          caughtErrorsIgnorePattern: "^(_|e)",
-          destructuredArrayIgnorePattern: "^(_|e)",
-          varsIgnorePattern: "^(_|e)",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
           ignoreRestSiblings: true,
         },
       ],

@@ -30,7 +30,12 @@ type Props = {
   onChange?: (text: EditorStateJSONString) => void;
 };
 
-const RichTextEditor: React.FC<Props> = ({ editMode, text, scrollableContainerId, onChange }) => {
+const RichTextEditor: React.FC<Props> = ({
+  editMode,
+  text,
+  scrollableContainerId,
+  onChange,
+}) => {
   const t = useT();
   const editorStateJSONStringRef = useRef<EditorStateJSONString>();
 
@@ -49,7 +54,7 @@ const RichTextEditor: React.FC<Props> = ({ editMode, text, scrollableContainerId
       },
       nodes: [...Nodes],
     }),
-    [text],
+    [text]
   );
 
   const isEmpty = useMemo(() => isContentEmpty(text), [text]);
@@ -62,7 +67,7 @@ const RichTextEditor: React.FC<Props> = ({ editMode, text, scrollableContainerId
         onChange?.(editorStateJSONString);
       }
     },
-    [editorStateJSONStringRef, onChange],
+    [editorStateJSONStringRef, onChange]
   );
 
   const editorRef = useRef<HTMLDivElement>(null);
@@ -71,7 +76,10 @@ const RichTextEditor: React.FC<Props> = ({ editMode, text, scrollableContainerId
     <LexicalComposer initialConfig={editorConfig}>
       <div className="lexical editor-container" ref={editorRef}>
         {editMode && (
-          <ToolbarPlugin containerRef={editorRef} scrollableContainerId={scrollableContainerId} />
+          <ToolbarPlugin
+            containerRef={editorRef}
+            scrollableContainerId={scrollableContainerId}
+          />
         )}
         <div className="editor-inner">
           <RichTextPlugin
@@ -116,7 +124,7 @@ const isEditorStateJSONString = (str?: string) => {
   if (!str) return false;
   try {
     return JSON.parse(str).root !== undefined;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };
@@ -125,7 +133,7 @@ const isContentEmpty = (str?: string) => {
   if (!str) return true;
   try {
     return JSON.parse(str).root.children[0].children[0].text === "";
-  } catch (e) {
+  } catch (_e) {
     return true;
   }
 };

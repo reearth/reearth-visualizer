@@ -115,7 +115,7 @@ async function loadCesiumIonToken(): Promise<string> {
     const res = await fetch("/cesium_ion_token.txt");
     const token = (await res.text()).trim();
     return token.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH ? token : "";
-  } catch (e) {
+  } catch (_e) {
     // ignore
     return "";
   }
