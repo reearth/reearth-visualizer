@@ -29,7 +29,10 @@ try {
 let cesiumVersion = "";
 try {
   const cesiumPackageJson = JSON.parse(
-    readFileSync(resolve(__dirname, "node_modules", "cesium", "package.json"), "utf-8"),
+    readFileSync(
+      resolve(__dirname, "node_modules", "cesium", "package.json"),
+      "utf-8"
+    )
   );
   cesiumVersion = cesiumPackageJson.version;
 } catch {
@@ -42,7 +45,9 @@ export default defineConfig({
     svgr(),
     react(),
     yaml(),
-    cesium({ cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined }),
+    cesium({
+      cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined,
+    }),
     serverHeaders(),
     config(),
     tsconfigPaths(),
@@ -116,16 +121,18 @@ function config(): Plugin {
       const envs = loadEnv(
         server.config.mode,
         server.config.envDir ?? process.cwd(),
-        server.config.envPrefix,
+        server.config.envPrefix
       );
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
         : {};
-      const remoteCesiumIonTokenResponseText = envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
-        ? await (await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)).text()
-        : undefined;
+      const remoteCesiumIonTokenResponseText =
+        envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
+          ? await (await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)).text()
+          : undefined;
       const remoteCesiumIonToken =
-        remoteCesiumIonTokenResponseText?.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH
+        remoteCesiumIonTokenResponseText?.length ===
+        DEFAULT_CESIUM_ION_TOKEN_LENGTH
           ? remoteCesiumIonTokenResponseText
           : "";
       const configRes = JSON.stringify(
@@ -133,7 +140,9 @@ function config(): Plugin {
           ...remoteReearthConfig,
           api: "http://localhost:8080/api",
           published: "/published.html?alias={}",
-          ...(remoteCesiumIonToken ? { cesiumIonAccessToken: remoteCesiumIonToken } : {}),
+          ...(remoteCesiumIonToken
+            ? { cesiumIonAccessToken: remoteCesiumIonToken }
+            : {}),
           // If Cesium version becomes outdated, you can set the Ion token as an environment variables here.
           // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
           // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
@@ -146,7 +155,7 @@ function config(): Plugin {
           ...loadJSON("./reearth-config.json"),
         },
         null,
-        2,
+        2
       );
 
       server.middlewares.use((req, res, next) => {
@@ -166,7 +175,7 @@ function config(): Plugin {
 function loadJSON(path: string): any {
   try {
     return JSON.parse(readFileSync(path, "utf8")) || {};
-  } catch (err) {
+  } catch (_err) {
     return {};
   }
 }

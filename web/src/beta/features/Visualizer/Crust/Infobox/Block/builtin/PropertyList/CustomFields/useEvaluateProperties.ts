@@ -7,16 +7,17 @@ import { PropertyListItem } from "../ListEditor";
 
 export default (properties: PropertyListItem[] | undefined) => {
   const [isReady, setIsReady] = useState(false);
-  const [currentValue, setCurrentValue] = useState<PropertyListItem[] | undefined>(properties);
+  const [currentValue, setCurrentValue] = useState<
+    PropertyListItem[] | undefined
+  >(properties);
 
-  const [evaluatedProperties, setEvaluatedResult] = useState<PropertyListItem[] | undefined>(
-    undefined,
-  );
+  const [evaluatedProperties, setEvaluatedResult] = useState<
+    PropertyListItem[] | undefined
+  >(undefined);
 
   const visualizer = useVisualizer();
 
   // We want the useEffect to be called on each render to make sure evaluatedProperties is up to date
-  // eslint-disable-next-line
   useEffect(() => {
     if (!isReady) {
       setIsReady(true);
@@ -38,13 +39,13 @@ export default (properties: PropertyListItem[] | undefined) => {
         metaData: selectedFeature.metaData,
         range: selectedFeature.range,
       };
-      const es = currentValue?.map(v => {
+      const es = currentValue?.map((v) => {
         const ev = evalExpression(
           {
             expression: v.value,
           },
           undefined,
-          simpleFeature,
+          simpleFeature
         );
 
         return ev
@@ -60,5 +61,5 @@ export default (properties: PropertyListItem[] | undefined) => {
     }
   });
 
-  return evaluatedProperties?.filter(ep => ep !== undefined);
+  return evaluatedProperties?.filter((ep) => ep !== undefined);
 };

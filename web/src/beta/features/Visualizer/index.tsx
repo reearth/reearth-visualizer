@@ -1,7 +1,12 @@
 import styled from "@emotion/styled";
 import { FC, MutableRefObject, SetStateAction } from "react";
 
-import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import {
+  Camera,
+  LatLng,
+  ValueType,
+  ValueTypes,
+} from "@reearth/beta/utils/value";
 import {
   type SketchFeature,
   type SketchType,
@@ -21,7 +26,12 @@ import { InstallableStoryBlock, StoryPanelRef } from "./Crust/StoryPanel";
 import { Position, Story } from "./Crust/StoryPanel/types";
 import { WidgetThemeOptions } from "./Crust/theme";
 import { InteractionModeType, MapRef } from "./Crust/types";
-import { Alignment, Widget, WidgetAlignSystem, WidgetLayoutConstraint } from "./Crust/Widgets";
+import {
+  Alignment,
+  Widget,
+  WidgetAlignSystem,
+  WidgetLayoutConstraint,
+} from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
 
@@ -40,18 +50,10 @@ type VisualizerProps = {
     })[];
     alignSystem?: WidgetAlignSystem;
     ownBuiltinWidgets: string[];
-    layoutConstraint?:
-      | {
-          [x: string]: WidgetLayoutConstraint;
-        }
-      | undefined;
+    layoutConstraint?: Record<string, WidgetLayoutConstraint> | undefined;
   };
   viewerProperty?: ViewerProperty;
-  pluginProperty?:
-    | {
-        [key: string]: any;
-      }
-    | undefined;
+  pluginProperty?: Record<string, any> | undefined;
   story?: Story;
   zoomedLayerId?: string;
   visualizerRef?: MutableRefObject<MapRef | null>;
@@ -62,9 +64,13 @@ type VisualizerProps = {
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
-    feature: ComputedFeature | undefined,
+    feature: ComputedFeature | undefined
   ) => void;
-  handleLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  handleLayerDrop?: (
+    layerId: string,
+    propertyKey: string,
+    position: LatLng | undefined
+  ) => void;
   handleZoomToLayer?: (layerId: string | undefined) => void;
   handleSketchTypeChange?: (type: SketchType | undefined) => void;
   handleSketchFeatureCreate?: (feature: SketchFeature | null) => void;
@@ -79,16 +85,21 @@ type VisualizerProps = {
       location?: Location | undefined;
       extended?: boolean | undefined;
       index?: number | undefined;
-    },
+    }
   ) => Promise<void>;
-  handleWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => Promise<void>;
-  selectWidgetArea?: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
+  handleWidgetAlignSystemUpdate?: (
+    location: Location,
+    align: Alignment
+  ) => Promise<void>;
+  selectWidgetArea?: (
+    update?: SetStateAction<WidgetAreaState | undefined>
+  ) => void;
   // infobox
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   handleInfoboxBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   handleInfoboxBlockMove?: (id: string, targetIndex: number) => Promise<void>;
   handleInfoboxBlockRemove?: (id?: string | undefined) => Promise<void>;
@@ -96,17 +107,24 @@ type VisualizerProps = {
   showStoryPanel?: boolean;
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   installableStoryBlocks?: InstallableStoryBlock[];
-  handleStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
+  handleStoryPageChange?: (
+    id?: string,
+    disableScrollIntoView?: boolean
+  ) => void;
   handleStoryBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
-  handleStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  handleStoryBlockMove?: (
+    id: string,
+    targetId: number,
+    blockId: string
+  ) => void;
   handleStoryBlockDelete?: (
     pageId?: string | undefined,
-    blockId?: string | undefined,
+    blockId?: string | undefined
   ) => Promise<void>;
   handlePropertyValueUpdate?: (
     propertyId?: string,
@@ -114,19 +132,22 @@ type VisualizerProps = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
-  handlePropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  handlePropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   handlePropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   handlePropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -215,7 +236,8 @@ const Visualizer: FC<VisualizerProps> = ({
         onZoomToLayer={handleZoomToLayer}
         onSketchTypeChangeProp={handleSketchTypeChange}
         onSketchFeatureCreate={handleSketchFeatureCreate}
-        onMount={handleMount}>
+        onMount={handleMount}
+      >
         <Crust
           engineName={engine}
           isBuilt={!!isBuilt}
@@ -276,7 +298,7 @@ const Wrapper = styled("div")<{ storyPanelPosition?: Position }>(
     width: "100%",
     height: "100%",
     overflow: "hidden",
-  }),
+  })
 );
 
 const StoryWrapper = styled("div")(() => ({

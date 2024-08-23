@@ -28,7 +28,7 @@ export default ({ value, onChange }: Params) => {
       setColor(e.target.value);
       setRgba(tinycolor(e.target.value ?? colorState).toRgb());
     },
-    [colorState],
+    [colorState]
   );
 
   const handleRgbaInput = useCallback(
@@ -40,7 +40,7 @@ export default ({ value, onChange }: Params) => {
         [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
       });
     },
-    [handleChange, rgba],
+    [handleChange, rgba]
   );
 
   const handleClose = useCallback(() => {
@@ -89,7 +89,7 @@ export default ({ value, onChange }: Params) => {
         handleHexSave();
       }
     },
-    [handleHexSave],
+    [handleHexSave]
   );
 
   //UseEffects
@@ -105,7 +105,11 @@ export default ({ value, onChange }: Params) => {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
-      if (open && wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      if (
+        open &&
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
         if (colorState != value && !open) {
           handleSave();
         }
@@ -121,7 +125,7 @@ export default ({ value, onChange }: Params) => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     wrapperRef,

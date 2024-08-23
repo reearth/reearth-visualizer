@@ -34,24 +34,34 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
-  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
+  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
+    undefined
+  );
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
+    undefined
+  );
 
-  const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } = useMemo(() => {
-    const sceneProperty = processProperty(data?.property);
-    const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
-    const cesiumIonAccessToken = sceneProperty?.default?.ion;
-    if (sceneProperty?.camera?.camera) {
-      setInitialCamera(sceneProperty?.camera?.camera);
-    }
-    return {
-      viewerProperty: sceneProperty
-        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
-        : undefined,
-      widgetThemeOptions,
-      cesiumIonAccessToken,
-    };
-  }, [data?.property]);
+  const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } =
+    useMemo(() => {
+      const sceneProperty = processProperty(data?.property);
+      const widgetThemeOptions = sceneProperty?.theme as
+        | WidgetThemeOptions
+        | undefined;
+      const cesiumIonAccessToken = sceneProperty?.default?.ion;
+      if (sceneProperty?.camera?.camera) {
+        setInitialCamera(sceneProperty?.camera?.camera);
+      }
+      return {
+        viewerProperty: sceneProperty
+          ? (convertData(
+              sceneProperty,
+              sceneProperty2ViewerPropertyMapping
+            ) as ViewerProperty)
+          : undefined,
+        widgetThemeOptions,
+        cesiumIonAccessToken,
+      };
+    }, [data?.property]);
 
   useEffect(() => {
     setCurrentCamera(initialCamera);
@@ -59,11 +69,14 @@ export default (alias?: string) => {
 
   const pluginProperty = useMemo(
     () =>
-      Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
-        {},
+      Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>(
+        (a, b) => ({
+          ...a,
+          [b]: processProperty(data?.plugins?.[b]?.property),
+        }),
+        {}
       ),
-    [data?.plugins],
+    [data?.plugins]
   );
 
   const widgets = useMemo<
@@ -81,7 +94,8 @@ export default (alias?: string) => {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ?? []) {
+            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ??
+              []) {
               widgetsInWas.add(w);
             }
           }
@@ -90,7 +104,7 @@ export default (alias?: string) => {
     }
 
     const floatingWidgets = data?.widgets
-      .filter(w => !widgetsInWas.has(w.id))
+      .filter((w) => !widgetsInWas.has(w.id))
       .map(
         (w): InternalWidget => ({
           id: w.id,
@@ -98,11 +112,11 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-        }),
+        })
       );
 
     const widgets = data?.widgets
-      .filter(w => widgetsInWas.has(w.id))
+      .filter((w) => widgetsInWas.has(w.id))
       .map(
         (w): InternalWidget => ({
           id: w.id,
@@ -110,7 +124,7 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-        }),
+        })
       );
 
     const widgetZone = (zone?: WidgetZone | null) => {
@@ -133,7 +147,9 @@ export default (alias?: string) => {
       const align = area?.align.toLowerCase() as WidgetAlignment | undefined;
       const padding = area?.padding as WidgetAreaPadding | undefined;
       const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
-        .map<InternalWidget | undefined>(w => widgets?.find(w2 => w === w2.id))
+        .map<
+          InternalWidget | undefined
+        >((w) => widgets?.find((w2) => w === w2.id))
         .filter((w): w is InternalWidget => !!w);
       return {
         align: align ?? "start",
@@ -150,10 +166,15 @@ export default (alias?: string) => {
       };
     };
 
-    const ownBuiltinWidgets = data.widgets.reduce<(keyof BuiltinWidgets)[]>((res, next) => {
-      const id = `${next.pluginId}/${next.extensionId}`;
-      return isBuiltinWidget(id) && widgetsInWas.has(next.id) ? [...res, id] : res;
-    }, []);
+    const ownBuiltinWidgets = data.widgets.reduce<(keyof BuiltinWidgets)[]>(
+      (res, next) => {
+        const id = `${next.pluginId}/${next.extensionId}`;
+        return isBuiltinWidget(id) && widgetsInWas.has(next.id)
+          ? [...res, id]
+          : res;
+      },
+      []
+    );
 
     return {
       floating: floatingWidgets,
@@ -168,8 +189,11 @@ export default (alias?: string) => {
   }, [data]);
 
   const actualAlias = useMemo(
-    () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
-    [alias],
+    () =>
+      alias ||
+      new URLSearchParams(window.location.search).get("alias") ||
+      undefined,
+    [alias]
   );
 
   const story = useMemo(() => {
@@ -181,13 +205,13 @@ export default (alias?: string) => {
           title: s.title,
           position: s.position,
           bgColor: s.bgColor || "#f1f1f1",
-          pages: s.pages.map(p => {
+          pages: s.pages.map((p) => {
             return {
               id: p.id,
               swipeable: p.swipeable,
               layerIds: p.layers,
               property: processProperty(p.property),
-              blocks: p.blocks.map(b => {
+              blocks: p.blocks.map((b) => {
                 return {
                   id: b.id,
                   pluginId: b.pluginId,
@@ -203,7 +227,7 @@ export default (alias?: string) => {
 
   const layers = useMemo(() => {
     const processedLayers = processLayers(
-      data?.nlsLayers?.map(l => ({
+      data?.nlsLayers?.map((l) => ({
         id: l.id,
         title: l.title,
         config: l.config,
@@ -213,11 +237,11 @@ export default (alias?: string) => {
         isSketch: l.isSketch,
         sketch: l.sketchInfo,
       })) ?? [],
-      data?.layerStyles,
+      data?.layerStyles
     );
     if (!story) return processedLayers;
 
-    return processedLayers?.map(layer => ({
+    return processedLayers?.map((layer) => ({
       ...layer,
       visible: true,
     }));
@@ -265,7 +289,7 @@ export default (alias?: string) => {
           ? cesiumIonAccessToken
           : config()?.cesiumIonAccessToken,
     }),
-    [cesiumIonAccessToken],
+    [cesiumIonAccessToken]
   );
 
   // GA

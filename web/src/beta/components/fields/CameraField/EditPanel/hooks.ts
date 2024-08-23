@@ -16,7 +16,7 @@ export default ({
 }) => {
   const t = useT();
   const [newCamera, setNewCamera] = useState<Camera | undefined>(
-    camera ? userFriendlyCamera(camera) : undefined,
+    camera ? userFriendlyCamera(camera) : undefined
   );
 
   useEffect(() => {
@@ -35,10 +35,10 @@ export default ({
       setNewCamera(updated);
       onFlyTo?.(saveFriendlyCamera(updated));
     },
-    [newCamera, onFlyTo],
+    [newCamera, onFlyTo]
   );
 
-  const panelContent: { [key: string]: RowType } = useMemo(() => {
+  const panelContent: Record<string, RowType> = useMemo(() => {
     return {
       [t("Location")]: [
         { id: "lat", description: t("Latitude") },
@@ -58,7 +58,7 @@ export default ({
       if (value === newCamera?.[field]) return;
       handleFieldUpdate(field, value);
     },
-    [newCamera, handleFieldUpdate],
+    [newCamera, handleFieldUpdate]
   );
 
   const handleSave = useCallback(() => {

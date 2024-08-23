@@ -85,21 +85,31 @@ export type Reearth = {
       | "overriddenLayers"
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
-      readonly overriddenProperties?: { [id: string]: any };
-      readonly overrideProperty?: (properties: LayerSimple["properties"] | undefined) => void;
+      readonly overriddenProperties?: Record<string, any>;
+      readonly overrideProperty?: (
+        properties: LayerSimple["properties"] | undefined
+      ) => void;
       readonly overridden?: OverriddenLayer[];
       readonly add?: (layer: NaiveLayer) => string | undefined;
       readonly delete?: WrappedRef<LayersRef>["deleteLayer"];
       readonly select?: (
         layerId: string | undefined,
-        reason?: LayerSelectionReason | undefined,
+        reason?: LayerSelectionReason | undefined
       ) => void;
-      findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
-      findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      findFeatureById?: (
+        layerId: string,
+        featureId: string
+      ) => Feature | undefined;
+      findFeaturesByIds?: (
+        layerId: string,
+        featureId: string[]
+      ) => Feature[] | undefined;
       bringToFront?: (layerId: string) => void;
       sendToBack?: (layerId: string) => void;
       selectFeature?: (layerId?: string, featureId?: string) => void;
-      selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
+      selectFeatures?: (
+        layers: { layerId?: string; featureId?: string[] }[]
+      ) => void;
       selectionReason?: LayerSelectionReason;
       // For compat
       overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
@@ -121,15 +131,15 @@ export type Reearth = {
   readonly sketch: Sketch;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
-    callback: (...args: ReearthEventType[T]) => void,
+    callback: (...args: ReearthEventType[T]) => void
   ) => void;
   readonly off: <T extends keyof ReearthEventType>(
     type: T,
-    callback: (...args: ReearthEventType[T]) => void,
+    callback: (...args: ReearthEventType[T]) => void
   ) => void;
   readonly once: <T extends keyof ReearthEventType>(
     type: T,
-    callback: (...args: ReearthEventType[T]) => void,
+    callback: (...args: ReearthEventType[T]) => void
   ) => void;
 };
 
@@ -145,41 +155,53 @@ export type CommonBlock = {
 export type Scene = {
   readonly inEditor: boolean;
   readonly built: boolean;
-  readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  readonly captureScreen: (
+    type?: string,
+    encoderOptions?: number
+  ) => string | undefined;
   readonly getLocationFromScreen: (
     x: number,
     y: number,
-    withTerrain?: boolean,
+    withTerrain?: boolean
   ) => LatLngHeight | undefined;
-  readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
-  readonly computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly sampleTerrainHeight: (
+    lng: number,
+    lat: number
+  ) => Promise<number | undefined>;
+  readonly computeGlobeHeight: (
+    lng: number,
+    lat: number,
+    height?: number
+  ) => number | undefined;
   readonly getGlobeHeight: () => void;
   readonly toXYZ: (
     lng: number,
     lat: number,
     height: number,
-    options?: { useGlobeEllipsoid?: boolean },
+    options?: { useGlobeEllipsoid?: boolean }
   ) => [x: number, y: number, z: number] | undefined;
   readonly toLngLatHeight: (
     x: number,
     y: number,
     z: number,
-    options?: { useGlobeEllipsoid?: boolean },
+    options?: { useGlobeEllipsoid?: boolean }
   ) => [lng: number, lat: number, height: number] | undefined;
   readonly convertScreenToPositionOffset: (
     rawPosition: [x: number, y: number, z: number],
-    screenOffset: [x: number, y: number],
+    screenOffset: [x: number, y: number]
   ) => [x: number, y: number, z: number] | undefined;
-  readonly isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
+  readonly isPositionVisible: (
+    position: [x: number, y: number, z: number]
+  ) => boolean;
   readonly toWindowPosition: (
-    position: [x: number, y: number, z: number],
+    position: [x: number, y: number, z: number]
   ) => [x: number, y: number] | undefined;
   readonly pickManyFromViewport: (
     windowPosition: [x: number, y: number],
     windowWidth: number,
     windowHeight: number,
     // TODO: Get condition as expression for plugin
-    condition?: (f: ComputedFeature) => boolean,
+    condition?: (f: ComputedFeature) => boolean
   ) => ComputedFeature[] | undefined;
 };
 
@@ -192,7 +214,10 @@ export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
-  readonly getFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+  readonly getFovInfo: (options: {
+    withTerrain?: boolean;
+    calcViewSize?: boolean;
+  }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;
@@ -201,19 +226,27 @@ export type Camera = {
   readonly zoomIn: (amount: number, options?: CameraOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
-  readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
+  readonly flyTo: (
+    destination: string | FlyToDestination,
+    options?: CameraOptions
+  ) => void;
   readonly flyToBBox: (
     bbox: [number, number, number, number],
     options?: CameraOptions & {
       heading?: number;
       pitch?: number;
       range?: number;
-    },
+    }
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
-  readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
+  readonly overrideScreenSpaceController: (
+    options: ScreenSpaceCameraControllerOptions
+  ) => void;
   /** Moves the camera position to look at the specified destination. */
-  readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  readonly lookAt: (
+    destination: LookAtDestination,
+    options?: CameraOptions
+  ) => void;
   /** Rotate the camera around the center of earth. */
   readonly rotateRight: (radian: number) => void;
   /** Move the angle of camera around the center of earth. */
@@ -231,7 +264,7 @@ export type Camera = {
   readonly flyToGround: (
     destination: FlyToDestination,
     options?: CameraOptions,
-    offset?: number,
+    offset?: number
   ) => void;
   readonly setView: (camera: CameraPosition) => void;
   readonly forceHorizontalRoll: (enable: boolean) => void;
@@ -247,7 +280,7 @@ export type Clock = {
   speed?: number;
   stepType?: "rate" | "fixed";
   rangeType?: "unbounded" | "clamped" | "bounced";
-  readonly tick?: () => Date | void;
+  readonly tick?: () => Date;
   readonly play?: () => void;
   readonly pause?: () => void;
   readonly setTime?: (time: {
@@ -256,7 +289,9 @@ export type Clock = {
     current: Date | string;
   }) => void;
   readonly setSpeed?: (speed: number) => void;
-  readonly setRangeType?: (rangeType: "unbounded" | "clamped" | "bounced") => void;
+  readonly setRangeType?: (
+    rangeType: "unbounded" | "clamped" | "bounced"
+  ) => void;
   readonly setStepType?: (stepType: "rate" | "fixed") => void;
 };
 
@@ -359,7 +394,7 @@ export type UI = {
       height?: number | string;
       /** Override whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
       extended?: boolean;
-    },
+    }
   ) => void;
   /**
    * Sends a message to the iframe's window shown by the show method. Sent data will be automatically encoded as JSON and restored in the iframe's window. So any object that cannot be serialized to JSON will be ignored.
@@ -376,7 +411,7 @@ export type UI = {
     /** Height of the iframe of the widget. This field is only available for widgets that are not vertically extended. */
     height: string | number | undefined,
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
-    extended?: boolean | undefined,
+    extended?: boolean | undefined
   ) => void;
   readonly close: () => void;
 };
@@ -388,7 +423,7 @@ export type Modal = {
       width?: number | string;
       height?: number | string;
       background?: string;
-    },
+    }
   ) => void;
   readonly postMessage: (message: any) => void;
   readonly update: (options: {
@@ -429,7 +464,7 @@ export type Popup = {
       height?: number | string;
       position?: PopupPosition;
       offset?: PopupOffset;
-    },
+    }
   ) => void;
   readonly postMessage: (message: any) => void;
   readonly update: (options: {
@@ -475,4 +510,4 @@ export type Sketch = {
 };
 
 /** Cesium API: available only when the plugin is a primitive */
-export type Cesium = {};
+export type Cesium = object;

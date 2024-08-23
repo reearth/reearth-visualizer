@@ -46,7 +46,9 @@ const AssetField: FC<AssetFieldProps> = ({
         onChange?.(url, name);
       } else if (
         inputMethod === "asset" &&
-        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes((url.split(".").pop() as FileType) ?? "")
+        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes(
+          (url.split(".").pop() as FileType) ?? ""
+        )
       ) {
         setNotification({
           type: "error",
@@ -58,7 +60,7 @@ const AssetField: FC<AssetFieldProps> = ({
         onChange?.(url, name);
       }
     },
-    [inputMethod, onChange, setNotification, t],
+    [inputMethod, onChange, setNotification, t]
   );
 
   const { handleFileUpload } = useAssetUpload({
@@ -85,7 +87,13 @@ const AssetField: FC<AssetFieldProps> = ({
         />
         {inputMethod === "asset" && (
           <ButtonWrapper>
-            <Button icon={"image"} size="small" title="Choose" onClick={handleClick} extendWidth />
+            <Button
+              icon={"image"}
+              size="small"
+              title="Choose"
+              onClick={handleClick}
+              extendWidth
+            />
             <Button
               icon={"uploadSimple"}
               size="small"
@@ -120,7 +128,7 @@ const AssetField: FC<AssetFieldProps> = ({
 
 export default AssetField;
 
-const AssetWrapper = styled("div")<{}>(({ theme }) => ({
+const AssetWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: `${theme.spacing.smallest}px`,

@@ -20,7 +20,7 @@ export type Options = {
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   ref?: ForwardedRef<Ref>;
   mainIFrameRef?: RefObject<IFrameRef>;
-  exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
+  exposed?: ((api: API) => Record<string, any>) | Record<string, any>;
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
@@ -94,32 +94,32 @@ export default function useHook({
     (e: (msg: any) => void) => {
       messageEvents.add(e);
     },
-    [messageEvents],
+    [messageEvents]
   );
   const offMessage = useCallback(
     (e: (msg: any) => void) => {
       messageEvents.delete(e);
     },
-    [messageEvents],
+    [messageEvents]
   );
   const onceMessage = useCallback(
     (e: (msg: any) => void) => {
       messageOnceEvents.add(e);
     },
-    [messageOnceEvents],
+    [messageOnceEvents]
   );
   const handleMessage = useCallback(
     (msg: any) => {
       try {
-        messageEvents.forEach(e => e(msg));
-        messageOnceEvents.forEach(e => e(msg));
+        messageEvents.forEach((e) => e(msg));
+        messageOnceEvents.forEach((e) => e(msg));
       } catch (e) {
         onError(e);
       }
       rawOnMessage?.(msg);
       messageOnceEvents.clear();
     },
-    [messageEvents, messageOnceEvents, onError, rawOnMessage],
+    [messageEvents, messageOnceEvents, onError, rawOnMessage]
   );
 
   const eventLoopCb = useCallback(() => {
@@ -153,7 +153,7 @@ export default function useHook({
 
       return result;
     },
-    [onError, startEventLoop],
+    [onError, startEventLoop]
   );
 
   useEffect(() => {
@@ -176,9 +176,11 @@ export default function useHook({
     (async () => {
       const ctx = (await getQuickJS()).newContext();
       arena.current = new Arena(ctx, {
-        isMarshalable: target =>
+        isMarshalable: (target) =>
           defaultIsMarshalable(target) ||
-          (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
+          (typeof isMarshalable === "function"
+            ? isMarshalable(target)
+            : "json"),
         experimentalContextEx: true,
       });
 
@@ -247,7 +249,7 @@ export default function useHook({
     (): Ref => ({
       arena: () => arena.current,
     }),
-    [],
+    []
   );
 
   return {

@@ -6,14 +6,17 @@ export default (value: unknown | undefined) => {
   const [isReady, setIsReady] = useState(false);
   const [currentValue, setCurrentValue] = useState<unknown | undefined>(value);
 
-  const [lastFeatureSelected, setLastFeatureSelected] = useState<string | undefined>(undefined);
+  const [lastFeatureSelected, setLastFeatureSelected] = useState<
+    string | undefined
+  >(undefined);
 
-  const [evaluatedResult, setEvaluatedResult] = useState<string | undefined>(undefined);
+  const [evaluatedResult, setEvaluatedResult] = useState<string | undefined>(
+    undefined
+  );
 
   const visualizer = useVisualizer();
 
   // We want the useEffect to be called on each render to make sure evaluatedResult is up to date
-  // eslint-disable-next-line
   useEffect(() => {
     if (!isReady) {
       setIsReady(true);
@@ -43,9 +46,13 @@ export default (value: unknown | undefined) => {
           expression: currentValue,
         },
         undefined,
-        simpleFeature,
+        simpleFeature
       );
-      if ((es && typeof es === "string") || typeof es === "number" || typeof es === "boolean") {
+      if (
+        (es && typeof es === "string") ||
+        typeof es === "number" ||
+        typeof es === "boolean"
+      ) {
         if (es.toString() !== evaluatedResult) {
           setEvaluatedResult(es.toString());
         }

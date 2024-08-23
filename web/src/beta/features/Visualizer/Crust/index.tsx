@@ -14,7 +14,11 @@ import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
-import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
+import Plugins, {
+  type ExternalPluginProps,
+  ModalContainer,
+  PopupContainer,
+} from "./Plugins";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
 import { WidgetThemeOptions, usePublishTheme } from "./theme";
@@ -67,7 +71,7 @@ export type Props = {
   widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignSystem?: WidgetAlignSystemType;
   widgetAlignSystemEditing?: boolean;
-  widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  widgetLayoutConstraint?: Record<string, WidgetLayoutConstraint>;
   floatingWidgets?: InternalWidget[];
   selectedWidgetArea?: WidgetAreaType;
   // infobox
@@ -82,7 +86,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -90,9 +94,13 @@ export type Props = {
   onInfoboxBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
-  onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onInfoboxBlockMove?: (
+    id: string,
+    targetIndex: number,
+    layerId?: string
+  ) => Promise<void>;
   onInfoboxBlockDelete?: (id?: string) => Promise<void>;
   // Infobox
   onPropertyUpdate?: (
@@ -101,19 +109,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   // Story
   showStoryPanel?: boolean;
@@ -126,17 +137,20 @@ export type Props = {
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
-  onStoryBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
+  onStoryBlockDelete?: (
+    pageId?: string | undefined,
+    blockId?: string | undefined
+  ) => Promise<void>;
   onPropertyValueUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
 };
 
@@ -205,8 +219,11 @@ export default function Crust({
   const widgetTheme = usePublishTheme(widgetThemeOptions);
 
   const selectedLayerId = useMemo(
-    () => ({ layerId: selectedLayer?.layerId, featureId: selectedLayer?.featureId }),
-    [selectedLayer?.featureId, selectedLayer?.layerId],
+    () => ({
+      layerId: selectedLayer?.layerId,
+      featureId: selectedLayer?.featureId,
+    }),
+    [selectedLayer?.featureId, selectedLayer?.layerId]
   );
 
   const {
@@ -228,7 +245,7 @@ export default function Crust({
   });
 
   const featuredInfobox = useMemo(() => {
-    const selected = layers?.find(l => l.id === selectedLayer?.layerId);
+    const selected = layers?.find((l) => l.id === selectedLayer?.layerId);
     return selectedLayerId?.featureId && selected?.infobox
       ? {
           property: selected?.infobox?.property,
@@ -265,7 +282,8 @@ export default function Crust({
       onLayerVisibility={onLayerVisibility}
       onLayerLoad={onLayerLoad}
       onSketchTypeChange={onSketchTypeChange}
-      onCameraForceHorizontalRollChange={handleCameraForceHorizontalRollChange}>
+      onCameraForceHorizontalRollChange={handleCameraForceHorizontalRollChange}
+    >
       <Widgets
         isMobile={viewport?.isMobile}
         isBuilt={isBuilt}
@@ -288,7 +306,10 @@ export default function Crust({
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}
       />
-      <PopupContainer shownPluginPopupInfo={shownPluginPopupInfo} ref={pluginPopupContainerRef} />
+      <PopupContainer
+        shownPluginPopupInfo={shownPluginPopupInfo}
+        ref={pluginPopupContainerRef}
+      />
       <Infobox
         infobox={featuredInfobox}
         installableInfoboxBlocks={installableInfoboxBlocks}

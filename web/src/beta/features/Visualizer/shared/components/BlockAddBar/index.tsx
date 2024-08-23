@@ -29,7 +29,7 @@ const BlockAddBar: FC<Props> = ({
 }) => {
   const items: PopupMenuItem[] = useMemo(
     () =>
-      installableBlocks?.map?.(b => {
+      installableBlocks?.map?.((b) => {
         return {
           id: `${b.extensionId}-${b.pluginId}`,
           title: b.name,
@@ -40,10 +40,13 @@ const BlockAddBar: FC<Props> = ({
           },
         };
       }) ?? [],
-    [installableBlocks, onBlockAdd, onBlockOpen],
+    [installableBlocks, onBlockAdd, onBlockOpen]
   );
 
-  const persist = useMemo(() => alwaysShow || openBlocks, [alwaysShow, openBlocks]);
+  const persist = useMemo(
+    () => alwaysShow || openBlocks,
+    [alwaysShow, openBlocks]
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -61,8 +64,9 @@ const BlockAddBar: FC<Props> = ({
         id={id}
         height={showAreaHeight}
         persist={persist}
-        onClick={e => e.stopPropagation()}
-        onMouseOver={e => e.stopPropagation()}>
+        onClick={(e) => e.stopPropagation()}
+        onMouseOver={(e) => e.stopPropagation()}
+      >
         <PopupMenu
           placement="bottom-start"
           openMenu={openBlocks}
@@ -84,23 +88,25 @@ const Wrapper = styled("div")(({ theme }) => ({
   zIndex: theme.zIndexes.visualizer.storyBlockAddBar,
 }));
 
-const Bar = styled("div")<{ height?: number; persist?: boolean }>(({ height, persist, theme }) => ({
-  position: "absolute",
-  left: 0,
-  right: 0,
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small + 2,
-  height: height ? `${height}px` : "1px",
-  cursor: "pointer",
-  "&:hover > *": {
-    opacity: "100%",
-  },
-  "& > *": {
-    opacity: persist ? "100%" : "0%",
-    transition: "opacity 0.4s",
-  },
-}));
+const Bar = styled("div")<{ height?: number; persist?: boolean }>(
+  ({ height, persist, theme }) => ({
+    position: "absolute",
+    left: 0,
+    right: 0,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.small + 2,
+    height: height ? `${height}px` : "1px",
+    cursor: "pointer",
+    "&:hover > *": {
+      opacity: "100%",
+    },
+    "& > *": {
+      opacity: persist ? "100%" : "0%",
+      transition: "opacity 0.4s",
+    },
+  })
+);
 
 const StyledIcon = styled(Icon)<{ persist?: boolean }>(({ theme }) => ({
   color: theme.content.main,
@@ -118,7 +124,8 @@ const Line = styled("div")<{ persist?: boolean }>(({ theme }) => ({
 export default BlockAddBar;
 
 const showWhenCloseToElement =
-  (id?: string, persist?: boolean, parentWidth?: number) => (event: MouseEvent) => {
+  (id?: string, persist?: boolean, parentWidth?: number) =>
+  (event: MouseEvent) => {
     if (!id) return;
 
     const targetElement = document.getElementById(id) as HTMLElement;
@@ -148,18 +155,18 @@ const showWhenCloseToElement =
     // If the cursor is close enough to the target element, show it; otherwise, hide it
     if (distanceX < xProximityThreshold && distanceY < yProximityThreshold) {
       const children = targetElement.children;
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i] as HTMLElement;
-        if (child.style.opacity === "100%") return;
-        child.style.opacity = "100%";
+      for (const child of children) {
+        const element = child as HTMLElement;
+        if (element.style.opacity === "100%") return;
+        element.style.opacity = "100%";
       }
     } else {
       if (persist) return;
       const children = targetElement.children;
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i] as HTMLElement;
-        if (child.style.opacity === "0%") return;
-        child.style.opacity = "0%";
+      for (const child of children) {
+        const element = child as HTMLElement;
+        if (element.style.opacity === "0%") return;
+        element.style.opacity = "0%";
       }
     }
   };

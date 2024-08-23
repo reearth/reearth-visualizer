@@ -38,7 +38,7 @@ export type Props = {
   invisibleWidgetIDs?: string[];
   editing?: boolean;
   built?: boolean;
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
   theme?: Theme;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -48,7 +48,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
@@ -87,7 +87,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
         editing={editing}
         onMove={handleMove}
         onAlignChange={handleAlignmentChange}
-        onExtend={handleExtend}>
+        onExtend={handleExtend}
+      >
         <Zone
           zoneName="outer"
           selectedWidgetArea={selectedWidgetArea}
@@ -98,7 +99,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
           built={built}
           isMobile={isMobile}
           renderWidget={renderWidget}
-          onWidgetAreaSelect={onWidgetAreaSelect}>
+          onWidgetAreaSelect={onWidgetAreaSelect}
+        >
           {(!isMobile || hasInner) && (
             <ZoneComponent
               zoneName="inner"

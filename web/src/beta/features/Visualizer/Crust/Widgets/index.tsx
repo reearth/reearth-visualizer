@@ -1,6 +1,12 @@
 import { Fragment, ReactNode, useCallback } from "react";
 
-import type { InternalWidget, Theme, Widget, WidgetLayout, WidgetLocationOptions } from "./types";
+import type {
+  InternalWidget,
+  Theme,
+  Widget,
+  WidgetLayout,
+  WidgetLocationOptions,
+} from "./types";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import WidgetComponent, { type Context } from "./Widget";
 import WidgetAlignSystem, {
@@ -26,13 +32,18 @@ export type {
 export type { Context, BuiltinWidgets } from "./Widget";
 export { isBuiltinWidget } from "./Widget";
 
-export type { Widget, InternalWidget, WidgetLocationOptions, WidgetAlignment } from "./types";
+export type {
+  Widget,
+  InternalWidget,
+  WidgetLocationOptions,
+  WidgetAlignment,
+} from "./types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
   floatingWidgets?: InternalWidget[];
   selectedWidgetArea?: WidgetAreaType;
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   editing?: boolean;
   isMobile?: boolean;
   theme?: Theme;
@@ -47,7 +58,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -80,11 +91,14 @@ export default function Widgets({
   onWidgetLayoutUpdate,
   onWidgetAreaSelect,
 }: Props): JSX.Element | null {
-  const { overriddenAlignSystem, invisibleWidgetIDs, onPluginWidgetVisibilityChange } =
-    useWidgetAlignSystem({
-      alignSystem,
-      isMobile,
-    });
+  const {
+    overriddenAlignSystem,
+    invisibleWidgetIDs,
+    onPluginWidgetVisibilityChange,
+  } = useWidgetAlignSystem({
+    alignSystem,
+    isMobile,
+  });
 
   const renderWidgetInternal = useCallback(
     ({ editing, extended, layout, widget, onExtend }: WasWidgetProps) => (
@@ -99,7 +113,7 @@ export default function Widgets({
         isBuilt={isBuilt}
         isMobile={isMobile}
         context={context}
-        renderWidget={widget2 =>
+        renderWidget={(widget2) =>
           renderWidget?.({
             widget: widget2,
             editing,
@@ -121,7 +135,7 @@ export default function Widgets({
       context,
       renderWidget,
       onPluginWidgetVisibilityChange,
-    ],
+    ]
   );
 
   return (
@@ -140,7 +154,7 @@ export default function Widgets({
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAreaSelect={onWidgetAreaSelect}
       />
-      {floatingWidgets?.map(w => (
+      {floatingWidgets?.map((w) => (
         <Fragment key={w.id}>
           {renderWidgetInternal({
             widget: w,

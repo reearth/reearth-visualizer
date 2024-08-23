@@ -7,7 +7,10 @@ import SelectField from "@reearth/beta/components/fields/SelectField";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import {
+  FILE_FORMATS,
+  IMAGE_FORMATS,
+} from "@reearth/beta/features/Assets/constants";
 import useHooks from "@reearth/beta/features/Assets/hooks";
 import { AcceptedFileFormat, Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
@@ -15,7 +18,7 @@ import { useT } from "@reearth/services/i18n";
 import { useNotification, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
-const getValue: { [key: string]: string } = {
+const getValue: Record<string, string> = {
   "date-reverse": "date",
   "name-reverse": "name",
   "size-reverse": "size",
@@ -71,7 +74,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       return assets;
     }
 
-    return assets?.filter(asset => {
+    return assets?.filter((asset) => {
       const isFile = checkIfFileType(asset.url, FILE_FORMATS);
       const isImage = checkIfFileType(asset.url, IMAGE_FORMATS);
 
@@ -85,7 +88,7 @@ const ChooseAssetModal: React.FC<Props> = ({
   }, [assetType, assets, fileFormat]);
 
   const handleReset = useCallback(() => {
-    const selectedAsset = assets?.find(a => a.url === currentValue);
+    const selectedAsset = assets?.find((a) => a.url === currentValue);
     if (selectedAsset) {
       selectAsset([selectedAsset]);
     }
@@ -113,7 +116,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       if (!asset) return;
       selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
     },
-    [selectedAssets, selectAsset],
+    [selectedAssets, selectAsset]
   );
   const onSortChange = useCallback(
     (selectedLabel: string) => {
@@ -122,7 +125,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       const reverse = selectedLabel.toLowerCase().includes("reverse");
       handleSortChange?.(value, reverse);
     },
-    [handleSortChange],
+    [handleSortChange]
   );
 
   useEffect(() => {
@@ -153,13 +156,14 @@ const ChooseAssetModal: React.FC<Props> = ({
             handleSelectButtonClick();
           }}
         />
-      }>
+      }
+    >
       <ControlWarpper>
         <SortWrapper>
           <Text size="footnote">{t("Sort By")}</Text>
           <SelectField
             value={selectedSortOption}
-            options={sortOptions.map(option => ({
+            options={sortOptions.map((option) => ({
               key: option.value,
               label: option.label,
             }))}
@@ -167,7 +171,10 @@ const ChooseAssetModal: React.FC<Props> = ({
           />
         </SortWrapper>
         <SearchWarpper>
-          <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
+          <TextInput
+            value={localSearchTerm}
+            onChange={handleSearchInputChange}
+          />
           <SearchButton icon="search" margin="0" onClick={handleSearch} />
         </SearchWarpper>
       </ControlWarpper>
@@ -178,18 +185,21 @@ const ChooseAssetModal: React.FC<Props> = ({
               {searchTerm
                 ? t("No assets match your search.")
                 : t(
-                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
+                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer."
                   )}
             </TemplateText>
           </Template>
         ) : (
           <AssetListWrapper
             ref={assetsWrapperRef}
-            onScroll={e =>
-              !isAssetsLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
-            }>
+            onScroll={(e) =>
+              !isAssetsLoading &&
+              hasMoreAssets &&
+              onScrollToBottom?.(e, handleGetMoreAssets)
+            }
+          >
             <AssetList>
-              {filteredAssets?.map(a => (
+              {filteredAssets?.map((a) => (
                 <AssetCard
                   key={a.id}
                   name={a.name}
@@ -197,8 +207,8 @@ const ChooseAssetModal: React.FC<Props> = ({
                     checkIfFileType(a.url, FILE_FORMATS)
                       ? "file"
                       : checkIfFileType(a.url, IMAGE_FORMATS)
-                      ? undefined
-                      : "assetNoSupport"
+                        ? undefined
+                        : "assetNoSupport"
                   }
                   url={a.url}
                   onSelect={() => onSelectAsset?.(a)}

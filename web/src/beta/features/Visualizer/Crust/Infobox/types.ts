@@ -49,5 +49,5 @@ export type PropertyItem<T> = {
   value?: T;
   min?: number;
   max?: number;
-  choices?: { [key: string]: string }[];
+  choices?: Record<string, string>[];
 };

@@ -13,7 +13,7 @@ export type Props = {
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   invisibleWidgetIDs?: string[];
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
   built?: boolean;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -33,9 +33,9 @@ export default function Zone({
 }: Props) {
   return (
     <>
-      {WAS_SECTIONS.map(s => (
+      {WAS_SECTIONS.map((s) => (
         <GridSection key={s} stretch={s === "center"}>
-          {WAS_AREAS.map(a =>
+          {WAS_AREAS.map((a) =>
             s === "center" && children && a === "middle" ? (
               <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
                 {children}
@@ -59,7 +59,7 @@ export default function Zone({
                 renderWidget={renderWidget}
                 onWidgetAreaSelect={onWidgetAreaSelect}
               />
-            ),
+            )
           )}
         </GridSection>
       ))}
