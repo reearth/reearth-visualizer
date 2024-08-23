@@ -25,7 +25,7 @@ export const convertStory = (
         .map((e) => ({ [e.extensionId]: e.translatedName ?? e.name }))
         .filter((e): e is Record<string, string> => !!e)
     )
-    .reduce((result, obj) => ({ ...result, ...obj }), {});
+    .reduce((result, obj) => Object.assign(result, obj), {});
 
   if (!story) return undefined;
 

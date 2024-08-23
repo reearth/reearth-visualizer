@@ -125,7 +125,10 @@ export default ({
       installableInfoboxBlocks
         ?.map((ib) => ({ [ib.extensionId]: ib.name }))
         .filter((bn): bn is Record<string, string> => !!bn)
-        .reduce((result, obj) => ({ ...result, ...obj }), {}),
+        .reduce((result, obj) => {
+          Object.assign(result, obj);
+          return result;
+        }, {}),
     [installableInfoboxBlocks]
   );
 
@@ -203,10 +206,10 @@ export default ({
   // Plugin
   const pluginProperty = useMemo(
     () =>
-      scene?.plugins.reduce<Record<string, any>>(
-        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
-        {}
-      ),
+      scene?.plugins.reduce<Record<string, any>>((a, b) => {
+        a[b.pluginId] = processProperty(b.property);
+        return a;
+      }, {}),
     [scene?.plugins]
   );
 

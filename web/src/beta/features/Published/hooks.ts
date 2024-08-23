@@ -69,13 +69,10 @@ export default (alias?: string) => {
 
   const pluginProperty = useMemo(
     () =>
-      Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>(
-        (a, b) => ({
-          ...a,
-          [b]: processProperty(data?.plugins?.[b]?.property),
-        }),
-        {}
-      ),
+      Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>((a, b) => {
+        a[b] = processProperty(data?.plugins?.[b]?.property);
+        return a;
+      }, {}),
     [data?.plugins]
   );
 
@@ -169,9 +166,10 @@ export default (alias?: string) => {
     const ownBuiltinWidgets = data.widgets.reduce<(keyof BuiltinWidgets)[]>(
       (res, next) => {
         const id = `${next.pluginId}/${next.extensionId}`;
-        return isBuiltinWidget(id) && widgetsInWas.has(next.id)
-          ? [...res, id]
-          : res;
+        if (isBuiltinWidget(id) && widgetsInWas.has(next.id)) {
+          res.push(id);
+        }
+        return res;
       },
       []
     );
