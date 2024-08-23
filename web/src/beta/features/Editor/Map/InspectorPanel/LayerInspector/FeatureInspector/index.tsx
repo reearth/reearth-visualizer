@@ -48,13 +48,11 @@ const FeatureData: FC<Props> = ({
 
   // Initialize collapsed state from localStorage
   const initialCollapsedStates = useMemo(() => {
-    const storedStates = ["customProperties", "geometry", "properties"].reduce(
-      (acc, id) => ({
-        ...acc,
-        [id]: localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) === "true",
-      }),
-      {},
-    );
+    const storedStates: Record<string, boolean> = {};
+    ["customProperties", "geometry", "properties"].forEach(id => {
+      storedStates[id] =
+        localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) === "true";
+    });
     return storedStates;
   }, []);
 
@@ -183,7 +181,7 @@ const FeatureData: FC<Props> = ({
         collapsed={collapsedStates.properties}
         onCollapse={state => handleCollapse("properties", state)}>
         <ValueWrapper>
-          <JsonView src={selectedFeature?.properties} theme="vscode" dark />
+          <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
         </ValueWrapper>
       </Collapse>
       {!!layer?.isSketch && sketchFeature?.id && (
