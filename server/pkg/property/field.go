@@ -3,8 +3,6 @@ package property
 import (
 	"context"
 	"errors"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 var (
@@ -16,7 +14,6 @@ var (
 
 type Field struct {
 	field FieldID
-	links *Links
 	v     *OptionalValue
 }
 
@@ -26,7 +23,6 @@ func (p *Field) Clone() *Field {
 	}
 	return &Field{
 		field: p.field,
-		links: p.links.Clone(),
 		v:     p.v.Clone(),
 	}
 }
@@ -40,13 +36,6 @@ func (p *Field) FieldRef() *FieldID {
 		return nil
 	}
 	return p.field.Ref()
-}
-
-func (p *Field) Links() *Links {
-	if p == nil {
-		return nil
-	}
-	return p.links
 }
 
 func (p *Field) Type() ValueType {
@@ -68,47 +57,6 @@ func (p *Field) TypeAndValue() *OptionalValue {
 		return nil
 	}
 	return p.v
-}
-
-func (p *Field) ActualValue(ds *dataset.Dataset) *ValueAndDatasetValue {
-	if p == nil {
-		return nil
-	}
-
-	var dv *dataset.Value
-	if p.links != nil {
-		if l := p.links.Last(); l != nil {
-			d := l.Dataset()
-			if d != nil && ds.ID() == *d && l.DatasetSchemaField() != nil {
-				dv = ds.Field(*l.DatasetSchemaField()).Value()
-			} else {
-				return nil
-			}
-		} else {
-			return nil
-		}
-	}
-	return NewValueAndDatasetValue(p.Type(), dv, p.Value())
-}
-
-func (p *Field) Datasets() []DatasetID {
-	if p == nil {
-		return nil
-	}
-
-	res := []DatasetID{}
-	if p.Links().IsLinkedFully() {
-		dsid := p.Links().Last().Dataset()
-		if dsid != nil {
-			res = append(res, *dsid)
-		}
-	}
-
-	return res
-}
-
-func (p *Field) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
-	return p.Links().HasDatasetSchemaAndDataset(s, i)
 }
 
 func (p *Field) Update(value *Value, field *SchemaField) error {
@@ -134,19 +82,7 @@ func (p *Field) Cast(t ValueType) bool {
 		return false
 	}
 	p.v = p.v.Cast(t)
-	p.Unlink()
 	return true
-}
-
-func (p *Field) Link(links *Links) {
-	if p == nil {
-		return
-	}
-	p.links = links.Clone()
-}
-
-func (p *Field) Unlink() {
-	p.Link(nil)
 }
 
 func (p *Field) UpdateField(field FieldID) {
@@ -157,11 +93,11 @@ func (p *Field) UpdateField(field FieldID) {
 }
 
 func (p *Field) IsEmpty() bool {
-	return p == nil || p.Value().IsEmpty() && p.Links().IsEmpty()
+	return p == nil || p.Value().IsEmpty()
 }
 
-func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset.Loader) bool {
-	if p == nil || dl == nil || newSchema == nil {
+func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema) bool {
+	if p == nil || newSchema == nil {
 		return false
 	}
 
@@ -176,31 +112,7 @@ func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 		p.UpdateUnsafe(nil)
 	}
 
-	// If linked dataset is not compatible for type, it will be unlinked
-	l := p.Links()
-	if dl != nil && l.IsLinkedFully() {
-		if dsid, dsfid := l.Last().Dataset(), l.Last().DatasetSchemaField(); dsid != nil && dsfid != nil {
-			dss, _ := dl(ctx, *dsid)
-			if dsf := dss[0].Field(*dsfid); dsf != nil {
-				if schemaField.Type() != ValueType(dsf.Type()) {
-					p.Unlink()
-				}
-			}
-		}
-	}
-
 	return !invalid
-}
-
-func (p *Field) MigrateDataset(q DatasetMigrationParam) {
-	if p == nil {
-		return
-	}
-	link := p.Links()
-	link.Replace(q.OldDatasetSchemaMap, q.OldDatasetMap, q.DatasetFieldIDMap)
-	if !link.Validate(q.NewDatasetSchemaMap, q.NewDatasetMap) {
-		p.Unlink()
-	}
 }
 
 func (f *Field) GuessSchema() *SchemaField {
@@ -217,6 +129,4 @@ type DatasetMigrationParam struct {
 	OldDatasetSchemaMap map[DatasetSchemaID]DatasetSchemaID
 	OldDatasetMap       map[DatasetID]DatasetID
 	DatasetFieldIDMap   map[DatasetFieldID]DatasetFieldID
-	NewDatasetSchemaMap map[DatasetSchemaID]*dataset.Schema
-	NewDatasetMap       map[DatasetID]*dataset.Dataset
 }

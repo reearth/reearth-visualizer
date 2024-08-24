@@ -86,19 +86,12 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 		  node(id: $sceneId, type: SCENE) {
 			id
 			... on Scene {
-			  rootLayerId
 			  propertyId
 		      stories {
 				id
 				pages {
 				  id
 				  title
-				  layers {
-					id
-				  }
-				  swipeableLayers {
-					id
-				  }
 				  blocks {
 					id
 					propertyId
@@ -495,117 +488,117 @@ func duplicatePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLRe
 	return requestBody, res, pID.(string)
 }
 
-func addLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
-	requestBody := GraphQLRequest{
-		OperationName: "AddPageLayer",
-		Query: `mutation AddPageLayer($sceneId: ID!, $storyId: ID!, $pageId: ID!, $layerId: ID!, $swipeable: Boolean) { 
-			addPageLayer( input: {sceneId: $sceneId, storyId: $storyId, pageId: $pageId, swipeable: $swipeable, layerId: $layerId} ) { 
-				story {
-				 	id
-					pages{
-						id
-					}
-				}
-				page{
-					id
-					layers{
-						id
-					}
-					swipeableLayers{
-						id
-					}
-				}
-			}
-		}`,
-		Variables: map[string]any{
-			"sceneId":   sId,
-			"storyId":   storyId,
-			"pageId":    pageId,
-			"layerId":   layerId,
-			"swipeable": swipeable,
-		},
-	}
+// func addLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
+// 	requestBody := GraphQLRequest{
+// 		OperationName: "AddPageLayer",
+// 		Query: `mutation AddPageLayer($sceneId: ID!, $storyId: ID!, $pageId: ID!, $layerId: ID!, $swipeable: Boolean) {
+// 			addPageLayer( input: {sceneId: $sceneId, storyId: $storyId, pageId: $pageId, swipeable: $swipeable, layerId: $layerId} ) {
+// 				story {
+// 				 	id
+// 					pages{
+// 						id
+// 					}
+// 				}
+// 				page{
+// 					id
+// 					layers{
+// 						id
+// 					}
+// 					swipeableLayers{
+// 						id
+// 					}
+// 				}
+// 			}
+// 		}`,
+// 		Variables: map[string]any{
+// 			"sceneId":   sId,
+// 			"storyId":   storyId,
+// 			"pageId":    pageId,
+// 			"layerId":   layerId,
+// 			"swipeable": swipeable,
+// 		},
+// 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+// 	res := e.POST("/api/graphql").
+// 		WithHeader("Origin", "https://example.com").
+// 		WithHeader("X-Reearth-Debug-User", uID.String()).
+// 		WithHeader("Content-Type", "application/json").
+// 		WithJSON(requestBody).
+// 		Expect().
+// 		Status(http.StatusOK).
+// 		JSON()
 
-	pageRes := res.Object().
-		Value("data").Object().
-		Value("addPageLayer").Object().
-		Value("page").Object()
+// 	pageRes := res.Object().
+// 		Value("data").Object().
+// 		Value("addPageLayer").Object().
+// 		Value("page").Object()
 
-	if swipeable != nil && *swipeable {
-		pageRes.Value("swipeableLayers").Array().
-			Path("$..id").Array().Contains(layerId)
-	} else {
-		pageRes.Value("layers").Array().
-			Path("$..id").Array().Contains(layerId)
-	}
+// 	if swipeable != nil && *swipeable {
+// 		pageRes.Value("swipeableLayers").Array().
+// 			Path("$..id").Array().Contains(layerId)
+// 	} else {
+// 		pageRes.Value("layers").Array().
+// 			Path("$..id").Array().Contains(layerId)
+// 	}
 
-	return requestBody, res, layerId
-}
+// 	return requestBody, res, layerId
+// }
 
-func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
-	requestBody := GraphQLRequest{
-		OperationName: "RemovePageLayer",
-		Query: `mutation RemovePageLayer($sceneId: ID!, $storyId: ID!, $pageId: ID!, $layerId: ID!, $swipeable: Boolean) { 
-			removePageLayer( input: {sceneId: $sceneId, storyId: $storyId, pageId: $pageId, swipeable: $swipeable, layerId: $layerId} ) { 
-				story {
-				 	id
-					pages{
-						id
-					}
-				}
-				page{
-					id
-					layers{
-						id
-					}
-					swipeableLayers{
-						id
-					}
-				}
-			}
-		}`,
-		Variables: map[string]any{
-			"sceneId":   sId,
-			"storyId":   storyId,
-			"pageId":    pageId,
-			"layerId":   layerId,
-			"swipeable": swipeable,
-		},
-	}
+// func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
+// 	requestBody := GraphQLRequest{
+// 		OperationName: "RemovePageLayer",
+// 		Query: `mutation RemovePageLayer($sceneId: ID!, $storyId: ID!, $pageId: ID!, $layerId: ID!, $swipeable: Boolean) {
+// 			removePageLayer( input: {sceneId: $sceneId, storyId: $storyId, pageId: $pageId, swipeable: $swipeable, layerId: $layerId} ) {
+// 				story {
+// 				 	id
+// 					pages{
+// 						id
+// 					}
+// 				}
+// 				page{
+// 					id
+// 					layers{
+// 						id
+// 					}
+// 					swipeableLayers{
+// 						id
+// 					}
+// 				}
+// 			}
+// 		}`,
+// 		Variables: map[string]any{
+// 			"sceneId":   sId,
+// 			"storyId":   storyId,
+// 			"pageId":    pageId,
+// 			"layerId":   layerId,
+// 			"swipeable": swipeable,
+// 		},
+// 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+// 	res := e.POST("/api/graphql").
+// 		WithHeader("Origin", "https://example.com").
+// 		WithHeader("X-Reearth-Debug-User", uID.String()).
+// 		WithHeader("Content-Type", "application/json").
+// 		WithJSON(requestBody).
+// 		Expect().
+// 		Status(http.StatusOK).
+// 		JSON()
 
-	pageRes := res.Object().
-		Value("data").Object().
-		Value("removePageLayer").Object().
-		Value("page").Object()
+// 	pageRes := res.Object().
+// 		Value("data").Object().
+// 		Value("removePageLayer").Object().
+// 		Value("page").Object()
 
-	if swipeable != nil && *swipeable {
-		pageRes.Value("swipeableLayers").Array().
-			Path("$..id").Array().NotContains(layerId)
-	} else {
-		pageRes.Value("layers").Array().
-			Path("$..id").Array().NotContains(layerId)
-	}
+// 	if swipeable != nil && *swipeable {
+// 		pageRes.Value("swipeableLayers").Array().
+// 			Path("$..id").Array().NotContains(layerId)
+// 	} else {
+// 		pageRes.Value("layers").Array().
+// 			Path("$..id").Array().NotContains(layerId)
+// 	}
 
-	return requestBody, res, layerId
-}
+// 	return requestBody, res, layerId
+// }
 
 func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
@@ -900,29 +893,29 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 
 	_, _, sID := createScene(e, pID)
 
-	_, _, storyID := createStory(e, sID, "test", 0)
+	// _, _, storyID := createStory(e, sID, "test", 0)
 
-	_, _, pageID := createPage(e, sID, storyID, "test", true)
+	// _, _, pageID := createPage(e, sID, storyID, "test", true)
 
 	_, res := fetchSceneForStories(e, sID)
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
 
-	rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
+	// rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
 
-	_, _, layerID := addLayerItemFromPrimitive(e, rootLayerID)
+	// _, _, layerID := addLayerItemFromPrimitive(e, rootLayerID)
 
-	_, _, _ = addLayerToPage(e, sID, storyID, pageID, layerID, nil)
-
-	_, res = fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerID})
-
-	_, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
+	// _, _, _ = addLayerToPage(e, sID, storyID, pageID, layerID, nil)
 
 	_, res = fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
+	// res.Object().
+	// Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerID})
+
+	// _, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
+
+	// _, res = fetchSceneForStories(e, sID)
+	// res.Object().
+	// 	Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
 }
 
 func TestStoryPageBlocksCRUD(t *testing.T) {
@@ -1048,7 +1041,7 @@ func TestStoryPublishing(t *testing.T) {
 	_, err = buf.ReadFrom(rc)
 	assert.NoError(t, err)
 
-	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"title":"test","blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}],"swipeable":true,"swipeableLayers":\[],"layers":\[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true,"enableGa":false,"trackingId":""}`, sID, storyID, pageID, blockID, extensionId, pluginId))
+	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":null,"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":null,"clusters":\[],"story":{"id":"%s","property":null,"pages":\[{"id":"%s","property":null,"title":"test","blocks":\[{"id":"%s","plugins":null,"extensionId":"%s","pluginId":"%s"}],"swipeable":true,"swipeableLayers":\[],"layers":\[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true,"enableGa":false,"trackingId":""}`, sID, storyID, pageID, blockID, extensionId, pluginId))
 	assert.Regexp(t, pub, buf.String())
 
 	resString := e.GET("/p/test-alias/data.json").

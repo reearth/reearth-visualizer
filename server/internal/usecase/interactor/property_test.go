@@ -20,7 +20,7 @@ func TestProperty_AddItem(t *testing.T) {
 	memory := memory.New()
 
 	ws := accountdomain.NewWorkspaceID()
-	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
+	scene := scene.New().NewID().Workspace(ws).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{
 		property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild(),
 	}).MustBuild()
@@ -72,7 +72,7 @@ func TestProperty_RemoveItem(t *testing.T) {
 	memory := memory.New()
 
 	ws := accountdomain.NewWorkspaceID()
-	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
+	scene := scene.New().NewID().Workspace(ws).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).MustBuild()
 	ps := property.NewSchema().ID(property.MustSchemaID("xxx~1.1.1/aa")).
 		Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
@@ -117,7 +117,7 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 	memory := memory.New()
 
 	ws := accountdomain.NewWorkspaceID()
-	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
+	scene := scene.New().NewID().Workspace(ws).MustBuild()
 	psf := property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{psf}).MustBuild()
 	ps := property.NewSchema().ID(property.MustSchemaID("xxx~1.1.1/aa")).

@@ -5,21 +5,14 @@ type Scene implements Node {
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  rootLayerId: ID!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystem
   project: Project
   team: Team
   property: Property
-  rootLayer: LayerGroup
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
-  datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
-  tagIds: [ID!]!
-  tags: [Tag!]!
-  clusters: [Cluster!]!
 }
 
 type SceneWidget {

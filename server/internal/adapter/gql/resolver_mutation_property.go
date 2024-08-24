@@ -131,7 +131,6 @@ func (r *mutationResolver) LinkDatasetToPropertyValue(ctx context.Context, input
 		return nil, err
 	}
 
-	links, err := gqlmodel.FromPropertyFieldLink(input.DatasetSchemaIds, input.DatasetIds, input.DatasetSchemaFieldIds)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +142,6 @@ func (r *mutationResolver) LinkDatasetToPropertyValue(ctx context.Context, input
 			input.ItemID,
 			lo.ToPtr(id.PropertyFieldID(input.FieldID)),
 		),
-		Links: links,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

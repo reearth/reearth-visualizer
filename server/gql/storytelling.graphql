@@ -28,10 +28,7 @@ type StoryPage implements Node {
   title: String!
   blocks: [StoryBlock!]!
   swipeable: Boolean!
-  layersIds: [ID!]!
-  layers: [Layer!]!
   swipeableLayersIds: [ID!]
-  swipeableLayers: [Layer!]
   propertyId: ID!
   property: Property
   createdAt: DateTime!
@@ -105,7 +102,6 @@ input CreateStoryPageInput {
   storyId: ID!
   title: String
   swipeable: Boolean
-  layers: [ID!]
   swipeableLayers: [ID!]
   index: Int
 }
@@ -116,7 +112,6 @@ input UpdateStoryPageInput {
   pageId: ID!
   title: String
   swipeable: Boolean
-  layers: [ID!]
   swipeableLayers: [ID!]
   index: Int
 }
@@ -144,7 +139,6 @@ input PageLayerInput {
   storyId: ID!
   pageId: ID!
   swipeable: Boolean
-  layerId: ID!
 }
 
 input CreateStoryBlockInput {
