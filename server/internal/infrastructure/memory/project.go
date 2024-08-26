@@ -83,6 +83,28 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	), nil
 }
 
+func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(id) {
+		return nil, nil
+	}
+
+	var result []*project.Project
+	for _, p := range r.data {
+		if p.Workspace() == id && p.Starred() {
+			result = append(result, p)
+		}
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].UpdatedAt().After(result[j].UpdatedAt())
+	})
+
+	return result, nil
+}
+
 func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []project.ID, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()

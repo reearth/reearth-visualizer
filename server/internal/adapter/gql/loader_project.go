@@ -79,6 +79,28 @@ func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string) (*gqlmodel
 	return &gqlmodel.ProjectAliasAvailability{Alias: alias, Available: ok}, nil
 }
 
+func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.usecase.FindStarredByWorkspace(ctx, tid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	nodes := make([]*gqlmodel.Project, 0, len(res))
+	for _, p := range res {
+		nodes = append(nodes, gqlmodel.ToProject(p))
+	}
+
+	return &gqlmodel.ProjectConnection{
+		Nodes:      nodes,
+		TotalCount: len(nodes),
+	}, nil
+}
+
 // data loaders
 
 type ProjectDataLoader interface {
