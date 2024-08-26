@@ -4,7 +4,7 @@ import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
+import { AcceptedFileFormat } from "@reearth/beta/features/AssetsManager/types";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
 import LayerStyleModal from "@reearth/beta/features/Modals/LayerStyleModal";
 import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";

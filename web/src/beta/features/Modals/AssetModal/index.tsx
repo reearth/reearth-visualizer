@@ -9,11 +9,12 @@ import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import useHooks from "@reearth/beta/features/Assets/hooks";
-import { AcceptedFileFormat, Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+
+import { AcceptedFileFormat, Asset } from "../../AssetsManager/types";
 
 const getValue: { [key: string]: string } = {
   "date-reverse": "date",
