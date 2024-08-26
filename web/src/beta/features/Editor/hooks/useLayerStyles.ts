@@ -37,12 +37,12 @@ export default function ({ sceneId }: LayerStyleProps) {
 
   const selectedLayerStyle = useMemo(
     () => layerStyles.find((l) => l.id === selectedLayerStyleId) || undefined,
-    [layerStyles, selectedLayerStyleId]
+    [layerStyles, selectedLayerStyleId],
   );
 
   const handleLayerStyleSelect = useCallback(
     (layerId: string | undefined) => setSelectedLayerStyleId(layerId),
-    [setSelectedLayerStyleId]
+    [setSelectedLayerStyleId],
   );
 
   const handleLayerStyleDelete = useCallback(
@@ -62,7 +62,7 @@ export default function ({ sceneId }: LayerStyleProps) {
       selectedLayerStyleId,
       setSelectedLayerStyleId,
       useRemoveLayerStyle,
-    ]
+    ],
   );
 
   const handleLayerStyleAdd = useCallback(
@@ -73,7 +73,7 @@ export default function ({ sceneId }: LayerStyleProps) {
         value: inp.value,
       });
     },
-    [sceneId, t, useAddLayerStyle]
+    [sceneId, t, useAddLayerStyle],
   );
 
   const handleLayerStyleNameUpdate = useCallback(
@@ -83,7 +83,7 @@ export default function ({ sceneId }: LayerStyleProps) {
         name: inp.name,
       });
     },
-    [useUpdateLayerStyle]
+    [useUpdateLayerStyle],
   );
 
   const handleLayerStyleValueUpdate = useCallback(
@@ -93,7 +93,7 @@ export default function ({ sceneId }: LayerStyleProps) {
         value: inp.value,
       });
     },
-    [useUpdateLayerStyle]
+    [useUpdateLayerStyle],
   );
 
   return {

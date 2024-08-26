@@ -53,7 +53,7 @@ export default () => {
 
     const project = useMemo(
       () => (data?.node?.__typename === "Project" ? data.node : undefined),
-      [data?.node]
+      [data?.node],
     );
 
     return { project, ...rest };
@@ -68,7 +68,7 @@ export default () => {
 
     const projects = useMemo(
       () => data?.projects?.edges.map((e) => e.node),
-      [data?.projects]
+      [data?.projects],
     );
 
     const hasMoreProjects = useMemo(
@@ -78,12 +78,12 @@ export default () => {
       [
         data?.projects.pageInfo?.hasNextPage,
         data?.projects.pageInfo?.hasPreviousPage,
-      ]
+      ],
     );
     const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
     const endCursor = useMemo(
       () => data?.projects.pageInfo?.endCursor,
-      [data?.projects.pageInfo?.endCursor]
+      [data?.projects.pageInfo?.endCursor],
     );
 
     return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
@@ -106,7 +106,7 @@ export default () => {
       name: string,
       coreSupport: boolean,
       description?: string,
-      imageUrl?: string
+      imageUrl?: string,
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
@@ -178,7 +178,7 @@ export default () => {
       t,
       setNotification,
       useCreateStoryPage,
-    ]
+    ],
   );
 
   const [publishProjectMutation, { loading: publishProjectLoading }] =
@@ -216,15 +216,15 @@ export default () => {
             ? t("Successfully published your scene!")
             : s == "published"
               ? t(
-                  "Successfully published your project with search engine indexing!"
+                  "Successfully published your project with search engine indexing!",
                 )
               : t(
-                  "Successfully unpublished your scene. Now nobody can access your scene."
+                  "Successfully unpublished your scene. Now nobody can access your scene.",
                 ),
       });
       return { data: data.publishProject.project, status: "success" };
     },
-    [apolloCache, publishProjectMutation, t, setNotification]
+    [apolloCache, publishProjectMutation, t, setNotification],
   );
 
   const [updateProjectMutation] = useMutation(UPDATE_PROJECT, {
@@ -255,7 +255,7 @@ export default () => {
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [apolloCache, updateProjectMutation, t, setNotification]
+    [apolloCache, updateProjectMutation, t, setNotification],
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
@@ -285,12 +285,12 @@ export default () => {
         text: input.archived
           ? t("Successfully archive project!")
           : t(
-              "Successfully unarchived the project. You can now edit this project."
+              "Successfully unarchived the project. You can now edit this project.",
             ),
       });
       return { status: "success" };
     },
-    [archiveProjectMutation, t, setNotification]
+    [archiveProjectMutation, t, setNotification],
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
@@ -321,14 +321,14 @@ export default () => {
       });
       return { status: "success" };
     },
-    [apolloCache, deleteProjectMutation, t, setNotification]
+    [apolloCache, deleteProjectMutation, t, setNotification],
   );
 
   const [updateProjectBasicAuthMutation] = useMutation(
     UPDATE_PROJECT_BASIC_AUTH,
     {
       refetchQueries: ["GetProject"],
-    }
+    },
   );
   const useUpdateProjectBasicAuth = useCallback(
     async (input: UpdateProjectBasicAuthMutationVariables) => {
@@ -355,7 +355,7 @@ export default () => {
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [apolloCache, updateProjectBasicAuthMutation, t, setNotification]
+    [apolloCache, updateProjectBasicAuthMutation, t, setNotification],
   );
 
   const [updateProjectAliasMutation] = useMutation(UPDATE_PROJECT_ALIAS);
@@ -384,7 +384,7 @@ export default () => {
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [apolloCache, updateProjectAliasMutation, t, setNotification]
+    [apolloCache, updateProjectAliasMutation, t, setNotification],
   );
 
   return {

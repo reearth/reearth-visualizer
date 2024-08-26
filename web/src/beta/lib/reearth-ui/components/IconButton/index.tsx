@@ -32,7 +32,7 @@ export const IconButton: FC<IconButtonProps> = ({
       if (disabled) return;
       onClick?.(e);
     },
-    [disabled, stopPropagationOnClick, onClick]
+    [disabled, stopPropagationOnClick, onClick],
   );
 
   return (

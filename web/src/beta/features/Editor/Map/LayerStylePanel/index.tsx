@@ -38,7 +38,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     (id?: string) => {
       handleLayerStyleSelect(id);
     },
-    [handleLayerStyleSelect]
+    [handleLayerStyleSelect],
   );
 
   const handleApplyLayerStyle = useCallback(() => {
