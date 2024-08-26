@@ -5,7 +5,9 @@ import playwright from "eslint-plugin-playwright";
 
 const customVisualizerConfig = [
   {
-    rules: {},
+    rules: {
+      "@typescript-eslint/consistent-type-definitions": "off",
+    },
   },
 ];
 
