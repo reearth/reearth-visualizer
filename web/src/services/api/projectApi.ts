@@ -171,6 +171,8 @@ export default () => {
         return { status: "error" };
       }
 
+      apolloCache.evict({ fieldName: "projects" });
+
       setNotification({
         type: s === "limited" ? "success" : s == "published" ? "success" : "info",
         text:
@@ -182,7 +184,7 @@ export default () => {
       });
       return { data: data.publishProject.project, status: "success" };
     },
-    [publishProjectMutation, t, setNotification],
+    [apolloCache, publishProjectMutation, t, setNotification],
   );
 
   const [updateProjectMutation] = useMutation(UPDATE_PROJECT, {
@@ -200,10 +202,12 @@ export default () => {
         return { status: "error" };
       }
 
+      apolloCache.evict({ fieldName: "projects" });
+
       setNotification({ type: "success", text: t("Successfully updated project!") });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [updateProjectMutation, t, setNotification],
+    [apolloCache, updateProjectMutation, t, setNotification],
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
@@ -275,10 +279,12 @@ export default () => {
         return { status: "error" };
       }
 
+      apolloCache.evict({ fieldName: "projects" });
+
       setNotification({ type: "success", text: t("Successfully updated project!") });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [updateProjectBasicAuthMutation, t, setNotification],
+    [apolloCache, updateProjectBasicAuthMutation, t, setNotification],
   );
 
   const [updateProjectAliasMutation] = useMutation(UPDATE_PROJECT_ALIAS);
@@ -294,10 +300,12 @@ export default () => {
         return { status: "error" };
       }
 
+      apolloCache.evict({ fieldName: "projects" });
+
       setNotification({ type: "success", text: t("Successfully updated project!") });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [updateProjectAliasMutation, t, setNotification],
+    [apolloCache, updateProjectAliasMutation, t, setNotification],
   );
 
   return {
