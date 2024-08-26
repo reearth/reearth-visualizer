@@ -1,8 +1,8 @@
 import { debounce } from "lodash-es";
-import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState } from "react";
+import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState, FC } from "react";
 
-import Markdown from "@reearth/beta/components/Markdown";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import { Markdown } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -11,7 +11,7 @@ export type Props = {
   onUpdate: (text: string) => void;
 };
 
-const MdBlockEditor: React.FC<Props> = ({ text, onUpdate }) => {
+const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const t = useT();
   const context = useContext(BlockContext);
@@ -37,32 +37,27 @@ const MdBlockEditor: React.FC<Props> = ({ text, onUpdate }) => {
   }, [value, context?.editMode]);
 
   return context?.editMode ? (
-    <StyledTextArea
-      ref={textareaRef}
-      placeholder={t("Add markdown text here")}
-      value={value}
-      onChange={onChange}
-    />
+    <StyledTextArea placeholder={t("Add markdown text here")} value={value} onChange={onChange} />
   ) : (
     <StyledMarkdown empty={!value}>{value || t("Add markdown text here")}</StyledMarkdown>
   );
 };
 
-const StyledTextArea = styled.textarea`
-  width: 100%;
-  resize: none;
-  overflow: hidden;
-  ${({ value }) => !value && "min-height: 115px;"}
-  border: none;
-  font-size: 14px;
-  padding: 0px;
-  outline: none;
-`;
+const StyledTextArea = styled("textarea")(() => ({
+  width: "100%",
+  resize: "none",
+  overflow: "hidden",
+  minHeight: "115px",
+  border: "none",
+  fontSize: "14px",
+  padding: 0,
+  outline: "none",
+}));
 
-const StyledMarkdown = styled(Markdown)<{ empty: boolean }>`
-  ${({ empty }) => empty && "min-height: 115px;"}
-  font-size: 14px;
-  opacity: ${({ empty }) => (!empty ? 1 : 0.6)};
-`;
+const StyledMarkdown = styled(Markdown)<{ empty: boolean }>(({ empty }) => ({
+  minHeight: empty ? "115px" : "0",
+  fontSize: "14px",
+  opacity: !empty ? 1 : 0.6,
+}));
 
 export default MdBlockEditor;

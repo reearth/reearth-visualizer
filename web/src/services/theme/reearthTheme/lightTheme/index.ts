@@ -56,11 +56,15 @@ const lightTheme: Theme = {
     lightest: rgba("#ffffff", 0.2),
     lighter: rgba("#ffffff", 0.15),
     light: rgba("#ffffff", 0.1),
+    dim: rgba("#ffffff", 0.05),
     dark: rgba("#000000", 0.1),
     darker: rgba("#000000", 0.15),
     darkest: rgba("#000000", 0.2),
   },
   placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
   colorSchema: "light",
+  publish: {
+    main: "#24A148",
+  },
 };
 export default lightTheme;

@@ -1,3 +1,5 @@
+// TODO: Remove this file
+
 export type Asset = {
   id: string;
   teamId: string;

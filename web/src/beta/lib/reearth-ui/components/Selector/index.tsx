@@ -79,9 +79,9 @@ export const Selector: FC<SelectorProps> = ({
         onChange?.(newSelectedArr);
       }
     } else {
-      if (value === selectedValue) setSelectedValue(undefined);
-      else setSelectedValue(value);
       setIsOpen(!isOpen);
+      if (value === selectedValue) return;
+      setSelectedValue(value);
       onChange?.(value);
     }
   };
@@ -216,7 +216,7 @@ const SelectInput = styled("div")<{
         }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  height: size == "small" ? "21px" : "32px",
+  height: size == "small" ? "21px" : "28px",
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
@@ -252,6 +252,20 @@ const DropDownWrapper = styled("div")<{
   border: `1px solid ${theme.outline.weaker}`,
   maxHeight: maxHeight ? `${maxHeight}px` : "",
   overflowY: maxHeight ? "auto" : "hidden",
+  ["::-webkit-scrollbar"]: {
+    width: "8px",
+  },
+  ["::-webkit-scrollbar-track"]: {
+    background: theme.relative.darker,
+    borderRadius: "10px",
+  },
+  ["::-webkit-scrollbar-thumb"]: {
+    background: theme.relative.light,
+    borderRadius: "4px",
+  },
+  ["::-webkit-scrollbar-thumb:hover"]: {
+    background: theme.relative.lighter,
+  },
 }));
 
 const DropDownItem = styled("div")<{

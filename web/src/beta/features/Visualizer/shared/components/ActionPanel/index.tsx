@@ -1,23 +1,20 @@
-import {
-  Dispatch,
-  ForwardRefRenderFunction,
-  Fragment,
-  MouseEvent,
-  SetStateAction,
-  forwardRef,
-} from "react";
+import { Dispatch, FC, Fragment, MouseEvent, SetStateAction } from "react";
 
-import Icon, { Icons } from "@reearth/beta/components/Icon";
-import * as Popover from "@reearth/beta/components/Popover";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import Text from "@reearth/beta/components/Text";
+import {
+  Icon,
+  IconName,
+  Popup,
+  PopupMenu,
+  PopupMenuItem,
+  PopupPanel,
+} from "@reearth/beta/lib/reearth-ui";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
 import { FieldComponent } from "../../hooks/useFieldComponent";
 
 export type ActionItem = {
-  icon: string;
+  icon: IconName;
   name?: string;
   hide?: boolean;
   onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
@@ -36,12 +33,11 @@ type Props = {
   position?: ActionPosition;
   overrideGroupId?: string;
   settingsTitle?: string;
-  popoverContent: {
-    name: string;
-    icon: Icons;
-    onClick: () => void;
-  }[];
+  dragHandleClassName?: string;
+  popupMenuItem: PopupMenuItem[];
+  openMenu?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
+  setOpenMenu: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onClick?: (e: any) => void;
   onPropertyUpdate?: (
@@ -65,193 +61,193 @@ type Props = {
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
+  onPopupMenuClick?: (e: MouseEvent<Element, globalThis.MouseEvent>) => void;
 };
 
-const ActionPanel: ForwardRefRenderFunction<HTMLDivElement, Props> = (
-  {
-    isSelected,
-    showSettings,
-    showPadding,
-    propertyId,
-    contentSettings,
-    actionItems,
-    dndEnabled,
-    position,
-    overrideGroupId,
-    settingsTitle,
-    popoverContent,
-    setShowPadding,
-    onSettingsToggle,
-    onClick,
-    onPropertyUpdate,
-    onPropertyItemAdd,
-    onPropertyItemMove,
-    onPropertyItemDelete,
-  },
-  ref,
-) => (
+const ActionPanel: FC<Props> = ({
+  isSelected,
+  showSettings,
+  showPadding,
+  propertyId,
+  contentSettings,
+  actionItems,
+  dndEnabled,
+  position,
+  overrideGroupId,
+  settingsTitle,
+  popupMenuItem,
+  dragHandleClassName,
+  openMenu,
+  setShowPadding,
+  setOpenMenu,
+  onSettingsToggle,
+  onClick,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
+  onPopupMenuClick,
+}) => (
   <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
     {dndEnabled && (
-      <DndHandle ref={ref}>
-        <Icon icon="dndHandle" size={16} />
+      <DndHandle className={dragHandleClassName}>
+        <Icon icon="dotsSixVertical" size="normal" />
       </DndHandle>
     )}
-    <Popover.Provider
-      open={showSettings && isSelected}
-      onOpenChange={() => onSettingsToggle?.()}
-      placement="bottom-start">
-      <BlockOptions isSelected={isSelected} onClick={!isSelected ? onClick : undefined}>
-        {actionItems.map(
-          (a, idx) =>
-            !a.hide && (
-              <Fragment key={idx}>
-                <Popover.Trigger asChild>
-                  <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
-                    <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
-                    {a.name && (
-                      <OptionText size="footnote" customColor>
-                        {a.name}
-                      </OptionText>
-                    )}
-                  </OptionWrapper>
-                </Popover.Trigger>
-              </Fragment>
-            ),
-        )}
-      </BlockOptions>
-      <StyledPopoverContent attachToRoot>
-        {showPadding ? (
-          <SettingsDropdown>
-            <SettingsHeading>
-              <Text size="footnote" customColor>
-                {settingsTitle}
-              </Text>
-              <CancelIcon icon="cancel" size={14} onClick={() => setShowPadding(false)} />
-            </SettingsHeading>
-            {propertyId && contentSettings && (
-              <SettingsContent>
-                {Object.keys(contentSettings).map((fieldId, index) => {
-                  const field = contentSettings[fieldId];
-                  const groupId = overrideGroupId || "panel";
-                  return (
-                    <FieldComponent
-                      key={index}
-                      propertyId={propertyId}
-                      groupId={groupId}
-                      fieldId={fieldId}
-                      field={field}
-                      onPropertyUpdate={onPropertyUpdate}
-                      onPropertyItemAdd={onPropertyItemAdd}
-                      onPropertyItemMove={onPropertyItemMove}
-                      onPropertyItemDelete={onPropertyItemDelete}
+    <BlockOptions isSelected={isSelected} onClick={!isSelected ? onClick : undefined}>
+      {actionItems.map(
+        (a, idx) =>
+          !a.hide && (
+            <Fragment key={idx}>
+              {a.icon === "settingFilled" ? (
+                <>
+                  <OptionsWrapper onClick={onPopupMenuClick}>
+                    <PopupMenu
+                      label={
+                        <OptionWrapper showPointer={!isSelected || !!a.onClick}>
+                          <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
+                          {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
+                        </OptionWrapper>
+                      }
+                      placement="bottom-end"
+                      menu={popupMenuItem}
+                      width={150}
+                      openMenu={openMenu}
+                      onOpenChange={setOpenMenu}
                     />
-                  );
-                })}
-              </SettingsContent>
-            )}
-          </SettingsDropdown>
-        ) : (
-          <PopoverMenuContent size="sm" items={popoverContent} />
-        )}
-      </StyledPopoverContent>
-    </Popover.Provider>
+                  </OptionsWrapper>
+                  {showPadding && !openMenu && (
+                    <Popup
+                      open={showSettings && isSelected}
+                      onOpenChange={onSettingsToggle}
+                      placement="bottom-end"
+                      offset={16}>
+                      <PopupContent>
+                        <PopupPanel
+                          title={settingsTitle}
+                          onCancel={() => {
+                            setShowPadding(false);
+                            setOpenMenu(true);
+                            onSettingsToggle?.();
+                          }}
+                          width={200}>
+                          {propertyId && contentSettings && (
+                            <SettingsContent>
+                              <FieldsWrapper>
+                                {Object.keys(contentSettings).map((fieldId, index) => {
+                                  const field = contentSettings[fieldId];
+                                  const groupId = overrideGroupId || "panel";
+                                  return (
+                                    <FieldComponent
+                                      key={index}
+                                      propertyId={propertyId}
+                                      groupId={groupId}
+                                      fieldId={fieldId}
+                                      field={field}
+                                      onPropertyUpdate={onPropertyUpdate}
+                                      onPropertyItemAdd={onPropertyItemAdd}
+                                      onPropertyItemMove={onPropertyItemMove}
+                                      onPropertyItemDelete={onPropertyItemDelete}
+                                    />
+                                  );
+                                })}
+                              </FieldsWrapper>
+                            </SettingsContent>
+                          )}
+                        </PopupPanel>
+                      </PopupContent>
+                    </Popup>
+                  )}
+                </>
+              ) : (
+                <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
+                  <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
+                  {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
+                </OptionWrapper>
+              )}
+            </Fragment>
+          ),
+      )}
+    </BlockOptions>
   </Wrapper>
 );
 
-export default forwardRef(ActionPanel);
+export default ActionPanel;
 
-const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
-  ${({ isSelected }) => !isSelected && "background: #f1f1f1;"}
-  color: ${({ theme }) => theme.select.main};
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 24px;
-  position: absolute;
-  max-width: 100%;
-  ${({ position }) =>
-    position === "left-top"
-      ? `
-  left: -1px;
-  top: -25px;
-  `
-      : position === "left-bottom"
-      ? `
-  left: 0;
-  top: 0;
-  `
-      : position === "right-bottom"
-      ? `
-  top: 0;
-  right: 0;
-    `
-      : `
-  right: -1px;
-  top: -25px;
-  `}
-`;
+const Wrapper = styled("div")<{
+  isSelected?: boolean;
+  position?: ActionPosition;
+}>(({ isSelected, position, theme }) => ({
+  background: !isSelected ? "#f1f1f1" : "none",
+  color: theme.select.main,
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
+  height: "24px",
+  position: "absolute",
+  maxWidth: "100%",
+  left: position === "left-top" ? "-1px" : position === "left-bottom" ? "0" : "auto",
+  top: position === "left-top" || position === "right-top" ? "-25px" : "0",
+  right: position === "right-bottom" ? "0" : position === "right-top" ? "-1px" : "auto",
+}));
 
-const BlockOptions = styled.div<{ isSelected?: boolean }>`
-  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "#f1f1f1")};
-  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.select.main)};
-  display: flex;
-  align-items: center;
-  height: 24px;
-`;
+const FieldsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.normal,
+  userSelect: "none",
+}));
 
-const StyledPopoverContent = styled(Popover.Content)`
-  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlock};
-`;
+const BlockOptions = styled("div")<{
+  isSelected?: boolean;
+}>(({ isSelected, theme }) => ({
+  background: isSelected ? theme.select.main : "#f1f1f1",
+  color: isSelected ? theme.content.main : theme.select.main,
+  display: "flex",
+  alignItems: "center",
+  height: "24px",
+}));
 
-const OptionWrapper = styled.div<{ showPointer?: boolean }>`
-  display: flex;
-  align-items: center;
-  cursor: ${({ showPointer }) => (showPointer ? "pointer" : "default")};
-`;
+const OptionsWrapper = styled("div")(() => ({
+  flexShrink: 0,
+}));
 
-const OptionText = styled(Text)`
-  padding-right: 4px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 150px;
-`;
+const PopupContent = styled("div")(({ theme }) => ({
+  zIndex: theme.zIndexes.visualizer.storyBlock,
+}));
 
-const OptionIcon = styled(Icon)<{ border?: boolean }>`
-  ${({ border }) => border && "border-left: 1px solid #f1f1f1;"}
-  padding: 4px;
-  transition: none;
-`;
+const OptionWrapper = styled("div")<{
+  showPointer?: boolean;
+}>(({ showPointer }) => ({
+  display: "flex",
+  alignItems: "center",
+  cursor: showPointer ? "pointer" : "default",
+}));
 
-const SettingsDropdown = styled.div`
-  background: ${({ theme }) => theme.bg[1]};
-  border-radius: 2px;
-  border: 1px solid ${({ theme }) => theme.bg[3]};
-`;
+const TitleWrapper = styled("div")(({ theme }) => ({
+  paddingRight: theme.spacing.smallest,
+  fontSize: theme.fonts.sizes.footnote,
+  fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  maxWidth: "150px",
+}));
 
-const SettingsHeading = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
-  height: 28px;
-  padding: 0 8px;
-`;
+const OptionIcon = styled(Icon)<{ border?: boolean }>(({ border, theme }) => ({
+  borderLeft: `1px solid ${border ? "#f1f1f1" : "transparent"}`,
+  padding: theme.spacing.smallest,
+  transition: "none",
+}));
 
-const SettingsContent = styled.div`
-  min-height: 134px;
-  width: 200px;
-  padding: 8px;
-  box-sizing: border-box;
-`;
+const SettingsContent = styled("div")(() => ({
+  minHeight: "120px",
+  boxSizing: "border-box",
+}));
 
-const CancelIcon = styled(Icon)`
-  cursor: pointer;
-`;
-
-const DndHandle = styled.div`
-  height: 100%;
-  display: flex;
-  align-items: center;
-  cursor: move;
-`;
+const DndHandle = styled("div")(() => ({
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
+  cursor: "move",
+}));

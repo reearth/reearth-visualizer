@@ -1,6 +1,8 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
+export * from "./devPlugins";
+
 export { default as useSetError, useError } from "./gqlErrorHandling";
 
 export type WidgetAreaState = {

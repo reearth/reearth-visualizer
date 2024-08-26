@@ -20,18 +20,25 @@ func ToAsset(a *asset.Asset) *Asset {
 	}
 }
 
-func AssetSortTypeFrom(ast *AssetSortType) *asset.SortType {
+func AssetSortTypeFrom(ast *AssetSort) *asset.SortType {
 	if ast == nil {
 		return nil
 	}
 
-	switch *ast {
-	case AssetSortTypeDate:
-		return &asset.SortTypeID
-	case AssetSortTypeName:
-		return &asset.SortTypeName
-	case AssetSortTypeSize:
-		return &asset.SortTypeSize
+	var key string
+	switch ast.Field {
+	case AssetSortFieldDate:
+		key = "id"
+	case AssetSortFieldName:
+		key = "name"
+	case AssetSortFieldSize:
+		key = "size"
+	default:
+		key = "id"
 	}
-	return &asset.SortTypeID
+
+	return &asset.SortType{
+		Key:  key,
+		Desc: ast.Direction == SortDirectionDesc,
+	}
 }

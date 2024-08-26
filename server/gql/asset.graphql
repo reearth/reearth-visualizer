@@ -9,7 +9,7 @@ type Asset implements Node {
   team: Team
 }
 
-enum AssetSortType {
+enum AssetSortField {
   DATE
   SIZE
   NAME
@@ -24,6 +24,11 @@ input CreateAssetInput {
 
 input RemoveAssetInput {
   assetId: ID!
+}
+
+input AssetSort {
+  field: AssetSortField!
+  direction: SortDirection!
 }
 
 # Payload
@@ -51,7 +56,7 @@ type AssetEdge {
 }
 
 extend type Query{
-  assets(teamId: ID!, keyword: String, sort: AssetSortType, pagination: Pagination): AssetConnection!
+  assets(teamId: ID!, pagination: Pagination, keyword: String, sort: AssetSort): AssetConnection!
 }
 
 extend type Mutation {

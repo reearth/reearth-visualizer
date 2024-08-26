@@ -129,12 +129,12 @@ export default (
       }
 
       handlePageTime(newPage);
-
       const cameraAnimation = newPage.property?.cameraAnimation;
-      const destination = cameraAnimation?.cameraPosition?.value;
+
+      const destination = cameraAnimation?.cameraPosition;
       if (!destination) return;
 
-      const duration = cameraAnimation?.cameraDuration?.value ?? DEFAULT_STORY_PAGE_DURATION;
+      const duration = cameraAnimation?.cameraDuration ?? DEFAULT_STORY_PAGE_DURATION;
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
@@ -148,7 +148,7 @@ export default (
     const currentIndex = pages.findIndex(p => p.id === currentPageId);
     return {
       currentPage: currentIndex + 1,
-      pageTitles: pages.map(p => p.property?.title?.title?.value),
+      pageTitles: pages.map(p => p.property?.title?.title),
       maxPage: pages.length,
       onPageChange: (pageIndex: number) => handleCurrentPageChange(pages[pageIndex - 1]?.id),
     };

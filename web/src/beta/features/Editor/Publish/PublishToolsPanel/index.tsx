@@ -1,10 +1,7 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
-import * as Popover from "@reearth/beta/components/Popover";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import TabButton from "@reearth/beta/components/TabButton";
-import Text from "@reearth/beta/components/Text";
+import { Button } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
@@ -14,16 +11,16 @@ import { usePublishPage } from "../context";
 
 import useHooks from "./hooks";
 import PublishModal from "./PublishModal";
-import { PublishStatus } from "./PublishModal/hooks";
 
 const PublishToolsPanel: FC = () => {
-  const { id, sceneId, selectedProjectType, handleProjectTypeChange } = usePublishPage();
+  const { storyId, projectId, sceneId, selectedProjectType, handleProjectTypeChange } =
+    usePublishPage();
   const t = useT();
 
   const {
+    publishmentStatuses,
     publishing,
     publishStatus,
-    dropdownOpen,
     modalOpen,
     alias,
     validAlias,
@@ -31,73 +28,68 @@ const PublishToolsPanel: FC = () => {
     publishProjectLoading,
     handleModalOpen,
     handleModalClose,
-    setDropdown,
     handleProjectPublish,
     handleProjectAliasCheck,
-    handleOpenProjectSettings,
     handleNavigationToSettings,
-  } = useHooks({ id, sceneId, selectedProjectType });
+  } = useHooks({ storyId, projectId, sceneId, selectedProjectType });
 
-  const text = useMemo(
-    () =>
-      publishStatus === "published" || publishStatus === "limited"
-        ? t("Published")
-        : t("Unpublished"),
-    [publishStatus, t],
-  );
-
-  const checkPublished: boolean = publishStatus === "limited" || publishStatus === "published";
+  const sceneStatus = publishmentStatuses.find(status => status?.type === "default")?.published
+    ? "published"
+    : "unpublished";
+  const storyStatus = publishmentStatuses.find(status => status?.type === "story")?.published
+    ? "published"
+    : "unpublished";
 
   return (
     <Panel extend>
       <StyledSecondaryNav>
         <LeftSection>
-          <TabButton
-            selected={selectedProjectType === "default"}
-            label={t("Scene")}
-            onClick={() => handleProjectTypeChange("default")}
-          />
-          <TabButton
-            selected={selectedProjectType === "story"}
-            label={t("Story")}
-            onClick={() => handleProjectTypeChange("story")}
-          />
-        </LeftSection>
-        <Popover.Provider
-          open={dropdownOpen}
-          onOpenChange={() => setDropdown(!dropdownOpen)}
-          placement="bottom-end">
-          <Popover.Trigger asChild>
-            <Publishing onClick={() => setDropdown(!dropdownOpen)}>
-              <Status status={publishStatus} />
-              <Text size="body" customColor>
-                {text}
-              </Text>
-              <Icon icon="arrowDown" size={16} />
-            </Publishing>
-          </Popover.Trigger>
-          <Popover.Content style={{ zIndex: 999 }}>
-            <PopoverMenuContent
-              size="sm"
-              width="142px"
-              items={[
-                {
-                  name: t("Unpublish"),
-                  disabled: publishStatus === "unpublished",
-                  onClick: () => handleModalOpen("unpublishing"),
-                },
-                {
-                  name: checkPublished ? t("Update") : t("Publish"),
-                  onClick: () => handleModalOpen(checkPublished ? "updating" : "publishing"),
-                },
-                {
-                  name: t("Publishing Settings"),
-                  onClick: () => handleOpenProjectSettings(),
-                },
-              ]}
+          <TabButtonWrapper>
+            <StatusWrapper>
+              <PublishStatus status={sceneStatus} />
+            </StatusWrapper>
+            <TabButton
+              highlighted={selectedProjectType === "default"}
+              title={t("Scene")}
+              onClick={() => handleProjectTypeChange("default")}
             />
-          </Popover.Content>
-        </Popover.Provider>
+          </TabButtonWrapper>
+          <TabButtonWrapper>
+            <StatusWrapper>
+              <PublishStatus status={storyStatus} />
+            </StatusWrapper>
+            <TabButton
+              highlighted={selectedProjectType === "story"}
+              title={t("Story")}
+              onClick={() => handleProjectTypeChange("story")}
+            />
+          </TabButtonWrapper>
+        </LeftSection>
+        <ButtonWrapper>
+          {publishStatus === "unpublished" ? (
+            <Button
+              title={t("Publish")}
+              icon="paperPlaneTilt"
+              size="small"
+              onClick={() => handleModalOpen("publishing")}
+            />
+          ) : (
+            <>
+              <Button
+                title={t("Unpublish")}
+                icon="lock"
+                size="small"
+                onClick={() => handleModalOpen("unpublishing")}
+              />
+              <Button
+                title={t("Update")}
+                icon="caretDoubleUp"
+                size="small"
+                onClick={() => handleModalOpen("updating")}
+              />
+            </>
+          )}
+        </ButtonWrapper>
       </StyledSecondaryNav>
       <PublishModal
         isVisible={modalOpen}
@@ -121,44 +113,49 @@ export default PublishToolsPanel;
 
 const StyledSecondaryNav = styled("div")(({ theme }) => ({
   width: "100%",
+  height: "44px",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: theme.spacing.smallest,
+  padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
 }));
 
-const LeftSection = styled.div`
-  display: flex;
-  gap: 4px;
-`;
+const LeftSection = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.normal,
+  height: "24px",
+  width: "244px",
+}));
 
-const Publishing = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: ${({ theme }) => theme.content.weak};
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.4s;
+const ButtonWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  height: "28px",
+}));
 
-  :hover {
-    background: ${({ theme }) => theme.bg[2]};
-    p {
-      transition: all 0.4s;
-      color: ${({ theme }) => theme.content.main};
-    }
-    * {
-      opacity: 1;
-    }
-  }
-`;
+const TabButton = styled(EntryItem)({
+  width: "100px",
+  height: "44px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+});
 
-const Status = styled.div<{ status?: PublishStatus }>`
-  opacity: 0.5;
-  background: ${({ theme, status }) =>
-    status === "published" || status === "limited" ? theme.select.strong : theme.bg[4]};
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-`;
+const TabButtonWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: theme.spacing.small,
+  width: "116px",
+}));
+
+const PublishStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
+  width: "8px",
+  height: "8px",
+  backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,
+  borderRadius: "50%",
+}));
+
+const StatusWrapper = styled("div")({
+  width: "8px",
+});

@@ -1,7 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 
-import * as Popover from "@reearth/beta/components/Popover";
-import Text from "@reearth/beta/components/Text";
+import { Popup } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
@@ -11,20 +10,9 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-const IndicatorSection: React.FC<Props> = ({
-  pageNumber,
-  currentPageNumber,
-  title,
-  onPageChange,
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  const handleMouseOut = useCallback(() => setIsHovered(false), []);
-
+const IndicatorSection: FC<Props> = ({ pageNumber, currentPageNumber, title, onPageChange }) => {
   const handleClick = useCallback(() => {
     onPageChange(pageNumber);
-    setIsHovered(false);
   }, [pageNumber, onPageChange]);
 
   const isHighlighted = useMemo(
@@ -33,56 +21,48 @@ const IndicatorSection: React.FC<Props> = ({
   );
 
   // const isLast = useMemo(() => pageNumber === totalPages, [pageNumber, totalPages]);
-
   return (
-    <Wrapper onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseOut}>
-      <Popover.Provider open={isHovered} placement="bottom" offset={0} shift={{ padding: 0 }}>
-        <Popover.Trigger asChild>
-          <Indicator highlighted={isHighlighted} />
-        </Popover.Trigger>
-        <Popover.Content attachToRoot>
-          <PageNameWrapper isHighlighted={isHighlighted}>
-            <StyledText size="footnote" customColor>
-              {title}
-            </StyledText>
-          </PageNameWrapper>
-        </Popover.Content>
-      </Popover.Provider>
-    </Wrapper>
+    <Popup
+      trigger={
+        <Indicator
+          highlighted={isHighlighted}
+          onClick={handleClick}
+          isFirstChild={pageNumber === 1}
+        />
+      }
+      triggerOnHover
+      placement="bottom"
+      extendTriggerWidth>
+      <PageNameWrapper isHighlighted={isHighlighted}>
+        <TitleWrapper>{title}</TitleWrapper>
+      </PageNameWrapper>
+    </Popup>
   );
 };
 
 export default IndicatorSection;
 
-const Wrapper = styled.div`
-  flex: 1;
-  cursor: pointer;
-  color: ${({ theme }) => theme.content.strong};
+const Indicator = styled("div")<{ highlighted: boolean; isFirstChild: boolean }>(
+  ({ highlighted, isFirstChild, theme }) => ({
+    height: "100%",
+    width: "100%",
+    background: highlighted ? theme.primary.strong : "#78a9ff",
+    cursor: "pointer",
+    borderLeft: !isFirstChild ? "1px solid #ffffff" : "none",
+  }),
+);
 
-  :not(:first-of-type) {
-    border-left: 1px solid #ffffff;
-  }
-`;
+const PageNameWrapper = styled("div")<{ isHighlighted: boolean }>(({ isHighlighted, theme }) => ({
+  background: isHighlighted ? theme.primary.strong : "#78a9ff",
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  maxWidth: "255px",
+}));
 
-const Indicator = styled.div<{ highlighted: boolean }>`
-  height: 100%;
-  ${({ highlighted }) =>
-    highlighted &&
-    `
-  background-color: #4589ff;
-  width: 100%;
-  `}
-`;
-
-const PageNameWrapper = styled.div<{ isHighlighted: boolean }>`
-  background-color: #78a9ff;
-  padding: 4px 8px;
-  ${({ isHighlighted }) => isHighlighted && "background-color: #4589ff;"}
-  max-width: 255px;
-`;
-
-const StyledText = styled(Text)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+const TitleWrapper = styled("div")(({ theme }) => ({
+  fontSize: theme.fonts.sizes.footnote,
+  fontWeight: theme.fonts.weight.regular,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  cursor: "default",
+}));

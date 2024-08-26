@@ -26,7 +26,6 @@ export default ({ projectId }: Props) => {
   const {
     useProjectQuery,
     useUpdateProject,
-    useArchiveProject,
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
@@ -44,16 +43,6 @@ export default ({ projectId }: Props) => {
       await useUpdateProject({ projectId, ...settings });
     },
     [projectId, useUpdateProject],
-  );
-
-  const handleArchiveProject = useCallback(
-    async (archived: boolean) => {
-      const { status } = await useArchiveProject({ projectId, archived });
-      if (status === "success") {
-        navigate(`/dashboard/${workspaceId}/`);
-      }
-    },
-    [workspaceId, projectId, useArchiveProject, navigate],
   );
 
   const handleDeleteProject = useCallback(async () => {
@@ -141,7 +130,6 @@ export default ({ projectId }: Props) => {
     accessToken,
     extensions,
     handleUpdateProject,
-    handleArchiveProject,
     handleDeleteProject,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,

@@ -17,7 +17,7 @@ export type Theme = {
   background: string;
 };
 
-export type SceneThemeOptions = {
+export type WidgetThemeOptions = {
   themeType?: "light" | "dark" | "forest" | "custom";
   themeTextColor?: string;
   themeSelectColor?: string;
@@ -38,11 +38,11 @@ export function mask(color?: string) {
   return isDark(color) ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)";
 }
 
-export function usePublishTheme(sceneThemeOptions?: SceneThemeOptions): Theme {
+export function usePublishTheme(sceneThemeOptions?: WidgetThemeOptions): Theme {
   return useMemo(() => publishTheme(sceneThemeOptions), [sceneThemeOptions]);
 }
 
-export function publishTheme(sceneThemeOptions?: SceneThemeOptions): Theme {
+export function publishTheme(sceneThemeOptions?: WidgetThemeOptions): Theme {
   const premadeTheme = premade[sceneThemeOptions?.themeType || defaultThemeType];
   if (premadeTheme) return premadeTheme;
 

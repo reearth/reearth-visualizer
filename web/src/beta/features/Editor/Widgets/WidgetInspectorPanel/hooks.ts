@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
+import { filterVisibleItems } from "@reearth/beta/ui/fields/utils";
 import { useWidgetsFetcher } from "@reearth/services/api";
 
 import { SelectedWidget } from "../../hooks/useWidgets";

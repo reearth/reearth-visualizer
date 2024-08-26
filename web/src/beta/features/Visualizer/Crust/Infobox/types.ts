@@ -23,10 +23,17 @@ export type InfoboxBlock<P = any> = {
   name?: string;
   pluginId?: string;
   extensionId?: string;
-  property?: P;
+  extensionType?: "infoboxBlock";
   propertyId?: string;
-  pluginBlockPropertyItems?: Item[];
+  property?: P;
+  propertyForPluginAPI?: any;
+  propertyItemsForPluginBlock?: Item[];
 };
+
+export type PluginInfoboxBlock = Omit<
+  InfoboxBlock,
+  "propertyForPluginAPI" | "propertyItemsForPluginBlock"
+>;
 
 export type InfoboxBlockProps<P = any> = {
   block?: InfoboxBlock<P>;

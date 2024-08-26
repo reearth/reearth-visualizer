@@ -240,6 +240,11 @@ type AssetEdge struct {
 	Node   *Asset          `json:"node,omitempty"`
 }
 
+type AssetSort struct {
+	Field     AssetSortField `json:"field"`
+	Direction SortDirection  `json:"direction"`
+}
+
 type AttachTagItemToGroupInput struct {
 	ItemID  ID `json:"itemID"`
 	GroupID ID `json:"groupID"`
@@ -1176,6 +1181,11 @@ type ProjectPayload struct {
 	Project *Project `json:"project"`
 }
 
+type ProjectSort struct {
+	Field     ProjectSortField `json:"field"`
+	Direction SortDirection    `json:"direction"`
+}
+
 type Property struct {
 	ID       ID              `json:"id"`
 	SchemaID ID              `json:"schemaId"`
@@ -1755,6 +1765,11 @@ type UpdateClusterPayload struct {
 	Cluster *Cluster `json:"cluster"`
 }
 
+type UpdateCustomPropertySchemaInput struct {
+	LayerID ID   `json:"layerId"`
+	Schema  JSON `json:"schema,omitempty"`
+}
+
 type UpdateDatasetSchemaInput struct {
 	SchemaID ID     `json:"schemaId"`
 	Name     string `json:"name"`
@@ -2051,46 +2066,46 @@ type WidgetZone struct {
 	Right  *WidgetSection `json:"right,omitempty"`
 }
 
-type AssetSortType string
+type AssetSortField string
 
 const (
-	AssetSortTypeDate AssetSortType = "DATE"
-	AssetSortTypeSize AssetSortType = "SIZE"
-	AssetSortTypeName AssetSortType = "NAME"
+	AssetSortFieldDate AssetSortField = "DATE"
+	AssetSortFieldSize AssetSortField = "SIZE"
+	AssetSortFieldName AssetSortField = "NAME"
 )
 
-var AllAssetSortType = []AssetSortType{
-	AssetSortTypeDate,
-	AssetSortTypeSize,
-	AssetSortTypeName,
+var AllAssetSortField = []AssetSortField{
+	AssetSortFieldDate,
+	AssetSortFieldSize,
+	AssetSortFieldName,
 }
 
-func (e AssetSortType) IsValid() bool {
+func (e AssetSortField) IsValid() bool {
 	switch e {
-	case AssetSortTypeDate, AssetSortTypeSize, AssetSortTypeName:
+	case AssetSortFieldDate, AssetSortFieldSize, AssetSortFieldName:
 		return true
 	}
 	return false
 }
 
-func (e AssetSortType) String() string {
+func (e AssetSortField) String() string {
 	return string(e)
 }
 
-func (e *AssetSortType) UnmarshalGQL(v interface{}) error {
+func (e *AssetSortField) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = AssetSortType(str)
+	*e = AssetSortField(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AssetSortType", str)
+		return fmt.Errorf("%s is not a valid AssetSortField", str)
 	}
 	return nil
 }
 
-func (e AssetSortType) MarshalGQL(w io.Writer) {
+func (e AssetSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2343,46 +2358,46 @@ func (e Position) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type ProjectSortType string
+type ProjectSortField string
 
 const (
-	ProjectSortTypeCreatedat ProjectSortType = "CREATEDAT"
-	ProjectSortTypeUpdatedat ProjectSortType = "UPDATEDAT"
-	ProjectSortTypeName      ProjectSortType = "NAME"
+	ProjectSortFieldCreatedat ProjectSortField = "CREATEDAT"
+	ProjectSortFieldUpdatedat ProjectSortField = "UPDATEDAT"
+	ProjectSortFieldName      ProjectSortField = "NAME"
 )
 
-var AllProjectSortType = []ProjectSortType{
-	ProjectSortTypeCreatedat,
-	ProjectSortTypeUpdatedat,
-	ProjectSortTypeName,
+var AllProjectSortField = []ProjectSortField{
+	ProjectSortFieldCreatedat,
+	ProjectSortFieldUpdatedat,
+	ProjectSortFieldName,
 }
 
-func (e ProjectSortType) IsValid() bool {
+func (e ProjectSortField) IsValid() bool {
 	switch e {
-	case ProjectSortTypeCreatedat, ProjectSortTypeUpdatedat, ProjectSortTypeName:
+	case ProjectSortFieldCreatedat, ProjectSortFieldUpdatedat, ProjectSortFieldName:
 		return true
 	}
 	return false
 }
 
-func (e ProjectSortType) String() string {
+func (e ProjectSortField) String() string {
 	return string(e)
 }
 
-func (e *ProjectSortType) UnmarshalGQL(v interface{}) error {
+func (e *ProjectSortField) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = ProjectSortType(str)
+	*e = ProjectSortField(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ProjectSortType", str)
+		return fmt.Errorf("%s is not a valid ProjectSortField", str)
 	}
 	return nil
 }
 
-func (e ProjectSortType) MarshalGQL(w io.Writer) {
+func (e ProjectSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2534,6 +2549,47 @@ func (e *Role) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Role) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type SortDirection string
+
+const (
+	SortDirectionAsc  SortDirection = "ASC"
+	SortDirectionDesc SortDirection = "DESC"
+)
+
+var AllSortDirection = []SortDirection{
+	SortDirectionAsc,
+	SortDirectionDesc,
+}
+
+func (e SortDirection) IsValid() bool {
+	switch e {
+	case SortDirectionAsc, SortDirectionDesc:
+		return true
+	}
+	return false
+}
+
+func (e SortDirection) String() string {
+	return string(e)
+}
+
+func (e *SortDirection) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = SortDirection(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid SortDirection", str)
+	}
+	return nil
+}
+
+func (e SortDirection) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -53,24 +53,24 @@ const TimePointField: FC<TimePointFieldProps> = ({
     setDateTime(value);
   }, [value]);
 
-  const DeleteAction: FC = () => (
-    <Button
-      icon="trash"
-      size="small"
-      iconButton
-      appearance="simple"
-      disabled={!dateTime}
-      onClick={handleTimeSettingDelete}
-      iconColor={dateTime ? theme.content.main : theme.content.weak}
-    />
-  );
   return (
     <CommonField commonTitle={commonTitle} description={description}>
       <Wrapper>
         <TextInput
           appearance="readonly"
           value={value && dateTime}
-          actions={[DeleteAction]}
+          actions={[
+            <Button
+              key="delete"
+              icon="trash"
+              size="small"
+              iconButton
+              appearance="simple"
+              disabled={!dateTime}
+              onClick={handleTimeSettingDelete}
+              iconColor={dateTime ? theme.content.main : theme.content.weak}
+            />,
+          ]}
           disabled
           placeholder={"YYYY-MM-DDThh:mm:ss±hh:mm"}
         />

@@ -185,6 +185,9 @@ const ColorPicker = styled(RgbaColorPicker, {
   ".react-colorful__hue, .react-colorful__alpha": {
     height: "10px",
   },
+  ".react-colorful__saturation": {
+    borderBottom: "none !important",
+  },
 }));
 
 const ColorPickerWrapper = styled("div")(({ theme }) => ({

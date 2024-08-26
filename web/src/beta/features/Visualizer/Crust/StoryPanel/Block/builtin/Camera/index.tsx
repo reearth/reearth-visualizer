@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
@@ -10,7 +10,7 @@ import { type CameraBlock as CameraBlockType } from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
+const CameraBlock: FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
   const cameraButtons = useMemo(
     () => (block?.property?.default ?? []) as CameraBlockType[],
     [block?.property?.default],

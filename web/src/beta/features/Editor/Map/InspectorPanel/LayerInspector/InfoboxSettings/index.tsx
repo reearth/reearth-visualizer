@@ -1,5 +1,7 @@
-import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
+import { FC } from "react";
+
+import { SwitchField } from "@reearth/beta/ui/fields";
+import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -11,7 +13,7 @@ type Props = {
   infobox?: NLSInfobox;
 };
 
-const Infobox: React.FC<Props> = ({ selectedLayerId, infobox }) => {
+const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
   const t = useT();
 
   const { visibleItems, handleInfoboxCreate } = useHooks({
@@ -26,10 +28,10 @@ const Infobox: React.FC<Props> = ({ selectedLayerId, infobox }) => {
           <PropertyItem key={i.id ?? ""} propertyId={infobox?.property?.id} item={i} />
         ))
       ) : (
-        <ToggleField
-          name={t("Enable Infobox")}
+        <SwitchField
+          commonTitle={t("Enable Infobox")}
           description={t("Show infobox when the user clicks on a layer")}
-          checked={false}
+          value={false}
           onChange={handleInfoboxCreate}
         />
       )}
@@ -37,10 +39,10 @@ const Infobox: React.FC<Props> = ({ selectedLayerId, infobox }) => {
   );
 };
 
-export default Infobox;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+}));
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
+export default Infobox;

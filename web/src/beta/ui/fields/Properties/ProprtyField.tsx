@@ -38,6 +38,18 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
     [field?.mergedValue, field?.value, schema.defaultValue],
   );
 
+  const assetTypes = useMemo(
+    () =>
+      schema.type === "url"
+        ? schema.ui === "image"
+          ? ["image" as const]
+          : schema.ui === "file"
+          ? ["file" as const]
+          : undefined
+        : undefined,
+    [schema.type, schema.ui],
+  );
+
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (
     <>
@@ -82,8 +94,8 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
         <AssetField
           key={schema.id}
           commonTitle={schema.name}
-          entityType={schema.ui === "image" ? "image" : schema.ui === "file" ? "file" : undefined}
-          fileType={schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"}
+          assetsTypes={assetTypes}
+          inputMethod={schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"}
           value={(value as string) ?? ""}
           description={schema.description}
           onChange={handleChange}

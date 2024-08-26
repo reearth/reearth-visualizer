@@ -6,7 +6,7 @@ import {
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-} from "@reearth/beta/features/Editor/Map/SharedComponent";
+} from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
   Selector,
   RadioGroup,
@@ -28,6 +28,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const {
     value,
     fileFormat,
+    assetsTypes,
     sourceType,
     dataSourceTypeOptions,
     fileFormatOptions,
@@ -63,11 +64,10 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         {sourceType == "local" && (
           <InputsWrapper>
             <AssetField
-              fileType="asset"
-              entityType="file"
+              inputMethod="asset"
               commonTitle={t("Asset")}
               value={value}
-              fileFormat={fileFormat}
+              assetsTypes={assetsTypes}
               onChange={handleValueChange}
             />
           </InputsWrapper>
@@ -91,7 +91,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             </InputsWrapper>
           </InputGroup>
         )}
-        {fileFormat === "GeoJSON" && (
+        {fileFormat === "geojson" && (
           <InputGroup label={t("Prioritize Performance")}>
             <Switcher value={prioritizePerformance} onChange={v => setPrioritizePerformance(v)} />
           </InputGroup>
