@@ -1,4 +1,3 @@
-
 import { Button, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";

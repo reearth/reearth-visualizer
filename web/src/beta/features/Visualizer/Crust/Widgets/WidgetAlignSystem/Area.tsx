@@ -4,7 +4,6 @@ import { ReactNode, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
-
 import type {
   Alignment,
   WidgetAreaPadding,

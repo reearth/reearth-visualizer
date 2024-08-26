@@ -1,4 +1,3 @@
-
 import Text from "@reearth/beta/components/Text";
 import { Icon, IconName } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";

@@ -1,4 +1,3 @@
-
 import Loading from "@reearth/beta/components/Loading";
 import PageWrapper from "@reearth/beta/features/RootPage/PageWrapper";
 import React from "react";

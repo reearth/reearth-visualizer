@@ -1,4 +1,3 @@
-
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 import type { FC } from "react";

@@ -1,4 +1,3 @@
-
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { usePropertyFetcher } from "@reearth/services/api";
 import { useCallback } from "react";

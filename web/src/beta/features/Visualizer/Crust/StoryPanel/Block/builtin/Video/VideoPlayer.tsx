@@ -2,7 +2,6 @@ import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 import Player from "react-player";
 
-
 type Props = {
   isSelected?: boolean;
   src?: string;

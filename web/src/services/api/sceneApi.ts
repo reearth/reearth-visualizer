@@ -2,7 +2,6 @@ import { useQuery } from "@apollo/client";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useCallback, useMemo } from "react";
 
-
 import { Scene as GqlScene } from "../gql";
 
 import { PluginExtensionType } from "./pluginsApi";

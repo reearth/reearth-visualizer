@@ -3,7 +3,6 @@ import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
 import { debounce } from "lodash-es";
 import { useMemo, useContext, useCallback, FC } from "react";
 
-
 export type Props = {
   text?: string;
   propertyId?: string;

@@ -3,7 +3,6 @@ import { styled, css } from "@reearth/services/theme";
 import { useRef, useCallback, useEffect, ReactNode } from "react";
 import { usePopper } from "react-popper";
 
-
 import Portal from "../Portal";
 
 export interface Props {

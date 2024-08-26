@@ -1,4 +1,3 @@
-
 import Text from "@reearth/beta/components/Text";
 import { PublishTheme, styled } from "@reearth/services/theme";
 import { memo } from "react";

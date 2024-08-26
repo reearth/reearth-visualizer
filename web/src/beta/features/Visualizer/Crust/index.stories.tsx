@@ -8,7 +8,6 @@ import {
 import { Meta, Story } from "@storybook/react";
 import { useRef } from "react";
 
-
 import { MapRef } from "./types";
 
 import Component, { Props } from ".";

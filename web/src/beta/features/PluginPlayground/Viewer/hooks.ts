@@ -1,4 +1,3 @@
-
 import { Camera } from "@reearth/beta/utils/value";
 import { MapRef, ViewerProperty } from "@reearth/core";
 import { config } from "@reearth/services/config";

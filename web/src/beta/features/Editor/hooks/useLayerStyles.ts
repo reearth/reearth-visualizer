@@ -1,4 +1,3 @@
-
 import { LayerAppearanceTypes } from "@reearth/core";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";

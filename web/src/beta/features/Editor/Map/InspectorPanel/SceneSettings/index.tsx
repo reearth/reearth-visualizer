@@ -1,4 +1,3 @@
-
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { filterVisibleItems } from "@reearth/beta/ui/fields/utils";

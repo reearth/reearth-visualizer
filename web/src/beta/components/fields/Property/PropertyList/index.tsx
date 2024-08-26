@@ -1,4 +1,3 @@
-
 import Button from "@reearth/beta/components/Button";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import Property from "@reearth/beta/components/fields";

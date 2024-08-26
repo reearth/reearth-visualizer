@@ -1,7 +1,6 @@
 import type { EditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-
 import { Infobox } from "./types";
 
 export default ({

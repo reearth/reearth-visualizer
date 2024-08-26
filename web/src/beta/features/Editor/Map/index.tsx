@@ -1,7 +1,6 @@
 import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
 import { FC, useRef } from "react";
 
-
 import { useMapPage } from "./context";
 import InspectorPanel from "./InspectorPanel";
 import LayersPanel from "./LayersPanel";

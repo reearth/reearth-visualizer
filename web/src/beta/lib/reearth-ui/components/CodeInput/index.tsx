@@ -2,7 +2,6 @@ import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { fonts, styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useCallback, useState, useEffect } from "react";
 
-
 export type CodeInputProps = {
   value?: string;
   language?: string;

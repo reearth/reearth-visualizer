@@ -1,4 +1,3 @@
-
 import { Tabs } from "@reearth/beta/lib/reearth-ui";
 import { Area, Window } from "@reearth/beta/ui/layout";
 import { FC } from "react";

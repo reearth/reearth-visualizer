@@ -8,7 +8,6 @@ import {
   AccordionItemState,
 } from "react-accessible-accordion";
 
-
 import Icon from "../Icon";
 
 export type Props = {

@@ -3,7 +3,6 @@ import { useAssetsFetcher } from "@reearth/services/api";
 import { useCallback, useMemo } from "react";
 import useFileInput from "use-file-input";
 
-
 import { FILE_FORMATS, IMAGE_FORMATS } from "../../features/Assets/constants";
 
 export default ({

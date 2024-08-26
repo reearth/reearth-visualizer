@@ -1,4 +1,3 @@
-
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useLang as useCurrentLang } from "@reearth/services/i18n";

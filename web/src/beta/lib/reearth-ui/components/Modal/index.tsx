@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode, useMemo, useRef } from "react";
 
-
 export type ModalProps = {
   visible: boolean;
   children: ReactNode;

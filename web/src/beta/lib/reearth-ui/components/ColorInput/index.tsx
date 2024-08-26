@@ -9,7 +9,6 @@ import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
 import { RgbaColorPicker } from "react-colorful";
 
-
 import useHooks from "./hooks";
 
 export type ColorInputProps = {

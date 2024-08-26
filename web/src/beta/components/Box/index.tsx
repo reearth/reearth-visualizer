@@ -1,4 +1,3 @@
-
 import { MetricsSizes, metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled } from "@reearth/services/theme";
 import { CSSProperties } from "react";

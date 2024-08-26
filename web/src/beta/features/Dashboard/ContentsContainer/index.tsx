@@ -1,4 +1,3 @@
-
 import AssetsManager from "@reearth/beta/features/AssetsManager";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";

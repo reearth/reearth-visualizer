@@ -1,4 +1,3 @@
-
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, ReactNode } from "react";

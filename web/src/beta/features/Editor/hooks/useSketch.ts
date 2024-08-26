@@ -1,4 +1,3 @@
-
 import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
 import { SketchFeature, SketchType, Geometry } from "@reearth/core";
 import { useFeatureCollectionFetcher } from "@reearth/services/api";

@@ -3,7 +3,6 @@ import { useT } from "@reearth/services/i18n";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 import { Workspace } from "../../types";
 
 export type Props = {

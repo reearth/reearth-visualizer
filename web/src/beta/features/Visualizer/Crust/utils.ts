@@ -1,7 +1,6 @@
 import { css } from "@reearth/services/theme";
 import { useCallback, useRef } from "react";
 
-
 import { Typography } from "./types";
 
 export type { Typography } from "./types";

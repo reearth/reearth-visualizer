@@ -1,4 +1,3 @@
-
 import { Camera } from "@reearth/beta/utils/value";
 import {
   TimelineManagerRef,

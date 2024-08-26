@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import React from "react";
 
-
 export type Props = {
   color?: string;
   margin?: string;

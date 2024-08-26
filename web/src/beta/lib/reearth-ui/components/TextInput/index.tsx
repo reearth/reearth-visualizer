@@ -9,7 +9,6 @@ import {
   KeyboardEvent,
 } from "react";
 
-
 export type TextInputProps = {
   value?: string;
   maxLength?: number;

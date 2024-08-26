@@ -1,4 +1,3 @@
-
 import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
 import { ColorField, SelectField } from "@reearth/beta/ui/fields";
 import { Position } from "@reearth/services/gql";

@@ -1,4 +1,3 @@
-
 import { Button, PopupPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

@@ -2,7 +2,6 @@ import { render, screen, fireEvent } from "@reearth/test/utils";
 import { useState } from "react";
 import { expect, test, vi, vitest } from "vitest";
 
-
 import { PADDING_HORIZONTAL, BORDER_WIDTH, GAP_HORIZONTAL } from "./constants";
 
 import Timeline from ".";

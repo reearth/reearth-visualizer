@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent } from "react";
 
-
 import { IconName, Icon } from "../Icon";
 
 export type ButtonProps = {

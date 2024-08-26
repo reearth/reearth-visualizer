@@ -5,7 +5,6 @@ import {
 } from "@reearth/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-
 import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
 import {
   convertOptionToSeconds,

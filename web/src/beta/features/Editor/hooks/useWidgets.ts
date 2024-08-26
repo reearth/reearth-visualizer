@@ -1,7 +1,6 @@
 import { WidgetAreaState } from "@reearth/services/state";
 import { useCallback, useEffect, useState } from "react";
 
-
 import { Tab } from "../../Navbar";
 
 export type SelectedWidget = {

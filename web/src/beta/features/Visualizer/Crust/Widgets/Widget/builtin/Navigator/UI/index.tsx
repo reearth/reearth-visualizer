@@ -1,4 +1,3 @@
-
 import Icon from "@reearth/beta/components/Icon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

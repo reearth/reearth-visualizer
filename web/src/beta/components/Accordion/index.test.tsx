@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from "@reearth/test/utils";
 import { expect, test } from "vitest";
 
-
 import Accordion, { AccordionItemType } from "./index";
 
 const sampleContents: AccordionItemType[] = [

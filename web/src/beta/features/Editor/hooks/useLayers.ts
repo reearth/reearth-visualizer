@@ -1,4 +1,3 @@
-
 import type {
   MapRef,
   ComputedFeature,

@@ -1,4 +1,3 @@
-
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
 import { styled, useTheme } from "@reearth/services/theme";

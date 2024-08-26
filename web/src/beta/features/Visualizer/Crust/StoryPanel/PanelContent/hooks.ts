@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 
-
 import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export type { StoryPage } from "../hooks";

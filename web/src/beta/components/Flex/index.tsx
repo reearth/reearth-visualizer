@@ -1,7 +1,6 @@
 import { ariaProps } from "@reearth/beta/utils/aria";
 import { ReactNode, CSSProperties, AriaRole, AriaAttributes } from "react";
 
-
 export type Props = {
   className?: string;
   onClick?: () => void;

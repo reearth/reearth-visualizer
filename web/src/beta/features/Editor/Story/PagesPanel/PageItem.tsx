@@ -1,4 +1,3 @@
-
 import { getFieldValue } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";

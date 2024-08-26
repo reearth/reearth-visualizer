@@ -9,7 +9,6 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-
 const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 180;

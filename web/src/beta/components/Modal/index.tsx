@@ -1,4 +1,3 @@
-
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
 import useManageSwitchState, {
   SwitchField,

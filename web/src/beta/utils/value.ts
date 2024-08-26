@@ -1,4 +1,3 @@
-
 import { LayerAppearanceTypes } from "@reearth/core";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";

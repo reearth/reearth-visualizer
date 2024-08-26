@@ -1,4 +1,3 @@
-
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";

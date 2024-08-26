@@ -1,4 +1,3 @@
-
 import { GisType } from "@reearth/beta/features/AssetsManager/constants";
 import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";

@@ -62,7 +62,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
         onItemDrop(movingItems[index], index);
       }
     },
-    [items, movingItems, onItemDrop]
+    [items, movingItems, onItemDrop],
   );
 
   const onItemDropOutside = useCallback(() => {

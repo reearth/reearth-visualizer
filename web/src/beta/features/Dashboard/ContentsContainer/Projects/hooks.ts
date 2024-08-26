@@ -1,4 +1,3 @@
-
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import {
   autoFillPage,

@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-
 export type RadioProps = {
   value?: string;
   label?: string;

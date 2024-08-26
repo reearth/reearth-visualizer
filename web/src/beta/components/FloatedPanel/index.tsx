@@ -5,7 +5,6 @@ import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 import React, { useRef, useEffect } from "react";
 import { useClickAway } from "react-use";
 
-
 export type Props = {
   className?: string;
   visible?: boolean;

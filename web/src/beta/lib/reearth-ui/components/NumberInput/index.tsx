@@ -1,7 +1,6 @@
 import { fonts, styled } from "@reearth/services/theme";
 import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
 
-
 export type NumberInputProps = {
   value?: number | string;
   size?: "normal" | "small";

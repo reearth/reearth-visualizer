@@ -1,4 +1,3 @@
-
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { FlyTo } from "@reearth/core";
 import { WidgetAreaState } from "@reearth/services/state";

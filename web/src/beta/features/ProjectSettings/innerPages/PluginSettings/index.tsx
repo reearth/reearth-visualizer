@@ -1,4 +1,3 @@
-
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { Extension } from "@reearth/services/config/extensions";
 import { ScenePlugin } from "@reearth/services/gql";

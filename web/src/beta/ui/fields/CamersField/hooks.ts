@@ -1,7 +1,6 @@
 import { Camera } from "@reearth/beta/utils/value";
 import { useCallback, useEffect, useState } from "react";
 
-
 export const degreesToRadians = (degrees: number): number =>
   degrees * (Math.PI / 180);
 

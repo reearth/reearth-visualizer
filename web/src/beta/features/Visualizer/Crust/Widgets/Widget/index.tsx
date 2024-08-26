@@ -1,4 +1,3 @@
-
 import type { TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 import { ComponentType, ReactNode, useMemo } from "react";

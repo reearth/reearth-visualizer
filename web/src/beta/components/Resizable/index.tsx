@@ -1,4 +1,3 @@
-
 import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 import { ReactNode } from "react";

@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { useMemo, useState } from "react";
 
-
 import Property from "..";
 import NumberInput from "../common/NumberInput";
 

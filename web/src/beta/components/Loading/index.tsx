@@ -2,7 +2,6 @@ import { styled, useTheme } from "@reearth/services/theme";
 import React from "react";
 import { RingLoader } from "react-spinners";
 
-
 import Portal from "../Portal";
 
 export type Props = {

@@ -1,4 +1,3 @@
-
 import { Icon, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useMemo } from "react";

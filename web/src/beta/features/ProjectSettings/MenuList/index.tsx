@@ -1,4 +1,3 @@
-
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
 import { Link } from "react-router-dom";

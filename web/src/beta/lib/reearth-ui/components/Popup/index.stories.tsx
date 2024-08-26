@@ -2,7 +2,6 @@ import { fonts, styled } from "@reearth/services/theme";
 import { Meta, StoryObj } from "@storybook/react";
 import { FC, useCallback, useState } from "react";
 
-
 import { Button } from "../Button";
 
 import { Popup, PopupProps } from ".";

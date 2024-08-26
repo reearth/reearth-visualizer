@@ -1,7 +1,6 @@
 import Template from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/Template";
 import { FC } from "react";
 
-
 import { PropertyListItem } from "../ListEditor";
 import ListItem from "../ListItem";
 

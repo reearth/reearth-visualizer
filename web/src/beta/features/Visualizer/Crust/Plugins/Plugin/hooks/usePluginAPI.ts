@@ -3,7 +3,6 @@ import type { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject, RefObject } from "react";
 
-
 import type {
   InfoboxBlock as Block,
   InfoboxBlock,

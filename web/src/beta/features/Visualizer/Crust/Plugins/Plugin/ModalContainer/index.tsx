@@ -7,7 +7,6 @@ import {
   useCallback,
 } from "react";
 
-
 export type PluginModalInfo = {
   id?: string;
   background?: string;

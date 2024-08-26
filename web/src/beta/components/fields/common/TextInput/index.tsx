@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 
-
 export type Props = {
   className?: string;
   value?: string;

@@ -5,7 +5,6 @@ import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import { ReactNode, useRef, useCallback, useMemo } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
-
 export type Props = {
   className?: string;
   children?: ReactNode;

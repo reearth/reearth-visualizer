@@ -1,4 +1,3 @@
-
 import { EntryItem } from "@reearth/beta/ui/components";
 import { InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
 import { styled } from "@reearth/services/theme";

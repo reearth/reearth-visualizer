@@ -1,4 +1,3 @@
-
 import { Switcher, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";

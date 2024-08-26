@@ -1,4 +1,3 @@
-
 import { Collapse, IconButton } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, ReactNode, useCallback, useMemo } from "react";

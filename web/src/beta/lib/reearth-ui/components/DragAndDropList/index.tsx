@@ -10,7 +10,6 @@ import {
   SortableEvent,
 } from "react-sortablejs";
 
-
 export interface DragAndDropListProps<T extends ItemInterface> {
   items?: T[];
   setItems?: React.Dispatch<React.SetStateAction<T[]>>;

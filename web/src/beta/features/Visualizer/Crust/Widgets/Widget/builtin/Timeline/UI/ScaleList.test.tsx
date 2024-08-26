@@ -1,4 +1,3 @@
-
 import { truncMinutes } from "@reearth/beta/utils/time";
 import { render, screen } from "@reearth/test/utils";
 import { expect, test } from "vitest";

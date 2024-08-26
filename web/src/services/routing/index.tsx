@@ -3,7 +3,6 @@ import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-
 const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
 const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const ProjectSettings = lazy(

@@ -1,4 +1,3 @@
-
 import type { TimeEventHandler } from "@reearth/beta/features/Visualizer/Crust/Widgets/Widget/builtin/Timeline/UI";
 import {
   TickEvent,

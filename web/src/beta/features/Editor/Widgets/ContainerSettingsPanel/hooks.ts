@@ -1,4 +1,3 @@
-
 import { useWidgetsFetcher } from "@reearth/services/api";
 import { WidgetAreaState } from "@reearth/services/state";
 import { SetStateAction, useCallback } from "react";

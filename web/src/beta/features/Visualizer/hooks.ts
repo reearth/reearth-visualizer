@@ -1,4 +1,3 @@
-
 import { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, ComputedFeature, ComputedLayer } from "@reearth/core";
 import { useCallback, useLayoutEffect, useMemo, useRef } from "react";

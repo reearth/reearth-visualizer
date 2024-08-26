@@ -1,4 +1,3 @@
-
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled, PublishTheme } from "@reearth/services/theme";

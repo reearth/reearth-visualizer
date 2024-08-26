@@ -1,7 +1,6 @@
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
-
 import Icons from "./icons";
 
 export type IconName = keyof typeof Icons;

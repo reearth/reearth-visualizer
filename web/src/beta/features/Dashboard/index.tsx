@@ -1,4 +1,3 @@
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";

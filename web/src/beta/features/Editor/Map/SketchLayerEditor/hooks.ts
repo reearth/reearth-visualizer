@@ -3,7 +3,6 @@ import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 import { useCallback, useEffect, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-
 import { CustomPropertyProps } from "../SketchLayerCreator/type";
 
 import { SketchLayerEditorProp } from ".";

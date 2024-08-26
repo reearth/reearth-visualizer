@@ -1,4 +1,3 @@
-
 import { useGetTeamsQuery } from "@reearth/services/api/teams";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";

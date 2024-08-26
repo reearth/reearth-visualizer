@@ -1,7 +1,6 @@
 import { fonts, styled } from "@reearth/services/theme";
 import { useCallback } from "react";
 
-
 export type Props = {
   selected?: boolean;
   keyValue: string;

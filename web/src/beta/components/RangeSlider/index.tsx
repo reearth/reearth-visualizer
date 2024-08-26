@@ -2,7 +2,6 @@ import { styled } from "@reearth/services/theme";
 import RCSlider from "rc-slider";
 import React, { ComponentProps } from "react";
 
-
 import "rc-slider/assets/index.css";
 
 const RangeSliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider.Range);

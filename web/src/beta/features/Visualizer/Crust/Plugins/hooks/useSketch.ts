@@ -1,7 +1,6 @@
 import { SketchOptions, SketchType } from "@reearth/core";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-
 import { SketchEventType } from "../pluginAPI/types";
 import { Props } from "../types";
 import { events } from "../utils/events";

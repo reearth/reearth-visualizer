@@ -1,4 +1,3 @@
-
 import Loading from "@reearth/beta/components/Loading";
 import GlobalModal from "@reearth/beta/features/GlobalModal";
 import NotificationBanner from "@reearth/beta/features/Notification";

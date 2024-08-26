@@ -1,7 +1,6 @@
 import { usePropertyFetcher } from "@reearth/services/api";
 import { useCallback } from "react";
 
-
 export default () => {
   const { useUpdatePropertyValue } = usePropertyFetcher();
   const handlePropertyValueUpdate = useCallback(

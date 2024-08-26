@@ -1,4 +1,3 @@
-
 import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
   GeoJsonFeatureDeleteProps,

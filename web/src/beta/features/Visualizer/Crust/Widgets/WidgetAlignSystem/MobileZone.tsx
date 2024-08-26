@@ -1,4 +1,3 @@
-
 import Icon from "@reearth/beta/components/Icon";
 import Slide from "@reearth/beta/components/Slide";
 import { styled } from "@reearth/services/theme";

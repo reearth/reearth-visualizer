@@ -1,4 +1,3 @@
-
 import { config } from "@reearth/services/config";
 import { type UnsafeBuiltinPlugin } from "@reearth/services/config/unsafeBuiltinPlugin";
 import { merge } from "lodash-es";

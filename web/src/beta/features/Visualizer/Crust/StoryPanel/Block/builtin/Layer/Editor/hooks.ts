@@ -3,7 +3,6 @@ import { useT } from "@reearth/services/i18n";
 import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 
-
 import type { Field } from "../../../../types";
 
 export type LayerBlock = {

@@ -1,4 +1,3 @@
-
 import FloatedPanel from "@reearth/beta/components/FloatedPanel";
 import Slider from "@reearth/beta/components/Slider";
 import Text from "@reearth/beta/components/Text";

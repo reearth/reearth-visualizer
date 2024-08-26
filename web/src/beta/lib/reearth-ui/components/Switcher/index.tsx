@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";
 
-
 export type SwitcherProps = {
   value?: boolean;
   disabled?: boolean;

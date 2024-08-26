@@ -2,7 +2,6 @@ import { Tab } from "@reearth/beta/features/Navbar";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
   const navigate = useNavigate();
 

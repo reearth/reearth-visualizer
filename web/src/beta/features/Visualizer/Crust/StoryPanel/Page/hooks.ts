@@ -1,7 +1,6 @@
 import { useEditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-
 import {
   DEFAULT_STORY_PAGE_GAP,
   DEFAULT_STORY_PAGE_PADDING,

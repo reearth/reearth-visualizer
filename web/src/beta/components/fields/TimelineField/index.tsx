@@ -1,4 +1,3 @@
-
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";

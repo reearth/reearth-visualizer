@@ -12,7 +12,6 @@ import React, {
   WheelEventHandler,
 } from "react";
 
-
 import {
   BORDER_WIDTH,
   DAY_SECS,

@@ -1,4 +1,3 @@
-
 import { Icon } from "@reearth/beta/lib/reearth-ui/components/Icon/index";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";

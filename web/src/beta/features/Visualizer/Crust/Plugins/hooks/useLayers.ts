@@ -1,7 +1,6 @@
 import { ComputedFeature, NaiveLayer } from "@reearth/core";
 import { useCallback, useEffect, useMemo } from "react";
 
-
 import { useGet } from "../../utils";
 import { LayersEventType } from "../pluginAPI/types";
 import { Props } from "../types";

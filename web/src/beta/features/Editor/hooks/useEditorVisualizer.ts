@@ -1,4 +1,3 @@
-
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { FlyTo, MapRef } from "@reearth/core";
 import { useCallback, useRef, useState } from "react";

@@ -1,4 +1,3 @@
-
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { useT } from "@reearth/services/i18n";

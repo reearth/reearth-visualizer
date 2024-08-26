@@ -2,7 +2,6 @@ import { IconName, Loading } from "@reearth/beta/lib/reearth-ui";
 import React from "react";
 import useFileInput from "use-file-input";
 
-
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
 export type Props = {

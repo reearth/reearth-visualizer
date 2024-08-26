@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from "@reearth/test/utils";
 import { expect, test, vitest } from "vitest";
 
-
 import Navigator from ".";
 
 test("it should rotate compass when degree props is changed", async () => {

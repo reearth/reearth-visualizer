@@ -1,7 +1,6 @@
 import { fonts, styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
-
 export type DatePickerProps = {
   value?: string;
   disabled?: boolean;

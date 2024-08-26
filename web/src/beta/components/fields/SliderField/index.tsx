@@ -1,4 +1,3 @@
-
 import Property from "@reearth/beta/components/fields";
 import Slider, { Props as SliderProps } from "@reearth/beta/components/Slider";
 import { useCallback, useEffect, useState } from "react";

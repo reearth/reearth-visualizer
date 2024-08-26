@@ -1,4 +1,3 @@
-
 import { SwitchField } from "@reearth/beta/ui/fields";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";

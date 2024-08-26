@@ -1,7 +1,6 @@
 import { useWidgetsFetcher } from "@reearth/services/api";
 import { useCallback } from "react";
 
-
 import { SelectedWidget } from "../../hooks/useWidgets";
 
 type Props = {

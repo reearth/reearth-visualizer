@@ -1,4 +1,3 @@
-
 import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
 import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
 import { Layer, LayerAppearanceTypes } from "@reearth/core";

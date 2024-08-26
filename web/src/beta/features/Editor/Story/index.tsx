@@ -1,7 +1,6 @@
 import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
 import { FC, useRef } from "react";
 
-
 import { useStoryPage } from "./context";
 import PageSettingsPanel from "./PageSettingsPanel";
 import PagesPanel from "./PagesPanel";

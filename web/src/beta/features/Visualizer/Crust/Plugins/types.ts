@@ -17,7 +17,6 @@ import type {
 } from "@reearth/core";
 import type { PropsWithChildren, RefObject } from "react";
 
-
 import { Story } from "../StoryPanel";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";

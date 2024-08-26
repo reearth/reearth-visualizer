@@ -1,4 +1,3 @@
-
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";

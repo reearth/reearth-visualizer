@@ -1,7 +1,6 @@
 import { ColorInput, ColorInputProps } from "@reearth/beta/lib/reearth-ui";
 import { FC } from "react";
 
-
 import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type ColorInputFieldProps = CommonFieldProps & ColorInputProps;

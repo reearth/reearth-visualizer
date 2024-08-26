@@ -1,7 +1,6 @@
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { createContext, useContext, ReactNode } from "react";
 
-
 import { ProjectType } from "./PublishToolsPanel/hooks";
 
 export interface PublishPageContextType {

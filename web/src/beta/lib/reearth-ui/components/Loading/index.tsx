@@ -2,7 +2,6 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 import { RingLoader } from "react-spinners";
 
-
 export type LoadingProps = {
   animationSize?: number;
   animationColor?: string;

@@ -11,7 +11,6 @@ import { styled } from "@reearth/services/theme";
 import { forwardRef, useCallback, type HTMLProps, type ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-
 import usePopover from "./hooks";
 
 type ContextType = ReturnType<typeof usePopover> | null;

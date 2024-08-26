@@ -1,7 +1,6 @@
 import { Window, Area } from "@reearth/beta/ui/layout";
 import { FC, useRef } from "react";
 
-
 import { usePublishPage } from "./context";
 import PublishToolsPanel from "./PublishToolsPanel";
 

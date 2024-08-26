@@ -1,4 +1,3 @@
-
 import { Button, Icon, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";

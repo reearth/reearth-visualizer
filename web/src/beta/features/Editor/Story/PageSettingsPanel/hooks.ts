@@ -1,4 +1,3 @@
-
 import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { Page } from "@reearth/services/api/storytellingApi/utils";

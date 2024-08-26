@@ -1,4 +1,3 @@
-
 import {
   FILE_TYPES,
   IMAGE_TYPES,

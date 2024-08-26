@@ -6,7 +6,6 @@ import {
 } from "@reearth/services/config";
 import React, { createContext, ReactNode, useState } from "react";
 
-
 import { useAuth0Auth } from "./auth0Auth";
 import type { AuthHook } from "./authHook";
 import { useCognitoAuth } from "./cognitoAuth";

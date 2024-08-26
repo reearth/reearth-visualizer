@@ -1,4 +1,3 @@
-
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import CheckBoxField from "@reearth/beta/ui/fields/CheckboxField";

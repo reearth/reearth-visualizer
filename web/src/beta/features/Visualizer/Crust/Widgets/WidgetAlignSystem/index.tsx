@@ -2,7 +2,6 @@ import { styled } from "@reearth/services/theme";
 import React, { ReactNode, useMemo } from "react";
 import { GridWrapper } from "react-align";
 
-
 import useHooks from "./hooks";
 import MobileZone from "./MobileZone";
 import type {

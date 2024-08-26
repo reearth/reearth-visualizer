@@ -1,4 +1,3 @@
-
 import AssetsSelector from "@reearth/beta/features/AssetsManager/AssetsSelector";
 import {
   AcceptedAssetsTypes,

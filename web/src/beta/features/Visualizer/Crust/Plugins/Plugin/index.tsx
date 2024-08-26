@@ -1,7 +1,6 @@
 import type { Layer } from "@reearth/core";
 import { type RefObject } from "react";
 
-
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
 import type { Widget } from "../../Widgets";

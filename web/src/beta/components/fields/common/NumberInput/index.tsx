@@ -1,4 +1,3 @@
-
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";

@@ -1,7 +1,6 @@
 import { Camera } from "@reearth/beta/utils/value";
 import { useCallback } from "react";
 
-
 type Params = {
   onIsCapturingChange?: (isCapturing: boolean) => void;
   camera?: Camera;

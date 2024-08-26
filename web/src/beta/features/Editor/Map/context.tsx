@@ -1,4 +1,3 @@
-
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { FlyTo, SketchType } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";

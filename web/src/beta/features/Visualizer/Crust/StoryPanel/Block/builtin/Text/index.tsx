@@ -1,4 +1,3 @@
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import RichText from "@reearth/beta/lib/lexical/RichTextEditor";

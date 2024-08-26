@@ -5,7 +5,6 @@ import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import tinycolor from "tinycolor2";
 
-
 export type Props = {
   className?: string;
   children?: string;

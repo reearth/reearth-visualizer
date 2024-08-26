@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 
-
 import { Icon } from "../Icon";
 import { Typography } from "../Typography";
 

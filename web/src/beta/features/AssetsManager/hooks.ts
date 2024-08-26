@@ -1,4 +1,3 @@
-
 import { BreadcrumbItem } from "@reearth/beta/lib/reearth-ui";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useAssetsFetcher } from "@reearth/services/api";

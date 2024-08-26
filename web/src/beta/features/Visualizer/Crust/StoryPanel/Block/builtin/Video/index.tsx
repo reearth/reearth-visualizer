@@ -1,4 +1,3 @@
-
 import VideoPlayer from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/builtin/Video/VideoPlayer";
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";

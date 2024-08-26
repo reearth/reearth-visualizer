@@ -1,4 +1,3 @@
-
 import Property from "@reearth/beta/components/fields";
 import RangeSlider, {
   Props as RangeProps,

@@ -1,7 +1,6 @@
 import { Args, Args3, Args2 } from "@reearth/types";
 import { useRef } from "react";
 
-
 /**
  * Often we want to make an array of keys of an object type,
  * but if we just specify the key names directly, we may forget to change the array if the object type is changed.

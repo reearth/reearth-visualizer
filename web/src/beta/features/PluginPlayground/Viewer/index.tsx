@@ -1,7 +1,6 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { FC } from "react";
 
-
 import useHooks from "./hooks";
 
 const Viewer: FC = () => {

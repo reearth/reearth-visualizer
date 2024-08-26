@@ -10,7 +10,6 @@ import {
   useEffect,
 } from "react";
 
-
 import Property from "..";
 
 export type Props = {

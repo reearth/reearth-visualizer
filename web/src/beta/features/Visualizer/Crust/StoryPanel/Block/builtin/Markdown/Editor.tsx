@@ -1,4 +1,3 @@
-
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { Markdown } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";

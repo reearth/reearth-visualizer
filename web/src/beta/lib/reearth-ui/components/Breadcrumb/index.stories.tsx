@@ -4,7 +4,6 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { Meta, StoryObj } from "@storybook/react";
 
-
 import { Breadcrumb, BreadcrumbProp, BreadcrumbItem } from "./";
 
 const meta: Meta<BreadcrumbProp> = {

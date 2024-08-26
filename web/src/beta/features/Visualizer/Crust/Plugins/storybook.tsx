@@ -2,7 +2,6 @@ import { Layer } from "@reearth/core";
 import { action } from "@storybook/addon-actions";
 import type { ReactNode } from "react";
 
-
 import { PluginProvider } from "./context";
 import type { Context } from "./types";
 
