@@ -3,10 +3,16 @@ import playwright from "eslint-plugin-playwright";
 
 /** @type { import("eslint").Linter.Config[] } */
 
-const customVisualizerConfig = [
+const themeConfig = [
   {
     rules: {
       "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-empty-object-type": [
+        "error",
+        {
+          allowInterfaces: "with-single-extends",
+        },
+      ],
     },
   },
 ];
@@ -31,4 +37,4 @@ const e2eConfig = [
   },
 ];
 
-export default [...config("@reearth"), ...e2eConfig, ...customVisualizerConfig];
+export default [...config("@reearth"), ...e2eConfig, ...themeConfig];
