@@ -56,7 +56,7 @@ export interface MapPageContextType {
   handleLayerStyleAdd: (inp: LayerStyleAddProps) => void;
   handleLayerStyleDelete: (id: string) => void;
   handleLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
-  handleLayerStyleSelect: (id: string) => void;
+  handleLayerStyleSelect: (id: string | undefined) => void;
 }
 
 const MapPageContext = createContext<MapPageContextType | undefined>(undefined);

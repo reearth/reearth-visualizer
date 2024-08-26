@@ -124,8 +124,6 @@ Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 Style_: スタイル_
-New Style: ''
-Delete: 削除
 Save: 保存
 Main: メイン
 Tiles: タイル
@@ -231,6 +229,7 @@ Installed Plugins: ''
 Uninstall: アンインストール
 Installed: インストール済み
 Install: インストール
+Delete: 削除
 You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
 Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
 No description.: ''
