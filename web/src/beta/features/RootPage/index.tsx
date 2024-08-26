@@ -1,7 +1,7 @@
 import React from "react";
 
-import Loading from "@reearth/beta/components/Loading";
 import PageWrapper from "@reearth/beta/features/RootPage/PageWrapper";
+import { Loading } from "@reearth/beta/lib/reearth-ui";
 
 import useHooks from "./hooks";
 

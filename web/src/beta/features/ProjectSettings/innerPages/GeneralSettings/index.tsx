@@ -180,7 +180,7 @@ const DangerItem = styled("div")(({ theme }) => ({
   gap: theme.spacing.large,
 }));
 
-const Divider = styled.div`
-  height: 1px;
-  background-color: ${({ theme }) => theme.outline.weaker};
-`;
+const Divider = styled("div")(({ theme }) => ({
+  height: "1px",
+  borderBlockColor: theme.outline.weaker,
+}));

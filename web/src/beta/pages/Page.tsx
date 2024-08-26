@@ -3,7 +3,7 @@ import React, { ReactNode, useMemo } from "react";
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
 
-import Loading from "../components/Loading";
+import { Loading } from "../lib/reearth-ui";
 
 type RenderItemProps = {
   sceneId?: string;
