@@ -312,3 +312,143 @@ func starProject(e *httpexpect.Expect, projectID string) {
 	response.ValueEqual("id", projectID).
 		ValueEqual("starred", true)
 }
+
+func TestSortByUpdatedAt(t *testing.T) {
+
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	createProject(e, "project1-test")
+	project2ID := createProject(e, "project2-test")
+	createProject(e, "project3-test")
+
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateProject",
+		Query: `mutation UpdateProject($input: UpdateProjectInput!) {
+			updateProject(input: $input) {
+				project {
+					id
+					name
+					description
+					updatedAt
+					__typename
+				}
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"input": map[string]any{
+				"projectId":   project2ID,
+				"description": "test updaet",
+			},
+		},
+	}
+
+	// Update 'project2'
+	e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	requestBody = GraphQLRequest{
+		OperationName: "GetProjects",
+		Query: `
+		query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+			projects(
+				teamId: $teamId
+				pagination: $pagination
+				keyword: $keyword
+				sort: $sort
+			) {
+				edges {
+					node {
+						id
+						...ProjectFragment
+						scene {
+							id
+							__typename
+						}
+						__typename
+					}
+					__typename
+				}
+				nodes {
+					id
+					...ProjectFragment
+					scene {
+						id
+						__typename
+					}
+					__typename
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
+					__typename
+				}
+				totalCount
+				__typename
+			}
+		}
+		fragment ProjectFragment on Project {
+			id
+			name
+			description
+			imageUrl
+			isArchived
+			isBasicAuthActive
+			basicAuthUsername
+			basicAuthPassword
+			publicTitle
+			publicDescription
+			publicImage
+			alias
+			enableGa
+			trackingId
+			publishmentStatus
+			updatedAt
+			createdAt
+			coreSupport
+			starred
+			__typename
+		}`,
+		Variables: map[string]any{
+			"pagination": map[string]any{
+				"first": 3, // Get first 3 itme
+			},
+			"teamId": wID.String(),
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC", // Sort DESC by UPDATEDAT
+			},
+		},
+	}
+
+	edges := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().
+		Value("data").Object().
+		Value("projects").Object().
+		Value("edges").Array()
+
+	edges.Length().Equal(3)
+	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
+	edges.Element(1).Object().Value("node").Object().Value("name").Equal("project3-test")
+	edges.Element(2).Object().Value("node").Object().Value("name").Equal("project1-test")
+}
