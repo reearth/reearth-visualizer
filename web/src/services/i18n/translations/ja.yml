@@ -30,11 +30,11 @@ Options: オプション
 Please choose an option: オプションを選んでください
 Add text here: テキストを書きましょう
 Timeline Settings: タイムライン設定
-"* Start Time": "* 開始時刻"
+'* Start Time': '* 開始時刻'
 Start time for the timeline: タイムラインの開始時刻
-"* Current Time": "* 現在時刻"
+'* Current Time': '* 現在時刻'
 Current time should be between start and end time: 現在時刻は開始時刻と終了時刻の間で設定してください
-"* End Time": "* 終了時刻"
+'* End Time': '* 終了時刻'
 End time for the timeline: タイムラインの終了時刻
 Please make sure the Current time must between the Start time and End Time.: 現在時刻が開始時刻と終了時刻の間にあることを確認してください
 not set: 未設定
@@ -48,38 +48,38 @@ A To Z: 昇順（ファイル名）
 Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
-Select Asset: ""
-Upload File: ""
-Search in all assets library: ""
-Assets selected: ""
-Asset selected: ""
+Select Asset: ''
+Upload File: ''
+Search in all assets library: ''
+Assets selected: ''
+Asset selected: ''
 Name: 名前
-Uploaded At: ""
-Size: ""
-Use Name or Email: ""
-Find Member: ""
-No Member match your search.: ""
-Last Created: ""
-First Created: ""
-Last Updated: ""
+Uploaded At: ''
+Size: ''
+Use Name or Email: ''
+Find Member: ''
+No Member match your search.: ''
+Last Created: ''
+First Created: ''
+Last Updated: ''
 New Project: 新規プロジェクト
-Search Result for: ""
+Search Result for: ''
 Project Name: プロジェクト名
-Updated At: ""
-Created At: ""
-Rename: ""
-Project Setting: ""
-Create new project: ""
-Project Name *: ""
-Text: ""
+Updated At: ''
+Created At: ''
+Rename: ''
+Project Setting: ''
+Create new project: ''
+Project Name *: ''
+Text: ''
 Description: プロジェクト概要
-Write down your content: ""
-Cover Image: ""
-Re:Earth Visualizer: ""
-Switch WorkSpace: ""
-Personal: ""
-Team Workspace: ""
-Log Out: ""
+Write down your content: ''
+Cover Image: ''
+Re:Earth Visualizer: ''
+Switch WorkSpace: ''
+Personal: ''
+Team Workspace: ''
+Log Out: ''
 Page: ページ
 From Assets: アセットから追加
 From Web: Webから追加
@@ -94,10 +94,10 @@ Value: 値
 Input data here: データ入力
 Prioritize Performance: パフォーマンスを優先
 Add to Layer: レイヤー追加
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ""
-Latitude Column Name: ""
-Column Name: ""
-Longitude Column Name: ""
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ''
+Latitude Column Name: ''
+Column Name: ''
+Longitude Column Name: ''
 Common: Common
 CSV: CSV
 WMS: WMS
@@ -106,17 +106,17 @@ Vector Tile: Vector Tile
 Data Source Manager: データソースマネージャー
 Choose layer to add: レイヤーの選択
 layer name: レイヤー名
-Layer name: ""
+Layer name: ''
 Inspector: インスペクター
-Layer Name: ""
+Layer Name: ''
 Format: フォーマット
-Unsupported custom field: ""
-Custom Properties: ""
-Save & Apply: ""
-No custom properties: ""
+Unsupported custom field: ''
+Custom Properties: ''
+Save & Apply: ''
+No custom properties: ''
 Geometry: ジオメトリ
 Properties: プロパティ
-Delete Feature: ""
+Delete Feature: ''
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
 Layer Style: レイヤースタイル
@@ -133,15 +133,15 @@ Sky: 空
 Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
-Type Title here: ""
-Please select one type: ""
+Type Title here: ''
+Please select one type: ''
 Title: ページタイトル
-Type: ""
-New Property: ""
-" Text": ""
-General: ""
-New Sketch Layer: ""
-Custom properties Schema Setting: ""
+Type: ''
+New Property: ''
+' Text': ''
+General: ''
+New Sketch Layer: ''
+Custom properties Schema Setting: ''
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
@@ -159,11 +159,11 @@ Your scene will be published. This means anybody with the below URL will be able
 Your story has been published!: ストーリーが公開されました。
 Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
-"* Anyone can see your story with this URL": "* このリンクを知っているインターネット上の全員が閲覧できます"
-"* Anyone can see your scene with this URL": "* このリンクを知っているインターネット上の全員が閲覧できます"
+'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
 Copy: コピー
 Embed Code: 埋め込み用コード
-"* Please use this code if you want to embed your story into a webpage": その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
+'* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 Publish domain: 公開ドメイン
 Need to change domain related settings?: ドメイン設定を変更しますか？
 Go to settings: 設定へ
@@ -199,9 +199,9 @@ You haven't added any layerStyle yet. Click the add button in the bottom panel t
 Project settings: プロジェクト設定
 Plugin: プラグイン
 Unknown: 不明
-Switch workspace: ""
+Switch workspace: ''
 Log out: ログアウト
-Asset management: ""
+Asset management: ''
 Map: マップ
 Widgets: ウィジェット
 Error: エラー
@@ -215,27 +215,27 @@ Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
 Delete this project: プロジェクトを削除
-This process will remove this project to recycle bin.: ""
+This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
 I am sure I want to delete this project.: このプロジェクトを削除します。
-This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ""
+This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
 Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
 Zip file from PC: PCからZipファイルをアップロード
 Public GitHub repository: GitHubパブリックレポジトリ
-Installed Plugins: ""
+Installed Plugins: ''
 Uninstall: アンインストール
 Installed: インストール済み
 Install: インストール
 Delete: 削除
 You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
 Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
-No description.: ""
+No description.: ''
 Import GitHub repository: GitHubレポジトリからインポート
 Continue: 続ける
-"Repository url:": "レポジトリURL:"
+'Repository url:': 'レポジトリURL:'
 Public Info: 公開詳細設定
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効化
@@ -244,9 +244,9 @@ Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
-Google Analytics: ""
+Google Analytics: ''
 Enable Google Analytics: 有効
-Tracking ID: ""
+Tracking ID: ''
 Left: 左
 Right: 右
 Story Panel: ストーリーパネル
@@ -261,7 +261,7 @@ New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
 Buttons List: ボタン一覧
 New Layers Button: 新しいレイヤーボタン
-New Link Button: ""
+New Link Button: ''
 Add markdown text here: マークダウンテキストを入力
 aria-label-compass: コンパス
 aria-label-adjust-angle: 角度を調節する
@@ -299,10 +299,10 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-"Sort:": ""
-Position Capture: ""
-value: ""
-Time Period Settings: ""
+'Sort:': ''
+Position Capture: ''
+value: ''
+Time Period Settings: ''
 Failed to add one or more assets.: アセットの作成に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しまたした。
@@ -310,9 +310,9 @@ One or more assets were successfully deleted.: アセットが削除されまし
 Failed to add layer.: レイヤーの追加に失敗しました。
 Successfully added a new layer: 新しいレイヤーの追加に成功しました。
 Failed to update the layer.: レイヤーのアップデートに失敗しました。
-Successfully updated the layer!: ""
-Failed to delete the feature.: ""
-Successfully deleted the feature!: ""
+Successfully updated the layer!: ''
+Failed to delete the feature.: ''
+Successfully deleted the feature!: ''
 Failed to create block.: ブロックの作成に失敗しました。
 Successfullly created a block!: ブロックの作成に成功しました！
 Failed to delete block.: ブロックの削除に失敗しました。
@@ -320,15 +320,15 @@ Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
 Failed to remove the layer.: レイヤーの削除に失敗しました。
-Successfully removed the layer!: ""
-Failed to update the custom property schema.: ""
-Successfully updated the custom property schema!: ""
-Failed to add layer style.: ""
-Successfully added a new layer style!: ""
+Successfully removed the layer!: ''
+Failed to update the custom property schema.: ''
+Successfully updated the custom property schema!: ''
+Failed to add layer style.: ''
+Successfully added a new layer style!: ''
 Failed to update the layerStyle.: レイヤースタイルのアップデートに失敗しました。
 Successfully updated a the layerStyle!: レイヤースタイルのアップデートに成功しました！
-Failed to delete the layer style.: ""
-Successfully deleted the layer style!: ""
+Failed to delete the layer style.: ''
+Successfully deleted the layer style!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
@@ -352,7 +352,7 @@ Successfully unarchived the project. You can now edit this project.: プロジ�
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
-Successfully updated the property value!: ""
+Successfully updated the property value!: ''
 Failed to create story.: ストーリーの作成に失敗しました。
 Successfully created a story!: ストーリーの作成に成功しました！
 Failed to update story.: ストーリーのアップデートに失敗しました。
