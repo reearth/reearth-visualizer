@@ -1,379 +1,378 @@
-Current Position: ""
-Latitude: ""
-Longitude: ""
-Height: ""
-Current Rotation: ""
-Heading: ""
-Pitch: ""
-Roll: ""
-Camera Position Editor: ""
-Cancel: ""
-Capture: ""
-Location: ""
-Rotation: ""
-Apply: ""
-Position Set: ""
-Not set: ""
-Edit: ""
-Color Picker: ""
-You have passed the maximum value.: ""
-You have passed the minimum value.: ""
-Set Time: ""
-Date: ""
-Time: ""
-Time Zone: ""
-set: ""
-Remove: ""
-Add: ""
-Settings: ""
-Options: ""
-Please choose an option: ""
-Add text here: ""
-Timeline Settings: ""
-"* Start Time": ""
-Start time for the timeline: ""
-"* Current Time": ""
-Current time should be between start and end time: ""
-"* End Time": ""
-End time for the timeline: ""
-Please make sure the Current time must between the Start time and End Time.: ""
-not set: ""
-Wrong file format: ""
-Choose: ""
-Upload: ""
-Not found: ""
-Last Uploaded: ""
-First Uploaded: ""
-A To Z: ""
-Z To A: ""
-Size Small to Large: ""
-Size Large to Small: ""
-Select Asset: ""
-Upload File: ""
-Search in all assets library: ""
-Assets selected: ""
-Asset selected: ""
-Name: ""
-Uploaded At: ""
-Size: ""
-Use Name or Email: ""
-Find Member: ""
-No Member match your search.: ""
-Last Created: ""
-First Created: ""
-Last Updated: ""
-New Project: ""
-Search Result for: ""
-Project Name: ""
-Last modified: ""
-Created time: ""
-Rename: ""
-Project Setting: ""
-Create new project: ""
-Project Name *: ""
-Text: ""
-Description: ""
-Write down your content: ""
-Cover Image: ""
-Re:Earth Visualizer: ""
-Switch WorkSpace: ""
-Personal: ""
-Team Workspace: ""
-Log Out: ""
-Page: ""
-From Assets: ""
-From Web: ""
-From Value: ""
-File Format: ""
-File format of the data source you want to add.: ""
-Source Type: ""
-Asset: ""
-Resource URL: ""
-Input Text: ""
-Value: ""
-Input data here: ""
-Prioritize Performance: ""
-Add to Layer: ""
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ""
-Latitude Column Name: ""
-Column Name: ""
-Longitude Column Name: ""
-Common: ""
-CSV: ""
-WMS: ""
-Vector Tile: ""
-3D Tiles: ""
-Data Source Manager: ""
-Choose layer to add: ""
-layer name: ""
-Layer name: ""
-Inspector: ""
-Layer Name: ""
-Format: ""
-Unsupported custom field: ""
-Custom Properties: ""
-Save & Apply: ""
-No custom properties: ""
-Geometry: ""
-Properties: ""
-Delete Feature: ""
-Enable Infobox: ""
-Show infobox when the user clicks on a layer: ""
-Layer Style: ""
-Add Layer from Resource: ""
-Add Sketch Layer: ""
-Layers: ""
-Style_: ""
-New Style: ""
-Delete: ""
-Save: ""
-Main: ""
-Tiles: ""
-Terrain: ""
-Globe: ""
-Sky: ""
-Camera: ""
-Unknown scene setting: ""
-Scene: ""
-Type Title here: ""
-Please select one type: ""
-Title: ""
-Type: ""
-New Property: ""
-" Text": ""
-General: ""
-New Sketch Layer: ""
-Custom properties Schema Setting: ""
-Story: ""
-Publish: ""
-Unpublish: ""
-Update: ""
-Congratulations!: ""
-Publish your story: ""
-Publish your scene: ""
-Update your story: ""
-Update your scene: ""
-Ok: ""
-Your published story will be updated. This means all current changes will overwrite the current published story.: ""
-Your published scene will be updated. This means all current changes will overwrite the current published scene.: ""
-Your story will be published. This means anybody with the below URL will be able to view this story.: ""
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: ""
-Your story has been published!: ""
-Your scene has been published!: ""
-Public URL: ""
-"* Anyone can see your story with this URL": ""
-"* Anyone can see your scene with this URL": ""
-Copy: ""
-Embed Code: ""
-"* Please use this code if you want to embed your story into a webpage": ""
-Publish domain: ""
-Need to change domain related settings?: ""
-Go to settings: ""
-Search engine indexing: ""
-Page will be available as result on search engines: ""
-Your story will be unpublished.: ""
-Your scene will be unpublished.: ""
-This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: ""
-This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: ""
-Page Settings: ""
-All Layers: ""
-Untitled: ""
-Container Settings: ""
-Padding top: ""
-Padding right: ""
-Padding bottom: ""
-Padding left: ""
-Gap spacing: ""
-Align centered: ""
-Background color: ""
-Align System: ""
-Widget Manager: ""
-Please select an asset before clicking Select.: ""
-Select Image: ""
-Select: ""
-Sort By: ""
-No assets match your search.: ""
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: ""
-Please select an layer style before clicking Select.: ""
-Select Layer Style: ""
-No layerStyle match your search.: ""
-You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ""
-Project settings: ""
-Plugin: ""
-Unknown: ""
-Switch workspace: ""
-Log out: ""
-Asset management: ""
-Map: ""
-Widgets: ""
-Error: ""
-Warning: ""
-Notice: ""
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ""
-Something went wrong. Please try again later.: ""
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: ""
-Project Info: ""
-Thumbnail: ""
-Submit: ""
-Danger Zone: ""
-Delete this project: ""
-This process will remove this project to recycle bin.: ""
-Delete project: ""
-I am sure I want to delete this project.: ""
-This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ""
-Please type your project name to continue.: ""
-Plugin Marketplace: ""
-Public Installed: ""
-Personal Installed: ""
-Zip file from PC: ""
-Public GitHub repository: ""
-Installed Plugins: ""
-Uninstall: ""
-Installed: ""
-Install: ""
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: ""
-Please be sure before uninstalling.: ""
-No description.: ""
-Import GitHub repository: ""
-Continue: ""
-"Repository url:": ""
-Public Info: ""
-Basic Authorization: ""
-Enable Basic Authorization: ""
-Username: ""
-Password: ""
-Site Setting: ""
-Site name: ""
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: ""
-Google Analytics: ""
-Enable Google Analytics: ""
-Tracking ID: ""
-Left: ""
-Right: ""
-Story Panel: ""
-Panel Position: ""
-Background Color: ""
-Something went wrong.: ""
-Couldn't find the Re:Earth project you were after.: ""
-Your account has been successfully verified! Feel free to login now.: ""
-Could not verify your signup. Please start the process over.: ""
-New Field: ""
-New Camera: ""
-New Camera Button: ""
-Buttons List: ""
-New Layers Button: ""
-New Link Button: ""
-Add markdown text here: ""
-aria-label-compass: ""
-aria-label-adjust-angle: ""
-aria-label-zoom-in: ""
-aria-label-Go-to-the-home-position: ""
-aria-label-zoom-out: ""
-Angle: ""
-Narrow: ""
-Wide: ""
-Spacing settings: ""
-Block: ""
-Unsupported field type: ""
-Write your story :): ""
-Normal: ""
-Heading 1: ""
-Heading 2: ""
-Heading 3: ""
-Bullet List: ""
-Numbered List: ""
-Quote: ""
-Formatting options for font family: ""
-Formatting options for font size: ""
-Formatting options for line height: ""
-Center Align: ""
-Justify Align: ""
-Left Align: ""
-Right Align: ""
-Outdent: ""
-Indent: ""
-Bulleted List: ""
-Insert Code Block: ""
-Insert Link: ""
-Text Color: ""
-Strikethrough: ""
-Subscript: ""
-Superscript: ""
-Clear Formatting: ""
-"Sort:": ""
-Position Capture: ""
-value: ""
-Time Period Settings: ""
-Failed to add one or more assets.: ""
-Successfully added one or more assets.: ""
-Failed to delete one or more assets.: ""
-One or more assets were successfully deleted.: ""
-Failed to add layer.: ""
-Successfully added a new layer: ""
-Failed to update the layer.: ""
-Successfully updated the layer!: ""
-Failed to delete the feature.: ""
-Successfully deleted the feature!: ""
-Failed to create block.: ""
-Successfullly created a block!: ""
-Failed to delete block.: ""
-Block was successfully deleted.: ""
-Failed to move block.: ""
-Block was successfully moved.: ""
-Failed to remove the layer.: ""
-Successfully removed the layer!: ""
-Failed to update the custom property schema.: ""
-Successfully updated the custom property schema!: ""
-Failed to add layer style.: ""
-Successfully added a new layer style!: ""
-Failed to update the layerStyle.: ""
-Successfully updated a the layerStyle!: ""
-Failed to delete the layer style.: ""
-Successfully deleted the layer style!: ""
-Failed to install plugin.: ""
-Successfully installed plugin!: ""
-Failed to upgrade plugin.: ""
-Successfully upgraded plugin!: ""
-Failed to uninstall plugin.: ""
-Successfully uninstalled plugin.: ""
-Failed to create project.: ""
-Default: ""
-Failed to create story page on project creation.: ""
-Successfully created project!: ""
-Failed to publish project.: ""
-Successfully published your scene!: ""
-Successfully published your project with search engine indexing!: ""
-Successfully unpublished your scene. Now nobody can access your scene.: ""
-Failed to update project.: ""
-Successfully updated project!: ""
-Failed to archive project.: ""
-Failed to unarchive project.: ""
-Successfully archive project!: ""
-Successfully unarchived the project. You can now edit this project.: ""
-Failed to delete project.: ""
-Successfully delete project!: ""
-Failed to update property.: ""
-Successfully updated the property value!: ""
-Failed to create story.: ""
-Successfully created a story!: ""
-Failed to update story.: ""
-Successfully updated a story!: ""
-Failed to publish story.: ""
-Successfully published your story!: ""
-Successfully published your story with search engine indexing!: ""
-Successfully unpublished your story. Now nobody can access your story.: ""
-Failed to create page.: ""
-Successfullly created a page!: ""
-Failed to delete page.: ""
-Page was successfully deleted.: ""
-Failed to move page.: ""
-Page was successfully moved.: ""
-Failed to update page.: ""
-Successfullly updated a page!: ""
-Failed to add widget.: ""
-Failed to update widget.: ""
-Failed to remove widget.: ""
-Failed to update widget alignment.: ""
-Failed to update the widget align system.: ""
-Failed to create workspace.: ""
-Successfully created workspace!: ""
+Current Position: ''
+Latitude: ''
+Longitude: ''
+Height: ''
+Current Rotation: ''
+Heading: ''
+Pitch: ''
+Roll: ''
+Camera Position Editor: ''
+Cancel: ''
+Capture: ''
+Location: ''
+Rotation: ''
+Apply: ''
+Position Set: ''
+Not set: ''
+Edit: ''
+Color Picker: ''
+You have passed the maximum value.: ''
+You have passed the minimum value.: ''
+Set Time: ''
+Date: ''
+Time: ''
+Time Zone: ''
+set: ''
+Remove: ''
+Add: ''
+Settings: ''
+Options: ''
+Please choose an option: ''
+Add text here: ''
+Timeline Settings: ''
+'* Start Time': ''
+Start time for the timeline: ''
+'* Current Time': ''
+Current time should be between start and end time: ''
+'* End Time': ''
+End time for the timeline: ''
+Please make sure the Current time must between the Start time and End Time.: ''
+not set: ''
+Wrong file format: ''
+Choose: ''
+Upload: ''
+Not found: ''
+Last Uploaded: ''
+First Uploaded: ''
+A To Z: ''
+Z To A: ''
+Size Small to Large: ''
+Size Large to Small: ''
+Select Asset: ''
+Upload File: ''
+Search in all assets library: ''
+Assets selected: ''
+Asset selected: ''
+Name: ''
+Uploaded At: ''
+Size: ''
+Use Name or Email: ''
+Find Member: ''
+No Member match your search.: ''
+Last Created: ''
+First Created: ''
+Last Updated: ''
+New Project: ''
+Search Result for: ''
+Project Name: ''
+Updated At: ''
+Created At: ''
+Rename: ''
+Project Setting: ''
+Create new project: ''
+Project Name *: ''
+Text: ''
+Description: ''
+Write down your content: ''
+Cover Image: ''
+Re:Earth Visualizer: ''
+Switch WorkSpace: ''
+Personal: ''
+Team Workspace: ''
+Log Out: ''
+Page: ''
+From Assets: ''
+From Web: ''
+From Value: ''
+File Format: ''
+File format of the data source you want to add.: ''
+Source Type: ''
+Asset: ''
+Resource URL: ''
+Input Text: ''
+Value: ''
+Input data here: ''
+Prioritize Performance: ''
+Add to Layer: ''
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ''
+Latitude Column Name: ''
+Column Name: ''
+Longitude Column Name: ''
+Common: ''
+CSV: ''
+WMS: ''
+Vector Tile: ''
+3D Tiles: ''
+Data Source Manager: ''
+Choose layer to add: ''
+layer name: ''
+Layer name: ''
+Inspector: ''
+Layer Name: ''
+Format: ''
+Unsupported custom field: ''
+Custom Properties: ''
+Save & Apply: ''
+No custom properties: ''
+Geometry: ''
+Properties: ''
+Delete Feature: ''
+Enable Infobox: ''
+Show infobox when the user clicks on a layer: ''
+Layer Style: ''
+Add Layer from Resource: ''
+Add Sketch Layer: ''
+Layers: ''
+Style_: ''
+Save: ''
+Main: ''
+Tiles: ''
+Terrain: ''
+Globe: ''
+Sky: ''
+Camera: ''
+Unknown scene setting: ''
+Scene: ''
+Type Title here: ''
+Please select one type: ''
+Title: ''
+Type: ''
+New Property: ''
+' Text': ''
+General: ''
+New Sketch Layer: ''
+Custom properties Schema Setting: ''
+Story: ''
+Publish: ''
+Unpublish: ''
+Update: ''
+Congratulations!: ''
+Publish your story: ''
+Publish your scene: ''
+Update your story: ''
+Update your scene: ''
+Ok: ''
+Your published story will be updated. This means all current changes will overwrite the current published story.: ''
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: ''
+Your story will be published. This means anybody with the below URL will be able to view this story.: ''
+Your scene will be published. This means anybody with the below URL will be able to view this scene.: ''
+Your story has been published!: ''
+Your scene has been published!: ''
+Public URL: ''
+'* Anyone can see your story with this URL': ''
+'* Anyone can see your scene with this URL': ''
+Copy: ''
+Embed Code: ''
+'* Please use this code if you want to embed your story into a webpage': ''
+Publish domain: ''
+Need to change domain related settings?: ''
+Go to settings: ''
+Search engine indexing: ''
+Page will be available as result on search engines: ''
+Your story will be unpublished.: ''
+Your scene will be unpublished.: ''
+This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: ''
+This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: ''
+Page Settings: ''
+All Layers: ''
+Untitled: ''
+Container Settings: ''
+Padding top: ''
+Padding right: ''
+Padding bottom: ''
+Padding left: ''
+Gap spacing: ''
+Align centered: ''
+Background color: ''
+Align System: ''
+Widget Manager: ''
+Please select an asset before clicking Select.: ''
+Select Image: ''
+Select: ''
+Sort By: ''
+No assets match your search.: ''
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: ''
+Please select an layer style before clicking Select.: ''
+Select Layer Style: ''
+No layerStyle match your search.: ''
+You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
+Project settings: ''
+Plugin: ''
+Unknown: ''
+Switch workspace: ''
+Log out: ''
+Asset management: ''
+Map: ''
+Widgets: ''
+Error: ''
+Warning: ''
+Notice: ''
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
+Something went wrong. Please try again later.: ''
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: ''
+Project Info: ''
+Thumbnail: ''
+Submit: ''
+Danger Zone: ''
+Delete this project: ''
+This process will remove this project to recycle bin.: ''
+Delete project: ''
+I am sure I want to delete this project.: ''
+This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
+Please type your project name to continue.: ''
+Plugin Marketplace: ''
+Public Installed: ''
+Personal Installed: ''
+Zip file from PC: ''
+Public GitHub repository: ''
+Installed Plugins: ''
+Uninstall: ''
+Installed: ''
+Install: ''
+Delete: ''
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: ''
+Please be sure before uninstalling.: ''
+No description.: ''
+Import GitHub repository: ''
+Continue: ''
+'Repository url:': ''
+Public Info: ''
+Basic Authorization: ''
+Enable Basic Authorization: ''
+Username: ''
+Password: ''
+Site Setting: ''
+Site name: ''
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: ''
+Google Analytics: ''
+Enable Google Analytics: ''
+Tracking ID: ''
+Left: ''
+Right: ''
+Story Panel: ''
+Panel Position: ''
+Background Color: ''
+Something went wrong.: ''
+Couldn't find the Re:Earth project you were after.: ''
+Your account has been successfully verified! Feel free to login now.: ''
+Could not verify your signup. Please start the process over.: ''
+New Field: ''
+New Camera: ''
+New Camera Button: ''
+Buttons List: ''
+New Layers Button: ''
+New Link Button: ''
+Add markdown text here: ''
+aria-label-compass: ''
+aria-label-adjust-angle: ''
+aria-label-zoom-in: ''
+aria-label-Go-to-the-home-position: ''
+aria-label-zoom-out: ''
+Angle: ''
+Narrow: ''
+Wide: ''
+Spacing settings: ''
+Block: ''
+Unsupported field type: ''
+Write your story :): ''
+Normal: ''
+Heading 1: ''
+Heading 2: ''
+Heading 3: ''
+Bullet List: ''
+Numbered List: ''
+Quote: ''
+Formatting options for font family: ''
+Formatting options for font size: ''
+Formatting options for line height: ''
+Center Align: ''
+Justify Align: ''
+Left Align: ''
+Right Align: ''
+Outdent: ''
+Indent: ''
+Bulleted List: ''
+Insert Code Block: ''
+Insert Link: ''
+Text Color: ''
+Strikethrough: ''
+Subscript: ''
+Superscript: ''
+Clear Formatting: ''
+'Sort:': ''
+Position Capture: ''
+value: ''
+Time Period Settings: ''
+Failed to add one or more assets.: ''
+Successfully added one or more assets.: ''
+Failed to delete one or more assets.: ''
+One or more assets were successfully deleted.: ''
+Failed to add layer.: ''
+Successfully added a new layer: ''
+Failed to update the layer.: ''
+Successfully updated the layer!: ''
+Failed to delete the feature.: ''
+Successfully deleted the feature!: ''
+Failed to create block.: ''
+Successfullly created a block!: ''
+Failed to delete block.: ''
+Block was successfully deleted.: ''
+Failed to move block.: ''
+Block was successfully moved.: ''
+Failed to remove the layer.: ''
+Successfully removed the layer!: ''
+Failed to update the custom property schema.: ''
+Successfully updated the custom property schema!: ''
+Failed to add layer style.: ''
+Successfully added a new layer style!: ''
+Failed to update the layerStyle.: ''
+Successfully updated a the layerStyle!: ''
+Failed to delete the layer style.: ''
+Successfully deleted the layer style!: ''
+Failed to install plugin.: ''
+Successfully installed plugin!: ''
+Failed to upgrade plugin.: ''
+Successfully upgraded plugin!: ''
+Failed to uninstall plugin.: ''
+Successfully uninstalled plugin.: ''
+Failed to create project.: ''
+Default: ''
+Failed to create story page on project creation.: ''
+Successfully created project!: ''
+Failed to publish project.: ''
+Successfully published your scene!: ''
+Successfully published your project with search engine indexing!: ''
+Successfully unpublished your scene. Now nobody can access your scene.: ''
+Failed to update project.: ''
+Successfully updated project!: ''
+Failed to archive project.: ''
+Failed to unarchive project.: ''
+Successfully archive project!: ''
+Successfully unarchived the project. You can now edit this project.: ''
+Failed to delete project.: ''
+Successfully delete project!: ''
+Failed to update property.: ''
+Successfully updated the property value!: ''
+Failed to create story.: ''
+Successfully created a story!: ''
+Failed to update story.: ''
+Successfully updated a story!: ''
+Failed to publish story.: ''
+Successfully published your story!: ''
+Successfully published your story with search engine indexing!: ''
+Successfully unpublished your story. Now nobody can access your story.: ''
+Failed to create page.: ''
+Successfullly created a page!: ''
+Failed to delete page.: ''
+Page was successfully deleted.: ''
+Failed to move page.: ''
+Page was successfully moved.: ''
+Failed to update page.: ''
+Successfullly updated a page!: ''
+Failed to add widget.: ''
+Failed to update widget.: ''
+Failed to remove widget.: ''
+Failed to update widget alignment.: ''
+Failed to update the widget align system.: ''
+Failed to create workspace.: ''
+Successfully created workspace!: ''

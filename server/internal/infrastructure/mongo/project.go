@@ -96,6 +96,19 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
+func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if !r.f.CanRead(id) {
+		return nil, repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":    id.String(),
+		"starred": true,
+	}
+
+	return r.find(ctx, filter)
+}
+
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound

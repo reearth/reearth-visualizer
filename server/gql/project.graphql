@@ -124,6 +124,7 @@ type ProjectEdge {
 extend type Query{
   projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
+  starredProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
