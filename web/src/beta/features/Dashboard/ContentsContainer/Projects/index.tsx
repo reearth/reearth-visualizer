@@ -169,12 +169,12 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               </ProjectNameCell>
               <TimeCell>
                 <Typography size="body" color={theme.content.weak}>
-                  {t("Last modified")}
+                  {t("Updated At")}
                 </Typography>
               </TimeCell>
               <TimeCell>
                 <Typography size="body" color={theme.content.weak}>
-                  {t("Created time")}
+                  {t("Created At")}
                 </Typography>
               </TimeCell>
               <ActionCell />
