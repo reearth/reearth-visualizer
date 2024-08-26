@@ -9,7 +9,12 @@ type Props = {
   setTimelineValues?: (value?: TimelineFieldProp) => void;
 };
 
-export default ({ timelineValues, onChange, onClose, setTimelineValues }: Props) => {
+export default ({
+  timelineValues,
+  onChange,
+  onClose,
+  setTimelineValues,
+}: Props) => {
   const [warning, setWarning] = useState(false);
 
   const handleOnChange = useCallback(
@@ -90,7 +95,7 @@ export default ({ timelineValues, onChange, onClose, setTimelineValues }: Props)
 
   const isDisabled = useMemo(() => {
     if (timelineValues) {
-      return Object.values(timelineValues).every(value => value !== "");
+      return Object.values(timelineValues).every((value) => value !== "");
     }
     return false;
   }, [timelineValues]);

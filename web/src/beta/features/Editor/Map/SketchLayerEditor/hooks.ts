@@ -1,8 +1,8 @@
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 import { useCallback, useEffect, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 
 import { CustomPropertyProps } from "../SketchLayerCreator/type";
 
@@ -15,8 +15,12 @@ export default function useHooks({
   setPropertiesList,
   onClose,
   onCustomPropertySchemaUpdate,
-}: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> & SketchLayerEditorProp) {
-  const sketchLayers = useMemo(() => layers.filter(({ isSketch }) => isSketch), [layers]);
+}: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> &
+  SketchLayerEditorProp) {
+  const sketchLayers = useMemo(
+    () => layers.filter(({ isSketch }) => isSketch),
+    [layers],
+  );
 
   const handleClose = useCallback(() => {
     if (onClose) setPropertiesList?.([]);
@@ -61,7 +65,7 @@ export default function useHooks({
 
   useEffect(() => {
     if (setPropertiesList) {
-      const layer = sketchLayers.find(layer => layer.id === layerId);
+      const layer = sketchLayers.find((layer) => layer.id === layerId);
       if (layer) {
         const newPropertiesList = processCustomProperties(layer);
         setPropertiesList(newPropertiesList);

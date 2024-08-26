@@ -47,7 +47,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
     ],
-    [t]
+    [t],
   );
 
   return (

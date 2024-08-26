@@ -8,7 +8,11 @@ export type Props = {
 
 const Toggle: React.FC<Props> = ({ checked, onChange, disabled = false }) => (
   <Wrapper>
-    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)}>
+    <Switch
+      checked={checked}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+    >
       <TopSlider checked={checked} />
     </Switch>
   </Wrapper>
@@ -29,8 +33,11 @@ const Switch = styled.label<{
   cursor: ${({ disabled }) => (!disabled ? "pointer" : "not-allowed")};
   width: 24px;
   height: 14px;
-  background: ${({ checked, theme }) => (checked ? theme.select.main : theme.secondary.main)};
-  border: 1px solid ${({ checked, theme }) => (checked ? theme.select.main : theme.secondary.main)};
+  background: ${({ checked, theme }) =>
+    checked ? theme.select.main : theme.secondary.main};
+  border: 1px solid
+    ${({ checked, theme }) =>
+      checked ? theme.select.main : theme.secondary.main};
   border-radius: 12px;
   opacity: ${({ disabled }) => (!disabled ? 1 : 0.5)};
   transition: 0.4s;

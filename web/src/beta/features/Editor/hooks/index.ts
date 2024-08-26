@@ -70,7 +70,12 @@ export default ({ sceneId, projectId, tab }: Props) => {
     visualizerRef,
   });
 
-  const { handleSceneSettingSelect, scene, selectedSceneSetting, sceneSettings } = useScene({
+  const {
+    handleSceneSettingSelect,
+    scene,
+    selectedSceneSetting,
+    sceneSettings,
+  } = useScene({
     sceneId,
   });
 

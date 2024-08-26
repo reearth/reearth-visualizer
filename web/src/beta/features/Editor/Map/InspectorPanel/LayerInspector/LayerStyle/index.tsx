@@ -1,9 +1,9 @@
-import { FC, useCallback, useMemo } from "react";
 
 import { SelectField } from "@reearth/beta/ui/fields";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { FC, useCallback, useMemo } from "react";
 
 import { LayerConfigUpdateProps } from "../../../../hooks/useLayers";
 
@@ -25,7 +25,7 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   const layerStyleOptions = useMemo(
     () => [
       { value: "", label: "NO STYLE" },
-      ...(layerStyles?.map(ls => ({ value: ls.id, label: ls.name })) ?? []),
+      ...(layerStyles?.map((ls) => ({ value: ls.id, label: ls.name })) ?? []),
     ],
     [layerStyles],
   );
@@ -44,7 +44,7 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   );
 
   const currentValue = useMemo(
-    () => layers?.find(a => a.id === selectedLayerId)?.config?.layerStyleId,
+    () => layers?.find((a) => a.id === selectedLayerId)?.config?.layerStyleId,
     [layers, selectedLayerId],
   );
 

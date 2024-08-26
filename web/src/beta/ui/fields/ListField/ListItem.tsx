@@ -1,8 +1,8 @@
-import { FC, useCallback, useMemo, useState } from "react";
 
 import { PopupMenuItem, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { ListItemProps } from ".";
 
@@ -81,7 +81,10 @@ const ListItem: FC<ItemProps> = ({
               />
             ) : (
               <TitleWrapper
-                onDoubleClick={isEditable ? () => setItemNameRenameId(item.id) : undefined}>
+                onDoubleClick={
+                  isEditable ? () => setItemNameRenameId(item.id) : undefined
+                }
+              >
                 {item.title}
               </TitleWrapper>
             )

@@ -1,7 +1,7 @@
-import { FC } from "react";
 
 import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -39,19 +39,21 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
       <CardImage
         backgroundImage={project.imageUrl}
         onDoubleClick={onProjectOpen}
-        onClick={e => onProjectSelect?.(e, project.id)}
+        onClick={(e) => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
         onMouseEnter={() => handleProjectHover?.(true)}
         onMouseLeave={() => handleProjectHover?.(false)}
-        isSelected={selectedProjectId === project.id}>
+        isSelected={selectedProjectId === project.id}
+      >
         <StarButtonWrapper
           isStarred={isStarred ?? false}
           isHovered={isHovered ?? false}
-          isSelected={selectedProjectId === project.id}>
+          isSelected={selectedProjectId === project.id}
+        >
           <Button
             iconButton
             icon={isStarred ? "starFilled" : "star"}
-            onClick={e => handleProjectStarClick?.(e)}
+            onClick={(e) => handleProjectStarClick?.(e)}
             iconColor={isStarred ? theme.warning.main : theme.content.main}
             appearance="simple"
           />
@@ -61,7 +63,9 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         {publishStatus && <PublishStatus />}
         <CardTitleWrapper>
           {!isEditing ? (
-            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>{projectName}</CardTitle>
+            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
+              {projectName}
+            </CardTitle>
           ) : (
             <TextInput
               onChange={handleProjectNameChange}
@@ -74,7 +78,9 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         </CardTitleWrapper>
         <PopupMenu
           menu={popupMenu}
-          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
+          label={
+            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+          }
         />
       </CardFooter>
     </Card>
@@ -99,7 +105,9 @@ const CardImage = styled("div")<{
 }>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
   position: "relative",
-  background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
+  background: backgroundImage
+    ? `url(${backgroundImage}) center/cover`
+    : theme.bg[1],
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",

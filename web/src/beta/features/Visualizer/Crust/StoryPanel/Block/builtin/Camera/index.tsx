@@ -1,7 +1,7 @@
-import { FC, useEffect, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import { FC, useEffect, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -10,7 +10,12 @@ import { type CameraBlock as CameraBlockType } from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const CameraBlock: FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
+const CameraBlock: FC<Props> = ({
+  block,
+  isSelected,
+  onPropertyItemAdd,
+  ...props
+}) => {
   const cameraButtons = useMemo(
     () => (block?.property?.default ?? []) as CameraBlockType[],
     [block?.property?.default],
@@ -33,7 +38,8 @@ const CameraBlock: FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props
       property={block?.property}
       settingsEnabled={false}
       onPropertyItemAdd={onPropertyItemAdd}
-      {...props}>
+      {...props}
+    >
       <Content
         cameraButtons={cameraButtons}
         propertyId={block?.propertyId}

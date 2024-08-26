@@ -1,4 +1,3 @@
-import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
@@ -10,6 +9,7 @@ import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useState } from "react";
 
 import Property from "..";
 
@@ -27,7 +27,14 @@ export type Props = {
   onFlyTo?: FlyTo;
 };
 
-const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSave, onFlyTo }) => {
+const CameraField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  disabled,
+  onSave,
+  onFlyTo,
+}) => {
   const t = useT();
   const [open, setOpen] = useState<Panel>(undefined);
 
@@ -36,7 +43,8 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
   const [currentCamera] = useCurrentCamera();
 
   const handleClick = useCallback(
-    (panel: Panel) => setOpen(current => (current === panel ? undefined : panel)),
+    (panel: Panel) =>
+      setOpen((current) => (current === panel ? undefined : panel)),
     [],
   );
 
@@ -70,12 +78,21 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
           <InputWrapper disabled={disabled}>
             <Input positionSet={!!value}>
               {value && (
-                <ZoomToIcon icon="zoomToLayer" size={10} onClick={() => handleFlyto(value)} />
+                <ZoomToIcon
+                  icon="zoomToLayer"
+                  size={10}
+                  onClick={() => handleFlyto(value)}
+                />
               )}
               <StyledText size="footnote" customColor>
                 {value ? t("Position Set") : t("Not set")}
               </StyledText>
-              <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
+              <DeleteIcon
+                icon="bin"
+                size={10}
+                disabled={!value}
+                onClick={handleRemoveSetting}
+              />
             </Input>
             <TriggerButton
               buttonType="secondary"
@@ -99,7 +116,11 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
         </Popover.Trigger>
         <Popover.Content autoFocus={false}>
           {open === "capture" ? (
-            <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
+            <CapturePanel
+              camera={currentCamera}
+              onSave={handleSave}
+              onClose={handleClose}
+            />
           ) : open === "editor" ? (
             <EditPanel
               camera={value}
@@ -136,7 +157,8 @@ const Input = styled.div<{ positionSet?: boolean }>`
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: ${({ theme }) => theme.shadow.input};
 
-  color: ${({ theme, positionSet }) => (positionSet ? theme.content.main : theme.content.weak)};
+  color: ${({ theme, positionSet }) =>
+    positionSet ? theme.content.main : theme.content.weak};
 `;
 
 const StyledText = styled(Text)`

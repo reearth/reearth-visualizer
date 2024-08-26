@@ -1,8 +1,8 @@
-import { FC } from "react";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import PluginListItem from "./PluginListItem";
 
@@ -29,8 +29,12 @@ const PluginList: FC<PluginListProps> = ({ plugins, uninstallPlugin }) => {
         <Typography size="body">{t("Installed Plugins")}</Typography>
       </InstalledHeader>
       <ListWrapper>
-        {plugins.map(p => (
-          <PluginListItem key={p.pluginId} plugin={p} uninstallPlugin={uninstallPlugin} />
+        {plugins.map((p) => (
+          <PluginListItem
+            key={p.pluginId}
+            plugin={p}
+            uninstallPlugin={uninstallPlugin}
+          />
         ))}
       </ListWrapper>
     </Wrapper>

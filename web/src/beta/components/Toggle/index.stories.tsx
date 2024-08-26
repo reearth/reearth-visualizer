@@ -1,8 +1,8 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import Toggle, { Props } from ".";
 
@@ -31,7 +31,12 @@ export const Default: Story = (args: Props) => {
         <Toggle {...args} checked={!args.checked} onChange={handleChange} />
       </div>
       <div>
-        <Toggle {...args} checked={!args.checked} disabled={true} onChange={handleChange} />
+        <Toggle
+          {...args}
+          checked={!args.checked}
+          disabled={true}
+          onChange={handleChange}
+        />
       </div>
     </Wrapper>
   );

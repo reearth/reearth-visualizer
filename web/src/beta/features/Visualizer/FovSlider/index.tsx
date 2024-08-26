@@ -1,4 +1,3 @@
-import React from "react";
 
 import FloatedPanel from "@reearth/beta/components/FloatedPanel";
 import Slider from "@reearth/beta/components/Slider";
@@ -6,6 +5,7 @@ import Text from "@reearth/beta/components/Text";
 import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import React from "react";
 
 import useHooks from "./hooks";
 
@@ -16,7 +16,12 @@ type Props = {
   onFovChange?: (fov: number) => void;
 };
 
-const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFovChange }) => {
+const FovSlider: React.FC<Props> = ({
+  visible,
+  onIsCapturingChange,
+  camera,
+  onFovChange,
+}) => {
   const t = useT();
 
   const { updateFov, handleClickAway } = useHooks({
@@ -34,7 +39,8 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
           <Text
             size="footnote"
             color={theme.content.withBackground}
-            otherProperties={{ marginRight: "16px" }}>
+            otherProperties={{ marginRight: "16px" }}
+          >
             {t("Angle")}
           </Text>
           <FieldForm>

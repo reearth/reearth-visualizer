@@ -1,8 +1,8 @@
+import { type Layer } from "@reearth/core";
 import type { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject, RefObject } from "react";
 
-import { type Layer } from "@reearth/core";
 
 import type {
   InfoboxBlock as Block,
@@ -72,12 +72,12 @@ export function usePluginAPI({
           height?: string | number;
           extended?: boolean;
         }
-      | undefined
+      | undefined,
   ) => void;
   onResize?: (
     width: string | number | undefined,
     height: string | number | undefined,
-    extended: boolean | undefined
+    extended: boolean | undefined,
   ) => void;
 }): {
   staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
@@ -165,7 +165,7 @@ export function usePluginAPI({
     if (instanceId) {
       ctx?.pluginInstances.addPluginMessageSender(
         instanceId,
-        pluginMessageSender
+        pluginMessageSender,
       );
       ctx.pluginInstances.runTimesCache.increment(instanceId);
     }
@@ -242,7 +242,7 @@ export function usePluginAPI({
         !!mapRef?.current?.layers?.isComputedLayer(target)
       );
     },
-    [mapRef]
+    [mapRef],
   );
 
   const staticExposed = useMemo(():
@@ -286,7 +286,7 @@ export function usePluginAPI({
           onRender?.(
             typeof extended !== "undefined" || options
               ? { extended, ...options }
-              : undefined
+              : undefined,
           );
           setUIVisibility(true);
         },
@@ -468,7 +468,7 @@ function initAndMergeEvents<T extends Record<string, any[]>>(
   eventsRef: MutableRefObject<
     [Events<T>, EventEmitter<T>, (() => void) | undefined] | undefined
   >,
-  eventKeys: (keyof T)[]
+  eventKeys: (keyof T)[],
 ) {
   const e = events<T>();
   let cancel: (() => void) | undefined;

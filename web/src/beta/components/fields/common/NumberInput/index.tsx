@@ -1,10 +1,10 @@
-import { useState, useCallback, useRef, useEffect } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export type Props = {
   className?: string;
@@ -47,7 +47,10 @@ const NumberInput: React.FC<Props> = ({
   useEffect(() => {
     // Calculate and set the minimum width for the input field
     if (inputRef.current && expandWithContent) {
-      const minWidth = Math.max(spacingSizes.smallest, inputRef.current.value.length * 10);
+      const minWidth = Math.max(
+        spacingSizes.smallest,
+        inputRef.current.value.length * 10,
+      );
       inputRef.current.style.width = `${minWidth}px`;
     }
   }, [expandWithContent]);
@@ -62,11 +65,17 @@ const NumberInput: React.FC<Props> = ({
         setInnerValue(undefined);
         onChange(undefined);
       } else if (typeof max === "number" && isFinite(max) && newValue > max) {
-        setNotification({ type: "warning", text: t("You have passed the maximum value.") });
+        setNotification({
+          type: "warning",
+          text: t("You have passed the maximum value."),
+        });
         setInnerValue(undefined);
         onChange(undefined);
       } else if (typeof min === "number" && isFinite(min) && newValue < min) {
-        setNotification({ type: "warning", text: t("You have passed the minimum value.") });
+        setNotification({
+          type: "warning",
+          text: t("You have passed the minimum value."),
+        });
         setInnerValue(undefined);
         onChange(undefined);
       } else if (!isNaN(newValue)) {
@@ -135,7 +144,8 @@ const NumberInput: React.FC<Props> = ({
           <TextWrapper
             size="footnote"
             color={theme.content.weak}
-            otherProperties={{ userSelect: "none" }}>
+            otherProperties={{ userSelect: "none" }}
+          >
             {suffix}
           </TextWrapper>
         )}
@@ -154,7 +164,10 @@ const Wrapper = styled.div`
   min-width: 0;
 `;
 
-const InputWrapper = styled.div<{ inactive: boolean; expandWithContent?: boolean }>`
+const InputWrapper = styled.div<{
+  inactive: boolean;
+  expandWithContent?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -165,7 +178,8 @@ const InputWrapper = styled.div<{ inactive: boolean; expandWithContent?: boolean
   padding: ${spacingSizes.smallest}px ${spacingSizes.small}px;
   gap: 12px;
   box-shadow: ${({ theme }) => theme.shadow.input};
-  color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
+  color: ${({ inactive, theme }) =>
+    inactive ? theme.content.weak : theme.content.main};
   ${({ expandWithContent }) => expandWithContent && "min-width: min-content;"}
 
   :focus-within {

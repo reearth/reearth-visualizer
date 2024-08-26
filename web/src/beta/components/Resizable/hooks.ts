@@ -29,7 +29,7 @@ const getSize = (
   size: number,
   delta: number,
   minSize?: number,
-  maxSize?: number
+  maxSize?: number,
 ) => {
   let newSize = size + delta;
   if (minSize !== undefined && newSize < minSize) newSize = minSize;
@@ -43,7 +43,7 @@ export default (
   initialSize: number,
   minSize: number,
   maxSize?: number,
-  localStorageKey?: string
+  localStorageKey?: string,
 ) => {
   const getLocalStorageParsedState = useCallback((localStorageKey?: string) => {
     const savedState = localStorageKey && localStorage.getItem(localStorageKey);
@@ -77,7 +77,7 @@ export default (
 
   const onResizeStart = useCallback(
     (
-      e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+      e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
     ) => {
       const position = getPositionFromEvent(e);
       if (!position) return;
@@ -86,7 +86,7 @@ export default (
       setIsResizing(true);
       setPosition(position);
     },
-    [size]
+    [size],
   );
 
   const onResize = useCallback(
@@ -123,7 +123,7 @@ export default (
       maxSize,
       minimized,
       startingSize,
-    ]
+    ],
   );
 
   const onResizeEnd = useCallback(() => {
@@ -174,7 +174,7 @@ export default (
       onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => onResizeStart(e),
       onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => onResizeStart(e),
     }),
-    [onResizeStart]
+    [onResizeStart],
   );
 
   const handleResetSize = useCallback(() => {

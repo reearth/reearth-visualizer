@@ -94,19 +94,19 @@ export default function useHook({
     (e: (msg: any) => void) => {
       messageEvents.add(e);
     },
-    [messageEvents]
+    [messageEvents],
   );
   const offMessage = useCallback(
     (e: (msg: any) => void) => {
       messageEvents.delete(e);
     },
-    [messageEvents]
+    [messageEvents],
   );
   const onceMessage = useCallback(
     (e: (msg: any) => void) => {
       messageOnceEvents.add(e);
     },
-    [messageOnceEvents]
+    [messageOnceEvents],
   );
   const handleMessage = useCallback(
     (msg: any) => {
@@ -119,7 +119,7 @@ export default function useHook({
       rawOnMessage?.(msg);
       messageOnceEvents.clear();
     },
-    [messageEvents, messageOnceEvents, onError, rawOnMessage]
+    [messageEvents, messageOnceEvents, onError, rawOnMessage],
   );
 
   const eventLoopCb = useCallback(() => {
@@ -153,7 +153,7 @@ export default function useHook({
 
       return result;
     },
-    [onError, startEventLoop]
+    [onError, startEventLoop],
   );
 
   useEffect(() => {
@@ -249,7 +249,7 @@ export default function useHook({
     (): Ref => ({
       arena: () => arena.current,
     }),
-    []
+    [],
   );
 
   return {

@@ -8,7 +8,7 @@ export type PasswordPolicy = {
 };
 
 export function convertPasswordPolicy(
-  passwordPolicy?: Record<string, string>
+  passwordPolicy?: Record<string, string>,
 ): Record<string, RegExp | undefined> | undefined {
   if (!passwordPolicy) return;
   return Object.fromEntries(
@@ -21,6 +21,6 @@ export function convertPasswordPolicy(
           return [k, undefined];
         }
       })
-      .filter((i) => !!i[1])
+      .filter((i) => !!i[1]),
   );
 }

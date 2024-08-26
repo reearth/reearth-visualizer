@@ -1,8 +1,13 @@
-import { FC } from "react";
 
-import { AssetField, ColorField, InputField, ListField } from "@reearth/beta/ui/fields";
+import {
+  AssetField,
+  ColorField,
+  InputField,
+  ListField,
+} from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks, { type LinkBlock } from "./hooks";
 
@@ -21,7 +26,10 @@ export type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -82,19 +90,25 @@ const LinkBlockEditor: FC<Props> = ({
             commonTitle={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
-            onBlur={value => debounceOnUpdate(selected, "title", "string", value)}
+            onBlur={(value) =>
+              debounceOnUpdate(selected, "title", "string", value)
+            }
           />
           <ColorField
             commonTitle={editorProperties?.color?.title}
             description={editorProperties?.color?.description}
             value={editorProperties?.color?.value}
-            onChange={value => debounceOnUpdate(selected, "color", "string", value)}
+            onChange={(value) =>
+              debounceOnUpdate(selected, "color", "string", value)
+            }
           />
           <ColorField
             commonTitle={editorProperties?.bgColor?.title}
             description={editorProperties?.bgColor?.description}
             value={editorProperties?.bgColor?.value}
-            onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
+            onChange={(value) =>
+              debounceOnUpdate(selected, "bgColor", "string", value)
+            }
           />
         </FieldGroup>
       </GroupWrapper>
@@ -104,7 +118,7 @@ const LinkBlockEditor: FC<Props> = ({
         inputMethod={"URL"}
         value={editorProperties?.url?.value?.toString() ?? ""}
         placeholder="http://"
-        onChange={value => debounceOnUpdate(selected, "url", "url", value)}
+        onChange={(value) => debounceOnUpdate(selected, "url", "url", value)}
       />
     </EditorWrapper>
   );
@@ -125,13 +139,15 @@ const GroupWrapper = styled("div")(() => ({
   gridGap: "10px",
 }));
 
-const FieldGroup = styled("div")<{ disabled: boolean }>(({ theme, disabled }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.small,
-  opacity: disabled ? 0.6 : 1,
-  cursor: disabled ? "not-allowed" : "inherit",
-  pointerEvents: disabled ? "none" : "inherit",
-}));
+const FieldGroup = styled("div")<{ disabled: boolean }>(
+  ({ theme, disabled }) => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing.small,
+    opacity: disabled ? 0.6 : 1,
+    cursor: disabled ? "not-allowed" : "inherit",
+    pointerEvents: disabled ? "none" : "inherit",
+  }),
+);
 
 export default LinkBlockEditor;

@@ -1,6 +1,6 @@
+import { usePropertyFetcher } from "@reearth/services/api";
 import { useCallback } from "react";
 
-import { usePropertyFetcher } from "@reearth/services/api";
 
 export default () => {
   const { useUpdatePropertyValue } = usePropertyFetcher();
@@ -14,7 +14,15 @@ export default () => {
       v?: any,
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
-      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
+      await useUpdatePropertyValue(
+        propertyId,
+        schemaItemId,
+        itemId,
+        fieldId,
+        "en",
+        v,
+        vt,
+      );
     },
     [useUpdatePropertyValue],
   );

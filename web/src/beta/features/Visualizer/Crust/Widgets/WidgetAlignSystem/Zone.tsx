@@ -59,7 +59,7 @@ export default function Zone({
                 renderWidget={renderWidget}
                 onWidgetAreaSelect={onWidgetAreaSelect}
               />
-            )
+            ),
           )}
         </GridSection>
       ))}

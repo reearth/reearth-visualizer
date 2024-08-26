@@ -1,8 +1,14 @@
-import { FC, useCallback, useState } from "react";
 
-import { Button, Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  Modal,
+  ModalPanel,
+  TabItem,
+  Tabs,
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import SketchCustomProperties from "../shared/SketchCustomProperties";
 
@@ -24,9 +30,16 @@ export const dataTypes: SketchLayerDataType[] = [
   "Boolean",
 ];
 
-const SketchLayerCreator: FC<SketchLayerProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
+const SketchLayerCreator: FC<SketchLayerProps> = ({
+  sceneId,
+  layerStyles,
+  onClose,
+  onSubmit,
+}) => {
   const t = useT();
-  const [customProperties, setCustomProperties] = useState<CustomPropertyProp[]>([]);
+  const [customProperties, setCustomProperties] = useState<
+    CustomPropertyProp[]
+  >([]);
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
@@ -112,7 +125,8 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({ sceneId, layerStyles, onClos
               disabled={!layerName}
             />
           </>
-        }>
+        }
+      >
         <Wrapper>
           <Tabs tabs={tabsItem} />
         </Wrapper>

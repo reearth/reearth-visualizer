@@ -1,11 +1,13 @@
-import { SetStateAction, useCallback } from "react";
 
 import { useWidgetsFetcher } from "@reearth/services/api";
 import { WidgetAreaState } from "@reearth/services/state";
+import { SetStateAction, useCallback } from "react";
 
 type Props = {
   sceneId?: string;
-  selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
+  selectWidgetArea: (
+    update?: SetStateAction<WidgetAreaState | undefined>,
+  ) => void;
 };
 
 export default ({ sceneId, selectWidgetArea }: Props) => {
@@ -14,7 +16,10 @@ export default ({ sceneId, selectWidgetArea }: Props) => {
   const handleWidgetAreaStateChange = useCallback(
     async (widgetAreaState?: WidgetAreaState) => {
       if (!sceneId || !widgetAreaState) return;
-      const results = await useUpdateWidgetAlignSystem(widgetAreaState, sceneId);
+      const results = await useUpdateWidgetAlignSystem(
+        widgetAreaState,
+        sceneId,
+      );
       if (results.status === "success") {
         selectWidgetArea(widgetAreaState);
       }

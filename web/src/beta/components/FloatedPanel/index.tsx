@@ -1,10 +1,10 @@
 import { SerializedStyles } from "@emotion/react";
+import useBuffered from "@reearth/beta/utils/use-buffered";
+import { styled } from "@reearth/services/theme";
 import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 import React, { useRef, useEffect } from "react";
 import { useClickAway } from "react-use";
 
-import useBuffered from "@reearth/beta/utils/use-buffered";
-import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
@@ -33,7 +33,7 @@ const FloatedPanel: React.FC<Props> = ({
   onExited,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  useClickAway(ref, e => onClickAway?.(e));
+  useClickAway(ref, (e) => onClickAway?.(e));
   const transition = useTransition(!!visible, 200, {
     mountOnEnter: true,
     unmountOnExit: true,
@@ -58,7 +58,8 @@ const FloatedPanel: React.FC<Props> = ({
       onMouseEnter={() => onHover?.(true)}
       onMouseLeave={() => onHover?.(false)}
       transition={transition}
-      styles={bStyles}>
+      styles={bStyles}
+    >
       {bChildren}
     </Wrapper>
   );
@@ -70,9 +71,13 @@ const Wrapper = styled.div<{
 }>`
   position: absolute;
   transition: ${({ transition }) =>
-    transition === "entering" || transition === "exiting" ? "all 0.2s ease" : ""};
+    transition === "entering" || transition === "exiting"
+      ? "all 0.2s ease"
+      : ""};
   transform: ${({ transition }) =>
-    transition === "entering" || transition === "entered" ? "translateX(0%)" : "translateX(100%)"};
+    transition === "entering" || transition === "entered"
+      ? "translateX(0%)"
+      : "translateX(100%)"};
   opacity: ${({ transition }) =>
     transition === "entering" || transition === "entered" ? "1" : "0"};
   ${({ styles }) => styles}

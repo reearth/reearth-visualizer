@@ -1,7 +1,7 @@
-import { FC, ReactNode } from "react";
 
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, ReactNode } from "react";
 
 import { PopupMenuItem } from "../PopupMenu";
 
@@ -33,11 +33,18 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
           <Item onClick={() => onClick?.(item.id)}>
             {typeof item.title === "string" ? (
               <>
-                {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}
+                {item.icon && (
+                  <Icon
+                    icon={item.icon}
+                    size="small"
+                    color={theme.content.weak}
+                  />
+                )}
                 <Typography
                   weight="bold"
                   size={size === "normal" ? "body" : "h5"}
-                  color={theme.content.weak}>
+                  color={theme.content.weak}
+                >
                   {item.title}
                 </Typography>
               </>

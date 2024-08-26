@@ -1,12 +1,21 @@
 import { useApolloClient, useMutation, useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
-import { CreateAssetInput, GetAssetsQueryVariables, GetAssetsQuery } from "@reearth/services/gql";
-import { CREATE_ASSET, GET_ASSETS, REMOVE_ASSET } from "@reearth/services/gql/queries/asset";
+import {
+  CreateAssetInput,
+  GetAssetsQueryVariables,
+  GetAssetsQuery,
+} from "@reearth/services/gql";
+import {
+  CREATE_ASSET,
+  GET_ASSETS,
+  REMOVE_ASSET,
+} from "@reearth/services/gql/queries/asset";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
+import { useCallback, useMemo } from "react";
 
-export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
+export type AssetNodes = NonNullable<
+  GetAssetsQuery["assets"]["nodes"][number]
+>[];
 
 export default () => {
   const t = useT();
@@ -14,24 +23,40 @@ export default () => {
   const apolloCache = useApolloClient().cache;
 
   const useAssetsQuery = useCallback((input: GetAssetsQueryVariables) => {
-    const { data, loading, networkStatus, fetchMore, ...rest } = useQuery(GET_ASSETS, {
-      variables: input,
-      skip: !input.teamId,
-    });
+    const { data, loading, networkStatus, fetchMore, ...rest } = useQuery(
+      GET_ASSETS,
+      {
+        variables: input,
+        skip: !input.teamId,
+      },
+    );
 
     const assets = useMemo(
-      () => data?.assets.edges?.map(e => e.node) as AssetNodes,
+      () => data?.assets.edges?.map((e) => e.node) as AssetNodes,
       [data?.assets],
     );
 
     const hasMoreAssets = useMemo(
-      () => data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage,
+      () =>
+        data?.assets.pageInfo?.hasNextPage ||
+        data?.assets.pageInfo?.hasPreviousPage,
       [data?.assets],
     );
     const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
-    const endCursor = useMemo(() => data?.assets.pageInfo?.endCursor, [data?.assets]);
+    const endCursor = useMemo(
+      () => data?.assets.pageInfo?.endCursor,
+      [data?.assets],
+    );
 
-    return { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore, ...rest };
+    return {
+      assets,
+      hasMoreAssets,
+      isRefetching,
+      endCursor,
+      loading,
+      fetchMore,
+      ...rest,
+    };
   }, []);
 
   const [createAssetMutation] = useMutation(CREATE_ASSET, {
@@ -43,10 +68,12 @@ export default () => {
       if (!file || !teamId) return;
 
       const results = await Promise.all(
-        Array.from(file).map(f => createAssetMutation({ variables: { teamId, file: f } })),
+        Array.from(file).map((f) =>
+          createAssetMutation({ variables: { teamId, file: f } }),
+        ),
       );
 
-      if (!results || results.some(r => r.errors)) {
+      if (!results || results.some((r) => r.errors)) {
         setNotification({
           type: "error",
           text: t("Failed to add one or more assets."),
@@ -72,10 +99,12 @@ export default () => {
   const useRemoveAssets = useCallback(
     async (assetIds: string[]) => {
       const results = await Promise.all(
-        assetIds.map(assetId => removeAssetMutation({ variables: { assetId } })),
+        assetIds.map((assetId) =>
+          removeAssetMutation({ variables: { assetId } }),
+        ),
       );
 
-      if (!results || results.some(r => r.errors)) {
+      if (!results || results.some((r) => r.errors)) {
         setNotification({
           type: "error",
           text: t("Failed to delete one or more assets."),
@@ -87,7 +116,9 @@ export default () => {
         });
       }
 
-      return { status: !results || results.some(r => r.errors) ? "error" : "success" };
+      return {
+        status: !results || results.some((r) => r.errors) ? "error" : "success",
+      };
     },
     [removeAssetMutation, t, setNotification],
   );

@@ -17,12 +17,12 @@ test("works", async () => {
   expect(screen.getByTestId("iframe")).toBeInTheDocument();
   expect(
     (screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body
-      .innerHTML
+      .innerHTML,
   ).toBe("");
   await promise;
   expect(
     (screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body
-      .innerHTML
+      .innerHTML,
   ).toBe("<h1>Hoge</h1>");
 
   // Update html prop
@@ -31,12 +31,12 @@ test("works", async () => {
   expect(screen.getByTestId("iframe")).toBeInTheDocument();
   expect(
     (screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body
-      .innerHTML
+      .innerHTML,
   ).toBe("");
   await promise2;
   expect(
     (screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body
-      .innerHTML
+      .innerHTML,
   ).toBe("<h1>Foo</h1>");
 });
 
@@ -50,7 +50,7 @@ test.skip("host -> iframe -> host", async () => {
   const [promise2, resolve2] = deferred();
   const onMessage = vi.fn<[any]>(() => resolve2());
   render(
-    <Component ref={ref} html={html} onLoad={resolve} onMessage={onMessage} />
+    <Component ref={ref} html={html} onLoad={resolve} onMessage={onMessage} />,
   );
 
   await promise;

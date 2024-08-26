@@ -1,8 +1,8 @@
-import { FC, useMemo } from "react";
 
 import { EntryItem } from "@reearth/beta/ui/components";
 import { InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 type ListItemProps = {
   item: InstalledWidget;
@@ -11,7 +11,12 @@ type ListItemProps = {
   onItemSelect?: (id: string) => void;
 };
 
-const ListItem: FC<ListItemProps> = ({ item, selected, onItemDelete, onItemSelect }) => {
+const ListItem: FC<ListItemProps> = ({
+  item,
+  selected,
+  onItemDelete,
+  onItemSelect,
+}) => {
   const optionsMenu = useMemo(
     () => [
       {

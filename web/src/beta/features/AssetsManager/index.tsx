@@ -1,4 +1,3 @@
-import { FC } from "react";
 
 import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
 import {
@@ -10,6 +9,7 @@ import {
 } from "@reearth/beta/ui/components/ManagerBase";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { AcceptedAssetsTypes } from "./constants";
 import useHooks from "./hooks";
@@ -89,7 +89,9 @@ const AssetsManager: FC<AssetsManagerProps> = ({
         searchPlaceholder={t("Search in all assets library")}
         enableDelete={enableDelete}
         deleteText={`${selectedAssetIds.length} ${
-          selectedAssetIds.length > 1 ? t("Assets selected") : t("Asset selected")
+          selectedAssetIds.length > 1
+            ? t("Assets selected")
+            : t("Asset selected")
         }`}
         selectedIds={selectedAssetIds}
         onCancelSelect={() => handleAssetSelect(undefined)}
@@ -126,7 +128,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               <AssetsContent size={size} ref={assetsContentRef}>
                 {/* TODO: Group of folders */}
                 <AssetsGroup layout={layout} size={size}>
-                  {filteredAssets?.map(asset =>
+                  {filteredAssets?.map((asset) =>
                     layout === "grid" ? (
                       <AssetGridItem
                         key={asset.id}
@@ -162,17 +164,21 @@ const AssetsManager: FC<AssetsManagerProps> = ({
 
 export default AssetsManager;
 
-const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.normal,
-  flex: 1,
-  height: 0,
-}));
+const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
+  ({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing.normal,
+    flex: 1,
+    height: 0,
+  }),
+);
 
-const PathWrapper = styled("div")<{ size: AssetsManagerSize }>(({ theme, size }) => ({
-  padding: `0 ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-}));
+const PathWrapper = styled("div")<{ size: AssetsManagerSize }>(
+  ({ theme, size }) => ({
+    padding: `0 ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
+  }),
+);
 
 const AssetsWrapper = styled("div")(() => ({
   position: "relative",
@@ -183,14 +189,16 @@ const AssetsWrapper = styled("div")(() => ({
   overflow: "auto",
 }));
 
-const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(({ theme, size }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.normal,
-  padding: `${theme.spacing.smallest}px ${
-    size === "large" ? theme.spacing.large : theme.spacing.small
-  }px ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-}));
+const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
+  ({ theme, size }) => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing.normal,
+    padding: `${theme.spacing.smallest}px ${
+      size === "large" ? theme.spacing.large : theme.spacing.small
+    }px ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
+  }),
+);
 
 const LayoutWrapper = styled("div")(() => ({
   display: "flex",
@@ -199,24 +207,25 @@ const LayoutWrapper = styled("div")(() => ({
   height: 0,
 }));
 
-const AssetsGroup = styled("div")<{ layout: ManagerLayout; size: AssetsManagerSize }>(
-  ({ theme, layout, size }) => ({
-    ...(layout === "grid"
-      ? {
-          display: "grid",
-          gap: theme.spacing.normal,
-          gridTemplateColumns: `repeat(auto-fill, minmax(${size === "medium" ? 96 : 144}px, 1fr))`,
-        }
-      : {}),
-    ...(layout === "list"
-      ? {
-          display: "flex",
-          flexDirection: "column",
-          gap: theme.spacing.small,
-        }
-      : {}),
-  }),
-);
+const AssetsGroup = styled("div")<{
+  layout: ManagerLayout;
+  size: AssetsManagerSize;
+}>(({ theme, layout, size }) => ({
+  ...(layout === "grid"
+    ? {
+        display: "grid",
+        gap: theme.spacing.normal,
+        gridTemplateColumns: `repeat(auto-fill, minmax(${size === "medium" ? 96 : 144}px, 1fr))`,
+      }
+    : {}),
+  ...(layout === "list"
+    ? {
+        display: "flex",
+        flexDirection: "column",
+        gap: theme.spacing.small,
+      }
+    : {}),
+}));
 
 const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
   ({ theme, size, width }) => ({
@@ -224,7 +233,8 @@ const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
     alignItems: "center",
     boxSizing: "border-box",
     padding: `${theme.spacing.smallest}px ${
-      (size === "large" ? theme.spacing.large : theme.spacing.small) + theme.spacing.smallest
+      (size === "large" ? theme.spacing.large : theme.spacing.small) +
+      theme.spacing.smallest
     }px`,
     gap: theme.spacing.small,
     width: width,

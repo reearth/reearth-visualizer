@@ -1,4 +1,9 @@
-import { ApolloProvider, ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
+import {
+  ApolloProvider,
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+} from "@apollo/client";
 import type { ReactNode } from "react";
 
 import fragmentMatcher from "../__gen__/fragmentMatcher.json";
@@ -24,11 +29,23 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       Query: {
         fields: {
           assets: {
-            keyArgs: ["teamId", "keyword", "sort", "pagination", ["first", "last"]],
+            keyArgs: [
+              "teamId",
+              "keyword",
+              "sort",
+              "pagination",
+              ["first", "last"],
+            ],
             merge: paginationMerge,
           },
           projects: {
-            keyArgs: ["teamId", "keyword", "sort", "pagination", ["first", "last"]],
+            keyArgs: [
+              "teamId",
+              "keyword",
+              "sort",
+              "pagination",
+              ["first", "last"],
+            ],
             merge: paginationMerge,
           },
           datasetSchemas: {
@@ -42,7 +59,12 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
 
   const client = new ApolloClient({
     uri: endpoint,
-    link: ApolloLink.from([errorLink(), sentryLink(endpoint), authLink(), uploadLink(endpoint)]),
+    link: ApolloLink.from([
+      errorLink(),
+      sentryLink(endpoint),
+      authLink(),
+      uploadLink(endpoint),
+    ]),
     cache,
     connectToDevTools: import.meta.env.DEV,
   });

@@ -1,6 +1,3 @@
-import { FC } from "react";
-import { RgbaColorPicker } from "react-colorful";
-
 import {
   Button,
   NumberInput,
@@ -9,6 +6,9 @@ import {
   PopupPanel,
 } from "@reearth/beta/lib/reearth-ui/components";
 import { fonts, styled } from "@reearth/services/theme";
+import { FC } from "react";
+import { RgbaColorPicker } from "react-colorful";
+
 
 import useHooks from "./hooks";
 
@@ -64,13 +64,19 @@ export const ColorInput: FC<ColorInputProps> = ({
             size={size}
             disabled={disabled}
           />
-        }>
+        }
+      >
         <PopupPanel
           title="Color Picker"
           onCancel={handlePickerCancel}
           actions={
             <ActionsWrapper>
-              <Button extendWidth size="small" title="Cancel" onClick={handlePickerCancel} />
+              <Button
+                extendWidth
+                size="small"
+                title="Cancel"
+                onClick={handlePickerCancel}
+              />
               <Button
                 extendWidth
                 size="small"
@@ -79,7 +85,8 @@ export const ColorInput: FC<ColorInputProps> = ({
                 onClick={handlePickerApply}
               />
             </ActionsWrapper>
-          }>
+          }
+        >
           <ColorPickerWrapper>
             <ColorPicker
               className="colorPicker"
@@ -89,11 +96,11 @@ export const ColorInput: FC<ColorInputProps> = ({
             />
             <Format>{alphaDisabled ? "RGB" : "RGBA"}</Format>
             <ChannelsWrapper>
-              {channels.map(channel => (
+              {channels.map((channel) => (
                 <NumberInput
                   key={channel}
                   value={pickerColor[channel]}
-                  onChange={value => handlePickerInputChange(channel, value)}
+                  onChange={(value) => handlePickerInputChange(channel, value)}
                   max={channel === "a" ? 1 : 255}
                   min={0}
                 />
@@ -137,7 +144,9 @@ const Swatch = styled("div")<{
   flexShrink: 0,
   borderRadius: theme.radius.small,
   boxShadow: theme.shadow.input,
-  border: status ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
+  border: status
+    ? `1px solid ${theme.select.main}`
+    : `1px solid ${theme.outline.weak}`,
   backgroundImage: alphaDisabled
     ? ""
     : `linear-gradient(45deg, ${theme.bg[2]} 25%, transparent 25%), linear-gradient(-45deg, ${theme.bg[2]} 25%, transparent 25%), linear-gradient(45deg, transparent 75%, ${theme.bg[2]} 75%), linear-gradient(-45deg, transparent 75%, ${theme.bg[2]} 75%)`,
@@ -161,7 +170,7 @@ const Swatch = styled("div")<{
 }));
 
 const ColorPicker = styled(RgbaColorPicker, {
-  shouldForwardProp: prop => prop !== "alphaDisabled",
+  shouldForwardProp: (prop) => prop !== "alphaDisabled",
 })<{ alphaDisabled?: boolean }>(({ theme, alphaDisabled }) => ({
   gap: theme.spacing.normal,
   ".react-colorful__saturation-pointer": {

@@ -1,4 +1,12 @@
-export const IMAGE_FILE_TYPES = ["jpg", "jpeg", "png", "gif", "svg", "tiff", "webp"] as const;
+export const IMAGE_FILE_TYPES = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "svg",
+  "tiff",
+  "webp",
+] as const;
 
 export const GIS_FILE_TYPES = [
   "geojson",

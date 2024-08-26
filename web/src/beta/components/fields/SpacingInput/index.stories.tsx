@@ -6,7 +6,7 @@ export default {
   component: SpacingInput,
 } as Meta;
 
-const Template: Story = args => <SpacingInput {...args} />;
+const Template: Story = (args) => <SpacingInput {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

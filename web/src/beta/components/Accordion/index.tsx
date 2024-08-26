@@ -28,8 +28,9 @@ const Accordion: React.FC<Props> = ({
       className={className}
       allowZeroExpanded={allowZeroExpanded}
       data-testid="atoms-accordion"
-      allowMultipleExpanded={allowMultipleExpanded}>
-      {items?.map(i => {
+      allowMultipleExpanded={allowMultipleExpanded}
+    >
+      {items?.map((i) => {
         return (
           <AccordionItem
             key={i.id}

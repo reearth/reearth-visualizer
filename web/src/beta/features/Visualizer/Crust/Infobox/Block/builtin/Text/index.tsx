@@ -1,14 +1,18 @@
-import { FC } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import type { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
-const TextBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
+const TextBlock: FC<BlockProps<InfoboxBlock>> = ({
+  block,
+  isSelected,
+  ...props
+}) => {
   const src = block?.property?.default?.text?.value as ValueTypes["string"];
 
   const evaluatedSrc = useExpressionEval(src);
@@ -20,7 +24,8 @@ const TextBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      {...props}>
+      {...props}
+    >
       {evaluatedSrc !== undefined ? <Text>{evaluatedSrc}</Text> : null}
     </BlockWrapper>
   );

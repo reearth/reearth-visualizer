@@ -15,7 +15,7 @@ import { processProperty as processNewProperty } from "./processNewProperty";
 
 export const convertStory = (
   scene?: Scene,
-  storyId?: string
+  storyId?: string,
 ): Story | undefined => {
   const story = scene?.stories.find((s) => s.id === storyId);
   const installedBlockNames = (scene?.plugins ?? [])
@@ -23,7 +23,7 @@ export const convertStory = (
       (p.plugin?.extensions ?? [])
         .filter((e) => e.type === "StoryBlock")
         .map((e) => ({ [e.extensionId]: e.translatedName ?? e.name }))
-        .filter((e): e is Record<string, string> => !!e)
+        .filter((e): e is Record<string, string> => !!e),
     )
     .reduce((result, obj) => Object.assign(result, obj), {});
 

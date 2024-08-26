@@ -1,6 +1,3 @@
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
 import {
   Popup,
   Icon,
@@ -9,6 +6,9 @@ import {
   PopupProps,
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 
 const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
@@ -82,7 +82,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         onOpenChange?.(state);
       }
     },
-    [onOpenChange, open]
+    [onOpenChange, open],
   );
 
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
@@ -162,7 +162,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
               {customSubMenu[index][0].customSubMenuLabel}
             </SubMenuHeader>
             {item.map((subItem, subIndex) =>
-              renderSingleItem(subItem, subIndex)
+              renderSingleItem(subItem, subIndex),
             )}
           </Group>
         ))}
@@ -229,7 +229,7 @@ const TriggerWrapper = styled("div")<{ nested?: boolean }>(
     gap: theme.spacing.smallest,
     alignItems: "center",
     justifyContent: nested ? "space-between" : "normal",
-  })
+  }),
 );
 
 const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
@@ -260,7 +260,7 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
     ["::-webkit-scrollbar-thumb:hover"]: {
       background: theme.relative.lighter,
     },
-  })
+  }),
 );
 
 const Item = styled("div")<{

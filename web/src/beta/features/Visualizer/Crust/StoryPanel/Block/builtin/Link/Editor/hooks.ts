@@ -1,8 +1,8 @@
+import { ValueTypes } from "@reearth/beta/utils/value";
+import { useT } from "@reearth/services/i18n";
 import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 
-import { ValueTypes } from "@reearth/beta/utils/value";
-import { useT } from "@reearth/services/i18n";
 
 import type { Field } from "../../../../types";
 
@@ -34,7 +34,10 @@ export default ({
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -49,12 +52,28 @@ export default ({
 }) => {
   const t = useT();
 
-  const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
+  const editorProperties = useMemo(
+    () => items.find((i) => i.id === selected),
+    [items, selected],
+  );
 
   const handlePropertyValueUpdate = useCallback(
-    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: any,
+      itemId?: string,
+    ) => {
       return async (v?: any) => {
-        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+        await onPropertyUpdate?.(
+          propertyId,
+          schemaGroupId,
+          fieldId,
+          itemId,
+          vt,
+          v,
+        );
       };
     },
     [onPropertyUpdate],
@@ -69,15 +88,28 @@ export default ({
     ) => {
       if (!propertyId || !itemId) return;
 
-      handlePropertyValueUpdate("default", propertyId, fieldId, fieldType, itemId)(updatedValue);
+      handlePropertyValueUpdate(
+        "default",
+        propertyId,
+        fieldId,
+        fieldType,
+        itemId,
+      )(updatedValue);
     },
     [propertyId, handlePropertyValueUpdate],
   );
 
-  const debounceOnUpdate = useMemo(() => debounce(handleUpdate, 500), [handleUpdate]);
+  const debounceOnUpdate = useMemo(
+    () => debounce(handleUpdate, 500),
+    [handleUpdate],
+  );
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, title: title?.value ?? t("New Link Button") })),
+    () =>
+      items.map(({ id, title }) => ({
+        id,
+        title: title?.value ?? t("New Link Button"),
+      })),
     [items, t],
   );
 

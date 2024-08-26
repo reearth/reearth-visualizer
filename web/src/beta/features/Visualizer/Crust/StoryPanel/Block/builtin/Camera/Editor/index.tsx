@@ -1,4 +1,3 @@
-import { FC } from "react";
 
 import {
   CameraField,
@@ -10,6 +9,7 @@ import {
 import { Camera } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks, { type CameraBlock } from "./hooks";
 
@@ -28,7 +28,10 @@ export type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -91,19 +94,25 @@ const CameraBlockEditor: FC<Props> = ({
             commonTitle={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
-            onBlur={value => debounceOnUpdate(selected, "title", "string", value)}
+            onBlur={(value) =>
+              debounceOnUpdate(selected, "title", "string", value)
+            }
           />
           <ColorField
             commonTitle={editorProperties?.color?.title}
             description={editorProperties?.color?.description}
             value={editorProperties?.color?.value}
-            onChange={value => debounceOnUpdate(selected, "color", "string", value)}
+            onChange={(value) =>
+              debounceOnUpdate(selected, "color", "string", value)
+            }
           />
           <ColorField
             commonTitle={editorProperties?.bgColor?.title}
             description={editorProperties?.bgColor?.description}
             value={editorProperties?.bgColor?.value}
-            onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
+            onChange={(value) =>
+              debounceOnUpdate(selected, "bgColor", "string", value)
+            }
           />
         </FieldGroup>
       </GroupWrapper>
@@ -113,14 +122,18 @@ const CameraBlockEditor: FC<Props> = ({
           commonTitle={editorProperties?.cameraPosition?.title}
           description={editorProperties?.cameraPosition?.description}
           value={editorProperties?.cameraPosition?.value as Camera}
-          onSave={value => handleUpdate(selected, "cameraPosition", "camera", value as Camera)}
+          onSave={(value) =>
+            handleUpdate(selected, "cameraPosition", "camera", value as Camera)
+          }
           onFlyTo={handleFlyTo}
         />
         <NumberField
           commonTitle={editorProperties?.cameraDuration?.title}
           description={editorProperties?.cameraDuration?.description}
           value={editorProperties?.cameraDuration?.value}
-          onBlur={value => handleUpdate(selected, "cameraDuration", "number", value || 0)}
+          onBlur={(value) =>
+            handleUpdate(selected, "cameraDuration", "number", value || 0)
+          }
         />
       </FieldGroup>
     </EditorWrapper>
@@ -139,13 +152,15 @@ const GroupWrapper = styled("div")(() => ({
   gridGap: "10px",
 }));
 
-const FieldGroup = styled("div")<{ disabled: boolean }>(({ theme, disabled }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.small,
-  opacity: disabled ? 0.6 : 1,
-  cursor: disabled ? "not-allowed" : "inherit",
-  pointerEvents: disabled ? "none" : "inherit",
-}));
+const FieldGroup = styled("div")<{ disabled: boolean }>(
+  ({ theme, disabled }) => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing.small,
+    opacity: disabled ? 0.6 : 1,
+    cursor: disabled ? "not-allowed" : "inherit",
+    pointerEvents: disabled ? "none" : "inherit",
+  }),
+);
 
 export default CameraBlockEditor;

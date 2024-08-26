@@ -1,6 +1,6 @@
+import { WidgetAreaState } from "@reearth/services/state";
 import { useCallback, useEffect, useState } from "react";
 
-import { WidgetAreaState } from "@reearth/services/state";
 
 import { Tab } from "../../Navbar";
 
@@ -16,10 +16,12 @@ type Props = {
 };
 
 export default ({ tab }: Props) => {
-  const [showWASEditor, setShowWASEditor] = useState<boolean | undefined>(undefined);
+  const [showWASEditor, setShowWASEditor] = useState<boolean | undefined>(
+    undefined,
+  );
 
   const handleShowWASEditorToggle = useCallback(
-    () => setShowWASEditor(show => !show),
+    () => setShowWASEditor((show) => !show),
     [setShowWASEditor],
   );
 
@@ -29,10 +31,12 @@ export default ({ tab }: Props) => {
     }
   }, [tab, showWASEditor, setShowWASEditor]);
 
-  const [selectedWidget, setSelectedWidget] = useState<SelectedWidget | undefined>(undefined);
-  const [selectedWidgetArea, setSelectedWidgetArea] = useState<WidgetAreaState | undefined>(
-    undefined,
-  );
+  const [selectedWidget, setSelectedWidget] = useState<
+    SelectedWidget | undefined
+  >(undefined);
+  const [selectedWidgetArea, setSelectedWidgetArea] = useState<
+    WidgetAreaState | undefined
+  >(undefined);
 
   return {
     showWASEditor,

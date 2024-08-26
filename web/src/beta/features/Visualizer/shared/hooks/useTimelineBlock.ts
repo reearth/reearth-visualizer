@@ -1,6 +1,10 @@
+import {
+  useVisualizer,
+  TickEventCallback,
+  TimelineCommitter,
+} from "@reearth/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useVisualizer, TickEventCallback, TimelineCommitter } from "@reearth/core";
 
 import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
 import {
@@ -28,7 +32,10 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   return {
     start: startTime || now,
     end: stopTime || stopTime || calculateEndTime(new Date()),
-    mid: calculateMidTime(startTime || now, stopTime || calculateEndTime(new Date())),
+    mid: calculateMidTime(
+      startTime || now,
+      stopTime || calculateEndTime(new Date()),
+    ),
   };
 };
 
@@ -36,22 +43,35 @@ export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
   const playSpeedOptions = useMemo(() => {
-    const speedOpt = ["1sec/sec", "0.5min/sec", "1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
+    const speedOpt = [
+      "1sec/sec",
+      "0.5min/sec",
+      "1min/sec",
+      "0.1hr/sec",
+      "0.5hr/sec",
+      "1hr/sec",
+    ];
     return convertOptionToSeconds(speedOpt);
   }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
   const [currentTime, setCurrentTime] = useState(
-    getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
+    getNewDate(
+      visualizerContext?.current?.timeline?.current?.timeline?.current,
+    ).getTime(),
   );
 
   const [timezone, setTimezone] = useState<string>(formatTimezone(currentTime));
 
   const range = useMemo(() => {
     if (timelineValues) {
-      const startTime = getNewDate(new Date(formatISO8601(timelineValues?.startTime))).getTime();
-      const endTime = getNewDate(new Date(formatISO8601(timelineValues?.endTime))).getTime();
+      const startTime = getNewDate(
+        new Date(formatISO8601(timelineValues?.startTime)),
+      ).getTime();
+      const endTime = getNewDate(
+        new Date(formatISO8601(timelineValues?.endTime)),
+      ).getTime();
       return timeRange(startTime, endTime);
     } else {
       return timeRange(
@@ -112,11 +132,13 @@ export default (timelineValues?: TimelineValues) => {
   );
 
   const onTick = useCallback(
-    (cb: TickEventCallback) => visualizerContext?.current?.timeline?.current?.onTick(cb),
+    (cb: TickEventCallback) =>
+      visualizerContext?.current?.timeline?.current?.onTick(cb),
     [visualizerContext],
   );
   const removeTickEventListener = useCallback(
-    (cb: TickEventCallback) => visualizerContext?.current?.timeline?.current?.offTick(cb),
+    (cb: TickEventCallback) =>
+      visualizerContext?.current?.timeline?.current?.offTick(cb),
     [visualizerContext],
   );
 
@@ -148,7 +170,9 @@ export default (timelineValues?: TimelineValues) => {
       return setCurrentTime(t);
     } else {
       return setCurrentTime(
-        getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
+        getNewDate(
+          visualizerContext?.current?.timeline?.current?.timeline?.current,
+        ).getTime(),
       );
     }
   }, [timelineValues, visualizerContext]);

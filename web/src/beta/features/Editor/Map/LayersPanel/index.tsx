@@ -1,15 +1,20 @@
-import { FC, useCallback, useMemo, useState } from "react";
 
-import { Button, PopupMenu, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  PopupMenu,
+  DragAndDropList,
+} from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
 
 import LayerItem from "./LayerItem";
 
-const LAYERS_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-layers-drag-handle";
+const LAYERS_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-layers-drag-handle";
 
 const LayersPanel: FC = () => {
   const {
@@ -48,7 +53,7 @@ const LayersPanel: FC = () => {
 
   const DraggableLayerItems = useMemo(
     () =>
-      layers.map(layer => ({
+      layers.map((layer) => ({
         id: layer.id,
         content: (
           <LayerItem
@@ -81,7 +86,9 @@ const LayersPanel: FC = () => {
     <Panel title={t("Layers")} storageId="editor-map-layers-panel" extend>
       <Wrapper>
         <PopupMenu
-          label={<Button icon="plus" title="New Layer" size="small" extendWidth />}
+          label={
+            <Button icon="plus" title="New Layer" size="small" extendWidth />
+          }
           extendTriggerWidth
           placement="bottom-end"
           menu={newLayerMenu}

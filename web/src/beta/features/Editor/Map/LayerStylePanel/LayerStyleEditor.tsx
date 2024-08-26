@@ -25,7 +25,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
 
   useEffect(() => {
     const selectedLayerStyle = layerStyles.find(
-      (a) => a.id === selectedLayerStyleId
+      (a) => a.id === selectedLayerStyleId,
     );
     if (selectedLayerStyle?.value) {
       setStyleCode(JSON.stringify(selectedLayerStyle.value, null, 2));

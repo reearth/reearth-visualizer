@@ -1,4 +1,3 @@
-import { Dispatch, FC, Fragment, MouseEvent, SetStateAction } from "react";
 
 import {
   Icon,
@@ -10,6 +9,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
+import { Dispatch, FC, Fragment, MouseEvent, SetStateAction } from "react";
 
 import { FieldComponent } from "../../hooks/useFieldComponent";
 
@@ -20,7 +20,11 @@ export type ActionItem = {
   onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 };
 
-export type ActionPosition = "left-top" | "left-bottom" | "right-top" | "right-bottom";
+export type ActionPosition =
+  | "left-top"
+  | "left-bottom"
+  | "right-top"
+  | "right-bottom";
 
 type Props = {
   isSelected?: boolean;
@@ -49,7 +53,10 @@ type Props = {
     v?: any,
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -88,13 +95,20 @@ const ActionPanel: FC<Props> = ({
   onPropertyItemDelete,
   onPopupMenuClick,
 }) => (
-  <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
+  <Wrapper
+    isSelected={isSelected}
+    position={position}
+    onClick={stopClickPropagation}
+  >
     {dndEnabled && (
       <DndHandle className={dragHandleClassName}>
         <Icon icon="dotsSixVertical" size="normal" />
       </DndHandle>
     )}
-    <BlockOptions isSelected={isSelected} onClick={!isSelected ? onClick : undefined}>
+    <BlockOptions
+      isSelected={isSelected}
+      onClick={!isSelected ? onClick : undefined}
+    >
       {actionItems.map(
         (a, idx) =>
           !a.hide && (
@@ -105,7 +119,11 @@ const ActionPanel: FC<Props> = ({
                     <PopupMenu
                       label={
                         <OptionWrapper showPointer={!isSelected || !!a.onClick}>
-                          <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
+                          <OptionIcon
+                            icon={a.icon}
+                            size="normal"
+                            border={idx !== 0}
+                          />
                           {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
                         </OptionWrapper>
                       }
@@ -121,7 +139,8 @@ const ActionPanel: FC<Props> = ({
                       open={showSettings && isSelected}
                       onOpenChange={onSettingsToggle}
                       placement="bottom-end"
-                      offset={16}>
+                      offset={16}
+                    >
                       <PopupContent>
                         <PopupPanel
                           title={settingsTitle}
@@ -130,27 +149,32 @@ const ActionPanel: FC<Props> = ({
                             setOpenMenu(true);
                             onSettingsToggle?.();
                           }}
-                          width={200}>
+                          width={200}
+                        >
                           {propertyId && contentSettings && (
                             <SettingsContent>
                               <FieldsWrapper>
-                                {Object.keys(contentSettings).map((fieldId, index) => {
-                                  const field = contentSettings[fieldId];
-                                  const groupId = overrideGroupId || "panel";
-                                  return (
-                                    <FieldComponent
-                                      key={index}
-                                      propertyId={propertyId}
-                                      groupId={groupId}
-                                      fieldId={fieldId}
-                                      field={field}
-                                      onPropertyUpdate={onPropertyUpdate}
-                                      onPropertyItemAdd={onPropertyItemAdd}
-                                      onPropertyItemMove={onPropertyItemMove}
-                                      onPropertyItemDelete={onPropertyItemDelete}
-                                    />
-                                  );
-                                })}
+                                {Object.keys(contentSettings).map(
+                                  (fieldId, index) => {
+                                    const field = contentSettings[fieldId];
+                                    const groupId = overrideGroupId || "panel";
+                                    return (
+                                      <FieldComponent
+                                        key={index}
+                                        propertyId={propertyId}
+                                        groupId={groupId}
+                                        fieldId={fieldId}
+                                        field={field}
+                                        onPropertyUpdate={onPropertyUpdate}
+                                        onPropertyItemAdd={onPropertyItemAdd}
+                                        onPropertyItemMove={onPropertyItemMove}
+                                        onPropertyItemDelete={
+                                          onPropertyItemDelete
+                                        }
+                                      />
+                                    );
+                                  },
+                                )}
                               </FieldsWrapper>
                             </SettingsContent>
                           )}
@@ -160,7 +184,10 @@ const ActionPanel: FC<Props> = ({
                   )}
                 </>
               ) : (
-                <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
+                <OptionWrapper
+                  showPointer={!isSelected || !!a.onClick}
+                  onClick={a.onClick}
+                >
                   <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
                   {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
                 </OptionWrapper>
@@ -186,9 +213,19 @@ const Wrapper = styled("div")<{
   height: "24px",
   position: "absolute",
   maxWidth: "100%",
-  left: position === "left-top" ? "-1px" : position === "left-bottom" ? "0" : "auto",
+  left:
+    position === "left-top"
+      ? "-1px"
+      : position === "left-bottom"
+        ? "0"
+        : "auto",
   top: position === "left-top" || position === "right-top" ? "-25px" : "0",
-  right: position === "right-bottom" ? "0" : position === "right-top" ? "-1px" : "auto",
+  right:
+    position === "right-bottom"
+      ? "0"
+      : position === "right-top"
+        ? "-1px"
+        : "auto",
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({

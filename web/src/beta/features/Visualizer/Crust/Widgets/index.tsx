@@ -58,7 +58,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    }
+    },
   ) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -135,7 +135,7 @@ export default function Widgets({
       context,
       renderWidget,
       onPluginWidgetVisibilityChange,
-    ]
+    ],
   );
 
   return (

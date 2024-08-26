@@ -1,6 +1,6 @@
+import { fonts, styled } from "@reearth/services/theme";
 import { useCallback } from "react";
 
-import { fonts, styled } from "@reearth/services/theme";
 
 export type Props = {
   selected?: boolean;
@@ -9,7 +9,12 @@ export type Props = {
   onClick?: (value: string) => void;
 };
 
-const RadioBox: React.FC<Props> = ({ selected, keyValue, label, onClick }: Props) => {
+const RadioBox: React.FC<Props> = ({
+  selected,
+  keyValue,
+  label,
+  onClick,
+}: Props) => {
   const handleRadioClick = useCallback(
     (value: string) => {
       onClick?.(value);
@@ -19,7 +24,11 @@ const RadioBox: React.FC<Props> = ({ selected, keyValue, label, onClick }: Props
 
   return (
     <Radio>
-      <RadioInput type="radio" value={keyValue} onClick={() => handleRadioClick(keyValue)} />
+      <RadioInput
+        type="radio"
+        value={keyValue}
+        onClick={() => handleRadioClick(keyValue)}
+      />
       <RadioButton selected={selected}>
         {selected && <RadioIndicator selected={selected} />}
       </RadioButton>
@@ -36,7 +45,8 @@ const RadioIndicator = styled.div<{
   height: 10px;
   border-radius: 50%;
   background-color: white;
-  background-color: ${({ selected, theme }) => (selected ? theme.select.main : theme.content.main)};
+  background-color: ${({ selected, theme }) =>
+    selected ? theme.select.main : theme.content.main};
 `;
 
 const Radio = styled.label`
@@ -66,7 +76,9 @@ const RadioButton = styled.span<{
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid ${({ selected, theme }) => (selected ? theme.select.main : theme.content.main)};
+  border: 2px solid
+    ${({ selected, theme }) =>
+      selected ? theme.select.main : theme.content.main};
   margin-right: 4px;
   display: flex;
   justify-content: center;

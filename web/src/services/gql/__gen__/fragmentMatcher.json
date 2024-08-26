@@ -7,18 +7,9 @@
       "Point",
       "Polygon"
     ],
-    "Layer": [
-      "LayerGroup",
-      "LayerItem"
-    ],
-    "LayerTag": [
-      "LayerTagGroup",
-      "LayerTagItem"
-    ],
-    "NLSLayer": [
-      "NLSLayerGroup",
-      "NLSLayerSimple"
-    ],
+    "Layer": ["LayerGroup", "LayerItem"],
+    "LayerTag": ["LayerTagGroup", "LayerTagItem"],
+    "NLSLayer": ["NLSLayerGroup", "NLSLayerSimple"],
     "Node": [
       "Asset",
       "Dataset",
@@ -33,13 +24,7 @@
       "Team",
       "User"
     ],
-    "PropertyItem": [
-      "PropertyGroup",
-      "PropertyGroupList"
-    ],
-    "Tag": [
-      "TagGroup",
-      "TagItem"
-    ]
+    "PropertyItem": ["PropertyGroup", "PropertyGroupList"],
+    "Tag": ["TagGroup", "TagItem"]
   }
 }

@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo, useRef } from "react";
 
 import { StoryPanelRef } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useT } from "@reearth/services/i18n";
+import { useState, useCallback, useMemo, useRef } from "react";
 
 type Props = {
   sceneId: string;
@@ -12,7 +12,9 @@ export default function ({ sceneId }: Props) {
   const t = useT();
 
   const storyPanelRef = useRef<StoryPanelRef | null>(null);
-  const [selectedStoryPageId, setSelectedStoryPageId] = useState<string | undefined>(undefined);
+  const [selectedStoryPageId, setSelectedStoryPageId] = useState<
+    string | undefined
+  >(undefined);
 
   const {
     useStoriesQuery,
@@ -25,19 +27,24 @@ export default function ({ sceneId }: Props) {
   } = useStorytellingAPI();
 
   const { stories } = useStoriesQuery({ sceneId });
-  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
+  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({
+    sceneId,
+  });
 
-  const selectedStory = useMemo(() => (stories?.length ? stories[0] : undefined), [stories]);
+  const selectedStory = useMemo(
+    () => (stories?.length ? stories[0] : undefined),
+    [stories],
+  );
 
   const currentStoryPage = useMemo(
-    () => selectedStory?.pages?.find(p => p.id === selectedStoryPageId),
+    () => selectedStory?.pages?.find((p) => p.id === selectedStoryPageId),
     [selectedStory?.pages, selectedStoryPageId],
   );
 
   const handleCurrentStoryPageChange = useCallback(
     (pageId?: string) => {
       if (selectedStoryPageId && selectedStoryPageId === pageId) return;
-      const newPage = selectedStory?.pages?.find(p => p.id === pageId);
+      const newPage = selectedStory?.pages?.find((p) => p.id === pageId);
       if (newPage) {
         storyPanelRef?.current?.handleCurrentPageChange(pageId);
       }
@@ -54,7 +61,7 @@ export default function ({ sceneId }: Props) {
     async (pageId: string) => {
       if (!selectedStory) return;
       const pages = selectedStory?.pages ?? [];
-      const deletedPageIndex = pages.findIndex(p => p.id === pageId);
+      const deletedPageIndex = pages.findIndex((p) => p.id === pageId);
 
       await useDeleteStoryPage({
         sceneId,
@@ -67,7 +74,13 @@ export default function ({ sceneId }: Props) {
         );
       }
     },
-    [selectedStory, sceneId, selectedStoryPageId, handleCurrentStoryPageChange, useDeleteStoryPage],
+    [
+      selectedStory,
+      sceneId,
+      selectedStoryPageId,
+      handleCurrentStoryPageChange,
+      useDeleteStoryPage,
+    ],
   );
 
   const handleStoryPageAdd = useCallback(

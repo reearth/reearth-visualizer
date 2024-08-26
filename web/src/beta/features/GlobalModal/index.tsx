@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
@@ -8,6 +7,7 @@ import {
   useCurrentTheme as useCurrentTheme,
   useNotification,
 } from "@reearth/services/state";
+import { useCallback, useEffect, useState } from "react";
 
 const GlobalModal: React.FC = () => {
   const extensions = config()?.extensions?.globalModal;
@@ -21,7 +21,7 @@ const GlobalModal: React.FC = () => {
 
   useEffect(() => {
     if (accessToken) return;
-    getAccessToken().then(token => {
+    getAccessToken().then((token) => {
       setAccessToken(token);
     });
   }, [accessToken, getAccessToken]);
@@ -34,7 +34,7 @@ const GlobalModal: React.FC = () => {
 
   return (
     <>
-      {extensions?.map(ext => (
+      {extensions?.map((ext) => (
         <ext.component
           key={ext.id}
           lang={currentLang}

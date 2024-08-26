@@ -1,7 +1,7 @@
+import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 import Player from "react-player";
 
-import { styled } from "@reearth/services/theme";
 
 type Props = {
   isSelected?: boolean;
@@ -12,7 +12,15 @@ const VideoPlayer: FC<Props> = ({ isSelected, src, inEditor }) => {
   return (
     <StyledWrapper>
       {inEditor && <Overlay />}
-      <Player url={src} width="100%" playsinline pip controls light isselected={isSelected} />
+      <Player
+        url={src}
+        width="100%"
+        playsinline
+        pip
+        controls
+        light
+        isselected={isSelected}
+      />
     </StyledWrapper>
   );
 };

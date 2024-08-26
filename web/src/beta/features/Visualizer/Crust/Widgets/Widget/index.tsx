@@ -1,7 +1,7 @@
-import { ComponentType, ReactNode, useMemo } from "react";
 
 import type { TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
+import { ComponentType, ReactNode, useMemo } from "react";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
@@ -17,7 +17,11 @@ import type {
 } from "./types";
 
 export type { WidgetLayout } from "../types";
-export { isBuiltinWidget, type BuiltinWidgets, getBuiltinWidgetOptions } from "./builtin";
+export {
+  isBuiltinWidget,
+  type BuiltinWidgets,
+  getBuiltinWidgetOptions,
+} from "./builtin";
 
 export type Props = {
   widget: InternalWidget;
@@ -45,8 +49,14 @@ export type Context = {
     featureId?: string;
   };
   is2d?: boolean;
-  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
-  onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (
+    target: string | FlyToDestination,
+    options?: { duration?: number },
+  ) => void;
+  onLookAt?: (
+    camera: LookAtDestination,
+    options?: { duration?: number },
+  ) => void;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -99,13 +109,16 @@ export default function WidgetComponent({
   if (!w) return null;
 
   const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
-  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin()[builtinWidgetId] : undefined;
+  const Builtin = isBuiltinWidget(builtinWidgetId)
+    ? builtin()[builtinWidgetId]
+    : undefined;
 
   return Builtin ? (
     <div
       style={{
         pointerEvents: editing ? "none" : "auto",
-      }}>
+      }}
+    >
       <Builtin {...props} editing={editing} widget={w} />
     </div>
   ) : (

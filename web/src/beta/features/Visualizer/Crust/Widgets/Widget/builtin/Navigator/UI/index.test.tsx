@@ -1,6 +1,6 @@
+import { fireEvent, render, screen } from "@reearth/test/utils";
 import { expect, test, vitest } from "vitest";
 
-import { fireEvent, render, screen } from "@reearth/test/utils";
 
 import Navigator from ".";
 
@@ -63,7 +63,7 @@ test("it should orbit by mouse operation", async () => {
       onStartOrbit={onStartOrbitMock}
       onEndOrbit={onEndOrbitMock}
       onMoveOrbit={onMoveOrbitMock}
-    />
+    />,
   );
 
   const angle = screen.getByLabelText("aria-label-adjust-angle");

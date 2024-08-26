@@ -1,3 +1,12 @@
+
+import {
+  IconButton,
+  PopupMenuItem,
+  TextInput,
+} from "@reearth/beta/lib/reearth-ui";
+import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { styled } from "@reearth/services/theme";
 import {
   Dispatch,
   FC,
@@ -8,11 +17,6 @@ import {
   useRef,
   useState,
 } from "react";
-
-import { IconButton, PopupMenuItem, TextInput } from "@reearth/beta/lib/reearth-ui";
-import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { styled } from "@reearth/services/theme";
 
 import { useMapPage } from "../context";
 
@@ -119,7 +123,13 @@ const LayerItem: FC<LayerItemProps> = ({
             },
           ]
         : undefined,
-    [layer.id, layer.visible, editingLayerNameId, handleZoomToLayer, handleToggleLayerVisibility],
+    [
+      layer.id,
+      layer.visible,
+      editingLayerNameId,
+      handleZoomToLayer,
+      handleToggleLayerVisibility,
+    ],
   );
 
   const [localTitle, setLocalTitle] = useState(layer.title);
@@ -128,7 +138,13 @@ const LayerItem: FC<LayerItemProps> = ({
     setEditingLayerNameId("");
     if (!localTitle || localTitle === layer.title) return;
     handleLayerNameUpdate({ layerId: layer.id, name: localTitle });
-  }, [layer.id, layer.title, localTitle, handleLayerNameUpdate, setEditingLayerNameId]);
+  }, [
+    layer.id,
+    layer.title,
+    localTitle,
+    handleLayerNameUpdate,
+    setEditingLayerNameId,
+  ]);
 
   const handleLayerItemClick = useCallback(() => {
     if (layer.id === selectedLayerId) return;

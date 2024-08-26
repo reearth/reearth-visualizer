@@ -11,15 +11,15 @@ export type Events<
 > = {
   readonly on: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>
+    callback: EventCallback<E[T]>,
   ) => void;
   readonly off: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>
+    callback: EventCallback<E[T]>,
   ) => void;
   readonly once: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>
+    callback: EventCallback<E[T]>,
   ) => void;
 };
 
@@ -33,7 +33,7 @@ export function events<
   >();
   const getEventCallback = <T extends keyof E>(
     type: T,
-    cb: EventCallback<E[T]>
+    cb: EventCallback<E[T]>,
   ): ((e: Event) => void) => {
     let ecbs = callbacks.get(type);
     if (!ecbs) {
@@ -117,7 +117,7 @@ export function mergeEvents<
 
 export function useEmit<T extends { [K in string]: any[] }>(
   values: { [K in keyof T]?: T[K] | undefined },
-  emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined
+  emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined,
 ) {
   for (const k of Object.keys(values)) {
     const args = values[k];

@@ -1,6 +1,6 @@
+import { fonts, styled } from "@reearth/services/theme";
 import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
 
-import { fonts, styled } from "@reearth/services/theme";
 
 export type NumberInputProps = {
   value?: number | string;
@@ -29,7 +29,9 @@ export const NumberInput: FC<NumberInputProps> = ({
   onChange,
   onBlur,
 }) => {
-  const [currentValue, setCurrentValue] = useState<string>(value?.toString() ?? "");
+  const [currentValue, setCurrentValue] = useState<string>(
+    value?.toString() ?? "",
+  );
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
@@ -53,7 +55,9 @@ export const NumberInput: FC<NumberInputProps> = ({
           }
         }
         setCurrentValue(validatedValue);
-        onChange?.(currentValue === "" ? undefined : parseFloat(validatedValue));
+        onChange?.(
+          currentValue === "" ? undefined : parseFloat(validatedValue),
+        );
       }
     },
     [max, min, onChange],
@@ -77,7 +81,11 @@ export const NumberInput: FC<NumberInputProps> = ({
   }, []);
 
   return (
-    <Wrapper size={size} status={isFocused ? "active" : "default"} extendWidth={extendWidth}>
+    <Wrapper
+      size={size}
+      status={isFocused ? "active" : "default"}
+      extendWidth={extendWidth}
+    >
       <StyledInput
         value={currentValue}
         disabled={disabled}
@@ -99,7 +107,9 @@ const Wrapper = styled("div")<{
 }>(({ size, theme, status, extendWidth }) => {
   return {
     border:
-      status === "active" ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
+      status === "active"
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",
@@ -123,7 +133,10 @@ const StyledInput = styled("input")<{
   outline: "none",
   border: "none",
   background: "none",
-  color: disabled && appearance !== "readonly" ? theme.content.weaker : theme.content.main,
+  color:
+    disabled && appearance !== "readonly"
+      ? theme.content.weaker
+      : theme.content.main,
   flex: 1,
   cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
   fontSize: fonts.sizes.body,

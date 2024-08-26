@@ -1,8 +1,8 @@
-import { useState, useMemo, useCallback } from "react";
 
 import { GisType } from "@reearth/beta/features/AssetsManager/constants";
 import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
+import { useState, useMemo, useCallback } from "react";
 
 import { DataProps, DataSourceOptType, SourceType } from "..";
 import { generateTitle } from "../util";
@@ -22,7 +22,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       { label: t("From Web"), value: "url" },
       { label: t("From Value"), value: "value" },
     ],
-    [t]
+    [t],
   );
 
   const fileFormatOptions = [

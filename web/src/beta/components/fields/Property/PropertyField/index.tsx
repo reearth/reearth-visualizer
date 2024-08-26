@@ -1,8 +1,8 @@
-import { useMemo } from "react";
 
 import { LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+import { useMemo } from "react";
 
 import CameraField from "../../CameraField";
 import { Camera } from "../../CameraField/types";
@@ -44,7 +44,11 @@ const PropertyField: React.FC<Props> = ({
     [field?.mergedValue, field?.value, schema.defaultValue],
   );
 
-  const handleChange = handlePropertyValueUpdate(schema.id, schema.type, itemId);
+  const handleChange = handlePropertyValueUpdate(
+    schema.id,
+    schema.type,
+    itemId,
+  );
   return (
     <>
       {schema.type === "string" ? (
@@ -88,8 +92,16 @@ const PropertyField: React.FC<Props> = ({
         <URLField
           key={schema.id}
           name={schema.name}
-          entityType={schema.ui === "image" ? "image" : schema.ui === "file" ? "file" : undefined}
-          fileType={schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"}
+          entityType={
+            schema.ui === "image"
+              ? "image"
+              : schema.ui === "file"
+                ? "file"
+                : undefined
+          }
+          fileType={
+            schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"
+          }
           value={(value as string) ?? ""}
           description={schema.description}
           onChange={handleChange}

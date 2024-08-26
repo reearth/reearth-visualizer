@@ -46,7 +46,7 @@ type TimelineProps = {
   onTimeChange?: (time: Date, committerId?: string) => void;
   onCommit?: (cb: (committer: TimelineCommitter) => void) => void;
   removeOnCommitEventListener?: (
-    cb: (committer: TimelineCommitter) => void
+    cb: (committer: TimelineCommitter) => void,
   ) => void;
   onTick?: (cb: TickEventCallback) => void;
   removeTickEventListener?: (cb: TickEventCallback) => void;
@@ -96,27 +96,27 @@ export default ({
     const textDate = formatDateForTimeline(
       currentTime,
       { detail: true },
-      timezone
+      timezone,
     );
 
     return textDate;
   }, [currentTime, timezone]);
 
   const current = formatRangeDateAndTime(
-    formatDateForSliderTimeline(currentTime, { detail: true }, timezone)
+    formatDateForSliderTimeline(currentTime, { detail: true }, timezone),
   );
 
   const timeRange = useMemo(() => {
     if (range) {
       return {
         startTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.start, { detail: true }, timezone)
+          formatDateForSliderTimeline(range.start, { detail: true }, timezone),
         ),
         midTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.mid, { detail: true }, timezone)
+          formatDateForSliderTimeline(range.mid, { detail: true }, timezone),
         ),
         endTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.end, { detail: true }, timezone)
+          formatDateForSliderTimeline(range.end, { detail: true }, timezone),
         ),
       };
     }
@@ -130,7 +130,7 @@ export default ({
         ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          property?.panel?.padding?.value
+          property?.panel?.padding?.value,
         ),
       },
     };
@@ -152,7 +152,7 @@ export default ({
         }
       }
     },
-    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected]
+    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected],
   );
 
   useEffect(() => {
@@ -166,7 +166,7 @@ export default ({
     (e) => {
       onSpeedChange?.(parseInt(e.currentTarget.value, 10), committer.id);
     },
-    [committer, onSpeedChange]
+    [committer, onSpeedChange],
   );
 
   const handleOnPlay = useCallback(() => {
@@ -234,7 +234,7 @@ export default ({
     (current: Date) => {
       return setCurrentTime?.(current.getTime());
     },
-    [setCurrentTime]
+    [setCurrentTime],
   );
 
   const handleOnReset = useCallback(() => {
@@ -266,7 +266,7 @@ export default ({
       setCurrentTime?.(getNewDate(new Date(time)).getTime());
       handleOnPause();
     },
-    [handleOnPause, onTimeChange, setCurrentTime]
+    [handleOnPause, onTimeChange, setCurrentTime],
   );
 
   const [target, setTarget] = useState<HTMLElement | null>(null);
@@ -298,12 +298,12 @@ export default ({
         const conv = convertPositionToTime(
           e as unknown as MouseEvent,
           range.start,
-          range.end
+          range.end,
         );
         if (committer?.id) handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [committer?.id, handleOnDrag, inEditor, range, target]
+    [committer?.id, handleOnDrag, inEditor, range, target],
   );
 
   const handleOnClick: MouseEventHandler = useCallback(
@@ -312,12 +312,12 @@ export default ({
         const conv = convertPositionToTime(
           e as unknown as MouseEvent,
           range.start,
-          range.end
+          range.end,
         );
         if (committer?.id) handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [inEditor, range, committer?.id, handleOnDrag]
+    [inEditor, range, committer?.id, handleOnDrag],
   );
 
   const handleTimelineCommitterChange = useCallback(
@@ -335,7 +335,7 @@ export default ({
         const currentTimeValue = timelineValues?.currentTime ?? "";
         if (timelineValues) {
           setCurrentTime?.(
-            getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime()
+            getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime(),
           );
         } else {
           setCurrentTime?.(range?.start);
@@ -343,7 +343,7 @@ export default ({
       }
       setIsPause(false);
     },
-    [activeBlock, isActive, range, setCurrentTime, timelineValues]
+    [activeBlock, isActive, range, setCurrentTime, timelineValues],
   );
 
   useEffect(() => {

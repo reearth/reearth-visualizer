@@ -31,8 +31,8 @@ try {
   const cesiumPackageJson = JSON.parse(
     readFileSync(
       resolve(__dirname, "node_modules", "cesium", "package.json"),
-      "utf-8"
-    )
+      "utf-8",
+    ),
   );
   cesiumVersion = cesiumPackageJson.version;
 } catch {
@@ -121,7 +121,7 @@ function config(): Plugin {
       const envs = loadEnv(
         server.config.mode,
         server.config.envDir ?? process.cwd(),
-        server.config.envPrefix
+        server.config.envPrefix,
       );
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
@@ -155,7 +155,7 @@ function config(): Plugin {
           ...loadJSON("./reearth-config.json"),
         },
         null,
-        2
+        2,
       );
 
       server.middlewares.use((req, res, next) => {

@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import AssetCard from "@reearth/beta/components/CatalogCard";
@@ -17,6 +16,7 @@ import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 const getValue: Record<string, string> = {
   "date-reverse": "date",
@@ -116,7 +116,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       if (!asset) return;
       selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
     },
-    [selectedAssets, selectAsset]
+    [selectedAssets, selectAsset],
   );
   const onSortChange = useCallback(
     (selectedLabel: string) => {
@@ -125,7 +125,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       const reverse = selectedLabel.toLowerCase().includes("reverse");
       handleSortChange?.(value, reverse);
     },
-    [handleSortChange]
+    [handleSortChange],
   );
 
   useEffect(() => {
@@ -185,7 +185,7 @@ const ChooseAssetModal: React.FC<Props> = ({
               {searchTerm
                 ? t("No assets match your search.")
                 : t(
-                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer."
+                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
                   )}
             </TemplateText>
           </Template>

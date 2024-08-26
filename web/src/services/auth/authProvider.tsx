@@ -1,7 +1,11 @@
 import { Auth0Provider } from "@auth0/auth0-react";
+import {
+  getAuthInfo,
+  getSignInCallbackUrl,
+  logInToTenant,
+} from "@reearth/services/config";
 import React, { createContext, ReactNode, useState } from "react";
 
-import { getAuthInfo, getSignInCallbackUrl, logInToTenant } from "@reearth/services/config";
 
 import { useAuth0Auth } from "./auth0Auth";
 import type { AuthHook } from "./authHook";
@@ -19,7 +23,9 @@ const CognitoWrapper = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
-export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
+  children,
+}) => {
   const [authInfo] = useState(() => {
     logInToTenant(); // note that it includes side effect
     return getAuthInfo();
@@ -41,7 +47,8 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) =
         }}
         useRefreshTokens
         useRefreshTokensFallback
-        cacheLocation="localstorage">
+        cacheLocation="localstorage"
+      >
         <Auth0Wrapper>{children}</Auth0Wrapper>
       </Auth0Provider>
     ) : null;

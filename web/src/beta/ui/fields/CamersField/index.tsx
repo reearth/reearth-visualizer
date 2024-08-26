@@ -1,11 +1,16 @@
-import { useCallback, useState, FC } from "react";
 
 import { useCurrentCamera } from "@reearth/beta/features/Editor/atoms";
-import { Button, ButtonProps, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  ButtonProps,
+  Popup,
+  TextInput,
+} from "@reearth/beta/lib/reearth-ui";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { useCallback, useState, FC } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
@@ -42,7 +47,8 @@ const CameraField: FC<CameraFieldProps> = ({
   const [currentCamera] = useCurrentCamera();
 
   const handleClick = useCallback(
-    (panel: "editor" | "capture") => setOpen(current => (current === panel ? null : panel)),
+    (panel: "editor" | "capture") =>
+      setOpen((current) => (current === panel ? null : panel)),
     [],
   );
 
@@ -118,7 +124,8 @@ const CameraField: FC<CameraFieldProps> = ({
           }
           open={open === "editor"}
           offset={4}
-          placement="bottom-start">
+          placement="bottom-start"
+        >
           {open === "editor" && (
             <EditPanel
               camera={value}
@@ -141,9 +148,14 @@ const CameraField: FC<CameraFieldProps> = ({
           }
           open={open === "capture"}
           offset={4}
-          placement="bottom-start">
+          placement="bottom-start"
+        >
           {open === "capture" && (
-            <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
+            <CapturePanel
+              camera={currentCamera}
+              onSave={handleSave}
+              onClose={handleClose}
+            />
           )}
         </Popup>
       </InputWrapper>

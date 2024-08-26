@@ -1,13 +1,13 @@
+import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { IconButton } from "@reearth/beta/lib/reearth-ui";
 
 import { EntryItem } from ".";
 
 const meta: Meta<typeof EntryItem> = {
   component: EntryItem,
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: 300 }}>
         <Story />
       </div>

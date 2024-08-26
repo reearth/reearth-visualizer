@@ -1,7 +1,7 @@
-import React from "react";
 
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import React from "react";
 
 import PluginList, { PluginItem } from "./PluginList";
 import PublicRepo from "./PublicRepo";
@@ -38,7 +38,10 @@ const PluginInstall: React.FC<Props> = ({
           onSend={installFromPublicRepo}
         />
       </ButtonsWrapper>
-      <PluginList plugins={installedPlugins} uninstallPlugin={uninstallPlugin} />
+      <PluginList
+        plugins={installedPlugins}
+        uninstallPlugin={uninstallPlugin}
+      />
     </Wrapper>
   );
 };

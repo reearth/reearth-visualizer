@@ -1,8 +1,13 @@
-import { FC, useCallback, useState } from "react";
 
-import { Button, Selector, TextInput, Icon } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  Selector,
+  TextInput,
+  Icon,
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { dataTypes } from "../../SketchLayerCreator";
 import { CustomPropertyItemProps } from "../../SketchLayerCreator/type";
@@ -20,7 +25,9 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
   const t = useT();
   const theme = useTheme();
 
-  const [customPropertyTitle, setCustomPropertyTitle] = useState(customPropertyItem.key);
+  const [customPropertyTitle, setCustomPropertyTitle] = useState(
+    customPropertyItem.key,
+  );
   const [dataType, setDataType] = useState(customPropertyItem.value);
 
   const handleTitleChange = useCallback((value: string) => {
@@ -61,17 +68,20 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
       <ProjectItemCol
         style={{
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         {customPropertyItem.value.trim() === "" || isEditType ? (
           <Selector
             size="small"
             value={dataType}
             placeholder={t("Please select one type")}
-            options={dataTypes.map(v => ({ value: v, label: v }))}
+            options={dataTypes.map((v) => ({ value: v, label: v }))}
             onChange={handleTypeChange}
           />
         ) : (
-          <TitleWrapper onDoubleClick={() => onDoubleClick?.("type")}>{dataType}</TitleWrapper>
+          <TitleWrapper onDoubleClick={() => onDoubleClick?.("type")}>
+            {dataType}
+          </TitleWrapper>
         )}
       </ProjectItemCol>
       <Button

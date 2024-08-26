@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react";
 
 import { usePluginsFetcher } from "@reearth/services/api";
 import { ScenePlugin } from "@reearth/services/gql";
+import { useCallback, useMemo } from "react";
 
 export type MarketplacePlugin = {
   id: string;
@@ -10,15 +10,28 @@ export type MarketplacePlugin = {
   author?: string;
 };
 
-export default ({ sceneId, plugins }: { sceneId?: string; plugins?: ScenePlugin[] }) => {
-  const { useInstallPlugin, useUpgradePlugin, useUploadPlugin, useUninstallPlugin } =
-    usePluginsFetcher();
+export default ({
+  sceneId,
+  plugins,
+}: {
+  sceneId?: string;
+  plugins?: ScenePlugin[];
+}) => {
+  const {
+    useInstallPlugin,
+    useUpgradePlugin,
+    useUploadPlugin,
+    useUninstallPlugin,
+  } = usePluginsFetcher();
 
   const marketplacePlugins = useMemo(
     () =>
       plugins
         ?.filter(
-          p => p.plugin && p.plugin?.id !== "reearth" && p.plugin.id.split("~", 3).length < 3,
+          (p) =>
+            p.plugin &&
+            p.plugin?.id !== "reearth" &&
+            p.plugin.id.split("~", 3).length < 3,
         )
         .map((p): MarketplacePlugin | undefined => {
           if (!p.plugin) return;
@@ -38,11 +51,15 @@ export default ({ sceneId, plugins }: { sceneId?: string; plugins?: ScenePlugin[
     () =>
       plugins
         ?.filter(
-          p => p.plugin && p.plugin.id !== "reearth" && p.plugin.id.split("~", 3).length == 3,
+          (p) =>
+            p.plugin &&
+            p.plugin.id !== "reearth" &&
+            p.plugin.id.split("~", 3).length == 3,
         )
-        .map(p => ({
+        .map((p) => ({
           title: p.plugin?.translatedName ?? p.plugin?.name ?? "",
-          bodyMarkdown: p.plugin?.translatedDescription ?? p.plugin?.description ?? "",
+          bodyMarkdown:
+            p.plugin?.translatedDescription ?? p.plugin?.description ?? "",
           author: p.plugin?.author ?? "",
           isInstalled: true,
           pluginId: p.plugin?.id ?? "",

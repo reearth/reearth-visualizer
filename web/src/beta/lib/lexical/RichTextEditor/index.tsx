@@ -5,11 +5,11 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 import { EditorState } from "lexical";
 import { useMemo, useCallback, useRef } from "react";
 
-import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
 import "./index.css";
 
 import Nodes from "./nodes";
@@ -54,7 +54,7 @@ const RichTextEditor: React.FC<Props> = ({
       },
       nodes: [...Nodes],
     }),
-    [text]
+    [text],
   );
 
   const isEmpty = useMemo(() => isContentEmpty(text), [text]);
@@ -67,7 +67,7 @@ const RichTextEditor: React.FC<Props> = ({
         onChange?.(editorStateJSONString);
       }
     },
-    [editorStateJSONStringRef, onChange]
+    [editorStateJSONStringRef, onChange],
   );
 
   const editorRef = useRef<HTMLDivElement>(null);

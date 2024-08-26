@@ -1,5 +1,3 @@
-import React from "react";
-import { RgbaColorPicker } from "react-colorful";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
@@ -7,6 +5,8 @@ import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, css, useTheme } from "@reearth/services/theme";
+import React from "react";
+import { RgbaColorPicker } from "react-colorful";
 
 import Property from "..";
 
@@ -16,7 +16,13 @@ import { Props, RGBA } from "./types";
 const channels = ["r", "g", "b", "a"];
 const hexPlaceholder = "#RRGGBBAA";
 
-const ColorField: React.FC<Props> = ({ name, description, value, onChange, className }) => {
+const ColorField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  onChange,
+  className,
+}) => {
   const t = useT();
   const theme = useTheme();
   const {
@@ -57,17 +63,27 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange, class
           </Popover.Trigger>
           <PickerWrapper>
             <HeaderWrapper>
-              <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
+              <PickerTitle
+                size="footnote"
+                weight="regular"
+                color={theme.content.main}
+              >
                 {t("Color Picker")}
               </PickerTitle>
-              {handleClose && <CloseIcon icon="cancel" size={12} onClick={handleClose} />}
+              {handleClose && (
+                <CloseIcon icon="cancel" size={12} onClick={handleClose} />
+              )}
             </HeaderWrapper>
             <SelectorPickerWrapper>
-              <ColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
+              <ColorPicker
+                className="colorPicker"
+                color={rgba}
+                onChange={handleChange}
+              />
               <RgbaInputWrapper>
                 <Text size="footnote">RGBA</Text>
                 <ValuesWrapper>
-                  {channels.map(channel => (
+                  {channels.map((channel) => (
                     <Input
                       key={channel}
                       name={channel}
@@ -144,8 +160,11 @@ linear-gradient(
 
 const CheckedPattern = styled.div`
   background-color: ${({ theme }) => theme.outline.main};
-  background-image: ${({ theme }) => check(theme.bg[3])}, ${({ theme }) => check(theme.bg[3])};
-  background-position: 0 0, 6px 6px;
+  background-image: ${({ theme }) => check(theme.bg[3])},
+    ${({ theme }) => check(theme.bg[3])};
+  background-position:
+    0 0,
+    6px 6px;
   background-size: 12px 12px;
   ${layerStyle};
 `;

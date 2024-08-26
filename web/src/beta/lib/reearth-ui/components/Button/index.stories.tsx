@@ -14,7 +14,11 @@ export const Default: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <Button title="Secondary" onClick={action("secondary-click")} />
-      <Button title="Secondary Small" size="small" onClick={action("secondary-small-click")} />
+      <Button
+        title="Secondary Small"
+        size="small"
+        onClick={action("secondary-small-click")}
+      />
       <Button title="Secondary Disabled" disabled={true} />
       <Button
         title="Secondary Icon Button"
@@ -32,7 +36,11 @@ export const Default: Story = {
         minWidth={300}
         onClick={action("secondary-min-width-click")}
       />
-      <Button iconButton={true} icon="settingFilled" onClick={action("secondary-icon-click")} />
+      <Button
+        iconButton={true}
+        icon="settingFilled"
+        onClick={action("secondary-icon-click")}
+      />
       <Button
         iconButton={true}
         icon="settingFilled"
@@ -46,7 +54,11 @@ export const Default: Story = {
 export const Primary: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Primary" appearance="primary" onClick={action("primary-click")} />
+      <Button
+        title="Primary"
+        appearance="primary"
+        onClick={action("primary-click")}
+      />
       <Button
         title="Primary Small"
         appearance="primary"
@@ -98,7 +110,11 @@ export const Primary: Story = {
 export const Dangerous: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Dangerous" appearance="dangerous" onClick={action("dangerous-click")} />
+      <Button
+        title="Dangerous"
+        appearance="dangerous"
+        onClick={action("dangerous-click")}
+      />
       <Button
         title="Dangerous Small"
         appearance="dangerous"
@@ -150,7 +166,11 @@ export const Dangerous: Story = {
 export const Simple: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Simple" appearance="simple" onClick={action("simple-click")} />
+      <Button
+        title="Simple"
+        appearance="simple"
+        onClick={action("simple-click")}
+      />
       <Button
         title="Simple Small"
         appearance="simple"

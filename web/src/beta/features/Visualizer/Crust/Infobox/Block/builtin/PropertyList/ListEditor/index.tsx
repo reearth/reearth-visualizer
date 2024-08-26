@@ -1,9 +1,13 @@
-import { FC, useMemo } from "react";
 
-import { Button, DragAndDropList, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  DragAndDropList,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import useHooks from "./hooks";
 import EditorItem from "./Item";
@@ -36,7 +40,10 @@ type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -71,7 +78,12 @@ const ListEditor: FC<Props> = ({
     handleMoveStart,
     handleMoveEnd,
     handlePropertyValueRemove,
-  } = useHooks({ propertyId, propertyListField, displayTypeField, onPropertyUpdate });
+  } = useHooks({
+    propertyId,
+    propertyListField,
+    displayTypeField,
+    onPropertyUpdate,
+  });
 
   const DraggableCurrentPropertyList = useMemo(
     () =>
@@ -88,7 +100,12 @@ const ListEditor: FC<Props> = ({
           />
         ),
       })),
-    [currentPropertyList, handleKeyBlur, handleValueBlur, handlePropertyValueRemove],
+    [
+      currentPropertyList,
+      handleKeyBlur,
+      handleValueBlur,
+      handlePropertyValueRemove,
+    ],
   );
 
   return (
@@ -99,18 +116,20 @@ const ListEditor: FC<Props> = ({
         options={displayOptions || []}
         onChange={handleDisplayTypeUpdate}
       />
-      {propertyListField && currentPropertyList && currentPropertyList.length > 0 && (
-        <>
-          <Typography size="footnote">{propertyListField.title}</Typography>
-          <FieldWrapper>
-            <DragAndDropList
-              items={DraggableCurrentPropertyList}
-              onMoveStart={handleMoveStart}
-              onMoveEnd={handleMoveEnd}
-            />
-          </FieldWrapper>
-        </>
-      )}
+      {propertyListField &&
+        currentPropertyList &&
+        currentPropertyList.length > 0 && (
+          <>
+            <Typography size="footnote">{propertyListField.title}</Typography>
+            <FieldWrapper>
+              <DragAndDropList
+                items={DraggableCurrentPropertyList}
+                onMoveStart={handleMoveStart}
+                onMoveEnd={handleMoveEnd}
+              />
+            </FieldWrapper>
+          </>
+        )}
       {displayTypeField?.value === "custom" && (
         <Button
           title={t("New Field")}

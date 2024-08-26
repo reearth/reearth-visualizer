@@ -7,7 +7,10 @@ const rootGenerateDirectory = `${rootGQLDirectory}__gen__/`;
 const config: CodegenConfig = {
   overwrite: true,
   schema: "../server/gql/*.graphql",
-  documents: [`${rootGQLDirectory}fragments/*.ts`, `${rootGQLDirectory}queries/*.ts`],
+  documents: [
+    `${rootGQLDirectory}fragments/*.ts`,
+    `${rootGQLDirectory}queries/*.ts`,
+  ],
   generates: {
     [rootGenerateDirectory]: {
       preset: "client",

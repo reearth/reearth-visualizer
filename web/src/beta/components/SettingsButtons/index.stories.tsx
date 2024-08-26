@@ -18,7 +18,7 @@ export const Default: Story = {
     title: "Audio",
     icon: "audio",
   },
-  render: args => {
+  render: (args) => {
     return (
       <Wrapper>
         <SettingsButtons {...args} />

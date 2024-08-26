@@ -1,6 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import { useMemo, useState } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import Property from "..";
 import NumberInput from "../common/NumberInput";
@@ -25,14 +25,23 @@ type Props = {
 
 type Position = keyof SpacingValues;
 
-const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onChange }) => {
+const SpacingInput: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  min,
+  max,
+  onChange,
+}) => {
   const [spacingValues, setSpacingValues] = useState<SpacingValues>(
     value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
 
   const memoizedSpacingValues = useMemo(
     () =>
-      SPACING_POSITIONS.map(position => getSpacingPosition(spacingValues, position as Position)),
+      SPACING_POSITIONS.map((position) =>
+        getSpacingPosition(spacingValues, position as Position),
+      ),
     [spacingValues],
   );
 
@@ -54,7 +63,9 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
             min={min}
             max={max}
             expandWithContent
-            onChange={newValue => handleInputChange(position as Position, newValue)}
+            onChange={(newValue) =>
+              handleInputChange(position as Position, newValue)
+            }
           />
         ))}
       </StyledRectangle>
@@ -79,12 +90,15 @@ const SpacingField = styled(NumberInput)<{ position: string }>`
     position === "top"
       ? "top: 0; left: 50%; transform: translateX(-50%);"
       : position === "left"
-      ? "left: 0; top: 50%; transform: translateY(-50%);"
-      : position === "right"
-      ? "right: 0; top: 50%; transform: translateY(-50%);"
-      : "bottom: 0; left: 50%; transform: translateX(-50%);"};
+        ? "left: 0; top: 50%; transform: translateY(-50%);"
+        : position === "right"
+          ? "right: 0; top: 50%; transform: translateY(-50%);"
+          : "bottom: 0; left: 50%; transform: translateX(-50%);"};
 `;
 
-function getSpacingPosition(spacingValue: SpacingValues, position: Position): number {
+function getSpacingPosition(
+  spacingValue: SpacingValues,
+  position: Position,
+): number {
   return spacingValue[position];
 }

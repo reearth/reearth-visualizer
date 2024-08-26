@@ -17,11 +17,11 @@ export default (
   defaultAlias?: string,
   onPublish?: (
     alias: string | undefined,
-    publishStatus: PublishStatus
+    publishStatus: PublishStatus,
   ) => void | Promise<void>,
   onClose?: () => void,
   onAliasValidate?: (alias: string) => void,
-  onCopyToClipBoard?: () => void
+  onCopyToClipBoard?: () => void,
 ) => {
   const [copiedKey, setCopiedKey] = useState<CopiedItemKey>();
   const [alias, changeAlias] = useState(defaultAlias);
@@ -48,7 +48,7 @@ export default (
       navigator.clipboard.writeText(value);
       onCopyToClipBoard?.();
     },
-    [onCopyToClipBoard]
+    [onCopyToClipBoard],
   );
 
   const validate = useCallback(
@@ -66,7 +66,7 @@ export default (
         onAliasValidate?.(a);
       }
     },
-    [onAliasValidate]
+    [onAliasValidate],
   );
 
   const generateAlias = useCallback(() => {
@@ -81,7 +81,7 @@ export default (
       changeAlias(a);
       validate(a);
     },
-    [validate, generateAlias]
+    [validate, generateAlias],
   );
 
   const handleClose = useCallback(() => {

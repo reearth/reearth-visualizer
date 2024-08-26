@@ -1,4 +1,3 @@
-import { useState, useMemo, useEffect, useRef } from "react";
 
 import {
   InternalWidget,
@@ -15,6 +14,7 @@ import {
 import type { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
@@ -35,10 +35,10 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
-    undefined
+    undefined,
   );
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
-    undefined
+    undefined,
   );
 
   const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } =
@@ -55,7 +55,7 @@ export default (alias?: string) => {
         viewerProperty: sceneProperty
           ? (convertData(
               sceneProperty,
-              sceneProperty2ViewerPropertyMapping
+              sceneProperty2ViewerPropertyMapping,
             ) as ViewerProperty)
           : undefined,
         widgetThemeOptions,
@@ -73,7 +73,7 @@ export default (alias?: string) => {
         a[b] = processProperty(data?.plugins?.[b]?.property);
         return a;
       }, {}),
-    [data?.plugins]
+    [data?.plugins],
   );
 
   const widgets = useMemo<
@@ -109,7 +109,7 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-        })
+        }),
       );
 
     const widgets = data?.widgets
@@ -121,7 +121,7 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-        })
+        }),
       );
 
     const widgetZone = (zone?: WidgetZone | null) => {
@@ -171,7 +171,7 @@ export default (alias?: string) => {
         }
         return res;
       },
-      []
+      [],
     );
 
     return {
@@ -191,7 +191,7 @@ export default (alias?: string) => {
       alias ||
       new URLSearchParams(window.location.search).get("alias") ||
       undefined,
-    [alias]
+    [alias],
   );
 
   const story = useMemo(() => {
@@ -235,7 +235,7 @@ export default (alias?: string) => {
         isSketch: l.isSketch,
         sketch: l.sketchInfo,
       })) ?? [],
-      data?.layerStyles
+      data?.layerStyles,
     );
     if (!story) return processedLayers;
 
@@ -287,7 +287,7 @@ export default (alias?: string) => {
           ? cesiumIonAccessToken
           : config()?.cesiumIonAccessToken,
     }),
-    [cesiumIonAccessToken]
+    [cesiumIonAccessToken],
   );
 
   // GA

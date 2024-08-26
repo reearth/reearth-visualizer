@@ -62,7 +62,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
     onMessage,
     onRender,
   },
-  ref
+  ref,
 ) => {
   const {
     mainIFrameRef,

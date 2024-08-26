@@ -1,4 +1,3 @@
-import React from "react";
 
 import {
   Button,
@@ -11,6 +10,7 @@ import {
 import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
+import React from "react";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
@@ -65,7 +65,8 @@ const PublicRepo: React.FC<Props> = ({
               disabled={!repoUrl}
               onClick={handleSubmit}
             />,
-          ]}>
+          ]}
+        >
           {loading && <Loading overlay />}
           <InputField
             commonTitle={t("Repository url:")}

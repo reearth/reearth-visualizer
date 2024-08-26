@@ -1,3 +1,4 @@
+import { truncMinutes } from "@reearth/beta/utils/time";
 import React, {
   ChangeEventHandler,
   MouseEvent,
@@ -11,7 +12,6 @@ import React, {
   WheelEventHandler,
 } from "react";
 
-import { truncMinutes } from "@reearth/beta/utils/time";
 
 import {
   BORDER_WIDTH,
@@ -67,7 +67,7 @@ const useTimelineInteraction = ({
     setIsMouseDown(false);
   }, []);
   const handleOnMouseMove: MouseEventHandler = useCallback(
-    e => {
+    (e) => {
       if (!isMouseDown || !onDrag || !e.target) {
         return;
       }
@@ -99,7 +99,7 @@ const useTimelineInteraction = ({
   }, [handleOnMouseUp]);
 
   const handleOnClick: MouseEventHandler = useCallback(
-    e => {
+    (e) => {
       if (!onClick) return;
       onClick(convertPositionToTime(e, { start, end }));
     },
@@ -107,12 +107,14 @@ const useTimelineInteraction = ({
   );
 
   const handleOnWheel: WheelEventHandler = useCallback(
-    e => {
+    (e) => {
       const { deltaX, deltaY } = e;
       const isHorizontal = Math.abs(deltaX) > 0 || Math.abs(deltaX) < 0;
       if (isHorizontal) return;
 
-      setZoom(() => Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO));
+      setZoom(() =>
+        Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO),
+      );
     },
     [zoom, setZoom],
   );
@@ -121,7 +123,7 @@ const useTimelineInteraction = ({
     const elm = scaleElement.current;
     if (!elm) return;
 
-    const obs = new ResizeObserver(m => {
+    const obs = new ResizeObserver((m) => {
       const target = m[0].target;
       setScaleWidth(target.clientWidth);
     });
@@ -157,7 +159,7 @@ const useTimelinePlayer = ({
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const syncCurrentTimeRef = useRef(currentTime);
   const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    e => {
+    (e) => {
       onSpeedChange?.(parseInt(e.currentTarget.value, 10));
     },
     [onSpeedChange],
@@ -167,7 +169,7 @@ const useTimelinePlayer = ({
       setIsPlayingReversed(false);
       onPlayReversed?.(false);
     }
-    setIsPlaying(p => !p);
+    setIsPlaying((p) => !p);
     onPlay?.(!isPlaying);
   }, [isPlayingReversed, onPlay, isPlaying, onPlayReversed]);
   const toggleIsPlayingReversed = useCallback(() => {
@@ -175,7 +177,7 @@ const useTimelinePlayer = ({
       setIsPlaying(false);
       onPlay?.(false);
     }
-    setIsPlayingReversed(p => !p);
+    setIsPlayingReversed((p) => !p);
     onPlayReversed?.(!isPlayingReversed);
   }, [isPlaying, isPlayingReversed, onPlay, onPlayReversed]);
   const formattedCurrentTime = useMemo(() => {
@@ -254,7 +256,9 @@ export const useTimeline = ({
     const range = getRange(_range);
     if (process.env.NODE_ENV !== "production") {
       if (range.start > range.end) {
-        throw new Error("Out of range error. `range.start` should be less than `range.end`");
+        throw new Error(
+          "Out of range error. `range.start` should be less than `range.end`",
+        );
       }
     }
     return {
@@ -277,7 +281,8 @@ export const useTimeline = ({
     strongScaleMinutes,
     gap: gapHorizontal,
   } = useMemo(
-    () => calcScaleInterval(epochDiff, zoom, { gap: zoomedGap, width: scaleWidth }),
+    () =>
+      calcScaleInterval(epochDiff, zoom, { gap: zoomedGap, width: scaleWidth }),
     [epochDiff, zoom, scaleWidth, zoomedGap],
   );
 
@@ -286,14 +291,24 @@ export const useTimeline = ({
 
   // Convert scale count to pixel.
   const currentPosition = useMemo(() => {
-    const diff = Math.min((currentTime - start) / EPOCH_SEC / scaleInterval, scaleCount);
+    const diff = Math.min(
+      (currentTime - start) / EPOCH_SEC / scaleInterval,
+      scaleCount,
+    );
     const strongScaleCount = diff / strongScaleMinutes - 1;
     return Math.max(
       (diff - strongScaleCount) * (NORMAL_SCALE_WIDTH + gapHorizontal) +
         strongScaleCount * (STRONG_SCALE_WIDTH + gapHorizontal),
       0,
     );
-  }, [currentTime, start, scaleCount, gapHorizontal, scaleInterval, strongScaleMinutes]);
+  }, [
+    currentTime,
+    start,
+    scaleCount,
+    gapHorizontal,
+    scaleInterval,
+    strongScaleMinutes,
+  ]);
 
   const events = useTimelineInteraction({
     range,
@@ -304,7 +319,12 @@ export const useTimeline = ({
     scaleElement,
     setScaleWidth,
   });
-  const player = useTimelinePlayer({ currentTime, onPlay, onPlayReversed, onSpeedChange });
+  const player = useTimelinePlayer({
+    currentTime,
+    onPlay,
+    onPlayReversed,
+    onSpeedChange,
+  });
 
   return {
     startDate,

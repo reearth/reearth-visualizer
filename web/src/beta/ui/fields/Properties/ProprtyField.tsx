@@ -1,8 +1,8 @@
-import { FC, useMemo } from "react";
 
 import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+import { FC, useMemo } from "react";
 
 import {
   AssetField,
@@ -30,7 +30,14 @@ type Props = {
   onFlyTo?: FlyTo;
 };
 
-const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, schema, onFlyTo }) => {
+const PropertyField: FC<Props> = ({
+  propertyId,
+  itemId,
+  field,
+  schemaGroup,
+  schema,
+  onFlyTo,
+}) => {
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
 
   const value = useMemo(
@@ -44,8 +51,8 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
         ? schema.ui === "image"
           ? ["image" as const]
           : schema.ui === "file"
-          ? ["file" as const]
-          : undefined
+            ? ["file" as const]
+            : undefined
         : undefined,
     [schema.type, schema.ui],
   );
@@ -76,7 +83,12 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
             commonTitle={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
-            options={schema?.choices?.map(({ key, label }) => ({ value: key, label: label })) || []}
+            options={
+              schema?.choices?.map(({ key, label }) => ({
+                value: key,
+                label: label,
+              })) || []
+            }
             onChange={handleChange}
           />
         ) : schema.ui === "buttons" ? (
@@ -95,7 +107,9 @@ const PropertyField: FC<Props> = ({ propertyId, itemId, field, schemaGroup, sche
           key={schema.id}
           commonTitle={schema.name}
           assetsTypes={assetTypes}
-          inputMethod={schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"}
+          inputMethod={
+            schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"
+          }
           value={(value as string) ?? ""}
           description={schema.description}
           onChange={handleChange}

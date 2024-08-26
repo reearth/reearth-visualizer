@@ -1,10 +1,10 @@
-import { FC, useCallback, useContext, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useContext, useMemo, useState } from "react";
 
 import CameraEditor, { type CameraBlock as CameraBlockType } from "./Editor";
 
@@ -20,7 +20,10 @@ type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -48,7 +51,10 @@ const Content: FC<Props> = ({
   const visualizer = useVisualizer();
   const [selected, setSelected] = useState<string>(cameraButtons[0]?.id);
 
-  const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
+  const handleFlyTo = useMemo(
+    () => visualizer.current?.engine.flyTo,
+    [visualizer],
+  );
 
   const handleClick = useCallback(
     (itemId: string) => {
@@ -56,9 +62,11 @@ const Content: FC<Props> = ({
         setSelected(itemId);
         return;
       }
-      const item = cameraButtons.find(i => i.id === itemId);
+      const item = cameraButtons.find((i) => i.id === itemId);
       if (!item?.cameraPosition?.value) return;
-      handleFlyTo?.(item.cameraPosition?.value, { duration: item.cameraDuration?.value || 2 });
+      handleFlyTo?.(item.cameraPosition?.value, {
+        duration: item.cameraDuration?.value || 2,
+      });
     },
     [cameraButtons, isEditable, handleFlyTo],
   );
@@ -112,15 +120,17 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   maxWidth: "400px",
 }));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
-  ({ color, bgColor, userSelected, theme }) => ({
-    color: userSelected ? bgColor ?? theme.content.strong : color,
-    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
-    borderColor: color,
+const StyledButton = styled(Button)<{
+  color?: string;
+  bgColor?: string;
+  userSelected?: boolean;
+}>(({ color, bgColor, userSelected, theme }) => ({
+  color: userSelected ? (bgColor ?? theme.content.strong) : color,
+  backgroundColor: userSelected ? (color ?? theme.primary.main) : bgColor,
+  borderColor: color,
 
-    ":hover": {
-      color: bgColor,
-      backgroundColor: color ?? theme.primary.main,
-    },
-  }),
-);
+  ":hover": {
+    color: bgColor,
+    backgroundColor: color ?? theme.primary.main,
+  },
+}));

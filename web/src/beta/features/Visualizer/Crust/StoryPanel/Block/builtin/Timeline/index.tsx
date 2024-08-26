@@ -1,7 +1,7 @@
-import { FC, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import { FC, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -13,7 +13,11 @@ export type TimelineValues = {
   endTime: string;
 };
 
-const TimelineBlock: FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
+const TimelineBlock: FC<BlockProps<StoryBlock>> = ({
+  block,
+  isSelected,
+  ...props
+}) => {
   const timeline = useMemo(() => {
     return {
       timelineValues: block?.property?.default?.timelineSetting?.value,
@@ -35,7 +39,8 @@ const TimelineBlock: FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      {...props}>
+      {...props}
+    >
       <TimelineEditor
         inEditor={!!props.isEditable}
         padding={props.padding}

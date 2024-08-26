@@ -1,4 +1,3 @@
-import { FC, useCallback } from "react";
 
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import { Button } from "@reearth/beta/lib/reearth-ui";
@@ -6,6 +5,7 @@ import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback } from "react";
 
 import { useMapPage } from "../context";
 
@@ -29,7 +29,10 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const t = useT();
 
   const handleLayerStyleAddition = useCallback(() => {
-    handleLayerStyleAdd({ name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`, value: {} });
+    handleLayerStyleAdd({
+      name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`,
+      value: {},
+    });
   }, [layerStyles?.length, t, handleLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
@@ -47,7 +50,8 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       alwaysOpen
       storageId="editor-map-scene-panel"
       showCollapseArea={showCollapseArea}
-      areaRef={areaRef}>
+      areaRef={areaRef}
+    >
       <LayerStyleContainer>
         <Button
           icon="plus"
@@ -57,7 +61,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           title={t("New Style")}
         />
         <CatalogListWrapper editorOpened={!!selectedLayerStyleId}>
-          {layerStyles?.map(layerStyle => (
+          {layerStyles?.map((layerStyle) => (
             <LayerStyleCard
               id={layerStyle.id}
               key={layerStyle.id}
@@ -104,14 +108,16 @@ const LayerStyleContainer = styled("div")(({ theme }) => ({
   marginBottom: theme.spacing.small,
 }));
 
-const CatalogListWrapper = styled("div")<{ editorOpened?: boolean }>(({ theme, editorOpened }) => ({
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(76px, 1fr))",
-  gridGap: `${theme.spacing.small}px`,
-  justifyContent: "space-between",
-  maxHeight: editorOpened ? "200px" : "auto",
-  overflowY: "auto",
-  padding: `${theme.spacing.small}px`,
-  background: theme.relative.darker,
-  borderRadius: `${theme.radius.normal}px`,
-}));
+const CatalogListWrapper = styled("div")<{ editorOpened?: boolean }>(
+  ({ theme, editorOpened }) => ({
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(76px, 1fr))",
+    gridGap: `${theme.spacing.small}px`,
+    justifyContent: "space-between",
+    maxHeight: editorOpened ? "200px" : "auto",
+    overflowY: "auto",
+    padding: `${theme.spacing.small}px`,
+    background: theme.relative.darker,
+    borderRadius: `${theme.radius.normal}px`,
+  }),
+);

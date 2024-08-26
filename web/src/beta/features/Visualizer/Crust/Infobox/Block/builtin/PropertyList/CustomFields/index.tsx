@@ -1,6 +1,6 @@
+import Template from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/Template";
 import { FC } from "react";
 
-import Template from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/Template";
 
 import { PropertyListItem } from "../ListEditor";
 import ListItem from "../ListItem";
@@ -18,7 +18,9 @@ const CustomFields: FC<Props> = ({ extensionId, properties }) => {
   return (
     <>
       {evaluatedProperties && evaluatedProperties.length > 0 ? (
-        evaluatedProperties.map(ep => <ListItem key={ep.id} keyValue={ep.key} value={ep.value} />)
+        evaluatedProperties.map((ep) => (
+          <ListItem key={ep.id} keyValue={ep.key} value={ep.value} />
+        ))
       ) : (
         <Template icon={extensionId} height={120} />
       )}

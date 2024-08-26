@@ -39,16 +39,16 @@ export default ({ value, onChange, setDateTime, onClose }: Props) => {
   const handleTimezoneSelect = useCallback(
     (newValue: string | string[]) => {
       const updatedTimezone = offsetFromUTC.find(
-        (info) => info.timezone === newValue
+        (info) => info.timezone === newValue,
       );
       setSelectedTimezone(updatedTimezone || selectedTimezone);
     },
-    [offsetFromUTC, selectedTimezone]
+    [offsetFromUTC, selectedTimezone],
   );
 
   const handleApply = useCallback(() => {
     const selectedTimezoneInfo = offsetFromUTC.find(
-      (info) => info.timezone === selectedTimezone.timezone
+      (info) => info.timezone === selectedTimezone.timezone,
     );
     if (selectedTimezoneInfo) {
       const formattedDateTime = `${date}T${time}${selectedTimezoneInfo.offset}`;
@@ -85,7 +85,7 @@ export default ({ value, onChange, setDateTime, onClose }: Props) => {
           info.offset ===
           (timeWithOffset.includes("-")
             ? `-${formattedTimezoneOffset}`
-            : `+${formattedTimezoneOffset}`)
+            : `+${formattedTimezoneOffset}`),
       );
       if (updatedTimezone) setSelectedTimezone(updatedTimezone);
     } else {

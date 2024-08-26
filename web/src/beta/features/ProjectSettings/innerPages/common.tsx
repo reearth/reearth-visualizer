@@ -2,16 +2,17 @@ import { Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-export const InnerPage = styled("div")<{ wide?: boolean; transparent?: boolean }>(
-  ({ wide, transparent, theme }) => ({
-    boxSizing: "border-box",
-    display: "flex",
-    width: "100%",
-    maxWidth: wide ? 950 : 750,
-    backgroundColor: transparent ? "none" : theme.bg[1],
-    borderRadius: theme.radius.normal,
-  }),
-);
+export const InnerPage = styled("div")<{
+  wide?: boolean;
+  transparent?: boolean;
+}>(({ wide, transparent, theme }) => ({
+  boxSizing: "border-box",
+  display: "flex",
+  width: "100%",
+  maxWidth: wide ? 950 : 750,
+  backgroundColor: transparent ? "none" : theme.bg[1],
+  borderRadius: theme.radius.normal,
+}));
 
 export const InnerSidebar = styled("div")(({ theme }) => ({
   display: "flex",
@@ -52,7 +53,9 @@ export const Thumbnail = styled("div")<{ src?: string }>(({ src, theme }) => ({
   width: "100%",
   paddingBottom: "52.3%",
   fontSize: 0,
-  background: src ? `url(${src}) center/contain no-repeat` : theme.relative.dark,
+  background: src
+    ? `url(${src}) center/contain no-repeat`
+    : theme.relative.dark,
   borderRadius: theme.radius.small,
 }));
 

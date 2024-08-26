@@ -9,7 +9,7 @@ export default {
 type Story = StoryObj<typeof ContentStory>;
 
 export const Default: Story = {
-  render: args => {
+  render: (args) => {
     return (
       <div style={{ height: "100vh" }}>
         <ContentStory {...args} />

@@ -1,6 +1,3 @@
-import { useCallback, useMemo } from "react";
-import useFileInput from "use-file-input";
-
 import {
   type AcceptedAssetsTypes,
   GIS_FILE_TYPES,
@@ -8,6 +5,9 @@ import {
   GENERAL_FILE_TYPE_ACCEPT_STRING,
 } from "@reearth/beta/features/AssetsManager/constants";
 import { useAssetsFetcher } from "@reearth/services/api";
+import { useCallback, useMemo } from "react";
+import useFileInput from "use-file-input";
+
 
 export default ({
   workspaceId,
@@ -26,7 +26,13 @@ export default ({
     return assetsTypes && assetsTypes.length > 0
       ? "." +
           assetsTypes
-            .map(t => (t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t))
+            .map((t) =>
+              t === "image"
+                ? IMAGE_FILE_TYPES
+                : t === "file"
+                  ? GIS_FILE_TYPES
+                  : t,
+            )
             .flat()
             .join(",.")
       : GENERAL_FILE_TYPE_ACCEPT_STRING;
@@ -49,10 +55,13 @@ export default ({
     },
     [workspaceId, useCreateAssets, onAssetSelect],
   );
-  const handleFileUpload = useFileInput(files => handleAssetsCreate?.(files), {
-    accept: acceptedExtension,
-    multiple,
-  });
+  const handleFileUpload = useFileInput(
+    (files) => handleAssetsCreate?.(files),
+    {
+      accept: acceptedExtension,
+      multiple,
+    },
+  );
 
   return { handleFileUpload };
 };

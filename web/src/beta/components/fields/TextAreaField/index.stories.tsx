@@ -1,8 +1,8 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import TextAreaField, { Props } from ".";
 
@@ -17,7 +17,10 @@ type Story = StoryObj<typeof TextAreaField>;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: string) => updateArgs({ value: value }), [updateArgs]);
+  const handleChange = useCallback(
+    (value: string) => updateArgs({ value: value }),
+    [updateArgs],
+  );
 
   return (
     <Wrapper>

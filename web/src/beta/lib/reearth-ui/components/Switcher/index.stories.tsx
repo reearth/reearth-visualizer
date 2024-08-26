@@ -16,5 +16,7 @@ export const Default: Story = {
 };
 
 export const Disabled: Story = {
-  render: () => <Switcher value={false} onChange={action("onChange")} disabled />,
+  render: () => (
+    <Switcher value={false} onChange={action("onChange")} disabled />
+  ),
 };

@@ -1,6 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 export type SwitcherProps = {
   value?: boolean;
@@ -37,8 +37,8 @@ const SwitcherContainer = styled.div<{ isOn: boolean; disabled?: boolean }>(
     backgroundColor: disabled
       ? theme.outline.weaker
       : isOn
-      ? theme.primary.main
-      : theme.outline.weaker,
+        ? theme.primary.main
+        : theme.outline.weaker,
     display: "flex",
     alignItems: "center",
     boxShadow: theme.shadow.input,
@@ -54,7 +54,9 @@ const SwitcherCircle = styled.div<{ isOn: boolean; disabled?: boolean }>(
     width: "12px",
     height: "12px",
     borderRadius: "50%",
-    backgroundColor: disabled ? theme.outline.weak : theme.content.withBackground,
+    backgroundColor: disabled
+      ? theme.outline.weak
+      : theme.content.withBackground,
     transition: "transform 0.3s",
     transform: isOn ? "translateX(10px)" : "translateX(0)",
   }),

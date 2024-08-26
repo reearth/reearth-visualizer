@@ -4,7 +4,10 @@ import { LazyLayer, MapRef } from "@reearth/core";
 import { REEATH_PLUGIN_API_VERSION } from "./constaint";
 import { GlobalThis, Reearth } from "./types";
 
-export type CommonReearth = Omit<Reearth, "ui" | "modal" | "popup" | "extension" | "data"> & {
+export type CommonReearth = Omit<
+  Reearth,
+  "ui" | "modal" | "popup" | "extension" | "data"
+> & {
   extension: Pick<Reearth["extension"], "list">;
 };
 
@@ -273,12 +276,22 @@ export function commonReearth({
         return getLayers()?.overriddenLayers?.();
       },
       get find() {
-        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
-          getLayers()?.find(cb);
+        return (
+          cb: (
+            layer: LazyLayer,
+            index: number,
+            parents: LazyLayer[],
+          ) => boolean,
+        ) => getLayers()?.find(cb);
       },
       get findAll() {
-        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
-          getLayers()?.findAll(cb);
+        return (
+          cb: (
+            layer: LazyLayer,
+            index: number,
+            parents: LazyLayer[],
+          ) => boolean,
+        ) => getLayers()?.findAll(cb);
       },
       get findById() {
         return (id: string) => getLayers()?.findById(id);

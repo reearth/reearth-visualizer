@@ -1,6 +1,6 @@
+import { fonts, styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
-import { fonts, styled } from "@reearth/services/theme";
 
 export type TextAreaProps = {
   value?: string;
@@ -54,7 +54,10 @@ export const TextArea: FC<TextAreaProps> = ({
 
   return (
     <Wrapper>
-      <TextAreaWrapper appearance={appearance} status={isFocused ? "active" : "default"}>
+      <TextAreaWrapper
+        appearance={appearance}
+        status={isFocused ? "active" : "default"}
+      >
         <StyledTextArea
           resizable={resizable}
           rows={rows}
@@ -109,7 +112,10 @@ const StyledTextArea = styled.textarea<{
   resize: resizable === "height" ? "vertical" : "none",
   overflow: resizable === "height" ? "scroll" : "auto",
   flex: 1,
-  color: disabled && appearance !== "readonly" ? theme.content.weaker : theme.content.main,
+  color:
+    disabled && appearance !== "readonly"
+      ? theme.content.weaker
+      : theme.content.main,
   cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
   colorScheme: theme.colorSchema,
   fontSize: fonts.sizes.body,

@@ -1,7 +1,7 @@
-import { CSSProperties } from "react";
 
 import { MetricsSizes, metricsSizes } from "@reearth/beta/utils/metrics";
 import { styled } from "@reearth/services/theme";
+import { CSSProperties } from "react";
 
 export type Props = {
   className?: string;
@@ -43,7 +43,7 @@ type OtherCSSProperties = {
 
 type BoxProps = MetricsProps & BorderProps & OtherCSSProperties;
 
-const Box: React.FC<Props> = props => {
+const Box: React.FC<Props> = (props) => {
   const { className, children, onClick, ...styleProps } = props;
   return (
     <Wrapper className={className} onClick={onClick} {...styleProps}>
@@ -53,37 +53,50 @@ const Box: React.FC<Props> = props => {
 };
 
 const Wrapper = styled.div<BoxProps>`
-  background-color: ${props => props.bg};
-  width: ${props => props.width};
-  margin: ${props => (props.m && props.m in metricsSizes ? `${metricsSizes[props.m]}px}` : "")};
-  margin: ${props => (props.mv && props.mv in metricsSizes ? `${metricsSizes[props.mv]}px 0` : "")};
-  margin: ${props => (props.mh && props.mh in metricsSizes ? `0 ${metricsSizes[props.mh]}px` : "")};
-  margin-top: ${props =>
+  background-color: ${(props) => props.bg};
+  width: ${(props) => props.width};
+  margin: ${(props) =>
+    props.m && props.m in metricsSizes ? `${metricsSizes[props.m]}px}` : ""};
+  margin: ${(props) =>
+    props.mv && props.mv in metricsSizes
+      ? `${metricsSizes[props.mv]}px 0`
+      : ""};
+  margin: ${(props) =>
+    props.mh && props.mh in metricsSizes
+      ? `0 ${metricsSizes[props.mh]}px`
+      : ""};
+  margin-top: ${(props) =>
     props.mt && props.mt in metricsSizes ? `${metricsSizes[props.mt]}px` : ""};
-  margin-bottom: ${props =>
+  margin-bottom: ${(props) =>
     props.mb && props.mb in metricsSizes ? `${metricsSizes[props.mb]}px` : ""};
-  margin-right: ${props =>
+  margin-right: ${(props) =>
     props.mr && props.mr in metricsSizes ? `${metricsSizes[props.mr]}px` : ""};
-  margin-left: ${props =>
+  margin-left: ${(props) =>
     props.ml && props.ml in metricsSizes ? `${metricsSizes[props.ml]}px` : ""};
-  padding: ${props => (props.p && props.p in metricsSizes ? `${metricsSizes[props.p]}px` : "")};
-  padding: ${props =>
-    props.pv && props.pv in metricsSizes ? `${metricsSizes[props.pv]}px 0` : ""};
-  padding: ${props =>
-    props.ph && props.ph in metricsSizes ? `0 ${metricsSizes[props.ph]}px` : ""};
-  padding-top: ${props =>
+  padding: ${(props) =>
+    props.p && props.p in metricsSizes ? `${metricsSizes[props.p]}px` : ""};
+  padding: ${(props) =>
+    props.pv && props.pv in metricsSizes
+      ? `${metricsSizes[props.pv]}px 0`
+      : ""};
+  padding: ${(props) =>
+    props.ph && props.ph in metricsSizes
+      ? `0 ${metricsSizes[props.ph]}px`
+      : ""};
+  padding-top: ${(props) =>
     props.pt && props.pt in metricsSizes ? `${metricsSizes[props.pt]}px` : ""};
-  padding-bottom: ${props =>
+  padding-bottom: ${(props) =>
     props.pb && props.pb in metricsSizes ? `${metricsSizes[props.pb]}px` : ""};
-  padding-right: ${props =>
+  padding-right: ${(props) =>
     props.pr && props.pr in metricsSizes ? `${metricsSizes[props.pr]}px` : ""};
-  padding-left: ${props =>
+  padding-left: ${(props) =>
     props.pl && props.pl in metricsSizes ? `${metricsSizes[props.pl]}px` : ""};
-  border: ${props => props.border};
-  border-radius: ${props => (props.border ? `${props.borderRadius}px` : "")};
-  border-width: ${props => (props.borderWidth ? `${props.borderWidth}px` : "")};
-  border-color: ${props => (props.borderColor ? `${props.borderColor}` : "")};
-  border-style: ${props => (props.borderStyle ? `${props.borderStyle}` : "")};
+  border: ${(props) => props.border};
+  border-radius: ${(props) => (props.border ? `${props.borderRadius}px` : "")};
+  border-width: ${(props) =>
+    props.borderWidth ? `${props.borderWidth}px` : ""};
+  border-color: ${(props) => (props.borderColor ? `${props.borderColor}` : "")};
+  border-style: ${(props) => (props.borderStyle ? `${props.borderStyle}` : "")};
 `;
 
 export default Box;

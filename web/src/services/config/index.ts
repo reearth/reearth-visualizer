@@ -91,7 +91,7 @@ export default async function loadConfig() {
 
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
-      config.passwordPolicy as Record<string, string>
+      config.passwordPolicy as Record<string, string>,
     );
   }
 
@@ -102,7 +102,7 @@ export default async function loadConfig() {
 
   if (config.unsafePluginUrls) {
     config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(
-      config.unsafePluginUrls
+      config.unsafePluginUrls,
     );
   }
 

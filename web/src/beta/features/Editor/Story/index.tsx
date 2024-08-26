@@ -1,6 +1,6 @@
+import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
 import { FC, useRef } from "react";
 
-import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
 
 import { useStoryPage } from "./context";
 import PageSettingsPanel from "./PageSettingsPanel";
@@ -20,7 +20,8 @@ const Story: FC = () => {
           direction="column"
           resizableEdge="right"
           storageId="editor-story-left-area"
-          ref={leftAreaRef}>
+          ref={leftAreaRef}
+        >
           <PagesPanel showCollapseArea areaRef={leftAreaRef} />
         </Area>
         <Area
@@ -34,7 +35,8 @@ const Story: FC = () => {
           direction="column"
           resizableEdge="left"
           storageId="editor-story-right-area"
-          ref={rightAreaRef}>
+          ref={rightAreaRef}
+        >
           <PageSettingsPanel showCollapseArea areaRef={rightAreaRef} />
         </Area>
       </Area>

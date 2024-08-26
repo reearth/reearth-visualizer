@@ -1,8 +1,8 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { useT } from "@reearth/services/i18n";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project as ProjectType } from "../../../type";
 
@@ -13,7 +13,12 @@ type Props = {
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
 };
 
-export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }: Props) => {
+export default ({
+  project,
+  selectedProjectId,
+  onProjectUpdate,
+  onProjectSelect,
+}: Props) => {
   const t = useT();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -37,7 +42,8 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
 
   const handleProjectNameEdit = useCallback(() => {
     setIsEditing?.(true);
-    if (selectedProjectId !== project.id || selectedProjectId) onProjectSelect?.(undefined);
+    if (selectedProjectId !== project.id || selectedProjectId)
+      onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
   useEffect(() => {

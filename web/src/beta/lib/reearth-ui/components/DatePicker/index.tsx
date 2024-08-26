@@ -1,6 +1,6 @@
+import { fonts, styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
-import { fonts, styled } from "@reearth/services/theme";
 
 export type DatePickerProps = {
   value?: string;
@@ -10,7 +10,12 @@ export type DatePickerProps = {
   onBlur?: (text: string) => void;
 };
 
-export const DatePicker: FC<DatePickerProps> = ({ value, disabled, onChange, onBlur }) => {
+export const DatePicker: FC<DatePickerProps> = ({
+  value,
+  disabled,
+  onChange,
+  onBlur,
+}) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -55,7 +60,9 @@ const Wrapper = styled("div")<{
 }>(({ theme, status }) => {
   return {
     border:
-      status === "active" ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
+      status === "active"
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",

@@ -1,8 +1,11 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 
-import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
+import {
+  autoFillPage,
+  onScrollToBottom,
+} from "@reearth/beta/utils/infinite-scroll";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 
 const LayerStylesPerPage = 20;
 
@@ -20,11 +23,14 @@ export default ({ sceneId }: { sceneId?: string }) => {
   const isGettingMore = useRef(false);
 
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
-  const { layerStyles, loading, isRefetching, fetchMore } = useGetLayerStylesQuery({ sceneId });
+  const { layerStyles, loading, isRefetching, fetchMore } =
+    useGetLayerStylesQuery({ sceneId });
   const [selectedLayerStyles, selectLayerStyle] = useState<LayerStyle[]>([]);
 
   const [searchTerm, setSearchTerm] = useState<string>();
-  const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>(
+    searchTerm ?? "",
+  );
 
   const handleSearchInputChange = useCallback(
     (value: string) => {
@@ -33,7 +39,10 @@ export default ({ sceneId }: { sceneId?: string }) => {
     [setLocalSearchTerm],
   );
 
-  const handleSearchTerm = useCallback((term?: string) => setSearchTerm(term), []);
+  const handleSearchTerm = useCallback(
+    (term?: string) => setSearchTerm(term),
+    [],
+  );
 
   const handleSearch = useCallback(() => {
     if (!localSearchTerm || localSearchTerm.length < 1) {
@@ -46,7 +55,9 @@ export default ({ sceneId }: { sceneId?: string }) => {
   const handleSelectLayerStyle = useCallback(
     (layerStyle?: LayerStyle) => {
       if (!layerStyle) return;
-      selectLayerStyle(!selectedLayerStyles.includes(layerStyle) ? [layerStyle] : []);
+      selectLayerStyle(
+        !selectedLayerStyles.includes(layerStyle) ? [layerStyle] : [],
+      );
     },
     [selectLayerStyle, selectedLayerStyles],
   );
@@ -63,7 +74,10 @@ export default ({ sceneId }: { sceneId?: string }) => {
     }
   }, [fetchMore, isGettingMore]);
 
-  const isLayerStylesLoading = useMemo(() => loading ?? isRefetching, [loading, isRefetching]);
+  const isLayerStylesLoading = useMemo(
+    () => loading ?? isRefetching,
+    [loading, isRefetching],
+  );
 
   useEffect(() => {
     if (layerStylesWrapperRef.current && !isLayerStylesLoading) {

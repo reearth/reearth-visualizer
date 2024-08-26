@@ -1,6 +1,9 @@
+import {
+  PopupMenu,
+  PopupMenuItem as PopupItems,
+} from "@reearth/beta/lib/reearth-ui";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { PopupMenu, PopupMenuItem as PopupItems } from "@reearth/beta/lib/reearth-ui";
 
 import { Breadcrumb, BreadcrumbProp, BreadcrumbItem } from "./";
 
@@ -81,12 +84,16 @@ const itemMenu: BreadcrumbItem[] = [
 ];
 
 const renderPopupMenu = (items: BreadcrumbItem[], level: number) => {
-  return items.map(item => {
+  return items.map((item) => {
     if (item.subItem) {
       return {
         ...item,
         title: (
-          <PopupMenu label={item.title} menu={item.subItem as PopupItems[]} nested={level > 0} />
+          <PopupMenu
+            label={item.title}
+            menu={item.subItem as PopupItems[]}
+            nested={level > 0}
+          />
         ),
         subItem: undefined,
       };

@@ -1,4 +1,3 @@
-import { FC, useMemo } from "react";
 
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
@@ -7,6 +6,7 @@ import type { FlyTo } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 type Props = {
   propertyId: string;
@@ -16,13 +16,25 @@ type Props = {
 
 const Settings: FC<Props> = ({ propertyId, propertyItems, onFlyTo }) => {
   const t = useT();
-  const visibleItems = useMemo(() => filterVisibleItems(propertyItems), [propertyItems]);
+  const visibleItems = useMemo(
+    () => filterVisibleItems(propertyItems),
+    [propertyItems],
+  );
 
   return (
     <Wrapper>
-      {visibleItems?.map(i => (
-        <Collapse key={i.schemaGroup} title={i.title ?? t("Settings")} size="small">
-          <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={onFlyTo} />
+      {visibleItems?.map((i) => (
+        <Collapse
+          key={i.schemaGroup}
+          title={i.title ?? t("Settings")}
+          size="small"
+        >
+          <PropertyItem
+            key={i.id}
+            propertyId={propertyId}
+            item={i}
+            onFlyTo={onFlyTo}
+          />
         </Collapse>
       ))}
     </Wrapper>

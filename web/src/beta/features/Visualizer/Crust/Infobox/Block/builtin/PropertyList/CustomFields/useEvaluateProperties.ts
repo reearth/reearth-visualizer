@@ -44,7 +44,7 @@ export default (properties: PropertyListItem[] | undefined) => {
             expression: v.value,
           },
           undefined,
-          simpleFeature
+          simpleFeature,
         );
 
         return ev

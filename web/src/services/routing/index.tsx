@@ -1,15 +1,21 @@
+import RootPage from "@reearth/beta/pages/RootPage";
+import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import RootPage from "@reearth/beta/pages/RootPage";
-import { styled } from "@reearth/services/theme";
 
 const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
 const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
-const ProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
-const PluginPlaygroundPage = lazy(() => import("@reearth/beta/pages/PluginPlaygroundPage"));
+const ProjectSettings = lazy(
+  () => import("@reearth/beta/pages/ProjectSettingsPage"),
+);
+const PluginPlaygroundPage = lazy(
+  () => import("@reearth/beta/pages/PluginPlaygroundPage"),
+);
 const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
-const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlayground"));
+const GraphQLPlayground = lazy(
+  () => import("@reearth/beta/pages/GraphQLPlayground"),
+);
 
 export const AppRoutes = () => {
   const router = createBrowserRouter([

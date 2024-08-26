@@ -1,13 +1,20 @@
-import { FC, MouseEvent, useCallback, useMemo } from "react";
 
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, MouseEvent, useCallback, useMemo } from "react";
 
 import { AssetItemProps } from "./type";
 import { getAssetType } from "./utils";
 
-const AssetListItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }) => {
-  const selected = useMemo(() => selectedAssetIds.includes(asset.id), [selectedAssetIds, asset.id]);
+const AssetListItem: FC<AssetItemProps> = ({
+  asset,
+  selectedAssetIds,
+  onSelect,
+}) => {
+  const selected = useMemo(
+    () => selectedAssetIds.includes(asset.id),
+    [selectedAssetIds, asset.id],
+  );
 
   const type = useMemo(() => getAssetType(asset), [asset]);
 
@@ -60,23 +67,25 @@ const AssetListItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
 
 export default AssetListItem;
 
-const Wrapper = styled("div")<{ selected?: boolean }>(({ theme, selected }) => ({
-  display: "flex",
-  width: "100%",
-  alignItems: "center",
-  boxSizing: "border-box",
-  padding: theme.spacing.smallest,
-  borderRadius: theme.radius.small,
-  gap: theme.spacing.small,
-  cursor: "pointer",
-  backgroundColor: selected ? theme.select.main : "transparent",
-  transition: "background-color 0.1s ease",
-  overflow: "hidden",
-  ["&:hover"]: {
-    background: selected ? theme.select.main : theme.relative.light,
+const Wrapper = styled("div")<{ selected?: boolean }>(
+  ({ theme, selected }) => ({
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
+    boxSizing: "border-box",
+    padding: theme.spacing.smallest,
     borderRadius: theme.radius.small,
-  },
-}));
+    gap: theme.spacing.small,
+    cursor: "pointer",
+    backgroundColor: selected ? theme.select.main : "transparent",
+    transition: "background-color 0.1s ease",
+    overflow: "hidden",
+    ["&:hover"]: {
+      background: selected ? theme.select.main : theme.relative.light,
+      borderRadius: theme.radius.small,
+    },
+  }),
+);
 
 const Thumbnail = styled("div")(() => ({
   width: 20,

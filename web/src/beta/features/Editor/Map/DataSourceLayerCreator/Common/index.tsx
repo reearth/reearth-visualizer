@@ -1,4 +1,3 @@
-import { FC } from "react";
 
 import {
   InputGroup,
@@ -17,6 +16,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
+import { FC } from "react";
 
 import { DataProps } from "..";
 
@@ -46,7 +46,8 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       <ContentWrapper>
         <InputGroup
           label={t("File Format")}
-          description={t("File format of the data source you want to add.")}>
+          description={t("File format of the data source you want to add.")}
+        >
           <Selector
             value={fileFormat}
             options={fileFormatOptions}
@@ -75,7 +76,11 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         {sourceType == "url" && (
           <InputGroup label={t("Resource URL")}>
             <InputsWrapper>
-              <TextInput placeholder={t("Input Text")} value={value} onChange={handleValueChange} />
+              <TextInput
+                placeholder={t("Input Text")}
+                value={value}
+                onChange={handleValueChange}
+              />
             </InputsWrapper>
           </InputGroup>
         )}
@@ -93,7 +98,10 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         )}
         {fileFormat === "geojson" && (
           <InputGroup label={t("Prioritize Performance")}>
-            <Switcher value={prioritizePerformance} onChange={v => setPrioritizePerformance(v)} />
+            <Switcher
+              value={prioritizePerformance}
+              onChange={(v) => setPrioritizePerformance(v)}
+            />
           </InputGroup>
         )}
       </ContentWrapper>
@@ -103,7 +111,9 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           appearance="primary"
           onClick={handleSubmit}
           disabled={
-            ((sourceType === "url" || sourceType === "value" || sourceType === "local") &&
+            ((sourceType === "url" ||
+              sourceType === "value" ||
+              sourceType === "local") &&
               !value) ||
             !isValidExtension()
           }

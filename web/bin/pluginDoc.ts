@@ -83,7 +83,7 @@ function renderHead(p: P, linkable: (name: string) => boolean): string {
 function renderType(
   type: string,
   required: boolean,
-  linkable: (name: string) => boolean
+  linkable: (name: string) => boolean,
 ) {
   const ts = split(type, [
     ") => ",
@@ -101,7 +101,7 @@ function renderType(
         ? {
             link: s,
           }
-        : s
+        : s,
     )
     .map((s) =>
       typeof s === "string"
@@ -110,7 +110,7 @@ function renderType(
           ? `[${s.link}](#${s.link})`
           : "s" in s
             ? s.s
-            : ""
+            : "",
     )
     .join("");
   const func = / => /.test(type);

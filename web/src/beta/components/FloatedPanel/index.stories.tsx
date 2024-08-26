@@ -9,7 +9,7 @@ const meta: Meta<Props> = {
 
 export default meta;
 
-const Template: Story<Props> = args => <FloatedPanel {...args} />;
+const Template: Story<Props> = (args) => <FloatedPanel {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

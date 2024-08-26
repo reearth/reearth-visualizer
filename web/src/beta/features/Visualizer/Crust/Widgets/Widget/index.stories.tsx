@@ -10,7 +10,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => <Widget {...args} />;
+export const Default: Story<Props> = (args) => <Widget {...args} />;
 
 Default.args = {
   widget: {

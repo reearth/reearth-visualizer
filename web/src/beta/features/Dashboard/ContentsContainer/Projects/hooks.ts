@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState, MouseEvent, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
-import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
+import {
+  autoFillPage,
+  onScrollToBottom,
+} from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
 import {
   ProjectSortField,
@@ -10,6 +11,15 @@ import {
   SortDirection,
   Visualizer,
 } from "@reearth/services/gql";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  MouseEvent,
+  useEffect,
+  useRef,
+} from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Project } from "../../type";
 
@@ -17,10 +27,16 @@ const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-vi
 
 const PROJECTS_PER_PAGE = 16;
 
-export type SortType = "date" | "date-reversed" | "name" | "name-reverse" | "date-updated";
+export type SortType =
+  | "date"
+  | "date-reversed"
+  | "name"
+  | "name-reverse"
+  | "date-updated";
 
 export default (workspaceId?: string) => {
-  const { useProjectsQuery, useUpdateProject, useCreateProject } = useProjectFetcher();
+  const { useProjectsQuery, useUpdateProject, useCreateProject } =
+    useProjectFetcher();
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState<string>();
@@ -28,20 +44,26 @@ export default (workspaceId?: string) => {
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const { projects, loading, isRefetching, hasMoreProjects, endCursor, fetchMore } =
-    useProjectsQuery({
-      teamId: workspaceId || "",
-      pagination: {
-        first: pagination(sortValue).first,
-      },
-      sort: pagination(sortValue).sortBy,
-      keyword: searchTerm,
-    });
+  const {
+    projects,
+    loading,
+    isRefetching,
+    hasMoreProjects,
+    endCursor,
+    fetchMore,
+  } = useProjectsQuery({
+    teamId: workspaceId || "",
+    pagination: {
+      first: pagination(sortValue).first,
+    },
+    sort: pagination(sortValue).sortBy,
+    keyword: searchTerm,
+  });
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
-      .filter(project => project?.coreSupport === true)
-      .map<Project | undefined>(project =>
+      .filter((project) => project?.coreSupport === true)
+      .map<Project | undefined>((project) =>
         project
           ? {
               id: project.id,
@@ -109,7 +131,10 @@ export default (workspaceId?: string) => {
 
   // favourite projects
   const favoriteProjects: Project[] = useMemo(
-    () => (filtedProjects ? filtedProjects.filter(project => !!project?.starred) : []),
+    () =>
+      filtedProjects
+        ? filtedProjects.filter((project) => !!project?.starred)
+        : [],
     [filtedProjects],
   );
 
@@ -164,7 +189,9 @@ export default (workspaceId?: string) => {
     (e?: MouseEvent, projectId?: string) => {
       e?.stopPropagation();
       if (projectId) {
-        setSelectedProject(filtedProjects.find(project => project.id === projectId));
+        setSelectedProject(
+          filtedProjects.find((project) => project.id === projectId),
+        );
       } else {
         setSelectedProject(undefined);
       }
@@ -174,7 +201,9 @@ export default (workspaceId?: string) => {
 
   // layout
   const [layout, setLayout] = useState(
-    ["grid", "list"].includes(localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "")
+    ["grid", "list"].includes(
+      localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "",
+    )
       ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
       : "grid",
   );

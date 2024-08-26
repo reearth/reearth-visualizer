@@ -1,7 +1,7 @@
-import { FC, ReactNode } from "react";
 
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
+import { FC, ReactNode } from "react";
 
 export type ModalPanelProps = {
   title?: string;
@@ -25,7 +25,13 @@ export const ModalPanel: FC<ModalPanelProps> = ({
       {appearance !== "simple" && (
         <HeaderWrapper>
           <Title>{title}</Title>
-          <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
+          <Button
+            iconButton
+            icon="close"
+            size="small"
+            onClick={onCancel}
+            appearance="simple"
+          />
         </HeaderWrapper>
       )}
       {layout === "common" ? (
@@ -33,7 +39,11 @@ export const ModalPanel: FC<ModalPanelProps> = ({
       ) : (
         <Content>{children}</Content>
       )}
-      {actions && <ActionWrapper showBorder={appearance !== "simple"}>{actions}</ActionWrapper>}
+      {actions && (
+        <ActionWrapper showBorder={appearance !== "simple"}>
+          {actions}
+        </ActionWrapper>
+      )}
     </Wrapper>
   );
 };
@@ -68,17 +78,19 @@ const Content = styled("div")(() => ({
   alignSelf: "stretch",
 }));
 
-const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorder }) => ({
-  padding: theme.spacing.normal,
-  background: theme.bg[1],
-  borderBottomRightRadius: theme.radius.large,
-  borderBottomLeftRadius: theme.radius.large,
-  justifyContent: "flex-end",
-  display: "flex",
-  alignItems: "flex-start",
-  borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
-  gap: theme.spacing.normal,
-}));
+const ActionWrapper = styled("div")<{ showBorder: boolean }>(
+  ({ theme, showBorder }) => ({
+    padding: theme.spacing.normal,
+    background: theme.bg[1],
+    borderBottomRightRadius: theme.radius.large,
+    borderBottomLeftRadius: theme.radius.large,
+    justifyContent: "flex-end",
+    display: "flex",
+    alignItems: "flex-start",
+    borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
+    gap: theme.spacing.normal,
+  }),
+);
 
 const CommonLayout = styled("div")(({ theme }) => ({
   width: "100%",

@@ -22,7 +22,7 @@ const mockClient = new ApolloClient({
     () =>
       new Observable((observer) => {
         observer.complete();
-      })
+      }),
   ),
   cache: new InMemoryCache(),
 });

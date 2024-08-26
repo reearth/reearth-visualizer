@@ -62,7 +62,7 @@ export type Widget = Omit<RawWidget, "layout" | "extended"> & {
 };
 
 export const convertWidgets = (
-  scene?: Partial<Scene>
+  scene?: Partial<Scene>,
 ):
   | {
       floating: Widget[];
@@ -89,8 +89,8 @@ export const convertWidgets = (
                 },
               }
             : b,
-        {}
-      )
+        {},
+      ),
     )
     .reduce((a, b) => ({ ...a, ...b }), {});
 
@@ -98,7 +98,7 @@ export const convertWidgets = (
     ?.filter(
       (w) =>
         w.enabled &&
-        layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating
+        layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating,
     )
     .map(
       (w): Widget => ({
@@ -107,14 +107,14 @@ export const convertWidgets = (
         pluginId: w.pluginId,
         extensionId: w.extensionId,
         property: processProperty(w.property, undefined, undefined, undefined),
-      })
+      }),
     );
 
   const widgets = scene?.widgets
     ?.filter(
       (w) =>
         w.enabled &&
-        !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating
+        !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating,
     )
     .map(
       (w): Widget => ({
@@ -123,7 +123,7 @@ export const convertWidgets = (
         pluginId: w.pluginId,
         extensionId: w.extensionId,
         property: processProperty(w.property, undefined, undefined, undefined),
-      })
+      }),
     );
 
   const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone | undefined => {
@@ -139,7 +139,7 @@ export const convertWidgets = (
   };
 
   const widgetSection = (
-    section?: Maybe<WidgetSectionType>
+    section?: Maybe<WidgetSectionType>,
   ): WidgetSection | undefined => {
     const top = widgetArea(section?.top);
     const middle = widgetArea(section?.middle);
@@ -196,7 +196,7 @@ export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
   orig?: PropertyFragmentFragment | null | undefined,
   linkedDatasetId?: string | null | undefined,
-  datasets?: DatasetMap | null | undefined
+  datasets?: DatasetMap | null | undefined,
 ): P | undefined => {
   const schema = orig?.schema || parent?.schema;
   if (!schema) return;
@@ -217,7 +217,7 @@ export const processProperty = (
         parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
       },
     }),
-    {}
+    {},
   );
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
@@ -234,7 +234,7 @@ export const processProperty = (
               undefined,
               undefined,
               linkedDatasetId,
-              datasets
+              datasets,
             ),
           ];
         }
@@ -252,7 +252,7 @@ export const processProperty = (
                 g,
                 undefined,
                 linkedDatasetId,
-                datasets
+                datasets,
               ),
               id: g.id,
             })),
@@ -270,13 +270,13 @@ export const processProperty = (
               parent,
               orig,
               linkedDatasetId,
-              datasets
+              datasets,
             ),
           ];
         }
         return [key, null];
       })
-      .filter(([, value]) => !!value)
+      .filter(([, value]) => !!value),
   );
 
   return mergedProperty;
@@ -287,7 +287,7 @@ const processPropertyGroups = (
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined,
   linkedDatasetId: string | null | undefined,
-  datasets: DatasetMap | null | undefined
+  datasets: DatasetMap | null | undefined,
 ): any => {
   const allFields: Record<
     string,
@@ -305,7 +305,7 @@ const processPropertyGroups = (
         orig: original?.fields.find((i) => i.fieldId === b.fieldId),
       },
     }),
-    {}
+    {},
   );
 
   return Object.fromEntries(
@@ -323,14 +323,14 @@ const processPropertyGroups = (
               datasets,
               datasetSchemaId,
               linkedDatasetId,
-              datasetFieldId
+              datasetFieldId,
             ),
           ];
         }
 
         return [key, valueFromGQL(used.value, used.type)?.value];
       })
-      .filter(([, value]) => typeof value !== "undefined" && value !== null)
+      .filter(([, value]) => typeof value !== "undefined" && value !== null),
   );
 };
 
@@ -338,7 +338,7 @@ export const datasetValue = (
   datasets: DatasetMap | null | undefined,
   datasetSchemaId: string,
   datasetId: string,
-  fieldId: string
+  fieldId: string,
 ) => {
   const dataset = datasets?.[datasetSchemaId];
   if (!dataset?.schema) return;
@@ -389,11 +389,11 @@ export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
-  infoboxBlockNames?: Record<string, string>
+  infoboxBlockNames?: Record<string, string>,
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      (a) => a.id === id
+      (a) => a.id === id,
     )?.value;
     if (typeof layerStyleValue === "object") {
       try {
@@ -432,7 +432,7 @@ export function processLayers(
       infobox: convertInfobox(
         nlsLayer.infobox,
         parent?.infobox,
-        infoboxBlockNames
+        infoboxBlockNames,
       ),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,

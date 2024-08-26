@@ -1,10 +1,10 @@
-import { FC, useCallback, useContext, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useContext, useState } from "react";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 
@@ -20,7 +20,10 @@ type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -56,7 +59,7 @@ const Content: FC<Props> = ({
         setSelected(itemId);
         return;
       }
-      const item = layerButtons.find(i => i.id === itemId);
+      const item = layerButtons.find((i) => i.id === itemId);
 
       if (!item?.showLayers?.value) return;
 
@@ -117,15 +120,17 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   maxWidth: "400px",
 }));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
-  ({ color, bgColor, userSelected, theme }) => ({
-    color: userSelected ? bgColor ?? theme.content.strong : color,
-    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
-    borderColor: color,
+const StyledButton = styled(Button)<{
+  color?: string;
+  bgColor?: string;
+  userSelected?: boolean;
+}>(({ color, bgColor, userSelected, theme }) => ({
+  color: userSelected ? (bgColor ?? theme.content.strong) : color,
+  backgroundColor: userSelected ? (color ?? theme.primary.main) : bgColor,
+  borderColor: color,
 
-    ":hover": {
-      color: bgColor,
-      backgroundColor: color ?? theme.primary.main,
-    },
-  }),
-);
+  ":hover": {
+    color: bgColor,
+    backgroundColor: color ?? theme.primary.main,
+  },
+}));

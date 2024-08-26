@@ -74,7 +74,7 @@ export default ({
   const [validAlias, setValidAlias] = useState(false);
   const alias = useMemo(
     () => project?.alias ?? generateAlias(),
-    [project?.alias, generateAlias]
+    [project?.alias, generateAlias],
   );
 
   const [
@@ -107,7 +107,7 @@ export default ({
         checkProjectAlias({ variables: { alias: a } });
       }
     },
-    [project?.alias, checkProjectAlias]
+    [project?.alias, checkProjectAlias],
   );
 
   useEffect(() => {
@@ -116,7 +116,7 @@ export default ({
         !!project &&
         !!checkProjectAliasData &&
         (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
-          checkProjectAliasData.checkProjectAlias.available)
+          checkProjectAliasData.checkProjectAlias.available),
     );
   }, [validatingAlias, checkProjectAliasData, project]);
 
@@ -127,7 +127,7 @@ export default ({
         : project?.publishmentStatus === "LIMITED"
           ? "limited"
           : "unpublished",
-    [project?.publishmentStatus]
+    [project?.publishmentStatus],
   );
 
   const handleProjectPublish = useCallback(
@@ -138,7 +138,7 @@ export default ({
         await usePublishProject(publishStatus, project?.id, alias);
       }
     },
-    [project?.id, selectedProjectType, usePublishStory, usePublishProject]
+    [project?.id, selectedProjectType, usePublishStory, usePublishProject],
   );
 
   const handleModalOpen = useCallback((p: publishingType) => {

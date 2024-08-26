@@ -1,4 +1,3 @@
-import { FC, useState } from "react";
 
 import {
   Button,
@@ -11,6 +10,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useState } from "react";
 
 import { type PluginItem } from ".";
 
@@ -54,13 +54,19 @@ const PluginListItem: FC<PluginListItemProps> = ({
         <Button
           appearance={isInstalled && hovered ? "dangerous" : "secondary"}
           icon={isInstalled ? (hovered ? "trash" : "check") : "install"}
-          title={isInstalled ? (hovered ? t("Uninstall") : t("Installed")) : t("Install")}
+          title={
+            isInstalled
+              ? hovered
+                ? t("Uninstall")
+                : t("Installed")
+              : t("Install")
+          }
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           minWidth={153}
           onClick={
             isInstalled
-              ? e => {
+              ? (e) => {
                   setIsModalOpen(true);
                   e.stopPropagation();
                 }
@@ -88,7 +94,8 @@ const PluginListItem: FC<PluginListItemProps> = ({
                   uninstallPlugin(pluginId);
                 }}
               />,
-            ]}>
+            ]}
+          >
             <WarningIcon>
               <Icon icon="warning" size={24} />
             </WarningIcon>
@@ -97,7 +104,9 @@ const PluginListItem: FC<PluginListItemProps> = ({
                 "You are uninstalling the selected plugin. The data used by this plugin may also be deleted.",
               )}
             </Typography>
-            <Typography size="body">{t("Please be sure before uninstalling.")}</Typography>
+            <Typography size="body">
+              {t("Please be sure before uninstalling.")}
+            </Typography>
           </ModalPanel>
         </Modal>
       </Header>
@@ -108,7 +117,8 @@ const PluginListItem: FC<PluginListItemProps> = ({
               backgroundColor={theme.bg.base}
               styles={{
                 color: theme.content.main,
-              }}>
+              }}
+            >
               {bodyMarkdown}
             </Markdown>
           ) : (

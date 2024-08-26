@@ -1,8 +1,8 @@
-import { FC, useCallback } from "react";
 
 import { Button, PopupPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback } from "react";
 
 import TripletInputField from "../TripletInputField";
 
@@ -32,7 +32,8 @@ const CapturePanel: FC<PanelProps> = ({ camera, onSave, onClose }) => {
             onClick={handleSave}
           />
         </ButtonWrapper>
-      }>
+      }
+    >
       <GroupWrapper>
         <TripletInputField
           values={[camera?.lat ?? 0, camera?.lng ?? 0, camera?.height ?? 0]}

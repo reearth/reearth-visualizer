@@ -1,6 +1,6 @@
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
-import { styled, useTheme } from "@reearth/services/theme";
 
 import Icons from "./icons";
 
@@ -13,7 +13,12 @@ export type IconProps = {
   className?: string;
 };
 
-export const Icon: FC<IconProps> = ({ icon, size = "normal", color, className }) => {
+export const Icon: FC<IconProps> = ({
+  icon,
+  size = "normal",
+  color,
+  className,
+}) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
     const SvgComponent = Icons[icon as IconName];
@@ -22,12 +27,16 @@ export const Icon: FC<IconProps> = ({ icon, size = "normal", color, className })
       color?: string;
       size: "large" | "normal" | "small" | number;
     }>`
-      width: ${({ size }) => `${typeof size === "string" ? theme.icon[size] : size}px`};
-      height: ${({ size }) => `${typeof size === "string" ? theme.icon[size] : size}px`};
+      width: ${({ size }) =>
+        `${typeof size === "string" ? theme.icon[size] : size}px`};
+      height: ${({ size }) =>
+        `${typeof size === "string" ? theme.icon[size] : size}px`};
       color: ${({ color }) => color};
       transition-property: color, background;
     `;
   }, [icon, theme]);
 
-  return SvgIcon ? <SvgIcon size={size} color={color} className={className} /> : null;
+  return SvgIcon ? (
+    <SvgIcon size={size} color={color} className={className} />
+  ) : null;
 };

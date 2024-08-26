@@ -44,14 +44,14 @@ export default function ColorPicker({
       x: (selfColor.hsv.s / 100) * WIDTH,
       y: ((100 - selfColor.hsv.v) / 100) * HEIGHT,
     }),
-    [selfColor.hsv.s, selfColor.hsv.v]
+    [selfColor.hsv.s, selfColor.hsv.v],
   );
 
   const huePosition = useMemo(
     () => ({
       x: (selfColor.hsv.h / 360) * WIDTH,
     }),
-    [selfColor.hsv]
+    [selfColor.hsv],
   );
 
   const onSetHex = (hex: string) => {
@@ -261,7 +261,7 @@ function hex2rgb(hex: string): RGB {
     hex
       .replace(
         /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-        (_m, r, g, b) => "#" + r + r + g + g + b + b
+        (_m, r, g, b) => "#" + r + r + g + g + b + b,
       )
       .substring(1)
       .match(/.{2}/g) || []
@@ -319,7 +319,7 @@ function rgb2hex({ b, g, r }: RGB): string {
 
 function transformColor<M extends keyof Color, C extends Color[M]>(
   format: M,
-  color: C
+  color: C,
 ): Color {
   let hex: Color["hex"] = toHex("#121212");
   let rgb: Color["rgb"] = hex2rgb(hex);

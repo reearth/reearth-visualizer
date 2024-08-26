@@ -1,10 +1,10 @@
+import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
+import { styled } from "@reearth/services/theme";
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import { ReactNode, useRef, useCallback, useMemo } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
-import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
@@ -15,7 +15,14 @@ export type Props = {
   onClose?: () => void;
 };
 
-const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, children }) => {
+const Modal: React.FC<Props> = ({
+  className,
+  size,
+  isVisible,
+  title,
+  onClose,
+  children,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   useClickAway(ref, () => onClose?.());
 
@@ -44,7 +51,9 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, ch
               <ModalTitle size="body" weight="regular" customColor>
                 {title}
               </ModalTitle>
-              {onClose && <CloseIcon icon="cancel" size={16} onClick={onClose} />}
+              {onClose && (
+                <CloseIcon icon="cancel" size={16} onClick={onClose} />
+              )}
             </HeaderWrapper>
           )}
           <InnerWrapper>{children}</InnerWrapper>
@@ -65,7 +74,8 @@ const Bg = styled.div<{ state: TransitionStatus }>`
   overflow: auto;
   transition: ${({ state }) =>
     state === "entering" || state === "exiting" ? "all 0.3s ease" : ""};
-  opacity: ${({ state }) => (state === "entered" || state === "entering" ? 1 : 0)};
+  opacity: ${({ state }) =>
+    state === "entered" || state === "entering" ? 1 : 0};
 `;
 
 const CenteredWrapper = styled.div<{ width?: string }>`

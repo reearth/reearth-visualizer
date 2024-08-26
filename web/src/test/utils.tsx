@@ -28,7 +28,7 @@ vitest.mock("react-inlinesvg", () => {
 const render = (
   ui: React.ReactElement,
   queryMocks?: readonly MockedResponse<Record<string, any>>[],
-  { ...renderOptions } = {}
+  { ...renderOptions } = {},
 ) => {
   const Wrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (

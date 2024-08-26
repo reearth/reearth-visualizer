@@ -10,7 +10,7 @@ export default (value: unknown | undefined) => {
   >(undefined);
 
   const [evaluatedResult, setEvaluatedResult] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   const visualizer = useVisualizer();
@@ -45,7 +45,7 @@ export default (value: unknown | undefined) => {
           expression: currentValue,
         },
         undefined,
-        simpleFeature
+        simpleFeature,
       );
       if (
         (es && typeof es === "string") ||

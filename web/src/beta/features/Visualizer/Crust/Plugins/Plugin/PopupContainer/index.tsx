@@ -52,7 +52,7 @@ const PopupContainer: ForwardRefRenderFunction<
             innerRef.current.style.top = `${y}px`;
           }
         });
-      }
+      },
     );
   }, [shownPluginPopupInfo]);
 

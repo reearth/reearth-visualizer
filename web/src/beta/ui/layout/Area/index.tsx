@@ -1,3 +1,6 @@
+
+import { IconButton } from "@reearth/beta/lib/reearth-ui";
+import { styled } from "@reearth/services/theme";
 import {
   MouseEvent as ReactMouseEvent,
   ReactNode,
@@ -10,9 +13,6 @@ import {
   useRef,
   useState,
 } from "react";
-
-import { IconButton } from "@reearth/beta/lib/reearth-ui";
-import { styled } from "@reearth/services/theme";
 
 import { Panel } from "../Panel";
 
@@ -74,8 +74,12 @@ export const Area = forwardRef<AreaRef, AreaProps>(
     },
     ref,
   ) => {
-    const sizeStorageKey = storageId ? `reearth-visualizer-${storageId}-size` : undefined;
-    const collapsedStorageKey = storageId ? `reearth-visualizer-${storageId}-collapsed` : undefined;
+    const sizeStorageKey = storageId
+      ? `reearth-visualizer-${storageId}-size`
+      : undefined;
+    const collapsedStorageKey = storageId
+      ? `reearth-visualizer-${storageId}-collapsed`
+      : undefined;
 
     const [size, setSize] = useState({
       width: Number(
@@ -95,7 +99,9 @@ export const Area = forwardRef<AreaRef, AreaProps>(
     });
 
     const [collapsed, setCollapsed] = useState<boolean>(
-      collapsedStorageKey ? localStorage.getItem(collapsedStorageKey) === "1" : false,
+      collapsedStorageKey
+        ? localStorage.getItem(collapsedStorageKey) === "1"
+        : false,
     );
 
     const resizableRef = useRef<HTMLDivElement>(null);
@@ -112,20 +118,20 @@ export const Area = forwardRef<AreaRef, AreaProps>(
 
         const rect = resizableRef.current.getBoundingClientRect();
 
-        setSize(prevSize => {
+        setSize((prevSize) => {
           let width =
             resizableEdge === "right"
               ? e.clientX - rect.left + 1
               : resizableEdge === "left"
-              ? rect.right - e.clientX + 1
-              : prevSize.width;
+                ? rect.right - e.clientX + 1
+                : prevSize.width;
 
           let height =
             resizableEdge === "bottom"
               ? e.clientY - rect.top + 1
               : resizableEdge === "top"
-              ? rect.bottom - e.clientY + 1
-              : prevSize.height;
+                ? rect.bottom - e.clientY + 1
+                : prevSize.height;
 
           if (
             (resizableEdge === "left" || resizableEdge === "right") &&
@@ -180,7 +186,13 @@ export const Area = forwardRef<AreaRef, AreaProps>(
           };
         });
       },
-      [isResizing, resizableEdge, sizeStorageKey, collapsedStorageKey, direction],
+      [
+        isResizing,
+        resizableEdge,
+        sizeStorageKey,
+        collapsedStorageKey,
+        direction,
+      ],
     );
 
     const onMouseUp = () => {
@@ -206,13 +218,14 @@ export const Area = forwardRef<AreaRef, AreaProps>(
       if (!onResize) return;
       const area = resizableRef.current;
       if (!area) return;
-      const areaObserver = new ResizeObserver(entries => {
+      const areaObserver = new ResizeObserver((entries) => {
         if (!entries || entries.length === 0) return;
         const { width, height } = entries[0].contentRect;
         const areaRect = resizableRef.current?.getBoundingClientRect();
         const windowRect = windowRef?.current?.getBoundingClientRect();
         const top = areaRect && windowRect ? areaRect.top - windowRect.top : 0;
-        const left = areaRect && windowRect ? areaRect.left - windowRect.left : 0;
+        const left =
+          areaRect && windowRect ? areaRect.left - windowRect.left : 0;
         onResize({ width, height, top, left });
       });
       areaObserver.observe(area);
@@ -224,8 +237,10 @@ export const Area = forwardRef<AreaRef, AreaProps>(
 
     const isValidEdge = useMemo(
       () =>
-        (direction === "row" && (resizableEdge === "top" || resizableEdge === "bottom")) ||
-        (direction === "column" && (resizableEdge === "left" || resizableEdge === "right")),
+        (direction === "row" &&
+          (resizableEdge === "top" || resizableEdge === "bottom")) ||
+        (direction === "column" &&
+          (resizableEdge === "left" || resizableEdge === "right")),
       [direction, resizableEdge],
     );
 
@@ -234,12 +249,21 @@ export const Area = forwardRef<AreaRef, AreaProps>(
       if (collapsedStorageKey) {
         localStorage.setItem(collapsedStorageKey, "0");
       }
-      setSize(prevSize => {
-        const w = direction === "column" ? initialWidth ?? DEFAULT_WIDTH : prevSize.width;
-        const h = direction === "row" ? initialHeight ?? DEFAULT_HEIGHT : prevSize.height;
+      setSize((prevSize) => {
+        const w =
+          direction === "column"
+            ? (initialWidth ?? DEFAULT_WIDTH)
+            : prevSize.width;
+        const h =
+          direction === "row"
+            ? (initialHeight ?? DEFAULT_HEIGHT)
+            : prevSize.height;
 
         if (sizeStorageKey) {
-          localStorage.setItem(sizeStorageKey, direction === "row" ? h.toString() : w.toString());
+          localStorage.setItem(
+            sizeStorageKey,
+            direction === "row" ? h.toString() : w.toString(),
+          );
         }
 
         return {
@@ -247,14 +271,20 @@ export const Area = forwardRef<AreaRef, AreaProps>(
           height: h,
         };
       });
-    }, [direction, sizeStorageKey, collapsedStorageKey, initialWidth, initialHeight]);
+    }, [
+      direction,
+      sizeStorageKey,
+      collapsedStorageKey,
+      initialWidth,
+      initialHeight,
+    ]);
 
     const collapse = useCallback(() => {
       setCollapsed(true);
       if (collapsedStorageKey) {
         localStorage.setItem(collapsedStorageKey, "1");
       }
-      setSize(prevSize => {
+      setSize((prevSize) => {
         const width = direction === "column" ? COLLAPSED_SIZE : prevSize.width;
         const height = direction === "row" ? COLLAPSED_SIZE : prevSize.height;
 
@@ -287,7 +317,8 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         height={size.height}
         backgroundColor={backgroundColor}
         asWrapper={asWrapper}
-        passive={passive}>
+        passive={passive}
+      >
         {!collapsed && children}
         {resizableEdge && isValidEdge && !collapsed && (
           <ResizeHandle
@@ -322,51 +353,66 @@ const StyledArea = styled("div")<{
   backgroundColor?: string;
   asWrapper?: boolean;
   passive?: boolean;
-}>(({ theme, direction, extend, width, height, backgroundColor, asWrapper, passive }) => ({
-  position: "relative",
-  display: "flex",
-  flexDirection: direction,
-  justifyContent: "space-between",
-  height: direction === "row" && !extend ? height : "100%",
-  width: direction === "column" && !extend ? width : "100%",
-  flexGrow: extend ? 1 : 0,
-  flexShrink: extend ? 1 : 0,
-  overflow: "hidden",
-  backgroundColor: backgroundColor
-    ? backgroundColor
-    : asWrapper || passive
-    ? "transparent"
-    : theme.bg.base,
-  boxSizing: "border-box",
-  pointerEvents: asWrapper || passive ? "none" : "auto",
-  ...(!asWrapper && {
-    padding: theme.spacing.micro / 2,
-    gap: theme.spacing.micro,
+}>(
+  ({
+    theme,
+    direction,
+    extend,
+    width,
+    height,
+    backgroundColor,
+    asWrapper,
+    passive,
+  }) => ({
+    position: "relative",
     display: "flex",
     flexDirection: direction,
+    justifyContent: "space-between",
+    height: direction === "row" && !extend ? height : "100%",
+    width: direction === "column" && !extend ? width : "100%",
+    flexGrow: extend ? 1 : 0,
+    flexShrink: extend ? 1 : 0,
+    overflow: "hidden",
+    backgroundColor: backgroundColor
+      ? backgroundColor
+      : asWrapper || passive
+        ? "transparent"
+        : theme.bg.base,
+    boxSizing: "border-box",
+    pointerEvents: asWrapper || passive ? "none" : "auto",
+    ...(!asWrapper && {
+      padding: theme.spacing.micro / 2,
+      gap: theme.spacing.micro,
+      display: "flex",
+      flexDirection: direction,
+    }),
+    maxHeight: "100%",
+    maxWidth: "100%",
   }),
-  maxHeight: "100%",
-  maxWidth: "100%",
-}));
+);
 
-const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(({ edge, color }) => ({
-  position: "absolute",
-  width: edge === "left" || edge === "right" ? 4 : "100%",
-  height: edge === "top" || edge === "bottom" ? 4 : "100%",
-  left: edge === "right" ? "calc(100% - 4px)" : edge === "left" ? "0" : 0,
-  top: edge === "bottom" ? "calc(100% - 4px)" : edge === "top" ? "0" : 0,
-  cursor: edge === "right" || edge === "left" ? "ew-resize" : "ns-resize",
-  zIndex: 1,
-  background: color ?? "none",
-}));
+const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(
+  ({ edge, color }) => ({
+    position: "absolute",
+    width: edge === "left" || edge === "right" ? 4 : "100%",
+    height: edge === "top" || edge === "bottom" ? 4 : "100%",
+    left: edge === "right" ? "calc(100% - 4px)" : edge === "left" ? "0" : 0,
+    top: edge === "bottom" ? "calc(100% - 4px)" : edge === "top" ? "0" : 0,
+    cursor: edge === "right" || edge === "left" ? "ew-resize" : "ns-resize",
+    zIndex: 1,
+    background: color ?? "none",
+  }),
+);
 
-const StyledIconButton = styled(IconButton)<{ vertical?: boolean }>(({ vertical }) => ({
-  height: "100%",
-  width: "100%",
-  ["svg"]: {
-    transform: vertical ? "rotate(90deg)" : "none",
-  },
-}));
+const StyledIconButton = styled(IconButton)<{ vertical?: boolean }>(
+  ({ vertical }) => ({
+    height: "100%",
+    width: "100%",
+    ["svg"]: {
+      transform: vertical ? "rotate(90deg)" : "none",
+    },
+  }),
+);
 
 export const Window = styled("div")(({ theme }) => ({
   flex: 1,

@@ -1,7 +1,7 @@
-import { FC, useEffect, useMemo } from "react";
 
 import { Icon, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useEffect, useMemo } from "react";
 
 import { getIconName } from "../../../Crust/StoryPanel/utils";
 import { InstallableBlock } from "../../types";
@@ -40,12 +40,12 @@ const BlockAddBar: FC<Props> = ({
           },
         };
       }) ?? [],
-    [installableBlocks, onBlockAdd, onBlockOpen]
+    [installableBlocks, onBlockAdd, onBlockOpen],
   );
 
   const persist = useMemo(
     () => alwaysShow || openBlocks,
-    [alwaysShow, openBlocks]
+    [alwaysShow, openBlocks],
   );
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const Bar = styled("div")<{ height?: number; persist?: boolean }>(
       opacity: persist ? "100%" : "0%",
       transition: "opacity 0.4s",
     },
-  })
+  }),
 );
 
 const StyledIcon = styled(Icon)<{ persist?: boolean }>(({ theme }) => ({

@@ -1,17 +1,21 @@
-import { FC, useEffect, useState } from "react";
 
 import { Button, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useEffect, useState } from "react";
 
 import { Workspace } from "../../type";
 
 import ListItem from "./ListItem";
 
-const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => {
+const Members: FC<{ currentWorkspace?: Workspace }> = ({
+  currentWorkspace,
+}) => {
   const t = useT();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredMembers, setFilteredMembers] = useState<Workspace["members"] | null>(null);
+  const [filteredMembers, setFilteredMembers] = useState<
+    Workspace["members"] | null
+  >(null);
 
   const handleMemberSearch = () => {
     if (!currentWorkspace?.members) {
@@ -19,7 +23,7 @@ const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => 
     }
 
     const filtered = currentWorkspace.members.filter(
-      member =>
+      (member) =>
         member?.user?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member?.user?.email?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
@@ -28,7 +32,8 @@ const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => 
 
   const handleSearchInputChange = (value: string) => {
     setSearchQuery(value);
-    if (value === "" && currentWorkspace?.members) setFilteredMembers(currentWorkspace.members);
+    if (value === "" && currentWorkspace?.members)
+      setFilteredMembers(currentWorkspace.members);
   };
 
   useEffect(() => {
@@ -55,10 +60,14 @@ const Members: FC<{ currentWorkspace?: Workspace }> = ({ currentWorkspace }) => 
       </Search>
       <ListWrapper>
         {filteredMembers && filteredMembers?.length > 0 ? (
-          filteredMembers?.map(member => <ListItem key={member.userId} member={member} />)
+          filteredMembers?.map((member) => (
+            <ListItem key={member.userId} member={member} />
+          ))
         ) : (
           <TemplateWrapper>
-            <Typography size="body">{t("No Member match your search.")}</Typography>
+            <Typography size="body">
+              {t("No Member match your search.")}
+            </Typography>
           </TemplateWrapper>
         )}
       </ListWrapper>

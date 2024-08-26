@@ -1,6 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import React, { ReactNode } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
@@ -12,8 +12,10 @@ const Slide: React.FC<Props> = ({ className, children, pos }) => {
   return (
     <Wrapper className={className}>
       <Inner pos={pos}>
-        {React.Children.map(children, child =>
-          React.isValidElement(child) ? <Page key={child.key ?? undefined}>{child}</Page> : null,
+        {React.Children.map(children, (child) =>
+          React.isValidElement(child) ? (
+            <Page key={child.key ?? undefined}>{child}</Page>
+          ) : null,
         )}
       </Inner>
     </Wrapper>

@@ -1,6 +1,6 @@
+import { styled, useTheme } from "@reearth/services/theme";
 import { useState, ReactNode, useCallback } from "react";
 
-import { styled, useTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -26,7 +26,12 @@ const Collapse: React.FC<{
             {title}
           </Text>
           {!alwaysOpen && (
-            <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
+            <ArrowIcon
+              icon="arrowToggle"
+              size={12}
+              color={theme.content.main}
+              opened={opened}
+            />
           )}
         </Header>
       )}
@@ -48,12 +53,13 @@ const Header = styled.div<{ clickable?: boolean }>`
 `;
 
 const ArrowIcon = styled(Icon)<{ opened: boolean }>`
-  transform: rotate(${props => (props.opened ? 90 : 180)}deg);
+  transform: rotate(${(props) => (props.opened ? 90 : 180)}deg);
   transition: all 0.2s;
 `;
 
 const Content = styled.div`
-  padding: ${({ theme }) => `${theme.spacing.largest}px ${theme.spacing.super}px`};
+  padding: ${({ theme }) =>
+    `${theme.spacing.largest}px ${theme.spacing.super}px`};
 `;
 
 export default Collapse;

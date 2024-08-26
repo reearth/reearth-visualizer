@@ -1,14 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Camera } from "@reearth/beta/utils/value";
 import { MapRef, ViewerProperty } from "@reearth/core";
 import { config } from "@reearth/services/config";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default () => {
   // Refrence: hooks of Editor/Visualizer/hooks.ts and Publish/hooks.ts
   const visualizerRef = useRef<MapRef | null>(null);
   const [ready, setReady] = useState(false);
-  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
+  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
+    undefined,
+  );
 
   const engineMeta = useMemo(
     () => ({

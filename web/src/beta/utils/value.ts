@@ -1,8 +1,8 @@
-import { Color } from "cesium";
 
 import { LayerAppearanceTypes } from "@reearth/core";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
+import { Color } from "cesium";
 
 export type LatLng = {
   lat: number;
@@ -171,7 +171,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
 
 export function valueToGQL<T extends ValueType>(
   val: ValueTypes[T] | null | undefined,
-  type: T
+  type: T,
 ): any {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
     return {
@@ -188,12 +188,12 @@ export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
 
 export const valueTypeToGQL = (t: ValueType): GQLValueType | undefined => {
   return (Object.keys(valueTypeMapper) as GQLValueType[]).find(
-    (k) => valueTypeMapper[k] === t
+    (k) => valueTypeMapper[k] === t,
   );
 };
 
 export const toGQLSimpleValue = (
-  v: unknown
+  v: unknown,
 ): string | number | boolean | undefined => {
   return typeof v === "string" ||
     typeof v === "number" ||
@@ -231,7 +231,7 @@ export const toColor = (c?: string) => {
 
   // support alpha
   const m = c.match(
-    /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/
+    /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/,
   );
   if (!m) return Color.fromCssColorString(c);
 

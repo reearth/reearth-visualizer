@@ -1,6 +1,9 @@
-import { useApolloClient, useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
@@ -26,6 +29,7 @@ import {
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useMemo } from "react";
 
 import { useNotification } from "../state";
 
@@ -62,11 +66,19 @@ export default () => {
       notifyOnNetworkStatusChange: true,
     });
 
-    const projects = useMemo(() => data?.projects?.edges.map(e => e.node), [data?.projects]);
+    const projects = useMemo(
+      () => data?.projects?.edges.map((e) => e.node),
+      [data?.projects],
+    );
 
     const hasMoreProjects = useMemo(
-      () => data?.projects.pageInfo?.hasNextPage || data?.projects.pageInfo?.hasPreviousPage,
-      [data?.projects.pageInfo?.hasNextPage, data?.projects.pageInfo?.hasPreviousPage],
+      () =>
+        data?.projects.pageInfo?.hasNextPage ||
+        data?.projects.pageInfo?.hasPreviousPage,
+      [
+        data?.projects.pageInfo?.hasNextPage,
+        data?.projects.pageInfo?.hasPreviousPage,
+      ],
     );
     const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
     const endCursor = useMemo(
@@ -82,7 +94,9 @@ export default () => {
   }, []);
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
-  const [createScene] = useMutation(CREATE_SCENE, { refetchQueries: ["GetProjects"] });
+  const [createScene] = useMutation(CREATE_SCENE, {
+    refetchQueries: ["GetProjects"],
+  });
   const { useCreateStory, useCreateStoryPage } = useStorytellingFetcher();
 
   const useCreateProject = useCallback(
@@ -94,18 +108,22 @@ export default () => {
       description?: string,
       imageUrl?: string,
     ): Promise<MutationReturn<Partial<Project>>> => {
-      const { data: projectResults, errors: projectErrors } = await createNewProject({
-        variables: {
-          teamId: workspaceId,
-          visualizer,
-          name,
-          description: description ?? "",
-          imageUrl: imageUrl ?? "",
-          coreSupport: !!coreSupport,
-        },
-      });
+      const { data: projectResults, errors: projectErrors } =
+        await createNewProject({
+          variables: {
+            teamId: workspaceId,
+            visualizer,
+            name,
+            description: description ?? "",
+            imageUrl: imageUrl ?? "",
+            coreSupport: !!coreSupport,
+          },
+        });
       if (projectErrors || !projectResults?.createProject) {
-        setNotification({ type: "error", text: t("Failed to create project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to create project."),
+        });
 
         return { status: "error" };
       }
@@ -114,7 +132,10 @@ export default () => {
         variables: { projectId: projectResults?.createProject.project.id },
       });
       if (sceneErrors || !sceneResults?.createScene) {
-        setNotification({ type: "error", text: t("Failed to create project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to create project."),
+        });
         return { status: "error" };
       }
 
@@ -124,7 +145,10 @@ export default () => {
         index: 0,
       });
       if (storyErrors || !storyResult?.createStory) {
-        setNotification({ type: "error", text: t("Failed to create project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to create project."),
+        });
         return { status: "error" };
       } else if (storyResult?.createStory?.story.id) {
         const { errors: storyPageErrors } = await useCreateStoryPage({
@@ -141,18 +165,26 @@ export default () => {
         }
       }
 
-      setNotification({ type: "success", text: t("Successfully created project!") });
+      setNotification({
+        type: "success",
+        text: t("Successfully created project!"),
+      });
       return { data: projectResults.createProject.project, status: "success" };
     },
-    [createNewProject, createScene, useCreateStory, t, setNotification, useCreateStoryPage],
+    [
+      createNewProject,
+      createScene,
+      useCreateStory,
+      t,
+      setNotification,
+      useCreateStoryPage,
+    ],
   );
 
-  const [publishProjectMutation, { loading: publishProjectLoading }] = useMutation(
-    PUBLISH_PROJECT,
-    {
+  const [publishProjectMutation, { loading: publishProjectLoading }] =
+    useMutation(PUBLISH_PROJECT, {
       refetchQueries: ["GetProject"],
-    },
-  );
+    });
 
   const usePublishProject = useCallback(
     async (s: PublishStatus, projectId?: string, alias?: string) => {
@@ -166,19 +198,27 @@ export default () => {
 
       if (errors || !data?.publishProject) {
         console.log("GraphQL: Failed to publish project", errors);
-        setNotification({ type: "error", text: t("Failed to publish project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to publish project."),
+        });
 
         return { status: "error" };
       }
 
       setNotification({
-        type: s === "limited" ? "success" : s == "published" ? "success" : "info",
+        type:
+          s === "limited" ? "success" : s == "published" ? "success" : "info",
         text:
           s === "limited"
             ? t("Successfully published your scene!")
             : s == "published"
-            ? t("Successfully published your project with search engine indexing!")
-            : t("Successfully unpublished your scene. Now nobody can access your scene."),
+              ? t(
+                  "Successfully published your project with search engine indexing!",
+                )
+              : t(
+                  "Successfully unpublished your scene. Now nobody can access your scene.",
+                ),
       });
       return { data: data.publishProject.project, status: "success" };
     },
@@ -191,16 +231,24 @@ export default () => {
   const useUpdateProject = useCallback(
     async (input: UpdateProjectInput) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectMutation({ variables: { ...input } });
+      const { data, errors } = await updateProjectMutation({
+        variables: { ...input },
+      });
 
       if (errors || !data?.updateProject) {
         console.log("GraphQL: Failed to update project", errors);
-        setNotification({ type: "error", text: t("Failed to update project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update project."),
+        });
 
         return { status: "error" };
       }
 
-      setNotification({ type: "success", text: t("Successfully updated project!") });
+      setNotification({
+        type: "success",
+        text: t("Successfully updated project!"),
+      });
       return { data: data?.updateProject?.project, status: "success" };
     },
     [updateProjectMutation, t, setNotification],
@@ -212,7 +260,9 @@ export default () => {
   const useArchiveProject = useCallback(
     async (input: ArchiveProjectMutationVariables) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await archiveProjectMutation({ variables: { ...input } });
+      const { data, errors } = await archiveProjectMutation({
+        variables: { ...input },
+      });
 
       if (errors || !data?.updateProject) {
         console.log("GraphQL: Failed to archive project", errors);
@@ -230,7 +280,9 @@ export default () => {
         type: "success",
         text: input.archived
           ? t("Successfully archive project!")
-          : t("Successfully unarchived the project. You can now edit this project."),
+          : t(
+              "Successfully unarchived the project. You can now edit this project.",
+            ),
       });
       return { status: "success" };
     },
@@ -243,39 +295,58 @@ export default () => {
   const useDeleteProject = useCallback(
     async (input: DeleteProjectInput) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await deleteProjectMutation({ variables: { ...input } });
+      const { data, errors } = await deleteProjectMutation({
+        variables: { ...input },
+      });
 
       if (errors || !data?.deleteProject) {
         console.log("GraphQL: Failed to delete project", errors);
-        setNotification({ type: "error", text: t("Failed to delete project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to delete project."),
+        });
 
         return { status: "error" };
       }
 
       apolloCache.evict({ fieldName: "projects" });
 
-      setNotification({ type: "success", text: t("Successfully delete project!") });
+      setNotification({
+        type: "success",
+        text: t("Successfully delete project!"),
+      });
       return { status: "success" };
     },
     [apolloCache, deleteProjectMutation, t, setNotification],
   );
 
-  const [updateProjectBasicAuthMutation] = useMutation(UPDATE_PROJECT_BASIC_AUTH, {
-    refetchQueries: ["GetProject"],
-  });
+  const [updateProjectBasicAuthMutation] = useMutation(
+    UPDATE_PROJECT_BASIC_AUTH,
+    {
+      refetchQueries: ["GetProject"],
+    },
+  );
   const useUpdateProjectBasicAuth = useCallback(
     async (input: UpdateProjectBasicAuthMutationVariables) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectBasicAuthMutation({ variables: { ...input } });
+      const { data, errors } = await updateProjectBasicAuthMutation({
+        variables: { ...input },
+      });
 
       if (errors || !data?.updateProject) {
         console.log("GraphQL: Failed to update project", errors);
-        setNotification({ type: "error", text: t("Failed to update project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update project."),
+        });
 
         return { status: "error" };
       }
 
-      setNotification({ type: "success", text: t("Successfully updated project!") });
+      setNotification({
+        type: "success",
+        text: t("Successfully updated project!"),
+      });
       return { data: data?.updateProject?.project, status: "success" };
     },
     [updateProjectBasicAuthMutation, t, setNotification],
@@ -285,16 +356,24 @@ export default () => {
   const useUpdateProjectAlias = useCallback(
     async (input: UpdateProjectAliasMutationVariables) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectAliasMutation({ variables: { ...input } });
+      const { data, errors } = await updateProjectAliasMutation({
+        variables: { ...input },
+      });
 
       if (errors || !data?.updateProject) {
         console.log("GraphQL: Failed to update project", errors);
-        setNotification({ type: "error", text: t("Failed to update project.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update project."),
+        });
 
         return { status: "error" };
       }
 
-      setNotification({ type: "success", text: t("Successfully updated project!") });
+      setNotification({
+        type: "success",
+        text: t("Successfully updated project!"),
+      });
       return { data: data?.updateProject?.project, status: "success" };
     },
     [updateProjectAliasMutation, t, setNotification],

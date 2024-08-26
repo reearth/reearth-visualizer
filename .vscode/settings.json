@@ -1,7 +1,6 @@
 {
   "go.testEnvFile": "${workspaceRoot}/.env",
   "go.lintTool": "golangci-lint",
-  "editor.formatOnSave": true,
   "yaml.format.enable": false,
   "yaml.completion": true,
   "yaml.validate": true,
@@ -17,15 +16,11 @@
   },
   "json.schemas": [
     {
-      "fileMatch": [
-        "/server/pkg/builtin/manifest.json"
-      ],
+      "fileMatch": ["/server/pkg/builtin/manifest.json"],
       "url": "./server/schemas/plugin_manifest.json"
     },
     {
-      "fileMatch": [
-        "/server/pkg/builtin/manifest_*.json"
-      ],
+      "fileMatch": ["/server/pkg/builtin/manifest_*.json"],
       "url": "./server/schemas/plugin_manifest_translation.json"
     }
   ],
@@ -35,6 +30,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+  "editor.formatOnSave": true,
   "eslint.enable": true,
   "eslint.useFlatConfig": true,
   "prettier.enable": true,

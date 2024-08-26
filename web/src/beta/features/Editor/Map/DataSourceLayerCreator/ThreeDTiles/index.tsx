@@ -1,4 +1,3 @@
-import { FC, useState } from "react";
 
 import {
   InputGroup,
@@ -9,6 +8,7 @@ import {
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import { FC, useState } from "react";
 
 import { DataProps } from "..";
 import { generateTitle } from "../util";
@@ -38,7 +38,11 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       <ContentWrapper>
         <InputGroup label={t("Resource URL")}>
           <InputsWrapper>
-            <TextInput placeholder="https://" value={value} onChange={value => setValue(value)} />
+            <TextInput
+              placeholder="https://"
+              value={value}
+              onChange={(value) => setValue(value)}
+            />
           </InputsWrapper>
         </InputGroup>
       </ContentWrapper>

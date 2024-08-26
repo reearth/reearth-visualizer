@@ -1,8 +1,8 @@
+import Icon from "@reearth/beta/components/Icon";
+import { styled, css } from "@reearth/services/theme";
 import { useRef, useCallback, useEffect, ReactNode } from "react";
 import { usePopper } from "react-popper";
 
-import Icon from "@reearth/beta/components/Icon";
-import { styled, css } from "@reearth/services/theme";
 
 import Portal from "../Portal";
 
@@ -62,17 +62,26 @@ const InsertionBar: React.FC<Props> = ({
         hovered={!!children}
         pos={pos}
         mode={mode}
-        onClick={handleClick}>
-        <InsertLine className="WORKAROUND_INSERTION_BAR" circleVisible={mode === "dragging"} />
+        onClick={handleClick}
+      >
+        <InsertLine
+          className="WORKAROUND_INSERTION_BAR"
+          circleVisible={mode === "dragging"}
+        />
         <ButtonWrapper
           className="WORKAROUND_INSERTION_BAR"
           visible={mode === "visible"}
-          hovered={!!children}>
+          hovered={!!children}
+        >
           <StyledAddButton onClick={handleClick} icon="plusSquare" size={13} />
         </ButtonWrapper>
       </Wrapper>
       <Portal>
-        <div ref={popperElement} style={{ ...styles.popper }} {...attributes.popper}>
+        <div
+          ref={popperElement}
+          style={{ ...styles.popper }}
+          {...attributes.popper}
+        >
           {children}
         </div>
       </Portal>
@@ -88,12 +97,13 @@ const StyledAddButton = styled(Icon)`
 `;
 
 const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
-  display: ${props => (props.visible ? "block" : "none")};
+  display: ${(props) => (props.visible ? "block" : "none")};
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${({ hovered, theme }) => (hovered ? theme.content.withBackground : theme.content.main)};
+  color: ${({ hovered, theme }) =>
+    hovered ? theme.content.withBackground : theme.content.main};
 `;
 
 const InsertLine = styled.div<{ circleVisible?: boolean }>`
@@ -106,7 +116,7 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
   background: ${({ theme }) => theme.select.main};
 
   &::before {
-    display: ${props => (props.circleVisible ? "block" : "none")};
+    display: ${(props) => (props.circleVisible ? "block" : "none")};
     content: "";
     position: absolute;
     left: 0;
@@ -134,14 +144,16 @@ const Wrapper = styled.div<WrapperProps>`
   position: absolute;
   left: 0;
   width: 100%;
-  z-index: ${props => props.theme.zIndexes.visualizer.storyPage.indicator.unselected};
-  top: ${props => (props.pos === "top" ? "0%" : "100%")};
+  z-index: ${(props) =>
+    props.theme.zIndexes.visualizer.storyPage.indicator.unselected};
+  top: ${(props) => (props.pos === "top" ? "0%" : "100%")};
   transform: translateY(-50%);
   height: 15px;
   cursor: pointer;
 
   & .WORKAROUND_INSERTION_BAR {
-    opacity: ${props => (!props.hovered && props.mode === "visible" ? "0" : "1")};
+    opacity: ${(props) =>
+      !props.hovered && props.mode === "visible" ? "0" : "1"};
     transition: all 0.5s;
   }
 

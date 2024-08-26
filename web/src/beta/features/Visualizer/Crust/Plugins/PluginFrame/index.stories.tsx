@@ -99,7 +99,7 @@ export const AutoResize: Story<Props> = (args) => {
         ref.current
           ?.arena()
           ?.evalCode(
-            `"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`
+            `"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`,
           );
       }}
       ref={ref}

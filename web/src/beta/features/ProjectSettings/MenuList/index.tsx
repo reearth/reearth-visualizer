@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
 
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
+import { Link } from "react-router-dom";
 
 export const MenuItem: React.FC<{
   text?: string;
@@ -19,7 +19,11 @@ export const MenuItem: React.FC<{
     </MenuItemWrapper>
   );
 
-  return !linkTo ? content : <StyledLinkButton to={linkTo}>{content}</StyledLinkButton>;
+  return !linkTo ? (
+    content
+  ) : (
+    <StyledLinkButton to={linkTo}>{content}</StyledLinkButton>
+  );
 };
 
 export const MenuList = styled.div`
@@ -40,7 +44,8 @@ const MenuItemWrapper = styled.div<{ active?: boolean }>`
   background-color: ${({ active, theme }) => (active ? theme.select.main : "")};
   transition: all 0.3s ease;
   &:hover {
-    background-color: ${({ active, theme }) => (active ? theme.select.main : theme.bg[2])};
+    background-color: ${({ active, theme }) =>
+      active ? theme.select.main : theme.bg[2]};
   }
 `;
 

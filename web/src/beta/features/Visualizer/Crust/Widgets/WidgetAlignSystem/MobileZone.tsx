@@ -1,9 +1,9 @@
-import { ReactNode, useState, useMemo, useEffect } from "react";
-import { GridSection } from "react-align";
 
 import Icon from "@reearth/beta/components/Icon";
 import Slide from "@reearth/beta/components/Slide";
 import { styled } from "@reearth/services/theme";
+import { ReactNode, useState, useMemo, useEffect } from "react";
+import { GridSection } from "react-align";
 
 import Area, { WidgetAreaType } from "./Area";
 import { WAS_AREAS } from "./constants";
@@ -46,13 +46,13 @@ export default function MobileZone({
     return filterSections(
       zone,
       invisibleWidgetIDs,
-      (s) => s === "center" && children
+      (s) => s === "center" && children,
     );
   }, [zone, children, invisibleWidgetIDs]);
 
   const initialPos = useMemo(
     () => (filteredSections.length === 3 ? 1 : 0),
-    [filteredSections]
+    [filteredSections],
   );
 
   const [pos, setPos] = useState(initialPos);
@@ -97,7 +97,7 @@ export default function MobileZone({
                   renderWidget={renderWidget}
                   onWidgetAreaSelect={onWidgetAreaSelect}
                 />
-              )
+              ),
             )}
           </GridSection>
         ))}

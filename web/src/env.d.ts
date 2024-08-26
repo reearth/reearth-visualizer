@@ -18,8 +18,8 @@ declare global {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-type ImportMetaEnv = {}
+type ImportMetaEnv = {};
 
 type ImportMeta = {
   readonly env: ImportMetaEnv;
-}
+};

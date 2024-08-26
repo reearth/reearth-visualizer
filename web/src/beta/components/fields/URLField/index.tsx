@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import {
+  FILE_FORMATS,
+  IMAGE_FORMATS,
+} from "@reearth/beta/features/Assets/constants";
 import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
 import LayerStyleModal from "@reearth/beta/features/Modals/LayerStyleModal";
@@ -12,6 +14,7 @@ import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import React, { useCallback, useEffect, useState } from "react";
 
 export type Props = {
   value?: string;
@@ -47,7 +50,10 @@ const URLField: React.FC<Props> = ({
         onChange?.(inputValue, name);
       } else if (
         fileType === "asset" &&
-        !(checkIfFileType(inputValue, FILE_FORMATS) || checkIfFileType(inputValue, IMAGE_FORMATS))
+        !(
+          checkIfFileType(inputValue, FILE_FORMATS) ||
+          checkIfFileType(inputValue, IMAGE_FORMATS)
+        )
       ) {
         setNotification({
           type: "error",
@@ -78,7 +84,11 @@ const URLField: React.FC<Props> = ({
 
   return (
     <Property name={name} description={description}>
-      <TextInput value={currentValue} onChange={handleChange} placeholder={t("Not set")} />
+      <TextInput
+        value={currentValue}
+        onChange={handleChange}
+        placeholder={t("Not set")}
+      />
       {fileType === "asset" && (
         <ButtonWrapper>
           <SelectionButton
@@ -95,7 +105,9 @@ const URLField: React.FC<Props> = ({
           />
         </ButtonWrapper>
       )}
-      {fileType === "layerStyle" && <SelectionButton icon="layerStyle" onClick={handleClick} />}
+      {fileType === "layerStyle" && (
+        <SelectionButton icon="layerStyle" onClick={handleClick} />
+      )}
       {open && entityType !== "layerStyle" && (
         <AssetModal
           open={open}

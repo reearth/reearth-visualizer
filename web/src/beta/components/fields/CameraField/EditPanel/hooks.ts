@@ -1,6 +1,6 @@
+import { useT } from "@reearth/services/i18n";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useT } from "@reearth/services/i18n";
 
 import type { Camera, RowType } from "../types";
 import { saveFriendlyCamera, userFriendlyCamera } from "../utils";
@@ -16,7 +16,7 @@ export default ({
 }) => {
   const t = useT();
   const [newCamera, setNewCamera] = useState<Camera | undefined>(
-    camera ? userFriendlyCamera(camera) : undefined
+    camera ? userFriendlyCamera(camera) : undefined,
   );
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default ({
       setNewCamera(updated);
       onFlyTo?.(saveFriendlyCamera(updated));
     },
-    [newCamera, onFlyTo]
+    [newCamera, onFlyTo],
   );
 
   const panelContent: Record<string, RowType> = useMemo(() => {
@@ -58,7 +58,7 @@ export default ({
       if (value === newCamera?.[field]) return;
       handleFieldUpdate(field, value);
     },
-    [newCamera, handleFieldUpdate]
+    [newCamera, handleFieldUpdate],
   );
 
   const handleSave = useCallback(() => {

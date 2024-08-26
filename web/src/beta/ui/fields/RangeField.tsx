@@ -1,7 +1,11 @@
-import { FC, useCallback, useEffect, useState } from "react";
 
-import { NumberInput, NumberInputProps, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  NumberInput,
+  NumberInputProps,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 

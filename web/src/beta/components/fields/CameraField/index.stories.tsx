@@ -19,12 +19,12 @@ export const Default: Story = (args: Props) => {
 
   const handleSave = useCallback(
     (value?: Camera) => updateArgs({ value: value }),
-    [updateArgs]
+    [updateArgs],
   );
 
   const handleFlyTo = useCallback(
     () => updateArgs({ value: undefined }),
-    [updateArgs]
+    [updateArgs],
   );
 
   return (

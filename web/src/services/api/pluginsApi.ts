@@ -1,6 +1,4 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
 import {
   INSTALL_PLUGIN,
   UPGRADE_PLUGIN,
@@ -10,6 +8,7 @@ import {
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT, useLang } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
+import { useCallback, useMemo } from "react";
 
 import { WidgetLayout } from "./widgetsApi";
 
@@ -62,13 +61,13 @@ export default () => {
         () =>
           data?.node?.__typename === "Scene"
             ? (data.node.plugins
-                .map(p => {
+                .map((p) => {
                   if (!p.plugin) return;
 
                   return {
                     id: p.plugin.id,
                     name: p.plugin.name,
-                    extensions: p.plugin.extensions.map(e => {
+                    extensions: p.plugin.extensions.map((e) => {
                       return {
                         pluginId: p.plugin?.id,
                         ...e,
@@ -83,7 +82,7 @@ export default () => {
                       : {},
                   };
                 })
-                .filter(p => !!p) as Plugin[])
+                .filter((p) => !!p) as Plugin[])
             : undefined,
         [data?.node],
       );
@@ -160,19 +159,19 @@ export default () => {
 
       const results = await Promise.all(
         files
-          ? Array.from(files).map(f =>
+          ? Array.from(files).map((f) =>
               uploadPluginMutation({
                 variables: { sceneId: sceneId, file: f },
               }),
             )
-          : Array.from([url]).map(u =>
+          : Array.from([url]).map((u) =>
               uploadPluginMutation({
                 variables: { sceneId: sceneId, url: u },
               }),
             ),
       );
 
-      if (!results || results.some(r => r.errors)) {
+      if (!results || results.some((r) => r.errors)) {
         setNotification({
           type: "error",
           text: t("Failed to install plugin."),

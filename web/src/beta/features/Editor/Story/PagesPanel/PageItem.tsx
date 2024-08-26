@@ -1,4 +1,3 @@
-import { FC, useCallback, useMemo, useState } from "react";
 
 import { getFieldValue } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { TextInput } from "@reearth/beta/lib/reearth-ui";
@@ -7,6 +6,7 @@ import { isEmptyString } from "@reearth/beta/utils/util";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { useStoryPage } from "../context";
 
@@ -17,7 +17,12 @@ interface PageItemProps {
   pageCount?: number;
 }
 
-const PageItem: FC<PageItemProps> = ({ storyPage, pageCount, dragHandleClassName, isDragging }) => {
+const PageItem: FC<PageItemProps> = ({
+  storyPage,
+  pageCount,
+  dragHandleClassName,
+  isDragging,
+}) => {
   const t = useT();
   const {
     selectedStoryPage,
@@ -26,8 +31,11 @@ const PageItem: FC<PageItemProps> = ({ storyPage, pageCount, dragHandleClassName
     handlePropertyValueUpdate,
   } = useStoryPage();
 
-  const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
-    t("Untitled")) as string;
+  const title = (getFieldValue(
+    storyPage.property.items ?? [],
+    "title",
+    "title",
+  ) ?? t("Untitled")) as string;
   const hasEmptySpace = isEmptyString(title);
 
   const [editingPageNameId, setEditingPageNameId] = useState("");
@@ -92,7 +100,9 @@ const PageItem: FC<PageItemProps> = ({ storyPage, pageCount, dragHandleClassName
               onBlur={handleTitleUpdate}
             />
           ) : (
-            <TitleWrapper onDoubleClick={() => setEditingPageNameId(storyPage.id)}>
+            <TitleWrapper
+              onDoubleClick={() => setEditingPageNameId(storyPage.id)}
+            >
               {hasEmptySpace || !title ? t("Untitled") : title}
             </TitleWrapper>
           )

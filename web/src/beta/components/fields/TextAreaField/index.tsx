@@ -1,8 +1,15 @@
-import { debounce } from "lodash-es";
-import { useCallback, useLayoutEffect, useRef, useMemo, useState, useEffect } from "react";
-
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { debounce } from "lodash-es";
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
+
 
 import Property from "..";
 
@@ -71,7 +78,10 @@ const TextAreaField: React.FC<Props> = ({
   );
 };
 
-const StyledTextArea = styled.textarea<{ minHeight: number; disabled: boolean }>`
+const StyledTextArea = styled.textarea<{
+  minHeight: number;
+  disabled: boolean;
+}>`
   padding: 4px 8px;
   width: 100%;
   resize: none;

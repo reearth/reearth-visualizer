@@ -1,8 +1,7 @@
-import React from "react";
-
 import Flex from "@reearth/beta/components/Flex";
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
+import React from "react";
 
 export type Size = "small" | "large";
 
@@ -33,10 +32,13 @@ const Avatar: React.FC<Props> = ({
       size={size}
       avatar={avatar}
       background={background ?? theme.bg[4]}
-      borderRadius={borderRadius}>
+      borderRadius={borderRadius}
+    >
       {innerText && (
         <Text size="h4" color={theme.content.withBackground}>
-          {typeof innerText === "number" ? `+${innerText.toString()}` : innerText.charAt(0)}
+          {typeof innerText === "number"
+            ? `+${innerText.toString()}`
+            : innerText.charAt(0)}
         </Text>
       )}
     </StyledAvatar>
@@ -52,7 +54,8 @@ const StyledAvatar = styled(Flex)<{
   width: ${({ size }) => (size === "large" ? "64px" : "32px")};
   height: ${({ size }) => (size === "large" ? "64px" : "32px")};
   border-radius: ${({ borderRadius }) => borderRadius ?? "50%"};
-  background: ${({ avatar, background }) => (avatar ? `url(${avatar});` : background)};
+  background: ${({ avatar, background }) =>
+    avatar ? `url(${avatar});` : background};
 `;
 
 export default Avatar;

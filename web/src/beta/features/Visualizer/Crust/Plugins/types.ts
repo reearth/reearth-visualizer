@@ -1,5 +1,3 @@
-import type { PropsWithChildren, RefObject } from "react";
-
 import type {
   ComputedFeature,
   SelectedFeatureInfo,
@@ -17,6 +15,8 @@ import type {
   SketchType,
   TimelineManagerRef,
 } from "@reearth/core";
+import type { PropsWithChildren, RefObject } from "react";
+
 
 import { Story } from "../StoryPanel";
 import type { MapRef, InteractionModeType } from "../types";
@@ -54,8 +54,12 @@ export type Props = PropsWithChildren<{
   overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onLayerEdit?: (cb: (e: LayerEditEvent) => void) => void;
-  onLayerSelectWithRectStart?: (cb: (e: LayerSelectWithRectStart) => void) => void;
-  onLayerSelectWithRectMove?: (cb: (e: LayerSelectWithRectMove) => void) => void;
+  onLayerSelectWithRectStart?: (
+    cb: (e: LayerSelectWithRectStart) => void,
+  ) => void;
+  onLayerSelectWithRectMove?: (
+    cb: (e: LayerSelectWithRectMove) => void,
+  ) => void;
   onLayerSelectWithRectEnd?: (cb: (e: LayerSelectWithRectEnd) => void) => void;
   onSketchPluginFeatureCreate?: (cb: SketchEventCallback) => void;
   onSketchTypeChange?: (cb: (type: SketchType | undefined) => void) => void;

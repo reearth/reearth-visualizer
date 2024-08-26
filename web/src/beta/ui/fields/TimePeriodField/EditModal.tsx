@@ -1,9 +1,9 @@
-import { FC, useMemo } from "react";
 
 import { getTimeZone } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { Button, Icon, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import TimePointField from "../TimePointField";
 
@@ -49,7 +49,8 @@ const EditModal: FC<EditPanelProps> = ({
     const currentTimezone = getTimeZone(timePeriodValues?.currentTime);
     const endTimezone = getTimeZone(timePeriodValues?.endTime);
 
-    const checkTimezones = startTimezone === currentTimezone && currentTimezone === endTimezone;
+    const checkTimezones =
+      startTimezone === currentTimezone && currentTimezone === endTimezone;
     return checkTimezones;
   }, [timePeriodValues]);
 
@@ -69,12 +70,13 @@ const EditModal: FC<EditPanelProps> = ({
               onClick={handleSubmit}
             />
           </>
-        }>
+        }
+      >
         <FieldsWrapper>
           <TimePointField
             commonTitle={t("* Start Time")}
             description={t("Start time for the timeline")}
-            onChange={newValue => handleChange(newValue || "", "startTime")}
+            onChange={(newValue) => handleChange(newValue || "", "startTime")}
             value={timePeriodValues?.startTime}
             fieldName={"startTime"}
             disabledField={disabledFields.includes("startTime")}
@@ -84,7 +86,7 @@ const EditModal: FC<EditPanelProps> = ({
           <TimePointField
             commonTitle={t("* Current Time")}
             description={t("Current time should be between start and end time")}
-            onChange={newValue => handleChange(newValue || "", "currentTime")}
+            onChange={(newValue) => handleChange(newValue || "", "currentTime")}
             value={timePeriodValues?.currentTime}
             disabledField={disabledFields.includes("currentTime")}
             fieldName={"currentTime"}
@@ -93,7 +95,7 @@ const EditModal: FC<EditPanelProps> = ({
           />
           <TimePointField
             commonTitle={t("* End Time")}
-            onChange={newValue => handleChange(newValue || "", "endTime")}
+            onChange={(newValue) => handleChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
             value={timePeriodValues?.endTime}
             fieldName={"endTime"}
@@ -104,7 +106,9 @@ const EditModal: FC<EditPanelProps> = ({
           {warning && (
             <Warning>
               <Icon icon="warning" size="large" />
-              {t("Please make sure the Current time must between the Start time and End Time.")}
+              {t(
+                "Please make sure the Current time must between the Start time and End Time.",
+              )}
             </Warning>
           )}
         </FieldsWrapper>

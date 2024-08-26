@@ -1,7 +1,7 @@
+import { render, screen, fireEvent } from "@reearth/test/utils";
 import { useState } from "react";
 import { expect, test, vi, vitest } from "vitest";
 
-import { render, screen, fireEvent } from "@reearth/test/utils";
 
 import { PADDING_HORIZONTAL, BORDER_WIDTH, GAP_HORIZONTAL } from "./constants";
 
@@ -75,7 +75,11 @@ test("it should get time from mouse moved position", () => {
 
   // Check initial position
   expect(
-    Math.abs(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))),
+    Math.abs(
+      Math.trunc(
+        parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10),
+      ),
+    ),
   ).toBe(0);
 
   // It should not move
@@ -83,7 +87,11 @@ test("it should get time from mouse moved position", () => {
     clientX,
   });
   expect(
-    Math.abs(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))),
+    Math.abs(
+      Math.trunc(
+        parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10),
+      ),
+    ),
   ).toBe(0);
 
   // It should move
@@ -110,7 +118,10 @@ test("it should get correct strongScaleHours from amount of scroll", () => {
     deltaY: -50,
   });
   expect(
-    parseInt(slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "", 10),
+    parseInt(
+      slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "",
+      10,
+    ),
   ).toBe(GAP_HORIZONTAL * 1.5);
 
   // Reset gap and increase memory.
@@ -118,14 +129,19 @@ test("it should get correct strongScaleHours from amount of scroll", () => {
     deltaY: -50,
   });
   expect(
-    parseInt(slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "", 10),
+    parseInt(
+      slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "",
+      10,
+    ),
   ).toBe(GAP_HORIZONTAL);
 });
 
 test("it should invoke onPlay or onPlayReversed when play button is clicked", async () => {
   const mockOnPlay = vitest.fn();
   const mockOnPlayReversed = vitest.fn();
-  render(<TimelineWrapper onPlay={mockOnPlay} onPlayReversed={mockOnPlayReversed} />);
+  render(
+    <TimelineWrapper onPlay={mockOnPlay} onPlayReversed={mockOnPlayReversed} />,
+  );
 
   // TODO: get element by label text
   // Click play button

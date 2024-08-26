@@ -33,7 +33,9 @@ export const Action: Story = {
   args: {
     title: "Panel Title",
     children: <MockChild />,
-    actions: <Button extendWidth size="small" title="Apply" appearance="primary" />,
+    actions: (
+      <Button extendWidth size="small" title="Apply" appearance="primary" />
+    ),
   },
 };
 
@@ -48,7 +50,8 @@ export const MultipleActions: Story = {
           justifyContent: "center",
           alignItems: "flex-start",
           gap: "8px",
-        }}>
+        }}
+      >
         <Button extendWidth size="small" title="Cancel" />
         <Button extendWidth size="small" title="Apply" appearance="primary" />
       </div>

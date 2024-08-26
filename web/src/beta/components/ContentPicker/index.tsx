@@ -1,9 +1,9 @@
-import { useRef } from "react";
-import { useClickAway } from "react-use";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
+import { useRef } from "react";
+import { useClickAway } from "react-use";
 
 export interface Item {
   id: string;
@@ -64,7 +64,8 @@ const Wrapper = styled.div`
     height: 0px;
     margin: auto;
     border-style: solid;
-    border-color: transparent transparent ${({ theme }) => theme.bg[2]} transparent;
+    border-color: transparent transparent ${({ theme }) => theme.bg[2]}
+      transparent;
     border-width: 0 10px 10px 10px;
   }
 `;

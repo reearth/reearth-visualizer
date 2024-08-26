@@ -1,4 +1,3 @@
-import { useMemo, type RefObject, useContext } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
@@ -9,6 +8,7 @@ import {
   type Camera,
   type MapRef,
 } from "@reearth/core";
+import { useMemo, type RefObject, useContext } from "react";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -86,7 +86,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    }
+    },
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -94,12 +94,12 @@ export type Props = {
   onInfoboxBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined
+    index?: number | undefined,
   ) => Promise<void>;
   onInfoboxBlockMove?: (
     id: string,
     targetIndex: number,
-    layerId?: string
+    layerId?: string,
   ) => Promise<void>;
   onInfoboxBlockDelete?: (id?: string) => Promise<void>;
   // Infobox
@@ -109,22 +109,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType]
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string
+    schemaGroupId?: string,
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number
+    index?: number,
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string
+    itemId?: string,
   ) => Promise<void>;
   // Story
   showStoryPanel?: boolean;
@@ -137,12 +137,12 @@ export type Props = {
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined
+    index?: number | undefined,
   ) => Promise<void>;
   onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onStoryBlockDelete?: (
     pageId?: string | undefined,
-    blockId?: string | undefined
+    blockId?: string | undefined,
   ) => Promise<void>;
   onPropertyValueUpdate?: (
     propertyId?: string,
@@ -150,7 +150,7 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType]
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
 };
 
@@ -223,7 +223,7 @@ export default function Crust({
       layerId: selectedLayer?.layerId,
       featureId: selectedLayer?.featureId,
     }),
-    [selectedLayer?.featureId, selectedLayer?.layerId]
+    [selectedLayer?.featureId, selectedLayer?.layerId],
   );
 
   const {

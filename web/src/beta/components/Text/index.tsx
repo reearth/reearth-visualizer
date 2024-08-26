@@ -1,4 +1,3 @@
-import { CSSProperties, ReactNode, useMemo } from "react";
 
 import { useTheme } from "@reearth/services/theme";
 import {
@@ -7,8 +6,14 @@ import {
   FontSize,
   UniqueTraits,
 } from "@reearth/services/theme/reearthTheme/common/fonts";
+import { CSSProperties, ReactNode, useMemo } from "react";
 
-type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
+type NonChangeableProperties =
+  | "color"
+  | "fontFamily"
+  | "fontSize"
+  | "lineHeight"
+  | "fontStyle";
 
 type ChangeableProperties = Omit<CSSProperties, NonChangeableProperties>;
 
@@ -46,8 +51,9 @@ const Text: React.FC<Props> = ({
       trait && typographyBySize && trait in typographyBySize
         ? typographyBySize[trait]
         : typographyBySize && weight in typographyBySize
-        ? typographyBySize[weight]
-        : typographyBySize && typographyBySize[size === "h1" ? "medium" : "regular"],
+          ? typographyBySize[weight]
+          : typographyBySize &&
+            typographyBySize[size === "h1" ? "medium" : "regular"],
     [trait, size, typographyBySize, weight],
   );
 
@@ -60,7 +66,8 @@ const Text: React.FC<Props> = ({
         color: customColor ? undefined : color || defaultColor,
       }}
       onClick={onClick}
-      onDoubleClick={onDoubleClick}>
+      onDoubleClick={onDoubleClick}
+    >
       {children}
     </Typography>
   ) : null;

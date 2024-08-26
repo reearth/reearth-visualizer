@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
+import { ReactNode } from "react";
 
 import useHooks, { type Direction, type Gutter } from "./hooks";
 
@@ -49,18 +49,26 @@ const Resizable: React.FC<Props> = ({
                   ? "arrowDown"
                   : "arrowUp"
                 : gutter === "end"
-                ? "arrowRight"
-                : "arrowLeft"
+                  ? "arrowRight"
+                  : "arrowLeft"
             }
           />
         </MinimizedWrapper>
       ) : (
         <StyledResizable direction={direction} size={size} minSize={minSize}>
-          {showTopGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
-          {showLeftGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
+          {showTopGutter && (
+            <Gutter direction={direction} gutter={gutter} {...gutterProps} />
+          )}
+          {showLeftGutter && (
+            <Gutter direction={direction} gutter={gutter} {...gutterProps} />
+          )}
           {children}
-          {showRightGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
-          {showBottomGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
+          {showRightGutter && (
+            <Gutter direction={direction} gutter={gutter} {...gutterProps} />
+          )}
+          {showBottomGutter && (
+            <Gutter direction={direction} gutter={gutter} {...gutterProps} />
+          )}
         </StyledResizable>
       )}
     </>
@@ -76,9 +84,12 @@ const StyledResizable = styled.div<{
   display: flex;
   align-items: stretch;
   position: relative;
-  flex-direction: ${({ direction }) => (direction === "vertical" ? "row" : "column")};
-  width: ${({ direction, size }) => (direction === "horizontal" ? null : `${size}px`)};
-  height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
+  flex-direction: ${({ direction }) =>
+    direction === "vertical" ? "row" : "column"};
+  width: ${({ direction, size }) =>
+    direction === "horizontal" ? null : `${size}px`};
+  height: ${({ direction, size }) =>
+    direction === "vertical" ? null : `${size}px`};
   flex-shrink: 0;
   min-width: ${({ direction, minSize }) =>
     direction === "vertical" && minSize ? `${minSize}px` : null};
@@ -99,10 +110,14 @@ const Gutter = styled.div<{ direction: Direction; gutter: Gutter }>`
   ${({ direction }) => direction === "vertical" && "height: 100%;"}
   ${({ direction }) => direction === "vertical" && "width: 4px;"}
   ${({ direction }) => direction === "vertical" && "cursor: col-resize;"}
-  left: ${({ direction, gutter }) => (direction === "vertical" && gutter === "start" ? 0 : null)};
-  right: ${({ direction, gutter }) => (direction === "vertical" && gutter === "end" ? 0 : null)};
-  top: ${({ direction, gutter }) => (direction === "horizontal" && gutter === "start" ? 0 : null)};
-  bottom: ${({ direction, gutter }) => (direction === "horizontal" && gutter === "end" ? 0 : null)};
+  left: ${({ direction, gutter }) =>
+    direction === "vertical" && gutter === "start" ? 0 : null};
+  right: ${({ direction, gutter }) =>
+    direction === "vertical" && gutter === "end" ? 0 : null};
+  top: ${({ direction, gutter }) =>
+    direction === "horizontal" && gutter === "start" ? 0 : null};
+  bottom: ${({ direction, gutter }) =>
+    direction === "horizontal" && gutter === "end" ? 0 : null};
 `;
 
 const MinimizedWrapper = styled.div<Pick<Props, "direction">>`

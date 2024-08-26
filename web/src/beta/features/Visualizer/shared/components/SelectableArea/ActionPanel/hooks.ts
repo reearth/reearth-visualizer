@@ -1,8 +1,15 @@
-import { Dispatch, MouseEvent, SetStateAction, useCallback, useMemo, useState } from "react";
 
 import { getIconName } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { IconName, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import {
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
 import type { ActionItem } from "../../ActionPanel";
 
@@ -82,7 +89,11 @@ export default ({
       },
     ];
 
-    if (onEditModeToggle && !!contentSettings && Object.keys(contentSettings).length !== 0) {
+    if (
+      onEditModeToggle &&
+      !!contentSettings &&
+      Object.keys(contentSettings).length !== 0
+    ) {
       menuItems.push({
         icon: editMode ? "exit" : "editMode",
         hide: !isSelected,
@@ -99,7 +110,16 @@ export default ({
     }
 
     return menuItems;
-  }, [title, icon, isSelected, editMode, contentSettings, t, onEditModeToggle, onSettingsToggle]);
+  }, [
+    title,
+    icon,
+    isSelected,
+    editMode,
+    contentSettings,
+    t,
+    onEditModeToggle,
+    onSettingsToggle,
+  ]);
 
   const handlePopupMenuClick = useCallback((e: MouseEvent) => {
     e.stopPropagation();

@@ -1,10 +1,10 @@
-import { createContext, useContext, ReactNode } from "react";
 
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
+import { createContext, useContext, ReactNode } from "react";
 
 import { Tab } from "../../Navbar";
 
@@ -32,7 +32,9 @@ export interface StoryPageContextType {
   handleStoryPageUpdate?: (id: string, layers: string[]) => void;
 }
 
-const StoryPageContext = createContext<StoryPageContextType | undefined>(undefined);
+const StoryPageContext = createContext<StoryPageContextType | undefined>(
+  undefined,
+);
 
 export const StoryPageProvider = ({
   value,
@@ -41,7 +43,11 @@ export const StoryPageProvider = ({
   value: StoryPageContextType;
   children: ReactNode;
 }) => {
-  return <StoryPageContext.Provider value={value}>{children}</StoryPageContext.Provider>;
+  return (
+    <StoryPageContext.Provider value={value}>
+      {children}
+    </StoryPageContext.Provider>
+  );
 };
 
 export const useStoryPage = (): StoryPageContextType => {

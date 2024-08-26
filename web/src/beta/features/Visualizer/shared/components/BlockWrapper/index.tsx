@@ -1,4 +1,3 @@
-import { FC, ReactNode, createContext, memo } from "react";
 
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
@@ -6,6 +5,7 @@ import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { FlyTo } from "@reearth/core";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
+import { FC, ReactNode, createContext, memo } from "react";
 
 import Template from "../../../Crust/StoryPanel/Block/Template";
 import { FieldComponent } from "../../hooks/useFieldComponent";
@@ -13,7 +13,9 @@ import SelectableArea from "../SelectableArea";
 
 import useHooks from "./hooks";
 
-export const BlockContext = createContext<{ editMode?: boolean } | undefined>(undefined);
+export const BlockContext = createContext<{ editMode?: boolean } | undefined>(
+  undefined,
+);
 
 type Spacing = {
   top: number;
@@ -48,7 +50,10 @@ type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -119,13 +124,15 @@ const BlockWrapper: FC<Props> = ({
         dndEnabled={dndEnabled}
         dragHandleClassName={dragHandleClassName}
         showSettings={showSettings}
-        contentSettings={isPluginBlock ? pluginBlockSettings : generalBlockSettings}
+        contentSettings={
+          isPluginBlock ? pluginBlockSettings : generalBlockSettings
+        }
         isPluginBlock={isPluginBlock}
         editMode={editMode}
         isEditable={isEditable}
         hideHoverUI={disableSelection}
         overrideGroupId={groupId === "title" ? groupId : undefined}
-        onClick={e => {
+        onClick={(e) => {
           handleBlockClick(e);
         }}
         onDoubleClick={handleDoubleClick}
@@ -136,41 +143,55 @@ const BlockWrapper: FC<Props> = ({
         onPropertyUpdate={onPropertyUpdate}
         onPropertyItemAdd={onPropertyItemAdd}
         onPropertyItemMove={onPropertyItemMove}
-        onPropertyItemDelete={onPropertyItemDelete}>
+        onPropertyItemDelete={onPropertyItemDelete}
+      >
         <Block
           padding={generalBlockSettings?.padding?.value}
           isEditable={isEditable}
-          disableSelection={disableSelection}>
-          {children ?? (isEditable && <Template icon={icon} height={minHeight} />)}
-          {!editMode && isEditable && <Overlay disableSelection={disableSelection} />}
+          disableSelection={disableSelection}
+        >
+          {children ??
+            (isEditable && <Template icon={icon} height={minHeight} />)}
+          {!editMode && isEditable && (
+            <Overlay disableSelection={disableSelection} />
+          )}
         </Block>
-        {editMode && groupId && propertyId && settingsEnabled && !isPluginBlock && (
-          <EditorPanel onClick={stopClickPropagation}>
-            <FieldsWrapper>
-              {Object.keys(defaultSettings).map((fieldId, idx) => {
-                const field = defaultSettings[fieldId];
-                return (
-                  <FieldComponent
-                    key={groupId + propertyId + idx}
-                    propertyId={propertyId}
-                    groupId={groupId}
-                    fieldId={fieldId}
-                    field={field}
-                    onPropertyUpdate={onPropertyUpdate}
-                    onPropertyItemAdd={onPropertyItemAdd}
-                    onPropertyItemMove={onPropertyItemMove}
-                    onPropertyItemDelete={onPropertyItemDelete}
-                  />
-                );
-              })}
-            </FieldsWrapper>
-          </EditorPanel>
-        )}
+        {editMode &&
+          groupId &&
+          propertyId &&
+          settingsEnabled &&
+          !isPluginBlock && (
+            <EditorPanel onClick={stopClickPropagation}>
+              <FieldsWrapper>
+                {Object.keys(defaultSettings).map((fieldId, idx) => {
+                  const field = defaultSettings[fieldId];
+                  return (
+                    <FieldComponent
+                      key={groupId + propertyId + idx}
+                      propertyId={propertyId}
+                      groupId={groupId}
+                      fieldId={fieldId}
+                      field={field}
+                      onPropertyUpdate={onPropertyUpdate}
+                      onPropertyItemAdd={onPropertyItemAdd}
+                      onPropertyItemMove={onPropertyItemMove}
+                      onPropertyItemDelete={onPropertyItemDelete}
+                    />
+                  );
+                })}
+              </FieldsWrapper>
+            </EditorPanel>
+          )}
         {editMode && propertyId && settingsEnabled && isPluginBlock && (
           <EditorPanel onClick={stopClickPropagation}>
             {propertyItemsForPluginBlock?.map((i, idx) => (
               <Collapse title={i.title} key={idx}>
-                <PropertyItem key={i.id} propertyId={propertyId} item={i} onFlyTo={onFlyTo} />
+                <PropertyItem
+                  key={i.id}
+                  propertyId={propertyId}
+                  item={i}
+                  onFlyTo={onFlyTo}
+                />
               </Collapse>
             ))}
           </EditorPanel>
@@ -204,12 +225,14 @@ const EditorPanel = styled("div")(({ theme }) => ({
   background: theme.bg[1],
 }));
 
-const Overlay = styled("div")<{ disableSelection?: boolean }>(({ disableSelection }) => ({
-  position: "absolute",
-  height: "100%",
-  width: "100%",
-  cursor: !disableSelection ? "pointer" : undefined,
-}));
+const Overlay = styled("div")<{ disableSelection?: boolean }>(
+  ({ disableSelection }) => ({
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+    cursor: !disableSelection ? "pointer" : undefined,
+  }),
+);
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",

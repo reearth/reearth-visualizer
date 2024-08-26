@@ -1,3 +1,4 @@
+import { styled, useTheme } from "@reearth/services/theme";
 import React from "react";
 import {
   AccordionItem as AccordionItemComponent,
@@ -7,7 +8,6 @@ import {
   AccordionItemState,
 } from "react-accessible-accordion";
 
-import { styled, useTheme } from "@reearth/services/theme";
 
 import Icon from "../Icon";
 
@@ -19,10 +19,21 @@ export type Props = {
   bg?: string;
 };
 
-const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg }) => {
+const AccordionItem: React.FC<Props> = ({
+  className,
+  id,
+  heading,
+  content,
+  bg,
+}) => {
   const theme = useTheme();
   return (
-    <Wrapper key={id} className={className} bg={bg} data-testid="atoms-accordion-item">
+    <Wrapper
+      key={id}
+      className={className}
+      bg={bg}
+      data-testid="atoms-accordion-item"
+    >
       <AccordionItemComponent>
         <AccordionItemHeading>
           <StyledAccordionItemButton data-testid="atoms-accordion-item-header">

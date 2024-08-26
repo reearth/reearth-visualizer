@@ -1,8 +1,8 @@
-import { FC, useCallback, useState } from "react";
 
 import { Button, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { Asset } from "./types";
 
@@ -14,7 +14,12 @@ export type AssetsSelectorProps = AssetsManagerProps & {
   onAssetSelect?: (url?: string, name?: string) => void;
 };
 
-const AssetsSelector: FC<AssetsSelectorProps> = ({ opened, onClose, onAssetSelect, ...props }) => {
+const AssetsSelector: FC<AssetsSelectorProps> = ({
+  opened,
+  onClose,
+  onAssetSelect,
+  ...props
+}) => {
   const t = useT();
 
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
@@ -43,7 +48,8 @@ const AssetsSelector: FC<AssetsSelectorProps> = ({ opened, onClose, onAssetSelec
               onClick={handleSelectFinish}
             />
           </>
-        }>
+        }
+      >
         <Wrapper>
           <AssetsManager
             {...props}

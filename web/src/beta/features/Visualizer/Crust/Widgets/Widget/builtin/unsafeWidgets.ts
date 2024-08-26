@@ -1,7 +1,7 @@
-import { merge } from "lodash-es";
 
 import { config } from "@reearth/services/config";
 import { type UnsafeBuiltinPlugin } from "@reearth/services/config/unsafeBuiltinPlugin";
+import { merge } from "lodash-es";
 
 import type { Component } from "..";
 
@@ -22,7 +22,7 @@ function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
           widgetId: `${p.id}/${w.extensionId}`,
           ...w,
         };
-      })
+      }),
     )
     .reduce((a, b) => {
       const newObject: Record<string, Component> = {};

@@ -1,9 +1,13 @@
-import { useMemo, useState } from "react";
 
 import { ValueType, ValueTypes, zeroValues } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
-import { Group, GroupListItem, Item } from "@reearth/services/api/propertyApi/utils";
+import {
+  Group,
+  GroupListItem,
+  Item,
+} from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { useMemo, useState } from "react";
 
 import PropertyField from "../PropertyField";
 import PropertyList, { ListItem } from "../PropertyList";
@@ -21,7 +25,7 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
   const isList = item && "items" in item;
   const layerMode = useMemo(() => {
     if (!isList || !item?.representativeField) return false;
-    const sf = item.schemaFields.find(f => f.id === item.representativeField);
+    const sf = item.schemaFields.find((f) => f.id === item.representativeField);
     return sf?.type === "ref" && sf.ui === "layer";
   }, [isList, item?.representativeField, item?.schemaFields]);
 
@@ -30,25 +34,28 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
     [item],
   );
 
-  const selectedItem = isList ? groups.find(g => g.id === selected) : groups[0];
+  const selectedItem = isList
+    ? groups.find((g) => g.id === selected)
+    : groups[0];
 
   const propertyListItems = useMemo(
     () =>
       groups
-        .map<ListItem | undefined>(i => {
+        .map<ListItem | undefined>((i) => {
           if (!i.id) return;
 
           const representativeField = item?.representativeField
-            ? i.fields.find(f => f.id === item.representativeField)
+            ? i.fields.find((f) => f.id === item.representativeField)
             : undefined;
           const nameSchemaField = item?.schemaFields?.find(
-            sf => sf.id === item.representativeField,
+            (sf) => sf.id === item.representativeField,
           );
 
-          const value = representativeField?.value || nameSchemaField?.defaultValue;
+          const value =
+            representativeField?.value || nameSchemaField?.defaultValue;
 
           const choice = nameSchemaField?.choices
-            ? nameSchemaField?.choices?.find(c => c.key === value)?.label
+            ? nameSchemaField?.choices?.find((c) => c.key === value)?.label
             : undefined;
 
           const title = valueToString(choice || value);
@@ -65,10 +72,13 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
   const schemaFields = useMemo(
     () =>
       selectedItem
-        ? item?.schemaFields.map(f => {
-            const field = selectedItem?.fields.find(f2 => f2.id === f.id);
-            const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
-            const condsf = f.only && item.schemaFields.find(f2 => f2.id === f.only?.field);
+        ? item?.schemaFields.map((f) => {
+            const field = selectedItem?.fields.find((f2) => f2.id === f.id);
+            const condf =
+              f.only &&
+              selectedItem?.fields.find((f2) => f2.id === f.only?.field);
+            const condsf =
+              f.only && item.schemaFields.find((f2) => f2.id === f.only?.field);
             const condv =
               condf?.value ??
               condf?.mergedValue ??
@@ -99,8 +109,12 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
         />
       )}
       {!!item &&
-        schemaFields?.map(f => {
-          if ((layerMode && f.schemaField.id === item.representativeField) || f.hidden) return null;
+        schemaFields?.map((f) => {
+          if (
+            (layerMode && f.schemaField.id === item.representativeField) ||
+            f.hidden
+          )
+            return null;
           return (
             <PropertyField
               key={f.schemaField.id}
@@ -119,7 +133,9 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
 
 export default PropertyItem;
 
-const valueToString = (v: ValueTypes[ValueType] | undefined): string | undefined => {
+const valueToString = (
+  v: ValueTypes[ValueType] | undefined,
+): string | undefined => {
   if (typeof v === "string" || typeof v === "number") {
     return v.toString();
   }

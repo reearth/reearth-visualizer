@@ -1,6 +1,6 @@
+import { ariaProps } from "@reearth/beta/utils/aria";
 import { ReactNode, CSSProperties, AriaRole, AriaAttributes } from "react";
 
-import { ariaProps } from "@reearth/beta/utils/aria";
 
 export type Props = {
   className?: string;
@@ -60,7 +60,8 @@ const Flex: React.FC<Props> = ({
       }}
       onClick={onClick}
       data-testid={testId}
-      {...aria}>
+      {...aria}
+    >
       {children}
     </div>
   );

@@ -1,4 +1,3 @@
-import { FC, Fragment, MutableRefObject, ReactNode, useEffect, useMemo } from "react";
 
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import ContentWrapper from "@reearth/beta/features/Visualizer/shared/components/ContentWrapper";
@@ -9,6 +8,14 @@ import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import {
+  FC,
+  Fragment,
+  MutableRefObject,
+  ReactNode,
+  useEffect,
+  useMemo,
+} from "react";
 
 import { BlockProps } from "../../../shared/types";
 import StoryBlock from "../Block";
@@ -32,7 +39,10 @@ type Props = {
   isAutoScrolling?: MutableRefObject<boolean>;
   scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
   children?: ReactNode;
-  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
+  onCurrentPageChange?: (
+    pageId: string,
+    disableScrollIntoView?: boolean,
+  ) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
@@ -52,7 +62,10 @@ type Props = {
   ) => Promise<void>;
   onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
   onBlockDoubleClick?: (blockId?: string) => void;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -66,7 +79,8 @@ type Props = {
   ) => Promise<void>;
   renderBlock?: (block: BlockProps<StoryBlockType>) => ReactNode;
 };
-const PAGE_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-page-drag-handle";
+const PAGE_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-page-drag-handle";
 
 const StoryPanel: FC<Props> = ({
   page,
@@ -122,7 +136,9 @@ const StoryPanel: FC<Props> = ({
       const id = containerRef.current?.id;
       if (id) {
         if (isAutoScrolling?.current) {
-          const wrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+          const wrapperElement = document.getElementById(
+            STORY_PANEL_CONTENT_ELEMENT_ID,
+          );
 
           wrapperElement?.addEventListener("scroll", () => {
             clearTimeout(scrollTimeoutRef.current);
@@ -135,7 +151,13 @@ const StoryPanel: FC<Props> = ({
         }
       }
     }
-  }, [isIntersecting, containerRef, isAutoScrolling, scrollTimeoutRef, onCurrentPageChange]);
+  }, [
+    isIntersecting,
+    containerRef,
+    isAutoScrolling,
+    scrollTimeoutRef,
+    onCurrentPageChange,
+  ]);
 
   const DraggableStoryBlockItems = useMemo(
     () =>
@@ -215,7 +237,8 @@ const StoryPanel: FC<Props> = ({
       onPropertyUpdate={onPropertyUpdate}
       onPropertyItemAdd={onPropertyItemAdd}
       onPropertyItemDelete={onPropertyItemDelete}
-      onPropertyItemMove={onPropertyItemMove}>
+      onPropertyItemMove={onPropertyItemMove}
+    >
       <ContentWrapper
         id={page?.id}
         ref={containerRef}
@@ -223,7 +246,8 @@ const StoryPanel: FC<Props> = ({
         minPaddingInEditor={MIN_STORY_PAGE_PADDING_IN_EDITOR}
         padding={panelSettings?.padding?.value}
         minGapInEditor={MIN_STORY_PAGE_GAP_IN_EDITOR}
-        gap={panelSettings?.gap?.value}>
+        gap={panelSettings?.gap?.value}
+      >
         <PageTitleWrapper>
           {(isEditable || titleProperty?.title?.title?.value) && (
             // The title block is a pseudo block.

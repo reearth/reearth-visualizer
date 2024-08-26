@@ -1,4 +1,3 @@
-import { FC, useCallback, useEffect, useState } from "react";
 
 import AssetsSelector from "@reearth/beta/features/AssetsManager/AssetsSelector";
 import {
@@ -11,6 +10,7 @@ import { TextInput, Button } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
@@ -47,7 +47,7 @@ const AssetField: FC<AssetFieldProps> = ({
       } else if (
         inputMethod === "asset" &&
         ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes(
-          (url.split(".").pop() as FileType) ?? ""
+          (url.split(".").pop() as FileType) ?? "",
         )
       ) {
         setNotification({
@@ -60,7 +60,7 @@ const AssetField: FC<AssetFieldProps> = ({
         onChange?.(url, name);
       }
     },
-    [inputMethod, onChange, setNotification, t]
+    [inputMethod, onChange, setNotification, t],
   );
 
   const { handleFileUpload } = useAssetUpload({

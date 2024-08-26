@@ -54,7 +54,7 @@ const SelectField: React.FC<Props> = ({
 
   const handlePopOver = useCallback(
     () => !disabled && setOpen(!open),
-    [open, disabled]
+    [open, disabled],
   );
 
   const handleClick = useCallback(
@@ -79,7 +79,7 @@ const SelectField: React.FC<Props> = ({
       if (key != value) onChange(key);
       return;
     },
-    [setOpen, onChange, value, multiSelect]
+    [setOpen, onChange, value, multiSelect],
   );
 
   const selected = useMemo(() => {
@@ -101,7 +101,7 @@ const SelectField: React.FC<Props> = ({
           : value === key
         : false;
     },
-    [value]
+    [value],
   );
 
   return (
