@@ -38,7 +38,7 @@ export default ({
   // sort
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>({
     type: "date",
-    reverse: false,
+    reverse: true,
   });
   const t = useT();
 
@@ -46,7 +46,7 @@ export default ({
     if (!sort) return undefined;
     switch (sort.type) {
       case "date":
-        return sort.reverse ? "date-reverse" : "date";
+        return sort.reverse ? "date" : "date-reverse";
       case "name":
         return sort.reverse ? "name-reverse" : "name";
       case "size":
@@ -71,10 +71,10 @@ export default ({
   const handleSortChange = useCallback((value: string) => {
     switch (value) {
       case "date":
-        setSort({ type: "date", reverse: false });
+        setSort({ type: "date", reverse: true });
         break;
       case "date-reverse":
-        setSort({ type: "date", reverse: true });
+        setSort({ type: "date", reverse: false });
         break;
       case "name":
         setSort({ type: "name", reverse: false });
