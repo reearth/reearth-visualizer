@@ -72,8 +72,8 @@ export default ({ value, onChange }: Params) => {
     const hexPattern = /^#?([a-fA-F0-9]{3,4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/;
     if (!colorState || hexPattern.test(colorState)) {
       handleSave();
-    } else {
-      value && setColor(value);
+    } else if (value) {
+      setColor(value);
     }
   }, [colorState, handleSave, value]);
 
@@ -103,8 +103,8 @@ export default ({ value, onChange }: Params) => {
     }
   }, [value]);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+  const handleClickOutside = useCallback(
+    (e: MouseEvent | TouchEvent) => {
       if (
         open &&
         wrapperRef.current &&
@@ -116,16 +116,26 @@ export default ({ value, onChange }: Params) => {
         handleClose();
         setOpen(false);
       }
-    };
+    },
+    [open, value, colorState, handleSave, handleClose]
+  );
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+  const handleClickOutsideRef = useRef(handleClickOutside);
+  handleClickOutsideRef.current = handleClickOutside;
+
+  const handleClickOutsideByRef = useCallback((e: MouseEvent | TouchEvent) => {
+    handleClickOutsideRef.current?.(e);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideByRef);
+    document.addEventListener("touchstart", handleClickOutsideByRef);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutsideByRef);
+      document.removeEventListener("touchstart", handleClickOutsideByRef);
     };
-  }, []);
+  }, [handleClickOutsideByRef]);
 
   return {
     wrapperRef,

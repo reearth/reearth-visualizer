@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
+import { useState, useEffect, useCallback } from "react";
 
 import { publishingType } from "./";
 
@@ -70,13 +69,19 @@ export default (
     [onAliasValidate]
   );
 
+  const generateAlias = useCallback(() => {
+    const str = generateRandomString(10);
+    changeAlias(str);
+    return str;
+  }, []);
+
   const onAliasChange = useCallback(
     (value?: string) => {
       const a = value || generateAlias();
       changeAlias(a);
       validate(a);
     },
-    [validate]
+    [validate, generateAlias]
   );
 
   const handleClose = useCallback(() => {
@@ -86,17 +91,11 @@ export default (
       setStatusChange(false);
       setOptions(defaultAlias ? false : true);
     }, 500);
-  }, [onClose, defaultAlias]);
-
-  const generateAlias = useCallback(() => {
-    const str = generateRandomString(10);
-    changeAlias(str);
-    return str;
-  }, []);
+  }, [onClose, defaultAlias, onAliasChange]);
 
   useEffect(() => {
     onAliasChange(defaultAlias);
-  }, [defaultAlias]);
+  }, [defaultAlias, onAliasChange]);
 
   const handlePublish = useCallback(async () => {
     if (!publishing) return;

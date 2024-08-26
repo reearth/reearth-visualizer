@@ -1,7 +1,13 @@
-import { useCallback, useMemo, useState, MouseEvent, useEffect } from "react";
-
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { Spacing } from "@reearth/core";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  MouseEvent,
+  useEffect,
+  useRef,
+} from "react";
 
 import { calculatePaddingValue } from "../../../Crust/StoryPanel/utils";
 import { useEditModeContext } from "../../contexts/editModeContext";
@@ -53,11 +59,18 @@ export default ({
     [editModeContext]
   );
 
+  const handleSelectionDisable = useCallback(() => {
+    editModeContext?.onSelectionDisable?.(false);
+  }, [editModeContext]);
+
+  const handleSelectionDisableRef = useRef(handleSelectionDisable);
+  handleSelectionDisableRef.current = handleSelectionDisable;
+
   useEffect(
     () => () => {
       // This is necessary to prevent the selection from being permanently disabled when the block is unmounted
       if (editMode && disableSelection) {
-        editModeContext?.onSelectionDisable?.(false);
+        handleSelectionDisableRef.current?.();
       }
     },
     [editMode, disableSelection]

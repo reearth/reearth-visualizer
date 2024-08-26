@@ -28,6 +28,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from "@lexical/utils";
+import { useT } from "@reearth/services/i18n";
 import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
 import {
   $createParagraphNode,
@@ -52,8 +53,6 @@ import {
 } from "lexical";
 import { useCallback, useEffect, useState, useMemo, RefObject } from "react";
 
-import { useT } from "@reearth/services/i18n";
-
 import DropDown, { DropDownItem } from "../ui/DropDown";
 import DropdownColorPicker from "../ui/DropdownColorPicker";
 import { getSelectedNode } from "../utils/getSelectedNode";
@@ -61,7 +60,7 @@ import { sanitizeUrl } from "../utils/url";
 
 const IS_APPLE = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
-const rootTypeToRootName = {
+const _rootTypeToRootName = {
   root: "Root",
   table: "Table",
 };
@@ -173,7 +172,7 @@ function BlockFormatDropDown({
   scrollableContainerId?: string;
   blockTypeToBlockName: Record<string, string>;
   blockType: keyof typeof blockTypeToBlockName;
-  rootType: keyof typeof rootTypeToRootName;
+  rootType: keyof typeof _rootTypeToRootName;
   editor: LexicalEditor;
   disabled?: boolean;
 }): JSX.Element {
@@ -535,7 +534,7 @@ export default function ToolbarPlugin({
   const [blockType, setBlockType] =
     useState<keyof typeof blockTypeToBlockName>("paragraph");
   const [rootType, setRootType] =
-    useState<keyof typeof rootTypeToRootName>("root");
+    useState<keyof typeof _rootTypeToRootName>("root");
   const [fontSize, setFontSize] = useState<string>("16px");
   const [fontColor, setFontColor] = useState<string>("#000");
   const [lineHeight, setLineHeight] = useState<string>("1.2");

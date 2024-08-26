@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-
 import { useVisualizer, evalExpression, Feature } from "@reearth/core";
+import { useEffect, useState } from "react";
 
 export default (value: unknown | undefined) => {
   const [isReady, setIsReady] = useState(false);
@@ -58,7 +57,14 @@ export default (value: unknown | undefined) => {
         }
       }
     }
-  });
+  }, [
+    isReady,
+    currentValue,
+    value,
+    evaluatedResult,
+    visualizer,
+    lastFeatureSelected,
+  ]);
 
   return evaluatedResult;
 };

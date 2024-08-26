@@ -1,14 +1,4 @@
 import {
-  ChangeEventHandler,
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
-import {
   calculatePaddingValue,
   convertPositionToTime,
   formatDateForSliderTimeline,
@@ -18,6 +8,15 @@ import {
 import { DEFAULT_BLOCK_PADDING } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper/hooks";
 import { getNewDate } from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
 import { TickEventCallback, TimelineCommitter } from "@reearth/core";
+import {
+  ChangeEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { PaddingProp } from "./Editor";
 
@@ -138,17 +137,19 @@ export default ({
   }, [property?.panel]);
 
   const handlePopOver = useCallback(() => {
-    !inEditor && setIsOpen(!isOpen);
+    if (!inEditor) setIsOpen(!isOpen);
   }, [inEditor, isOpen]);
 
   const handleOnSelect = useCallback(
     (value: string, second: number) => {
       if (!inEditor) {
         setIsOpen(false);
-        value !== selected && setSelected(value);
-        isPlayingReversed
-          ? onSpeedChange?.(second * -1, committer.id)
-          : onSpeedChange?.(second, committer.id);
+        if (value !== selected) setSelected(value);
+        if (isPlayingReversed) {
+          onSpeedChange?.(second * -1, committer.id);
+        } else {
+          onSpeedChange?.(second, committer.id);
+        }
       }
     },
     [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected]
@@ -176,7 +177,7 @@ export default ({
       }
       onPlay?.(committer);
       setIsActive(true);
-      committer?.id && setActiveBlock(committer.id);
+      if (committer?.id) setActiveBlock(committer.id);
       onTimeChange?.(new Date(currentTime), committer.id);
       onSpeedChange?.(Math.abs(speed), committer.id);
       setIsPlaying(true);
@@ -202,7 +203,7 @@ export default ({
       onPlay?.(committer);
       setIsActive(true);
       setIsPlayingReversed(true);
-      committer?.id && setActiveBlock(committer.id);
+      if (committer?.id) setActiveBlock(committer.id);
       onTimeChange?.(new Date(currentTime), committer.id);
       onSpeedChange?.(Math.abs(speed) * -1, committer.id);
     }
@@ -224,7 +225,7 @@ export default ({
         setIsPlayingReversed?.(false);
         setIsPlaying?.(false);
       }
-      committer?.id && onPause?.(committer.id);
+      if (committer?.id) onPause?.(committer.id);
       setIsPause(true);
     }
   }, [committer.id, inEditor, isPlaying, isPlayingReversed, onPause]);
@@ -240,9 +241,9 @@ export default ({
     if (!range) return;
     onTimeChange?.(new Date(range?.start), committer.id);
     setCurrentTime?.(range?.start);
-    isPlaying && setIsPlaying(false);
-    isPlayingReversed && setIsPlayingReversed(false);
-    committer.id && onPause(committer.id);
+    if (isPlaying) setIsPlaying(false);
+    if (isPlayingReversed) setIsPlayingReversed(false);
+    if (committer.id) onPause(committer.id);
   }, [
     range,
     onTimeChange,
@@ -299,7 +300,7 @@ export default ({
           range.start,
           range.end
         );
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+        if (committer?.id) handleOnDrag(new Date(conv), committer?.id);
       }
     },
     [committer?.id, handleOnDrag, inEditor, range, target]
@@ -313,7 +314,7 @@ export default ({
           range.start,
           range.end
         );
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+        if (committer?.id) handleOnDrag(new Date(conv), committer?.id);
       }
     },
     [inEditor, range, committer?.id, handleOnDrag]
@@ -332,11 +333,13 @@ export default ({
         setIsPlaying(false);
         setIsPlayingReversed(false);
         const currentTimeValue = timelineValues?.currentTime ?? "";
-        timelineValues
-          ? setCurrentTime?.(
-              getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime()
-            )
-          : setCurrentTime?.(range?.start);
+        if (timelineValues) {
+          setCurrentTime?.(
+            getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime()
+          );
+        } else {
+          setCurrentTime?.(range?.start);
+        }
       }
       setIsPause(false);
     },

@@ -1,6 +1,5 @@
-import React, { useCallback, useState, useEffect, useMemo } from "react";
-
 import { setLocalStorageData } from "@reearth/beta/utils/localstorage";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 
 export type Direction = "vertical" | "horizontal";
 export type Gutter = "start" | "end";
@@ -26,7 +25,12 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
 const getDelta = (direction: Direction, deltaX: number, deltaY: number) =>
   direction === "vertical" ? deltaX : deltaY;
 
-const getSize = (size: number, delta: number, minSize?: number, maxSize?: number) => {
+const getSize = (
+  size: number,
+  delta: number,
+  minSize?: number,
+  maxSize?: number
+) => {
   let newSize = size + delta;
   if (minSize !== undefined && newSize < minSize) newSize = minSize;
   if (maxSize !== undefined && newSize > maxSize) newSize = maxSize;
@@ -39,7 +43,7 @@ export default (
   initialSize: number,
   minSize: number,
   maxSize?: number,
-  localStorageKey?: string,
+  localStorageKey?: string
 ) => {
   const getLocalStorageParsedState = useCallback((localStorageKey?: string) => {
     const savedState = localStorageKey && localStorage.getItem(localStorageKey);
@@ -72,7 +76,9 @@ export default (
   }, [localStorageKey, getLocalStorageParsedState, initialSize]);
 
   const onResizeStart = useCallback(
-    (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    (
+      e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+    ) => {
       const position = getPositionFromEvent(e);
       if (!position) return;
 
@@ -80,14 +86,15 @@ export default (
       setIsResizing(true);
       setPosition(position);
     },
-    [size],
+    [size]
   );
 
   const onResize = useCallback(
     (e: MouseEvent | TouchEvent) => {
       if (!isResizing) return;
 
-      const { clientX: x, clientY: y } = e instanceof MouseEvent ? e : e.touches[0];
+      const { clientX: x, clientY: y } =
+        e instanceof MouseEvent ? e : e.touches[0];
       const deltaX = gutter === "start" ? position.x - x : x - position.x;
       const deltaY = gutter === "start" ? position.y - y : y - position.y;
       const delta = getDelta(direction, deltaX, deltaY);
@@ -116,7 +123,7 @@ export default (
       maxSize,
       minimized,
       startingSize,
-    ],
+    ]
   );
 
   const onResizeEnd = useCallback(() => {
@@ -130,7 +137,9 @@ export default (
       size,
       minimized,
     };
-    localStorageKey && setLocalStorageData(localStorageKey, storedData);
+    if (localStorageKey) {
+      setLocalStorageData(localStorageKey, storedData);
+    }
   }, [isResizing, localStorageKey, minimized, size]);
 
   const bindEventListeners = useCallback(() => {
@@ -165,17 +174,18 @@ export default (
       onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => onResizeStart(e),
       onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => onResizeStart(e),
     }),
-    [onResizeStart],
+    [onResizeStart]
   );
 
   const handleResetSize = useCallback(() => {
     setMinimized(false);
     setSize(initialSize);
-    localStorageKey &&
+    if (localStorageKey) {
       setLocalStorageData(localStorageKey, {
         size: initialSize,
         minimized: false,
       });
+    }
   }, [initialSize, localStorageKey]);
 
   return {

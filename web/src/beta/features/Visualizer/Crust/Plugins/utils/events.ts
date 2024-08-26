@@ -121,6 +121,8 @@ export function useEmit<T extends { [K in string]: any[] }>(
 ) {
   for (const k of Object.keys(values)) {
     const args = values[k];
+    // TODO: fix this
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       if (!args) return;
       emit?.(k, ...args);

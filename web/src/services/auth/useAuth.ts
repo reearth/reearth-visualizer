@@ -6,13 +6,9 @@ import { AuthContext } from "./authProvider";
 export const errorKey = "reeartherror";
 
 export const useAuth = () => {
-  let auth = useContext(AuthContext);
-
-  if (!auth) {
-    auth = useAuth0Auth();
-  }
-
-  return auth;
+  const auth = useContext(AuthContext);
+  const auth0Auth = useAuth0Auth();
+  return auth ? auth : auth0Auth;
 };
 
 export function useCleanUrl(): [string | undefined, boolean] {

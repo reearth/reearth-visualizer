@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useMemo } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import React, { useState, useCallback, useMemo } from "react";
 
 import Property from "..";
 
@@ -53,7 +52,10 @@ const SelectField: React.FC<Props> = ({
 
   const [open, setOpen] = useState(false);
 
-  const handlePopOver = useCallback(() => !disabled && setOpen(!open), [open, disabled]);
+  const handlePopOver = useCallback(
+    () => !disabled && setOpen(!open),
+    [open, disabled]
+  );
 
   const handleClick = useCallback(
     (key: string) => {
@@ -61,9 +63,11 @@ const SelectField: React.FC<Props> = ({
         // handle multiselect
         if (value && Array.isArray(value)) {
           const tempArray = [...value];
-          tempArray.includes(key)
-            ? tempArray.splice(tempArray.indexOf(key), 1)
-            : tempArray.push(key);
+          if (tempArray.includes(key)) {
+            tempArray.splice(tempArray.indexOf(key), 1);
+          } else {
+            tempArray.push(key);
+          }
           onChange(tempArray.length > 0 ? [...tempArray] : undefined);
         } else {
           onChange([key]);
@@ -72,33 +76,41 @@ const SelectField: React.FC<Props> = ({
       }
 
       setOpen(false);
-      key != value && onChange(key);
+      if (key != value) onChange(key);
       return;
     },
-    [setOpen, onChange, value, multiSelect],
+    [setOpen, onChange, value, multiSelect]
   );
 
   const selected = useMemo(() => {
     return value
       ? Array.isArray(value)
-        ? value.map(key => ({
+        ? value.map((key) => ({
             key,
-            label: options?.find(x => x.key === key)?.label,
+            label: options?.find((x) => x.key === key)?.label,
           }))
-        : options?.find(x => x.key === value)
+        : options?.find((x) => x.key === value)
       : undefined;
   }, [options, value]);
 
   const checkSelected = useCallback(
     (key: string) => {
-      return value ? (Array.isArray(value) ? value.includes(key) : value === key) : false;
+      return value
+        ? Array.isArray(value)
+          ? value.includes(key)
+          : value === key
+        : false;
     },
-    [value],
+    [value]
   );
 
   return (
     <Property name={name} description={description} className={className}>
-      <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
+      <Popover.Provider
+        open={open}
+        placement="bottom-start"
+        onOpenChange={handlePopOver}
+      >
         <ProviderWrapper multiSelect={Array.isArray(value) && value.length > 0}>
           <Popover.Trigger asChild>
             <InputWrapper disabled={disabled} onClick={handlePopOver}>
@@ -117,9 +129,13 @@ const SelectField: React.FC<Props> = ({
               <OptionWrapper
                 key={key}
                 onClick={() => handleClick(key)}
-                selected={checkSelected(key)}>
+                selected={checkSelected(key)}
+              >
                 {multiSelect && (
-                  <CheckIcon icon={checkSelected(key) ? "checkmark" : "plus"} size={12} />
+                  <CheckIcon
+                    icon={checkSelected(key) ? "checkmark" : "plus"}
+                    size={12}
+                  />
                 )}
                 <Text size="footnote">{value}</Text>
               </OptionWrapper>
@@ -174,11 +190,14 @@ const Select = styled.div<{ open: boolean; selected: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: ${({ theme, selected }) => (selected ? theme.content.main : theme.content.weaker)};
+  color: ${({ theme, selected }) =>
+    selected ? theme.content.main : theme.content.weaker};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: ${({ theme }) => theme.shadow.input};
   border: ${({ theme, open }) =>
-    open ? `1px solid ${theme.select.strong}` : `1px solid ${theme.outline.weak}`};
+    open
+      ? `1px solid ${theme.select.strong}`
+      : `1px solid ${theme.outline.weak}`};
 
   &:focus {
     border: 1px solid ${({ theme }) => theme.select.strong};
@@ -194,7 +213,8 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
+  transform: ${({ open }) =>
+    open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)"};
   color: ${({ theme }) => theme.content.main};
 `;
 
@@ -220,7 +240,8 @@ const OptionWrapper = styled.div<{ selected: boolean }>`
   background: ${({ theme, selected }) => (selected ? theme.bg[2] : "inherit")};
 
   &:hover {
-    background: ${({ theme, selected }) => (selected ? theme.bg[2] : theme.select.main)};
+    background: ${({ theme, selected }) =>
+      selected ? theme.bg[2] : theme.select.main};
   }
 `;
 

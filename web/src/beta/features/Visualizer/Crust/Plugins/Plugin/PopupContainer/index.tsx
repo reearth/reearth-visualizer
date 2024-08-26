@@ -1,4 +1,5 @@
 import { computePosition, offset, autoUpdate } from "@floating-ui/dom";
+import { styled } from "@reearth/services/theme";
 import {
   forwardRef,
   ForwardRefRenderFunction,
@@ -7,8 +8,6 @@ import {
   useEffect,
   RefObject,
 } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import type { PopupPosition } from "../../pluginAPI/types";
 
@@ -29,28 +28,32 @@ type Props = {
   shownPluginPopupInfo?: PluginPopupInfo;
 };
 
-const PopupContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props> = (
-  { shownPluginPopupInfo },
-  ref,
-) => {
+const PopupContainer: ForwardRefRenderFunction<
+  HTMLDivElement | undefined,
+  Props
+> = ({ shownPluginPopupInfo }, ref) => {
   const innerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
 
   useEffect(() => {
     if (!shownPluginPopupInfo?.ref?.current || !innerRef.current) return;
-    return autoUpdate(shownPluginPopupInfo?.ref?.current, innerRef.current, () => {
-      if (!shownPluginPopupInfo?.ref?.current || !innerRef.current) return;
-      computePosition(shownPluginPopupInfo?.ref?.current, innerRef.current, {
-        placement: shownPluginPopupInfo.position ?? "bottom-start",
-        middleware: [offset(shownPluginPopupInfo.offset ?? 0)],
-      }).then(({ x, y }) => {
-        if (innerRef.current) {
-          innerRef.current.style.left = `${x}px`;
-          innerRef.current.style.top = `${y}px`;
-        }
-      });
-    });
+    return autoUpdate(
+      shownPluginPopupInfo?.ref?.current,
+      innerRef.current,
+      () => {
+        if (!shownPluginPopupInfo?.ref?.current || !innerRef.current) return;
+        computePosition(shownPluginPopupInfo?.ref?.current, innerRef.current, {
+          placement: shownPluginPopupInfo.position ?? "bottom-start",
+          middleware: [offset(shownPluginPopupInfo.offset ?? 0)],
+        }).then(({ x, y }) => {
+          if (innerRef.current) {
+            innerRef.current.style.left = `${x}px`;
+            innerRef.current.style.top = `${y}px`;
+          }
+        });
+      }
+    );
   }, [shownPluginPopupInfo]);
 
   return <Wrapper visible={!!shownPluginPopupInfo?.id} ref={innerRef} />;
@@ -59,7 +62,9 @@ const PopupContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
 const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
   position: "absolute",
   visibility: visible ? "visible" : "hidden",
-  zIndex: visible ? theme.zIndexes.visualizer.pluginPopup : theme.zIndexes.hidden,
+  zIndex: visible
+    ? theme.zIndexes.visualizer.pluginPopup
+    : theme.zIndexes.hidden,
   transition: "opacity 0.25s",
   opacity: visible ? "1" : "0",
 }));

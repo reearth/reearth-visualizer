@@ -1,7 +1,6 @@
+import { evalExpression, useVisualizer, Feature } from "@reearth/core";
 import { isEqual } from "lodash-es";
 import { useEffect, useState } from "react";
-
-import { evalExpression, useVisualizer, Feature } from "@reearth/core";
 
 import { PropertyListItem } from "../ListEditor";
 
@@ -59,7 +58,7 @@ export default (properties: PropertyListItem[] | undefined) => {
         setEvaluatedResult(es as PropertyListItem[]);
       }
     }
-  });
+  }, [isReady, currentValue, properties, evaluatedProperties, visualizer]);
 
   return evaluatedProperties?.filter((ep) => ep !== undefined);
 };
