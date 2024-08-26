@@ -1,7 +1,6 @@
 import React from "react";
 
-import Text from "@reearth/beta/components/Text";
-import { Icon, IconName } from "@reearth/beta/lib/reearth-ui";
+import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
@@ -14,7 +13,7 @@ export type Props = {
 const PluginInstallCardButton: React.FC<Props> = ({ className, icon, text, onClick }) => (
   <StyledButton onClick={onClick} className={className}>
     <Icon icon={icon} size={126} />
-    <Text size="h4">{text}</Text>
+    <Typography size="h4">{text}</Typography>
   </StyledButton>
 );
 

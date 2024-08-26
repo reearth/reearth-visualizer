@@ -2,10 +2,10 @@ import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import { useEffect, useState } from "react";
 
-import Filled from "@reearth/beta/components/Filled";
-import Text from "@reearth/beta/components/Text";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useAuth } from "@reearth/services/auth";
 import "graphiql/graphiql.css";
+import { styled } from "@reearth/services/theme";
 
 const fetcher = createGraphiQLFetcher({
   url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql",
@@ -25,6 +25,13 @@ export default function GraphQLPlayground(_: { path?: string }): JSX.Element {
       <GraphiQL fetcher={fetcher} isHeadersEditorEnabled headers={headers} />
     </Filled>
   ) : (
-    <Text size="h2">Please log in to Re:Earth</Text>
+    <Typography size="h2">Please log in to Re:Earth</Typography>
   );
 }
+
+const Filled = styled("div")(() => ({
+  width: "100%",
+  height: "100%",
+  position: "relative",
+  overflow: "hidden",
+}));

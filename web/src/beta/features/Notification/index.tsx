@@ -1,5 +1,6 @@
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
+import { FC } from "react";
+
+import { IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
@@ -11,7 +12,7 @@ export type Notification = {
   text: string;
 };
 
-const NotificationBanner: React.FC = () => {
+const NotificationBanner: FC = () => {
   const { isHovered, visible, notification, setModal, setIsHovered } = useHooks();
   const theme = useTheme();
 
@@ -24,26 +25,27 @@ const NotificationBanner: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
       type={notification?.type}>
       <HeadingArea>
-        <Text size="body" color={theme.content.strong} weight="bold">
+        <Typography size="body" color={theme.content.strong} weight="bold">
           {notification?.heading}
-        </Text>
-        <CloseBtn
-          role="button"
-          icon="cancel"
-          size={20}
-          show={isHovered}
-          onClick={() => {
-            setModal?.(false);
-          }}
-        />
+        </Typography>
+        <IconWrapper show={isHovered}>
+          <IconButton
+            icon="close"
+            size="normal"
+            appearance="simple"
+            onClick={() => {
+              setModal?.(false);
+            }}
+          />
+        </IconWrapper>
       </HeadingArea>
       {notification?.text && (
-        <Text
+        <Typography
           size="footnote"
           color={theme.content.strong}
           otherProperties={{ padding: "8px 0 0 0" }}>
           {notification?.text}
-        </Text>
+        </Typography>
       )}
     </StyledNotificationBanner>
   );
@@ -51,49 +53,45 @@ const NotificationBanner: React.FC = () => {
 
 export default NotificationBanner;
 
-const StyledNotificationBanner = styled.div<{
+const StyledNotificationBanner = styled("div")<{
   type?: NotificationType;
   visible?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 30px;
-  left: 0;
-  right: 0;
-  margin-left: auto;
-  margin-right: auto;
-  width: 312px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
-  background-color: ${({ type, theme }) =>
+}>(({ visible, type, theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  position: "absolute",
+  top: 30,
+  left: 0,
+  right: 0,
+  margin: "auto",
+  width: 312,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  borderRadius: theme.radius.normal,
+  boxShadow: "rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
+  backgroundColor:
     type === "error"
       ? theme.dangerous.main
       : type === "warning"
       ? theme.warning.main
       : type === "success"
       ? theme.select.strong
-      : theme.secondary.main};
-  color: ${({ theme }) => theme.content.main};
-  z-index: ${({ theme, visible }) => (visible ? theme.zIndexes.editor.notificationBar : 0)};
-  opacity: ${({ visible }) => (visible ? "1" : "0")};
-  transition: all 0.5s;
-  pointer-events: ${({ visible }) => (visible ? "auto" : "none")};
+      : theme.secondary.main,
+  color: theme.content.main,
+  zIndex: visible ? theme.zIndexes.editor.notificationBar : 0,
+  opacity: visible ? "1" : "0",
+  pointerEvents: visible ? "auto" : "none",
+  transition: "all 0.5s",
+  "&:hover": {
+    padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
+  },
+}));
 
-  :hover {
-    padding: 8px 12px;
-  }
-`;
+const HeadingArea = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  width: "100%",
+}));
 
-const HeadingArea = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const CloseBtn = styled(Icon)<{ show: boolean }>`
-  cursor: pointer;
-  transition: all 1s;
-  opacity: ${({ show }) => (show ? "100%" : "0")};
-`;
+const IconWrapper = styled("div")<{ show: boolean }>(({ show }) => ({
+  opacity: show ? "100%" : "0",
+}));

@@ -1,11 +1,11 @@
-import React from "react";
+import { FC } from "react";
 
-import Text from "@reearth/beta/components/Text";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 
 export type Props = {
   path?: string;
 };
 
-const AccountPage: React.FC<Props> = () => <Text size="h4">Account page</Text>;
+const AccountPage: FC<Props> = () => <Typography size="h4">Account page</Typography>;
 
 export default AccountPage;
