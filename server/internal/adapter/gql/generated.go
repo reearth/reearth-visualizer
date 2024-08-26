@@ -1007,6 +1007,7 @@ type ComplexityRoot struct {
 		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
 		Scene             func(childComplexity int, projectID gqlmodel.ID) int
 		SearchUser        func(childComplexity int, nameOrEmail string) int
+		StarredProjects   func(childComplexity int, teamID gqlmodel.ID) int
 	}
 
 	Rect struct {
@@ -1686,6 +1687,7 @@ type QueryResolver interface {
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
 	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
+	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -6624,6 +6626,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.SearchUser(childComplexity, args["nameOrEmail"].(string)), true
 
+	case "Query.starredProjects":
+		if e.complexity.Query.StarredProjects == nil {
+			break
+		}
+
+		args, err := ec.field_Query_starredProjects_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.StarredProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+
 	case "Rect.east":
 		if e.complexity.Rect.East == nil {
 			break
@@ -9529,6 +9543,7 @@ type ProjectEdge {
 extend type Query{
   projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
+  starredProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -12667,6 +12682,21 @@ func (ec *executionContext) field_Query_searchUser_args(ctx context.Context, raw
 		}
 	}
 	args["nameOrEmail"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ID
+	if tmp, ok := rawArgs["teamId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		arg0, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["teamId"] = arg0
 	return args, nil
 }
 
@@ -44779,6 +44809,71 @@ func (ec *executionContext) fieldContext_Query_checkProjectAlias(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_starredProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_starredProjects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().StarredProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectConnection)
+	fc.Result = res
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_starredProjects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ProjectConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_starredProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_propertySchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_propertySchema(ctx, field)
 	if err != nil {
@@ -72190,6 +72285,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_checkProjectAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "starredProjects":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_starredProjects(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
