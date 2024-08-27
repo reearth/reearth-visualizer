@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -12,6 +12,7 @@ export type IconButtonProps = {
   disabled?: boolean;
   className?: string;
   iconRotate?: string;
+  stopPropagationOnClick?: boolean;
   onClick?: (e: MouseEvent) => void;
 };
 
@@ -23,8 +24,18 @@ export const IconButton: FC<IconButtonProps> = ({
   active,
   className,
   iconRotate,
+  stopPropagationOnClick,
   onClick,
 }) => {
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
+      if (stopPropagationOnClick) e.stopPropagation();
+      if (disabled) return;
+      onClick?.(e);
+    },
+    [disabled, stopPropagationOnClick, onClick],
+  );
+
   return (
     <StyledButton
       className={className}
@@ -33,7 +44,7 @@ export const IconButton: FC<IconButtonProps> = ({
       size={size}
       active={active}
       iconRotate={iconRotate}
-      onClick={onClick}>
+      onClick={handleClick}>
       <Icon icon={icon} />
     </StyledButton>
   );
