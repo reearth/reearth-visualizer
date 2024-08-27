@@ -1,9 +1,13 @@
-import { FC } from "react";
-
-import { Icon, PopupMenu, PopupMenuItem, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Icon,
+  PopupMenu,
+  PopupMenuItem,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
+import { FC } from "react";
 
 import { Workspace } from "../type";
 
@@ -39,7 +43,7 @@ export const Profile: FC<ProfileProp> = ({
       id: "workspace",
       title: t("Switch WorkSpace"),
       icon: "arrowLeftRight",
-      subItem: workspaces?.map(w => {
+      subItem: workspaces?.map((w) => {
         return {
           customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
           customSubMenuOrder: w.personal ? 0 : 1,
@@ -64,7 +68,9 @@ export const Profile: FC<ProfileProp> = ({
     <ProfileWrapper>
       {isPersonal && (
         <Avatar>
-          <Typography size="body">{currentUser?.charAt(0).toUpperCase()}</Typography>
+          <Typography size="body">
+            {currentUser?.charAt(0).toUpperCase()}
+          </Typography>
         </Avatar>
       )}
       <Typography size="body" weight="bold">
@@ -72,7 +78,9 @@ export const Profile: FC<ProfileProp> = ({
       </Typography>
       <div>
         <PopupMenu
-          label={<Icon color={theme.content.weak} icon="caretDown" size="small" />}
+          label={
+            <Icon color={theme.content.weak} icon="caretDown" size="small" />
+          }
           menu={popupMenu}
         />
       </div>

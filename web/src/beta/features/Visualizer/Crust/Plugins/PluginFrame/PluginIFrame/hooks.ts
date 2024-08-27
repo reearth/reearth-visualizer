@@ -24,7 +24,10 @@ export default function useHooks({
   enabled?: boolean;
   onRender?: (type: string) => void;
 }) {
-  const handleRender = useCallback(() => type && onRender?.(type), [type, onRender]);
+  const handleRender = useCallback(
+    () => type && onRender?.(type),
+    [type, onRender],
+  );
 
   const {
     ref: IFrameRef,

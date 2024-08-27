@@ -1,5 +1,3 @@
-import { FC, ReactNode, useMemo, CSSProperties } from "react";
-
 import { useTheme } from "@reearth/services/theme";
 import {
   FontSize,
@@ -7,8 +5,14 @@ import {
   UniqueTraits,
   typography,
 } from "@reearth/services/theme/reearthTheme/common/fonts";
+import { FC, ReactNode, useMemo, CSSProperties } from "react";
 
-type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
+type NonChangeableProperties =
+  | "color"
+  | "fontFamily"
+  | "fontSize"
+  | "lineHeight"
+  | "fontStyle";
 
 type ChangeableProperties = Omit<CSSProperties, NonChangeableProperties>;
 
@@ -40,8 +44,8 @@ export const Typography: FC<TypographyProps> = ({
       trait && trait in themeTypographyBySize
         ? themeTypographyBySize[trait]
         : weight in themeTypographyBySize
-        ? themeTypographyBySize[weight]
-        : themeTypographyBySize[size === "h1" ? "bold" : "regular"],
+          ? themeTypographyBySize[weight]
+          : themeTypographyBySize[size === "h1" ? "bold" : "regular"],
     [trait, size, weight, themeTypographyBySize],
   );
 
@@ -57,7 +61,11 @@ export const Typography: FC<TypographyProps> = ({
   );
 
   return ThemeTypography ? (
-    <ThemeTypography style={memoizedStyle} onClick={onClick} className={className}>
+    <ThemeTypography
+      style={memoizedStyle}
+      onClick={onClick}
+      className={className}
+    >
       {children}
     </ThemeTypography>
   ) : null;

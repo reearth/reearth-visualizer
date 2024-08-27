@@ -61,7 +61,10 @@ const lightTheme: Theme = {
     darker: rgba("#000000", 0.15),
     darkest: rgba("#000000", 0.2),
   },
-  placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
+  placeHolder: {
+    main_1: rgba("#FF560E", 0.2),
+    main_2: rgba(brandBlue.main, 0.2),
+  },
   colorSchema: "light",
   publish: {
     main: "#24A148",

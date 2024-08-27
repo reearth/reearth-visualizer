@@ -1,8 +1,7 @@
-import { useState, useMemo, useCallback } from "react";
-
 import { GisType } from "@reearth/beta/features/AssetsManager/constants";
 import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
+import { useState, useMemo, useCallback } from "react";
 
 import { DataProps, DataSourceOptType, SourceType } from "..";
 import { generateTitle } from "../util";
@@ -55,11 +54,12 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       if (fileFormat === "geojson") {
         try {
           parsedValue = JSON.parse(value);
-        } catch (error) {
+        } catch (_error) {
           parsedValue = value;
         }
       } else {
-        parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
+        parsedValue =
+          "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
       }
     }
 
@@ -74,8 +74,8 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
             (sourceType === "url" || sourceType === "local") && value !== ""
               ? value
               : fileFormat === "czml" || fileFormat === "kml"
-              ? parsedValue
-              : undefined,
+                ? parsedValue
+                : undefined,
           type: fileFormat.toLowerCase() as DataType,
           value: parsedValue,
           geojson: {

@@ -1,9 +1,13 @@
-import { expect, test } from "vitest";
-
 import { truncMinutes } from "@reearth/beta/utils/time";
 import { render, screen } from "@reearth/test/utils";
+import { expect, test } from "vitest";
 
-import { EPOCH_SEC, GAP_HORIZONTAL, HOURS_SECS, SCALE_INTERVAL } from "./constants";
+import {
+  EPOCH_SEC,
+  GAP_HORIZONTAL,
+  HOURS_SECS,
+  SCALE_INTERVAL,
+} from "./constants";
 import ScaleList from "./ScaleList";
 
 const START_DATE = new Date("2022-07-03T12:21:21.100");
@@ -44,7 +48,7 @@ test("it should render memory and date label", () => {
     "Jul 04 2022 10:00:00.00",
   ];
 
-  expectedStrongScaleLabelList.forEach(label => {
+  expectedStrongScaleLabelList.forEach((label) => {
     expect(screen.getByText(label)).toBeInTheDocument();
   });
 });
@@ -81,7 +85,7 @@ test("it should render memory and date label when scaleInterval is changed", () 
     "Jul 04 2022 09:00:00.00",
   ];
 
-  expectedStrongScaleLabelList.forEach(label => {
+  expectedStrongScaleLabelList.forEach((label) => {
     expect(screen.getByText(label)).toBeInTheDocument();
   });
 });
@@ -133,7 +137,7 @@ test("it should render memory and date label when strongScaleMinutes is changed"
     "Jul 04 2022 09:00:00.00",
   ];
 
-  expectedStrongScaleLabelList.forEach(label => {
+  expectedStrongScaleLabelList.forEach((label) => {
     expect(screen.getByText(label)).toBeInTheDocument();
   });
 });

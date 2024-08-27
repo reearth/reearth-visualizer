@@ -1,4 +1,6 @@
-export const convertTime = (time: string | Date | undefined): Date | undefined => {
+export const convertTime = (
+  time: string | Date | undefined,
+): Date | undefined => {
   if (!time) return;
   if (time instanceof Date) {
     return !isNaN(time.getTime()) ? time : undefined;

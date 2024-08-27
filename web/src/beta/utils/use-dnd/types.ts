@@ -1,4 +1,9 @@
-export type ItemType = "layerItem" | "layerGroup" | "primitive" | "block" | "null";
+export type ItemType =
+  | "layerItem"
+  | "layerGroup"
+  | "primitive"
+  | "block"
+  | "null";
 
 export type Item<T extends ItemType = ItemType> = {
   null: { type: "null" };

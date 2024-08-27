@@ -1,7 +1,6 @@
-import { ForwardRefRenderFunction, ReactNode, forwardRef } from "react";
-
 import { Spacing } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
+import { ForwardRefRenderFunction, ReactNode, forwardRef } from "react";
 
 export type Props = {
   children?: ReactNode;
@@ -14,17 +13,28 @@ export type Props = {
 };
 
 const ContentWrapper: ForwardRefRenderFunction<HTMLDivElement, Props> = (
-  { id, isEditable, minPaddingInEditor, minGapInEditor, padding, gap, children },
+  {
+    id,
+    isEditable,
+    minPaddingInEditor,
+    minGapInEditor,
+    padding,
+    gap,
+    children,
+  },
   ref,
 ) => (
   <Wrapper
     id={id}
     ref={ref}
     isEditable={isEditable}
-    minPaddingInEditor={minPaddingInEditor ?? { top: 0, left: 0, right: 0, bottom: 0 }}
+    minPaddingInEditor={
+      minPaddingInEditor ?? { top: 0, left: 0, right: 0, bottom: 0 }
+    }
     padding={padding ?? { top: 0, left: 0, right: 0, bottom: 0 }}
     minGapInEditor={minGapInEditor ?? 0}
-    gap={gap}>
+    gap={gap}
+  >
     {children}
   </Wrapper>
 );
@@ -37,26 +47,38 @@ const Wrapper = styled("div")<{
   isEditable?: boolean;
   minPaddingInEditor: Spacing;
   minGapInEditor: number;
-}>(({ padding, gap, isEditable, minGapInEditor, minPaddingInEditor, theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  color: theme.content.weaker,
-  gap: gap !== undefined && isEditable && gap < minGapInEditor ? `${minGapInEditor}px` : `${gap}px`,
-  paddingTop:
-    isEditable && padding.top < minPaddingInEditor.top
-      ? `${minPaddingInEditor.top}px`
-      : `${padding.top}px`,
-  paddingBottom:
-    isEditable && padding.bottom < minPaddingInEditor.bottom
-      ? `${minPaddingInEditor.bottom}px`
-      : `${padding.bottom}px`,
-  paddingLeft:
-    isEditable && padding.left < minPaddingInEditor.left
-      ? `${minPaddingInEditor.left}px`
-      : `${padding.left}px`,
-  paddingRight:
-    isEditable && padding.right < minPaddingInEditor.right
-      ? `${minPaddingInEditor.right}px`
-      : `${padding.right}px`,
-  boxSizing: "border-box",
-}));
+}>(
+  ({
+    padding,
+    gap,
+    isEditable,
+    minGapInEditor,
+    minPaddingInEditor,
+    theme,
+  }) => ({
+    display: "flex",
+    flexDirection: "column",
+    color: theme.content.weaker,
+    gap:
+      gap !== undefined && isEditable && gap < minGapInEditor
+        ? `${minGapInEditor}px`
+        : `${gap}px`,
+    paddingTop:
+      isEditable && padding.top < minPaddingInEditor.top
+        ? `${minPaddingInEditor.top}px`
+        : `${padding.top}px`,
+    paddingBottom:
+      isEditable && padding.bottom < minPaddingInEditor.bottom
+        ? `${minPaddingInEditor.bottom}px`
+        : `${padding.bottom}px`,
+    paddingLeft:
+      isEditable && padding.left < minPaddingInEditor.left
+        ? `${minPaddingInEditor.left}px`
+        : `${padding.left}px`,
+    paddingRight:
+      isEditable && padding.right < minPaddingInEditor.right
+        ? `${minPaddingInEditor.right}px`
+        : `${padding.right}px`,
+    boxSizing: "border-box",
+  }),
+);

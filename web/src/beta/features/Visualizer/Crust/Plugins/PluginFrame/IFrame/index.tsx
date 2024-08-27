@@ -1,5 +1,9 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { IframeHTMLAttributes, ForwardRefRenderFunction, forwardRef } from "react";
+import {
+  IframeHTMLAttributes,
+  ForwardRefRenderFunction,
+  forwardRef,
+} from "react";
 import type { RefObject } from "react";
 
 import useHook, { RefType, AutoResize as AutoResizeType } from "./hooks";

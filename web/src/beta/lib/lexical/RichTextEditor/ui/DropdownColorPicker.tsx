@@ -32,7 +32,8 @@ export default function DropdownColorPicker({
       disabled={disabled}
       containerRef={containerRef}
       scrollableContainerId={scrollableContainerId}
-      stopCloseOnClickSelf={stopCloseOnClickSelf}>
+      stopCloseOnClickSelf={stopCloseOnClickSelf}
+    >
       <ColorPicker color={color} onChange={onChange} />
     </DropDown>
   );

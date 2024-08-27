@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ApolloProvider,
   ApolloClient,
@@ -21,7 +20,7 @@ import theme from "./theme";
 const mockClient = new ApolloClient({
   link: new ApolloLink(
     () =>
-      new Observable(observer => {
+      new Observable((observer) => {
         observer.complete();
       }),
   ),
@@ -53,7 +52,7 @@ const preview: Preview = {
       Provider: ThemeProvider,
       GlobalStyles,
     }),
-    Story => {
+    (Story) => {
       return (
         <ApolloProvider client={mockClient}>
           <I18nProvider>

@@ -1,7 +1,10 @@
 import { useMutation } from "@apollo/client";
-import { useCallback } from "react";
-
-import { ValueType, ValueTypes, valueToGQL, valueTypeToGQL } from "@reearth/beta/utils/value";
+import {
+  ValueType,
+  ValueTypes,
+  valueToGQL,
+  valueTypeToGQL,
+} from "@reearth/beta/utils/value";
 import { PropertyItemPayload } from "@reearth/services/gql";
 import {
   UPDATE_PROPERTY_VALUE,
@@ -11,6 +14,7 @@ import {
 } from "@reearth/services/gql/queries/property";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
+import { useCallback } from "react";
 
 import { MutationReturn } from "../types";
 
@@ -53,11 +57,17 @@ export default () => {
 
       if (errors || !data?.updatePropertyValue) {
         console.log("GraphQL: Failed to update property", errors);
-        setNotification({ type: "error", text: t("Failed to update property.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update property."),
+        });
 
         return { status: "error" };
       }
-      setNotification({ type: "success", text: t("Successfully updated the property value!") });
+      setNotification({
+        type: "success",
+        text: t("Successfully updated the property value!"),
+      });
       return {
         data: data.updatePropertyValue.property,
         status: "success",
@@ -70,7 +80,9 @@ export default () => {
     async (
       propertyId: string,
       schemaGroupId: string,
-    ): Promise<MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>> => {
+    ): Promise<
+      MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
+    > => {
       const { data, errors } = await addPropertyItem({
         variables: {
           propertyId,
@@ -81,7 +93,10 @@ export default () => {
 
       if (errors || !data?.addPropertyItem?.property?.id) {
         console.log("GraphQL: Failed to update property", errors);
-        setNotification({ type: "error", text: t("Failed to update property.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update property."),
+        });
 
         return { data: undefined, status: "error" };
       }
@@ -99,7 +114,9 @@ export default () => {
       propertyId: string,
       schemaGroupId: string,
       itemId: string,
-    ): Promise<MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>> => {
+    ): Promise<
+      MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
+    > => {
       const { data, errors } = await removePropertyItem({
         variables: {
           propertyId,
@@ -111,7 +128,10 @@ export default () => {
 
       if (errors || !data?.removePropertyItem?.property?.id) {
         console.log("GraphQL: Failed to update property", errors);
-        setNotification({ type: "error", text: t("Failed to update property.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update property."),
+        });
 
         return { data: undefined, status: "error" };
       }
@@ -130,7 +150,9 @@ export default () => {
       schemaGroupId: string,
       itemId: string,
       index: number,
-    ): Promise<MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>> => {
+    ): Promise<
+      MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
+    > => {
       const { data, errors } = await movePropertyItem({
         variables: {
           propertyId,
@@ -143,7 +165,10 @@ export default () => {
 
       if (errors || !data?.movePropertyItem?.property?.id) {
         console.log("GraphQL: Failed to update property", errors);
-        setNotification({ type: "error", text: t("Failed to update property.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update property."),
+        });
 
         return { data: undefined, status: "error" };
       }

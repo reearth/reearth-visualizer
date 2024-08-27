@@ -1,5 +1,3 @@
-import React, { useCallback } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import CatalogCard from "@reearth/beta/components/CatalogCard";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
@@ -10,6 +8,7 @@ import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import React, { useCallback } from "react";
 
 import useHooks from "./hooks";
 
@@ -21,7 +20,12 @@ export type Props = {
 };
 
 // TODO: Remove this file
-const ChooseLayerStyleModal: React.FC<Props> = ({ open, sceneId, onClose, onSelect }) => {
+const ChooseLayerStyleModal: React.FC<Props> = ({
+  open,
+  sceneId,
+  onClose,
+  onSelect,
+}) => {
   const t = useT();
   const [, setNotification] = useNotification();
 
@@ -70,10 +74,14 @@ const ChooseLayerStyleModal: React.FC<Props> = ({ open, sceneId, onClose, onSele
           text={t("Cancel")}
           onClick={() => onClose?.()}
         />
-      }>
+      }
+    >
       <ControlWarpper>
         <SearchWarpper>
-          <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
+          <TextInput
+            value={localSearchTerm}
+            onChange={handleSearchInputChange}
+          />
           <SearchButton icon="search" margin="0" onClick={handleSearch} />
         </SearchWarpper>
       </ControlWarpper>
@@ -91,15 +99,16 @@ const ChooseLayerStyleModal: React.FC<Props> = ({ open, sceneId, onClose, onSele
         ) : (
           <LayerStyleListWrapper
             ref={layerStylesWrapperRef}
-            onScroll={e => !isLayerStylesLoading && onScrollToBottom?.(e)}>
+            onScroll={(e) => !isLayerStylesLoading && onScrollToBottom?.(e)}
+          >
             <LayerStyleList>
-              {layerStyles?.map(a => (
+              {layerStyles?.map((a) => (
                 <CatalogCard
                   key={a.id}
                   name={a.name}
                   icon={"layerStyle"}
                   onSelect={() => handleSelectLayerStyle?.(a as LayerStyle)}
-                  selected={selectedLayerStyles.some(ua => ua.id === a.id)}
+                  selected={selectedLayerStyles.some((ua) => ua.id === a.id)}
                 />
               ))}
             </LayerStyleList>

@@ -20,9 +20,8 @@ export default ({
   handleCoreLayerSelect,
   handleSceneSettingSelect,
 }: Props) => {
-  const [currentProjectType, setCurrentProjectType] = useState<VisualizerProjectType>(
-    tab === "story" ? "story" : "default",
-  );
+  const [currentProjectType, setCurrentProjectType] =
+    useState<VisualizerProjectType>(tab === "story" ? "story" : "default");
 
   const handleProjectTypeChange = useCallback(
     (projectType: VisualizerProjectType) => setCurrentProjectType(projectType),
@@ -74,21 +73,44 @@ export default ({
   );
 
   // modals
-  const [dataSourceLayerCreatorShown, setDataSourceLayerShown] = useState(false);
-  const openDataSourceLayerCreator = useCallback(() => setDataSourceLayerShown(true), []);
-  const closeDataSourceLayerCreator = useCallback(() => setDataSourceLayerShown(false), []);
+  const [dataSourceLayerCreatorShown, setDataSourceLayerShown] =
+    useState(false);
+  const openDataSourceLayerCreator = useCallback(
+    () => setDataSourceLayerShown(true),
+    [],
+  );
+  const closeDataSourceLayerCreator = useCallback(
+    () => setDataSourceLayerShown(false),
+    [],
+  );
 
   const [sketchLayerCreatorShown, setSketchLayerCreatorShown] = useState(false);
-  const openSketchLayerCreator = useCallback(() => setSketchLayerCreatorShown(true), []);
-  const closeSketchLayerCreator = useCallback(() => setSketchLayerCreatorShown(false), []);
+  const openSketchLayerCreator = useCallback(
+    () => setSketchLayerCreatorShown(true),
+    [],
+  );
+  const closeSketchLayerCreator = useCallback(
+    () => setSketchLayerCreatorShown(false),
+    [],
+  );
 
-  const [customPropertySchemaShown, setCustomPropertySchemaShown] = useState(false);
-  const openCustomPropertySchema = useCallback(() => setCustomPropertySchemaShown(true), []);
-  const closeCustomPropertySchema = useCallback(() => setCustomPropertySchemaShown(false), []);
+  const [customPropertySchemaShown, setCustomPropertySchemaShown] =
+    useState(false);
+  const openCustomPropertySchema = useCallback(
+    () => setCustomPropertySchemaShown(true),
+    [],
+  );
+  const closeCustomPropertySchema = useCallback(
+    () => setCustomPropertySchemaShown(false),
+    [],
+  );
 
   // devices - not in use
   const [selectedDevice, setDevice] = useState<Device>("desktop");
-  const handleDeviceChange = useCallback((newDevice: Device) => setDevice(newDevice), []);
+  const handleDeviceChange = useCallback(
+    (newDevice: Device) => setDevice(newDevice),
+    [],
+  );
   // const visualizerWidth = useMemo(
   //   () => (tab === "widgets" ? devices[selectedDevice] : "100%"),
   //   [tab, selectedDevice],

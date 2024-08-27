@@ -35,13 +35,13 @@ const fontWeights = {
 
 export type FontWeight = keyof typeof fontWeights;
 
-const uniqueTraits = {
+const _uniqueTraits = {
   underline: "underline",
   italic: "italic",
   strike: "strike",
 };
 
-export type UniqueTraits = keyof typeof uniqueTraits;
+export type UniqueTraits = keyof typeof _uniqueTraits;
 
 // H1 components
 export const H1Bold = styled.p`

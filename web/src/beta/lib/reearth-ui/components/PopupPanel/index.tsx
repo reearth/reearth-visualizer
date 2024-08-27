@@ -1,7 +1,6 @@
-import { FC, ReactNode } from "react";
-
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
+import { FC, ReactNode } from "react";
 
 const DEFAULT_PANEL_WIDTH = 286;
 
@@ -13,12 +12,24 @@ export type PopupPanelProps = {
   onCancel?: () => void;
 };
 
-export const PopupPanel: FC<PopupPanelProps> = ({ title, width, children, actions, onCancel }) => {
+export const PopupPanel: FC<PopupPanelProps> = ({
+  title,
+  width,
+  children,
+  actions,
+  onCancel,
+}) => {
   return (
     <Wrapper width={width}>
       <HeaderWrapper>
         <Title>{title}</Title>
-        <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
+        <Button
+          iconButton
+          icon="close"
+          size="small"
+          onClick={onCancel}
+          appearance="simple"
+        />
       </HeaderWrapper>
       <Content>{children}</Content>
       {actions && <ActionWrapper>{actions}</ActionWrapper>}

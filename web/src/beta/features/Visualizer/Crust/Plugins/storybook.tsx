@@ -1,7 +1,6 @@
+import { Layer } from "@reearth/core";
 import { action } from "@storybook/addon-actions";
 import type { ReactNode } from "react";
-
-import { Layer } from "@reearth/core";
 
 import { PluginProvider } from "./context";
 import type { Context } from "./types";
@@ -142,8 +141,12 @@ export const context: Context = {
       rotateRight: act("rotateRight"),
       orbit: act("orbit"),
       getGlobeIntersection: act("getGlobeIntersection"),
-      enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
-      overrideScreenSpaceCameraController: act("overrideScreenSpaceCameraController"),
+      enableScreenSpaceCameraController: act(
+        "enableScreenSpaceCameraController",
+      ),
+      overrideScreenSpaceCameraController: act(
+        "overrideScreenSpaceCameraController",
+      ),
       move: act("move"),
       moveOverTerrain: act("moveOverTerrain"),
       setView: act("setView"),

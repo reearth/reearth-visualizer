@@ -7,6 +7,8 @@ export { default as publishColors } from "./colors";
 
 export { mask } from "./utils";
 
-export function usePublishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
+export function usePublishTheme(
+  sceneThemeOptions?: SceneThemeOptions,
+): PublishTheme {
   return useMemo(() => publishTheme(sceneThemeOptions), [sceneThemeOptions]);
 }

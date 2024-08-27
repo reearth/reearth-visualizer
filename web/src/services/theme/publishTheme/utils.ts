@@ -32,7 +32,9 @@ const premadeThemes: Record<PremadeThemeType, PublishTheme> = {
   forest,
 };
 
-export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
+export function publishTheme(
+  sceneThemeOptions?: SceneThemeOptions,
+): PublishTheme {
   if (sceneThemeOptions?.themeType) {
     if (sceneThemeOptions.themeType in premadeThemes) {
       return premadeThemes[sceneThemeOptions?.themeType as PremadeThemeType];
@@ -43,9 +45,12 @@ export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishThem
 
   const options = {
     ...sceneThemeOptions,
-    themeBackgroundColor: sceneThemeOptions?.themeBackgroundColor || themeDefaults.backgroundColor,
-    themeTextColor: sceneThemeOptions?.themeTextColor || themeDefaults.textColor,
-    themeSelectColor: sceneThemeOptions?.themeSelectColor || themeDefaults.selectColor,
+    themeBackgroundColor:
+      sceneThemeOptions?.themeBackgroundColor || themeDefaults.backgroundColor,
+    themeTextColor:
+      sceneThemeOptions?.themeTextColor || themeDefaults.textColor,
+    themeSelectColor:
+      sceneThemeOptions?.themeSelectColor || themeDefaults.selectColor,
   };
 
   const isBackgroundDark = isDark(options?.themeBackgroundColor);

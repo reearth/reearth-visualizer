@@ -1,8 +1,7 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import Slider, { Props } from ".";
 
@@ -17,7 +16,10 @@ export default meta;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: number) => updateArgs({ value: value }), [updateArgs]);
+  const handleChange = useCallback(
+    (value: number) => updateArgs({ value: value }),
+    [updateArgs],
+  );
 
   return (
     <Wrapper>
@@ -25,7 +27,11 @@ export const Default: Story = (args: Props) => {
         <Slider {...args} onChange={handleChange} />
       </div>
       <div>
-        <Slider {...args} max={args.max ? 2 * args.max : undefined} onChange={handleChange} />
+        <Slider
+          {...args}
+          max={args.max ? 2 * args.max : undefined}
+          onChange={handleChange}
+        />
       </div>
       <div>
         <Slider {...args} disabled={true} onChange={handleChange} />

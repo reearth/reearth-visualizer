@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import useFileInput from "use-file-input";
-
 import { BreadcrumbItem } from "@reearth/beta/lib/reearth-ui";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { AssetSortField, SortDirection } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import useFileInput from "use-file-input";
 
 import {
   FileType,
@@ -99,31 +98,37 @@ export default ({
   }, []);
 
   // assets
-  const { useAssetsQuery, useRemoveAssets, useCreateAssets } = useAssetsFetcher();
-  const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } = useAssetsQuery({
-    teamId: workspaceId ?? "",
-    pagination: {
-      first: ASSETS_PER_PAGE,
-    },
-    sort: {
-      direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
-      field: typeToGQLField[sort.type ?? "date"],
-    },
-    keyword: searchTerm,
-  });
+  const { useAssetsQuery, useRemoveAssets, useCreateAssets } =
+    useAssetsFetcher();
+  const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } =
+    useAssetsQuery({
+      teamId: workspaceId ?? "",
+      pagination: {
+        first: ASSETS_PER_PAGE,
+      },
+      sort: {
+        direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
+        field: typeToGQLField[sort.type ?? "date"],
+      },
+      keyword: searchTerm,
+    });
 
   const assetsExts = useMemo(
     () =>
       assetsTypes
-        ?.map(t => (t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t))
+        ?.map((t) =>
+          t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t,
+        )
         .flat(),
     [assetsTypes],
   );
 
   const filteredAssets = useMemo(() => {
     if (!assetsExts || !assets) return assets;
-    return assets.filter(a =>
-      assetsExts.includes((a.url.split(".").pop()?.toLowerCase() as FileType) ?? ""),
+    return assets.filter((a) =>
+      assetsExts.includes(
+        (a.url.split(".").pop()?.toLowerCase() as FileType) ?? "",
+      ),
     );
   }, [assets, assetsExts]);
 
@@ -195,7 +200,10 @@ export default ({
     const handleScroll = () => {
       if (childElement) {
         const isScrolledToBottom =
-          childElement.scrollHeight - parentElement.scrollTop - parentElement.clientHeight < 50;
+          childElement.scrollHeight -
+            parentElement.scrollTop -
+            parentElement.clientHeight <
+          50;
         if (isScrolledToBottom) {
           loadMoreRef.current?.();
         }
@@ -224,14 +232,19 @@ export default ({
 
   // upload
   // currently use in dashboard only therefore we can set multiple to true always
-  const handleAssetUpload = useFileInput(files => handleAssetsCreate?.(files), {
-    accept: GENERAL_FILE_TYPE_ACCEPT_STRING,
-    multiple: true,
-  });
+  const handleAssetUpload = useFileInput(
+    (files) => handleAssetsCreate?.(files),
+    {
+      accept: GENERAL_FILE_TYPE_ACCEPT_STRING,
+      multiple: true,
+    },
+  );
 
   // layout
   const [layout, setLayout] = useState(
-    ["grid", "list"].includes(localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? "")
+    ["grid", "list"].includes(
+      localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? "",
+    )
       ? (localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) as ManagerLayout)
       : "grid",
   );
@@ -244,7 +257,9 @@ export default ({
 
   // path
   // TODO: support path with folder
-  const [paths, _setPaths] = useState<BreadcrumbItem[]>([{ id: "assets", title: "Assets" }]);
+  const [paths, _setPaths] = useState<BreadcrumbItem[]>([
+    { id: "assets", title: "Assets" },
+  ]);
   const handlePathClick = useCallback((_id?: string) => {}, []);
 
   // select
@@ -256,7 +271,7 @@ export default ({
       if (allowMultipleSelection && ctrlPressed.current && assetId) {
         selectAsset(
           selectedAssetIds.includes(assetId)
-            ? selectedAssetIds.filter(a => a !== assetId)
+            ? selectedAssetIds.filter((a) => a !== assetId)
             : [...selectedAssetIds, assetId],
         );
       } else {
@@ -289,7 +304,9 @@ export default ({
   useEffect(() => {
     if (!onSelectChange) return;
     onSelectChange(
-      selectedAssetIds.map(id => assets.find(a => a.id === id)).filter(a => !!a) as Asset[],
+      selectedAssetIds
+        .map((id) => assets.find((a) => a.id === id))
+        .filter((a) => !!a) as Asset[],
     );
   }, [selectedAssetIds, assets, onSelectChange]);
 

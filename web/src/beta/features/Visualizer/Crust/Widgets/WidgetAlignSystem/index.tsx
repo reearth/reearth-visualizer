@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import React, { ReactNode, useMemo } from "react";
 import { GridWrapper } from "react-align";
-
-import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 import MobileZone from "./MobileZone";
@@ -38,7 +37,7 @@ export type Props = {
   invisibleWidgetIDs?: string[];
   editing?: boolean;
   built?: boolean;
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
   theme?: Theme;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -87,7 +86,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
         editing={editing}
         onMove={handleMove}
         onAlignChange={handleAlignmentChange}
-        onExtend={handleExtend}>
+        onExtend={handleExtend}
+      >
         <Zone
           zoneName="outer"
           selectedWidgetArea={selectedWidgetArea}
@@ -98,7 +98,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
           built={built}
           isMobile={isMobile}
           renderWidget={renderWidget}
-          onWidgetAreaSelect={onWidgetAreaSelect}>
+          onWidgetAreaSelect={onWidgetAreaSelect}
+        >
           {(!isMobile || hasInner) && (
             <ZoneComponent
               zoneName="inner"

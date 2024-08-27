@@ -1,12 +1,18 @@
-import { useMemo, useEffect, useCallback, useState, MutableRefObject } from "react";
-
-import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
+import type {
+  Alignment,
+  Location,
+} from "@reearth/beta/features/Visualizer/Crust";
 import {
   convertData,
   sceneProperty2ViewerPropertyMapping,
 } from "@reearth/beta/utils/convert-object";
 import { Camera } from "@reearth/beta/utils/value";
-import type { LatLng, ComputedLayer, ComputedFeature, ViewerProperty } from "@reearth/core";
+import type {
+  LatLng,
+  ComputedLayer,
+  ComputedFeature,
+  ViewerProperty,
+} from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -17,6 +23,13 @@ import {
   useInfoboxFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
+import {
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  MutableRefObject,
+} from "react";
 
 import { useCurrentCamera } from "../atoms";
 import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
@@ -50,8 +63,12 @@ export default ({
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
-  const { useUpdatePropertyValue, useAddPropertyItem, useMovePropertyItem, useRemovePropertyItem } =
-    usePropertyFetcher();
+  const {
+    useUpdatePropertyValue,
+    useAddPropertyItem,
+    useMovePropertyItem,
+    useRemovePropertyItem,
+  } = usePropertyFetcher();
   const {
     useInstallableInfoboxBlocksQuery,
     useCreateInfoboxBlock,
@@ -73,7 +90,9 @@ export default ({
   const { scene } = useSceneQuery({ sceneId });
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
-  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
+    undefined,
+  );
 
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
@@ -83,7 +102,10 @@ export default ({
     }
     return {
       viewerProperty: sceneProperty
-        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
+        ? (convertData(
+            sceneProperty,
+            sceneProperty2ViewerPropertyMapping,
+          ) as ViewerProperty)
         : undefined,
       cesiumIonAccessToken,
     };
@@ -93,28 +115,42 @@ export default ({
     setCurrentCamera(initialCamera);
   }, [initialCamera, setCurrentCamera]);
 
-  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
+  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({
+    sceneId,
+  });
 
   const infoboxBlockNames = useMemo(
     () =>
       installableInfoboxBlocks
-        ?.map(ib => ({ [ib.extensionId]: ib.name }))
-        .filter((bn): bn is { [key: string]: string } => !!bn)
-        .reduce((result, obj) => ({ ...result, ...obj }), {}),
+        ?.map((ib) => ({ [ib.extensionId]: ib.name }))
+        .filter((bn): bn is Record<string, string> => !!bn)
+        .reduce((result, obj) => {
+          Object.assign(result, obj);
+          return result;
+        }, {}),
     [installableInfoboxBlocks],
   );
 
   const layers = useMemo(() => {
-    const processedLayers = processLayers(nlsLayers, layerStyles, undefined, infoboxBlockNames);
+    const processedLayers = processLayers(
+      nlsLayers,
+      layerStyles,
+      undefined,
+      infoboxBlockNames,
+    );
     if (!showStoryPanel) return processedLayers;
-    return processedLayers?.map(layer => ({
+    return processedLayers?.map((layer) => ({
       ...layer,
       visible: true,
     }));
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
   const handleCoreLayerSelect = useCallback(
-    (layerId?: string, computedLayer?: ComputedLayer, computedFeature?: ComputedFeature) => {
+    (
+      layerId?: string,
+      computedLayer?: ComputedLayer,
+      computedFeature?: ComputedFeature,
+    ) => {
       if (
         (!layerId && !computedFeature && !selectedLayer) ??
         (layerId === selectedLayer?.layer?.id || !computedFeature)
@@ -142,7 +178,10 @@ export default ({
   const widgets = useMemo(() => convertWidgets(scene), [scene]);
 
   const handleWidgetUpdate = useCallback(
-    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+    async (
+      id: string,
+      update: { location?: Location; extended?: boolean; index?: number },
+    ) => {
       await useUpdateWidget(id, update, sceneId);
     },
     [sceneId, useUpdateWidget],
@@ -151,7 +190,12 @@ export default ({
   const handleWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
       await useUpdateWidgetAlignSystem(
-        { zone: location.zone, section: location.section, area: location.area, align },
+        {
+          zone: location.zone,
+          section: location.section,
+          area: location.area,
+          align,
+        },
         sceneId,
       );
     },
@@ -161,10 +205,10 @@ export default ({
   // Plugin
   const pluginProperty = useMemo(
     () =>
-      scene?.plugins.reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
-        {},
-      ),
+      scene?.plugins.reduce<Record<string, any>>((a, b) => {
+        a[b.pluginId] = processProperty(b.property);
+        return a;
+      }, {}),
     [scene?.plugins],
   );
 
@@ -216,7 +260,12 @@ export default ({
   );
 
   const handleStoryBlockCreate = useCallback(
-    async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
+    async (
+      pageId?: string,
+      extensionId?: string,
+      pluginId?: string,
+      index?: number,
+    ) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
       await useCreateStoryBlock({
         pluginId,
@@ -247,7 +296,15 @@ export default ({
       v?: any,
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
-      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
+      await useUpdatePropertyValue(
+        propertyId,
+        schemaItemId,
+        itemId,
+        fieldId,
+        "en",
+        v,
+        vt,
+      );
     },
     [useUpdatePropertyValue],
   );
@@ -261,8 +318,14 @@ export default ({
   );
 
   const handlePropertyItemMove = useCallback(
-    async (propertyId?: string, schemaGroupId?: string, itemId?: string, index?: number) => {
-      if (!propertyId || !schemaGroupId || !itemId || index === undefined) return;
+    async (
+      propertyId?: string,
+      schemaGroupId?: string,
+      itemId?: string,
+      index?: number,
+    ) => {
+      if (!propertyId || !schemaGroupId || !itemId || index === undefined)
+        return;
       await useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
     },
     [useMovePropertyItem],
@@ -293,7 +356,10 @@ export default ({
     document.title = title;
   }, [isBuilt, title]);
 
-  const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
+  const handleMount = useCallback(
+    () => onVisualizerReady(true),
+    [onVisualizerReady],
+  );
 
   return {
     viewerProperty,

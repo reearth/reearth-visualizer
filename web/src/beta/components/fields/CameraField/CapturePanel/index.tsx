@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
@@ -6,6 +5,7 @@ import Text from "@reearth/beta/components/Text";
 import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
 
 import PanelCommon from "../../common/PanelCommon";
 import type { RowType } from "../types";
@@ -20,7 +20,7 @@ type Props = {
 const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
   const t = useT();
 
-  const panelContent: { [key: string]: RowType } = useMemo(() => {
+  const panelContent: Record<string, RowType> = useMemo(() => {
     return {
       [t("Current Position")]: [
         { id: "lat", description: t("Latitude"), value: camera?.lat },
@@ -28,20 +28,32 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
         { id: "height", description: t("Height"), value: camera?.height },
       ],
       [t("Current Rotation")]: [
-        { id: "heading", description: t("Heading"), value: radiansToDegrees(camera?.heading ?? 0) },
-        { id: "pitch", description: t("Pitch"), value: radiansToDegrees(camera?.pitch ?? 0) },
-        { id: "roll", description: t("Roll"), value: radiansToDegrees(camera?.roll ?? 0) },
+        {
+          id: "heading",
+          description: t("Heading"),
+          value: radiansToDegrees(camera?.heading ?? 0),
+        },
+        {
+          id: "pitch",
+          description: t("Pitch"),
+          value: radiansToDegrees(camera?.pitch ?? 0),
+        },
+        {
+          id: "roll",
+          description: t("Roll"),
+          value: radiansToDegrees(camera?.roll ?? 0),
+        },
       ],
     };
   }, [t, camera]);
 
   return (
     <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>
-      {Object.keys(panelContent).map(group => (
+      {Object.keys(panelContent).map((group) => (
         <FieldGroup key={group}>
           <Text size="footnote">{group}</Text>
           <InputWrapper>
-            {panelContent[group].map(field => (
+            {panelContent[group].map((field) => (
               <StyledNumberInput
                 key={field.id}
                 inputDescription={field.description}

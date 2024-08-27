@@ -1,6 +1,4 @@
 import { useMutation } from "@apollo/client";
-import { useCallback } from "react";
-
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryPageInput,
@@ -24,6 +22,7 @@ import {
   UPDATE_STORY_PAGE,
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
+import { useCallback } from "react";
 
 import { useNotification } from "../../state";
 
@@ -39,7 +38,9 @@ export default () => {
   >(CREATE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useCreateStoryPage = useCallback(
-    async (input: CreateStoryPageInput): Promise<MutationReturn<CreateStoryPageMutation>> => {
+    async (
+      input: CreateStoryPageInput,
+    ): Promise<MutationReturn<CreateStoryPageMutation>> => {
       const { data, errors } = await createStoryPageMutation({
         variables: {
           input,
@@ -50,7 +51,10 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfullly created a page!") });
+      setNotification({
+        type: "success",
+        text: t("Successfullly created a page!"),
+      });
 
       return { data, status: "success" };
     },
@@ -63,7 +67,9 @@ export default () => {
   >(DELETE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useDeleteStoryPage = useCallback(
-    async (input: DeleteStoryPageInput): Promise<MutationReturn<DeleteStoryPageMutation>> => {
+    async (
+      input: DeleteStoryPageInput,
+    ): Promise<MutationReturn<DeleteStoryPageMutation>> => {
       const { data, errors } = await deleteStoryPageMutation({
         variables: {
           input,
@@ -74,20 +80,25 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "info", text: t("Page was successfully deleted.") });
+      setNotification({
+        type: "info",
+        text: t("Page was successfully deleted."),
+      });
 
       return { data, status: "success" };
     },
     [deleteStoryPageMutation, setNotification, t],
   );
 
-  const [moveStoryPageMutation] = useMutation<MoveStoryPageMutation, MutationMoveStoryPageArgs>(
-    MOVE_STORY_PAGE,
-    { refetchQueries: ["GetScene"] },
-  );
+  const [moveStoryPageMutation] = useMutation<
+    MoveStoryPageMutation,
+    MutationMoveStoryPageArgs
+  >(MOVE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useMoveStoryPage = useCallback(
-    async (input: MoveStoryPageInput): Promise<MutationReturn<MoveStoryPageMutation>> => {
+    async (
+      input: MoveStoryPageInput,
+    ): Promise<MutationReturn<MoveStoryPageMutation>> => {
       const { data, errors } = await moveStoryPageMutation({
         variables: {
           input,
@@ -98,7 +109,10 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "info", text: t("Page was successfully moved.") });
+      setNotification({
+        type: "info",
+        text: t("Page was successfully moved."),
+      });
 
       return { data, status: "success" };
     },
@@ -111,7 +125,9 @@ export default () => {
   >(UPDATE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useUpdateStoryPage = useCallback(
-    async (input: UpdateStoryPageInput): Promise<MutationReturn<UpdateStoryPageMutation>> => {
+    async (
+      input: UpdateStoryPageInput,
+    ): Promise<MutationReturn<UpdateStoryPageMutation>> => {
       const { data, errors } = await updateStoryPageMutation({
         variables: {
           input,
@@ -122,7 +138,10 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfullly updated a page!") });
+      setNotification({
+        type: "success",
+        text: t("Successfullly updated a page!"),
+      });
 
       return { data, status: "success" };
     },

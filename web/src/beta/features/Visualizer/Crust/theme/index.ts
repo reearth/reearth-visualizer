@@ -43,7 +43,8 @@ export function usePublishTheme(sceneThemeOptions?: WidgetThemeOptions): Theme {
 }
 
 export function publishTheme(sceneThemeOptions?: WidgetThemeOptions): Theme {
-  const premadeTheme = premade[sceneThemeOptions?.themeType || defaultThemeType];
+  const premadeTheme =
+    premade[sceneThemeOptions?.themeType || defaultThemeType];
   if (premadeTheme) return premadeTheme;
 
   const options = {

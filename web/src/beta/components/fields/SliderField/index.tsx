@@ -1,14 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
-
 import Property from "@reearth/beta/components/fields";
 import Slider, { Props as SliderProps } from "@reearth/beta/components/Slider";
+import { useCallback, useEffect, useState } from "react";
 
 export type Props = {
   name?: string;
   description?: string;
 } & SliderProps;
 
-const SliderField: React.FC<Props> = ({ name, description, value, onChange, ...args }: Props) => {
+const SliderField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  onChange,
+  ...args
+}: Props) => {
   const [internalState, setInternalState] = useState(value);
 
   const handleChange = useCallback(
@@ -24,7 +29,12 @@ const SliderField: React.FC<Props> = ({ name, description, value, onChange, ...a
 
   return (
     <Property name={name} description={description}>
-      <Slider value={internalState} onChange={handleChange} onAfterChange={onChange} {...args} />
+      <Slider
+        value={internalState}
+        onChange={handleChange}
+        onAfterChange={onChange}
+        {...args}
+      />
     </Property>
   );
 };

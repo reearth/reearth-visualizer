@@ -1,9 +1,8 @@
-import { FC } from "react";
-import { Link } from "react-router-dom";
-
 import { IconName, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
+import { Link } from "react-router-dom";
 
 export type SidebarMenuItemProps = {
   text?: string;
@@ -35,7 +34,10 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
             color={active ? theme.content.main : theme.content.weak}
           />
         )}
-        <Typography size="body" color={disabled ? theme.content.weak : theme.content.main}>
+        <Typography
+          size="body"
+          color={disabled ? theme.content.weak : theme.content.main}
+        >
           {text}
         </Typography>
       </MenuWrapper>
@@ -43,10 +45,12 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   );
 };
 
-const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(({ disabled }) => ({
-  pointerEvents: disabled ? "none" : "auto",
-  textDecoration: "none",
-}));
+const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(
+  ({ disabled }) => ({
+    pointerEvents: disabled ? "none" : "auto",
+    textDecoration: "none",
+  }),
+);
 
 const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
   ({ active, theme, disabled }) => ({

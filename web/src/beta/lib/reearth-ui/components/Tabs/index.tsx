@@ -1,7 +1,13 @@
-import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export type TabItem = {
   id: string;
@@ -58,18 +64,24 @@ export const Tabs: FC<TabsProps> = ({
             onClick={() => handleTabChange?.(id)}
             selected={id === activeTab}
             position={position}
-            tabStyle={tabStyle}>
+            tabStyle={tabStyle}
+          >
             {icon && (
               <Icon
                 icon={icon}
-                color={id === activeTab ? theme.content.main : theme.content.weak}
+                color={
+                  id === activeTab ? theme.content.main : theme.content.weak
+                }
               />
             )}
             {name && (
               <Typography
                 size="body"
                 weight="regular"
-                color={id === activeTab ? theme.content.main : theme.content.weak}>
+                color={
+                  id === activeTab ? theme.content.main : theme.content.weak
+                }
+              >
                 {name}
               </Typography>
             )}
@@ -81,25 +93,27 @@ export const Tabs: FC<TabsProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{ position?: "top" | "left"; background?: string }>(
-  ({ position, background, theme }) => ({
-    display: "flex",
-    flexFlow: position === "top" ? "column nowrap" : "row nowrap",
-    background: background || theme.bg[1],
-    height: "100%",
-    width: "100%",
-  }),
-);
+const Wrapper = styled("div")<{
+  position?: "top" | "left";
+  background?: string;
+}>(({ position, background, theme }) => ({
+  display: "flex",
+  flexFlow: position === "top" ? "column nowrap" : "row nowrap",
+  background: background || theme.bg[1],
+  height: "100%",
+  width: "100%",
+}));
 
-const TabsMenu = styled("div")<{ position?: "top" | "left"; tabStyle?: "normal" | "separated" }>(
-  ({ position, tabStyle, theme }) => ({
-    display: "flex",
-    flexFlow: position === "top" ? "row nowrap" : "column nowrap",
-    background: theme.bg[0],
-    padding: tabStyle === "normal" ? " " : theme.spacing.large,
-    gap: theme.spacing.micro,
-  }),
-);
+const TabsMenu = styled("div")<{
+  position?: "top" | "left";
+  tabStyle?: "normal" | "separated";
+}>(({ position, tabStyle, theme }) => ({
+  display: "flex",
+  flexFlow: position === "top" ? "row nowrap" : "column nowrap",
+  background: theme.bg[0],
+  padding: tabStyle === "normal" ? " " : theme.spacing.large,
+  gap: theme.spacing.micro,
+}));
 
 const Tab = styled("div")<{
   position?: "top" | "left";
@@ -113,9 +127,11 @@ const Tab = styled("div")<{
   background: selected ? theme.bg[1] : "inherit",
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: tabStyle === "separated" ? theme.radius.small : 0,
-  borderTopRightRadius: position === "top" && tabStyle === "normal" ? theme.radius.small : "",
+  borderTopRightRadius:
+    position === "top" && tabStyle === "normal" ? theme.radius.small : "",
   borderTopLeftRadius: tabStyle === "normal" ? theme.radius.small : "",
-  borderBottomLeftRadius: position === "left" && tabStyle === "normal" ? theme.radius.small : "",
+  borderBottomLeftRadius:
+    position === "left" && tabStyle === "normal" ? theme.radius.small : "",
 }));
 
 const Content = styled("div")(({ theme }) => ({

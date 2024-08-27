@@ -10,10 +10,13 @@ export const useScroll = () => {
 
       const mouseY = e.clientY;
       const scrollThreshold = scrollContainer.offsetHeight * 0.4;
-      mouseY < scrollThreshold
-        ? (scrollContainer.scrollTop -= 10)
-        : mouseY > scrollContainer.offsetHeight - scrollThreshold &&
-          (scrollContainer.scrollTop += 10);
+      if (mouseY < scrollThreshold) {
+        scrollContainer.scrollTop -= 10;
+      } else {
+        if (mouseY > scrollContainer.offsetHeight - scrollThreshold) {
+          scrollContainer.scrollTop += 10;
+        }
+      }
     },
     [scrollContainerRef],
   );

@@ -1,7 +1,6 @@
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 import { RingLoader } from "react-spinners";
-
-import { styled, useTheme } from "@reearth/services/theme";
 
 export type LoadingProps = {
   animationSize?: number;
@@ -22,24 +21,29 @@ export const Loading: FC<LoadingProps> = ({
 
   return (
     <LoadingWrapper fixed={fixed} overlay={overlay} relative={relative}>
-      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.select.main} />
+      <RingLoader
+        size={animationSize ?? 33}
+        color={animationColor ?? theme.select.main}
+      />
     </LoadingWrapper>
   );
 };
 
-const LoadingWrapper = styled("div")<{ fixed?: boolean; overlay?: boolean; relative?: boolean }>(
-  ({ theme, fixed, relative, overlay }) => ({
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-    background: overlay ? theme.bg[1] : "",
-    position: fixed ? "fixed" : relative ? "relative" : "absolute",
-    top: 0,
-    left: 0,
-    opacity: "0.8",
-    zIndex: theme.zIndexes.editor.loading,
-  }),
-);
+const LoadingWrapper = styled("div")<{
+  fixed?: boolean;
+  overlay?: boolean;
+  relative?: boolean;
+}>(({ theme, fixed, relative, overlay }) => ({
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flexDirection: "column",
+  background: overlay ? theme.bg[1] : "",
+  position: fixed ? "fixed" : relative ? "relative" : "absolute",
+  top: 0,
+  left: 0,
+  opacity: "0.8",
+  zIndex: theme.zIndexes.editor.loading,
+}));

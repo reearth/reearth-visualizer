@@ -4,7 +4,13 @@ import type { InternalWidget, WidgetAlignment, WidgetLocation } from "../types";
 
 export type { Alignment } from "react-align";
 
-export type { Theme, Widget, InternalWidget, WidgetAlignment, WidgetLocation } from "../types";
+export type {
+  Theme,
+  Widget,
+  InternalWidget,
+  WidgetAlignment,
+  WidgetLocation,
+} from "../types";
 
 export type Location = {
   zone: "inner" | "outer";
@@ -12,7 +18,12 @@ export type Location = {
   area: "top" | "middle" | "bottom";
 };
 
-export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+export type WidgetAreaPadding = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
 
 export type WidgetArea = {
   align?: Alignment;

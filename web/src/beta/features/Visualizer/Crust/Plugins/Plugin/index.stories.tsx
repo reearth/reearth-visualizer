@@ -9,7 +9,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => (
+export const Default: Story<Props> = (args) => (
   <Provider>
     <div style={{ background: "#fff" }}>
       <Component {...args} />
@@ -24,7 +24,7 @@ Default.args = {
   visible: true,
 };
 
-export const Headless: Story<Props> = args => (
+export const Headless: Story<Props> = (args) => (
   <Provider>
     <Component {...args} />
   </Provider>

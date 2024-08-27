@@ -21,7 +21,7 @@ const dummyItems: DummyItem[] = [...Array(10)].map((_, i) => {
   return { id: str, text: str };
 });
 
-const DummyComponent: typeof DragAndDropList<DummyItem> = args => {
+const DummyComponent: typeof DragAndDropList<DummyItem> = (args) => {
   const [items, setItems] = useState<DummyItem[]>(dummyItems);
   return (
     <DragAndDropList<DummyItem>
@@ -29,10 +29,10 @@ const DummyComponent: typeof DragAndDropList<DummyItem> = args => {
       items={items}
       onItemDrop={(item, index) => {
         // actual use case would be api call or optimistic update
-        setItems(old => {
+        setItems((old) => {
           const items = [...old];
           items.splice(
-            old.findIndex(o => o.id === item.id),
+            old.findIndex((o) => o.id === item.id),
             1,
           );
           items.splice(index, 0, item);
@@ -44,26 +44,34 @@ const DummyComponent: typeof DragAndDropList<DummyItem> = args => {
 };
 
 export const Default: Story = {
-  render: args => {
+  render: (args) => {
     return (
-      <div style={{ maxHeight: "240px", overflowY: "auto", background: "gray", padding: "24px" }}>
+      <div
+        style={{
+          maxHeight: "240px",
+          overflowY: "auto",
+          background: "gray",
+          padding: "24px",
+        }}
+      >
         <DummyComponent {...args} />
       </div>
     );
   },
   args: {
     uniqueKey: "uniqueKey",
-    renderItem: item => (
+    renderItem: (item) => (
       <div
         style={{
           border: "1px solid blue",
           padding: "0.5rem 1rem",
           backgroundColor: "lightgray",
-        }}>
+        }}
+      >
         {item.text}
       </div>
     ),
-    getId: item => item.id.toString(),
+    getId: (item) => item.id.toString(),
     items: dummyItems,
     gap: 16,
   },

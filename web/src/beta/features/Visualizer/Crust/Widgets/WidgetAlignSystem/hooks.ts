@@ -14,7 +14,13 @@ export default function ({
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
 }) {
   const handleMove = useCallback(
-    (id: string, area: string, index: number, prevArea: string, _prevIndex: number) => {
+    (
+      id: string,
+      area: string,
+      index: number,
+      prevArea: string,
+      _prevIndex: number,
+    ) => {
       const location = area !== prevArea ? getLocationFromId(area) : undefined;
       onWidgetLayoutUpdate?.(id, { index, location });
     },

@@ -9,12 +9,15 @@ export default ({
   floatingWidgets,
   selectedLayer,
   selectedStory,
-}: Pick<Props, "alignSystem" | "floatingWidgets" | "selectedLayer" | "selectedStory">) => {
+}: Pick<
+  Props,
+  "alignSystem" | "floatingWidgets" | "selectedLayer" | "selectedStory"
+>) => {
   const pluginInstances = usePluginInstances({
     alignSystem,
     floatingWidgets,
     infoboxBlocks: selectedLayer?.layer?.infobox?.blocks,
-    storyBlocks: selectedStory?.pages.flatMap(p => p.blocks),
+    storyBlocks: selectedStory?.pages.flatMap((p) => p.blocks),
   });
 
   const getPluginInstances = useGet(pluginInstances);

@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import RCSlider from "rc-slider";
 import React, { ComponentProps } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import "rc-slider/assets/index.css";
 
@@ -12,7 +11,11 @@ export type Props = {
   max?: number;
 } & ComponentProps<typeof RangeSliderWithTooltip>;
 
-const calculateStep = (min?: number, max?: number, step?: number | null): number => {
+const calculateStep = (
+  min?: number,
+  max?: number,
+  step?: number | null,
+): number => {
   if (step != undefined) {
     return step;
   } else if (min !== undefined && max !== undefined) {

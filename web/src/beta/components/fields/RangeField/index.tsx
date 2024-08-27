@@ -1,15 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
-
 import Property from "@reearth/beta/components/fields";
-import RangeSlider, { Props as RangeProps } from "@reearth/beta/components/RangeSlider";
+import RangeSlider, {
+  Props as RangeProps,
+} from "@reearth/beta/components/RangeSlider";
+import { useCallback, useEffect, useState } from "react";
 
 export type Props = {
   name?: string;
   description?: string;
 } & RangeProps;
 
-const RangeField: React.FC<Props> = ({ name, description, value, onChange, ...args }: Props) => {
-  const [internalState, setInternalState] = useState<number[] | undefined>(value);
+const RangeField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  onChange,
+  ...args
+}: Props) => {
+  const [internalState, setInternalState] = useState<number[] | undefined>(
+    value,
+  );
 
   const handleChange = useCallback(
     (value: number[]) => {

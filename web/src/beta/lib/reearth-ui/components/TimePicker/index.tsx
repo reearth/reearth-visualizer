@@ -1,6 +1,5 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
-
 import { fonts, styled } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
 export type TimePickerProps = {
   value?: string;
@@ -10,7 +9,12 @@ export type TimePickerProps = {
   onBlur?: (text: string) => void;
 };
 
-export const TimePicker: FC<TimePickerProps> = ({ value, disabled, onChange, onBlur }) => {
+export const TimePicker: FC<TimePickerProps> = ({
+  value,
+  disabled,
+  onChange,
+  onBlur,
+}) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -56,7 +60,9 @@ const Wrapper = styled("div")<{
 }>(({ theme, status }) => {
   return {
     border:
-      status === "active" ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
+      status === "active"
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",

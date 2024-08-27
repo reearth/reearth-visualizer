@@ -34,7 +34,11 @@ export declare type LayerSelectWithRectMove = LayerSelectWithRect & {
 
 export declare type LayerSelectWithRectStart = LayerSelectWithRect;
 
-export declare type InteractionModeType = "default" | "move" | "selection" | "sketch";
+export declare type InteractionModeType =
+  | "default"
+  | "move"
+  | "selection"
+  | "sketch";
 
 export declare type Viewer = {
   readonly property: ViewerProperty | undefined;
@@ -43,7 +47,10 @@ export declare type Viewer = {
   readonly interactionMode: InteractionMode;
   readonly env: Env;
   readonly tools: Tools;
-  readonly capture: (type?: string, encoderOptions?: number) => string | undefined;
+  readonly capture: (
+    type?: string,
+    encoderOptions?: number,
+  ) => string | undefined;
   readonly on: ViewerEvents["on"];
   readonly off: ViewerEvents["off"];
 };
@@ -83,8 +90,15 @@ export declare type Tools = {
   readonly getScreenCoordinateFromPosition: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
-  readonly getTerrainHeightAsync: (lng: number, lat: number) => Promise<number | undefined>;
-  readonly getGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly getTerrainHeightAsync: (
+    lng: number,
+    lat: number,
+  ) => Promise<number | undefined>;
+  readonly getGlobeHeight: (
+    lng: number,
+    lat: number,
+    height?: number,
+  ) => number | undefined;
   readonly getGlobeHeightByCamera: () => number | undefined;
   readonly cartographicToCartesian: (
     lng: number,
@@ -102,7 +116,9 @@ export declare type Tools = {
     rawPosition: [x: number, y: number, z: number],
     screenOffset: [x: number, y: number],
   ) => [x: number, y: number, z: number] | undefined;
-  readonly isPositionVisibleOnGlobe: (position: [x: number, y: number, z: number]) => boolean;
+  readonly isPositionVisibleOnGlobe: (
+    position: [x: number, y: number, z: number],
+  ) => boolean;
 };
 
 export declare type ViewerEventType = {

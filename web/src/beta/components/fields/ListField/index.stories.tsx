@@ -1,8 +1,7 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import ListField, { Props } from ".";
 
@@ -41,7 +40,7 @@ export const Default: Story = (args: Props) => {
     (item: { id: string; value: string }, index: number) => {
       const items = [...args.items];
       items.splice(
-        items.findIndex(x => x.id === item.id),
+        items.findIndex((x) => x.id === item.id),
         1,
       );
       items.splice(index, 0, item);
@@ -50,7 +49,10 @@ export const Default: Story = (args: Props) => {
     [updateArgs, args.items],
   );
 
-  const onSelect = useCallback((id: string) => updateArgs({ selected: id }), [updateArgs]);
+  const onSelect = useCallback(
+    (id: string) => updateArgs({ selected: id }),
+    [updateArgs],
+  );
 
   return (
     <Wrapper>

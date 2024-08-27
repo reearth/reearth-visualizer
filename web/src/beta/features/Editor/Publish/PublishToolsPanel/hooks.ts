@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { useSettingsNavigation } from "@reearth/beta/hooks";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import { useProjectFetcher, useStorytellingFetcher } from "@reearth/services/api";
+import {
+  useProjectFetcher,
+  useStorytellingFetcher,
+} from "@reearth/services/api";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
@@ -45,7 +47,7 @@ export default ({
 
   const project: SelectedProject | undefined = useMemo(() => {
     if (selectedProjectType === "story") {
-      const story = stories?.find(s => s.id === storyId);
+      const story = stories?.find((s) => s.id === storyId);
       return story
         ? {
             id: story.id,
@@ -70,10 +72,15 @@ export default ({
   const generateAlias = useCallback(() => generateRandomString(10), []);
 
   const [validAlias, setValidAlias] = useState(false);
-  const alias = useMemo(() => project?.alias ?? generateAlias(), [project?.alias, generateAlias]);
+  const alias = useMemo(
+    () => project?.alias ?? generateAlias(),
+    [project?.alias, generateAlias],
+  );
 
-  const [checkProjectAlias, { loading: validatingAlias, data: checkProjectAliasData }] =
-    useProjectAliasCheckLazyQuery();
+  const [
+    checkProjectAlias,
+    { loading: validatingAlias, data: checkProjectAliasData },
+  ] = useProjectAliasCheckLazyQuery();
 
   const publishmentStatuses = useMemo(() => {
     return [
@@ -83,7 +90,7 @@ export default ({
         type: "default",
         published: isPublished(mapProject?.publishmentStatus),
       },
-      ...(stories?.map(s => ({
+      ...(stories?.map((s) => ({
         id: s.id,
         title: "Story",
         type: "story",
@@ -118,16 +125,18 @@ export default ({
       project?.publishmentStatus === "PUBLIC"
         ? "published"
         : project?.publishmentStatus === "LIMITED"
-        ? "limited"
-        : "unpublished",
+          ? "limited"
+          : "unpublished",
     [project?.publishmentStatus],
   );
 
   const handleProjectPublish = useCallback(
     async (alias: string | undefined, publishStatus: PublishStatus) => {
-      selectedProjectType === "story"
-        ? await usePublishStory(publishStatus, project?.id, alias)
-        : await usePublishProject(publishStatus, project?.id, alias);
+      if (selectedProjectType === "story") {
+        await usePublishStory(publishStatus, project?.id, alias);
+      } else {
+        await usePublishProject(publishStatus, project?.id, alias);
+      }
     },
     [project?.id, selectedProjectType, usePublishStory, usePublishProject],
   );

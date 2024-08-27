@@ -57,7 +57,9 @@ const reearthBuiltin: BuiltinStoryBlocks<Component> = {
 
 const builtin = merge({}, reearthBuiltin);
 
-export const isBuiltinStoryBlock = (id: string): id is keyof BuiltinStoryBlocks => {
+export const isBuiltinStoryBlock = (
+  id: string,
+): id is keyof BuiltinStoryBlocks => {
   return !!builtin[id as keyof BuiltinStoryBlocks];
 };
 

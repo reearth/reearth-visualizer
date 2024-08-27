@@ -32,8 +32,8 @@ export const processProperty = (
       ...a,
       [b.schemaGroupId]: {
         schema: b,
-        orig: orig?.items.find(i => i.schemaGroupId === b.schemaGroupId),
-        parent: parent?.items.find(i => i.schemaGroupId === b.schemaGroupId),
+        orig: orig?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
+        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
       },
     }),
     {},
@@ -48,7 +48,13 @@ export const processProperty = (
           }
           return [
             key,
-            processPropertyGroups(schema, undefined, undefined, linkedDatasetId, datasets),
+            processPropertyGroups(
+              schema,
+              undefined,
+              undefined,
+              linkedDatasetId,
+              datasets,
+            ),
           ];
         }
 
@@ -59,8 +65,14 @@ export const processProperty = (
           const used = orig || parent;
           return [
             key,
-            used?.groups.map(g => ({
-              ...processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
+            used?.groups.map((g) => ({
+              ...processPropertyGroups(
+                schema,
+                g,
+                undefined,
+                linkedDatasetId,
+                datasets,
+              ),
               id: g.id,
             })),
           ];
@@ -70,7 +82,16 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
-          return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
+          return [
+            key,
+            processPropertyGroups(
+              schema,
+              parent,
+              orig,
+              linkedDatasetId,
+              datasets,
+            ),
+          ];
         }
         return [key, null];
       })
@@ -99,8 +120,8 @@ const processPropertyGroups = (
       ...a,
       [b.fieldId]: {
         schema: b,
-        parent: parent?.fields.find(i => i.fieldId === b.fieldId),
-        orig: original?.fields.find(i => i.fieldId === b.fieldId),
+        parent: parent?.fields.find((i) => i.fieldId === b.fieldId),
+        orig: original?.fields.find((i) => i.fieldId === b.fieldId),
       },
     }),
     {},
@@ -139,7 +160,12 @@ const processPropertyGroups = (
           key,
           {
             ...fieldMeta,
-            value: datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId),
+            value: datasetValue(
+              datasets,
+              datasetSchemaId,
+              linkedDatasetId,
+              datasetFieldId,
+            ),
           },
         ];
       }

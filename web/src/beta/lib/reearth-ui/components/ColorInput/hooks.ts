@@ -10,7 +10,9 @@ const useColorPicker = ({
   onChange,
 }: Pick<ColorInputProps, "value" | "alphaDisabled" | "onChange">) => {
   const [colorValue, setColorValue] = useState<string | undefined>(value);
-  const [pickerColor, setPickerColor] = useState<RgbaColor>(tinycolor(value).toRgb());
+  const [pickerColor, setPickerColor] = useState<RgbaColor>(
+    tinycolor(value).toRgb(),
+  );
 
   const [open, setOpen] = useState(false);
   const [isSwatchFocused, setSwatchFocused] = useState(false);
@@ -30,7 +32,10 @@ const useColorPicker = ({
   }, []);
 
   const handleHexInputBlur = useCallback(() => {
-    const hexPattern = /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(colorValue || "");
+    const hexPattern =
+      /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(
+        colorValue || "",
+      );
     const color = !colorValue || hexPattern ? colorValue : value;
     setPickerColor(tinycolor(color).toRgb());
     onChange?.(color || "");
@@ -59,14 +64,20 @@ const useColorPicker = ({
 
   const handlePickerApply = useCallback(() => {
     const color =
-      "#" + (alphaDisabled ? tinycolor(pickerColor).toHex() : tinycolor(pickerColor).toHex8());
+      "#" +
+      (alphaDisabled
+        ? tinycolor(pickerColor).toHex()
+        : tinycolor(pickerColor).toHex8());
     setColorValue(color);
     onChange?.(color || "");
     handlePickerClose();
   }, [onChange, handlePickerClose, alphaDisabled, pickerColor]);
 
   const channels = useMemo(
-    () => (alphaDisabled ? ["r", "g", "b"] : ["r", "g", "b", "a"]) as (keyof RgbaColor)[],
+    () =>
+      (alphaDisabled
+        ? ["r", "g", "b"]
+        : ["r", "g", "b", "a"]) as (keyof RgbaColor)[],
     [alphaDisabled],
   );
 

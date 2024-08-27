@@ -1,11 +1,13 @@
 import { useApolloClient } from "@apollo/client";
-import { useCallback, useState, useRef, useMemo, useEffect } from "react";
-
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
-import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
+import {
+  autoFillPage,
+  onScrollToBottom,
+} from "@reearth/beta/utils/infinite-scroll";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useState, useRef, useMemo, useEffect } from "react";
 
 // TODO: Remove this file
 
@@ -26,7 +28,8 @@ function pagination(
   sort?: { type?: Maybe<SortType>; reverse?: boolean },
   endCursor?: string | null,
 ) {
-  const reverseOrder = !sort?.type || sort?.type === "date" ? !sort?.reverse : !!sort?.reverse;
+  const reverseOrder =
+    !sort?.type || sort?.type === "date" ? !sort?.reverse : !!sort?.reverse;
 
   return {
     after: !reverseOrder ? endCursor : undefined,
@@ -52,12 +55,13 @@ export default ({
 
   const { useAssetsQuery, useRemoveAssets } = useAssetsFetcher();
 
-  const { assets, hasMoreAssets, loading, isRefetching, endCursor, fetchMore } = useAssetsQuery({
-    teamId: workspaceId ?? "",
-    pagination: pagination(sort),
-    // sort: toGQLEnum(sort?.type),
-    keyword: searchTerm,
-  });
+  const { assets, hasMoreAssets, loading, isRefetching, endCursor, fetchMore } =
+    useAssetsQuery({
+      teamId: workspaceId ?? "",
+      pagination: pagination(sort),
+      // sort: toGQLEnum(sort?.type),
+      keyword: searchTerm,
+    });
 
   useEffect(() => {
     return () => {
@@ -68,7 +72,9 @@ export default ({
 
   const t = useT();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>(
+    searchTerm ?? "",
+  );
   const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
   const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
   const assetsWrapperRef = useRef<HTMLDivElement>(null);
@@ -113,7 +119,7 @@ export default ({
 
   const handleRemove = useCallback(async () => {
     if (selectedAssets?.length) {
-      const { status } = await useRemoveAssets(selectedAssets.map(a => a.id));
+      const { status } = await useRemoveAssets(selectedAssets.map((a) => a.id));
       if (status === "success") {
         selectAsset([]);
       }

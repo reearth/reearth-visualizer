@@ -44,7 +44,7 @@ export const Input = styled.input`
   border-radius: 4px;
   outline: none;
   padding: 5px 10px;
-  color: ${props => props.theme.content.main};
+  color: ${(props) => props.theme.content.main};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -96,7 +96,7 @@ export const TextArea = styled.textarea`
   outline: none;
   resize: none;
   padding: 5px 10px;
-  color: ${props => props.theme.content.main};
+  color: ${(props) => props.theme.content.main};
 `;
 
 export const LayerWrapper = styled.div`
@@ -111,7 +111,8 @@ export const DeleteLayerIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 7px 6px;
   border-radius: 4px;
   outline: none;
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)}; // Reduce opacity for disabled state
+  opacity: ${({ disabled }) =>
+    disabled ? 0.5 : 1}; // Reduce opacity for disabled state
 `;
 
 export const AddLayerWrapper = styled.div`

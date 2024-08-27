@@ -1,7 +1,6 @@
+import { Tab } from "@reearth/beta/features/Navbar";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Tab } from "@reearth/beta/features/Navbar";
 
 export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
   const navigate = useNavigate();
@@ -17,13 +16,19 @@ export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
   return sceneId ? handleNavigate : undefined;
 };
 
-export const useSettingsNavigation = ({ projectId }: { projectId?: string }) => {
+export const useSettingsNavigation = ({
+  projectId,
+}: {
+  projectId?: string;
+}) => {
   const navigate = useNavigate();
 
   const handleNavigate = useCallback(
     (page?: "public" | "story" | "asset" | "plugin", subId?: string) => {
       if (!projectId || !page) return;
-      navigate(`/settings/project/${projectId}/${page}${subId ? `/${subId}` : ""}`);
+      navigate(
+        `/settings/project/${projectId}/${page}${subId ? `/${subId}` : ""}`,
+      );
     },
     [projectId, navigate],
   );

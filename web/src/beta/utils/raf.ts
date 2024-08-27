@@ -2,7 +2,10 @@ import { easing as tweenEasing, IEasingMap } from "ts-easing";
 
 export type Easing = keyof IEasingMap;
 
-export function interval(callback: (t: number) => boolean, delay?: number): () => void {
+export function interval(
+  callback: (t: number) => boolean,
+  delay?: number,
+): () => void {
   let prev = 0;
   let raf = 0;
   let to = 0;
@@ -34,7 +37,7 @@ export function intervalDuring(
   delay?: number,
 ): () => void {
   if (duration < 0) return () => {};
-  return interval(d => {
+  return interval((d) => {
     const t = Math.min(1, duration === 0 ? 1 : d / duration);
     callback(t);
     return t < 1;
@@ -49,7 +52,7 @@ export function tweenInterval(
 ): () => void {
   const e = typeof easing === "function" ? easing : tweenEasing[easing];
   return intervalDuring(
-    d => {
+    (d) => {
       callback(e(d), d);
     },
     duration,
