@@ -24,7 +24,10 @@ type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -43,10 +46,12 @@ const Content: FC<Props> = ({ block, isEditable, ...props }) => {
 
   const { selectedComputedFeature } = useContext(coreContext);
 
-  const displayTypeField: DisplayTypeField = block?.property?.default?.displayType;
+  const displayTypeField: DisplayTypeField =
+    block?.property?.default?.displayType;
 
   const propertyListField: PropertyListField =
-    displayTypeField?.value === "custom" && block?.property?.default?.propertyList;
+    displayTypeField?.value === "custom" &&
+    block?.property?.default?.propertyList;
 
   const properties = useMemo(() => {
     if (displayTypeField?.value === "custom") {
@@ -56,14 +61,21 @@ const Content: FC<Props> = ({ block, isEditable, ...props }) => {
     } else {
       return filterChildObjectsToEnd(selectedComputedFeature?.properties);
     }
-  }, [displayTypeField, propertyListField, selectedComputedFeature?.properties]);
+  }, [
+    displayTypeField,
+    propertyListField,
+    selectedComputedFeature?.properties,
+  ]);
 
   return (
     <Wrapper>
       {!context?.editMode ? (
         displayTypeField?.value === "custom" ? (
           properties ? (
-            <CustomFields properties={properties} extensionId={block?.extensionId} />
+            <CustomFields
+              properties={properties}
+              extensionId={block?.extensionId}
+            />
           ) : (
             <Template icon={block?.extensionId} height={120} />
           )

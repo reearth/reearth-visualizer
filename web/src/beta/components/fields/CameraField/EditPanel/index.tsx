@@ -27,11 +27,11 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onFlyTo, onClose }) => {
 
   return (
     <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>
-      {Object.keys(panelContent).map(group => (
+      {Object.keys(panelContent).map((group) => (
         <FieldGroup key={group}>
           <Text size="footnote">{group}</Text>
           <InputWrapper>
-            {panelContent[group].map(field => (
+            {panelContent[group].map((field) => (
               <StyledNumberInput
                 key={field.id}
                 value={newCamera?.[field.id] ?? 0}
@@ -46,7 +46,12 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onFlyTo, onClose }) => {
       <Divider />
       <ButtonWrapper>
         <StyledButton text={t("Cancel")} size="small" onClick={onClose} />
-        <StyledButton text={t("Apply")} size="small" buttonType="primary" onClick={handleSave} />
+        <StyledButton
+          text={t("Apply")}
+          size="small"
+          buttonType="primary"
+          onClick={handleSave}
+        />
       </ButtonWrapper>
     </PanelCommon>
   );

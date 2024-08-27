@@ -1,8 +1,7 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import ListField, { Props } from ".";
 
@@ -17,7 +16,10 @@ type Story = StoryObj<typeof ListField>;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const onSelect = useCallback((id: string) => updateArgs({ selected: id }), [updateArgs]);
+  const onSelect = useCallback(
+    (id: string) => updateArgs({ selected: id }),
+    [updateArgs],
+  );
 
   return (
     <Wrapper>

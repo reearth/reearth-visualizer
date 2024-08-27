@@ -84,13 +84,16 @@ const theme: EditorThemeClasses = {
   tableAddRows: "DefaultLexicalEditorTheme__tableAddRows",
   tableCell: "DefaultLexicalEditorTheme__tableCell",
   tableCellActionButton: "DefaultLexicalEditorTheme__tableCellActionButton",
-  tableCellActionButtonContainer: "DefaultLexicalEditorTheme__tableCellActionButtonContainer",
+  tableCellActionButtonContainer:
+    "DefaultLexicalEditorTheme__tableCellActionButtonContainer",
   tableCellEditing: "DefaultLexicalEditorTheme__tableCellEditing",
   tableCellHeader: "DefaultLexicalEditorTheme__tableCellHeader",
-  tableCellPrimarySelected: "DefaultLexicalEditorTheme__tableCellPrimarySelected",
+  tableCellPrimarySelected:
+    "DefaultLexicalEditorTheme__tableCellPrimarySelected",
   tableCellResizer: "DefaultLexicalEditorTheme__tableCellResizer",
   tableCellSelected: "DefaultLexicalEditorTheme__tableCellSelected",
-  tableCellSortedIndicator: "DefaultLexicalEditorTheme__tableCellSortedIndicator",
+  tableCellSortedIndicator:
+    "DefaultLexicalEditorTheme__tableCellSortedIndicator",
   tableResizeRuler: "DefaultLexicalEditorTheme__tableCellResizeRuler",
   tableSelected: "DefaultLexicalEditorTheme__tableSelected",
   tableSelection: "DefaultLexicalEditorTheme__tableSelection",
@@ -102,7 +105,8 @@ const theme: EditorThemeClasses = {
     subscript: "DefaultLexicalEditorTheme__textSubscript",
     superscript: "DefaultLexicalEditorTheme__textSuperscript",
     underline: "DefaultLexicalEditorTheme__textUnderline",
-    underlineStrikethrough: "DefaultLexicalEditorTheme__textUnderlineStrikethrough",
+    underlineStrikethrough:
+      "DefaultLexicalEditorTheme__textUnderlineStrikethrough",
   },
 };
 

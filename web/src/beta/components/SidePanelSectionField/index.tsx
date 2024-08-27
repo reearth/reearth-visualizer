@@ -13,11 +13,19 @@ const SidePanelSectionField: React.FC<{
   children?: ReactNode;
   storageKey?: string;
   border?: string;
-}> = ({ className, title, startCollapsed, gap, children, storageKey, border }) => {
+}> = ({
+  className,
+  title,
+  startCollapsed,
+  gap,
+  children,
+  storageKey,
+  border,
+}) => {
   const theme = useTheme();
   const [opened, setOpened] = useState<boolean>(() => {
     const storedValue = localStorage.getItem(storageKey || "");
-    return storedValue ? JSON.parse(storedValue) : !startCollapsed ?? true;
+    return storedValue ? JSON.parse(storedValue) : !startCollapsed;
   });
 
   useEffect(() => {
@@ -31,7 +39,12 @@ const SidePanelSectionField: React.FC<{
           <Text size="body" color={theme.content.main}>
             {title}
           </Text>
-          <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
+          <ArrowIcon
+            icon="arrowToggle"
+            size={12}
+            color={theme.content.main}
+            opened={opened}
+          />
         </Header>
       )}
 
@@ -59,7 +72,7 @@ const Header = styled.div`
 `;
 
 const ArrowIcon = styled(Icon)<{ opened?: boolean }>`
-  transform: rotate(${props => (props.opened ? 90 : 180)}deg);
+  transform: rotate(${(props) => (props.opened ? 90 : 180)}deg);
   transition: all 0.2s;
 `;
 
@@ -68,7 +81,8 @@ const Content = styled.div<{ gap?: number; border?: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ gap }) => (gap ?? 16) + "px"} 16px;
-  border-top: ${({ border, theme }) => (border ? `1px solid  ${theme.outline.weak}` : "none")};
+  border-top: ${({ border, theme }) =>
+    border ? `1px solid  ${theme.outline.weak}` : "none"};
 `;
 
 export default SidePanelSectionField;

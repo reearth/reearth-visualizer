@@ -187,7 +187,7 @@
   background-position: center;
   background-repeat: no-repeat;
   display: block;
-  content: ' ';
+  content: " ";
   position: absolute;
   top: 0;
   left: 0;
@@ -215,7 +215,7 @@
   background-position: center;
   background-repeat: no-repeat;
   display: block;
-  content: ' ';
+  content: " ";
   position: absolute;
   top: 0;
   left: 0;
@@ -320,7 +320,7 @@
 }
 .DefaultLexicalEditorTheme__listItemUnchecked:before,
 .DefaultLexicalEditorTheme__listItemChecked:before {
-  content: '';
+  content: "";
   width: 16px;
   height: 16px;
   top: 2px;
@@ -330,8 +330,8 @@
   background-size: cover;
   position: absolute;
 }
-.DefaultLexicalEditorTheme__listItemUnchecked[dir='rtl']:before,
-.DefaultLexicalEditorTheme__listItemChecked[dir='rtl']:before {
+.DefaultLexicalEditorTheme__listItemUnchecked[dir="rtl"]:before,
+.DefaultLexicalEditorTheme__listItemChecked[dir="rtl"]:before {
   left: auto;
   right: 0;
 }
@@ -351,7 +351,7 @@
   background-repeat: no-repeat;
 }
 .DefaultLexicalEditorTheme__listItemChecked:after {
-  content: '';
+  content: "";
   cursor: pointer;
   border-color: #fff;
   border-style: solid;
@@ -434,7 +434,7 @@
   position: absolute;
 }
 .DefaultLexicalEditorTheme__blockCursor:after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   top: -2px;

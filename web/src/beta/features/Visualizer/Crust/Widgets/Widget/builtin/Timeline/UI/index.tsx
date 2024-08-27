@@ -1,8 +1,7 @@
-import { memo } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled, PublishTheme } from "@reearth/services/theme";
+import { memo } from "react";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
 import { useTimeline } from "./hooks";
@@ -89,7 +88,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           <PlayButton
             publishedTheme={theme}
             isPlaying={isPlayingReversed}
-            onClick={toggleIsPlayingReversed}>
+            onClick={toggleIsPlayingReversed}
+          >
             <Icon icon="playLeft" size={16} />
           </PlayButton>
         </li>
@@ -98,13 +98,18 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             isRight
             publishedTheme={theme}
             isPlaying={isPlaying}
-            onClick={toggleIsPlaying}>
+            onClick={toggleIsPlaying}
+          >
             <Icon icon="playRight" size={16} />
           </PlayButton>
         </li>
         <li>
           <InputRangeLabel>
-            <InputRangeLabelText size="footnote" customColor publishedTheme={theme}>
+            <InputRangeLabelText
+              size="footnote"
+              customColor
+              publishedTheme={theme}
+            >
               X{speed}
             </InputRangeLabelText>
             <InputRange
@@ -135,7 +140,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         {...events}
         ref={scaleElement}
         shouldScroll={shouldScroll}
-        publishedTheme={theme}>
+        publishedTheme={theme}
+      >
         <ScaleList
           start={startDate}
           scaleCount={scaleCount}
@@ -150,7 +156,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           publishedTheme={theme}
           style={{
             left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
-          }}>
+          }}
+        >
           <Icon icon="ellipse" size={KNOB_SIZE} />
         </IconWrapper>
       </ScaleBox>
@@ -163,7 +170,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
 });
 
 const Container = styled.div<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.bg[0]};
   width: 100%;
   height: 40px;
   display: flex;
@@ -175,14 +183,18 @@ const Container = styled.div<StyledColorProps>`
 `;
 
 const OpenButton = styled.button<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.bg[0]};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   padding: 8px 12px;
 `;
 
 const CloseButton = styled.button<StyledColorProps>`
-  background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.select.main};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.select || theme.select.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -203,24 +215,31 @@ const ToolBox = styled.ul`
   }
 `;
 
-const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & StyledColorProps>`
+const PlayButton = styled.button<
+  { isRight?: boolean; isPlaying?: boolean } & StyledColorProps
+>`
   border-radius: 50%;
   border-width: 1px;
   border-style: solid;
   border-color: ${({ theme, isPlaying, publishedTheme }) =>
-    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.content.main};
+    isPlaying
+      ? publishedTheme?.select
+      : publishedTheme?.mainText || theme.content.main};
   width: 22px;
   height: 22px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: ${({ isRight, theme }) => (isRight ? `${theme.spacing.small}px` : 0)};
+  margin-left: ${({ isRight, theme }) =>
+    isRight ? `${theme.spacing.small}px` : 0};
   background: ${({ isPlaying, publishedTheme, theme }) =>
     isPlaying ? publishedTheme?.select || theme.select.main : "transparent"};
 
   @media (max-width: 768px) {
-    margin-left: ${({ isRight, theme }) => (isRight ? `${theme.spacing.smallest}px` : 0)};
+    margin-left: ${({ isRight, theme }) =>
+      isRight ? `${theme.spacing.smallest}px` : 0};
   }
 `;
 
@@ -232,7 +251,8 @@ const InputRangeLabel = styled.label`
 `;
 
 const InputRangeLabelText = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   /* space for preventing layout shift by increasing speed label. */
   width: 37px;
   text-align: right;
@@ -247,7 +267,8 @@ const InputRange = styled.input<StyledColorProps>`
   border: none;
   ::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.select.main};
+    background: ${({ theme, publishedTheme }) =>
+      publishedTheme?.select || theme.select.main};
     height: 10px;
     width: 10px;
     border-radius: 50%;
@@ -272,7 +293,8 @@ const CurrentTimeWrapper = styled.div`
 `;
 
 const CurrentTime = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   line-height: 16px;
   white-space: pre-line;
 `;
@@ -318,7 +340,8 @@ const ScaleBox = styled.div<StyledColorProps & { shouldScroll: boolean }>`
 const IconWrapper = styled.div<StyledColorProps>`
   position: absolute;
   top: 2px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.select.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.select || theme.select.main};
 `;
 
 export default Timeline;

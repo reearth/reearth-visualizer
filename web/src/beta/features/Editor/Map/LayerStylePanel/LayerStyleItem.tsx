@@ -1,8 +1,7 @@
-import { FC, MouseEvent, useCallback, useState } from "react";
-
 import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/theme";
+import { FC, MouseEvent, useCallback, useState } from "react";
 
 import { LayerStyleNameUpdateProps } from "../../hooks/useLayerStyles";
 
@@ -55,7 +54,9 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
             onBlur={handleNameUpdate}
           />
         ) : (
-          <TitleWrapper onDoubleClick={() => setIsEditing(true)}>{localName}</TitleWrapper>
+          <TitleWrapper onDoubleClick={() => setIsEditing(true)}>
+            {localName}
+          </TitleWrapper>
         )
       }
       highlighted={selected}

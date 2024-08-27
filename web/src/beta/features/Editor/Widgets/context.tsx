@@ -1,8 +1,7 @@
-import { createContext, useContext, ReactNode, SetStateAction } from "react";
-
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { FlyTo } from "@reearth/core";
 import { WidgetAreaState } from "@reearth/services/state";
+import { createContext, useContext, ReactNode, SetStateAction } from "react";
 
 import { SelectedWidget } from "../hooks/useWidgets";
 
@@ -14,7 +13,9 @@ export interface WidgetsPageContextType {
   selectedDevice?: Device;
   handleShowWASEditorToggle: () => void;
   handleDeviceChange: (device: Device) => void;
-  selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
+  selectWidgetArea: (
+    update?: SetStateAction<WidgetAreaState | undefined>,
+  ) => void;
   sceneId?: string;
   selectedWidget?: SelectedWidget;
   selectWidget: (value: SelectedWidget | undefined) => void;
@@ -22,7 +23,9 @@ export interface WidgetsPageContextType {
   handleFlyTo?: FlyTo;
 }
 
-const WidgetsPageContext = createContext<WidgetsPageContextType | undefined>(undefined);
+const WidgetsPageContext = createContext<WidgetsPageContextType | undefined>(
+  undefined,
+);
 
 export const WidgetsPageProvider = ({
   value,
@@ -31,7 +34,11 @@ export const WidgetsPageProvider = ({
   value: WidgetsPageContextType;
   children: ReactNode;
 }) => {
-  return <WidgetsPageContext.Provider value={value}>{children}</WidgetsPageContext.Provider>;
+  return (
+    <WidgetsPageContext.Provider value={value}>
+      {children}
+    </WidgetsPageContext.Provider>
+  );
 };
 
 export const useWidgetsPage = (): WidgetsPageContextType => {

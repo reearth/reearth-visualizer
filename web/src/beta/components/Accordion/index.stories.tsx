@@ -10,10 +10,14 @@ export default meta;
 
 type Story = StoryObj<typeof Accordion>;
 
-const SampleHeading = <div style={{ color: "white", background: "black" }}>heading</div>;
+const SampleHeading = (
+  <div style={{ color: "white", background: "black" }}>heading</div>
+);
 
 const SampleContent = (
-  <div style={{ color: "white", background: "black", padding: "20px" }}>hoge</div>
+  <div style={{ color: "white", background: "black", padding: "20px" }}>
+    hoge
+  </div>
 );
 
 export const Default: Story = {

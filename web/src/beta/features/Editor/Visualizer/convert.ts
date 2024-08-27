@@ -12,7 +12,10 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
-import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
+import {
+  DEFAULT_LAYER_STYLE,
+  valueTypeFromGQL,
+} from "@reearth/beta/utils/value";
 import { LayerAppearanceTypes } from "@reearth/core";
 import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -69,7 +72,7 @@ export const convertWidgets = (
     }
   | undefined => {
   const layoutConstraint = scene?.plugins
-    ?.map(p =>
+    ?.map((p) =>
       p.plugin?.extensions.reduce<{
         [w in string]: WidgetLayoutConstraint & { floating: boolean };
       }>(
@@ -92,7 +95,11 @@ export const convertWidgets = (
     .reduce((a, b) => ({ ...a, ...b }), {});
 
   const floating = scene?.widgets
-    ?.filter(w => w.enabled && layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    ?.filter(
+      (w) =>
+        w.enabled &&
+        layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating,
+    )
     .map(
       (w): Widget => ({
         id: w.id,
@@ -104,7 +111,11 @@ export const convertWidgets = (
     );
 
   const widgets = scene?.widgets
-    ?.filter(w => w.enabled && !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    ?.filter(
+      (w) =>
+        w.enabled &&
+        !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating,
+    )
     .map(
       (w): Widget => ({
         id: w.id,
@@ -127,7 +138,9 @@ export const convertWidgets = (
     };
   };
 
-  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | undefined => {
+  const widgetSection = (
+    section?: Maybe<WidgetSectionType>,
+  ): WidgetSection | undefined => {
     const top = widgetArea(section?.top);
     const middle = widgetArea(section?.middle);
     const bottom = widgetArea(section?.bottom);
@@ -143,7 +156,7 @@ export const convertWidgets = (
     const align = area?.align.toLowerCase() as Alignment | undefined;
     const padding = area?.padding as WidgetAreaPadding | undefined;
     const areaWidgets: Widget[] | undefined = area?.widgetIds
-      .map<Widget | undefined>(w => widgets?.find(w2 => w === w2.id))
+      .map<Widget | undefined>((w) => widgets?.find((w2) => w === w2.id))
       .filter((w): w is Widget => !!w);
     if (!areaWidgets || (areaWidgets && areaWidgets.length < 1)) return;
     return {
@@ -162,8 +175,8 @@ export const convertWidgets = (
   };
 
   const ownBuiltinWidgets = scene?.widgets
-    ?.filter(w => w.enabled)
-    .map(w => {
+    ?.filter((w) => w.enabled)
+    .map((w) => {
       return `${w.pluginId}/${w.extensionId}` as keyof BuiltinWidgets;
     })
     .filter(isBuiltinWidget);
@@ -200,8 +213,8 @@ export const processProperty = (
       ...a,
       [b.schemaGroupId]: {
         schema: b,
-        orig: orig?.items.find(i => i.schemaGroupId === b.schemaGroupId),
-        parent: parent?.items.find(i => i.schemaGroupId === b.schemaGroupId),
+        orig: orig?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
+        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
       },
     }),
     {},
@@ -216,7 +229,13 @@ export const processProperty = (
           }
           return [
             key,
-            processPropertyGroups(schema, undefined, undefined, linkedDatasetId, datasets),
+            processPropertyGroups(
+              schema,
+              undefined,
+              undefined,
+              linkedDatasetId,
+              datasets,
+            ),
           ];
         }
 
@@ -227,8 +246,14 @@ export const processProperty = (
           const used = orig || parent;
           return [
             key,
-            used?.groups.map(g => ({
-              ...processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
+            used?.groups.map((g) => ({
+              ...processPropertyGroups(
+                schema,
+                g,
+                undefined,
+                linkedDatasetId,
+                datasets,
+              ),
               id: g.id,
             })),
           ];
@@ -238,7 +263,16 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
-          return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
+          return [
+            key,
+            processPropertyGroups(
+              schema,
+              parent,
+              orig,
+              linkedDatasetId,
+              datasets,
+            ),
+          ];
         }
         return [key, null];
       })
@@ -267,8 +301,8 @@ const processPropertyGroups = (
       ...a,
       [b.fieldId]: {
         schema: b,
-        parent: parent?.fields.find(i => i.fieldId === b.fieldId),
-        orig: original?.fields.find(i => i.fieldId === b.fieldId),
+        parent: parent?.fields.find((i) => i.fieldId === b.fieldId),
+        orig: original?.fields.find((i) => i.fieldId === b.fieldId),
       },
     }),
     {},
@@ -283,7 +317,15 @@ const processPropertyGroups = (
         const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
         const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
         if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-          return [key, datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId)];
+          return [
+            key,
+            datasetValue(
+              datasets,
+              datasetSchemaId,
+              linkedDatasetId,
+              datasetFieldId,
+            ),
+          ];
         }
 
         return [key, valueFromGQL(used.value, used.type)?.value];
@@ -307,7 +349,7 @@ export const datasetValue = (
   })?.[0];
 
   if (!fieldName) return;
-  return dataset.datasets.find(d => d[""] === datasetId)?.[fieldName];
+  return dataset.datasets.find((d) => d[""] === datasetId)?.[fieldName];
 };
 
 export const valueFromGQL = (val: any, type: GQLValueType) => {
@@ -347,13 +389,11 @@ export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
-  infoboxBlockNames?: {
-    [key: string]: string;
-  },
+  infoboxBlockNames?: Record<string, string>,
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      a => a.id === id,
+      (a) => a.id === id,
     )?.value;
     if (typeof layerStyleValue === "object") {
       try {
@@ -366,14 +406,14 @@ export function processLayers(
     return DEFAULT_LAYER_STYLE;
   };
 
-  return newLayers?.map(nlsLayer => {
+  return newLayers?.map((nlsLayer) => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
 
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
-        features: nlsLayer.sketch?.featureCollection?.features.map(f => ({
+        features: nlsLayer.sketch?.featureCollection?.features.map((f) => ({
           ...f,
           geometry: f.geometry[0],
         })),
@@ -389,7 +429,11 @@ export function processLayers(
       visible: nlsLayer.visible,
       sketch: nlsLayer.sketch,
       isSketch: nlsLayer.isSketch,
-      infobox: convertInfobox(nlsLayer.infobox, parent?.infobox, infoboxBlockNames),
+      infobox: convertInfobox(
+        nlsLayer.infobox,
+        parent?.infobox,
+        infoboxBlockNames,
+      ),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,

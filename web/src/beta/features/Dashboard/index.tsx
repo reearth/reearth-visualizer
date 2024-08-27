@@ -1,9 +1,8 @@
-import { FC } from "react";
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
 
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
@@ -22,7 +21,12 @@ export const topTabItems: Omit<TabItems[], "active"> = [
 ];
 
 export const bottomTabsItems: Omit<TabItems[], "active"> = [
-  { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", disabled: true },
+  {
+    id: "plugin",
+    text: "Plugin Playground",
+    icon: "puzzlePiece",
+    disabled: true,
+  },
   { id: "documentary", text: "Documentary", icon: "book", disabled: true },
   { id: "community", text: "Community", icon: "usersFour", disabled: true },
   { id: "help", text: "Help & Support", icon: "question", disabled: true },

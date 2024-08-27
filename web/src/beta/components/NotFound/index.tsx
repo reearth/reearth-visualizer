@@ -10,7 +10,11 @@ type Props = {
   customType?: "error" | "warning";
 };
 
-const NotFound: React.FC<Props> = ({ customHeader, customMessage, customType }) => {
+const NotFound: React.FC<Props> = ({
+  customHeader,
+  customMessage,
+  customType,
+}) => {
   const t = useT();
 
   return (
@@ -18,10 +22,16 @@ const NotFound: React.FC<Props> = ({ customHeader, customMessage, customType }) 
       <InnerWrapper>
         <IconWrapper>
           <Icon icon="logo" />
-          <Icon icon="cancel" size={110} color={customType === "warning" ? "yellow" : "red"} />
+          <Icon
+            icon="cancel"
+            size={110}
+            color={customType === "warning" ? "yellow" : "red"}
+          />
         </IconWrapper>
         <Text size="h1">{customHeader ?? `404 ${t("Not found")}`}</Text>
-        {customMessage && <CustomMessage size="h3">{customMessage}</CustomMessage>}
+        {customMessage && (
+          <CustomMessage size="h3">{customMessage}</CustomMessage>
+        )}
       </InnerWrapper>
     </Wrapper>
   );

@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
 import type { EditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Infobox } from "./types";
 
@@ -70,16 +69,21 @@ export default ({
   );
 
   const handleBlockCreate = useCallback(
-    (index: number) => async (extensionId?: string | undefined, pluginId?: string | undefined) => {
-      if (!extensionId || !pluginId) return;
-      await onBlockCreate?.(pluginId, extensionId, index);
-    },
+    (index: number) =>
+      async (
+        extensionId?: string | undefined,
+        pluginId?: string | undefined,
+      ) => {
+        if (!extensionId || !pluginId) return;
+        await onBlockCreate?.(pluginId, extensionId, index);
+      },
     [onBlockCreate],
   );
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
-      if (!isEditable || blockId === selectedBlockId || disableSelection) return;
+      if (!isEditable || blockId === selectedBlockId || disableSelection)
+        return;
       setSelectedBlockId(blockId);
     },
     [selectedBlockId, isEditable, disableSelection],
@@ -103,7 +107,9 @@ export default ({
 
   useEffect(() => {
     if (infobox) {
-      setInfoboxBlocks(infobox.blocks && infobox.blocks.length > 0 ? infobox.blocks : []);
+      setInfoboxBlocks(
+        infobox.blocks && infobox.blocks.length > 0 ? infobox.blocks : [],
+      );
     } else {
       setInfoboxBlocks([]);
       setSelectedBlockId(undefined);
@@ -121,9 +127,9 @@ export default ({
   const handleMoveEnd = useCallback(
     async (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        setInfoboxBlocks(old => {
+        setInfoboxBlocks((old) => {
           const items = [...old];
-          const currentIndex = old.findIndex(o => o.id === itemId);
+          const currentIndex = old.findIndex((o) => o.id === itemId);
           if (currentIndex !== -1) {
             const [movedItem] = items.splice(currentIndex, 1);
             items.splice(newIndex, 0, movedItem);

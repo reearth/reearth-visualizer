@@ -45,12 +45,15 @@ export default function AutoLinkPluginWithMathers() {
 
   useEffect(() => {
     if (!editor) return;
-    const removeNodeListener = editor.registerNodeTransform(AutoLinkNode, node => {
-      if (!node) return;
-      const dom = editor.getElementByKey(node.__key);
-      if (!dom) return;
-      dom.setAttribute("target", "_blank");
-    });
+    const removeNodeListener = editor.registerNodeTransform(
+      AutoLinkNode,
+      (node) => {
+        if (!node) return;
+        const dom = editor.getElementByKey(node.__key);
+        if (!dom) return;
+        dom.setAttribute("target", "_blank");
+      },
+    );
     return () => removeNodeListener();
   }, [editor]);
   return <AutoLinkPlugin matchers={MATCHERS} />;

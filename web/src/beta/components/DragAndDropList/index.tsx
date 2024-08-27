@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useDragDropManager } from "react-dnd";
-
-import { styled } from "@reearth/services/theme";
 
 import Item from "./Item";
 import { useScroll } from "./scrollItem";
@@ -47,7 +46,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   }, [items]);
 
   const onItemMove = useCallback((dragIndex: number, hoverIndex: number) => {
-    setMovingItems(old => {
+    setMovingItems((old) => {
       const items = [...old];
       items.splice(dragIndex, 1);
       items.splice(hoverIndex, 0, old[dragIndex]);
@@ -59,7 +58,9 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
     (index: number) => {
       const item = movingItems[index];
       if (items[index].id === item.id) return;
-      item && onItemDrop(movingItems[index], index);
+      if (item) {
+        onItemDrop(movingItems[index], index);
+      }
     },
     [items, movingItems, onItemDrop],
   );
@@ -82,7 +83,8 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
             onItemMove={onItemMove}
             onItemDropOnItem={onItemDropOnItem}
             onItemDropOutside={onItemDropOutside}
-            shouldUseCustomHandler={shouldUseCustomHandler}>
+            shouldUseCustomHandler={shouldUseCustomHandler}
+          >
             {renderItem(item, i)}
           </Item>
         );

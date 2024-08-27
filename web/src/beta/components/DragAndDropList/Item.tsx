@@ -1,7 +1,12 @@
 import type { Identifier } from "dnd-core";
 import type { FC, ReactNode } from "react";
 import { memo, useRef, createContext, useContext } from "react";
-import { ConnectDragPreview, ConnectDragSource, useDrag, useDrop } from "react-dnd";
+import {
+  ConnectDragPreview,
+  ConnectDragSource,
+  useDrag,
+  useDrop,
+} from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
 
@@ -41,7 +46,11 @@ const Item: FC<Props> = ({
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+  const [{ handlerId }, drop] = useDrop<
+    DragItem,
+    () => void,
+    { handlerId: Identifier | null }
+  >({
     accept: itemGroupKey,
     collect(monitor) {
       return {
@@ -66,7 +75,8 @@ const Item: FC<Props> = ({
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
       // Get vertical middle Y
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
       // Dragging downwards
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
@@ -87,7 +97,7 @@ const Item: FC<Props> = ({
     item: () => {
       return { id, index };
     },
-    collect: monitor => ({
+    collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {
@@ -103,11 +113,14 @@ const Item: FC<Props> = ({
   drop(contentRef);
 
   return shouldUseCustomHandler ? (
-    <ItemContext.Provider value={{ customDragSource: drag, customDragPreview: preview }}>
+    <ItemContext.Provider
+      value={{ customDragSource: drag, customDragPreview: preview }}
+    >
       <SItem
         customHandler={shouldUseCustomHandler}
         data-handler-id={handlerId}
-        isDragging={isDragging}>
+        isDragging={isDragging}
+      >
         <div ref={contentRef}>{children}</div>
       </SItem>
     </ItemContext.Provider>

@@ -9,7 +9,14 @@ const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
 }) => <div style={{ display: "flex", height: 400, ...style }}>{children}</div>;
 const Pane = <div style={{ flex: 1, background: "#ffffff" }} />;
 const Content = (
-  <div style={{ width: "100%", height: "100%", background: "#ffffff", color: "#000000" }}>
+  <div
+    style={{
+      width: "100%",
+      height: "100%",
+      background: "#ffffff",
+      color: "#000000",
+    }}
+  >
     content
   </div>
 );
@@ -25,7 +32,7 @@ export const Vertical: StoryObj<typeof Resizable> = {
     initialSize: 400,
     minSize: 100,
   },
-  render: args => {
+  render: (args) => {
     return (
       <Container style={{ flexDirection: "row" }}>
         <Resizable {...args}>{Content}</Resizable>
@@ -42,7 +49,7 @@ export const Horizontal: StoryObj<typeof Resizable> = {
     initialSize: 350,
     minSize: 200,
   },
-  render: args => {
+  render: (args) => {
     return (
       <Container style={{ flexDirection: "column" }}>
         <Resizable {...args}>{Content}</Resizable>

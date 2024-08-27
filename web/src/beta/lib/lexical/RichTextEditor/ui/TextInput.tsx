@@ -27,7 +27,7 @@ export default function TextInput({
         className="Input__input"
         placeholder={placeholder}
         value={value}
-        onChange={e => {
+        onChange={(e) => {
           onChange(e.target.value);
         }}
         data-test-id={dataTestId}

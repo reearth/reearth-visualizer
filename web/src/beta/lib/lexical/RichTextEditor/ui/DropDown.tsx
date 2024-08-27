@@ -46,7 +46,13 @@ export function DropDownItem({
   }, [ref, registerItem]);
 
   return (
-    <button className={className} onClick={onClick} ref={ref} title={title} type="button">
+    <button
+      className={className}
+      onClick={onClick}
+      ref={ref}
+      title={title}
+      type="button"
+    >
       {children}
     </button>
   );
@@ -62,11 +68,12 @@ function DropDownItems({
   onClose: () => void;
 }) {
   const [items, setItems] = useState<React.RefObject<HTMLButtonElement>[]>();
-  const [highlightedItem, setHighlightedItem] = useState<React.RefObject<HTMLButtonElement>>();
+  const [highlightedItem, setHighlightedItem] =
+    useState<React.RefObject<HTMLButtonElement>>();
 
   const registerItem = useCallback(
     (itemRef: React.RefObject<HTMLButtonElement>) => {
-      setItems(prev => (prev ? [...prev, itemRef] : [itemRef]));
+      setItems((prev) => (prev ? [...prev, itemRef] : [itemRef]));
     },
     [setItems],
   );
@@ -83,13 +90,13 @@ function DropDownItems({
     if (key === "Escape" || key === "Tab") {
       onClose();
     } else if (key === "ArrowUp") {
-      setHighlightedItem(prev => {
+      setHighlightedItem((prev) => {
         if (!prev) return items[0];
         const index = items.indexOf(prev) - 1;
         return items[index === -1 ? items.length - 1 : index];
       });
     } else if (key === "ArrowDown") {
-      setHighlightedItem(prev => {
+      setHighlightedItem((prev) => {
         if (!prev) return items[0];
         return items[items.indexOf(prev) + 1];
       });
@@ -184,7 +191,13 @@ export default function DropDown({
     return () => {
       container.removeEventListener("click", handle);
     };
-  }, [dropDownRef, buttonRef, showDropDown, stopCloseOnClickSelf, containerRef]);
+  }, [
+    dropDownRef,
+    buttonRef,
+    showDropDown,
+    stopCloseOnClickSelf,
+    containerRef,
+  ]);
 
   useEffect(() => {
     const container = scrollableContainerId
@@ -221,9 +234,12 @@ export default function DropDown({
         aria-label={buttonAriaLabel || buttonLabel}
         className={buttonClassName}
         onClick={() => setShowDropDown(!showDropDown)}
-        ref={buttonRef}>
+        ref={buttonRef}
+      >
         {buttonIconClassName && <span className={buttonIconClassName} />}
-        {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
+        {buttonLabel && (
+          <span className="text dropdown-button-text">{buttonLabel}</span>
+        )}
         <i className="chevron-down" />
       </button>
 

@@ -7,4 +7,6 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Normal: Story<Props> = ({ ...args }) => <Navigator {...args} degree={0} />;
+export const Normal: Story<Props> = ({ ...args }) => (
+  <Navigator {...args} degree={0} />
+);

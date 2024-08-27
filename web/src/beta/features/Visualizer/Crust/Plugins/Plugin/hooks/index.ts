@@ -1,8 +1,10 @@
+import { type Layer } from "@reearth/core";
+import {
+  useDevPluginExtensionRenderKey,
+  useDevPluginExtensions,
+} from "@reearth/services/state";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
-
-import { type Layer } from "@reearth/core";
-import { useDevPluginExtensionRenderKey, useDevPluginExtensions } from "@reearth/services/state";
 
 import type { InfoboxBlock as Block } from "../../../Infobox/types";
 import type { MapRef } from "../../../types";
@@ -78,7 +80,14 @@ export default function ({
     [onVisibilityChange, widget?.id, block?.id],
   );
 
-  const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
+  const {
+    staticExposed,
+    isMarshalable,
+    onPreInit,
+    onDispose,
+    onModalClose,
+    onPopupClose,
+  } =
     usePluginAPI({
       extensionId,
       extensionType,
@@ -145,14 +154,14 @@ export default function ({
 
   const devPluginExtensionSrc = useMemo(() => {
     if (!devPluginExtensions) return;
-    return devPluginExtensions.find(e => e.id === extensionId)?.url;
+    return devPluginExtensions.find((e) => e.id === extensionId)?.url;
   }, [devPluginExtensions, extensionId]);
 
   const src = useMemo(
     () =>
       pluginId && extensionId
-        ? devPluginExtensionSrc ??
-          `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
+        ? (devPluginExtensionSrc ??
+          `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`)
         : undefined,
     [devPluginExtensionSrc, pluginBaseUrl, pluginId, extensionId],
   );

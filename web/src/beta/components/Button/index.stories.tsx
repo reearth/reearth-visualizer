@@ -31,7 +31,9 @@ export const SecondarySmall: Story = {
 };
 
 export const SecondaryMedium: Story = {
-  render: () => <Button buttonType="secondary" text="secondary" size="medium" />,
+  render: () => (
+    <Button buttonType="secondary" text="secondary" size="medium" />
+  ),
 };
 
 export const SecondaryDisabled: Story = {
@@ -51,7 +53,9 @@ export const DangerDisabled: Story = {
 };
 
 export const DisabledSmall: Story = {
-  render: () => <Button buttonType="primary" text="disabled" size="small" disabled />,
+  render: () => (
+    <Button buttonType="primary" text="disabled" size="small" disabled />
+  ),
 };
 
 export const DisabledMedium: Story = {
@@ -60,19 +64,37 @@ export const DisabledMedium: Story = {
 
 export const WithLeftIconSmall: Story = {
   render: () => (
-    <Button buttonType="primary" text="Primary" icon="book" size="small" iconPosition="left" />
+    <Button
+      buttonType="primary"
+      text="Primary"
+      icon="book"
+      size="small"
+      iconPosition="left"
+    />
   ),
 };
 
 export const WithRightIconSmall: Story = {
   render: () => (
-    <Button buttonType="secondary" text="Primary" icon="book" size="small" iconPosition="right" />
+    <Button
+      buttonType="secondary"
+      text="Primary"
+      icon="book"
+      size="small"
+      iconPosition="right"
+    />
   ),
 };
 
 export const WithLeftIconMedium: Story = {
   render: () => (
-    <Button buttonType="primary" text="Primary" icon="book" size="medium" iconPosition="left" />
+    <Button
+      buttonType="primary"
+      text="Primary"
+      icon="book"
+      size="medium"
+      iconPosition="left"
+    />
   ),
 };
 

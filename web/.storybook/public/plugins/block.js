@@ -34,6 +34,6 @@ reearth.ui.show(html);
 reearth.on("update", () => {
   reearth.ui.postMessage(reearth.block);
 });
-reearth.on("message", msg => {
+reearth.on("message", (msg) => {
   console.log("message received:", msg);
 });

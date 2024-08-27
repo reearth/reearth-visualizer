@@ -6,7 +6,11 @@ export type Props = {
   description?: string;
 } & ToggleProps;
 
-const ToggleField: React.FC<Props> = ({ name, description, ...args }: Props) => (
+const ToggleField: React.FC<Props> = ({
+  name,
+  description,
+  ...args
+}: Props) => (
   <Property name={name} description={description}>
     <Toggle {...args} />
   </Property>

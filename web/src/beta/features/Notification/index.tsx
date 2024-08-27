@@ -12,7 +12,8 @@ export type Notification = {
 };
 
 const NotificationBanner: React.FC = () => {
-  const { isHovered, visible, notification, setModal, setIsHovered } = useHooks();
+  const { isHovered, visible, notification, setModal, setIsHovered } =
+    useHooks();
   const theme = useTheme();
 
   return (
@@ -22,7 +23,8 @@ const NotificationBanner: React.FC = () => {
       visible={visible}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      type={notification?.type}>
+      type={notification?.type}
+    >
       <HeadingArea>
         <Text size="body" color={theme.content.strong} weight="bold">
           {notification?.heading}
@@ -41,7 +43,8 @@ const NotificationBanner: React.FC = () => {
         <Text
           size="footnote"
           color={theme.content.strong}
-          otherProperties={{ padding: "8px 0 0 0" }}>
+          otherProperties={{ padding: "8px 0 0 0" }}
+        >
           {notification?.text}
         </Text>
       )}
@@ -66,17 +69,20 @@ const StyledNotificationBanner = styled.div<{
   width: 312px;
   padding: 4px 8px;
   border-radius: 6px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  box-shadow:
+    rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
   background-color: ${({ type, theme }) =>
     type === "error"
       ? theme.dangerous.main
       : type === "warning"
-      ? theme.warning.main
-      : type === "success"
-      ? theme.select.strong
-      : theme.secondary.main};
+        ? theme.warning.main
+        : type === "success"
+          ? theme.select.strong
+          : theme.secondary.main};
   color: ${({ theme }) => theme.content.main};
-  z-index: ${({ theme, visible }) => (visible ? theme.zIndexes.editor.notificationBar : 0)};
+  z-index: ${({ theme, visible }) =>
+    visible ? theme.zIndexes.editor.notificationBar : 0};
   opacity: ${({ visible }) => (visible ? "1" : "0")};
   transition: all 0.5s;
   pointer-events: ${({ visible }) => (visible ? "auto" : "none")};

@@ -1,4 +1,5 @@
 // DragAndDropList.tsx
+import { styled } from "@reearth/services/theme";
 import React, { useCallback } from "react";
 import {
   ReactSortable,
@@ -8,8 +9,6 @@ import {
   GroupOptions,
   SortableEvent,
 } from "react-sortablejs";
-
-import { styled } from "@reearth/services/theme";
 
 export interface DragAndDropListProps<T extends ItemInterface> {
   items?: T[];
@@ -37,7 +36,11 @@ export const DragAndDropList = <T extends ItemInterface>({
   onMoveStart,
   onMoveEnd,
 }: DragAndDropListProps<T>) => {
-  const handleSetList = (newState: ItemInterface[], _sortable: Sortable | null, _store: Store) => {
+  const handleSetList = (
+    newState: ItemInterface[],
+    _sortable: Sortable | null,
+    _store: Store,
+  ) => {
     setItems?.(newState as T[]);
   };
 
@@ -64,9 +67,13 @@ export const DragAndDropList = <T extends ItemInterface>({
       ghostClass={GHOST_CLASSNAME}
       filter={`.${NO_DRAG_CLASSNAME}`}
       onStart={handleStart}
-      onEnd={handleEnd}>
-      {items?.map(item => (
-        <ItemWrapper key={item.id} className={dragDisabled ? NO_DRAG_CLASSNAME : ""}>
+      onEnd={handleEnd}
+    >
+      {items?.map((item) => (
+        <ItemWrapper
+          key={item.id}
+          className={dragDisabled ? NO_DRAG_CLASSNAME : ""}
+        >
           {item.content}
         </ItemWrapper>
       ))}
@@ -76,17 +83,21 @@ export const DragAndDropList = <T extends ItemInterface>({
 
 export default DragAndDropList;
 
-const StyledReactSortable = styled(ReactSortable)<{ gap?: "normal" | "small" | number }>(
-  ({ theme, gap }) => ({
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    gap:
-      gap === "small" ? theme.spacing.smallest : gap === "normal" ? theme.spacing.small : gap ?? 0,
-    [`.${GHOST_CLASSNAME}`]: {
-      opacity: 0,
-    },
-  }),
-);
+const StyledReactSortable = styled(ReactSortable)<{
+  gap?: "normal" | "small" | number;
+}>(({ theme, gap }) => ({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  gap:
+    gap === "small"
+      ? theme.spacing.smallest
+      : gap === "normal"
+        ? theme.spacing.small
+        : (gap ?? 0),
+  [`.${GHOST_CLASSNAME}`]: {
+    opacity: 0,
+  },
+}));
 
 const ItemWrapper = styled("div")(() => ({}));

@@ -1,9 +1,8 @@
+import { useTheme } from "@reearth/services/theme";
 import { omit, pick } from "lodash-es";
 import { ReactNode, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
-
-import { useTheme } from "@reearth/services/theme";
 
 import type {
   Alignment,
@@ -72,7 +71,10 @@ export default function Area({
     }),
     [align, area, section, zone],
   );
-  const { overriddenExtended, handleExtend } = useOverriddenExtended({ layout, widgets });
+  const { overriddenExtended, handleExtend } = useOverriddenExtended({
+    layout,
+    widgets,
+  });
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea
@@ -98,14 +100,16 @@ export default function Area({
       vertical={area === "middle"}
       stretch={area === "middle"}
       bottom={(section === "right" && area !== "top") || area === "bottom"}
-      realignable={(area === "middle" || section === "center") && !!widgets?.length}
+      realignable={
+        (area === "middle" || section === "center") && !!widgets?.length
+      }
       align={
         widgets?.length
           ? area === "middle" || section === "center"
             ? align
             : section === "right"
-            ? "end"
-            : undefined
+              ? "end"
+              : undefined
           : undefined
       }
       style={{
@@ -126,21 +130,22 @@ export default function Area({
         backgroundColor: backgroundColor
           ? backgroundColor
           : area === "middle"
-          ? theme.placeHolder.main_2
-          : theme.placeHolder.main_1,
+            ? theme.placeHolder.main_2
+            : theme.placeHolder.main_1,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.primary.weak}`
-            : `1px solid #E95518`,
+              ? `1px solid ${theme.primary.weak}`
+              : `1px solid #E95518`,
         gap: gap,
         alignItems: centered ? "center" : "unset",
       }}
-      iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
+      iconColor={area === "middle" ? "#4770FF" : "#E95518"}
+    >
       {widgets
-        ?.filter(widget => !isInvisibleBuiltin(widget, isMobile))
+        ?.filter((widget) => !isInvisibleBuiltin(widget, isMobile))
         .map((widget, i) => {
           const constraint =
             widget.pluginId && widget.extensionId
@@ -159,7 +164,8 @@ export default function Area({
               extended={extended ?? widget.extended}
               extendable={extendable2}
               style={{ pointerEvents: "none", margin: 0 }}
-              editorStyle={{ margin: 0 }}>
+              editorStyle={{ margin: 0 }}
+            >
               {({ editing }) =>
                 renderWidget?.({
                   widget,
@@ -183,25 +189,30 @@ function useOverriddenExtended({
   layout: WidgetLayout;
   widgets: InternalWidget[] | undefined;
 }) {
-  const extendable = layout.location.section === "center" || layout.location.area === "middle";
-  const [overriddenExtended, overrideExtend] = useState<{ [id in string]?: boolean }>({});
+  const extendable =
+    layout.location.section === "center" || layout.location.area === "middle";
+  const [overriddenExtended, overrideExtend] = useState<{
+    [id in string]?: boolean;
+  }>({});
   const handleExtend = useCallback(
     (id: string, extended: boolean | undefined) => {
-      overrideExtend(oe =>
+      overrideExtend((oe) =>
         oe[id] === extended
           ? oe
           : {
               ...omit(oe, id),
-              ...(typeof extended === "undefined" || !extendable ? {} : { [id]: extended }),
+              ...(typeof extended === "undefined" || !extendable
+                ? {}
+                : { [id]: extended }),
             },
       );
     },
     [extendable],
   );
 
-  const widgetIds = widgets?.map(w => w.id) ?? [];
+  const widgetIds = widgets?.map((w) => w.id) ?? [];
   useDeepCompareEffect(() => {
-    overrideExtend(oe => pick(oe, Object.keys(widgetIds)));
+    overrideExtend((oe) => pick(oe, Object.keys(widgetIds)));
   }, [widgetIds]);
 
   return {

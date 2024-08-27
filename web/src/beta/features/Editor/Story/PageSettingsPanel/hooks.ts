@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-
 import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 type SettingProps = {
   onPageUpdate?: (id: string, layers: string[]) => void;
@@ -13,10 +12,13 @@ type SettingProps = {
 export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
   const pageId = useMemo(() => selectedPage?.id, [selectedPage?.id]);
 
-  const selectedLayerIds = useMemo(() => selectedPage?.layersIds || [], [selectedPage]);
+  const selectedLayerIds = useMemo(
+    () => selectedPage?.layersIds || [],
+    [selectedPage],
+  );
 
   const allLayersSelected = useMemo(() => {
-    const allLayerIds = layers?.map(layer => layer.id) || [];
+    const allLayerIds = layers?.map((layer) => layer.id) || [];
     return selectedLayerIds.length >= allLayerIds.length;
   }, [layers, selectedLayerIds.length]);
 
@@ -32,7 +34,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
     (layerId: string) => {
       if (!pageId) return;
       const updatedLayers = checkedLayers.includes(layerId)
-        ? checkedLayers.filter(id => id !== layerId)
+        ? checkedLayers.filter((id) => id !== layerId)
         : [...checkedLayers, layerId];
 
       setCheckedLayers(updatedLayers);
@@ -43,7 +45,9 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
 
   const handleAllLayersCheck = useCallback(() => {
     if (!pageId) return;
-    const updatedCheckedLayers = allCheckedLayers ? [] : layers?.map(layer => layer.id) || [];
+    const updatedCheckedLayers = allCheckedLayers
+      ? []
+      : layers?.map((layer) => layer.id) || [];
     setAllCheckedLayers(!allCheckedLayers);
     setCheckedLayers(updatedCheckedLayers);
     onPageUpdate?.(pageId, updatedCheckedLayers);
@@ -53,7 +57,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
     () =>
       filterVisibleItems(
         selectedPage?.property.items?.filter(
-          p => p.schemaGroup !== "panel" && p.schemaGroup !== "title",
+          (p) => p.schemaGroup !== "panel" && p.schemaGroup !== "title",
         ),
       ),
     [selectedPage?.property],

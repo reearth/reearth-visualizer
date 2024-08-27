@@ -90,7 +90,11 @@ export function exposedReearth({
   getBlock?: () => Reearth["extension"]["block"] | undefined;
   getLayer?: () => Layer | undefined;
   startEventLoop?: () => void;
-  pluginPostMessage: (extentionId: string, msg: unknown, sender: string) => void;
+  pluginPostMessage: (
+    extentionId: string,
+    msg: unknown,
+    sender: string,
+  ) => void;
   extensionEventsOn: Reearth["extension"]["on"];
   extensionEventsOff: Reearth["extension"]["off"];
   // data
@@ -105,13 +109,20 @@ export function exposedReearth({
       viewer: merge(commonReearth.viewer, {
         get overrideProperty() {
           return (property: ViewerProperty) => {
-            overrideViewerProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+            overrideViewerProperty?.(
+              plugin ? `${plugin.id}/${plugin.extensionId}` : "",
+              property,
+            );
           };
         },
         tools: merge(commonReearth.viewer.tools, {
           get getTerrainHeightAsync() {
             return async (lng: number, lat: number) => {
-              const result = await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(lng, lat);
+              const result =
+                await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(
+                  lng,
+                  lat,
+                );
               startEventLoop?.();
               return result;
             };
@@ -131,8 +142,8 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
+                      ? getBlock?.()?.id
+                      : "") ?? "",
               },
             });
           };
@@ -147,13 +158,17 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
+                      ? getBlock?.()?.id
+                      : "") ?? "",
               },
             });
         },
         get setTime() {
-          return (time: { start: Date | string; stop: Date | string; current: Date | string }) =>
+          return (time: {
+            start: Date | string;
+            stop: Date | string;
+            current: Date | string;
+          }) =>
             timelineManagerRef?.current?.commit({
               cmd: "SET_TIME",
               payload: { ...time },
@@ -163,8 +178,8 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
+                      ? getBlock?.()?.id
+                      : "") ?? "",
               },
             });
         },
@@ -179,8 +194,8 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
+                      ? getBlock?.()?.id
+                      : "") ?? "",
               },
             });
         },
@@ -195,8 +210,8 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
+                      ? getBlock?.()?.id
+                      : "") ?? "",
               },
             });
         },
@@ -211,8 +226,8 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
+                      ? getBlock?.()?.id
+                      : "") ?? "",
               },
             });
         },
@@ -248,10 +263,13 @@ export function exposedReearth({
             const sender =
               (plugin?.extensionType === "widget"
                 ? getWidget?.()?.id
-                : ["infoboxBlock", "storyBlock", "block"].includes(plugin?.extensionType ?? "")
-                ? getBlock?.()?.id
-                : "") ?? "";
-            return (id: string, msg: unknown) => pluginPostMessage(id, msg, sender);
+                : ["infoboxBlock", "storyBlock", "block"].includes(
+                      plugin?.extensionType ?? "",
+                    )
+                  ? getBlock?.()?.id
+                  : "") ?? "";
+            return (id: string, msg: unknown) =>
+              pluginPostMessage(id, msg, sender);
           },
           on: extensionEventsOn,
           off: extensionEventsOff,
@@ -263,7 +281,8 @@ export function exposedReearth({
               },
             }
           : {},
-        plugin?.extensionType === "infoboxBlock" || plugin?.extensionType === "storyBlock"
+        plugin?.extensionType === "infoboxBlock" ||
+          plugin?.extensionType === "storyBlock"
           ? {
               get block() {
                 return {
@@ -282,8 +301,8 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? "",
                 key,
               );
               promise.finally(() => {
@@ -295,13 +314,15 @@ export function exposedReearth({
           get setAsync() {
             return (key: string, value: unknown) => {
               const localValue =
-                typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
+                typeof value === "object"
+                  ? JSON.parse(JSON.stringify(value))
+                  : value;
               const promise = clientStorage.setAsync(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? "",
                 key,
                 localValue,
               );
@@ -317,8 +338,8 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? "",
                 key,
               );
               promise.finally(() => {
@@ -333,8 +354,8 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? "",
               );
               promise.finally(() => {
                 startEventLoop?.();
@@ -348,8 +369,8 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? "",
               );
               promise.finally(() => {
                 startEventLoop?.();

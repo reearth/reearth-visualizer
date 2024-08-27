@@ -29,7 +29,13 @@ const Navbar: React.FC<Props> = ({
   currentTab = "map",
   page = "editor",
 }) => {
-  const { currentProject, workspace, workspaces, handleLogout, handleWorkspaceChange } = useHook({
+  const {
+    currentProject,
+    workspace,
+    workspaces,
+    handleLogout,
+    handleWorkspaceChange,
+  } = useHook({
     projectId,
     workspaceId,
   });

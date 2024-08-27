@@ -20,7 +20,9 @@ function getElementNodesInSelection(selection: RangeSelection) {
     ]);
   }
 
-  return new Set(nodesInSelection.map(n => ($isElementNode(n) ? n : n.getParentOrThrow())));
+  return new Set(
+    nodesInSelection.map((n) => ($isElementNode(n) ? n : n.getParentOrThrow())),
+  );
 }
 
 function isIndentPermitted(maxDepth: number) {
@@ -52,7 +54,11 @@ function isIndentPermitted(maxDepth: number) {
   return totalDepth <= maxDepth;
 }
 
-export default function ListMaxIndentLevelPlugin({ maxDepth }: { maxDepth?: number }) {
+export default function ListMaxIndentLevelPlugin({
+  maxDepth,
+}: {
+  maxDepth?: number;
+}) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {

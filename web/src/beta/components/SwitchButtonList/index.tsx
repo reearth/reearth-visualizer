@@ -21,10 +21,14 @@ const SwitchButtonList: React.FC<Props> = ({ list, onChange }) => {
           disabled={!!item?.active}
           onClick={() => onChange?.(item.id)}
           first={index === 0}
-          end={index === list.length - 1}>
+          end={index === list.length - 1}
+        >
           <Text
             size="footnote"
-            color={item.active ? theme.content.withBackground : theme.content.main}>
+            color={
+              item.active ? theme.content.withBackground : theme.content.main
+            }
+          >
             {item.text}
           </Text>
         </SwitchButton>
@@ -37,16 +41,17 @@ const SwitchButton = styled.button<{
   first: boolean;
   end: boolean;
 }>`
-  background: ${props => (props.disabled ? props.theme.select.main : props.theme.bg[0])};
+  background: ${(props) =>
+    props.disabled ? props.theme.select.main : props.theme.bg[0]};
   padding: 8px;
   height: 32px;
-  border-top-left-radius: ${props => (props.first ? "4px" : "0px")};
-  border-top-right-radius: ${props => (props.end ? "4px" : "0px")};
-  border-bottom-left-radius: ${props => (props.first ? "4px" : "0px")};
-  border-bottom-right-radius: ${props => (props.end ? "4px" : "0px")};
+  border-top-left-radius: ${(props) => (props.first ? "4px" : "0px")};
+  border-top-right-radius: ${(props) => (props.end ? "4px" : "0px")};
+  border-bottom-left-radius: ${(props) => (props.first ? "4px" : "0px")};
+  border-bottom-right-radius: ${(props) => (props.end ? "4px" : "0px")};
   transition: all 0.5s ease;
   :hover {
-    background: ${props => props.theme.select.main};
+    background: ${(props) => props.theme.select.main};
   }
 `;
 

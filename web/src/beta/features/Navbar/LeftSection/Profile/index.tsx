@@ -1,8 +1,7 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Workspace } from "../../types";
 
@@ -40,7 +39,7 @@ const HeaderProfile: React.FC<Props> = ({
     {
       icon: "switch",
       id: "switchWorkspace",
-      subItem: workspaces.map(w => {
+      subItem: workspaces.map((w) => {
         return {
           customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
           customSubMenuOrder: w.personal ? 0 : 1,

@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-
 import { useT, useLang } from "@reearth/services/i18n";
-import { useError, useNotification, Notification } from "@reearth/services/state";
+import {
+  useError,
+  useNotification,
+  Notification,
+} from "@reearth/services/state";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 export type PolicyItems =
   | "layer"
@@ -29,7 +32,8 @@ export default () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const policyLimitNotifications = window.REEARTH_CONFIG?.policy?.limitNotifications;
+  const policyLimitNotifications =
+    window.REEARTH_CONFIG?.policy?.limitNotifications;
 
   const errorHeading = t("Error");
   const warningHeading = t("Warning");
@@ -40,8 +44,8 @@ export default () => {
       notification?.type === "error"
         ? errorHeading
         : notification?.type === "warning"
-        ? warningHeading
-        : noticeHeading,
+          ? warningHeading
+          : noticeHeading,
     [notification?.type, errorHeading, warningHeading, noticeHeading],
   );
 
@@ -52,9 +56,11 @@ export default () => {
   useEffect(() => {
     if (!error) return;
     if (error.message?.includes("policy violation") && error.message) {
-      const limitedItem = policyItems.find(i => error.message?.includes(i));
+      const limitedItem = policyItems.find((i) => error.message?.includes(i));
       const policyItem =
-        limitedItem && policyLimitNotifications ? policyLimitNotifications[limitedItem] : undefined;
+        limitedItem && policyLimitNotifications
+          ? policyLimitNotifications[limitedItem]
+          : undefined;
       const message = policyItem
         ? typeof policyItem === "string"
           ? policyItem
@@ -89,7 +95,8 @@ export default () => {
   ]);
 
   useEffect(() => {
-    if (!notification || notification?.duration === "persistent" || isHovered) return;
+    if (!notification || notification?.duration === "persistent" || isHovered)
+      return;
     let notificationTimeout = 2000;
 
     if (notification.duration) {

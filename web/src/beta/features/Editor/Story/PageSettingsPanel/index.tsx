@@ -1,5 +1,3 @@
-import { FC } from "react";
-
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import CheckBoxField from "@reearth/beta/ui/fields/CheckboxField";
@@ -7,6 +5,7 @@ import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { useStoryPage } from "../context";
 
@@ -15,14 +14,20 @@ import useHooks from "./hooks";
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
-  const { selectedStoryPage, layers, handleStoryPageUpdate, tab, handleFlyTo } = useStoryPage();
+  const { selectedStoryPage, layers, handleStoryPageUpdate, tab, handleFlyTo } =
+    useStoryPage();
 
-  const { allCheckedLayers, checkedLayers, visibleItems, handleAllLayersCheck, handleLayerCheck } =
-    useHooks({
-      layers,
-      selectedPage: selectedStoryPage,
-      onPageUpdate: handleStoryPageUpdate,
-    });
+  const {
+    allCheckedLayers,
+    checkedLayers,
+    visibleItems,
+    handleAllLayersCheck,
+    handleLayerCheck,
+  } = useHooks({
+    layers,
+    selectedPage: selectedStoryPage,
+    onPageUpdate: handleStoryPageUpdate,
+  });
 
   const t = useT();
 
@@ -33,7 +38,8 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       extend
       alwaysOpen
       showCollapseArea={showCollapseArea}
-      areaRef={areaRef}>
+      areaRef={areaRef}
+    >
       {selectedStoryPage && (
         <Wrapper>
           {tab == "story" && (
@@ -41,17 +47,24 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
               {layers && layers.length > 0 && (
                 <LayerWrapper>
                   <AllLayers>
-                    <CheckBoxField onChange={handleAllLayersCheck} value={allCheckedLayers} />
+                    <CheckBoxField
+                      onChange={handleAllLayersCheck}
+                      value={allCheckedLayers}
+                    />
                     <Title>{t("All Layers")}</Title>
                   </AllLayers>
                   <LayerList>
-                    {layers.map(layer => (
+                    {layers.map((layer) => (
                       <Layer key={layer.id}>
                         <CheckBoxField
                           onChange={() => handleLayerCheck(layer.id)}
                           value={checkedLayers.includes(layer.id)}
                         />
-                        <EntryItem icon="file" title={layer.title} disableHover />
+                        <EntryItem
+                          icon="file"
+                          title={layer.title}
+                          disableHover
+                        />
                       </Layer>
                     ))}
                   </LayerList>

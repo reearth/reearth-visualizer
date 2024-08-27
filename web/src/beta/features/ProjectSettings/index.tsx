@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import Navbar from "@reearth/beta/features/Navbar";
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -10,6 +8,7 @@ import {
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
 
 import useHooks from "./hooks";
 import GeneralSettings from "./innerPages/GeneralSettings";
@@ -27,7 +26,7 @@ export const projectSettingTabs = [
 export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
 
 export function isProjectSettingTab(tab: string): tab is projectSettingsTab {
-  return projectSettingTabs.map(f => f.id).includes(tab as never);
+  return projectSettingTabs.map((f) => f.id).includes(tab as never);
 }
 
 type Props = {
@@ -62,7 +61,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
 
   const tabs = useMemo(
     () =>
-      projectSettingTabs.map(tab => ({
+      projectSettingTabs.map((tab) => ({
         id: tab.id,
         icon: tab.icon,
         text: t(tab.text),
@@ -73,12 +72,17 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
 
   return (
     <Wrapper>
-      <Navbar projectId={projectId} workspaceId={workspaceId} sceneId={sceneId} page="settings" />
+      <Navbar
+        projectId={projectId}
+        workspaceId={workspaceId}
+        sceneId={sceneId}
+        page="settings"
+      />
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
             <SidebarSection>
-              {tabs?.map(t => (
+              {tabs?.map((t) => (
                 <SidebarMenuItem
                   key={t.id}
                   path={t.path}

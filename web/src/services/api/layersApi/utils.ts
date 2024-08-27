@@ -10,7 +10,12 @@ export type NLSInfobox = {
 
 export type SketchGeometry = {
   type: string;
-  coordinates?: number[] | number[][] | number[][][] | number[][][][] | number[][][][];
+  coordinates?:
+    | number[]
+    | number[][]
+    | number[][][]
+    | number[][][][]
+    | number[][][][];
 };
 
 export type SketchFeature = {
@@ -57,7 +62,7 @@ const getGeometryCoordinates = (geometry: Geometry) => {
 
 const convertGeometry = (geometry: Geometry) => {
   return geometry["__typename"] === "GeometryCollection"
-    ? geometry.geometries.map(g => ({
+    ? geometry.geometries.map((g) => ({
         type: g.type,
         coordinates: getGeometryCoordinates(g),
       }))
@@ -75,7 +80,7 @@ export const convertSketchFeatureCollection = (
   return featureCollection
     ? {
         type: featureCollection.type,
-        features: featureCollection.features.map(f => ({
+        features: featureCollection.features.map((f) => ({
           id: f.id,
           type: f.type,
           properties: f.properties,
@@ -86,7 +91,8 @@ export const convertSketchFeatureCollection = (
 };
 
 export const getLayers = (rawScene?: GetSceneQuery) => {
-  const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
+  const scene =
+    rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
 
   return scene?.newLayers?.map((l): NLSLayer => {
     return {

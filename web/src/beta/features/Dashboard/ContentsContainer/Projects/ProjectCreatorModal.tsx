@@ -1,5 +1,3 @@
-import { FC, useCallback, useState } from "react";
-
 import URLField from "@reearth/beta/components/fields/URLField";
 import {
   Button,
@@ -11,13 +9,16 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { Project } from "../../type";
 
 type ProjectCreatorModalProps = {
   visible: boolean;
   onClose?: () => void;
-  onProjectCreate: (data: Pick<Project, "name" | "description" | "imageUrl">) => void;
+  onProjectCreate: (
+    data: Pick<Project, "name" | "description" | "imageUrl">,
+  ) => void;
 };
 
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
@@ -66,7 +67,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               disabled={!projectName}
             />
           </>
-        }>
+        }
+      >
         <ContentWrapper>
           <Form>
             <FormInputWrapper>
@@ -76,7 +78,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               <TextInput
                 value={projectName}
                 placeholder={t("Text")}
-                onChange={value => handleOnChange("projectName", value)}
+                onChange={(value) => handleOnChange("projectName", value)}
               />
             </FormInputWrapper>
             <FormInputWrapper>
@@ -87,7 +89,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 value={description}
                 placeholder={t("Write down your content")}
                 rows={4}
-                onChange={value => handleOnChange("description", value)}
+                onChange={(value) => handleOnChange("description", value)}
               />
             </FormInputWrapper>
             <URLField
@@ -95,7 +97,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               fileType="asset"
               entityType="image"
               value={imageUrl}
-              onChange={value => handleOnChange("asset", value || "")}
+              onChange={(value) => handleOnChange("asset", value || "")}
             />
           </Form>
         </ContentWrapper>

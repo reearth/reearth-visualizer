@@ -1,7 +1,6 @@
-import { FC, useEffect, useMemo } from "react";
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import { FC, useEffect, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -10,7 +9,12 @@ import { type LinkBlock as LinkBlockType } from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const LinkBlock: FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
+const LinkBlock: FC<Props> = ({
+  block,
+  isSelected,
+  onPropertyItemAdd,
+  ...props
+}) => {
   const linkButtons = useMemo(
     () => (block?.property?.default ?? []) as LinkBlockType[],
     [block?.property?.default],
@@ -33,7 +37,8 @@ const LinkBlock: FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }
       property={block?.property}
       settingsEnabled={false}
       onPropertyItemAdd={onPropertyItemAdd}
-      {...props}>
+      {...props}
+    >
       <Content
         linkButtons={linkButtons}
         propertyId={block?.propertyId}

@@ -3,7 +3,10 @@ type AnyObject = Record<string, any>;
 
 // Helper function to get nested property value
 function getNestedProperty(obj: AnyObject, keys: string[]): any {
-  return keys.reduce((acc, key) => (acc?.[key] !== undefined ? acc[key] : undefined), obj);
+  return keys.reduce(
+    (acc, key) => (acc?.[key] !== undefined ? acc[key] : undefined),
+    obj,
+  );
 }
 
 // Helper function to set nested properties
@@ -34,7 +37,7 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
 
     if (value !== undefined) {
       if (isArray(value) && typeof targetKey === "object") {
-        const convertedArray = value.map(item =>
+        const convertedArray = value.map((item) =>
           isObject(item) ? convertData(item, targetKey[1]) : item,
         );
         const targetKeys = targetKey[0].split(".");
@@ -72,7 +75,8 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "terrain.terrainCesiumIonAccessToken": "assets.cesium.terrain.ionAccessToken",
   "terrain.terrainCesiumIonUrl": "assets.cesium.terrain.ionUrl",
   "terrain.terrainExaggeration": "scene.verticalExaggeration",
-  "terrain.terrainExaggerationRelativeHeight": "scene.verticalExaggerationRelativeHeight",
+  "terrain.terrainExaggerationRelativeHeight":
+    "scene.verticalExaggerationRelativeHeight",
   "terrain.depthTestAgainstTerrain": "globe.depthTestAgainstTerrain",
   "globeLighting.globeLighting": "globe.enableLighting",
   "globeShadow.globeShadow": "scene.shadow.enabled",

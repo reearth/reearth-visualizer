@@ -1,7 +1,6 @@
-import type { FC } from "react";
-
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
+import type { FC } from "react";
 
 import Icon, { Icons } from "../Icon";
 
@@ -35,8 +34,10 @@ const Button = styled.button<ButtonProps>`
   padding: 4px 8px;
   gap: 8px;
   border-radius: 4px;
-  color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
-  background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[0])};
+  color: ${({ selected, theme }) =>
+    selected ? theme.content.main : theme.content.weak};
+  background: ${({ disabled, theme }) =>
+    disabled ? theme.bg[3] : theme.bg[0]};
   line-height: 19px;
   white-space: nowrap;
   overflow: hidden;

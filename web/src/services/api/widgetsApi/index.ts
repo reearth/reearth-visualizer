@@ -1,6 +1,4 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
 import {
   SceneWidget,
   WidgetAreaAlign,
@@ -17,6 +15,7 @@ import {
 } from "@reearth/services/gql/queries/widget";
 import { useT } from "@reearth/services/i18n";
 import { WidgetAreaState, useNotification } from "@reearth/services/state";
+import { useCallback, useMemo } from "react";
 
 import { SceneQueryProps } from "../sceneApi";
 import { MutationReturn } from "../types";
@@ -56,32 +55,46 @@ export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
 
-  const useInstallableWidgetsQuery = useCallback(({ sceneId, lang }: WidgetQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
-      variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId,
-    });
+  const useInstallableWidgetsQuery = useCallback(
+    ({ sceneId, lang }: WidgetQueryProps) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId,
+      });
 
-    const installableWidgets = useMemo(() => getInstallableWidgets(data), [data]);
+      const installableWidgets = useMemo(
+        () => getInstallableWidgets(data),
+        [data],
+      );
 
-    return { installableWidgets, ...rest };
-  }, []);
+      return { installableWidgets, ...rest };
+    },
+    [],
+  );
 
-  const useInstalledWidgetsQuery = useCallback(({ sceneId, lang }: WidgetQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
-      variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId,
-    });
+  const useInstalledWidgetsQuery = useCallback(
+    ({ sceneId, lang }: WidgetQueryProps) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId,
+      });
 
-    const installedWidgets = useMemo(() => getInstalledWidgets(data), [data]);
+      const installedWidgets = useMemo(() => getInstalledWidgets(data), [data]);
 
-    return { installedWidgets, ...rest };
-  }, []);
+      return { installedWidgets, ...rest };
+    },
+    [],
+  );
 
-  const [addWidgetMutation] = useMutation(ADD_WIDGET, { refetchQueries: ["GetScene"] });
+  const [addWidgetMutation] = useMutation(ADD_WIDGET, {
+    refetchQueries: ["GetScene"],
+  });
 
   const useAddWidget = useCallback(
-    async (sceneId?: string, id?: string): Promise<MutationReturn<Partial<Widget>>> => {
+    async (
+      sceneId?: string,
+      id?: string,
+    ): Promise<MutationReturn<Partial<Widget>>> => {
       if (!sceneId || !id)
         return {
           status: "error",
@@ -107,7 +120,9 @@ export default () => {
     [addWidgetMutation, setNotification, t],
   );
 
-  const [updateWidget] = useMutation(UPDATE_WIDGET, { refetchQueries: ["GetScene"] });
+  const [updateWidget] = useMutation(UPDATE_WIDGET, {
+    refetchQueries: ["GetScene"],
+  });
 
   const useUpdateWidget = useCallback(
     async (
@@ -116,7 +131,9 @@ export default () => {
       sceneId?: string,
     ) => {
       if (!sceneId) {
-        console.log("GraphQL: Failed to update widget because there is no sceneId provided");
+        console.log(
+          "GraphQL: Failed to update widget because there is no sceneId provided",
+        );
         setNotification({ type: "error", text: t("Failed to update widget.") });
         return {
           status: "error",
@@ -131,7 +148,8 @@ export default () => {
           location: update.location
             ? {
                 zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                section:
+                  update.location.section?.toUpperCase() as WidgetSectionType,
                 area: update.location.area?.toUpperCase() as WidgetAreaType,
               }
             : undefined,
@@ -155,7 +173,9 @@ export default () => {
     [updateWidget, setNotification, t],
   );
 
-  const [removeWidget] = useMutation(REMOVE_WIDGET, { refetchQueries: ["GetScene"] });
+  const [removeWidget] = useMutation(REMOVE_WIDGET, {
+    refetchQueries: ["GetScene"],
+  });
 
   const useRemoveWidget = useCallback(
     async (
@@ -201,7 +221,10 @@ export default () => {
         console.log(
           "GraphQL: Failed to update the widget align system because there is no sceneId provided",
         );
-        setNotification({ type: "error", text: t("Failed to update widget alignment.") });
+        setNotification({
+          type: "error",
+          text: t("Failed to update widget alignment."),
+        });
         return {
           status: "error",
         };
@@ -224,8 +247,14 @@ export default () => {
       });
 
       if (errors || !data?.updateWidgetAlignSystem) {
-        console.log("GraphQL: Failed to update the widget align system", errors);
-        setNotification({ type: "error", text: t("Failed to update the widget align system.") });
+        console.log(
+          "GraphQL: Failed to update the widget align system",
+          errors,
+        );
+        setNotification({
+          type: "error",
+          text: t("Failed to update the widget align system."),
+        });
 
         return { status: "error" };
       }

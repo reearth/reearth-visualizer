@@ -1,9 +1,12 @@
-import { useMemo } from "react";
-import { Link } from "react-router-dom";
-
-import { IconButton, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import {
+  IconButton,
+  PopupMenu,
+  PopupMenuItem,
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 
 import { Project, Workspace } from "../types";
 
@@ -36,13 +39,17 @@ const LeftSection: React.FC<Props> = ({
         icon: "setting",
         id: "setting",
         title: t("Project settings"),
-        path: currentProject?.id ? `/settings/project/${currentProject.id}` : "",
+        path: currentProject?.id
+          ? `/settings/project/${currentProject.id}`
+          : "",
       },
       {
         icon: "plugin",
         id: "plugin",
         title: t("Plugin"),
-        path: currentProject?.id ? `/settings/project/${currentProject.id}/plugins` : "",
+        path: currentProject?.id
+          ? `/settings/project/${currentProject.id}/plugins`
+          : "",
       },
     ],
     [currentProject?.id, t],
@@ -50,7 +57,10 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <StyledLink to={`/dashboard/${currentWorkspace?.id}`} disabled={!currentWorkspace?.id}>
+      <StyledLink
+        to={`/dashboard/${currentWorkspace?.id}`}
+        disabled={!currentWorkspace?.id}
+      >
         <IconButton icon="grid" appearance="simple" size="large" />
       </StyledLink>
       {page !== "editor" && (
@@ -65,7 +75,9 @@ const LeftSection: React.FC<Props> = ({
         onWorkspaceChange={onWorkspaceChange}
       />
       <Separator>/</Separator>
-      {currentProject && <PopupMenu label={currentProject.name} menu={menuItems} />}
+      {currentProject && (
+        <PopupMenu label={currentProject.name} menu={menuItems} />
+      )}
     </Wrapper>
   );
 };
@@ -79,15 +91,17 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
 }));
 
-const StyledLink = styled(Link)<{ disabled?: boolean }>(({ theme, disabled }) => ({
-  display: "flex",
-  color: theme.content.main,
-  textDecoration: "none",
-  pointerEvents: disabled ? "none" : "all",
-  "&:hover": {
+const StyledLink = styled(Link)<{ disabled?: boolean }>(
+  ({ theme, disabled }) => ({
+    display: "flex",
+    color: theme.content.main,
     textDecoration: "none",
-  },
-}));
+    pointerEvents: disabled ? "none" : "all",
+    "&:hover": {
+      textDecoration: "none",
+    },
+  }),
+);
 
 const Separator = styled.div(({ theme }) => ({
   color: theme.content.weak,

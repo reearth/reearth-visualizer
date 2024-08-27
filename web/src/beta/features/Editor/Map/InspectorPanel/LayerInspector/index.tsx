@@ -1,5 +1,3 @@
-import { FC, useCallback, useMemo, useState } from "react";
-
 import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
   GeoJsonFeatureDeleteProps,
@@ -8,6 +6,7 @@ import {
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { LayerConfigUpdateProps } from "../../../hooks/useLayers";
 
@@ -16,7 +15,8 @@ import FeatureInspector from "./FeatureInspector";
 import InfoboxSettings from "./InfoboxSettings";
 import LayerStyle from "./LayerStyle";
 
-const LAYER_INSPECTOR_TAB_STORAGE_KEY = "reearth-visualizer-map-layer-inspector-tab";
+const LAYER_INSPECTOR_TAB_STORAGE_KEY =
+  "reearth-visualizer-map-layer-inspector-tab";
 
 type Props = {
   layerStyles?: LayerStyleType[];
@@ -43,9 +43,9 @@ const InspectorTabs: FC<Props> = ({
       selectedLayer.layer?.config?.data?.type === "3dtiles" ||
       selectedLayer.layer?.config?.data?.type === "mvt"
         ? selectedLayer.computedFeature
-        : selectedLayer.computedLayer?.features?.find(
-            f => f.id === selectedLayer.computedFeature?.id,
-          ) ?? {};
+        : (selectedLayer.computedLayer?.features?.find(
+            (f) => f.id === selectedLayer.computedFeature?.id,
+          ) ?? {});
 
     if (!id) return;
     return {
@@ -65,7 +65,9 @@ const InspectorTabs: FC<Props> = ({
 
     const selectedFeatureId = selectedFeature.properties.id;
 
-    return features?.find(feature => feature.properties.id === selectedFeatureId);
+    return features?.find(
+      (feature) => feature.properties.id === selectedFeatureId,
+    );
   }, [selectedLayer, selectedFeature]);
 
   const tabItems: TabItem[] = useMemo(
@@ -73,7 +75,9 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "dataSource",
         icon: "data",
-        children: selectedLayer?.layer && <DataSource selectedLayer={selectedLayer.layer} />,
+        children: selectedLayer?.layer && (
+          <DataSource selectedLayer={selectedLayer.layer} />
+        ),
       },
       {
         id: "featureInspector",
@@ -135,7 +139,12 @@ const InspectorTabs: FC<Props> = ({
   }, []);
 
   return (
-    <Tabs tabs={tabItems} currentTab={currentTab} position="left" onChange={handleTabChange} />
+    <Tabs
+      tabs={tabItems}
+      currentTab={currentTab}
+      position="left"
+      onChange={handleTabChange}
+    />
   );
 };
 

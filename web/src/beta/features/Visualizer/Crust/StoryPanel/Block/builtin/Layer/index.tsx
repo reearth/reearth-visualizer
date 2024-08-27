@@ -1,7 +1,6 @@
-import { useMemo, useEffect } from "react";
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import { useMemo, useEffect } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -10,7 +9,12 @@ import { type LayerBlock as LayerBlockType } from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const LayerBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
+const LayerBlock: React.FC<Props> = ({
+  block,
+  isSelected,
+  onPropertyItemAdd,
+  ...props
+}) => {
   const layerButtons = useMemo(
     () => (block?.property?.default ?? []) as LayerBlockType[],
     [block?.property?.default],
@@ -33,7 +37,8 @@ const LayerBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...
       property={block?.property}
       settingsEnabled={false}
       onPropertyItemAdd={onPropertyItemAdd}
-      {...props}>
+      {...props}
+    >
       <Content
         layerButtons={layerButtons}
         propertyId={block?.propertyId}

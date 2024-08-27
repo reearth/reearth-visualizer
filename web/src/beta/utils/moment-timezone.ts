@@ -8,7 +8,7 @@ type TimezoneInfo = {
 export const getUniqueTimezones = (timezones: string[]): TimezoneInfo[] => {
   const uniqueTimezones: TimezoneInfo[] = [];
   const seenOffsets = new Set<string>();
-  timezones.forEach(timezone => {
+  timezones.forEach((timezone) => {
     const offset = moment.tz(timezone).utcOffset() / 60;
 
     if (Number.isInteger(offset)) {

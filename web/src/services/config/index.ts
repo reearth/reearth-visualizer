@@ -5,9 +5,17 @@ import { configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
-import { type UnsafeBuiltinPlugin, loadUnsafeBuiltinPlugins } from "./unsafeBuiltinPlugin";
+import {
+  type UnsafeBuiltinPlugin,
+  loadUnsafeBuiltinPlugins,
+} from "./unsafeBuiltinPlugin";
 
-export { getAuthInfo, getSignInCallbackUrl, logInToTenant, logOutFromTenant } from "./authInfo";
+export {
+  getAuthInfo,
+  getSignInCallbackUrl,
+  logInToTenant,
+  logOutFromTenant,
+} from "./authInfo";
 
 export type Config = {
   version?: string;
@@ -82,7 +90,7 @@ export default async function loadConfig() {
 
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
-      config.passwordPolicy as { [key: string]: string },
+      config.passwordPolicy as Record<string, string>,
     );
   }
 
@@ -92,7 +100,9 @@ export default async function loadConfig() {
   }
 
   if (config.unsafePluginUrls) {
-    config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(config.unsafePluginUrls);
+    config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(
+      config.unsafePluginUrls,
+    );
   }
 
   window.REEARTH_CONFIG = config;
@@ -104,7 +114,7 @@ async function loadCesiumIonToken(): Promise<string> {
     const res = await fetch("/cesium_ion_token.txt");
     const token = (await res.text()).trim();
     return token.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH ? token : "";
-  } catch (e) {
+  } catch (_e) {
     // ignore
     return "";
   }

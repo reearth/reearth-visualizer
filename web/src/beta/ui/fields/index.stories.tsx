@@ -38,7 +38,8 @@ export const Components: Story = {
         maxWidth: "500px",
         padding: "24px",
         margin: "0 auto",
-      }}>
+      }}
+    >
       <CommonField
         commonTitle="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."

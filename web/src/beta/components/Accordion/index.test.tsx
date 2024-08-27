@@ -1,6 +1,5 @@
-import { expect, test } from "vitest";
-
 import { fireEvent, render, screen } from "@reearth/test/utils";
+import { expect, test } from "vitest";
 
 import Accordion, { AccordionItemType } from "./index";
 
@@ -36,7 +35,11 @@ test("should display items content", () => {
 
 test("should open when header button is clicked", () => {
   render(<Accordion items={sampleContents} />);
-  expect(screen.getAllByTestId("atoms-accordion-item-content")[0]).not.toBeVisible();
+  expect(
+    screen.getAllByTestId("atoms-accordion-item-content")[0],
+  ).not.toBeVisible();
   fireEvent.click(screen.getAllByTestId("atoms-accordion-item-header")[0]);
-  expect(screen.getAllByTestId("atoms-accordion-item-content")[0]).toBeVisible();
+  expect(
+    screen.getAllByTestId("atoms-accordion-item-content")[0],
+  ).toBeVisible();
 });

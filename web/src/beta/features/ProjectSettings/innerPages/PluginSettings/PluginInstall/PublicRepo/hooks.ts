@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
 
-export const validateUrl = (url: string): { result: boolean; message: string } => {
+export const validateUrl = (
+  url: string,
+): { result: boolean; message: string } => {
   if (!url) {
     return { result: false, message: "Error: Thie field is required" };
   }
