@@ -72,10 +72,10 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
+          <PublishStatus status={publishStatus} />
         </ActionWrapper>
       </ThumbnailCol>
       <ProjectNameCol>
-        <PublishStatus status={publishStatus} />
         {!isEditing ? (
           <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
             {projectName}
@@ -124,7 +124,6 @@ const ListWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     padding: `${theme.spacing.small}px 0`,
     alignItems: "center",
     boxSizing: "border-box",
-    gap: theme.spacing.small,
     overflow: "hidden",
   }),
 );
@@ -188,7 +187,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   cursor: "pointer",
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  wordBreak: "break-word",
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
   overflow: "hidden",
   textOverflow: "ellipsis",
 }));
