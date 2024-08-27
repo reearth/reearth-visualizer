@@ -1,6 +1,5 @@
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
-
 import { styled } from "@reearth/services/theme";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 
 import { Icon } from "../Icon";
 import { Typography } from "../Typography";
@@ -105,8 +104,8 @@ const StyledHeader = styled("div")<{
     size === "normal"
       ? `${theme.spacing.small}px`
       : size === "large"
-      ? `${theme.spacing.large}px`
-      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+        ? `${theme.spacing.large}px`
+        : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   minHeight: size === "normal" ? "34px" : "28px",
   gap: iconPosition === "left" ? "8px" : "0px",
   justifyContent: iconPosition === "left" ? "flex-end" : "space-between",
@@ -134,10 +133,10 @@ const ChildWrapper = styled("div")<{
   padding: noPadding
     ? 0
     : size === "normal"
-    ? `${theme.spacing.normal}px`
-    : size === "large"
-    ? `${theme.spacing.super}px`
-    : `${theme.spacing.small}px`,
+      ? `${theme.spacing.normal}px`
+      : size === "large"
+        ? `${theme.spacing.super}px`
+        : `${theme.spacing.small}px`,
   borderRadius: `0px 0px ${theme.radius.small}px ${theme.radius.small}px`,
   flexGrow: 1,
   display: "flex",

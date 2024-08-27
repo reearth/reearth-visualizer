@@ -1,5 +1,10 @@
 import { SceneProperty } from "@reearth/beta/types";
-import type { DataRange, DataType, Geometry, TimeInterval } from "@reearth/core";
+import type {
+  DataRange,
+  DataType,
+  Geometry,
+  TimeInterval,
+} from "@reearth/core";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
@@ -133,7 +138,12 @@ export type WidgetArea = {
 
 export type WidgetAlignment = "start" | "centered" | "end";
 
-export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+export type WidgetAreaPadding = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
 
 export type Feature = {
   id: string;

@@ -1,8 +1,7 @@
-import { ReactNode } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
+import { ReactNode } from "react";
 
 type Props = {
   title: string;
@@ -15,7 +14,11 @@ const PanelCommon: React.FC<Props> = ({ title, children, onClose }) => {
   return (
     <Wrapper>
       <HeaderWrapper>
-        <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
+        <PickerTitle
+          size="footnote"
+          weight="regular"
+          color={theme.content.main}
+        >
           {title}
         </PickerTitle>
         <CloseIcon icon="cancel" size={12} onClick={onClose} />

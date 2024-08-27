@@ -1,11 +1,10 @@
-import { useArgs } from "@storybook/preview-api";
-import { Meta, StoryObj } from "@storybook/react";
-import { ReactNode, CSSProperties } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import Resizable from "@reearth/beta/components/Resizable";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
+import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
+import { ReactNode, CSSProperties } from "react";
 
 import TabMenu, { Props } from "./index";
 
@@ -18,7 +17,12 @@ type Story = StoryObj<typeof TabMenu>;
 const SampleComponent = () => {
   return (
     <div>
-      <Button margin="auto" buttonType="primary" text="Disabled Sample Button" disabled />
+      <Button
+        margin="auto"
+        buttonType="primary"
+        text="Disabled Sample Button"
+        disabled
+      />
       <JSONTag>
         {JSON.stringify(
           {
@@ -49,7 +53,9 @@ const JSONTag = styled.pre`
 const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
   children,
   style,
-}) => <div style={{ display: "flex", height: "100vh", ...style }}>{children}</div>;
+}) => (
+  <div style={{ display: "flex", height: "100vh", ...style }}>{children}</div>
+);
 
 const Pane = (
   <div
@@ -60,10 +66,12 @@ const Pane = (
       fontSize: 24,
       textAlign: "center",
       padding: "25vh 5rem",
-    }}>
+    }}
+  >
     {" "}
-    Whatever the main area holds. The tab panel works only when on the <b>left</b> with{" "}
-    <b>flex 100%</b>. Which is to do with <b>Resizable Component</b> and not the left panel.
+    Whatever the main area holds. The tab panel works only when on the{" "}
+    <b>left</b> with <b>flex 100%</b>. Which is to do with{" "}
+    <b>Resizable Component</b> and not the left panel.
   </div>
 );
 
@@ -75,7 +83,12 @@ export const Default: Story = (args: Props) => {
   return (
     <Container style={{ flexDirection: "row" }}>
       {Pane}
-      <Resizable direction="vertical" gutter="start" initialSize={500} minSize={200}>
+      <Resizable
+        direction="vertical"
+        gutter="start"
+        initialSize={500}
+        minSize={200}
+      >
         <TabMenu {...args} onSelectedTabChange={handleChange} />
       </Resizable>
     </Container>
@@ -84,7 +97,12 @@ export const Default: Story = (args: Props) => {
 
 Default.args = {
   tabs: [
-    { id: "tab1", name: "My infobox", icon: "infobox", component: <SampleComponent /> },
+    {
+      id: "tab1",
+      name: "My infobox",
+      icon: "infobox",
+      component: <SampleComponent />,
+    },
     {
       id: "tab2",
       icon: "marker",

@@ -85,8 +85,10 @@ export type Reearth = {
       | "overriddenLayers"
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
-      readonly overriddenProperties?: { [id: string]: any };
-      readonly overrideProperty?: (properties: LayerSimple["properties"] | undefined) => void;
+      readonly overriddenProperties?: Record<string, any>;
+      readonly overrideProperty?: (
+        properties: LayerSimple["properties"] | undefined,
+      ) => void;
       readonly overridden?: OverriddenLayer[];
       readonly add?: (layer: NaiveLayer) => string | undefined;
       readonly delete?: WrappedRef<LayersRef>["deleteLayer"];
@@ -94,12 +96,20 @@ export type Reearth = {
         layerId: string | undefined,
         reason?: LayerSelectionReason | undefined,
       ) => void;
-      findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
-      findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      findFeatureById?: (
+        layerId: string,
+        featureId: string,
+      ) => Feature | undefined;
+      findFeaturesByIds?: (
+        layerId: string,
+        featureId: string[],
+      ) => Feature[] | undefined;
       bringToFront?: (layerId: string) => void;
       sendToBack?: (layerId: string) => void;
       selectFeature?: (layerId?: string, featureId?: string) => void;
-      selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
+      selectFeatures?: (
+        layers: { layerId?: string; featureId?: string[] }[],
+      ) => void;
       selectionReason?: LayerSelectionReason;
       // For compat
       overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
@@ -145,14 +155,24 @@ export type CommonBlock = {
 export type Scene = {
   readonly inEditor: boolean;
   readonly built: boolean;
-  readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  readonly captureScreen: (
+    type?: string,
+    encoderOptions?: number,
+  ) => string | undefined;
   readonly getLocationFromScreen: (
     x: number,
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
-  readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
-  readonly computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly sampleTerrainHeight: (
+    lng: number,
+    lat: number,
+  ) => Promise<number | undefined>;
+  readonly computeGlobeHeight: (
+    lng: number,
+    lat: number,
+    height?: number,
+  ) => number | undefined;
   readonly getGlobeHeight: () => void;
   readonly toXYZ: (
     lng: number,
@@ -170,7 +190,9 @@ export type Scene = {
     rawPosition: [x: number, y: number, z: number],
     screenOffset: [x: number, y: number],
   ) => [x: number, y: number, z: number] | undefined;
-  readonly isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
+  readonly isPositionVisible: (
+    position: [x: number, y: number, z: number],
+  ) => boolean;
   readonly toWindowPosition: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
@@ -192,7 +214,10 @@ export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
-  readonly getFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+  readonly getFovInfo: (options: {
+    withTerrain?: boolean;
+    calcViewSize?: boolean;
+  }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;
@@ -201,7 +226,10 @@ export type Camera = {
   readonly zoomIn: (amount: number, options?: CameraOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
-  readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
+  readonly flyTo: (
+    destination: string | FlyToDestination,
+    options?: CameraOptions,
+  ) => void;
   readonly flyToBBox: (
     bbox: [number, number, number, number],
     options?: CameraOptions & {
@@ -211,9 +239,14 @@ export type Camera = {
     },
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
-  readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
+  readonly overrideScreenSpaceController: (
+    options: ScreenSpaceCameraControllerOptions,
+  ) => void;
   /** Moves the camera position to look at the specified destination. */
-  readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  readonly lookAt: (
+    destination: LookAtDestination,
+    options?: CameraOptions,
+  ) => void;
   /** Rotate the camera around the center of earth. */
   readonly rotateRight: (radian: number) => void;
   /** Move the angle of camera around the center of earth. */
@@ -247,7 +280,7 @@ export type Clock = {
   speed?: number;
   stepType?: "rate" | "fixed";
   rangeType?: "unbounded" | "clamped" | "bounced";
-  readonly tick?: () => Date | void;
+  readonly tick?: () => Date;
   readonly play?: () => void;
   readonly pause?: () => void;
   readonly setTime?: (time: {
@@ -256,7 +289,9 @@ export type Clock = {
     current: Date | string;
   }) => void;
   readonly setSpeed?: (speed: number) => void;
-  readonly setRangeType?: (rangeType: "unbounded" | "clamped" | "bounced") => void;
+  readonly setRangeType?: (
+    rangeType: "unbounded" | "clamped" | "bounced",
+  ) => void;
   readonly setStepType?: (stepType: "rate" | "fixed") => void;
 };
 
@@ -475,4 +510,4 @@ export type Sketch = {
 };
 
 /** Cesium API: available only when the plugin is a primitive */
-export type Cesium = {};
+export type Cesium = object;

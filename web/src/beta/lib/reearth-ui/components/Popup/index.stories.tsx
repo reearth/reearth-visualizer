@@ -1,7 +1,6 @@
+import { fonts, styled } from "@reearth/services/theme";
 import { Meta, StoryObj } from "@storybook/react";
 import { FC, useCallback, useState } from "react";
-
-import { fonts, styled } from "@reearth/services/theme";
 
 import { Button } from "../Button";
 
@@ -18,7 +17,8 @@ const MockChild: FC = () => (
   <Container>
     <Title>Title</Title>
     <Content>
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum
     </Content>
   </Container>
 );
@@ -27,7 +27,8 @@ const MockChildWithClose: FC<{ onClose: () => void }> = ({ onClose }) => (
   <Container>
     <Title>Title</Title>
     <Content>
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum
     </Content>
     <Button title="Close" onClick={onClose} />
   </Container>
@@ -60,7 +61,7 @@ const Wrapper = styled("div")(({ theme }) => ({
 }));
 
 export const BasicTrigger: Story = {
-  render: args => {
+  render: (args) => {
     return <Popup {...args} />;
   },
   args: {
@@ -71,14 +72,20 @@ export const BasicTrigger: Story = {
   parameters: {
     docs: {
       description: {
-        story: "When passing a string as a trigger, it will be rendered as a button.",
+        story:
+          "When passing a string as a trigger, it will be rendered as a button.",
       },
     },
   },
 };
 
 export const CustomTrigger: Story = {
-  render: args => <Popup {...args} trigger={<Button title="Click me" appearance="primary" />} />,
+  render: (args) => (
+    <Popup
+      {...args}
+      trigger={<Button title="Click me" appearance="primary" />}
+    />
+  ),
   args: {
     placement: "bottom",
     children: <MockChild />,
@@ -86,7 +93,7 @@ export const CustomTrigger: Story = {
 };
 
 export const MultipleTrigger: Story = {
-  render: args => {
+  render: (args) => {
     return (
       <Wrapper>
         <Popup trigger="Click me" {...args} />
@@ -101,7 +108,7 @@ export const MultipleTrigger: Story = {
 };
 
 export const Placement: Story = {
-  render: args => {
+  render: (args) => {
     return (
       <div
         style={{
@@ -111,7 +118,8 @@ export const Placement: Story = {
           gridTemplateColumns: "1fr 1fr 1fr",
           justifyItems: "center",
           alignItems: "center",
-        }}>
+        }}
+      >
         <Popup {...args} trigger="top-start" placement="top-start" />
         <Popup {...args} trigger="top" placement="top" />
         <Popup {...args} trigger="top-end" placement="top-end" />
@@ -145,7 +153,8 @@ const ControlledComponent: FC = () => {
     <Popup
       trigger={<Button title="Click me" appearance="primary" />}
       open={open}
-      onOpenChange={setOpen}>
+      onOpenChange={setOpen}
+    >
       <MockChildWithClose onClose={handleClose} />
     </Popup>
   );

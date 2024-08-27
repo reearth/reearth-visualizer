@@ -1,9 +1,8 @@
-import { FC, useCallback, useState, useEffect } from "react";
-
 import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState, useEffect } from "react";
 
 import { LayerStyleValueUpdateProps } from "../../hooks/useLayerStyles";
 
@@ -25,7 +24,9 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   const { layerStyles = [] } = useGetLayerStylesQuery({ sceneId });
 
   useEffect(() => {
-    const selectedLayerStyle = layerStyles.find(a => a.id === selectedLayerStyleId);
+    const selectedLayerStyle = layerStyles.find(
+      (a) => a.id === selectedLayerStyleId,
+    );
     if (selectedLayerStyle?.value) {
       setStyleCode(JSON.stringify(selectedLayerStyle.value, null, 2));
     }
@@ -33,7 +34,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
 
   const handleSubmit = useCallback(() => {
     if (onLayerStyleValueUpdate && styleCode && JSON.parse(styleCode)) {
-      selectedLayerStyleId &&
+      if (selectedLayerStyleId)
         onLayerStyleValueUpdate({
           styleId: selectedLayerStyleId,
           value: JSON.parse(styleCode),

@@ -1,7 +1,19 @@
-import { FC, MouseEvent, ReactNode, useCallback, useEffect, useState } from "react";
-
-import { Icon, IconButton, IconName, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import {
+  Icon,
+  IconButton,
+  IconName,
+  PopupMenu,
+  PopupMenuItem,
+} from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import {
+  FC,
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 export interface EntryItemAction {
   comp: ReactNode;
@@ -59,8 +71,12 @@ export const EntryItem: FC<EntryItemProps> = ({
       onClick={onClick}
       hovered={hovered}
       highlight={highlighted}
-      smallPaddingRight={!!optionsMenu}>
-      <MainContent className={dragHandleClassName} asDragHandle={!!dragHandleClassName}>
+      smallPaddingRight={!!optionsMenu}
+    >
+      <MainContent
+        className={dragHandleClassName}
+        asDragHandle={!!dragHandleClassName}
+      >
         {icon && (
           <IconWrapper>
             <Icon icon={icon} size="small" />
@@ -69,11 +85,19 @@ export const EntryItem: FC<EntryItemProps> = ({
         {typeof title === "string" ? <Title>{title}</Title> : title}
       </MainContent>
       <Actions>
-        {actions?.map(a => (highlighted || hovered || a.keepVisible) && a.comp)}
+        {actions?.map(
+          (a) => (highlighted || hovered || a.keepVisible) && a.comp,
+        )}
         {!!optionsMenu && (
           <OptionsWrapper onClick={handleOptionsClick}>
             <PopupMenu
-              label={<IconButton icon="dotsThreeVertical" size="small" appearance="simple" />}
+              label={
+                <IconButton
+                  icon="dotsThreeVertical"
+                  size="small"
+                  appearance="simple"
+                />
+              }
               placement="bottom-start"
               menu={optionsMenu}
               width={optionsMenuWidth}
@@ -114,22 +138,24 @@ const Wrapper = styled("div")<{
     backgroundColor: highlight
       ? theme.select.strong
       : hovered
-      ? theme.relative.light
-      : "transparent",
+        ? theme.relative.light
+        : "transparent",
   },
 }));
 
-const MainContent = styled("div")<{ asDragHandle?: boolean }>(({ theme, asDragHandle }) => ({
-  flex: 1,
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.smallest,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  ...(asDragHandle && {
-    cursor: "pointer",
+const MainContent = styled("div")<{ asDragHandle?: boolean }>(
+  ({ theme, asDragHandle }) => ({
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.smallest,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    ...(asDragHandle && {
+      cursor: "pointer",
+    }),
   }),
-}));
+);
 
 const Title = styled("div")(({ theme }) => ({
   width: "100%",

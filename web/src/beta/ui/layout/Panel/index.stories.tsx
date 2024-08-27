@@ -5,8 +5,15 @@ import { Panel } from ".";
 const meta: Meta<typeof Panel> = {
   component: Panel,
   decorators: [
-    Story => (
-      <div style={{ width: 300, height: 300, display: "flex", flexDirection: "column" }}>
+    (Story) => (
+      <div
+        style={{
+          width: 300,
+          height: 300,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Story />
       </div>
     ),

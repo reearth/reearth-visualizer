@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import RCSlider from "rc-slider";
 import React, { ComponentProps } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import "rc-slider/assets/index.css";
 
@@ -13,7 +12,11 @@ export type Props = {
 } & ComponentProps<typeof SliderWithTooltip>;
 
 const Slider: React.FC<Props> = ({ ...props }) => {
-  const calculatedStep = props.step ? props.step : props.max ? props.max / 10 : 0.1;
+  const calculatedStep = props.step
+    ? props.step
+    : props.max
+      ? props.max / 10
+      : 0.1;
   return (
     <SliderStyled disabled={props.disabled as boolean}>
       <SliderWithTooltip step={calculatedStep} {...props} />

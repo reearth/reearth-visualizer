@@ -1,11 +1,10 @@
-import { FC } from "react";
-
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { usePublishPage } from "../context";
 
@@ -13,8 +12,13 @@ import useHooks from "./hooks";
 import PublishModal from "./PublishModal";
 
 const PublishToolsPanel: FC = () => {
-  const { storyId, projectId, sceneId, selectedProjectType, handleProjectTypeChange } =
-    usePublishPage();
+  const {
+    storyId,
+    projectId,
+    sceneId,
+    selectedProjectType,
+    handleProjectTypeChange,
+  } = usePublishPage();
   const t = useT();
 
   const {
@@ -33,10 +37,14 @@ const PublishToolsPanel: FC = () => {
     handleNavigationToSettings,
   } = useHooks({ storyId, projectId, sceneId, selectedProjectType });
 
-  const sceneStatus = publishmentStatuses.find(status => status?.type === "default")?.published
+  const sceneStatus = publishmentStatuses.find(
+    (status) => status?.type === "default",
+  )?.published
     ? "published"
     : "unpublished";
-  const storyStatus = publishmentStatuses.find(status => status?.type === "story")?.published
+  const storyStatus = publishmentStatuses.find(
+    (status) => status?.type === "story",
+  )?.published
     ? "published"
     : "unpublished";
 
@@ -149,12 +157,15 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   width: "116px",
 }));
 
-const PublishStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
-  width: "8px",
-  height: "8px",
-  backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,
-  borderRadius: "50%",
-}));
+const PublishStatus = styled("div")<{ status: string }>(
+  ({ theme, status }) => ({
+    width: "8px",
+    height: "8px",
+    backgroundColor:
+      status !== "unpublished" ? "#24A148" : theme.content.weaker,
+    borderRadius: "50%",
+  }),
+);
 
 const StatusWrapper = styled("div")({
   width: "8px",

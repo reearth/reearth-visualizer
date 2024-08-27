@@ -1,5 +1,3 @@
-import { FC } from "react";
-
 import {
   SidebarMenuItem,
   SidebarSection,
@@ -7,6 +5,7 @@ import {
   SidebarWrapper,
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
+import { FC } from "react";
 
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
@@ -47,7 +46,7 @@ const LeftSidePanel: FC<Props> = ({
           onWorkspaceChange={onWorkspaceChange}
         />
         <>
-          {topTabs?.map(tab => (
+          {topTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
               path={tab.path}
@@ -62,7 +61,7 @@ const LeftSidePanel: FC<Props> = ({
       </SidebarSection>
       <SidebarSection>
         <>
-          {bottomTabs?.map(tab => (
+          {bottomTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
               path={tab.path}

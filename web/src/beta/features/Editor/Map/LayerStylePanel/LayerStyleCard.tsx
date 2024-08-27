@@ -1,5 +1,3 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
-
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -7,6 +5,7 @@ import Text from "@reearth/beta/components/Text";
 import type { LayerStyleNameUpdateProps } from "@reearth/beta/features/Editor/hooks/useLayerStyles";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { styled } from "@reearth/services/theme";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 type Props = {
   id?: string;
@@ -92,7 +91,8 @@ const LayerStyleCard: React.FC<Props> = ({
       selected={selected}
       onClick={handleSingleClick}
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}>
+      onMouseLeave={handleMouseLeave}
+    >
       <MainWrapper>
         <Icon icon="layerStyle" />
         {actionContent && (
@@ -108,7 +108,10 @@ const LayerStyleCard: React.FC<Props> = ({
           </Popover.Provider>
         )}
       </MainWrapper>
-      <BottomWrapper isHovered={isHovered || isOpenAction} isSelected={selected}>
+      <BottomWrapper
+        isHovered={isHovered || isOpenAction}
+        isSelected={selected}
+      >
         {isEditing ? (
           <StyledTextInput
             value={newName}
@@ -139,7 +142,8 @@ const Wrapper = styled.div<{ selected?: boolean }>`
   cursor: pointer;
   transition: all 0.3s;
 
-  border-color: ${({ selected, theme }) => (selected ? `${theme.select.main}` : "transparent")};
+  border-color: ${({ selected, theme }) =>
+    selected ? `${theme.select.main}` : "transparent"};
   border-width: 1px;
   border-style: solid;
   border-radius: 4px;

@@ -29,7 +29,9 @@ const reearthBuiltin: BuiltinInfoboxBlocks<Component> = {
 
 const builtin = merge({}, reearthBuiltin);
 
-export const isBuiltinInfoboxBlock = (id: string): id is keyof BuiltinInfoboxBlocks => {
+export const isBuiltinInfoboxBlock = (
+  id: string,
+): id is keyof BuiltinInfoboxBlocks => {
   return !!builtin[id as keyof BuiltinInfoboxBlocks];
 };
 

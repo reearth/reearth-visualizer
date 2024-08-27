@@ -1,15 +1,24 @@
-import { useCallback } from "react";
-
-import { FILE_TYPES, IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
-import { AssetField, InputField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
+import {
+  FILE_TYPES,
+  IMAGE_TYPES,
+} from "@reearth/beta/features/AssetsManager/constants";
+import {
+  AssetField,
+  InputField,
+  NumberField,
+  SwitchField,
+} from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { useT } from "@reearth/services/i18n";
+import { useCallback } from "react";
 
 import { FieldProp, ValueProp } from ".";
 
 type Props = {
   field: FieldProp;
-  setFields?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
+  setFields?: (
+    v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[]),
+  ) => void;
 };
 
 export const FieldComponent = ({ field, setFields }: Props) => {
@@ -17,9 +26,9 @@ export const FieldComponent = ({ field, setFields }: Props) => {
 
   const handleChange = useCallback(
     (value: ValueProp) => {
-      setFields?.(prevFields => {
+      setFields?.((prevFields) => {
         if (!prevFields) return [];
-        return prevFields.map(prevField => {
+        return prevFields.map((prevField) => {
           if (prevField.id === field.id) {
             return { ...prevField, value };
           }

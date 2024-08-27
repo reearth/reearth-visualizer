@@ -1,6 +1,5 @@
-import { FC, useRef } from "react";
-
 import { Window, Area } from "@reearth/beta/ui/layout";
+import { FC, useRef } from "react";
 
 import { usePublishPage } from "./context";
 import PublishToolsPanel from "./PublishToolsPanel";
@@ -16,7 +15,12 @@ const Publish: FC = () => {
           <Area initialHeight={44}>
             <PublishToolsPanel />
           </Area>
-          <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />
+          <Area
+            extend
+            onResize={handleVisualizerResize}
+            windowRef={windowRef}
+            passive
+          />
         </Area>
       </Area>
     </Window>

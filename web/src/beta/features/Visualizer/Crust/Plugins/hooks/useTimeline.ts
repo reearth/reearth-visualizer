@@ -9,13 +9,13 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
   const [timelineEvents, emit] = useMemo(() => events<TimelineEventType>(), []);
 
   useEffect(() => {
-    timelineManagerRef?.current?.onTick(e => {
+    timelineManagerRef?.current?.onTick((e) => {
       emit("tick", e);
     });
   }, [timelineManagerRef, emit]);
 
   useEffect(() => {
-    timelineManagerRef?.current?.onCommit(e => {
+    timelineManagerRef?.current?.onCommit((e) => {
       emit("commit", e);
     });
   }, [timelineManagerRef, emit]);
@@ -79,7 +79,11 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
           committer: { source: "pluginAPI", id: "window" },
         });
       },
-      setTime: (time: { start: Date | string; stop: Date | string; current: Date | string }) => {
+      setTime: (time: {
+        start: Date | string;
+        stop: Date | string;
+        current: Date | string;
+      }) => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: { ...time },
@@ -107,7 +111,9 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
           committer: { source: "pluginAPI", id: "window" },
         });
       },
-      tick: timelineManagerRef?.current?.tick as (() => Date | undefined) | undefined,
+      tick: timelineManagerRef?.current?.tick as
+        | (() => Date | undefined)
+        | undefined,
       on: timelineEventsOn,
       off: timelineEventsOff,
     };

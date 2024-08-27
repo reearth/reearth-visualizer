@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
-
 import { LayerAppearanceTypes } from "@reearth/core";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useMemo, useState } from "react";
 
 type LayerStyleProps = {
   sceneId: string;
@@ -25,27 +24,30 @@ export type LayerStyleValueUpdateProps = {
 
 export default function ({ sceneId }: LayerStyleProps) {
   const t = useT();
-  const { useAddLayerStyle, useGetLayerStylesQuery, useRemoveLayerStyle, useUpdateLayerStyle } =
-    useLayerStylesFetcher();
-  const [selectedLayerStyleId, setSelectedLayerStyleId] = useState<string | undefined>(undefined);
+  const {
+    useAddLayerStyle,
+    useGetLayerStylesQuery,
+    useRemoveLayerStyle,
+    useUpdateLayerStyle,
+  } = useLayerStylesFetcher();
+  const [selectedLayerStyleId, setSelectedLayerStyleId] = useState<
+    string | undefined
+  >(undefined);
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const selectedLayerStyle = useMemo(
-    () => layerStyles.find(l => l.id === selectedLayerStyleId) || undefined,
+    () => layerStyles.find((l) => l.id === selectedLayerStyleId) || undefined,
     [layerStyles, selectedLayerStyleId],
   );
 
   const handleLayerStyleSelect = useCallback(
-    (layerId: string | undefined) =>
-      setSelectedLayerStyleId(prevId =>
-        prevId === layerId || layerId === undefined ? undefined : layerId,
-      ),
+    (layerId: string | undefined) => setSelectedLayerStyleId(layerId),
     [setSelectedLayerStyleId],
   );
 
   const handleLayerStyleDelete = useCallback(
     async (styleId: string) => {
-      const deletedPageIndex = layerStyles.findIndex(l => l.id === styleId);
+      const deletedPageIndex = layerStyles.findIndex((l) => l.id === styleId);
       if (deletedPageIndex === undefined) return;
 
       await useRemoveLayerStyle({
@@ -55,7 +57,12 @@ export default function ({ sceneId }: LayerStyleProps) {
         setSelectedLayerStyleId(undefined);
       }
     },
-    [layerStyles, selectedLayerStyleId, setSelectedLayerStyleId, useRemoveLayerStyle],
+    [
+      layerStyles,
+      selectedLayerStyleId,
+      setSelectedLayerStyleId,
+      useRemoveLayerStyle,
+    ],
   );
 
   const handleLayerStyleAdd = useCallback(

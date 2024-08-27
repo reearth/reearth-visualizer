@@ -1,7 +1,0 @@
-/build
-/dist
-/coverage
-/storybook-static
-!/.storybook
-/.storybook/public
-/src/services/gql/__gen__

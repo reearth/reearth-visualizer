@@ -1,14 +1,21 @@
-import { FC, useCallback, useMemo, useState } from "react";
-
-import { Button, IconName, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  IconName,
+  PopupMenu,
+  PopupMenuItem,
+} from "@reearth/beta/lib/reearth-ui";
 import { InstallableWidget } from "@reearth/services/api/widgetsApi/utils";
+import { FC, useCallback, useMemo, useState } from "react";
 
 type ActionAreaProps = {
   installableWidgets?: InstallableWidget[];
   onWidgetAdd: (id?: string | undefined) => Promise<void>;
 };
 
-const ActionArea: FC<ActionAreaProps> = ({ installableWidgets, onWidgetAdd }) => {
+const ActionArea: FC<ActionAreaProps> = ({
+  installableWidgets,
+  onWidgetAdd,
+}) => {
   const [open, setOpen] = useState(false);
 
   const handleWidgetAdd = useCallback(
@@ -22,8 +29,8 @@ const ActionArea: FC<ActionAreaProps> = ({ installableWidgets, onWidgetAdd }) =>
   const items: PopupMenuItem[] = useMemo(
     () =>
       (installableWidgets ?? [])
-        .filter(w => !w.disabled)
-        .map(w => ({
+        .filter((w) => !w.disabled)
+        .map((w) => ({
           id: `${w.pluginId}/${w.extensionId}`,
           title: w.title,
           icon: w.icon as IconName,

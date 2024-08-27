@@ -1,10 +1,12 @@
-import * as yaml from "js-yaml";
-import { useCallback, useEffect } from "react";
-
 import { fetchAndZipFiles } from "@reearth/beta/utils/file";
 import { usePluginsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
-import { useDevPluginExtensionRenderKey, useDevPluginExtensions } from "@reearth/services/state";
+import {
+  useDevPluginExtensionRenderKey,
+  useDevPluginExtensions,
+} from "@reearth/services/state";
+import * as yaml from "js-yaml";
+import { useCallback, useEffect } from "react";
 
 type ReearthYML = {
   id: string;
@@ -19,12 +21,14 @@ type Props = {
 };
 
 export default ({ sceneId }: Props) => {
-  const [devPluginExtensions, setDevPluginExtensions] = useDevPluginExtensions();
-  const [_, updateDevPluginExtensionRenderKey] = useDevPluginExtensionRenderKey();
+  const [devPluginExtensions, setDevPluginExtensions] =
+    useDevPluginExtensions();
+  const [_, updateDevPluginExtensionRenderKey] =
+    useDevPluginExtensionRenderKey();
   const { useUploadPluginWithFile } = usePluginsFetcher();
 
   const handleDevPluginExtensionsReload = useCallback(() => {
-    updateDevPluginExtensionRenderKey(prev => prev + 1);
+    updateDevPluginExtensionRenderKey((prev) => prev + 1);
   }, [updateDevPluginExtensionRenderKey]);
 
   const handleInstallPluginFromFile = useCallback(
@@ -41,7 +45,7 @@ export default ({ sceneId }: Props) => {
     const { devPluginUrls } = config() ?? {};
     if (!devPluginUrls || devPluginUrls.length === 0) return;
 
-    devPluginUrls.forEach(async url => {
+    devPluginUrls.forEach(async (url) => {
       const file: File | undefined = await getPluginZipFromUrl(url);
       if (!file) return;
       handleInstallPluginFromFile(file);
@@ -54,23 +58,32 @@ export default ({ sceneId }: Props) => {
 
     const fetchExtensions = async () => {
       const extensions = await Promise.all(
-        devPluginUrls.map(async url => {
+        devPluginUrls.map(async (url) => {
           const response = await fetch(`${url}/reearth.yml`);
           if (!response.ok) {
             throw new Error(`Failed to fetch the file: ${response.statusText}`);
           }
           const yamlText = await response.text();
           const data = yaml.load(yamlText) as ReearthYML;
-          return data.extensions?.map(e => ({ id: e.id, url: `${url}/${e.id}.js` })) ?? [];
+          return (
+            data.extensions?.map((e) => ({
+              id: e.id,
+              url: `${url}/${e.id}.js`,
+            })) ?? []
+          );
         }),
       );
-      setDevPluginExtensions(extensions.flatMap(e => e));
+      setDevPluginExtensions(extensions.flatMap((e) => e));
     };
 
     fetchExtensions();
   }, [setDevPluginExtensions]);
 
-  return { devPluginExtensions, handleDevPluginsInstall, handleDevPluginExtensionsReload };
+  return {
+    devPluginExtensions,
+    handleDevPluginsInstall,
+    handleDevPluginExtensionsReload,
+  };
 };
 
 async function getPluginZipFromUrl(url: string) {
@@ -82,7 +95,9 @@ async function getPluginZipFromUrl(url: string) {
     const yamlText = await response.text();
     const data = yaml.load(yamlText) as ReearthYML;
 
-    const extensionUrls = data?.extensions?.map(extensions => `${url}/${extensions.id}.js`);
+    const extensionUrls = data?.extensions?.map(
+      (extensions) => `${url}/${extensions.id}.js`,
+    );
     if (!extensionUrls) return;
 
     const file = await fetchAndZipFiles(

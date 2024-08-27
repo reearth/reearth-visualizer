@@ -1,7 +1,6 @@
 import { Auth } from "@aws-amplify/auth";
-import { useState, useEffect } from "react";
-
 import { logOutFromTenant } from "@reearth/services/config";
+import { useState, useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
 
@@ -52,5 +51,12 @@ export const useCognitoAuth = (): AuthHook => {
     }
   };
 
-  return { isAuthenticated: !!user, isLoading, error, getAccessToken, login, logout };
+  return {
+    isAuthenticated: !!user,
+    isLoading,
+    error,
+    getAccessToken,
+    login,
+    logout,
+  };
 };

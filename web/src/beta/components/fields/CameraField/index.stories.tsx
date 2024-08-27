@@ -1,9 +1,8 @@
+import { Camera } from "@reearth/beta/utils/value";
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
-
-import { Camera } from "@reearth/beta/utils/value";
-import { styled } from "@reearth/services/theme";
 
 import CameraField, { type Props } from ".";
 
@@ -18,9 +17,15 @@ type Story = StoryObj<typeof CameraField>;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleSave = useCallback((value?: Camera) => updateArgs({ value: value }), [updateArgs]);
+  const handleSave = useCallback(
+    (value?: Camera) => updateArgs({ value: value }),
+    [updateArgs],
+  );
 
-  const handleFlyTo = useCallback(() => updateArgs({ value: undefined }), [updateArgs]);
+  const handleFlyTo = useCallback(
+    () => updateArgs({ value: undefined }),
+    [updateArgs],
+  );
 
   return (
     <Wrapper>
@@ -48,7 +53,7 @@ Default.args = {
   value: undefined,
   disabled: false,
   onSave: (value?: Camera) => console.log("saved camera value: ", value),
-  onFlyTo: target => console.log("Fly to", target),
+  onFlyTo: (target) => console.log("Fly to", target),
 };
 
 const Wrapper = styled.div`

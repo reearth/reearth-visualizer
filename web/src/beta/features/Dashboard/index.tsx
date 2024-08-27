@@ -1,12 +1,13 @@
-import { FC } from "react";
-
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
+
 
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
 import LeftSidePanel from "./LeftSidePanel";
 import { TabItems } from "./type";
+
 
 export type DashboardProps = {
   workspaceId?: string;
@@ -20,7 +21,12 @@ export const topTabItems: Omit<TabItems[], "active"> = [
 ];
 
 export const bottomTabsItems: Omit<TabItems[], "active"> = [
-  { id: "plugin", text: "Plugin Playground", icon: "puzzlePiece", disabled: true },
+  {
+    id: "plugin",
+    text: "Plugin Playground",
+    icon: "puzzlePiece",
+    disabled: true,
+  },
   { id: "documentary", text: "Documentary", icon: "book", disabled: true },
   { id: "community", text: "Community", icon: "usersFour", disabled: true },
   { id: "help", text: "Help & Support", icon: "question", disabled: true },

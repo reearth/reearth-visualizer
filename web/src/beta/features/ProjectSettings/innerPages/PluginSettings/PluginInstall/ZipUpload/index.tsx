@@ -1,7 +1,6 @@
+import { IconName, Loading } from "@reearth/beta/lib/reearth-ui";
 import React from "react";
 import useFileInput from "use-file-input";
-
-import { IconName, Loading } from "@reearth/beta/lib/reearth-ui";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
@@ -14,7 +13,7 @@ export type Props = {
 
 const ZipUpload: React.FC<Props> = ({ icon, buttonText, onSend, loading }) => {
   const accept = ".zip";
-  const handleClick = useFileInput(files => onSend?.(files), {
+  const handleClick = useFileInput((files) => onSend?.(files), {
     accept,
     multiple: false,
   });
@@ -23,7 +22,11 @@ const ZipUpload: React.FC<Props> = ({ icon, buttonText, onSend, loading }) => {
       {loading ? (
         <Loading overlay />
       ) : (
-        <PluginInstallCardButton icon={icon} text={buttonText} onClick={handleClick} />
+        <PluginInstallCardButton
+          icon={icon}
+          text={buttonText}
+          onClick={handleClick}
+        />
       )}
     </>
   );

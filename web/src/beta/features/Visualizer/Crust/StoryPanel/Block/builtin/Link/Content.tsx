@@ -1,9 +1,8 @@
-import { FC, useCallback, useContext, useState } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useContext, useState } from "react";
 
 import LinkEditor, { type LinkBlock as LinkBlockType } from "./Editor";
 
@@ -19,7 +18,10 @@ type Props = {
     vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -52,7 +54,7 @@ const Content: FC<Props> = ({
         setSelected(itemId);
         return;
       }
-      const item = linkButtons.find(i => i.id === itemId);
+      const item = linkButtons.find((i) => i.id === itemId);
 
       if (!item?.url?.value) return;
       window.open(item.url.value, "_blank");
@@ -109,15 +111,17 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   maxWidth: "400px",
 }));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
-  ({ color, bgColor, userSelected, theme }) => ({
-    color: userSelected ? bgColor ?? theme.content.strong : color,
-    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
-    borderColor: color,
+const StyledButton = styled(Button)<{
+  color?: string;
+  bgColor?: string;
+  userSelected?: boolean;
+}>(({ color, bgColor, userSelected, theme }) => ({
+  color: userSelected ? (bgColor ?? theme.content.strong) : color,
+  backgroundColor: userSelected ? (color ?? theme.primary.main) : bgColor,
+  borderColor: color,
 
-    ":hover": {
-      color: bgColor,
-      backgroundColor: color ?? theme.primary.main,
-    },
-  }),
-);
+  ":hover": {
+    color: bgColor,
+    backgroundColor: color ?? theme.primary.main,
+  },
+}));

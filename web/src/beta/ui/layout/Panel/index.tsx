@@ -1,7 +1,6 @@
-import { FC, MouseEvent, ReactNode, useCallback, useMemo } from "react";
-
 import { Collapse, IconButton } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, MouseEvent, ReactNode, useCallback, useMemo } from "react";
 
 import { AreaRef } from "../Area";
 
@@ -32,7 +31,9 @@ export const Panel: FC<PanelProps> = ({
 }) => {
   const theme = useTheme();
 
-  const storageKey = storageId ? `reearth-visualizer-${storageId}-collapsed` : undefined;
+  const storageKey = storageId
+    ? `reearth-visualizer-${storageId}-collapsed`
+    : undefined;
 
   const initialCollapsed = useMemo(
     () => !!(storageKey ? localStorage.getItem(storageKey) === "1" : collapsed),
@@ -92,7 +93,8 @@ export const Panel: FC<PanelProps> = ({
           noPadding={noPadding}
           disabled={alwaysOpen}
           actions={actions}
-          onCollapse={handleCollapse}>
+          onCollapse={handleCollapse}
+        >
           {children}
         </Collapse>
       ) : (

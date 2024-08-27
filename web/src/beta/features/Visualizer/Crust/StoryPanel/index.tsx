@@ -1,11 +1,13 @@
-import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
-import { createPortal } from "react-dom";
-
 import { BlockProvider } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
-import { BlockProps, InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
+import {
+  BlockProps,
+  InstallableBlock,
+} from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
+import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
+import { createPortal } from "react-dom";
 
 import { STORY_PANEL_WIDTH } from "./constants";
 import { PanelProvider, StoryPanelContext } from "./context";
@@ -33,7 +35,10 @@ export type StoryPanelProps = {
     index?: number | undefined,
   ) => Promise<void>;
   onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
-  onStoryBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
+  onStoryBlockDelete?: (
+    pageId?: string | undefined,
+    blockId?: string | undefined,
+  ) => Promise<void>;
   onPropertyValueUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -42,7 +47,10 @@ export type StoryPanelProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -105,7 +113,7 @@ export const StoryPanel = memo(
 
       const panelContext: StoryPanelContext = useMemo(
         () => ({
-          pageIds: selectedStory?.pages.map(p => p.id),
+          pageIds: selectedStory?.pages.map((p) => p.id),
           onJumpToPage: (pageIndex: number) => {
             const pageId = selectedStory?.pages[pageIndex].id;
             if (!pageId) return;
@@ -113,7 +121,9 @@ export const StoryPanel = memo(
             if (!element) return;
             setCurrentPageId(pageId);
             setLayerOverride(undefined);
-            element.scrollIntoView({ behavior: "instant" } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
+            element.scrollIntoView({
+              behavior: "instant",
+            } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
           },
         }),
         [selectedStory?.pages, setCurrentPageId, setLayerOverride],
@@ -186,9 +196,11 @@ export const StoryPanel = memo(
 
 export default StoryPanel;
 
-const PanelWrapper = styled("div")<{ bgColor?: string }>(({ bgColor, theme }) => ({
-  flex: `0 0 ${STORY_PANEL_WIDTH}px`,
-  background: bgColor,
-  width: `${STORY_PANEL_WIDTH}px`,
-  color: theme.content.weak,
-}));
+const PanelWrapper = styled("div")<{ bgColor?: string }>(
+  ({ bgColor, theme }) => ({
+    flex: `0 0 ${STORY_PANEL_WIDTH}px`,
+    background: bgColor,
+    width: `${STORY_PANEL_WIDTH}px`,
+    color: theme.content.weak,
+  }),
+);

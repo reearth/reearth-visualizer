@@ -17,11 +17,12 @@ type Story = StoryObj<typeof Modal>;
 const ModalContent: React.FC = () => {
   return (
     <Text size="h5">
-      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
-      Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-      words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
-      classical literature, discovered the undoubtable source.
+      Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+      roots in a piece of classical Latin literature from 45 BC, making it over
+      2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
+      College in Virginia, looked up one of the more obscure Latin words,
+      consectetur, from a Lorem Ipsum passage, and going through the cites of
+      the word in classical literature, discovered the undoubtable source.
     </Text>
   );
 };
@@ -30,11 +31,12 @@ const TabContent: ReactNode = (
   <>
     <Text size="h1">Tab Title</Text>
     <Text size="h5">
-      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
-      Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-      words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
-      classical literature, discovered the undoubtable source.
+      Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+      roots in a piece of classical Latin literature from 45 BC, making it over
+      2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
+      College in Virginia, looked up one of the more obscure Latin words,
+      consectetur, from a Lorem Ipsum passage, and going through the cites of
+      the word in classical literature, discovered the undoubtable source.
     </Text>
   </>
 );
@@ -42,11 +44,12 @@ const TabContent2: ReactNode = (
   <>
     <Text size="h1">Tab Title2</Text>
     <Text size="h5">
-      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
-      Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-      words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
-      classical literature, discovered the undoubtable source.
+      Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+      roots in a piece of classical Latin literature from 45 BC, making it over
+      2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
+      College in Virginia, looked up one of the more obscure Latin words,
+      consectetur, from a Lorem Ipsum passage, and going through the cites of
+      the word in classical literature, discovered the undoubtable source.
     </Text>
   </>
 );
@@ -56,11 +59,12 @@ const TabContent3: ReactNode = (
     <Text size="h1">Tab Title3</Text>
     <Text size="h4">Tab subTitle3</Text>
     <Text size="h5">
-      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
-      Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-      words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
-      classical literature, discovered the undoubtable source.
+      Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+      roots in a piece of classical Latin literature from 45 BC, making it over
+      2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
+      College in Virginia, looked up one of the more obscure Latin words,
+      consectetur, from a Lorem Ipsum passage, and going through the cites of
+      the word in classical literature, discovered the undoubtable source.
     </Text>
   </>
 );
@@ -96,7 +100,8 @@ export const Small: Story = {
       isVisible={true}
       title="Small modal"
       button1={<Button text="Confirm" />}
-      button2={<Button text="Cancel" />}>
+      button2={<Button text="Cancel" />}
+    >
       <ModalContent />
     </Modal>
   ),
@@ -109,7 +114,8 @@ export const Medium: Story = {
       isVisible={true}
       title="Medium modal"
       button1={<Button text="Confirm" />}
-      button2={<Button text="Cancel" />}>
+      button2={<Button text="Cancel" />}
+    >
       <ModalContent />
     </Modal>
   ),
@@ -122,7 +128,8 @@ export const Large: Story = {
       isVisible={true}
       title="Large modal"
       button1={<Button text="Confirm" />}
-      button2={<Button text="Cancel" />}>
+      button2={<Button text="Cancel" />}
+    >
       <ModalContent />
     </Modal>
   ),

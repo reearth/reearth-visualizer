@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useEffect, useState } from "react";
 
 import Property from "..";
 
@@ -23,7 +22,12 @@ export type Props = {
   onChange?: (value?: TimelineFieldProp) => void;
 };
 
-const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) => {
+const TimelineField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  onChange,
+}) => {
   const [openModal, setOpenModal] = useState(false);
   const t = useT();
 
@@ -49,13 +53,19 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
           <Input dataTimeSet={!!timelineValues}>
             <Timeline>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.startTime ? timelineValues?.startTime : t("not set")}
+                {timelineValues?.startTime
+                  ? timelineValues?.startTime
+                  : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.currentTime ? timelineValues?.currentTime : t("not set")}
+                {timelineValues?.currentTime
+                  ? timelineValues?.currentTime
+                  : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.endTime ? timelineValues?.endTime : t("not set")}
+                {timelineValues?.endTime
+                  ? timelineValues?.endTime
+                  : t("not set")}
               </TextWrapper>
             </Timeline>
             <DeleteIcon
@@ -114,7 +124,8 @@ const Input = styled.div<{ dataTimeSet?: boolean }>`
   color: ${({ theme }) => theme.content.strong};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: ${({ theme }) => theme.shadow.input};
-  color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
+  color: ${({ theme, dataTimeSet }) =>
+    dataTimeSet ? theme.content.strong : theme.content.weak};
 `;
 
 const Timeline = styled.div`

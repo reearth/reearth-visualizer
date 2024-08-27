@@ -23,7 +23,10 @@ const MONTH_LABEL_LIST = [
   "Dec",
 ];
 
-export const formatDateForTimeline = (time: number, options: { detail?: boolean } = {}) => {
+export const formatDateForTimeline = (
+  time: number,
+  options: { detail?: boolean } = {},
+) => {
   const d = new Date(time);
   const year = d.getFullYear();
   const month = MONTH_LABEL_LIST[d.getMonth()];
@@ -63,7 +66,8 @@ export const calcScaleInterval = (
   const numberOfScales = Math.round(timelineWidth / scaleWidth) - 1;
   // Scale interval to round time like 30 mins, 1 hour
   const scaleInterval =
-    roundScaleInterval(rangeDiff / (MINUTES_SEC * EPOCH_SEC) / numberOfScales) * MINUTES_SEC;
+    roundScaleInterval(rangeDiff / (MINUTES_SEC * EPOCH_SEC) / numberOfScales) *
+    MINUTES_SEC;
   const zoomedScaleInterval = Math.max(scaleInterval / zoom, MINUTES_SEC);
 
   // convert epoch diff to minutes.
@@ -74,16 +78,21 @@ export const calcScaleInterval = (
   const initialDisplayedWidth =
     (scaleCount - strongScaleCount) * scaleWidth +
     strongScaleCount * (styles.gap + STRONG_SCALE_WIDTH);
-  const initialRemainingGap = (timelineWidth - initialDisplayedWidth) / scaleCount;
+  const initialRemainingGap =
+    (timelineWidth - initialDisplayedWidth) / scaleCount;
 
   // To fit scale in initial width, adjusted gap is added only when zoom level is 1.
   const nextGap = zoom === 1 ? styles.gap + initialRemainingGap : styles.gap;
 
   // Adjust strong scale position
-  const diffLabelWidth = Math.max(SCALE_LABEL_WIDTH - nextGap * DEFAULT_STRONG_SCALE_MINUTES, 0);
+  const diffLabelWidth = Math.max(
+    SCALE_LABEL_WIDTH - nextGap * DEFAULT_STRONG_SCALE_MINUTES,
+    0,
+  );
   const strongScaleMinutes =
     DEFAULT_STRONG_SCALE_MINUTES +
-    Math.floor(diffLabelWidth / DEFAULT_STRONG_SCALE_MINUTES) * ADDITIONAL_STRONG_SCALE_MINUTES;
+    Math.floor(diffLabelWidth / DEFAULT_STRONG_SCALE_MINUTES) *
+      ADDITIONAL_STRONG_SCALE_MINUTES;
 
   return {
     scaleCount: Math.trunc(scaleCount),

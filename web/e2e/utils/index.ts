@@ -1,5 +1,10 @@
 // eslint-disable-next-line no-restricted-imports
-import { type APIRequestContext, request, test as base, type Page } from "@playwright/test";
+import {
+  type APIRequestContext,
+  request,
+  test as base,
+  type Page,
+} from "@playwright/test";
 
 import { config, getAccessToken, type Config } from "./config";
 
@@ -35,7 +40,9 @@ export const test = base.extend<{
       async goto(url, options) {
         const res = await page.goto(url, options);
         if (this.token) {
-          await page.evaluate(`window.REEARTH_E2E_ACCESS_TOKEN = ${JSON.stringify(this.token)};`);
+          await page.evaluate(
+            `window.REEARTH_E2E_ACCESS_TOKEN = ${JSON.stringify(this.token)};`,
+          );
         }
         return res;
       },

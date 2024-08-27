@@ -1,5 +1,3 @@
-import { FC, Fragment, ReactNode, memo, useMemo } from "react";
-
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import { InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
@@ -7,6 +5,7 @@ import { DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
+import { FC, Fragment, ReactNode, memo, useMemo } from "react";
 
 import InfoboxBlockComponent from "./Block";
 import {
@@ -24,7 +23,8 @@ export type InstallableInfoboxBlock = InstallableBlock & {
   type?: "InfoboxBlock";
 };
 
-const INFOBOX_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-infobox-drag-handle";
+const INFOBOX_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-infobox-drag-handle";
 
 export type Props = {
   infobox?: Infobox;
@@ -36,7 +36,11 @@ export type Props = {
     extensionId: string,
     index?: number | undefined,
   ) => Promise<void>;
-  onBlockMove?: (id: string, targetIndex: number, blockId?: string) => Promise<void>;
+  onBlockMove?: (
+    id: string,
+    targetIndex: number,
+    blockId?: string,
+  ) => Promise<void>;
   onBlockDelete?: (id?: string) => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -46,7 +50,10 @@ export type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
@@ -157,7 +164,11 @@ const Infobox: FC<Props> = ({
 
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
-      <Wrapper ref={wrapperRef} position={positionField?.value} padding={paddingField?.value}>
+      <Wrapper
+        ref={wrapperRef}
+        position={positionField?.value}
+        padding={paddingField?.value}
+      >
         {isEditable && !disableSelection && (
           <BlockAddBar
             id="top-bar"

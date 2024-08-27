@@ -1,8 +1,13 @@
+import {
+  Popup,
+  Icon,
+  Typography,
+  IconName,
+  PopupProps,
+} from "@reearth/beta/lib/reearth-ui";
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-import { Popup, Icon, IconName, PopupProps, Typography } from "@reearth/beta/lib/reearth-ui";
-import { styled, useTheme } from "@reearth/services/theme";
 
 const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
@@ -13,9 +18,7 @@ export type CustomSubMenu = {
   menuItem: PopupMenuItem;
 };
 
-interface Accumulator {
-  [key: string]: PopupMenuItem[];
-}
+type Accumulator = Record<string, PopupMenuItem[]>;
 
 export type PopupMenuItem = {
   customSubMenuLabel?: string;
@@ -82,7 +85,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   );
 
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
-    const { icon, id, hasBorderBottom, onClick, path, selected, subItem, title } = item;
+    const {
+      icon,
+      id,
+      hasBorderBottom,
+      onClick,
+      path,
+      selected,
+      subItem,
+      title,
+    } = item;
     return (
       <Item
         hasBorderBottom={!!hasBorderBottom}
@@ -91,9 +103,14 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         onClick={() => {
           onClick?.(id);
           handlePopOver(false);
-        }}>
+        }}
+      >
         {icon && (
-          <Icon icon={icon} size="small" color={iconColor ? iconColor : theme.content.weak} />
+          <Icon
+            icon={icon}
+            size="small"
+            color={iconColor ? iconColor : theme.content.weak}
+          />
         )}
         <SubItem>
           {subItem ? (
@@ -105,7 +122,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           ) : (
             <TitleWrapper size="body">{title}</TitleWrapper>
           )}
-          {selected && <Icon icon="check" size="small" color={theme.content.main} />}
+          {selected && (
+            <Icon icon="check" size="small" color={theme.content.main} />
+          )}
         </SubItem>
       </Item>
     );
@@ -114,7 +133,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
     const groups = subMenuItems
       .sort((a, b) => {
-        if (a.customSubMenuOrder !== undefined && b.customSubMenuOrder !== undefined) {
+        if (
+          a.customSubMenuOrder !== undefined &&
+          b.customSubMenuOrder !== undefined
+        ) {
           return a.customSubMenuOrder - b.customSubMenuOrder;
         }
         return 0;
@@ -135,8 +157,12 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       <PopupMenuWrapper width={width} nested={nested}>
         {customSubMenu.map((item, index) => (
           <Group key={index}>
-            <SubMenuHeader>{customSubMenu[index][0].customSubMenuLabel}</SubMenuHeader>
-            {item.map((subItem, subIndex) => renderSingleItem(subItem, subIndex))}
+            <SubMenuHeader>
+              {customSubMenu[index][0].customSubMenuLabel}
+            </SubMenuHeader>
+            {item.map((subItem, subIndex) =>
+              renderSingleItem(subItem, subIndex),
+            )}
           </Group>
         ))}
       </PopupMenuWrapper>
@@ -158,7 +184,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       <LabelWrapper size={size} nested={!!nested}>
         {icon && <Icon icon={icon} size="small" />}
         <Label nested={!!nested}>{label}</Label>
-        <Icon color={theme.content.weak} icon={nested ? "caretRight" : "caretDown"} size="small" />
+        <Icon
+          color={theme.content.weak}
+          icon={nested ? "caretRight" : "caretDown"}
+          size="small"
+        />
       </LabelWrapper>
     ) : label ? (
       label
@@ -170,7 +200,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   return (
     <Popup
       open={open}
-      placement={placement ? placement : nested ? "right-start" : "bottom-start"}
+      placement={
+        placement ? placement : nested ? "right-start" : "bottom-start"
+      }
       offset={nested ? MULTLEVEL_OFFSET : DEFAULT_OFFSET}
       onOpenChange={handlePopOver}
       triggerOnHover={triggerOnHover || nested ? true : false}
@@ -180,21 +212,24 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
           {renderTrigger()}
         </TriggerWrapper>
-      }>
-      {nested && !!menu.find(item => item.hasCustomSubMenu)
+      }
+    >
+      {nested && !!menu.find((item) => item.hasCustomSubMenu)
         ? renderSubMenuItems(menu)
         : renderMenuItems(menu)}
     </Popup>
   );
 };
 
-const TriggerWrapper = styled("div")<{ nested?: boolean }>(({ nested, theme }) => ({
-  cursor: "pointer",
-  display: "flex",
-  gap: theme.spacing.smallest,
-  alignItems: "center",
-  justifyContent: nested ? "space-between" : "normal",
-}));
+const TriggerWrapper = styled("div")<{ nested?: boolean }>(
+  ({ nested, theme }) => ({
+    cursor: "pointer",
+    display: "flex",
+    gap: theme.spacing.smallest,
+    alignItems: "center",
+    justifyContent: nested ? "space-between" : "normal",
+  }),
+);
 
 const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
   ({ width, nested, theme }) => ({
@@ -227,24 +262,25 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
   }),
 );
 
-const Item = styled("div")<{ hasBorderBottom: boolean; size?: "small" | "normal" }>(
-  ({ hasBorderBottom, size, theme }) => ({
-    display: "flex",
-    gap: theme.spacing.small,
-    alignItems: "center",
-    padding:
-      size === "small"
-        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
-        : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    borderRadius: `${theme.radius.smallest}px`,
-    borderBottom: hasBorderBottom ? `1px solid ${theme.outline.weaker}` : "",
-    cursor: "pointer",
-    backgroundColor: "transparent",
-    "&:hover": {
-      backgroundColor: `${theme.bg[2]}`,
-    },
-  }),
-);
+const Item = styled("div")<{
+  hasBorderBottom: boolean;
+  size?: "small" | "normal";
+}>(({ hasBorderBottom, size, theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center",
+  padding:
+    size === "small"
+      ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  borderRadius: `${theme.radius.smallest}px`,
+  borderBottom: hasBorderBottom ? `1px solid ${theme.outline.weaker}` : "",
+  cursor: "pointer",
+  backgroundColor: "transparent",
+  "&:hover": {
+    backgroundColor: `${theme.bg[2]}`,
+  },
+}));
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",
@@ -275,25 +311,26 @@ const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
   fontWeight: nested ? "normal" : "bold",
 }));
 
-const LabelWrapper = styled("div")<{ size?: "small" | "normal"; nested: boolean }>(
-  ({ size, nested, theme }) => ({
-    display: "flex",
-    padding: nested
-      ? "0px"
-      : size === "small"
+const LabelWrapper = styled("div")<{
+  size?: "small" | "normal";
+  nested: boolean;
+}>(({ size, nested, theme }) => ({
+  display: "flex",
+  padding: nested
+    ? "0px"
+    : size === "small"
       ? `${theme.spacing.micro}px ${theme.spacing.small}px`
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    borderRadius: "4px",
-    flex: 1,
-    alignItems: "center",
-    "&:hover": {
-      background: theme.bg[2],
-      p: {
-        color: theme.content.main,
-      },
+  borderRadius: "4px",
+  flex: 1,
+  alignItems: "center",
+  "&:hover": {
+    background: theme.bg[2],
+    p: {
+      color: theme.content.main,
     },
-  }),
-);
+  },
+}));
 
 const Group = styled("div")(({ theme }) => ({
   display: "flex",

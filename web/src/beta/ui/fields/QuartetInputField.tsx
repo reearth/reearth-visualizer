@@ -1,7 +1,10 @@
-import { FC, useCallback, useEffect, useState } from "react";
-
-import { NumberInput, NumberInputProps, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  NumberInput,
+  NumberInputProps,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
@@ -58,7 +61,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
             <NumberInput
               value={value}
               placeholder={placeholders?.[index]}
-              onChange={newValue => handleChange(index, newValue)}
+              onChange={(newValue) => handleChange(index, newValue)}
               onBlur={handleBlur}
               extendWidth
               {...props}

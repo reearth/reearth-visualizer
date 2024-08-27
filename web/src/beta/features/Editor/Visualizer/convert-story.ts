@@ -5,26 +5,32 @@ import {
 } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
-import { StoryPage as GqlStoryPage, StoryBlock as GqlStoryBlock } from "@reearth/services/gql";
+import {
+  StoryPage as GqlStoryPage,
+  StoryBlock as GqlStoryBlock,
+} from "@reearth/services/gql";
 
 import { processProperty } from "./convert";
 import { processProperty as processNewProperty } from "./processNewProperty";
 
-export const convertStory = (scene?: Scene, storyId?: string): Story | undefined => {
-  const story = scene?.stories.find(s => s.id === storyId);
+export const convertStory = (
+  scene?: Scene,
+  storyId?: string,
+): Story | undefined => {
+  const story = scene?.stories.find((s) => s.id === storyId);
   const installedBlockNames = (scene?.plugins ?? [])
-    .flatMap(p =>
+    .flatMap((p) =>
       (p.plugin?.extensions ?? [])
-        .filter(e => e.type === "StoryBlock")
-        .map(e => ({ [e.extensionId]: e.translatedName ?? e.name }))
-        .filter((e): e is { [key: string]: string } => !!e),
+        .filter((e) => e.type === "StoryBlock")
+        .map((e) => ({ [e.extensionId]: e.translatedName ?? e.name }))
+        .filter((e): e is Record<string, string> => !!e),
     )
-    .reduce((result, obj) => ({ ...result, ...obj }), {});
+    .reduce((result, obj) => Object.assign(result, obj), {});
 
   if (!story) return undefined;
 
   const storyPages = (pages: GqlStoryPage[]): StoryPage[] =>
-    pages.map(p => ({
+    pages.map((p) => ({
       id: p.id,
       title: p.title,
       propertyId: p.propertyId,
@@ -33,7 +39,7 @@ export const convertStory = (scene?: Scene, storyId?: string): Story | undefined
       blocks: storyBlocks(p.blocks),
     }));
   const storyBlocks = (blocks: GqlStoryBlock[]): StoryBlock[] =>
-    blocks.map(b => ({
+    blocks.map((b) => ({
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,

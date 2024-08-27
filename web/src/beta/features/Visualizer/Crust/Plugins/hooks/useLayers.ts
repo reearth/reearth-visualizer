@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo } from "react";
-
 import { ComputedFeature, NaiveLayer } from "@reearth/core";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useGet } from "../../utils";
 import { LayersEventType } from "../pluginAPI/types";
@@ -64,7 +63,9 @@ export default ({
   );
 
   const layersInViewport = useCallback(() => {
-    return layersRef?.findAll(layer => !!engineRef?.inViewport(layer?.property?.default?.location));
+    return layersRef?.findAll(
+      (layer) => !!engineRef?.inViewport(layer?.property?.default?.location),
+    );
   }, [engineRef, layersRef]);
 
   const selectLayer = useCallback(
@@ -96,7 +97,12 @@ export default ({
       rect: [x: number, y: number, width: number, height: number],
       condition?: (f: ComputedFeature) => boolean,
     ) => {
-      return engineRef?.pickManyFromViewport([rect[0], rect[1]], rect[2], rect[3], condition);
+      return engineRef?.pickManyFromViewport(
+        [rect[0], rect[1]],
+        rect[2],
+        rect[3],
+        condition,
+      );
     },
     [engineRef],
   );
@@ -120,8 +126,13 @@ export default ({
 
   useEmit<LayersEventType>(
     {
-      select: useMemo<[layerId: string | undefined, featureId: string | undefined]>(
-        () => (selectedLayer ? [selectedLayer.id, selectedFeature?.id] : [undefined, undefined]),
+      select: useMemo<
+        [layerId: string | undefined, featureId: string | undefined]
+      >(
+        () =>
+          selectedLayer
+            ? [selectedLayer.id, selectedFeature?.id]
+            : [undefined, undefined],
         [selectedLayer, selectedFeature],
       ),
     },
@@ -129,19 +140,19 @@ export default ({
   );
 
   useEffect(() => {
-    onLayerEdit?.(e => {
+    onLayerEdit?.((e) => {
       emit("edit", e);
     });
   }, [emit, onLayerEdit]);
 
   useEffect(() => {
-    onLayerVisibility?.(e => {
+    onLayerVisibility?.((e) => {
       emit("visible", e);
     });
   }, [emit, onLayerVisibility]);
 
   useEffect(() => {
-    onLayerLoad?.(e => {
+    onLayerLoad?.((e) => {
       emit("load", e);
     });
   }, [emit, onLayerLoad]);
@@ -152,13 +163,18 @@ export default ({
       callback: (...args: LayersEventType[T]) => void,
       options?: { once?: boolean },
     ) => {
-      return options?.once ? layersEvents.once(type, callback) : layersEvents.on(type, callback);
+      return options?.once
+        ? layersEvents.once(type, callback)
+        : layersEvents.on(type, callback);
     },
     [layersEvents],
   );
 
   const layersEventsOff = useCallback(
-    <T extends keyof LayersEventType>(type: T, callback: (...args: LayersEventType[T]) => void) => {
+    <T extends keyof LayersEventType>(
+      type: T,
+      callback: (...args: LayersEventType[T]) => void,
+    ) => {
       return layersEvents.off(type, callback);
     },
     [layersEvents],

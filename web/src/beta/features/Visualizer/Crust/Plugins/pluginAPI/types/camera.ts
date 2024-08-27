@@ -24,7 +24,10 @@ export declare type Camera = {
     destination: LookAtDestination,
     options?: CameraMoveOptions & { fov?: number },
   ) => void;
-  readonly getGlobeIntersection: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+  readonly getGlobeIntersection: (options: {
+    withTerrain?: boolean;
+    calcViewSize?: boolean;
+  }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;

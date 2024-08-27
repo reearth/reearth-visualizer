@@ -20,7 +20,7 @@ export type Options = {
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   ref?: ForwardedRef<Ref>;
   mainIFrameRef?: RefObject<IFrameRef>;
-  exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
+  exposed?: ((api: API) => Record<string, any>) | Record<string, any>;
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
@@ -111,8 +111,8 @@ export default function useHook({
   const handleMessage = useCallback(
     (msg: any) => {
       try {
-        messageEvents.forEach(e => e(msg));
-        messageOnceEvents.forEach(e => e(msg));
+        messageEvents.forEach((e) => e(msg));
+        messageOnceEvents.forEach((e) => e(msg));
       } catch (e) {
         onError(e);
       }
@@ -176,9 +176,11 @@ export default function useHook({
     (async () => {
       const ctx = (await getQuickJS()).newContext();
       arena.current = new Arena(ctx, {
-        isMarshalable: target =>
+        isMarshalable: (target) =>
           defaultIsMarshalable(target) ||
-          (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
+          (typeof isMarshalable === "function"
+            ? isMarshalable(target)
+            : "json"),
         experimentalContextEx: true,
       });
 

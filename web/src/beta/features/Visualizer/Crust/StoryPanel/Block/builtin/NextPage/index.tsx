@@ -1,20 +1,24 @@
-import { FC, useCallback } from "react";
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import { Icon } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback } from "react";
 
 import { usePanelContext } from "../../../context";
 import { StoryBlock } from "../../../types";
 import { getIconName } from "../../../utils";
 
-const NextPage: FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected, ...props }) => {
+const NextPage: FC<BlockProps<StoryBlock>> = ({
+  block,
+  pageId,
+  isSelected,
+  ...props
+}) => {
   const { pageIds, onJumpToPage } = usePanelContext();
 
   const handlePageChange = useCallback(() => {
     if (!pageId) return;
-    const pageIndex = pageIds?.findIndex(id => id === pageId);
+    const pageIndex = pageIds?.findIndex((id) => id === pageId);
     if (pageIndex === undefined) return;
     onJumpToPage?.(pageIndex + 1);
   }, [pageId, pageIds, onJumpToPage]);
@@ -26,7 +30,8 @@ const NextPage: FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected, ...pr
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      {...props}>
+      {...props}
+    >
       <Wrapper>
         <Button onClick={handlePageChange}>
           <StyledIcon icon={getIconName(block?.extensionId)} size="normal" />
