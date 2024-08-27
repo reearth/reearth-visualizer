@@ -1352,3 +1352,31 @@ extensions:
         fields:
           padding:
             title: 余白
+  videoInfoboxBetaBlock:
+    name: Video
+    description: Infobox Video Block
+    propertySchema:
+      default:
+        title: Video Block
+        fields:
+          src:
+            title: Video
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  markdownInfoboxBetaBlock:
+    name: MD Text
+    description: Infobox MD Text Block
+    propertySchema:      
+      default:
+        title: MD Text Block
+        fields:
+          src:
+            title: Content
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白

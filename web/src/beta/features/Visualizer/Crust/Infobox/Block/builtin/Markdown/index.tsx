@@ -1,14 +1,17 @@
 import { FC, useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import gfm from "remark-gfm";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
-import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import type { ValueTypes } from "@reearth/beta/utils/value";
-import { styled } from "@reearth/services/theme";
+import { CommonBlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
-const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
+const plugins = [gfm];
+
+const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src],
@@ -24,16 +27,13 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props 
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      {evaluatedSrc !== undefined ? <Image src={evaluatedSrc} /> : null}
+      {evaluatedSrc !== undefined ? (
+        <ReactMarkdown remarkPlugins={plugins} linkTarget="_blank">
+          {evaluatedSrc || ""}
+        </ReactMarkdown>
+      ) : null}
     </BlockWrapper>
   );
 };
 
-export default ImageBlock;
-
-const Image = styled("img")(() => ({
-  width: "100%",
-  height: "100%",
-  objectFit: "contain",
-  objectPosition: "center",
-}));
+export default MarkdownBlock;

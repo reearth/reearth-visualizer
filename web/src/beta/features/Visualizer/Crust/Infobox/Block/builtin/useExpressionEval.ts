@@ -24,7 +24,18 @@ export default (value: unknown | undefined) => {
       setEvaluatedResult(undefined);
       return;
     }
-    const selectedFeature = visualizer.current?.layers.selectedFeature();
+
+    // NOTE: core's selectedFeature is not always up to date, but the computed.features from selectedLayer is always up to date
+    // TODO: fix it on core
+    let selectedFeature = visualizer.current?.layers.selectedFeature();
+    const selectedLayer = visualizer.current?.layers.selectedLayer();
+
+    if (selectedLayer?.type === "simple" && selectedLayer?.data?.isSketchLayer) {
+      selectedFeature = selectedLayer.computed?.features.find(f => f.id === selectedFeature?.id);
+    } else {
+      selectedFeature = visualizer.current?.layers.selectedFeature();
+    }
+
     if (selectedFeature && selectedFeature.id !== lastFeatureSelected) {
       setLastFeatureSelected(selectedFeature.id);
       setEvaluatedResult(undefined);

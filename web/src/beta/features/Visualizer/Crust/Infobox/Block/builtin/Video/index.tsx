@@ -1,14 +1,14 @@
 import { FC, useMemo } from "react";
+import Player from "react-player";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
-import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import type { ValueTypes } from "@reearth/beta/utils/value";
-import { styled } from "@reearth/services/theme";
+import { CommonBlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
-const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
+const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src],
@@ -24,16 +24,11 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props 
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      {evaluatedSrc !== undefined ? <Image src={evaluatedSrc} /> : null}
+      {evaluatedSrc !== undefined ? (
+        <Player url={evaluatedSrc} width="100%" playsinline pip controls light height={180} />
+      ) : null}
     </BlockWrapper>
   );
 };
 
-export default ImageBlock;
-
-const Image = styled("img")(() => ({
-  width: "100%",
-  height: "100%",
-  objectFit: "contain",
-  objectPosition: "center",
-}));
+export default VideoBlock;
