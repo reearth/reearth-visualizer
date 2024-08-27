@@ -4,21 +4,23 @@ import { useCallback, useState, useRef, useMemo, useEffect } from "react";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useAssetsFetcher } from "@reearth/services/api";
-import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
+import { Maybe } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
+
+// TODO: Remove this file
 
 const assetsPerPage = 20;
 
-const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
-  [GQLSortType.Date]: "date",
-  [GQLSortType.Name]: "name",
-  [GQLSortType.Size]: "size",
-};
+// const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
+//   [GQLSortType.Date]: "date",
+//   [GQLSortType.Name]: "name",
+//   [GQLSortType.Size]: "size",
+// };
 
-function toGQLEnum(val?: SortType) {
-  if (!val) return;
-  return (Object.keys(enumTypeMapper) as GQLSortType[]).find(k => enumTypeMapper[k] === val);
-}
+// function toGQLEnum(val?: SortType) {
+// if (!val) return;
+// return (Object.keys(enumTypeMapper) as GQLSortType[]).find(k => enumTypeMapper[k] === val);
+// }
 
 function pagination(
   sort?: { type?: Maybe<SortType>; reverse?: boolean },
@@ -53,7 +55,7 @@ export default ({
   const { assets, hasMoreAssets, loading, isRefetching, endCursor, fetchMore } = useAssetsQuery({
     teamId: workspaceId ?? "",
     pagination: pagination(sort),
-    sort: toGQLEnum(sort?.type),
+    // sort: toGQLEnum(sort?.type),
     keyword: searchTerm,
   });
 

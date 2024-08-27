@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { CreateAssetInput, GetAssetsQueryVariables, GetAssetsQuery } from "@reearth/services/gql";
@@ -11,6 +11,7 @@ export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+  const apolloCache = useApolloClient().cache;
 
   const useAssetsQuery = useCallback((input: GetAssetsQueryVariables) => {
     const { data, loading, networkStatus, fetchMore, ...rest } = useQuery(GET_ASSETS, {
@@ -22,11 +23,12 @@ export default () => {
       () => data?.assets.edges?.map(e => e.node) as AssetNodes,
       [data?.assets],
     );
+
     const hasMoreAssets = useMemo(
       () => data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage,
       [data?.assets],
     );
-    const isRefetching = useMemo(() => networkStatus === 3, [networkStatus]);
+    const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
     const endCursor = useMemo(() => data?.assets.pageInfo?.endCursor, [data?.assets]);
 
     return { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore, ...rest };
@@ -55,9 +57,12 @@ export default () => {
           text: t("Successfully added one or more assets."),
         });
       }
+
+      apolloCache.evict({ fieldName: "assets" });
+
       return { data: results, result: "success" };
     },
-    [createAssetMutation, t, setNotification],
+    [apolloCache, createAssetMutation, t, setNotification],
   );
 
   const [removeAssetMutation] = useMutation(REMOVE_ASSET, {

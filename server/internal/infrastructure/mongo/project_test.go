@@ -139,3 +139,55 @@ func TestProject_FindByPublicName(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, prj1, got)
 }
+
+func TestProject_FindStarredByWorkspace(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	wid2 := accountdomain.NewWorkspaceID()
+
+	pid1 := id.NewProjectID()
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+	pid4 := id.NewProjectID()
+
+	_, _ = c.Collection("project").InsertMany(ctx, []any{
+		bson.M{"id": pid1.String(), "team": wid.String(), "name": "Project 1", "starred": true},
+		bson.M{"id": pid2.String(), "team": wid.String(), "name": "Project 2", "starred": true},
+		bson.M{"id": pid3.String(), "team": wid.String(), "name": "Project 3", "starred": false},
+		bson.M{"id": pid4.String(), "team": wid2.String(), "name": "Project 4", "starred": true},
+	})
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("FindStarredByWorkspace", func(t *testing.T) {
+		got, err := r.FindStarredByWorkspace(ctx, wid)
+		assert.NoError(t, err)
+		assert.Equal(t, 2, len(got))
+		assert.ElementsMatch(t, []id.ProjectID{pid1, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
+	})
+
+	t.Run("FindStarredByWorkspace with workspace filter", func(t *testing.T) {
+		r2 := r.Filtered(repo.WorkspaceFilter{
+			Readable: accountdomain.WorkspaceIDList{wid2},
+		})
+		got, err := r2.FindStarredByWorkspace(ctx, wid)
+		assert.Equal(t, repo.ErrOperationDenied, err)
+		assert.Nil(t, got)
+	})
+
+	t.Run("FindStarredByWorkspace with different workspace", func(t *testing.T) {
+		got, err := r.FindStarredByWorkspace(ctx, wid2)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(got))
+		assert.Equal(t, pid4, got[0].ID())
+	})
+
+	t.Run("FindStarredByWorkspace with workspace having no starred projects", func(t *testing.T) {
+		emptyWid := accountdomain.NewWorkspaceID()
+		got, err := r.FindStarredByWorkspace(ctx, emptyWid)
+		assert.NoError(t, err)
+		assert.Empty(t, got)
+	})
+}

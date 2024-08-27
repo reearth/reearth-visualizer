@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FC } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
+import { IconButton } from "../IconButton";
 
 import { TextInput, TextInputProps } from ".";
 
@@ -53,12 +52,10 @@ export const UsecaseReadonly: Story = {
     value: "Text Input",
   },
 };
-// TODO: use IconButton instead of MockButton
-const MockButton: FC = () => <Icon icon="settings" size={12} color="#525252" />;
 
 export const Actions: Story = {
   args: {
-    actions: [MockButton],
+    actions: [<IconButton key={1} icon="table" size="small" />],
     value: "Text Input",
   },
 };

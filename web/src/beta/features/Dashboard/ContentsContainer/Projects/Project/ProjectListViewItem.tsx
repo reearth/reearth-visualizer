@@ -10,11 +10,9 @@ import { ProjectProps } from "./types";
 const ProjectListViewItem: FC<ProjectProps> = ({
   project,
   selectedProjectId,
-  isStarred,
   onProjectOpen,
   onProjectSelect,
   onProjectUpdate,
-  onProjectStarClick,
 }) => {
   const theme = useTheme();
 
@@ -32,10 +30,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     popupMenu,
     isEditing,
     isHovered,
+    isStarred,
+    publishStatus,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleProjectStarClick,
   } = useHooks({
     project,
     selectedProjectId,
@@ -60,7 +61,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
-              onClick={e => onProjectStarClick?.(e, project.id)}
+              onClick={e => handleProjectStarClick?.(e)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
             />
@@ -69,6 +70,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
         </FlexItem>
       </ActionCell>
       <ProjectNameCell>
+        <PublishStatus status={publishStatus} />
         {!isEditing ? (
           <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>{projectName}</TitleWrapper>
         ) : (
@@ -103,16 +105,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
 export default ProjectListViewItem;
 
 const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
-  ({ isSelected, theme, isHovered }) => ({
+  ({ theme, isHovered }) => ({
     display: "flex",
     width: "100%",
     cursor: "pointer",
     borderRadius: theme.radius.small,
-    border: `1px solid ${
-      isSelected ? theme.select.main : isHovered ? theme.outline.weak : "transparent"
-    }`,
+    border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
     padding: `${theme.spacing.small}px 0`,
-    gap: theme.spacing.small,
     alignItems: "center",
   }),
 );
@@ -136,8 +135,18 @@ const ActionCell = styled("div")(() => ({
   flex: 0.2,
 }));
 
-const ProjectNameCell = styled("div")(() => ({
+const ProjectNameCell = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
   flex: 1,
+}));
+
+const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) => ({
+  height: "12px",
+  width: "12px",
+  borderRadius: "50%",
+  background: status ? theme.publish.main : "transparent",
 }));
 
 const TimeCell = styled("div")(() => ({

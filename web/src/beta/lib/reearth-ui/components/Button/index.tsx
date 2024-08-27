@@ -15,7 +15,10 @@ export type ButtonProps = {
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
+  background?: string;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
+  onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
 };
 
 export const Button: FC<ButtonProps> = ({
@@ -29,7 +32,10 @@ export const Button: FC<ButtonProps> = ({
   iconColor,
   extendWidth,
   minWidth,
+  background,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   return (
     <StyledButton
@@ -39,7 +45,10 @@ export const Button: FC<ButtonProps> = ({
       iconButton={iconButton}
       extendWidth={extendWidth}
       minWidth={minWidth}
-      onClick={onClick}>
+      background={background}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}>
       {icon && <Icon icon={icon} color={iconColor} />}
       {!iconButton && title}
       {iconRight && <Icon icon={iconRight} />}
@@ -53,7 +62,8 @@ const StyledButton = styled("button")<{
   iconButton?: boolean;
   extendWidth?: boolean;
   minWidth?: number;
-}>(({ appearance, size, iconButton, extendWidth, minWidth, theme }) => ({
+  background?: string;
+}>(({ appearance, size, iconButton, extendWidth, minWidth, background, theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -84,19 +94,32 @@ const StyledButton = styled("button")<{
       : appearance === "dangerous"
       ? `${theme.dangerous.main}`
       : `${theme.content.main}`,
-  backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
+  backgroundColor:
+    background && appearance !== "simple" && iconButton
+      ? background
+      : appearance === "simple"
+      ? "transparent"
+      : `${theme.bg[1]}`,
   width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
   boxShadow: appearance === "simple" ? "none" : theme.shadow.button,
-  ["&:hover"]: {
-    borderColor: "transparent",
-    color: `${theme.content.withBackground}`,
-    backgroundColor: appearance === "simple" ? "transparent" : `${theme[appearance].weak}`,
-  },
+  ["&:hover"]:
+    background && appearance !== "simple" && iconButton
+      ? {}
+      : {
+          borderColor: "transparent",
+          color: `${theme.content.withBackground}`,
+          backgroundColor: appearance === "simple" ? "transparent" : `${theme[appearance].weak}`,
+        },
   ["&:active"]: {
     borderColor: "transparent",
     color: `${theme.content.withBackground}`,
-    backgroundColor: appearance === "simple" ? "transparent" : `${theme[appearance].main}`,
+    backgroundColor:
+      background && appearance !== "simple" && iconButton
+        ? background
+        : appearance === "simple"
+        ? "transparent"
+        : `${theme[appearance].main}`,
     boxShadow: "none",
   },
   ["&:disabled"]: {

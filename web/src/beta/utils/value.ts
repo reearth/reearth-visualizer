@@ -23,6 +23,7 @@ export type Camera = {
   pitch: number;
   roll: number;
   fov: number;
+  aspectRatio?: number;
 };
 
 export type Spacing = {

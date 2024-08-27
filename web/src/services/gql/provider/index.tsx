@@ -28,10 +28,9 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
             merge: paginationMerge,
           },
           projects: {
-            keyArgs: ["teamId", "last", "before"],
+            keyArgs: ["teamId", "keyword", "sort", "pagination", ["first", "last"]],
             merge: paginationMerge,
           },
-
           datasetSchemas: {
             keyArgs: ["sceneId", "first", "after"],
             merge: paginationMerge,

@@ -108,6 +108,11 @@ enum TextAlign {
   JUSTIFY_ALL
 }
 
+enum SortDirection {
+  ASC
+  DESC
+}
+
 # Query & Mutation
 
 type Query {

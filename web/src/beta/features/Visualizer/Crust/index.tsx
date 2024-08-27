@@ -1,8 +1,14 @@
 import { useMemo, type RefObject, useContext } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import type { Layer, SelectedFeatureInfo } from "@reearth/core";
-import { coreContext } from "@reearth/core";
+import {
+  coreContext,
+  type ViewerProperty,
+  type Layer,
+  type SelectedFeatureInfo,
+  type Camera,
+  type MapRef,
+} from "@reearth/core";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -11,8 +17,7 @@ import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
-import { usePublishTheme } from "./theme";
-import type { MapRef, SceneProperty } from "./types";
+import { WidgetThemeOptions, usePublishTheme } from "./theme";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -27,7 +32,6 @@ export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 export type { InfoboxBlock as Block } from "./Infobox/types";
 
 export type { ExternalPluginProps } from "./Plugins";
-// export { INTERACTION_MODES, FEATURE_FLAGS } from "@reearth/core";
 
 export type {
   Context,
@@ -53,9 +57,14 @@ export type Props = {
   isBuilt?: boolean;
   mapRef?: RefObject<MapRef>;
   layers?: Layer[];
-  sceneProperty?: SceneProperty;
+  camera?: Camera;
   selectedFeatureInfo?: SelectedFeatureInfo;
+  // viewer
+  viewerProperty?: ViewerProperty;
+  overrideViewerProperty?: (pluginId: string, property: ViewerProperty) => void;
   // widgets
+  initialCamera?: Camera;
+  widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignSystem?: WidgetAlignSystemType;
   widgetAlignSystemEditing?: boolean;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -137,12 +146,15 @@ export default function Crust({
   isEditable,
   inEditor,
   mapRef,
-  sceneProperty,
   selectedFeatureInfo,
   externalPlugin,
   layers,
-
+  // Viewer
+  viewerProperty,
+  overrideViewerProperty,
   // Widget
+  initialCamera,
+  widgetThemeOptions,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
@@ -178,8 +190,6 @@ export default function Crust({
     selectedLayer,
     selectedComputedFeature,
     viewport,
-    overriddenSceneProperty,
-    overrideSceneProperty,
     handleCameraForceHorizontalRollChange,
     onLayerEdit,
     handleInteractionModeChange,
@@ -192,7 +202,7 @@ export default function Crust({
     onLayerSelectWithRectEnd,
   } = useContext(coreContext);
 
-  const theme = usePublishTheme(overriddenSceneProperty?.theme);
+  const widgetTheme = usePublishTheme(widgetThemeOptions);
 
   const selectedLayerId = useMemo(
     () => ({ layerId: selectedLayer?.layerId, featureId: selectedLayer?.featureId }),
@@ -211,22 +221,18 @@ export default function Crust({
 
   const widgetContext = useWidgetContext({
     mapRef,
-    sceneProperty,
+    viewerProperty,
+    initialCamera,
     selectedLayerId,
     timelineManagerRef: mapRef?.current?.timeline,
   });
 
   const featuredInfobox = useMemo(() => {
     const selected = layers?.find(l => l.id === selectedLayer?.layerId);
-    const infobox = selectedLayer?.layer?.layer.infobox
+    return selectedLayerId?.featureId && selected?.infobox
       ? {
           property: selected?.infobox?.property,
           blocks: [...(selected?.infobox?.blocks ?? [])],
-        }
-      : undefined;
-    return selectedLayerId?.featureId && infobox
-      ? {
-          ...infobox,
           featureId: selectedLayerId.featureId,
         }
       : undefined;
@@ -236,7 +242,7 @@ export default function Crust({
     <Plugins
       engineName={engineName}
       mapRef={mapRef}
-      sceneProperty={sceneProperty}
+      viewerProperty={viewerProperty}
       built={isBuilt}
       inEditor={inEditor}
       selectedLayer={selectedLayer?.layer}
@@ -250,7 +256,7 @@ export default function Crust({
       interactionMode={interactionMode ?? "default"}
       timelineManagerRef={mapRef?.current?.timeline}
       overrideInteractionMode={handleInteractionModeChange}
-      overrideSceneProperty={overrideSceneProperty}
+      overrideViewerProperty={overrideViewerProperty}
       onLayerEdit={onLayerEdit}
       onLayerSelectWithRectStart={onLayerSelectWithRectStart}
       onLayerSelectWithRectMove={onLayerSelectWithRectMove}
@@ -270,7 +276,7 @@ export default function Crust({
         selectedWidgetArea={selectedWidgetArea}
         editing={widgetAlignSystemEditing}
         layoutConstraint={widgetLayoutConstraint}
-        theme={theme}
+        theme={widgetTheme}
         context={widgetContext}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onAlignmentUpdate={onWidgetAlignmentUpdate}

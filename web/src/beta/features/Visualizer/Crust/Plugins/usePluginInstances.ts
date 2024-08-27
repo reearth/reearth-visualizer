@@ -1,16 +1,16 @@
 import { useEffect, useRef, useMemo, type MutableRefObject } from "react";
 
-import type { InfoboxBlock as Block } from "../Infobox/types";
+import type { InfoboxBlock } from "../Infobox/types";
 import { StoryBlock } from "../StoryPanel/types";
 import type { WidgetAlignSystem } from "../Widgets";
 import type { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
 
-import type { PluginExtensionInstance } from "./plugin_types";
+import type { PluginExtensionInstance } from "./pluginAPI/types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
-  blocks?: Block[];
+  infoboxBlocks?: InfoboxBlock[];
   storyBlocks?: StoryBlock[];
 };
 
@@ -28,7 +28,7 @@ export type PluginInstances = {
   };
 };
 
-export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) => {
+export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Props) => {
   const pluginInstancesMeta = useRef<PluginExtensionInstance[]>([]);
 
   const runTimesCache = useMemo<Map<string, number>>(() => new Map(), []);
@@ -91,8 +91,8 @@ export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) =>
       });
     }
 
-    if (blocks) {
-      blocks.forEach(block => {
+    if (infoboxBlocks) {
+      infoboxBlocks.forEach(block => {
         instances.push({
           id: block.id,
           pluginId: block.pluginId ?? "",
@@ -122,7 +122,7 @@ export default ({ alignSystem, floatingWidgets, blocks, storyBlocks }: Props) =>
     }
 
     pluginInstancesMeta.current = instances;
-  }, [alignSystem, floatingWidgets, blocks, storyBlocks, runTimesCacheHandler]);
+  }, [alignSystem, floatingWidgets, infoboxBlocks, storyBlocks, runTimesCacheHandler]);
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
 

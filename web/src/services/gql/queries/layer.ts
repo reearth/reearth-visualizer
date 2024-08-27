@@ -27,3 +27,13 @@ export const REMOVE_NLSLAYER = gql(`
     }
   }
 `);
+
+export const UPDATE_CUSTOM_PROPERTY_SCHEMA = gql(`
+  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {
+    updateCustomProperties(input: $input) {
+      layer {
+        id
+      }
+    }
+  }
+`);

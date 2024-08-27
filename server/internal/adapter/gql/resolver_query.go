@@ -13,7 +13,7 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sortType *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
+func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
 	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
 }
 
@@ -236,13 +236,8 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
-func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor, keyword *string, sortType *gqlmodel.ProjectSortType) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), &gqlmodel.Pagination{
-		First:  first,
-		Last:   last,
-		After:  after,
-		Before: before,
-	})
+func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
@@ -259,4 +254,8 @@ func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gq
 
 func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error) {
 	return loaders(ctx).Project.CheckAlias(ctx, alias)
+}
+
+func (r *queryResolver) StarredProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindStarredByWorkspace(ctx, teamId)
 }

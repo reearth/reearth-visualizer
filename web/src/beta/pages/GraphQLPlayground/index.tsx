@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import Filled from "@reearth/beta/components/Filled";
 import Text from "@reearth/beta/components/Text";
 import { useAuth } from "@reearth/services/auth";
+import "graphiql/graphiql.css";
 
 const fetcher = createGraphiQLFetcher({
-  url: `${window.REEARTH_CONFIG?.api || "/api"}/graphql`,
+  url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql",
 });
 
 export default function GraphQLPlayground(_: { path?: string }): JSX.Element {

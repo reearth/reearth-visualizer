@@ -1,31 +1,23 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 
+import { FILE_TYPES, IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { AssetField, InputField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
-import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { FieldProp, ValueProp } from ".";
 
 type Props = {
-  field: any;
-  selectedFeature?: SketchFeature;
-  setField?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
-  onSubmit?: (inp: any) => void;
+  field: FieldProp;
+  setFields?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
 };
 
-export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: Props) => {
+export const FieldComponent = ({ field, setFields }: Props) => {
   const t = useT();
-
-  const currentSelectedFeature = useRef(selectedFeature);
-
-  useEffect(() => {
-    currentSelectedFeature.current = selectedFeature;
-  }, [selectedFeature]);
 
   const handleChange = useCallback(
     (value: ValueProp) => {
-      setField?.(prevFields => {
+      setFields?.(prevFields => {
         if (!prevFields) return [];
         return prevFields.map(prevField => {
           if (prevField.id === field.id) {
@@ -34,70 +26,54 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
           return prevField;
         });
       });
-
-      const updatedProperties = {
-        ...currentSelectedFeature.current?.properties,
-        [field.title]: value,
-      };
-      if (Object.keys(updatedProperties).length) {
-        onSubmit?.(updatedProperties);
-      }
     },
-    [field.id, field.title, setField, onSubmit],
+    [field.id, setFields],
   );
 
-  const getDynamicValue = useCallback(
-    (selectedFeature: SketchFeature | undefined, fieldTitle: string, fieldValue: any) => {
-      return selectedFeature?.properties && fieldTitle in selectedFeature.properties
-        ? selectedFeature.properties[fieldTitle]
-        : fieldValue;
-    },
-    [],
-  );
   return field?.type === "Text" ? (
     <InputField
       key={field?.id}
       commonTitle={field?.title}
-      value={getDynamicValue(selectedFeature, field.title, field.value)}
+      value={field.value as string}
       onBlur={handleChange}
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
       key={field?.id}
       commonTitle={field?.title}
-      value={getDynamicValue(selectedFeature, field.title, field.value)}
+      value={field.value as string}
       onBlur={handleChange}
     />
   ) : field?.type === "Asset" ? (
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      entityType="image"
-      fileType={"asset"}
-      value={getDynamicValue(selectedFeature, field.title, field.value)}
+      assetsTypes={IMAGE_TYPES}
+      inputMethod={"asset"}
+      value={field.value as string}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
     <AssetField
       key={field?.id}
       commonTitle={field?.title}
-      entityType="file"
-      fileType={"URL"}
-      value={getDynamicValue(selectedFeature, field.title, field.value)}
+      assetsTypes={FILE_TYPES}
+      inputMethod={"URL"}
+      value={field.value as string}
       onChange={handleChange}
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
       key={field?.id}
       commonTitle={field?.title}
-      value={getDynamicValue(selectedFeature, field.title, field.value)}
+      value={field.value as number}
       onBlur={handleChange}
     />
   ) : field?.type === "Boolean" ? (
     <SwitchField
       key={field?.id}
       commonTitle={field?.title}
-      value={getDynamicValue(selectedFeature, field.title, field.value)}
+      value={field.value as boolean}
       onChange={handleChange}
     />
   ) : (

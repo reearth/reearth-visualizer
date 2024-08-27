@@ -7,6 +7,7 @@ import { PopupMenuItem } from "../PopupMenu";
 
 export type BreadcrumbItem = {
   title: string | ReactNode;
+  id?: string;
   icon?: IconName;
   subItem?: PopupMenuItem[];
 };
@@ -14,20 +15,29 @@ export type BreadcrumbItem = {
 export type BreadcrumbProp = {
   items: BreadcrumbItem[];
   separator?: ReactNode;
-  onClick?: () => void;
+  size?: "normal" | "large";
+  onClick?: (id?: string) => void;
 };
 
-export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", onClick }) => {
+export const Breadcrumb: FC<BreadcrumbProp> = ({
+  items = [],
+  separator = " / ",
+  size,
+  onClick,
+}) => {
   const theme = useTheme();
   return (
     <Wrapper>
       {items.map((item, index) => (
         <ItemWrapper key={index}>
-          <Item onClick={onClick}>
+          <Item onClick={() => onClick?.(item.id)}>
             {typeof item.title === "string" ? (
               <>
                 {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}
-                <Typography weight="bold" size="body">
+                <Typography
+                  weight="bold"
+                  size={size === "normal" ? "body" : "h5"}
+                  color={theme.content.weak}>
                   {item.title}
                 </Typography>
               </>

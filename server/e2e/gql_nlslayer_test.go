@@ -194,6 +194,63 @@ func duplicateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *h
 	return requestBody, res
 }
 
+func fetchProjectForNewLayers(e *httpexpect.Expect, pID string) (GraphQLRequest, *httpexpect.Value) {
+	fetchProjectRequestBody := GraphQLRequest{
+		OperationName: "GetProject",
+		Query: `query GetProject($projectId: ID!) {
+			node(id: $projectId, type: PROJECT) {
+				id
+				... on Project {
+					...ProjectFragment
+					scene {
+						id
+						__typename
+					}
+					__typename
+				}
+				__typename
+			}
+		}
+
+		fragment ProjectFragment on Project {
+			id
+			name
+			description
+			imageUrl
+			isArchived
+			isBasicAuthActive
+			basicAuthUsername
+			basicAuthPassword
+			publicTitle
+			publicDescription
+			publicImage
+			alias
+			enableGa
+			trackingId
+			publishmentStatus
+			updatedAt
+			createdAt
+			coreSupport
+			starred
+			__typename
+		}`,
+		Variables: map[string]any{
+			"projectId": pID,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(fetchProjectRequestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	return fetchProjectRequestBody, res
+}
+
 func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
@@ -307,10 +364,16 @@ func TestNLSLayerCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
+
+	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
+	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("updatedAt").Raw().(string)
+
 	_, _, sId := createScene(e, pId)
 
-	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
 
 	res.Object().
@@ -417,6 +480,12 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().Equal(0)
+
+	_, updatedProject := fetchProjectForNewLayers(e, pId)
+	updatedProject.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
 func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {
@@ -661,7 +730,14 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
+
+	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
+	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("updatedAt").Raw().(string)
+
 	_, _, sId := createScene(e, pId)
 
 	// fetch scene
@@ -715,6 +791,12 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+
+	_, updatedProject := fetchProjectForNewLayers(e, pId)
+	updatedProject.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
 func addCustomProperties(
@@ -762,7 +844,14 @@ func TestCustomProperties(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pId := createProject(e, "test")
+
+	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
+	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("updatedAt").Raw().(string)
+
 	_, _, sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -828,4 +917,10 @@ func TestCustomProperties(t *testing.T) {
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
 		Value("extrudedHeight").Equal(10)
+
+	_, updatedProject := fetchProjectForNewLayers(e, pId)
+	updatedProject.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }

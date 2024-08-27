@@ -8,9 +8,15 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust";
 import { Story } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
+import {
+  convertData,
+  sceneProperty2ViewerPropertyMapping,
+} from "@reearth/beta/utils/convert-object";
 import type { Camera } from "@reearth/beta/utils/value";
-import { MapRef } from "@reearth/core";
+import { ViewerProperty, MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
+
+import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
 import { processProperty } from "./convert";
 import { processLayers, processNewProperty } from "./convert-new-property";
@@ -29,8 +35,28 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
 
-  const sceneProperty = processProperty(data?.property);
+  const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } = useMemo(() => {
+    const sceneProperty = processProperty(data?.property);
+    const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
+    const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    if (sceneProperty?.camera?.camera) {
+      setInitialCamera(sceneProperty?.camera?.camera);
+    }
+    return {
+      viewerProperty: sceneProperty
+        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
+        : undefined,
+      widgetThemeOptions,
+      cesiumIonAccessToken,
+    };
+  }, [data?.property]);
+
+  useEffect(() => {
+    setCurrentCamera(initialCamera);
+  }, [initialCamera]);
+
   const pluginProperty = useMemo(
     () =>
       Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
@@ -160,7 +186,7 @@ export default (alias?: string) => {
               id: p.id,
               swipeable: p.swipeable,
               layerIds: p.layers,
-              property: processNewProperty(p.property),
+              property: processProperty(p.property),
               blocks: p.blocks.map(b => {
                 return {
                   id: b.id,
@@ -234,25 +260,30 @@ export default (alias?: string) => {
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken:
+        typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
+          ? cesiumIonAccessToken
+          : config()?.cesiumIonAccessToken,
     }),
-    [],
+    [cesiumIonAccessToken],
   );
 
   // GA
   useGA({ enableGa: data?.enableGa, trackingId: data?.trackingId });
 
   return {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
+    widgetThemeOptions,
     story,
     ready,
     error,
     engineMeta,
     visualizerRef,
     currentCamera,
+    initialCamera,
     setCurrentCamera,
   };
 };

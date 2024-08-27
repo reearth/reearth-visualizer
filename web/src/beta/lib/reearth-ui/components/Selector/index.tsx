@@ -79,9 +79,9 @@ export const Selector: FC<SelectorProps> = ({
         onChange?.(newSelectedArr);
       }
     } else {
-      if (value === selectedValue) setSelectedValue(undefined);
-      else setSelectedValue(value);
       setIsOpen(!isOpen);
+      if (value === selectedValue) return;
+      setSelectedValue(value);
       onChange?.(value);
     }
   };
@@ -216,7 +216,7 @@ const SelectInput = styled("div")<{
         }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  height: size == "small" ? "21px" : "32px",
+  height: size == "small" ? "21px" : "28px",
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({

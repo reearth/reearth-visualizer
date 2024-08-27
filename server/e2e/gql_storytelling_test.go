@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createProject(e *httpexpect.Expect) string {
+func createProject(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
@@ -28,7 +28,7 @@ func createProject(e *httpexpect.Expect) string {
 			}
 		}`,
 		Variables: map[string]any{
-			"name":        "test",
+			"name":        name,
 			"description": "abc",
 			"imageUrl":    "",
 			"teamId":      wID.String(),
@@ -756,7 +756,7 @@ func TestStoryCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -802,7 +802,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -896,7 +896,7 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -933,7 +933,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -981,7 +981,7 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -1018,7 +1018,7 @@ func TestStoryPublishing(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 

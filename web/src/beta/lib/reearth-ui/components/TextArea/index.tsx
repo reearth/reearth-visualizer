@@ -93,7 +93,7 @@ const TextAreaWrapper = styled("div")<{
       ? `1px solid ${theme.outline.weak}`
       : `1px solid ${theme.select.main}`,
   borderRadius: theme.radius.small,
-  background: theme.bg[1],
+  background: "transparent",
   display: "flex",
   boxShadow: theme.shadow.input,
 }));
@@ -105,7 +105,7 @@ const StyledTextArea = styled.textarea<{
 }>(({ theme, resizable, disabled, appearance }) => ({
   outline: "none",
   border: "none",
-  background: "none",
+  background: theme.bg[1],
   resize: resizable === "height" ? "vertical" : "none",
   overflow: resizable === "height" ? "scroll" : "auto",
   flex: 1,

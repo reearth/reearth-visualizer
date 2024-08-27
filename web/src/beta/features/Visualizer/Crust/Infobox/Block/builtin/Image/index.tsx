@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
@@ -8,7 +8,7 @@ import { styled } from "@reearth/services/theme";
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
-const ImageBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
+const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src],
@@ -31,9 +31,9 @@ const ImageBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...
 
 export default ImageBlock;
 
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-`;
+const Image = styled("img")(() => ({
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  objectPosition: "center",
+}));

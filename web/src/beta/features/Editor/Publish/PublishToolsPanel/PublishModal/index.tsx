@@ -1,13 +1,17 @@
-import { useMemo } from "react";
+import { useMemo, FC } from "react";
 
-import Button from "@reearth/beta/components/Button";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import Icon from "@reearth/beta/components/Icon";
-import Modal from "@reearth/beta/components/Modal";
-import Text from "@reearth/beta/components/Text";
+import {
+  Button,
+  Icon,
+  Typography,
+  ModalPanel,
+  Modal,
+} from "@reearth/beta/lib/reearth-ui/components";
+import { CommonField, SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
+
+import { usePublishPage } from "../../context";
 
 import useHooks, { type PublishStatus } from "./hooks";
 
@@ -28,10 +32,13 @@ type Props = {
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
-  onNavigateToSettings?: (page?: "story" | "public" | "asset" | "plugin" | undefined) => void;
+  onNavigateToSettings?: (
+    page?: "story" | "public" | "asset" | "plugin" | undefined,
+    subId?: string,
+  ) => void;
 };
 
-const PublishModal: React.FC<Props> = ({
+const PublishModal: FC<Props> = ({
   isVisible,
   loading,
   publishing,
@@ -49,17 +56,18 @@ const PublishModal: React.FC<Props> = ({
   const t = useT();
   const theme = useTheme();
 
+  const { selectedProjectType, storyId } = usePublishPage();
+
+  const isStory = selectedProjectType === "story";
+
   const {
     statusChanged,
     alias,
     validation,
-    showOptions,
-    searchIndex,
     handlePublish,
     handleClose,
     handleCopyToClipBoard,
     handleSearchIndexChange,
-    setOptions,
   } = useHooks(
     publishing,
     publishStatus,
@@ -91,11 +99,15 @@ const PublishModal: React.FC<Props> = ({
     return statusChanged
       ? t("Congratulations!")
       : publishing === "publishing"
-      ? t("Publish your project")
+      ? isStory
+        ? t(`Publish your story`)
+        : t(`Publish your scene`)
       : publishing === "updating"
-      ? t("Update your project")
+      ? isStory
+        ? t(`Update your story`)
+        : t(`Update your scene`)
       : "";
-  }, [t, statusChanged, publishing]);
+  }, [t, statusChanged, publishing, isStory]);
 
   const primaryButtonText = useMemo(() => {
     return statusChanged
@@ -104,190 +116,217 @@ const PublishModal: React.FC<Props> = ({
       ? t("Publish")
       : publishing === "updating"
       ? t("Update")
-      : t("Continue");
+      : t("Unpublish");
   }, [t, statusChanged, publishing]);
 
-  const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "OK"), [statusChanged]);
+  const secondaryButtonText = useMemo(
+    () => (!statusChanged ? t("Cancel") : t("Ok")),
+    [t, statusChanged],
+  );
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
+      ? isStory
+        ? t(
+            `Your published story will be updated. This means all current changes will overwrite the current published story.`,
+          )
+        : t(
+            `Your published scene will be updated. This means all current changes will overwrite the current published scene.`,
+          )
+      : isStory
       ? t(
-          "Your published project will be updated. This means all current changes will overwrite the current published project.",
+          `Your story will be published. This means anybody with the below URL will be able to view this story.`,
         )
       : t(
-          "Your project will be published. This means anybody with the below URL will be able to view this project.",
+          `Your scene will be published. This means anybody with the below URL will be able to view this scene.`,
         );
-  }, [t, publishing]);
+  }, [t, publishing, isStory]);
 
-  return (
-    <Modal
-      isVisible={isVisible}
-      size="sm"
-      title={modalTitleText}
-      button1={
+  const actions = useMemo(
+    () => (
+      <>
         <Button
-          text={secondaryButtonText}
-          buttonType={statusChanged ? "primary" : "secondary"}
+          title={secondaryButtonText}
+          appearance={statusChanged ? "primary" : "secondary"}
           onClick={handleClose}
         />
-      }
-      button2={
-        !statusChanged && (
+        {!statusChanged && (
           <Button
-            text={primaryButtonText}
-            buttonType="primary"
+            title={primaryButtonText}
+            appearance="primary"
             disabled={publishDisabled}
             onClick={handlePublish}
           />
-        )
-      }
-      onClose={handleClose}>
-      {statusChanged ? (
-        <Section>
-          <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
-          <Subtitle size="footnote">{t("Public URL")}</Subtitle>
-          <div>
-            <UrlWrapper justify="space-between">
-              <Text
-                size="body"
-                weight="bold"
-                color={theme.primary.main}
-                onClick={() => window.open(purl, "_blank")}>
-                {purl}
-              </Text>
-              <Text
-                size="body"
-                color={theme.primary.main}
-                onClick={handleCopyToClipBoard("url", purl)}>
-                {t("Copy")}
-              </Text>
-            </UrlWrapper>
-            <Text size="footnote">{t("* Anyone can see your project with this URL")}</Text>
-          </div>
-          <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
-          <div>
-            <UrlWrapper justify="space-between">
-              <Text size="footnote">{embedCode}</Text>
-              <Text
-                size="body"
-                color={theme.primary.main}
-                onClick={handleCopyToClipBoard("embedCode", embedCode)}>
-                {t("Copy")}
-              </Text>
-            </UrlWrapper>
-            <Text size="footnote">
-              {t("* Please use this code if you want to embed your project into a webpage")}
-            </Text>
-          </div>
-        </Section>
-      ) : publishing !== "unpublishing" ? (
-        <>
+        )}
+      </>
+    ),
+    [
+      handleClose,
+      handlePublish,
+      publishDisabled,
+      primaryButtonText,
+      secondaryButtonText,
+      statusChanged,
+    ],
+  );
+
+  const isPublishing = publishing !== "unpublishing";
+
+  return (
+    <Modal size="small" visible={isVisible}>
+      <ModalPanel
+        title={modalTitleText}
+        actions={actions}
+        onCancel={handleClose}
+        appearance={isPublishing ? "normal" : "simple"}>
+        {statusChanged ? (
           <Section>
-            <Text size="body">{updateDescriptionText}</Text>
-          </Section>
-          <Section>
-            <Text size="footnote">{t("Publish domain")}</Text>
-            {url && alias && (
-              <UrlWrapper onClick={() => window.open(purl, "_blank")}>
-                <Text size="body" weight="bold" color={theme.primary.main}>
+            <Subtitle size="body">
+              {isStory ? t(`Your story has been published!`) : t(`Your scene has been published!`)}
+            </Subtitle>
+            <CommonField
+              commonTitle={t("Public URL")}
+              description={
+                isStory
+                  ? t(`* Anyone can see your story with this URL`)
+                  : t(`* Anyone can see your scene with this URL`)
+              }>
+              <UrlWrapper justify="space-between">
+                <UrlText publicUrl={true} onClick={() => window.open(purl, "_blank")}>
                   {purl}
-                </Text>
+                </UrlText>
+                <Typography
+                  size="body"
+                  color={theme.primary.main}
+                  onClick={handleCopyToClipBoard("url", purl)}>
+                  {t("Copy")}
+                </Typography>
               </UrlWrapper>
-            )}
+            </CommonField>
+            <CommonField
+              commonTitle={t("Embed Code")}
+              description={t(
+                `* Please use this code if you want to embed your story into a webpage`,
+              )}>
+              <UrlWrapper justify="space-between">
+                <UrlText>{embedCode}</UrlText>
+                <Typography
+                  size="body"
+                  color={theme.primary.main}
+                  onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                  {t("Copy")}
+                </Typography>
+              </UrlWrapper>
+            </CommonField>
           </Section>
-          <OptionsToggle onClick={() => setOptions(!showOptions)}>
-            <Text size="footnote">{t("More options")}</Text>
-            <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
-          </OptionsToggle>
-          <HideableSection showOptions={showOptions}>
+        ) : publishing !== "unpublishing" ? (
+          <Section>
+            <Typography size="body">{updateDescriptionText}</Typography>
+            <DomainWrapper>
+              <Typography size="footnote">{t("Publish domain")}</Typography>
+              {url && alias && (
+                <UrlWrapper onClick={() => window.open(purl, "_blank")}>
+                  <UrlText publicUrl={true}>{purl}</UrlText>
+                </UrlWrapper>
+              )}
+            </DomainWrapper>
             <div>
-              <DomainText size="footnote">
-                {t("Need to change domain related settings?")}
+              <DomainText>
+                <Typography size="footnote">
+                  {t("Need to change domain related settings?")}
+                </Typography>
               </DomainText>
-              <Button size="small" onClick={() => onNavigateToSettings?.("public")}>
-                {t("Go to settings")}
-              </Button>
+              <Button
+                size="small"
+                onClick={() => onNavigateToSettings?.("public", isStory ? storyId : "")}
+                title={t("Go to settings")}
+              />
             </div>
-            <ToggleField
-              name={t("Search engine indexing")}
+            <SwitchField
+              commonTitle={t("Search engine indexing")}
               description={t("Page will be available as result on search engines")}
-              checked={searchIndex}
               onChange={handleSearchIndexChange}
             />
-          </HideableSection>
-        </>
-      ) : (
-        <Section>
-          <Header>
-            <Icon icon="alert" />
-            <Text size="h5" weight="bold">
-              {t("Unpublishing")}
-            </Text>
-          </Header>
-          <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
-          <Subtitle size="body">
-            {t("This means that anybody with the URL will become unable to view this project.")}
-          </Subtitle>
-          <Text size="body" color={theme.warning.main}>
-            {t("**Warning**: This includes websites where this project is embedded.")}
-          </Text>
-        </Section>
-      )}
+          </Section>
+        ) : (
+          <Section>
+            <Header>
+              <WarningIcon icon="warning" />
+            </Header>
+            <Subtitle size="body">
+              {isStory
+                ? t(`Your story will be unpublished.`)
+                : t(`Your scene will be unpublished.`)}
+            </Subtitle>
+            <Subtitle size="body">
+              {isStory
+                ? t(
+                    `This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.`,
+                  )
+                : t(
+                    `This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.`,
+                  )}
+            </Subtitle>
+          </Section>
+        )}
+      </ModalPanel>
     </Modal>
   );
 };
 
 export default PublishModal;
 
-const Section = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: ${`${spacingSizes["normal"]}px`};
-  opacity: ${({ disabled }) => disabled && "0.6"};
-  cursor: ${({ disabled }) => disabled && "not-allowed"};
-`;
+const Section = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  padding: theme.spacing.normal,
+  gap: theme.spacing.large,
+  opacity: disabled ? 0.6 : 1,
+  cursor: disabled ? "not-allowed" : "auto",
+}));
 
-const Subtitle = styled(Text)`
-  text-align: left;
-`;
+const Subtitle = styled(Typography)({
+  textAlign: "left",
+});
 
-const UrlWrapper = styled.div<{ justify?: string }>`
-  display: flex;
-  justify-content: ${({ justify }) => justify ?? "center"};
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-`;
+const DomainWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+}));
 
-const OptionsToggle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: ${({ theme }) => theme.content.main};
-  cursor: pointer;
-  user-select: none;
-`;
+const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => ({
+  display: "flex",
+  justifyContent: justify ?? "center",
+  alignItems: "center",
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: "4px",
+  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
+  cursor: "pointer",
+}));
 
-const ArrowIcon = styled(Icon)<{ open?: boolean }>`
-  transition: transform 0.15s ease;
-  transform: ${({ open }) =>
-    open ? "translateY(10%) rotate(90deg)" : "translateY(0) rotate(180deg)"};
-`;
+const UrlText = styled("div")<{ publicUrl?: boolean }>(({ publicUrl, theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+  fontSize: "12px",
+  whiteSpace: "break-spaces",
+  color: publicUrl ? theme.primary.main : "inherit",
+  fontWeight: publicUrl ? "bold" : "normal",
+}));
 
-const HideableSection = styled(Section)<{ showOptions?: boolean }>`
-  display: ${props => (props.showOptions ? null : "none")};
-`;
+const DomainText = styled("div")(({ theme }) => ({
+  marginBottom: `${theme.spacing.small}px`,
+}));
 
-const DomainText = styled(Text)`
-  margin-bottom: 8px;
-`;
+const Header = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.normal,
+  color: theme.warning.main,
+}));
 
-const Header = styled.div`
-  display: flex;
-  gap: 12px;
-  color: ${({ theme }) => theme.warning.main};
-  margin-bottom: 12px;
-`;
+const WarningIcon = styled(Icon)({
+  width: "24px",
+  height: "24px",
+});
