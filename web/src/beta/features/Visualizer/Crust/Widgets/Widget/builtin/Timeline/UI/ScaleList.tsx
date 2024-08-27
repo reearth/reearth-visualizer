@@ -85,7 +85,7 @@ const ScaleContainer = styled("div")(({ theme }) => ({
   height: "30px",
   paddingLeft: `${PADDING_HORIZONTAL}px`,
   "&::after": {
-    content: "",
+    content: '""',
     display: "block",
     paddingRight: theme.spacing.micro - 1,
     height: "1px",
