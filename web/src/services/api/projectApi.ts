@@ -22,6 +22,7 @@ import {
   DELETE_PROJECT,
   GET_PROJECT,
   GET_PROJECTS,
+  GET_STARRED_PROJECTS,
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
   UPDATE_PROJECT_ALIAS,
@@ -87,6 +88,20 @@ export default () => {
     );
 
     return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
+  }, []);
+
+  const useStarredProjectsQuery = useCallback((teamId?: string) => {
+    const { data, ...rest } = useQuery(GET_STARRED_PROJECTS, {
+      variables: { teamId: teamId ?? "" },
+      skip: !teamId,
+    });
+
+    const starredProjects = useMemo(
+      () => (data?.starredProjects.nodes),
+      [data?.starredProjects],
+    );
+
+    return { starredProjects, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
@@ -399,5 +414,6 @@ export default () => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
+    useStarredProjectsQuery,
   };
 };

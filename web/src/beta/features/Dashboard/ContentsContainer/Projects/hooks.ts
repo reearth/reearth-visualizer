@@ -34,7 +34,7 @@ export type SortType =
   | "date-updated";
 
 export default (workspaceId?: string) => {
-  const { useProjectsQuery, useUpdateProject, useCreateProject } =
+  const { useProjectsQuery, useUpdateProject, useCreateProject, useStarredProjectsQuery } =
     useProjectFetcher();
   const navigate = useNavigate();
 
@@ -58,6 +58,10 @@ export default (workspaceId?: string) => {
     sort: pagination(sortValue).sortBy,
     keyword: searchTerm,
   });
+
+  const { starredProjects } = useStarredProjectsQuery(workspaceId)
+
+  console.log("starredProjects", starredProjects)
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])

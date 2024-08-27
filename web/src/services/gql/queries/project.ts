@@ -191,3 +191,16 @@ export const DELETE_PROJECT = gql(`
     }
   }
 `);
+
+export const GET_STARRED_PROJECTS = gql(`
+  query GetStarredProjects($teamId: ID!) {
+    starredProjects(teamId: $teamId) {
+				nodes {
+					id
+					name
+					starred
+				}
+				totalCount
+			}
+  }
+`);
