@@ -27,7 +27,6 @@ export type Config = {
   sentryDsn?: string;
   sentryEnv?: string;
   cesiumIonAccessToken?: string;
-  developerMode?: boolean;
   earlyAccessAdmins?: string[];
   brand?: {
     logoUrl?: string;
