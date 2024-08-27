@@ -1,5 +1,3 @@
-import { useCallback, useState, useMemo, FC } from "react";
-
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
@@ -13,6 +11,7 @@ import {
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useState, useMemo, FC } from "react";
 
 import {
   InnerPage,
@@ -43,12 +42,20 @@ type Props = {
   onDeleteProject: () => void;
 };
 
-const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
+const GeneralSettings: FC<Props> = ({
+  project,
+  onUpdateProject,
+  onDeleteProject,
+}) => {
   const t = useT();
 
   const [localName, setLocalName] = useState(project?.name ?? "");
-  const [localDescription, setLocalDescription] = useState(project?.description ?? "");
-  const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(project?.imageUrl ?? "");
+  const [localDescription, setLocalDescription] = useState(
+    project?.description ?? "",
+  );
+  const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(
+    project?.imageUrl ?? "",
+  );
 
   const handleSubmit = useCallback(() => {
     onUpdateProject({
@@ -76,7 +83,7 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
               <InputField
                 commonTitle={t("Project Name")}
                 value={project.name}
-                onChange={name => setLocalName(name)}
+                onChange={(name) => setLocalName(name)}
               />
               <TextareaField
                 commonTitle={t("Description")}
@@ -98,7 +105,11 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
                 </SettingsRowItem>
               </SettingsRow>
               <ButtonWrapper>
-                <Button title={t("Submit")} appearance="primary" onClick={handleSubmit} />
+                <Button
+                  title={t("Submit")}
+                  appearance="primary"
+                  onClick={handleSubmit}
+                />
               </ButtonWrapper>
             </SettingsFields>
           </Collapse>
@@ -144,7 +155,8 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
               disabled={deleteDisabled}
               onClick={onDeleteProject}
             />,
-          ]}>
+          ]}
+        >
           <ModalContentWrapper>
             <Typography size="body" weight="bold">
               {project?.name}
@@ -155,8 +167,10 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
               )}
             </Typography>
             <Divider />
-            <Typography size="body">{t("Please type your project name to continue.")}</Typography>
-            <TextInput onChange={name => setDeleteInputName(name)} />
+            <Typography size="body">
+              {t("Please type your project name to continue.")}
+            </Typography>
+            <TextInput onChange={(name) => setDeleteInputName(name)} />
           </ModalContentWrapper>
         </ModalPanel>
       </Modal>

@@ -62,7 +62,7 @@ const tabsIcons: TabItem[] = [
 ];
 
 export const Default: Story = {
-  render: arg => (
+  render: (arg) => (
     <div style={{ width: "500px", marginTop: "10px", marginLeft: "10px" }}>
       <Tabs {...arg} />
     </div>
@@ -74,7 +74,7 @@ export const Default: Story = {
 };
 
 export const LeftSideTabs: Story = {
-  render: arg => (
+  render: (arg) => (
     <div style={{ width: "500px" }}>
       <Tabs {...arg} />
     </div>
@@ -87,7 +87,7 @@ export const LeftSideTabs: Story = {
 };
 
 export const IconTabs: Story = {
-  render: arg => (
+  render: (arg) => (
     <div style={{ width: "500px", height: "100vh" }}>
       <Tabs {...arg} />
     </div>

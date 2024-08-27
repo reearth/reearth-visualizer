@@ -1,6 +1,10 @@
 import "./index.css";
 
-import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
+import {
+  $isAutoLinkNode,
+  $isLinkNode,
+  TOGGLE_LINK_COMMAND,
+} from "@lexical/link";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $findMatchingParent, mergeRegister } from "@lexical/utils";
 import {
@@ -97,7 +101,8 @@ function FloatingLinkEditor({
 
   useEffect(() => {
     const scrollerElem =
-      document.getElementById(scrollableContainerId ?? "") ?? anchorElem.parentElement;
+      document.getElementById(scrollableContainerId ?? "") ??
+      anchorElem.parentElement;
 
     const update = () => {
       editor.getEditorState().read(() => {
@@ -118,7 +123,12 @@ function FloatingLinkEditor({
         scrollerElem.removeEventListener("scroll", update);
       }
     };
-  }, [anchorElem.parentElement, editor, scrollableContainerId, updateLinkEditor]);
+  }, [
+    anchorElem.parentElement,
+    editor,
+    scrollableContainerId,
+    updateLinkEditor,
+  ]);
 
   useEffect(() => {
     return mergeRegister(
@@ -162,7 +172,9 @@ function FloatingLinkEditor({
     }
   }, [isEditMode]);
 
-  const monitorInputInteraction = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const monitorInputInteraction = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (event.key === "Enter") {
       event.preventDefault();
       handleLinkSubmission();
@@ -189,10 +201,10 @@ function FloatingLinkEditor({
             ref={inputRef}
             className="link-input"
             value={editedLinkUrl}
-            onChange={event => {
+            onChange={(event) => {
               setEditedLinkUrl(event.target.value);
             }}
-            onKeyDown={event => {
+            onKeyDown={(event) => {
               monitorInputInteraction(event);
             }}
           />
@@ -201,7 +213,7 @@ function FloatingLinkEditor({
               className="link-cancel"
               role="button"
               tabIndex={0}
-              onMouseDown={event => event.preventDefault()}
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
                 setEditMode(false);
               }}
@@ -211,21 +223,25 @@ function FloatingLinkEditor({
               className="link-confirm"
               role="button"
               tabIndex={0}
-              onMouseDown={event => event.preventDefault()}
+              onMouseDown={(event) => event.preventDefault()}
               onClick={handleLinkSubmission}
             />
           </div>
         </>
       ) : (
         <div className="link-view">
-          <a href={sanitizeUrl(linkUrl)} target="_blank" rel="noopener noreferrer">
+          <a
+            href={sanitizeUrl(linkUrl)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {linkUrl}
           </a>
           <div
             className="link-edit"
             role="button"
             tabIndex={0}
-            onMouseDown={event => event.preventDefault()}
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => {
               setEditedLinkUrl(linkUrl);
               setEditMode(true);
@@ -235,7 +251,7 @@ function FloatingLinkEditor({
             className="link-trash"
             role="button"
             tabIndex={0}
-            onMouseDown={event => event.preventDefault()}
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => {
               editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
             }}
@@ -309,5 +325,9 @@ export default function FloatingLinkEditorPlugin({
   scrollableContainerId?: string;
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
-  return useFloatingLinkEditorToolbar(editor, anchorElem, scrollableContainerId);
+  return useFloatingLinkEditorToolbar(
+    editor,
+    anchorElem,
+    scrollableContainerId,
+  );
 }

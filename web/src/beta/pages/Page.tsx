@@ -1,7 +1,10 @@
-import React, { ReactNode, useMemo } from "react";
-
-import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
+import {
+  useMeFetcher,
+  useProjectFetcher,
+  useSceneFetcher,
+} from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
+import React, { ReactNode, useMemo } from "react";
 
 import { Loading } from "../lib/reearth-ui";
 
@@ -18,7 +21,12 @@ type Props = {
   renderItem: (props: RenderItemProps) => ReactNode;
 };
 
-const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => {
+const PageWrapper: React.FC<Props> = ({
+  sceneId,
+  projectId,
+  workspaceId,
+  renderItem,
+}) => {
   const { useMeQuery } = useMeFetcher();
   const { useProjectQuery } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
@@ -57,7 +65,12 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
   );
 };
 
-const Page: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => (
+const Page: React.FC<Props> = ({
+  sceneId,
+  projectId,
+  workspaceId,
+  renderItem,
+}) => (
   <AuthenticatedPage>
     <PageWrapper
       sceneId={sceneId}

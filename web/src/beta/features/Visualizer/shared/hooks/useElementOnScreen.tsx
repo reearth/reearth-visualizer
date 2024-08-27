@@ -6,7 +6,7 @@ export const useElementOnScreen = (options: IntersectionObserverInit) => {
 
   useEffect(() => {
     const elementRef = containerRef.current;
-    const observer = new IntersectionObserver(entries => {
+    const observer = new IntersectionObserver((entries) => {
       const [entry] = entries;
       setIsIntersecting(entry.isIntersecting);
     }, options);

@@ -1,7 +1,9 @@
-import { useCallback, type ComponentType, type ReactNode } from "react";
-
-import type { CommonBlockProps, BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import type {
+  CommonBlockProps,
+  BlockProps,
+} from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
+import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { StoryBlock } from "../types";
@@ -22,7 +24,9 @@ export default function StoryBlockComponent({
   ...props
 }: Props): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
-  const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
+  const Builtin = isBuiltinStoryBlock(builtinBlockId)
+    ? builtin[builtinBlockId]
+    : undefined;
   const handleRemove = useCallback(
     () => props.block?.id && onRemove?.(props.block.id),
     [props.block?.id, onRemove],
@@ -42,8 +46,13 @@ export default function StoryBlockComponent({
       propertyId={props.block.propertyId}
       dragHandleClassName={props.dragHandleClassName}
       propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
-      onRemove={onRemove ? handleRemove : undefined}>
-      {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
+      onRemove={onRemove ? handleRemove : undefined}
+    >
+      {renderBlock?.({
+        block: props.block,
+        layer: props.layer,
+        onClick: props.onClick,
+      })}
     </BlockWrapper>
   ) : null;
 }

@@ -35,13 +35,23 @@ export declare type Layers = {
     fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
   ) => LazyLayer[] | undefined;
   readonly findById: (layerId: string) => LazyLayer | undefined;
-  readonly findByIds: (...layerIds: string[]) => (LazyLayer | undefined)[] | undefined;
-  readonly findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
-  readonly findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+  readonly findByIds: (
+    ...layerIds: string[]
+  ) => (LazyLayer | undefined)[] | undefined;
+  readonly findFeatureById?: (
+    layerId: string,
+    featureId: string,
+  ) => Feature | undefined;
+  readonly findFeaturesByIds?: (
+    layerId: string,
+    featureId: string[],
+  ) => Feature[] | undefined;
   readonly layersInViewport?: () => LazyLayer[] | undefined;
   readonly select?: (layerId: string | undefined) => void;
   readonly selectFeature?: (layerId?: string, featureId?: string) => void;
-  readonly selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
+  readonly selectFeatures?: (
+    layers: { layerId?: string; featureId?: string[] }[],
+  ) => void;
   readonly selected?: ComputedLayer;
   readonly selectedFeature?: ComputedFeature;
   readonly bringToFront?: (layerId: string) => void;

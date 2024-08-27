@@ -9,13 +9,19 @@ export const filterSections = (
   cb?: (s: (typeof WAS_SECTIONS)[number]) => void,
 ) => {
   return WAS_SECTIONS.filter(
-    s =>
-      WAS_AREAS.filter(a => zone?.[s]?.[a]?.widgets?.some(w => !invisibleWidgetIDs?.includes(w.id)))
-        .length || cb?.(s),
+    (s) =>
+      WAS_AREAS.filter((a) =>
+        zone?.[s]?.[a]?.widgets?.some(
+          (w) => !invisibleWidgetIDs?.includes(w.id),
+        ),
+      ).length || cb?.(s),
   );
 };
 
-export const isInvisibleBuiltin = (widget: InternalWidget, isMobile?: boolean) => {
+export const isInvisibleBuiltin = (
+  widget: InternalWidget,
+  isMobile?: boolean,
+) => {
   const defaultVisible = widget.property?.default?.visible;
   return (
     isBuiltinWidget(`${widget.pluginId}/${widget.extensionId}`) &&

@@ -126,7 +126,12 @@ export const CustomLabel: Story = {
 export const MultilevelMenu: Story = {
   render: () => (
     <div style={{ margin: "5px", height: "120px" }}>
-      <PopupMenu label="Multilevel Menu" icon="data" menu={multlevelItems} width={200} />
+      <PopupMenu
+        label="Multilevel Menu"
+        icon="data"
+        menu={multlevelItems}
+        width={200}
+      />
     </div>
   ),
 };
@@ -135,7 +140,9 @@ export const IconsMenu: Story = {
   render: () => (
     <div style={{ margin: "5px", height: "120px" }}>
       <PopupMenu
-        label={<Button appearance="primary" iconButton={true} icon="settingFilled" />}
+        label={
+          <Button appearance="primary" iconButton={true} icon="settingFilled" />
+        }
         menu={menuItems}
       />
     </div>

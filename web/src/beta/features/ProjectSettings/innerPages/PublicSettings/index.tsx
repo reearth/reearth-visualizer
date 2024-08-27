@@ -1,5 +1,3 @@
-import { useCallback, useMemo, useState } from "react";
-
 import {
   SidebarMenuItem,
   SidebarSection,
@@ -7,8 +5,14 @@ import {
 } from "@reearth/beta/ui/components/Sidebar";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useMemo, useState } from "react";
 
-import { InnerPage, SettingsWrapper, ArchivedSettingNotice, InnerSidebar } from "../common";
+import {
+  InnerPage,
+  SettingsWrapper,
+  ArchivedSettingNotice,
+  InnerSidebar,
+} from "../common";
 
 import PublicSettingsDetail from "./PublicSettingsDetail";
 
@@ -86,7 +90,7 @@ const PublicSettings: React.FC<Props> = ({
         path: `/settings/project/${project.id}/public/`,
         active: selectedTab === "map",
       },
-      ...stories.map(s => ({
+      ...stories.map((s) => ({
         id: s.id,
         title: (!s.title || s.title) === "Default" ? t("Story") : s.title,
         icon: "sidebar" as const,
@@ -104,7 +108,7 @@ const PublicSettings: React.FC<Props> = ({
       <InnerSidebar>
         <SidebarWrapper>
           <SidebarSection>
-            {menu?.map(s => (
+            {menu?.map((s) => (
               <SidebarMenuItem
                 key={s.id}
                 text={s.title}

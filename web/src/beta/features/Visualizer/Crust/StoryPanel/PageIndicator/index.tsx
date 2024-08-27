@@ -1,7 +1,6 @@
-import { FC } from "react";
-
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import IndicatorSection from "./IndicatorSection";
 
@@ -12,7 +11,12 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-const StoryPageIndicator: FC<Props> = ({ currentPage, pageTitles, maxPage, onPageChange }) => {
+const StoryPageIndicator: FC<Props> = ({
+  currentPage,
+  pageTitles,
+  maxPage,
+  onPageChange,
+}) => {
   const t = useT();
   return (
     <Wrapper>

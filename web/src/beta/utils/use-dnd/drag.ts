@@ -21,8 +21,9 @@ export const useDrag = <T extends ItemType = ItemType>(
       type: item?.type ?? "null",
       item: item ?? { type: "null" },
       canDrag: !!item && !disabled,
-      end: (item, monitor) => end?.(item as Item<T>, monitor.getDropResult() ?? undefined),
-      collect: monitor => ({
+      end: (item, monitor) =>
+        end?.(item as Item<T>, monitor.getDropResult() ?? undefined),
+      collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     }),

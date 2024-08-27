@@ -1,6 +1,5 @@
-import { FC, MouseEvent, useCallback } from "react";
-
 import { styled } from "@reearth/services/theme";
+import { FC, MouseEvent, useCallback } from "react";
 
 import { IconName, Icon } from "../Icon";
 
@@ -44,7 +43,8 @@ export const IconButton: FC<IconButtonProps> = ({
       size={size}
       active={active}
       iconRotate={iconRotate}
-      onClick={handleClick}>
+      onClick={handleClick}
+    >
       <Icon icon={icon} />
     </StyledButton>
   );
@@ -62,26 +62,49 @@ const StyledButton = styled("button")<{
   justifyContent: "center",
   flexShrink: 0,
   width:
-    size === "smallest" ? "16px" : size === "small" ? "20px" : size === "large" ? "36px" : "24px",
+    size === "smallest"
+      ? "16px"
+      : size === "small"
+        ? "20px"
+        : size === "large"
+          ? "36px"
+          : "24px",
   height:
-    size === "smallest" ? "16px" : size === "small" ? "20px" : size === "large" ? "36px" : "24px",
-  borderRadius: size === "small" ? `${theme.radius.small}px` : `${theme.radius.normal}px`,
+    size === "smallest"
+      ? "16px"
+      : size === "small"
+        ? "20px"
+        : size === "large"
+          ? "36px"
+          : "24px",
+  borderRadius:
+    size === "small" ? `${theme.radius.small}px` : `${theme.radius.normal}px`,
   color: active
     ? `${theme.content.withBackground}`
     : appearance === "primary"
-    ? `${theme.primary.main}`
-    : appearance === "dangerous"
-    ? `${theme.dangerous.main}`
-    : `${theme.content.main}`,
+      ? `${theme.primary.main}`
+      : appearance === "dangerous"
+        ? `${theme.dangerous.main}`
+        : `${theme.content.main}`,
   backgroundColor: active
     ? `${theme["primary"].weak}`
     : appearance === "simple"
-    ? "transparent"
-    : `${theme.bg[1]}`,
+      ? "transparent"
+      : `${theme.bg[1]}`,
   boxShadow: appearance !== "simple" ? theme.shadow.button : "none",
   ["svg"]: {
-    width: size === "small" || size === "smallest" ? "12px" : size === "large" ? "20px" : "16px",
-    height: size === "small" || size === "smallest" ? "12px" : size === "large" ? "20px" : "16px",
+    width:
+      size === "small" || size === "smallest"
+        ? "12px"
+        : size === "large"
+          ? "20px"
+          : "16px",
+    height:
+      size === "small" || size === "smallest"
+        ? "12px"
+        : size === "large"
+          ? "20px"
+          : "16px",
     transform: iconRotate ? `rotate(${iconRotate})` : "none",
     transition: "transform 0.1s",
   },
@@ -90,12 +113,13 @@ const StyledButton = styled("button")<{
     backgroundColor: active
       ? `${theme["primary"].weak}`
       : appearance === "simple"
-      ? "transparent"
-      : `${theme[appearance].weak}`,
+        ? "transparent"
+        : `${theme[appearance].weak}`,
   },
   ["&:active"]: {
     color: `${theme.content.withBackground}`,
-    backgroundColor: appearance === "simple" ? "transparent" : `${theme[appearance].main}`,
+    backgroundColor:
+      appearance === "simple" ? "transparent" : `${theme[appearance].main}`,
     boxShadow: "none",
   },
   ["&:disabled"]: {

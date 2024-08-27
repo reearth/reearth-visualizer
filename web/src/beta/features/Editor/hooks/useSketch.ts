@@ -1,9 +1,14 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-
 import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
 import { SketchFeature, SketchType, Geometry } from "@reearth/core";
 import { useFeatureCollectionFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { Tab } from "../../Navbar";
 
@@ -41,11 +46,13 @@ export default ({
   visualizerRef,
   ignoreCoreLayerUnselect,
 }: Props) => {
-  const [sketchType, setSketchType] = useState<SketchType | undefined>(undefined);
-
-  const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string } | undefined>(
+  const [sketchType, setSketchType] = useState<SketchType | undefined>(
     undefined,
   );
+
+  const pendingSketchSelectionRef = useRef<
+    { layerId: string; featureId: string } | undefined
+  >(undefined);
 
   const handleSketchTypeChange = useCallback(
     (type: SketchType | undefined, from: "editor" | "plugin" = "editor") => {
@@ -58,8 +65,11 @@ export default ({
     [visualizerRef],
   );
 
-  const { useAddGeoJsonFeature, useUpdateGeoJSONFeature, useDeleteGeoJSONFeature } =
-    useFeatureCollectionFetcher();
+  const {
+    useAddGeoJsonFeature,
+    useUpdateGeoJSONFeature,
+    useDeleteGeoJSONFeature,
+  } = useFeatureCollectionFetcher();
 
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
@@ -93,7 +103,12 @@ export default ({
 
       ignoreCoreLayerUnselect.current = true;
     },
-    [selectedLayer?.id, selectedLayer?.isSketch, ignoreCoreLayerUnselect, handleSketchLayerAdd],
+    [
+      selectedLayer?.id,
+      selectedLayer?.isSketch,
+      ignoreCoreLayerUnselect,
+      handleSketchLayerAdd,
+    ],
   );
 
   useEffect(() => {
@@ -104,8 +119,10 @@ export default ({
         const { layerId, featureId } = pendingSketchSelectionRef.current;
         const layer = visualizerRef?.current?.layers
           ?.layers?.()
-          ?.find(l => l.id === layerId)?.computed;
-        const feature = layer?.features?.find(f => f.properties?.id === featureId);
+          ?.find((l) => l.id === layerId)?.computed;
+        const feature = layer?.features?.find(
+          (f) => f.properties?.id === featureId,
+        );
         if (feature) {
           visualizerRef?.current?.layers.selectFeature(layerId, feature?.id);
         }
@@ -113,7 +130,12 @@ export default ({
         ignoreCoreLayerUnselect.current = false;
       }
     }, 100);
-  }, [nlsLayers, pendingSketchSelectionRef, visualizerRef, ignoreCoreLayerUnselect]);
+  }, [
+    nlsLayers,
+    pendingSketchSelectionRef,
+    visualizerRef,
+    ignoreCoreLayerUnselect,
+  ]);
 
   useEffect(() => {
     handleSketchTypeChange(undefined);

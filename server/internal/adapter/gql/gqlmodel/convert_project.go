@@ -77,7 +77,7 @@ func ProjectSortTypeFrom(pst *ProjectSort) *project.SortType {
 	case ProjectSortFieldCreatedat:
 		key = "id"
 	case ProjectSortFieldUpdatedat:
-		key = "updatedAt"
+		key = "updatedat"
 	case ProjectSortFieldName:
 		key = "name"
 	default:

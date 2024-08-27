@@ -11,7 +11,14 @@ type Story = StoryObj<typeof Collapse>;
 
 export const Default: Story = {
   render: () => (
-    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div
+      style={{
+        width: "500px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
       <Collapse title="Default Collapse">
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
@@ -21,7 +28,14 @@ export const Default: Story = {
 
 export const Small: Story = {
   render: () => (
-    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div
+      style={{
+        width: "500px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
       <Collapse title="Small Collapse" size="small">
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
@@ -31,7 +45,14 @@ export const Small: Story = {
 
 export const NoPadding: Story = {
   render: () => (
-    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div
+      style={{
+        width: "500px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
       <Collapse title="No Padding Collapse" noPadding>
         <p>User can manage the content freely.</p>
       </Collapse>
@@ -41,7 +62,14 @@ export const NoPadding: Story = {
 
 export const HeaderBg: Story = {
   render: () => (
-    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div
+      style={{
+        width: "500px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
       <Collapse title="Customized Header Background" headerBg="#3B3CD0">
         <p>Lorem ipsum dolor sit</p>
       </Collapse>
@@ -51,7 +79,14 @@ export const HeaderBg: Story = {
 
 export const InitialAsCollapsed: Story = {
   render: () => (
-    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div
+      style={{
+        width: "500px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
       <Collapse title="Collapsed" collapsed={true}>
         <p>Lorem ipsum dolor sit</p>
       </Collapse>

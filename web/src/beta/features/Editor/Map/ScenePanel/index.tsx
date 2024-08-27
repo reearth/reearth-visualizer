@@ -1,17 +1,17 @@
-import { FC, useCallback } from "react";
-
 import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { ScenePropertyCollection } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback } from "react";
 
 import { useMapPage } from "../context";
 
 const ScenePanel: FC = () => {
   const t = useT();
 
-  const { scene, selectedSceneSetting, handleSceneSettingSelect } = useMapPage();
+  const { scene, selectedSceneSetting, handleSceneSettingSelect } =
+    useMapPage();
 
   // TODO-VizUI: use EntryItem
   const handleTranslatedCollectionName = useCallback(
@@ -19,16 +19,16 @@ const ScenePanel: FC = () => {
       return name === "main"
         ? t("Main")
         : name === "tiles"
-        ? t("Tiles")
-        : name === "terrain"
-        ? t("Terrain")
-        : name === "globe"
-        ? t("Globe")
-        : name === "sky"
-        ? t("Sky")
-        : name === "camera"
-        ? t("Camera")
-        : t("Unknown scene setting");
+          ? t("Tiles")
+          : name === "terrain"
+            ? t("Terrain")
+            : name === "globe"
+              ? t("Globe")
+              : name === "sky"
+                ? t("Sky")
+                : name === "camera"
+                  ? t("Camera")
+                  : t("Unknown scene setting");
     },
     [t],
   );
@@ -36,12 +36,18 @@ const ScenePanel: FC = () => {
   return (
     <Panel title={t("Scene")} storageId="editor-map-scene-panel">
       <Wrapper>
-        {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
+        {[
+          ...new Set(
+            scene?.property?.schema?.groups.map(({ collection }) => collection),
+          ),
+        ].map(
           (collection, index) =>
             collection && (
               <EntryItem
                 key={index}
-                title={handleTranslatedCollectionName(collection as ScenePropertyCollection)}
+                title={handleTranslatedCollectionName(
+                  collection as ScenePropertyCollection,
+                )}
                 highlighted={selectedSceneSetting === collection}
                 onClick={() => handleSceneSettingSelect(collection)}
               />

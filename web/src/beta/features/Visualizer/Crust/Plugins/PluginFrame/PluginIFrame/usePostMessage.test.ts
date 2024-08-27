@@ -14,7 +14,8 @@ test("usePostMessage", () => {
   };
 
   const { result, rerender } = renderHook(
-    ({ iFrame, pending }: { iFrame: P; pending?: boolean }) => usePostMessage(iFrame, pending),
+    ({ iFrame, pending }: { iFrame: P; pending?: boolean }) =>
+      usePostMessage(iFrame, pending),
     {
       initialProps: { iFrame: nullIFrame },
     },

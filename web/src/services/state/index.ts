@@ -18,7 +18,12 @@ export type WidgetAreaState = {
 
 export type WidgetAlignment = "start" | "centered" | "end";
 
-export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+export type WidgetAreaPadding = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
 
 export type NotificationType = "error" | "warning" | "info" | "success";
 
@@ -44,7 +49,7 @@ export type Policy = {
 export type Workspace = {
   id: string;
   name: string;
-  members?: Array<any>;
+  members?: any[];
   assets?: any;
   projects?: any;
   personal?: boolean;

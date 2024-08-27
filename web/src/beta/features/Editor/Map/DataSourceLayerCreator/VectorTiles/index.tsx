@@ -1,5 +1,3 @@
-import { FC, useCallback, useState } from "react";
-
 import {
   ContentWrapper,
   InputGroup,
@@ -13,6 +11,7 @@ import {
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { DataProps } from "..";
 import { generateTitle } from "../util";
@@ -29,7 +28,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const handleLayerNameAdd = () => {
     if (layerName.trim() !== "") {
       const exist = layerNameList.some((layer: string) => layer === layerName);
-      if (!exist) setLayerNameList(prev => [...prev, layerName]);
+      if (!exist) setLayerNameList((prev) => [...prev, layerName]);
       setLayerName("");
     }
   };
@@ -79,7 +78,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             <TextInput
               placeholder="https://"
               value={mvtUrlValue}
-              onChange={value => handleValueChange(value)}
+              onChange={(value) => handleValueChange(value)}
             />
           </InputsWrapper>
         </InputGroup>
@@ -106,7 +105,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                     value={layerName}
                     extendWidth
                     onBlur={handleBlur}
-                    onChange={value => setLayerName(value)}
+                    onChange={(value) => setLayerName(value)}
                   />
                   <Button
                     icon="close"

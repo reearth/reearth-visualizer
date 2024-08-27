@@ -1,8 +1,7 @@
-import { FC, useCallback, useMemo } from "react";
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/beta/utils/value";
+import { FC, useCallback, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -17,9 +16,22 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   );
 
   const handlePropertyValueUpdate = useCallback(
-    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: any,
+      itemId?: string,
+    ) => {
       return async (v?: any) => {
-        await props.onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+        await props.onPropertyUpdate?.(
+          propertyId,
+          schemaGroupId,
+          fieldId,
+          itemId,
+          vt,
+          v,
+        );
       };
     },
     [props],
@@ -28,7 +40,12 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const handleTextUpdate = useCallback(
     (text: string) => {
       if (!block?.propertyId) return;
-      handlePropertyValueUpdate("default", block?.propertyId, "text", "string")(text);
+      handlePropertyValueUpdate(
+        "default",
+        block?.propertyId,
+        "text",
+        "string",
+      )(text);
     },
     [block?.propertyId, handlePropertyValueUpdate],
   );
@@ -41,7 +58,8 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
       propertyId={block?.propertyId}
       property={block?.property}
       settingsEnabled={false}
-      {...props}>
+      {...props}
+    >
       <MdEditor text={text} onUpdate={handleTextUpdate} />
     </BlockWrapper>
   );

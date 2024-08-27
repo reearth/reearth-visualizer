@@ -1,6 +1,5 @@
-import { FC } from "react";
-
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 export type RadioProps = {
   value?: string;
@@ -10,7 +9,13 @@ export type RadioProps = {
   onChange?: (value: string) => void;
 };
 
-export const Radio: FC<RadioProps> = ({ value, label, disabled, checked, onChange }) => {
+export const Radio: FC<RadioProps> = ({
+  value,
+  label,
+  disabled,
+  checked,
+  onChange,
+}) => {
   const handleChange = () => {
     if (disabled) return;
     onChange?.(value || "");
@@ -39,21 +44,25 @@ const RadioWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
 }));
 
-const RadioIndicator = styled("div")<{ checked?: boolean }>(({ checked, theme }) => ({
-  width: "6px",
-  height: "6px",
-  borderRadius: "50%",
-  background: checked ? theme.select.main : theme.content.main,
-}));
+const RadioIndicator = styled("div")<{ checked?: boolean }>(
+  ({ checked, theme }) => ({
+    width: "6px",
+    height: "6px",
+    borderRadius: "50%",
+    background: checked ? theme.select.main : theme.content.main,
+  }),
+);
 
-const RadioLabel = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => ({
-  color: disabled ? theme.content.weak : theme.content.main,
-  fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
-  minWidth: "40px",
-  cursor: disabled ? "not-allowed" : "pointer",
-  flexGrow: 1,
-}));
+const RadioLabel = styled("div")<{ disabled?: boolean }>(
+  ({ disabled, theme }) => ({
+    color: disabled ? theme.content.weak : theme.content.main,
+    fontSize: theme.fonts.sizes.body,
+    fontWeight: theme.fonts.weight.regular,
+    minWidth: "40px",
+    cursor: disabled ? "not-allowed" : "pointer",
+    flexGrow: 1,
+  }),
+);
 
 const RadioInput = styled("input")(() => ({
   position: "absolute",
@@ -70,8 +79,8 @@ const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
     border: disabled
       ? `1px solid ${theme.content.weak}`
       : checked
-      ? `1px solid ${theme.select.main}`
-      : `1px solid ${theme.content.main}`,
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.content.main}`,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

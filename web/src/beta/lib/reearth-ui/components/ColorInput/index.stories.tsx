@@ -15,21 +15,21 @@ export const Default: Story = {
 };
 
 export const AlphaDisabled: Story = {
-  render: arg => <ColorInput onChange={action("onChange")} {...arg} />,
+  render: (arg) => <ColorInput onChange={action("onChange")} {...arg} />,
   args: {
     alphaDisabled: true,
   },
 };
 
 export const Disabled: Story = {
-  render: arg => <ColorInput {...arg} />,
+  render: (arg) => <ColorInput {...arg} />,
   args: {
     disabled: true,
   },
 };
 
 export const Small: Story = {
-  render: arg => <ColorInput onChange={action("onChange")} {...arg} />,
+  render: (arg) => <ColorInput onChange={action("onChange")} {...arg} />,
   args: {
     size: "small",
   },

@@ -1,13 +1,18 @@
 import { useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
+import { useCallback, useMemo } from "react";
 
 import { Scene as GqlScene } from "../gql";
 
 import { PluginExtensionType } from "./pluginsApi";
 
-export type ScenePropertyCollection = "main" | "tiles" | "terrain" | "globe" | "sky" | "camera";
+export type ScenePropertyCollection =
+  | "main"
+  | "tiles"
+  | "terrain"
+  | "globe"
+  | "sky"
+  | "camera";
 
 export type ScenePlugin = {
   id?: string;

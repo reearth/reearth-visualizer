@@ -1,10 +1,17 @@
-import { debounce } from "lodash-es";
-import { useContext, useCallback, useLayoutEffect, useRef, useMemo, useState, FC } from "react";
-
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { Markdown } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { debounce } from "lodash-es";
+import {
+  useContext,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useMemo,
+  useState,
+  FC,
+} from "react";
 
 export type Props = {
   text: string;
@@ -18,7 +25,10 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
 
   const [value, setValue] = useState(text);
 
-  const debouncedHandleTextUpdate = useMemo(() => debounce(onUpdate, 1000), [onUpdate]);
+  const debouncedHandleTextUpdate = useMemo(
+    () => debounce(onUpdate, 1000),
+    [onUpdate],
+  );
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,9 +47,15 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
   }, [value, context?.editMode]);
 
   return context?.editMode ? (
-    <StyledTextArea placeholder={t("Add markdown text here")} value={value} onChange={onChange} />
+    <StyledTextArea
+      placeholder={t("Add markdown text here")}
+      value={value}
+      onChange={onChange}
+    />
   ) : (
-    <StyledMarkdown empty={!value}>{value || t("Add markdown text here")}</StyledMarkdown>
+    <StyledMarkdown empty={!value}>
+      {value || t("Add markdown text here")}
+    </StyledMarkdown>
   );
 };
 

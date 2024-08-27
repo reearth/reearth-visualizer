@@ -1,9 +1,14 @@
-import { memo } from "react";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { PublishTheme, styled } from "@reearth/services/theme";
+import { memo } from "react";
 
-import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL } from "./constants";
+import {
+  EPOCH_SEC,
+  STRONG_SCALE_WIDTH,
+  NORMAL_SCALE_WIDTH,
+  PADDING_HORIZONTAL,
+} from "./constants";
 import { formatDateForTimeline } from "./utils";
 
 type Props = {
@@ -11,7 +16,11 @@ type Props = {
   gapHorizontal: number;
 } & ScaleListInnerProps;
 
-const ScaleList: React.FC<Props> = ({ publishedTheme, gapHorizontal, ...props }) => {
+const ScaleList: React.FC<Props> = ({
+  publishedTheme,
+  gapHorizontal,
+  ...props
+}) => {
   return (
     <ScaleContainer style={{ gap: `0 ${gapHorizontal}px` }}>
       <ScaleListInner publishedTheme={publishedTheme} {...props} />
@@ -28,50 +37,55 @@ type ScaleListInnerProps = {
   strongScaleMinutes: number;
 };
 
-const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPresenter({
-  publishedTheme,
-  start,
-  scaleCount,
-  hoursCount,
-  scaleInterval,
-  strongScaleMinutes,
-}) {
-  const lastStrongScaleIdx = scaleCount - strongScaleMinutes;
-  return (
-    <>
-      {[...Array(scaleCount + 1)].map((_, idx) => {
-        const isHour = idx % hoursCount === 0;
-        const isStrongScale = idx % strongScaleMinutes === 0;
-        if (isStrongScale && idx < lastStrongScaleIdx) {
-          const label = formatDateForTimeline(start.getTime() + idx * EPOCH_SEC * scaleInterval, {
-            detail: true,
-          });
+const ScaleListInner: React.FC<ScaleListInnerProps> = memo(
+  function ScaleListPresenter({
+    publishedTheme,
+    start,
+    scaleCount,
+    hoursCount,
+    scaleInterval,
+    strongScaleMinutes,
+  }) {
+    const lastStrongScaleIdx = scaleCount - strongScaleMinutes;
+    return (
+      <>
+        {[...Array(scaleCount + 1)].map((_, idx) => {
+          const isHour = idx % hoursCount === 0;
+          const isStrongScale = idx % strongScaleMinutes === 0;
+          if (isStrongScale && idx < lastStrongScaleIdx) {
+            const label = formatDateForTimeline(
+              start.getTime() + idx * EPOCH_SEC * scaleInterval,
+              {
+                detail: true,
+              },
+            );
 
-          return (
-            <LabeledScale key={idx}>
-              <ScaleLabel size="footnote" publishedTheme={publishedTheme}>
+            return (
+              <LabeledScale key={idx}>
+                <ScaleLabel size="footnote" publishedTheme={publishedTheme}>
                 {label}
               </ScaleLabel>
-              <Scale
-                isHour={isHour}
-                isStrongScale={isStrongScale}
-                publishedTheme={publishedTheme}
-              />
-            </LabeledScale>
+                <Scale
+                  isHour={isHour}
+                  isStrongScale={isStrongScale}
+                  publishedTheme={publishedTheme}
+                />
+              </LabeledScale>
+            );
+          }
+          return (
+            <Scale
+              key={idx}
+              isHour={isHour}
+              isStrongScale={isStrongScale}
+              publishedTheme={publishedTheme}
+            />
           );
-        }
-        return (
-          <Scale
-            key={idx}
-            isHour={isHour}
-            isStrongScale={isStrongScale}
-            publishedTheme={publishedTheme}
-          />
-        );
-      })}
-    </>
-  );
-});
+        })}
+      </>
+    );
+  },
+);
 
 export type StyledColorProps = {
   publishedTheme: PublishTheme | undefined;

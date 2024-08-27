@@ -28,10 +28,10 @@ export async function fetchAndZipFiles(urls: string[], zipFileName: string) {
 
   await zip
     .generateAsync({ type: "blob" })
-    .then(blob => {
+    .then((blob) => {
       file = new File([blob], zipFileName);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error generating ZIP file:", error);
     });
 

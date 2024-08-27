@@ -1,6 +1,5 @@
-import { FC, useRef } from "react";
-
 import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
+import { FC, useRef } from "react";
 
 import { useMapPage } from "./context";
 import InspectorPanel from "./InspectorPanel";
@@ -19,7 +18,11 @@ const Map: FC = () => {
   return (
     <Window ref={windowRef}>
       <Area extend asWrapper>
-        <Area direction="column" resizableEdge="right" storageId="editor-map-left-area">
+        <Area
+          direction="column"
+          resizableEdge="right"
+          storageId="editor-map-left-area"
+        >
           <ScenePanel />
           <LayersPanel />
         </Area>
@@ -27,20 +30,27 @@ const Map: FC = () => {
           <Area initialHeight={34}>
             <ToolsPanel />
           </Area>
-          <Area extend onResize={handleVisualizerResize} windowRef={windowRef} passive />
+          <Area
+            extend
+            onResize={handleVisualizerResize}
+            windowRef={windowRef}
+            passive
+          />
         </Area>
         <Area
           direction="column"
           resizableEdge="left"
           storageId="editor-map-sec-right-area"
-          ref={secRightAreaRef}>
+          ref={secRightAreaRef}
+        >
           <InspectorPanel showCollapseArea areaRef={secRightAreaRef} />
         </Area>
         <Area
           direction="column"
           resizableEdge="left"
           storageId="editor-map-right-area"
-          ref={rightAreaRef}>
+          ref={rightAreaRef}
+        >
           <LayerStylePanel showCollapseArea areaRef={rightAreaRef} />
         </Area>
       </Area>

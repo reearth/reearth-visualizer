@@ -3,7 +3,11 @@ import { useRef, useMemo, useCallback } from "react";
 
 export type ClientStorage = {
   getAsync: (extensionInstanceId: string, key: string) => Promise<any>;
-  setAsync: (extensionInstanceId: string, key: string, value: any) => Promise<void>;
+  setAsync: (
+    extensionInstanceId: string,
+    key: string,
+    value: any,
+  ) => Promise<void>;
   deleteAsync: (extensionInstanceId: string, key: string) => Promise<void>;
   keysAsync: (extensionInstanceId: string) => Promise<string[]>;
   dropStore: (extensionInstanceId: string) => Promise<void>;
@@ -101,7 +105,9 @@ export default () => {
                 resolve(value);
               })
               .catch((err: any) => {
-                console.log(`err get client storage keys for ${extensionInstanceId}: ${err}`);
+                console.log(
+                  `err get client storage keys for ${extensionInstanceId}: ${err}`,
+                );
                 reject();
               });
           }
@@ -118,7 +124,9 @@ export default () => {
               .dropInstance()
               .then(() => resolve())
               .catch((err: any) => {
-                console.log(`err drop client storage for ${extensionInstanceId}: ${err}`);
+                console.log(
+                  `err drop client storage for ${extensionInstanceId}: ${err}`,
+                );
                 reject();
               })
               .finally(() => {

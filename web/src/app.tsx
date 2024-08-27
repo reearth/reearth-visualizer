@@ -1,8 +1,8 @@
-import { Suspense } from "react";
 
 import GlobalModal from "@reearth/beta/features/GlobalModal";
 import NotificationBanner from "@reearth/beta/features/Notification";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
+import { Suspense } from "react";
 
 import { Loading } from "./beta/lib/reearth-ui";
 import { AuthProvider } from "./services/auth";
@@ -16,7 +16,9 @@ export default function App() {
       <GqlProvider>
         <ThemeProvider>
           <I18nProvider>
-            <Suspense fallback={<Loading animationSize={80} animationColor="#3B3CD0" />}>
+            <Suspense
+              fallback={<Loading animationSize={80} animationColor="#3B3CD0" />}
+            >
               <NotificationBanner />
               <GlobalModal />
               <AppRoutes />

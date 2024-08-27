@@ -12,7 +12,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-const Template: Story<Props> = args => (
+const Template: Story<Props> = (args) => (
   <div style={{ width: "100%", height: "100%" }}>
     <Component {...args} />
   </div>

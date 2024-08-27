@@ -1,7 +1,6 @@
-import { FC, useCallback, useMemo, useState } from "react";
-
 import { NumberInput, NumberInputProps } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
@@ -34,7 +33,10 @@ const SpacingField: FC<SpacingFieldProps> = ({
   );
 
   const processedSpacingValues = useMemo(
-    () => spacingPosition.map(position => spacingValues[position as keyof SpacingValues]),
+    () =>
+      spacingPosition.map(
+        (position) => spacingValues[position as keyof SpacingValues],
+      ),
     [spacingValues],
   );
 
@@ -53,7 +55,9 @@ const SpacingField: FC<SpacingFieldProps> = ({
       <CenteredInput key={index} position={position}>
         <NumberInput
           value={processedSpacingValues[index]}
-          onChange={value => handleChange(position as keyof SpacingValues, value)}
+          onChange={(value) =>
+            handleChange(position as keyof SpacingValues, value)
+          }
           onBlur={handleBlur}
           unit="px"
           {...props}

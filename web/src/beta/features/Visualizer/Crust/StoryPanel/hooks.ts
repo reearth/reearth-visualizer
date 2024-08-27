@@ -1,18 +1,37 @@
-import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-
-import type { Story, StoryPage } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
+import type {
+  Story,
+  StoryPage,
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 import { useVisualizer } from "@reearth/core";
+import {
+  Ref,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { MapRef } from "../../Crust/types";
 
-import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
+import {
+  DEFAULT_STORY_PAGE_DURATION,
+  STORY_PANEL_CONTENT_ELEMENT_ID,
+} from "./constants";
 import { formatISO8601 } from "./utils";
 
-export type { Story, StoryPage } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
+export type {
+  Story,
+  StoryPage,
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 
 export type StoryPanelRef = {
   currentPageId?: string;
-  handleCurrentPageChange: (pageId?: string, disableScrollIntoView?: boolean) => void;
+  handleCurrentPageChange: (
+    pageId?: string,
+    disableScrollIntoView?: boolean,
+  ) => void;
 };
 
 export default (
@@ -49,7 +68,7 @@ export default (
 
   const handlePageSettingsToggle = useCallback(() => {
     if (!selectedPageId && !isEditable) return;
-    setShowPageSettings(show => !show);
+    setShowPageSettings((show) => !show);
   }, [selectedPageId, isEditable]);
 
   const handlePageSelect = useCallback(
@@ -65,7 +84,8 @@ export default (
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
-      if (!isEditable || blockId === selectedBlockId || disableSelection) return;
+      if (!isEditable || blockId === selectedBlockId || disableSelection)
+        return;
       if (selectedPageId) {
         setSelectedPageId(undefined);
       }
@@ -87,7 +107,8 @@ export default (
       return visualizer?.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
         payload: {
-          start: visualizer?.current?.timeline?.current?.computedTimeline?.start,
+          start:
+            visualizer?.current?.timeline?.current?.computedTimeline?.start,
           current: time,
           stop: visualizer?.current?.timeline?.current?.computedTimeline?.stop,
         },
@@ -101,7 +122,9 @@ export default (
     (page: StoryPage) => {
       const timePointField = page.property?.timePoint;
       if (!timePointField?.timePoint?.value) return;
-      return onTimeChange?.(new Date(formatISO8601(timePointField?.timePoint?.value) ?? ""));
+      return onTimeChange?.(
+        new Date(formatISO8601(timePointField?.timePoint?.value) ?? ""),
+      );
     },
     [onTimeChange],
   );
@@ -134,36 +157,52 @@ export default (
       const destination = cameraAnimation?.cameraPosition;
       if (!destination) return;
 
-      const duration = cameraAnimation?.cameraDuration ?? DEFAULT_STORY_PAGE_DURATION;
+      const duration =
+        cameraAnimation?.cameraDuration ?? DEFAULT_STORY_PAGE_DURATION;
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
-    [currentPageId, selectedStory?.pages, onStoryPageChange, handlePageTime, visualizer],
+    [
+      currentPageId,
+      selectedStory?.pages,
+      onStoryPageChange,
+      handlePageTime,
+      visualizer,
+    ],
   );
 
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];
     if ((pages?.length ?? 0) < 2) return;
 
-    const currentIndex = pages.findIndex(p => p.id === currentPageId);
+    const currentIndex = pages.findIndex((p) => p.id === currentPageId);
     return {
       currentPage: currentIndex + 1,
-      pageTitles: pages.map(p => p.property?.title?.title),
+      pageTitles: pages.map((p) => p.property?.title?.title),
       maxPage: pages.length,
-      onPageChange: (pageIndex: number) => handleCurrentPageChange(pages[pageIndex - 1]?.id),
+      onPageChange: (pageIndex: number) =>
+        handleCurrentPageChange(pages[pageIndex - 1]?.id),
     };
   }, [selectedStory, currentPageId, handleCurrentPageChange]);
 
   const handleLayerReset = useCallback(
     (vizRef?: MapRef | null) => {
       if (!vizRef) return;
-      const currentLayerIds = vizRef.layers.layers()?.map(l => l.id);
+      const currentLayerIds = vizRef.layers.layers()?.map((l) => l.id);
 
       const currentPage = getPage(currentPageId, selectedStory?.pages);
       if (currentPage) {
         if (currentLayerIds) {
-          vizRef.layers.show(...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)));
-          vizRef.layers.hide(...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)));
+          vizRef.layers.show(
+            ...currentLayerIds.filter((id) =>
+              currentPage.layerIds?.includes(id),
+            ),
+          );
+          vizRef.layers.hide(
+            ...currentLayerIds.filter(
+              (id) => !currentPage.layerIds?.includes(id),
+            ),
+          );
         }
       }
     },
@@ -184,7 +223,11 @@ export default (
       layers?.show(...(layerIds ?? []));
       const allLayers = layers?.layers() ?? [];
       // Hide the rest
-      layers?.hide(...(allLayers.map(({ id }) => id).filter(id => !layerIds?.includes(id)) ?? []));
+      layers?.hide(
+        ...(allLayers
+          .map(({ id }) => id)
+          .filter((id) => !layerIds?.includes(id)) ?? []),
+      );
     },
     [visualizer, layerOverride?.extensionId, handleLayerReset],
   );
@@ -201,7 +244,7 @@ export default (
   // On page change, update visible layers in the viz based on page's initial settings.
   useEffect(() => {
     const vizRef = visualizer?.current;
-    const currentLayerIds = vizRef?.layers.layers()?.map(l => l.id);
+    const currentLayerIds = vizRef?.layers.layers()?.map((l) => l.id);
     handleLayerReset(vizRef);
 
     return () => {
@@ -237,5 +280,5 @@ export default (
 const getPage = (id?: string, pages?: StoryPage[]) => {
   if (!pages?.length) return;
   if (!id) return pages[0]; // If no ID, set first page
-  return pages.find(p => p.id === id);
+  return pages.find((p) => p.id === id);
 };

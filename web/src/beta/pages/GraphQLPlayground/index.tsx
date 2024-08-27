@@ -1,9 +1,8 @@
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
-import { GraphiQL } from "graphiql";
-import { useEffect, useState } from "react";
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useAuth } from "@reearth/services/auth";
+import { GraphiQL } from "graphiql";
+import { useEffect, useState } from "react";
 import "graphiql/graphiql.css";
 import { styled } from "@reearth/services/theme";
 
@@ -15,7 +14,7 @@ export default function GraphQLPlayground(_: { path?: string }): JSX.Element {
   const { getAccessToken } = useAuth();
   const [headers, setHeaders] = useState<string>();
   useEffect(() => {
-    getAccessToken().then(a => {
+    getAccessToken().then((a) => {
       setHeaders(JSON.stringify({ Authorization: `Bearer ${a}` }, null, 2));
     });
   }, [getAccessToken]);

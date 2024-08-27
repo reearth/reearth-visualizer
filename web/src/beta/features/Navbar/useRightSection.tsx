@@ -1,9 +1,9 @@
-import { useMemo } from "react";
 
 import { useEditorNavigation } from "@reearth/beta/hooks/navigationHooks";
 import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
 
 import useDevPlugins from "./useDevPlugins";
 
@@ -18,8 +18,11 @@ type Props = {
 const useRightSide = ({ currentTab, page, sceneId }: Props) => {
   const t = useT();
   const handleEditorNavigation = useEditorNavigation({ sceneId });
-  const { devPluginExtensions, handleDevPluginsInstall, handleDevPluginExtensionsReload } =
-    useDevPlugins({ sceneId });
+  const {
+    devPluginExtensions,
+    handleDevPluginsInstall,
+    handleDevPluginExtensionsReload,
+  } = useDevPlugins({ sceneId });
 
   const rightSide = useMemo(() => {
     if (page === "editor") {

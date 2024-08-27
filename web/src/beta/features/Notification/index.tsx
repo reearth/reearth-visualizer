@@ -1,7 +1,7 @@
-import { FC } from "react";
 
 import { IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 
@@ -23,7 +23,8 @@ const NotificationBanner: FC = () => {
       visible={visible}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      type={notification?.type}>
+      type={notification?.type}
+    >
       <HeadingArea>
         <Typography size="body" color={theme.content.strong} weight="bold">
           {notification?.heading}
@@ -43,7 +44,8 @@ const NotificationBanner: FC = () => {
         <Typography
           size="footnote"
           color={theme.content.strong}
-          otherProperties={{ padding: "8px 0 0 0" }}>
+          otherProperties={{ padding: "8px 0 0 0" }}
+        >
           {notification?.text}
         </Typography>
       )}

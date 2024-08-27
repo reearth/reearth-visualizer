@@ -1,10 +1,12 @@
+import { type Layer } from "@reearth/core";
 import type { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject, RefObject } from "react";
 
-import { type Layer } from "@reearth/core";
-
-import type { InfoboxBlock as Block, InfoboxBlock } from "../../../Infobox/types";
+import type {
+  InfoboxBlock as Block,
+  InfoboxBlock,
+} from "../../../Infobox/types";
 import { StoryBlock } from "../../../StoryPanel/types";
 import type { MapRef } from "../../../types";
 import { useGet } from "../../../utils";
@@ -89,7 +91,7 @@ export function usePluginAPI({
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
 
-  const useEventRef = <T extends { [x: string]: any[] }>() =>
+  const useEventRef = <T extends Record<string, any[]>>() =>
     useRef<[Events<T>, EventEmitter<T>, (() => void) | undefined]>();
   const viewerEventsRef = useEventRef<ViewerEventType>();
   const selectionModeEventsRef = useEventRef<SelectionModeEventType>();
@@ -99,9 +101,12 @@ export function usePluginAPI({
   const sketchEventsRef = useEventRef<SketchEventType>();
 
   const uiEvents = useRef<[Events<UIEventType>, EventEmitter<UIEventType>]>();
-  const modalEvents = useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>();
-  const popupEvents = useRef<[Events<PopupEventType>, EventEmitter<PopupEventType>]>();
-  const extensionEvents = useRef<[Events<ExtensionEventType>, EventEmitter<ExtensionEventType>]>();
+  const modalEvents =
+    useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>();
+  const popupEvents =
+    useRef<[Events<PopupEventType>, EventEmitter<PopupEventType>]>();
+  const extensionEvents =
+    useRef<[Events<ExtensionEventType>, EventEmitter<ExtensionEventType>]>();
 
   const pluginMessageSender = useCallback((msg: any) => {
     extensionEvents.current?.[1]("extensionMessage", msg);
@@ -138,15 +143,29 @@ export function usePluginAPI({
 
     initAndMergeEvents(ctx.cameraEvents, cameraEventsRef, ["move"]);
 
-    initAndMergeEvents(ctx.timelineEvents, timelineEventsRef, ["tick", "commit"]);
+    initAndMergeEvents(ctx.timelineEvents, timelineEventsRef, [
+      "tick",
+      "commit",
+    ]);
 
-    initAndMergeEvents(ctx.layersEvents, layersEventsRef, ["select", "edit", "visible", "load"]);
+    initAndMergeEvents(ctx.layersEvents, layersEventsRef, [
+      "select",
+      "edit",
+      "visible",
+      "load",
+    ]);
 
-    initAndMergeEvents(ctx.sketchEvents, sketchEventsRef, ["create", "toolChange"]);
+    initAndMergeEvents(ctx.sketchEvents, sketchEventsRef, [
+      "create",
+      "toolChange",
+    ]);
 
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
-      ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+      ctx?.pluginInstances.addPluginMessageSender(
+        instanceId,
+        pluginMessageSender,
+      );
       ctx.pluginInstances.runTimesCache.increment(instanceId);
     }
   }, [
@@ -225,7 +244,9 @@ export function usePluginAPI({
     [mapRef],
   );
 
-  const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
+  const staticExposed = useMemo(():
+    | ((api: IFrameAPI) => GlobalThis)
+    | undefined => {
     return ({ main, modal, popup, messages, startEventLoop }: IFrameAPI) => {
       return exposedReearth({
         commonReearth: ctx.reearth,
@@ -262,7 +283,9 @@ export function usePluginAPI({
         render: (html, { extended, ...options } = {}) => {
           main.render(html, options);
           onRender?.(
-            typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
+            typeof extended !== "undefined" || options
+              ? { extended, ...options }
+              : undefined,
           );
           setUIVisibility(true);
         },
@@ -295,7 +318,7 @@ export function usePluginAPI({
         closeModal: () => {
           onPluginModalShow?.();
         },
-        updateModal: options => {
+        updateModal: (options) => {
           modal.resize(options.width, options.height);
           onPluginModalShow?.({
             id: widget?.id ?? block?.id,
@@ -340,7 +363,7 @@ export function usePluginAPI({
         closePopup: () => {
           onPluginPopupShow?.();
         },
-        updatePopup: options => {
+        updatePopup: (options) => {
           const opt = { ...options, position: options?.position ?? "bottom" };
           if (options.width !== undefined || options.height !== undefined) {
             popup.resize(options.width, options.height);
@@ -439,9 +462,11 @@ export function usePluginAPI({
   };
 }
 
-function initAndMergeEvents<T extends { [x: string]: any[] }>(
+function initAndMergeEvents<T extends Record<string, any[]>>(
   ctxEvents: Events<T> | undefined,
-  eventsRef: MutableRefObject<[Events<T>, EventEmitter<T>, (() => void) | undefined] | undefined>,
+  eventsRef: MutableRefObject<
+    [Events<T>, EventEmitter<T>, (() => void) | undefined] | undefined
+  >,
   eventKeys: (keyof T)[],
 ) {
   const e = events<T>();

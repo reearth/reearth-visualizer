@@ -1,8 +1,12 @@
-import { FC, MouseEvent, useMemo } from "react";
-
-import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  PopupMenu,
+  TextInput,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { convertTimeToString } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, MouseEvent, useMemo } from "react";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -46,22 +50,24 @@ const ProjectListViewItem: FC<ProjectProps> = ({
 
   return (
     <StyledRow
-      onClick={e => onProjectSelect?.(e, project.id)}
+      onClick={(e) => onProjectSelect?.(e, project.id)}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
       onMouseEnter={() => handleProjectHover?.(true)}
       onMouseLeave={() => handleProjectHover?.(false)}
-      isSelected={selectedProjectId === project.id}>
+      isSelected={selectedProjectId === project.id}
+    >
       <ActionCell>
         <FlexItem>
           <StarButtonWrapper
             isStarred={isStarred ?? false}
             isHovered={isHovered ?? false}
-            isSelected={selectedProjectId === project.id}>
+            isSelected={selectedProjectId === project.id}
+          >
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
-              onClick={e => handleProjectStarClick?.(e)}
+              onClick={(e) => handleProjectStarClick?.(e)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
             />
@@ -72,7 +78,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
       <ProjectNameCell>
         <PublishStatus status={publishStatus} />
         {!isEditing ? (
-          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>{projectName}</TitleWrapper>
+          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
+            {projectName}
+          </TitleWrapper>
         ) : (
           <TextInput
             onChange={handleProjectNameChange}
@@ -92,10 +100,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
       <ActionCell
         onClick={(e: MouseEvent) => {
           e.stopPropagation();
-        }}>
+        }}
+      >
         <PopupMenu
           menu={popupMenu}
-          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
+          label={
+            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+          }
         />
       </ActionCell>
     </StyledRow>
@@ -118,7 +129,9 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
 
 const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
   ({ theme, backgroundImage }) => ({
-    background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
+    background: backgroundImage
+      ? `url(${backgroundImage}) center/cover`
+      : theme.bg[1],
     borderRadius: theme.radius.normal,
     height: "32px",
     width: "55px",
@@ -142,12 +155,14 @@ const ProjectNameCell = styled("div")(({ theme }) => ({
   flex: 1,
 }));
 
-const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) => ({
-  height: "12px",
-  width: "12px",
-  borderRadius: "50%",
-  background: status ? theme.publish.main : "transparent",
-}));
+const PublishStatus = styled("div")<{ status?: boolean }>(
+  ({ status, theme }) => ({
+    height: "12px",
+    width: "12px",
+    borderRadius: "50%",
+    background: status ? theme.publish.main : "transparent",
+  }),
+);
 
 const TimeCell = styled("div")(() => ({
   flex: 0.5,

@@ -15,8 +15,8 @@ export const useManageSwitchState = <T,>({ fields }: Props<T>) => {
     setFieldsState(fields);
   }, [fields]);
   const handleActivate = useCallback((id: string) => {
-    setFieldsState(f =>
-      f.map(v => ({
+    setFieldsState((f) =>
+      f.map((v) => ({
         ...v,
         active: v.id === id,
       })),

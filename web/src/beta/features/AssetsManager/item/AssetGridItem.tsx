@@ -1,13 +1,19 @@
-import { FC, MouseEvent, useCallback, useMemo } from "react";
-
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, MouseEvent, useCallback, useMemo } from "react";
 
 import { AssetItemProps } from "./type";
 import { getAssetType } from "./utils";
 
-const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }) => {
-  const selected = useMemo(() => selectedAssetIds.includes(asset.id), [selectedAssetIds, asset.id]);
+const AssetGridItem: FC<AssetItemProps> = ({
+  asset,
+  selectedAssetIds,
+  onSelect,
+}) => {
+  const selected = useMemo(
+    () => selectedAssetIds.includes(asset.id),
+    [selectedAssetIds, asset.id],
+  );
 
   const type = useMemo(() => getAssetType(asset), [asset]);
 
@@ -32,7 +38,9 @@ const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
           ) : (
             <IconWrapper>
               <Icon icon="fileFilled" color={theme.content.weak} size={64} />
-              <StyledTypography size="body">{ext?.toUpperCase()}</StyledTypography>
+              <StyledTypography size="body">
+                {ext?.toUpperCase()}
+              </StyledTypography>
             </IconWrapper>
           )}
         </Thumbnail>
@@ -46,22 +54,24 @@ const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
 
 export default AssetGridItem;
 
-const Wrapper = styled("div")<{ selected?: boolean }>(({ theme, selected }) => ({
-  display: "flex",
-  flexDirection: "column",
-  boxSizing: "border-box",
-  width: "100%",
-  padding: theme.spacing.smallest,
-  borderRadius: theme.radius.small,
-  gap: theme.spacing.smallest,
-  cursor: "pointer",
-  backgroundColor: selected ? theme.select.main : "transparent",
-  transition: "background-color 0.1s ease",
-  ["&:hover"]: {
-    background: selected ? theme.select.main : theme.relative.light,
+const Wrapper = styled("div")<{ selected?: boolean }>(
+  ({ theme, selected }) => ({
+    display: "flex",
+    flexDirection: "column",
+    boxSizing: "border-box",
+    width: "100%",
+    padding: theme.spacing.smallest,
     borderRadius: theme.radius.small,
-  },
-}));
+    gap: theme.spacing.smallest,
+    cursor: "pointer",
+    backgroundColor: selected ? theme.select.main : "transparent",
+    transition: "background-color 0.1s ease",
+    ["&:hover"]: {
+      background: selected ? theme.select.main : theme.relative.light,
+      borderRadius: theme.radius.small,
+    },
+  }),
+);
 
 const ThumbnailWrapper = styled("div")(() => ({
   position: "relative",

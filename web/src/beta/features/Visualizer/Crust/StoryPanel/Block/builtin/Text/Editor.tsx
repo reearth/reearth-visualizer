@@ -1,8 +1,7 @@
-import { debounce } from "lodash-es";
-import { useMemo, useContext, useCallback, FC } from "react";
-
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
+import { debounce } from "lodash-es";
+import { useMemo, useContext, useCallback, FC } from "react";
 
 export type Props = {
   text?: string;
@@ -18,13 +17,31 @@ export type Props = {
   ) => Promise<void>;
 };
 
-const TextBlockEditor: FC<Props> = ({ text, propertyId, isEditable, onPropertyUpdate }) => {
+const TextBlockEditor: FC<Props> = ({
+  text,
+  propertyId,
+  isEditable,
+  onPropertyUpdate,
+}) => {
   const context = useContext(BlockContext);
 
   const handlePropertyValueUpdate = useCallback(
-    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: any,
+      itemId?: string,
+    ) => {
       return async (v?: any) => {
-        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+        await onPropertyUpdate?.(
+          propertyId,
+          schemaGroupId,
+          fieldId,
+          itemId,
+          vt,
+          v,
+        );
       };
     },
     [onPropertyUpdate],

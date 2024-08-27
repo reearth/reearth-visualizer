@@ -1,9 +1,8 @@
-import { FC, useCallback } from "react";
-
 import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback } from "react";
 
 import { useMapPage } from "../context";
 
@@ -29,7 +28,10 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const t = useT();
 
   const handleLayerStyleAddition = useCallback(() => {
-    handleLayerStyleAdd({ name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`, value: {} });
+    handleLayerStyleAdd({
+      name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`,
+      value: {},
+    });
   }, [layerStyles?.length, t, handleLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
@@ -56,7 +58,8 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       alwaysOpen
       storageId="editor-map-scene-panel"
       showCollapseArea={showCollapseArea}
-      areaRef={areaRef}>
+      areaRef={areaRef}
+    >
       <LayerStyleManager onClick={() => handleSelectLayerStyle(undefined)}>
         <ActionsWrapper>
           <IconButton
@@ -75,7 +78,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
         </ActionsWrapper>
         <StylesWrapper>
           <StylesGrid>
-            {layerStyles?.map(layerStyle => (
+            {layerStyles?.map((layerStyle) => (
               <LayerStyleItem
                 id={layerStyle.id}
                 key={layerStyle.id}

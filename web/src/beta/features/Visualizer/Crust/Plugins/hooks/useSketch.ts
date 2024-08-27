@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-
 import { SketchOptions, SketchType } from "@reearth/core";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { SketchEventType } from "../pluginAPI/types";
 import { Props } from "../types";
@@ -10,18 +9,29 @@ export default ({
   mapRef,
   onSketchPluginFeatureCreate,
   onSketchTypeChange,
-}: Pick<Props, "mapRef" | "onSketchPluginFeatureCreate" | "onSketchTypeChange">) => {
-  const getSketchTool = useCallback(() => mapRef?.current?.sketch?.getType(), [mapRef]);
-
-  const setSketchTool = useCallback(
-    (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
+}: Pick<
+  Props,
+  "mapRef" | "onSketchPluginFeatureCreate" | "onSketchTypeChange"
+>) => {
+  const getSketchTool = useCallback(
+    () => mapRef?.current?.sketch?.getType(),
     [mapRef],
   );
 
-  const getSketchOptions = useCallback(() => mapRef?.current?.sketch?.getOptions(), [mapRef]);
+  const setSketchTool = useCallback(
+    (type: SketchType | undefined) =>
+      mapRef?.current?.sketch?.setType(type, "plugin"),
+    [mapRef],
+  );
+
+  const getSketchOptions = useCallback(
+    () => mapRef?.current?.sketch?.getOptions(),
+    [mapRef],
+  );
 
   const overrideSketchOptions = useCallback(
-    (options: SketchOptions) => mapRef?.current?.sketch?.overrideOptions(options),
+    (options: SketchOptions) =>
+      mapRef?.current?.sketch?.overrideOptions(options),
     [mapRef],
   );
 
@@ -29,8 +39,11 @@ export default ({
 
   const sketchPluginFeatureCreateEventBinded = useRef(false);
   useEffect(() => {
-    if (!sketchPluginFeatureCreateEventBinded.current && onSketchPluginFeatureCreate) {
-      onSketchPluginFeatureCreate?.(e => {
+    if (
+      !sketchPluginFeatureCreateEventBinded.current &&
+      onSketchPluginFeatureCreate
+    ) {
+      onSketchPluginFeatureCreate?.((e) => {
         emit("create", e);
       });
       sketchPluginFeatureCreateEventBinded.current = true;
@@ -40,7 +53,7 @@ export default ({
   const sketchTypeChangeEventBinded = useRef(false);
   useEffect(() => {
     if (!sketchTypeChangeEventBinded.current && onSketchTypeChange) {
-      onSketchTypeChange?.(e => {
+      onSketchTypeChange?.((e) => {
         emit("toolChange", e);
       });
       sketchTypeChangeEventBinded.current = true;
@@ -53,13 +66,18 @@ export default ({
       callback: (...args: SketchEventType[T]) => void,
       options?: { once?: boolean },
     ) => {
-      return options?.once ? sketchEvents.once(type, callback) : sketchEvents.on(type, callback);
+      return options?.once
+        ? sketchEvents.once(type, callback)
+        : sketchEvents.on(type, callback);
     },
     [sketchEvents],
   );
 
   const sketchEventsOff = useCallback(
-    <T extends keyof SketchEventType>(type: T, callback: (...args: SketchEventType[T]) => void) => {
+    <T extends keyof SketchEventType>(
+      type: T,
+      callback: (...args: SketchEventType[T]) => void,
+    ) => {
       return sketchEvents.off(type, callback);
     },
     [sketchEvents],

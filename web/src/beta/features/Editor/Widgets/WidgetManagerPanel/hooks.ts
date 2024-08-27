@@ -1,6 +1,5 @@
-import { useCallback } from "react";
-
 import { useWidgetsFetcher } from "@reearth/services/api";
+import { useCallback } from "react";
 
 import { SelectedWidget } from "../../hooks/useWidgets";
 
@@ -36,7 +35,7 @@ export default ({ sceneId, selectWidget }: Props) => {
   );
 
   const handleWidgetSelection = (id: string) => {
-    const w = installedWidgets?.find(w => w.id === id);
+    const w = installedWidgets?.find((w) => w.id === id);
     if (!w) return;
     selectWidget({
       id: w.id,

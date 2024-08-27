@@ -1,10 +1,11 @@
+import { Camera } from "@reearth/beta/utils/value";
 import { useCallback, useEffect, useState } from "react";
 
-import { Camera } from "@reearth/beta/utils/value";
+export const degreesToRadians = (degrees: number): number =>
+  degrees * (Math.PI / 180);
 
-export const degreesToRadians = (degrees: number): number => degrees * (Math.PI / 180);
-
-export const radiansToDegrees = (radians: number): number => radians * (180 / Math.PI);
+export const radiansToDegrees = (radians: number): number =>
+  radians * (180 / Math.PI);
 
 export const handleCameraeRadianToDegree = (camera: Camera) => ({
   lat: camera.lat,
@@ -60,7 +61,7 @@ export default ({
   );
 
   const handleFieldChange = useCallback((key: keyof Camera, value?: number) => {
-    setNewCamera(prev => (prev ? { ...prev, [key]: value } : undefined));
+    setNewCamera((prev) => (prev ? { ...prev, [key]: value } : undefined));
   }, []);
 
   const handleSave = useCallback(() => {
