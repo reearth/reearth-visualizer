@@ -1353,28 +1353,28 @@ extensions:
           padding:
             title: 余白
   videoInfoboxBetaBlock:
-    name: Video
-    description: Infobox Video Block
+    name: ビデオ
+    description: インフォボックスビデオブロック
     propertySchema:
       default:
-        title: Video Block
+        title: ビデオブロック
         fields:
           src:
-            title: Video
+            title: ビデオ
       panel:
         title: パネル設定
         fields:
           padding:
             title: 余白
   markdownInfoboxBetaBlock:
-    name: MD Text
-    description: Infobox MD Text Block
-    propertySchema:      
+    name: MDテキスト
+    description: インフォボックスMDテキストブロック
+    propertySchema:
       default:
-        title: MD Text Block
+        title: MDテキストブロック
         fields:
           src:
-            title: Content
+            title: コンテンツ
       panel:
         title: パネル設定
         fields:
