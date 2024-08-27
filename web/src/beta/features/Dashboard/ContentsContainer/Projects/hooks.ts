@@ -42,26 +42,19 @@ export default (workspaceId?: string) => {
   const [sortValue, setSort] = useState<SortType>("date-updated");
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const {
-    projects,
-    loading,
-    isRefetching,
-    hasMoreProjects,
-    endCursor,
-    fetchMore,
-  } = useProjectsQuery({
-    teamId: workspaceId || "",
-    pagination: {
-      first: pagination(sortValue).first,
-    },
-    sort: pagination(sortValue).sortBy,
-    keyword: searchTerm,
-  });
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { starredProjects } = useStarredProjectsQuery(workspaceId)
 
-  console.log("starredProjects", starredProjects)
+  const { projects, loading, isRefetching, hasMoreProjects, endCursor, fetchMore } =
+    useProjectsQuery({
+      teamId: workspaceId || "",
+      pagination: {
+        first: pagination(sortValue).first,
+      },
+      sort: pagination(sortValue).sortBy,
+      keyword: searchTerm,
+    });
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
@@ -131,15 +124,6 @@ export default (workspaceId?: string) => {
       setSearchTerm?.(value);
     }
   }, []);
-
-  // favourite projects
-  const favoriteProjects: Project[] = useMemo(
-    () =>
-      filtedProjects
-        ? filtedProjects.filter((project) => !!project?.starred)
-        : [],
-    [filtedProjects],
-  );
 
   // project create
   const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
@@ -217,17 +201,44 @@ export default (workspaceId?: string) => {
     setLayout(newView);
   }, []);
 
+  const [contentWidth, setContentWidth] = useState(0);
+
+  useEffect(() => {
+    const parentElement = wrapperRef.current;
+    const childElement = contentRef.current;
+
+    if (!parentElement || !childElement) return;
+    const checkSize = () => {
+      if (childElement && parentElement) {
+        setContentWidth(childElement.offsetWidth);
+      }
+    };
+
+    const parentObserver = new ResizeObserver(checkSize);
+    const childObserver = new ResizeObserver(checkSize);
+    parentObserver.observe(parentElement);
+    childObserver.observe(childElement);
+
+    checkSize();
+    return () => {
+      parentObserver.disconnect();
+      childObserver.disconnect();
+    };
+  }, []);
+
   return {
     filtedProjects,
     hasMoreProjects,
     isLoading,
     selectedProject,
     wrapperRef,
+    contentRef,
     layout,
     projectCreatorVisible,
-    favoriteProjects,
     searchTerm,
     sortValue,
+    contentWidth,
+    starredProjects,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,

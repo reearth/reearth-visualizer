@@ -119,7 +119,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.bold,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  wordBreak: "break-all",
 }));
 
 const PopupWrapper = styled("div")(() => ({}));

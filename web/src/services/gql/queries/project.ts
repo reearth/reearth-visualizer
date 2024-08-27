@@ -199,6 +199,9 @@ export const GET_STARRED_PROJECTS = gql(`
 					id
 					name
 					starred
+          scene {
+            id
+          }
 				}
 				totalCount
 			}

@@ -243,7 +243,7 @@ export default () => {
   );
 
   const [updateProjectMutation] = useMutation(UPDATE_PROJECT, {
-    refetchQueries: ["GetProject"],
+    refetchQueries: ["GetProject", "GetStarredProjects"],
   });
   const useUpdateProject = useCallback(
     async (input: UpdateProjectInput) => {

@@ -57,7 +57,7 @@ const LeftSidePanel: FC<Props> = ({
             />
           ))}
         </>
-        <StarredProject />
+        <StarredProject  workspaceId={currentWorkspace?.id}/>
       </SidebarSection>
       <SidebarSection>
         <>

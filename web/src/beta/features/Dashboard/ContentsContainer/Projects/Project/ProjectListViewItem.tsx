@@ -49,16 +49,15 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   });
 
   return (
-    <StyledRow
-      onClick={(e) => onProjectSelect?.(e, project.id)}
+    <ListWrapper
+      onClick={e => onProjectSelect?.(e, project.id)}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
       onMouseEnter={() => handleProjectHover?.(true)}
       onMouseLeave={() => handleProjectHover?.(false)}
-      isSelected={selectedProjectId === project.id}
-    >
-      <ActionCell>
-        <FlexItem>
+      isSelected={selectedProjectId === project.id}>
+      <ThumbnailCol>
+        <ActionWrapper>
           <StarButtonWrapper
             isStarred={isStarred ?? false}
             isHovered={isHovered ?? false}
@@ -73,9 +72,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
-        </FlexItem>
-      </ActionCell>
-      <ProjectNameCell>
+        </ActionWrapper>
+      </ThumbnailCol>
+      <ProjectNameCol>
         <PublishStatus status={publishStatus} />
         {!isEditing ? (
           <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
@@ -90,14 +89,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             appearance="present"
           />
         )}
-      </ProjectNameCell>
-      <TimeCell>
+      </ProjectNameCol>
+      <TimeCol>
         <Typography size="body">{convertTimeToString(UpdatedAt)}</Typography>
-      </TimeCell>
-      <TimeCell>
+      </TimeCol>
+      <TimeCol>
         <Typography size="body">{convertTimeToString(createAt)}</Typography>
-      </TimeCell>
-      <ActionCell
+      </TimeCol>
+      <ActionCol
         onClick={(e: MouseEvent) => {
           e.stopPropagation();
         }}
@@ -108,14 +107,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <Button icon="dotsThreeVertical" iconButton appearance="simple" />
           }
         />
-      </ActionCell>
-    </StyledRow>
+      </ActionCol>
+    </ListWrapper>
   );
 };
 
 export default ProjectListViewItem;
 
-const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
+const ListWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
   ({ theme, isHovered }) => ({
     display: "flex",
     width: "100%",
@@ -124,48 +123,21 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
     padding: `${theme.spacing.small}px 0`,
     alignItems: "center",
+    boxSizing: "border-box",
+    gap: theme.spacing.small,
+    overflow: "hidden",
   }),
 );
 
-const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
-  ({ theme, backgroundImage }) => ({
-    background: backgroundImage
-      ? `url(${backgroundImage}) center/cover`
-      : theme.bg[1],
-    borderRadius: theme.radius.normal,
-    height: "32px",
-    width: "55px",
-  }),
-);
+const ThumbnailCol = styled("div")(() => ({
+  flex: "0 0 10%",
+  flexShrink: 0,
+}));
 
-const FlexItem = styled("div")(({ theme }) => ({
+const ActionWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
-}));
-
-const ActionCell = styled("div")(() => ({
-  flex: 0.2,
-}));
-
-const ProjectNameCell = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.smallest,
-  flex: 1,
-}));
-
-const PublishStatus = styled("div")<{ status?: boolean }>(
-  ({ status, theme }) => ({
-    height: "12px",
-    width: "12px",
-    borderRadius: "50%",
-    background: status ? theme.publish.main : "transparent",
-  }),
-);
-
-const TimeCell = styled("div")(() => ({
-  flex: 0.5,
 }));
 
 const StarButtonWrapper = styled("div")<{
@@ -176,15 +148,47 @@ const StarButtonWrapper = styled("div")<{
   opacity: isSelected || isStarred || isHovered ? 1 : 0,
 }));
 
+const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
+  ({ theme, backgroundImage }) => ({
+    background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
+    borderRadius: theme.radius.normal,
+    height: "32px",
+    width: "55px",
+    flexShrink: 0,
+  }),
+);
+const ProjectNameCol = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.micro,
+  flex: "0 0 40%",
+  flexGrow: 1,
+}));
+
+const TimeCol = styled("div")(() => ({
+  flex: "0 0 20%",
+  flexShrink: 0,
+}));
+
+const ActionCol = styled("div")(() => ({
+  flex: "0 0 10%",
+  flexShrink: 0,
+}));
+
+const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) => ({
+  height: "12px",
+  width: "12px",
+  borderRadius: "50%",
+  background: status ? theme.publish.main : "transparent",
+}));
+
 const TitleWrapper = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.smallest + 1}px`,
   color: theme.content.main,
   cursor: "pointer",
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  display: "-webkit-box",
-  WebkitBoxOrient: "vertical",
-  WebkitLineClamp: 1,
+  wordBreak: "break-word",
   overflow: "hidden",
   textOverflow: "ellipsis",
 }));

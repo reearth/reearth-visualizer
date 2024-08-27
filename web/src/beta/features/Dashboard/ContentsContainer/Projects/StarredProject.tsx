@@ -1,31 +1,29 @@
-import { FC } from "react";
 
 import { Collapse, Icon } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
 
-import { Project } from "../../type";
+import useHooks from "./hooks";
 
-type StarredProjectProps = {
-  projects?: Project[];
-};
 
-const StarredProject: FC<StarredProjectProps> = () => {
+const StarredProject: FC<{workspaceId?: string }> = ({workspaceId}) => {
   const t = useT();
   const theme = useTheme();
+  const { starredProjects, handleProjectOpen } =  useHooks(workspaceId);
+
   return (
     <Wrapper>
       <Collapse iconPosition="left" title={t("Starred")} size="small" weight="bold">
         <ProjectsWrapper>
-          <Item>
-            <IconWrapper icon="notebook" color={theme.content.weak} />
-            <TitleWrapper>Project A</TitleWrapper>
-          </Item>
-
-          <Item>
-            <IconWrapper icon="notebook" color={theme.content.weak} />
-            <TitleWrapper>Project B</TitleWrapper>
-          </Item>
+          {
+            starredProjects?.map(statredProject => (
+              <Item onClick={() => handleProjectOpen(statredProject?.scene?.id)}>
+                <IconWrapper icon="notebook" color={theme.content.weak} />
+                <TitleWrapper>{statredProject?.name}</TitleWrapper>
+              </Item>
+            ) )
+          }
         </ProjectsWrapper>
       </Collapse>
     </Wrapper>
@@ -52,10 +50,18 @@ const Item = styled("div")(({ theme }) => ({
   padding: theme.spacing.small,
   alignItems: "center",
   alignSelf: "stretch",
+  cursor: "pointer",
+  "&:hover":{
+    backgroundColor: theme.bg[2],
+    borderRadius: theme.radius.small,
+
+  }
 }));
+
 const IconWrapper = styled(Icon)(() => ({
   flexShrink: 0,
 }));
+
 const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
