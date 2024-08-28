@@ -54,10 +54,12 @@ const Widget = styled.div<{
   opened?: boolean;
 }>`
   max-width: 100vw;
-  width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "720px" : "auto")};
+  width: ${({ extended, opened }) =>
+    extended && opened ? "100%" : opened ? "720px" : "auto"};
 
   @media (max-width: 768px) {
-    width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "90vw" : "auto")};
+    width: ${({ extended, opened }) =>
+      extended && opened ? "100%" : opened ? "90vw" : "auto"};
   }
 `;
 

@@ -14,7 +14,10 @@ export type IFrameAPI = {
       onAutoResized?: () => void;
     },
   ) => void;
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
+  resize: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+  ) => void;
   postMessage: (message: any) => void;
 };
 
@@ -52,7 +55,10 @@ export default function useIFrame({
   const api = useMemo<IFrameAPI>(
     () => ({
       render: (html, { visible = true, ...options } = {}) => {
-        setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
+        setIFrameState([
+          html,
+          { visible: !!iframeCanBeVisible && !!visible, ...options },
+        ]);
         onRender?.();
       },
       resize: (width, height) => {
@@ -64,7 +70,10 @@ export default function useIFrame({
   );
 
   useEffect(() => {
-    setIFrameState(([html, options]) => [html, { ...options, visible: !!iframeCanBeVisible }]);
+    setIFrameState(([html, options]) => [
+      html,
+      { ...options, visible: !!iframeCanBeVisible },
+    ]);
   }, [iframeCanBeVisible]);
 
   useEffect(() => {

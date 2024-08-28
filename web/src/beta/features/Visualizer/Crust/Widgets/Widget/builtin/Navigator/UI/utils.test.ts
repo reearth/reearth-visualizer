@@ -10,7 +10,12 @@ const compassPosition = {
 };
 
 test("it should be 0˚ when x axis is half of width and y axis is 0", () => {
-  expect(calculateDegreeOfCompass(compassPosition, { x: compassPosition.width / 2, y: 0 })).toBe(0);
+  expect(
+    calculateDegreeOfCompass(compassPosition, {
+      x: compassPosition.width / 2,
+      y: 0,
+    }),
+  ).toBe(0);
 });
 
 test("it should be 90˚ when x axis equals to width and y axis half of height", () => {

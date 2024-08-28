@@ -11,5 +11,9 @@ export default meta;
 type Story = StoryObj<typeof Avatar>;
 
 export const Default: Story = { render: () => <Avatar innerText="ReEarth" /> };
-export const Small: Story = { render: () => <Avatar size="small" innerText="ReEarth" /> };
-export const Large: Story = { render: () => <Avatar size="large" innerText="ReEarth" /> };
+export const Small: Story = {
+  render: () => <Avatar size="small" innerText="ReEarth" />,
+};
+export const Large: Story = {
+  render: () => <Avatar size="large" innerText="ReEarth" />,
+};

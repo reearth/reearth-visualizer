@@ -12,7 +12,7 @@ export default {
   // parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => {
+export const Default: Story<Props> = (args) => {
   const ref = useRef<Ref>(null);
   const postMessage = () => {
     ref.current?.postMessage({ foo: new Date().toISOString() });

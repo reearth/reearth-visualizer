@@ -46,7 +46,8 @@ const PopoverMenuContent: React.FC<Props> = ({ size, width, items }) => {
             isLast={i === items.length - 1}
             size={size}
             disabled={!!item.disabled}
-            onClick={item.onClick}>
+            onClick={item.onClick}
+          >
             {item.icon && (
               <SLeftIcon>
                 <Icon icon={item.icon} size={stylesBySize[size].iconSize} />
@@ -73,14 +74,16 @@ const SRoot = styled.div<Pick<Props, "width">>`
 `;
 
 const SRow = styled.button<
-  Pick<Props, "size"> & Pick<MenuItem, "isSelected"> & { isFirst: boolean; isLast: boolean }
+  Pick<Props, "size"> &
+    Pick<MenuItem, "isSelected"> & { isFirst: boolean; isLast: boolean }
 >`
   box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
-  color: ${({ theme, disabled }) => (disabled ? theme.content.weak : theme.content.main)};
+  color: ${({ theme, disabled }) =>
+    disabled ? theme.content.weak : theme.content.main};
   ${({ disabled }) => disabled && "cursor: default;"}
 
   ${({ isFirst }) => !isFirst && "border-top: 1px solid transparent;"}
@@ -88,7 +91,8 @@ const SRow = styled.button<
   ${({ size }) => stylesBySize[size].row ?? ""}
   
   :hover {
-    background: ${({ isSelected, theme, disabled }) => !disabled && !isSelected && theme.bg[2]};
+    background: ${({ isSelected, theme, disabled }) =>
+      !disabled && !isSelected && theme.bg[2]};
   }
 `;
 

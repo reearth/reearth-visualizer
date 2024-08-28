@@ -1,11 +1,10 @@
 import { Placement } from "@floating-ui/react";
-import React, { ReactNode, useState, useCallback } from "react";
-
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
+import React, { ReactNode, useState, useCallback } from "react";
 
 import { LayerStyleNameUpdateProps } from "../../features/Editor/hooks/useLayerStyles";
 
@@ -64,13 +63,17 @@ const CatalogCard: React.FC<Props> = ({
 
   const handleNameChange = useCallback(
     (newName: string) => {
-      isNameEditable && setNewName(newName);
+      if (isNameEditable) {
+        setNewName(newName);
+      }
     },
     [isNameEditable],
   );
 
   const handleNameSubmit = useCallback(() => {
-    isNameEditable && setIsEditing(false);
+    if (isNameEditable) {
+      setIsEditing(false);
+    }
     onLayerStyleNameUpdate?.({ styleId: id || "", name: newName });
   }, [id, isNameEditable, newName, onLayerStyleNameUpdate]);
 
@@ -101,9 +104,14 @@ const CatalogCard: React.FC<Props> = ({
       isLayerStyleIcon={icon === "layerStyle"}
       onClick={() => onSelect?.(!selected)}
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}>
+      onMouseLeave={handleMouseLeave}
+    >
       <ImgWrapper>
-        {!icon ? <PreviewImage url={url} /> : <Icon icon={icon} size={iconSize} />}
+        {!icon ? (
+          <PreviewImage url={url} />
+        ) : (
+          <Icon icon={icon} size={iconSize} />
+        )}
       </ImgWrapper>
 
       {isEditing ? (
@@ -125,7 +133,8 @@ const CatalogCard: React.FC<Props> = ({
         <Popover.Provider
           open={isOpenAction}
           placement={actionPlacement}
-          onOpenChange={handleOpenChange}>
+          onOpenChange={handleOpenChange}
+        >
           {isHovered && (
             <Popover.Trigger asChild>
               <ActionIcon onClick={handleActionClick}>
@@ -143,13 +152,18 @@ const CatalogCard: React.FC<Props> = ({
 const Wrapper = styled.div<{ selected?: boolean; isLayerStyleIcon?: boolean }>`
   display: flex;
   flex-direction: column;
-  background: ${({ theme, isLayerStyleIcon }) => (isLayerStyleIcon ? theme.bg[0] : theme.bg[2])};
+  background: ${({ theme, isLayerStyleIcon }) =>
+    isLayerStyleIcon ? theme.bg[0] : theme.bg[2]};
   box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.25);
-  border: 2px solid ${({ selected, theme }) => (selected ? `${theme.select.main}` : "transparent")};
+  border: 2px solid
+    ${({ selected, theme }) =>
+      selected ? `${theme.select.main}` : "transparent"};
   padding: ${({ theme }) => theme.spacing.small}px;
   width: 100%;
-  max-width: ${({ isLayerStyleIcon }) => (isLayerStyleIcon ? "calc(148px * 0.7)" : "148px")};
-  max-height: ${({ isLayerStyleIcon }) => (isLayerStyleIcon ? "calc(148px * 0.7)" : "148px")};
+  max-width: ${({ isLayerStyleIcon }) =>
+    isLayerStyleIcon ? "calc(148px * 0.7)" : "148px"};
+  max-height: ${({ isLayerStyleIcon }) =>
+    isLayerStyleIcon ? "calc(148px * 0.7)" : "148px"};
   height: 100%;
   position: relative;
   cursor: pointer;
@@ -171,7 +185,7 @@ const ImgWrapper = styled.div`
 const PreviewImage = styled.div<{ url?: string }>`
   width: 100%;
   height: 100%;
-  background-image: ${props => `url(${props.url})`};
+  background-image: ${(props) => `url(${props.url})`};
   background-size: cover;
   background-position: center;
 `;
@@ -183,7 +197,8 @@ const FileName = styled(Text)<{ selected?: boolean }>`
   white-space: nowrap;
   margin-top: ${({ theme }) => theme.spacing.small}px;
   color: inherit;
-  fill: ${({ selected, theme }) => (selected ? `${theme.select.main}` : undefined)};
+  fill: ${({ selected, theme }) =>
+    selected ? `${theme.select.main}` : undefined};
 `;
 
 const StyledTextInput = styled(TextInput)`

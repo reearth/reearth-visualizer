@@ -1,6 +1,13 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent, ReactNode, KeyboardEvent } from "react";
-
 import { fonts, styled } from "@reearth/services/theme";
+import {
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  ChangeEvent,
+  ReactNode,
+  KeyboardEvent,
+} from "react";
 
 export type TextInputProps = {
   value?: string;
@@ -63,7 +70,8 @@ export const TextInput: FC<TextInputProps> = ({
       size={size}
       appearance={appearance}
       extendWidth={extendWidth}
-      status={isFocused || autoFocus ? "active" : "default"}>
+      status={isFocused || autoFocus ? "active" : "default"}
+    >
       {leftAction && (
         <ActionsWrapper>
           {leftAction.map((Action, i) => (
@@ -100,8 +108,8 @@ const Wrapper = styled("div")<{
         ? `1px solid transparent`
         : `1px solid ${theme.select.main}`
       : status === "active"
-      ? `1px solid ${theme.select.main}`
-      : `1px solid ${theme.outline.weak}`;
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.outline.weak}`;
 
   return {
     border: borderStyle,

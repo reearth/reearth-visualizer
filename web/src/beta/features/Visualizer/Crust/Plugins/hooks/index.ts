@@ -154,9 +154,10 @@ export default function ({
 
   const { clientStorage } = useData();
 
-  const { deprecated, cameraDeprecated, layersDeprecated, sketchDeprecated } = useDeprecated({
-    built,
-  });
+  const { deprecated, cameraDeprecated, layersDeprecated, sketchDeprecated } =
+    useDeprecated({
+      built,
+    });
 
   const value = useMemo<Context>(
     () => ({

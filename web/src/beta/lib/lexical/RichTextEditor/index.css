@@ -1,4 +1,4 @@
-@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap';
+@import "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap";
 
 .lexical.editor-container {
   position: relative;
@@ -13,21 +13,21 @@
   z-index: -1;
 }
 
-.lexical .editor-inner{
+.lexical .editor-inner {
   position: relative;
   cursor: auto;
 }
 
-.lexical .editor-input{
+.lexical .editor-input {
   outline: none;
   padding: 8px;
 }
 
-.lexical .editor-input-minheight{
+.lexical .editor-input-minheight {
   min-height: 200px;
 }
 
-.lexical .editor-placeholder{
+.lexical .editor-placeholder {
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
@@ -72,7 +72,7 @@
 }
 
 .lexical .editor-dev-button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 10px;
   right: 10px;
@@ -120,7 +120,7 @@
 }
 
 .lexical .test-recorder-button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 8px;
   right: 8px;
@@ -646,7 +646,7 @@
   color: red;
 }
 
-.lexical .dropdown-wrapper{
+.lexical .dropdown-wrapper {
   position: relative;
 }
 
@@ -654,7 +654,9 @@
   z-index: 100;
   display: block;
   position: fixed;
-  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 12px 28px 0 rgba(0, 0, 0, 0.2),
+    0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   border-radius: 8px;
   min-height: 40px;
@@ -881,11 +883,11 @@
   transition: transform 0.2s;
 }
 
-.lexical .switch button[aria-checked='true'] {
+.lexical .switch button[aria-checked="true"] {
   background-color: rgb(24, 119, 242);
 }
 
-.lexical .switch button[aria-checked='true'] span {
+.lexical .switch button[aria-checked="true"] span {
   transform: translateX(20px);
 }
 
@@ -1158,7 +1160,7 @@
   overflow: hidden;
 }
 
-.lexical .toolbar-line{
+.lexical .toolbar-line {
   display: flex;
   vertical-align: middle;
 }
@@ -1292,7 +1294,7 @@
 }
 
 .lexical .sticky-note:after {
-  content: '';
+  content: "";
   position: absolute;
   z-index: -1;
   right: -0px;
@@ -1438,7 +1440,7 @@
 }
 
 .lexical hr:after {
-  content: '';
+  content: "";
   display: block;
   height: 2px;
   background-color: #ccc;

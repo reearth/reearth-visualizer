@@ -9,7 +9,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-const Template: Story<Props> = args => <Component {...args} />;
+const Template: Story<Props> = (args) => <Component {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

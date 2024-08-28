@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useEffect, useState } from "react";
 
 import Property from "..";
 
@@ -66,7 +65,12 @@ const DateTimeField: React.FC<Props> = ({
               <StyledText size="footnote" customColor>
                 {dateTime ? dateTime : "YYYY-MM-DDThh:mm:ss±hh:mm"}
               </StyledText>
-              <DeleteIcon icon="bin" size={10} disabled={!dateTime} onClick={handleRemoveSetting} />
+              <DeleteIcon
+                icon="bin"
+                size={10}
+                disabled={!dateTime}
+                onClick={handleRemoveSetting}
+              />
             </Input>
             <TriggerButton
               buttonType="secondary"
@@ -114,7 +118,8 @@ const Input = styled.div<{ dataTimeSet?: boolean }>`
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: ${({ theme }) => theme.shadow.input};
   width: 65%;
-  color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
+  color: ${({ theme, dataTimeSet }) =>
+    dataTimeSet ? theme.content.strong : theme.content.weak};
 `;
 
 const StyledText = styled(Text)`

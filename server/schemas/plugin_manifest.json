@@ -336,7 +336,8 @@
             "cluster",
             "story",
             "storyPage",
-            "storyBlock"
+            "storyBlock",
+            "infoboxBlock"
           ]
         },
         "singleOnly": {

@@ -1,12 +1,17 @@
-import { useMemo, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { useWorkspaceFetcher, useProjectFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
 import { useWorkspace } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
+import { useMemo, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: string }) => {
+export default ({
+  projectId,
+  workspaceId,
+}: {
+  projectId?: string;
+  workspaceId?: string;
+}) => {
   const navigate = useNavigate();
   const { logout: handleLogout } = useAuth();
 
@@ -21,7 +26,10 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
   const { project } = useProjectQuery(projectId);
 
   useEffect(() => {
-    if (!currentWorkspace || (workspace && workspace.id !== currentWorkspace?.id)) {
+    if (
+      !currentWorkspace ||
+      (workspace && workspace.id !== currentWorkspace?.id)
+    ) {
       setCurrentWorkspace(workspace);
     }
   }, [currentWorkspace, setCurrentWorkspace, workspace]);
@@ -48,7 +56,7 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
 
   const handleWorkspaceChange = useCallback(
     (id: string) => {
-      const newWorkspace = workspaces?.find(team => team.id === id);
+      const newWorkspace = workspaces?.find((team) => team.id === id);
       if (newWorkspace && workspaceId !== newWorkspace.id) {
         setCurrentWorkspace(newWorkspace);
         navigate(`/dashboard/${newWorkspace.id}`);

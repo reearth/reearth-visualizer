@@ -1,1 +1,3 @@
 package.json
+**/__gen__/**
+src/services/i18n/translations/*.yml

@@ -1,8 +1,7 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-
 import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
@@ -45,8 +44,15 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
   }, [value]);
 
   const checkAllFieldsSet = useMemo(
-    () => timePeriodValues?.startTime && timePeriodValues?.currentTime && timePeriodValues?.endTime,
-    [timePeriodValues?.currentTime, timePeriodValues?.endTime, timePeriodValues?.startTime],
+    () =>
+      timePeriodValues?.startTime &&
+      timePeriodValues?.currentTime &&
+      timePeriodValues?.endTime,
+    [
+      timePeriodValues?.currentTime,
+      timePeriodValues?.endTime,
+      timePeriodValues?.startTime,
+    ],
   );
 
   return (
@@ -69,7 +75,8 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
                   {timePeriodValues?.startTime && timePeriodValues?.startTime}
                 </Typography>
                 <Typography size="body">
-                  {timePeriodValues?.currentTime && timePeriodValues?.currentTime}
+                  {timePeriodValues?.currentTime &&
+                    timePeriodValues?.currentTime}
                 </Typography>
                 <Typography size="body">
                   {timePeriodValues?.endTime && timePeriodValues?.endTime}
@@ -114,7 +121,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   width: "100%",
 }));
 
-const TimePeriodWrapper = styled("div")<{}>(({ theme }) => ({
+const TimePeriodWrapper = styled("div")(({ theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],

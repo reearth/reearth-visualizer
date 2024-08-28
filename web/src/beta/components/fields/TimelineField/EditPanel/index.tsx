@@ -1,11 +1,10 @@
-import { useMemo } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import { getTimeZone } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
 
 import { TimelineFieldProp } from "..";
 import DateTimeField from "../../DateTimeField";
@@ -50,7 +49,8 @@ const EditPanel = ({
     const currentTimezone = getTimeZone(timelineValues?.currentTime);
     const endTimezone = getTimeZone(timelineValues?.endTime);
 
-    const areTimezonesEqual = startTimezone === currentTimezone && currentTimezone === endTimezone;
+    const areTimezonesEqual =
+      startTimezone === currentTimezone && currentTimezone === endTimezone;
 
     return areTimezonesEqual;
   }, [timelineValues]);
@@ -60,7 +60,9 @@ const EditPanel = ({
       isVisible={isVisible}
       size="sm"
       title={t("Timeline Settings")}
-      button1={<Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />}
+      button1={
+        <Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />
+      }
       button2={
         <Button
           text={t("Apply")}
@@ -68,12 +70,13 @@ const EditPanel = ({
           disabled={!isDisabled || warning || !timezoneMatches}
           onClick={onAppyChange}
         />
-      }>
+      }
+    >
       <FieldsWrapper>
         <CustomDateTimeField
           name={t("* Start Time")}
           description={t("Start time for the timeline")}
-          onChange={newValue => handleOnChange(newValue || "", "startTime")}
+          onChange={(newValue) => handleOnChange(newValue || "", "startTime")}
           value={timelineValues?.startTime}
           fieldName={"startTime"}
           disableField={disabledFields.includes("startTime")}
@@ -83,7 +86,7 @@ const EditPanel = ({
         <CustomDateTimeField
           name={t("* Current Time")}
           description={t("Current time should be between start and end time")}
-          onChange={newValue => handleOnChange(newValue || "", "currentTime")}
+          onChange={(newValue) => handleOnChange(newValue || "", "currentTime")}
           value={timelineValues?.currentTime}
           disableField={disabledFields.includes("currentTime")}
           fieldName={"currentTime"}
@@ -92,7 +95,7 @@ const EditPanel = ({
         />
         <CustomDateTimeField
           name={t("* End Time")}
-          onChange={newValue => handleOnChange(newValue || "", "endTime")}
+          onChange={(newValue) => handleOnChange(newValue || "", "endTime")}
           description={t("End time for the timeline")}
           value={timelineValues?.endTime}
           fieldName={"endTime"}
@@ -103,7 +106,9 @@ const EditPanel = ({
         {warning && (
           <DangerItem>
             <Icon icon="alert" size={30} />
-            {t("Please make sure the Current time must between the Start time and End Time.")}
+            {t(
+              "Please make sure the Current time must between the Start time and End Time.",
+            )}
           </DangerItem>
         )}
       </FieldsWrapper>

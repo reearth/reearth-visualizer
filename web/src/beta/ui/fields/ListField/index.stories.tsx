@@ -35,11 +35,14 @@ export const Default: Story = (args: ListFieldProps) => {
     [updateArgs, args.items],
   );
 
-  const handleSelect = useCallback((id: string) => updateArgs({ selected: id }), [updateArgs]);
+  const handleSelect = useCallback(
+    (id: string) => updateArgs({ selected: id }),
+    [updateArgs],
+  );
 
   const handleItemMove = useCallback(
     (id: string, targetIndex: number) => {
-      const currentIndex = args.items.findIndex(item => item.id === id);
+      const currentIndex = args.items.findIndex((item) => item.id === id);
       if (currentIndex === -1 || currentIndex === targetIndex) return;
 
       const updatedItems = [...args.items];
@@ -52,7 +55,7 @@ export const Default: Story = (args: ListFieldProps) => {
   );
   const handleItemNameUpdate = useCallback(
     (id: string, newTitle: string) => {
-      const updatedItems = args.items.map(item =>
+      const updatedItems = args.items.map((item) =>
         item.id === id ? { ...item, title: newTitle } : item,
       );
       updateArgs({ items: updatedItems });
@@ -68,7 +71,8 @@ export const Default: Story = (args: ListFieldProps) => {
         gap: "10px",
         width: "500px",
         margin: "0 auto",
-      }}>
+      }}
+    >
       <ListField
         {...args}
         atLeastOneItem={true}

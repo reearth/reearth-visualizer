@@ -1,8 +1,7 @@
-import { FC, useMemo } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import Icons from "@reearth/beta/components/Icon/icons";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import Text from "../Text";
 
@@ -42,8 +41,13 @@ const TabMenu: FC<Props> = ({
             key={id}
             onClick={() => onSelectedTabChange(id)}
             selected={id === selectedTab}
-            menuAlignment={menuAlignment}>
-            {icon ? <Icon icon={icon} size={20} /> : <TabHeader size="footnote">{name}</TabHeader>}
+            menuAlignment={menuAlignment}
+          >
+            {icon ? (
+              <Icon icon={icon} size={20} />
+            ) : (
+              <TabHeader size="footnote">{name}</TabHeader>
+            )}
           </TabIconWrapper>
         ))}
       </Tabs>
@@ -62,7 +66,8 @@ const TabMenu: FC<Props> = ({
 export default TabMenu;
 
 const Wrapper = styled.div<{ menuAlignment?: menuAlignment }>`
-  display: ${({ menuAlignment }) => (menuAlignment === "top" ? "flex" : "grid")};
+  display: ${({ menuAlignment }) =>
+    menuAlignment === "top" ? "flex" : "grid"};
   grid-template-columns: 28px 1fr;
   flex-flow: column nowrap;
   position: relative;
@@ -72,21 +77,29 @@ const Wrapper = styled.div<{ menuAlignment?: menuAlignment }>`
 
 const Tabs = styled.div<{ menuAlignment?: menuAlignment }>`
   display: flex;
-  flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "row" : "column")} nowrap;
+  flex-flow: ${({ menuAlignment }) =>
+      menuAlignment === "top" ? "row" : "column"}
+    nowrap;
   padding-top: 4px;
   background: ${({ theme }) => theme.bg[0]};
 `;
 
-const TabIconWrapper = styled.div<{ selected: boolean; menuAlignment?: menuAlignment }>`
+const TabIconWrapper = styled.div<{
+  selected: boolean;
+  menuAlignment?: menuAlignment;
+}>`
   padding: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
-  background: ${props => (props.selected ? props.theme.bg[1] : "inherit")};
-  border-top-right-radius: ${({ menuAlignment }) => (menuAlignment === "top" ? "4px" : "0")};
-  border-top-left-radius: ${({ menuAlignment }) => (menuAlignment === "top" ? "4px" : "0")};
+  color: ${({ selected, theme }) =>
+    selected ? theme.content.main : theme.content.weak};
+  background: ${(props) => (props.selected ? props.theme.bg[1] : "inherit")};
+  border-top-right-radius: ${({ menuAlignment }) =>
+    menuAlignment === "top" ? "4px" : "0"};
+  border-top-left-radius: ${({ menuAlignment }) =>
+    menuAlignment === "top" ? "4px" : "0"};
 `;
 
 const TabHeader = styled(Text)`

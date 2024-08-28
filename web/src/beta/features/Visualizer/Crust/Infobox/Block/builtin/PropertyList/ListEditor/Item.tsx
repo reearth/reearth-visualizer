@@ -1,7 +1,6 @@
-import { FC, useCallback, useState } from "react";
-
 import { Button, Icon, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { PropertyListItem } from ".";
 
@@ -13,7 +12,13 @@ type Props = {
   onItemRemove: () => void;
 };
 
-const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, onItemRemove }) => {
+const EditorItem: FC<Props> = ({
+  item,
+  handleClassName,
+  onKeyBlur,
+  onValueBlur,
+  onItemRemove,
+}) => {
   const [currentKeyValue, setCurrentKeyValue] = useState<string>(item.key);
   const [currentValue, setCurrentValue] = useState<string>(item.value);
 
@@ -54,7 +59,13 @@ const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, 
         onChange={handleValueChange}
         onBlur={handleValueBlur}
       />
-      <Button icon="trash" iconButton appearance="simple" size="small" onClick={onItemRemove} />
+      <Button
+        icon="trash"
+        iconButton
+        appearance="simple"
+        size="small"
+        onClick={onItemRemove}
+      />
     </Field>
   );
 };

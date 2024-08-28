@@ -5,7 +5,9 @@ import { insertToBody } from "./utils";
 test("insertScriptToBody", () => {
   const script = `<script id="insert-script"></script>`;
   const html1 = `<div></div>`;
-  expect(insertToBody(html1, script)).toEqual(`<div></div><script id="insert-script"></script>`);
+  expect(insertToBody(html1, script)).toEqual(
+    `<div></div><script id="insert-script"></script>`,
+  );
 
   const html2 = `<html><body></body></html>`;
   expect(insertToBody(html2, script)).toEqual(

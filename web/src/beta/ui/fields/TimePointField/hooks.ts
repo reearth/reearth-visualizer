@@ -1,7 +1,6 @@
+import { getUniqueTimezones } from "@reearth/beta/utils/moment-timezone";
 import moment from "moment-timezone";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-import { getUniqueTimezones } from "@reearth/beta/utils/moment-timezone";
 
 type Props = {
   value?: string;
@@ -39,7 +38,9 @@ export default ({ value, onChange, setDateTime, onClose }: Props) => {
 
   const handleTimezoneSelect = useCallback(
     (newValue: string | string[]) => {
-      const updatedTimezone = offsetFromUTC.find(info => info.timezone === newValue);
+      const updatedTimezone = offsetFromUTC.find(
+        (info) => info.timezone === newValue,
+      );
       setSelectedTimezone(updatedTimezone || selectedTimezone);
     },
     [offsetFromUTC, selectedTimezone],
@@ -47,7 +48,7 @@ export default ({ value, onChange, setDateTime, onClose }: Props) => {
 
   const handleApply = useCallback(() => {
     const selectedTimezoneInfo = offsetFromUTC.find(
-      info => info.timezone === selectedTimezone.timezone,
+      (info) => info.timezone === selectedTimezone.timezone,
     );
     if (selectedTimezoneInfo) {
       const formattedDateTime = `${date}T${time}${selectedTimezoneInfo.offset}`;
@@ -55,13 +56,22 @@ export default ({ value, onChange, setDateTime, onClose }: Props) => {
       onChange?.(formattedDateTime);
     }
     onClose?.();
-  }, [offsetFromUTC, onClose, selectedTimezone.timezone, date, time, setDateTime, onChange]);
+  }, [
+    offsetFromUTC,
+    onClose,
+    selectedTimezone.timezone,
+    date,
+    time,
+    setDateTime,
+    onChange,
+  ]);
 
   useEffect(() => {
     if (value) {
       const [parsedDate, timeWithOffset] = value.split("T");
       const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
-      const [timezoneOffsetHour, timezoneOffsetMinute] = timezoneOffset.split(":");
+      const [timezoneOffsetHour, timezoneOffsetMinute] =
+        timezoneOffset.split(":");
       const formattedTimezoneOffset =
         timezoneOffsetHour.length === 2
           ? timezoneOffset
@@ -71,13 +81,13 @@ export default ({ value, onChange, setDateTime, onClose }: Props) => {
       setDate(parsedDate);
 
       const updatedTimezone = offsetFromUTC.find(
-        info =>
+        (info) =>
           info.offset ===
           (timeWithOffset.includes("-")
             ? `-${formattedTimezoneOffset}`
             : `+${formattedTimezoneOffset}`),
       );
-      updatedTimezone && setSelectedTimezone(updatedTimezone);
+      if (updatedTimezone) setSelectedTimezone(updatedTimezone);
     } else {
       setDate("");
       setTime("");

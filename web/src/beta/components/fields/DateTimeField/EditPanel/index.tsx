@@ -1,9 +1,8 @@
-import { useMemo } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import PanelCommon from "@reearth/beta/components/fields/common/PanelCommon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
 
 import TextInput from "../../common/TextInput";
 import SelectField from "../../SelectField";
@@ -17,7 +16,12 @@ type Props = {
   setDateTime?: (value?: string | undefined) => void;
 };
 
-const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
+const EditPanel: React.FC<Props> = ({
+  onChange,
+  onClose,
+  value,
+  setDateTime,
+}) => {
   const t = useT();
 
   const {
@@ -45,13 +49,18 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) =
         <TextWrapper>
           <Label>{t("Time")}</Label>
 
-          <Input type="time" value={time} onChange={handleTimeChange} step={1} />
+          <Input
+            type="time"
+            value={time}
+            onChange={handleTimeChange}
+            step={1}
+          />
         </TextWrapper>
         <SelectWrapper>
           <Label>{t("Time Zone")}</Label>
           <CustomSelect
             value={selectedTimezone.timezone}
-            options={offsetFromUTC.map(timezone => ({
+            options={offsetFromUTC.map((timezone) => ({
               key: timezone.timezone,
               label: timezone?.offset,
             }))}
@@ -67,7 +76,8 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) =
           size="small"
           buttonType="primary"
           onClick={() => {
-            onDateTimeApply(), onClose();
+            onDateTimeApply();
+            onClose();
           }}
           disabled={isButtonDisabled}
         />

@@ -1,9 +1,11 @@
-import { FC, useMemo } from "react";
-
 import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
-import { ManagerHeader, ManagerHeaderButton } from "@reearth/beta/ui/components/ManagerBase";
+import {
+  ManagerHeader,
+  ManagerHeaderButton,
+} from "@reearth/beta/ui/components/ManagerBase";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -73,16 +75,22 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       />
       <ProjectsWrapper
         ref={wrapperRef}
-        onScroll={e => {
-          !isLoading && hasMoreProjects && handleScrollToBottom(e, handleGetMoreProjects);
-        }}>
+        onScroll={(e) => {
+          if (!isLoading && hasMoreProjects)
+            handleScrollToBottom(e, handleGetMoreProjects);
+        }}
+      >
         <BreadcrumbContainer>
           {favoriteProjects.length > 0 && (
             <Breadcrumb
               items={[
                 {
                   title: (
-                    <Typography size="h5" weight="bold" color={theme.content.weak}>
+                    <Typography
+                      size="h5"
+                      weight="bold"
+                      color={theme.content.weak}
+                    >
                       Stars
                     </Typography>
                   ),
@@ -91,7 +99,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   ? [
                       {
                         title: (
-                          <Typography size="h5" weight="bold" color={theme.content.weak}>
+                          <Typography
+                            size="h5"
+                            weight="bold"
+                            color={theme.content.weak}
+                          >
                             {`${t("Search Result for")} "${searchTerm}"`}
                           </Typography>
                         ),
@@ -106,7 +118,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           <ProjectsContainer>
             {favoriteProjects.length > 0 && (
               <ProjectsGrid>
-                {favoriteProjects.map(project => (
+                {favoriteProjects.map((project) => (
                   <ProjectGridViewItem
                     key={project.id}
                     project={project}
@@ -126,7 +138,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       size="h5"
                       weight="bold"
                       color={theme.content.weak}
-                      onClick={() => handleSearch(undefined)}>
+                      onClick={() => handleSearch(undefined)}
+                    >
                       All Projects
                     </Typography>
                   ),
@@ -135,7 +148,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   ? [
                       {
                         title: (
-                          <Typography size="h5" weight="bold" color={theme.content.weak}>
+                          <Typography
+                            size="h5"
+                            weight="bold"
+                            color={theme.content.weak}
+                          >
                             {`${t("Search Result for")} "${searchTerm}"`}
                           </Typography>
                         ),
@@ -145,7 +162,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               ]}
             />
             <ProjectsGrid>
-              {filtedProjects.map(project => (
+              {filtedProjects.map((project) => (
                 <ProjectGridViewItem
                   key={project.id}
                   project={project}
@@ -182,7 +199,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             <FlexTableBody>
               <ProjectsContainer>
                 {favoriteProjects.length > 0 &&
-                  favoriteProjects.map(project => (
+                  favoriteProjects.map((project) => (
                     <FlexTableRow key={project.id}>
                       <ProjectListViewItem
                         key={project.id}
@@ -202,7 +219,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                           size="h5"
                           weight="bold"
                           color={theme.content.weak}
-                          onClick={() => handleSearch(undefined)}>
+                          onClick={() => handleSearch(undefined)}
+                        >
                           All Projects
                         </Typography>
                       ),
@@ -211,7 +229,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       ? [
                           {
                             title: (
-                              <Typography size="h5" weight="bold" color={theme.content.weak}>
+                              <Typography
+                                size="h5"
+                                weight="bold"
+                                color={theme.content.weak}
+                              >
                                 {searchTerm}
                               </Typography>
                             ),
@@ -220,7 +242,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       : []),
                   ]}
                 />
-                {filtedProjects.map(project => (
+                {filtedProjects.map((project) => (
                   <FlexTableRow key={project.id}>
                     <ProjectListViewItem
                       key={project.id}

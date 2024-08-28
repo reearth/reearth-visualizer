@@ -15,7 +15,11 @@ type Props = {
   onUpdateStory: (settings: StorySettingsType) => void;
 };
 
-const StorySettings: React.FC<Props> = ({ currentStory, isArchived, onUpdateStory }) => {
+const StorySettings: React.FC<Props> = ({
+  currentStory,
+  isArchived,
+  onUpdateStory,
+}) => {
   return (
     <InnerPage>
       <SettingsWrapper>

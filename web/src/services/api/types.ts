@@ -8,5 +8,5 @@ export type QueryReturn<T> = {
 export type MutationReturn<T> = {
   data?: T | null | undefined;
   status: "success" | "error";
-  errors?: ReadonlyArray<GraphQLFormattedError>;
+  errors?: readonly GraphQLFormattedError[];
 };

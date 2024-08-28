@@ -22,7 +22,10 @@ const options = [
 export const VerticalRadioGroup: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: string) => updateArgs({ value }), [updateArgs]);
+  const handleChange = useCallback(
+    (value: string) => updateArgs({ value }),
+    [updateArgs],
+  );
 
   return (
     <div>
@@ -39,7 +42,10 @@ VerticalRadioGroup.args = {
 export const HorizontalRadioGroup: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: string) => updateArgs({ value }), [updateArgs]);
+  const handleChange = useCallback(
+    (value: string) => updateArgs({ value }),
+    [updateArgs],
+  );
 
   return (
     <div>

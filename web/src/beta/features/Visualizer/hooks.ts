@@ -1,7 +1,6 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-
 import { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, ComputedFeature, ComputedLayer } from "@reearth/core";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
@@ -25,12 +24,13 @@ export default function useHooks({
 }) {
   const shouldRender = useMemo(() => {
     const shouldWidgetAnimate = ownBuiltinWidgets?.some(
-      id => !!getBuiltinWidgetOptions(id).animation,
+      (id) => !!getBuiltinWidgetOptions(id).animation,
     );
     return shouldWidgetAnimate;
   }, [ownBuiltinWidgets]);
 
-  const [overriddenViewerProperty, overrideViewerProperty] = useOverriddenProperty(viewerProperty);
+  const [overriddenViewerProperty, overrideViewerProperty] =
+    useOverriddenProperty(viewerProperty);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 

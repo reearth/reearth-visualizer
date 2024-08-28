@@ -9,7 +9,12 @@ type Props = {
   setTimePeriodValues?: (value?: TimePeriodFieldProp) => void;
 };
 
-export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Props) => {
+export default ({
+  timePeriodValues,
+  onChange,
+  onClose,
+  setTimePeriodValues,
+}: Props) => {
   const [warning, setWarning] = useState(false);
 
   const handleChange = useCallback(
@@ -89,7 +94,7 @@ export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Pr
 
   const isDisabled = useMemo(() => {
     if (timePeriodValues) {
-      return Object.values(timePeriodValues).every(value => value !== "");
+      return Object.values(timePeriodValues).every((value) => value !== "");
     }
     return false;
   }, [timePeriodValues]);

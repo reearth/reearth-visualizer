@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useMemo } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import DragAndDropList, {
   Props as DragAndDropProps,
@@ -8,6 +6,7 @@ import Property from "@reearth/beta/components/fields";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useEffect, useMemo } from "react";
 
 type ListItem = {
   id: string;
@@ -59,7 +58,8 @@ const ListField: React.FC<Props> = ({
   useEffect(() => {
     if (!atLeastOneItem) return;
 
-    const updateSelected = !selected || !items.find(({ id }) => id === selected);
+    const updateSelected =
+      !selected || !items.find(({ id }) => id === selected);
     if (updateSelected) {
       onSelect(items[0]?.id);
     }
@@ -116,9 +116,11 @@ const Item = styled.div<{ selected: boolean }>`
   padding: 0 12px;
   height: 28px;
   cursor: pointer;
-  background: ${({ theme, selected }) => (selected ? theme.select.main : "inherit")};
+  background: ${({ theme, selected }) =>
+    selected ? theme.select.main : "inherit"};
   &:hover {
-    background: ${({ theme, selected }) => (selected ? theme.select.main : theme.bg[2])};
+    background: ${({ theme, selected }) =>
+      selected ? theme.select.main : theme.bg[2]};
   }
 `;
 

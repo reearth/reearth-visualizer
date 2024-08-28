@@ -1,8 +1,9 @@
-import { ReactNode, useCallback, useState } from "react";
-
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
-import useManageSwitchState, { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
+import useManageSwitchState, {
+  SwitchField,
+} from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled } from "@reearth/services/theme";
+import { ReactNode, useCallback, useState } from "react";
 
 type Size = "sm" | "md" | "lg";
 
@@ -66,24 +67,33 @@ const Modal: React.FC<Props> = ({
       size={size}
       isVisible={isVisible}
       title={title}
-      onClose={onClose}>
+      onClose={onClose}
+    >
       <InnerWrapper>
         {tabs.length > 0 && (
           <NavBarWrapper>
-            {tabs.map(tab => (
-              <Tab key={tab.id} isSelected={tab.active} onClick={() => handleTabChange(tab.id)}>
+            {tabs.map((tab) => (
+              <Tab
+                key={tab.id}
+                isSelected={tab.active}
+                onClick={() => handleTabChange(tab.id)}
+              >
                 {tab.label}
               </Tab>
             ))}
           </NavBarWrapper>
         )}
         <ContentWrapper>
-          {tabs.length > 0 && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
+          {tabs.length > 0 && (
+            <Content>
+              {tabs.find((tab) => tab.active === true)?.content}
+            </Content>
+          )}
           {children && <Content isContent={isContent}> {children}</Content>}
           {button1 || button2 ? (
             <ButtonWrapper>
-              {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
-              {tabs.find(tab => tab.active === true)?.tabButton2 ?? button2}
+              {tabs.find((tab) => tab.active === true)?.tabButton1 ?? button1}
+              {tabs.find((tab) => tab.active === true)?.tabButton2 ?? button2}
             </ButtonWrapper>
           ) : null}
         </ContentWrapper>
@@ -109,8 +119,10 @@ const Tab = styled.button<{ isSelected?: boolean }>`
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
-  background: ${({ isSelected, theme }) => (isSelected ? theme.bg[2] : "transparent")};
-  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.content.weak)};
+  background: ${({ isSelected, theme }) =>
+    isSelected ? theme.bg[2] : "transparent"};
+  color: ${({ isSelected, theme }) =>
+    isSelected ? theme.content.main : theme.content.weak};
 `;
 
 const ContentWrapper = styled.div`
@@ -121,7 +133,8 @@ const ContentWrapper = styled.div`
 
 const Content = styled.div<{ isContent?: boolean }>`
   display: flex;
-  padding: ${({ isContent, theme }) => (isContent ? theme.spacing.normal : theme.spacing.super)}px;
+  padding: ${({ isContent, theme }) =>
+    isContent ? theme.spacing.normal : theme.spacing.super}px;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.largest}px;
   align-self: stretch;

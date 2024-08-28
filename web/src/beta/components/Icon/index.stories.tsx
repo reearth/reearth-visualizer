@@ -13,4 +13,6 @@ export const Default = () => <Icon icon="file" size={20} />;
 export const Color = () => <Icon icon="file" color="red" size={20} />;
 export const Image = () => <Icon icon={`/sample.svg`} size={20} />;
 export const Svg = () => <Icon icon={icon} size={20} />;
-export const Wrapped = () => <Icon icon={icon} size={20} style={{ background: "green" }} />;
+export const Wrapped = () => (
+  <Icon icon={icon} size={20} style={{ background: "green" }} />
+);

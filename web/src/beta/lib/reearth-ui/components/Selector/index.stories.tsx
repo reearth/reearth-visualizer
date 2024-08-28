@@ -57,10 +57,22 @@ export const NoOptions: Story = {
 export const Disabled: Story = {
   render: () => {
     return (
-      <div style={{ width: "100%", gap: "8px", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          width: "100%",
+          gap: "8px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Selector options={options} disabled />
         <Selector options={options} value="item_1" disabled />
-        <Selector options={options} value={["item_1", "item_2"]} multiple disabled />
+        <Selector
+          options={options}
+          value={["item_1", "item_2"]}
+          multiple
+          disabled
+        />
       </div>
     );
   },

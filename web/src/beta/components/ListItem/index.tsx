@@ -1,10 +1,9 @@
 import { Placement } from "@floating-ui/react";
-import { FC, MouseEvent, ReactNode } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
+import { FC, MouseEvent, ReactNode } from "react";
 
 type Clamp = "left" | "right";
 
@@ -34,7 +33,12 @@ const ListItem: FC<Props> = ({
   onOpenChange,
 }) => {
   return (
-    <Wrapper border={border} isSelected={isSelected} isOpenAction={isOpenAction} clamp={clamp}>
+    <Wrapper
+      border={border}
+      isSelected={isSelected}
+      isOpenAction={isOpenAction}
+      clamp={clamp}
+    >
       <Inner onClick={onItemClick}>
         {typeof children === "string" ? (
           <StyledText size="footnote">{children}</StyledText>
@@ -46,7 +50,8 @@ const ListItem: FC<Props> = ({
         <Popover.Provider
           open={isOpenAction}
           placement={actionPlacement}
-          onOpenChange={onOpenChange}>
+          onOpenChange={onOpenChange}
+        >
           <Popover.Trigger asChild>
             <Button clamp={clamp} onClick={onActionClick}>
               <Icon icon="actionbutton" size={16} />
@@ -71,16 +76,22 @@ const Wrapper = styled.div<{
   min-height: 36px;
   align-items: center;
   color: ${({ theme }) => theme.content.main};
-  border: 1px solid ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
+  border: 1px solid
+    ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
   border-radius: ${({ clamp }) =>
-    clamp === "left" ? "0 4px 4px 0" : clamp === "right" ? "4px 0 0 4px" : "4px"};
+    clamp === "left"
+      ? "0 4px 4px 0"
+      : clamp === "right"
+        ? "4px 0 0 4px"
+        : "4px"};
   background: ${({ theme, isSelected, isOpenAction }) =>
     isSelected ? theme.select.main : isOpenAction ? theme.bg[3] : "inherit"};
   transition: all 0.2s;
   cursor: pointer;
 
   :hover {
-    ${({ isSelected, theme }) => !isSelected && `background-color:` + theme.bg[3]}
+    ${({ isSelected, theme }) =>
+      !isSelected && `background-color:` + theme.bg[3]}
   }
 `;
 
@@ -104,5 +115,9 @@ const Button = styled.div<{ clamp?: Clamp }>`
   height: 36px;
   color: ${({ theme }) => theme.content.weak};
   border-radius: ${({ clamp }) =>
-    clamp === "left" ? "0 4px 4px 0" : clamp === "right" ? "4px 0 0 4px" : "4px"};
+    clamp === "left"
+      ? "0 4px 4px 0"
+      : clamp === "right"
+        ? "4px 0 0 4px"
+        : "4px"};
 `;

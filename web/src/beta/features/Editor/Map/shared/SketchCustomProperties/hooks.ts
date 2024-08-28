@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { CustomPropertyProps, PropertyListProp } from "../../SketchLayerCreator/type";
+import {
+  CustomPropertyProps,
+  PropertyListProp,
+} from "../../SketchLayerCreator/type";
 
 export default function useHooks({
   customProperties,
@@ -17,7 +20,7 @@ export default function useHooks({
     (idx: number) => (newKeyValue?: string) => {
       if (!propertiesList) return;
 
-      const newList = propertiesList.map(i => ({ ...i } as PropertyListProp));
+      const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
       newList[idx].key = newKeyValue ?? "";
       setPropertiesList?.(newList);
       if (editTitleIndex === idx) setEditTitleIndex(null);
@@ -28,7 +31,9 @@ export default function useHooks({
   const handleTypeChange = useCallback(
     (idx: number) => (value?: string | string[]) => {
       if (!propertiesList) return;
-      const newList = propertiesList?.map(i => ({ ...i } as PropertyListProp));
+      const newList = propertiesList?.map(
+        (i) => ({ ...i }) as PropertyListProp,
+      );
       newList[idx].value = (value as string) ?? "";
       setPropertiesList?.(newList);
       if (editTypeIndex === idx) setEditTypeIndex(null);
@@ -71,10 +76,15 @@ export default function useHooks({
 
   const handlePropertyDrop = useCallback(
     (item: PropertyListProp, targetIndex: number) => {
-      if (!propertiesList || targetIndex < 0 || targetIndex >= propertiesList.length) return;
+      if (
+        !propertiesList ||
+        targetIndex < 0 ||
+        targetIndex >= propertiesList.length
+      )
+        return;
 
       const newList = [...propertiesList];
-      const currentIndex = newList.findIndex(li => li.id === item.id);
+      const currentIndex = newList.findIndex((li) => li.id === item.id);
       if (currentIndex === -1) return; // Item not found
 
       // Remove the item from its current position
@@ -91,8 +101,12 @@ export default function useHooks({
   useEffect(() => {
     if (setCustomProperties) {
       if (!propertiesList) return;
-      const filteredList = propertiesList.filter(item => item.key !== "" && item.value !== "");
-      const propertyList = filteredList.map(item => ({ [item.key]: item.value }));
+      const filteredList = propertiesList.filter(
+        (item) => item.key !== "" && item.value !== "",
+      );
+      const propertyList = filteredList.map((item) => ({
+        [item.key]: item.value,
+      }));
       setCustomProperties(propertyList);
     }
   }, [propertiesList, setCustomProperties]);
@@ -104,7 +118,7 @@ export default function useHooks({
   const handleMoveEnd = useCallback(
     (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        const itemToMove = propertiesList?.find(item => item.id === itemId);
+        const itemToMove = propertiesList?.find((item) => item.id === itemId);
         if (itemToMove) {
           handlePropertyDrop(itemToMove, newIndex);
         }

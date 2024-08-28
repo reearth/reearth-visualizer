@@ -1,7 +1,6 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import { FC, useMemo, useCallback, useState, useEffect } from "react";
-
 import { fonts, styled, useTheme } from "@reearth/services/theme";
+import { FC, useMemo, useCallback, useState, useEffect } from "react";
 
 export type CodeInputProps = {
   value?: string;
@@ -110,8 +109,8 @@ const EditorWrapper = styled("div")<{
   border: disabled
     ? `1px solid ${theme.outline.weak}`
     : isActive
-    ? `1px solid ${theme.select.strong}`
-    : `1px solid ${theme.outline.weak}`,
+      ? `1px solid ${theme.select.strong}`
+      : `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   cursor: disabled ? "not-allowed" : "text",
   boxShadow: theme.shadow.input,

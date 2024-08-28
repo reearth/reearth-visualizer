@@ -1,3 +1,4 @@
+import { styled } from "@reearth/services/theme";
 import {
   forwardRef,
   ForwardRefRenderFunction,
@@ -5,8 +6,6 @@ import {
   useImperativeHandle,
   useCallback,
 } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 export type PluginModalInfo = {
   id?: string;
@@ -19,10 +18,10 @@ type Props = {
   shownPluginModalInfo?: PluginModalInfo;
 };
 
-const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props> = (
-  { onPluginModalShow, shownPluginModalInfo },
-  ref,
-) => {
+const ModalContainer: ForwardRefRenderFunction<
+  HTMLDivElement | undefined,
+  Props
+> = ({ onPluginModalShow, shownPluginModalInfo }, ref) => {
   const innerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
@@ -55,7 +54,9 @@ const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
   top: " 50%",
   transform: "translate(-50%, -50%)",
   visibility: visible ? "visible" : "hidden",
-  zIndex: visible ? theme.zIndexes.visualizer.pluginModal : theme.zIndexes.hidden,
+  zIndex: visible
+    ? theme.zIndexes.visualizer.pluginModal
+    : theme.zIndexes.hidden,
   transition: "opacity 0.25s",
   opacity: visible ? "1" : "0",
 }));
@@ -70,7 +71,9 @@ const Background = styled("div")<{ visible: boolean; background?: string }>(
     height: "100%",
     background: background,
     visibility: visible ? "visible" : "hidden",
-    zIndex: visible ? theme.zIndexes.visualizer.pluginModal : theme.zIndexes.hidden,
+    zIndex: visible
+      ? theme.zIndexes.visualizer.pluginModal
+      : theme.zIndexes.hidden,
   }),
 );
 

@@ -1,7 +1,10 @@
-import { FC, useCallback, useEffect, useState } from "react";
-
-import { NumberInput, NumberInputProps, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  NumberInput,
+  NumberInputProps,
+  Typography,
+} from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
@@ -54,7 +57,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
           <InputWrapper key={index}>
             <NumberInput
               value={value}
-              onChange={newValue => handleChange(index, newValue)}
+              onChange={(newValue) => handleChange(index, newValue)}
               onBlur={handleBlur}
               placeholder={placeholders?.[index]}
               extendWidth

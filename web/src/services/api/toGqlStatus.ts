@@ -5,6 +5,6 @@ export const toGqlStatus = (status?: PublishStatus) => {
   return status === "limited"
     ? PublishmentStatus.Limited
     : status == "published"
-    ? PublishmentStatus.Public
-    : PublishmentStatus.Private;
+      ? PublishmentStatus.Public
+      : PublishmentStatus.Private;
 };

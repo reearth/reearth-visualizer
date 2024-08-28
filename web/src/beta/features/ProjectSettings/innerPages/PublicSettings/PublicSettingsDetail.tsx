@@ -1,5 +1,3 @@
-import { useCallback, useState } from "react";
-
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
@@ -7,6 +5,7 @@ import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useState } from "react";
 
 import { useGA } from "../../../Published/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
@@ -91,14 +90,14 @@ const PublicSettingsDetail: React.FC<Props> = ({
             commonTitle={t("Title")}
             value={settingsItem.publicTitle}
             onChange={(publicTitle: string) => {
-              setLocalPublicInfo(s => ({ ...s, publicTitle }));
+              setLocalPublicInfo((s) => ({ ...s, publicTitle }));
             }}
           />
           <TextAreaField
             commonTitle={t("Description")}
             value={localPublicInfo.publicDescription ?? ""}
             onChange={(publicDescription: string) => {
-              setLocalPublicInfo(s => ({ ...s, publicDescription }));
+              setLocalPublicInfo((s) => ({ ...s, publicDescription }));
             }}
           />
           <ThumbnailField>
@@ -107,18 +106,24 @@ const PublicSettingsDetail: React.FC<Props> = ({
               inputMethod="asset"
               assetsTypes={IMAGE_TYPES}
               value={localPublicInfo.publicImage}
-              onChange={publicImage => {
-                setLocalPublicInfo(s => ({ ...s, publicImage }));
+              onChange={(publicImage) => {
+                setLocalPublicInfo((s) => ({ ...s, publicImage }));
               }}
             />
             <StyledImage
               src={
-                !localPublicInfo.publicImage ? defaultBetaProjectImage : localPublicInfo.publicImage
+                !localPublicInfo.publicImage
+                  ? defaultBetaProjectImage
+                  : localPublicInfo.publicImage
               }
             />
           </ThumbnailField>
           <ButtonWrapper>
-            <Button title={t("Submit")} appearance="primary" onClick={handleSubmitPublicInfo} />
+            <Button
+              title={t("Submit")}
+              appearance="primary"
+              onClick={handleSubmitPublicInfo}
+            />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
@@ -127,15 +132,15 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <SwitchField
             commonTitle={t("Enable Basic Authorization")}
             value={localBasicAuthorization.isBasicAuthActive}
-            onChange={isBasicAuthActive => {
-              setBasicAuthorization(s => ({ ...s, isBasicAuthActive }));
+            onChange={(isBasicAuthActive) => {
+              setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
             }}
           />
           <InputField
             commonTitle={t("Username")}
             value={settingsItem.basicAuthUsername}
             onChange={(basicAuthUsername: string) => {
-              setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
+              setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
             }}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
@@ -143,7 +148,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             commonTitle={t("Password")}
             value={settingsItem.basicAuthPassword}
             onChange={(basicAuthPassword: string) => {
-              setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
+              setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
             }}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
@@ -169,7 +174,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
             )}
           />
           <ButtonWrapper>
-            <Button title={t("Submit")} appearance="primary" onClick={handleSubmitAlias} />
+            <Button
+              title={t("Submit")}
+              appearance="primary"
+              onClick={handleSubmitAlias}
+            />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
@@ -179,18 +188,22 @@ const PublicSettingsDetail: React.FC<Props> = ({
             commonTitle={t("Enable Google Analytics")}
             value={localGA.enableGa ?? false}
             onChange={(enableGa: boolean) => {
-              setLocalGA(s => ({ ...s, enableGa }));
+              setLocalGA((s) => ({ ...s, enableGa }));
             }}
           />
           <InputField
             commonTitle={t("Tracking ID")}
             value={settingsItem.trackingId}
             onChange={(trackingId: string) => {
-              setLocalGA(s => ({ ...s, trackingId }));
+              setLocalGA((s) => ({ ...s, trackingId }));
             }}
           />
           <ButtonWrapper>
-            <Button title={t("Submit")} appearance="primary" onClick={handleSubmitGA} />
+            <Button
+              title={t("Submit")}
+              appearance="primary"
+              onClick={handleSubmitGA}
+            />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>

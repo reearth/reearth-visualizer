@@ -1,16 +1,27 @@
-import { useCallback } from "react";
-
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { usePropertyFetcher } from "@reearth/services/api";
+import { useCallback } from "react";
 
 export default (propertyId: string, schemaGroup: string) => {
-  const { useUpdatePropertyValue, useAddPropertyItem, useRemovePropertyItem, useMovePropertyItem } =
-    usePropertyFetcher();
+  const {
+    useUpdatePropertyValue,
+    useAddPropertyItem,
+    useRemovePropertyItem,
+    useMovePropertyItem,
+  } = usePropertyFetcher();
 
   const handlePropertyValueUpdate = useCallback(
     (fieldId: string, vt: ValueType, itemId?: string) => {
       return async (v?: ValueTypes[ValueType]) => {
-        await useUpdatePropertyValue(propertyId, schemaGroup, itemId, fieldId, "en", v, vt);
+        await useUpdatePropertyValue(
+          propertyId,
+          schemaGroup,
+          itemId,
+          fieldId,
+          "en",
+          v,
+          vt,
+        );
       };
     },
     [propertyId, schemaGroup, useUpdatePropertyValue],

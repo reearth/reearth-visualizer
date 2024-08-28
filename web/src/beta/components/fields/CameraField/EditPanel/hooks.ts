@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { Camera, RowType } from "../types";
 import { saveFriendlyCamera, userFriendlyCamera } from "../utils";
@@ -38,7 +37,7 @@ export default ({
     [newCamera, onFlyTo],
   );
 
-  const panelContent: { [key: string]: RowType } = useMemo(() => {
+  const panelContent: Record<string, RowType> = useMemo(() => {
     return {
       [t("Location")]: [
         { id: "lat", description: t("Latitude") },

@@ -1,9 +1,8 @@
-import { ReactNode, useMemo } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
+import { ReactNode, useMemo } from "react";
 
 export type Type = "primary" | "secondary" | "danger";
 
@@ -60,7 +59,8 @@ const Button: React.FC<Props> = ({
       margin={margin}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}>
+      onMouseLeave={onMouseLeave}
+    >
       {iconPosition === "left" && WrappedIcon}
       {size === "medium" ? (
         <Text size="body" customColor>
@@ -93,29 +93,29 @@ const StyledButton = styled.button<ButtonProps>`
     disabled
       ? theme.content.weak
       : buttonType === "danger"
-      ? theme.dangerous.main
-      : buttonType === "primary"
-      ? theme.primary.main
-      : theme.secondary.main};
+        ? theme.dangerous.main
+        : buttonType === "primary"
+          ? theme.primary.main
+          : theme.secondary.main};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
     disabled
       ? theme.content.weak
       : buttonType === "danger"
-      ? theme.dangerous.main
-      : buttonType === "primary"
-      ? theme.primary.main
-      : theme.secondary.strong};
+        ? theme.dangerous.main
+        : buttonType === "primary"
+          ? theme.primary.main
+          : theme.secondary.strong};
   &:active,
   &:hover {
     background: ${({ buttonType, disabled, theme }) =>
       disabled
         ? "inherit"
         : buttonType === "danger"
-        ? theme.dangerous.main
-        : buttonType === "primary"
-        ? theme.primary.main
-        : theme.secondary.main};
+          ? theme.dangerous.main
+          : buttonType === "primary"
+            ? theme.primary.main
+            : theme.secondary.main};
     color: ${({ disabled, theme }) =>
       disabled ? theme.content.weak : theme.content.withBackground};
   }
@@ -144,8 +144,16 @@ const IconWrapper = styled.span<{
   align-items: center;
   user-select: none;
   margin-left: ${({ text, iconPosition, size }) =>
-    text && iconPosition === "right" ? (size === "medium" ? "8px" : "8px") : "none"};
+    text && iconPosition === "right"
+      ? size === "medium"
+        ? "8px"
+        : "8px"
+      : "none"};
   margin-right: ${({ text, iconPosition, size }) =>
-    text && iconPosition === "left" ? (size === "medium" ? "8px" : "8px") : "none"};
+    text && iconPosition === "left"
+      ? size === "medium"
+        ? "8px"
+        : "8px"
+      : "none"};
 `;
 export default Button;

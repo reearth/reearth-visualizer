@@ -1,8 +1,13 @@
-import { FC } from "react";
-
-import { Button, DatePicker, PopupPanel, Selector, TimePicker } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  DatePicker,
+  PopupPanel,
+  Selector,
+  TimePicker,
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 
@@ -42,7 +47,8 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
             onClick={handleApply}
           />
         </ButtonWrapper>
-      }>
+      }
+    >
       <EditorWrapper>
         <Wrapper>
           <Label>{t("Date")}</Label>
@@ -61,7 +67,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
           <InputWrapper>
             <Selector
               value={selectedTimezone.timezone}
-              options={offsetFromUTC.map(timezone => ({
+              options={offsetFromUTC.map((timezone) => ({
                 label: timezone.offset,
                 value: timezone?.timezone,
               }))}

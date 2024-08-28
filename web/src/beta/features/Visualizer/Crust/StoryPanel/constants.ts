@@ -7,9 +7,19 @@ export const STORY_PANEL_CONTENT_ELEMENT_ID = "story-page-content";
 // Story Page
 export const DEFAULT_STORY_PAGE_DURATION = 2;
 export const DEFAULT_STORY_PAGE_GAP = 20;
-export const DEFAULT_STORY_PAGE_PADDING: Spacing = { top: 20, bottom: 20, left: 20, right: 20 };
+export const DEFAULT_STORY_PAGE_PADDING: Spacing = {
+  top: 20,
+  bottom: 20,
+  left: 20,
+  right: 20,
+};
 export const MIN_STORY_PAGE_GAP_IN_EDITOR = 4;
-export const MIN_STORY_PAGE_PADDING_IN_EDITOR: Spacing = { top: 4, bottom: 4, left: 4, right: 4 };
+export const MIN_STORY_PAGE_PADDING_IN_EDITOR: Spacing = {
+  top: 4,
+  bottom: 4,
+  left: 4,
+  right: 4,
+};
 
 // Story Block
 export const TITLE_BUILTIN_STORY_BLOCK_ID = "reearth/titleStoryBlock"; // pseudo storyblock. Uninstallable. Top of each page.

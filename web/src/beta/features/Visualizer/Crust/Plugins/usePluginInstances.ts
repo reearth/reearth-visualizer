@@ -3,7 +3,11 @@ import { useEffect, useRef, useMemo, type MutableRefObject } from "react";
 import type { InfoboxBlock } from "../Infobox/types";
 import { StoryBlock } from "../StoryPanel/types";
 import type { WidgetAlignSystem } from "../Widgets";
-import type { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
+import type {
+  InternalWidget,
+  WidgetSection,
+  WidgetZone,
+} from "../Widgets/WidgetAlignSystem";
 
 import type { PluginExtensionInstance } from "./pluginAPI/types";
 
@@ -17,7 +21,10 @@ export type Props = {
 export type PluginInstances = {
   meta: MutableRefObject<PluginExtensionInstance[]>;
   postMessage: (id: string, msg: any, sender: string) => void;
-  addPluginMessageSender: (id: string, msgSender: (msg: string) => void) => void;
+  addPluginMessageSender: (
+    id: string,
+    msgSender: (msg: string) => void,
+  ) => void;
   removePluginMessageSender: (id: string) => void;
   runTimesCache: {
     get: (id: string) => number | undefined;
@@ -28,15 +35,22 @@ export type PluginInstances = {
   };
 };
 
-export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Props) => {
+export default ({
+  alignSystem,
+  floatingWidgets,
+  infoboxBlocks,
+  storyBlocks,
+}: Props) => {
   const pluginInstancesMeta = useRef<PluginExtensionInstance[]>([]);
 
   const runTimesCache = useMemo<Map<string, number>>(() => new Map(), []);
   const runTimesCacheHandler = useMemo(
     () => ({
       get: (id: string) => runTimesCache.get(id) || 0,
-      increment: (id: string) => runTimesCache.set(id, runTimesCacheHandler.get(id) + 1),
-      decrement: (id: string) => runTimesCache.set(id, runTimesCacheHandler.get(id) - 1),
+      increment: (id: string) =>
+        runTimesCache.set(id, runTimesCacheHandler.get(id) + 1),
+      decrement: (id: string) =>
+        runTimesCache.set(id, runTimesCacheHandler.get(id) - 1),
       clear: (id: string) => runTimesCache.set(id, 0),
       clearAll: () => runTimesCache.clear(),
     }),
@@ -47,16 +61,16 @@ export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Pr
     const instances: PluginExtensionInstance[] = [];
 
     if (alignSystem) {
-      Object.keys(alignSystem).forEach(zoneName => {
+      Object.keys(alignSystem).forEach((zoneName) => {
         const zone = alignSystem[zoneName as keyof WidgetAlignSystem];
         if (zone) {
-          Object.keys(zone).forEach(sectionName => {
+          Object.keys(zone).forEach((sectionName) => {
             const section = zone[sectionName as keyof WidgetZone];
             if (section) {
-              Object.keys(section).forEach(areaName => {
+              Object.keys(section).forEach((areaName) => {
                 const area = section[areaName as keyof WidgetSection];
                 if (area?.widgets) {
-                  area?.widgets.forEach(widget => {
+                  area?.widgets.forEach((widget) => {
                     instances.push({
                       id: widget.id,
                       pluginId: widget.pluginId ?? "",
@@ -77,7 +91,7 @@ export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Pr
     }
 
     if (floatingWidgets) {
-      floatingWidgets.forEach(widget => {
+      floatingWidgets.forEach((widget) => {
         instances.push({
           id: widget.id,
           pluginId: widget.pluginId ?? "",
@@ -92,7 +106,7 @@ export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Pr
     }
 
     if (infoboxBlocks) {
-      infoboxBlocks.forEach(block => {
+      infoboxBlocks.forEach((block) => {
         instances.push({
           id: block.id,
           pluginId: block.pluginId ?? "",
@@ -107,7 +121,7 @@ export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Pr
     }
 
     if (storyBlocks) {
-      storyBlocks.forEach(block => {
+      storyBlocks.forEach((block) => {
         instances.push({
           id: block.id,
           pluginId: block.pluginId ?? "",
@@ -122,9 +136,17 @@ export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Pr
     }
 
     pluginInstancesMeta.current = instances;
-  }, [alignSystem, floatingWidgets, infoboxBlocks, storyBlocks, runTimesCacheHandler]);
+  }, [
+    alignSystem,
+    floatingWidgets,
+    infoboxBlocks,
+    storyBlocks,
+    runTimesCacheHandler,
+  ]);
 
-  const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
+  const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(
+    new Map(),
+  );
 
   const pluginInstances = useMemo(() => {
     return {
@@ -139,11 +161,14 @@ export default ({ alignSystem, floatingWidgets, infoboxBlocks, storyBlocks }: Pr
           } catch (err) {
             reject(err);
           }
-        }).catch(err => {
+        }).catch((err) => {
           console.error(`plugin postMessage error (${sender} -> ${id})`, err);
         });
       },
-      addPluginMessageSender: (id: string, msgSender: (msg: string) => void) => {
+      addPluginMessageSender: (
+        id: string,
+        msgSender: (msg: string) => void,
+      ) => {
         pluginMessageSenders.current?.set(id, msgSender);
       },
       removePluginMessageSender: (id: string) => {

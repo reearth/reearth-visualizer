@@ -57,7 +57,11 @@ export default function useHook({
 
   const renderWidget = useCallback(
     (widgetProps: WidgetProps): ReactNode => (
-      <Widget widgetProps={widgetProps} commonPluginProps={commonPluginProps} mapRef={mapRef} />
+      <Widget
+        widgetProps={widgetProps}
+        commonPluginProps={commonPluginProps}
+        mapRef={mapRef}
+      />
     ),
     [mapRef, commonPluginProps],
   );
@@ -89,12 +93,12 @@ const Widget: FC<{
   const autoResize = widget?.extended?.vertically
     ? "width-only"
     : widget?.extended?.horizontally
-    ? "height-only"
-    : "both";
+      ? "height-only"
+      : "both";
 
   const onExtend = widgetProps.onExtend;
   const handleOnRender = useCallback<NonNullable<PluginProps["onRender"]>>(
-    options => {
+    (options) => {
       onExtend?.(widget.id, options?.extended);
     },
     [onExtend, widget.id],

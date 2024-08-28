@@ -14,7 +14,9 @@ export const useGA = ({ enableGa, trackingId }: GeneralGASettingsType) => {
     if (!isEnabled || !trackingId) return;
 
     const loadGaModule = async () => {
-      const gaModule = isGa4TrackingId(trackingId) ? await import("./ga4") : await import("./ga");
+      const gaModule = isGa4TrackingId(trackingId)
+        ? await import("./ga4")
+        : await import("./ga");
       gaModule.initialize(trackingId);
       gaModule.pageview(window.location.pathname);
     };
