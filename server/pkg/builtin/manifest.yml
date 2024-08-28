@@ -2709,3 +2709,45 @@ extensions:
                 field: displayType
                 type: string
                 value: custom
+  - id: videoInfoboxBetaBlock
+    name: Video
+    type: infoboxBlock
+    description: Infobox Video Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Video Block
+          fields:
+            - id: src
+              type: string
+              title: Video
+  - id: markdownInfoboxBetaBlock
+    name: MD Text
+    type: infoboxBlock
+    description: Infobox MD Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: MD Text Block
+          fields:
+            - id: src
+              type: string
+              title: Content
