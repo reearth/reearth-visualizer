@@ -1,3 +1,4 @@
+import { styled } from "@reearth/services/theme";
 import type { Identifier } from "dnd-core";
 import type { FC, ReactNode } from "react";
 import { memo, useRef, createContext, useContext } from "react";
@@ -8,7 +9,6 @@ import {
   useDrop,
 } from "react-dnd";
 
-import { styled } from "@reearth/services/theme";
 
 type DragItem = {
   index: number;

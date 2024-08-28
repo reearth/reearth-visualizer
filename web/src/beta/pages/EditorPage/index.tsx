@@ -1,10 +1,10 @@
-import { FC } from "react";
-import { useParams } from "react-router-dom";
 
 import NotFound from "@reearth/beta/components/NotFound";
 import Editor from "@reearth/beta/features/Editor";
 import { isTab } from "@reearth/beta/features/Navbar";
 import Page from "@reearth/beta/pages/Page";
+import { FC } from "react";
+import { useParams } from "react-router-dom";
 
 const EditorPage: FC = () => {
   const { sceneId, tab } = useParams<{ sceneId: string; tab: string }>();

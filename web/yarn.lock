@@ -8472,7 +8472,7 @@ __metadata:
     react-ga4: "npm:2.1.0"
     react-i18next: "npm:12.2.2"
     react-markdown: "npm:8.0.7"
-    react-player: "npm:2.13.0"
+    react-player: "npm:2.16.0"
     react-popper: "npm:2.3.0"
     react-router-dom: "npm:6.21.0"
     react-sortablejs: "npm:6.1.4"
@@ -23644,9 +23644,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-player@npm:2.13.0":
-  version: 2.13.0
-  resolution: "react-player@npm:2.13.0"
+"react-player@npm:2.16.0":
+  version: 2.16.0
+  resolution: "react-player@npm:2.16.0"
   dependencies:
     deepmerge: "npm:^4.0.0"
     load-script: "npm:^1.0.0"
@@ -23655,7 +23655,7 @@ __metadata:
     react-fast-compare: "npm:^3.0.1"
   peerDependencies:
     react: ">=16.6.0"
-  checksum: 10c0/3dc15908ffdab7c48788714ff806559b53bb80753024118ed2e31f8d0c857d83c04f9630bf1d195d4b0f621e3ce757f4dab9a51883fcc8c285250724edb0d9d9
+  checksum: 10c0/ee0f4cd3bd468b28af38dbbb65cae1659218153956f43c0bdd15cd8b38aaaf151deec43b93b7dd887c0ac28242a4ba7e9d01823351e78ba60ae04d5fb51defb4
   languageName: node
   linkType: hard
 

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
@@ -6,6 +5,7 @@ import Text from "@reearth/beta/components/Text";
 import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
 
 import PanelCommon from "../../common/PanelCommon";
 import type { RowType } from "../types";

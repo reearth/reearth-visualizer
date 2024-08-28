@@ -1,10 +1,10 @@
-import { FC } from "react";
 
 import { ColorField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { WidgetAreaPadding } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { useWidgetsPage } from "../context";
 

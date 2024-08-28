@@ -1,7 +1,7 @@
+import { styled } from "@reearth/services/theme";
 import { Meta, Story } from "@storybook/react";
 import { ReactNode, useState } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import { Icon } from "../Icon";
 
