@@ -10,12 +10,13 @@ export default (value: unknown | undefined) => {
   >(undefined);
 
   const [evaluatedResult, setEvaluatedResult] = useState<string | undefined>(
-    undefined,
+    undefined
   );
 
   const visualizer = useVisualizer();
 
   // We want the useEffect to be called on each render to make sure evaluatedResult is up to date
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!isReady) {
       setIsReady(true);
@@ -33,7 +34,7 @@ export default (value: unknown | undefined) => {
     const selectedFeature =
       selectedLayer?.type === "simple" && selectedLayer?.data?.isSketchLayer
         ? selectedLayer.computed?.features.find(
-            f => f.id === visualizer.current?.layers.selectedFeature()?.id,
+            (f) => f.id === visualizer.current?.layers.selectedFeature()?.id
           )
         : visualizer.current?.layers.selectedFeature();
 
@@ -55,7 +56,7 @@ export default (value: unknown | undefined) => {
           expression: currentValue,
         },
         undefined,
-        simpleFeature,
+        simpleFeature
       );
       if (
         (es && typeof es === "string") ||
@@ -67,14 +68,7 @@ export default (value: unknown | undefined) => {
         }
       }
     }
-  }, [
-    isReady,
-    currentValue,
-    value,
-    evaluatedResult,
-    visualizer,
-    lastFeatureSelected,
-  ]);
+  });
 
   return evaluatedResult;
 };
