@@ -3,6 +3,7 @@ package builder
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"time"
 
@@ -33,15 +34,18 @@ type Builder struct {
 	nlsLayer    *nlslayer.NLSLayerList
 	layerStyles *scene.StyleList
 	story       *storytelling.Story
+
+	export bool
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader) *Builder {
+func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
 	e := &encoder{}
 	return &Builder{
 		ploader:   pl,
 		tloader:   tsl,
 		nlsloader: nlsl,
 		encoder:   e,
+		export:    exp,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
 				LayerLoader:    ll,
@@ -123,6 +127,43 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 	}
 
 	return json.NewEncoder(w).Encode(res)
+}
+
+func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
+	if b == nil || b.scene == nil {
+		return nil, errors.New("invalid builder state")
+	}
+
+	sceneData, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
+	if err != nil {
+		return nil, err
+	}
+
+	if b.story != nil {
+		story, err := b.buildStory(ctx)
+		if err != nil {
+			return nil, err
+		}
+		sceneData.Story = story
+	}
+
+	if b.nlsLayer != nil {
+		nlsLayers, err := b.buildNLSLayers(ctx)
+		if err != nil {
+			return nil, err
+		}
+		sceneData.NLSLayers = nlsLayers
+	}
+
+	if b.layerStyles != nil {
+		layerStyles, err := b.buildLayerStyles(ctx)
+		if err != nil {
+			return nil, err
+		}
+		sceneData.LayerStyles = layerStyles
+	}
+
+	return sceneData, nil
 }
 
 func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {

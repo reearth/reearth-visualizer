@@ -24,6 +24,28 @@ import {
   Thumbnail
 } from "../common";
 
+import { useEffect } from "react";
+import { useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
+import useFileInput from "use-file-input";
+
+// Export Example
+const EXPORT_PROJECT = gql`
+  mutation ExportProject($projectId: ID!) {
+    exportProject(input: { projectId: $projectId }) {
+      projectData
+    }
+  }
+`;
+// Import Example
+export const IMPORT_PROJECT = gql`
+  mutation ImportProject($file: Upload!) {
+    importProject(input: { file: $file }) {
+      projectData
+    }
+  }
+`;
+
 export type GeneralSettingsType = {
   name?: string;
   description?: string;
@@ -71,6 +93,59 @@ const GeneralSettings: FC<Props> = ({
     () => deleteInputName !== project?.name,
     [deleteInputName, project?.name]
   );
+
+  const fileName = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `project_${year}-${month}-${day}_${hours}-${minutes}-${seconds}.reearth`;
+  }
+
+  // Export Example
+  const [exportProject, { data: exportData, loading: exportLoading, error: exportError }] = useMutation(EXPORT_PROJECT);
+  useEffect(() => {
+    if (exportLoading || !exportData) return;
+    if (exportError) {
+      console.error(exportError)
+    } else {
+
+      const jsonString = JSON.stringify(exportData.exportProject.projectData, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName()
+      document.body.appendChild(link);
+      link.click();// Download
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  }, [exportData]);
+
+  // Import Example
+  const [importProject, { data: importData, loading: importLoading, error: importError }] = useMutation(IMPORT_PROJECT);
+  const handleImportProjectClick = useFileInput(async (files: FileList) => {
+    console.log(files)
+    await importProject({
+      variables: { file: files[0] }
+    });
+  }, {
+    accept: ".reearth",
+    multiple: true,
+  })
+  useEffect(() => {
+    if (importLoading) return
+    if (importError) {
+      console.error(importError)
+    } else {
+      console.log(importData)
+    }
+  }, [importData]);
 
   return project ? (
     <InnerPage>
@@ -128,6 +203,29 @@ const GeneralSettings: FC<Props> = ({
                   title={t("Delete project")}
                   appearance="dangerous"
                   onClick={() => setDeleteModelVisible(true)}
+                />
+              </ButtonWrapper>
+              <ButtonWrapper>
+                {/* Export Example */}
+                <Button
+                  title={t("Export project")}
+                  appearance="primary"
+                  onClick={async () => {
+                    console.log("project.id:", project.id)
+                    try {
+                      await exportProject({ variables: { projectId: project.id } });
+                    } catch (e) {
+                      console.error("Error exporting project:", e);
+                    }
+                  }}
+                />
+              </ButtonWrapper>
+              <ButtonWrapper>
+                {/* Import Example */}
+                <Button
+                  title={t("Import project")}
+                  appearance="primary"
+                  onClick={handleImportProjectClick}
                 />
               </ButtonWrapper>
             </DangerItem>

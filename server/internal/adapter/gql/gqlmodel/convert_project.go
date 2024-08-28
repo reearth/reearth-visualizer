@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/project"
@@ -15,7 +16,7 @@ func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {
 	case PublishmentStatusPrivate:
 		return project.PublishmentStatusPrivate
 	}
-	return project.PublishmentStatus("")
+	return project.PublishmentStatus(string(v))
 }
 
 func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
@@ -27,7 +28,7 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 	case project.PublishmentStatusPrivate:
 		return PublishmentStatusPrivate
 	}
-	return PublishmentStatus("")
+	return PublishmentStatus(string(v))
 }
 
 func ToProject(p *project.Project) *Project {
@@ -53,7 +54,7 @@ func ToProject(p *project.Project) *Project {
 		ImageURL:          p.ImageURL(),
 		PublishedAt:       publishedAtRes,
 		UpdatedAt:         p.UpdatedAt(),
-		Visualizer:        Visualizer(p.Visualizer()),
+		Visualizer:        ToVisualizer(p.Visualizer()),
 		TeamID:            IDFrom(p.Workspace()),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
 		PublicTitle:       p.PublicTitle(),
@@ -65,6 +66,18 @@ func ToProject(p *project.Project) *Project {
 		TrackingID:        p.TrackingID(),
 		Starred:           p.Starred(),
 	}
+}
+
+func ToProjectFromJSON(data map[string]any) *Project {
+	var p Project
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return nil
+	}
+	if err := json.Unmarshal(bytes, &p); err != nil {
+		return nil
+	}
+	return &p
 }
 
 func ProjectSortTypeFrom(pst *ProjectSort) *project.SortType {

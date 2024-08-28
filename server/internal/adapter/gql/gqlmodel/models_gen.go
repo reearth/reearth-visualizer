@@ -558,6 +558,14 @@ type DuplicateStylePayload struct {
 	Style *Style `json:"style"`
 }
 
+type ExportProjectInput struct {
+	ProjectID ID `json:"projectId"`
+}
+
+type ExportProjectPayload struct {
+	ProjectData JSON `json:"projectData"`
+}
+
 type Feature struct {
 	Type       string   `json:"type"`
 	Geometry   Geometry `json:"geometry"`
@@ -604,6 +612,14 @@ type ImportLayerInput struct {
 type ImportLayerPayload struct {
 	Layers      []Layer     `json:"layers"`
 	ParentLayer *LayerGroup `json:"parentLayer"`
+}
+
+type ImportProjectInput struct {
+	File graphql.Upload `json:"file"`
+}
+
+type ImportProjectPayload struct {
+	ProjectData JSON `json:"projectData"`
 }
 
 type Infobox struct {
@@ -2756,16 +2772,18 @@ func (e ValueType) MarshalGQL(w io.Writer) {
 type Visualizer string
 
 const (
-	VisualizerCesium Visualizer = "CESIUM"
+	VisualizerCesium     Visualizer = "cesium"
+	VisualizerCesiumBeta Visualizer = "cesium_beta"
 )
 
 var AllVisualizer = []Visualizer{
 	VisualizerCesium,
+	VisualizerCesiumBeta,
 }
 
 func (e Visualizer) IsValid() bool {
 	switch e {
-	case VisualizerCesium:
+	case VisualizerCesium, VisualizerCesiumBeta:
 		return true
 	}
 	return false

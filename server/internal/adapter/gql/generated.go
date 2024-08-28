@@ -338,6 +338,10 @@ type ComplexityRoot struct {
 		Style func(childComplexity int) int
 	}
 
+	ExportProjectPayload struct {
+		ProjectData func(childComplexity int) int
+	}
+
 	Feature struct {
 		Geometry   func(childComplexity int) int
 		ID         func(childComplexity int) int
@@ -362,6 +366,10 @@ type ComplexityRoot struct {
 	ImportLayerPayload struct {
 		Layers      func(childComplexity int) int
 		ParentLayer func(childComplexity int) int
+	}
+
+	ImportProjectPayload struct {
+		ProjectData func(childComplexity int) int
 	}
 
 	Infobox struct {
@@ -652,9 +660,11 @@ type ComplexityRoot struct {
 		DuplicateNLSLayer            func(childComplexity int, input gqlmodel.DuplicateNLSLayerInput) int
 		DuplicateStoryPage           func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
 		DuplicateStyle               func(childComplexity int, input gqlmodel.DuplicateStyleInput) int
+		ExportProject                func(childComplexity int, input gqlmodel.ExportProjectInput) int
 		ImportDataset                func(childComplexity int, input gqlmodel.ImportDatasetInput) int
 		ImportDatasetFromGoogleSheet func(childComplexity int, input gqlmodel.ImportDatasetFromGoogleSheetInput) int
 		ImportLayer                  func(childComplexity int, input gqlmodel.ImportLayerInput) int
+		ImportProject                func(childComplexity int, input gqlmodel.ImportProjectInput) int
 		InstallPlugin                func(childComplexity int, input gqlmodel.InstallPluginInput) int
 		LinkDatasetToPropertyValue   func(childComplexity int, input gqlmodel.LinkDatasetToPropertyValueInput) int
 		MoveInfoboxField             func(childComplexity int, input gqlmodel.MoveInfoboxFieldInput) int
@@ -1561,6 +1571,8 @@ type MutationResolver interface {
 	UpdateProject(ctx context.Context, input gqlmodel.UpdateProjectInput) (*gqlmodel.ProjectPayload, error)
 	PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error)
 	DeleteProject(ctx context.Context, input gqlmodel.DeleteProjectInput) (*gqlmodel.DeleteProjectPayload, error)
+	ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error)
+	ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error)
 	UpdatePropertyValue(ctx context.Context, input gqlmodel.UpdatePropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	RemovePropertyField(ctx context.Context, input gqlmodel.RemovePropertyFieldInput) (*gqlmodel.PropertyFieldPayload, error)
 	UploadFileToProperty(ctx context.Context, input gqlmodel.UploadFileToPropertyInput) (*gqlmodel.PropertyFieldPayload, error)
@@ -2576,6 +2588,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DuplicateStylePayload.Style(childComplexity), true
 
+	case "ExportProjectPayload.projectData":
+		if e.complexity.ExportProjectPayload.ProjectData == nil {
+			break
+		}
+
+		return e.complexity.ExportProjectPayload.ProjectData(childComplexity), true
+
 	case "Feature.geometry":
 		if e.complexity.Feature.Geometry == nil {
 			break
@@ -2652,6 +2671,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImportLayerPayload.ParentLayer(childComplexity), true
+
+	case "ImportProjectPayload.projectData":
+		if e.complexity.ImportProjectPayload.ProjectData == nil {
+			break
+		}
+
+		return e.complexity.ImportProjectPayload.ProjectData(childComplexity), true
 
 	case "Infobox.fields":
 		if e.complexity.Infobox.Fields == nil {
@@ -4322,6 +4348,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DuplicateStyle(childComplexity, args["input"].(gqlmodel.DuplicateStyleInput)), true
 
+	case "Mutation.exportProject":
+		if e.complexity.Mutation.ExportProject == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_exportProject_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ExportProject(childComplexity, args["input"].(gqlmodel.ExportProjectInput)), true
+
 	case "Mutation.importDataset":
 		if e.complexity.Mutation.ImportDataset == nil {
 			break
@@ -4357,6 +4395,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ImportLayer(childComplexity, args["input"].(gqlmodel.ImportLayerInput)), true
+
+	case "Mutation.importProject":
+		if e.complexity.Mutation.ImportProject == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_importProject_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ImportProject(childComplexity, args["input"].(gqlmodel.ImportProjectInput)), true
 
 	case "Mutation.installPlugin":
 		if e.complexity.Mutation.InstallPlugin == nil {
@@ -8221,9 +8271,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDuplicateNLSLayerInput,
 		ec.unmarshalInputDuplicateStoryPageInput,
 		ec.unmarshalInputDuplicateStyleInput,
+		ec.unmarshalInputExportProjectInput,
 		ec.unmarshalInputImportDatasetFromGoogleSheetInput,
 		ec.unmarshalInputImportDatasetInput,
 		ec.unmarshalInputImportLayerInput,
+		ec.unmarshalInputImportProjectInput,
 		ec.unmarshalInputInstallPluginInput,
 		ec.unmarshalInputLinkDatasetToPropertyValueInput,
 		ec.unmarshalInputMoveInfoboxFieldInput,
@@ -9475,7 +9527,8 @@ type ProjectAliasAvailability {
 }
 
 enum Visualizer {
-  CESIUM
+  cesium
+  cesium_beta
 }
 
 enum PublishmentStatus {
@@ -9540,6 +9593,14 @@ input ProjectSort {
   direction: SortDirection!
 }
 
+input ExportProjectInput {
+  projectId: ID!
+}
+
+input ImportProjectInput {
+  file: Upload!
+}
+
 # Payload
 
 type ProjectPayload {
@@ -9548,6 +9609,14 @@ type ProjectPayload {
 
 type DeleteProjectPayload {
   projectId: ID!
+}
+
+type ExportProjectPayload {
+  projectData: JSON!
+}
+
+type ImportProjectPayload {
+  projectData: JSON!
 }
 
 # Connection
@@ -9575,7 +9644,10 @@ extend type Mutation {
   updateProject(input: UpdateProjectInput!): ProjectPayload
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
-}`, BuiltIn: false},
+  exportProject(input: ExportProjectInput!): ExportProjectPayload
+  importProject(input: ImportProjectInput!): ImportProjectPayload
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/property.graphql", Input: `type PropertySchema {
   id: ID!
   groups: [PropertySchemaGroup!]!
@@ -11314,6 +11386,21 @@ func (ec *executionContext) field_Mutation_duplicateStyle_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_exportProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ExportProjectInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNExportProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐExportProjectInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_importDatasetFromGoogleSheet_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -11351,6 +11438,21 @@ func (ec *executionContext) field_Mutation_importLayer_args(ctx context.Context,
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNImportLayerInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportLayerInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_importProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ImportProjectInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNImportProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -18983,6 +19085,50 @@ func (ec *executionContext) fieldContext_DuplicateStylePayload_style(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _ExportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ExportProjectPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ExportProjectPayload_projectData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.JSON)
+	fc.Result = res
+	return ec.marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ExportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ExportProjectPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Feature_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Feature) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Feature_type(ctx, field)
 	if err != nil {
@@ -19537,6 +19683,50 @@ func (ec *executionContext) fieldContext_ImportLayerPayload_parentLayer(ctx cont
 				return ec.fieldContext_LayerGroup_scenePlugin(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type LayerGroup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ImportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ImportProjectPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ImportProjectPayload_projectData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.JSON)
+	fc.Result = res
+	return ec.marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ImportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ImportProjectPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
 		},
 	}
 	return fc, nil
@@ -31582,6 +31772,118 @@ func (ec *executionContext) fieldContext_Mutation_deleteProject(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteProject_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_exportProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_exportProject(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ExportProject(rctx, fc.Args["input"].(gqlmodel.ExportProjectInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ExportProjectPayload)
+	fc.Result = res
+	return ec.marshalOExportProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐExportProjectPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_exportProject(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "projectData":
+				return ec.fieldContext_ExportProjectPayload_projectData(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ExportProjectPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_exportProject_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_importProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_importProject(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ImportProject(rctx, fc.Args["input"].(gqlmodel.ImportProjectInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ImportProjectPayload)
+	fc.Result = res
+	return ec.marshalOImportProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_importProject(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "projectData":
+				return ec.fieldContext_ImportProjectPayload_projectData(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ImportProjectPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_importProject_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -59928,6 +60230,33 @@ func (ec *executionContext) unmarshalInputDuplicateStyleInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputExportProjectInput(ctx context.Context, obj interface{}) (gqlmodel.ExportProjectInput, error) {
+	var it gqlmodel.ExportProjectInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"projectId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "projectId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputImportDatasetFromGoogleSheetInput(ctx context.Context, obj interface{}) (gqlmodel.ImportDatasetFromGoogleSheetInput, error) {
 	var it gqlmodel.ImportDatasetFromGoogleSheetInput
 	asMap := map[string]interface{}{}
@@ -60059,6 +60388,33 @@ func (ec *executionContext) unmarshalInputImportLayerInput(ctx context.Context, 
 				return it, err
 			}
 			it.Format = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputImportProjectInput(ctx context.Context, obj interface{}) (gqlmodel.ImportProjectInput, error) {
+	var it gqlmodel.ImportProjectInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"file"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "file":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
+			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.File = data
 		}
 	}
 
@@ -65374,6 +65730,45 @@ func (ec *executionContext) _DuplicateStylePayload(ctx context.Context, sel ast.
 	return out
 }
 
+var exportProjectPayloadImplementors = []string{"ExportProjectPayload"}
+
+func (ec *executionContext) _ExportProjectPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ExportProjectPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, exportProjectPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExportProjectPayload")
+		case "projectData":
+			out.Values[i] = ec._ExportProjectPayload_projectData(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var featureImplementors = []string{"Feature"}
 
 func (ec *executionContext) _Feature(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Feature) graphql.Marshaler {
@@ -65570,6 +65965,45 @@ func (ec *executionContext) _ImportLayerPayload(ctx context.Context, sel ast.Sel
 			}
 		case "parentLayer":
 			out.Values[i] = ec._ImportLayerPayload_parentLayer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var importProjectPayloadImplementors = []string{"ImportProjectPayload"}
+
+func (ec *executionContext) _ImportProjectPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ImportProjectPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, importProjectPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ImportProjectPayload")
+		case "projectData":
+			out.Values[i] = ec._ImportProjectPayload_projectData(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -69124,6 +69558,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteProject":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProject(ctx, field)
+			})
+		case "exportProject":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_exportProject(ctx, field)
+			})
+		case "importProject":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_importProject(ctx, field)
 			})
 		case "updatePropertyValue":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -77759,6 +78201,11 @@ func (ec *executionContext) unmarshalNDuplicateStyleInput2githubᚗcomᚋreearth
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNExportProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐExportProjectInput(ctx context.Context, v interface{}) (gqlmodel.ExportProjectInput, error) {
+	res, err := ec.unmarshalInputExportProjectInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNFeature2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeature(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Feature) graphql.Marshaler {
 	return ec._Feature(ctx, sel, &v)
 }
@@ -78089,6 +78536,11 @@ func (ec *executionContext) unmarshalNImportDatasetInput2githubᚗcomᚋreearth�
 
 func (ec *executionContext) unmarshalNImportLayerInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportLayerInput(ctx context.Context, v interface{}) (gqlmodel.ImportLayerInput, error) {
 	res, err := ec.unmarshalInputImportLayerInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNImportProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectInput(ctx context.Context, v interface{}) (gqlmodel.ImportProjectInput, error) {
+	res, err := ec.unmarshalInputImportProjectInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -81158,6 +81610,13 @@ func (ec *executionContext) marshalODuplicateStylePayload2ᚖgithubᚗcomᚋreea
 	return ec._DuplicateStylePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOExportProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐExportProjectPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ExportProjectPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ExportProjectPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOFeatureCollection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeatureCollection(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FeatureCollection) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -81264,6 +81723,13 @@ func (ec *executionContext) marshalOImportLayerPayload2ᚖgithubᚗcomᚋreearth
 		return graphql.Null
 	}
 	return ec._ImportLayerPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOImportProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ImportProjectPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ImportProjectPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOInfobox2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐInfobox(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Infobox) graphql.Marshaler {

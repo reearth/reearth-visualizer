@@ -32,7 +32,8 @@ type ProjectAliasAvailability {
 }
 
 enum Visualizer {
-  CESIUM
+  cesium
+  cesium_beta
 }
 
 enum PublishmentStatus {
@@ -97,6 +98,14 @@ input ProjectSort {
   direction: SortDirection!
 }
 
+input ExportProjectInput {
+  projectId: ID!
+}
+
+input ImportProjectInput {
+  file: Upload!
+}
+
 # Payload
 
 type ProjectPayload {
@@ -105,6 +114,14 @@ type ProjectPayload {
 
 type DeleteProjectPayload {
   projectId: ID!
+}
+
+type ExportProjectPayload {
+  projectData: JSON!
+}
+
+type ImportProjectPayload {
+  projectData: JSON!
 }
 
 # Connection
@@ -121,8 +138,14 @@ type ProjectEdge {
   node: Project
 }
 
-extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
+extend type Query {
+  projects(
+    teamId: ID!
+    includeArchived: Boolean
+    pagination: Pagination
+    keyword: String
+    sort: ProjectSort
+  ): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
 }
@@ -132,4 +155,6 @@ extend type Mutation {
   updateProject(input: UpdateProjectInput!): ProjectPayload
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
+  exportProject(input: ExportProjectInput!): ExportProjectPayload
+  importProject(input: ImportProjectInput!): ImportProjectPayload
 }

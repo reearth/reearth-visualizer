@@ -1,8 +1,11 @@
 package gqlmodel
 
 import (
+	"encoding/json"
+
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 func ToPlugin(p *plugin.Plugin) *Plugin {
@@ -41,6 +44,24 @@ func ToPlugin(p *plugin.Plugin) *Plugin {
 	}
 }
 
+func ToPlugins(pl []*plugin.Plugin) []*Plugin {
+	return lo.Map(pl, func(s *plugin.Plugin, _ int) *Plugin {
+		return ToPlugin(s)
+	})
+}
+
+func ToPluginsFromJSON(data []interface{}) []*Plugin {
+	var plgs []*Plugin
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return nil
+	}
+	if err := json.Unmarshal(bytes, &plgs); err != nil {
+		return nil
+	}
+	return plgs
+}
+
 func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	switch t {
 	case plugin.ExtensionTypePrimitive:
@@ -64,7 +85,7 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	case plugin.ExtensionTypeStoryBlock:
 		return PluginExtensionTypeStoryBlock
 	}
-	return PluginExtensionType("")
+	return PluginExtensionType(string(t))
 }
 
 func ToPluginWidgetLayout(wl *plugin.WidgetLayout) *WidgetLayout {
