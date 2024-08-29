@@ -1,6 +1,7 @@
 import {
   SidebarMenuItem,
   SidebarSection,
+  SidebarTopSectionWrapper,
   SidebarVersion,
   SidebarWrapper,
 } from "@reearth/beta/ui/components/Sidebar";
@@ -45,7 +46,7 @@ const LeftSidePanel: FC<Props> = ({
           onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
-        <>
+        <SidebarTopSectionWrapper>
           {topTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
@@ -56,8 +57,8 @@ const LeftSidePanel: FC<Props> = ({
               disabled={tab.disabled}
             />
           ))}
-        </>
-        <StarredProject  workspaceId={currentWorkspace?.id}/>
+          <StarredProject  workspaceId={currentWorkspace?.id}/>
+        </SidebarTopSectionWrapper>
       </SidebarSection>
       <SidebarSection>
         <>

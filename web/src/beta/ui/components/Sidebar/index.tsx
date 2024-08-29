@@ -77,6 +77,12 @@ export const SidebarWrapper = styled("div")(({ theme }) => ({
   justifyContent: "space-between",
 }));
 
+export const SidebarTopSectionWrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+}));
+
 export const SidebarSection = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",

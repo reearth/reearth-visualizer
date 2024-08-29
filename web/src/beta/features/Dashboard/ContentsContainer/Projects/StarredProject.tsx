@@ -35,13 +35,15 @@ export default StarredProject;
 const Wrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
+  flexGrow: 1,
 }));
 
 const ProjectsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   paddingLeft: theme.spacing.small,
-  height: "300px",
+  height: "calc(92vh - 400px)",
+  overflowY: "auto", 
 }));
 
 const Item = styled("div")(({ theme }) => ({
