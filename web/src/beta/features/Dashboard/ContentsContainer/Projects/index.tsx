@@ -84,7 +84,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               </LoadingWrapper>
             ) :  filtedProjects.length ?  <ManagerContent>
             <ContentWrapper>
-              <HeaderWrapper>
+              <BreadcrumbContainer>
                 <Breadcrumb
                   items={[
                     {
@@ -111,6 +111,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       : []),
                   ]}
                 />
+              </BreadcrumbContainer>
                    {layout === "list" && (
               <ListHeader width={contentWidth}>
               <ThumbnailCol />
@@ -130,9 +131,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                 </Typography>
               </TimeCol>
               <ActionCol />
-               </ListHeader>
+              </ListHeader>
+            
               )}
-              </HeaderWrapper>     
               <ProjectsWrapper
                 ref={wrapperRef}
                 onScroll={e => {
@@ -205,10 +206,7 @@ const ProjectsWrapper = styled("div")(() => ({
   overflow: "auto",
 }));
 
-const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  gap: theme.spacing.large,
-  flexDirection: "column",
+const BreadcrumbContainer = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.largest}px`,
 }));
 
