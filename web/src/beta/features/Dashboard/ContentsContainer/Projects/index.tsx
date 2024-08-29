@@ -250,7 +250,7 @@ const ListHeader = styled("div")<{width: number}>(({ width, theme }) => ({
   display: "flex",
   alignItems: "center",
   boxSizing: "border-box",
-  padding: theme.spacing.smallest,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.largest}px`,
   width: width === 0 ? "100%" : width,
 }));
 
