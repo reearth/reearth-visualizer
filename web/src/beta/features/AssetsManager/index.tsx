@@ -6,8 +6,9 @@ import {
   ManagerLayout,
   ManagerWrapper,
 } from "@reearth/beta/ui/components/ManagerBase";
+import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
 import { AcceptedAssetsTypes } from "./constants";
@@ -63,7 +64,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     onSelectChange,
   });
   const t = useT();
-
+  const theme = useTheme()
   return (
     <ManagerWrapper onClick={() => handleAssetSelect(undefined)}>
       <ManagerHeader
@@ -97,6 +98,12 @@ const AssetsManager: FC<AssetsManagerProps> = ({
         onDelete={handleAssetDelete}
         onSearch={handleSearch}
       />
+    {(loading || loadingMore) ? (
+                  <LoadingWrapper>
+                    <Loading relative />
+                  </LoadingWrapper>
+                ) : 
+          filteredAssets.length ?
       <ManagerContent>
         <ContentWrapper size={size}>
           <PathWrapper size={size}>
@@ -147,16 +154,19 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                     ),
                   )}
                 </AssetsGroup>
-                {(loading || loadingMore) && (
-                  <LoadingWrapper>
-                    <Loading relative />
-                  </LoadingWrapper>
-                )}
+               
               </AssetsContent>
             </AssetsWrapper>
           </LayoutWrapper>
         </ContentWrapper>
-      </ManagerContent>
+      </ManagerContent>: 
+      <ManagerEmptyContent>
+      <Typography size="h5" color={theme.content.weak}>
+        {t("No Asset has been uploaded yet")}
+      </Typography>
+    </ManagerEmptyContent>
+
+}
     </ManagerWrapper>
   );
 };
@@ -236,7 +246,7 @@ const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
       theme.spacing.smallest
     }px`,
     gap: theme.spacing.small,
-    width: width,
+    width: width === 0 ? "100%" : width,
   }),
 );
 

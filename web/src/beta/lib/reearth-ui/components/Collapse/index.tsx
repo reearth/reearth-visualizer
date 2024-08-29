@@ -9,9 +9,12 @@ export type CollapseProps = {
   background?: string;
   headerBg?: string;
   size?: "normal" | "small" | "large";
+  iconPosition?: "left" | "right";
+  weight?: "medium" | "regular" | "bold";
   collapsed?: boolean;
   noPadding?: boolean;
   disabled?: boolean;
+
   actions?: ReactNode;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
@@ -22,6 +25,8 @@ export const Collapse: FC<CollapseProps> = ({
   background,
   headerBg,
   size = "normal",
+  weight = "regular",
+  iconPosition = "right",
   collapsed,
   disabled,
   noPadding,
@@ -48,17 +53,19 @@ export const Collapse: FC<CollapseProps> = ({
         isCollapsed={isCollapsed}
         size={size}
         headerBg={headerBg}
-        disabled={disabled}
-      >
-        <Typography size="body">{title}</Typography>
-        <ActionsWapper>
+        iconPosition={iconPosition}
+        disabled={disabled}>
+        <Typography size="body" weight={weight}>
+          {title}
+        </Typography>
+        <ActionsWrapper>
           {actions}
           {!disabled && (
-            <IconWrapper isCollapsed={isCollapsed}>
+            <IconWrapper isCollapsed={isCollapsed} iconPosition={iconPosition}>
               <Icon size="small" icon="triangle" />
             </IconWrapper>
           )}
-        </ActionsWapper>
+        </ActionsWrapper>
       </StyledHeader>
       {!isCollapsed && (
         <ChildWrapper size={size} background={background} noPadding={noPadding}>
@@ -85,9 +92,11 @@ const StyledHeader = styled("div")<{
   size?: "normal" | "small" | "large";
   headerBg?: string;
   isCollapsed?: boolean;
+  iconPosition?: "left" | "right";
   disabled?: boolean;
-}>(({ headerBg, size, isCollapsed, disabled, theme }) => ({
+}>(({ headerBg, size, isCollapsed, iconPosition, disabled, theme }) => ({
   display: "flex",
+  flexDirection: iconPosition === "left" ? "row-reverse" : "row",
   borderRadius: isCollapsed
     ? `${theme.radius.small}px`
     : `${theme.radius.small}px ${theme.radius.small}px 0px 0px`,
@@ -98,7 +107,8 @@ const StyledHeader = styled("div")<{
         ? `${theme.spacing.large}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   minHeight: size === "normal" ? "34px" : "28px",
-  justifyContent: "space-between",
+  gap: iconPosition === "left" ? "8px" : "0px",
+  justifyContent: iconPosition === "left" ? "flex-end" : "space-between",
   alignItems: "center",
   color: `${theme.content.main}`,
   cursor: disabled ? "auto" : "pointer",
@@ -107,7 +117,7 @@ const StyledHeader = styled("div")<{
   boxSizing: "border-box",
 }));
 
-const ActionsWapper = styled("div")(({ theme }) => ({
+const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.micro,
@@ -136,7 +146,15 @@ const ChildWrapper = styled("div")<{
 
 const IconWrapper = styled("div")<{
   isCollapsed?: boolean;
-}>(({ isCollapsed }) => ({
-  rotate: isCollapsed ? "0deg" : "-90deg",
+  iconPosition?: "left" | "right";
+}>(({ isCollapsed, iconPosition }) => ({
+  rotate:
+    iconPosition === "left"
+      ? isCollapsed
+        ? "-180deg"
+        : "-90deg"
+      : isCollapsed
+      ? "0deg"
+      : "-90deg",
   transition: "rotate 0.2s ease-in",
 }));

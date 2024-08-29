@@ -117,10 +117,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             <PopupMenu label={title} menu={subItem} width={width} nested />
           ) : path ? (
             <StyledLink to={path}>
-              <Typography size="body">{title}</Typography>
+              <TitleWrapper size="body">{title}</TitleWrapper>
             </StyledLink>
           ) : (
-            <Typography size="body">{title}</Typography>
+            <TitleWrapper size="body">{title}</TitleWrapper>
           )}
           {selected && (
             <Icon icon="check" size="small" color={theme.content.main} />
@@ -300,6 +300,7 @@ const SubItem = styled("div")(() => ({
   justifyContent: "space-between",
   justifyItems: "center",
   flexGrow: 1,
+  alignItems: "center",
 }));
 
 const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
@@ -335,4 +336,10 @@ const Group = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: `${theme.spacing.micro}px`,
+}));
+
+const TitleWrapper = styled(Typography)(({ theme }) => ({
+  color: theme.content.main,
+  whiteSpace: "nowrap",
+  maxWidth: "160px",
 }));

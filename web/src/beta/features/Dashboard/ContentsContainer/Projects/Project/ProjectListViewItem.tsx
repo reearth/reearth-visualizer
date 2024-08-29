@@ -49,7 +49,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   });
 
   return (
-    <StyledRow
+    <ListWrapper
       onClick={(e) => onProjectSelect?.(e, project.id)}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
@@ -57,8 +57,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
       onMouseLeave={() => handleProjectHover?.(false)}
       isSelected={selectedProjectId === project.id}
     >
-      <ActionCell>
-        <FlexItem>
+      <ThumbnailCol>
+        <ActionWrapper>
           <StarButtonWrapper
             isStarred={isStarred ?? false}
             isHovered={isHovered ?? false}
@@ -73,9 +73,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
-        </FlexItem>
-      </ActionCell>
-      <ProjectNameCell>
+        </ActionWrapper>
+      </ThumbnailCol>
+      <ProjectNameCol>
         <PublishStatus status={publishStatus} />
         {!isEditing ? (
           <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
@@ -90,14 +90,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             appearance="present"
           />
         )}
-      </ProjectNameCell>
-      <TimeCell>
+      </ProjectNameCol>
+      <TimeCol>
         <Typography size="body">{convertTimeToString(UpdatedAt)}</Typography>
-      </TimeCell>
-      <TimeCell>
+      </TimeCol>
+      <TimeCol>
         <Typography size="body">{convertTimeToString(createAt)}</Typography>
-      </TimeCell>
-      <ActionCell
+      </TimeCol>
+      <ActionCol
         onClick={(e: MouseEvent) => {
           e.stopPropagation();
         }}
@@ -108,14 +108,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <Button icon="dotsThreeVertical" iconButton appearance="simple" />
           }
         />
-      </ActionCell>
-    </StyledRow>
+      </ActionCol>
+    </ListWrapper>
   );
 };
 
 export default ProjectListViewItem;
 
-const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
+const ListWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
   ({ theme, isHovered }) => ({
     display: "flex",
     width: "100%",
@@ -124,6 +124,8 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
     padding: `${theme.spacing.small}px 0`,
     alignItems: "center",
+    boxSizing: "border-box",
+    overflow: "hidden",
   }),
 );
 
@@ -138,21 +140,23 @@ const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
   }),
 );
 
-const FlexItem = styled("div")(({ theme }) => ({
+const ThumbnailCol = styled("div")(() => ({
+  width: 120,
+  flexShrink: 0
+}));
+
+const ActionWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
 }));
 
-const ActionCell = styled("div")(() => ({
-  flex: 0.2,
-}));
-
-const ProjectNameCell = styled("div")(({ theme }) => ({
+const ProjectNameCol = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.smallest,
   flex: 1,
+  flexShrink: 0
 }));
 
 const PublishStatus = styled("div")<{ status?: boolean }>(
@@ -164,8 +168,15 @@ const PublishStatus = styled("div")<{ status?: boolean }>(
   }),
 );
 
-const TimeCell = styled("div")(() => ({
-  flex: 0.5,
+const TimeCol = styled("div")(() => ({
+  flex: "0 0 20%",
+  flexShrink: 0
+
+}));
+
+const ActionCol = styled("div")(() => ({
+  flex: "0 0 10%",
+  flexShrink: 0
 }));
 
 const StarButtonWrapper = styled("div")<{

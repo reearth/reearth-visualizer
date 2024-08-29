@@ -1,9 +1,4 @@
-import {
-  useApolloClient,
-  useLazyQuery,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
@@ -22,6 +17,7 @@ import {
   DELETE_PROJECT,
   GET_PROJECT,
   GET_PROJECTS,
+  GET_STARRED_PROJECTS,
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
   UPDATE_PROJECT_ALIAS,
@@ -43,7 +39,6 @@ export type Project = ProjectPayload["project"];
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
-  const apolloCache = useApolloClient().cache;
 
   const useProjectQuery = useCallback((projectId?: string) => {
     const { data, ...rest } = useQuery(GET_PROJECT, {
@@ -53,7 +48,7 @@ export default () => {
 
     const project = useMemo(
       () => (data?.node?.__typename === "Project" ? data.node : undefined),
-      [data?.node],
+      [data?.node]
     );
 
     return { project, ...rest };
@@ -68,7 +63,7 @@ export default () => {
 
     const projects = useMemo(
       () => data?.projects?.edges.map((e) => e.node),
-      [data?.projects],
+      [data?.projects]
     );
 
     const hasMoreProjects = useMemo(
@@ -78,15 +73,29 @@ export default () => {
       [
         data?.projects.pageInfo?.hasNextPage,
         data?.projects.pageInfo?.hasPreviousPage,
-      ],
+      ]
     );
     const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
     const endCursor = useMemo(
       () => data?.projects.pageInfo?.endCursor,
-      [data?.projects.pageInfo?.endCursor],
+      [data?.projects.pageInfo?.endCursor]
     );
 
     return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
+  }, []);
+
+  const useStarredProjectsQuery = useCallback((teamId?: string) => {
+    const { data, ...rest } = useQuery(GET_STARRED_PROJECTS, {
+      variables: { teamId: teamId ?? "" },
+      skip: !teamId,
+    });
+
+    const starredProjects = useMemo(
+      () => data?.starredProjects.nodes,
+      [data?.starredProjects]
+    );
+
+    return { starredProjects, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
@@ -106,7 +115,7 @@ export default () => {
       name: string,
       coreSupport: boolean,
       description?: string,
-      imageUrl?: string,
+      imageUrl?: string
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
@@ -178,7 +187,7 @@ export default () => {
       t,
       setNotification,
       useCreateStoryPage,
-    ],
+    ]
   );
 
   const [publishProjectMutation, { loading: publishProjectLoading }] =
@@ -206,8 +215,6 @@ export default () => {
         return { status: "error" };
       }
 
-      apolloCache.evict({ fieldName: "projects" });
-
       setNotification({
         type:
           s === "limited" ? "success" : s == "published" ? "success" : "info",
@@ -216,23 +223,24 @@ export default () => {
             ? t("Successfully published your scene!")
             : s == "published"
               ? t(
-                  "Successfully published your project with search engine indexing!",
+                  "Successfully published your project with search engine indexing!"
                 )
               : t(
-                  "Successfully unpublished your scene. Now nobody can access your scene.",
+                  "Successfully unpublished your scene. Now nobody can access your scene."
                 ),
       });
       return { data: data.publishProject.project, status: "success" };
     },
-    [apolloCache, publishProjectMutation, t, setNotification],
+    [publishProjectMutation, t, setNotification]
   );
 
   const [updateProjectMutation] = useMutation(UPDATE_PROJECT, {
-    refetchQueries: ["GetProject"],
+    refetchQueries: ["GetProject", "GetStarredProjects"],
   });
   const useUpdateProject = useCallback(
     async (input: UpdateProjectInput) => {
       if (!input.projectId) return { status: "error" };
+
       const { data, errors } = await updateProjectMutation({
         variables: { ...input },
       });
@@ -247,15 +255,13 @@ export default () => {
         return { status: "error" };
       }
 
-      apolloCache.evict({ fieldName: "projects" });
-
       setNotification({
         type: "success",
         text: t("Successfully updated project!"),
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [apolloCache, updateProjectMutation, t, setNotification],
+    [updateProjectMutation, t, setNotification]
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
@@ -285,12 +291,12 @@ export default () => {
         text: input.archived
           ? t("Successfully archive project!")
           : t(
-              "Successfully unarchived the project. You can now edit this project.",
+              "Successfully unarchived the project. You can now edit this project."
             ),
       });
       return { status: "success" };
     },
-    [archiveProjectMutation, t, setNotification],
+    [archiveProjectMutation, t, setNotification]
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
@@ -313,22 +319,20 @@ export default () => {
         return { status: "error" };
       }
 
-      apolloCache.evict({ fieldName: "projects" });
-
       setNotification({
         type: "success",
         text: t("Successfully delete project!"),
       });
       return { status: "success" };
     },
-    [apolloCache, deleteProjectMutation, t, setNotification],
+    [deleteProjectMutation, t, setNotification]
   );
 
   const [updateProjectBasicAuthMutation] = useMutation(
     UPDATE_PROJECT_BASIC_AUTH,
     {
       refetchQueries: ["GetProject"],
-    },
+    }
   );
   const useUpdateProjectBasicAuth = useCallback(
     async (input: UpdateProjectBasicAuthMutationVariables) => {
@@ -347,15 +351,13 @@ export default () => {
         return { status: "error" };
       }
 
-      apolloCache.evict({ fieldName: "projects" });
-
       setNotification({
         type: "success",
         text: t("Successfully updated project!"),
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [apolloCache, updateProjectBasicAuthMutation, t, setNotification],
+    [updateProjectBasicAuthMutation, t, setNotification]
   );
 
   const [updateProjectAliasMutation] = useMutation(UPDATE_PROJECT_ALIAS);
@@ -376,15 +378,13 @@ export default () => {
         return { status: "error" };
       }
 
-      apolloCache.evict({ fieldName: "projects" });
-
       setNotification({
         type: "success",
         text: t("Successfully updated project!"),
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [apolloCache, updateProjectAliasMutation, t, setNotification],
+    [updateProjectAliasMutation, t, setNotification]
   );
 
   return {
@@ -399,5 +399,6 @@ export default () => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
+    useStarredProjectsQuery,
   };
 };
