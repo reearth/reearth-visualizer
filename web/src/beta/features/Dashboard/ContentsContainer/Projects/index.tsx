@@ -84,6 +84,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               </LoadingWrapper>
             ) :  filtedProjects.length ?  <ManagerContent>
             <ContentWrapper>
+              <HeaderWrapper>
                 <Breadcrumb
                   items={[
                     {
@@ -110,8 +111,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       : []),
                   ]}
                 />
-              {layout === "list" && (
-                <ListHeader width={contentWidth}>
+                   {layout === "list" && (
+              <ListHeader width={contentWidth}>
               <ThumbnailCol />
               <ProjectNameCol>
                 <Typography size="body" color={theme.content.weak}>
@@ -129,8 +130,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                 </Typography>
               </TimeCol>
               <ActionCol />
-                </ListHeader>
+               </ListHeader>
               )}
+              </HeaderWrapper>     
               <ProjectsWrapper
                 ref={wrapperRef}
                 onScroll={e => {
@@ -191,7 +193,6 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
   flex: 1,
   height: 0,
 }));
@@ -204,10 +205,19 @@ const ProjectsWrapper = styled("div")(() => ({
   overflow: "auto",
 }));
 
+const HeaderWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.large,
+  flexDirection: "column",
+  padding: `0 ${theme.spacing.largest}px`,
+}));
+
 const ProjectsContainer = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.large,
   flexDirection: "column",
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
+
 }));
 
 const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(({ theme, layout }) => ({
