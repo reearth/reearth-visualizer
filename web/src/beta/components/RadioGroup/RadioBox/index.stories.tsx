@@ -7,7 +7,7 @@ import RadioBox from ".";
 type Props = React.ComponentProps<typeof RadioBox>;
 
 const meta: Meta<typeof RadioBox> = {
-  component: RadioBox,
+  component: RadioBox
 };
 
 export default meta;
@@ -22,7 +22,7 @@ export const Default: Story = (args: Props) => {
       console.log(value);
       updateArgs({ value });
     },
-    [updateArgs],
+    [updateArgs]
   );
 
   return <RadioBox {...args} onClick={handleChange} />;
@@ -31,5 +31,5 @@ export const Default: Story = (args: Props) => {
 Default.args = {
   label: "test",
   selected: false,
-  keyValue: "test",
+  keyValue: "test"
 };

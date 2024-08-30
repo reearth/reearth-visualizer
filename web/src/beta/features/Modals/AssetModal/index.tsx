@@ -7,7 +7,7 @@ import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import {
   FILE_FORMATS,
-  IMAGE_FORMATS,
+  IMAGE_FORMATS
 } from "@reearth/beta/features/Assets/constants";
 import useHooks from "@reearth/beta/features/Assets/hooks";
 import { AcceptedFileFormat, Asset } from "@reearth/beta/features/Assets/types";
@@ -23,7 +23,7 @@ const getValue: Record<string, string> = {
   "size-reverse": "size",
   date: "date",
   size: "size",
-  name: "name",
+  name: "name"
 };
 
 export type Props = {
@@ -45,7 +45,7 @@ const ChooseAssetModal: React.FC<Props> = ({
   open,
   fileFormat,
   onSelect,
-  onModalClose,
+  onModalClose
 }) => {
   const t = useT();
 
@@ -65,7 +65,7 @@ const ChooseAssetModal: React.FC<Props> = ({
     handleSearchInputChange,
     handleSearch,
     handleGetMoreAssets,
-    handleSortChange,
+    handleSortChange
   } = useHooks({ workspaceId: currentWorkspace?.id });
 
   const filteredAssets = useMemo(() => {
@@ -105,7 +105,7 @@ const ChooseAssetModal: React.FC<Props> = ({
     } else {
       setNotification({
         type: "warning",
-        text: t("Please select an asset before clicking Select."),
+        text: t("Please select an asset before clicking Select.")
       });
     }
   }, [onClose, onSelect, selectedAssets, setNotification, t]);
@@ -115,7 +115,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       if (!asset) return;
       selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
     },
-    [selectedAssets, selectAsset],
+    [selectedAssets, selectAsset]
   );
   const onSortChange = useCallback(
     (selectedLabel: string) => {
@@ -124,7 +124,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       const reverse = selectedLabel.toLowerCase().includes("reverse");
       handleSortChange?.(value, reverse);
     },
-    [handleSortChange],
+    [handleSortChange]
   );
 
   useEffect(() => {
@@ -164,7 +164,7 @@ const ChooseAssetModal: React.FC<Props> = ({
             value={selectedSortOption}
             options={sortOptions.map((option) => ({
               key: option.value,
-              label: option.label,
+              label: option.label
             }))}
             onChange={onSortChange}
           />
@@ -184,7 +184,7 @@ const ChooseAssetModal: React.FC<Props> = ({
               {searchTerm
                 ? t("No assets match your search.")
                 : t(
-                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
+                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer."
                   )}
             </TemplateText>
           </Template>

@@ -1,13 +1,13 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import RangeField, { Props } from ".";
 
 const meta: Meta<typeof RangeField> = {
-  component: RangeField,
+  component: RangeField
 };
 
 export default meta;
@@ -21,7 +21,7 @@ export const Default: Story = (args: Props) => {
     (value: number[]) => {
       updateArgs({ value: value });
     },
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -58,5 +58,5 @@ Default.args = {
   max: 100,
   step: 1,
   disabled: false,
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };

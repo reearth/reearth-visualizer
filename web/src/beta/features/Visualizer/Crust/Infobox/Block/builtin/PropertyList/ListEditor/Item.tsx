@@ -17,7 +17,7 @@ const EditorItem: FC<Props> = ({
   handleClassName,
   onKeyBlur,
   onValueBlur,
-  onItemRemove,
+  onItemRemove
 }) => {
   const [currentKeyValue, setCurrentKeyValue] = useState<string>(item.key);
   const [currentValue, setCurrentValue] = useState<string>(item.value);
@@ -30,7 +30,7 @@ const EditorItem: FC<Props> = ({
     (newValue: string) => {
       onKeyBlur(newValue);
     },
-    [onKeyBlur],
+    [onKeyBlur]
   );
 
   const handleValueChange = useCallback((newValue: string) => {
@@ -41,7 +41,7 @@ const EditorItem: FC<Props> = ({
     (newValue: string) => {
       onValueBlur(newValue);
     },
-    [onValueBlur],
+    [onValueBlur]
   );
 
   return (
@@ -81,13 +81,13 @@ const Field = styled("div")(({ theme }) => ({
   color: theme.content.main,
   gap: theme.spacing.micro,
   padding: theme.spacing.micro,
-  borderRadius: theme.radius.smallest,
+  borderRadius: theme.radius.smallest
 }));
 
 const HandleIcon = styled(Icon)(({ theme }) => ({
   color: theme.content.weak,
   cursor: "move",
   "&:hover": {
-    color: theme.content.main,
-  },
+    color: theme.content.main
+  }
 }));

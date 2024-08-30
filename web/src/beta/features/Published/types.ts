@@ -3,7 +3,7 @@ import type {
   DataRange,
   DataType,
   Geometry,
-  TimeInterval,
+  TimeInterval
 } from "@reearth/core";
 import { SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";

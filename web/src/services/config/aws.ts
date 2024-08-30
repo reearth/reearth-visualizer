@@ -31,9 +31,9 @@ export const configureCognito = (cognitoConfig: CognitoParams) => {
         domain: cognitoOauthDomain,
         redirectSignIn: cognitoOauthRedirectSignIn,
         redirectSignOut: cognitoOauthRedirectSignOut,
-        responseType: cognitoOauthResponseType,
-      },
-    },
+        responseType: cognitoOauthResponseType
+      }
+    }
   };
 
   Amplify.configure(config);

@@ -14,7 +14,7 @@ export type Props = {
 const calculateStep = (
   min?: number,
   max?: number,
-  step?: number | null,
+  step?: number | null
 ): number => {
   if (step != undefined) {
     return step;

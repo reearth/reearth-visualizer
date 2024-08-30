@@ -4,7 +4,7 @@ import { useLang as useCurrentLang } from "@reearth/services/i18n";
 import {
   NotificationType,
   useCurrentTheme as useCurrentTheme,
-  useNotification,
+  useNotification
 } from "@reearth/services/state";
 import { useCallback, useEffect, useState } from "react";
 
@@ -28,7 +28,7 @@ const GlobalModal: React.FC = () => {
   const handleNotificationChange = useCallback(
     (type: NotificationType, text: string, heading?: string) =>
       setNotification({ type, text, heading }),
-    [setNotification],
+    [setNotification]
   );
 
   return (

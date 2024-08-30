@@ -14,7 +14,7 @@ const Property: React.FC<Props> = ({
   name,
   description,
   children,
-  className,
+  className
 }) => {
   return (
     <Wrapper className={className}>

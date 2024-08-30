@@ -1,6 +1,6 @@
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
 import useManageSwitchState, {
-  SwitchField,
+  SwitchField
 } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled } from "@reearth/services/theme";
 import { ReactNode, useCallback, useState } from "react";
@@ -40,17 +40,17 @@ const Modal: React.FC<Props> = ({
   isContent,
   onClose,
   onTabChange,
-  sidebarTabs,
+  sidebarTabs
 }) => {
   const [tabsFields] = useState<SwitchField<SidebarTab>[]>(
     sidebarTabs?.map((tab, index) => ({
       active: index === 0,
-      ...tab,
-    })) || [],
+      ...tab
+    })) || []
   );
 
   const { handleActivate, fields: tabs } = useManageSwitchState({
-    fields: tabsFields,
+    fields: tabsFields
   });
 
   const handleTabChange = useCallback(
@@ -58,7 +58,7 @@ const Modal: React.FC<Props> = ({
       handleActivate(tabId);
       onTabChange?.(tabId);
     },
-    [handleActivate, onTabChange],
+    [handleActivate, onTabChange]
   );
 
   return (

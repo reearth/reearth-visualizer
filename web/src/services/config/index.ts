@@ -7,14 +7,14 @@ import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
 import {
   type UnsafeBuiltinPlugin,
-  loadUnsafeBuiltinPlugins,
+  loadUnsafeBuiltinPlugins
 } from "./unsafeBuiltinPlugin";
 
 export {
   getAuthInfo,
   getSignInCallbackUrl,
   logInToTenant,
-  logOutFromTenant,
+  logOutFromTenant
 } from "./authInfo";
 
 export type Config = {
@@ -75,7 +75,7 @@ export default async function loadConfig() {
   window.REEARTH_CONFIG = defaultConfig;
   const config: Config = {
     ...defaultConfig,
-    ...(await (await fetch("/reearth_config.json")).json()),
+    ...(await (await fetch("/reearth_config.json")).json())
   };
 
   const cesiumIonToken = await loadCesiumIonToken();
@@ -90,7 +90,7 @@ export default async function loadConfig() {
 
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
-      config.passwordPolicy as Record<string, string>,
+      config.passwordPolicy as Record<string, string>
     );
   }
 
@@ -101,7 +101,7 @@ export default async function loadConfig() {
 
   if (config.unsafePluginUrls) {
     config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(
-      config.unsafePluginUrls,
+      config.unsafePluginUrls
     );
   }
 

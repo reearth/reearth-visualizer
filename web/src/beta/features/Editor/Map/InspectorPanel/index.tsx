@@ -21,14 +21,14 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     handleFlyTo,
     handleLayerConfigUpdate,
     handleGeoJsonFeatureUpdate,
-    handleGeoJsonFeatureDelete,
+    handleGeoJsonFeatureDelete
   } = useMapPage();
 
   const t = useT();
 
   const scenePropertyId = useMemo(
     () => scene?.property?.id,
-    [scene?.property?.id],
+    [scene?.property?.id]
   );
 
   return (

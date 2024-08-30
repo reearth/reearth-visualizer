@@ -17,7 +17,7 @@ export const PopupPanel: FC<PopupPanelProps> = ({
   width,
   children,
   actions,
-  onCancel,
+  onCancel
 }) => {
   return (
     <Wrapper width={width}>
@@ -45,7 +45,7 @@ const Wrapper = styled("div")<{ width?: number }>(({ width, theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
-  boxShadow: theme.shadow.popup,
+  boxShadow: theme.shadow.popup
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
@@ -55,21 +55,21 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   alignSelf: "stretch",
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderBottom: `1px solid ${theme.outline.weak}`,
-  color: theme.content.main,
+  color: theme.content.main
 }));
 
 const Title = styled("div")(() => ({
   flex: "1 0 0",
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));
 
 const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.small,
-  alignSelf: "stretch",
+  alignSelf: "stretch"
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
   borderTop: `1px solid ${theme.outline.weak}`,
-  padding: theme.spacing.small,
+  padding: theme.spacing.small
 }));

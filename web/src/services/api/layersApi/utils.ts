@@ -64,18 +64,18 @@ const convertGeometry = (geometry: Geometry) => {
   return geometry["__typename"] === "GeometryCollection"
     ? geometry.geometries.map((g) => ({
         type: g.type,
-        coordinates: getGeometryCoordinates(g),
+        coordinates: getGeometryCoordinates(g)
       }))
     : [
         {
           type: geometry.type,
-          coordinates: getGeometryCoordinates(geometry),
-        },
+          coordinates: getGeometryCoordinates(geometry)
+        }
       ];
 };
 
 export const convertSketchFeatureCollection = (
-  featureCollection: SketchInfo["featureCollection"],
+  featureCollection: SketchInfo["featureCollection"]
 ) => {
   return featureCollection
     ? {
@@ -84,8 +84,8 @@ export const convertSketchFeatureCollection = (
           id: f.id,
           type: f.type,
           properties: f.properties,
-          geometry: convertGeometry(f.geometry),
-        })),
+          geometry: convertGeometry(f.geometry)
+        }))
       }
     : undefined;
 };
@@ -106,8 +106,8 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
         ? {
             customPropertySchema: l.sketch.customPropertySchema,
             featureCollection: convertSketchFeatureCollection(
-              l.sketch.featureCollection as SketchInfo["featureCollection"],
-            ),
+              l.sketch.featureCollection as SketchInfo["featureCollection"]
+            )
           }
         : undefined,
       infobox: l.infobox
@@ -116,9 +116,9 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
             layerId: l.infobox.layerId,
             propertyId: l.infobox.propertyId,
             property: l.infobox.property,
-            blocks: l.infobox.blocks,
+            blocks: l.infobox.blocks
           }
-        : undefined,
+        : undefined
     };
   });
 };

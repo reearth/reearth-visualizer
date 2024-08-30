@@ -19,12 +19,12 @@ const TitleBlock: FC<BlockProps<StoryBlock>> = ({
 
   const title = useMemo(
     () => property?.title?.title?.value as ValueTypes["string"],
-    [property?.title?.title?.value],
+    [property?.title?.title?.value]
   );
 
   const color = useMemo(
     () => property?.title?.color?.value as ValueTypes["string"],
-    [property?.title?.color?.value],
+    [property?.title?.color?.value]
   );
 
   const hasEmptySpace = useMemo(() => isEmptyString(title), [title]);
@@ -56,5 +56,5 @@ const TitleWrapper = styled("div")<{ color?: string }>(({ color, theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  wordBreak: "break-word",
+  wordBreak: "break-word"
 }));

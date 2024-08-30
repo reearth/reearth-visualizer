@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 import SettingsButtons from ".";
 
 export default {
-  component: SettingsButtons,
+  component: SettingsButtons
 } as Meta;
 
 type Story = StoryObj<typeof SettingsButtons>;
@@ -16,7 +16,7 @@ const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
 export const Default: Story = {
   args: {
     title: "Audio",
-    icon: "audio",
+    icon: "audio"
   },
   render: (args) => {
     return (
@@ -24,5 +24,5 @@ export const Default: Story = {
         <SettingsButtons {...args} />
       </Wrapper>
     );
-  },
+  }
 };

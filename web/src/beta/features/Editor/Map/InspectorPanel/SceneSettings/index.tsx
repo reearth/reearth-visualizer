@@ -17,7 +17,7 @@ const Settings: FC<Props> = ({ propertyId, propertyItems, onFlyTo }) => {
   const t = useT();
   const visibleItems = useMemo(
     () => filterVisibleItems(propertyItems),
-    [propertyItems],
+    [propertyItems]
   );
 
   return (
@@ -45,5 +45,5 @@ export default Settings;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));

@@ -11,7 +11,7 @@ import type {
   Location,
   WidgetLayout,
   WidgetProps,
-  InternalWidget,
+  InternalWidget
 } from "./types";
 import { isInvisibleBuiltin } from "./utils";
 
@@ -61,19 +61,19 @@ export default function Area({
   layoutConstraint,
   isMobile,
   renderWidget,
-  onWidgetAreaSelect,
+  onWidgetAreaSelect
 }: Props) {
   const theme = useTheme();
   const layout = useMemo<WidgetLayout>(
     () => ({
       location: { zone, section, area },
-      align,
+      align
     }),
-    [align, area, section, zone],
+    [align, area, section, zone]
   );
   const { overriddenExtended, handleExtend } = useOverriddenExtended({
     layout,
-    widgets,
+    widgets
   });
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
@@ -92,8 +92,8 @@ export default function Area({
             top: padding?.top ?? 6,
             bottom: padding?.bottom ?? 6,
             left: padding?.left ?? 6,
-            right: padding?.right ?? 6,
-          },
+            right: padding?.right ?? 6
+          }
         })
       }
       id={`${zone}/${section}/${area}`}
@@ -122,7 +122,7 @@ export default function Area({
         gap: gap,
         alignItems: centered ? "center" : "unset",
         borderRadius: 0,
-        transition: built ? "none" : undefined,
+        transition: built ? "none" : undefined
       }}
       editorStyle={{
         flexWrap: "wrap",
@@ -140,7 +140,7 @@ export default function Area({
               ? `1px solid ${theme.primary.weak}`
               : `1px solid #E95518`,
         gap: gap,
-        alignItems: centered ? "center" : "unset",
+        alignItems: centered ? "center" : "unset"
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}
     >
@@ -172,7 +172,7 @@ export default function Area({
                   layout,
                   extended,
                   editing,
-                  onExtend: handleExtend,
+                  onExtend: handleExtend
                 })
               }
             </GridItem>
@@ -184,7 +184,7 @@ export default function Area({
 
 function useOverriddenExtended({
   layout,
-  widgets,
+  widgets
 }: {
   layout: WidgetLayout;
   widgets: InternalWidget[] | undefined;
@@ -203,11 +203,11 @@ function useOverriddenExtended({
               ...omit(oe, id),
               ...(typeof extended === "undefined" || !extendable
                 ? {}
-                : { [id]: extended }),
-            },
+                : { [id]: extended })
+            }
       );
     },
-    [extendable],
+    [extendable]
   );
 
   const widgetIds = widgets?.map((w) => w.id) ?? [];
@@ -217,7 +217,7 @@ function useOverriddenExtended({
 
   return {
     overriddenExtended: extendable ? overriddenExtended : undefined,
-    handleExtend,
+    handleExtend
   };
 }
 
@@ -229,7 +229,7 @@ export function getLocationFromId(id: string): Location | undefined {
     ? {
         zone: z,
         section: s,
-        area: a,
+        area: a
       }
     : undefined;
 }

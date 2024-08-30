@@ -9,7 +9,7 @@ type DummyItem = {
 };
 
 const meta: Meta<typeof DragAndDropList<DummyItem>> = {
-  component: DragAndDropList<DummyItem>,
+  component: DragAndDropList<DummyItem>
 };
 
 export default meta;
@@ -33,7 +33,7 @@ const DummyComponent: typeof DragAndDropList<DummyItem> = (args) => {
           const items = [...old];
           items.splice(
             old.findIndex((o) => o.id === item.id),
-            1,
+            1
           );
           items.splice(index, 0, item);
           return items;
@@ -51,7 +51,7 @@ export const Default: Story = {
           maxHeight: "240px",
           overflowY: "auto",
           background: "gray",
-          padding: "24px",
+          padding: "24px"
         }}
       >
         <DummyComponent {...args} />
@@ -65,7 +65,7 @@ export const Default: Story = {
         style={{
           border: "1px solid blue",
           padding: "0.5rem 1rem",
-          backgroundColor: "lightgray",
+          backgroundColor: "lightgray"
         }}
       >
         {item.text}
@@ -73,6 +73,6 @@ export const Default: Story = {
     ),
     getId: (item) => item.id.toString(),
     items: dummyItems,
-    gap: 16,
-  },
+    gap: 16
+  }
 };

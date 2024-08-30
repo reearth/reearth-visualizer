@@ -5,7 +5,7 @@ import IconList from "./icons";
 import { Icon, IconProps, IconName } from ".";
 
 const meta: Meta<IconProps> = {
-  component: Icon,
+  component: Icon
 };
 
 export default meta;
@@ -20,7 +20,7 @@ export const AllIcons: Story = {
           flexWrap: "wrap",
           gap: "8px",
           width: "500px",
-          marginBottom: "20px",
+          marginBottom: "20px"
         }}
       >
         {Object.keys(IconList).map((iconName) => {
@@ -32,7 +32,7 @@ export const AllIcons: Story = {
                 display: "flex",
                 flexDirection: "row",
                 gap: "8px",
-                cursor: "pointer",
+                cursor: "pointer"
               }}
               title={iconName}
               onClick={() => copyToClipboard(iconName)}
@@ -47,7 +47,7 @@ export const AllIcons: Story = {
           display: "flex",
           flexWrap: "wrap",
           gap: "8px",
-          width: "500px",
+          width: "500px"
         }}
       >
         {Object.keys(IconList).map((iconName) => {
@@ -59,7 +59,7 @@ export const AllIcons: Story = {
                 display: "flex",
                 flexDirection: "row",
                 gap: "8px",
-                cursor: "pointer",
+                cursor: "pointer"
               }}
               title={iconName}
               onClick={() => copyToClipboard(iconName)}
@@ -70,7 +70,7 @@ export const AllIcons: Story = {
         })}
       </div>
     </>
-  ),
+  )
 };
 
 function copyToClipboard(text: string) {

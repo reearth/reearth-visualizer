@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import TextField, { Props } from "./index";
 
 const meta: Meta<Props> = {
-  component: TextField,
+  component: TextField
 };
 
 export default meta;
@@ -13,14 +13,14 @@ export const Default: Story = {
   args: {
     name: "Text input field",
     value: "Text field",
-    description: "The text input description",
-  },
+    description: "The text input description"
+  }
 };
 
 export const WithPlaceholder: Story = {
   args: {
     placeholder: "Text Input",
     name: "Text input field",
-    description: "The text input description",
-  },
+    description: "The text input description"
+  }
 };

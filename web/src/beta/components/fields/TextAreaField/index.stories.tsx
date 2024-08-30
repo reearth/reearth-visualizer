@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import TextAreaField, { Props } from ".";
 
 const meta: Meta<typeof TextAreaField> = {
-  component: TextAreaField,
+  component: TextAreaField
 };
 
 export default meta;
@@ -18,7 +18,7 @@ export const Default: Story = (args: Props) => {
 
   const handleChange = useCallback(
     (value: string) => updateArgs({ value: value }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -61,5 +61,5 @@ Default.args = {
   description: "Description around",
   disabled: false,
   value: undefined,
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };

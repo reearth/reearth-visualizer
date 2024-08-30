@@ -32,7 +32,7 @@ const CameraField: React.FC<Props> = ({
   value,
   disabled,
   onSave,
-  onFlyTo,
+  onFlyTo
 }) => {
   const t = useT();
   const [open, setOpen] = useState<Panel>(undefined);
@@ -44,7 +44,7 @@ const CameraField: React.FC<Props> = ({
   const handleClick = useCallback(
     (panel: Panel) =>
       setOpen((current) => (current === panel ? undefined : panel)),
-    [],
+    []
   );
 
   const handleSave = useCallback(
@@ -52,7 +52,7 @@ const CameraField: React.FC<Props> = ({
       onSave(value);
       setOpen(undefined);
     },
-    [onSave],
+    [onSave]
   );
 
   const handleFlyto = useCallback(
@@ -62,7 +62,7 @@ const CameraField: React.FC<Props> = ({
         onFlyTo?.(dest);
       }
     },
-    [currentCamera, onFlyTo],
+    [currentCamera, onFlyTo]
   );
 
   const handleRemoveSetting = useCallback(() => {

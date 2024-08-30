@@ -6,7 +6,7 @@ import Component, { Props } from ".";
 
 export default {
   component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
 export const Default: Story<Props> = (args) => (
@@ -21,7 +21,7 @@ Default.args = {
   pluginId: "plugins",
   extensionId: "plugin",
   pluginBaseUrl: "",
-  visible: true,
+  visible: true
 };
 
 export const Headless: Story<Props> = (args) => (
@@ -32,5 +32,5 @@ export const Headless: Story<Props> = (args) => (
 
 Headless.args = {
   sourceCode: `console.log("hello world");`,
-  visible: true,
+  visible: true
 };

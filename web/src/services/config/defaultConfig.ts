@@ -11,41 +11,41 @@ export const defaultConfig: Config = {
   policy: {
     modalTitle: {
       en: "Re:Earth Cloud",
-      ja: "Re:Earth Cloud",
+      ja: "Re:Earth Cloud"
     },
     modalDescription: {
       en: "This is your currently subscribed to plan. If this plan stops meeting your needs, Re:Earth has other plans available. ",
-      ja: "日本語版にほなsdflkjlksdjf",
+      ja: "日本語版にほなsdflkjlksdjf"
     },
     url: {
       en: "https://reearth.io/service/cloud",
-      ja: "https://reearth.io/ja/service/cloud",
+      ja: "https://reearth.io/ja/service/cloud"
     },
     limitNotifications: {
       asset: {
         en: "Your workspace has reached its plan's limit for assets. Please check reearth.io/service/cloud for details.",
-        ja: "",
+        ja: ""
       },
       createProject: {
         en: "Your workspace has reached its plan's limit for projects. Please check reearth.io/service/cloud for details.",
-        ja: "",
+        ja: ""
       },
       dataset: {
         en: "Your workspace has reached its plan's limit for dataset. Please check reearth.io/service/cloud for details.",
-        ja: "",
+        ja: ""
       },
       member: {
         en: "Your workspace has reached its plan's limit for new members. Please check reearth.io/service/cloud for details.",
-        ja: "",
+        ja: ""
       },
       layer: {
         en: "Your workspace has reached its plan's limit for layers. Please check reearth.io/service/cloud for details.",
-        ja: "",
+        ja: ""
       },
       publishProject: {
         en: "Your workspace has reached its plan's limit for publishing projects. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-    },
-  },
+        ja: ""
+      }
+    }
+  }
 };

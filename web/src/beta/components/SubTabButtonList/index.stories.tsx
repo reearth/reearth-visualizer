@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import SubTabButtonList from ".";
 
 const meta: Meta<typeof SubTabButtonList> = {
-  component: SubTabButtonList,
+  component: SubTabButtonList
 };
 
 export default meta;
@@ -15,7 +15,7 @@ export const Default: Story = {
     items: [
       { id: "1", name: "GIS", active: true },
       { id: "2", name: "Story", active: false },
-      { id: "3", name: "Web AR", active: false },
-    ],
-  },
+      { id: "3", name: "Web AR", active: false }
+    ]
+  }
 };

@@ -21,7 +21,7 @@ export const Modal: FC<ModalProps> = ({ visible, children, size }) => {
         : size === "large"
           ? DEFAULT_LARGE_WIDTH
           : DEFAULT_MEDIUM_WIDTH,
-    [size],
+    [size]
   );
 
   return !visible ? null : (
@@ -42,7 +42,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   overflow: "auto",
   opacity: 1,
-  zIndex: theme.zIndexes.editor.modal.bg,
+  zIndex: theme.zIndexes.editor.modal.bg
 }));
 
 const ContentWrapper = styled("div")<{ modalWidth?: number }>(
@@ -53,6 +53,6 @@ const ContentWrapper = styled("div")<{ modalWidth?: number }>(
     position: "relative",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
-  }),
+    justifyContent: "center"
+  })
 );

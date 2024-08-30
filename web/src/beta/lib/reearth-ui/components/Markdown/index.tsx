@@ -22,11 +22,11 @@ export const Markdown: FC<Props> = ({
   backgroundColor,
   children,
   onClick,
-  onDoubleClick,
+  onDoubleClick
 }) => {
   const dark = useMemo(
     () => (backgroundColor ? isDark(backgroundColor) : false),
-    [backgroundColor],
+    [backgroundColor]
   );
 
   return (
@@ -57,55 +57,55 @@ const Wrapper = styled("div")<{ styles?: Typography; dark: boolean }>(
     lineHeight: "inherit",
     ...typographyStyles(styles),
     ["h1"]: {
-      borderBottom: "none",
+      borderBottom: "none"
     },
     ["h2"]: {
-      borderBottom: "none",
+      borderBottom: "none"
     },
     ["code"]: {
       backgroundColor: dark
         ? "rgba(240, 246, 252, 0.15)"
-        : "rgba(27, 31, 35, 0.05)",
+        : "rgba(27, 31, 35, 0.05)"
     },
     [".highlight pre"]: {
       backgroundColor: dark
         ? "rgba(22, 27, 34, 0.1)"
-        : "rgba(246, 248, 250, 0.1)",
+        : "rgba(246, 248, 250, 0.1)"
     },
     ["pre"]: {
       backgroundColor: dark
         ? "rgba(22, 27, 34, 0.1)"
-        : "rgba(246, 248, 250, 0.1)",
+        : "rgba(246, 248, 250, 0.1)"
     },
     ["table tr"]: {
       backgroundColor: "inherit",
       borderTopColor: dark
         ? "rgba(39, 67, 75, 0.1)"
-        : "rgba(198, 203, 209, 0.1)",
+        : "rgba(198, 203, 209, 0.1)"
     },
     ["table tr nthOfType(2n)"]: {
       backgroundColor: dark
         ? "rgba(22, 27, 34, 0.1)"
-        : "rgba(246, 248, 250, 0.1)",
+        : "rgba(246, 248, 250, 0.1)"
     },
     ["table td"]: {
-      borderColor: dark ? "rgba(59, 67, 75, 0.1)" : "rgba(223, 226, 229, 0.1)",
+      borderColor: dark ? "rgba(59, 67, 75, 0.1)" : "rgba(223, 226, 229, 0.1)"
     },
     ["table th"]: {
-      borderColor: dark ? "rgba(59, 67, 75, 0.1)" : "rgba(223, 226, 229, 0.1)",
+      borderColor: dark ? "rgba(59, 67, 75, 0.1)" : "rgba(223, 226, 229, 0.1)"
     },
     ["blockquote"]: {
       color: dark ? "rgba(139, 148, 158, 0.6)" : "rgba(106, 115, 125, 0.6)",
       borderLeftColor: dark
         ? "rgba(59, 67, 75, 0.1)"
-        : "rgba(223, 226, 229, 0.1)",
+        : "rgba(223, 226, 229, 0.1)"
     },
     ["hr"]: {
       backgroundColor: dark
         ? "rgba(48, 54, 61, 0.1"
-        : "rgba(225, 228, 232, 0.1)",
-    },
-  }),
+        : "rgba(225, 228, 232, 0.1)"
+    }
+  })
 );
 
 const isDark = (hex: string): boolean => tinycolor(hex).isDark();

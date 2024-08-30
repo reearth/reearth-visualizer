@@ -20,7 +20,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   onItemDrop,
   getId,
   renderItem,
-  gap,
+  gap
 }: Props<Item>) {
   const [movingItems, setMovingItems] = useState<Item[]>(items);
   const { scrollContainerRef } = useScroll();
@@ -62,7 +62,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
         onItemDrop(movingItems[index], index);
       }
     },
-    [items, movingItems, onItemDrop],
+    [items, movingItems, onItemDrop]
   );
 
   const onItemDropOutside = useCallback(() => {

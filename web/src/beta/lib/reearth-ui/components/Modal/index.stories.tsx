@@ -7,7 +7,7 @@ import { ModalPanel } from "../ModalPanel";
 import { ModalProps, Modal as ModalComponent } from ".";
 
 const meta: Meta<ModalProps> = {
-  component: ModalComponent,
+  component: ModalComponent
 };
 
 export default meta;
@@ -15,7 +15,7 @@ type Story = StoryObj<typeof ModalComponent>;
 
 const Modal: FC<ModalProps> = ({
   size,
-  children,
+  children
 }: Omit<ModalProps, "visible">) => {
   const [visible, setVisible] = useState(false);
 
@@ -37,7 +37,7 @@ const Modal: FC<ModalProps> = ({
               style={{
                 padding: "24px",
                 borderRadius: "4px",
-                background: "#262626",
+                background: "#262626"
               }}
             >
               {children}
@@ -45,7 +45,7 @@ const Modal: FC<ModalProps> = ({
                 style={{
                   justifyContent: "flex-end",
                   display: "flex",
-                  paddingTop: "10px",
+                  paddingTop: "10px"
                 }}
               >
                 <Button
@@ -101,8 +101,8 @@ export const SmallSize: Story = {
     );
   },
   args: {
-    visible: false,
-  },
+    visible: false
+  }
 };
 
 export const MediumSize: Story = {
@@ -110,8 +110,8 @@ export const MediumSize: Story = {
     return <Modal {...args} size="medium" />;
   },
   args: {
-    visible: false,
-  },
+    visible: false
+  }
 };
 
 export const LargeSize: Story = {
@@ -119,6 +119,6 @@ export const LargeSize: Story = {
     return <Modal {...args} size="large" />;
   },
   args: {
-    visible: false,
-  },
+    visible: false
+  }
 };

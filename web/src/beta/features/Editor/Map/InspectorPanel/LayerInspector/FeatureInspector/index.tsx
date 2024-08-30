@@ -4,7 +4,7 @@ import "react18-json-view/src/dark.css";
 
 import {
   GeoJsonFeatureDeleteProps,
-  GeoJsonFeatureUpdateProps,
+  GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
@@ -40,7 +40,7 @@ const FeatureData: FC<Props> = ({
   layer,
   sketchFeature,
   onGeoJsonFeatureUpdate,
-  onGeoJsonFeatureDelete,
+  onGeoJsonFeatureDelete
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -64,7 +64,7 @@ const FeatureData: FC<Props> = ({
   const saveCollapseState = useCallback((storageId: string, state: boolean) => {
     localStorage.setItem(
       `reearth-visualizer-feature-${storageId}-collapsed`,
-      JSON.stringify(state),
+      JSON.stringify(state)
     );
   }, []);
 
@@ -73,10 +73,10 @@ const FeatureData: FC<Props> = ({
       saveCollapseState(storageId, state);
       setCollapsedStates((prevState) => ({
         ...prevState,
-        [storageId]: state,
+        [storageId]: state
       }));
     },
-    [saveCollapseState],
+    [saveCollapseState]
   );
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const FeatureData: FC<Props> = ({
       id: key,
       type: value.replace(/_\d+$/, ""),
       title: key,
-      value: selectedFeature?.properties?.[key],
+      value: selectedFeature?.properties?.[key]
     }));
 
     setFields(fieldArray);
@@ -108,20 +108,20 @@ const FeatureData: FC<Props> = ({
     const newProperties = { ...selectedFeature.properties };
     Object.assign(
       newProperties,
-      ...fields.map((f) => ({ [f.title]: f.value })),
+      ...fields.map((f) => ({ [f.title]: f.value }))
     );
     onGeoJsonFeatureUpdate?.({
       layerId: layer.id,
       featureId: sketchFeature.id,
       geometry: selectedFeature.geometry,
-      properties: newProperties,
+      properties: newProperties
     });
   }, [
     layer?.id,
     fields,
     onGeoJsonFeatureUpdate,
     selectedFeature,
-    sketchFeature?.id,
+    sketchFeature?.id
   ]);
 
   const jsonStyle = useMemo(
@@ -129,16 +129,16 @@ const FeatureData: FC<Props> = ({
       wordWrap: "break-word" as const,
       minWidth: 0,
       lineHeight: "1.5em",
-      fontSize: theme.fonts.sizes.body,
+      fontSize: theme.fonts.sizes.body
     }),
-    [theme.fonts.sizes.body],
+    [theme.fonts.sizes.body]
   );
 
   const handleDeleteSketchFeature = useCallback(() => {
     if (!layer?.id || !sketchFeature?.id) return;
     onGeoJsonFeatureDelete?.({
       layerId: layer.id,
-      featureId: sketchFeature.id,
+      featureId: sketchFeature.id
     });
   }, [layer?.id, sketchFeature?.id, onGeoJsonFeatureDelete]);
 
@@ -228,19 +228,19 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.small,
   padding: `${theme.spacing.small}px 0`,
-  wordBreak: "break-all",
+  wordBreak: "break-all"
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  userSelect: "none",
+  userSelect: "none"
 }));
 
 const ValueWrapper = styled("div")(({ theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`
 }));

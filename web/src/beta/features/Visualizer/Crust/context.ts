@@ -2,7 +2,7 @@ import { Camera } from "@reearth/beta/utils/value";
 import {
   TimelineManagerRef,
   TimelineCommitter,
-  ViewerProperty,
+  ViewerProperty
 } from "@reearth/core";
 import { RefObject, useMemo } from "react";
 
@@ -14,7 +14,7 @@ export const useWidgetContext = ({
   selectedLayerId,
   viewerProperty,
   initialCamera,
-  timelineManagerRef,
+  timelineManagerRef
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -23,15 +23,9 @@ export const useWidgetContext = ({
         selectedLayerId,
         viewerProperty,
         initialCamera,
-        timelineManagerRef,
+        timelineManagerRef
       }),
-    [
-      mapRef,
-      viewerProperty,
-      initialCamera,
-      selectedLayerId,
-      timelineManagerRef,
-    ],
+    [mapRef, viewerProperty, initialCamera, selectedLayerId, timelineManagerRef]
   );
 
 export function widgetContextFromMapRef({
@@ -39,7 +33,7 @@ export function widgetContextFromMapRef({
   selectedLayerId,
   viewerProperty,
   initialCamera,
-  timelineManagerRef,
+  timelineManagerRef
 }: {
   mapRef?: RefObject<MapRef>;
   selectedLayerId?: {
@@ -73,7 +67,7 @@ export function widgetContextFromMapRef({
         title: l.title,
         lat: location?.lat,
         lng: location?.lng,
-        height: location?.height ?? 0,
+        height: location?.height ?? 0
       };
     },
     onCameraOrbit: (...args) => engine()?.orbit(...args),
@@ -83,7 +77,7 @@ export function widgetContextFromMapRef({
     onLayerSelect: (layerId, featureId, options) => {
       layers()?.selectFeatures(
         [{ layerId, featureId: featureId ? [featureId] : undefined }],
-        options,
+        options
       );
     },
     onPause: (committer?: TimelineCommitter) =>
@@ -91,28 +85,28 @@ export function widgetContextFromMapRef({
         cmd: "PAUSE",
         committer: {
           source: committer?.source ?? "widgetContext",
-          id: committer?.id,
-        },
+          id: committer?.id
+        }
       }),
     onPlay: (committer?: TimelineCommitter) =>
       timelineManagerRef?.current?.commit({
         cmd: "PLAY",
         committer: {
           source: committer?.source ?? "widgetContext",
-          id: committer?.id,
-        },
+          id: committer?.id
+        }
       }),
     onSpeedChange: (speed, committer?: TimelineCommitter) =>
       timelineManagerRef?.current?.commit({
         cmd: "SET_OPTIONS",
         payload: {
           multiplier: speed,
-          stepType: "rate",
+          stepType: "rate"
         },
         committer: {
           source: committer?.source ?? "widgetContext",
-          id: committer?.id,
-        },
+          id: committer?.id
+        }
       }),
     onTick: (cb) => timelineManagerRef?.current?.onTick(cb),
     removeTickEventListener: (cb) => timelineManagerRef?.current?.offTick(cb),
@@ -122,14 +116,14 @@ export function widgetContextFromMapRef({
         payload: {
           start: timelineManagerRef.current?.computedTimeline.start,
           current: time,
-          stop: timelineManagerRef.current?.computedTimeline.stop,
+          stop: timelineManagerRef.current?.computedTimeline.stop
         },
         committer: {
           source: committer?.source ?? "widgetContext",
-          id: committer?.id,
-        },
+          id: committer?.id
+        }
       }),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
-    onZoomOut: (...args) => engine()?.zoomOut(...args),
+    onZoomOut: (...args) => engine()?.zoomOut(...args)
   };
 }

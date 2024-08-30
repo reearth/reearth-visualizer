@@ -12,7 +12,7 @@ export type Props = BlockProps<StoryBlock>;
 const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
-    [block?.property?.default?.text?.value],
+    [block?.property?.default?.text?.value]
   );
 
   const handlePropertyValueUpdate = useCallback(
@@ -21,7 +21,7 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
       propertyId: string,
       fieldId: string,
       vt: any,
-      itemId?: string,
+      itemId?: string
     ) => {
       return async (v?: any) => {
         await props.onPropertyUpdate?.(
@@ -30,11 +30,11 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
           fieldId,
           itemId,
           vt,
-          v,
+          v
         );
       };
     },
-    [props],
+    [props]
   );
 
   const handleTextUpdate = useCallback(
@@ -44,10 +44,10 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
         "default",
         block?.propertyId,
         "text",
-        "string",
+        "string"
       )(text);
     },
-    [block?.propertyId, handlePropertyValueUpdate],
+    [block?.propertyId, handlePropertyValueUpdate]
   );
 
   return (

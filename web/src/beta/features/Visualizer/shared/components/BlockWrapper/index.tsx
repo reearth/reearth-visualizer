@@ -13,7 +13,7 @@ import SelectableArea from "../SelectableArea";
 import useHooks from "./hooks";
 
 export const BlockContext = createContext<{ editMode?: boolean } | undefined>(
-  undefined,
+  undefined
 );
 
 type Spacing = {
@@ -47,22 +47,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   onFlyTo?: FlyTo;
 };
@@ -89,7 +89,7 @@ const BlockWrapper: FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
-  onFlyTo,
+  onFlyTo
 }) => {
   const {
     title,
@@ -103,14 +103,14 @@ const BlockWrapper: FC<Props> = ({
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
-    handleDoubleClick,
+    handleDoubleClick
   } = useHooks({
     name,
     isSelected,
     property,
     isEditable,
     onClick,
-    onBlockDoubleClick,
+    onBlockDoubleClick
   });
   return (
     <BlockContext.Provider value={{ editMode }}>
@@ -215,13 +215,13 @@ const Block = styled("div")<{
   cursor: isEditable && !disableSelection ? "pointer" : "default",
   color: "black",
   position: "relative",
-  minHeight: isEditable ? "28px" : 0,
+  minHeight: isEditable ? "28px" : 0
 }));
 
 const EditorPanel = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
   color: theme.content.main,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));
 
 const Overlay = styled("div")<{ disableSelection?: boolean }>(
@@ -229,13 +229,13 @@ const Overlay = styled("div")<{ disableSelection?: boolean }>(
     position: "absolute",
     height: "100%",
     width: "100%",
-    cursor: !disableSelection ? "pointer" : undefined,
-  }),
+    cursor: !disableSelection ? "pointer" : undefined
+  })
 );
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large,
-  userSelect: "none",
+  userSelect: "none"
 }));

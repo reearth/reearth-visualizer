@@ -17,7 +17,7 @@ const LocationField: React.FC<Props> = ({
   name,
   description,
   value,
-  onChange,
+  onChange
 }) => {
   const t = useT();
   const [location, setLocation] = useState<LatLng>(value || { lat: 0, lng: 0 });
@@ -28,11 +28,11 @@ const LocationField: React.FC<Props> = ({
 
       setLocation((prevLocation) => ({
         ...prevLocation,
-        [coordination === "Latitude" ? "lat" : "lng"]: newValue,
+        [coordination === "Latitude" ? "lat" : "lng"]: newValue
       }));
       onChange?.(location);
     },
-    [location, onChange],
+    [location, onChange]
   );
 
   return (

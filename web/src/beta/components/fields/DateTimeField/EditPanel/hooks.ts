@@ -18,7 +18,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
   const [time, setTime] = useState("");
   const [selectedTimezone, setSelectedTimezone] = useState<TimezoneInfo>({
     offset: "+00:00",
-    timezone: "Africa/Abidjan",
+    timezone: "Africa/Abidjan"
   });
 
   const handleTimeChange = useCallback((newValue: string | undefined) => {
@@ -37,7 +37,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
 
   const handleApplyChange = useCallback(() => {
     const selectedTimezoneInfo = offsetFromUTC.find(
-      (info) => info.timezone === selectedTimezone.timezone,
+      (info) => info.timezone === selectedTimezone.timezone
     );
     if (selectedTimezoneInfo) {
       const formattedDateTime = `${date}T${time}${selectedTimezoneInfo.offset}`;
@@ -50,17 +50,17 @@ export default ({ value, onChange, setDateTime }: Props) => {
     date,
     time,
     setDateTime,
-    onChange,
+    onChange
   ]);
 
   const handleTimezoneSelect = useCallback(
     (newValue: string) => {
       const updatedTimezone = offsetFromUTC.find(
-        (info) => info.timezone === newValue,
+        (info) => info.timezone === newValue
       );
       setSelectedTimezone(updatedTimezone || selectedTimezone);
     },
-    [offsetFromUTC, selectedTimezone],
+    [offsetFromUTC, selectedTimezone]
   );
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
           info.offset ===
           (timeWithOffset.includes("-")
             ? `-${formattedTimezoneOffset}`
-            : `+${formattedTimezoneOffset}`),
+            : `+${formattedTimezoneOffset}`)
       );
       if (updatedTimezone) setSelectedTimezone(updatedTimezone);
     } else {
@@ -100,6 +100,6 @@ export default ({ value, onChange, setDateTime }: Props) => {
     handleTimeChange,
     onTimezoneSelect: handleTimezoneSelect,
     onDateChange: handleDateChange,
-    onDateTimeApply: handleApplyChange,
+    onDateTimeApply: handleApplyChange
   };
 };

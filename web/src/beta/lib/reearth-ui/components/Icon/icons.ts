@@ -277,5 +277,5 @@ export default {
   videoFilled: VideoFilled,
   warning: Warning,
   aToZ: AToZ,
-  zToA: ZToA,
+  zToA: ZToA
 };

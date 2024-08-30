@@ -16,7 +16,7 @@ export default ({
   project,
   selectedProjectId,
   onProjectUpdate,
-  onProjectSelect,
+  onProjectSelect
 }: Props) => {
   const t = useT();
 
@@ -33,7 +33,7 @@ export default ({
     if (!project || projectName === project.name) return setIsEditing(false);
     const updatedProject: ProjectType = {
       ...project,
-      name: projectName,
+      name: projectName
     };
     onProjectUpdate?.(updatedProject, project.id);
     setIsEditing(false);
@@ -54,19 +54,19 @@ export default ({
       id: "rename",
       title: t("Rename"),
       icon: "pencilLine",
-      onClick: () => handleProjectNameEdit?.(),
+      onClick: () => handleProjectNameEdit?.()
     },
     {
       id: "setting",
       title: t("Project Setting"),
       path: `/settings/project/${project.id}`,
-      icon: "setting",
-    },
+      icon: "setting"
+    }
   ];
 
   const [, handleDoubleClick] = useDoubleClick(
     () => {},
-    () => handleProjectNameEdit(),
+    () => handleProjectNameEdit()
   );
 
   const handleProjectHover = useCallback((value: boolean) => {
@@ -78,7 +78,7 @@ export default ({
       e.stopPropagation();
       handleDoubleClick();
     },
-    [handleDoubleClick],
+    [handleDoubleClick]
   );
   const handleProjectStarClick = useCallback(
     (e: MouseEvent) => {
@@ -86,16 +86,16 @@ export default ({
       setIsStarred(!isStarred);
       const updatedProject: ProjectType = {
         ...project,
-        starred: !isStarred,
+        starred: !isStarred
       };
       onProjectUpdate?.(updatedProject, project.id);
     },
-    [isStarred, onProjectUpdate, project],
+    [isStarred, onProjectUpdate, project]
   );
 
   const publishStatus = useMemo(
     () => project.status === "published" || project.status === "limited",
-    [project.status],
+    [project.status]
   );
 
   return {
@@ -109,6 +109,6 @@ export default ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
+    handleProjectStarClick
   };
 };

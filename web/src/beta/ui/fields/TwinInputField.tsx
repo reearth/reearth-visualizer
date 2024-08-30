@@ -1,7 +1,7 @@
 import {
   NumberInput,
   NumberInputProps,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -43,7 +43,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
       setInputValues(newValues);
       onChange?.(newValues);
     },
-    [inputValues, onChange],
+    [inputValues, onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -79,7 +79,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: `${theme.spacing.smallest}px`,
   alignItems: "flex-start",
-  width: "100%",
+  width: "100%"
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
@@ -88,5 +88,5 @@ const InputWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.smallest,
   width: "100%",
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 }));

@@ -1,6 +1,6 @@
 import {
   autoFillPage,
-  onScrollToBottom,
+  onScrollToBottom
 } from "@reearth/beta/utils/infinite-scroll";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
@@ -13,7 +13,7 @@ function pagination(endCursor?: string | null) {
     after: null,
     before: endCursor,
     first: LayerStylesPerPage,
-    last: LayerStylesPerPage,
+    last: LayerStylesPerPage
   };
 }
 
@@ -28,19 +28,19 @@ export default ({ sceneId }: { sceneId?: string }) => {
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [localSearchTerm, setLocalSearchTerm] = useState<string>(
-    searchTerm ?? "",
+    searchTerm ?? ""
   );
 
   const handleSearchInputChange = useCallback(
     (value: string) => {
       setLocalSearchTerm(value);
     },
-    [setLocalSearchTerm],
+    [setLocalSearchTerm]
   );
 
   const handleSearchTerm = useCallback(
     (term?: string) => setSearchTerm(term),
-    [],
+    []
   );
 
   const handleSearch = useCallback(() => {
@@ -55,10 +55,10 @@ export default ({ sceneId }: { sceneId?: string }) => {
     (layerStyle?: LayerStyle) => {
       if (!layerStyle) return;
       selectLayerStyle(
-        !selectedLayerStyles.includes(layerStyle) ? [layerStyle] : [],
+        !selectedLayerStyles.includes(layerStyle) ? [layerStyle] : []
       );
     },
-    [selectLayerStyle, selectedLayerStyles],
+    [selectLayerStyle, selectedLayerStyles]
   );
 
   const handleGetMoreLayerStyles = useCallback(async () => {
@@ -66,8 +66,8 @@ export default ({ sceneId }: { sceneId?: string }) => {
       isGettingMore.current = true;
       await fetchMore({
         variables: {
-          pagination: pagination(),
-        },
+          pagination: pagination()
+        }
       });
       isGettingMore.current = false;
     }
@@ -75,7 +75,7 @@ export default ({ sceneId }: { sceneId?: string }) => {
 
   const isLayerStylesLoading = useMemo(
     () => loading ?? isRefetching,
-    [loading, isRefetching],
+    [loading, isRefetching]
   );
 
   useEffect(() => {
@@ -95,6 +95,6 @@ export default ({ sceneId }: { sceneId?: string }) => {
     selectLayerStyle,
     handleSelectLayerStyle,
     handleSearchInputChange,
-    handleSearch,
+    handleSearch
   };
 };

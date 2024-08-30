@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { CodeInput, CodeInputProps } from ".";
 
 const meta: Meta<CodeInputProps> = {
-  component: CodeInput,
+  component: CodeInput
 };
 
 export default meta;
@@ -13,7 +13,7 @@ type Story = StoryObj<typeof CodeInput>;
 const TEST_JSON = {
   name: "Eukarya",
   application: "reearth",
-  component: "CodeInput",
+  component: "CodeInput"
 };
 
 export const Default: Story = {
@@ -25,7 +25,7 @@ export const Default: Story = {
         onBlur={action("onBlur")}
       />
     </div>
-  ),
+  )
 };
 
 export const Disabled: Story = {
@@ -38,7 +38,7 @@ export const Disabled: Story = {
         disabled={true}
       />
     </div>
-  ),
+  )
 };
 
 export const HideLineNumber: Story = {
@@ -51,7 +51,7 @@ export const HideLineNumber: Story = {
         showLines={false}
       />
     </div>
-  ),
+  )
 };
 
 export const JavascriptInput: Story = {
@@ -64,5 +64,5 @@ export const JavascriptInput: Story = {
         language="javascript"
       />
     </div>
-  ),
+  )
 };

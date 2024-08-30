@@ -13,7 +13,7 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
 };
 
@@ -21,7 +21,7 @@ const TextBlockEditor: FC<Props> = ({
   text,
   propertyId,
   isEditable,
-  onPropertyUpdate,
+  onPropertyUpdate
 }) => {
   const context = useContext(BlockContext);
 
@@ -31,7 +31,7 @@ const TextBlockEditor: FC<Props> = ({
       propertyId: string,
       fieldId: string,
       vt: any,
-      itemId?: string,
+      itemId?: string
     ) => {
       return async (v?: any) => {
         await onPropertyUpdate?.(
@@ -40,11 +40,11 @@ const TextBlockEditor: FC<Props> = ({
           fieldId,
           itemId,
           vt,
-          v,
+          v
         );
       };
     },
-    [onPropertyUpdate],
+    [onPropertyUpdate]
   );
 
   const handleTextUpdate = useCallback(
@@ -52,12 +52,12 @@ const TextBlockEditor: FC<Props> = ({
       if (!propertyId || !isEditable) return;
       handlePropertyValueUpdate("default", propertyId, "text", "string")(text);
     },
-    [propertyId, isEditable, handlePropertyValueUpdate],
+    [propertyId, isEditable, handlePropertyValueUpdate]
   );
 
   const debouncedHandleTextUpdate = useMemo(
     () => (handleTextUpdate ? debounce(handleTextUpdate, 1000) : undefined),
-    [handleTextUpdate],
+    [handleTextUpdate]
   );
 
   return (

@@ -30,18 +30,18 @@ const SpacingInput: React.FC<Props> = ({
   value,
   min,
   max,
-  onChange,
+  onChange
 }) => {
   const [spacingValues, setSpacingValues] = useState<SpacingValues>(
-    value || { top: 0, left: 0, right: 0, bottom: 0 },
+    value || { top: 0, left: 0, right: 0, bottom: 0 }
   );
 
   const memoizedSpacingValues = useMemo(
     () =>
       SPACING_POSITIONS.map((position) =>
-        getSpacingPosition(spacingValues, position as Position),
+        getSpacingPosition(spacingValues, position as Position)
       ),
-    [spacingValues],
+    [spacingValues]
   );
 
   const handleInputChange = (position: Position, newValue?: number) => {
@@ -97,7 +97,7 @@ const SpacingField = styled(NumberInput)<{ position: string }>`
 
 function getSpacingPosition(
   spacingValue: SpacingValues,
-  position: Position,
+  position: Position
 ): number {
   return spacingValue[position];
 }

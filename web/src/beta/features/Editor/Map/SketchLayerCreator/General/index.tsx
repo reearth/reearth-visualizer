@@ -7,7 +7,7 @@ import {
   ContentWrapper,
   InputGroup,
   InputsWrapper,
-  Wrapper,
+  Wrapper
 } from "../../shared/SharedComponent";
 
 export interface Props {
@@ -22,7 +22,7 @@ const General: FC<Props> = ({
   layerName,
   layerStyle,
   onLayerNameChange,
-  onLayerStyleChange,
+  onLayerStyleChange
 }) => {
   const t = useT();
   const layerStyleOption = layerStyles ? layerStyles : [];
@@ -46,7 +46,7 @@ const General: FC<Props> = ({
             maxHeight={250}
             options={layerStyleOption?.map((v) => ({
               label: v.name,
-              value: v.id,
+              value: v.id
             }))}
             onChange={onLayerStyleChange}
           />

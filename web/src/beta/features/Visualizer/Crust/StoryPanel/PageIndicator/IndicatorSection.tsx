@@ -13,7 +13,7 @@ const IndicatorSection: FC<Props> = ({
   pageNumber,
   currentPageNumber,
   title,
-  onPageChange,
+  onPageChange
 }) => {
   const handleClick = useCallback(() => {
     onPageChange(pageNumber);
@@ -21,7 +21,7 @@ const IndicatorSection: FC<Props> = ({
 
   const isHighlighted = useMemo(
     () => pageNumber <= currentPageNumber,
-    [currentPageNumber, pageNumber],
+    [currentPageNumber, pageNumber]
   );
 
   // const isLast = useMemo(() => pageNumber === totalPages, [pageNumber, totalPages]);
@@ -55,15 +55,15 @@ const Indicator = styled("div")<{
   width: "100%",
   background: highlighted ? theme.primary.strong : "#78a9ff",
   cursor: "pointer",
-  borderLeft: !isFirstChild ? "1px solid #ffffff" : "none",
+  borderLeft: !isFirstChild ? "1px solid #ffffff" : "none"
 }));
 
 const PageNameWrapper = styled("div")<{ isHighlighted: boolean }>(
   ({ isHighlighted, theme }) => ({
     background: isHighlighted ? theme.primary.strong : "#78a9ff",
     padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    maxWidth: "255px",
-  }),
+    maxWidth: "255px"
+  })
 );
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -72,5 +72,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
-  cursor: "default",
+  cursor: "default"
 }));

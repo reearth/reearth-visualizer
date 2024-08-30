@@ -14,7 +14,7 @@ import {
   PublicAliasSettingsType,
   PublicBasicAuthSettingsType,
   PublicSettingsType,
-  PublicGASettingsType,
+  PublicGASettingsType
 } from ".";
 
 type Props = {
@@ -33,49 +33,49 @@ const PublicSettingsDetail: React.FC<Props> = ({
   onUpdate,
   onUpdateBasicAuth,
   onUpdateAlias,
-  onUpdateGA,
+  onUpdateGA
 }) => {
   const t = useT();
 
   const [localPublicInfo, setLocalPublicInfo] = useState({
     publicTitle: settingsItem.publicTitle,
     publicDescription: settingsItem.publicDescription,
-    publicImage: settingsItem.publicImage,
+    publicImage: settingsItem.publicImage
   });
   const handleSubmitPublicInfo = useCallback(() => {
     onUpdate({
-      ...localPublicInfo,
+      ...localPublicInfo
     });
   }, [localPublicInfo, onUpdate]);
 
   const [localBasicAuthorization, setBasicAuthorization] = useState({
     isBasicAuthActive: !!settingsItem.isBasicAuthActive,
     basicAuthUsername: settingsItem.basicAuthUsername,
-    basicAuthPassword: settingsItem.basicAuthPassword,
+    basicAuthPassword: settingsItem.basicAuthPassword
   });
   const handleSubmitBasicAuthorization = useCallback(() => {
     onUpdateBasicAuth({
-      ...localBasicAuthorization,
+      ...localBasicAuthorization
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
 
   const [localAlias, setLocalAlias] = useState(settingsItem.alias);
   const handleSubmitAlias = useCallback(() => {
     onUpdateAlias({
-      alias: localAlias,
+      alias: localAlias
     });
   }, [localAlias, onUpdateAlias]);
 
   const [localGA, setLocalGA] = useState<PublicGASettingsType>({
     enableGa: settingsItem.enableGa,
-    trackingId: settingsItem.trackingId,
+    trackingId: settingsItem.trackingId
   });
 
   const handleSubmitGA = useCallback(() => {
     if (onUpdateGA) {
       onUpdateGA({
         enableGa: localGA.enableGa,
-        trackingId: localGA.trackingId,
+        trackingId: localGA.trackingId
       });
     }
   }, [localGA, onUpdateGA]);
@@ -170,7 +170,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
               setLocalAlias(alias);
             }}
             description={t(
-              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.",
+              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows."
             )}
           />
           <ButtonWrapper>

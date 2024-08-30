@@ -3,14 +3,14 @@ import {
   ValueType,
   ValueTypes,
   valueToGQL,
-  valueTypeToGQL,
+  valueTypeToGQL
 } from "@reearth/beta/utils/value";
 import { PropertyItemPayload } from "@reearth/services/gql";
 import {
   UPDATE_PROPERTY_VALUE,
   ADD_PROPERTY_ITEM,
   REMOVE_PROPERTY_ITEM,
-  MOVE_PROPERTY_ITEM,
+  MOVE_PROPERTY_ITEM
 } from "@reearth/services/gql/queries/property";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
@@ -37,7 +37,7 @@ export default () => {
       fieldId: string,
       lang: string,
       v: ValueTypes[ValueType] | undefined,
-      vt: ValueType,
+      vt: ValueType
     ) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
@@ -50,52 +50,52 @@ export default () => {
           fieldId,
           value,
           type: gvt,
-          lang: lang,
+          lang: lang
         },
-        refetchQueries: ["GetScene"],
+        refetchQueries: ["GetScene"]
       });
 
       if (errors || !data?.updatePropertyValue) {
         console.log("GraphQL: Failed to update property", errors);
         setNotification({
           type: "error",
-          text: t("Failed to update property."),
+          text: t("Failed to update property.")
         });
 
         return { status: "error" };
       }
       setNotification({
         type: "success",
-        text: t("Successfully updated the property value!"),
+        text: t("Successfully updated the property value!")
       });
       return {
         data: data.updatePropertyValue.property,
-        status: "success",
+        status: "success"
       };
     },
-    [updatePropertyValue, setNotification, t],
+    [updatePropertyValue, setNotification, t]
   );
 
   const useAddPropertyItem = useCallback(
     async (
       propertyId: string,
-      schemaGroupId: string,
+      schemaGroupId: string
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
       const { data, errors } = await addPropertyItem({
         variables: {
           propertyId,
-          schemaGroupId,
+          schemaGroupId
         },
-        refetchQueries: ["GetScene"],
+        refetchQueries: ["GetScene"]
       });
 
       if (errors || !data?.addPropertyItem?.property?.id) {
         console.log("GraphQL: Failed to update property", errors);
         setNotification({
           type: "error",
-          text: t("Failed to update property."),
+          text: t("Failed to update property.")
         });
 
         return { data: undefined, status: "error" };
@@ -103,17 +103,17 @@ export default () => {
 
       return {
         data: data.addPropertyItem.property.id,
-        status: "success",
+        status: "success"
       };
     },
-    [addPropertyItem, setNotification, t],
+    [addPropertyItem, setNotification, t]
   );
 
   const useRemovePropertyItem = useCallback(
     async (
       propertyId: string,
       schemaGroupId: string,
-      itemId: string,
+      itemId: string
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
@@ -121,16 +121,16 @@ export default () => {
         variables: {
           propertyId,
           schemaGroupId,
-          itemId,
+          itemId
         },
-        refetchQueries: ["GetScene"],
+        refetchQueries: ["GetScene"]
       });
 
       if (errors || !data?.removePropertyItem?.property?.id) {
         console.log("GraphQL: Failed to update property", errors);
         setNotification({
           type: "error",
-          text: t("Failed to update property."),
+          text: t("Failed to update property.")
         });
 
         return { data: undefined, status: "error" };
@@ -138,10 +138,10 @@ export default () => {
 
       return {
         data: data.removePropertyItem.property.id,
-        status: "success",
+        status: "success"
       };
     },
-    [removePropertyItem, setNotification, t],
+    [removePropertyItem, setNotification, t]
   );
 
   const useMovePropertyItem = useCallback(
@@ -149,7 +149,7 @@ export default () => {
       propertyId: string,
       schemaGroupId: string,
       itemId: string,
-      index: number,
+      index: number
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
@@ -158,16 +158,16 @@ export default () => {
           propertyId,
           schemaGroupId,
           itemId,
-          index,
+          index
         },
-        refetchQueries: ["GetScene"],
+        refetchQueries: ["GetScene"]
       });
 
       if (errors || !data?.movePropertyItem?.property?.id) {
         console.log("GraphQL: Failed to update property", errors);
         setNotification({
           type: "error",
-          text: t("Failed to update property."),
+          text: t("Failed to update property.")
         });
 
         return { data: undefined, status: "error" };
@@ -175,15 +175,15 @@ export default () => {
 
       return {
         data: data.movePropertyItem.property.id,
-        status: "success",
+        status: "success"
       };
     },
-    [movePropertyItem, setNotification, t],
+    [movePropertyItem, setNotification, t]
   );
   return {
     useUpdatePropertyValue,
     useAddPropertyItem,
     useRemovePropertyItem,
-    useMovePropertyItem,
+    useMovePropertyItem
   };
 };

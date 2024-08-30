@@ -5,7 +5,7 @@ import {
   type Layer,
   type SelectedFeatureInfo,
   type Camera,
-  type MapRef,
+  type MapRef
 } from "@reearth/core";
 import { useMemo, type RefObject, useContext } from "react";
 
@@ -16,7 +16,7 @@ import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, {
   type ExternalPluginProps,
   ModalContainer,
-  PopupContainer,
+  PopupContainer
 } from "./Plugins";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
@@ -27,7 +27,7 @@ import Widgets, {
   type Location,
   type WidgetLayoutConstraint,
   type InternalWidget,
-  type WidgetAreaType,
+  type WidgetAreaType
 } from "./Widgets";
 
 export type { ValueTypes, ValueType, InteractionModeType } from "./types";
@@ -48,7 +48,7 @@ export type {
   BuiltinWidgets,
   WidgetArea,
   WidgetAlignment,
-  WidgetAreaType,
+  WidgetAreaType
 } from "./Widgets";
 export { isBuiltinWidget } from "./Widgets";
 
@@ -85,7 +85,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -93,12 +93,12 @@ export type Props = {
   onInfoboxBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onInfoboxBlockMove?: (
     id: string,
     targetIndex: number,
-    layerId?: string,
+    layerId?: string
   ) => Promise<void>;
   onInfoboxBlockDelete?: (id?: string) => Promise<void>;
   // Infobox
@@ -108,22 +108,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   // Story
   showStoryPanel?: boolean;
@@ -136,12 +136,12 @@ export type Props = {
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onStoryBlockDelete?: (
     pageId?: string | undefined,
-    blockId?: string | undefined,
+    blockId?: string | undefined
   ) => Promise<void>;
   onPropertyValueUpdate?: (
     propertyId?: string,
@@ -149,7 +149,7 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
 };
 
@@ -196,7 +196,7 @@ export default function Crust({
   onStoryBlockCreate,
   onStoryBlockMove,
   onStoryBlockDelete,
-  onPropertyValueUpdate,
+  onPropertyValueUpdate
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -212,7 +212,7 @@ export default function Crust({
     onLayerLoad,
     onLayerSelectWithRectStart,
     onLayerSelectWithRectMove,
-    onLayerSelectWithRectEnd,
+    onLayerSelectWithRectEnd
   } = useContext(coreContext);
 
   const widgetTheme = usePublishTheme(widgetThemeOptions);
@@ -220,9 +220,9 @@ export default function Crust({
   const selectedLayerId = useMemo(
     () => ({
       layerId: selectedLayer?.layerId,
-      featureId: selectedLayer?.featureId,
+      featureId: selectedLayer?.featureId
     }),
-    [selectedLayer?.featureId, selectedLayer?.layerId],
+    [selectedLayer?.featureId, selectedLayer?.layerId]
   );
 
   const {
@@ -232,7 +232,7 @@ export default function Crust({
     pluginPopupContainerRef,
     renderWidget,
     renderBlock,
-    onPluginModalShow,
+    onPluginModalShow
   } = useHooks({ mapRef, ...externalPlugin });
 
   const widgetContext = useWidgetContext({
@@ -240,7 +240,7 @@ export default function Crust({
     viewerProperty,
     initialCamera,
     selectedLayerId,
-    timelineManagerRef: mapRef?.current?.timeline,
+    timelineManagerRef: mapRef?.current?.timeline
   });
 
   const featuredInfobox = useMemo(() => {
@@ -249,7 +249,7 @@ export default function Crust({
       ? {
           property: selected?.infobox?.property,
           blocks: [...(selected?.infobox?.blocks ?? [])],
-          featureId: selectedLayerId.featureId,
+          featureId: selectedLayerId.featureId
         }
       : undefined;
   }, [layers, selectedLayer, selectedLayerId?.featureId]);

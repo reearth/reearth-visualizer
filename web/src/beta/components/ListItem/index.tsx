@@ -30,7 +30,7 @@ const ListItem: FC<Props> = ({
   clamp,
   onItemClick,
   onActionClick,
-  onOpenChange,
+  onOpenChange
 }) => {
   return (
     <Wrapper

@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Area, AreaProps } from ".";
 
 const meta: Meta<AreaProps> = {
-  component: Area,
+  component: Area
 };
 export default meta;
 
@@ -51,7 +51,7 @@ export const Default: StoryObj<typeof Area> = {
         </Area>
       </Area>
     </div>
-  ),
+  )
 };
 
 export const Complicated: StoryObj<typeof Area> = {
@@ -116,5 +116,5 @@ export const Complicated: StoryObj<typeof Area> = {
         </Area>
       </Area>
     </div>
-  ),
+  )
 };

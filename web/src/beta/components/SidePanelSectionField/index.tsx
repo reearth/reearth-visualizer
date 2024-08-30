@@ -1,7 +1,6 @@
 import { styled, useTheme } from "@reearth/services/theme";
 import { useState, ReactNode, useEffect } from "react";
 
-
 import Icon from "../Icon";
 import Text from "../Text";
 
@@ -20,7 +19,7 @@ const SidePanelSectionField: React.FC<{
   gap,
   children,
   storageKey,
-  border,
+  border
 }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState<boolean>(() => {

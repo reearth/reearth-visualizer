@@ -57,6 +57,6 @@ export const useCognitoAuth = (): AuthHook => {
     error,
     getAccessToken,
     login,
-    logout,
+    logout
   };
 };

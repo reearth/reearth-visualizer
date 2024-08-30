@@ -20,7 +20,7 @@ const ColorField: React.FC<Props> = ({
   description,
   value,
   onChange,
-  className,
+  className
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -38,7 +38,7 @@ const ColorField: React.FC<Props> = ({
     handleRgbaInput,
     handleHexInput,
     handleClick,
-    handleKeyPress,
+    handleKeyPress
   } = useHooks({ value, onChange });
 
   return (

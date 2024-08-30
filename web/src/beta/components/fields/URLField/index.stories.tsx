@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import URLField, { Props } from ".";
 
 const meta: Meta<Props> = {
-  component: URLField,
+  component: URLField
 };
 
 export default meta;
@@ -14,8 +14,8 @@ export const AssetImageType: Story = {
     name: "Asset",
     description: "Defaul Asset Uploader",
     fileType: "asset",
-    entityType: "image",
-  },
+    entityType: "image"
+  }
 };
 
 export const AssetFileType: Story = {
@@ -23,16 +23,16 @@ export const AssetFileType: Story = {
     name: "Asset",
     description: "Defaul Asset Uploader",
     fileType: "asset",
-    entityType: "file",
-  },
+    entityType: "file"
+  }
 };
 
 export const URLType: Story = {
   args: {
     name: "URL",
     description: "Defaul URL Input wrapper",
-    fileType: "URL",
-  },
+    fileType: "URL"
+  }
 };
 
 export const AppearanceType: Story = {
@@ -40,6 +40,6 @@ export const AppearanceType: Story = {
     name: "URL",
     description: "Defaul URL Input wrapper",
     fileType: "layerStyle",
-    entityType: "layerStyle",
-  },
+    entityType: "layerStyle"
+  }
 };

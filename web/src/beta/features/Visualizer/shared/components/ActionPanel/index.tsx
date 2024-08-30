@@ -4,7 +4,7 @@ import {
   Popup,
   PopupMenu,
   PopupMenuItem,
-  PopupPanel,
+  PopupPanel
 } from "@reearth/beta/lib/reearth-ui";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
@@ -49,23 +49,23 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   onPopupMenuClick?: (e: MouseEvent<Element, globalThis.MouseEvent>) => void;
 };
@@ -92,7 +92,7 @@ const ActionPanel: FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
-  onPopupMenuClick,
+  onPopupMenuClick
 }) => (
   <Wrapper
     isSelected={isSelected}
@@ -172,7 +172,7 @@ const ActionPanel: FC<Props> = ({
                                         }
                                       />
                                     );
-                                  },
+                                  }
                                 )}
                               </FieldsWrapper>
                             </SettingsContent>
@@ -192,7 +192,7 @@ const ActionPanel: FC<Props> = ({
                 </OptionWrapper>
               )}
             </Fragment>
-          ),
+          )
       )}
     </BlockOptions>
   </Wrapper>
@@ -224,14 +224,14 @@ const Wrapper = styled("div")<{
       ? "0"
       : position === "right-top"
         ? "-1px"
-        : "auto",
+        : "auto"
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  userSelect: "none",
+  userSelect: "none"
 }));
 
 const BlockOptions = styled("div")<{
@@ -241,15 +241,15 @@ const BlockOptions = styled("div")<{
   color: isSelected ? theme.content.main : theme.select.main,
   display: "flex",
   alignItems: "center",
-  height: "24px",
+  height: "24px"
 }));
 
 const OptionsWrapper = styled("div")(() => ({
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const PopupContent = styled("div")(({ theme }) => ({
-  zIndex: theme.zIndexes.visualizer.storyBlock,
+  zIndex: theme.zIndexes.visualizer.storyBlock
 }));
 
 const OptionWrapper = styled("div")<{
@@ -257,7 +257,7 @@ const OptionWrapper = styled("div")<{
 }>(({ showPointer }) => ({
   display: "flex",
   alignItems: "center",
-  cursor: showPointer ? "pointer" : "default",
+  cursor: showPointer ? "pointer" : "default"
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -267,23 +267,23 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
-  maxWidth: "150px",
+  maxWidth: "150px"
 }));
 
 const OptionIcon = styled(Icon)<{ border?: boolean }>(({ border, theme }) => ({
   borderLeft: `1px solid ${border ? "#f1f1f1" : "transparent"}`,
   padding: theme.spacing.smallest,
-  transition: "none",
+  transition: "none"
 }));
 
 const SettingsContent = styled("div")(() => ({
   minHeight: "120px",
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 }));
 
 const DndHandle = styled("div")(() => ({
   height: "100%",
   display: "flex",
   alignItems: "center",
-  cursor: "move",
+  cursor: "move"
 }));

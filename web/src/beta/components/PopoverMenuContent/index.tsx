@@ -22,7 +22,7 @@ const stylesBySize = {
       height: 28px;
       font-size: 12px;
       padding: 4px 12px;
-    `,
+    `
   },
   md: {
     iconSize: 16,
@@ -30,8 +30,8 @@ const stylesBySize = {
       height: 38px;
       font-size: 14px;
       padding: 8px 12px;
-    `,
-  },
+    `
+  }
 };
 
 const PopoverMenuContent: React.FC<Props> = ({ size, width, items }) => {

@@ -31,10 +31,10 @@ export const loadUnsafeBuiltinPlugins = async (urls: string[]) => {
           return plugin;
         } catch (e) {
           throw new Error(
-            `Specified unsafe built-in module could not find: ${url} ${e}`,
+            `Specified unsafe built-in module could not find: ${url} ${e}`
           );
         }
-      }),
+      })
     )
   )
     .map((val) => {

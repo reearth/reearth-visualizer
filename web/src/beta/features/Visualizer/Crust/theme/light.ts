@@ -11,5 +11,5 @@ export const light: Theme = {
   weakIcon: colors.light.icon.weak,
   select: colors.light.other.select,
   mask: colors.light.other.mask,
-  background: colors.light.other.background,
+  background: colors.light.other.background
 };

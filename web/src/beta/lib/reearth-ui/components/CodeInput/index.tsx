@@ -19,7 +19,7 @@ export const CodeInput: FC<CodeInputProps> = ({
   disabled,
   height,
   onChange,
-  onBlur,
+  onBlur
 }) => {
   const theme = useTheme();
   const [currentValue, setCurrentValue] = useState<string | undefined>(value);
@@ -28,11 +28,11 @@ export const CodeInput: FC<CodeInputProps> = ({
   const options = useMemo(
     () => ({
       bracketPairColorization: {
-        enabled: true,
+        enabled: true
       },
       automaticLayout: true,
       minimap: {
-        enabled: false,
+        enabled: false
       },
       selectOnLineNumbers: true,
       fontSize: fonts.sizes.body,
@@ -40,13 +40,13 @@ export const CodeInput: FC<CodeInputProps> = ({
       readOnly: disabled ? true : false,
       wordWrap: "on",
       readOnlyMessage: {
-        supportHtml: false,
+        supportHtml: false
       },
       scrollbar: {
-        horizontal: "hidden",
-      },
+        horizontal: "hidden"
+      }
     }),
-    [disabled, showLines],
+    [disabled, showLines]
   );
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
@@ -55,8 +55,8 @@ export const CodeInput: FC<CodeInputProps> = ({
       inherit: true,
       rules: [],
       colors: {
-        "editor.background": theme.bg[1],
-      },
+        "editor.background": theme.bg[1]
+      }
     });
     monaco.editor.setTheme("myCustomTheme");
     editor.getAction("editor.action.formatDocument").run();
@@ -76,7 +76,7 @@ export const CodeInput: FC<CodeInputProps> = ({
       setCurrentValue(val);
       onChange?.(val);
     },
-    [onChange],
+    [onChange]
   );
 
   useEffect(() => {
@@ -115,6 +115,6 @@ const EditorWrapper = styled("div")<{
   cursor: disabled ? "not-allowed" : "text",
   boxShadow: theme.shadow.input,
   ".monaco-editor .view-lines": {
-    cursor: disabled ? "not-allowed !important" : "text",
-  },
+    cursor: disabled ? "not-allowed !important" : "text"
+  }
 }));

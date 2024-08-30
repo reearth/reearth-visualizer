@@ -15,7 +15,7 @@ export const Loading: FC<LoadingProps> = ({
   animationColor,
   fixed,
   relative,
-  overlay,
+  overlay
 }) => {
   const theme = useTheme();
 
@@ -45,5 +45,5 @@ const LoadingWrapper = styled("div")<{
   top: 0,
   left: 0,
   opacity: "0.8",
-  zIndex: theme.zIndexes.editor.loading,
+  zIndex: theme.zIndexes.editor.loading
 }));

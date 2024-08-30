@@ -1,13 +1,13 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import ToggleField, { Props } from ".";
 
 const meta: Meta<typeof ToggleField> = {
-  component: ToggleField,
+  component: ToggleField
 };
 
 export default meta;
@@ -19,7 +19,7 @@ export const Default: Story = (args: Props) => {
 
   const handleChange = useCallback(
     (checked: boolean) => updateArgs({ checked: !checked }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -63,5 +63,5 @@ Default.args = {
   description: "Sample description",
   checked: true,
   disabled: false,
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };

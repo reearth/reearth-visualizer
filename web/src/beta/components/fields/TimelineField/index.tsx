@@ -26,7 +26,7 @@ const TimelineField: React.FC<Props> = ({
   name,
   description,
   value,
-  onChange,
+  onChange
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const t = useT();

@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import ListField, { Props } from ".";
 
 const meta: Meta<typeof ListField> = {
-  component: ListField,
+  component: ListField
 };
 
 export default meta;
@@ -23,9 +23,9 @@ export const Default: Story = (args: Props) => {
         ...args.items,
         {
           id: randomId,
-          value: `Item ${randomId}`,
-        },
-      ],
+          value: `Item ${randomId}`
+        }
+      ]
     });
   }, [updateArgs, args.items]);
 
@@ -33,7 +33,7 @@ export const Default: Story = (args: Props) => {
     (key: string) => {
       updateArgs({ items: args.items.filter(({ id }) => id != key) });
     },
-    [updateArgs, args.items],
+    [updateArgs, args.items]
   );
 
   const onItemDrop = useCallback(
@@ -41,17 +41,17 @@ export const Default: Story = (args: Props) => {
       const items = [...args.items];
       items.splice(
         items.findIndex((x) => x.id === item.id),
-        1,
+        1
       );
       items.splice(index, 0, item);
       updateArgs({ items });
     },
-    [updateArgs, args.items],
+    [updateArgs, args.items]
   );
 
   const onSelect = useCallback(
     (id: string) => updateArgs({ selected: id }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -85,27 +85,27 @@ Default.args = {
   items: [
     {
       id: "w3tlwi",
-      value: "Item w3tlwi",
+      value: "Item w3tlwi"
     },
     {
       id: "77eg5",
-      value: "Item 77eg5",
+      value: "Item 77eg5"
     },
     {
       id: "7p218",
-      value: "Item 7p218",
+      value: "Item 7p218"
     },
     {
       id: "xquyo",
-      value: "Item xquyo",
+      value: "Item xquyo"
     },
     {
       id: "2mewj",
-      value: "Item 2mewj",
+      value: "Item 2mewj"
     },
     {
       id: "d2gmu",
-      value: "Item d2gmu",
-    },
-  ],
+      value: "Item d2gmu"
+    }
+  ]
 };

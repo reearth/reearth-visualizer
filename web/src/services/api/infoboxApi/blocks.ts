@@ -11,12 +11,12 @@ import {
   MutationRemoveNlsInfoboxBlockArgs,
   PluginExtensionType,
   RemoveNlsInfoboxBlockInput,
-  RemoveNlsInfoboxBlockMutation,
+  RemoveNlsInfoboxBlockMutation
 } from "@reearth/services/gql";
 import {
   ADD_NLSINFOBOX_BLOCK,
   MOVE_NLSINFOBOX_BLOCK,
-  REMOVE_NLSINFOBOX_BLOCK,
+  REMOVE_NLSINFOBOX_BLOCK
 } from "@reearth/services/gql/queries/infobox";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -60,17 +60,17 @@ export default () => {
     ({ sceneId, lang }: InfoboxBlockQueryProps) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
-        skip: !sceneId,
+        skip: !sceneId
       });
 
       const installableInfoboxBlocks = useMemo(
         () => getInstallableInfoboxBlocks(data),
-        [data],
+        [data]
       );
 
       return { installableInfoboxBlocks, ...rest };
     },
-    [],
+    []
   );
 
   const [createInfoboxBlockMutation] = useMutation<
@@ -80,10 +80,10 @@ export default () => {
 
   const useCreateInfoboxBlock = useCallback(
     async (
-      input: AddNlsInfoboxBlockInput,
+      input: AddNlsInfoboxBlockInput
     ): Promise<MutationReturn<AddNlsInfoboxBlockMutation>> => {
       const { data, errors } = await createInfoboxBlockMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.addNLSInfoboxBlock) {
         setNotification({ type: "error", text: t("Failed to create block.") });
@@ -92,12 +92,12 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfullly created a block!"),
+        text: t("Successfullly created a block!")
       });
 
       return { data, status: "success" };
     },
-    [createInfoboxBlockMutation, setNotification, t],
+    [createInfoboxBlockMutation, setNotification, t]
   );
 
   const [removeInfoboxBlockMutation] = useMutation<
@@ -107,10 +107,10 @@ export default () => {
 
   const useDeleteInfoboxBlock = useCallback(
     async (
-      input: RemoveNlsInfoboxBlockInput,
+      input: RemoveNlsInfoboxBlockInput
     ): Promise<MutationReturn<RemoveNlsInfoboxBlockMutation>> => {
       const { data, errors } = await removeInfoboxBlockMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.removeNLSInfoboxBlock) {
         setNotification({ type: "error", text: t("Failed to delete block.") });
@@ -119,12 +119,12 @@ export default () => {
       }
       setNotification({
         type: "info",
-        text: t("Block was successfully deleted."),
+        text: t("Block was successfully deleted.")
       });
 
       return { data, status: "success" };
     },
-    [removeInfoboxBlockMutation, setNotification, t],
+    [removeInfoboxBlockMutation, setNotification, t]
   );
 
   const [moveInfoboxBlockMutation] = useMutation<
@@ -134,10 +134,10 @@ export default () => {
 
   const useMoveInfoboxBlock = useCallback(
     async (
-      input: MoveNlsInfoboxBlockInput,
+      input: MoveNlsInfoboxBlockInput
     ): Promise<MutationReturn<MoveNlsInfoboxBlockMutation>> => {
       const { data, errors } = await moveInfoboxBlockMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.moveNLSInfoboxBlock) {
         setNotification({ type: "error", text: t("Failed to move block.") });
@@ -146,19 +146,19 @@ export default () => {
       }
       setNotification({
         type: "info",
-        text: t("Block was successfully moved."),
+        text: t("Block was successfully moved.")
       });
 
       return { data, status: "success" };
     },
-    [moveInfoboxBlockMutation, setNotification, t],
+    [moveInfoboxBlockMutation, setNotification, t]
   );
 
   return {
     useInstallableInfoboxBlocksQuery,
     useCreateInfoboxBlock,
     useDeleteInfoboxBlock,
-    useMoveInfoboxBlock,
+    useMoveInfoboxBlock
   };
 };
 
@@ -173,7 +173,7 @@ const getInstallableInfoboxBlocks = (rawScene?: GetSceneQuery) => {
           (e) =>
             e.type === PluginExtensionType.InfoboxBlock &&
             (AVAILABLE_INFOBOX_BLOCK_IDS.includes(`reearth/${e.extensionId}`) ||
-              plugin.id !== "reearth"),
+              plugin.id !== "reearth")
         )
         .map((e): InstallableInfoboxBlock => {
           return {
@@ -183,7 +183,7 @@ const getInstallableInfoboxBlocks = (rawScene?: GetSceneQuery) => {
             extensionId: e.extensionId,
             icon: e.extensionId,
             singleOnly: !!e.singleOnly,
-            type: "InfoboxBlock",
+            type: "InfoboxBlock"
           };
         })
         .filter((sb): sb is InstallableInfoboxBlock => !!sb);

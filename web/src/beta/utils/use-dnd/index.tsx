@@ -19,5 +19,5 @@ export const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => (
 
 export const useDraggingItemType = () =>
   useDragLayer((monitor) =>
-    monitor.isDragging() ? (monitor.getItemType() as ItemType) : null,
+    monitor.isDragging() ? (monitor.getItemType() as ItemType) : null
   );

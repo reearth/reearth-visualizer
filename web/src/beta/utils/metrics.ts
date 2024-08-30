@@ -11,7 +11,7 @@ const metrics = {
   dashboardWorkspaceMinWidth: 364,
   dashboardQuickMinWidth: 270,
   dashboardContentHeight: 250,
-  dashboardContentSmallHeight: 156,
+  dashboardContentSmallHeight: 156
 };
 
 export const metricsSizes = {
@@ -23,7 +23,7 @@ export const metricsSizes = {
   xl: 20,
   "2xl": 24,
   "3xl": 28,
-  "4xl": 32,
+  "4xl": 32
 } as const;
 
 export type MetricsSizesType = typeof metricsSizes;

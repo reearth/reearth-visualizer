@@ -6,7 +6,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState,
+  useState
 } from "react";
 
 export type TabItem = {
@@ -31,7 +31,7 @@ export const Tabs: FC<TabsProps> = ({
   tabStyle = "normal",
   background,
   currentTab,
-  onChange,
+  onChange
 }) => {
   const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0].id);
 
@@ -40,7 +40,7 @@ export const Tabs: FC<TabsProps> = ({
       setActiveTab(newTab);
       onChange?.(newTab);
     },
-    [onChange],
+    [onChange]
   );
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const Wrapper = styled("div")<{
   flexFlow: position === "top" ? "column nowrap" : "row nowrap",
   background: background || theme.bg[1],
   height: "100%",
-  width: "100%",
+  width: "100%"
 }));
 
 const TabsMenu = styled("div")<{
@@ -112,7 +112,7 @@ const TabsMenu = styled("div")<{
   flexFlow: position === "top" ? "row nowrap" : "column nowrap",
   background: theme.bg[0],
   padding: tabStyle === "normal" ? " " : theme.spacing.large,
-  gap: theme.spacing.micro,
+  gap: theme.spacing.micro
 }));
 
 const Tab = styled("div")<{
@@ -131,7 +131,7 @@ const Tab = styled("div")<{
     position === "top" && tabStyle === "normal" ? theme.radius.small : "",
   borderTopLeftRadius: tabStyle === "normal" ? theme.radius.small : "",
   borderBottomLeftRadius:
-    position === "left" && tabStyle === "normal" ? theme.radius.small : "",
+    position === "left" && tabStyle === "normal" ? theme.radius.small : ""
 }));
 
 const Content = styled("div")(({ theme }) => ({
@@ -139,5 +139,5 @@ const Content = styled("div")(({ theme }) => ({
   minHeight: 0,
   flex: 1,
   height: "auto",
-  overflowY: "auto",
+  overflowY: "auto"
 }));

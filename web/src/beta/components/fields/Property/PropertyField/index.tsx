@@ -34,19 +34,19 @@ const PropertyField: React.FC<Props> = ({
   field,
   schemaGroup,
   schema,
-  onFlyTo,
+  onFlyTo
 }) => {
   const { handlePropertyValueUpdate } = useHooks(propertyId, schemaGroup);
 
   const value = useMemo(
     () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
-    [field?.mergedValue, field?.value, schema.defaultValue],
+    [field?.mergedValue, field?.value, schema.defaultValue]
   );
 
   const handleChange = handlePropertyValueUpdate(
     schema.id,
     schema.type,
-    itemId,
+    itemId
   );
   return (
     <>

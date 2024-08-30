@@ -3,7 +3,7 @@ import Icon from "@reearth/beta/components/Icon";
 import { styled, useTheme } from "@reearth/services/theme";
 import {
   brandBlue,
-  brandRed,
+  brandRed
 } from "@reearth/services/theme/reearthTheme/common/colors";
 import React from "react";
 import { RingLoader } from "react-spinners";

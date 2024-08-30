@@ -25,17 +25,17 @@ const ContentStory: React.FC<Props> = ({
   onStoryAdd,
   onStoryDelete,
   onStoryClickSettings,
-  onStoryRename,
+  onStoryRename
 }) => {
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [items, setItems] = useState(
     [...Array(100)].map((_, i) => ({
       id: i.toString(),
       index: i,
-      text: "page" + i,
-    })),
+      text: "page" + i
+    }))
   );
   return (
     <SContent>
@@ -52,7 +52,7 @@ const ContentStory: React.FC<Props> = ({
               const items = [...old];
               items.splice(
                 old.findIndex((o) => o.id === item.id),
-                1,
+                1
               );
               items.splice(index, 0, item);
               return items;
@@ -86,7 +86,7 @@ const ContentStory: React.FC<Props> = ({
                           onClick: () => {
                             setOpenedPageId(undefined);
                             onStoryRename(item.id);
-                          },
+                          }
                         },
                         {
                           icon: "gearSix",
@@ -94,7 +94,7 @@ const ContentStory: React.FC<Props> = ({
                           onClick: () => {
                             setOpenedPageId(undefined);
                             onStoryClickSettings(item.id);
-                          },
+                          }
                         },
                         {
                           icon: "trash",
@@ -102,8 +102,8 @@ const ContentStory: React.FC<Props> = ({
                           onClick: () => {
                             setOpenedPageId(undefined);
                             onStoryDelete(item.id);
-                          },
-                        },
+                          }
+                        }
                       ]}
                     />
                   }
@@ -137,7 +137,7 @@ const ContentStory: React.FC<Props> = ({
                     onClick: () => {
                       setOpenedPageId(undefined);
                       onStoryRename(i.toString());
-                    },
+                    }
                   },
                   {
                     icon: "gearSix",
@@ -145,7 +145,7 @@ const ContentStory: React.FC<Props> = ({
                     onClick: () => {
                       setOpenedPageId(undefined);
                       onStoryClickSettings(i.toString());
-                    },
+                    }
                   },
                   {
                     icon: "trash",
@@ -153,8 +153,8 @@ const ContentStory: React.FC<Props> = ({
                     onClick: () => {
                       setOpenedPageId(undefined);
                       onStoryDelete(i.toString());
-                    },
-                  },
+                    }
+                  }
                 ]}
               />
             }

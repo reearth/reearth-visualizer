@@ -41,7 +41,7 @@ export type Props = {
   theme?: Theme;
   onFlyTo?: (
     target: string | FlyToDestination,
-    options?: { duration?: number },
+    options?: { duration?: number }
   ) => void;
 };
 
@@ -51,7 +51,7 @@ export default function MenuButton({
   location,
   align,
   theme,
-  onFlyTo,
+  onFlyTo
 }: Props): JSX.Element {
   const [visibleMenuButton, setVisibleMenuButton] = useState(false);
 
@@ -84,17 +84,17 @@ export default function MenuButton({
           enabled: !visibleMenuButton,
           options: {
             scroll: false,
-            resize: false,
-          },
+            resize: false
+          }
         },
         {
           name: "offset",
           options: {
-            offset: [0, 2],
-          },
-        },
-      ],
-    },
+            offset: [0, 2]
+          }
+        }
+      ]
+    }
   );
 
   const handleClick = useCallback(
@@ -135,7 +135,7 @@ export default function MenuButton({
       }
       setVisibleMenuButton(false);
     },
-    [onFlyTo, visibleMenuButton],
+    [onFlyTo, visibleMenuButton]
   );
 
   return (
@@ -156,7 +156,7 @@ export default function MenuButton({
               marginLeft:
                 b?.buttonIcon && b?.buttonStyle === "texticon"
                   ? "5px"
-                  : undefined,
+                  : undefined
             }}
           >
             {b?.buttonTitle}
@@ -185,7 +185,7 @@ export default function MenuButton({
                     size="footnote"
                     customColor
                     otherProperties={{
-                      marginLeft: i.menuIcon ? "5px" : undefined,
+                      marginLeft: i.menuIcon ? "5px" : undefined
                     }}
                   >
                     {i.menuTitle}

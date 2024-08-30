@@ -15,7 +15,7 @@ const SettingsButtons: React.FC<Props> = ({
   icon,
   onBlock,
   onEdit,
-  onSetting,
+  onSetting
 }) => {
   const theme = useTheme();
 

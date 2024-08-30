@@ -8,11 +8,11 @@ export const calculateDegreeOfCompass = (
     height: number;
     width: number;
   },
-  currentPosition: { x: number; y: number },
+  currentPosition: { x: number; y: number }
 ) => {
   const compassCenterPos = {
     x: compass.x + compass.width / 2,
-    y: compass.y + compass.height / 2,
+    y: compass.y + compass.height / 2
   };
 
   // It assumes that compassCenterPos is center, calculate x,y axis

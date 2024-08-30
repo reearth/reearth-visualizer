@@ -21,7 +21,7 @@ const ContentPicker: React.FC<ContentsPickerProps> = ({
   className,
   items: items,
   onSelect,
-  onClickAway,
+  onClickAway
 }) => {
   const ref = useRef(null);
   useClickAway(ref, () => onClickAway?.());

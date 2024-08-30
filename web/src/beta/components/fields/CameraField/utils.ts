@@ -13,7 +13,7 @@ export const userFriendlyCamera = (camera: Camera) => ({
   heading: radiansToDegrees(camera.heading),
   pitch: radiansToDegrees(camera.pitch),
   roll: radiansToDegrees(camera.roll),
-  fov: camera?.fov,
+  fov: camera?.fov
 });
 
 export const saveFriendlyCamera = (camera: Camera) => ({
@@ -23,5 +23,5 @@ export const saveFriendlyCamera = (camera: Camera) => ({
   heading: degreesToRadians(camera.heading),
   pitch: degreesToRadians(camera.pitch),
   roll: degreesToRadians(camera.roll),
-  fov: camera?.fov,
+  fov: camera?.fov
 });

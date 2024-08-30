@@ -9,7 +9,7 @@ export default () => {
 
   const handleIsVisualizerUpdate = useCallback(
     (value: boolean) => setIsVisualizerReady(value),
-    [setIsVisualizerReady],
+    [setIsVisualizerReady]
   );
 
   // Visualizer Size
@@ -17,7 +17,7 @@ export default () => {
     width: 0,
     height: 0,
     left: 0,
-    top: 0,
+    top: 0
   });
   const isVisualizerResizing = useRef(false);
 
@@ -26,7 +26,7 @@ export default () => {
       left: size.left + 1,
       top: size.top + 1,
       width: size.width,
-      height: size.height,
+      height: size.height
     });
     isVisualizerResizing.current = true;
     requestAnimationFrame(() => {
@@ -39,7 +39,7 @@ export default () => {
       if (!isVisualizerReady) return;
       visualizerRef.current?.engine.flyTo(target, options);
     },
-    [isVisualizerReady],
+    [isVisualizerReady]
   );
 
   return {
@@ -49,6 +49,6 @@ export default () => {
     visualizerSize,
     handleVisualizerResize,
     isVisualizerResizing,
-    handleFlyTo,
+    handleFlyTo
   };
 };

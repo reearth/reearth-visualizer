@@ -17,7 +17,7 @@ const PublishToolsPanel: FC = () => {
     projectId,
     sceneId,
     selectedProjectType,
-    handleProjectTypeChange,
+    handleProjectTypeChange
   } = usePublishPage();
   const t = useT();
 
@@ -34,16 +34,16 @@ const PublishToolsPanel: FC = () => {
     handleModalClose,
     handleProjectPublish,
     handleProjectAliasCheck,
-    handleNavigationToSettings,
+    handleNavigationToSettings
   } = useHooks({ storyId, projectId, sceneId, selectedProjectType });
 
   const sceneStatus = publishmentStatuses.find(
-    (status) => status?.type === "default",
+    (status) => status?.type === "default"
   )?.published
     ? "published"
     : "unpublished";
   const storyStatus = publishmentStatuses.find(
-    (status) => status?.type === "story",
+    (status) => status?.type === "story"
   )?.published
     ? "published"
     : "unpublished";
@@ -125,20 +125,20 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
+  padding: `${theme.spacing.small}px ${theme.spacing.normal}px`
 }));
 
 const LeftSection = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.normal,
   height: "24px",
-  width: "244px",
+  width: "244px"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  height: "28px",
+  height: "28px"
 }));
 
 const TabButton = styled(EntryItem)({
@@ -146,7 +146,7 @@ const TabButton = styled(EntryItem)({
   height: "44px",
   display: "flex",
   justifyContent: "space-between",
-  alignItems: "center",
+  alignItems: "center"
 });
 
 const TabButtonWrapper = styled("div")(({ theme }) => ({
@@ -154,7 +154,7 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   gap: theme.spacing.small,
-  width: "116px",
+  width: "116px"
 }));
 
 const PublishStatus = styled("div")<{ status: string }>(
@@ -163,10 +163,10 @@ const PublishStatus = styled("div")<{ status: string }>(
     height: "8px",
     backgroundColor:
       status !== "unpublished" ? "#24A148" : theme.content.weaker,
-    borderRadius: "50%",
-  }),
+    borderRadius: "50%"
+  })
 );
 
 const StatusWrapper = styled("div")({
-  width: "8px",
+  width: "8px"
 });

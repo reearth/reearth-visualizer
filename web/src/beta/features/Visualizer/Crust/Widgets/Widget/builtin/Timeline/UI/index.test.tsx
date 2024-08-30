@@ -53,7 +53,7 @@ test("it should get time from clicked position", () => {
   vi.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   fireEvent.click(slider, {
-    clientX: PADDING_HORIZONTAL + BORDER_WIDTH + currentPosition,
+    clientX: PADDING_HORIZONTAL + BORDER_WIDTH + currentPosition
   });
 
   const iconWrapper = screen.getByTestId("knob-icon");
@@ -76,34 +76,34 @@ test("it should get time from mouse moved position", () => {
   expect(
     Math.abs(
       Math.trunc(
-        parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10),
-      ),
-    ),
+        parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)
+      )
+    )
   ).toBe(0);
 
   // It should not move
   fireEvent.mouseMove(slider, {
-    clientX,
+    clientX
   });
   expect(
     Math.abs(
       Math.trunc(
-        parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10),
-      ),
-    ),
+        parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)
+      )
+    )
   ).toBe(0);
 
   // It should move
   fireEvent.mouseDown(slider);
   fireEvent.mouseMove(slider, {
-    clientX,
+    clientX
   });
   fireEvent.mouseUp(slider);
   expect(screen.getByTestId("knob-icon").style.left).toBe(expectedLeft);
 
   // It should not move
   fireEvent.mouseMove(slider, {
-    clientX: clientX * 2,
+    clientX: clientX * 2
   });
   expect(screen.getByTestId("knob-icon").style.left).toBe(expectedLeft);
 });
@@ -114,24 +114,24 @@ test("it should get correct strongScaleHours from amount of scroll", () => {
   vi.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   fireEvent.wheel(slider, {
-    deltaY: -50,
+    deltaY: -50
   });
   expect(
     parseInt(
       slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "",
-      10,
-    ),
+      10
+    )
   ).toBe(GAP_HORIZONTAL * 1.5);
 
   // Reset gap and increase memory.
   fireEvent.wheel(slider, {
-    deltaY: -50,
+    deltaY: -50
   });
   expect(
     parseInt(
       slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "",
-      10,
-    ),
+      10
+    )
   ).toBe(GAP_HORIZONTAL);
 });
 
@@ -139,7 +139,7 @@ test("it should invoke onPlay or onPlayReversed when play button is clicked", as
   const mockOnPlay = vitest.fn();
   const mockOnPlayReversed = vitest.fn();
   render(
-    <TimelineWrapper onPlay={mockOnPlay} onPlayReversed={mockOnPlayReversed} />,
+    <TimelineWrapper onPlay={mockOnPlay} onPlayReversed={mockOnPlayReversed} />
   );
 
   // TODO: get element by label text

@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import Toggle, { Props } from ".";
 
 const meta: Meta<typeof Toggle> = {
-  component: Toggle,
+  component: Toggle
 };
 
 export default meta;
@@ -18,7 +18,7 @@ export const Default: Story = (args: Props) => {
 
   const handleChange = useCallback(
     (checked: boolean) => updateArgs({ checked: !checked }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -53,5 +53,5 @@ const Wrapper = styled.div`
 Default.args = {
   checked: true,
   disabled: false,
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };

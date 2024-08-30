@@ -12,21 +12,21 @@ const mapping: Mapping = {
     "contacts",
     {
       name: "fullName",
-      age: "userAge",
-    },
-  ],
+      age: "userAge"
+    }
+  ]
 };
 describe("convertData", () => {
   it("should convert flat properties", () => {
     const sourceData = {
       user: {
         name: "John Doe",
-        age: 30,
-      },
+        age: 30
+      }
     };
     const expectedTargetData = {
       fullName: "John Doe",
-      userAge: 30,
+      userAge: 30
     };
     expect(convertData(sourceData, mapping)).toEqual(expectedTargetData);
   });
@@ -37,18 +37,18 @@ describe("convertData", () => {
         address: {
           street: "123 Main St",
           city: "Anytown",
-          zip: "12345",
-        },
-      },
+          zip: "12345"
+        }
+      }
     };
     const expectedTargetData = {
       location: {
         address: {
           street: "123 Main St",
           city: "Anytown",
-          zipCode: "12345",
-        },
-      },
+          zipCode: "12345"
+        }
+      }
     };
     expect(convertData(sourceData, mapping)).toEqual(expectedTargetData);
   });
@@ -58,15 +58,15 @@ describe("convertData", () => {
       user: {
         friends: [
           { name: "Jane Doe", age: 28 },
-          { name: "Jim Beam", age: 35 },
-        ],
-      },
+          { name: "Jim Beam", age: 35 }
+        ]
+      }
     };
     const expectedTargetData = {
       contacts: [
         { fullName: "Jane Doe", userAge: 28 },
-        { fullName: "Jim Beam", userAge: 35 },
-      ],
+        { fullName: "Jim Beam", userAge: 35 }
+      ]
     };
     expect(convertData(sourceData, mapping)).toEqual(expectedTargetData);
   });
@@ -79,13 +79,13 @@ describe("convertData", () => {
         address: {
           street: "123 Main St",
           city: "Anytown",
-          zip: "12345",
+          zip: "12345"
         },
         friends: [
           { name: "Jane Doe", age: 28 },
-          { name: "Jim Beam", age: 35 },
-        ],
-      },
+          { name: "Jim Beam", age: 35 }
+        ]
+      }
     };
     const expectedTargetData = {
       fullName: "John Doe",
@@ -94,13 +94,13 @@ describe("convertData", () => {
         address: {
           street: "123 Main St",
           city: "Anytown",
-          zipCode: "12345",
-        },
+          zipCode: "12345"
+        }
       },
       contacts: [
         { fullName: "Jane Doe", userAge: 28 },
-        { fullName: "Jim Beam", userAge: 35 },
-      ],
+        { fullName: "Jim Beam", userAge: 35 }
+      ]
     };
     expect(convertData(sourceData, mapping)).toEqual(expectedTargetData);
   });

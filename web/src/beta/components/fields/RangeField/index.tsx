@@ -1,6 +1,6 @@
 import Property from "@reearth/beta/components/fields";
 import RangeSlider, {
-  Props as RangeProps,
+  Props as RangeProps
 } from "@reearth/beta/components/RangeSlider";
 import { useCallback, useEffect, useState } from "react";
 
@@ -17,14 +17,14 @@ const RangeField: React.FC<Props> = ({
   ...args
 }: Props) => {
   const [internalState, setInternalState] = useState<number[] | undefined>(
-    value,
+    value
   );
 
   const handleChange = useCallback(
     (value: number[]) => {
       setInternalState(value);
     },
-    [setInternalState],
+    [setInternalState]
   );
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import {
   NumberInput,
   Popup,
   TextInput,
-  PopupPanel,
+  PopupPanel
 } from "@reearth/beta/lib/reearth-ui/components";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
@@ -26,7 +26,7 @@ export const ColorInput: FC<ColorInputProps> = ({
   disabled,
   size = "normal",
   alphaDisabled,
-  onChange,
+  onChange
 }) => {
   const {
     open,
@@ -40,11 +40,11 @@ export const ColorInput: FC<ColorInputProps> = ({
     handleHexInputChange,
     handleHexInputBlur,
     handlePickerApply,
-    handlePickerCancel,
+    handlePickerCancel
   } = useHooks({
     value,
     alphaDisabled,
-    onChange,
+    onChange
   });
 
   return (
@@ -125,7 +125,7 @@ export const ColorInput: FC<ColorInputProps> = ({
 const InputWrapper = styled("div")<{ width?: number }>(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: "flex-start",
+  alignItems: "flex-start"
 }));
 
 const Swatch = styled("div")<{
@@ -164,61 +164,61 @@ const Swatch = styled("div")<{
     left: 0,
     top: 0,
     boxShadow: theme.shadow.input,
-    background: color ? color : "",
-  },
+    background: color ? color : ""
+  }
 }));
 
 const ColorPicker = styled(RgbaColorPicker, {
-  shouldForwardProp: (prop) => prop !== "alphaDisabled",
+  shouldForwardProp: (prop) => prop !== "alphaDisabled"
 })<{ alphaDisabled?: boolean }>(({ theme, alphaDisabled }) => ({
   gap: theme.spacing.normal,
   ".react-colorful__saturation-pointer": {
     width: "12px",
     height: "12px",
-    borderWidth: theme.spacing.smallest - 2,
+    borderWidth: theme.spacing.smallest - 2
   },
   ".react-colorful__hue-pointer, .react-colorful__alpha-pointer": {
     width: "2px",
     height: "10px",
     border: `2px solid ${theme.item.default}`,
-    borderRadius: theme.radius.smallest,
+    borderRadius: theme.radius.smallest
   },
   ".react-colorful__alpha.react-colorful__last-control": {
-    display: alphaDisabled ? "none" : "auto",
+    display: alphaDisabled ? "none" : "auto"
   },
   ".react-colorful__saturation, .react-colorful__hue, .react-colorful__alpha": {
     borderRadius: theme.radius.smallest + 1,
-    width: "270px",
+    width: "270px"
   },
   ".react-colorful__hue, .react-colorful__alpha": {
-    height: "10px",
+    height: "10px"
   },
   ".react-colorful__saturation": {
-    borderBottom: "none !important",
-  },
+    borderBottom: "none !important"
+  }
 }));
 
 const ColorPickerWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 const Format = styled("div")(() => ({
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));
 
 const ChannelsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
   justifyContent: "center",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));

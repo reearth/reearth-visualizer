@@ -5,5 +5,5 @@ export default {
   // allow keys to be phrases having `:`, `.`
   namespaceSeparator: false,
   keySeparator: false,
-  createOldCatalogs: false,
+  createOldCatalogs: false
 };

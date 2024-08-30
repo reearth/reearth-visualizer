@@ -1,7 +1,7 @@
 import {
   Field,
   Item,
-  SchemaField,
+  SchemaField
 } from "@reearth/services/api/propertyApi/utils";
 
 export const filterVisibleItems = (items?: Item[]) => {
@@ -16,7 +16,7 @@ export const filterVisibleItems = (items?: Item[]) => {
 
 const searchField = (
   items: Item[],
-  fid: string,
+  fid: string
 ): [SchemaField, Field | undefined] | undefined => {
   for (const i of items) {
     const sf2 = i.schemaFields.find((f) => f.id === fid);

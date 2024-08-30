@@ -1,7 +1,7 @@
 import {
   IconButton,
   PopupMenuItem,
-  TextInput,
+  TextInput
 } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -14,7 +14,7 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { useMapPage } from "../context";
@@ -32,7 +32,7 @@ const LayerItem: FC<LayerItemProps> = ({
   dragHandleClassName,
   isDragging,
   editingLayerNameId,
-  setEditingLayerNameId,
+  setEditingLayerNameId
 }) => {
   const {
     selectedLayerId,
@@ -42,7 +42,7 @@ const LayerItem: FC<LayerItemProps> = ({
     handleLayerVisibilityUpdate,
     handleFlyTo,
     openCustomPropertySchema,
-    handleCustomPropertySchemaClick,
+    handleCustomPropertySchemaClick
   } = useMapPage();
 
   const handleZoomToLayer = useCallback(() => {
@@ -59,14 +59,14 @@ const LayerItem: FC<LayerItemProps> = ({
         id: "rename",
         title: "Rename",
         icon: "pencilSimple" as const,
-        onClick: () => setEditingLayerNameId(layer.id),
+        onClick: () => setEditingLayerNameId(layer.id)
       },
       {
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
-        onClick: () => handleLayerDelete(layer.id),
-      },
+        onClick: () => handleLayerDelete(layer.id)
+      }
     ];
 
     const sketchMenu = layer.isSketch
@@ -78,8 +78,8 @@ const LayerItem: FC<LayerItemProps> = ({
             onClick: () => {
               openCustomPropertySchema();
               handleCustomPropertySchemaClick?.(layer.id);
-            },
-          },
+            }
+          }
         ]
       : [];
 
@@ -90,7 +90,7 @@ const LayerItem: FC<LayerItemProps> = ({
     setEditingLayerNameId,
     handleLayerDelete,
     openCustomPropertySchema,
-    handleCustomPropertySchemaClick,
+    handleCustomPropertySchemaClick
   ]);
 
   const hoverActions: EntryItemAction[] | undefined = useMemo(
@@ -106,7 +106,7 @@ const LayerItem: FC<LayerItemProps> = ({
                   appearance="simple"
                   onClick={handleZoomToLayer}
                 />
-              ),
+              )
             },
             {
               comp: (
@@ -118,8 +118,8 @@ const LayerItem: FC<LayerItemProps> = ({
                   onClick={handleToggleLayerVisibility}
                 />
               ),
-              keepVisible: !layer.visible,
-            },
+              keepVisible: !layer.visible
+            }
           ]
         : undefined,
     [
@@ -127,8 +127,8 @@ const LayerItem: FC<LayerItemProps> = ({
       layer.visible,
       editingLayerNameId,
       handleZoomToLayer,
-      handleToggleLayerVisibility,
-    ],
+      handleToggleLayerVisibility
+    ]
   );
 
   const [localTitle, setLocalTitle] = useState(layer.title);
@@ -142,7 +142,7 @@ const LayerItem: FC<LayerItemProps> = ({
     layer.title,
     localTitle,
     handleLayerNameUpdate,
-    setEditingLayerNameId,
+    setEditingLayerNameId
   ]);
 
   const handleLayerItemClick = useCallback(() => {
@@ -203,5 +203,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));

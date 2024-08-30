@@ -24,7 +24,7 @@ export const IconButton: FC<IconButtonProps> = ({
   className,
   iconRotate,
   stopPropagationOnClick,
-  onClick,
+  onClick
 }) => {
   const handleClick = useCallback(
     (e: MouseEvent) => {
@@ -32,7 +32,7 @@ export const IconButton: FC<IconButtonProps> = ({
       if (disabled) return;
       onClick?.(e);
     },
-    [disabled, stopPropagationOnClick, onClick],
+    [disabled, stopPropagationOnClick, onClick]
   );
 
   return (
@@ -106,7 +106,7 @@ const StyledButton = styled("button")<{
           ? "20px"
           : "16px",
     transform: iconRotate ? `rotate(${iconRotate})` : "none",
-    transition: "transform 0.1s",
+    transition: "transform 0.1s"
   },
   ["&:hover"]: {
     color: `${theme.content.withBackground}`,
@@ -114,19 +114,19 @@ const StyledButton = styled("button")<{
       ? `${theme["primary"].weak}`
       : appearance === "simple"
         ? "transparent"
-        : `${theme[appearance].weak}`,
+        : `${theme[appearance].weak}`
   },
   ["&:active"]: {
     color: `${theme.content.withBackground}`,
     backgroundColor:
       appearance === "simple" ? "transparent" : `${theme[appearance].main}`,
-    boxShadow: "none",
+    boxShadow: "none"
   },
   ["&:disabled"]: {
     borderColor: "transparent",
     color: `${theme.content.weaker}`,
     backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
     boxShadow: "none",
-    cursor: "not-allowed",
-  },
+    cursor: "not-allowed"
+  }
 }));

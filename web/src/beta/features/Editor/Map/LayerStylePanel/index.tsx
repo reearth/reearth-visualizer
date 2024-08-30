@@ -22,7 +22,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     handleLayerStyleNameUpdate,
     handleLayerStyleSelect,
     handleLayerStyleValueUpdate,
-    handleLayerConfigUpdate,
+    handleLayerConfigUpdate
   } = useMapPage();
 
   const t = useT();
@@ -30,7 +30,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const handleLayerStyleAddition = useCallback(() => {
     handleLayerStyleAdd({
       name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`,
-      value: {},
+      value: {}
     });
   }, [layerStyles?.length, t, handleLayerStyleAdd]);
 
@@ -38,7 +38,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     (id?: string) => {
       handleLayerStyleSelect(id);
     },
-    [handleLayerStyleSelect],
+    [handleLayerStyleSelect]
   );
 
   const handleApplyLayerStyle = useCallback(() => {
@@ -46,8 +46,8 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     handleLayerConfigUpdate?.({
       layerId: selectedLayer.layer.id,
       config: {
-        layerStyleId: selectedLayerStyleId,
-      },
+        layerStyleId: selectedLayerStyleId
+      }
     });
   }, [selectedLayer, selectedLayerStyleId, handleLayerConfigUpdate]);
 
@@ -113,13 +113,13 @@ const LayerStyleManager = styled("div")(({ theme }) => ({
   flex: 1,
   height: "30%",
   maxHeight: 300,
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const StylesWrapper = styled("div")(({ theme }) => ({
@@ -128,18 +128,18 @@ const StylesWrapper = styled("div")(({ theme }) => ({
   overflowY: "auto",
   padding: `${theme.spacing.small}px`,
   background: theme.relative.darker,
-  borderRadius: `${theme.radius.normal}px`,
+  borderRadius: `${theme.radius.normal}px`
 }));
 
 const StylesGrid = styled("div")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
-  gap: `${theme.spacing.small}px`,
+  gap: `${theme.spacing.small}px`
 }));
 
 const LayerStyleEditorWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flex: 1,
   height: "70%",
-  paddingTop: theme.spacing.small,
+  paddingTop: theme.spacing.small
 }));

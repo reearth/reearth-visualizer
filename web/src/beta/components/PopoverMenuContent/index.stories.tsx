@@ -8,9 +8,9 @@ const meta: Meta<typeof PopoverContent> = {
   argTypes: {
     size: {
       control: "radio",
-      options: ["sm", "md"],
-    },
-  },
+      options: ["sm", "md"]
+    }
+  }
 };
 
 export default meta;
@@ -26,27 +26,27 @@ export const Default: Story = {
         icon: "copy",
         name: "Name",
         onClick: action("onClickItem"),
-        isSelected: true,
+        isSelected: true
       },
       {
         icon: "pencilSimple",
         name: "NameNameNameNameNameNameName",
-        onClick: action("onClickItem"),
+        onClick: action("onClickItem")
       },
       {
         name: "NameNameNameNameNameNameName",
-        onClick: action("onClickItem"),
+        onClick: action("onClickItem")
       },
       {
         icon: "trash",
         name: "Name",
-        onClick: action("onClickItem"),
+        onClick: action("onClickItem")
       },
       {
         icon: "gearSix",
         name: "NameNameNameNameNameNameName",
-        onClick: action("onClickItem"),
-      },
-    ],
-  },
+        onClick: action("onClickItem")
+      }
+    ]
+  }
 };

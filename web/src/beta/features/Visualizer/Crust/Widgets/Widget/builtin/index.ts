@@ -1,6 +1,6 @@
 import {
   BUTTON_BUILTIN_WIDGET_ID,
-  NAVIGATOR_BUILTIN_WIDGET_ID,
+  NAVIGATOR_BUILTIN_WIDGET_ID
 } from "@reearth/services/api/widgetsApi/utils";
 import { config } from "@reearth/services/config";
 import { merge } from "lodash-es";
@@ -11,7 +11,7 @@ import Navigator from "./Navigator";
 import {
   Component,
   unsafeBuiltinWidgets,
-  type UnsafeBuiltinWidgets,
+  type UnsafeBuiltinWidgets
 } from "./unsafeWidgets";
 
 export type ReEarthBuiltinWidgets<T = unknown> = Record<
@@ -31,8 +31,8 @@ const REEARTH_BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
     //   animation: true,
     // },
     [NAVIGATOR_BUILTIN_WIDGET_ID]: {
-      animation: true,
-    },
+      animation: true
+    }
   };
 
 const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
@@ -41,7 +41,7 @@ const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
 const reearthBuiltin: BuiltinWidgets<Component> = {
   [BUTTON_BUILTIN_WIDGET_ID]: Button,
   // [TIMELINE_BUILTIN_WIDGET_ID]: Timeline,
-  [NAVIGATOR_BUILTIN_WIDGET_ID]: Navigator,
+  [NAVIGATOR_BUILTIN_WIDGET_ID]: Navigator
 };
 
 let cachedBuiltin:

@@ -15,8 +15,8 @@ export const contextEvents: Context = {
     onTick: "onTick",
     onTimeChange: "onTimeChange",
     onZoomIn: "onZoomIn",
-    onZoomOut: "onZoomOut",
-  }),
+    onZoomOut: "onZoomOut"
+  })
 };
 
 type PickString<T> = T extends `on${string}` ? T : never;

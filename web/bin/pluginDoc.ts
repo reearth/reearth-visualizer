@@ -50,7 +50,7 @@ function parse(node: ts.Node): D | undefined {
         name: s.name,
         type: tc.typeToString(t),
         required: (s.flags & ts.SymbolFlags.Optional) === 0,
-        desc: ts.displayPartsToString(s.getDocumentationComment(tc)),
+        desc: ts.displayPartsToString(s.getDocumentationComment(tc))
       };
     })
     .filter((p): p is P => !!p);
@@ -58,7 +58,7 @@ function parse(node: ts.Node): D | undefined {
   return {
     name: node.name.text,
     desc: ts.displayPartsToString(sym.getDocumentationComment(tc)),
-    properties,
+    properties
   };
 }
 
@@ -70,7 +70,7 @@ function render(decls: D[], linkable: (name: string) => boolean): string {
       d.properties.map((p) => `- ${renderHead(p, linkable)}`).join("\n"),
       ...d.properties
         .filter((p) => p.desc)
-        .flatMap((p) => [`## ${renderHead(p, linkable)}`, p.desc]),
+        .flatMap((p) => [`## ${renderHead(p, linkable)}`, p.desc])
     ])
     .filter(Boolean)
     .join("\n\n");
@@ -83,7 +83,7 @@ function renderHead(p: P, linkable: (name: string) => boolean): string {
 function renderType(
   type: string,
   required: boolean,
-  linkable: (name: string) => boolean,
+  linkable: (name: string) => boolean
 ) {
   const ts = split(type, [
     ") => ",
@@ -94,14 +94,14 @@ function renderType(
     " | ",
     "(",
     ")",
-    ", ",
+    ", "
   ])
     .map((s) =>
       typeof s === "string" && linkable(s)
         ? {
-            link: s,
+            link: s
           }
-        : s,
+        : s
     )
     .map((s) =>
       typeof s === "string"
@@ -110,7 +110,7 @@ function renderType(
           ? `[${s.link}](#${s.link})`
           : "s" in s
             ? s.s
-            : "",
+            : ""
     )
     .join("");
   const func = / => /.test(type);
@@ -118,7 +118,7 @@ function renderType(
     !required && func ? "(" : "",
     ts,
     !required && func ? ")" : "",
-    !required ? " | undefined" : "",
+    !required ? " | undefined" : ""
   ].join("");
 }
 

@@ -19,14 +19,14 @@ const FovSlider: React.FC<Props> = ({
   visible,
   onIsCapturingChange,
   camera,
-  onFovChange,
+  onFovChange
 }) => {
   const t = useT();
 
   const { updateFov, handleClickAway } = useHooks({
     onIsCapturingChange,
     camera,
-    onFovChange,
+    onFovChange
   });
 
   const fov = camera?.fov && Math.round(camera?.fov * 1000) / 1000;

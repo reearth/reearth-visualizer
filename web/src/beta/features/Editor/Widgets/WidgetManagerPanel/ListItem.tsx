@@ -14,7 +14,7 @@ const ListItem: FC<ListItemProps> = ({
   item,
   selected,
   onItemDelete,
-  onItemSelect,
+  onItemSelect
 }) => {
   const optionsMenu = useMemo(
     () => [
@@ -22,10 +22,10 @@ const ListItem: FC<ListItemProps> = ({
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
-        onClick: () => onItemDelete?.(item.id),
-      },
+        onClick: () => onItemDelete?.(item.id)
+      }
     ],
-    [item.id, onItemDelete],
+    [item.id, onItemDelete]
   );
 
   return (
@@ -45,11 +45,11 @@ export default ListItem;
 
 const Wrapper = styled("div")(() => ({
   display: "flex",
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));

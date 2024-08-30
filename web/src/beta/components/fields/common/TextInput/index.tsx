@@ -3,7 +3,7 @@ import {
   HTMLInputTypeAttribute,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from "react";
 
 export type Props = {
@@ -29,7 +29,7 @@ const TextInput: React.FC<Props> = ({
   onBlur,
   onExit,
   disabled,
-  type,
+  type
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
 
@@ -43,7 +43,7 @@ const TextInput: React.FC<Props> = ({
       if (newValue === undefined) return;
       setCurrentValue(newValue);
     },
-    [],
+    []
   );
 
   const handleBlur = useCallback(() => {
@@ -60,7 +60,7 @@ const TextInput: React.FC<Props> = ({
         onExit?.(e);
       }
     },
-    [currentValue, onChange, onExit],
+    [currentValue, onChange, onExit]
   );
 
   return (

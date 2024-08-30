@@ -19,8 +19,8 @@ const MATCHERS = [
         text: match[0],
         url: match[0],
         attributes: {
-          target: "_blank",
-        },
+          target: "_blank"
+        }
       }
     );
   },
@@ -33,11 +33,11 @@ const MATCHERS = [
         text: match[0],
         url: `mailto:${match[0]}`,
         attributes: {
-          target: "_blank",
-        },
+          target: "_blank"
+        }
       }
     );
-  },
+  }
 ];
 
 export default function AutoLinkPluginWithMathers() {
@@ -52,7 +52,7 @@ export default function AutoLinkPluginWithMathers() {
         const dom = editor.getElementByKey(node.__key);
         if (!dom) return;
         dom.setAttribute("target", "_blank");
-      },
+      }
     );
     return () => removeNodeListener();
   }, [editor]);

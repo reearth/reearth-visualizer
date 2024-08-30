@@ -28,11 +28,11 @@ export default VideoPlayer;
 
 const StyledWrapper = styled("div")(() => ({
   width: "100%",
-  position: "relative",
+  position: "relative"
 }));
 
 const Overlay = styled("div")(() => ({
   width: "100%",
   height: "100%",
-  position: "absolute",
+  position: "absolute"
 }));

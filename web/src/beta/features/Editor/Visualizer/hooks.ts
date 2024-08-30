@@ -1,17 +1,17 @@
 import type {
   Alignment,
-  Location,
+  Location
 } from "@reearth/beta/features/Visualizer/Crust";
 import {
   convertData,
-  sceneProperty2ViewerPropertyMapping,
+  sceneProperty2ViewerPropertyMapping
 } from "@reearth/beta/utils/convert-object";
 import { Camera } from "@reearth/beta/utils/value";
 import type {
   LatLng,
   ComputedLayer,
   ComputedFeature,
-  ViewerProperty,
+  ViewerProperty
 } from "@reearth/core";
 import {
   useLayersFetcher,
@@ -20,7 +20,7 @@ import {
   useStorytellingFetcher,
   usePropertyFetcher,
   useLayerStylesFetcher,
-  useInfoboxFetcher,
+  useInfoboxFetcher
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
@@ -28,7 +28,7 @@ import {
   useEffect,
   useCallback,
   useState,
-  MutableRefObject,
+  MutableRefObject
 } from "react";
 
 import { useCurrentCamera } from "../atoms";
@@ -46,7 +46,7 @@ export default ({
   isVisualizerResizing,
   onCoreLayerSelect,
   onVisualizerReady,
-  setSelectedStoryPageId,
+  setSelectedStoryPageId
 }: {
   sceneId?: string;
   storyId?: string;
@@ -67,13 +67,13 @@ export default ({
     useUpdatePropertyValue,
     useAddPropertyItem,
     useMovePropertyItem,
-    useRemovePropertyItem,
+    useRemovePropertyItem
   } = usePropertyFetcher();
   const {
     useInstallableInfoboxBlocksQuery,
     useCreateInfoboxBlock,
     useDeleteInfoboxBlock,
-    useMoveInfoboxBlock,
+    useMoveInfoboxBlock
   } = useInfoboxFetcher();
 
   const [currentCamera, setCurrentCamera] = useCurrentCamera();
@@ -81,7 +81,7 @@ export default ({
     (camera: Camera) => {
       setCurrentCamera(camera);
     },
-    [setCurrentCamera],
+    [setCurrentCamera]
   );
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
@@ -91,7 +91,7 @@ export default ({
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
-    undefined,
+    undefined
   );
 
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
@@ -104,10 +104,10 @@ export default ({
       viewerProperty: sceneProperty
         ? (convertData(
             sceneProperty,
-            sceneProperty2ViewerPropertyMapping,
+            sceneProperty2ViewerPropertyMapping
           ) as ViewerProperty)
         : undefined,
-      cesiumIonAccessToken,
+      cesiumIonAccessToken
     };
   }, [scene?.property]);
 
@@ -116,7 +116,7 @@ export default ({
   }, [initialCamera, setCurrentCamera]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({
-    sceneId,
+    sceneId
   });
 
   const infoboxBlockNames = useMemo(
@@ -128,7 +128,7 @@ export default ({
           Object.assign(result, obj);
           return result;
         }, {}),
-    [installableInfoboxBlocks],
+    [installableInfoboxBlocks]
   );
 
   const layers = useMemo(() => {
@@ -136,12 +136,12 @@ export default ({
       nlsLayers,
       layerStyles,
       undefined,
-      infoboxBlockNames,
+      infoboxBlockNames
     );
     if (!showStoryPanel) return processedLayers;
     return processedLayers?.map((layer) => ({
       ...layer,
-      visible: true,
+      visible: true
     }));
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
@@ -149,7 +149,7 @@ export default ({
     (
       layerId?: string,
       computedLayer?: ComputedLayer,
-      computedFeature?: ComputedFeature,
+      computedFeature?: ComputedFeature
     ) => {
       if (
         (!layerId && !computedFeature && !selectedLayer) ??
@@ -163,7 +163,7 @@ export default ({
         onCoreLayerSelect(undefined);
       }
     },
-    [selectedLayer, onCoreLayerSelect],
+    [selectedLayer, onCoreLayerSelect]
   );
 
   const handleLayerDrop = useCallback(
@@ -171,7 +171,7 @@ export default ({
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
     },
-    [],
+    []
   );
 
   // Widgets
@@ -180,11 +180,11 @@ export default ({
   const handleWidgetUpdate = useCallback(
     async (
       id: string,
-      update: { location?: Location; extended?: boolean; index?: number },
+      update: { location?: Location; extended?: boolean; index?: number }
     ) => {
       await useUpdateWidget(id, update, sceneId);
     },
-    [sceneId, useUpdateWidget],
+    [sceneId, useUpdateWidget]
   );
 
   const handleWidgetAlignSystemUpdate = useCallback(
@@ -194,12 +194,12 @@ export default ({
           zone: location.zone,
           section: location.section,
           area: location.area,
-          align,
+          align
         },
-        sceneId,
+        sceneId
       );
     },
-    [sceneId, useUpdateWidgetAlignSystem],
+    [sceneId, useUpdateWidgetAlignSystem]
   );
 
   // Plugin
@@ -209,7 +209,7 @@ export default ({
         a[b.pluginId] = processProperty(b.property);
         return a;
       }, {}),
-    [scene?.plugins],
+    [scene?.plugins]
   );
 
   const handleInfoboxBlockCreate = useCallback(
@@ -219,10 +219,10 @@ export default ({
         layerId: selectedLayer.layer.id,
         pluginId,
         extensionId,
-        index,
+        index
       });
     },
-    [selectedLayer, useCreateInfoboxBlock],
+    [selectedLayer, useCreateInfoboxBlock]
   );
 
   const handleInfoboxBlockMove = useCallback(
@@ -231,10 +231,10 @@ export default ({
       await useMoveInfoboxBlock({
         layerId: selectedLayer.layer.id,
         infoboxBlockId: id,
-        index: targetIndex,
+        index: targetIndex
       });
     },
-    [selectedLayer, useMoveInfoboxBlock],
+    [selectedLayer, useMoveInfoboxBlock]
   );
 
   const handleInfoboxBlockRemove = useCallback(
@@ -242,10 +242,10 @@ export default ({
       if (!selectedLayer?.layer?.id || !id) return;
       await useDeleteInfoboxBlock({
         layerId: selectedLayer.layer.id,
-        infoboxBlockId: id,
+        infoboxBlockId: id
       });
     },
-    [selectedLayer, useDeleteInfoboxBlock],
+    [selectedLayer, useDeleteInfoboxBlock]
   );
 
   // Story
@@ -256,7 +256,7 @@ export default ({
       if (isVisualizerResizing?.current) return;
       setSelectedStoryPageId(pageId);
     },
-    [isVisualizerResizing, setSelectedStoryPageId],
+    [isVisualizerResizing, setSelectedStoryPageId]
   );
 
   const handleStoryBlockCreate = useCallback(
@@ -264,7 +264,7 @@ export default ({
       pageId?: string,
       extensionId?: string,
       pluginId?: string,
-      index?: number,
+      index?: number
     ) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
       await useCreateStoryBlock({
@@ -272,10 +272,10 @@ export default ({
         extensionId,
         storyId,
         pageId,
-        index,
+        index
       });
     },
-    [storyId, useCreateStoryBlock],
+    [storyId, useCreateStoryBlock]
   );
 
   const handleStoryBlockDelete = useCallback(
@@ -283,7 +283,7 @@ export default ({
       if (!blockId || !storyId || !pageId) return;
       await useDeleteStoryBlock({ blockId, pageId, storyId });
     },
-    [storyId, useDeleteStoryBlock],
+    [storyId, useDeleteStoryBlock]
   );
 
   const handlePropertyValueUpdate = useCallback(
@@ -293,7 +293,7 @@ export default ({
       fieldId?: string,
       itemId?: string,
       vt?: any,
-      v?: any,
+      v?: any
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
       await useUpdatePropertyValue(
@@ -303,10 +303,10 @@ export default ({
         fieldId,
         "en",
         v,
-        vt,
+        vt
       );
     },
-    [useUpdatePropertyValue],
+    [useUpdatePropertyValue]
   );
 
   const handlePropertyItemAdd = useCallback(
@@ -314,7 +314,7 @@ export default ({
       if (!propertyId || !schemaGroupId) return;
       await useAddPropertyItem(propertyId, schemaGroupId);
     },
-    [useAddPropertyItem],
+    [useAddPropertyItem]
   );
 
   const handlePropertyItemMove = useCallback(
@@ -322,13 +322,13 @@ export default ({
       propertyId?: string,
       schemaGroupId?: string,
       itemId?: string,
-      index?: number,
+      index?: number
     ) => {
       if (!propertyId || !schemaGroupId || !itemId || index === undefined)
         return;
       await useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
     },
-    [useMovePropertyItem],
+    [useMovePropertyItem]
   );
 
   const handlePropertyItemDelete = useCallback(
@@ -336,7 +336,7 @@ export default ({
       if (!propertyId || !schemaGroupId || !itemId) return;
       await useRemovePropertyItem(propertyId, schemaGroupId, itemId);
     },
-    [useRemovePropertyItem],
+    [useRemovePropertyItem]
   );
 
   const engineMeta = useMemo(
@@ -344,9 +344,9 @@ export default ({
       cesiumIonAccessToken:
         typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
           ? cesiumIonAccessToken
-          : config()?.cesiumIonAccessToken,
+          : config()?.cesiumIonAccessToken
     }),
-    [cesiumIonAccessToken],
+    [cesiumIonAccessToken]
   );
 
   // TODO: Use GQL value
@@ -358,7 +358,7 @@ export default ({
 
   const handleMount = useCallback(
     () => onVisualizerReady(true),
-    [onVisualizerReady],
+    [onVisualizerReady]
   );
 
   return {
@@ -388,6 +388,6 @@ export default ({
     handlePropertyItemDelete,
     handlePropertyItemMove,
     handleMount,
-    zoomToLayer,
+    zoomToLayer
   };
 };

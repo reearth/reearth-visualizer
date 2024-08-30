@@ -30,5 +30,5 @@ const CodeInputWrapper = styled("div")<{
   width?: number;
 }>(({ height, width }) => ({
   height: height ? `${height}px` : "auto",
-  width: width ? `${width}px` : "100%",
+  width: width ? `${width}px` : "100%"
 }));

@@ -37,7 +37,7 @@ const StyledListItem = styled("div")(({ theme }) => ({
   alignItems: "center",
   background: theme.bg[1],
   borderRadius: theme.radius.normal,
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const Avatar = styled("div")(({ theme }) => ({
@@ -47,10 +47,10 @@ const Avatar = styled("div")(({ theme }) => ({
   background: theme.bg[2],
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "center"
 }));
 
 const TypographyWrapper = styled("div")(() => ({
   overflow: "hidden",
-  textOverflow: "ellipsis",
+  textOverflow: "ellipsis"
 }));

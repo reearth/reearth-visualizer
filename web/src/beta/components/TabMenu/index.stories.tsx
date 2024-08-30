@@ -9,7 +9,7 @@ import { ReactNode, CSSProperties } from "react";
 import TabMenu, { Props } from "./index";
 
 export default {
-  component: TabMenu,
+  component: TabMenu
 } as Meta;
 
 type Story = StoryObj<typeof TabMenu>;
@@ -29,14 +29,14 @@ const SampleComponent = () => {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [125.6, 10.1],
+              coordinates: [125.6, 10.1]
             },
             properties: {
-              name: "Dinagat Islands",
-            },
+              name: "Dinagat Islands"
+            }
           },
           null,
-          2,
+          2
         )}
       </JSONTag>
     </div>
@@ -52,7 +52,7 @@ const JSONTag = styled.pre`
 
 const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
   children,
-  style,
+  style
 }) => (
   <div style={{ display: "flex", height: "100vh", ...style }}>{children}</div>
 );
@@ -65,7 +65,7 @@ const Pane = (
       color: "black",
       fontSize: 24,
       textAlign: "center",
-      padding: "25vh 5rem",
+      padding: "25vh 5rem"
     }}
   >
     {" "}
@@ -101,13 +101,13 @@ Default.args = {
       id: "tab1",
       name: "My infobox",
       icon: "infobox",
-      component: <SampleComponent />,
+      component: <SampleComponent />
     },
     {
       id: "tab2",
       icon: "marker",
-      component: <Text size="body">Tab 2. Can be any react component</Text>,
-    },
+      component: <Text size="body">Tab 2. Can be any react component</Text>
+    }
   ],
-  selectedTab: "tab1",
+  selectedTab: "tab1"
 };

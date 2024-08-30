@@ -18,7 +18,7 @@ export const useScroll = () => {
         }
       }
     },
-    [scrollContainerRef],
+    [scrollContainerRef]
   );
 
   useEffect(() => {

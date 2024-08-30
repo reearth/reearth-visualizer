@@ -68,5 +68,5 @@ export default AssetsSelector;
 const Wrapper = styled("div")(({ theme }) => ({
   height: "60vh",
   maxHeight: 652,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));

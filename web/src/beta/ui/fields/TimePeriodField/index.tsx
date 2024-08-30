@@ -22,7 +22,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
   commonTitle,
   description,
   value,
-  onChange,
+  onChange
 }) => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [timePeriodValues, setTimePeriodValues] = useState(value);
@@ -51,8 +51,8 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
     [
       timePeriodValues?.currentTime,
       timePeriodValues?.endTime,
-      timePeriodValues?.startTime,
-    ],
+      timePeriodValues?.startTime
+    ]
   );
 
   return (
@@ -118,7 +118,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
-  width: "100%",
+  width: "100%"
 }));
 
 const TimePeriodWrapper = styled("div")(({ theme }) => ({
@@ -127,13 +127,13 @@ const TimePeriodWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   display: "flex",
   width: "100%",
-  boxShadow: theme.shadow.input,
+  boxShadow: theme.shadow.input
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
-  height: "30px",
+  height: "30px"
 }));
 
 const NoteIcon = styled("div")(({ theme }) => ({
@@ -142,7 +142,7 @@ const NoteIcon = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   paddingTop: theme.spacing.smallest,
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const ProgressSteps = styled("div")(({ theme }) => ({
@@ -151,7 +151,7 @@ const ProgressSteps = styled("div")(({ theme }) => ({
   alignItems: "center",
   padding: theme.spacing.small,
   gap: theme.spacing.large,
-  position: "relative",
+  position: "relative"
 }));
 
 const Circle = styled("div")<{ filled?: boolean }>(({ theme, filled }) => ({
@@ -170,8 +170,8 @@ const Circle = styled("div")<{ filled?: boolean }>(({ theme, filled }) => ({
     top: "10px",
     left: "50%",
     transform: "translateX(-50%)",
-    zIndex: 0,
-  },
+    zIndex: 0
+  }
 }));
 
 export default TimePeriodField;

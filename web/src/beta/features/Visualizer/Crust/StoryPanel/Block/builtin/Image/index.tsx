@@ -13,7 +13,7 @@ const ImageBlock: FC<BlockProps<StoryBlock>> = ({
 }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
-    [block?.property?.default?.src],
+    [block?.property?.default?.src]
   );
 
   return (

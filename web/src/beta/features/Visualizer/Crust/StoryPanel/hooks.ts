@@ -1,6 +1,6 @@
 import type {
   Story,
-  StoryPage,
+  StoryPage
 } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 import { useVisualizer } from "@reearth/core";
 import {
@@ -10,27 +10,27 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { MapRef } from "../../Crust/types";
 
 import {
   DEFAULT_STORY_PAGE_DURATION,
-  STORY_PANEL_CONTENT_ELEMENT_ID,
+  STORY_PANEL_CONTENT_ELEMENT_ID
 } from "./constants";
 import { formatISO8601 } from "./utils";
 
 export type {
   Story,
-  StoryPage,
+  StoryPage
 } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 
 export type StoryPanelRef = {
   currentPageId?: string;
   handleCurrentPageChange: (
     pageId?: string,
-    disableScrollIntoView?: boolean,
+    disableScrollIntoView?: boolean
   ) => void;
 };
 
@@ -38,13 +38,13 @@ export default (
   {
     selectedStory,
     isEditable,
-    onStoryPageChange,
+    onStoryPageChange
   }: {
     selectedStory?: Story;
     isEditable?: boolean;
     onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   },
-  ref: Ref<StoryPanelRef>,
+  ref: Ref<StoryPanelRef>
 ) => {
   const isAutoScrolling = useRef(false);
 
@@ -58,7 +58,7 @@ export default (
 
   const handleSelectionDisable = useCallback(
     (disabled?: boolean) => setDisableSelection(!!disabled),
-    [],
+    []
   );
 
   const [layerOverride, setLayerOverride] = useState<{
@@ -79,7 +79,7 @@ export default (
       }
       setSelectedPageId(pageId);
     },
-    [selectedPageId, selectedBlockId, isEditable, disableSelection],
+    [selectedPageId, selectedBlockId, isEditable, disableSelection]
   );
 
   const handleBlockSelect = useCallback(
@@ -91,7 +91,7 @@ export default (
       }
       setSelectedBlockId(blockId);
     },
-    [selectedPageId, selectedBlockId, isEditable, disableSelection],
+    [selectedPageId, selectedBlockId, isEditable, disableSelection]
   );
 
   const handleBlockDoubleClick = useCallback(
@@ -99,7 +99,7 @@ export default (
       if (disableSelection) return;
       setSelectedBlockId(blockId);
     },
-    [disableSelection],
+    [disableSelection]
   );
 
   const onTimeChange = useCallback(
@@ -110,12 +110,12 @@ export default (
           start:
             visualizer?.current?.timeline?.current?.computedTimeline?.start,
           current: time,
-          stop: visualizer?.current?.timeline?.current?.computedTimeline?.stop,
+          stop: visualizer?.current?.timeline?.current?.computedTimeline?.stop
         },
-        committer: { source: "storyPage", id: currentPageId },
+        committer: { source: "storyPage", id: currentPageId }
       });
     },
-    [currentPageId, visualizer],
+    [currentPageId, visualizer]
   );
 
   const handlePageTime = useCallback(
@@ -123,10 +123,10 @@ export default (
       const timePointField = page.property?.timePoint;
       if (!timePointField?.timePoint?.value) return;
       return onTimeChange?.(
-        new Date(formatISO8601(timePointField?.timePoint?.value) ?? ""),
+        new Date(formatISO8601(timePointField?.timePoint?.value) ?? "")
       );
     },
-    [onTimeChange],
+    [onTimeChange]
   );
 
   const handleCurrentPageChange = useCallback(
@@ -167,8 +167,8 @@ export default (
       selectedStory?.pages,
       onStoryPageChange,
       handlePageTime,
-      visualizer,
-    ],
+      visualizer
+    ]
   );
 
   const pageInfo = useMemo(() => {
@@ -181,7 +181,7 @@ export default (
       pageTitles: pages.map((p) => p.property?.title?.title),
       maxPage: pages.length,
       onPageChange: (pageIndex: number) =>
-        handleCurrentPageChange(pages[pageIndex - 1]?.id),
+        handleCurrentPageChange(pages[pageIndex - 1]?.id)
     };
   }, [selectedStory, currentPageId, handleCurrentPageChange]);
 
@@ -195,18 +195,18 @@ export default (
         if (currentLayerIds) {
           vizRef.layers.show(
             ...currentLayerIds.filter((id) =>
-              currentPage.layerIds?.includes(id),
-            ),
+              currentPage.layerIds?.includes(id)
+            )
           );
           vizRef.layers.hide(
             ...currentLayerIds.filter(
-              (id) => !currentPage.layerIds?.includes(id),
-            ),
+              (id) => !currentPage.layerIds?.includes(id)
+            )
           );
         }
       }
     },
-    [currentPageId, selectedStory?.pages],
+    [currentPageId, selectedStory?.pages]
   );
 
   const handleLayerOverride = useCallback(
@@ -226,19 +226,19 @@ export default (
       layers?.hide(
         ...(allLayers
           .map(({ id }) => id)
-          .filter((id) => !layerIds?.includes(id)) ?? []),
+          .filter((id) => !layerIds?.includes(id)) ?? [])
       );
     },
-    [visualizer, layerOverride?.extensionId, handleLayerReset],
+    [visualizer, layerOverride?.extensionId, handleLayerReset]
   );
 
   useImperativeHandle(
     ref,
     () => ({
       currentPageId,
-      handleCurrentPageChange,
+      handleCurrentPageChange
     }),
-    [currentPageId, handleCurrentPageChange],
+    [currentPageId, handleCurrentPageChange]
   );
 
   // On page change, update visible layers in the viz based on page's initial settings.
@@ -273,7 +273,7 @@ export default (
     handlePageSelect,
     handleBlockSelect,
     handleBlockDoubleClick,
-    handleCurrentPageChange,
+    handleCurrentPageChange
   };
 };
 

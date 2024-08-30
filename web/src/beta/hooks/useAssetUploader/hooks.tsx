@@ -9,7 +9,7 @@ export default ({
   workspaceId,
   onAssetSelect,
   assetType,
-  fileFormat,
+  fileFormat
 }: {
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string, name?: string) => void;
@@ -33,21 +33,21 @@ export default ({
       if (!files) return;
       const result = await useCreateAssets({
         teamId: workspaceId ?? "",
-        file: files,
+        file: files
       });
       const assetUrl = result?.data[0].data?.createAsset?.asset.url;
       const assetName = result?.data[0].data?.createAsset?.asset.name;
 
       onAssetSelect?.(assetUrl, assetName);
     },
-    [workspaceId, useCreateAssets, onAssetSelect],
+    [workspaceId, useCreateAssets, onAssetSelect]
   );
   const handleFileUpload = useFileInput(
     (files) => handleAssetsCreate?.(files),
     {
       accept: acceptedExtension,
-      multiple: true,
-    },
+      multiple: true
+    }
   );
 
   return { handleFileUpload };

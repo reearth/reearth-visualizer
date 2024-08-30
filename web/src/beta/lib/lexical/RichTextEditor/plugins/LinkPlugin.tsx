@@ -15,7 +15,7 @@ export default function LinkOnBlankPlugin() {
         const dom = editor.getElementByKey(node.__key);
         if (!dom) return;
         dom.setAttribute("target", "_blank");
-      },
+      }
     );
     return () => removeNodeListener();
   }, [editor]);

@@ -10,7 +10,7 @@ import {
   SwitchField,
   TimePeriodField,
   TimePointField,
-  TwinInputField,
+  TwinInputField
 } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
@@ -20,7 +20,7 @@ export const FieldComponent = ({
   groupId,
   fieldId,
   field,
-  onPropertyUpdate,
+  onPropertyUpdate
 }: {
   propertyId: string;
   groupId: string;
@@ -32,22 +32,22 @@ export const FieldComponent = ({
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 }) => {
   const t = useT();
@@ -57,7 +57,7 @@ export const FieldComponent = ({
       propertyId: string,
       fieldId: string,
       vt: any,
-      itemId?: string,
+      itemId?: string
     ) => {
       return async (v?: any) => {
         await onPropertyUpdate?.(
@@ -66,11 +66,11 @@ export const FieldComponent = ({
           fieldId,
           itemId,
           vt,
-          v,
+          v
         );
       };
     },
-    [onPropertyUpdate],
+    [onPropertyUpdate]
   );
 
   const assetsTypes = useMemo(
@@ -80,7 +80,7 @@ export const FieldComponent = ({
         : field.ui === "file"
           ? ["file" as const]
           : undefined,
-    [field.ui],
+    [field.ui]
   );
 
   return field?.type === "spacing" ? (
@@ -95,7 +95,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "bool" ? (
@@ -108,7 +108,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "latlng" ? (
@@ -121,7 +121,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "camera" ? (
@@ -134,7 +134,7 @@ export const FieldComponent = ({
         propertyId,
         groupId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "number" ? (
@@ -148,7 +148,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "url" ? (
@@ -165,7 +165,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "string" ? (
@@ -179,7 +179,7 @@ export const FieldComponent = ({
           groupId,
           propertyId,
           fieldId,
-          field?.type,
+          field?.type
         )}
       />
     ) : field?.ui === "color" ? (
@@ -192,7 +192,7 @@ export const FieldComponent = ({
           groupId,
           propertyId,
           fieldId,
-          field?.type,
+          field?.type
         )}
       />
     ) : field?.ui === "selection" || field?.choices ? (
@@ -205,15 +205,15 @@ export const FieldComponent = ({
           field?.choices.map(
             ({ key, title }: { key: string; title: string }) => ({
               value: key,
-              label: title,
-            }),
+              label: title
+            })
           ) || []
         }
         onChange={handlePropertyValueUpdate(
           groupId,
           propertyId,
           fieldId,
-          field?.type,
+          field?.type
         )}
       />
     ) : (
@@ -226,7 +226,7 @@ export const FieldComponent = ({
           groupId,
           propertyId,
           fieldId,
-          field?.type,
+          field?.type
         )}
       />
     )
@@ -240,7 +240,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : field?.type === "array" && field?.ui === "range" ? (
@@ -257,7 +257,7 @@ export const FieldComponent = ({
         groupId,
         propertyId,
         fieldId,
-        field?.type,
+        field?.type
       )}
     />
   ) : (

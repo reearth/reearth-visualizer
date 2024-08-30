@@ -3,7 +3,7 @@ import {
   engines,
   Engine,
   InteractionModeType,
-  INTERACTION_MODES,
+  INTERACTION_MODES
 } from "@reearth/core";
 import { Meta, Story } from "@storybook/react";
 import { useRef } from "react";
@@ -14,7 +14,7 @@ import Component, { Props } from ".";
 
 export default {
   component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
 const Template: Story<
@@ -37,5 +37,5 @@ const Template: Story<
 export const Cesium = Template.bind({});
 
 Cesium.args = {
-  engine: engines.cesium,
+  engine: engines.cesium
 };

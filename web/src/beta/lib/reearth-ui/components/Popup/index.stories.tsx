@@ -7,7 +7,7 @@ import { Button } from "../Button";
 import { Popup, PopupProps } from ".";
 
 const meta: Meta<PopupProps> = {
-  component: Popup,
+  component: Popup
 };
 
 export default meta;
@@ -41,23 +41,23 @@ const Container = styled("div")(({ theme }) => ({
   height: "auto",
   color: theme.content.main,
   boxShadow: theme.shadow.card,
-  borderRadius: theme.radius.small,
+  borderRadius: theme.radius.small
 }));
 
 const Title = styled("div")(() => ({
   fontSize: fonts.sizes.h5,
-  lineHeight: `${fonts.lineHeights.h5}px`,
+  lineHeight: `${fonts.lineHeights.h5}px`
 }));
 
 const Content = styled("div")(() => ({
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 export const BasicTrigger: Story = {
@@ -67,16 +67,16 @@ export const BasicTrigger: Story = {
   args: {
     trigger: "Click me",
     children: <MockChild />,
-    placement: "bottom",
+    placement: "bottom"
   },
   parameters: {
     docs: {
       description: {
         story:
-          "When passing a string as a trigger, it will be rendered as a button.",
-      },
-    },
-  },
+          "When passing a string as a trigger, it will be rendered as a button."
+      }
+    }
+  }
 };
 
 export const CustomTrigger: Story = {
@@ -88,8 +88,8 @@ export const CustomTrigger: Story = {
   ),
   args: {
     placement: "bottom",
-    children: <MockChild />,
-  },
+    children: <MockChild />
+  }
 };
 
 export const MultipleTrigger: Story = {
@@ -103,8 +103,8 @@ export const MultipleTrigger: Story = {
   },
   args: {
     children: <MockChild />,
-    placement: "bottom",
-  },
+    placement: "bottom"
+  }
 };
 
 export const Placement: Story = {
@@ -117,7 +117,7 @@ export const Placement: Story = {
           gridTemplateRows: "1fr 1fr 1fr 1fr 1fr",
           gridTemplateColumns: "1fr 1fr 1fr",
           justifyItems: "center",
-          alignItems: "center",
+          alignItems: "center"
         }}
       >
         <Popup {...args} trigger="top-start" placement="top-start" />
@@ -139,8 +139,8 @@ export const Placement: Story = {
     );
   },
   args: {
-    children: <MockChild />,
-  },
+    children: <MockChild />
+  }
 };
 
 const ControlledComponent: FC = () => {
@@ -161,5 +161,5 @@ const ControlledComponent: FC = () => {
 };
 
 export const Controlled: Story = {
-  render: () => <ControlledComponent />,
+  render: () => <ControlledComponent />
 };

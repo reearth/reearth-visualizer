@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import {
   propertyFragment,
-  infoboxFragment,
+  infoboxFragment
 } from "@reearth/services/gql/fragments";
 
 export const LayerSystemFragments = gql`

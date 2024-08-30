@@ -3,7 +3,7 @@ import {
   type APIRequestContext,
   request,
   test as base,
-  type Page,
+  type Page
 } from "@playwright/test";
 
 import { config, getAccessToken, type Config } from "./config";
@@ -23,7 +23,7 @@ export type Reearth = {
   gql: <T = any>(
     query: string,
     variables?: Record<string, any>,
-    options?: { ignoreError?: boolean },
+    options?: { ignoreError?: boolean }
   ) => Promise<T>;
 } & Config;
 
@@ -41,7 +41,7 @@ export const test = base.extend<{
         const res = await page.goto(url, options);
         if (this.token) {
           await page.evaluate(
-            `window.REEARTH_E2E_ACCESS_TOKEN = ${JSON.stringify(this.token)};`,
+            `window.REEARTH_E2E_ACCESS_TOKEN = ${JSON.stringify(this.token)};`
           );
         }
         return res;
@@ -52,11 +52,11 @@ export const test = base.extend<{
         const resp = await request.post(config.api + "/graphql", {
           data: {
             query,
-            variables,
+            variables
           },
           headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
+            Authorization: `Bearer ${this.token}`
+          }
         });
 
         const body = await resp.json();
@@ -65,14 +65,14 @@ export const test = base.extend<{
         }
 
         return body;
-      },
+      }
     });
-  },
+  }
 });
 
 export async function initUser(
   token: string,
-  ctx?: APIRequestContext,
+  ctx?: APIRequestContext
 ): Promise<{
   token: string;
   userId: string;
@@ -92,8 +92,8 @@ export async function initUser(
         userId,
         teamId,
         api,
-        signUpSecret: signUpSecret ? "***" : "",
-      })}`,
+        signUpSecret: signUpSecret ? "***" : ""
+      })}`
     );
   }
 
@@ -109,12 +109,12 @@ export async function initUser(
         userId,
         teamId,
         secret: signUpSecret,
-        lang: "en",
-      },
+        lang: "en"
+      }
     },
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   });
 
   const body = await resp.json();
@@ -125,8 +125,8 @@ export async function initUser(
         userId,
         teamId,
         api,
-        signUpSecret: signUpSecret ? "***" : "",
-      })}`,
+        signUpSecret: signUpSecret ? "***" : ""
+      })}`
     );
   }
 
@@ -134,6 +134,6 @@ export async function initUser(
     token,
     userName,
     userId: body.data.signup.user.id,
-    teamId,
+    teamId
   };
 }

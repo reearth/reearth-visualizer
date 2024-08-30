@@ -6,7 +6,7 @@ export declare type Modal = {
       height?: number | string;
       background?: string;
       clickBgToClose?: boolean;
-    },
+    }
   ) => void;
   readonly postMessage: (message: unknown) => void;
   readonly update: (options: {
@@ -28,10 +28,10 @@ export declare type ModalEvents = {
   readonly on: <T extends keyof ModalEventType>(
     type: T,
     callback: (...args: ModalEventType[T]) => void,
-    options?: { once?: boolean },
+    options?: { once?: boolean }
   ) => void;
   readonly off: <T extends keyof ModalEventType>(
     type: T,
-    callback: (...args: ModalEventType[T]) => void,
+    callback: (...args: ModalEventType[T]) => void
   ) => void;
 };

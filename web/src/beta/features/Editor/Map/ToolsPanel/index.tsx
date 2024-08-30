@@ -1,8 +1,8 @@
-import { FC, useEffect, useMemo } from "react";
 
 import { IconButton, IconName } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { styled } from "@reearth/services/theme";
+import { FC, useEffect, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
@@ -20,45 +20,45 @@ const ToolsPanel: FC = () => {
       {
         icon: "mapPin",
         selected: sketchEnabled && sketchType === "marker",
-        onClick: () => handleSketchTypeChange("marker"),
+        onClick: () => handleSketchTypeChange("marker")
       },
       {
         icon: "polyline",
         selected: sketchEnabled && sketchType === "polyline",
-        onClick: () => handleSketchTypeChange("polyline"),
+        onClick: () => handleSketchTypeChange("polyline")
       },
       {
         icon: "circle",
         selected: sketchEnabled && sketchType === "circle",
-        onClick: () => handleSketchTypeChange("circle"),
+        onClick: () => handleSketchTypeChange("circle")
       },
       {
         icon: "square",
         selected: sketchEnabled && sketchType === "rectangle",
-        onClick: () => handleSketchTypeChange("rectangle"),
+        onClick: () => handleSketchTypeChange("rectangle")
       },
       {
         icon: "polygon",
         selected: sketchEnabled && sketchType === "polygon",
-        onClick: () => handleSketchTypeChange("polygon"),
+        onClick: () => handleSketchTypeChange("polygon")
       },
       {
         icon: "cylinder",
         selected: sketchEnabled && sketchType === "extrudedCircle",
-        onClick: () => handleSketchTypeChange("extrudedCircle"),
+        onClick: () => handleSketchTypeChange("extrudedCircle")
       },
       {
         icon: "cube",
         selected: sketchEnabled && sketchType === "extrudedRectangle",
-        onClick: () => handleSketchTypeChange("extrudedRectangle"),
+        onClick: () => handleSketchTypeChange("extrudedRectangle")
       },
       {
         icon: "extrude",
         selected: sketchEnabled && sketchType === "extrudedPolygon",
-        onClick: () => handleSketchTypeChange("extrudedPolygon"),
-      },
+        onClick: () => handleSketchTypeChange("extrudedPolygon")
+      }
     ],
-    [sketchEnabled, sketchType, handleSketchTypeChange],
+    [sketchEnabled, sketchType, handleSketchTypeChange]
   );
 
   useEffect(() => {
@@ -90,5 +90,5 @@ const SketchToolsWrapper = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  padding: theme.spacing.smallest,
+  padding: theme.spacing.smallest
 }));

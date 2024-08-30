@@ -2,7 +2,7 @@ import type {
   MapRef,
   ComputedFeature,
   ComputedLayer,
-  LayerSimple,
+  LayerSimple
 } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -14,7 +14,7 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 type LayerProps = {
@@ -70,7 +70,7 @@ export type SelectedLayer = {
 export default function ({
   sceneId,
   isVisualizerReady,
-  visualizerRef,
+  visualizerRef
 }: LayerProps) {
   const t = useT();
   const {
@@ -78,7 +78,7 @@ export default function ({
     useAddNLSLayerSimple,
     useRemoveNLSLayer,
     useUpdateNLSLayer,
-    useUpdateCustomProperties,
+    useUpdateCustomProperties
   } = useLayersFetcher();
 
   const { nlsLayers: originNlsLayers } = useGetLayersQuery({ sceneId });
@@ -89,7 +89,7 @@ export default function ({
   useEffect(() => {
     if (!originNlsLayers) return;
     setSortedLayerIds((prev) =>
-      prev.length > 0 ? prev : originNlsLayers.map((l) => l.id),
+      prev.length > 0 ? prev : originNlsLayers.map((l) => l.id)
     );
   }, [originNlsLayers]);
 
@@ -100,10 +100,10 @@ export default function ({
             ...(sortedLayerIds
               .map((id) => originNlsLayers.find((l) => l.id === id))
               .filter(Boolean) as NLSLayer[]),
-            ...originNlsLayers.filter((l) => !sortedLayerIds.includes(l.id)),
+            ...originNlsLayers.filter((l) => !sortedLayerIds.includes(l.id))
           ]
         : [],
-    [originNlsLayers, sortedLayerIds],
+    [originNlsLayers, sortedLayerIds]
   );
 
   const [selectedLayer, setSelectedLayer] = useState<
@@ -121,7 +121,7 @@ export default function ({
           setSelectedLayer({
             layer: nlsLayers.find((l) => l.id === props.layerId),
             computedLayer: props?.computedLayer,
-            computedFeature: props?.computedFeature,
+            computedFeature: props?.computedFeature
           });
         } else {
           setSelectedLayer(undefined);
@@ -131,7 +131,7 @@ export default function ({
       // Layer selection does not specific any feature, we do unselect for core.
       visualizerRef?.current?.layers.select(undefined);
     },
-    [isVisualizerReady, visualizerRef, nlsLayers],
+    [isVisualizerReady, visualizerRef, nlsLayers]
   );
 
   // Workaround: core will trigger a select undefined after sketch layer add feature.
@@ -154,13 +154,13 @@ export default function ({
         setSelectedLayer({
           layer: nlsLayers.find((l) => l.id === props.layerId),
           computedLayer: props?.computedLayer,
-          computedFeature: props?.computedFeature,
+          computedFeature: props?.computedFeature
         });
       } else {
         setSelectedLayer(undefined);
       }
     },
-    [isVisualizerReady, nlsLayers, selectedLayer],
+    [isVisualizerReady, nlsLayers, selectedLayer]
   );
 
   const handleLayerDelete = useCallback(
@@ -169,7 +169,7 @@ export default function ({
       if (deletedPageIndex === undefined) return;
 
       await useRemoveNLSLayer({
-        layerId,
+        layerId
       });
       if (layerId === selectedLayer?.layer?.id) {
         handleLayerSelect(undefined);
@@ -180,7 +180,7 @@ export default function ({
         return newSortedLayerIds;
       });
     },
-    [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer],
+    [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer]
   );
 
   const handleLayerAdd = useCallback(
@@ -192,39 +192,39 @@ export default function ({
         layerType: inp.layerType,
         title: t(inp.title),
         index: inp.index,
-        schema: inp.schema,
+        schema: inp.schema
       });
     },
-    [t, useAddNLSLayerSimple],
+    [t, useAddNLSLayerSimple]
   );
 
   const handleLayerNameUpdate = useCallback(
     async (inp: LayerNameUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
-        name: inp.name,
+        name: inp.name
       });
     },
-    [useUpdateNLSLayer],
+    [useUpdateNLSLayer]
   );
 
   const handleLayerConfigUpdate = useCallback(
     async (inp: LayerConfigUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
-        config: inp.config,
+        config: inp.config
       });
     },
-    [useUpdateNLSLayer],
+    [useUpdateNLSLayer]
   );
   const handleLayerVisibilityUpdate = useCallback(
     async (inp: LayerVisibilityUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
-        visible: inp.visible,
+        visible: inp.visible
       });
     },
-    [useUpdateNLSLayer],
+    [useUpdateNLSLayer]
   );
 
   useEffect(() => {
@@ -234,7 +234,7 @@ export default function ({
         return layer
           ? {
               ...prev,
-              layer,
+              layer
             }
           : undefined;
       }
@@ -264,10 +264,10 @@ export default function ({
     async (inp: UpdateCustomPropertySchemaInput) => {
       await useUpdateCustomProperties({
         layerId: inp.layerId,
-        schema: inp.schema,
+        schema: inp.schema
       });
     },
-    [useUpdateCustomProperties],
+    [useUpdateCustomProperties]
   );
 
   return {
@@ -284,6 +284,6 @@ export default function ({
     handleLayerVisibilityUpdate,
     handleLayerMove,
     handleCustomPropertySchemaClick,
-    handleCustomPropertySchemaUpdate,
+    handleCustomPropertySchemaUpdate
   };
 }

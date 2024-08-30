@@ -13,7 +13,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   value,
   disabled,
   onChange,
-  onBlur,
+  onBlur
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -28,7 +28,7 @@ export const DatePicker: FC<DatePickerProps> = ({
       setCurrentValue(newValue ?? "");
       onChange?.(newValue);
     },
-    [onChange],
+    [onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -67,7 +67,7 @@ const Wrapper = styled("div")<{
     display: "flex",
     gap: `${theme.spacing.smallest}px`,
     alignItems: "center",
-    boxShadow: theme.shadow.input,
+    boxShadow: theme.shadow.input
   };
 });
 
@@ -85,6 +85,6 @@ const StyledInput = styled("input")<{
   lineHeight: `${fonts.lineHeights.body}px`,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   "::placeholder": {
-    color: theme.content.weak,
-  },
+    color: theme.content.weak
+  }
 }));

@@ -2,7 +2,7 @@ import { useT, useLang } from "@reearth/services/i18n";
 import {
   useError,
   useNotification,
-  Notification,
+  Notification
 } from "@reearth/services/state";
 import { useState, useEffect, useCallback, useMemo } from "react";
 
@@ -20,7 +20,7 @@ const policyItems: PolicyItems[] = [
   "dataset",
   "createProject",
   "publishProject",
-  "member",
+  "member"
 ];
 
 export default () => {
@@ -46,7 +46,7 @@ export default () => {
         : notification?.type === "warning"
           ? warningHeading
           : noticeHeading,
-    [notification?.type, errorHeading, warningHeading, noticeHeading],
+    [notification?.type, errorHeading, warningHeading, noticeHeading]
   );
 
   const setModal = useCallback((show: boolean) => {
@@ -66,20 +66,20 @@ export default () => {
           ? policyItem
           : policyItem[currentLanguage]
         : t(
-            "You have reached a policy limit. Please contact an administrator of your Re:Earth system.",
+            "You have reached a policy limit. Please contact an administrator of your Re:Earth system."
           );
 
       setNotification({
         type: "info",
         heading: noticeHeading,
         text: message,
-        duration: "persistent",
+        duration: "persistent"
       });
     } else {
       setNotification({
         type: "error",
         heading: errorHeading,
-        text: t("Something went wrong. Please try again later."),
+        text: t("Something went wrong. Please try again later.")
       });
     }
     setError(undefined);
@@ -91,7 +91,7 @@ export default () => {
     noticeHeading,
     setError,
     setNotification,
-    t,
+    t
   ]);
 
   useEffect(() => {
@@ -118,9 +118,9 @@ export default () => {
     notification: {
       type: notification?.type,
       heading: notificationHeading,
-      text: notification?.text,
+      text: notification?.text
     } as Notification,
     setIsHovered,
-    setModal,
+    setModal
   };
 };

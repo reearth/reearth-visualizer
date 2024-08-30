@@ -28,7 +28,7 @@ export default ({ value, onChange }: Params) => {
       setColor(e.target.value);
       setRgba(tinycolor(e.target.value ?? colorState).toRgb());
     },
-    [colorState],
+    [colorState]
   );
 
   const handleRgbaInput = useCallback(
@@ -37,10 +37,10 @@ export default ({ value, onChange }: Params) => {
 
       handleChange({
         ...rgba,
-        [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
+        [e.target.name]: e.target.value ? Number(e.target.value) : undefined
       });
     },
-    [handleChange, rgba],
+    [handleChange, rgba]
   );
 
   const handleClose = useCallback(() => {
@@ -89,7 +89,7 @@ export default ({ value, onChange }: Params) => {
         handleHexSave();
       }
     },
-    [handleHexSave],
+    [handleHexSave]
   );
 
   //UseEffects
@@ -117,7 +117,7 @@ export default ({ value, onChange }: Params) => {
         setOpen(false);
       }
     },
-    [open, value, colorState, handleSave, handleClose],
+    [open, value, colorState, handleSave, handleClose]
   );
 
   const handleClickOutsideRef = useRef(handleClickOutside);
@@ -152,6 +152,6 @@ export default ({ value, onChange }: Params) => {
     handleRgbaInput,
     handleHexInput,
     handleClick,
-    handleKeyPress,
+    handleKeyPress
   };
 };

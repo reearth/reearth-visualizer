@@ -5,7 +5,7 @@ import { FC } from "react";
 const ListItem: FC<{ index?: number; keyValue?: string; value?: string }> = ({
   index,
   keyValue,
-  value,
+  value
 }) => {
   const theme = useTheme();
   return (
@@ -35,12 +35,12 @@ const PropertyWrapper = styled("div")<{ isEven?: boolean }>(
     padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
     boxSizing: "border-box",
     wordBreak: "break-word",
-    width: "100%",
-  }),
+    width: "100%"
+  })
 );
 
 const TextWrapper = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 function isEven(number: number) {

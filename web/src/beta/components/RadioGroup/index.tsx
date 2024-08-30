@@ -1,7 +1,7 @@
-import { memo, useCallback } from "react";
 
 import RadioBox from "@reearth/beta/components/RadioGroup/RadioBox";
 import { styled } from "@reearth/services/theme";
+import { memo, useCallback } from "react";
 
 export type Option = {
   label?: string;
@@ -19,14 +19,14 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   options,
   layout = "horizontal",
   selectedValue,
-  onChange,
+  onChange
 }) => {
   const handleRadioChange = useCallback(
     (value: string) => {
       if (value === selectedValue) return;
       onChange?.(value);
     },
-    [onChange, selectedValue],
+    [onChange, selectedValue]
   );
 
   return (

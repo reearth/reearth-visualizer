@@ -1,7 +1,7 @@
 import {
   useVisualizer,
   TickEventCallback,
-  TimelineCommitter,
+  TimelineCommitter
 } from "@reearth/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -11,7 +11,7 @@ import {
   formatDateToSting,
   formatISO8601,
   formatTimezone,
-  getTimeZone,
+  getTimeZone
 } from "../../Crust/StoryPanel/utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
@@ -33,8 +33,8 @@ const timeRange = (startTime?: number, stopTime?: number) => {
     end: stopTime || stopTime || calculateEndTime(new Date()),
     mid: calculateMidTime(
       startTime || now,
-      stopTime || calculateEndTime(new Date()),
-    ),
+      stopTime || calculateEndTime(new Date())
+    )
   };
 };
 
@@ -48,7 +48,7 @@ export default (timelineValues?: TimelineValues) => {
       "1min/sec",
       "0.1hr/sec",
       "0.5hr/sec",
-      "1hr/sec",
+      "1hr/sec"
     ];
     return convertOptionToSeconds(speedOpt);
   }, []);
@@ -57,8 +57,8 @@ export default (timelineValues?: TimelineValues) => {
 
   const [currentTime, setCurrentTime] = useState(
     getNewDate(
-      visualizerContext?.current?.timeline?.current?.timeline?.current,
-    ).getTime(),
+      visualizerContext?.current?.timeline?.current?.timeline?.current
+    ).getTime()
   );
 
   const [timezone, setTimezone] = useState<string>(formatTimezone(currentTime));
@@ -66,16 +66,16 @@ export default (timelineValues?: TimelineValues) => {
   const range = useMemo(() => {
     if (timelineValues) {
       const startTime = getNewDate(
-        new Date(formatISO8601(timelineValues?.startTime)),
+        new Date(formatISO8601(timelineValues?.startTime))
       ).getTime();
       const endTime = getNewDate(
-        new Date(formatISO8601(timelineValues?.endTime)),
+        new Date(formatISO8601(timelineValues?.endTime))
       ).getTime();
       return timeRange(startTime, endTime);
     } else {
       return timeRange(
         visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
-        visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
+        visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime()
       );
     }
   }, [timelineValues, visualizerContext]);
@@ -84,20 +84,20 @@ export default (timelineValues?: TimelineValues) => {
     (committerId?: string) => {
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "PAUSE",
-        committer: { source: "storyTimelineBlock", id: committerId },
+        committer: { source: "storyTimelineBlock", id: committerId }
       });
     },
-    [visualizerContext],
+    [visualizerContext]
   );
 
   const onPlay = useCallback(
     (committer?: TimelineCommitter) => {
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "PLAY",
-        committer: { source: "storyTimelineBlock", id: committer?.id },
+        committer: { source: "storyTimelineBlock", id: committer?.id }
       });
     },
-    [visualizerContext],
+    [visualizerContext]
   );
 
   const onTimeChange = useCallback(
@@ -108,12 +108,12 @@ export default (timelineValues?: TimelineValues) => {
         payload: {
           start: formatDateToSting(range.start),
           current: time,
-          stop: formatDateToSting(range.end),
+          stop: formatDateToSting(range.end)
         },
-        committer: { source: "storyTimelineBlock", id: committerId },
+        committer: { source: "storyTimelineBlock", id: committerId }
       });
     },
-    [range, visualizerContext],
+    [range, visualizerContext]
   );
 
   const onSpeedChange = useCallback(
@@ -122,42 +122,42 @@ export default (timelineValues?: TimelineValues) => {
         cmd: "SET_OPTIONS",
         payload: {
           multiplier: speed,
-          stepType: "rate",
+          stepType: "rate"
         },
-        committer: { source: "storyTimelineBlock", id: committerId },
+        committer: { source: "storyTimelineBlock", id: committerId }
       });
     },
-    [visualizerContext],
+    [visualizerContext]
   );
 
   const onTick = useCallback(
     (cb: TickEventCallback) =>
       visualizerContext?.current?.timeline?.current?.onTick(cb),
-    [visualizerContext],
+    [visualizerContext]
   );
   const removeTickEventListener = useCallback(
     (cb: TickEventCallback) =>
       visualizerContext?.current?.timeline?.current?.offTick(cb),
-    [visualizerContext],
+    [visualizerContext]
   );
 
   const removeOnCommitEventListener = useCallback(
     (cb: (committer: TimelineCommitter) => void) =>
       visualizerContext?.current?.timeline?.current?.offCommit(cb),
-    [visualizerContext],
+    [visualizerContext]
   );
 
   const onCommit = useCallback(
     (cb: (committer: TimelineCommitter) => void) =>
       visualizerContext?.current?.timeline?.current?.onCommit(cb),
-    [visualizerContext],
+    [visualizerContext]
   );
   const handleOnSpeedChange = useCallback(
     (speed: number, committerId?: string) => {
       onSpeedChange?.(speed, committerId);
       setSpeed(speed);
     },
-    [onSpeedChange],
+    [onSpeedChange]
   );
 
   useEffect(() => {
@@ -170,8 +170,8 @@ export default (timelineValues?: TimelineValues) => {
     } else {
       return setCurrentTime(
         getNewDate(
-          visualizerContext?.current?.timeline?.current?.timeline?.current,
-        ).getTime(),
+          visualizerContext?.current?.timeline?.current?.timeline?.current
+        ).getTime()
       );
     }
   }, [timelineValues, visualizerContext]);
@@ -190,6 +190,6 @@ export default (timelineValues?: TimelineValues) => {
     removeTickEventListener,
     onCommit,
     removeOnCommitEventListener,
-    setCurrentTime,
+    setCurrentTime
   };
 };

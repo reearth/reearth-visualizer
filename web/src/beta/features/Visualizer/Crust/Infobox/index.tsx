@@ -12,7 +12,7 @@ import {
   GAP_DEFAULT_VALUE,
   INFOBOX_WIDTH,
   PADDING_DEFAULT_VALUE,
-  POSITION_DEFAULT_VALUE,
+  POSITION_DEFAULT_VALUE
 } from "./constants";
 import useHooks from "./hooks";
 import type { Infobox, InfoboxBlockProps } from "./types";
@@ -34,12 +34,12 @@ export type Props = {
   onBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onBlockMove?: (
     id: string,
     targetIndex: number,
-    blockId?: string,
+    blockId?: string
   ) => Promise<void>;
   onBlockDelete?: (id?: string) => Promise<void>;
   onPropertyUpdate?: (
@@ -48,22 +48,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -78,7 +78,7 @@ const Infobox: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
-  onPropertyItemDelete,
+  onPropertyItemDelete
 }) => {
   const {
     wrapperRef,
@@ -95,12 +95,12 @@ const Infobox: FC<Props> = ({
     handleBlockCreate,
     handleBlockSelect,
     handleBlockDoubleClick,
-    handleMoveEnd,
+    handleMoveEnd
   } = useHooks({
     infobox,
     isEditable,
     onBlockCreate,
-    onBlockMove,
+    onBlockMove
   });
 
   const DraggableInfoboxBlock = useMemo(
@@ -139,7 +139,7 @@ const Infobox: FC<Props> = ({
               />
             )}
           </Fragment>
-        ),
+        )
       })),
     [
       infoboxBlocks,
@@ -158,8 +158,8 @@ const Infobox: FC<Props> = ({
       gapField?.value,
       handleBlockCreate,
       handleBlockDoubleClick,
-      handleBlockOpen,
-    ],
+      handleBlockOpen
+    ]
   );
 
   return showInfobox ? (
@@ -215,9 +215,9 @@ const Wrapper = styled("div")<{
   paddingBottom: padding?.bottom ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingLeft: padding?.left ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingRight: padding?.right ?? `${PADDING_DEFAULT_VALUE}px`,
-  [position ?? POSITION_DEFAULT_VALUE]: "13px",
+  [position ?? POSITION_DEFAULT_VALUE]: "13px"
 }));
 
 const ItemWrapper = styled("div")(() => ({
-  background: "#ffffff",
+  background: "#ffffff"
 }));

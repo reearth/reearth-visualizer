@@ -5,6 +5,6 @@ export const useDevPluginExtensionRenderKey = () =>
   useAtom(devPluginExtensionRenderKey);
 
 const devPluginExtensions = atom<{ id: string; url: string }[] | undefined>(
-  undefined,
+  undefined
 );
 export const useDevPluginExtensions = () => useAtom(devPluginExtensions);

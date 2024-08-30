@@ -28,7 +28,7 @@ const PluginSettings: React.FC<Props> = ({
   isArchived,
   accessToken,
   plugins,
-  extensions,
+  extensions
 }) => {
   const t = useT();
   const currentLang = useLang();
@@ -39,7 +39,7 @@ const PluginSettings: React.FC<Props> = ({
     handleInstallPluginByMarketplace,
     handleInstallPluginFromPublicRepo,
     handleInstallPluginFromFile,
-    handleUninstallPlugin,
+    handleUninstallPlugin
   } = useHooks({ sceneId, plugins });
 
   const tabItems: TabItem[] = useMemo(
@@ -62,7 +62,7 @@ const PluginSettings: React.FC<Props> = ({
                 />
               ))}
           </>
-        ),
+        )
       },
       {
         id: "Public",
@@ -82,7 +82,7 @@ const PluginSettings: React.FC<Props> = ({
                 />
               ))}
           </>
-        ),
+        )
       },
       {
         id: "Personal",
@@ -94,8 +94,8 @@ const PluginSettings: React.FC<Props> = ({
             installByUploadingZipFile={handleInstallPluginFromFile}
             uninstallPlugin={handleUninstallPlugin}
           />
-        ),
-      },
+        )
+      }
     ],
     [
       accessToken,
@@ -107,8 +107,8 @@ const PluginSettings: React.FC<Props> = ({
       handleInstallPluginByMarketplace,
       handleInstallPluginFromPublicRepo,
       handleInstallPluginFromFile,
-      handleUninstallPlugin,
-    ],
+      handleUninstallPlugin
+    ]
   );
 
   return (
@@ -128,5 +128,5 @@ export default PluginSettings;
 
 const Wrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  padding: `${theme.spacing.largest}px 0`,
+  padding: `${theme.spacing.largest}px 0`
 }));

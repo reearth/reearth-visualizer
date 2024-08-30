@@ -1,7 +1,7 @@
 import { styled } from "../styled";
 
 const type = {
-  base: '"Noto Sans", "hiragino sans", "hiragino kaku gothic proN", -apple-system, BlinkMacSystem, sans-serif',
+  base: '"Noto Sans", "hiragino sans", "hiragino kaku gothic proN", -apple-system, BlinkMacSystem, sans-serif'
 };
 
 const fontSizes = {
@@ -10,12 +10,12 @@ const fontSizes = {
   m: 16,
   s: 14,
   xs: 12,
-  "2xs": 10,
+  "2xs": 10
 };
 
 const weight = {
   normal: "normal",
-  bold: "bold",
+  bold: "bold"
 };
 
 export const XLBold = styled.p`
@@ -95,29 +95,29 @@ export const XXSRegular = styled.p`
 export const typography = {
   xl: {
     bold: XLBold,
-    regular: XLRegular,
+    regular: XLRegular
   },
   l: {
     bold: LBold,
-    regular: LRegular,
+    regular: LRegular
   },
   m: {
     bold: MBold,
     regular: MRegular,
-    paragraph: MParagraph,
+    paragraph: MParagraph
   },
   s: {
     bold: SBold,
     regular: SRegular,
-    paragraph: SParagraph,
+    paragraph: SParagraph
   },
   xs: {
     bold: XSBold,
-    regular: XSRegular,
+    regular: XSRegular
   },
   "2xs": {
-    regular: XXSRegular,
-  },
+    regular: XXSRegular
+  }
 };
 
 export type TypographySize = keyof typeof typography;
@@ -127,7 +127,7 @@ export type FontWeight = keyof typeof weight;
 const fonts = {
   typography: typography,
   weight: weight,
-  sizes: fontSizes,
+  sizes: fontSizes
 };
 
 export default fonts;

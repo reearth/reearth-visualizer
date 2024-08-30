@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import InsertionBar, { Props } from ".";
 
 const meta: Meta<Props> = {
-  component: InsertionBar,
+  component: InsertionBar
 };
 
 export default meta;
@@ -15,22 +15,22 @@ export const Default: Story = {
     pos: "bottom",
     mode: "visible",
     onButtonClick: () => console.log("Button clicked"),
-    children: "Insertion bar content",
-  },
+    children: "Insertion bar content"
+  }
 };
 
 export const Hidden: Story = {
   args: {
     pos: "top",
     mode: "hidden",
-    children: "Insertion bar content",
-  },
+    children: "Insertion bar content"
+  }
 };
 
 export const Dragging: Story = {
   args: {
     pos: "bottom",
     mode: "dragging",
-    children: "Insertion bar content",
-  },
+    children: "Insertion bar content"
+  }
 };

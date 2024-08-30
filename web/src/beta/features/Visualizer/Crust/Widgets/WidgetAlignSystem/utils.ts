@@ -6,21 +6,21 @@ import { InternalWidget, WidgetZone } from "./types";
 export const filterSections = (
   zone?: WidgetZone,
   invisibleWidgetIDs?: string[],
-  cb?: (s: (typeof WAS_SECTIONS)[number]) => void,
+  cb?: (s: (typeof WAS_SECTIONS)[number]) => void
 ) => {
   return WAS_SECTIONS.filter(
     (s) =>
       WAS_AREAS.filter((a) =>
         zone?.[s]?.[a]?.widgets?.some(
-          (w) => !invisibleWidgetIDs?.includes(w.id),
-        ),
-      ).length || cb?.(s),
+          (w) => !invisibleWidgetIDs?.includes(w.id)
+        )
+      ).length || cb?.(s)
   );
 };
 
 export const isInvisibleBuiltin = (
   widget: InternalWidget,
-  isMobile?: boolean,
+  isMobile?: boolean
 ) => {
   const defaultVisible = widget.property?.default?.visible;
   return (

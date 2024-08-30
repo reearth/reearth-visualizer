@@ -21,7 +21,7 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   active,
   disabled,
   path,
-  onClick,
+  onClick
 }) => {
   const theme = useTheme();
   return (
@@ -48,8 +48,8 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
 const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(
   ({ disabled }) => ({
     pointerEvents: disabled ? "none" : "auto",
-    textDecoration: "none",
-  }),
+    textDecoration: "none"
+  })
 );
 
 const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
@@ -64,9 +64,9 @@ const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
     cursor: disabled ? "default" : "pointer",
     ["&:hover"]: {
       background: active ? theme.select.main : theme.bg[2],
-      borderRadius: theme.radius.small,
-    },
-  }),
+      borderRadius: theme.radius.small
+    }
+  })
 );
 
 export const SidebarWrapper = styled("div")(({ theme }) => ({
@@ -74,19 +74,19 @@ export const SidebarWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   padding: `0 ${theme.spacing.smallest}px`,
   flex: 1,
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 }));
 
 export const SidebarTopSectionWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 }));
 
 export const SidebarSection = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export const SidebarVersion: FC = () => {
@@ -102,5 +102,5 @@ export const SidebarVersion: FC = () => {
 };
 
 const Version = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small,
+  padding: theme.spacing.small
 }));

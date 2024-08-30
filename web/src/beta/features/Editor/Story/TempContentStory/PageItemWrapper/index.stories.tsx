@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import ActionItem from "./index";
 
 export default {
-  component: ActionItem,
+  component: ActionItem
 } as Meta;
 
 type Story = StoryObj<typeof ActionItem>;
@@ -12,6 +12,6 @@ export const Default: Story = {
   args: {
     pageCount: 10,
     isSwipeable: true,
-    children: <div>test</div>,
-  },
+    children: <div>test</div>
+  }
 };

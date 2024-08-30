@@ -18,15 +18,15 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   layers,
   layerStyles,
   selectedLayerId,
-  onLayerConfigUpdate,
+  onLayerConfigUpdate
 }) => {
   const t = useT();
   const layerStyleOptions = useMemo(
     () => [
       { value: "", label: "NO STYLE" },
-      ...(layerStyles?.map((ls) => ({ value: ls.id, label: ls.name })) ?? []),
+      ...(layerStyles?.map((ls) => ({ value: ls.id, label: ls.name })) ?? [])
     ],
-    [layerStyles],
+    [layerStyles]
   );
 
   const handleLayerStyleChange = useCallback(
@@ -35,16 +35,16 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
       onLayerConfigUpdate?.({
         layerId: selectedLayerId,
         config: {
-          layerStyleId: value,
-        },
+          layerStyleId: value
+        }
       });
     },
-    [selectedLayerId, onLayerConfigUpdate],
+    [selectedLayerId, onLayerConfigUpdate]
   );
 
   const currentValue = useMemo(
     () => layers?.find((a) => a.id === selectedLayerId)?.config?.layerStyleId,
-    [layers, selectedLayerId],
+    [layers, selectedLayerId]
   );
 
   return (

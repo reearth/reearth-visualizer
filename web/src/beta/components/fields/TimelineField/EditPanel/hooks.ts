@@ -13,7 +13,7 @@ export default ({
   timelineValues,
   onChange,
   onClose,
-  setTimelineValues,
+  setTimelineValues
 }: Props) => {
   const [warning, setWarning] = useState(false);
 
@@ -23,7 +23,7 @@ export default ({
         ...timelineValues,
         currentTime: timelineValues?.currentTime || "",
         startTime: timelineValues?.startTime || "",
-        endTime: timelineValues?.endTime || "",
+        endTime: timelineValues?.endTime || ""
       };
 
       switch (fieldId) {
@@ -60,7 +60,7 @@ export default ({
 
       setTimelineValues?.(updatedData);
     },
-    [timelineValues, setTimelineValues],
+    [timelineValues, setTimelineValues]
   );
 
   const [disabledFields, setDisabledFields] = useState<string[]>([]);
@@ -107,6 +107,6 @@ export default ({
     setDisabledFields,
     handleOnChange,
     handlePopoverOpen,
-    onAppyChange: handleApplyChange,
+    onAppyChange: handleApplyChange
   };
 };

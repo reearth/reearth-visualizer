@@ -12,11 +12,11 @@ import type { PluginPopupInfo } from "./PopupContainer";
 
 export {
   default as PopupContainer,
-  type PluginPopupInfo,
+  type PluginPopupInfo
 } from "./PopupContainer";
 export {
   default as ModalContainer,
-  type PluginModalInfo,
+  type PluginModalInfo
 } from "./ModalContainer";
 
 export type CommonProps = {
@@ -58,12 +58,12 @@ export type Props = {
           height?: string | number;
           extended?: boolean;
         }
-      | undefined,
+      | undefined
   ) => void;
   onResize?: (
     width: string | number | undefined,
     height: string | number | undefined,
-    extended: boolean | undefined,
+    extended: boolean | undefined
   ) => void;
 } & CommonProps;
 
@@ -91,7 +91,7 @@ export default function Plugin({
   onPluginPopupShow,
   onClick,
   onRender,
-  onResize,
+  onResize
 }: Props): JSX.Element | null {
   const {
     skip,
@@ -105,7 +105,7 @@ export default function Plugin({
     onPreInit,
     onDispose,
     exposed,
-    onError,
+    onError
   } = useHooks({
     mapRef,
     pluginId,
@@ -123,7 +123,7 @@ export default function Plugin({
     onPluginModalShow,
     onPluginPopupShow,
     onRender,
-    onResize,
+    onResize
   });
 
   return !skip && (src || sourceCode) ? (

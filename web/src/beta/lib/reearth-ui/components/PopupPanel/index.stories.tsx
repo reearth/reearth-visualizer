@@ -6,7 +6,7 @@ import { Button } from "../Button";
 import { PopupPanel, PopupPanelProps } from ".";
 
 const meta: Meta<PopupPanelProps> = {
-  component: PopupPanel,
+  component: PopupPanel
 };
 
 export default meta;
@@ -25,8 +25,8 @@ const MockChild: FC = () => (
 export const Dafault: Story = {
   args: {
     title: "Panel Title",
-    children: <MockChild />,
-  },
+    children: <MockChild />
+  }
 };
 
 export const Action: Story = {
@@ -35,8 +35,8 @@ export const Action: Story = {
     children: <MockChild />,
     actions: (
       <Button extendWidth size="small" title="Apply" appearance="primary" />
-    ),
-  },
+    )
+  }
 };
 
 export const MultipleActions: Story = {
@@ -49,12 +49,12 @@ export const MultipleActions: Story = {
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
-          gap: "8px",
+          gap: "8px"
         }}
       >
         <Button extendWidth size="small" title="Cancel" />
         <Button extendWidth size="small" title="Apply" appearance="primary" />
       </div>
-    ),
-  },
+    )
+  }
 };

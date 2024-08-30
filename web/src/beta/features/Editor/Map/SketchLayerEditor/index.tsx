@@ -8,7 +8,7 @@ import { FC, useState } from "react";
 import SketchCustomProperties from "../shared/SketchCustomProperties";
 import {
   CustomPropertyProp,
-  PropertyListProp,
+  PropertyListProp
 } from "../SketchLayerCreator/type";
 
 import useHooks from "./hooks";
@@ -26,7 +26,7 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
   layers,
   layerId,
   onClose,
-  onCustomPropertySchemaUpdate,
+  onCustomPropertySchemaUpdate
 }) => {
   const t = useT();
   const [customProperties, setCustomProperties] = useState<
@@ -39,7 +39,7 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
     customProperties,
     setPropertiesList,
     onClose,
-    onCustomPropertySchemaUpdate,
+    onCustomPropertySchemaUpdate
   });
 
   return (
@@ -75,7 +75,7 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   height: "400px",
   background: theme.bg[0],
-  padding: theme.spacing.normal,
+  padding: theme.spacing.normal
 }));
 
 export default SketchLayerEditor;

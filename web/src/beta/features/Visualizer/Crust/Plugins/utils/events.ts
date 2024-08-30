@@ -3,28 +3,28 @@ import { useEffect } from "react";
 
 export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
 export type EventEmitter<
-  E extends { [P in string]: any[] } = { [P in string]: any[] },
+  E extends { [P in string]: any[] } = { [P in string]: any[] }
 > = <T extends keyof E>(type: T, ...args: E[T]) => void;
 
 export type Events<
-  E extends { [P in string]: any[] } = { [P in string]: any[] },
+  E extends { [P in string]: any[] } = { [P in string]: any[] }
 > = {
   readonly on: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>,
+    callback: EventCallback<E[T]>
   ) => void;
   readonly off: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>,
+    callback: EventCallback<E[T]>
   ) => void;
   readonly once: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>,
+    callback: EventCallback<E[T]>
   ) => void;
 };
 
 export function events<
-  E extends { [P in string]: any[] } = { [P in string]: any[] },
+  E extends { [P in string]: any[] } = { [P in string]: any[] }
 >(): [Events<E>, EventEmitter<E>] {
   const e = new EventTarget();
   const callbacks = new Map<
@@ -33,7 +33,7 @@ export function events<
   >();
   const getEventCallback = <T extends keyof E>(
     type: T,
-    cb: EventCallback<E[T]>,
+    cb: EventCallback<E[T]>
   ): ((e: Event) => void) => {
     let ecbs = callbacks.get(type);
     if (!ecbs) {
@@ -84,18 +84,18 @@ export function events<
     },
     get once() {
       return once;
-    },
+    }
   };
 
   return [
     events,
     <T extends keyof E>(type: T, ...args: E[T]) =>
-      e.dispatchEvent(new CustomEvent(String(type), { detail: args })),
+      e.dispatchEvent(new CustomEvent(String(type), { detail: args }))
   ];
 }
 
 export function mergeEvents<
-  E extends Record<string, any[]> = Record<string, any[]>,
+  E extends Record<string, any[]> = Record<string, any[]>
 >(source: Events<E>, dest: EventEmitter<E>, types: (keyof E)[]): () => void {
   const cbs = types.reduce<{ [T in keyof E]: EventCallback<E[T]> }>((a, b) => {
     a[b] = (...args: E[typeof b]) => {
@@ -117,7 +117,7 @@ export function mergeEvents<
 
 export function useEmit<T extends { [K in string]: any[] }>(
   values: { [K in keyof T]?: T[K] | undefined },
-  emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined,
+  emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined
 ) {
   for (const k of Object.keys(values)) {
     const args = values[k];

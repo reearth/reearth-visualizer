@@ -3,7 +3,7 @@ const radiusSizes = {
   smallest: 2,
   small: 4,
   normal: 6,
-  large: 8,
+  large: 8
 } as const;
 
 export type RadiusSizesType = typeof radiusSizes;

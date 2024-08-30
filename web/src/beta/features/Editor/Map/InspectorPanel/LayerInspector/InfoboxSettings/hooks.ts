@@ -1,8 +1,8 @@
-import { useCallback, useMemo } from "react";
 
 import { filterVisibleItems } from "@reearth/beta/ui/fields/utils";
 import { useInfoboxFetcher } from "@reearth/services/api";
 import { Item, convert } from "@reearth/services/api/propertyApi/utils";
+import { useCallback, useMemo } from "react";
 
 export default ({ layerId, property }: { layerId: string; property?: any }) => {
   const { useCreateNLSInfobox } = useInfoboxFetcher();
@@ -10,7 +10,7 @@ export default ({ layerId, property }: { layerId: string; property?: any }) => {
 
   const visibleItems: Item[] | undefined = useMemo(
     () => filterVisibleItems(convert(property)),
-    [property],
+    [property]
   );
 
   const handleInfoboxCreate = useCallback(async () => {
@@ -21,6 +21,6 @@ export default ({ layerId, property }: { layerId: string; property?: any }) => {
 
   return {
     visibleItems,
-    handleInfoboxCreate,
+    handleInfoboxCreate
   };
 };

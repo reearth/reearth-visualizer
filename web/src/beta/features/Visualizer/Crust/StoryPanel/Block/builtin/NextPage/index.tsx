@@ -46,11 +46,11 @@ export default NextPage;
 const Wrapper = styled("div")(() => ({
   display: "flex",
   width: "100%",
-  justifyContent: "center",
+  justifyContent: "center"
 }));
 
 const StyledIcon = styled(Icon)(() => ({
-  transition: "none",
+  transition: "none"
 }));
 
 const Button = styled("div")(({ theme }) => ({
@@ -65,6 +65,6 @@ const Button = styled("div")(({ theme }) => ({
   ["&:hover"]: {
     background: "#8d8d8d",
     border: "1px solid #8d8d8d",
-    color: theme.content.strong,
-  },
+    color: theme.content.strong
+  }
 }));

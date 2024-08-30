@@ -10,7 +10,7 @@ export default () => {
       fieldId?: string,
       itemId?: string,
       vt?: any,
-      v?: any,
+      v?: any
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
       await useUpdatePropertyValue(
@@ -20,13 +20,13 @@ export default () => {
         fieldId,
         "en",
         v,
-        vt,
+        vt
       );
     },
-    [useUpdatePropertyValue],
+    [useUpdatePropertyValue]
   );
 
   return {
-    handlePropertyValueUpdate,
+    handlePropertyValueUpdate
   };
 };

@@ -6,9 +6,8 @@ import {
   ConnectDragPreview,
   ConnectDragSource,
   useDrag,
-  useDrop,
+  useDrop
 } from "react-dnd";
-
 
 type DragItem = {
   index: number;
@@ -42,7 +41,7 @@ const Item: FC<Props> = ({
   shouldUseCustomHandler,
   onItemMove,
   onItemDropOnItem,
-  onItemDropOutside,
+  onItemDropOutside
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +53,7 @@ const Item: FC<Props> = ({
     accept: itemGroupKey,
     collect(monitor) {
       return {
-        handlerId: monitor.getHandlerId(),
+        handlerId: monitor.getHandlerId()
       };
     },
     hover(item: DragItem, monitor) {
@@ -89,7 +88,7 @@ const Item: FC<Props> = ({
       }
       onItemMove(dragIndex, hoverIndex);
       item.index = hoverIndex;
-    },
+    }
   });
 
   const [{ isDragging }, drag, preview] = useDrag({
@@ -98,7 +97,7 @@ const Item: FC<Props> = ({
       return { id, index };
     },
     collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+      isDragging: monitor.isDragging()
     }),
     end: (item, monitor) => {
       const didDrop = monitor.didDrop();
@@ -107,7 +106,7 @@ const Item: FC<Props> = ({
       } else {
         onItemDropOutside();
       }
-    },
+    }
   });
 
   drop(contentRef);
