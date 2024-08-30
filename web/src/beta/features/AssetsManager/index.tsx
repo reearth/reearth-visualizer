@@ -151,7 +151,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                             selectedAssetIds={selectedAssetIds}
                             onSelect={handleAssetSelect}
                           />
-                        )
+                        ),
                       )}
                     </AssetsGroup>
                   </AssetsContent>
@@ -189,13 +189,13 @@ const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
     gap: theme.spacing.normal,
     flex: 1,
     height: 0,
-  })
+  }),
 );
 
 const PathWrapper = styled("div")<{ size: AssetsManagerSize }>(
   ({ theme, size }) => ({
     padding: `0 ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-  })
+  }),
 );
 
 const AssetsWrapper = styled("div")(() => ({
@@ -215,7 +215,7 @@ const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
     padding: `${theme.spacing.smallest}px ${
       size === "large" ? theme.spacing.large : theme.spacing.small
     }px ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-  })
+  }),
 );
 
 const LayoutWrapper = styled("div")(() => ({
@@ -256,7 +256,7 @@ const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
     }px`,
     gap: theme.spacing.small,
     width: width === 0 ? "100%" : width,
-  })
+  }),
 );
 
 const ThumbnailSpacer = styled("div")(() => ({

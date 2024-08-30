@@ -1,4 +1,3 @@
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/beta/utils/value";

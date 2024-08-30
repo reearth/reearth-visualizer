@@ -52,7 +52,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
     ],
-    [t]
+    [t],
   );
 
   return (
@@ -163,7 +163,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                       />
-                    )
+                    ),
                   )}
                 </ProjectsGroup>
               </ProjectsContainer>
@@ -252,7 +252,7 @@ const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
           gap: theme.spacing.normal,
         }
       : {}),
-  })
+  }),
 );
 
 const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({

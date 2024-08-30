@@ -28,7 +28,7 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                 <IconWrapper icon="notebook" color={theme.content.weak} />
                 <TitleWrapper>{statredProject?.name}</TitleWrapper>
               </Item>
-            ) : null
+            ) : null,
           )}
         </ProjectsWrapper>
       </Collapse>
