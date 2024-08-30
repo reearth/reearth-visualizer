@@ -4,7 +4,7 @@ import type { ComponentProps as WidgetProps } from "../..";
 
 import MenuButton, {
   Button as ButtonType,
-  MenuItem as MenuItemType,
+  MenuItem as MenuItemType
 } from "./MenuButton";
 
 export type Props = WidgetProps<Property>;
@@ -18,7 +18,7 @@ export type Property = {
 const Menu = ({
   widget,
   theme,
-  context: { onFlyTo } = {},
+  context: { onFlyTo } = {}
 }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = widget.property ?? {};
 

@@ -10,14 +10,14 @@ export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
       if (!sceneId) return;
       navigate(`/scene/${sceneId}/${tab}`);
     },
-    [sceneId, navigate],
+    [sceneId, navigate]
   );
 
   return sceneId ? handleNavigate : undefined;
 };
 
 export const useSettingsNavigation = ({
-  projectId,
+  projectId
 }: {
   projectId?: string;
 }) => {
@@ -27,10 +27,10 @@ export const useSettingsNavigation = ({
     (page?: "public" | "story" | "asset" | "plugin", subId?: string) => {
       if (!projectId || !page) return;
       navigate(
-        `/settings/project/${projectId}/${page}${subId ? `/${subId}` : ""}`,
+        `/settings/project/${projectId}/${page}${subId ? `/${subId}` : ""}`
       );
     },
-    [projectId, navigate],
+    [projectId, navigate]
   );
 
   return projectId ? handleNavigate : undefined;

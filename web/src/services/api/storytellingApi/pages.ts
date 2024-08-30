@@ -13,13 +13,13 @@ import {
   MutationRemoveStoryPageArgs,
   MutationUpdateStoryPageArgs,
   UpdateStoryPageInput,
-  UpdateStoryPageMutation,
+  UpdateStoryPageMutation
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   CREATE_STORY_PAGE,
   DELETE_STORY_PAGE,
   MOVE_STORY_PAGE,
-  UPDATE_STORY_PAGE,
+  UPDATE_STORY_PAGE
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { useCallback } from "react";
@@ -39,12 +39,12 @@ export default () => {
 
   const useCreateStoryPage = useCallback(
     async (
-      input: CreateStoryPageInput,
+      input: CreateStoryPageInput
     ): Promise<MutationReturn<CreateStoryPageMutation>> => {
       const { data, errors } = await createStoryPageMutation({
         variables: {
-          input,
-        },
+          input
+        }
       });
       if (errors || !data?.createStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create page.") });
@@ -53,12 +53,12 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfullly created a page!"),
+        text: t("Successfullly created a page!")
       });
 
       return { data, status: "success" };
     },
-    [createStoryPageMutation, setNotification, t],
+    [createStoryPageMutation, setNotification, t]
   );
 
   const [deleteStoryPageMutation] = useMutation<
@@ -68,12 +68,12 @@ export default () => {
 
   const useDeleteStoryPage = useCallback(
     async (
-      input: DeleteStoryPageInput,
+      input: DeleteStoryPageInput
     ): Promise<MutationReturn<DeleteStoryPageMutation>> => {
       const { data, errors } = await deleteStoryPageMutation({
         variables: {
-          input,
-        },
+          input
+        }
       });
       if (errors || !data?.removeStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to delete page.") });
@@ -82,12 +82,12 @@ export default () => {
       }
       setNotification({
         type: "info",
-        text: t("Page was successfully deleted."),
+        text: t("Page was successfully deleted.")
       });
 
       return { data, status: "success" };
     },
-    [deleteStoryPageMutation, setNotification, t],
+    [deleteStoryPageMutation, setNotification, t]
   );
 
   const [moveStoryPageMutation] = useMutation<
@@ -97,12 +97,12 @@ export default () => {
 
   const useMoveStoryPage = useCallback(
     async (
-      input: MoveStoryPageInput,
+      input: MoveStoryPageInput
     ): Promise<MutationReturn<MoveStoryPageMutation>> => {
       const { data, errors } = await moveStoryPageMutation({
         variables: {
-          input,
-        },
+          input
+        }
       });
       if (errors || !data?.moveStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to move page.") });
@@ -111,12 +111,12 @@ export default () => {
       }
       setNotification({
         type: "info",
-        text: t("Page was successfully moved."),
+        text: t("Page was successfully moved.")
       });
 
       return { data, status: "success" };
     },
-    [moveStoryPageMutation, setNotification, t],
+    [moveStoryPageMutation, setNotification, t]
   );
 
   const [updateStoryPageMutation] = useMutation<
@@ -126,12 +126,12 @@ export default () => {
 
   const useUpdateStoryPage = useCallback(
     async (
-      input: UpdateStoryPageInput,
+      input: UpdateStoryPageInput
     ): Promise<MutationReturn<UpdateStoryPageMutation>> => {
       const { data, errors } = await updateStoryPageMutation({
         variables: {
-          input,
-        },
+          input
+        }
       });
       if (errors || !data?.updateStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to update page.") });
@@ -140,17 +140,17 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfullly updated a page!"),
+        text: t("Successfullly updated a page!")
       });
 
       return { data, status: "success" };
     },
-    [updateStoryPageMutation, setNotification, t],
+    [updateStoryPageMutation, setNotification, t]
   );
   return {
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
-    useUpdateStoryPage,
+    useUpdateStoryPage
   };
 };

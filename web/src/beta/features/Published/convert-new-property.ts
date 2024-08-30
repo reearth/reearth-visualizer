@@ -4,7 +4,7 @@ import { Layer, LayerAppearanceTypes } from "@reearth/core";
 import {
   NLSInfobox,
   NLSLayer,
-  SketchFeature,
+  SketchFeature
 } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { mapValues } from "lodash-es";
@@ -15,7 +15,7 @@ export const processNewProperty = (p: any): any => {
     return Array.isArray(g)
       ? g.map((h) => ({
           ...processNewPropertyGroup(h),
-          id: h.id,
+          id: h.id
         }))
       : processNewPropertyGroup(g);
   });
@@ -33,8 +33,8 @@ function processNewPropertyGroup(g: any): any {
           "lng" in v &&
           "altitude" in v // For compability
             ? { value: { ...vv, height: vv.altitude } }
-            : vv,
-        ),
+            : vv
+        )
       };
     }
     if (
@@ -47,8 +47,8 @@ function processNewPropertyGroup(g: any): any {
       return {
         value: {
           ...v,
-          height: v.altitude,
-        },
+          height: v.altitude
+        }
       };
     }
     return { value: v };
@@ -57,11 +57,11 @@ function processNewPropertyGroup(g: any): any {
 
 export function processLayers(
   newLayers?: NLSLayer[],
-  layerStyles?: LayerStyle[],
+  layerStyles?: LayerStyle[]
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      (a) => a.id === id,
+      (a) => a.id === id
     )?.value;
     if (typeof layerStyleValue === "object") {
       try {
@@ -84,13 +84,13 @@ export function processLayers(
           (feature: SketchFeature) => {
             return {
               ...feature,
-              geometry: feature.geometry[0],
+              geometry: feature.geometry[0]
             };
-          },
-        ),
+          }
+        )
       },
       isSketchLayer: true,
-      idProperty: "id",
+      idProperty: "id"
     };
 
     return {
@@ -103,13 +103,13 @@ export function processLayers(
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
       data: nlsLayer.isSketch ? sketchLayerData : nlsLayer.config?.data,
-      ...layerStyle,
+      ...layerStyle
     };
   });
 }
 
 function convertInfobox(
-  infobox: NLSInfobox | null | undefined,
+  infobox: NLSInfobox | null | undefined
 ): Layer["infobox"] {
   if (!infobox) return;
   return {
@@ -119,7 +119,7 @@ function convertInfobox(
       // name: blockNames?.[b.extensionId] ?? "Infobox Block",
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      property: processNewProperty(b.property),
-    })),
+      property: processNewProperty(b.property)
+    }))
   };
 }

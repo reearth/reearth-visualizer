@@ -5,7 +5,7 @@ import {
   NORMAL_SCALE_WIDTH,
   PADDING_HORIZONTAL,
   SCALE_LABEL_WIDTH,
-  STRONG_SCALE_WIDTH,
+  STRONG_SCALE_WIDTH
 } from "./constants";
 
 const MONTH_LABEL_LIST = [
@@ -20,12 +20,12 @@ const MONTH_LABEL_LIST = [
   "Sep",
   "Oct",
   "Nov",
-  "Dec",
+  "Dec"
 ];
 
 export const formatDateForTimeline = (
   time: number,
-  options: { detail?: boolean } = {},
+  options: { detail?: boolean } = {}
 ) => {
   const d = new Date(time);
   const year = d.getFullYear();
@@ -58,7 +58,7 @@ const ADDITIONAL_STRONG_SCALE_MINUTES = 5;
 export const calcScaleInterval = (
   rangeDiff: number,
   zoom: number,
-  styles: { width: number; gap: number },
+  styles: { width: number; gap: number }
 ) => {
   const timelineWidth = styles.width - (PADDING_HORIZONTAL + BORDER_WIDTH) * 2;
   const scaleWidth = styles.gap + NORMAL_SCALE_WIDTH;
@@ -87,7 +87,7 @@ export const calcScaleInterval = (
   // Adjust strong scale position
   const diffLabelWidth = Math.max(
     SCALE_LABEL_WIDTH - nextGap * DEFAULT_STRONG_SCALE_MINUTES,
-    0,
+    0
   );
   const strongScaleMinutes =
     DEFAULT_STRONG_SCALE_MINUTES +
@@ -98,6 +98,6 @@ export const calcScaleInterval = (
     scaleCount: Math.trunc(scaleCount),
     scaleInterval: Math.trunc(zoomedScaleInterval),
     strongScaleMinutes,
-    gap: nextGap,
+    gap: nextGap
   };
 };

@@ -9,14 +9,14 @@ const config: CodegenConfig = {
   schema: "../server/gql/*.graphql",
   documents: [
     `${rootGQLDirectory}fragments/*.ts`,
-    `${rootGQLDirectory}queries/*.ts`,
+    `${rootGQLDirectory}queries/*.ts`
   ],
   generates: {
     [rootGenerateDirectory]: {
       preset: "client",
       presetConfig: {
         gqlTagName: "gql",
-        fragmentMasking: false,
+        fragmentMasking: false
       },
       config: {
         useTypeImports: true,
@@ -28,15 +28,15 @@ const config: CodegenConfig = {
           URL: "string",
           Lang: "string",
           TranslatedString: "{ [lang in string]?: string } | null",
-          JSON: "any",
-        },
-      },
+          JSON: "any"
+        }
+      }
     },
     [`${rootGenerateDirectory}/fragmentMatcher.json`]: {
-      plugins: ["fragment-matcher"],
-    },
+      plugins: ["fragment-matcher"]
+    }
   },
-  ignoreNoDocuments: true,
+  ignoreNoDocuments: true
 };
 
 export default config;

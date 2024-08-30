@@ -34,7 +34,7 @@ export const Button: FC<ButtonProps> = ({
   background,
   onClick,
   onMouseEnter,
-  onMouseLeave,
+  onMouseLeave
 }) => {
   return (
     <StyledButton
@@ -71,7 +71,7 @@ const StyledButton = styled("button")<{
     extendWidth,
     minWidth,
     background,
-    theme,
+    theme
   }) => ({
     display: "flex",
     flexDirection: "row",
@@ -122,7 +122,7 @@ const StyledButton = styled("button")<{
             backgroundColor:
               appearance === "simple"
                 ? "transparent"
-                : `${theme[appearance].weak}`,
+                : `${theme[appearance].weak}`
           },
     ["&:active"]: {
       borderColor: "transparent",
@@ -133,7 +133,7 @@ const StyledButton = styled("button")<{
           : appearance === "simple"
             ? "transparent"
             : `${theme[appearance].main}`,
-      boxShadow: "none",
+      boxShadow: "none"
     },
     ["&:disabled"]: {
       cursor: "not-allowed",
@@ -145,11 +145,11 @@ const StyledButton = styled("button")<{
         appearance === "simple"
           ? `1px solid transparent`
           : `1px solid ${theme.content.weaker}`,
-      boxShadow: "none",
+      boxShadow: "none"
     },
     ["& svg"]: {
       width: iconButton && size === "small" ? "12px" : "16px",
-      height: iconButton && size === "small" ? "12px" : "16px",
-    },
-  }),
+      height: iconButton && size === "small" ? "12px" : "16px"
+    }
+  })
 );

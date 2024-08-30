@@ -6,7 +6,7 @@ import React, {
   ReactElement,
   HTMLAttributes,
   MutableRefObject,
-  FunctionComponent,
+  FunctionComponent
 } from "react";
 
 type FocusEvents = "focusin" | "focusout";
@@ -30,7 +30,7 @@ const eventTypeMapping = {
   mousedown: "onMouseDown",
   mouseup: "onMouseUp",
   touchstart: "onTouchStart",
-  touchend: "onTouchEnd",
+  touchend: "onTouchEnd"
 };
 
 const ClickAwayListener: FunctionComponent<Props> = ({
@@ -39,7 +39,7 @@ const ClickAwayListener: FunctionComponent<Props> = ({
   onClickAway,
   focusEvent = "focusin",
   mouseEvent = "click",
-  touchEvent = "touchend",
+  touchEvent = "touchend"
 }) => {
   const node = useRef<HTMLElement | null>(null);
   const bubbledEventTarget = useRef<EventTarget | null>(null);
@@ -124,8 +124,8 @@ const ClickAwayListener: FunctionComponent<Props> = ({
           ref: handleChildRef,
           [mappedFocusEvent]: handleBubbledEvents(mappedFocusEvent),
           [mappedMouseEvent]: handleBubbledEvents(mappedMouseEvent),
-          [mappedTouchEvent]: handleBubbledEvents(mappedTouchEvent),
-        }),
+          [mappedTouchEvent]: handleBubbledEvents(mappedTouchEvent)
+        })
       )
     : children;
 };

@@ -8,14 +8,14 @@ export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
   const [ready, setReady] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
-    undefined,
+    undefined
   );
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken: config()?.cesiumIonAccessToken
     }),
-    [],
+    []
   );
 
   const viewerProperty: ViewerProperty = useMemo(
@@ -23,11 +23,11 @@ export default () => {
       tiles: [
         {
           id: "default",
-          type: "default",
-        },
-      ],
+          type: "default"
+        }
+      ]
     }),
-    [],
+    []
   );
 
   useEffect(() => {
@@ -40,6 +40,6 @@ export default () => {
     ready,
     engineMeta,
     currentCamera,
-    setCurrentCamera,
+    setCurrentCamera
   };
 };

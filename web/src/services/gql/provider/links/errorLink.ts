@@ -1,5 +1,4 @@
 import { onError } from "@apollo/client/link/error";
-
 import { reportError } from "@reearth/sentry";
 import { useSetError } from "@reearth/services/state";
 
@@ -15,7 +14,7 @@ export default () => {
     } else {
       error = {
         type: graphQLErrors?.[0].path?.[0].toString(),
-        message: graphQLErrors?.[0].message,
+        message: graphQLErrors?.[0].message
       };
     }
     if (error) {

@@ -8,7 +8,7 @@ export default ({
   alignSystem,
   floatingWidgets,
   selectedLayer,
-  selectedStory,
+  selectedStory
 }: Pick<
   Props,
   "alignSystem" | "floatingWidgets" | "selectedLayer" | "selectedStory"
@@ -17,18 +17,18 @@ export default ({
     alignSystem,
     floatingWidgets,
     infoboxBlocks: selectedLayer?.layer?.infobox?.blocks,
-    storyBlocks: selectedStory?.pages.flatMap((p) => p.blocks),
+    storyBlocks: selectedStory?.pages.flatMap((p) => p.blocks)
   });
 
   const getPluginInstances = useGet(pluginInstances);
 
   const getExtensionList = useCallback(
     () => getPluginInstances().meta.current,
-    [getPluginInstances],
+    [getPluginInstances]
   );
 
   return {
     pluginInstances,
-    getExtensionList,
+    getExtensionList
   };
 };

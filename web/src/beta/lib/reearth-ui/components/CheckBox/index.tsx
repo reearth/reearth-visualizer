@@ -47,6 +47,6 @@ const BoxField = styled("div")<{ disabled?: boolean }>(
     height: "16px",
     border: `1px solid ${theme.outline.weak}`,
     borderRadius: "4px",
-    cursor: disabled ? "not-allowed" : "pointer",
-  }),
+    cursor: disabled ? "not-allowed" : "pointer"
+  })
 );

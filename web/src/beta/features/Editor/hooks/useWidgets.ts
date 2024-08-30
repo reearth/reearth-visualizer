@@ -16,12 +16,12 @@ type Props = {
 
 export default ({ tab }: Props) => {
   const [showWASEditor, setShowWASEditor] = useState<boolean | undefined>(
-    undefined,
+    undefined
   );
 
   const handleShowWASEditorToggle = useCallback(
     () => setShowWASEditor((show) => !show),
-    [setShowWASEditor],
+    [setShowWASEditor]
   );
 
   useEffect(() => {
@@ -43,6 +43,6 @@ export default ({ tab }: Props) => {
     selectedWidget,
     selectWidget: setSelectedWidget,
     selectedWidgetArea,
-    selectWidgetArea: setSelectedWidgetArea,
+    selectWidgetArea: setSelectedWidgetArea
   };
 };

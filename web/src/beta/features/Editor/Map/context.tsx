@@ -12,16 +12,16 @@ import {
   LayerMoveProps,
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
-  SelectedLayer,
+  SelectedLayer
 } from "../hooks/useLayers";
 import {
   LayerStyleAddProps,
   LayerStyleNameUpdateProps,
-  LayerStyleValueUpdateProps,
+  LayerStyleValueUpdateProps
 } from "../hooks/useLayerStyles";
 import {
   GeoJsonFeatureDeleteProps,
-  GeoJsonFeatureUpdateProps,
+  GeoJsonFeatureUpdateProps
 } from "../hooks/useSketch";
 
 export interface MapPageContextType {
@@ -41,7 +41,7 @@ export interface MapPageContextType {
   layerId?: string;
   handleCustomPropertySchemaClick?: (id?: string) => void;
   handleCustomPropertySchemaUpdate?: (
-    inp: UpdateCustomPropertySchemaInput,
+    inp: UpdateCustomPropertySchemaInput
   ) => void;
   handleLayerVisibilityUpdate: (inp: LayerVisibilityUpdateProps) => void;
   handleFlyTo?: FlyTo;
@@ -67,7 +67,7 @@ const MapPageContext = createContext<MapPageContextType | undefined>(undefined);
 
 export const MapPageProvider = ({
   value,
-  children,
+  children
 }: {
   value: MapPageContextType;
   children: ReactNode;

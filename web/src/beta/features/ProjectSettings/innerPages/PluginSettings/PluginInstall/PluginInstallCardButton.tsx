@@ -14,7 +14,7 @@ const PluginInstallCardButton: FC<Props> = ({
   className,
   icon,
   text,
-  onClick,
+  onClick
 }) => (
   <StyledButton onClick={onClick} className={className}>
     <Icon icon={icon} size={126} />
@@ -37,9 +37,9 @@ const StyledButton = styled("div")(({ theme }) => ({
   cursor: "pointer",
   padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px`,
   "&:hover": {
-    backgroundColor: theme.bg[2],
+    backgroundColor: theme.bg[2]
   },
-  transition: "all 0.1s",
+  transition: "all 0.1s"
 }));
 
 export default PluginInstallCardButton;

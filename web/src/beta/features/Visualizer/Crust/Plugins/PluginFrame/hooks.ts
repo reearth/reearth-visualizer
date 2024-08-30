@@ -8,7 +8,7 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { IFrameAPI, Ref as IFrameRef } from "./PluginIFrame";
@@ -74,7 +74,7 @@ export default function useHook({
   onPreInit,
   onError = defaultOnError,
   onDispose,
-  onMessage: rawOnMessage,
+  onMessage: rawOnMessage
 }: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
@@ -94,19 +94,19 @@ export default function useHook({
     (e: (msg: any) => void) => {
       messageEvents.add(e);
     },
-    [messageEvents],
+    [messageEvents]
   );
   const offMessage = useCallback(
     (e: (msg: any) => void) => {
       messageEvents.delete(e);
     },
-    [messageEvents],
+    [messageEvents]
   );
   const onceMessage = useCallback(
     (e: (msg: any) => void) => {
       messageOnceEvents.add(e);
     },
-    [messageOnceEvents],
+    [messageOnceEvents]
   );
   const handleMessage = useCallback(
     (msg: any) => {
@@ -119,7 +119,7 @@ export default function useHook({
       rawOnMessage?.(msg);
       messageOnceEvents.clear();
     },
-    [messageEvents, messageOnceEvents, onError, rawOnMessage],
+    [messageEvents, messageOnceEvents, onError, rawOnMessage]
   );
 
   const eventLoopCb = useCallback(() => {
@@ -153,7 +153,7 @@ export default function useHook({
 
       return result;
     },
-    [onError, startEventLoop],
+    [onError, startEventLoop]
   );
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export default function useHook({
           (typeof isMarshalable === "function"
             ? isMarshalable(target)
             : "json"),
-        experimentalContextEx: true,
+        experimentalContextEx: true
       });
 
       const e =
@@ -193,9 +193,9 @@ export default function useHook({
               messages: {
                 on: onMessage,
                 off: offMessage,
-                once: onceMessage,
+                once: onceMessage
               },
-              startEventLoop,
+              startEventLoop
             })
           : exposed;
       if (e) {
@@ -241,15 +241,15 @@ export default function useHook({
     mainIFrameRef,
     messageEvents,
     messageOnceEvents,
-    startEventLoop,
+    startEventLoop
   ]);
 
   useImperativeHandle(
     ref,
     (): Ref => ({
-      arena: () => arena.current,
+      arena: () => arena.current
     }),
-    [],
+    []
   );
 
   return {
@@ -257,6 +257,6 @@ export default function useHook({
     modalIFrameRef,
     popupIFrameRef,
     loaded,
-    handleMessage,
+    handleMessage
   };
 }

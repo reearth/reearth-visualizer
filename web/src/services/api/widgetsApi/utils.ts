@@ -7,7 +7,7 @@ export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
 
 export const AVAILABLE_WIDGET_IDS = [
   BUTTON_BUILTIN_WIDGET_ID,
-  NAVIGATOR_BUILTIN_WIDGET_ID,
+  NAVIGATOR_BUILTIN_WIDGET_ID
 ];
 
 export type InstallableWidget = {
@@ -46,7 +46,7 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
           (e) =>
             e.type === PluginExtensionType.Widget &&
             (AVAILABLE_WIDGET_IDS.includes(`reearth/${e.extensionId}`) ||
-              plugin.id !== "reearth"),
+              plugin.id !== "reearth")
         )
         .map((e): InstallableWidget => {
           return {
@@ -59,27 +59,27 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
             disabled:
               (e.singleOnly &&
                 !!scene?.widgets?.find(
-                  (w) => w.extensionId === e.extensionId,
+                  (w) => w.extensionId === e.extensionId
                 )) ??
-              undefined,
+              undefined
           };
         })
         .filter(
-          (w): w is InstallableWidget => !!w && !w.title.includes("legacy"),
+          (w): w is InstallableWidget => !!w && !w.title.includes("legacy")
         );
     })
     .reduce<InstallableWidget[]>((a, b) => (b ? [...a, ...b] : a), []);
 };
 
 export const getInstalledWidgets = (
-  rawScene?: GetSceneQuery,
+  rawScene?: GetSceneQuery
 ): InstalledWidget[] | undefined => {
   const scene =
     rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
 
   return scene?.widgets?.map((w) => {
     const e = getInstallableWidgets(rawScene)?.find(
-      (e) => e.extensionId === w.extensionId,
+      (e) => e.extensionId === w.extensionId
     );
 
     return {
@@ -94,8 +94,8 @@ export const getInstalledWidgets = (
       icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
       property: {
         id: w.property?.id ?? "",
-        items: convert(w.property, null),
-      },
+        items: convert(w.property, null)
+      }
     };
   });
 };

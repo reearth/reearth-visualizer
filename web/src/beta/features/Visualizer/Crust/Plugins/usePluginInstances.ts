@@ -6,7 +6,7 @@ import type { WidgetAlignSystem } from "../Widgets";
 import type {
   InternalWidget,
   WidgetSection,
-  WidgetZone,
+  WidgetZone
 } from "../Widgets/WidgetAlignSystem";
 
 import type { PluginExtensionInstance } from "./pluginAPI/types";
@@ -23,7 +23,7 @@ export type PluginInstances = {
   postMessage: (id: string, msg: any, sender: string) => void;
   addPluginMessageSender: (
     id: string,
-    msgSender: (msg: string) => void,
+    msgSender: (msg: string) => void
   ) => void;
   removePluginMessageSender: (id: string) => void;
   runTimesCache: {
@@ -39,7 +39,7 @@ export default ({
   alignSystem,
   floatingWidgets,
   infoboxBlocks,
-  storyBlocks,
+  storyBlocks
 }: Props) => {
   const pluginInstancesMeta = useRef<PluginExtensionInstance[]>([]);
 
@@ -52,9 +52,9 @@ export default ({
       decrement: (id: string) =>
         runTimesCache.set(id, runTimesCacheHandler.get(id) - 1),
       clear: (id: string) => runTimesCache.set(id, 0),
-      clearAll: () => runTimesCache.clear(),
+      clearAll: () => runTimesCache.clear()
     }),
-    [runTimesCache],
+    [runTimesCache]
   );
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default ({
                       extensionType: "widget",
                       get runTimes() {
                         return runTimesCacheHandler.get(widget.id);
-                      },
+                      }
                     });
                   });
                 }
@@ -100,7 +100,7 @@ export default ({
           extensionType: "widget",
           get runTimes() {
             return runTimesCacheHandler.get(widget.id);
-          },
+          }
         });
       });
     }
@@ -115,7 +115,7 @@ export default ({
           extensionType: "block",
           get runTimes() {
             return runTimesCacheHandler.get(block.id);
-          },
+          }
         });
       });
     }
@@ -130,7 +130,7 @@ export default ({
           extensionType: "storyBlock",
           get runTimes() {
             return runTimesCacheHandler.get(block.id);
-          },
+          }
         });
       });
     }
@@ -141,11 +141,11 @@ export default ({
     floatingWidgets,
     infoboxBlocks,
     storyBlocks,
-    runTimesCacheHandler,
+    runTimesCacheHandler
   ]);
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(
-    new Map(),
+    new Map()
   );
 
   const pluginInstances = useMemo(() => {
@@ -167,14 +167,14 @@ export default ({
       },
       addPluginMessageSender: (
         id: string,
-        msgSender: (msg: string) => void,
+        msgSender: (msg: string) => void
       ) => {
         pluginMessageSenders.current?.set(id, msgSender);
       },
       removePluginMessageSender: (id: string) => {
         pluginMessageSenders.current?.delete(id);
       },
-      runTimesCache: runTimesCacheHandler,
+      runTimesCache: runTimesCacheHandler
     };
   }, [pluginInstancesMeta, runTimesCacheHandler]);
 

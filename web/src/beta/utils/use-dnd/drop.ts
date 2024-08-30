@@ -2,7 +2,7 @@ import { useMemo, useCallback } from "react";
 import {
   useDrop as useDndDrop,
   DropTargetHookSpec,
-  DropTargetMonitor,
+  DropTargetMonitor
 } from "react-dnd";
 
 import { Item, ItemType, Dropper } from "./types";
@@ -16,7 +16,7 @@ export type Context = {
 
 export type DropOptions<
   T extends ItemType = ItemType,
-  E extends HTMLElement = HTMLElement,
+  E extends HTMLElement = HTMLElement
 > = {
   accept: T | T[];
   canDrop?: (item: Item<T>) => boolean;
@@ -29,7 +29,7 @@ export type DropOptions<
 
 export const useDrop = <
   T extends ItemType = ItemType,
-  E extends HTMLElement = HTMLElement,
+  E extends HTMLElement = HTMLElement
 >({
   accept,
   hover,
@@ -37,7 +37,7 @@ export const useDrop = <
   drop,
   shallow,
   disabled,
-  wrapperRef,
+  wrapperRef
 }: DropOptions<T, E>) => {
   const calcContext = useCallback(
     (monitor: DropTargetMonitor) => {
@@ -53,15 +53,15 @@ export const useDrop = <
               x: offset.x - wrapperOffset.left,
               y: offset.y - wrapperOffset.top,
               w: wrapperOffset.width,
-              h: wrapperOffset.height,
+              h: wrapperOffset.height
             }
           : undefined;
       return {
         canDrop: monitor.canDrop(),
-        position,
+        position
       };
     },
-    [wrapperRef],
+    [wrapperRef]
   );
 
   const options = useMemo<
@@ -97,11 +97,11 @@ export const useDrop = <
           isOver,
           canDrop,
           isDroppable: isOver && canDrop,
-          isNotDroppable: isOver && !canDrop,
+          isNotDroppable: isOver && !canDrop
         };
-      },
+      }
     }),
-    [accept, calcContext, canDrop, disabled, drop, hover, shallow],
+    [accept, calcContext, canDrop, disabled, drop, hover, shallow]
   );
 
   const [{ isOver, canDrop: canDrop2, isDroppable, isNotDroppable }, ref] =

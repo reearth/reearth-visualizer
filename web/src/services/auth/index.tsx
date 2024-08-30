@@ -8,7 +8,7 @@ export { AuthProvider } from "./authProvider";
 export { useAuth, useCleanUrl, useAuthenticationRequired } from "./useAuth";
 
 const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({
-  children,
+  children
 }) => {
   const [isAuthenticated] = useAuthenticationRequired(); // TODO: show error
   return isAuthenticated && children ? <>{children}</> : null;
@@ -20,12 +20,12 @@ const withAuthorisation = (): ((props: any) => React.FC<any>) => {
     return withAuthenticator as unknown as (props: any) => React.FC<any>;
   } else if (authProvider === "auth0") {
     return withAuthenticationRequired as unknown as (
-      props: any,
+      props: any
     ) => React.FC<any>;
   }
   return (props: any) => props;
 };
 
 export const AuthenticatedPage = withAuthorisation()(
-  AuthenticationRequiredPage,
+  AuthenticationRequiredPage
 );

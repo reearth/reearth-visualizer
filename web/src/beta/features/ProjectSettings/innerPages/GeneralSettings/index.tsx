@@ -6,7 +6,7 @@ import {
   Modal,
   Button,
   ModalPanel,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -21,7 +21,7 @@ import {
   ArchivedSettingNotice,
   SettingsRow,
   SettingsRowItem,
-  Thumbnail,
+  Thumbnail
 } from "../common";
 
 export type GeneralSettingsType = {
@@ -45,23 +45,23 @@ type Props = {
 const GeneralSettings: FC<Props> = ({
   project,
   onUpdateProject,
-  onDeleteProject,
+  onDeleteProject
 }) => {
   const t = useT();
 
   const [localName, setLocalName] = useState(project?.name ?? "");
   const [localDescription, setLocalDescription] = useState(
-    project?.description ?? "",
+    project?.description ?? ""
   );
   const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(
-    project?.imageUrl ?? "",
+    project?.imageUrl ?? ""
   );
 
   const handleSubmit = useCallback(() => {
     onUpdateProject({
       name: localName,
       description: localDescription,
-      imageUrl: localImageUrl,
+      imageUrl: localImageUrl
     });
   }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
@@ -69,7 +69,7 @@ const GeneralSettings: FC<Props> = ({
   const [deleteInputName, setDeleteInputName] = useState("");
   const deleteDisabled = useMemo(
     () => deleteInputName !== project?.name,
-    [deleteInputName, project?.name],
+    [deleteInputName, project?.name]
   );
 
   return project ? (
@@ -154,7 +154,7 @@ const GeneralSettings: FC<Props> = ({
               appearance="dangerous"
               disabled={deleteDisabled}
               onClick={onDeleteProject}
-            />,
+            />
           ]}
         >
           <ModalContentWrapper>
@@ -163,7 +163,7 @@ const GeneralSettings: FC<Props> = ({
             </Typography>
             <Typography size="body">
               {t(
-                "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.",
+                "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore."
               )}
             </Typography>
             <Divider />
@@ -185,13 +185,13 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.large,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));
 
 const DangerItem = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
 const Divider = styled("div")(({ theme }) => ({

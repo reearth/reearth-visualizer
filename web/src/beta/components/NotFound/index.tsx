@@ -13,7 +13,7 @@ type Props = {
 const NotFound: React.FC<Props> = ({
   customHeader,
   customMessage,
-  customType,
+  customType
 }) => {
   const t = useT();
 

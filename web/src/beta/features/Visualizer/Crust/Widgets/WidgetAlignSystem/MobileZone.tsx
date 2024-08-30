@@ -10,7 +10,7 @@ import type {
   WidgetZone,
   WidgetLayoutConstraint,
   Theme,
-  WidgetProps,
+  WidgetProps
 } from "./types";
 import { filterSections } from "./utils";
 
@@ -39,19 +39,19 @@ export default function MobileZone({
   children,
   invisibleWidgetIDs,
   renderWidget,
-  onWidgetAreaSelect,
+  onWidgetAreaSelect
 }: Props) {
   const filteredSections = useMemo(() => {
     return filterSections(
       zone,
       invisibleWidgetIDs,
-      (s) => s === "center" && children,
+      (s) => s === "center" && children
     );
   }, [zone, children, invisibleWidgetIDs]);
 
   const initialPos = useMemo(
     () => (filteredSections.length === 3 ? 1 : 0),
-    [filteredSections],
+    [filteredSections]
   );
 
   const [pos, setPos] = useState(initialPos);
@@ -84,7 +84,7 @@ export default function MobileZone({
                       top: 6,
                       bottom: 6,
                       left: 6,
-                      right: 6,
+                      right: 6
                     }
                   }
                   gap={zone?.[s]?.[a]?.gap ?? 6}
@@ -96,7 +96,7 @@ export default function MobileZone({
                   renderWidget={renderWidget}
                   onWidgetAreaSelect={onWidgetAreaSelect}
                 />
-              ),
+              )
             )}
           </GridSection>
         ))}

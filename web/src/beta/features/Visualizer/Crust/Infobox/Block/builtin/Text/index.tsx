@@ -36,5 +36,5 @@ const Text = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   minWidth: 0,
-  wordWrap: "break-word",
+  wordWrap: "break-word"
 }));

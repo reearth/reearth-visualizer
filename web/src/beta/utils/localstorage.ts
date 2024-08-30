@@ -1,6 +1,6 @@
 export const setLocalStorageData = (
   localStorageKey: string,
-  storedData: any,
+  storedData: any
 ) => {
   if (!localStorageKey) return;
 

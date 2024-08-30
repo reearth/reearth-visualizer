@@ -7,7 +7,7 @@ import {
   EPOCH_SEC,
   STRONG_SCALE_WIDTH,
   NORMAL_SCALE_WIDTH,
-  PADDING_HORIZONTAL,
+  PADDING_HORIZONTAL
 } from "./constants";
 import { formatDateForTimeline } from "./utils";
 
@@ -44,7 +44,7 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(
     scaleCount,
     hoursCount,
     scaleInterval,
-    strongScaleMinutes,
+    strongScaleMinutes
   }) {
     const lastStrongScaleIdx = scaleCount - strongScaleMinutes;
     return (
@@ -56,8 +56,8 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(
             const label = formatDateForTimeline(
               start.getTime() + idx * EPOCH_SEC * scaleInterval,
               {
-                detail: true,
-              },
+                detail: true
+              }
             );
 
             return (
@@ -84,7 +84,7 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(
         })}
       </>
     );
-  },
+  }
 );
 
 export type StyledColorProps = {

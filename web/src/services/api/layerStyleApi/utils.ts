@@ -14,7 +14,7 @@ export const getLayerStyles = (rawScene?: GetSceneQuery) => {
     return {
       id: s.id,
       name: s.name,
-      value: s.value,
+      value: s.value
     };
   });
 };

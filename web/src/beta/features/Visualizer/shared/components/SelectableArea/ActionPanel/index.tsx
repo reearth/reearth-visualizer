@@ -31,23 +31,23 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -72,7 +72,7 @@ const ActionPanel: FC<Props> = ({
     actionItems,
     openMenu,
     setOpenMenu,
-    handlePopupMenuClick,
+    handlePopupMenuClick
   } = useHooks({
     title,
     icon,
@@ -83,7 +83,7 @@ const ActionPanel: FC<Props> = ({
     setShowPadding,
     onEditModeToggle,
     onSettingsToggle,
-    onRemove,
+    onRemove
   });
 
   return (

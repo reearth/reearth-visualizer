@@ -1,7 +1,7 @@
 import {
   Button,
   DragAndDropList,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -37,22 +37,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -63,7 +63,7 @@ const ListEditor: FC<Props> = ({
   propertyId,
   displayTypeField,
   propertyListField,
-  onPropertyUpdate,
+  onPropertyUpdate
 }) => {
   const t = useT();
 
@@ -76,12 +76,12 @@ const ListEditor: FC<Props> = ({
     handleItemAdd,
     handleMoveStart,
     handleMoveEnd,
-    handlePropertyValueRemove,
+    handlePropertyValueRemove
   } = useHooks({
     propertyId,
     propertyListField,
     displayTypeField,
-    onPropertyUpdate,
+    onPropertyUpdate
   });
 
   const DraggableCurrentPropertyList = useMemo(
@@ -97,14 +97,14 @@ const ListEditor: FC<Props> = ({
             onValueBlur={handleValueBlur(idx)}
             onItemRemove={() => handlePropertyValueRemove(idx)}
           />
-        ),
+        )
       })),
     [
       currentPropertyList,
       handleKeyBlur,
       handleValueBlur,
-      handlePropertyValueRemove,
-    ],
+      handlePropertyValueRemove
+    ]
   );
 
   return (
@@ -149,7 +149,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   background: theme.bg[1],
   gap: theme.spacing.small,
-  padding: theme.spacing.normal,
+  padding: theme.spacing.normal
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
@@ -158,5 +158,5 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   justifyContent: "space-between",
   gap: theme.spacing.smallest,
   alignItems: "center",
-  boxsizing: "border-box",
+  boxsizing: "border-box"
 }));

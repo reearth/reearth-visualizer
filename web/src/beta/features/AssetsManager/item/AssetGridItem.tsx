@@ -8,11 +8,11 @@ import { getAssetType } from "./utils";
 const AssetGridItem: FC<AssetItemProps> = ({
   asset,
   selectedAssetIds,
-  onSelect,
+  onSelect
 }) => {
   const selected = useMemo(
     () => selectedAssetIds.includes(asset.id),
-    [selectedAssetIds, asset.id],
+    [selectedAssetIds, asset.id]
   );
 
   const type = useMemo(() => getAssetType(asset), [asset]);
@@ -26,7 +26,7 @@ const AssetGridItem: FC<AssetItemProps> = ({
       e.stopPropagation();
       onSelect?.(asset.id);
     },
-    [asset, onSelect],
+    [asset, onSelect]
   );
 
   return (
@@ -68,14 +68,14 @@ const Wrapper = styled("div")<{ selected?: boolean }>(
     transition: "background-color 0.1s ease",
     ["&:hover"]: {
       background: selected ? theme.select.main : theme.relative.light,
-      borderRadius: theme.radius.small,
-    },
-  }),
+      borderRadius: theme.radius.small
+    }
+  })
 );
 
 const ThumbnailWrapper = styled("div")(() => ({
   position: "relative",
-  paddingBottom: "62.5%",
+  paddingBottom: "62.5%"
 }));
 
 const Thumbnail = styled("div")(({ theme }) => ({
@@ -88,27 +88,27 @@ const Thumbnail = styled("div")(({ theme }) => ({
   height: "100%",
   borderRadius: theme.radius.small,
   overflow: "hidden",
-  display: "flex",
+  display: "flex"
 }));
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
   background: url ? `url(${url}) center/contain no-repeat` : theme.bg[1],
   borderRadius: theme.radius.small,
-  width: "100%",
+  width: "100%"
 }));
 
 const IconWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: "100%",
+  width: "100%"
 }));
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
   position: "absolute",
   color: theme.content.weak,
   transform: "translate(0, 10px)",
-  fontWeight: "bold",
+  fontWeight: "bold"
 }));
 
 const AssetName = styled("div")(() => ({
@@ -117,5 +117,5 @@ const AssetName = styled("div")(() => ({
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  padding: "1px 0",
+  padding: "1px 0"
 }));

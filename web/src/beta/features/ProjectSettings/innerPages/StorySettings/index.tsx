@@ -18,7 +18,7 @@ type Props = {
 const StorySettings: React.FC<Props> = ({
   currentStory,
   isArchived,
-  onUpdateStory,
+  onUpdateStory
 }) => {
   return (
     <InnerPage>
@@ -30,7 +30,7 @@ const StorySettings: React.FC<Props> = ({
             key={currentStory.id}
             settingsItem={{
               panelPosition: currentStory.panelPosition,
-              bgColor: currentStory.bgColor,
+              bgColor: currentStory.bgColor
             }}
             onUpdateStory={onUpdateStory}
           />

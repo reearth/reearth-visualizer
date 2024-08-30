@@ -6,7 +6,7 @@ import {
   ModalPanel,
   TextArea,
   TextInput,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -19,14 +19,14 @@ type ProjectCreatorModalProps = {
   visible: boolean;
   onClose?: () => void;
   onProjectCreate: (
-    data: Pick<Project, "name" | "description" | "imageUrl">,
+    data: Pick<Project, "name" | "description" | "imageUrl">
   ) => void;
 };
 
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   visible,
   onClose,
-  onProjectCreate,
+  onProjectCreate
 }) => {
   const t = useT();
   const [projectName, setProjectName] = useState("");
@@ -47,7 +47,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     const data = {
       name: projectName,
       description,
-      imageUrl,
+      imageUrl
     };
     onProjectCreate(data);
     onClose?.();
@@ -114,20 +114,20 @@ const Form = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large,
-  padding: theme.spacing.normal,
+  padding: theme.spacing.normal
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   borderBottom: `1px solid ${theme.outline.weak}`,
-  borderTop: `1px solid ${theme.outline.weak}`,
+  borderTop: `1px solid ${theme.outline.weak}`
 }));
 
 const FormInputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest,
-  width: "100%",
+  width: "100%"
 }));
 
 const Label = styled("div")(() => ({}));

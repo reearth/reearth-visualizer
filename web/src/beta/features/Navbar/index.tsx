@@ -27,23 +27,23 @@ const Navbar: React.FC<Props> = ({
   projectId,
   workspaceId,
   currentTab = "map",
-  page = "editor",
+  page = "editor"
 }) => {
   const {
     currentProject,
     workspace,
     workspaces,
     handleLogout,
-    handleWorkspaceChange,
+    handleWorkspaceChange
   } = useHook({
     projectId,
-    workspaceId,
+    workspaceId
   });
 
   const { rightSide } = useRightSide({
     currentTab,
     sceneId,
-    page,
+    page
   });
 
   return (
@@ -75,5 +75,5 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.super,
   background: theme.bg[0],
   zIndex: theme.zIndexes.editor.navbar,
-  boxShadow: theme.shadow.card,
+  boxShadow: theme.shadow.card
 }));

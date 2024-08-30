@@ -5,7 +5,7 @@ export const IMAGE_FILE_TYPES = [
   "gif",
   "svg",
   "tiff",
-  "webp",
+  "webp"
 ] as const;
 
 export const GIS_FILE_TYPES = [
@@ -20,7 +20,7 @@ export const GIS_FILE_TYPES = [
   "gpx",
   "wms",
   "mvt",
-  "czml",
+  "czml"
 ] as const;
 
 export type ImageType = (typeof IMAGE_FILE_TYPES)[number];

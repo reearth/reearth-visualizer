@@ -15,7 +15,7 @@ type LayerStyleEditorProps = {
 const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   selectedLayerStyleId,
   sceneId,
-  onLayerStyleValueUpdate,
+  onLayerStyleValueUpdate
 }) => {
   const t = useT();
   const [styleCode, setStyleCode] = useState<string | undefined>("{}");
@@ -25,7 +25,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
 
   useEffect(() => {
     const selectedLayerStyle = layerStyles.find(
-      (a) => a.id === selectedLayerStyleId,
+      (a) => a.id === selectedLayerStyleId
     );
     if (selectedLayerStyle?.value) {
       setStyleCode(JSON.stringify(selectedLayerStyle.value, null, 2));
@@ -37,7 +37,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
       if (selectedLayerStyleId)
         onLayerStyleValueUpdate({
           styleId: selectedLayerStyleId,
-          value: JSON.parse(styleCode),
+          value: JSON.parse(styleCode)
         });
     }
   }, [onLayerStyleValueUpdate, styleCode, selectedLayerStyleId]);
@@ -63,7 +63,7 @@ const EditorContainer = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export default LayerStyleEditor;

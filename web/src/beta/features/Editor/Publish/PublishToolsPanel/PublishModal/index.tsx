@@ -3,7 +3,7 @@ import {
   Icon,
   Typography,
   ModalPanel,
-  Modal,
+  Modal
 } from "@reearth/beta/lib/reearth-ui/components";
 import { CommonField, SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -29,14 +29,14 @@ type Props = {
   url?: string[];
   onPublish: (
     alias: string | undefined,
-    publishStatus: PublishStatus,
+    publishStatus: PublishStatus
   ) => void | Promise<void>;
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
   onNavigateToSettings?: (
     page?: "story" | "public" | "asset" | "plugin" | undefined,
-    subId?: string,
+    subId?: string
   ) => void;
 };
 
@@ -53,7 +53,7 @@ const PublishModal: FC<Props> = ({
   onPublish,
   onCopyToClipBoard,
   onAliasValidate,
-  onNavigateToSettings,
+  onNavigateToSettings
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -69,7 +69,7 @@ const PublishModal: FC<Props> = ({
     handlePublish,
     handleClose,
     handleCopyToClipBoard,
-    handleSearchIndexChange,
+    handleSearchIndexChange
   } = useHooks(
     publishing,
     publishStatus,
@@ -77,7 +77,7 @@ const PublishModal: FC<Props> = ({
     onPublish,
     onClose,
     onAliasValidate,
-    onCopyToClipBoard,
+    onCopyToClipBoard
   );
 
   const purl = useMemo(() => {
@@ -89,7 +89,7 @@ const PublishModal: FC<Props> = ({
   const embedCode = useMemo(
     () =>
       `<iframe width="560" height="315" src="${purl}" frameBorder="0"></iframe>;`,
-    [purl],
+    [purl]
   );
 
   const publishDisabled = useMemo(
@@ -97,7 +97,7 @@ const PublishModal: FC<Props> = ({
       loading ||
       ((publishing === "publishing" || publishing === "updating") &&
         (!alias || !!validation || validatingAlias || !validAlias)),
-    [alias, loading, publishing, validation, validAlias, validatingAlias],
+    [alias, loading, publishing, validation, validAlias, validatingAlias]
   );
 
   const modalTitleText = useMemo(() => {
@@ -126,24 +126,24 @@ const PublishModal: FC<Props> = ({
 
   const secondaryButtonText = useMemo(
     () => (!statusChanged ? t("Cancel") : t("Ok")),
-    [t, statusChanged],
+    [t, statusChanged]
   );
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
       ? isStory
         ? t(
-            `Your published story will be updated. This means all current changes will overwrite the current published story.`,
+            `Your published story will be updated. This means all current changes will overwrite the current published story.`
           )
         : t(
-            `Your published scene will be updated. This means all current changes will overwrite the current published scene.`,
+            `Your published scene will be updated. This means all current changes will overwrite the current published scene.`
           )
       : isStory
         ? t(
-            `Your story will be published. This means anybody with the below URL will be able to view this story.`,
+            `Your story will be published. This means anybody with the below URL will be able to view this story.`
           )
         : t(
-            `Your scene will be published. This means anybody with the below URL will be able to view this scene.`,
+            `Your scene will be published. This means anybody with the below URL will be able to view this scene.`
           );
   }, [t, publishing, isStory]);
 
@@ -171,8 +171,8 @@ const PublishModal: FC<Props> = ({
       publishDisabled,
       primaryButtonText,
       secondaryButtonText,
-      statusChanged,
-    ],
+      statusChanged
+    ]
   );
 
   const isPublishing = publishing !== "unpublishing";
@@ -219,7 +219,7 @@ const PublishModal: FC<Props> = ({
             <CommonField
               commonTitle={t("Embed Code")}
               description={t(
-                `* Please use this code if you want to embed your story into a webpage`,
+                `* Please use this code if you want to embed your story into a webpage`
               )}
             >
               <UrlWrapper justify="space-between">
@@ -262,7 +262,7 @@ const PublishModal: FC<Props> = ({
             <SwitchField
               commonTitle={t("Search engine indexing")}
               description={t(
-                "Page will be available as result on search engines",
+                "Page will be available as result on search engines"
               )}
               onChange={handleSearchIndexChange}
             />
@@ -280,10 +280,10 @@ const PublishModal: FC<Props> = ({
             <Subtitle size="body">
               {isStory
                 ? t(
-                    `This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.`,
+                    `This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.`
                   )
                 : t(
-                    `This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.`,
+                    `This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.`
                   )}
             </Subtitle>
           </Section>
@@ -302,18 +302,18 @@ const Section = styled("div")<{ disabled?: boolean }>(
     padding: theme.spacing.normal,
     gap: theme.spacing.large,
     opacity: disabled ? 0.6 : 1,
-    cursor: disabled ? "not-allowed" : "auto",
-  }),
+    cursor: disabled ? "not-allowed" : "auto"
+  })
 );
 
 const Subtitle = styled(Typography)({
-  textAlign: "left",
+  textAlign: "left"
 });
 
 const DomainWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const UrlWrapper = styled("div")<{ justify?: string }>(
@@ -324,8 +324,8 @@ const UrlWrapper = styled("div")<{ justify?: string }>(
     border: `1px solid ${theme.outline.weak}`,
     borderRadius: "4px",
     padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-    cursor: "pointer",
-  }),
+    cursor: "pointer"
+  })
 );
 
 const UrlText = styled("div")<{ publicUrl?: boolean }>(
@@ -337,21 +337,21 @@ const UrlText = styled("div")<{ publicUrl?: boolean }>(
     fontSize: "12px",
     whiteSpace: "break-spaces",
     color: publicUrl ? theme.primary.main : "inherit",
-    fontWeight: publicUrl ? "bold" : "normal",
-  }),
+    fontWeight: publicUrl ? "bold" : "normal"
+  })
 );
 
 const DomainText = styled("div")(({ theme }) => ({
-  marginBottom: `${theme.spacing.small}px`,
+  marginBottom: `${theme.spacing.small}px`
 }));
 
 const Header = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.normal,
-  color: theme.warning.main,
+  color: theme.warning.main
 }));
 
 const WarningIcon = styled(Icon)({
   width: "24px",
-  height: "24px",
+  height: "24px"
 });

@@ -16,7 +16,7 @@ export type Props = BlockProps<StoryBlock>;
 const TextBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
-    [block?.property?.default?.text?.value],
+    [block?.property?.default?.text?.value]
   );
 
   return (

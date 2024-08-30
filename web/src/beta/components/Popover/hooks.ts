@@ -7,7 +7,7 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
-  useRole,
+  useRole
 } from "@floating-ui/react";
 import { useState, useMemo } from "react";
 
@@ -20,7 +20,7 @@ export default function usePopover({
   offset: offsetProps,
   shift: shiftProps,
   open: controlledOpen,
-  onOpenChange: setControlledOpen,
+  onOpenChange: setControlledOpen
 }: PopoverOptions = {}) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(initialOpen);
 
@@ -37,16 +37,16 @@ export default function usePopover({
       flip({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "end",
-        padding: 4,
+        padding: 4
       }),
-      shift(shiftProps ?? { padding: 4 }),
-    ],
+      shift(shiftProps ?? { padding: 4 })
+    ]
   });
 
   const context = data.context;
 
   const click = useClick(context, {
-    enabled: controlledOpen == null,
+    enabled: controlledOpen == null
   });
   const dismiss = useDismiss(context);
   const role = useRole(context);
@@ -59,8 +59,8 @@ export default function usePopover({
       setOpen,
       ...interactions,
       ...data,
-      modal,
+      modal
     }),
-    [open, setOpen, interactions, data, modal],
+    [open, setOpen, interactions, data, modal]
   );
 }

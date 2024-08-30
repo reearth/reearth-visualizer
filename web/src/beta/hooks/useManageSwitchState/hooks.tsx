@@ -18,8 +18,8 @@ export const useManageSwitchState = <T,>({ fields }: Props<T>) => {
     setFieldsState((f) =>
       f.map((v) => ({
         ...v,
-        active: v.id === id,
-      })),
+        active: v.id === id
+      }))
     );
   }, []);
   return { handleActivate, fields: fieldsState };

@@ -19,8 +19,8 @@ const Timeline = ({
     onSpeedChange,
     onTimeChange,
     onTick,
-    removeTickEventListener,
-  } = {},
+    removeTickEventListener
+  } = {}
 }: Props): JSX.Element | null => {
   const { isOpened, currentTime, range, speed, events } = useTimeline({
     widget,
@@ -32,7 +32,7 @@ const Timeline = ({
     onTimeChange,
     onTick,
     removeTickEventListener,
-    onExtend,
+    onExtend
   });
 
   return (

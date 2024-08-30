@@ -1,4 +1,3 @@
-
 import { ColorField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
@@ -14,12 +13,12 @@ const ContainerSettingsPanel: FC = () => {
   const {
     sceneId,
     selectedWidgetArea: widgetArea,
-    selectWidgetArea,
+    selectWidgetArea
   } = useWidgetsPage();
 
   const { handleWidgetAreaStateChange } = useHooks({
     sceneId,
-    selectWidgetArea,
+    selectWidgetArea
   });
 
   const t = useT();
@@ -35,8 +34,8 @@ const ContainerSettingsPanel: FC = () => {
               ...widgetArea,
               padding: {
                 ...(widgetArea.padding as WidgetAreaPadding),
-                top: Number(newVal),
-              },
+                top: Number(newVal)
+              }
             });
           }}
         />
@@ -48,8 +47,8 @@ const ContainerSettingsPanel: FC = () => {
               ...widgetArea,
               padding: {
                 ...(widgetArea.padding as WidgetAreaPadding),
-                right: Number(newVal),
-              },
+                right: Number(newVal)
+              }
             });
           }}
         />
@@ -61,8 +60,8 @@ const ContainerSettingsPanel: FC = () => {
               ...widgetArea,
               padding: {
                 ...(widgetArea.padding as WidgetAreaPadding),
-                bottom: Number(newVal),
-              },
+                bottom: Number(newVal)
+              }
             });
           }}
         />
@@ -74,8 +73,8 @@ const ContainerSettingsPanel: FC = () => {
               ...widgetArea,
               padding: {
                 ...(widgetArea.padding as WidgetAreaPadding),
-                left: Number(newVal),
-              },
+                left: Number(newVal)
+              }
             });
           }}
         />
@@ -86,7 +85,7 @@ const ContainerSettingsPanel: FC = () => {
           onBlur={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
-              gap: Number(newVal),
+              gap: Number(newVal)
             });
           }}
         />
@@ -96,7 +95,7 @@ const ContainerSettingsPanel: FC = () => {
           onChange={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
-              centered: newVal,
+              centered: newVal
             });
           }}
         />
@@ -106,7 +105,7 @@ const ContainerSettingsPanel: FC = () => {
           onChange={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
-              background: newVal,
+              background: newVal
             });
           }}
         />
@@ -118,7 +117,7 @@ const ContainerSettingsPanel: FC = () => {
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
 export default ContainerSettingsPanel;

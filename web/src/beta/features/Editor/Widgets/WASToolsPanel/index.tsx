@@ -14,7 +14,7 @@ const WASToolsPanel: FC = () => {
     selectedDevice = "desktop",
     handleShowWASEditorToggle,
     handleDeviceChange,
-    selectWidgetArea,
+    selectWidgetArea
   } = useWidgetsPage();
 
   const t = useT();
@@ -52,10 +52,10 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   width: "100%",
   flex: 1,
-  padding: theme.spacing.small,
+  padding: theme.spacing.small
 }));
 
 const AlignSystem = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.small + 2,
+  gap: theme.spacing.small + 2
 }));

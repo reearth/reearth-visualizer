@@ -45,7 +45,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
   onPlayReversed,
   onOpen,
   onClose,
-  onSpeedChange: onSpeedChangeProps,
+  onSpeedChange: onSpeedChangeProps
 }) {
   const {
     startDate,
@@ -64,8 +64,8 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
       isPlayingReversed,
       toggleIsPlaying,
       toggleIsPlayingReversed,
-      onSpeedChange,
-    },
+      onSpeedChange
+    }
   } = useTimeline({
     currentTime,
     range,
@@ -73,7 +73,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     onDrag,
     onPlay,
     onPlayReversed,
-    onSpeedChange: onSpeedChangeProps,
+    onSpeedChange: onSpeedChangeProps
   });
 
   return isOpened ? (
@@ -155,7 +155,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           data-testid="knob-icon"
           publishedTheme={theme}
           style={{
-            left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
+            left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2
           }}
         >
           <Icon icon="ellipse" size={KNOB_SIZE} />

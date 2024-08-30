@@ -135,7 +135,7 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Ref]: "ref",
   [GQLValueType.Spacing]: "spacing",
   [GQLValueType.Array]: "array",
-  [GQLValueType.Timeline]: "timeline",
+  [GQLValueType.Timeline]: "timeline"
 };
 
 export type ValueType = keyof ValueTypes;
@@ -150,7 +150,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   if (t === "camera" && val && typeof val === "object" && "altitude" in val) {
     newVal = {
       ...val,
-      height: val.altitude,
+      height: val.altitude
     };
   }
   if (
@@ -162,7 +162,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   ) {
     newVal = {
       ...val,
-      textAlign: val.textAlign.toLowerCase(),
+      textAlign: val.textAlign.toLowerCase()
     };
   }
   return { type: t, value: newVal ?? undefined, ok };
@@ -170,12 +170,12 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
 
 export function valueToGQL<T extends ValueType>(
   val: ValueTypes[T] | null | undefined,
-  type: T,
+  type: T
 ): any {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
     return {
       ...(val as any),
-      altitude: (val as any).height,
+      altitude: (val as any).height
     };
   }
   return val ?? null;
@@ -187,12 +187,12 @@ export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
 
 export const valueTypeToGQL = (t: ValueType): GQLValueType | undefined => {
   return (Object.keys(valueTypeMapper) as GQLValueType[]).find(
-    (k) => valueTypeMapper[k] === t,
+    (k) => valueTypeMapper[k] === t
   );
 };
 
 export const toGQLSimpleValue = (
-  v: unknown,
+  v: unknown
 ): string | number | boolean | undefined => {
   return typeof v === "string" ||
     typeof v === "number" ||
@@ -230,7 +230,7 @@ export const toColor = (c?: string) => {
 
   // support alpha
   const m = c.match(
-    /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/,
+    /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/
   );
   if (!m) return Color.fromCssColorString(c);
 
@@ -250,23 +250,23 @@ export const typographyStyles = (t?: Typography) => {
 
 export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
-  string: "",
+  string: ""
 };
 
 export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
   "3dtiles": {
-    show: true,
+    show: true
   },
   resource: {
-    clampToGround: true,
+    clampToGround: true
   },
   marker: {
-    heightReference: "clamp",
+    heightReference: "clamp"
   },
   polygon: {
-    heightReference: "clamp",
+    heightReference: "clamp"
   },
   polyline: {
-    clampToGround: true,
-  },
+    clampToGround: true
+  }
 };

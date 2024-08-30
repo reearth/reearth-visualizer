@@ -1,4 +1,3 @@
-
 import NotFound from "@reearth/beta/components/NotFound";
 import Editor from "@reearth/beta/features/Editor";
 import { isTab } from "@reearth/beta/features/Navbar";

@@ -11,7 +11,7 @@ export type MarketplacePlugin = {
 
 export default ({
   sceneId,
-  plugins,
+  plugins
 }: {
   sceneId?: string;
   plugins?: ScenePlugin[];
@@ -20,7 +20,7 @@ export default ({
     useInstallPlugin,
     useUpgradePlugin,
     useUploadPlugin,
-    useUninstallPlugin,
+    useUninstallPlugin
   } = usePluginsFetcher();
 
   const marketplacePlugins = useMemo(
@@ -30,7 +30,7 @@ export default ({
           (p) =>
             p.plugin &&
             p.plugin?.id !== "reearth" &&
-            p.plugin.id.split("~", 3).length < 3,
+            p.plugin.id.split("~", 3).length < 3
         )
         .map((p): MarketplacePlugin | undefined => {
           if (!p.plugin) return;
@@ -39,11 +39,11 @@ export default ({
             id,
             version,
             title: p.plugin.name,
-            author: p.plugin.author,
+            author: p.plugin.author
           };
         })
         .filter((p): p is MarketplacePlugin => !!p) ?? [],
-    [plugins],
+    [plugins]
   );
 
   const personalPlugins = useMemo(
@@ -53,7 +53,7 @@ export default ({
           (p) =>
             p.plugin &&
             p.plugin.id !== "reearth" &&
-            p.plugin.id.split("~", 3).length == 3,
+            p.plugin.id.split("~", 3).length == 3
         )
         .map((p) => ({
           title: p.plugin?.translatedName ?? p.plugin?.name ?? "",
@@ -61,9 +61,9 @@ export default ({
             p.plugin?.translatedDescription ?? p.plugin?.description ?? "",
           author: p.plugin?.author ?? "",
           isInstalled: true,
-          pluginId: p.plugin?.id ?? "",
+          pluginId: p.plugin?.id ?? ""
         })) ?? [],
-    [plugins],
+    [plugins]
   );
 
   const handleInstallPluginByMarketplace = useCallback(
@@ -76,7 +76,7 @@ export default ({
         await useInstallPlugin(sceneId, pluginId);
       }
     },
-    [sceneId, useInstallPlugin, useUpgradePlugin],
+    [sceneId, useInstallPlugin, useUpgradePlugin]
   );
 
   const handleInstallPluginFromFile = useCallback(
@@ -84,7 +84,7 @@ export default ({
       if (!sceneId) return;
       useUploadPlugin(sceneId, files);
     },
-    [sceneId, useUploadPlugin],
+    [sceneId, useUploadPlugin]
   );
 
   const handleInstallPluginFromPublicRepo = useCallback(
@@ -92,7 +92,7 @@ export default ({
       if (!sceneId) return;
       useUploadPlugin(sceneId, undefined, repoUrl);
     },
-    [sceneId, useUploadPlugin],
+    [sceneId, useUploadPlugin]
   );
 
   const handleUninstallPlugin = useCallback(
@@ -100,7 +100,7 @@ export default ({
       if (!sceneId) return;
       useUninstallPlugin(sceneId, pluginId);
     },
-    [sceneId, useUninstallPlugin],
+    [sceneId, useUninstallPlugin]
   );
 
   return {
@@ -109,6 +109,6 @@ export default ({
     handleInstallPluginByMarketplace,
     handleInstallPluginFromFile,
     handleInstallPluginFromPublicRepo,
-    handleUninstallPlugin,
+    handleUninstallPlugin
   };
 };

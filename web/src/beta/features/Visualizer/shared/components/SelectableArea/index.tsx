@@ -37,22 +37,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -83,19 +83,19 @@ const SelectableArea: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
-  onPropertyItemDelete,
+  onPropertyItemDelete
 }) => {
   const {
     showPadding,
     isHovered,
     handleHoverChange,
     setShowPadding,
-    handleClickAway,
+    handleClickAway
   } = useHooks({
     editMode,
     isSelected,
     onEditModeToggle,
-    onClickAway,
+    onClickAway
   });
 
   return !isEditable ? (
@@ -158,6 +158,6 @@ const Wrapper = styled("div")<{
   position: "relative",
   transition: "all 0.3s",
   "&:hover": {
-    borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none",
-  },
+    borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none"
+  }
 }));

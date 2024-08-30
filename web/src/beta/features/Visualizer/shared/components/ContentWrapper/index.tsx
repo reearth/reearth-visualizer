@@ -20,9 +20,9 @@ const ContentWrapper: ForwardRefRenderFunction<HTMLDivElement, Props> = (
     minGapInEditor,
     padding,
     gap,
-    children,
+    children
   },
-  ref,
+  ref
 ) => (
   <Wrapper
     id={id}
@@ -54,7 +54,7 @@ const Wrapper = styled("div")<{
     isEditable,
     minGapInEditor,
     minPaddingInEditor,
-    theme,
+    theme
   }) => ({
     display: "flex",
     flexDirection: "column",
@@ -79,6 +79,6 @@ const Wrapper = styled("div")<{
       isEditable && padding.right < minPaddingInEditor.right
         ? `${minPaddingInEditor.right}px`
         : `${padding.right}px`,
-    boxSizing: "border-box",
-  }),
+    boxSizing: "border-box"
+  })
 );

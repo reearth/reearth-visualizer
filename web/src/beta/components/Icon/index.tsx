@@ -6,7 +6,7 @@ import {
   CSSProperties,
   MouseEvent,
   memo,
-  useMemo,
+  useMemo
 } from "react";
 
 import Icons from "./icons";
@@ -73,7 +73,7 @@ const Icon: React.FC<Props> = ({
         transitionDuration:
           !notransition && !style?.transitionDuration
             ? transitionDuration || "0.3s"
-            : style?.transitionDuration,
+            : style?.transitionDuration
       }}
       {...aria}
     />

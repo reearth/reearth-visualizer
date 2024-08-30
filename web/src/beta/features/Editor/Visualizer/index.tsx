@@ -2,7 +2,7 @@ import Visualizer from "@reearth/beta/features/Visualizer";
 import { type InteractionModeType } from "@reearth/beta/features/Visualizer/Crust";
 import {
   StoryPanelRef,
-  type InstallableStoryBlock,
+  type InstallableStoryBlock
 } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
@@ -36,7 +36,7 @@ export type Props = {
   onCoreLayerSelect: (props: LayerSelectProps) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
   selectWidgetArea: (
-    update?: SetStateAction<WidgetAreaState | undefined>,
+    update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;
 };
 
@@ -60,7 +60,7 @@ const EditorVisualizer: React.FC<Props> = ({
   onVisualizerReady,
   onCoreLayerSelect,
   setSelectedStoryPageId,
-  selectWidgetArea,
+  selectWidgetArea
 }) => {
   const {
     viewerProperty,
@@ -89,7 +89,7 @@ const EditorVisualizer: React.FC<Props> = ({
     handlePropertyItemDelete,
     handlePropertyItemMove,
     handleMount,
-    zoomToLayer,
+    zoomToLayer
   } = useHooks({
     sceneId,
     isBuilt,
@@ -99,7 +99,7 @@ const EditorVisualizer: React.FC<Props> = ({
     isVisualizerResizing,
     onCoreLayerSelect,
     onVisualizerReady,
-    setSelectedStoryPageId,
+    setSelectedStoryPageId
   });
 
   return (

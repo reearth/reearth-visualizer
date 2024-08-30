@@ -6,7 +6,7 @@ import {
   TEXT_BUILTIN_INFOBOX_BLOCK_ID,
   PROPERTY_BUILTIN_INFOBOX_BLOCK_ID,
   VIDEO_BUILTIN_INFOBOX_BLOCK_ID,
-  MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID,
+  MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID
 } from "../../constants";
 
 import ImageBlock from "./Image";
@@ -32,13 +32,13 @@ const reearthBuiltin: BuiltinInfoboxBlocks<Component> = {
   [TEXT_BUILTIN_INFOBOX_BLOCK_ID]: TextBlock,
   [PROPERTY_BUILTIN_INFOBOX_BLOCK_ID]: PropertyListBlock,
   [VIDEO_BUILTIN_INFOBOX_BLOCK_ID]: VideoBlock,
-  [MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID]: MarkdownBlock,
+  [MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID]: MarkdownBlock
 };
 
 const builtin = merge({}, reearthBuiltin);
 
 export const isBuiltinInfoboxBlock = (
-  id: string,
+  id: string
 ): id is keyof BuiltinInfoboxBlocks => {
   return !!builtin[id as keyof BuiltinInfoboxBlocks];
 };

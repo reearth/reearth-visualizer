@@ -6,7 +6,7 @@ import {
   PropertyGroupFragmentFragment,
   PropertyItemFragmentFragment,
   PropertySchemaFieldFragmentFragment,
-  PropertySchemaGroupFragmentFragment,
+  PropertySchemaGroupFragmentFragment
 } from "@reearth/services/gql";
 
 import { DatasetMap, P, datasetValue } from "./convert";
@@ -15,7 +15,7 @@ export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
   orig?: PropertyFragmentFragment | null | undefined,
   linkedDatasetId?: string | null | undefined,
-  datasets?: DatasetMap | null | undefined,
+  datasets?: DatasetMap | null | undefined
 ): P | undefined => {
   const schema = orig?.schema || parent?.schema;
   if (!schema) return;
@@ -33,10 +33,10 @@ export const processProperty = (
       [b.schemaGroupId]: {
         schema: b,
         orig: orig?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
-        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
-      },
+        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId)
+      }
     }),
-    {},
+    {}
   );
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
@@ -53,8 +53,8 @@ export const processProperty = (
               undefined,
               undefined,
               linkedDatasetId,
-              datasets,
-            ),
+              datasets
+            )
           ];
         }
 
@@ -71,10 +71,10 @@ export const processProperty = (
                 g,
                 undefined,
                 linkedDatasetId,
-                datasets,
+                datasets
               ),
-              id: g.id,
-            })),
+              id: g.id
+            }))
           ];
         }
 
@@ -89,13 +89,13 @@ export const processProperty = (
               parent,
               orig,
               linkedDatasetId,
-              datasets,
-            ),
+              datasets
+            )
           ];
         }
         return [key, null];
       })
-      .filter(([, value]) => !!value),
+      .filter(([, value]) => !!value)
   );
 
   return mergedProperty;
@@ -106,7 +106,7 @@ const processPropertyGroups = (
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined,
   linkedDatasetId: string | null | undefined,
-  datasets: DatasetMap | null | undefined,
+  datasets: DatasetMap | null | undefined
 ): any => {
   const allFields: Record<
     string,
@@ -121,10 +121,10 @@ const processPropertyGroups = (
       [b.fieldId]: {
         schema: b,
         parent: parent?.fields.find((i) => i.fieldId === b.fieldId),
-        orig: original?.fields.find((i) => i.fieldId === b.fieldId),
-      },
+        orig: original?.fields.find((i) => i.fieldId === b.fieldId)
+      }
     }),
-    {},
+    {}
   );
 
   return Object.fromEntries(
@@ -138,7 +138,7 @@ const processPropertyGroups = (
         description: schema.translatedDescription || undefined,
         choices: schema.choices || undefined,
         min: schema.min || undefined,
-        max: schema.max || undefined,
+        max: schema.max || undefined
       };
 
       if (!used) {
@@ -148,8 +148,8 @@ const processPropertyGroups = (
             ...fieldMeta,
             value: schema.defaultValue
               ? valueFromGQL(schema.defaultValue, schema.type)?.value
-              : undefined,
-          },
+              : undefined
+          }
         ];
       }
 
@@ -164,9 +164,9 @@ const processPropertyGroups = (
               datasets,
               datasetSchemaId,
               linkedDatasetId,
-              datasetFieldId,
-            ),
-          },
+              datasetFieldId
+            )
+          }
         ];
       }
 
@@ -174,9 +174,9 @@ const processPropertyGroups = (
         key,
         {
           ...fieldMeta,
-          value: valueFromGQL(used.value, used.type)?.value,
-        },
+          value: valueFromGQL(used.value, used.type)?.value
+        }
       ];
-    }),
+    })
   );
 };

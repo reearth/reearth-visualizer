@@ -22,7 +22,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
   items = [],
   separator = " / ",
   size,
-  onClick,
+  onClick
 }) => {
   const theme = useTheme();
   return (
@@ -60,14 +60,14 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const ItemWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  cursor: "pointer",
+  cursor: "pointer"
 }));
 
 const Item = styled("div")(({ theme }) => ({
@@ -75,10 +75,10 @@ const Item = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.smallest,
   display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const Separator = styled("div")(({ theme }) => ({
   color: theme.content.weak,
-  userSelect: "none",
+  userSelect: "none"
 }));

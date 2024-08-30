@@ -21,7 +21,7 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
   const {
     devPluginExtensions,
     handleDevPluginsInstall,
-    handleDevPluginExtensionsReload,
+    handleDevPluginExtensionsReload
   } = useDevPlugins({ sceneId });
 
   const rightSide = useMemo(() => {
@@ -74,11 +74,11 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
     t,
     devPluginExtensions,
     handleDevPluginsInstall,
-    handleDevPluginExtensionsReload,
+    handleDevPluginExtensionsReload
   ]);
 
   return {
-    rightSide,
+    rightSide
   };
 };
 

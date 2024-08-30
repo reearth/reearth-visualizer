@@ -24,23 +24,23 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
     <T extends keyof TimelineEventType>(
       type: T,
       callback: (...args: TimelineEventType[T]) => void,
-      options?: { once?: boolean },
+      options?: { once?: boolean }
     ) => {
       return options?.once
         ? timelineEvents.once(type, callback)
         : timelineEvents.on(type, callback);
     },
-    [timelineEvents],
+    [timelineEvents]
   );
 
   const timelineEventsOff = useCallback(
     <T extends keyof TimelineEventType>(
       type: T,
-      callback: (...args: TimelineEventType[T]) => void,
+      callback: (...args: TimelineEventType[T]) => void
     ) => {
       return timelineEvents.off(type, callback);
     },
-    [timelineEvents],
+    [timelineEvents]
   );
 
   // timeline
@@ -70,13 +70,13 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
       play: () => {
         timelineManagerRef?.current?.commit({
           cmd: "PLAY",
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       pause: () => {
         timelineManagerRef?.current?.commit({
           cmd: "PAUSE",
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setTime: (time: {
@@ -87,40 +87,40 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: { ...time },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setSpeed: (speed: number) => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { multiplier: speed },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setStepType: (stepType: "rate" | "fixed") => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { stepType },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setRangeType: (rangeType: "unbounded" | "clamped" | "bounced") => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { rangeType },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       tick: timelineManagerRef?.current?.tick as
         | (() => Date | undefined)
         | undefined,
       on: timelineEventsOn,
-      off: timelineEventsOff,
+      off: timelineEventsOff
     };
   }, [timelineManagerRef, timelineEventsOn, timelineEventsOff]);
 
   return {
     getTimeline,
-    timelineEvents,
+    timelineEvents
   };
 };

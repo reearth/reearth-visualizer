@@ -1,5 +1,5 @@
 export const convertTime = (
-  time: string | Date | undefined,
+  time: string | Date | undefined
 ): Date | undefined => {
   if (!time) return;
   if (time instanceof Date) {

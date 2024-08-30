@@ -7,7 +7,7 @@ import "graphiql/graphiql.css";
 import { styled } from "@reearth/services/theme";
 
 const fetcher = createGraphiQLFetcher({
-  url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql",
+  url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql"
 });
 
 export default function GraphQLPlayground(_: { path?: string }): JSX.Element {

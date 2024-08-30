@@ -6,7 +6,7 @@ import {
   useCallback,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import type { BlockProps } from "../shared/types";
@@ -17,7 +17,7 @@ import {
   type PluginProps,
   type PluginModalInfo,
   type PluginPopupInfo,
-  type ExternalPluginProps,
+  type ExternalPluginProps
 } from "./Plugins";
 import type { MapRef } from "./types";
 import type { WidgetProps } from "./Widgets";
@@ -25,7 +25,7 @@ import type { WidgetProps } from "./Widgets";
 export default function useHook({
   mapRef,
   pluginBaseUrl,
-  pluginProperty,
+  pluginProperty
 }: { mapRef?: RefObject<MapRef> } & ExternalPluginProps) {
   const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
   const pluginModalContainerRef = useRef<HTMLDivElement>();
@@ -43,7 +43,7 @@ export default function useHook({
       onPluginPopupShow,
       pluginBaseUrl,
       pluginProperty,
-      property: pluginProperty,
+      property: pluginProperty
     }),
     [
       shownPluginModalInfo,
@@ -51,8 +51,8 @@ export default function useHook({
       shownPluginPopupInfo,
       onPluginPopupShow,
       pluginBaseUrl,
-      pluginProperty,
-    ],
+      pluginProperty
+    ]
   );
 
   const renderWidget = useCallback(
@@ -63,13 +63,13 @@ export default function useHook({
         mapRef={mapRef}
       />
     ),
-    [mapRef, commonPluginProps],
+    [mapRef, commonPluginProps]
   );
   const renderBlock = useCallback(
     (blockProps: BlockProps): ReactNode => (
       <Block blockProps={blockProps} commonPluginProps={commonPluginProps} />
     ),
-    [commonPluginProps],
+    [commonPluginProps]
   );
 
   return {
@@ -80,7 +80,7 @@ export default function useHook({
     renderWidget,
     renderBlock,
     onPluginModalShow,
-    onPluginPopupShow,
+    onPluginPopupShow
   };
 }
 
@@ -101,19 +101,19 @@ const Widget: FC<{
     (options) => {
       onExtend?.(widget.id, options?.extended);
     },
-    [onExtend, widget.id],
+    [onExtend, widget.id]
   );
   const handleOnResize = useCallback<NonNullable<PluginProps["onResize"]>>(
     (_width, _height, extended) => {
       onExtend?.(widget.id, extended);
     },
-    [onExtend, widget.id],
+    [onExtend, widget.id]
   );
   const iframeProps = useMemo<{ style: CSS.Properties }>(
     () => ({
-      style: { pointerEvents: widgetProps.editing ? "none" : "auto" },
+      style: { pointerEvents: widgetProps.editing ? "none" : "auto" }
     }),
-    [widgetProps.editing],
+    [widgetProps.editing]
   );
   return (
     <Plugin

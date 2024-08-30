@@ -22,22 +22,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -64,7 +64,7 @@ const Content: FC<Props> = ({ block, isEditable, ...props }) => {
   }, [
     displayTypeField,
     propertyListField,
-    selectedComputedFeature?.properties,
+    selectedComputedFeature?.properties
   ]);
 
   return (
@@ -100,7 +100,7 @@ const Content: FC<Props> = ({ block, isEditable, ...props }) => {
 export default memo(Content);
 
 const Wrapper = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 
 function filterChildObjectsToEnd(inputObject?: any): any[] {

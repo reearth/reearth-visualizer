@@ -6,7 +6,7 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 import { createPortal } from "react-dom";
 
@@ -22,7 +22,7 @@ export function DropDownItem({
   children,
   className,
   onClick,
-  title,
+  title
 }: {
   children: React.ReactNode;
   className: string;
@@ -61,7 +61,7 @@ export function DropDownItem({
 function DropDownItems({
   children,
   dropDownRef,
-  onClose,
+  onClose
 }: {
   children: React.ReactNode;
   dropDownRef: React.Ref<HTMLDivElement>;
@@ -75,7 +75,7 @@ function DropDownItems({
     (itemRef: React.RefObject<HTMLButtonElement>) => {
       setItems((prev) => (prev ? [...prev, itemRef] : [itemRef]));
     },
-    [setItems],
+    [setItems]
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -105,9 +105,9 @@ function DropDownItems({
 
   const contextValue = useMemo(
     () => ({
-      registerItem,
+      registerItem
     }),
-    [registerItem],
+    [registerItem]
   );
 
   useEffect(() => {
@@ -138,7 +138,7 @@ export default function DropDown({
   buttonClassName,
   buttonIconClassName,
   children,
-  stopCloseOnClickSelf,
+  stopCloseOnClickSelf
 }: {
   disabled?: boolean;
   containerRef?: React.RefObject<HTMLDivElement>;
@@ -196,7 +196,7 @@ export default function DropDown({
     buttonRef,
     showDropDown,
     stopCloseOnClickSelf,
-    containerRef,
+    containerRef
   ]);
 
   useEffect(() => {
@@ -249,7 +249,7 @@ export default function DropDown({
           <DropDownItems dropDownRef={dropDownRef} onClose={handleClose}>
             {children}
           </DropDownItems>,
-          containerRef.current,
+          containerRef.current
         )}
     </>
   );

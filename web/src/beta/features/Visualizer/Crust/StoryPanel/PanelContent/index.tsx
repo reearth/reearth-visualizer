@@ -9,7 +9,7 @@ import { StoryBlock } from "../types";
 
 import useHooks, {
   STORY_PANEL_CONTENT_ELEMENT_ID,
-  type StoryPage as StoryPageType,
+  type StoryPage as StoryPageType
 } from "./hooks";
 
 export type Props = {
@@ -25,18 +25,18 @@ export type Props = {
   onPageSelect?: (pageId?: string | undefined) => void;
   onCurrentPageChange?: (
     pageId: string,
-    disableScrollIntoView?: boolean,
+    disableScrollIntoView?: boolean
   ) => void;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onBlockDelete?: (
     pageId?: string | undefined,
-    blockId?: string | undefined,
+    blockId?: string | undefined
   ) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
   onBlockDoubleClick?: (blockId?: string) => void;
@@ -46,22 +46,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
 };
@@ -87,17 +87,17 @@ const StoryContent: FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
-  renderBlock,
+  renderBlock
 }) => {
   const {
     pageGap,
     scrollTimeoutRef,
     disableSelection,
     handleBlockCreate,
-    handleBlockDelete,
+    handleBlockDelete
   } = useHooks({
     onBlockCreate,
-    onBlockDelete,
+    onBlockDelete
   });
 
   return (
@@ -148,12 +148,12 @@ const PagesWrapper = styled("div")<{
   overflowY: "auto",
   cursor: isEditable ? "pointer" : "default",
   ["::-webkit-scrollbar"]: {
-    display: "none",
+    display: "none"
   },
   scrollbarWidth: "none",
-  msOverflowStyle: "none",
+  msOverflowStyle: "none"
 }));
 
 const PageGap = styled("div")<{ height?: number }>(({ height }) => ({
-  height: height ? `${height}px` : "70vh",
+  height: height ? `${height}px` : "70vh"
 }));

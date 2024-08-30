@@ -3,7 +3,7 @@ import {
   Button,
   ButtonProps,
   Popup,
-  TextInput,
+  TextInput
 } from "@reearth/beta/lib/reearth-ui";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo } from "@reearth/core";
@@ -38,7 +38,7 @@ const CameraField: FC<CameraFieldProps> = ({
   disabled,
   commonTitle,
   onSave,
-  onFlyTo,
+  onFlyTo
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -48,7 +48,7 @@ const CameraField: FC<CameraFieldProps> = ({
   const handleClick = useCallback(
     (panel: "editor" | "capture") =>
       setOpen((current) => (current === panel ? null : panel)),
-    [],
+    []
   );
 
   const handleClose = useCallback(() => setOpen(null), []);
@@ -58,7 +58,7 @@ const CameraField: FC<CameraFieldProps> = ({
       onSave(value);
       setOpen(null);
     },
-    [onSave],
+    [onSave]
   );
 
   const handleFlyto = useCallback(
@@ -68,7 +68,7 @@ const CameraField: FC<CameraFieldProps> = ({
         onFlyTo?.(dest);
       }
     },
-    [currentCamera, onFlyTo],
+    [currentCamera, onFlyTo]
   );
 
   const handleCameraSettingDelete = useCallback(() => {
@@ -107,7 +107,7 @@ const CameraField: FC<CameraFieldProps> = ({
               disabled={!value}
               onClick={handleCameraSettingDelete}
               iconColor={value ? theme.content.main : theme.content.weak}
-            />,
+            />
           ]}
         />
         <Popup
@@ -166,7 +166,7 @@ const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   flexWrap: "wrap",
-  width: "100%",
+  width: "100%"
 }));
 
 export default CameraField;

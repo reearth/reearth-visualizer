@@ -3,7 +3,7 @@ export {
   LayerSystemFragments,
   EarthLayerFragments,
   layerFragment,
-  nlsLayerSimpleFragment,
+  nlsLayerSimpleFragment
 } from "./layer";
 export { default as propertyFragment } from "./property";
 export { default as datasetFragment } from "./dataset";

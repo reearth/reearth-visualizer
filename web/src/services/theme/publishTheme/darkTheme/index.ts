@@ -11,5 +11,5 @@ export const dark: PublishTheme = {
   weakIcon: colors.icon.weak,
   select: colors.other.select,
   mask: colors.other.mask,
-  background: colors.other.background,
+  background: colors.other.background
 };

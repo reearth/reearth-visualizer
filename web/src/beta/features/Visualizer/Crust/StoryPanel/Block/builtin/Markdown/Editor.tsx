@@ -10,7 +10,7 @@ import {
   useRef,
   useMemo,
   useState,
-  FC,
+  FC
 } from "react";
 
 export type Props = {
@@ -27,7 +27,7 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
 
   const debouncedHandleTextUpdate = useMemo(
     () => debounce(onUpdate, 1000),
-    [onUpdate],
+    [onUpdate]
   );
 
   const onChange = useCallback(
@@ -35,7 +35,7 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
       setValue(e.currentTarget.value);
       debouncedHandleTextUpdate(e.currentTarget.value);
     },
-    [debouncedHandleTextUpdate],
+    [debouncedHandleTextUpdate]
   );
 
   useLayoutEffect(() => {
@@ -67,13 +67,13 @@ const StyledTextArea = styled("textarea")(() => ({
   border: "none",
   fontSize: "14px",
   padding: 0,
-  outline: "none",
+  outline: "none"
 }));
 
 const StyledMarkdown = styled(Markdown)<{ empty: boolean }>(({ empty }) => ({
   minHeight: empty ? "115px" : "0",
   fontSize: "14px",
-  opacity: !empty ? 1 : 0.6,
+  opacity: !empty ? 1 : 0.6
 }));
 
 export default MdBlockEditor;

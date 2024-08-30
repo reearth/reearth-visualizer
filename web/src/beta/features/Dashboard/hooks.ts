@@ -21,7 +21,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
 
   const workspaces = (data?.teams as Workspace[]) ?? [];
   const workspace = workspaces.find(
-    (workspace) => workspace.id === workspaceId,
+    (workspace) => workspace.id === workspaceId
   );
   const isPersonal = !!workspaceId && workspaceId === data?.myTeam?.id;
 
@@ -38,9 +38,9 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
           ...tab,
           path:
             tab.path ||
-            `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`,
+            `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`
         })),
-    [topTabItems, isPersonal, workspaceId],
+    [topTabItems, isPersonal, workspaceId]
   );
 
   const bottomTabs = useMemo(() => bottomTabsItems, [bottomTabsItems]);
@@ -50,7 +50,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
       setCurrentWorkspace({
         ...workspace,
         personal: isPersonal,
-        members: workspace.members ?? [],
+        members: workspace.members ?? []
       });
     }
   }, [currentWorkspace, workspace, setCurrentWorkspace, isPersonal]);
@@ -62,7 +62,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspace, setCurrentWorkspace, navigate],
+    [workspace, setCurrentWorkspace, navigate]
   );
 
   return {
@@ -73,6 +73,6 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     bottomTabs,
     currentTab,
     onSignOut: logout,
-    handleWorkspaceChange,
+    handleWorkspaceChange
   };
 };

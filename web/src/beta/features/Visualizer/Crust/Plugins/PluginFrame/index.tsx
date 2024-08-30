@@ -2,7 +2,7 @@ import {
   forwardRef,
   ForwardRefRenderFunction,
   IframeHTMLAttributes,
-  ReactNode,
+  ReactNode
 } from "react";
 import type { RefObject } from "react";
 
@@ -60,16 +60,16 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
     onDispose,
     onClick,
     onMessage,
-    onRender,
+    onRender
   },
-  ref,
+  ref
 ) => {
   const {
     mainIFrameRef,
     modalIFrameRef,
     popupIFrameRef,
     loaded,
-    handleMessage,
+    handleMessage
   } = useHook({
     src,
     sourceCode,
@@ -80,7 +80,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
     onError,
     onPreInit,
     onDispose,
-    onMessage,
+    onMessage
   });
 
   return (

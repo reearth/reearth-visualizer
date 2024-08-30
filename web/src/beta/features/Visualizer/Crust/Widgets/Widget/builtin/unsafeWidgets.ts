@@ -19,9 +19,9 @@ function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
       p.widgets?.map((w) => {
         return {
           widgetId: `${p.id}/${w.extensionId}`,
-          ...w,
+          ...w
         };
-      }),
+      })
     )
     .reduce((a, b) => {
       const newObject: Record<string, Component> = {};

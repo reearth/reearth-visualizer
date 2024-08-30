@@ -31,8 +31,8 @@ try {
   const cesiumPackageJson = JSON.parse(
     readFileSync(
       resolve(__dirname, "node_modules", "cesium", "package.json"),
-      "utf-8",
-    ),
+      "utf-8"
+    )
   );
   cesiumVersion = cesiumPackageJson.version;
 } catch {
@@ -46,22 +46,22 @@ export default defineConfig({
     react(),
     yaml(),
     cesium({
-      cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined,
+      cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined
     }),
     serverHeaders(),
     config(),
-    tsconfigPaths(),
+    tsconfigPaths()
   ],
   // https://github.com/storybookjs/storybook/issues/25256
   assetsInclude: ["/sb-preview/runtime.js"],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
-    __REEARTH_COMMIT_HASH__: JSON.stringify(commitHash),
+    __REEARTH_COMMIT_HASH__: JSON.stringify(commitHash)
   },
   mode: NO_MINIFY ? "development" : undefined,
   server: {
-    port: 3000,
+    port: 3000
   },
   build: {
     target: "esnext",
@@ -69,15 +69,15 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        published: resolve(__dirname, "published.html"),
-      },
+        published: resolve(__dirname, "published.html")
+      }
     },
-    minify: NO_MINIFY ? false : "esbuild",
+    minify: NO_MINIFY ? false : "esbuild"
   },
   resolve: {
     alias: [
-      { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
-    ],
+      { find: "crypto", replacement: "crypto-js" } // quickjs-emscripten
+    ]
   },
   test: {
     environment: "jsdom",
@@ -91,15 +91,15 @@ export default defineConfig({
         "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
         "src/beta/services/gql/__gen__/**/*",
-        "src/test/**/*",
+        "src/test/**/*"
       ],
-      reporter: ["text", "json", "lcov"],
+      reporter: ["text", "json", "lcov"]
     },
     alias: [
       { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
-      { find: "csv-parse", replacement: "csv-parse" },
-    ],
-  },
+      { find: "csv-parse", replacement: "csv-parse" }
+    ]
+  }
 });
 
 function serverHeaders(): Plugin {
@@ -110,7 +110,7 @@ function serverHeaders(): Plugin {
         res.setHeader("Service-Worker-Allowed", "/");
         next();
       });
-    },
+    }
   };
 }
 
@@ -121,7 +121,7 @@ function config(): Plugin {
       const envs = loadEnv(
         server.config.mode,
         server.config.envDir ?? process.cwd(),
-        server.config.envPrefix,
+        server.config.envPrefix
       );
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
@@ -150,12 +150,12 @@ function config(): Plugin {
             ? { cesiumIonAccessToken: process.env.CESIUM_ION_ACCESS_TOKEN }
             : {}),
           ...readEnv("REEARTH_WEB", {
-            source: envs,
+            source: envs
           }),
-          ...loadJSON("./reearth-config.json"),
+          ...loadJSON("./reearth-config.json")
         },
         null,
-        2,
+        2
       );
 
       server.middlewares.use((req, res, next) => {
@@ -168,7 +168,7 @@ function config(): Plugin {
           next();
         }
       });
-    },
+    }
   };
 }
 

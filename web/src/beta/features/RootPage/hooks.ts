@@ -4,7 +4,7 @@ import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
   useNotification,
-  useUserId,
+  useUserId
 } from "@reearth/services/state";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
@@ -20,7 +20,7 @@ export default () => {
     isLoading,
     error: authError,
     login,
-    logout,
+    logout
   } = useAuth();
   const [error, isErrorChecked] = useCleanUrl();
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
@@ -38,28 +38,28 @@ export default () => {
   const verifySignup = useCallback(
     async (token: string) => {
       const res = await axios.post(
-        (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify/" + token,
+        (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify/" + token
       );
 
       if (res.status === 200) {
         setNotification({
           type: "success",
           text: t(
-            "Your account has been successfully verified! Feel free to login now.",
-          ),
+            "Your account has been successfully verified! Feel free to login now."
+          )
         });
         navigate("/login");
       } else {
         setNotification({
           type: "error",
           text: t(
-            "Could not verify your signup. Please start the process over.",
-          ),
+            "Could not verify your signup. Please start the process over."
+          )
         });
         navigate("/signup");
       }
     },
-    [t, navigate, setNotification],
+    [t, navigate, setNotification]
   );
 
   useEffect(() => {
@@ -94,7 +94,7 @@ export default () => {
     verifySignup,
     navigate,
     setCurrentUserId,
-    setCurrentWorkspace,
+    setCurrentWorkspace
   ]);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default () => {
     if (error) {
       setNotification({
         type: "error",
-        text: error,
+        text: error
       });
     }
   }, [error, setNotification]);
@@ -118,6 +118,6 @@ export default () => {
   return {
     error,
     isLoading,
-    isAuthenticated,
+    isAuthenticated
   };
 };

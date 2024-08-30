@@ -20,10 +20,10 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     installedWidgets,
     handleWidgetAdd,
     handleWidgetRemove,
-    handleWidgetSelection,
+    handleWidgetSelection
   } = useHooks({
     sceneId,
-    selectWidget,
+    selectWidget
   });
 
   return (
@@ -60,18 +60,18 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const InstalledWidgetsList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const EmptySpace = styled("div")(() => ({
   flex: 1,
-  minHeight: 50,
+  minHeight: 50
 }));
 
 export default WidgetManagerPanel;

@@ -5,7 +5,7 @@ import type {
   Theme,
   Widget,
   WidgetLayout,
-  WidgetLocationOptions,
+  WidgetLocationOptions
 } from "./types";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import WidgetComponent, { type Context } from "./Widget";
@@ -15,7 +15,7 @@ import WidgetAlignSystem, {
   type Location,
   type WidgetAlignSystem as WidgetAlignSystemType,
   type WidgetLayoutConstraint,
-  type WidgetProps as WasWidgetProps,
+  type WidgetProps as WasWidgetProps
 } from "./WidgetAlignSystem";
 
 export type {
@@ -26,7 +26,7 @@ export type {
   WidgetArea,
   WidgetZone,
   WidgetSection,
-  WidgetAreaType,
+  WidgetAreaType
 } from "./WidgetAlignSystem";
 
 export type { Context, BuiltinWidgets } from "./Widget";
@@ -36,7 +36,7 @@ export type {
   Widget,
   InternalWidget,
   WidgetLocationOptions,
-  WidgetAlignment,
+  WidgetAlignment
 } from "./types";
 
 export type Props = {
@@ -58,7 +58,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -89,15 +89,15 @@ export default function Widgets({
   renderWidget,
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
-  onWidgetAreaSelect,
+  onWidgetAreaSelect
 }: Props): JSX.Element | null {
   const {
     overriddenAlignSystem,
     invisibleWidgetIDs,
-    onPluginWidgetVisibilityChange,
+    onPluginWidgetVisibilityChange
   } = useWidgetAlignSystem({
     alignSystem,
-    isMobile,
+    isMobile
   });
 
   const renderWidgetInternal = useCallback(
@@ -120,7 +120,7 @@ export default function Widgets({
             extended,
             layout,
             onExtend,
-            onVisibilityChange: onPluginWidgetVisibilityChange,
+            onVisibilityChange: onPluginWidgetVisibilityChange
           })
         }
         onExtend={onExtend}
@@ -134,8 +134,8 @@ export default function Widgets({
       isMobile,
       context,
       renderWidget,
-      onPluginWidgetVisibilityChange,
-    ],
+      onPluginWidgetVisibilityChange
+    ]
   );
 
   return (
@@ -158,7 +158,7 @@ export default function Widgets({
         <Fragment key={w.id}>
           {renderWidgetInternal({
             widget: w,
-            editing: false,
+            editing: false
           })}
         </Fragment>
       ))}

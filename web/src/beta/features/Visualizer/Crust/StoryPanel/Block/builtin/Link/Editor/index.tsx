@@ -2,7 +2,7 @@ import {
   AssetField,
   ColorField,
   InputField,
-  ListField,
+  ListField
 } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -23,22 +23,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -50,7 +50,7 @@ const LinkBlockEditor: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove,
+  onPropertyItemMove
 }) => {
   const t = useT();
   const {
@@ -59,7 +59,7 @@ const LinkBlockEditor: FC<Props> = ({
     listItems,
     handleItemAdd,
     handleItemRemove,
-    handleItemMove,
+    handleItemMove
   } = useHooks({
     selected,
     items,
@@ -67,7 +67,7 @@ const LinkBlockEditor: FC<Props> = ({
     onPropertyUpdate,
     onPropertyItemAdd,
     onPropertyItemDelete,
-    onPropertyItemMove,
+    onPropertyItemMove
   });
 
   return (
@@ -129,13 +129,13 @@ const EditorWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const GroupWrapper = styled("div")(() => ({
   display: "grid",
   gridTemplateColumns: "55% 42%",
-  gridGap: "10px",
+  gridGap: "10px"
 }));
 
 const FieldGroup = styled("div")<{ disabled: boolean }>(
@@ -145,8 +145,8 @@ const FieldGroup = styled("div")<{ disabled: boolean }>(
     gap: theme.spacing.small,
     opacity: disabled ? 0.6 : 1,
     cursor: disabled ? "not-allowed" : "inherit",
-    pointerEvents: disabled ? "none" : "inherit",
-  }),
+    pointerEvents: disabled ? "none" : "inherit"
+  })
 );
 
 export default LinkBlockEditor;

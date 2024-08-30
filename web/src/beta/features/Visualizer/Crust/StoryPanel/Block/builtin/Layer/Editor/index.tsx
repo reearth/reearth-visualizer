@@ -2,7 +2,7 @@ import {
   ColorField,
   InputField,
   ListField,
-  SelectField,
+  SelectField
 } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -23,22 +23,22 @@ export type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -50,7 +50,7 @@ const CameraBlockEditor: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove,
+  onPropertyItemMove
 }) => {
   const t = useT();
   const {
@@ -60,7 +60,7 @@ const CameraBlockEditor: FC<Props> = ({
     listItems,
     handleItemAdd,
     handleItemRemove,
-    handleItemMove,
+    handleItemMove
   } = useHooks({
     selected,
     items,
@@ -68,7 +68,7 @@ const CameraBlockEditor: FC<Props> = ({
     onPropertyUpdate,
     onPropertyItemAdd,
     onPropertyItemDelete,
-    onPropertyItemMove,
+    onPropertyItemMove
   });
 
   return (
@@ -132,13 +132,13 @@ const CameraBlockEditor: FC<Props> = ({
 const EditorWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
   margin: `${theme.spacing.micro}px 0`,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));
 
 const GroupWrapper = styled("div")(() => ({
   display: "grid",
   gridTemplateColumns: "55% 42%",
-  gridGap: "10px",
+  gridGap: "10px"
 }));
 
 const FieldGroup = styled("div")<{ disabled: boolean }>(
@@ -148,7 +148,7 @@ const FieldGroup = styled("div")<{ disabled: boolean }>(
     gap: theme.spacing.small,
     opacity: disabled ? 0.6 : 1,
     cursor: disabled ? "not-allowed" : "inherit",
-    pointerEvents: disabled ? "none" : "inherit",
-  }),
+    pointerEvents: disabled ? "none" : "inherit"
+  })
 );
 export default CameraBlockEditor;

@@ -11,5 +11,5 @@ export const forest: Theme = {
   weakIcon: colors.forest.icon.weak,
   select: colors.forest.other.select,
   mask: colors.forest.other.mask,
-  background: colors.forest.other.background,
+  background: colors.forest.other.background
 };

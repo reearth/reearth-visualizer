@@ -3,14 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 
 import {
   CustomPropertyProps,
-  PropertyListProp,
+  PropertyListProp
 } from "../../SketchLayerCreator/type";
 
 export default function useHooks({
   customProperties,
   propertiesList,
   setPropertiesList,
-  setCustomProperties,
+  setCustomProperties
 }: CustomPropertyProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [editTitleIndex, setEditTitleIndex] = useState<number | null>(null);
@@ -25,20 +25,20 @@ export default function useHooks({
       setPropertiesList?.(newList);
       if (editTitleIndex === idx) setEditTitleIndex(null);
     },
-    [editTitleIndex, propertiesList, setPropertiesList],
+    [editTitleIndex, propertiesList, setPropertiesList]
   );
 
   const handleTypeChange = useCallback(
     (idx: number) => (value?: string | string[]) => {
       if (!propertiesList) return;
       const newList = propertiesList?.map(
-        (i) => ({ ...i }) as PropertyListProp,
+        (i) => ({ ...i }) as PropertyListProp
       );
       newList[idx].value = (value as string) ?? "";
       setPropertiesList?.(newList);
       if (editTypeIndex === idx) setEditTypeIndex(null);
     },
-    [editTypeIndex, propertiesList, setPropertiesList],
+    [editTypeIndex, propertiesList, setPropertiesList]
   );
 
   const handleDoubleClick = useCallback((idx: number, field: string) => {
@@ -58,8 +58,8 @@ export default function useHooks({
       {
         id: uuidv4(),
         key: "",
-        value: "",
-      },
+        value: ""
+      }
     ];
     setPropertiesList?.(newPropertiesList);
   }, [propertiesList, setPropertiesList]);
@@ -71,7 +71,7 @@ export default function useHooks({
       updatedPropertiesList.splice(idx, 1);
       setPropertiesList?.(updatedPropertiesList);
     },
-    [customProperties, propertiesList, setPropertiesList],
+    [customProperties, propertiesList, setPropertiesList]
   );
 
   const handlePropertyDrop = useCallback(
@@ -95,17 +95,17 @@ export default function useHooks({
 
       setPropertiesList?.(newList);
     },
-    [propertiesList, setPropertiesList],
+    [propertiesList, setPropertiesList]
   );
 
   useEffect(() => {
     if (setCustomProperties) {
       if (!propertiesList) return;
       const filteredList = propertiesList.filter(
-        (item) => item.key !== "" && item.value !== "",
+        (item) => item.key !== "" && item.value !== ""
       );
       const propertyList = filteredList.map((item) => ({
-        [item.key]: item.value,
+        [item.key]: item.value
       }));
       setCustomProperties(propertyList);
     }
@@ -125,7 +125,7 @@ export default function useHooks({
       }
       setIsDragging(false);
     },
-    [handlePropertyDrop, propertiesList],
+    [handlePropertyDrop, propertiesList]
   );
 
   return {
@@ -139,6 +139,6 @@ export default function useHooks({
     handleCustomPropertyDelete,
     handlePropertyDrop,
     handleMoveStart,
-    handleMoveEnd,
+    handleMoveEnd
   };
 }

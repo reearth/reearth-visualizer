@@ -6,7 +6,7 @@ import Component, { Props } from ".";
 
 export default {
   component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
 const Template: Story<Props> = (args) => <Component {...args} />;
@@ -18,10 +18,10 @@ Default.args = {
     id: "",
     extended: {
       horizontally: false,
-      vertically: false,
-    },
+      vertically: false
+    }
   },
-  context: { ...contextEvents },
+  context: { ...contextEvents }
 };
 
 export const Extended = Template.bind({});
@@ -31,8 +31,8 @@ Extended.args = {
     id: "",
     extended: {
       horizontally: true,
-      vertically: false,
-    },
+      vertically: false
+    }
   },
-  context: { ...contextEvents },
+  context: { ...contextEvents }
 };

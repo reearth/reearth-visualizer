@@ -25,7 +25,7 @@ const basicColors = [
   "#000000",
   "#4a4a4a",
   "#9b9b9b",
-  "#ffffff",
+  "#ffffff"
 ];
 
 const WIDTH = 214;
@@ -33,7 +33,7 @@ const HEIGHT = 150;
 
 export default function ColorPicker({
   color,
-  onChange,
+  onChange
 }: Readonly<ColorPickerProps>): JSX.Element {
   const [selfColor, setSelfColor] = useState(transformColor("hex", color));
   const [inputColor, setInputColor] = useState(color);
@@ -42,16 +42,16 @@ export default function ColorPicker({
   const saturationPosition = useMemo(
     () => ({
       x: (selfColor.hsv.s / 100) * WIDTH,
-      y: ((100 - selfColor.hsv.v) / 100) * HEIGHT,
+      y: ((100 - selfColor.hsv.v) / 100) * HEIGHT
     }),
-    [selfColor.hsv.s, selfColor.hsv.v],
+    [selfColor.hsv.s, selfColor.hsv.v]
   );
 
   const huePosition = useMemo(
     () => ({
-      x: (selfColor.hsv.h / 360) * WIDTH,
+      x: (selfColor.hsv.h / 360) * WIDTH
     }),
-    [selfColor.hsv],
+    [selfColor.hsv]
   );
 
   const onSetHex = (hex: string) => {
@@ -66,7 +66,7 @@ export default function ColorPicker({
     const newHsv = {
       ...selfColor.hsv,
       s: (x / WIDTH) * 100,
-      v: 100 - (y / HEIGHT) * 100,
+      v: 100 - (y / HEIGHT) * 100
     };
     const newColor = transformColor("hsv", newHsv);
     setSelfColor(newColor);
@@ -126,7 +126,7 @@ export default function ColorPicker({
           style={{
             backgroundColor: selfColor.hex,
             left: saturationPosition.x,
-            top: saturationPosition.y,
+            top: saturationPosition.y
           }}
         />
       </MoveWrapper>
@@ -135,7 +135,7 @@ export default function ColorPicker({
           className="color-picker-hue_cursor"
           style={{
             backgroundColor: `hsl(${selfColor.hsv.h}, 100%, 50%)`,
-            left: huePosition.x,
+            left: huePosition.x
           }}
         />
       </MoveWrapper>
@@ -163,7 +163,7 @@ function MoveWrapper({
   className,
   style,
   onChange,
-  children,
+  children
 }: MoveWrapperProps) {
   const divRef = useRef<HTMLDivElement>(null);
 
@@ -261,7 +261,7 @@ function hex2rgb(hex: string): RGB {
     hex
       .replace(
         /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-        (_m, r, g, b) => "#" + r + r + g + g + b + b,
+        (_m, r, g, b) => "#" + r + r + g + g + b + b
       )
       .substring(1)
       .match(/.{2}/g) || []
@@ -270,7 +270,7 @@ function hex2rgb(hex: string): RGB {
   return {
     b: rbgArr[2],
     g: rbgArr[1],
-    r: rbgArr[0],
+    r: rbgArr[0]
   };
 }
 
@@ -319,7 +319,7 @@ function rgb2hex({ b, g, r }: RGB): string {
 
 function transformColor<M extends keyof Color, C extends Color[M]>(
   format: M,
-  color: C,
+  color: C
 ): Color {
   let hex: Color["hex"] = toHex("#121212");
   let rgb: Color["rgb"] = hex2rgb(hex);

@@ -16,7 +16,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     useStoryPage();
 
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(
-    undefined,
+    undefined
   );
 
   const [isDragging, setIsDragging] = useState(false);
@@ -33,9 +33,9 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
             dragHandleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
             isDragging={isDragging}
           />
-        ),
+        )
       })),
-    [storyPageitems, isDragging],
+    [storyPageitems, isDragging]
   );
 
   const handleMoveStart = useCallback(() => {
@@ -58,7 +58,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       }
       setIsDragging(false);
     },
-    [handleStoryPageMove],
+    [handleStoryPageMove]
   );
 
   useEffect(() => {
@@ -108,9 +108,9 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   gap: theme.spacing.normal,
   overflowY: "auto",
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  padding: `${theme.spacing.small}px 0`,
+  padding: `${theme.spacing.small}px 0`
 }));

@@ -37,7 +37,7 @@ const ListField: FC<ListFieldProps> = ({
   onItemSelect,
   onItemDelete,
   onItemMove,
-  onItemNameUpdate,
+  onItemNameUpdate
 }) => {
   const [listItems, setListItems] = useState(items ?? []);
 
@@ -67,7 +67,7 @@ const ListField: FC<ListFieldProps> = ({
       }
       setIsDragging(false);
     },
-    [onItemMove],
+    [onItemMove]
   );
 
   useEffect(() => {
@@ -89,7 +89,7 @@ const ListField: FC<ListFieldProps> = ({
             onItemSelect={onItemSelect}
             onItemNameUpdate={onItemNameUpdate}
           />
-        ),
+        )
       })),
     [
       listItems,
@@ -98,8 +98,8 @@ const ListField: FC<ListFieldProps> = ({
       isEditable,
       onItemDelete,
       onItemSelect,
-      onItemNameUpdate,
-    ],
+      onItemNameUpdate
+    ]
   );
 
   const handleMoveStart = useCallback(() => {
@@ -133,7 +133,7 @@ const ListField: FC<ListFieldProps> = ({
 const FieldContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
@@ -141,7 +141,7 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.small,
   padding: theme.spacing.smallest,
   border: `1px solid ${theme.outline.weak}`,
-  overflow: "auto",
+  overflow: "auto"
 }));
 
 export default ListField;

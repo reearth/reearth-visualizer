@@ -28,7 +28,7 @@ export declare type Popup = {
       height?: number | string;
       position?: PopupPosition;
       offset?: PopupOffset;
-    },
+    }
   ) => void;
   readonly postMessage: (message: unknown) => void;
   readonly update: (options: {
@@ -50,10 +50,10 @@ export declare type PopupEvents = {
   readonly on: <T extends keyof PopupEventType>(
     type: T,
     callback: (...args: PopupEventType[T]) => void,
-    options?: { once?: boolean },
+    options?: { once?: boolean }
   ) => void;
   readonly off: <T extends keyof PopupEventType>(
     type: T,
-    callback: (...args: PopupEventType[T]) => void,
+    callback: (...args: PopupEventType[T]) => void
   ) => void;
 };

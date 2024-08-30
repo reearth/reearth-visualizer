@@ -3,7 +3,7 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
-  ContentWrapper,
+  ContentWrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
   Selector,
@@ -11,7 +11,7 @@ import {
   Switcher,
   Button,
   TextInput,
-  TextArea,
+  TextArea
 } from "@reearth/beta/lib/reearth-ui";
 import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -37,7 +37,7 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     handleFileFormatChange,
     handleSubmit,
     setPrioritizePerformance,
-    isValidExtension,
+    isValidExtension
   } = useHooks({ sceneId, onSubmit, onClose });
 
   return (

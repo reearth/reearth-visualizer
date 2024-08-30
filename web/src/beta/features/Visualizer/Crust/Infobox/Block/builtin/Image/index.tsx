@@ -14,7 +14,7 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
 }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
-    [block?.property?.default?.src],
+    [block?.property?.default?.src]
   );
 
   const evaluatedSrc = useExpressionEval(src);
@@ -39,5 +39,5 @@ const Image = styled("img")(() => ({
   width: "100%",
   height: "100%",
   objectFit: "contain",
-  objectPosition: "center",
+  objectPosition: "center"
 }));

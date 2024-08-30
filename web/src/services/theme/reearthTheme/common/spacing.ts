@@ -5,7 +5,7 @@ const spacingSizes = {
   normal: 12,
   large: 16,
   largest: 20,
-  super: 24,
+  super: 24
 } as const;
 
 export type SpacingSizesType = typeof spacingSizes;

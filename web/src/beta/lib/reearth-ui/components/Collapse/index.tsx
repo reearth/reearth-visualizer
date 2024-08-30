@@ -32,7 +32,7 @@ export const Collapse: FC<CollapseProps> = ({
   noPadding,
   actions,
   children,
-  onCollapse,
+  onCollapse
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed ?? false);
 
@@ -54,7 +54,8 @@ export const Collapse: FC<CollapseProps> = ({
         size={size}
         headerBg={headerBg}
         iconPosition={iconPosition}
-        disabled={disabled}>
+        disabled={disabled}
+      >
         <Typography size="body" weight={weight}>
           {title}
         </Typography>
@@ -85,7 +86,7 @@ const StyledWrapper = styled("div")<{
   flexShrink: 1,
   display: "flex",
   flexDirection: "column",
-  minHeight: 0,
+  minHeight: 0
 }));
 
 const StyledHeader = styled("div")<{
@@ -114,13 +115,13 @@ const StyledHeader = styled("div")<{
   cursor: disabled ? "auto" : "pointer",
   backgroundColor: headerBg ? headerBg : `${theme.bg[1]}`,
   fontSize: 0,
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.micro,
+  gap: theme.spacing.micro
 }));
 
 const ChildWrapper = styled("div")<{
@@ -141,7 +142,7 @@ const ChildWrapper = styled("div")<{
   flexGrow: 1,
   display: "flex",
   flexDirection: "column",
-  overflowY: "auto",
+  overflowY: "auto"
 }));
 
 const IconWrapper = styled("div")<{
@@ -154,7 +155,7 @@ const IconWrapper = styled("div")<{
         ? "-180deg"
         : "-90deg"
       : isCollapsed
-      ? "0deg"
-      : "-90deg",
-  transition: "rotate 0.2s ease-in",
+        ? "0deg"
+        : "-90deg",
+  transition: "rotate 0.2s ease-in"
 }));

@@ -44,8 +44,8 @@ const SwitcherContainer = styled.div<{ isOn: boolean; disabled?: boolean }>(
     cursor: disabled ? "not-allowed" : "pointer",
     transition: "background-color 0.3s",
     padding: "1px",
-    boxSizing: "border-box",
-  }),
+    boxSizing: "border-box"
+  })
 );
 
 const SwitcherCircle = styled.div<{ isOn: boolean; disabled?: boolean }>(
@@ -57,6 +57,6 @@ const SwitcherCircle = styled.div<{ isOn: boolean; disabled?: boolean }>(
       ? theme.outline.weak
       : theme.content.withBackground,
     transition: "transform 0.3s",
-    transform: isOn ? "translateX(10px)" : "translateX(0)",
-  }),
+    transform: isOn ? "translateX(10px)" : "translateX(0)"
+  })
 );

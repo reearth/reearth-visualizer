@@ -49,11 +49,11 @@ export default (value: unknown | undefined) => {
         interval: selectedFeature.interval,
         properties: selectedFeature.properties,
         metaData: selectedFeature.metaData,
-        range: selectedFeature.range,
+        range: selectedFeature.range
       };
       const es = evalExpression(
         {
-          expression: currentValue,
+          expression: currentValue
         },
         undefined,
         simpleFeature

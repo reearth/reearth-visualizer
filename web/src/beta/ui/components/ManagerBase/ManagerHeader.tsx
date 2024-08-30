@@ -2,7 +2,7 @@ import {
   IconButton,
   Selector,
   TextInput,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -13,7 +13,7 @@ import {
   ReactNode,
   useCallback,
   useMemo,
-  useState,
+  useState
 } from "react";
 
 type ManagerHeaderSize = "medium" | "large";
@@ -52,7 +52,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
   deleteText,
   selectedIds,
   onCancelSelect,
-  onDelete,
+  onDelete
 }) => {
   const t = useT();
 
@@ -61,7 +61,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       if (typeof value !== "string") return;
       onSortChange?.(value);
     },
-    [onSortChange],
+    [onSortChange]
   );
 
   const handleLayoutChange = useCallback(
@@ -69,7 +69,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       e.stopPropagation();
       onLayoutChange?.(value);
     },
-    [onLayoutChange],
+    [onLayoutChange]
   );
 
   const handleCancelSelect = useCallback(
@@ -77,7 +77,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       e.stopPropagation();
       onCancelSelect?.();
     },
-    [onCancelSelect],
+    [onCancelSelect]
   );
 
   const handleDelete = useCallback(
@@ -85,7 +85,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       e.stopPropagation();
       onDelete?.(selectedIds ?? []);
     },
-    [onDelete, selectedIds],
+    [onDelete, selectedIds]
   );
 
   const showDelete = enableDelete && selectedIds && selectedIds.length > 0;
@@ -108,7 +108,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         onSearch?.(searchTerm);
       }
     },
-    [searchTerm, onSearch],
+    [searchTerm, onSearch]
   );
 
   const searchActions = useMemo(() => {
@@ -128,7 +128,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         appearance="simple"
         size="smallest"
         onClick={handleSearch}
-      />,
+      />
     ];
   }, [searchTerm, searchHovered, handleClearSearch, handleSearch]);
 
@@ -209,14 +209,14 @@ const Wrapper = styled("div")<{ size: ManagerHeaderSize }>(
     padding: size === "medium" ? theme.spacing.normal : theme.spacing.largest,
     minHeight: size === "medium" ? "56px" : "76px",
     boxSizing: "border-box",
-    flexGrow: 0,
-  }),
+    flexGrow: 0
+  })
 );
 
 const Actions = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const Tools = styled("div")(({ theme }) => ({
@@ -224,19 +224,19 @@ const Tools = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   alignItems: "center",
   gap: theme.spacing.normal,
-  flex: 1,
+  flex: 1
 }));
 
 const Sort = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
-  width: 200,
+  width: 200
 }));
 
 const Layouts = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const Search = styled("div")<{ size: ManagerHeaderSize }>(
@@ -244,8 +244,8 @@ const Search = styled("div")<{ size: ManagerHeaderSize }>(
     display: "flex",
     gap: theme.spacing.small,
     maxWidth: size === "large" ? 250 : undefined,
-    flex: 1,
-  }),
+    flex: 1
+  })
 );
 
 const DeleteBar = styled("div")(({ theme }) => ({
@@ -255,5 +255,5 @@ const DeleteBar = styled("div")(({ theme }) => ({
   backgroundColor: theme.select.weak,
   borderRadius: theme.radius.small,
   height: 36,
-  padding: `0 ${theme.spacing.small}px`,
+  padding: `0 ${theme.spacing.small}px`
 }));
