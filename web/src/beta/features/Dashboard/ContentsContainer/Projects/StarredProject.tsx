@@ -19,15 +19,17 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         weight="bold"
       >
         <ProjectsWrapper>
-          {starredProjects?.map((statredProject) => (
-            <Item
-              key={statredProject.id}
-              onClick={() => handleProjectOpen(statredProject?.scene?.id)}
-            >
-              <IconWrapper icon="notebook" color={theme.content.weak} />
-              <TitleWrapper>{statredProject?.name}</TitleWrapper>
-            </Item>
-          ))}
+          {starredProjects?.map((statredProject) =>
+            statredProject ? (
+              <Item
+                key={statredProject.id}
+                onClick={() => handleProjectOpen(statredProject?.scene?.id)}
+              >
+                <IconWrapper icon="notebook" color={theme.content.weak} />
+                <TitleWrapper>{statredProject?.name}</TitleWrapper>
+              </Item>
+            ) : null
+          )}
         </ProjectsWrapper>
       </Collapse>
     </Wrapper>
