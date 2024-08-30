@@ -2,12 +2,10 @@ import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
 import LeftSidePanel from "./LeftSidePanel";
 import { TabItems } from "./type";
-
 
 export type DashboardProps = {
   workspaceId?: string;

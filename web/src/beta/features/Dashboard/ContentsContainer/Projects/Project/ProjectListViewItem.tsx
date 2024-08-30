@@ -142,7 +142,7 @@ const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
 
 const ThumbnailCol = styled("div")(() => ({
   width: 120,
-  flexShrink: 0
+  flexShrink: 0,
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
@@ -156,7 +156,7 @@ const ProjectNameCol = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.smallest,
   flex: 1,
-  flexShrink: 0
+  flexShrink: 0,
 }));
 
 const PublishStatus = styled("div")<{ status?: boolean }>(
@@ -170,13 +170,12 @@ const PublishStatus = styled("div")<{ status?: boolean }>(
 
 const TimeCol = styled("div")(() => ({
   flex: "0 0 20%",
-  flexShrink: 0
-
+  flexShrink: 0,
 }));
 
 const ActionCol = styled("div")(() => ({
   flex: "0 0 10%",
-  flexShrink: 0
+  flexShrink: 0,
 }));
 
 const StarButtonWrapper = styled("div")<{

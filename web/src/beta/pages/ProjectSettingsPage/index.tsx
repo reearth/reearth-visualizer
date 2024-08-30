@@ -1,4 +1,3 @@
-
 import NotFound from "@reearth/beta/components/NotFound";
 import ProjectSettings, {
   isProjectSettingTab,

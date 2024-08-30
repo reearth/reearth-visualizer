@@ -34,8 +34,12 @@ export type SortType =
   | "date-updated";
 
 export default (workspaceId?: string) => {
-  const { useProjectsQuery, useUpdateProject, useCreateProject, useStarredProjectsQuery } =
-    useProjectFetcher();
+  const {
+    useProjectsQuery,
+    useUpdateProject,
+    useCreateProject,
+    useStarredProjectsQuery,
+  } = useProjectFetcher();
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState<string>();
@@ -44,17 +48,23 @@ export default (workspaceId?: string) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const { starredProjects } = useStarredProjectsQuery(workspaceId)
+  const { starredProjects } = useStarredProjectsQuery(workspaceId);
 
-  const { projects, loading, isRefetching, hasMoreProjects, endCursor, fetchMore } =
-    useProjectsQuery({
-      teamId: workspaceId || "",
-      pagination: {
-        first: pagination(sortValue).first,
-      },
-      sort: pagination(sortValue).sortBy,
-      keyword: searchTerm,
-    });
+  const {
+    projects,
+    loading,
+    isRefetching,
+    hasMoreProjects,
+    endCursor,
+    fetchMore,
+  } = useProjectsQuery({
+    teamId: workspaceId || "",
+    pagination: {
+      first: pagination(sortValue).first,
+    },
+    sort: pagination(sortValue).sortBy,
+    keyword: searchTerm,
+  });
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])

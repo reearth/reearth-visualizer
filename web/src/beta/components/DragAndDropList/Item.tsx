@@ -9,7 +9,6 @@ import {
   useDrop,
 } from "react-dnd";
 
-
 type DragItem = {
   index: number;
   id: string;

@@ -78,104 +78,109 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         searchPlaceholder={t("Search in all assets library")}
         onSearch={handleSearch}
       />
-        {isLoading ? (
-              <LoadingWrapper>
-                <Loading relative />
-              </LoadingWrapper>
-            ) :  filtedProjects.length ?  <ManagerContent>
-            <ContentWrapper>
-              <BreadcrumbContainer>
-                <Breadcrumb
-                  items={[
-                    {
-                      title: (
-                        <Typography size="h5" weight="bold" color={theme.content.weak}>
-                          {t("All projects")}
-                        </Typography>
-                      ),
-                    },
-                    ...(searchTerm
-                      ? [
-                          {
-                            title: (
-                              <Typography
-                                size="h5"
-                                weight="bold"
-                                color={theme.content.weak}
-                              >
-                                {`${t("Search Result for")} "${searchTerm}"`}
-                              </Typography>
-                            ),
-                          },
-                        ]
-                      : []),
-                  ]}
-                />
-              </BreadcrumbContainer>
-                   {layout === "list" && (
+      {filtedProjects?.length ? (
+        <ManagerContent>
+          <ContentWrapper>
+            <BreadcrumbContainer>
+              <Breadcrumb
+                items={[
+                  {
+                    title: (
+                      <Typography
+                        size="h5"
+                        weight="bold"
+                        color={theme.content.weak}
+                      >
+                        {t("All projects")}
+                      </Typography>
+                    ),
+                  },
+                  ...(searchTerm
+                    ? [
+                        {
+                          title: (
+                            <Typography
+                              size="h5"
+                              weight="bold"
+                              color={theme.content.weak}
+                            >
+                              {`${t("Search Result for")} "${searchTerm}"`}
+                            </Typography>
+                          ),
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+            </BreadcrumbContainer>
+            {layout === "list" && (
               <ListHeader width={contentWidth}>
-              <ThumbnailCol />
-              <ProjectNameCol>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Project Name")}
-                </Typography>
-              </ProjectNameCol>
-              <TimeCol>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Updated At")}
-                </Typography>
-              </TimeCol>
-              <TimeCol>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Created At")}
-                </Typography>
-              </TimeCol>
-              <ActionCol />
-              </ListHeader>
-            
-              )}
-              <ProjectsWrapper
-                ref={wrapperRef}
-                onScroll={e => {
-                  if(!isLoading && hasMoreProjects){
-                    handleScrollToBottom(e, handleGetMoreProjects)
-                  }
-                }}>
-                <ProjectsContainer ref={contentRef}>
-                  <ProjectsGroup layout={layout}>
-                    {filtedProjects.map(project =>
-                      layout === "grid" ? (
-                        <ProjectGridViewItem
-                          key={project.id}
-                          project={project}
-                          selectedProjectId={selectedProject?.id}
-                          onProjectUpdate={handleProjectUpdate}
-                          onProjectSelect={handleProjectSelect}
-                          onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                        />
-                      ) : (
-                        <ProjectListViewItem
-                          key={project.id}
-                          project={project}
-                          selectedProjectId={selectedProject?.id}
-                          onProjectUpdate={handleProjectUpdate}
-                          onProjectSelect={handleProjectSelect}
-                          onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                        />
-                      ),
-                    )}
-                  </ProjectsGroup>
-                </ProjectsContainer>
-              </ProjectsWrapper>
-            </ContentWrapper>
-           </ManagerContent> :
-                  <ManagerEmptyContent>
-                  <Typography size="h5" color={theme.content.weak}>
-                    {t("No Project has been created yet")}
+                <ThumbnailCol />
+                <ProjectNameCol>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Project Name")}
                   </Typography>
-                </ManagerEmptyContent>
-        
-                  }
+                </ProjectNameCol>
+                <TimeCol>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Updated At")}
+                  </Typography>
+                </TimeCol>
+                <TimeCol>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Created At")}
+                  </Typography>
+                </TimeCol>
+                <ActionCol />
+              </ListHeader>
+            )}
+            <ProjectsWrapper
+              ref={wrapperRef}
+              onScroll={(e) => {
+                if (!isLoading && hasMoreProjects) {
+                  handleScrollToBottom(e, handleGetMoreProjects);
+                }
+              }}
+            >
+              <ProjectsContainer ref={contentRef}>
+                <ProjectsGroup layout={layout}>
+                  {filtedProjects.map((project) =>
+                    layout === "grid" ? (
+                      <ProjectGridViewItem
+                        key={project.id}
+                        project={project}
+                        selectedProjectId={selectedProject?.id}
+                        onProjectUpdate={handleProjectUpdate}
+                        onProjectSelect={handleProjectSelect}
+                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                      />
+                    ) : (
+                      <ProjectListViewItem
+                        key={project.id}
+                        project={project}
+                        selectedProjectId={selectedProject?.id}
+                        onProjectUpdate={handleProjectUpdate}
+                        onProjectSelect={handleProjectSelect}
+                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                      />
+                    ),
+                  )}
+                </ProjectsGroup>
+              </ProjectsContainer>
+            </ProjectsWrapper>
+          </ContentWrapper>
+        </ManagerContent>
+      ) : isLoading ? (
+        <LoadingWrapper>
+          <Loading relative />
+        </LoadingWrapper>
+      ) : (
+        <ManagerEmptyContent>
+          <Typography size="h5" color={theme.content.weak}>
+            {t("No Project has been created yet")}
+          </Typography>
+        </ManagerEmptyContent>
+      )}
 
       {projectCreatorVisible && (
         <ProjectCreatorModal
@@ -215,38 +220,39 @@ const ProjectsContainer = styled("div")(({ theme }) => ({
   gap: theme.spacing.large,
   flexDirection: "column",
   padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
-
 }));
 
-const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(({ theme, layout }) => ({
-  ...(layout === "grid"
-    ? {
-        display: "grid",
-        gap: theme.spacing.normal,
-        width: "100%",
-        gridTemplateColumns: "repeat(4, 1fr)",
+const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
+  ({ theme, layout }) => ({
+    ...(layout === "grid"
+      ? {
+          display: "grid",
+          gap: theme.spacing.normal,
+          width: "100%",
+          gridTemplateColumns: "repeat(4, 1fr)",
 
-        "@media (max-width: 1200px)": {
-          gridTemplateColumns: "repeat(3, 1fr)",
-        },
-        "@media (max-width: 900px)": {
-          gridTemplateColumns: "repeat(2, 1fr)",
-        },
-        "@media (max-width: 600px)": {
-          gridTemplateColumns: "1fr",
-        },
-      }
-    : {}),
-  ...(layout === "list"
-    ? {
-        display: "flex",
-        flexDirection: "column",
-        gap: theme.spacing.normal,
-      }
-    : {}),
-}));
+          "@media (max-width: 1200px)": {
+            gridTemplateColumns: "repeat(3, 1fr)",
+          },
+          "@media (max-width: 900px)": {
+            gridTemplateColumns: "repeat(2, 1fr)",
+          },
+          "@media (max-width: 600px)": {
+            gridTemplateColumns: "1fr",
+          },
+        }
+      : {}),
+    ...(layout === "list"
+      ? {
+          display: "flex",
+          flexDirection: "column",
+          gap: theme.spacing.normal,
+        }
+      : {}),
+  }),
+);
 
-const ListHeader = styled("div")<{width: number}>(({ width, theme }) => ({
+const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
   display: "flex",
   alignItems: "center",
   boxSizing: "border-box",
@@ -254,26 +260,24 @@ const ListHeader = styled("div")<{width: number}>(({ width, theme }) => ({
   width: width === 0 ? "100%" : width,
 }));
 
-
 const ThumbnailCol = styled("div")(() => ({
   width: 120,
-  flexShrink: 0
+  flexShrink: 0,
 }));
 
 const ProjectNameCol = styled("div")(() => ({
   flex: 1,
-  flexShrink: 0
+  flexShrink: 0,
 }));
 
 const TimeCol = styled("div")(() => ({
   flex: "0 0 20%",
-  flexShrink: 0
-
+  flexShrink: 0,
 }));
 
 const ActionCol = styled("div")(() => ({
   flex: "0 0 10%",
-  flexShrink: 0
+  flexShrink: 0,
 }));
 
 const LoadingWrapper = styled("div")(() => ({

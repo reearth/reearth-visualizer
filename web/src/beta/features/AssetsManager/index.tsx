@@ -64,7 +64,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     onSelectChange,
   });
   const t = useT();
-  const theme = useTheme()
+  const theme = useTheme();
   return (
     <ManagerWrapper onClick={() => handleAssetSelect(undefined)}>
       <ManagerHeader
@@ -98,75 +98,77 @@ const AssetsManager: FC<AssetsManagerProps> = ({
         onDelete={handleAssetDelete}
         onSearch={handleSearch}
       />
-    {(loading || loadingMore) ? (
-                  <LoadingWrapper>
-                    <Loading relative />
-                  </LoadingWrapper>
-                ) : 
-          filteredAssets.length ?
-      <ManagerContent>
-        <ContentWrapper size={size}>
-          <PathWrapper size={size}>
-            <Breadcrumb items={paths} size="large" onClick={handlePathClick} />
-          </PathWrapper>
-          <LayoutWrapper>
-            {layout === "list" && (
-              <ListHeader size={size} width={contentWidth}>
-                <ThumbnailSpacer />
-                <Col width={50}>
-                  <Typography weight="bold" size="body">
-                    {t("Name")}
-                  </Typography>
-                </Col>
-                <Col width={30}>
-                  <Typography weight="bold" size="body">
-                    {t("Uploaded At")}
-                  </Typography>
-                </Col>
-                <Col width={30}>
-                  <Typography weight="bold" size="body">
-                    {t("Size")}
-                  </Typography>
-                </Col>
-              </ListHeader>
-            )}
-            <AssetsWrapper ref={assetsWrapperRef}>
-              <AssetsContent size={size} ref={assetsContentRef}>
-                {/* TODO: Group of folders */}
-                <AssetsGroup layout={layout} size={size}>
-                  {filteredAssets?.map((asset) =>
-                    layout === "grid" ? (
-                      <AssetGridItem
-                        key={asset.id}
-                        asset={asset}
-                        layout={layout}
-                        selectedAssetIds={selectedAssetIds}
-                        onSelect={handleAssetSelect}
-                      />
-                    ) : (
-                      <AssetListItem
-                        key={asset.id}
-                        asset={asset}
-                        layout={layout}
-                        selectedAssetIds={selectedAssetIds}
-                        onSelect={handleAssetSelect}
-                      />
-                    ),
-                  )}
-                </AssetsGroup>
-               
-              </AssetsContent>
-            </AssetsWrapper>
-          </LayoutWrapper>
-        </ContentWrapper>
-      </ManagerContent>: 
-      <ManagerEmptyContent>
-      <Typography size="h5" color={theme.content.weak}>
-        {t("No Asset has been uploaded yet")}
-      </Typography>
-    </ManagerEmptyContent>
-
-}
+      {filteredAssets?.length ? (
+        <ManagerContent>
+          <ContentWrapper size={size}>
+            <PathWrapper size={size}>
+              <Breadcrumb
+                items={paths}
+                size="large"
+                onClick={handlePathClick}
+              />
+            </PathWrapper>
+            <LayoutWrapper>
+              {layout === "list" && (
+                <ListHeader size={size} width={contentWidth}>
+                  <ThumbnailSpacer />
+                  <Col width={50}>
+                    <Typography weight="bold" size="body">
+                      {t("Name")}
+                    </Typography>
+                  </Col>
+                  <Col width={30}>
+                    <Typography weight="bold" size="body">
+                      {t("Uploaded At")}
+                    </Typography>
+                  </Col>
+                  <Col width={30}>
+                    <Typography weight="bold" size="body">
+                      {t("Size")}
+                    </Typography>
+                  </Col>
+                </ListHeader>
+              )}
+              <AssetsWrapper ref={assetsWrapperRef}>
+                <AssetsContent size={size} ref={assetsContentRef}>
+                  {/* TODO: Group of folders */}
+                  <AssetsGroup layout={layout} size={size}>
+                    {filteredAssets?.map((asset) =>
+                      layout === "grid" ? (
+                        <AssetGridItem
+                          key={asset.id}
+                          asset={asset}
+                          layout={layout}
+                          selectedAssetIds={selectedAssetIds}
+                          onSelect={handleAssetSelect}
+                        />
+                      ) : (
+                        <AssetListItem
+                          key={asset.id}
+                          asset={asset}
+                          layout={layout}
+                          selectedAssetIds={selectedAssetIds}
+                          onSelect={handleAssetSelect}
+                        />
+                      ),
+                    )}
+                  </AssetsGroup>
+                </AssetsContent>
+              </AssetsWrapper>
+            </LayoutWrapper>
+          </ContentWrapper>
+        </ManagerContent>
+      ) : loading || loadingMore ? (
+        <LoadingWrapper>
+          <Loading relative />
+        </LoadingWrapper>
+      ) : (
+        <ManagerEmptyContent>
+          <Typography size="h5" color={theme.content.weak}>
+            {t("No Asset has been uploaded yet")}
+          </Typography>
+        </ManagerEmptyContent>
+      )}
     </ManagerWrapper>
   );
 };

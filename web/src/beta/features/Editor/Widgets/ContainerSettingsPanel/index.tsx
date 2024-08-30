@@ -1,4 +1,3 @@
-
 import { ColorField, NumberField, SwitchField } from "@reearth/beta/ui/fields";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";

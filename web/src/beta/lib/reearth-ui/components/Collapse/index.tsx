@@ -54,7 +54,8 @@ export const Collapse: FC<CollapseProps> = ({
         size={size}
         headerBg={headerBg}
         iconPosition={iconPosition}
-        disabled={disabled}>
+        disabled={disabled}
+      >
         <Typography size="body" weight={weight}>
           {title}
         </Typography>
@@ -154,7 +155,7 @@ const IconWrapper = styled("div")<{
         ? "-180deg"
         : "-90deg"
       : isCollapsed
-      ? "0deg"
-      : "-90deg",
+        ? "0deg"
+        : "-90deg",
   transition: "rotate 0.2s ease-in",
 }));

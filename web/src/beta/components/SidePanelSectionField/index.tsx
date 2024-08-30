@@ -1,7 +1,6 @@
 import { styled, useTheme } from "@reearth/services/theme";
 import { useState, ReactNode, useEffect } from "react";
 
-
 import Icon from "../Icon";
 import Text from "../Text";
 

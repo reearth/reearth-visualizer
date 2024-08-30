@@ -1,4 +1,3 @@
-
 import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
 import Text from "@reearth/beta/components/Text";

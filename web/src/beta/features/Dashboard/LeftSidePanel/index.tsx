@@ -57,7 +57,7 @@ const LeftSidePanel: FC<Props> = ({
               disabled={tab.disabled}
             />
           ))}
-          <StarredProject  workspaceId={currentWorkspace?.id}/>
+          <StarredProject workspaceId={currentWorkspace?.id} />
         </SidebarTopSectionWrapper>
       </SidebarSection>
       <SidebarSection>

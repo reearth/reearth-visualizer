@@ -2,7 +2,6 @@ import { styled } from "@reearth/services/theme";
 import { Meta, Story } from "@storybook/react";
 import { ReactNode, useState } from "react";
 
-
 import { Icon } from "../Icon";
 
 import { DragAndDropList, DragAndDropListProps } from ".";

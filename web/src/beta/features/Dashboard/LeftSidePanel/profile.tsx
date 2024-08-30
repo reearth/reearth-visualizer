@@ -72,13 +72,17 @@ export const Profile: FC<ProfileProp> = ({
       <ProfileWrapper>
         {isPersonal && (
           <Avatar>
-            <Typography size="body">{currentUser?.charAt(0).toUpperCase()}</Typography>
+            <Typography size="body">
+              {currentUser?.charAt(0).toUpperCase()}
+            </Typography>
           </Avatar>
         )}
         <TitleWrapper>{currentUser}</TitleWrapper>
         <PopupWrapper>
           <PopupMenu
-            label={<Icon color={theme.content.weak} icon="caretDown" size="small" />}
+            label={
+              <Icon color={theme.content.weak} icon="caretDown" size="small" />
+            }
             menu={popupMenu}
           />
         </PopupWrapper>
