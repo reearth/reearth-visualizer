@@ -6,7 +6,7 @@ import {
 import { AuthenticatedPage } from "@reearth/services/auth";
 import React, { ReactNode, useMemo } from "react";
 
-import Loading from "../components/Loading";
+import { Loading } from "../lib/reearth-ui";
 
 type RenderItemProps = {
   sceneId?: string;

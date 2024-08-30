@@ -1,54 +1,13 @@
-Current Position: 現地
-Latitude: 緯度
-Longitude: 経度
-Height: 高さ
-Current Rotation: 現在のローテーション
-Heading: ヘッディング
-Pitch: ピッチ
-Roll: ロール
-Camera Position Editor: カメラ位置の編集
-Cancel: キャンセル
-Capture: キャプチャ
-Location: 位置
-Rotation: ローテーション
-Apply: 適用
-Position Set: 設定済み
-Not set: 未設定
-Edit: 編集
-Color Picker: カラーピッカー
-You have passed the maximum value.: 最大値を超えています
-You have passed the minimum value.: 最小値を下回っています
-Set Time: 時間設定
-Date: 時間帯
-Time: 時間
-Time Zone: 時間帯
-set: 設定
-Remove: 削除
-Add: 追加
-Settings: 設定
-Options: オプション
-Please choose an option: オプションを選んでください
-Add text here: テキストを書きましょう
-Timeline Settings: タイムライン設定
-'* Start Time': '* 開始時刻'
-Start time for the timeline: タイムラインの開始時刻
-'* Current Time': '* 現在時刻'
-Current time should be between start and end time: 現在時刻は開始時刻と終了時刻の間で設定してください
-'* End Time': '* 終了時刻'
-End time for the timeline: タイムラインの終了時刻
-Please make sure the Current time must between the Start time and End Time.: 現在時刻が開始時刻と終了時刻の間にあることを確認してください
-not set: 未設定
-Wrong file format: ファイルのフォーマットが異なります
-Choose: 選択
-Upload: アップロード
+You have passed the maximum value.: ''
+You have passed the minimum value.: ''
 Not found: ページが見つかりません
+Select Asset: ''
 Last Uploaded: 昇順（アップロード日）
 First Uploaded: 降順（アップロード日）
 A To Z: 昇順（ファイル名）
 Z To A: 降順（ファイル名）
 Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
-Select Asset: ''
 Upload File: ''
 Search in all assets library: ''
 Assets selected: ''
@@ -124,6 +83,7 @@ Delete Feature: ''
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
 Layer Style: レイヤースタイル
+Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
@@ -156,6 +116,7 @@ Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
+Cancel: キャンセル
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
 Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
@@ -190,16 +151,6 @@ Align centered: 中央に配置
 Background color: 背景色
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
-Please select an asset before clicking Select.: アセットを選んで「選択」をクリックしてください。
-Select Image: イメージ選択
-Select: 選択
-Sort By: 並び替え
-No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
-Please select an layer style before clicking Select.: レイヤースタイルを選んで「選択」をクリックしてください。
-Select Layer Style: レイヤースタイル選択
-No layerStyle match your search.: 検索からレイヤースタイルを見つけられません。
-You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルをまだ作成していません。「レイヤースタイル」パネルの＋ボタンをクリックし作成してください。
 Project settings: プロジェクト設定
 Plugin: プラグイン
 Unknown: 不明
@@ -276,6 +227,7 @@ Angle: 角度
 Narrow: 狭い
 Wide: 広い
 Spacing settings: 余白設定
+Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプです
 Write your story :): ストーリーを書きましょう!
@@ -304,9 +256,37 @@ Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
 'Sort:': ''
+Wrong file format: ファイルのフォーマットが異なります
+Not set: 未設定
 Position Capture: ''
+Latitude: 緯度
+Longitude: 経度
+Height: 高さ
+Current Position: 現地
+Current Rotation: 現在のローテーション
+Heading: ヘッディング
+Pitch: ピッチ
+Roll: ロール
+Camera Position Editor: カメラ位置の編集
+Location: 位置
 value: ''
+Rotation: ローテーション
+Position Set: 設定済み
+Edit: 編集
+Capture: キャプチャ
 Time Period Settings: ''
+'* Start Time': '* 開始時刻'
+Start time for the timeline: タイムラインの開始時刻
+'* Current Time': '* 現在時刻'
+Current time should be between start and end time: 現在時刻は開始時刻と終了時刻の間で設定してください
+'* End Time': '* 終了時刻'
+End time for the timeline: タイムラインの終了時刻
+Please make sure the Current time must between the Start time and End Time.: 現在時刻が開始時刻と終了時刻の間にあることを確認してください
+set: 設定
+Set Time: 時間設定
+Date: 時間帯
+Time: 時間
+Time Zone: 時間帯
 Failed to add one or more assets.: アセットの作成に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しまたした。

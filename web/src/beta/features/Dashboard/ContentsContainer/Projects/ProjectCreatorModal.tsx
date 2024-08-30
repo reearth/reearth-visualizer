@@ -1,4 +1,5 @@
-import URLField from "@reearth/beta/components/fields/URLField";
+
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   Button,
   Modal,
@@ -7,6 +8,7 @@ import {
   TextInput,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
@@ -83,7 +85,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
             </FormInputWrapper>
             <FormInputWrapper>
               <Label>
-                <Typography size="body">{t("Description")}*</Typography>
+                <Typography size="body">{t("Description")}</Typography>
               </Label>
               <TextArea
                 value={description}
@@ -92,10 +94,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 onChange={(value) => handleOnChange("description", value)}
               />
             </FormInputWrapper>
-            <URLField
-              name={t("Cover Image")}
-              fileType="asset"
-              entityType="image"
+            <AssetField
+              commonTitle={t("Cover Image")}
+              inputMethod="asset"
+              assetsTypes={IMAGE_TYPES}
               value={imageUrl}
               onChange={(value) => handleOnChange("asset", value || "")}
             />
