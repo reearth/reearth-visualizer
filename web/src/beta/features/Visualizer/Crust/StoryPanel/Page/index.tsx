@@ -13,7 +13,7 @@ import {
   MutableRefObject,
   ReactNode,
   useEffect,
-  useMemo,
+  useMemo
 } from "react";
 
 import { BlockProps } from "../../../shared/types";
@@ -22,7 +22,7 @@ import {
   STORY_PANEL_CONTENT_ELEMENT_ID,
   MIN_STORY_PAGE_PADDING_IN_EDITOR,
   MIN_STORY_PAGE_GAP_IN_EDITOR,
-  STORY_PANEL_WIDTH,
+  STORY_PANEL_WIDTH
 } from "../constants";
 import { StoryBlock as StoryBlockType } from "../types";
 
@@ -40,14 +40,14 @@ type Props = {
   children?: ReactNode;
   onCurrentPageChange?: (
     pageId: string,
-    disableScrollIntoView?: boolean,
+    disableScrollIntoView?: boolean
   ) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void> | undefined;
   onBlockDelete?: (blockId?: string | undefined) => Promise<void> | undefined;
   onBlockSelect?: (blockId?: string) => void;
@@ -57,24 +57,24 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
   onBlockDoubleClick?: (blockId?: string) => void;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   renderBlock?: (block: BlockProps<StoryBlockType>) => ReactNode;
 };
@@ -103,7 +103,7 @@ const StoryPanel: FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
-  renderBlock,
+  renderBlock
 }) => {
   const t = useT();
 
@@ -117,17 +117,17 @@ const StoryPanel: FC<Props> = ({
     disableSelection,
     handleBlockOpen,
     handleBlockCreate,
-    handleMoveEnd,
+    handleMoveEnd
   } = useHooks({
     page,
     isEditable,
     onBlockCreate,
-    onBlockMove,
+    onBlockMove
   });
 
   const { containerRef, isIntersecting } = useElementOnScreen({
     root: document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID),
-    threshold: 0.2,
+    threshold: 0.2
   });
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const StoryPanel: FC<Props> = ({
       if (id) {
         if (isAutoScrolling?.current) {
           const wrapperElement = document.getElementById(
-            STORY_PANEL_CONTENT_ELEMENT_ID,
+            STORY_PANEL_CONTENT_ELEMENT_ID
           );
 
           wrapperElement?.addEventListener("scroll", () => {
@@ -155,7 +155,7 @@ const StoryPanel: FC<Props> = ({
     containerRef,
     isAutoScrolling,
     scrollTimeoutRef,
-    onCurrentPageChange,
+    onCurrentPageChange
   ]);
 
   const DraggableStoryBlockItems = useMemo(
@@ -193,7 +193,7 @@ const StoryPanel: FC<Props> = ({
               />
             )}
           </Fragment>
-        ),
+        )
       })),
     [
       storyBlocks,
@@ -214,8 +214,8 @@ const StoryPanel: FC<Props> = ({
       installableStoryBlocks,
       handleBlockCreate,
       onBlockDoubleClick,
-      handleBlockOpen,
-    ],
+      handleBlockOpen
+    ]
   );
   return (
     <SelectableArea
@@ -259,7 +259,7 @@ const StoryPanel: FC<Props> = ({
                 extensionId: "titleStoryBlock",
                 name: t("Title"),
                 propertyId,
-                property: titleProperty,
+                property: titleProperty
               }}
               isEditable={isEditable}
               isSelected={selectedStoryBlockId === titleId}
@@ -305,5 +305,5 @@ const StoryPanel: FC<Props> = ({
 export default StoryPanel;
 
 const PageTitleWrapper = styled("div")(() => ({
-  position: "relative",
+  position: "relative"
 }));

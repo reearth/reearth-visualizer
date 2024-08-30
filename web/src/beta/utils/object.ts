@@ -1,6 +1,6 @@
 export function delayedObject<T extends object>(
   obj: T,
-  excludedKeys?: string[],
+  excludedKeys?: string[]
 ): Readonly<T> {
   const res: any = {};
   const descs = Object.keys(obj).reduce<PropertyDescriptorMap>(
@@ -11,17 +11,17 @@ export function delayedObject<T extends object>(
             value: (obj as any)[b],
             configurable: false,
             enumerable: true,
-            writable: false,
+            writable: false
           }
         : {
             get() {
               return (obj as any)[b];
             },
             configurable: false,
-            enumerable: true,
-          },
+            enumerable: true
+          }
     }),
-    {},
+    {}
   );
   Object.defineProperties(res, descs);
   return res;
@@ -29,7 +29,7 @@ export function delayedObject<T extends object>(
 
 export function objectFromGetter<T extends { [K in keyof T]: any }>(
   keys: (keyof T)[],
-  fn: (this: T, key: keyof T) => T[keyof T],
+  fn: (this: T, key: keyof T) => T[keyof T]
 ): Readonly<T> {
   const res: any = {};
   const descs = keys.reduce<PropertyDescriptorMap>(
@@ -40,10 +40,10 @@ export function objectFromGetter<T extends { [K in keyof T]: any }>(
           return fn.call(this, b);
         },
         configurable: false,
-        enumerable: true,
-      },
+        enumerable: true
+      }
     }),
-    {},
+    {}
   );
   Object.defineProperties(res, descs);
   return res;
@@ -60,7 +60,7 @@ type BoxedTupleTypes<T extends any[]> = { [P in keyof T]: [T[P]] }[Exclude<
   keyof any[]
 >];
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I,
+  k: infer I
 ) => void
   ? I
   : never;

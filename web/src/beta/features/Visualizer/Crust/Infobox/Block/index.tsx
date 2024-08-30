@@ -1,7 +1,7 @@
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type {
   CommonBlockProps,
-  BlockProps,
+  BlockProps
 } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 import { useCallback, type ComponentType, type ReactNode, memo } from "react";
@@ -30,7 +30,7 @@ const InfoboxBlockComponent = ({
     : undefined;
   const handleRemove = useCallback(
     () => props.block?.id && onRemove?.(props.block.id),
-    [props.block?.id, onRemove],
+    [props.block?.id, onRemove]
   );
 
   return Builtin ? (
@@ -55,7 +55,7 @@ const InfoboxBlockComponent = ({
       {renderBlock?.({
         block: props.block,
         layer: props.layer,
-        onClick: props.onClick,
+        onClick: props.onClick
       })}
     </BlockWrapper>
   ) : null;

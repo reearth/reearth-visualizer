@@ -11,7 +11,7 @@ export default ({
   editMode,
   isSelected,
   onEditModeToggle,
-  onClickAway,
+  onClickAway
 }: Props) => {
   const [showPadding, setShowPadding] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -32,7 +32,7 @@ export default ({
       e?.stopPropagation();
       setIsHovered(isHovered);
     },
-    [],
+    []
   );
 
   return {
@@ -40,6 +40,6 @@ export default ({
     isHovered,
     handleHoverChange,
     setShowPadding,
-    handleClickAway,
+    handleClickAway
   };
 };

@@ -28,7 +28,7 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                 <IconWrapper icon="notebook" color={theme.content.weak} />
                 <TitleWrapper>{statredProject?.name}</TitleWrapper>
               </Item>
-            ) : null,
+            ) : null
           )}
         </ProjectsWrapper>
       </Collapse>
@@ -41,7 +41,7 @@ export default StarredProject;
 const Wrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  flexGrow: 1,
+  flexGrow: 1
 }));
 
 const ProjectsWrapper = styled("div")(({ theme }) => ({
@@ -49,7 +49,7 @@ const ProjectsWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   paddingLeft: theme.spacing.small,
   height: "calc(92vh - 400px)",
-  overflowY: "auto",
+  overflowY: "auto"
 }));
 
 const Item = styled("div")(({ theme }) => ({
@@ -61,12 +61,12 @@ const Item = styled("div")(({ theme }) => ({
   cursor: "pointer",
   "&:hover": {
     backgroundColor: theme.bg[2],
-    borderRadius: theme.radius.small,
-  },
+    borderRadius: theme.radius.small
+  }
 }));
 
 const IconWrapper = styled(Icon)(() => ({
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -75,5 +75,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));

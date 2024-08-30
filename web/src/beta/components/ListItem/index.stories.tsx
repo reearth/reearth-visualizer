@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import ActionItem from "./index";
 
 export default {
-  component: ActionItem,
+  component: ActionItem
 } as Meta;
 
 type Story = StoryObj<typeof ActionItem>;
@@ -14,6 +14,6 @@ export const Default: Story = {
     actionContent: <div style={{ background: "gray" }}>actionContent</div>,
     isOpenAction: true,
     children:
-      "long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ",
-  },
+      "long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text "
+  }
 };

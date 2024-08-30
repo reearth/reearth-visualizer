@@ -15,7 +15,7 @@ const StoryPageIndicator: FC<Props> = ({
   currentPage,
   pageTitles,
   maxPage,
-  onPageChange,
+  onPageChange
 }) => {
   const t = useT();
   return (
@@ -39,5 +39,5 @@ export default StoryPageIndicator;
 
 const Wrapper = styled("div")(() => ({
   display: "flex",
-  height: "8px",
+  height: "8px"
 }));

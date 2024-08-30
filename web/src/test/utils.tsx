@@ -1,6 +1,6 @@
 import {
   MockedProvider as MockedGqlProvider,
-  MockedResponse,
+  MockedResponse
 } from "@apollo/client/testing";
 import { render as rtlRender } from "@testing-library/react";
 import { vitest } from "vitest";
@@ -21,14 +21,14 @@ vitest.mock("react-inlinesvg", () => {
           height={props.size}
         />
       );
-    },
+    }
   };
 });
 
 const render = (
   ui: React.ReactElement,
   queryMocks?: readonly MockedResponse<Record<string, any>>[],
-  { ...renderOptions } = {},
+  { ...renderOptions } = {}
 ) => {
   const Wrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (

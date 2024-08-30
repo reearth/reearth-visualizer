@@ -21,7 +21,7 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
   selected,
   onSelect,
   onDelete,
-  onLayerStyleNameUpdate,
+  onLayerStyleNameUpdate
 }) => {
   const [localName, setLocalName] = useState(name);
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +38,7 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
       e.stopPropagation();
       onSelect?.();
     },
-    [onSelect],
+    [onSelect]
   );
 
   return (
@@ -66,8 +66,8 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
           id: "delete",
           title: "Delete",
           icon: "trash" as const,
-          onClick: onDelete,
-        },
+          onClick: onDelete
+        }
       ]}
     />
   );
@@ -80,7 +80,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));
 
 export default LayerStyleItem;

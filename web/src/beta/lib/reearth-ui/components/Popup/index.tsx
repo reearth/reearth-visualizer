@@ -4,7 +4,7 @@ import {
   FloatingFocusManager,
   Placement,
   OffsetOptions,
-  ShiftOptions,
+  ShiftOptions
 } from "@floating-ui/react";
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
@@ -35,7 +35,7 @@ type TriggerProps = {
 const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
   function PopoverTrigger(
     { children, disabled, extendWidth, ...props },
-    propRef,
+    propRef
   ) {
     const context = usePopoverContext();
     const childrenRef = (children as any)?.ref;
@@ -51,7 +51,7 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
         {typeof children === "string" ? <Button title={children} /> : children}
       </TriggerWrapper>
     );
-  },
+  }
 );
 
 const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
@@ -67,7 +67,7 @@ const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
             ref={ref}
             style={{
               ...context.floatingStyles,
-              ...style,
+              ...style
             }}
             {...context.getFloatingProps(props)}
           >
@@ -76,7 +76,7 @@ const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
         </FloatingFocusManager>
       </FloatingPortal>
     );
-  },
+  }
 );
 
 export type PopupProps = {
@@ -126,9 +126,9 @@ const TriggerWrapper = styled("div")<{
   extendWidth?: boolean;
 }>(({ disabled, extendWidth }) => ({
   width: extendWidth ? "100%" : "fit-content",
-  pointerEvents: disabled ? "none" : "auto",
+  pointerEvents: disabled ? "none" : "auto"
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
-  zIndex: theme.zIndexes.editor.popover,
+  zIndex: theme.zIndexes.editor.popover
 }));

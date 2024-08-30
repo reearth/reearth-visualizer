@@ -10,7 +10,7 @@ import type {
   Location,
   WidgetLayoutConstraint,
   Theme,
-  WidgetProps,
+  WidgetProps
 } from "./types";
 import { filterSections } from "./utils";
 import ZoneComponent, { WidgetAreaType } from "./Zone";
@@ -28,7 +28,7 @@ export type {
   WidgetLayoutConstraint,
   Theme,
   WidgetProps,
-  InternalWidget,
+  InternalWidget
 } from "./types";
 
 export type Props = {
@@ -47,7 +47,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
@@ -65,11 +65,11 @@ const WidgetAlignSystem: React.FC<Props> = ({
   renderWidget,
   onWidgetAreaSelect,
   onWidgetLayoutUpdate: onWidgetLayoutUpdate,
-  onAlignmentUpdate: onAlignmentUpdate,
+  onAlignmentUpdate: onAlignmentUpdate
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
     onWidgetLayoutUpdate,
-    onAlignmentUpdate,
+    onAlignmentUpdate
   });
   const Zone = isMobile ? MobileZone : ZoneComponent;
 

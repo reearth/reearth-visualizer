@@ -26,8 +26,8 @@ export default {
     (Story) => {
       const [pos, setPos] = useState(0);
       return <Story pos={pos} setPos={setPos} />;
-    },
-  ],
+    }
+  ]
 } as Meta;
 
 export const Default = ({ pos, setPos }: DefaultProps) => {

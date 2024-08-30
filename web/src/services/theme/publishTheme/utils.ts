@@ -23,17 +23,17 @@ const themeDefaults: ThemeDefaults = {
   type: "dark",
   backgroundColor: "#dfe5f0",
   textColor: "#434343",
-  selectColor: "#C52C63",
+  selectColor: "#C52C63"
 };
 
 const premadeThemes: Record<PremadeThemeType, PublishTheme> = {
   dark,
   light,
-  forest,
+  forest
 };
 
 export function publishTheme(
-  sceneThemeOptions?: SceneThemeOptions,
+  sceneThemeOptions?: SceneThemeOptions
 ): PublishTheme {
   if (sceneThemeOptions?.themeType) {
     if (sceneThemeOptions.themeType in premadeThemes) {
@@ -50,7 +50,7 @@ export function publishTheme(
     themeTextColor:
       sceneThemeOptions?.themeTextColor || themeDefaults.textColor,
     themeSelectColor:
-      sceneThemeOptions?.themeSelectColor || themeDefaults.selectColor,
+      sceneThemeOptions?.themeSelectColor || themeDefaults.selectColor
   };
 
   const isBackgroundDark = isDark(options?.themeBackgroundColor);
@@ -68,6 +68,6 @@ export function publishTheme(
       : "#FFFFFF",
     weakText: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
     mainIcon: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
-    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String(),
+    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String()
   };
 }

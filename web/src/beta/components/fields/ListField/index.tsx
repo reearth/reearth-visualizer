@@ -1,6 +1,6 @@
 import Button from "@reearth/beta/components/Button";
 import DragAndDropList, {
-  Props as DragAndDropProps,
+  Props as DragAndDropProps
 } from "@reearth/beta/components/DragAndDropList";
 import Property from "@reearth/beta/components/fields";
 import Text from "@reearth/beta/components/Text";
@@ -35,7 +35,7 @@ const ListField: React.FC<Props> = ({
   onItemDrop,
   onSelect,
   selected,
-  atLeastOneItem,
+  atLeastOneItem
 }: Props) => {
   const t = useT();
 

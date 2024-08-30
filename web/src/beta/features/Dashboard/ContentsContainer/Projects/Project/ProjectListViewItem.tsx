@@ -2,7 +2,7 @@ import {
   Button,
   PopupMenu,
   TextInput,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { convertTimeToString } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -16,17 +16,17 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate,
+  onProjectUpdate
 }) => {
   const theme = useTheme();
 
   const createAt: Date = useMemo(
     () => (project.createdAt ? new Date(project.createdAt) : new Date()),
-    [project.createdAt],
+    [project.createdAt]
   );
   const UpdatedAt: Date = useMemo(
     () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
-    [project.updatedAt],
+    [project.updatedAt]
   );
 
   const {
@@ -40,12 +40,12 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
+    handleProjectStarClick
   } = useHooks({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect,
+    onProjectSelect
   });
 
   return (
@@ -125,8 +125,8 @@ const ListWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     padding: `${theme.spacing.small}px 0`,
     alignItems: "center",
     boxSizing: "border-box",
-    overflow: "hidden",
-  }),
+    overflow: "hidden"
+  })
 );
 
 const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
@@ -136,19 +136,19 @@ const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
       : theme.bg[1],
     borderRadius: theme.radius.normal,
     height: "32px",
-    width: "55px",
-  }),
+    width: "55px"
+  })
 );
 
 const ThumbnailCol = styled("div")(() => ({
   width: 120,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const ProjectNameCol = styled("div")(({ theme }) => ({
@@ -156,7 +156,7 @@ const ProjectNameCol = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.smallest,
   flex: 1,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const PublishStatus = styled("div")<{ status?: boolean }>(
@@ -164,18 +164,18 @@ const PublishStatus = styled("div")<{ status?: boolean }>(
     height: "12px",
     width: "12px",
     borderRadius: "50%",
-    background: status ? theme.publish.main : "transparent",
-  }),
+    background: status ? theme.publish.main : "transparent"
+  })
 );
 
 const TimeCol = styled("div")(() => ({
   flex: "0 0 20%",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const ActionCol = styled("div")(() => ({
   flex: "0 0 10%",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const StarButtonWrapper = styled("div")<{
@@ -183,7 +183,7 @@ const StarButtonWrapper = styled("div")<{
   isStarred: boolean;
   isHovered: boolean;
 }>(({ isSelected, isStarred, isHovered }) => ({
-  opacity: isSelected || isStarred || isHovered ? 1 : 0,
+  opacity: isSelected || isStarred || isHovered ? 1 : 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -196,5 +196,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   WebkitBoxOrient: "vertical",
   WebkitLineClamp: 1,
   overflow: "hidden",
-  textOverflow: "ellipsis",
+  textOverflow: "ellipsis"
 }));

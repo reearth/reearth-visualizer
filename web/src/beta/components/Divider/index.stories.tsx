@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import Divider from ".";
 
 const meta: Meta<typeof Divider> = {
-  component: Divider,
+  component: Divider
 };
 
 export default meta;

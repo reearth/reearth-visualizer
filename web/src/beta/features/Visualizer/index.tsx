@@ -3,7 +3,7 @@ import {
   Camera,
   LatLng,
   ValueType,
-  ValueTypes,
+  ValueTypes
 } from "@reearth/beta/utils/value";
 import {
   type SketchFeature,
@@ -13,7 +13,7 @@ import {
   type Layer,
   type EngineType,
   type ViewerProperty,
-  CoreVisualizer,
+  CoreVisualizer
 } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
@@ -29,7 +29,7 @@ import {
   Alignment,
   Widget,
   WidgetAlignSystem,
-  WidgetLayoutConstraint,
+  WidgetLayoutConstraint
 } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
@@ -63,12 +63,12 @@ type VisualizerProps = {
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
-    feature: ComputedFeature | undefined,
+    feature: ComputedFeature | undefined
   ) => void;
   handleLayerDrop?: (
     layerId: string,
     propertyKey: string,
-    position: LatLng | undefined,
+    position: LatLng | undefined
   ) => void;
   handleZoomToLayer?: (layerId: string | undefined) => void;
   handleSketchTypeChange?: (type: SketchType | undefined) => void;
@@ -84,21 +84,21 @@ type VisualizerProps = {
       location?: Location | undefined;
       extended?: boolean | undefined;
       index?: number | undefined;
-    },
+    }
   ) => Promise<void>;
   handleWidgetAlignSystemUpdate?: (
     location: Location,
-    align: Alignment,
+    align: Alignment
   ) => Promise<void>;
   selectWidgetArea?: (
-    update?: SetStateAction<WidgetAreaState | undefined>,
+    update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;
   // infobox
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   handleInfoboxBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   handleInfoboxBlockMove?: (id: string, targetIndex: number) => Promise<void>;
   handleInfoboxBlockRemove?: (id?: string | undefined) => Promise<void>;
@@ -108,22 +108,22 @@ type VisualizerProps = {
   installableStoryBlocks?: InstallableStoryBlock[];
   handleStoryPageChange?: (
     id?: string,
-    disableScrollIntoView?: boolean,
+    disableScrollIntoView?: boolean
   ) => void;
   handleStoryBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   handleStoryBlockMove?: (
     id: string,
     targetId: number,
-    blockId: string,
+    blockId: string
   ) => void;
   handleStoryBlockDelete?: (
     pageId?: string | undefined,
-    blockId?: string | undefined,
+    blockId?: string | undefined
   ) => Promise<void>;
   handlePropertyValueUpdate?: (
     propertyId?: string,
@@ -131,22 +131,22 @@ type VisualizerProps = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   handlePropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   handlePropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   handlePropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -197,7 +197,7 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyValueUpdate,
   handlePropertyItemAdd,
   handlePropertyItemMove,
-  handlePropertyItemDelete,
+  handlePropertyItemDelete
 }) => {
   const {
     shouldRender,
@@ -205,12 +205,12 @@ const Visualizer: FC<VisualizerProps> = ({
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
-    handleCoreLayerSelect,
+    handleCoreLayerSelect
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
     onCoreLayerSelect,
-    currentCamera,
+    currentCamera
   });
 
   return (
@@ -296,13 +296,13 @@ const Wrapper = styled("div")<{ storyPanelPosition?: Position }>(
     background: theme.bg[0],
     width: "100%",
     height: "100%",
-    overflow: "hidden",
-  }),
+    overflow: "hidden"
+  })
 );
 
 const StoryWrapper = styled("div")(() => ({
   display: "flex",
   position: "relative",
   flexShrink: 0,
-  height: "100%",
+  height: "100%"
 }));

@@ -22,7 +22,7 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onFlyTo, onClose }) => {
   const { newCamera, panelContent, handleChange, handleSave } = useHooks({
     camera,
     onFlyTo,
-    onSave,
+    onSave
   });
 
   return (

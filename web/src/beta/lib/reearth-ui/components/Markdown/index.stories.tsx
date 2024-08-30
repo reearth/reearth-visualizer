@@ -1,6 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { styled } from "@reearth/services/theme";
 
 import { Markdown, Props } from ".";
 
@@ -24,7 +24,7 @@ A table:
 `;
 
 const meta: Meta<typeof Markdown> = {
-  component: Markdown,
+  component: Markdown
 };
 
 export default meta;
@@ -53,5 +53,5 @@ const Wrapper = styled.div`
 Default.args = {
   children: markdown,
   onClick: () => console.log("clicked"),
-  onDoubleClick: () => console.log("double clicked clicked"),
+  onDoubleClick: () => console.log("double clicked clicked")
 };

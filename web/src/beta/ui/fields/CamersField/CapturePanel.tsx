@@ -46,7 +46,7 @@ const CapturePanel: FC<PanelProps> = ({ camera, onSave, onClose }) => {
           values={[
             radiansToDegrees(camera?.heading ?? 0),
             radiansToDegrees(camera?.pitch ?? 0),
-            radiansToDegrees(camera?.roll ?? 0),
+            radiansToDegrees(camera?.roll ?? 0)
           ]}
           appearance="readonly"
           disabled
@@ -61,14 +61,14 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-start",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const GroupWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 export default CapturePanel;

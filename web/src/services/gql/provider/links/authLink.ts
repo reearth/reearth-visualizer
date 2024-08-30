@@ -1,5 +1,4 @@
 import { setContext } from "@apollo/client/link/context";
-
 import { useAuth } from "@reearth/services/auth";
 import { e2eAccessToken } from "@reearth/services/config";
 
@@ -13,8 +12,8 @@ export default () => {
     return {
       headers: {
         ...headers,
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      },
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+      }
     };
   });
 };

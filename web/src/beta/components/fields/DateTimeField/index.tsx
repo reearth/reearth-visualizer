@@ -29,7 +29,7 @@ const DateTimeField: React.FC<Props> = ({
   fieldName,
   onChange,
   onPopoverOpen,
-  setDisabledFields,
+  setDisabledFields
 }) => {
   const [open, setOpen] = useState(false);
   const t = useT();

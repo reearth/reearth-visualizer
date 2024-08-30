@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default ({
   projectId,
-  workspaceId,
+  workspaceId
 }: {
   projectId?: string;
   workspaceId?: string;
@@ -48,10 +48,10 @@ export default ({
             id: project.id,
             name: project.name,
             sceneId: project.scene?.id,
-            projectType: "beta",
+            projectType: "beta"
           }
         : undefined,
-    [project],
+    [project]
   );
 
   const handleWorkspaceChange = useCallback(
@@ -62,7 +62,7 @@ export default ({
         navigate(`/dashboard/${newWorkspace.id}`);
       }
     },
-    [workspaces, workspaceId, setCurrentWorkspace, navigate],
+    [workspaces, workspaceId, setCurrentWorkspace, navigate]
   );
 
   return {
@@ -70,6 +70,6 @@ export default ({
     currentProject,
     workspace,
     handleWorkspaceChange,
-    handleLogout,
+    handleLogout
   };
 };

@@ -7,14 +7,14 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 export type RefType = {
   postMessage: (message: any) => void;
   resize: (
     width: string | number | undefined,
-    height: string | number | undefined,
+    height: string | number | undefined
   ) => void;
 };
 
@@ -32,7 +32,7 @@ export default function useHook({
   onLoad,
   onMessage,
   onClick,
-  onAutoResized,
+  onAutoResized
 }: {
   width?: number | string;
   height?: number | string;
@@ -73,9 +73,9 @@ export default function useHook({
         const height2 =
           typeof height === "number" ? height + "px" : (height ?? undefined);
         setIFrameSize(width2 || height2 ? [width2, height2] : undefined);
-      },
+      }
     }),
-    [],
+    []
   );
 
   useEffect(() => {
@@ -181,10 +181,10 @@ export default function useHook({
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
-        ...iFrameProps?.style,
-      },
+        ...iFrameProps?.style
+      }
     }),
-    [autoResize, iFrameProps, iFrameSize, visible],
+    [autoResize, iFrameProps, iFrameSize, visible]
   );
 
   useEffect(() => {
@@ -208,13 +208,13 @@ export default function useHook({
   return {
     ref: iFrameRef,
     props,
-    onLoad: onIframeLoad,
+    onLoad: onIframeLoad
   };
 }
 
 function execScripts(
   scripts: Iterable<HTMLScriptElement>,
-  asyncScript: boolean,
+  asyncScript: boolean
 ) {
   const isAsync = (script: HTMLScriptElement) =>
     script.getAttribute("type") === "module" ||

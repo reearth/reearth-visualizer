@@ -62,7 +62,7 @@ test("it should orbit by mouse operation", async () => {
       onStartOrbit={onStartOrbitMock}
       onEndOrbit={onEndOrbitMock}
       onMoveOrbit={onMoveOrbitMock}
-    />,
+    />
   );
 
   const angle = screen.getByLabelText("aria-label-adjust-angle");

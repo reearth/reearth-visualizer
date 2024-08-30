@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import ColorField from ".";
 
 const meta: Meta<typeof ColorField> = {
-  component: ColorField,
+  component: ColorField
 };
 
 export default meta;
@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof ColorField>;
 
 export const ColorFieldInput: Story = {
-  render: () => <ColorField name="Color Field" onChange={action("onchange")} />,
+  render: () => <ColorField name="Color Field" onChange={action("onchange")} />
 };

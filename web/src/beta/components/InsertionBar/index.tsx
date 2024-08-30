@@ -18,14 +18,14 @@ const InsertionBar: React.FC<Props> = ({
   children,
   pos,
   mode = "visible",
-  onButtonClick,
+  onButtonClick
 }) => {
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
   const {
     styles,
     attributes,
-    update: updatePopper,
+    update: updatePopper
   } = usePopper(referenceElement.current, popperElement.current, {
     placement: "bottom",
     strategy: "fixed",
@@ -35,10 +35,10 @@ const InsertionBar: React.FC<Props> = ({
         enabled: false,
         options: {
           scroll: false,
-          resize: false,
-        },
-      },
-    ],
+          resize: false
+        }
+      }
+    ]
   });
 
   const handleClick = useCallback(() => {

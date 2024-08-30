@@ -6,7 +6,7 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { Button } from "../Button";
@@ -33,7 +33,7 @@ export const Selector: FC<SelectorProps> = ({
   placeholder = "Please select",
   disabled,
   maxHeight,
-  onChange,
+  onChange
 }) => {
   const theme = useTheme();
   const selectorRef = useRef<HTMLDivElement>(null);
@@ -71,7 +71,7 @@ export const Selector: FC<SelectorProps> = ({
       }
       return selectedValue === value;
     },
-    [multiple, selectedValue],
+    [multiple, selectedValue]
   );
 
   const handleChange = (value: string) => {
@@ -103,13 +103,13 @@ export const Selector: FC<SelectorProps> = ({
         onChange?.(newSelectedArr);
       }
     },
-    [selectedValue, onChange],
+    [selectedValue, onChange]
   );
 
   const selectedLabels = useMemo(() => {
     if (Array.isArray(selectedValue)) {
       return selectedValue.map(
-        (val) => optionValues.find((item) => item.value === val)?.label,
+        (val) => optionValues.find((item) => item.value === val)?.label
       );
     }
     return [optionValues.find((item) => item.value === selectedValue)?.label];
@@ -204,7 +204,7 @@ export const Selector: FC<SelectorProps> = ({
 };
 
 const SelectorWrapper = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 
 const SelectInput = styled("div")<{
@@ -231,7 +231,7 @@ const SelectInput = styled("div")<{
         }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  height: size == "small" ? "21px" : "28px",
+  height: size == "small" ? "21px" : "28px"
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
@@ -239,7 +239,7 @@ const SelectedItems = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
-  flexWrap: "wrap",
+  flexWrap: "wrap"
 }));
 
 const SelectedItem = styled("div")(({ theme }) => ({
@@ -248,7 +248,7 @@ const SelectedItem = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   backgroundColor: `${theme.bg[2]}`,
-  borderRadius: `${theme.radius.smallest}px`,
+  borderRadius: `${theme.radius.smallest}px`
 }));
 
 const DropDownWrapper = styled("div")<{
@@ -268,19 +268,19 @@ const DropDownWrapper = styled("div")<{
   maxHeight: maxHeight ? `${maxHeight}px` : "",
   overflowY: maxHeight ? "auto" : "hidden",
   ["::-webkit-scrollbar"]: {
-    width: "8px",
+    width: "8px"
   },
   ["::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px",
+    borderRadius: "10px"
   },
   ["::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   ["::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter,
-  },
+    background: theme.relative.lighter
+  }
 }));
 
 const DropDownItem = styled("div")<{
@@ -297,6 +297,6 @@ const DropDownItem = styled("div")<{
   borderRadius: `${theme.radius.smallest}px`,
   cursor: "pointer",
   ["&:hover"]: {
-    backgroundColor: `${theme.bg[2]}`,
-  },
+    backgroundColor: `${theme.bg[2]}`
+  }
 }));

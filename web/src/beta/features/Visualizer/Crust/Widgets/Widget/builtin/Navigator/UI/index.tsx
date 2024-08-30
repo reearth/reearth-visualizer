@@ -48,7 +48,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
   onRestoreRotate,
   onClickHelp,
   onZoomIn,
-  onZoomOut,
+  onZoomOut
 }) {
   const t = useT();
 
@@ -58,7 +58,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
     compassFocusDegree,
     isMovingAngle,
     handleOnMouseDownAngle,
-    handleOnMouseDownCompass,
+    handleOnMouseDownCompass
   } = useNavigator({ degree, onRotate, onStartOrbit, onEndOrbit, onMoveOrbit });
 
   return (
@@ -79,7 +79,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
           {isMovingAngle && (
             <CompassFocusIcon
               style={{
-                transform: `rotate(${compassFocusDegree}deg)`,
+                transform: `rotate(${compassFocusDegree}deg)`
               }}
               data-testid="compassFocus"
             >

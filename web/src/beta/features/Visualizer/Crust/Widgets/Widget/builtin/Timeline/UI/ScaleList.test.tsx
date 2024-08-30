@@ -6,7 +6,7 @@ import {
   EPOCH_SEC,
   GAP_HORIZONTAL,
   HOURS_SECS,
-  SCALE_INTERVAL,
+  SCALE_INTERVAL
 } from "./constants";
 import ScaleList from "./ScaleList";
 
@@ -27,7 +27,7 @@ test("it should render memory and date label", () => {
       scaleInterval={SCALE_INTERVAL}
       strongScaleMinutes={12}
       gapHorizontal={GAP_HORIZONTAL}
-    />,
+    />
   );
 
   const children = Array.from(container.querySelector("div")?.children || []);
@@ -45,7 +45,7 @@ test("it should render memory and date label", () => {
     "Jul 04 2022 04:00:00.00",
     "Jul 04 2022 06:00:00.00",
     "Jul 04 2022 08:00:00.00",
-    "Jul 04 2022 10:00:00.00",
+    "Jul 04 2022 10:00:00.00"
   ];
 
   expectedStrongScaleLabelList.forEach((label) => {
@@ -68,7 +68,7 @@ test("it should render memory and date label when scaleInterval is changed", () 
       scaleInterval={scaleInterval}
       strongScaleMinutes={12}
       gapHorizontal={GAP_HORIZONTAL}
-    />,
+    />
   );
 
   const children = Array.from(container.querySelector("div")?.children || []);
@@ -82,7 +82,7 @@ test("it should render memory and date label when scaleInterval is changed", () 
     "Jul 04 2022 00:00:00.00",
     "Jul 04 2022 03:00:00.00",
     "Jul 04 2022 06:00:00.00",
-    "Jul 04 2022 09:00:00.00",
+    "Jul 04 2022 09:00:00.00"
   ];
 
   expectedStrongScaleLabelList.forEach((label) => {
@@ -106,7 +106,7 @@ test("it should render memory and date label when strongScaleMinutes is changed"
       scaleInterval={scaleInterval}
       strongScaleMinutes={strongScaleMinutes}
       gapHorizontal={GAP_HORIZONTAL}
-    />,
+    />
   );
 
   const children = Array.from(container.querySelector("div")?.children || []);
@@ -134,7 +134,7 @@ test("it should render memory and date label when strongScaleMinutes is changed"
     "Jul 04 2022 06:00:00.00",
     "Jul 04 2022 07:00:00.00",
     "Jul 04 2022 08:00:00.00",
-    "Jul 04 2022 09:00:00.00",
+    "Jul 04 2022 09:00:00.00"
   ];
 
   expectedStrongScaleLabelList.forEach((label) => {

@@ -8,31 +8,31 @@ import { events } from "../utils/events";
 export default ({
   mapRef,
   onSketchPluginFeatureCreate,
-  onSketchTypeChange,
+  onSketchTypeChange
 }: Pick<
   Props,
   "mapRef" | "onSketchPluginFeatureCreate" | "onSketchTypeChange"
 >) => {
   const getSketchTool = useCallback(
     () => mapRef?.current?.sketch?.getType(),
-    [mapRef],
+    [mapRef]
   );
 
   const setSketchTool = useCallback(
     (type: SketchType | undefined) =>
       mapRef?.current?.sketch?.setType(type, "plugin"),
-    [mapRef],
+    [mapRef]
   );
 
   const getSketchOptions = useCallback(
     () => mapRef?.current?.sketch?.getOptions(),
-    [mapRef],
+    [mapRef]
   );
 
   const overrideSketchOptions = useCallback(
     (options: SketchOptions) =>
       mapRef?.current?.sketch?.overrideOptions(options),
-    [mapRef],
+    [mapRef]
   );
 
   const [sketchEvents, emit] = useMemo(() => events<SketchEventType>(), []);
@@ -64,23 +64,23 @@ export default ({
     <T extends keyof SketchEventType>(
       type: T,
       callback: (...args: SketchEventType[T]) => void,
-      options?: { once?: boolean },
+      options?: { once?: boolean }
     ) => {
       return options?.once
         ? sketchEvents.once(type, callback)
         : sketchEvents.on(type, callback);
     },
-    [sketchEvents],
+    [sketchEvents]
   );
 
   const sketchEventsOff = useCallback(
     <T extends keyof SketchEventType>(
       type: T,
-      callback: (...args: SketchEventType[T]) => void,
+      callback: (...args: SketchEventType[T]) => void
     ) => {
       return sketchEvents.off(type, callback);
     },
-    [sketchEvents],
+    [sketchEvents]
   );
 
   return {
@@ -90,6 +90,6 @@ export default ({
     overrideSketchOptions,
     sketchEventsOn,
     sketchEventsOff,
-    sketchEvents,
+    sketchEvents
   };
 };

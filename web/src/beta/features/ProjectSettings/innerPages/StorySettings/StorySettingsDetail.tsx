@@ -8,7 +8,7 @@ import {
   SettingsFields,
   ButtonWrapper,
   SettingsRow,
-  SettingsRowItem,
+  SettingsRowItem
 } from "../common";
 
 import { StorySettingsType } from ".";
@@ -20,7 +20,7 @@ type Props = {
 
 const StorySettingsDetail: React.FC<Props> = ({
   settingsItem,
-  onUpdateStory,
+  onUpdateStory
 }) => {
   const t = useT();
 
@@ -28,24 +28,24 @@ const StorySettingsDetail: React.FC<Props> = ({
     Position | undefined
   >(settingsItem.panelPosition);
   const [backgroundColor, setBackgroundColor] = useState<string | undefined>(
-    settingsItem?.bgColor,
+    settingsItem?.bgColor
   );
   const handleSubmit = useCallback(() => {
     onUpdateStory({
       panelPosition: localPanelPosition,
-      bgColor: backgroundColor,
+      bgColor: backgroundColor
     });
   }, [backgroundColor, localPanelPosition, onUpdateStory]);
 
   const options = [
     {
       label: t("Left"),
-      value: Position.Left,
+      value: Position.Left
     },
     {
       label: t("Right"),
-      value: Position.Right,
-    },
+      value: Position.Right
+    }
   ];
 
   return (

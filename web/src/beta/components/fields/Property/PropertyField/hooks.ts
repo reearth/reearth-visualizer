@@ -7,7 +7,7 @@ export default (propertyId: string, schemaGroup: string) => {
     useUpdatePropertyValue,
     useAddPropertyItem,
     useRemovePropertyItem,
-    useMovePropertyItem,
+    useMovePropertyItem
   } = usePropertyFetcher();
 
   const handlePropertyValueUpdate = useCallback(
@@ -20,11 +20,11 @@ export default (propertyId: string, schemaGroup: string) => {
           fieldId,
           "en",
           v,
-          vt,
+          vt
         );
       };
     },
-    [propertyId, schemaGroup, useUpdatePropertyValue],
+    [propertyId, schemaGroup, useUpdatePropertyValue]
   );
 
   const handleAddPropertyItem = useCallback(() => {
@@ -35,20 +35,20 @@ export default (propertyId: string, schemaGroup: string) => {
     (itemId: string) => {
       return useRemovePropertyItem(propertyId, schemaGroup, itemId);
     },
-    [propertyId, schemaGroup, useRemovePropertyItem],
+    [propertyId, schemaGroup, useRemovePropertyItem]
   );
 
   const handleMovePropertyItem = useCallback(
     ({ id }: { id: string }, index: number) => {
       return useMovePropertyItem(propertyId, schemaGroup, id, index);
     },
-    [propertyId, schemaGroup, useMovePropertyItem],
+    [propertyId, schemaGroup, useMovePropertyItem]
   );
 
   return {
     handlePropertyValueUpdate,
     handleAddPropertyItem,
     handleRemovePropertyItem,
-    handleMovePropertyItem,
+    handleMovePropertyItem
   };
 };

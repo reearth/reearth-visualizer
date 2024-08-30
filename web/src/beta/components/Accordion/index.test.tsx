@@ -7,13 +7,13 @@ const sampleContents: AccordionItemType[] = [
   {
     id: "1",
     heading: <div>This is heading1</div>,
-    content: <div>This is content1</div>,
+    content: <div>This is content1</div>
   },
   {
     id: "2",
     heading: <div>This is heading2</div>,
-    content: <div>This is content2</div>,
-  },
+    content: <div>This is content2</div>
+  }
 ];
 
 test("should be rendered", () => {
@@ -36,10 +36,10 @@ test("should display items content", () => {
 test("should open when header button is clicked", () => {
   render(<Accordion items={sampleContents} />);
   expect(
-    screen.getAllByTestId("atoms-accordion-item-content")[0],
+    screen.getAllByTestId("atoms-accordion-item-content")[0]
   ).not.toBeVisible();
   fireEvent.click(screen.getAllByTestId("atoms-accordion-item-header")[0]);
   expect(
-    screen.getAllByTestId("atoms-accordion-item-content")[0],
+    screen.getAllByTestId("atoms-accordion-item-content")[0]
   ).toBeVisible();
 });

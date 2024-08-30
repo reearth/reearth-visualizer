@@ -2,7 +2,7 @@ import { cloneDeep, mergeWith, omit } from "lodash-es";
 import { useCallback, useMemo, useState } from "react";
 
 export function useOverriddenProperty<T extends object>(
-  property: T | undefined,
+  property: T | undefined
 ): [T, (pluginId: string, property: T) => void] {
   const [overriddenProperties, setOverrideProperty] = useState<
     Record<string, any>
@@ -15,14 +15,14 @@ export function useOverriddenProperty<T extends object>(
 
   const overrideProperty = useCallback((pluginId: string, property: any) => {
     setOverrideProperty((p) =>
-      property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId),
+      property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId)
     );
   }, []);
 
   const mergedProperty = useMemo(() => {
     return [
       overriddenPropertyCommon,
-      ...Object.values(overriddenProperty),
+      ...Object.values(overriddenProperty)
     ].reduce((p, v) => mergeProperty(p, v), property);
   }, [property, overriddenPropertyCommon, overriddenProperty]);
 
@@ -40,7 +40,7 @@ export function mergeProperty(a: any, b: any) {
       _k: string | number | symbol,
       _obj: any,
       _src: any,
-      stack: { size: number },
-    ) => (stack.size > 0 || Array.isArray(v) ? (v ?? s) : undefined),
+      stack: { size: number }
+    ) => (stack.size > 0 || Array.isArray(v) ? (v ?? s) : undefined)
   );
 }

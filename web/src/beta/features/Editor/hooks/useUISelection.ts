@@ -6,7 +6,7 @@ import { LayerSelectProps } from "./useLayers";
 export const useUISelection = ({
   handleLayerSelect,
   handleLayerStyleSelect,
-  handleSceneSettingSelect,
+  handleSceneSettingSelect
 }: {
   handleLayerSelect: (props: LayerSelectProps) => void;
   handleLayerStyleSelect: (layerStyleId?: string) => void;
@@ -18,7 +18,7 @@ export const useUISelection = ({
       handleSceneSettingSelect(undefined);
       handleLayerStyleSelect(layerStyleId);
     },
-    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect],
+    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect]
   );
 
   const handleLayerSelected = useCallback(
@@ -27,7 +27,7 @@ export const useUISelection = ({
       handleSceneSettingSelect(undefined);
       handleLayerSelect({ layerId });
     },
-    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect],
+    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect]
   );
 
   const handleSceneSettingSelected = useCallback(
@@ -36,12 +36,12 @@ export const useUISelection = ({
       handleLayerSelect(undefined);
       handleSceneSettingSelect(collection);
     },
-    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect],
+    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect]
   );
 
   return {
     handleLayerStyleSelected,
     handleLayerSelected,
-    handleSceneSettingSelected,
+    handleSceneSettingSelected
   };
 };

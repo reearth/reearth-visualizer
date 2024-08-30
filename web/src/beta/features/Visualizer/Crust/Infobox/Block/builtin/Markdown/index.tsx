@@ -18,7 +18,7 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
 }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
-    [block?.property?.default?.src],
+    [block?.property?.default?.src]
   );
 
   const evaluatedSrc = useExpressionEval(src);
@@ -50,6 +50,6 @@ const Wrapper = styled("div")(() => ({
   position: "relative",
   ["*"]: {
     maxWidth: "100%",
-    height: "auto",
-  },
+    height: "auto"
+  }
 }));

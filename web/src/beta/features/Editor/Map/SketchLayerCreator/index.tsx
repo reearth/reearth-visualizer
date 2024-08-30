@@ -3,7 +3,7 @@ import {
   Modal,
   ModalPanel,
   TabItem,
-  Tabs,
+  Tabs
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -16,7 +16,7 @@ import {
   CustomPropertyProp,
   PropertyListProp,
   SketchLayerProps,
-  SketchLayerDataType,
+  SketchLayerDataType
 } from "./type";
 
 export const dataTypes: SketchLayerDataType[] = [
@@ -26,14 +26,14 @@ export const dataTypes: SketchLayerDataType[] = [
   "Asset",
   "Float",
   "Int",
-  "Boolean",
+  "Boolean"
 ];
 
 const SketchLayerCreator: FC<SketchLayerProps> = ({
   sceneId,
   layerStyles,
   onClose,
-  onSubmit,
+  onSubmit
 }) => {
   const t = useT();
   const [customProperties, setCustomProperties] = useState<
@@ -69,13 +69,13 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
       schema: schemaJSON,
       config: {
         properties: {
-          name: layerName,
+          name: layerName
         },
         layerStyleId: layerStyle,
         data: {
-          type: "geojson",
-        },
-      },
+          type: "geojson"
+        }
+      }
     });
     onClose?.();
   };
@@ -92,7 +92,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
           onLayerStyleChange={handleLayerStyleChange}
           onLayerNameChange={handleLayerNameChange}
         />
-      ),
+      )
     },
     {
       id: "customProperties",
@@ -104,8 +104,8 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
           setCustomProperties={setCustomProperties}
           setPropertiesList={setPropertiesList}
         />
-      ),
-    },
+      )
+    }
   ];
 
   return (
@@ -137,7 +137,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   height: "440px",
   padding: theme.spacing.normal,
-  background: theme.bg[0],
+  background: theme.bg[0]
 }));
 
 export default SketchLayerCreator;

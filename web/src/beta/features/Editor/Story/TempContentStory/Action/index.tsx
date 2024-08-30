@@ -18,7 +18,7 @@ const StorySidePanelAction: FC<Props> = ({
   iconSize,
   iconColor,
   title,
-  onClick,
+  onClick
 }) => {
   return (
     <Wrapper onClick={onClick} type="button">

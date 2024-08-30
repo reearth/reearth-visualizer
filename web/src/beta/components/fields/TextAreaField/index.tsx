@@ -7,7 +7,7 @@ import {
   useRef,
   useMemo,
   useState,
-  useEffect,
+  useEffect
 } from "react";
 
 import Property from "..";
@@ -31,7 +31,7 @@ const TextAreaField: React.FC<Props> = ({
   placeholder,
   minHeight = 0,
   disabled,
-  debounceBy = 1000,
+  debounceBy = 1000
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const t = useT();
@@ -40,7 +40,7 @@ const TextAreaField: React.FC<Props> = ({
 
   const debouncedHandleTextUpdate = useMemo(
     () => debounce(onChange, debounceBy),
-    [onChange, debounceBy],
+    [onChange, debounceBy]
   );
 
   const handleChange = useCallback(
@@ -48,7 +48,7 @@ const TextAreaField: React.FC<Props> = ({
       setText(e.currentTarget.value);
       debouncedHandleTextUpdate(e.currentTarget.value);
     },
-    [debouncedHandleTextUpdate],
+    [debouncedHandleTextUpdate]
   );
 
   useLayoutEffect(() => {

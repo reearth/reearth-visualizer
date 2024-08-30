@@ -6,54 +6,54 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
 const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const ProjectSettings = lazy(
-  () => import("@reearth/beta/pages/ProjectSettingsPage"),
+  () => import("@reearth/beta/pages/ProjectSettingsPage")
 );
 const PluginPlaygroundPage = lazy(
-  () => import("@reearth/beta/pages/PluginPlaygroundPage"),
+  () => import("@reearth/beta/pages/PluginPlaygroundPage")
 );
 const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
 const GraphQLPlayground = lazy(
-  () => import("@reearth/beta/pages/GraphQLPlayground"),
+  () => import("@reearth/beta/pages/GraphQLPlayground")
 );
 
 export const AppRoutes = () => {
   const router = createBrowserRouter([
     {
       path: "dashboard/:workspaceId/",
-      element: <Dashboard />,
+      element: <Dashboard />
     },
     {
       path: "dashboard/:workspaceId/:tab",
-      element: <Dashboard />,
+      element: <Dashboard />
     },
     {
       path: "scene/:sceneId/:tab",
-      element: <Editor />,
+      element: <Editor />
     },
     {
       path: "settings/project/:projectId/:tab?/:subId?",
-      element: <ProjectSettings />,
+      element: <ProjectSettings />
     },
     {
       path: "graphql",
-      element: <GraphQLPlayground />,
+      element: <GraphQLPlayground />
     },
     {
       index: true,
-      element: <RootPage />,
+      element: <RootPage />
     },
     {
       path: "auth/*",
-      element: <RootPage />,
+      element: <RootPage />
     },
     {
       path: "plugin-playground",
-      element: <PluginPlaygroundPage />,
+      element: <PluginPlaygroundPage />
     },
     {
       path: "*",
-      element: <NotFound />,
-    },
+      element: <NotFound />
+    }
   ]);
 
   return <StyledRouter router={router} />;

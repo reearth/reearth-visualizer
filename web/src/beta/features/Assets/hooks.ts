@@ -2,7 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import {
   autoFillPage,
-  onScrollToBottom,
+  onScrollToBottom
 } from "@reearth/beta/utils/infinite-scroll";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe } from "@reearth/services/gql";
@@ -26,7 +26,7 @@ const assetsPerPage = 20;
 
 function pagination(
   sort?: { type?: Maybe<SortType>; reverse?: boolean },
-  endCursor?: string | null,
+  endCursor?: string | null
 ) {
   const reverseOrder =
     !sort?.type || sort?.type === "date" ? !sort?.reverse : !!sort?.reverse;
@@ -35,12 +35,12 @@ function pagination(
     after: !reverseOrder ? endCursor : undefined,
     before: reverseOrder ? endCursor : undefined,
     first: !reverseOrder ? assetsPerPage : undefined,
-    last: reverseOrder ? assetsPerPage : undefined,
+    last: reverseOrder ? assetsPerPage : undefined
   };
 }
 
 export default ({
-  workspaceId,
+  workspaceId
 }: {
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string) => void;
@@ -60,7 +60,7 @@ export default ({
       teamId: workspaceId ?? "",
       pagination: pagination(sort),
       // sort: toGQLEnum(sort?.type),
-      keyword: searchTerm,
+      keyword: searchTerm
     });
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default ({
   const t = useT();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState<string>(
-    searchTerm ?? "",
+    searchTerm ?? ""
   );
   const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
   const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
@@ -85,9 +85,9 @@ export default ({
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
       { value: "size", label: t("Size Small to Large") },
-      { value: "size-reverse", label: t("Size Large to Small") },
+      { value: "size-reverse", label: t("Size Large to Small") }
     ],
-    [t],
+    [t]
   );
 
   const handleGetMoreAssets = useCallback(async () => {
@@ -95,8 +95,8 @@ export default ({
       isGettingMore.current = true;
       await fetchMore({
         variables: {
-          pagination: pagination(sort, endCursor),
-        },
+          pagination: pagination(sort, endCursor)
+        }
       });
       isGettingMore.current = false;
     }
@@ -107,10 +107,10 @@ export default ({
       if (!type && reverse === undefined) return;
       setSort({
         type: (type as SortType) ?? sort?.type,
-        reverse: !!reverse,
+        reverse: !!reverse
       });
     },
-    [sort],
+    [sort]
   );
 
   const handleSearchTerm = useCallback((term?: string) => {
@@ -135,7 +135,7 @@ export default ({
     (value: string) => {
       setLocalSearchTerm(value);
     },
-    [setLocalSearchTerm],
+    [setLocalSearchTerm]
   );
   const handleSearch = useCallback(() => {
     if (!localSearchTerm || localSearchTerm.length < 1) {
@@ -159,7 +159,7 @@ export default ({
       if (!asset) return;
       selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
     },
-    [selectedAssets, selectAsset],
+    [selectedAssets, selectAsset]
   );
 
   return {
@@ -184,6 +184,6 @@ export default ({
     handleRemove,
     handleReverse,
     handleSearchInputChange,
-    handleSearch,
+    handleSearch
   };
 };

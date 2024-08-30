@@ -36,11 +36,11 @@ const theme: EditorThemeClasses = {
     symbol: "DefaultLexicalEditorTheme__tokenProperty",
     tag: "DefaultLexicalEditorTheme__tokenProperty",
     url: "DefaultLexicalEditorTheme__tokenOperator",
-    variable: "DefaultLexicalEditorTheme__tokenVariable",
+    variable: "DefaultLexicalEditorTheme__tokenVariable"
   },
   embedBlock: {
     base: "DefaultLexicalEditorTheme__embedBlock",
-    focus: "DefaultLexicalEditorTheme__embedBlockFocus",
+    focus: "DefaultLexicalEditorTheme__embedBlockFocus"
   },
   hashtag: "DefaultLexicalEditorTheme__hashtag",
   heading: {
@@ -49,7 +49,7 @@ const theme: EditorThemeClasses = {
     h3: "DefaultLexicalEditorTheme__h3",
     h4: "DefaultLexicalEditorTheme__h4",
     h5: "DefaultLexicalEditorTheme__h5",
-    h6: "DefaultLexicalEditorTheme__h6",
+    h6: "DefaultLexicalEditorTheme__h6"
   },
   image: "editor-image",
   indent: "DefaultLexicalEditorTheme__indent",
@@ -62,16 +62,16 @@ const theme: EditorThemeClasses = {
     listitemChecked: "DefaultLexicalEditorTheme__listItemChecked",
     listitemUnchecked: "DefaultLexicalEditorTheme__listItemUnchecked",
     nested: {
-      listitem: "DefaultLexicalEditorTheme__nestedListItem",
+      listitem: "DefaultLexicalEditorTheme__nestedListItem"
     },
     olDepth: [
       "DefaultLexicalEditorTheme__ol1",
       "DefaultLexicalEditorTheme__ol2",
       "DefaultLexicalEditorTheme__ol3",
       "DefaultLexicalEditorTheme__ol4",
-      "DefaultLexicalEditorTheme__ol5",
+      "DefaultLexicalEditorTheme__ol5"
     ],
-    ul: "DefaultLexicalEditorTheme__ul",
+    ul: "DefaultLexicalEditorTheme__ul"
   },
   ltr: "DefaultLexicalEditorTheme__ltr",
   mark: "DefaultLexicalEditorTheme__mark",
@@ -106,8 +106,8 @@ const theme: EditorThemeClasses = {
     superscript: "DefaultLexicalEditorTheme__textSuperscript",
     underline: "DefaultLexicalEditorTheme__textUnderline",
     underlineStrikethrough:
-      "DefaultLexicalEditorTheme__textUnderlineStrikethrough",
-  },
+      "DefaultLexicalEditorTheme__textUnderlineStrikethrough"
+  }
 };
 
 export default theme;

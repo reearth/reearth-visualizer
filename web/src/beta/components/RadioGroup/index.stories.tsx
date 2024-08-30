@@ -7,7 +7,7 @@ import RadioGroup from "./index";
 type Props = React.ComponentProps<typeof RadioGroup>;
 
 const meta: Meta<typeof RadioGroup> = {
-  component: RadioGroup,
+  component: RadioGroup
 };
 
 export default meta;
@@ -16,7 +16,7 @@ type Story = StoryObj<typeof RadioGroup>;
 
 const options = [
   { label: "option1", keyValue: "Option 1" },
-  { label: "option2", keyValue: "Option 2" },
+  { label: "option2", keyValue: "Option 2" }
 ];
 
 export const VerticalRadioGroup: Story = (args: Props) => {
@@ -24,7 +24,7 @@ export const VerticalRadioGroup: Story = (args: Props) => {
 
   const handleChange = useCallback(
     (value: string) => updateArgs({ value }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -36,7 +36,7 @@ export const VerticalRadioGroup: Story = (args: Props) => {
 VerticalRadioGroup.args = {
   options: options,
   layout: "vertical",
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };
 
 export const HorizontalRadioGroup: Story = (args: Props) => {
@@ -44,7 +44,7 @@ export const HorizontalRadioGroup: Story = (args: Props) => {
 
   const handleChange = useCallback(
     (value: string) => updateArgs({ value }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -56,5 +56,5 @@ export const HorizontalRadioGroup: Story = (args: Props) => {
 HorizontalRadioGroup.args = {
   options: options,
   layout: "horizontal",
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };

@@ -24,7 +24,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
   open,
   sceneId,
   onClose,
-  onSelect,
+  onSelect
 }) => {
   const t = useT();
   const [, setNotification] = useNotification();
@@ -39,7 +39,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
     handleSelectLayerStyle,
     handleSearch,
     handleSearchInputChange,
-    onScrollToBottom,
+    onScrollToBottom
   } = useHooks({ sceneId });
 
   const handleSelectButtonClick = useCallback(() => {
@@ -49,7 +49,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
     } else {
       setNotification({
         type: "warning",
-        text: t("Please select an layer style before clicking Select."),
+        text: t("Please select an layer style before clicking Select.")
       });
     }
   }, [selectedLayerStyles, onSelect, onClose, setNotification, t]);
@@ -92,7 +92,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
               {searchTerm
                 ? t("No layerStyle match your search.")
                 : t(
-                    "You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.",
+                    "You haven't added any layerStyle yet. Click the add button in the bottom panel to get started."
                   )}
             </TemplateText>
           </Template>

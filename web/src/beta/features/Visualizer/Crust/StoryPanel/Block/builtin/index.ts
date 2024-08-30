@@ -11,7 +11,7 @@ import {
   VIDEO_BUILTIN_STORY_BLOCK_ID,
   LAYER_BUILTIN_STORY_BLOCK_ID,
   NEXT_PAGE_BUILTIN_STORY_BLOCK_ID,
-  LINK_BUILTIN_STORY_BLOCK_ID,
+  LINK_BUILTIN_STORY_BLOCK_ID
 } from "../../constants";
 
 import CameraBlock from "./Camera";
@@ -52,13 +52,13 @@ const reearthBuiltin: BuiltinStoryBlocks<Component> = {
   [CAMERA_BUILTIN_STORY_BLOCK_ID]: CameraBlock,
   [LAYER_BUILTIN_STORY_BLOCK_ID]: LayerBlock,
   [NEXT_PAGE_BUILTIN_STORY_BLOCK_ID]: NextPageBlock,
-  [LINK_BUILTIN_STORY_BLOCK_ID]: LinkBlock,
+  [LINK_BUILTIN_STORY_BLOCK_ID]: LinkBlock
 };
 
 const builtin = merge({}, reearthBuiltin);
 
 export const isBuiltinStoryBlock = (
-  id: string,
+  id: string
 ): id is keyof BuiltinStoryBlocks => {
   return !!builtin[id as keyof BuiltinStoryBlocks];
 };

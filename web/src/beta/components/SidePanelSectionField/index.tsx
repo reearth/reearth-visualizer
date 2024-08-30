@@ -19,7 +19,7 @@ const SidePanelSectionField: React.FC<{
   gap,
   children,
   storageKey,
-  border,
+  border
 }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState<boolean>(() => {

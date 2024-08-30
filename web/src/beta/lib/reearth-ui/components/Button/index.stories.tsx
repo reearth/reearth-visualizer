@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Button, ButtonProps } from ".";
 
 const meta: Meta<ButtonProps> = {
-  component: Button,
+  component: Button
 };
 
 export default meta;
@@ -48,7 +48,7 @@ export const Default: Story = {
         onClick={action("secondary-icon-small-click")}
       />
     </div>
-  ),
+  )
 };
 
 export const Primary: Story = {
@@ -104,7 +104,7 @@ export const Primary: Story = {
         onClick={action("primary-icon-small-click")}
       />
     </div>
-  ),
+  )
 };
 
 export const Dangerous: Story = {
@@ -160,7 +160,7 @@ export const Dangerous: Story = {
         onClick={action("dangerous-icon-small-click")}
       />
     </div>
-  ),
+  )
 };
 
 export const Simple: Story = {
@@ -216,5 +216,5 @@ export const Simple: Story = {
         onClick={action("simple-icon-small-click")}
       />
     </div>
-  ),
+  )
 };

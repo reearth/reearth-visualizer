@@ -20,7 +20,7 @@ const Avatar: React.FC<Props> = ({
   background,
   avatar,
   innerText,
-  borderRadius = "50%",
+  borderRadius = "50%"
 }) => {
   const theme = useTheme();
 

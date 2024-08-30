@@ -6,7 +6,7 @@ import {
   useRef,
   useImperativeHandle,
   useEffect,
-  RefObject,
+  RefObject
 } from "react";
 
 import type { PopupPosition } from "../../pluginAPI/types";
@@ -45,14 +45,14 @@ const PopupContainer: ForwardRefRenderFunction<
         if (!shownPluginPopupInfo?.ref?.current || !innerRef.current) return;
         computePosition(shownPluginPopupInfo?.ref?.current, innerRef.current, {
           placement: shownPluginPopupInfo.position ?? "bottom-start",
-          middleware: [offset(shownPluginPopupInfo.offset ?? 0)],
+          middleware: [offset(shownPluginPopupInfo.offset ?? 0)]
         }).then(({ x, y }) => {
           if (innerRef.current) {
             innerRef.current.style.left = `${x}px`;
             innerRef.current.style.top = `${y}px`;
           }
         });
-      },
+      }
     );
   }, [shownPluginPopupInfo]);
 
@@ -66,7 +66,7 @@ const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
     ? theme.zIndexes.visualizer.pluginPopup
     : theme.zIndexes.hidden,
   transition: "opacity 0.25s",
-  opacity: visible ? "1" : "0",
+  opacity: visible ? "1" : "0"
 }));
 
 export default forwardRef(PopupContainer);

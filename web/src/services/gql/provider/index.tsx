@@ -2,7 +2,7 @@ import {
   ApolloProvider,
   ApolloClient,
   ApolloLink,
-  InMemoryCache,
+  InMemoryCache
 } from "@apollo/client";
 import type { ReactNode } from "react";
 
@@ -22,9 +22,9 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       LayerGroup: {
         fields: {
           layers: {
-            merge: false,
-          },
-        },
+            merge: false
+          }
+        }
       },
       Query: {
         fields: {
@@ -34,9 +34,9 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
               "keyword",
               "sort",
               "pagination",
-              ["first", "last"],
+              ["first", "last"]
             ],
-            merge: paginationMerge,
+            merge: paginationMerge
           },
           projects: {
             keyArgs: [
@@ -44,17 +44,17 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
               "keyword",
               "sort",
               "pagination",
-              ["first", "last"],
+              ["first", "last"]
             ],
-            merge: paginationMerge,
+            merge: paginationMerge
           },
           datasetSchemas: {
             keyArgs: ["sceneId", "first", "after"],
-            merge: paginationMerge,
-          },
-        },
-      },
-    },
+            merge: paginationMerge
+          }
+        }
+      }
+    }
   });
 
   const client = new ApolloClient({
@@ -63,10 +63,10 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       errorLink(),
       sentryLink(endpoint),
       authLink(),
-      uploadLink(endpoint),
+      uploadLink(endpoint)
     ]),
     cache,
-    connectToDevTools: import.meta.env.DEV,
+    connectToDevTools: import.meta.env.DEV
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

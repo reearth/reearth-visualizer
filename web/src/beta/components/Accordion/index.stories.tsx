@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import Accordion from ".";
 
 const meta: Meta<typeof Accordion> = {
-  component: Accordion,
+  component: Accordion
 };
 
 export default meta;
@@ -27,14 +27,14 @@ export const Default: Story = {
         {
           id: "hoge",
           heading: SampleHeading,
-          content: SampleContent,
+          content: SampleContent
         },
         {
           id: "hogefuga",
           heading: SampleHeading,
-          content: SampleContent,
-        },
+          content: SampleContent
+        }
       ]}
     />
-  ),
+  )
 };

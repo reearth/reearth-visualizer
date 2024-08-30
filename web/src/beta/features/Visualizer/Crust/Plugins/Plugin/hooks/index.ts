@@ -1,7 +1,7 @@
 import { type Layer } from "@reearth/core";
 import {
   useDevPluginExtensionRenderKey,
-  useDevPluginExtensions,
+  useDevPluginExtensions
 } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
@@ -31,7 +31,7 @@ export default function ({
   shownPluginPopupInfo,
   onPluginPopupShow,
   onRender,
-  onResize,
+  onResize
 }: {
   mapRef?: RefObject<MapRef>;
   pluginId?: string;
@@ -55,12 +55,12 @@ export default function ({
           height?: string | number;
           extended?: boolean;
         }
-      | undefined,
+      | undefined
   ) => void;
   onResize?: (
     width: string | number | undefined,
     height: string | number | undefined,
-    extended: boolean | undefined,
+    extended: boolean | undefined
   ) => void;
 }) {
   const externalRef = useRef<HTMLIFrameElement>(null);
@@ -77,7 +77,7 @@ export default function ({
         onVisibilityChange?.(instanceId, v);
       }
     },
-    [onVisibilityChange, widget?.id, block?.id],
+    [onVisibilityChange, widget?.id, block?.id]
   );
 
   const {
@@ -86,7 +86,7 @@ export default function ({
     onPreInit,
     onDispose,
     onModalClose,
-    onPopupClose,
+    onPopupClose
   } =
     usePluginAPI({
       extensionId,
@@ -104,7 +104,7 @@ export default function ({
       setUIVisibility: handleSetVisibility,
       onRender,
       onResize,
-      mapRef,
+      mapRef
     }) ?? [];
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function ({
     extensionId,
     widget?.id,
     block?.id,
-    onModalClose,
+    onModalClose
   ]);
 
   useEffect(() => {
@@ -140,14 +140,14 @@ export default function ({
     extensionId,
     widget?.id,
     block?.id,
-    onPopupClose,
+    onPopupClose
   ]);
 
   const onError = useCallback(
     (err: any) => {
       console.error(`plugin error from ${pluginId}/${extensionId}: `, err);
     },
-    [pluginId, extensionId],
+    [pluginId, extensionId]
   );
 
   const [devPluginExtensions] = useDevPluginExtensions();
@@ -163,13 +163,13 @@ export default function ({
         ? (devPluginExtensionSrc ??
           `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`)
         : undefined,
-    [devPluginExtensionSrc, pluginBaseUrl, pluginId, extensionId],
+    [devPluginExtensionSrc, pluginBaseUrl, pluginId, extensionId]
   );
   const [devPluginExtensionRenderKey] = useDevPluginExtensionRenderKey();
 
   const renderKey = useMemo(
     () => (devPluginExtensionSrc ? devPluginExtensionRenderKey : undefined),
-    [devPluginExtensionRenderKey, devPluginExtensionSrc],
+    [devPluginExtensionRenderKey, devPluginExtensionSrc]
   );
 
   return {
@@ -184,6 +184,6 @@ export default function ({
     exposed: staticExposed,
     onError,
     onPreInit,
-    onDispose,
+    onDispose
   };
 }

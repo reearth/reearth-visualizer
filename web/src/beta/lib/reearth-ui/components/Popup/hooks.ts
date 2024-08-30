@@ -8,7 +8,7 @@ import {
   useDismiss,
   useInteractions,
   useHover,
-  safePolygon,
+  safePolygon
 } from "@floating-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -20,7 +20,7 @@ const usePopover = ({
   offset: offsetProps,
   shift: shiftProps,
   onOpenChange,
-  triggerOnHover = false,
+  triggerOnHover = false
 }: Omit<PopupProps, "children" | "trigger">) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
@@ -36,7 +36,7 @@ const usePopover = ({
 
       onOpenChange?.(newOpen);
     },
-    [isControlled, onOpenChange],
+    [isControlled, onOpenChange]
   );
 
   const data = useFloating({
@@ -48,10 +48,10 @@ const usePopover = ({
       offset(offsetProps),
       flip({
         crossAxis: placement.includes("-"),
-        fallbackAxisSideDirection: "start",
+        fallbackAxisSideDirection: "start"
       }),
-      shift(shiftProps),
-    ],
+      shift(shiftProps)
+    ]
   });
 
   const context = data.context;
@@ -60,7 +60,7 @@ const usePopover = ({
   const dismiss = useDismiss(context);
   const hover = useHover(context, {
     enabled: triggerOnHover,
-    handleClose: safePolygon(),
+    handleClose: safePolygon()
   });
 
   const interactions = useInteractions([hover, click, dismiss]);
@@ -70,9 +70,9 @@ const usePopover = ({
       open,
       setOpen,
       ...interactions,
-      ...data,
+      ...data
     }),
-    [open, setOpen, interactions, data],
+    [open, setOpen, interactions, data]
   );
 };
 

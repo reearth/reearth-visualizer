@@ -3,12 +3,12 @@ import {
   WidgetAlignSystem,
   WidgetAlignment,
   BuiltinWidgets,
-  isBuiltinWidget,
+  isBuiltinWidget
 } from "@reearth/beta/features/Visualizer/Crust";
 import { Story } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import {
   convertData,
-  sceneProperty2ViewerPropertyMapping,
+  sceneProperty2ViewerPropertyMapping
 } from "@reearth/beta/utils/convert-object";
 import type { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, MapRef } from "@reearth/core";
@@ -25,7 +25,7 @@ import type {
   WidgetZone,
   WidgetSection,
   WidgetArea,
-  WidgetAreaPadding,
+  WidgetAreaPadding
 } from "./types";
 
 export default (alias?: string) => {
@@ -34,10 +34,10 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
-    undefined,
+    undefined
   );
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
-    undefined,
+    undefined
   );
 
   const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } =
@@ -54,11 +54,11 @@ export default (alias?: string) => {
         viewerProperty: sceneProperty
           ? (convertData(
               sceneProperty,
-              sceneProperty2ViewerPropertyMapping,
+              sceneProperty2ViewerPropertyMapping
             ) as ViewerProperty)
           : undefined,
         widgetThemeOptions,
-        cesiumIonAccessToken,
+        cesiumIonAccessToken
       };
     }, [data?.property]);
 
@@ -72,7 +72,7 @@ export default (alias?: string) => {
         a[b] = processProperty(data?.plugins?.[b]?.property);
         return a;
       }, {}),
-    [data?.plugins],
+    [data?.plugins]
   );
 
   const widgets = useMemo<
@@ -107,8 +107,8 @@ export default (alias?: string) => {
           extended: !!w.extended,
           pluginId: w.pluginId,
           extensionId: w.extensionId,
-          property: processProperty(w.property),
-        }),
+          property: processProperty(w.property)
+        })
       );
 
     const widgets = data?.widgets
@@ -119,15 +119,15 @@ export default (alias?: string) => {
           extended: !!w.extended,
           pluginId: w.pluginId,
           extensionId: w.extensionId,
-          property: processProperty(w.property),
-        }),
+          property: processProperty(w.property)
+        })
       );
 
     const widgetZone = (zone?: WidgetZone | null) => {
       return {
         left: widgetSection(zone?.left),
         center: widgetSection(zone?.center),
-        right: widgetSection(zone?.right),
+        right: widgetSection(zone?.right)
       };
     };
 
@@ -135,7 +135,7 @@ export default (alias?: string) => {
       return {
         top: widgetArea(section?.top),
         middle: widgetArea(section?.middle),
-        bottom: widgetArea(section?.bottom),
+        bottom: widgetArea(section?.bottom)
       };
     };
 
@@ -153,12 +153,12 @@ export default (alias?: string) => {
           top: padding?.top ?? 6,
           bottom: padding?.bottom ?? 6,
           left: padding?.left ?? 6,
-          right: padding?.right ?? 6,
+          right: padding?.right ?? 6
         },
         gap: area?.gap ?? 6,
         widgets: areaWidgets || [],
         background: area?.background as string | undefined,
-        centered: area?.centered,
+        centered: area?.centered
       };
     };
 
@@ -170,7 +170,7 @@ export default (alias?: string) => {
         }
         return res;
       },
-      [],
+      []
     );
 
     return {
@@ -178,10 +178,10 @@ export default (alias?: string) => {
       alignSystem: data.widgetAlignSystem
         ? {
             outer: widgetZone(data.widgetAlignSystem.outer),
-            inner: widgetZone(data.widgetAlignSystem.inner),
+            inner: widgetZone(data.widgetAlignSystem.inner)
           }
         : undefined,
-      ownBuiltinWidgets,
+      ownBuiltinWidgets
     };
   }, [data]);
 
@@ -190,7 +190,7 @@ export default (alias?: string) => {
       alias ||
       new URLSearchParams(window.location.search).get("alias") ||
       undefined,
-    [alias],
+    [alias]
   );
 
   const story = useMemo(() => {
@@ -213,11 +213,11 @@ export default (alias?: string) => {
                   id: b.id,
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
-                  property: processNewProperty(b.property),
+                  property: processNewProperty(b.property)
                 };
-              }),
+              })
             };
-          }),
+          })
         };
     return processedStory;
   }, [data?.story]);
@@ -232,15 +232,15 @@ export default (alias?: string) => {
         visible: !!l.isVisible,
         infobox: l.nlsInfobox,
         isSketch: l.isSketch,
-        sketch: l.sketchInfo,
+        sketch: l.sketchInfo
       })) ?? [],
-      data?.layerStyles,
+      data?.layerStyles
     );
     if (!story) return processedLayers;
 
     return processedLayers?.map((layer) => ({
       ...layer,
-      visible: true,
+      visible: true
     }));
   }, [data?.nlsLayers, data?.layerStyles, story]);
 
@@ -266,7 +266,7 @@ export default (alias?: string) => {
         ) {
           d.property = {
             ...d.property,
-            tiles: [{ id: "___default_tile___" }],
+            tiles: [{ id: "___default_tile___" }]
           };
         }
         setData(d);
@@ -284,9 +284,9 @@ export default (alias?: string) => {
       cesiumIonAccessToken:
         typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
           ? cesiumIonAccessToken
-          : config()?.cesiumIonAccessToken,
+          : config()?.cesiumIonAccessToken
     }),
-    [cesiumIonAccessToken],
+    [cesiumIonAccessToken]
   );
 
   // GA
@@ -305,7 +305,7 @@ export default (alias?: string) => {
     visualizerRef,
     currentCamera,
     initialCamera,
-    setCurrentCamera,
+    setCurrentCamera
   };
 };
 

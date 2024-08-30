@@ -6,7 +6,7 @@ import {
   $isRangeSelection,
   INDENT_CONTENT_COMMAND,
   COMMAND_PRIORITY_HIGH,
-  RangeSelection,
+  RangeSelection
 } from "lexical";
 import { useEffect } from "react";
 
@@ -16,12 +16,12 @@ function getElementNodesInSelection(selection: RangeSelection) {
   if (nodesInSelection.length === 0) {
     return new Set([
       selection.anchor.getNode().getParentOrThrow(),
-      selection.focus.getNode().getParentOrThrow(),
+      selection.focus.getNode().getParentOrThrow()
     ]);
   }
 
   return new Set(
-    nodesInSelection.map((n) => ($isElementNode(n) ? n : n.getParentOrThrow())),
+    nodesInSelection.map((n) => ($isElementNode(n) ? n : n.getParentOrThrow()))
   );
 }
 
@@ -43,7 +43,7 @@ function isIndentPermitted(maxDepth: number) {
       const parent = elementNode.getParent();
       if (!$isListNode(parent)) {
         throw new Error(
-          "ListMaxIndentLevelPlugin: A ListItemNode must have a ListNode for a parent.",
+          "ListMaxIndentLevelPlugin: A ListItemNode must have a ListNode for a parent."
         );
       }
 
@@ -55,7 +55,7 @@ function isIndentPermitted(maxDepth: number) {
 }
 
 export default function ListMaxIndentLevelPlugin({
-  maxDepth,
+  maxDepth
 }: {
   maxDepth?: number;
 }) {
@@ -65,7 +65,7 @@ export default function ListMaxIndentLevelPlugin({
     return editor.registerCommand(
       INDENT_CONTENT_COMMAND,
       () => !isIndentPermitted(maxDepth ?? 7),
-      COMMAND_PRIORITY_HIGH,
+      COMMAND_PRIORITY_HIGH
     );
   }, [editor, maxDepth]);
 

@@ -10,7 +10,7 @@ export {
   type CommonProps as CommonPluginProps,
   type PluginModalInfo,
   type PluginPopupInfo,
-  type ExternalPluginProps,
+  type ExternalPluginProps
 } from "./Plugin";
 
 export default function Plugins(props: Props) {

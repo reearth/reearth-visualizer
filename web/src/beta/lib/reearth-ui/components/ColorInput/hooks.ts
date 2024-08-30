@@ -7,11 +7,11 @@ import { ColorInputProps } from ".";
 const useColorPicker = ({
   value,
   alphaDisabled,
-  onChange,
+  onChange
 }: Pick<ColorInputProps, "value" | "alphaDisabled" | "onChange">) => {
   const [colorValue, setColorValue] = useState<string | undefined>(value);
   const [pickerColor, setPickerColor] = useState<RgbaColor>(
-    tinycolor(value).toRgb(),
+    tinycolor(value).toRgb()
   );
 
   const [open, setOpen] = useState(false);
@@ -34,7 +34,7 @@ const useColorPicker = ({
   const handleHexInputBlur = useCallback(() => {
     const hexPattern =
       /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(
-        colorValue || "",
+        colorValue || ""
       );
     const color = !colorValue || hexPattern ? colorValue : value;
     setPickerColor(tinycolor(color).toRgb());
@@ -51,10 +51,10 @@ const useColorPicker = ({
 
       setPickerColor({
         ...pickerColor,
-        [channel]: value,
+        [channel]: value
       });
     },
-    [pickerColor],
+    [pickerColor]
   );
 
   const handlePickerCancel = useCallback(() => {
@@ -78,7 +78,7 @@ const useColorPicker = ({
       (alphaDisabled
         ? ["r", "g", "b"]
         : ["r", "g", "b", "a"]) as (keyof RgbaColor)[],
-    [alphaDisabled],
+    [alphaDisabled]
   );
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const useColorPicker = ({
     handlePickerApply,
     handlePickerCancel,
     handleHexInputChange,
-    handleHexInputBlur,
+    handleHexInputBlur
   };
 };
 

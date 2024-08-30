@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import ListField, { Props } from ".";
 
 const meta: Meta<typeof ListField> = {
-  component: ListField,
+  component: ListField
 };
 
 export default meta;
@@ -18,7 +18,7 @@ export const Default: Story = (args: Props) => {
 
   const onSelect = useCallback(
     (id: string) => updateArgs({ selected: id }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -46,27 +46,27 @@ Default.args = {
   items: [
     {
       id: "w3tlwi",
-      title: "Item w3tlwi",
+      title: "Item w3tlwi"
     },
     {
       id: "77eg5",
-      title: "Item 77eg5",
+      title: "Item 77eg5"
     },
     {
       id: "7p218",
-      title: "Item 7p218",
+      title: "Item 7p218"
     },
     {
       id: "xquyo",
-      title: "Item xquyo",
+      title: "Item xquyo"
     },
     {
       id: "2mewj",
-      title: "Item 2mewj",
+      title: "Item 2mewj"
     },
     {
       id: "d2gmu",
-      title: "Item d2gmu",
-    },
-  ],
+      title: "Item d2gmu"
+    }
+  ]
 };

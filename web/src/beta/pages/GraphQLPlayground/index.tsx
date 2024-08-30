@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import "graphiql/graphiql.css";
 
 const fetcher = createGraphiQLFetcher({
-  url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql",
+  url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql"
 });
 
 export default function GraphQLPlayground(_: { path?: string }): JSX.Element {

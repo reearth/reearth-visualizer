@@ -12,7 +12,7 @@ type Props = {
 const StorySidePanelPageWrapper: FC<Props> = ({
   children,
   pageCount,
-  isSwipeable,
+  isSwipeable
 }) => {
   const theme = useTheme();
 

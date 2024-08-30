@@ -6,7 +6,7 @@ import {
   LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
-  Wrapper,
+  Wrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -28,7 +28,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const handleLayerNameAdd = () => {
     if (layerNameValue.trim() !== "") {
       const exist = layersNameList.some(
-        (layer: string) => layer === layerNameValue,
+        (layer: string) => layer === layerNameValue
       );
       if (!exist) setLayersNameList((prev) => [...prev, layerNameValue]);
       setLayerNameValue("");
@@ -66,9 +66,9 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           url: wmsUrlValue !== "" ? wmsUrlValue : undefined,
           type: "wms",
           layers:
-            LayerNameList.length === 1 ? layersNameList[0] : layersNameList,
-        },
-      },
+            LayerNameList.length === 1 ? layersNameList[0] : layersNameList
+        }
+      }
     });
     onClose();
   };

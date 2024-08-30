@@ -13,7 +13,7 @@ import type {
   ViewerProperty,
   SketchEventCallback,
   SketchType,
-  TimelineManagerRef,
+  TimelineManagerRef
 } from "@reearth/core";
 import type { PropsWithChildren, RefObject } from "react";
 
@@ -28,7 +28,7 @@ import {
   SelectionModeEventType,
   SketchEventType,
   TimelineEventType,
-  ViewerEventType,
+  ViewerEventType
 } from "./pluginAPI/types";
 import type { ClientStorage } from "./useClientStorage";
 import type { PluginInstances } from "./usePluginInstances";
@@ -54,10 +54,10 @@ export type Props = PropsWithChildren<{
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onLayerEdit?: (cb: (e: LayerEditEvent) => void) => void;
   onLayerSelectWithRectStart?: (
-    cb: (e: LayerSelectWithRectStart) => void,
+    cb: (e: LayerSelectWithRectStart) => void
   ) => void;
   onLayerSelectWithRectMove?: (
-    cb: (e: LayerSelectWithRectMove) => void,
+    cb: (e: LayerSelectWithRectMove) => void
   ) => void;
   onLayerSelectWithRectEnd?: (cb: (e: LayerSelectWithRectEnd) => void) => void;
   onSketchPluginFeatureCreate?: (cb: SketchEventCallback) => void;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Timeline, { Props } from ".";
 
 export default {
-  component: Timeline,
+  component: Timeline
 } as Meta;
 
 export const Normal: Story<Props> = () => (
@@ -12,7 +12,7 @@ export const Normal: Story<Props> = () => (
     currentTime={new Date("2022-06-30T12:20:00.000").getTime()}
     range={{
       start: new Date("2022-06-30T21:00:00.000").getTime(),
-      end: new Date("2022-07-03T12:21:21.221").getTime(),
+      end: new Date("2022-07-03T12:21:21.221").getTime()
     }}
     isOpened={true}
   />

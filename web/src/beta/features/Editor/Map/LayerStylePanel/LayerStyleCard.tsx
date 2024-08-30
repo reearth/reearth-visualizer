@@ -26,7 +26,7 @@ const LayerStyleCard: React.FC<Props> = ({
   actionContent,
   onSelect,
   onOpenChange,
-  onLayerStyleNameUpdate,
+  onLayerStyleNameUpdate
 }) => {
   const [isOpenAction, setIsOpenAction] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -35,7 +35,7 @@ const LayerStyleCard: React.FC<Props> = ({
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onSelect?.(!selected),
-    () => setIsEditing(true),
+    () => setIsEditing(true)
   );
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const LayerStyleCard: React.FC<Props> = ({
       setIsEditing(false);
       onLayerStyleNameUpdate?.({ styleId: id || "", name: newName });
     },
-    [id, onLayerStyleNameUpdate],
+    [id, onLayerStyleNameUpdate]
   );
 
   const handleActionClick = useCallback(
@@ -62,7 +62,7 @@ const LayerStyleCard: React.FC<Props> = ({
       e.stopPropagation();
       setIsOpenAction(!isOpenAction);
     },
-    [isOpenAction],
+    [isOpenAction]
   );
 
   const handleEditExit = useCallback(
@@ -74,7 +74,7 @@ const LayerStyleCard: React.FC<Props> = ({
       }
       setIsEditing(false);
     },
-    [handleNameSubmit, name, newName],
+    [handleNameSubmit, name, newName]
   );
 
   const handleOpenChange = useCallback(
@@ -82,7 +82,7 @@ const LayerStyleCard: React.FC<Props> = ({
       setIsOpenAction(isOpen);
       onOpenChange?.(isOpen);
     },
-    [onOpenChange],
+    [onOpenChange]
   );
 
   return (

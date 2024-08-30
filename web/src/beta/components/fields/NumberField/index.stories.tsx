@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import NumberField, { Props } from ".";
 
 const meta: Meta<Props> = {
-  component: NumberField,
+  component: NumberField
 };
 
 export default meta;
@@ -15,8 +15,8 @@ export const Default: Story = {
     description: "The Number field",
     value: 42,
     inputDescription: "Value",
-    suffix: "px",
-  },
+    suffix: "px"
+  }
 };
 
 export const Disabled: Story = {
@@ -26,8 +26,8 @@ export const Disabled: Story = {
     value: 15,
     inputDescription: "Disabled",
     suffix: "px",
-    disabled: true,
-  },
+    disabled: true
+  }
 };
 
 export const Range: Story = {
@@ -38,8 +38,8 @@ export const Range: Story = {
     inputDescription: "Range",
     suffix: "px",
     min: 4,
-    max: 100,
-  },
+    max: 100
+  }
 };
 
 export const NoValue: Story = {
@@ -47,8 +47,8 @@ export const NoValue: Story = {
     name: "Number Field",
     description: "The Number field",
     inputDescription: "No Value",
-    suffix: "px",
-  },
+    suffix: "px"
+  }
 };
 
 export const WithMinValue: Story = {
@@ -58,8 +58,8 @@ export const WithMinValue: Story = {
     value: 5,
     inputDescription: "With Min Value",
     suffix: "px",
-    min: 0,
-  },
+    min: 0
+  }
 };
 
 export const WithMaxValue: Story = {
@@ -69,8 +69,8 @@ export const WithMaxValue: Story = {
     value: 95,
     inputDescription: "With Max Value",
     suffix: "px",
-    max: 100,
-  },
+    max: 100
+  }
 };
 
 export const Editable: Story = {
@@ -79,6 +79,6 @@ export const Editable: Story = {
     description: "The Number field",
     value: 25,
     inputDescription: "Editable",
-    suffix: "px",
-  },
+    suffix: "px"
+  }
 };

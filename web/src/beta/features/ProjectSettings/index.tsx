@@ -4,7 +4,7 @@ import {
   SidebarMenuItem,
   SidebarSection,
   SidebarVersion,
-  SidebarWrapper,
+  SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -20,7 +20,7 @@ export const projectSettingTabs = [
   { id: "general", text: "General", icon: "setting" },
   { id: "story", text: "Story", icon: "sidebar" },
   { id: "public", text: "Public", icon: "paperPlaneTilt" },
-  { id: "plugins", text: "Plugin", icon: "puzzlePiece" },
+  { id: "plugins", text: "Plugin", icon: "puzzlePiece" }
 ] as const;
 
 export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
@@ -53,10 +53,10 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     handleUpdateProjectGA,
     handleUpdateStory,
     handleUpdateStoryBasicAuth,
-    handleUpdateStoryAlias,
+    handleUpdateStoryAlias
   } = useHooks({
     projectId,
-    subId,
+    subId
   });
 
   const tabs = useMemo(
@@ -65,9 +65,9 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         id: tab.id,
         icon: tab.icon,
         text: t(tab.text),
-        path: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`,
+        path: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`
       })),
-    [projectId, t],
+    [projectId, t]
   );
 
   return (
@@ -148,29 +148,29 @@ const Wrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   backgroundColor: theme.bg[0],
   ["*"]: {
-    boxSizing: "border-box",
+    boxSizing: "border-box"
   },
   ["* ::-webkit-scrollbar"]: {
-    width: "8px",
+    width: "8px"
   },
   ["* ::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px",
+    borderRadius: "10px"
   },
   ["* ::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter,
-  },
+    background: theme.relative.lighter
+  }
 }));
 
 const MainSection = styled("div")(() => ({
   display: "flex",
   flex: 1,
   overflow: "auto",
-  position: "relative",
+  position: "relative"
 }));
 
 const LeftSidePanel = styled("div")(({ theme }) => ({
@@ -179,7 +179,7 @@ const LeftSidePanel = styled("div")(({ theme }) => ({
   backgroundColor: theme.bg[1],
   display: "flex",
   padding: `${theme.spacing.large}px 0`,
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 }));
 
 const Content = styled("div")(({ theme }) => ({
@@ -190,7 +190,7 @@ const Content = styled("div")(({ theme }) => ({
   height: "100%",
   alignItems: "center",
   overflow: "auto",
-  padding: `${theme.spacing.super}px`,
+  padding: `${theme.spacing.super}px`
 }));
 
 export default ProjectSettings;

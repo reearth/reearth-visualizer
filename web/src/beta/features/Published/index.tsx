@@ -23,7 +23,7 @@ export default function Published({ alias }: Props) {
     visualizerRef,
     currentCamera,
     initialCamera,
-    setCurrentCamera,
+    setCurrentCamera
   } = useHooks(alias);
 
   return error ? (

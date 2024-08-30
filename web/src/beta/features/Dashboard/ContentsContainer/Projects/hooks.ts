@@ -1,14 +1,14 @@
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import {
   autoFillPage,
-  onScrollToBottom,
+  onScrollToBottom
 } from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
 import {
   ProjectSortField,
   PublishmentStatus,
   SortDirection,
-  Visualizer,
+  Visualizer
 } from "@reearth/services/gql";
 import {
   useCallback,
@@ -16,7 +16,7 @@ import {
   useState,
   MouseEvent,
   useEffect,
-  useRef,
+  useRef
 } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -38,7 +38,7 @@ export default (workspaceId?: string) => {
     useProjectsQuery,
     useUpdateProject,
     useCreateProject,
-    useStarredProjectsQuery,
+    useStarredProjectsQuery
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -56,14 +56,14 @@ export default (workspaceId?: string) => {
     isRefetching,
     hasMoreProjects,
     endCursor,
-    fetchMore,
+    fetchMore
   } = useProjectsQuery({
     teamId: workspaceId || "",
     pagination: {
-      first: pagination(sortValue).first,
+      first: pagination(sortValue).first
     },
     sort: pagination(sortValue).sortBy,
-    keyword: searchTerm,
+    keyword: searchTerm
   });
 
   const filtedProjects = useMemo(() => {
@@ -82,9 +82,9 @@ export default (workspaceId?: string) => {
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
-              starred: project.starred,
+              starred: project.starred
             }
-          : undefined,
+          : undefined
       )
       .filter((project): project is Project => !!project);
   }, [projects]);
@@ -99,9 +99,9 @@ export default (workspaceId?: string) => {
         variables: {
           pagination: {
             after: endCursor,
-            first: PROJECTS_PER_PAGE,
-          },
-        },
+            first: PROJECTS_PER_PAGE
+          }
+        }
       });
       isFetchingMore.current = false;
     }
@@ -123,7 +123,7 @@ export default (workspaceId?: string) => {
       if (!value) return;
       setSort((value as SortType) ?? sortValue);
     },
-    [sortValue],
+    [sortValue]
   );
 
   // search
@@ -154,10 +154,10 @@ export default (workspaceId?: string) => {
         data.name,
         true,
         data.description,
-        data.imageUrl || "",
+        data.imageUrl || ""
       );
     },
-    [useCreateProject, workspaceId],
+    [useCreateProject, workspaceId]
   );
 
   // project update
@@ -166,7 +166,7 @@ export default (workspaceId?: string) => {
       await useUpdateProject({ projectId, ...project });
       // if (sortBy) refetch();
     },
-    [useUpdateProject],
+    [useUpdateProject]
   );
 
   // project open
@@ -176,7 +176,7 @@ export default (workspaceId?: string) => {
         navigate(`/scene/${sceneId}/map`);
       }
     },
-    [navigate],
+    [navigate]
   );
 
   // selection
@@ -187,22 +187,22 @@ export default (workspaceId?: string) => {
       e?.stopPropagation();
       if (projectId) {
         setSelectedProject(
-          filtedProjects.find((project) => project.id === projectId),
+          filtedProjects.find((project) => project.id === projectId)
         );
       } else {
         setSelectedProject(undefined);
       }
     },
-    [filtedProjects],
+    [filtedProjects]
   );
 
   // layout
   const [layout, setLayout] = useState(
     ["grid", "list"].includes(
-      localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? "",
+      localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? ""
     )
       ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
-      : "grid",
+      : "grid"
   );
 
   const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
@@ -259,7 +259,7 @@ export default (workspaceId?: string) => {
     handleScrollToBottom: onScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
-    handleSearch,
+    handleSearch
   };
 };
 
@@ -282,35 +282,35 @@ const pagination = (sort?: SortType) => {
       first = PROJECTS_PER_PAGE;
       sortBy = {
         field: ProjectSortField.Createdat,
-        direction: SortDirection.Desc,
+        direction: SortDirection.Desc
       };
       break;
     case "date-reversed":
       first = PROJECTS_PER_PAGE;
       sortBy = {
         field: ProjectSortField.Createdat,
-        direction: SortDirection.Asc,
+        direction: SortDirection.Asc
       };
       break;
     case "date-updated":
       first = PROJECTS_PER_PAGE;
       sortBy = {
         field: ProjectSortField.Updatedat,
-        direction: SortDirection.Desc,
+        direction: SortDirection.Desc
       };
       break;
     case "name":
       first = PROJECTS_PER_PAGE;
       sortBy = {
         field: ProjectSortField.Name,
-        direction: SortDirection.Asc,
+        direction: SortDirection.Asc
       };
       break;
     case "name-reverse":
       first = PROJECTS_PER_PAGE;
       sortBy = {
         field: ProjectSortField.Name,
-        direction: SortDirection.Desc,
+        direction: SortDirection.Desc
       };
       break;
     default:

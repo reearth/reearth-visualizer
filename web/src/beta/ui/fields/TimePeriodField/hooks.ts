@@ -13,7 +13,7 @@ export default ({
   timePeriodValues,
   onChange,
   onClose,
-  setTimePeriodValues,
+  setTimePeriodValues
 }: Props) => {
   const [warning, setWarning] = useState(false);
 
@@ -23,7 +23,7 @@ export default ({
         ...timePeriodValues,
         currentTime: timePeriodValues?.currentTime || "",
         startTime: timePeriodValues?.startTime || "",
-        endTime: timePeriodValues?.endTime || "",
+        endTime: timePeriodValues?.endTime || ""
       };
 
       switch (fieldId) {
@@ -59,7 +59,7 @@ export default ({
       }
       setTimePeriodValues?.(updatedData);
     },
-    [timePeriodValues, setTimePeriodValues],
+    [timePeriodValues, setTimePeriodValues]
   );
 
   const [disabledFields, setDisabledFields] = useState<string[]>([]);
@@ -106,6 +106,6 @@ export default ({
     setDisabledFields,
     handleChange,
     handleTimePointPopup,
-    handleSubmit,
+    handleSubmit
   };
 };

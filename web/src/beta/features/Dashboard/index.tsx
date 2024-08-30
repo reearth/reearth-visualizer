@@ -15,7 +15,7 @@ export const topTabItems: Omit<TabItems[], "active"> = [
   { id: "projects", text: "Projects", icon: "grid" },
   { id: "asset", text: "Assets", icon: "file" },
   { id: "members", text: "Members", icon: "users" },
-  { id: "bin", text: "Recycle bin", icon: "trash" },
+  { id: "bin", text: "Recycle bin", icon: "trash" }
 ];
 
 export const bottomTabsItems: Omit<TabItems[], "active"> = [
@@ -23,11 +23,11 @@ export const bottomTabsItems: Omit<TabItems[], "active"> = [
     id: "plugin",
     text: "Plugin Playground",
     icon: "puzzlePiece",
-    disabled: true,
+    disabled: true
   },
   { id: "documentary", text: "Documentary", icon: "book", disabled: true },
   { id: "community", text: "Community", icon: "usersFour", disabled: true },
-  { id: "help", text: "Help & Support", icon: "question", disabled: true },
+  { id: "help", text: "Help & Support", icon: "question", disabled: true }
 ];
 
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
@@ -39,7 +39,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
     workspaces,
     currentTab,
     onSignOut,
-    handleWorkspaceChange,
+    handleWorkspaceChange
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
 
   return (
@@ -72,25 +72,25 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   width: "100%",
   ["* ::-webkit-scrollbar"]: {
-    width: "8px",
+    width: "8px"
   },
   ["* ::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px",
+    borderRadius: "10px"
   },
   ["* ::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter,
+    background: theme.relative.lighter
   },
   overflowX: "hidden",
   minWidth: "630px",
   ["@media (max-width: 630px)"]: {
     width: "630px",
-    overflowX: "auto",
-  },
+    overflowX: "auto"
+  }
 }));
 
 const LeftSideWrapper = styled("div")(({ theme }) => ({
@@ -99,5 +99,5 @@ const LeftSideWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   width: DEFAULT_SIDEBAR_WIDTH,
   gap: theme.spacing.super,
-  boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)",
+  boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)"
 }));

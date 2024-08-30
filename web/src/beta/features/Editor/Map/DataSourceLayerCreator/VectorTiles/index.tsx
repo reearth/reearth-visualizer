@@ -6,7 +6,7 @@ import {
   LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
-  Wrapper,
+  Wrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -63,9 +63,9 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: mvtUrlValue !== "" ? mvtUrlValue : undefined,
           type: "mvt",
-          layers: layerNameList.length === 1 ? layerNameList[0] : layerNameList,
-        },
-      },
+          layers: layerNameList.length === 1 ? layerNameList[0] : layerNameList
+        }
+      }
     });
     onClose();
   };

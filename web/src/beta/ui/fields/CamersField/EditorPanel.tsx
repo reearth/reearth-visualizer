@@ -2,7 +2,7 @@ import {
   Button,
   NumberInput,
   PopupPanel,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -26,12 +26,12 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
     handleTrippleFieldChange,
     handleFieldBlur,
     handleFieldChange,
-    handleSave,
+    handleSave
   } = useHooks({
     camera,
     onFlyTo,
     onSave,
-    onClose,
+    onClose
   });
 
   return (
@@ -74,7 +74,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
           values={[
             newCamera?.heading ?? 0,
             newCamera?.pitch ?? 0,
-            newCamera?.roll ?? 0,
+            newCamera?.roll ?? 0
           ]}
           content={[t("Heading"), t("Pitch"), t("Roll")]}
           placeholders={[t("value"), t("value"), t("value")]}
@@ -90,20 +90,20 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-start",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const GroupWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export default EditPanel;

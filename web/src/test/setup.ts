@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import {
   type EmotionMatchers,
-  matchers as emotionMatchers,
+  matchers as emotionMatchers
 } from "@emotion/jest";
 import * as domMatchers from "@testing-library/jest-dom/matchers";
 import { cleanup } from "@testing-library/react";
@@ -33,13 +33,13 @@ Object.defineProperty(window, "matchMedia", {
     removeListener: vi.fn(), // deprecated
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+    dispatchEvent: vi.fn()
+  }))
 });
 
 Object.defineProperty(window, "requestIdleCallback", {
   writable: true,
-  value: vi.fn(),
+  value: vi.fn()
 });
 
 afterEach(cleanup);

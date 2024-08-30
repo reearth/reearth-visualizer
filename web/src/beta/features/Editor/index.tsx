@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
+import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { FC } from "react";
 
-import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 
 import Navbar, { Tab } from "../Navbar";
 
@@ -59,7 +59,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     layerStyles,
     layers,
     layerId,
-    handleCustomPropertySchemaUpdate,
+    handleCustomPropertySchemaUpdate
   } = useHooks({ sceneId, tab, projectId });
 
   // TODO remove DndProvider, use DragAndDropContext instead
@@ -153,24 +153,24 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   height: "100vh",
   width: "100vw",
-  color: theme.content.main,
+  color: theme.content.main
 }));
 
 const Content = styled("div")(() => ({
   position: "relative",
   flexGrow: 1,
-  height: 0,
+  height: 0
 }));
 
 const Workbench = styled("div")(() => ({
   position: "absolute",
   width: "100%",
   height: "100%",
-  pointerEvents: "none",
+  pointerEvents: "none"
 }));
 
 const VisualizerArea = styled("div")(({ theme }) => ({
   position: "absolute",
   borderRadius: theme.radius.small,
-  overflow: "hidden",
+  overflow: "hidden"
 }));

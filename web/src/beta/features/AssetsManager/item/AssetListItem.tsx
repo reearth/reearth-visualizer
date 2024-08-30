@@ -8,11 +8,11 @@ import { getAssetType } from "./utils";
 const AssetListItem: FC<AssetItemProps> = ({
   asset,
   selectedAssetIds,
-  onSelect,
+  onSelect
 }) => {
   const selected = useMemo(
     () => selectedAssetIds.includes(asset.id),
-    [selectedAssetIds, asset.id],
+    [selectedAssetIds, asset.id]
   );
 
   const type = useMemo(() => getAssetType(asset), [asset]);
@@ -24,7 +24,7 @@ const AssetListItem: FC<AssetItemProps> = ({
       e.stopPropagation();
       onSelect?.(asset.id);
     },
-    [asset, onSelect],
+    [asset, onSelect]
   );
 
   const formattedDate = useMemo(
@@ -35,9 +35,9 @@ const AssetListItem: FC<AssetItemProps> = ({
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit",
+        second: "2-digit"
       }),
-    [asset.createdAt],
+    [asset.createdAt]
   );
 
   const formattedSize = useMemo(() => formatBytes(asset.size), [asset.size]);
@@ -81,9 +81,9 @@ const Wrapper = styled("div")<{ selected?: boolean }>(
     overflow: "hidden",
     ["&:hover"]: {
       background: selected ? theme.select.main : theme.relative.light,
-      borderRadius: theme.radius.small,
-    },
-  }),
+      borderRadius: theme.radius.small
+    }
+  })
 );
 
 const Thumbnail = styled("div")(() => ({
@@ -91,7 +91,7 @@ const Thumbnail = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const AssetName = styled("div")(() => ({
@@ -100,13 +100,13 @@ const AssetName = styled("div")(() => ({
   textOverflow: "ellipsis",
   width: "50%",
   flexGrow: 0,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const Col = styled("div")<{ width: number }>(({ width }) => ({
   width: `${width}%`,
   flexGrow: 0,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 function formatBytes(bytes: number): string {

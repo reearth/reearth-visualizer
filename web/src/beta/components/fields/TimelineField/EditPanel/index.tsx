@@ -24,7 +24,7 @@ const EditPanel = ({
   timelineValues,
   setTimelineValues,
   onClose,
-  onChange,
+  onChange
 }: EditPanelProps) => {
   const t = useT();
   const {
@@ -34,12 +34,12 @@ const EditPanel = ({
     setDisabledFields,
     handleOnChange,
     onAppyChange,
-    handlePopoverOpen,
+    handlePopoverOpen
   } = useHooks({
     timelineValues,
     onChange,
     onClose,
-    setTimelineValues,
+    setTimelineValues
   });
 
   const timezoneMatches = useMemo(() => {
@@ -107,7 +107,7 @@ const EditPanel = ({
           <DangerItem>
             <Icon icon="alert" size={30} />
             {t(
-              "Please make sure the Current time must between the Start time and End Time.",
+              "Please make sure the Current time must between the Start time and End Time."
             )}
           </DangerItem>
         )}

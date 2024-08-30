@@ -29,7 +29,7 @@ export default function Zone({
   isMobile,
   children,
   renderWidget,
-  onWidgetAreaSelect,
+  onWidgetAreaSelect
 }: Props) {
   return (
     <>
@@ -59,7 +59,7 @@ export default function Zone({
                 renderWidget={renderWidget}
                 onWidgetAreaSelect={onWidgetAreaSelect}
               />
-            ),
+            )
           )}
         </GridSection>
       ))}

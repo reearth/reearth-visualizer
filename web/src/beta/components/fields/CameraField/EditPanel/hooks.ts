@@ -7,7 +7,7 @@ import { saveFriendlyCamera, userFriendlyCamera } from "../utils";
 export default ({
   camera,
   onFlyTo,
-  onSave,
+  onSave
 }: {
   camera?: Camera;
   onFlyTo?: (c?: Camera) => void;
@@ -15,7 +15,7 @@ export default ({
 }) => {
   const t = useT();
   const [newCamera, setNewCamera] = useState<Camera | undefined>(
-    camera ? userFriendlyCamera(camera) : undefined,
+    camera ? userFriendlyCamera(camera) : undefined
   );
 
   useEffect(() => {
@@ -29,26 +29,26 @@ export default ({
       if (update === undefined || !newCamera) return;
       const updated: Camera = {
         ...newCamera,
-        [key]: update,
+        [key]: update
       };
       setNewCamera(updated);
       onFlyTo?.(saveFriendlyCamera(updated));
     },
-    [newCamera, onFlyTo],
+    [newCamera, onFlyTo]
   );
 
   const panelContent: Record<string, RowType> = useMemo(() => {
     return {
       [t("Location")]: [
         { id: "lat", description: t("Latitude") },
-        { id: "lng", description: t("Longitude") },
+        { id: "lng", description: t("Longitude") }
       ],
       [t("Height")]: [{ id: "height", unit: "km", description: t("Height") }],
       [t("Rotation")]: [
         { id: "heading", description: t("Heading") },
         { id: "pitch", description: t("Pitch") },
-        { id: "roll", description: t("Roll") },
-      ],
+        { id: "roll", description: t("Roll") }
+      ]
     };
   }, [t]);
 
@@ -57,7 +57,7 @@ export default ({
       if (value === newCamera?.[field]) return;
       handleFieldUpdate(field, value);
     },
-    [newCamera, handleFieldUpdate],
+    [newCamera, handleFieldUpdate]
   );
 
   const handleSave = useCallback(() => {
@@ -70,6 +70,6 @@ export default ({
     newCamera,
     panelContent,
     handleChange,
-    handleSave,
+    handleSave
   };
 };

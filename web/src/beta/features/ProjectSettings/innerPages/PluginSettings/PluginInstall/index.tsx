@@ -17,7 +17,7 @@ const PluginInstall: React.FC<Props> = ({
   installedPlugins,
   installFromPublicRepo,
   installByUploadingZipFile,
-  uninstallPlugin,
+  uninstallPlugin
 }) => {
   const t = useT();
 
@@ -50,11 +50,11 @@ export default PluginInstall;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.super,
+  gap: theme.spacing.super
 }));
 
 const ButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.largest,
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 }));

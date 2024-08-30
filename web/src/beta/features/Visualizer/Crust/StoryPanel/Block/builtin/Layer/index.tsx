@@ -17,7 +17,7 @@ const LayerBlock: React.FC<Props> = ({
 }) => {
   const layerButtons = useMemo(
     () => (block?.property?.default ?? []) as LayerBlockType[],
-    [block?.property?.default],
+    [block?.property?.default]
   );
 
   // if there's no item add 1 button.

@@ -1,11 +1,11 @@
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import { Meta, StoryObj } from "@storybook/react";
 
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 
 import AssetCard from ".";
 
 const meta: Meta<typeof AssetCard> = {
-  component: AssetCard,
+  component: AssetCard
 };
 
 export default meta;
@@ -16,16 +16,16 @@ export const Default: Story = {
   args: {
     selected: false,
     url: `/sample.svg`,
-    name: "hoge",
-  },
+    name: "hoge"
+  }
 };
 
 export const Selected: Story = {
   args: {
     url: `/sample.svg`,
     name: "hoge",
-    selected: true,
-  },
+    selected: true
+  }
 };
 
 export const EditableName: Story = {
@@ -41,10 +41,10 @@ export const EditableName: Story = {
           {
             name: "Delete",
             icon: "bin",
-            onClick: undefined,
-          },
+            onClick: undefined
+          }
         ]}
       />
-    ),
-  },
+    )
+  }
 };

@@ -1,13 +1,13 @@
+import { styled } from "@reearth/services/theme";
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import { styled } from "@reearth/services/theme";
 
 import SelectField, { SingleSelectProps, MultiSelectProps } from ".";
 
 const meta: Meta<typeof SelectField> = {
-  component: SelectField,
+  component: SelectField
 };
 
 export default meta;
@@ -21,7 +21,7 @@ export const Default: Story = (args: SingleSelectProps) => {
     (value: string) => {
       updateArgs({ value: value });
     },
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -57,7 +57,7 @@ export const MultiSelect: Story = (args: MultiSelectProps) => {
     (value: string[] | undefined) => {
       updateArgs({ value: value });
     },
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -103,12 +103,12 @@ Default.args = {
   options: [
     {
       label: "item 1 akas bakas moti kiran kapoor takhat buland biba kaur",
-      key: "item_1",
+      key: "item_1"
     },
     { label: "item 2", key: "item_2" },
-    { label: "item 3", key: "item_3" },
+    { label: "item 3", key: "item_3" }
   ],
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };
 
 MultiSelect.args = {
@@ -119,15 +119,15 @@ MultiSelect.args = {
   options: [
     {
       label: "item 1",
-      key: "item_1",
+      key: "item_1"
     },
     { label: "item 2", key: "item_2" },
     { label: "item 3", key: "item_3" },
     { label: "item 4", key: "item_4" },
     { label: "item 5", key: "item_5" },
     { label: "item 6", key: "item_6" },
-    { label: "item 7", key: "item_7" },
+    { label: "item 7", key: "item_7" }
   ],
   multiSelect: true,
-  onChange: () => console.log("clicked"),
+  onChange: () => console.log("clicked")
 };

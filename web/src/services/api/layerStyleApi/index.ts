@@ -7,12 +7,12 @@ import {
   UpdateStyleInput,
   UpdateStyleMutation,
   RemoveStyleMutation,
-  RemoveStyleInput,
+  RemoveStyleInput
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ADD_LAYERSTYLE,
   REMOVE_LAYERSTYLE,
-  UPDATE_LAYERSTYLE,
+  UPDATE_LAYERSTYLE
 } from "@reearth/services/gql/queries/layerStyle";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -35,8 +35,8 @@ export default () => {
         GET_SCENE,
         {
           variables: { sceneId: sceneId ?? "", lang },
-          skip: !sceneId,
-        },
+          skip: !sceneId
+        }
       );
 
       const isRefetching = useMemo(() => networkStatus === 3, [networkStatus]);
@@ -44,100 +44,100 @@ export default () => {
 
       return { layerStyles, loading, isRefetching, fetchMore, ...rest };
     },
-    [],
+    []
   );
 
   const [addLayerStyleMutation] = useMutation<
     AddStyleMutation,
     MutationAddStyleArgs
   >(ADD_LAYERSTYLE, {
-    refetchQueries: ["GetScene"],
+    refetchQueries: ["GetScene"]
   });
   const useAddLayerStyle = useCallback(
     async (input: AddStyleInput): Promise<MutationReturn<AddStyleMutation>> => {
       const { data, errors } = await addLayerStyleMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.addStyle?.style?.id) {
         setNotification({
           type: "error",
-          text: t("Failed to add layer style."),
+          text: t("Failed to add layer style.")
         });
 
         return { status: "error", errors };
       }
       setNotification({
         type: "success",
-        text: t("Successfully added a new layer style!"),
+        text: t("Successfully added a new layer style!")
       });
 
       return { data, status: "success" };
     },
-    [addLayerStyleMutation, setNotification, t],
+    [addLayerStyleMutation, setNotification, t]
   );
 
   const [updateLayerStyleMutation] = useMutation(UPDATE_LAYERSTYLE, {
-    refetchQueries: ["GetScene"],
+    refetchQueries: ["GetScene"]
   });
   const useUpdateLayerStyle = useCallback(
     async (
-      input: UpdateStyleInput,
+      input: UpdateStyleInput
     ): Promise<MutationReturn<UpdateStyleMutation>> => {
       if (!input.styleId) return { status: "error" };
       const { data, errors } = await updateLayerStyleMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.updateStyle) {
         setNotification({
           type: "error",
-          text: t("Failed to update the layerStyle."),
+          text: t("Failed to update the layerStyle.")
         });
 
         return { status: "error", errors };
       }
       setNotification({
         type: "success",
-        text: t("Successfully updated a the layerStyle!"),
+        text: t("Successfully updated a the layerStyle!")
       });
 
       return { data, status: "success" };
     },
-    [updateLayerStyleMutation, setNotification, t],
+    [updateLayerStyleMutation, setNotification, t]
   );
 
   const [removeLayerStyleMutation] = useMutation(REMOVE_LAYERSTYLE, {
-    refetchQueries: ["GetScene"],
+    refetchQueries: ["GetScene"]
   });
   const useRemoveLayerStyle = useCallback(
     async (
-      input: RemoveStyleInput,
+      input: RemoveStyleInput
     ): Promise<MutationReturn<RemoveStyleMutation>> => {
       if (!input.styleId) return { status: "error" };
       const { data, errors } = await removeLayerStyleMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.removeStyle) {
         setNotification({
           type: "error",
-          text: t("Failed to delete the layer style."),
+          text: t("Failed to delete the layer style.")
         });
 
         return { status: "error", errors };
       }
       setNotification({
         type: "success",
-        text: t("Successfully deleted the layer style!"),
+        text: t("Successfully deleted the layer style!")
       });
 
       return { data, status: "success" };
     },
-    [removeLayerStyleMutation, setNotification, t],
+    [removeLayerStyleMutation, setNotification, t]
   );
 
   return {
     useGetLayerStylesQuery,
     useAddLayerStyle,
     useUpdateLayerStyle,
-    useRemoveLayerStyle,
+    useRemoveLayerStyle
   };
 };

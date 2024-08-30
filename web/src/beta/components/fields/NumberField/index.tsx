@@ -22,7 +22,7 @@ const NumberField: React.FC<Props> = ({
   suffix,
   inputDescription,
   disabled,
-  onChange,
+  onChange
 }) => {
   return (
     <Property name={name} description={description}>

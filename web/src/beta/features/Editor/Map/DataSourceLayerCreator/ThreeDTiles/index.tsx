@@ -3,7 +3,7 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
-  ContentWrapper,
+  ContentWrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -25,9 +25,9 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       config: {
         data: {
           url: value !== "" ? value : undefined,
-          type: "3dtiles",
-        },
-      },
+          type: "3dtiles"
+        }
+      }
     });
     onClose();
   };

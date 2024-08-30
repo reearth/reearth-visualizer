@@ -4,7 +4,7 @@ import {
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
   ListNode,
-  REMOVE_LIST_COMMAND,
+  REMOVE_LIST_COMMAND
 } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $isDecoratorBlockNode } from "@lexical/react/LexicalDecoratorBlockNode";
@@ -13,20 +13,20 @@ import {
   $createQuoteNode,
   $isHeadingNode,
   $isQuoteNode,
-  HeadingTagType,
+  HeadingTagType
 } from "@lexical/rich-text";
 import {
   $getSelectionStyleValueForProperty,
   $isParentElementRTL,
   $patchStyleText,
-  $setBlocksType,
+  $setBlocksType
 } from "@lexical/selection";
 import { $isTableNode } from "@lexical/table";
 import {
   $findMatchingParent,
   $getNearestBlockElementAncestorOrThrow,
   $getNearestNodeOfType,
-  mergeRegister,
+  mergeRegister
 } from "@lexical/utils";
 import { useT } from "@reearth/services/i18n";
 import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
@@ -49,7 +49,7 @@ import {
   OUTDENT_CONTENT_COMMAND,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND,
+  UNDO_COMMAND
 } from "lexical";
 import { useCallback, useEffect, useState, useMemo, RefObject } from "react";
 
@@ -62,7 +62,7 @@ const IS_APPLE = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
 const _rootTypeToRootName = {
   root: "Root",
-  table: "Table",
+  table: "Table"
 };
 
 const FONT_FAMILY_OPTIONS: [string, string][] = [
@@ -72,7 +72,7 @@ const FONT_FAMILY_OPTIONS: [string, string][] = [
   ["Times New Roman", "Times New Roman"],
   ["Trebuchet MS", "Trebuchet MS"],
   ["Verdana", "Verdana"],
-  ["Noto Sans JP", "Noto Sans JP"],
+  ["Noto Sans JP", "Noto Sans JP"]
 ];
 
 const FONT_SIZE_OPTIONS: [string, string][] = [
@@ -89,7 +89,7 @@ const FONT_SIZE_OPTIONS: [string, string][] = [
   ["32px", "32px"],
   ["36px", "36px"],
   ["40px", "40px"],
-  ["64px", "64px"],
+  ["64px", "64px"]
 ];
 
 const LINE_HEIGHT_OPTIONS: [string, string][] = [
@@ -103,7 +103,7 @@ const LINE_HEIGHT_OPTIONS: [string, string][] = [
   ["1.7", "1.7"],
   ["1.8", "1.8"],
   ["1.9", "1.9"],
-  ["2.0", "2.0"],
+  ["2.0", "2.0"]
 ];
 
 // Fix for $patchStyleText not updating the style correctly
@@ -111,7 +111,7 @@ const LINE_HEIGHT_OPTIONS: [string, string][] = [
 function $customPatchStyleText(
   selection: RangeSelection,
   cssProperty: string,
-  cssValue: string,
+  cssValue: string
 ) {
   $patchStyleText(selection, { [cssProperty]: cssValue });
 
@@ -122,7 +122,7 @@ function $customPatchStyleText(
 function replaceCssStyle(
   existingCssStyle: string,
   cssProperty: string,
-  newCssValue: string,
+  newCssValue: string
 ): string {
   const cssArr = existingCssStyle
     .split(";")
@@ -166,7 +166,7 @@ function BlockFormatDropDown({
   blockTypeToBlockName,
   editor,
   blockType,
-  disabled = false,
+  disabled = false
 }: {
   containerRef: RefObject<HTMLDivElement>;
   scrollableContainerId?: string;
@@ -306,7 +306,7 @@ function FontDropDown({
   editor,
   value,
   style,
-  disabled = false,
+  disabled = false
 }: {
   containerRef: RefObject<HTMLDivElement>;
   scrollableContainerId?: string;
@@ -325,7 +325,7 @@ function FontDropDown({
         }
       });
     },
-    [editor, style],
+    [editor, style]
   );
 
   const buttonAriaLabel = useMemo(
@@ -333,7 +333,7 @@ function FontDropDown({
       style === "font-family"
         ? t("Formatting options for font family")
         : t("Formatting options for font size"),
-    [style, t],
+    [style, t]
   );
   return (
     <DropDown
@@ -358,7 +358,7 @@ function FontDropDown({
           >
             <span className="text">{text}</span>
           </DropDownItem>
-        ),
+        )
       )}
     </DropDown>
   );
@@ -370,7 +370,7 @@ function LineHeightDropDown({
   editor,
   value,
   style,
-  disabled = false,
+  disabled = false
 }: {
   containerRef: RefObject<HTMLDivElement>;
   scrollableContainerId?: string;
@@ -389,7 +389,7 @@ function LineHeightDropDown({
         }
       });
     },
-    [editor, style],
+    [editor, style]
   );
 
   return (
@@ -420,7 +420,7 @@ function ElementFormatDropdown({
   editor,
   value,
   isRTL,
-  disabled = false,
+  disabled = false
 }: {
   containerRef: RefObject<HTMLDivElement>;
   scrollableContainerId?: string;
@@ -435,22 +435,22 @@ function ElementFormatDropdown({
     () => ({
       center: {
         icon: "center-align",
-        name: t("Center Align"),
+        name: t("Center Align")
       },
       justify: {
         icon: "justify-align",
-        name: t("Justify Align"),
+        name: t("Justify Align")
       },
       left: {
         icon: "left-align",
-        name: t("Left Align"),
+        name: t("Left Align")
       },
       right: {
         icon: "right-align",
-        name: t("Right Align"),
-      },
+        name: t("Right Align")
+      }
     }),
-    [t],
+    [t]
   );
 
   return (
@@ -524,7 +524,7 @@ function ElementFormatDropdown({
 
 export default function ToolbarPlugin({
   containerRef,
-  scrollableContainerId,
+  scrollableContainerId
 }: {
   containerRef: RefObject<HTMLDivElement>;
   scrollableContainerId?: string;
@@ -563,9 +563,9 @@ export default function ToolbarPlugin({
       h3: t("Heading 3"),
       bullet: t("Bulleted List"),
       number: t("Numbered List"),
-      quote: t("Quote"),
+      quote: t("Quote")
     }),
-    [t],
+    [t]
   );
 
   const $updateToolbar = useCallback(() => {
@@ -617,7 +617,7 @@ export default function ToolbarPlugin({
         if ($isListNode(element)) {
           const parentList = $getNearestNodeOfType<ListNode>(
             anchorNode,
-            ListNode,
+            ListNode
           );
           const type = parentList
             ? parentList.getListType()
@@ -636,28 +636,28 @@ export default function ToolbarPlugin({
       }
       // Handle buttons
       setFontSize(
-        $getSelectionStyleValueForProperty(selection, "font-size", "16px"),
+        $getSelectionStyleValueForProperty(selection, "font-size", "16px")
       );
       setFontColor(
-        $getSelectionStyleValueForProperty(selection, "color", "#000"),
+        $getSelectionStyleValueForProperty(selection, "color", "#000")
       );
       setBgColor(
         $getSelectionStyleValueForProperty(
           selection,
           "background-color",
-          "#fff",
-        ),
+          "#fff"
+        )
       );
       setFontFamily(
-        $getSelectionStyleValueForProperty(selection, "font-family", "Arial"),
+        $getSelectionStyleValueForProperty(selection, "font-family", "Arial")
       );
       setLineHeight(
-        $getSelectionStyleValueForProperty(selection, "line-height", "1.2"),
+        $getSelectionStyleValueForProperty(selection, "line-height", "1.2")
       );
       setElementFormat(
         ($isElementNode(node)
           ? node.getFormatType()
-          : parent?.getFormatType()) || "left",
+          : parent?.getFormatType()) || "left"
       );
     }
   }, [activeEditor, blockTypeToBlockName]);
@@ -670,7 +670,7 @@ export default function ToolbarPlugin({
         setActiveEditor(newEditor);
         return false;
       },
-      COMMAND_PRIORITY_CRITICAL,
+      COMMAND_PRIORITY_CRITICAL
     );
   }, [editor, $updateToolbar]);
 
@@ -690,7 +690,7 @@ export default function ToolbarPlugin({
           setCanUndo(payload);
           return false;
         },
-        COMMAND_PRIORITY_CRITICAL,
+        COMMAND_PRIORITY_CRITICAL
       ),
       activeEditor.registerCommand<boolean>(
         CAN_REDO_COMMAND,
@@ -698,8 +698,8 @@ export default function ToolbarPlugin({
           setCanRedo(payload);
           return false;
         },
-        COMMAND_PRIORITY_CRITICAL,
-      ),
+        COMMAND_PRIORITY_CRITICAL
+      )
     );
   }, [$updateToolbar, activeEditor, editor]);
 
@@ -714,12 +714,12 @@ export default function ToolbarPlugin({
           event.preventDefault();
           return activeEditor.dispatchCommand(
             TOGGLE_LINK_COMMAND,
-            sanitizeUrl("https://"),
+            sanitizeUrl("https://")
           );
         }
         return false;
       },
-      COMMAND_PRIORITY_NORMAL,
+      COMMAND_PRIORITY_NORMAL
     );
   }, [activeEditor, isLink]);
 
@@ -732,7 +732,7 @@ export default function ToolbarPlugin({
         }
       });
     },
-    [activeEditor],
+    [activeEditor]
   );
 
   const clearFormatting = useCallback(() => {
@@ -779,14 +779,14 @@ export default function ToolbarPlugin({
     (value: string) => {
       applyStyleText({ color: value });
     },
-    [applyStyleText],
+    [applyStyleText]
   );
 
   const onBgColorSelect = useCallback(
     (value: string) => {
       applyStyleText({ "background-color": value });
     },
-    [applyStyleText],
+    [applyStyleText]
   );
 
   const insertLink = useCallback(() => {
@@ -971,7 +971,7 @@ export default function ToolbarPlugin({
             onClick={() => {
               activeEditor.dispatchCommand(
                 FORMAT_TEXT_COMMAND,
-                "strikethrough",
+                "strikethrough"
               );
             }}
             className={"item " + dropDownActiveClass(isStrikethrough)}

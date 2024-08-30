@@ -2,7 +2,7 @@ import {
   GIS_FILE_TYPES,
   GisType,
   IMAGE_FILE_TYPES,
-  ImageType,
+  ImageType
 } from "../constants";
 import { Asset } from "../types";
 

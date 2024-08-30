@@ -5,7 +5,7 @@ import Resizable from ".";
 
 const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
   children,
-  style,
+  style
 }) => <div style={{ display: "flex", height: 400, ...style }}>{children}</div>;
 const Pane = <div style={{ flex: 1, background: "#ffffff" }} />;
 const Content = (
@@ -14,7 +14,7 @@ const Content = (
       width: "100%",
       height: "100%",
       background: "#ffffff",
-      color: "#000000",
+      color: "#000000"
     }}
   >
     content
@@ -22,7 +22,7 @@ const Content = (
 );
 
 export default {
-  component: Resizable,
+  component: Resizable
 } as Meta<ComponentProps<typeof Resizable>>;
 
 export const Vertical: StoryObj<typeof Resizable> = {
@@ -30,7 +30,7 @@ export const Vertical: StoryObj<typeof Resizable> = {
     direction: "vertical",
     gutter: "end",
     initialSize: 400,
-    minSize: 100,
+    minSize: 100
   },
   render: (args) => {
     return (
@@ -39,7 +39,7 @@ export const Vertical: StoryObj<typeof Resizable> = {
         {Pane}
       </Container>
     );
-  },
+  }
 };
 
 export const Horizontal: StoryObj<typeof Resizable> = {
@@ -47,7 +47,7 @@ export const Horizontal: StoryObj<typeof Resizable> = {
     direction: "horizontal",
     gutter: "end",
     initialSize: 350,
-    minSize: 200,
+    minSize: 200
   },
   render: (args) => {
     return (
@@ -56,5 +56,5 @@ export const Horizontal: StoryObj<typeof Resizable> = {
         {Pane}
       </Container>
     );
-  },
+  }
 };

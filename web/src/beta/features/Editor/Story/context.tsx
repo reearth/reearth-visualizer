@@ -21,7 +21,7 @@ export interface StoryPageContextType {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   sceneId?: string;
   selectedStoryPage?: Page;
@@ -32,12 +32,12 @@ export interface StoryPageContextType {
 }
 
 const StoryPageContext = createContext<StoryPageContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const StoryPageProvider = ({
   value,
-  children,
+  children
 }: {
   value: StoryPageContextType;
   children: ReactNode;

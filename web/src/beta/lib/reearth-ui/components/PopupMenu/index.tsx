@@ -3,7 +3,7 @@ import {
   Icon,
   Typography,
   IconName,
-  PopupProps,
+  PopupProps
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
@@ -62,7 +62,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   icon,
   openMenu = false,
   size = "normal",
-  onOpenChange,
+  onOpenChange
 }) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -81,7 +81,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         onOpenChange?.(state);
       }
     },
-    [onOpenChange, open],
+    [onOpenChange, open]
   );
 
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
@@ -93,7 +93,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       path,
       selected,
       subItem,
-      title,
+      title
     } = item;
     return (
       <Item
@@ -161,7 +161,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
               {customSubMenu[index][0].customSubMenuLabel}
             </SubMenuHeader>
             {item.map((subItem, subIndex) =>
-              renderSingleItem(subItem, subIndex),
+              renderSingleItem(subItem, subIndex)
             )}
           </Group>
         ))}
@@ -227,8 +227,8 @@ const TriggerWrapper = styled("div")<{ nested?: boolean }>(
     display: "flex",
     gap: theme.spacing.smallest,
     alignItems: "center",
-    justifyContent: nested ? "space-between" : "normal",
-  }),
+    justifyContent: nested ? "space-between" : "normal"
+  })
 );
 
 const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
@@ -246,20 +246,20 @@ const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
     overflowY: "auto",
     margin: nested ? "-7px 0 0 2px" : "inherit",
     ["::-webkit-scrollbar"]: {
-      width: "8px",
+      width: "8px"
     },
     ["::-webkit-scrollbar-track"]: {
       background: theme.relative.darker,
-      borderRadius: "10px",
+      borderRadius: "10px"
     },
     ["::-webkit-scrollbar-thumb"]: {
       background: theme.relative.light,
-      borderRadius: "4px",
+      borderRadius: "4px"
     },
     ["::-webkit-scrollbar-thumb:hover"]: {
-      background: theme.relative.lighter,
-    },
-  }),
+      background: theme.relative.lighter
+    }
+  })
 );
 
 const Item = styled("div")<{
@@ -278,13 +278,13 @@ const Item = styled("div")<{
   cursor: "pointer",
   backgroundColor: "transparent",
   "&:hover": {
-    backgroundColor: `${theme.bg[2]}`,
-  },
+    backgroundColor: `${theme.bg[2]}`
+  }
 }));
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",
-  width: "100%",
+  width: "100%"
 }));
 
 const SubMenuHeader = styled("div")(({ theme }) => ({
@@ -292,7 +292,7 @@ const SubMenuHeader = styled("div")(({ theme }) => ({
   fontSize: "11px",
   fontWeight: 400,
   lineHeight: "16px",
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  0 ${theme.spacing.small}px`,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  0 ${theme.spacing.small}px`
 }));
 
 const SubItem = styled("div")(() => ({
@@ -300,7 +300,7 @@ const SubItem = styled("div")(() => ({
   justifyContent: "space-between",
   justifyItems: "center",
   flexGrow: 1,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
@@ -308,7 +308,7 @@ const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
   fontSize: theme.fonts.sizes.body,
   flex: 1,
   color: nested ? theme.content.main : theme.content.weak,
-  fontWeight: nested ? "normal" : "bold",
+  fontWeight: nested ? "normal" : "bold"
 }));
 
 const LabelWrapper = styled("div")<{
@@ -327,19 +327,19 @@ const LabelWrapper = styled("div")<{
   "&:hover": {
     background: theme.bg[2],
     p: {
-      color: theme.content.main,
-    },
-  },
+      color: theme.content.main
+    }
+  }
 }));
 
 const Group = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: `${theme.spacing.micro}px`,
+  gap: `${theme.spacing.micro}px`
 }));
 
 const TitleWrapper = styled(Typography)(({ theme }) => ({
   color: theme.content.main,
   whiteSpace: "nowrap",
-  maxWidth: "160px",
+  maxWidth: "160px"
 }));

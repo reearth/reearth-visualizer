@@ -4,7 +4,7 @@ import Component, { Props } from ".";
 
 export default {
   title: "beta/components/Box",
-  component: Component,
+  component: Component
 } as Meta;
 
 export const Margin: Story<Props> = () => (

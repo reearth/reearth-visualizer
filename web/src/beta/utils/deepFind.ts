@@ -1,7 +1,7 @@
 export default function deepFind<T>(
   array: T[] | undefined,
   cb: (value: T, index: number, array: T[]) => boolean,
-  children?: (value: T, index: number, array: T[]) => T[] | undefined,
+  children?: (value: T, index: number, array: T[]) => T[] | undefined
 ): [T | undefined, number[]] {
   if (!array?.length) return [undefined, []];
 

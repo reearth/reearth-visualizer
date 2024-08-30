@@ -3,7 +3,7 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { calculateDegreeOfCompass } from "./utils";
@@ -23,7 +23,7 @@ export const useNavigator = ({
   onRotate,
   onMoveOrbit,
   onStartOrbit,
-  onEndOrbit,
+  onEndOrbit
 }: {
   degree: number;
   onRotate?: (degree: number) => void;
@@ -56,15 +56,15 @@ export const useNavigator = ({
             x: rect.x,
             y: rect.y,
             height: compass.clientHeight,
-            width: compass.clientWidth,
+            width: compass.clientWidth
           },
-          { x: e.clientX, y: e.clientY },
+          { x: e.clientX, y: e.clientY }
         );
         isRotatingRef.current = true;
         setCompassDegree(degree);
         onRotateRef.current?.(degree);
       },
-      [onRotateRef],
+      [onRotateRef]
     );
 
   const rotateCompassWhileMovingAngle = useCallback(() => {
@@ -92,9 +92,9 @@ export const useNavigator = ({
           x: rect.x,
           y: rect.y,
           height: compass.clientHeight,
-          width: compass.clientWidth,
+          width: compass.clientWidth
         },
-        { x: e.clientX, y: e.clientY },
+        { x: e.clientX, y: e.clientY }
       );
       setIsMovingAngle(true);
       isMovingAngleRef.current = true;
@@ -108,8 +108,8 @@ export const useNavigator = ({
       rotateCompassWhileMovingAngle,
       onMoveOrbitRef,
       isMovingAngleRef,
-      onStartOrbitRef,
-    ],
+      onStartOrbitRef
+    ]
   );
 
   useEffect(() => {
@@ -124,9 +124,9 @@ export const useNavigator = ({
           x: rect.x,
           y: rect.y,
           height: compass.clientHeight,
-          width: compass.clientWidth,
+          width: compass.clientWidth
         },
-        { x: e.clientX, y: e.clientY },
+        { x: e.clientX, y: e.clientY }
       );
       setCompassDegree(degree);
       onRotateRef.current?.(degree);
@@ -143,9 +143,9 @@ export const useNavigator = ({
           x: rect.x,
           y: rect.y,
           height: compass.clientHeight,
-          width: compass.clientWidth,
+          width: compass.clientWidth
         },
-        { x: e.clientX, y: e.clientY },
+        { x: e.clientX, y: e.clientY }
       );
       setCompassFocusDegree(degree);
       onMoveOrbitRef.current?.(degree);
@@ -172,7 +172,7 @@ export const useNavigator = ({
     onStartOrbitRef,
     onEndOrbitRef,
     onMoveOrbitRef,
-    onRotateRef,
+    onRotateRef
   ]);
 
   useEffect(() => {
@@ -187,6 +187,6 @@ export const useNavigator = ({
     compassFocusDegree,
     isMovingAngle,
     handleOnMouseDownCompass,
-    handleOnMouseDownAngle,
+    handleOnMouseDownAngle
   };
 };

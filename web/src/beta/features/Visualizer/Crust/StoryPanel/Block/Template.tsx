@@ -1,7 +1,7 @@
-import { FC } from "react";
 
 import { Icon } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { getIconName } from "../utils";
 
@@ -27,10 +27,10 @@ const Wrapper = styled("div")<{ height?: number }>(({ height }) => ({
   alignItems: "center",
   flex: 1,
   backgroundColor: "#e0e0e0",
-  color: "#a8a8a8",
+  color: "#a8a8a8"
 }));
 
 const StyledIcon = styled(Icon)(() => ({
   width: "32px",
-  height: "32px",
+  height: "32px"
 }));

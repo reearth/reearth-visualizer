@@ -3,7 +3,7 @@ import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import {
   FILE_FORMATS,
-  IMAGE_FORMATS,
+  IMAGE_FORMATS
 } from "@reearth/beta/features/Assets/constants";
 import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
@@ -34,7 +34,7 @@ const URLField: React.FC<Props> = ({
   entityType,
   sceneId,
   fileFormat,
-  onChange,
+  onChange
 }) => {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -56,7 +56,7 @@ const URLField: React.FC<Props> = ({
       ) {
         setNotification({
           type: "error",
-          text: t("Wrong file format"),
+          text: t("Wrong file format")
         });
         setCurrentValue(undefined);
       } else {
@@ -64,14 +64,14 @@ const URLField: React.FC<Props> = ({
         onChange?.(inputValue, name);
       }
     },
-    [fileType, onChange, setNotification, t],
+    [fileType, onChange, setNotification, t]
   );
 
   const { handleFileUpload } = useFileUploaderHook({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
     assetType: entityType,
-    fileFormat,
+    fileFormat
   });
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { FlyTo } from "@reearth/core";
 import {
   Group,
   GroupListItem,
-  Item,
+  Item
 } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useMemo, useState } from "react";
@@ -30,7 +30,7 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
 
   const groups = useMemo<(GroupListItem | Group)[]>(
     () => (item && "items" in item ? item.items : item ? [item] : []),
-    [item],
+    [item]
   );
 
   const selectedItem = isList
@@ -47,7 +47,7 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
             ? i.fields.find((f) => f.id === item.representativeField)
             : undefined;
           const nameSchemaField = item?.schemaFields?.find(
-            (sf) => sf.id === item.representativeField,
+            (sf) => sf.id === item.representativeField
           );
 
           const value =
@@ -62,11 +62,11 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
           return {
             id: i.id,
             title: (!layerMode ? title : undefined) ?? t("Settings"),
-            layerId: layerMode ? title : undefined,
+            layerId: layerMode ? title : undefined
           };
         })
         .filter((g): g is ListItem => !!g),
-    [groups, layerMode, item, t],
+    [groups, layerMode, item, t]
   );
   const schemaFields = useMemo(
     () =>
@@ -86,11 +86,11 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
             return {
               schemaField: f,
               field,
-              hidden: f.only && (!condv || condv !== f.only.value),
+              hidden: f.only && (!condv || condv !== f.only.value)
             };
           })
         : [],
-    [item?.schemaFields, selectedItem],
+    [item?.schemaFields, selectedItem]
   );
 
   return (
@@ -133,7 +133,7 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
 export default PropertyItem;
 
 const valueToString = (
-  v: ValueTypes[ValueType] | undefined,
+  v: ValueTypes[ValueType] | undefined
 ): string | undefined => {
   if (typeof v === "string" || typeof v === "number") {
     return v.toString();

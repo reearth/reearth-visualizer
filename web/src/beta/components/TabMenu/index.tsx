@@ -27,7 +27,7 @@ const TabMenu: FC<Props> = ({
   selectedTab,
   scrollable,
   onSelectedTabChange,
-  menuAlignment,
+  menuAlignment
 }) => {
   const selectedTabItem = useMemo(() => {
     return tabs.find(({ id }) => id === selectedTab);

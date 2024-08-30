@@ -2,11 +2,11 @@ import {
   useMergeRefs,
   FloatingPortal,
   FloatingFocusManager,
-  useTransitionStyles,
+  useTransitionStyles
 } from "@floating-ui/react";
 import {
   PopoverContext,
-  usePopoverContext,
+  usePopoverContext
 } from "@reearth/beta/components/Popover/context";
 import { useTheme } from "@reearth/services/theme";
 import {
@@ -16,7 +16,7 @@ import {
   MutableRefObject,
   type ButtonHTMLAttributes,
   type HTMLProps,
-  type ReactNode,
+  type ReactNode
 } from "react";
 
 import usePopover from "./hooks";
@@ -49,7 +49,7 @@ export const Trigger = forwardRef<
   HTMLProps<HTMLElement> & TriggerProps
 >(function Trigger(
   { children, asChild = false, className, ...props },
-  propRef,
+  propRef
 ) {
   const context = usePopoverContext();
   const childrenRef = (children as any).ref;
@@ -63,8 +63,8 @@ export const Trigger = forwardRef<
         ref,
         ...props,
         ...children.props,
-        "data-state": context.open ? "open" : "closed",
-      }),
+        "data-state": context.open ? "open" : "closed"
+      })
     );
   }
 
@@ -92,7 +92,7 @@ export const Content = forwardRef<
   HTMLProps<HTMLDivElement> & ContentProps
 >(function Content(
   { style, className, attachToRoot = false, ...props },
-  propRef,
+  propRef
 ) {
   const { context: floatingContext, ...context } = usePopoverContext();
   const theme = useTheme();
@@ -100,8 +100,8 @@ export const Content = forwardRef<
   const { isMounted, styles: transitionStyles } = useTransitionStyles(
     floatingContext,
     {
-      duration: 50,
-    },
+      duration: 50
+    }
   );
 
   if (!isMounted) return null;
@@ -127,7 +127,7 @@ export const Content = forwardRef<
             ...context.floatingStyles,
             ...transitionStyles,
             ...style,
-            zIndex: theme.zIndexes.editor.popover,
+            zIndex: theme.zIndexes.editor.popover
           }}
           {...context.getFloatingProps(props)}
         >

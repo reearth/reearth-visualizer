@@ -6,7 +6,7 @@ import {
   useState,
   ChangeEvent,
   ReactNode,
-  KeyboardEvent,
+  KeyboardEvent
 } from "react";
 
 export type TextInputProps = {
@@ -38,7 +38,7 @@ export const TextInput: FC<TextInputProps> = ({
   autoFocus,
   onChange,
   onBlur,
-  onKeyDown,
+  onKeyDown
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -53,7 +53,7 @@ export const TextInput: FC<TextInputProps> = ({
       setCurrentValue(newValue ?? "");
       onChange?.(newValue);
     },
-    [onChange],
+    [onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -124,7 +124,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
-    width: !extendWidth ? "" : "100%",
+    width: !extendWidth ? "" : "100%"
   };
 });
 
@@ -149,13 +149,13 @@ const StyledInput = styled("input")<{
   width: "100%",
   overflow: "hidden",
   "::placeholder": {
-    color: theme.content.weak,
-  },
+    color: theme.content.weak
+  }
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
-  flexShrink: 0,
+  flexShrink: 0
 }));

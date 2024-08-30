@@ -55,7 +55,7 @@ const Flex: React.FC<Props> = ({
         flexGrow: grow,
         flexShrink: shrink,
         flex,
-        gap, // TODO: Safari doesn't support this property and please develop polyfill
+        gap // TODO: Safari doesn't support this property and please develop polyfill
       }}
       onClick={onClick}
       data-testid={testId}

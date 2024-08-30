@@ -20,7 +20,7 @@ const SliderField: React.FC<Props> = ({
     (value: number) => {
       setInternalState(value);
     },
-    [setInternalState],
+    [setInternalState]
   );
 
   useEffect(() => {

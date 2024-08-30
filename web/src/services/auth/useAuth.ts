@@ -47,7 +47,7 @@ export function useAuthenticationRequired(): [boolean, string | undefined] {
     isLoading,
     error: authError,
     login,
-    logout,
+    logout
   } = useAuth();
 
   useEffect(() => {

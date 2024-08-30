@@ -12,13 +12,13 @@ const RadioBox: React.FC<Props> = ({
   selected,
   keyValue,
   label,
-  onClick,
+  onClick
 }: Props) => {
   const handleRadioClick = useCallback(
     (value: string) => {
       onClick?.(value);
     },
-    [onClick],
+    [onClick]
   );
 
   return (

@@ -20,19 +20,19 @@ const Modal: React.FC<Props> = ({
   isVisible,
   title,
   onClose,
-  children,
+  children
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useClickAway(ref, () => onClose?.());
 
   const modalWidth = useMemo(
     () => (size === "sm" ? "416px" : size === "lg" ? "778px" : "572px"),
-    [size],
+    [size]
   );
 
   const state = useTransition(!!isVisible, 300, {
     mountOnEnter: true,
-    unmountOnExit: true,
+    unmountOnExit: true
   });
 
   const handleClose = useCallback(() => {

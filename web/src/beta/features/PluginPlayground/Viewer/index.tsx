@@ -10,7 +10,7 @@ const Viewer: FC = () => {
     ready,
     engineMeta,
     currentCamera,
-    setCurrentCamera,
+    setCurrentCamera
   } = useHooks();
 
   return (

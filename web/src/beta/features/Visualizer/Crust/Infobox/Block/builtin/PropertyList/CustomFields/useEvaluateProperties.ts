@@ -36,21 +36,21 @@ export default (properties: PropertyListItem[] | undefined) => {
         interval: selectedFeature.interval,
         properties: selectedFeature.properties,
         metaData: selectedFeature.metaData,
-        range: selectedFeature.range,
+        range: selectedFeature.range
       };
       const es = currentValue?.map((v) => {
         const ev = evalExpression(
           {
-            expression: v.value,
+            expression: v.value
           },
           undefined,
-          simpleFeature,
+          simpleFeature
         );
 
         return ev
           ? {
               ...v,
-              value: ev,
+              value: ev
             }
           : undefined;
       });

@@ -1,13 +1,13 @@
 import {
   Story,
   StoryBlock,
-  StoryPage,
+  StoryPage
 } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/types";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
 import {
   StoryPage as GqlStoryPage,
-  StoryBlock as GqlStoryBlock,
+  StoryBlock as GqlStoryBlock
 } from "@reearth/services/gql";
 
 import { processProperty } from "./convert";
@@ -15,7 +15,7 @@ import { processProperty as processNewProperty } from "./processNewProperty";
 
 export const convertStory = (
   scene?: Scene,
-  storyId?: string,
+  storyId?: string
 ): Story | undefined => {
   const story = scene?.stories.find((s) => s.id === storyId);
   const installedBlockNames = (scene?.plugins ?? [])
@@ -23,7 +23,7 @@ export const convertStory = (
       (p.plugin?.extensions ?? [])
         .filter((e) => e.type === "StoryBlock")
         .map((e) => ({ [e.extensionId]: e.translatedName ?? e.name }))
-        .filter((e): e is Record<string, string> => !!e),
+        .filter((e): e is Record<string, string> => !!e)
     )
     .reduce((result, obj) => Object.assign(result, obj), {});
 
@@ -36,7 +36,7 @@ export const convertStory = (
       propertyId: p.propertyId,
       layerIds: p.layersIds,
       property: processProperty(undefined, p.property),
-      blocks: storyBlocks(p.blocks),
+      blocks: storyBlocks(p.blocks)
     }));
   const storyBlocks = (blocks: GqlStoryBlock[]): StoryBlock[] =>
     blocks.map((b) => ({
@@ -48,7 +48,7 @@ export const convertStory = (
       propertyId: b.property?.id,
       property: processNewProperty(undefined, b.property),
       propertyForPluginAPI: processProperty(b.property),
-      propertyItemsForPluginBlock: convert(b.property),
+      propertyItemsForPluginBlock: convert(b.property)
     }));
 
   return {
@@ -56,6 +56,6 @@ export const convertStory = (
     title: story.title,
     position: story.panelPosition === "RIGHT" ? "right" : "left",
     bgColor: story.bgColor || "#f1f1f1",
-    pages: storyPages(story.pages),
+    pages: storyPages(story.pages)
   };
 };

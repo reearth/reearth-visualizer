@@ -3,7 +3,7 @@ import {
   FontWeight,
   typography,
   FontSize,
-  UniqueTraits,
+  UniqueTraits
 } from "@reearth/services/theme/reearthTheme/common/fonts";
 import { CSSProperties, ReactNode, useMemo } from "react";
 
@@ -39,7 +39,7 @@ const Text: React.FC<Props> = ({
   trait,
   otherProperties,
   onClick,
-  onDoubleClick,
+  onDoubleClick
 }) => {
   const theme = useTheme();
   const defaultColor = theme.content.main;
@@ -53,7 +53,7 @@ const Text: React.FC<Props> = ({
           ? typographyBySize[weight]
           : typographyBySize &&
             typographyBySize[size === "h1" ? "medium" : "regular"],
-    [trait, size, typographyBySize, weight],
+    [trait, size, typographyBySize, weight]
   );
 
   return Typography ? (
@@ -62,7 +62,7 @@ const Text: React.FC<Props> = ({
       style={{
         userSelect: "none",
         ...otherProperties,
-        color: customColor ? undefined : color || defaultColor,
+        color: customColor ? undefined : color || defaultColor
       }}
       onClick={onClick}
       onDoubleClick={onDoubleClick}

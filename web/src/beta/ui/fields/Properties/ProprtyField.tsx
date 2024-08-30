@@ -14,7 +14,7 @@ import {
   SpacingField,
   SwitchField,
   TimePointField,
-  TwinInputField,
+  TwinInputField
 } from "..";
 import { SpacingValues } from "../SpacingField";
 
@@ -35,13 +35,13 @@ const PropertyField: FC<Props> = ({
   field,
   schemaGroup,
   schema,
-  onFlyTo,
+  onFlyTo
 }) => {
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
 
   const value = useMemo(
     () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
-    [field?.mergedValue, field?.value, schema.defaultValue],
+    [field?.mergedValue, field?.value, schema.defaultValue]
   );
 
   const assetTypes = useMemo(
@@ -53,7 +53,7 @@ const PropertyField: FC<Props> = ({
             ? ["file" as const]
             : undefined
         : undefined,
-    [schema.type, schema.ui],
+    [schema.type, schema.ui]
   );
 
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
@@ -85,7 +85,7 @@ const PropertyField: FC<Props> = ({
             options={
               schema?.choices?.map(({ key, label }) => ({
                 value: key,
-                label: label,
+                label: label
               })) || []
             }
             onChange={handleChange}

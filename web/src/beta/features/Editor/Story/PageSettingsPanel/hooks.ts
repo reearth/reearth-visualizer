@@ -14,7 +14,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
 
   const selectedLayerIds = useMemo(
     () => selectedPage?.layersIds || [],
-    [selectedPage],
+    [selectedPage]
   );
 
   const allLayersSelected = useMemo(() => {
@@ -40,7 +40,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
       setCheckedLayers(updatedLayers);
       onPageUpdate?.(pageId, updatedLayers);
     },
-    [checkedLayers, onPageUpdate, pageId],
+    [checkedLayers, onPageUpdate, pageId]
   );
 
   const handleAllLayersCheck = useCallback(() => {
@@ -57,10 +57,10 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
     () =>
       filterVisibleItems(
         selectedPage?.property.items?.filter(
-          (p) => p.schemaGroup !== "panel" && p.schemaGroup !== "title",
-        ),
+          (p) => p.schemaGroup !== "panel" && p.schemaGroup !== "title"
+        )
       ),
-    [selectedPage?.property],
+    [selectedPage?.property]
   );
 
   return {
@@ -68,6 +68,6 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
     allCheckedLayers,
     visibleItems,
     handleLayerCheck,
-    handleAllLayersCheck,
+    handleAllLayersCheck
   };
 };

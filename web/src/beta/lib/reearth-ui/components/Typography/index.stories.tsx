@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Typography } from ".";
 
 const meta: Meta<typeof Typography> = {
-  component: Typography,
+  component: Typography
 };
 
 export default meta;
@@ -21,7 +21,7 @@ export const Regular: Story = {
       <Typography size="body">Body Regular</Typography>
       <Typography size="footnote">Footnote Regular</Typography>
     </div>
-  ),
+  )
 };
 
 export const Medium: Story = {
@@ -31,7 +31,7 @@ export const Medium: Story = {
         Body Medium
       </Typography>
     </div>
-  ),
+  )
 };
 
 export const Bold: Story = {
@@ -59,5 +59,5 @@ export const Bold: Story = {
         Footnote Bold
       </Typography>
     </div>
-  ),
+  )
 };

@@ -21,7 +21,7 @@ const Accordion: React.FC<Props> = ({
   items,
   allowMultipleExpanded,
   allowZeroExpanded = true,
-  itemBgColor,
+  itemBgColor
 }) => {
   return (
     <AccordionComponent

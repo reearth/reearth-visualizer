@@ -6,12 +6,12 @@ test("convert password policy to regular expression", () => {
   const passwordPolicy = {
     whiteSpace: "(?=.*\\s)",
     highSecurity: "^(?=.*[a-z])(?=.*[A-Z])((?=(.*\\d){2}))",
-    wrong: "@[",
+    wrong: "@["
   };
   const actual = convertPasswordPolicy(passwordPolicy);
   expect(actual).toStrictEqual({
     whiteSpace: /(?=.*\s)/,
-    highSecurity: /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/,
+    highSecurity: /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/
   });
 });
 

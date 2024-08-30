@@ -46,7 +46,7 @@ const SelectField: React.FC<Props> = ({
   disabled = false,
   name,
   description,
-  attachToRoot,
+  attachToRoot
 }) => {
   const t = useT();
 
@@ -54,7 +54,7 @@ const SelectField: React.FC<Props> = ({
 
   const handlePopOver = useCallback(
     () => !disabled && setOpen(!open),
-    [open, disabled],
+    [open, disabled]
   );
 
   const handleClick = useCallback(
@@ -79,7 +79,7 @@ const SelectField: React.FC<Props> = ({
       if (key != value) onChange(key);
       return;
     },
-    [setOpen, onChange, value, multiSelect],
+    [setOpen, onChange, value, multiSelect]
   );
 
   const selected = useMemo(() => {
@@ -87,7 +87,7 @@ const SelectField: React.FC<Props> = ({
       ? Array.isArray(value)
         ? value.map((key) => ({
             key,
-            label: options?.find((x) => x.key === key)?.label,
+            label: options?.find((x) => x.key === key)?.label
           }))
         : options?.find((x) => x.key === value)
       : undefined;
@@ -101,7 +101,7 @@ const SelectField: React.FC<Props> = ({
           : value === key
         : false;
     },
-    [value],
+    [value]
   );
 
   return (

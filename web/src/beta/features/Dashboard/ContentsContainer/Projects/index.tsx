@@ -4,7 +4,7 @@ import {
   ManagerHeader,
   ManagerHeaderButton,
   ManagerLayout,
-  ManagerWrapper,
+  ManagerWrapper
 } from "@reearth/beta/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
@@ -39,7 +39,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
-    handleSearch,
+    handleSearch
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -50,9 +50,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       { value: "date-reversed", label: t("First Created") },
       { value: "date-updated", label: t("Last Updated") },
       { value: "name", label: t("A To Z") },
-      { value: "name-reverse", label: t("Z To A") },
+      { value: "name-reverse", label: t("Z To A") }
     ],
-    [t],
+    [t]
   );
 
   return (
@@ -67,7 +67,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             icon="plus"
             appearance="primary"
             onClick={showProjectCreator}
-          />,
+          />
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}
@@ -93,7 +93,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                       >
                         {t("All projects")}
                       </Typography>
-                    ),
+                    )
                   },
                   ...(searchTerm
                     ? [
@@ -106,10 +106,10 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                             >
                               {`${t("Search Result for")} "${searchTerm}"`}
                             </Typography>
-                          ),
-                        },
+                          )
+                        }
                       ]
-                    : []),
+                    : [])
                 ]}
               />
             </BreadcrumbContainer>
@@ -163,7 +163,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                       />
-                    ),
+                    )
                   )}
                 </ProjectsGroup>
               </ProjectsContainer>
@@ -203,7 +203,7 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.normal,
   flex: 1,
-  height: 0,
+  height: 0
 }));
 
 const ProjectsWrapper = styled("div")(() => ({
@@ -211,18 +211,18 @@ const ProjectsWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   flex: 1,
-  overflow: "auto",
+  overflow: "auto"
 }));
 
 const BreadcrumbContainer = styled("div")(({ theme }) => ({
-  padding: `0 ${theme.spacing.largest}px`,
+  padding: `0 ${theme.spacing.largest}px`
 }));
 
 const ProjectsContainer = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.large,
   flexDirection: "column",
-  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
 const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
@@ -235,24 +235,24 @@ const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
           gridTemplateColumns: "repeat(4, 1fr)",
 
           "@media (max-width: 1200px)": {
-            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateColumns: "repeat(3, 1fr)"
           },
           "@media (max-width: 900px)": {
-            gridTemplateColumns: "repeat(2, 1fr)",
+            gridTemplateColumns: "repeat(2, 1fr)"
           },
           "@media (max-width: 600px)": {
-            gridTemplateColumns: "1fr",
-          },
+            gridTemplateColumns: "1fr"
+          }
         }
       : {}),
     ...(layout === "list"
       ? {
           display: "flex",
           flexDirection: "column",
-          gap: theme.spacing.normal,
+          gap: theme.spacing.normal
         }
-      : {}),
-  }),
+      : {})
+  })
 );
 
 const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
@@ -260,30 +260,30 @@ const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
   alignItems: "center",
   boxSizing: "border-box",
   padding: `${theme.spacing.smallest}px ${theme.spacing.largest}px`,
-  width: width === 0 ? "100%" : width,
+  width: width === 0 ? "100%" : width
 }));
 
 const ThumbnailCol = styled("div")(() => ({
   width: 120,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const ProjectNameCol = styled("div")(() => ({
   flex: 1,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const TimeCol = styled("div")(() => ({
   flex: "0 0 20%",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const ActionCol = styled("div")(() => ({
   flex: "0 0 10%",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const LoadingWrapper = styled("div")(() => ({
   width: "100%",
-  height: 100,
+  height: 100
 }));

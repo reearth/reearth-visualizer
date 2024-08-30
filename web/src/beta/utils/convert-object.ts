@@ -5,7 +5,7 @@ type AnyObject = Record<string, any>;
 function getNestedProperty(obj: AnyObject, keys: string[]): any {
   return keys.reduce(
     (acc, key) => (acc?.[key] !== undefined ? acc[key] : undefined),
-    obj,
+    obj
   );
 }
 
@@ -38,7 +38,7 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
     if (value !== undefined) {
       if (isArray(value) && typeof targetKey === "object") {
         const convertedArray = value.map((item) =>
-          isObject(item) ? convertData(item, targetKey[1]) : item,
+          isObject(item) ? convertData(item, targetKey[1]) : item
         );
         const targetKeys = targetKey[0].split(".");
         setNestedProperty(target, targetKeys, convertedArray);
@@ -66,8 +66,8 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
       tile_zoomLevel: "zoomLevel",
       tile_zoomLevelForURL: "zoomLevelForURL",
       tile_opacity: "opacity",
-      heatmap: "heatmap",
-    },
+      heatmap: "heatmap"
+    }
   ],
   "terrain.terrain": "terrain.enabled",
   "terrain.terrainType": "terrain.type",
@@ -87,5 +87,5 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "moon.moon": "sky.moon.show",
   "skyAtmosphere.skyAtmosphere": "sky.atmosphere.show",
   "skyAtmosphere.skyAtmosphereIntensity": "sky.atmosphere.lightIntensity",
-  "camera.allowEnterGround": "camera.allowEnterGround",
+  "camera.allowEnterGround": "camera.allowEnterGround"
 };

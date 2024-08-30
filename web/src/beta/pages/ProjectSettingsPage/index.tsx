@@ -1,6 +1,6 @@
 import NotFound from "@reearth/beta/components/NotFound";
 import ProjectSettings, {
-  isProjectSettingTab,
+  isProjectSettingTab
 } from "@reearth/beta/features/ProjectSettings";
 import Page from "@reearth/beta/pages/Page";
 import { FC, useMemo } from "react";

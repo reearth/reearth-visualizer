@@ -7,7 +7,7 @@ import { useCallback } from "react";
 import CameraField, { type Props } from ".";
 
 const meta: Meta<typeof CameraField> = {
-  component: CameraField,
+  component: CameraField
 };
 
 export default meta;
@@ -19,12 +19,12 @@ export const Default: Story = (args: Props) => {
 
   const handleSave = useCallback(
     (value?: Camera) => updateArgs({ value: value }),
-    [updateArgs],
+    [updateArgs]
   );
 
   const handleFlyTo = useCallback(
     () => updateArgs({ value: undefined }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -53,7 +53,7 @@ Default.args = {
   value: undefined,
   disabled: false,
   onSave: (value?: Camera) => console.log("saved camera value: ", value),
-  onFlyTo: (target) => console.log("Fly to", target),
+  onFlyTo: (target) => console.log("Fly to", target)
 };
 
 const Wrapper = styled.div`

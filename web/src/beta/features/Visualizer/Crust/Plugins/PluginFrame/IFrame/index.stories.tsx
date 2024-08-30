@@ -7,8 +7,8 @@ export default {
   component: Component,
   argTypes: {
     onLoad: { action: "onLoad" },
-    onMessage: { action: "onMessage" },
-  },
+    onMessage: { action: "onMessage" }
+  }
   // parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
@@ -32,8 +32,8 @@ Default.args = {
   iFrameProps: {
     style: {
       width: "400px",
-      height: "300px",
-    },
+      height: "300px"
+    }
   },
   html: `<h1>iframe</h1><script>
   window.addEventListener("message", ev => {
@@ -44,5 +44,5 @@ Default.args = {
     parent.postMessage(ev.data, "*");
   });
   parent.postMessage("loaded", "*");
-</script>`,
+</script>`
 };

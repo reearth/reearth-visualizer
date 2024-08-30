@@ -6,7 +6,7 @@ import {
   useState,
   MouseEvent,
   useEffect,
-  useRef,
+  useRef
 } from "react";
 
 import { calculatePaddingValue } from "../../../Crust/StoryPanel/utils";
@@ -16,7 +16,7 @@ export const DEFAULT_BLOCK_PADDING: Spacing = {
   top: 0,
   bottom: 0,
   left: 0,
-  right: 0,
+  right: 0
 };
 
 export default ({
@@ -25,7 +25,7 @@ export default ({
   property,
   isEditable,
   onClick,
-  onBlockDoubleClick,
+  onBlockDoubleClick
 }: {
   name?: string | null;
   isSelected?: boolean;
@@ -48,7 +48,7 @@ export default ({
 
   const disableSelection = useMemo(
     () => editModeContext?.disableSelection,
-    [editModeContext?.disableSelection],
+    [editModeContext?.disableSelection]
   );
 
   const handleEditModeToggle = useCallback(
@@ -56,7 +56,7 @@ export default ({
       editModeContext?.onSelectionDisable?.(enable);
       setEditMode?.(enable);
     },
-    [editModeContext],
+    [editModeContext]
   );
 
   const handleSelectionDisable = useCallback(() => {
@@ -73,12 +73,12 @@ export default ({
         handleSelectionDisableRef.current?.();
       }
     },
-    [editMode, disableSelection],
+    [editMode, disableSelection]
   );
 
   const handleSettingsToggle = useCallback(
     () => setShowSettings?.((s) => !s),
-    [],
+    []
   );
 
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
@@ -92,7 +92,7 @@ export default ({
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onClick?.(),
-    () => handleBlockDoubleClick?.(),
+    () => handleBlockDoubleClick?.()
   );
 
   const handleBlockClick = useCallback(
@@ -101,18 +101,18 @@ export default ({
       if ((showSettings && isSelected) || editMode) return;
       handleSingleClick();
     },
-    [showSettings, isSelected, editMode, handleSingleClick],
+    [showSettings, isSelected, editMode, handleSingleClick]
   );
 
   const defaultSettings = useMemo(
     () => property?.default ?? property?.title,
-    [property],
+    [property]
   );
 
   const groupId = useMemo(
     () =>
       property?.default ? "default" : property?.title ? "title" : undefined,
-    [property],
+    [property]
   );
 
   const generalBlockSettings = useMemo(() => {
@@ -123,9 +123,9 @@ export default ({
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
           property?.panel?.padding?.value,
-          isEditable,
-        ),
-      },
+          isEditable
+        )
+      }
     };
   }, [property?.panel, isEditable]);
 
@@ -145,6 +145,6 @@ export default ({
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
-    handleDoubleClick,
+    handleDoubleClick
   };
 };

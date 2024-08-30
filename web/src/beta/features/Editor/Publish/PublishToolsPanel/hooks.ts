@@ -2,7 +2,7 @@ import { useSettingsNavigation } from "@reearth/beta/hooks";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import {
   useProjectFetcher,
-  useStorytellingFetcher,
+  useStorytellingFetcher
 } from "@reearth/services/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -21,7 +21,7 @@ export default ({
   storyId,
   projectId,
   sceneId,
-  selectedProjectType,
+  selectedProjectType
 }: {
   storyId?: string;
   projectId?: string;
@@ -35,7 +35,7 @@ export default ({
     publishProjectLoading,
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
-    usePublishProject,
+    usePublishProject
   } = useProjectFetcher();
 
   const { project: mapProject } = useProjectQuery(projectId);
@@ -52,7 +52,7 @@ export default ({
         ? {
             id: story.id,
             alias: story.alias,
-            publishmentStatus: story.publishmentStatus,
+            publishmentStatus: story.publishmentStatus
           }
         : undefined;
     } else {
@@ -60,7 +60,7 @@ export default ({
         ? {
             id: mapProject.id,
             alias: mapProject.alias,
-            publishmentStatus: mapProject.publishmentStatus,
+            publishmentStatus: mapProject.publishmentStatus
           }
         : undefined;
     }
@@ -74,12 +74,12 @@ export default ({
   const [validAlias, setValidAlias] = useState(false);
   const alias = useMemo(
     () => project?.alias ?? generateAlias(),
-    [project?.alias, generateAlias],
+    [project?.alias, generateAlias]
   );
 
   const [
     checkProjectAlias,
-    { loading: validatingAlias, data: checkProjectAliasData },
+    { loading: validatingAlias, data: checkProjectAliasData }
   ] = useProjectAliasCheckLazyQuery();
 
   const publishmentStatuses = useMemo(() => {
@@ -88,14 +88,14 @@ export default ({
         id: "map",
         title: "Scene",
         type: "default",
-        published: isPublished(mapProject?.publishmentStatus),
+        published: isPublished(mapProject?.publishmentStatus)
       },
       ...(stories?.map((s) => ({
         id: s.id,
         title: "Story",
         type: "story",
-        published: isPublished(s.publishmentStatus),
-      })) || []),
+        published: isPublished(s.publishmentStatus)
+      })) || [])
     ];
   }, [mapProject, stories]);
 
@@ -107,7 +107,7 @@ export default ({
         checkProjectAlias({ variables: { alias: a } });
       }
     },
-    [project?.alias, checkProjectAlias],
+    [project?.alias, checkProjectAlias]
   );
 
   useEffect(() => {
@@ -116,7 +116,7 @@ export default ({
         !!project &&
         !!checkProjectAliasData &&
         (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
-          checkProjectAliasData.checkProjectAlias.available),
+          checkProjectAliasData.checkProjectAlias.available)
     );
   }, [validatingAlias, checkProjectAliasData, project]);
 
@@ -127,7 +127,7 @@ export default ({
         : project?.publishmentStatus === "LIMITED"
           ? "limited"
           : "unpublished",
-    [project?.publishmentStatus],
+    [project?.publishmentStatus]
   );
 
   const handleProjectPublish = useCallback(
@@ -138,7 +138,7 @@ export default ({
         await usePublishProject(publishStatus, project?.id, alias);
       }
     },
-    [project?.id, selectedProjectType, usePublishStory, usePublishProject],
+    [project?.id, selectedProjectType, usePublishStory, usePublishProject]
   );
 
   const handleModalOpen = useCallback((p: publishingType) => {
@@ -161,7 +161,7 @@ export default ({
     handleModalClose,
     handleProjectPublish,
     handleProjectAliasCheck,
-    handleNavigationToSettings,
+    handleNavigationToSettings
   };
 };
 

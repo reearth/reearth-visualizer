@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import SpacingInput from "./index";
 
 export default {
-  component: SpacingInput,
+  component: SpacingInput
 } as Meta;
 
 const Template: Story = (args) => <SpacingInput {...args} />;
@@ -11,7 +11,7 @@ const Template: Story = (args) => <SpacingInput {...args} />;
 export const Default = Template.bind({});
 Default.args = {
   name: "Padding",
-  description: "Adjust the padding values",
+  description: "Adjust the padding values"
 };
 
 export const WithValues = Template.bind({});
@@ -22,6 +22,6 @@ WithValues.args = {
     top: "10",
     left: "20",
     right: "30",
-    bottom: "40",
-  },
+    bottom: "40"
+  }
 };

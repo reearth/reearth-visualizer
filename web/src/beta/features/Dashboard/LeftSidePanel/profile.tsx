@@ -2,7 +2,7 @@ import {
   Icon,
   PopupMenu,
   PopupMenuItem,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -33,7 +33,7 @@ export const Profile: FC<ProfileProp> = ({
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
-  onSignOut,
+  onSignOut
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -52,16 +52,16 @@ export const Profile: FC<ProfileProp> = ({
           hasCustomSubMenu: true,
           personal: w.personal,
           selected: currentWorkspace?.id === w.id,
-          onClick: () => onWorkspaceChange?.(w.id),
+          onClick: () => onWorkspaceChange?.(w.id)
         };
-      }),
+      })
     },
     {
       id: "signOut",
       title: t("Log Out"),
       icon: "exit",
-      onClick: onSignOut,
-    },
+      onClick: onSignOut
+    }
   ];
 
   return (
@@ -97,13 +97,13 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal,
   borderBottom: `1px solid ${theme.outline.weaker}`,
   alignContent: "center",
-  padding: theme.spacing.normal,
+  padding: theme.spacing.normal
 }));
 
 const ProfileWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const Avatar = styled("div")(({ theme }) => ({
@@ -114,7 +114,7 @@ const Avatar = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -123,7 +123,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.bold,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  wordBreak: "break-all",
+  wordBreak: "break-all"
 }));
 
 const PopupWrapper = styled("div")(() => ({}));

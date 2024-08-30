@@ -7,7 +7,7 @@ const ManagerEmptyContent: FC<{ children?: ReactNode }> = ({ children }) => {
 const WrapperContent = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
-  margin: "auto",
+  margin: "auto"
 }));
 
 export default ManagerEmptyContent;

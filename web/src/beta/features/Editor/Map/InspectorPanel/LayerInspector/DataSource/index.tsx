@@ -1,9 +1,9 @@
-import { FC } from "react";
 
 import { InputField, TextareaField } from "@reearth/beta/ui/fields";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 type Props = {
   selectedLayer: NLSLayer;
@@ -42,7 +42,7 @@ const DataSource: FC<Props> = ({ selectedLayer }) => {
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
 export default DataSource;

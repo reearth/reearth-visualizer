@@ -1,7 +1,7 @@
 import {
   CameraPosition as CoreCameraPosition,
   CameraOptions,
-  FlyTo,
+  FlyTo
 } from "@reearth/core";
 import { useCallback, useMemo } from "react";
 
@@ -12,7 +12,7 @@ import {
   CameraMoveOptions,
   CameraPosition,
   LookAtDestination,
-  ScreenSpaceCameraControllerOptions,
+  ScreenSpaceCameraControllerOptions
 } from "../pluginAPI/types";
 import { GeoRect } from "../pluginAPI/types/common";
 import { Props } from "../types";
@@ -20,7 +20,7 @@ import { events, useEmit } from "../utils/events";
 
 export default ({
   mapRef,
-  onCameraForceHorizontalRollChange,
+  onCameraForceHorizontalRollChange
 }: Pick<Props, "mapRef" | "onCameraForceHorizontalRollChange">) => {
   const engineRef = mapRef?.current?.engine;
   const [camera] = useVisualizerCamera();
@@ -33,7 +33,7 @@ export default ({
       height: camera.height,
       heading: camera.heading,
       pitch: camera.pitch,
-      roll: camera.roll,
+      roll: camera.roll
     };
   }, [camera]);
 
@@ -44,35 +44,35 @@ export default ({
 
   const getCameraViewport = useCallback(
     () => engineRef?.getViewport(),
-    [engineRef],
+    [engineRef]
   );
 
   const zoomIn = useCallback(
     (amount: number) => {
       engineRef?.zoomIn(amount);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const zoomOut = useCallback(
     (amount: number) => {
       engineRef?.zoomOut(amount);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const setView = useCallback(
     (camera: CoreCameraPosition) => {
       engineRef?.setView(camera);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const flyTo: FlyTo = useCallback(
     (target, options) => {
       engineRef?.flyTo(target, options);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const flyToBoundingBox = useCallback(
@@ -82,68 +82,68 @@ export default ({
         heading?: number;
         pitch?: number;
         range?: number;
-      },
+      }
     ) => {
       return engineRef?.flyToBBox(
         [bbox.west, bbox.south, bbox.east, bbox.north],
-        options,
+        options
       );
     },
-    [engineRef],
+    [engineRef]
   );
 
   const getGlobeIntersection = useCallback(
     (options: { withTerrain?: boolean; calcViewSize?: boolean }) => {
       return engineRef?.getCameraFovInfo(options);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const enableScreenSpaceCameraController = useCallback(
     (enabled?: boolean) =>
       engineRef?.enableScreenSpaceCameraController(!!enabled),
-    [engineRef],
+    [engineRef]
   );
 
   const overrideScreenSpaceCameraController = useCallback(
     (options?: ScreenSpaceCameraControllerOptions) => {
       return engineRef?.overrideScreenSpaceController(options ?? {});
     },
-    [engineRef],
+    [engineRef]
   );
 
   const lookAt = useCallback(
     (dest: LookAtDestination, options?: CameraOptions) => {
       engineRef?.lookAt(dest, options);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const rotateAround = useCallback(
     (radian: number) => {
       return engineRef?.rotateOnCenter(radian);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const rotateRight = useCallback(
     (radian: number) => {
       engineRef?.rotateRight(radian);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const orbit = useCallback(
     (radian: number) => {
       engineRef?.orbit(radian);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const move = useCallback(
     (
       direction: "forward" | "backward" | "up" | "down" | "left" | "right",
-      amount: number,
+      amount: number
     ) => {
       if (direction === "forward") {
         engineRef?.moveForward(amount);
@@ -159,21 +159,21 @@ export default ({
         engineRef?.moveRight(amount);
       }
     },
-    [engineRef],
+    [engineRef]
   );
 
   const moveOverTerrain = useCallback(
     (offset?: number) => {
       return engineRef?.moveOverTerrain(offset);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const enableForceHorizontalRoll = useCallback(
     (enabled: boolean) => {
       onCameraForceHorizontalRollChange?.(enabled);
     },
-    [onCameraForceHorizontalRollChange],
+    [onCameraForceHorizontalRollChange]
   );
 
   // events
@@ -183,33 +183,33 @@ export default ({
     {
       move: useMemo<[camera: CameraPosition] | undefined>(
         () => (camera ? [camera] : undefined),
-        [camera],
-      ),
+        [camera]
+      )
     },
-    emit,
+    emit
   );
 
   const cameraEventsOn = useCallback(
     <T extends keyof CameraEventType>(
       type: T,
       callback: (...args: CameraEventType[T]) => void,
-      options?: { once?: boolean },
+      options?: { once?: boolean }
     ) => {
       return options?.once
         ? cameraEvents.once(type, callback)
         : cameraEvents.on(type, callback);
     },
-    [cameraEvents],
+    [cameraEvents]
   );
 
   const cameraEventsOff = useCallback(
     <T extends keyof CameraEventType>(
       type: T,
-      callback: (...args: CameraEventType[T]) => void,
+      callback: (...args: CameraEventType[T]) => void
     ) => {
       return cameraEvents.off(type, callback);
     },
-    [cameraEvents],
+    [cameraEvents]
   );
 
   return {
@@ -234,6 +234,6 @@ export default ({
     enableForceHorizontalRoll,
     cameraEventsOn,
     cameraEventsOff,
-    cameraEvents,
+    cameraEvents
   };
 };

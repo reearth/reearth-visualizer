@@ -45,16 +45,16 @@ export default PluginList;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.super,
+  gap: theme.spacing.super
 }));
 
 const InstalledHeader = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
-  borderBottom: `solid 1px ${theme.outline.weak}`,
+  borderBottom: `solid 1px ${theme.outline.weak}`
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));

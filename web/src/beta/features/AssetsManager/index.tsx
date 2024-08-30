@@ -4,7 +4,7 @@ import {
   ManagerHeader,
   ManagerHeaderButton,
   ManagerLayout,
-  ManagerWrapper,
+  ManagerWrapper
 } from "@reearth/beta/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
@@ -36,7 +36,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
   enableDelete = true,
   allowMultipleSelection = true,
   assetsTypes,
-  onSelectChange,
+  onSelectChange
 }) => {
   const {
     filteredAssets,
@@ -56,12 +56,12 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     handleAssetUpload,
     contentWidth,
     loading,
-    loadingMore,
+    loadingMore
   } = useHooks({
     allowMultipleSelection,
     workspaceId,
     assetsTypes,
-    onSelectChange,
+    onSelectChange
   });
   const t = useT();
   const theme = useTheme();
@@ -78,7 +78,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               icon="uploadSimple"
               onClick={handleAssetUpload}
             />
-          ),
+          )
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}
@@ -151,7 +151,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                             selectedAssetIds={selectedAssetIds}
                             onSelect={handleAssetSelect}
                           />
-                        ),
+                        )
                       )}
                     </AssetsGroup>
                   </AssetsContent>
@@ -188,14 +188,14 @@ const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
     flexDirection: "column",
     gap: theme.spacing.normal,
     flex: 1,
-    height: 0,
-  }),
+    height: 0
+  })
 );
 
 const PathWrapper = styled("div")<{ size: AssetsManagerSize }>(
   ({ theme, size }) => ({
-    padding: `0 ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-  }),
+    padding: `0 ${size === "large" ? theme.spacing.large : theme.spacing.small}px`
+  })
 );
 
 const AssetsWrapper = styled("div")(() => ({
@@ -204,7 +204,7 @@ const AssetsWrapper = styled("div")(() => ({
   flexDirection: "column",
   flex: 1,
   height: 0,
-  overflow: "auto",
+  overflow: "auto"
 }));
 
 const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
@@ -214,15 +214,15 @@ const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
     gap: theme.spacing.normal,
     padding: `${theme.spacing.smallest}px ${
       size === "large" ? theme.spacing.large : theme.spacing.small
-    }px ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-  }),
+    }px ${size === "large" ? theme.spacing.large : theme.spacing.small}px`
+  })
 );
 
 const LayoutWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   flex: 1,
-  height: 0,
+  height: 0
 }));
 
 const AssetsGroup = styled("div")<{
@@ -233,16 +233,16 @@ const AssetsGroup = styled("div")<{
     ? {
         display: "grid",
         gap: theme.spacing.normal,
-        gridTemplateColumns: `repeat(auto-fill, minmax(${size === "medium" ? 96 : 144}px, 1fr))`,
+        gridTemplateColumns: `repeat(auto-fill, minmax(${size === "medium" ? 96 : 144}px, 1fr))`
       }
     : {}),
   ...(layout === "list"
     ? {
         display: "flex",
         flexDirection: "column",
-        gap: theme.spacing.small,
+        gap: theme.spacing.small
       }
-    : {}),
+    : {})
 }));
 
 const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
@@ -255,22 +255,22 @@ const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
       theme.spacing.smallest
     }px`,
     gap: theme.spacing.small,
-    width: width === 0 ? "100%" : width,
-  }),
+    width: width === 0 ? "100%" : width
+  })
 );
 
 const ThumbnailSpacer = styled("div")(() => ({
   width: 20,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const Col = styled("div")<{ width: number }>(({ width }) => ({
   width: `${width}%`,
   flexGrow: 0,
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const LoadingWrapper = styled("div")(() => ({
   width: "100%",
-  height: 100,
+  height: 100
 }));

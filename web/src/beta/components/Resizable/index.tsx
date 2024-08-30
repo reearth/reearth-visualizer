@@ -21,7 +21,7 @@ const Resizable: React.FC<Props> = ({
   maxSize,
   initialSize,
   children,
-  localStorageKey,
+  localStorageKey
 }) => {
   const { size, gutterProps, minimized, handleResetSize } = useHooks(
     direction,
@@ -29,7 +29,7 @@ const Resizable: React.FC<Props> = ({
     initialSize,
     minSize,
     maxSize,
-    localStorageKey,
+    localStorageKey
   );
 
   const showTopGutter = direction === "horizontal" && gutter === "start";

@@ -3,7 +3,7 @@ import { usePluginsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
   useDevPluginExtensionRenderKey,
-  useDevPluginExtensions,
+  useDevPluginExtensions
 } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { useCallback, useEffect } from "react";
@@ -36,7 +36,7 @@ export default ({ sceneId }: Props) => {
       if (!sceneId || !file) return;
       useUploadPluginWithFile(sceneId, file);
     },
-    [sceneId, useUploadPluginWithFile],
+    [sceneId, useUploadPluginWithFile]
   );
 
   const handleDevPluginsInstall = useCallback(async () => {
@@ -68,10 +68,10 @@ export default ({ sceneId }: Props) => {
           return (
             data.extensions?.map((e) => ({
               id: e.id,
-              url: `${url}/${e.id}.js`,
+              url: `${url}/${e.id}.js`
             })) ?? []
           );
-        }),
+        })
       );
       setDevPluginExtensions(extensions.flatMap((e) => e));
     };
@@ -82,7 +82,7 @@ export default ({ sceneId }: Props) => {
   return {
     devPluginExtensions,
     handleDevPluginsInstall,
-    handleDevPluginExtensionsReload,
+    handleDevPluginExtensionsReload
   };
 };
 
@@ -96,13 +96,13 @@ async function getPluginZipFromUrl(url: string) {
     const data = yaml.load(yamlText) as ReearthYML;
 
     const extensionUrls = data?.extensions?.map(
-      (extensions) => `${url}/${extensions.id}.js`,
+      (extensions) => `${url}/${extensions.id}.js`
     );
     if (!extensionUrls) return;
 
     const file = await fetchAndZipFiles(
       [...extensionUrls, `${url}/reearth.yml`],
-      `${data.id}-${data.version}.zip`,
+      `${data.id}-${data.version}.zip`
     );
 
     return file;

@@ -30,7 +30,7 @@ const ScenePanel: FC = () => {
                   ? t("Camera")
                   : t("Unknown scene setting");
     },
-    [t],
+    [t]
   );
 
   return (
@@ -38,20 +38,20 @@ const ScenePanel: FC = () => {
       <Wrapper>
         {[
           ...new Set(
-            scene?.property?.schema?.groups.map(({ collection }) => collection),
-          ),
+            scene?.property?.schema?.groups.map(({ collection }) => collection)
+          )
         ].map(
           (collection, index) =>
             collection && (
               <EntryItem
                 key={index}
                 title={handleTranslatedCollectionName(
-                  collection as ScenePropertyCollection,
+                  collection as ScenePropertyCollection
                 )}
                 highlighted={selectedSceneSetting === collection}
                 onClick={() => handleSceneSettingSelect(collection)}
               />
-            ),
+            )
         )}
       </Wrapper>
     </Panel>
@@ -63,5 +63,5 @@ export default ScenePanel;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));

@@ -34,14 +34,14 @@ const PropertyList: React.FC<Props> = ({
   schemaGroup,
   selected,
   atLeastOneItem,
-  onSelect,
+  onSelect
 }: Props) => {
   const t = useT();
 
   const {
     handleAddPropertyItem,
     handleRemovePropertyItem,
-    handleMovePropertyItem,
+    handleMovePropertyItem
   } = useHooks(propertyId, schemaGroup);
 
   const deleteItem = useCallback(() => {

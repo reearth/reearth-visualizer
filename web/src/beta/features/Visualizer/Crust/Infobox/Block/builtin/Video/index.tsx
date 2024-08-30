@@ -18,7 +18,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
 
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
-    [block?.property?.default?.src],
+    [block?.property?.default?.src]
   );
 
   const evaluatedSrc = useExpressionEval(src);
@@ -62,11 +62,11 @@ export default VideoBlock;
 const Wrapper = styled("div")<{ aspectRatio: number }>(({ aspectRatio }) => ({
   position: "relative",
   paddingTop: `${aspectRatio}%`,
-  width: "100%",
+  width: "100%"
 }));
 
 const StyledPlayer = styled(Player)({
   position: "absolute",
   top: 0,
-  left: 0,
+  left: 0
 });

@@ -5,7 +5,7 @@ import { SetStateAction, useCallback } from "react";
 type Props = {
   sceneId?: string;
   selectWidgetArea: (
-    update?: SetStateAction<WidgetAreaState | undefined>,
+    update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;
 };
 
@@ -17,16 +17,16 @@ export default ({ sceneId, selectWidgetArea }: Props) => {
       if (!sceneId || !widgetAreaState) return;
       const results = await useUpdateWidgetAlignSystem(
         widgetAreaState,
-        sceneId,
+        sceneId
       );
       if (results.status === "success") {
         selectWidgetArea(widgetAreaState);
       }
     },
-    [sceneId, useUpdateWidgetAlignSystem, selectWidgetArea],
+    [sceneId, useUpdateWidgetAlignSystem, selectWidgetArea]
   );
 
   return {
-    handleWidgetAreaStateChange,
+    handleWidgetAreaStateChange
   };
 };

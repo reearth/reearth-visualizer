@@ -3,7 +3,7 @@ import {
   IconButton,
   IconName,
   PopupMenu,
-  PopupMenuItem,
+  PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import {
@@ -12,7 +12,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from "react";
 
 export interface EntryItemAction {
@@ -40,7 +40,7 @@ export const EntryItem: FC<EntryItemProps> = ({
   optionsMenu,
   optionsMenuWidth,
   actions,
-  onClick,
+  onClick
 }) => {
   const [hovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => {
@@ -86,7 +86,7 @@ export const EntryItem: FC<EntryItemProps> = ({
       </MainContent>
       <Actions>
         {actions?.map(
-          (a) => (highlighted || hovered || a.keepVisible) && a.comp,
+          (a) => (highlighted || hovered || a.keepVisible) && a.comp
         )}
         {!!optionsMenu && (
           <OptionsWrapper onClick={handleOptionsClick}>
@@ -129,18 +129,18 @@ const Wrapper = styled("div")<{
   minWidth: 0,
   cursor: "pointer",
   ...(hovered && {
-    backgroundColor: theme.bg[1],
+    backgroundColor: theme.bg[1]
   }),
   ...(highlight && {
-    backgroundColor: theme.select.main,
+    backgroundColor: theme.select.main
   }),
   ["&:active"]: {
     backgroundColor: highlight
       ? theme.select.strong
       : hovered
         ? theme.relative.light
-        : "transparent",
-  },
+        : "transparent"
+  }
 }));
 
 const MainContent = styled("div")<{ asDragHandle?: boolean }>(
@@ -152,9 +152,9 @@ const MainContent = styled("div")<{ asDragHandle?: boolean }>(
     overflow: "hidden",
     textOverflow: "ellipsis",
     ...(asDragHandle && {
-      cursor: "pointer",
-    }),
-  }),
+      cursor: "pointer"
+    })
+  })
 );
 
 const Title = styled("div")(({ theme }) => ({
@@ -164,22 +164,22 @@ const Title = styled("div")(({ theme }) => ({
   whiteSpace: "nowrap",
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 const Actions = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const OptionsWrapper = styled("div")(() => ({
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const IconWrapper = styled("div")(({ theme }) => ({
   height: 12,
   flexShrink: 0,
   fontSize: 0,
-  color: theme.content.main,
+  color: theme.content.main
 }));

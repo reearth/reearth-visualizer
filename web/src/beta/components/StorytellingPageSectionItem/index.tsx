@@ -19,7 +19,7 @@ const StorytellingPageSectionItem: FC<Props> = ({
   index,
   active,
   onAction,
-  onClick,
+  onClick
 }) => {
   const theme = useTheme();
   return (

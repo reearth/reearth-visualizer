@@ -37,7 +37,7 @@ export type OmitFunc3<F extends (a: any, b: any, c: any, ...args: any) => any> =
 
 export type ExtendedFuncProps<
   P extends { [key in string]?: (...args: any) => any },
-  A,
+  A
 > = {
   [K in keyof P]?: ExtendedFunc<NonNullable<P[K]>, A>;
 };
@@ -45,7 +45,7 @@ export type ExtendedFuncProps<
 export type ExtendedFuncProps2<
   P extends { [key in string]?: (...args: any) => any },
   A,
-  B,
+  B
 > = {
   [K in keyof P]?: ExtendedFunc2<NonNullable<P[K]>, A, B>;
 };
@@ -54,25 +54,25 @@ export type ExtendedFuncProps3<
   P extends { [key in string]?: (...args: any) => any },
   A,
   B,
-  C,
+  C
 > = {
   [K in keyof P]?: ExtendedFunc3<NonNullable<P[K]>, A, B, C>;
 };
 
 export type OmitFuncProps<
-  P extends { [key in string]?: (...args: any) => any },
+  P extends { [key in string]?: (...args: any) => any }
 > = {
   [K in keyof P]?: OmitFunc<NonNullable<P[K]>>;
 };
 
 export type OmitFuncProps2<
-  P extends { [key in string]?: (...args: any) => any },
+  P extends { [key in string]?: (...args: any) => any }
 > = {
   [K in keyof P]?: OmitFunc2<NonNullable<P[K]>>;
 };
 
 export type OmitFuncProps3<
-  P extends { [key in string]?: (...args: any) => any },
+  P extends { [key in string]?: (...args: any) => any }
 > = {
   [K in keyof P]?: OmitFunc3<NonNullable<P[K]>>;
 };

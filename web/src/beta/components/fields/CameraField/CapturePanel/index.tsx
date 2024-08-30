@@ -24,25 +24,25 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
       [t("Current Position")]: [
         { id: "lat", description: t("Latitude"), value: camera?.lat },
         { id: "lng", description: t("Longitude"), value: camera?.lng },
-        { id: "height", description: t("Height"), value: camera?.height },
+        { id: "height", description: t("Height"), value: camera?.height }
       ],
       [t("Current Rotation")]: [
         {
           id: "heading",
           description: t("Heading"),
-          value: radiansToDegrees(camera?.heading ?? 0),
+          value: radiansToDegrees(camera?.heading ?? 0)
         },
         {
           id: "pitch",
           description: t("Pitch"),
-          value: radiansToDegrees(camera?.pitch ?? 0),
+          value: radiansToDegrees(camera?.pitch ?? 0)
         },
         {
           id: "roll",
           description: t("Roll"),
-          value: radiansToDegrees(camera?.roll ?? 0),
-        },
-      ],
+          value: radiansToDegrees(camera?.roll ?? 0)
+        }
+      ]
     };
   }, [t, camera]);
 

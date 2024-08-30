@@ -24,7 +24,7 @@ const BlockAddBar: FC<Props> = ({
   showAreaHeight,
   parentWidth,
   onBlockOpen,
-  onBlockAdd,
+  onBlockAdd
 }) => {
   const items: PopupMenuItem[] = useMemo(
     () =>
@@ -36,15 +36,15 @@ const BlockAddBar: FC<Props> = ({
           onClick: () => {
             onBlockAdd?.(b.extensionId, b.pluginId);
             onBlockOpen();
-          },
+          }
         };
       }) ?? [],
-    [installableBlocks, onBlockAdd, onBlockOpen],
+    [installableBlocks, onBlockAdd, onBlockOpen]
   );
 
   const persist = useMemo(
     () => alwaysShow || openBlocks,
-    [alwaysShow, openBlocks],
+    [alwaysShow, openBlocks]
   );
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const BlockAddBar: FC<Props> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   position: "relative",
   padding: `${theme.spacing.micro}px 0`,
-  zIndex: theme.zIndexes.visualizer.storyBlockAddBar,
+  zIndex: theme.zIndexes.visualizer.storyBlockAddBar
 }));
 
 const Bar = styled("div")<{ height?: number; persist?: boolean }>(
@@ -98,26 +98,26 @@ const Bar = styled("div")<{ height?: number; persist?: boolean }>(
     height: height ? `${height}px` : "1px",
     cursor: "pointer",
     "&:hover > *": {
-      opacity: "100%",
+      opacity: "100%"
     },
     "& > *": {
       opacity: persist ? "100%" : "0%",
-      transition: "opacity 0.4s",
-    },
-  }),
+      transition: "opacity 0.4s"
+    }
+  })
 );
 
 const StyledIcon = styled(Icon)<{ persist?: boolean }>(({ theme }) => ({
   color: theme.content.main,
   background: theme.select.main,
   padding: theme.spacing.micro,
-  borderRadius: theme.radius.small,
+  borderRadius: theme.radius.small
 }));
 
 const Line = styled("div")<{ persist?: boolean }>(({ theme }) => ({
   height: "1px",
   width: "100%",
-  background: theme.select.main,
+  background: theme.select.main
 }));
 
 export default BlockAddBar;

@@ -6,7 +6,7 @@ import type { Item } from "@reearth/services/api/propertyApi/utils";
 export const getFieldValue = (
   items: Item[],
   fieldId: string,
-  fieldGroup?: string,
+  fieldGroup?: string
 ) => {
   const d =
     items.find((i) => i.schemaGroup === (fieldGroup ?? "default")) ?? items[0];
@@ -21,27 +21,27 @@ export const getFieldValue = (
             obj[field.id] = field.value;
             return obj;
           },
-          {},
-        ),
+          {}
+        )
       }));
 };
 
 export const calculatePaddingValue = (
   defaultValue: Spacing,
   value?: Spacing,
-  editorMode?: boolean,
+  editorMode?: boolean
 ) => {
   const calculateValue = (
     position: keyof Spacing,
-    v?: number,
+    v?: number
   ): Record<string, number> => {
     if (v === undefined) {
       return {
-        [position]: editorMode ? defaultValue[position] : 0,
+        [position]: editorMode ? defaultValue[position] : 0
       };
     }
     return {
-      [position]: v,
+      [position]: v
     };
   };
 
@@ -49,8 +49,8 @@ export const calculatePaddingValue = (
     ? Object.assign(
         {},
         ...Object.keys(value).map((p) =>
-          calculateValue(p as keyof Spacing, value[p as keyof Spacing]),
-        ),
+          calculateValue(p as keyof Spacing, value[p as keyof Spacing])
+        )
       )
     : defaultValue;
 };
@@ -67,7 +67,7 @@ const MONTH_LABEL_LIST = [
   "Sep",
   "Oct",
   "Nov",
-  "Dec",
+  "Dec"
 ];
 
 export const formatTimezone = (time: number) => {
@@ -82,12 +82,12 @@ export const formatTimezone = (time: number) => {
 export const formatDateForTimeline = (
   time: number,
   options: { detail?: boolean } = {},
-  timezone?: string,
+  timezone?: string
 ) => {
   const localTimezoneOffset = new Date().getTimezoneOffset();
   const d = new Date(
     time +
-      (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+      (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000
   );
 
   const year = d.getFullYear();
@@ -106,12 +106,12 @@ export const formatDateForTimeline = (
 export const formatDateForSliderTimeline = (
   time: number,
   options: { detail?: boolean } = {},
-  timezone?: string,
+  timezone?: string
 ) => {
   const localTimezoneOffset = new Date().getTimezoneOffset();
   const d = new Date(
     time +
-      (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+      (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000
   );
 
   const month = MONTH_LABEL_LIST[d.getMonth()];
@@ -169,14 +169,14 @@ export const formatRangeDateAndTime = (data: string) => {
   const time = data.slice(lastIdx + 1);
   return {
     date,
-    time,
+    time
   };
 };
 
 export const convertPositionToTime = (
   e: MouseEvent,
   start: number,
-  end: number,
+  end: number
 ) => {
   const curTar = e.currentTarget as HTMLElement;
   const width = curTar.scrollWidth - 32;
@@ -207,7 +207,7 @@ export const formatISO8601 = (time: string) => {
     return time
       .replace(
         timezone,
-        `${splitZone[0][0]}0${splitZone[0][1]}:${splitZone[1]}`,
+        `${splitZone[0][0]}0${splitZone[0][1]}:${splitZone[1]}`
       )
       .replace(" ", "");
   }

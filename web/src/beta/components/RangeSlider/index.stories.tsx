@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import RangeSlider, { Props } from ".";
 
 const meta: Meta<typeof RangeSlider> = {
-  component: RangeSlider,
+  component: RangeSlider
 };
 
 type Story = StoryObj<typeof RangeSlider>;
@@ -18,7 +18,7 @@ export const Default: Story = (args: Props) => {
 
   const handleChange = useCallback(
     (value: number[]) => updateArgs({ value: value }),
-    [updateArgs],
+    [updateArgs]
   );
 
   return (
@@ -45,7 +45,7 @@ Default.args = {
   min: 0,
   max: 100,
   step: 1,
-  disabled: false,
+  disabled: false
 };
 
 const Wrapper = styled.div`

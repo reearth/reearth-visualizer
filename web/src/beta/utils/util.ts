@@ -15,7 +15,7 @@ export const isPresent = <V>(v: V | undefined): v is V =>
 
 export const partitionObject = <T extends object, K extends keyof T>(
   obj: T,
-  keys: K[],
+  keys: K[]
 ): [Pick<T, K>, Omit<T, K>] => {
   const a: any = {};
   const b: any = {};
@@ -31,7 +31,7 @@ export const partitionObject = <T extends object, K extends keyof T>(
 
 export const bindFunc = <F extends (a: A, ...args: any[]) => any, A>(
   f?: F,
-  a?: A,
+  a?: A
 ) =>
   isPresent(f) && isPresent(a)
     ? (...args: Args<F>) => f(a, ...args)
@@ -40,7 +40,7 @@ export const bindFunc = <F extends (a: A, ...args: any[]) => any, A>(
 export const bindFunc2 = <F extends (a: A, b: B, ...args: any[]) => any, A, B>(
   f?: F,
   a?: A,
-  b?: B,
+  b?: B
 ) =>
   isPresent(f) && isPresent(a) && isPresent(b)
     ? (...args: Args2<F>) => f(a, b, ...args)
@@ -50,12 +50,12 @@ export const bindFunc3 = <
   F extends (a: A, b: B, c: C, ...args: any[]) => any,
   A,
   B,
-  C,
+  C
 >(
   f?: F,
   a?: A,
   b?: B,
-  c?: C,
+  c?: C
 ) =>
   isPresent(f) && isPresent(a) && isPresent(b) && isPresent(c)
     ? (...args: Args3<F>) => f(a, b, c, ...args)

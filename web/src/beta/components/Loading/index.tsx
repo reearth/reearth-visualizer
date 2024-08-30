@@ -21,7 +21,7 @@ const Loading: React.FC<Props> = ({
   portal,
   fixed,
   relative,
-  overlay,
+  overlay
 }) => {
   const theme = useTheme();
   const loading = (

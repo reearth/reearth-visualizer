@@ -29,7 +29,7 @@ const getSize = (
   size: number,
   delta: number,
   minSize?: number,
-  maxSize?: number,
+  maxSize?: number
 ) => {
   let newSize = size + delta;
   if (minSize !== undefined && newSize < minSize) newSize = minSize;
@@ -43,7 +43,7 @@ export default (
   initialSize: number,
   minSize: number,
   maxSize?: number,
-  localStorageKey?: string,
+  localStorageKey?: string
 ) => {
   const getLocalStorageParsedState = useCallback((localStorageKey?: string) => {
     const savedState = localStorageKey && localStorage.getItem(localStorageKey);
@@ -77,7 +77,7 @@ export default (
 
   const onResizeStart = useCallback(
     (
-      e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
+      e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
     ) => {
       const position = getPositionFromEvent(e);
       if (!position) return;
@@ -86,7 +86,7 @@ export default (
       setIsResizing(true);
       setPosition(position);
     },
-    [size],
+    [size]
   );
 
   const onResize = useCallback(
@@ -122,8 +122,8 @@ export default (
       minSize,
       maxSize,
       minimized,
-      startingSize,
-    ],
+      startingSize
+    ]
   );
 
   const onResizeEnd = useCallback(() => {
@@ -135,7 +135,7 @@ export default (
     setDifference(0);
     const storedData = {
       size,
-      minimized,
+      minimized
     };
     if (localStorageKey) {
       setLocalStorageData(localStorageKey, storedData);
@@ -172,9 +172,9 @@ export default (
   const gutterProps = useMemo(
     () => ({
       onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => onResizeStart(e),
-      onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => onResizeStart(e),
+      onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => onResizeStart(e)
     }),
-    [onResizeStart],
+    [onResizeStart]
   );
 
   const handleResetSize = useCallback(() => {
@@ -183,7 +183,7 @@ export default (
     if (localStorageKey) {
       setLocalStorageData(localStorageKey, {
         size: initialSize,
-        minimized: false,
+        minimized: false
       });
     }
   }, [initialSize, localStorageKey]);
@@ -192,6 +192,6 @@ export default (
     size: size || initialSize,
     gutterProps,
     minimized,
-    handleResetSize,
+    handleResetSize
   };
 };

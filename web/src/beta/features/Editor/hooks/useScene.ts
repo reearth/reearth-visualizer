@@ -16,19 +16,19 @@ export default function ({ sceneId }: SceneProps) {
   const sceneSettings = useMemo(
     () =>
       convert(scene?.property)?.filter(
-        (item) => item.collection === selectedSceneSetting,
+        (item) => item.collection === selectedSceneSetting
       ),
-    [scene?.property, selectedSceneSetting],
+    [scene?.property, selectedSceneSetting]
   );
   const handleSceneSettingSelect = useCallback(
     (collection?: string) => setSelectedSceneSetting(collection),
-    [],
+    []
   );
 
   return {
     scene,
     selectedSceneSetting,
     sceneSettings,
-    handleSceneSettingSelect,
+    handleSceneSettingSelect
   };
 }

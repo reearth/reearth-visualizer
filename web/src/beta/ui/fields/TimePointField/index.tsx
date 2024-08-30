@@ -24,7 +24,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
   fieldName,
   onChange,
   onTimePointPopupOpen,
-  setDisabledFields,
+  setDisabledFields
 }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
@@ -68,7 +68,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
               disabled={!dateTime}
               onClick={handleTimeSettingDelete}
               iconColor={dateTime ? theme.content.main : theme.content.weak}
-            />,
+            />
           ]}
           disabled
           placeholder={"YYYY-MM-DDThh:mm:ss±hh:mm"}
@@ -107,5 +107,5 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
   gap: theme.spacing.small,
-  flexWrap: "wrap",
+  flexWrap: "wrap"
 }));

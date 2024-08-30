@@ -16,8 +16,8 @@ const Navigator = ({
     onCameraRotateRight,
     onFlyTo,
     onZoomIn,
-    onZoomOut,
-  } = {},
+    onZoomOut
+  } = {}
 }: Props): JSX.Element | null => {
   const { degree, events } = useHooks({
     camera,
@@ -28,7 +28,7 @@ const Navigator = ({
     onCameraRotateRight,
     onFlyTo,
     onZoomIn,
-    onZoomOut,
+    onZoomOut
   });
 
   return <NavigatorUI theme={theme} degree={degree} {...events} />;

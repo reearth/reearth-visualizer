@@ -21,7 +21,7 @@ const TextField: React.FC<Props> = ({
   placeholder,
   disabled,
   onChange,
-  onBlur,
+  onBlur
 }) => {
   return (
     <Property className={className} name={name} description={description}>

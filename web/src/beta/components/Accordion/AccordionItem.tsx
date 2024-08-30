@@ -5,7 +5,7 @@ import {
   AccordionItemButton,
   AccordionItemHeading,
   AccordionItemPanel,
-  AccordionItemState,
+  AccordionItemState
 } from "react-accessible-accordion";
 
 import Icon from "../Icon";
@@ -23,7 +23,7 @@ const AccordionItem: React.FC<Props> = ({
   id,
   heading,
   content,
-  bg,
+  bg
 }) => {
   const theme = useTheme();
   return (

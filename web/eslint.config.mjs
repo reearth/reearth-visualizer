@@ -10,11 +10,11 @@ const themeConfig = [
       "@typescript-eslint/no-empty-object-type": [
         "error",
         {
-          allowInterfaces: "with-single-extends",
-        },
-      ],
-    },
-  },
+          allowInterfaces: "with-single-extends"
+        }
+      ]
+    }
+  }
 ];
 
 const e2eConfig = [
@@ -28,13 +28,13 @@ const e2eConfig = [
           paths: [
             {
               name: "@playwright/test",
-              message: "Use @reearth/e2e/utils instead.",
-            },
-          ],
-        },
-      ],
-    },
-  },
+              message: "Use @reearth/e2e/utils instead."
+            }
+          ]
+        }
+      ]
+    }
+  }
 ];
 
 export default [...config("@reearth"), ...e2eConfig, ...themeConfig];

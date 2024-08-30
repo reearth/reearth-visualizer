@@ -17,7 +17,7 @@ const HeaderProfile: React.FC<Props> = ({
   currentWorkspace,
   workspaces = [],
   onSignOut,
-  onWorkspaceChange,
+  onWorkspaceChange
 }) => {
   const t = useT();
 
@@ -25,7 +25,7 @@ const HeaderProfile: React.FC<Props> = ({
     (t: string) => {
       onWorkspaceChange?.(t);
     },
-    [onWorkspaceChange],
+    [onWorkspaceChange]
   );
 
   const navigate = useNavigate();
@@ -48,24 +48,24 @@ const HeaderProfile: React.FC<Props> = ({
           hasCustomSubMenu: true,
           personal: w.personal,
           selected: currentWorkspace?.id === w.id,
-          onClick: () => w.id && handleWorkspaceChange(w.id),
+          onClick: () => w.id && handleWorkspaceChange(w.id)
         };
       }),
-      title: t("Switch workspace"),
+      title: t("Switch workspace")
     },
     {
       icon: "exit",
       id: "logOut",
       hasBorderBottom: true,
       onClick: onSignOut,
-      title: t("Log out"),
+      title: t("Log out")
     },
     {
       icon: "file",
       id: "assetManagement",
       onClick: handleAssetManager,
-      title: t("Asset management"),
-    },
+      title: t("Asset management")
+    }
   ];
 
   return <PopupMenu label={currentWorkspace?.name} menu={popupMenu} />;

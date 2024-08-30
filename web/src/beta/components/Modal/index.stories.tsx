@@ -7,7 +7,7 @@ import Text from "../Text";
 import Modal, { SidebarTab } from ".";
 
 const meta: Meta<typeof Modal> = {
-  component: Modal,
+  component: Modal
 };
 
 export default meta;
@@ -74,7 +74,7 @@ const sidebarTab1: SidebarTab = {
   label: "Tab1",
   content: TabContent,
   tabButton1: <Button text="Confirm" />,
-  tabButton2: <Button text="Cancel" />,
+  tabButton2: <Button text="Cancel" />
 };
 
 const sidebarTab2: SidebarTab = {
@@ -82,7 +82,7 @@ const sidebarTab2: SidebarTab = {
   label: "Tab2",
   content: TabContent2,
   tabButton1: <Button text="Yes" />,
-  tabButton2: <Button text="No" />,
+  tabButton2: <Button text="No" />
 };
 
 const sidebarTab3: SidebarTab = {
@@ -90,7 +90,7 @@ const sidebarTab3: SidebarTab = {
   label: "Tab3",
   content: TabContent3,
   tabButton1: <Button text="Ok" />,
-  tabButton2: <Button text="Cancel" />,
+  tabButton2: <Button text="Cancel" />
 };
 
 export const Small: Story = {
@@ -104,7 +104,7 @@ export const Small: Story = {
     >
       <ModalContent />
     </Modal>
-  ),
+  )
 };
 
 export const Medium: Story = {
@@ -118,7 +118,7 @@ export const Medium: Story = {
     >
       <ModalContent />
     </Modal>
-  ),
+  )
 };
 
 export const Large: Story = {
@@ -132,7 +132,7 @@ export const Large: Story = {
     >
       <ModalContent />
     </Modal>
-  ),
+  )
 };
 
 export const Sidebar: Story = {
@@ -143,5 +143,5 @@ export const Sidebar: Story = {
       title="Modal with sidebar"
       sidebarTabs={[sidebarTab1, sidebarTab2, sidebarTab3]}
     />
-  ),
+  )
 };

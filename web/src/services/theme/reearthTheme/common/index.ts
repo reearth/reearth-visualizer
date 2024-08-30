@@ -22,7 +22,7 @@ const common: Common = {
   icon: iconSizes,
   radius: radiusSizes,
   shadow,
-  fonts,
+  fonts
 };
 
 export default common;

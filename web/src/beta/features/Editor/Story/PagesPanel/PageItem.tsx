@@ -20,20 +20,20 @@ const PageItem: FC<PageItemProps> = ({
   storyPage,
   pageCount,
   dragHandleClassName,
-  isDragging,
+  isDragging
 }) => {
   const t = useT();
   const {
     selectedStoryPage,
     handleStoryPageSelect,
     handleStoryPageDelete,
-    handlePropertyValueUpdate,
+    handlePropertyValueUpdate
   } = useStoryPage();
 
   const title = (getFieldValue(
     storyPage.property.items ?? [],
     "title",
-    "title",
+    "title"
   ) ?? t("Untitled")) as string;
   const hasEmptySpace = isEmptyString(title);
 
@@ -56,14 +56,14 @@ const PageItem: FC<PageItemProps> = ({
       "title",
       undefined,
       "string",
-      localTitle,
+      localTitle
     );
   }, [
     handlePropertyValueUpdate,
     localTitle,
     storyPage.property.id,
     storyPage.property.items,
-    storyPage.title,
+    storyPage.title
   ]);
 
   const optionsMenu = useMemo(
@@ -72,16 +72,16 @@ const PageItem: FC<PageItemProps> = ({
         id: "rename",
         title: "Rename",
         icon: "pencilSimple" as const,
-        onClick: () => setEditingPageNameId(storyPage.id),
+        onClick: () => setEditingPageNameId(storyPage.id)
       },
       {
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
-        onClick: () => handleStoryPageDelete(storyPage.id),
-      },
+        onClick: () => handleStoryPageDelete(storyPage.id)
+      }
     ],
-    [storyPage.id, handleStoryPageDelete],
+    [storyPage.id, handleStoryPageDelete]
   );
 
   return (
@@ -124,14 +124,14 @@ const Wrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.micro,
   width: "100%",
-  overflowX: "hidden",
+  overflowX: "hidden"
 }));
 
 const PageCount = styled("div")(({ theme }) => ({
   minWidth: "17px",
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -141,5 +141,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));

@@ -11,7 +11,7 @@ export const InnerPage = styled("div")<{
   width: "100%",
   maxWidth: wide ? 950 : 750,
   backgroundColor: transparent ? "none" : theme.bg[1],
-  borderRadius: theme.radius.normal,
+  borderRadius: theme.radius.normal
 }));
 
 export const InnerSidebar = styled("div")(({ theme }) => ({
@@ -19,7 +19,7 @@ export const InnerSidebar = styled("div")(({ theme }) => ({
   flexDirection: "column",
   width: 213,
   borderRight: `1px solid ${theme.outline.weaker}`,
-  padding: `${theme.spacing.normal}px 0`,
+  padding: `${theme.spacing.normal}px 0`
 }));
 
 export const SettingsWrapper = styled("div")(({ theme }) => ({
@@ -28,25 +28,25 @@ export const SettingsWrapper = styled("div")(({ theme }) => ({
   width: "100%",
   flex: 1,
   ["> div:not(:last-child)"]: {
-    borderBottom: `1px solid ${theme.outline.weaker}`,
-  },
+    borderBottom: `1px solid ${theme.outline.weaker}`
+  }
 }));
 
 export const SettingsFields = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.largest,
+  gap: theme.spacing.largest
 }));
 
 export const SettingsRow = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   flexDirection: "row",
-  gap: theme.spacing.largest,
+  gap: theme.spacing.largest
 }));
 
 export const SettingsRowItem = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 
 export const Thumbnail = styled("div")<{ src?: string }>(({ src, theme }) => ({
@@ -56,13 +56,13 @@ export const Thumbnail = styled("div")<{ src?: string }>(({ src, theme }) => ({
   background: src
     ? `url(${src}) center/contain no-repeat`
     : theme.relative.dark,
-  borderRadius: theme.radius.small,
+  borderRadius: theme.radius.small
 }));
 
 export const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export const ArchivedSettingNotice: React.FC = () => {
@@ -71,7 +71,7 @@ export const ArchivedSettingNotice: React.FC = () => {
     <Collapse title={t("Notice")} size="large">
       <Typography size="body">
         {t(
-          "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.",
+          "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings."
         )}
       </Typography>
     </Collapse>

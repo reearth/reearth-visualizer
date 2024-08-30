@@ -4,7 +4,7 @@ import {
   Loading,
   Modal,
   ModalPanel,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -28,7 +28,7 @@ const PublicRepo: React.FC<Props> = ({
   buttonText: text,
   onSend,
   serverSideError,
-  loading,
+  loading
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -39,7 +39,7 @@ const PublicRepo: React.FC<Props> = ({
     handleRepoUrlChange,
     handleOpen,
     handleSubmit,
-    handleClose,
+    handleClose
   } = useHooks(onSend, loading);
 
   return (
@@ -63,7 +63,7 @@ const PublicRepo: React.FC<Props> = ({
               title={t("Continue")}
               disabled={!repoUrl}
               onClick={handleSubmit}
-            />,
+            />
           ]}
         >
           {loading && <Loading overlay />}

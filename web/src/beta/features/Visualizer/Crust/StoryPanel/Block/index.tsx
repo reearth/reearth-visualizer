@@ -1,6 +1,6 @@
 import type {
   CommonBlockProps,
-  BlockProps,
+  BlockProps
 } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 import { useCallback, type ComponentType, type ReactNode } from "react";
@@ -29,7 +29,7 @@ export default function StoryBlockComponent({
     : undefined;
   const handleRemove = useCallback(
     () => props.block?.id && onRemove?.(props.block.id),
-    [props.block?.id, onRemove],
+    [props.block?.id, onRemove]
   );
 
   return Builtin ? (
@@ -51,7 +51,7 @@ export default function StoryBlockComponent({
       {renderBlock?.({
         block: props.block,
         layer: props.layer,
-        onClick: props.onClick,
+        onClick: props.onClick
       })}
     </BlockWrapper>
   ) : null;

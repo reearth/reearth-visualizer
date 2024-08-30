@@ -25,7 +25,7 @@ export type Page = {
 };
 export enum Position {
   Left = "LEFT",
-  Right = "RIGHT",
+  Right = "RIGHT"
 }
 export type Story = {
   id: string;
@@ -57,19 +57,19 @@ export const getStories = (rawScene?: GetSceneQuery) => {
           ...p,
           property: {
             id: p.property?.id,
-            items: convert(p.property, null),
+            items: convert(p.property, null)
           },
           blocks: p.blocks.map((b) => {
             return {
               ...b,
               property: {
                 id: b.property?.id,
-                items: convert(b.property, null),
-              },
+                items: convert(b.property, null)
+              }
             };
-          }),
+          })
         };
-      }),
+      })
     } as Story;
   });
 };

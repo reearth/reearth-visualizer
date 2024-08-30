@@ -12,7 +12,7 @@ interface Item {
 }
 
 const meta: Meta<DragAndDropListProps<Item>> = {
-  component: DragAndDropList,
+  component: DragAndDropList
 };
 export default meta;
 
@@ -24,19 +24,19 @@ const MockItem = styled("div")(({ theme }) => ({
   padding: theme.spacing.smallest,
   border: theme.outline.weakest,
   borderRadius: theme.radius.small,
-  backgroundColor: theme.bg[1],
+  backgroundColor: theme.bg[1]
 }));
 
 const MockListContainer = styled("div")(({ theme }) => ({
   width: 300,
-  border: theme.outline.main,
+  border: theme.outline.main
 }));
 
 const DefaultComponent: typeof DragAndDropList<Item> = (args) => {
   const [list1, setList1] = useState<Item[]>([
     { id: "1", content: <MockItem>Item 1</MockItem> },
     { id: "2", content: <MockItem>Item 2</MockItem> },
-    { id: "3", content: <MockItem>Item 3</MockItem> },
+    { id: "3", content: <MockItem>Item 3</MockItem> }
   ]);
 
   return (
@@ -52,7 +52,7 @@ export const Default: Story = () => {
       style={{
         padding: "24px",
         display: "flex",
-        justifyContent: "space-around",
+        justifyContent: "space-around"
       }}
     >
       <DefaultComponent />
@@ -71,7 +71,7 @@ const HandleComponent: typeof DragAndDropList<Item> = (args) => {
           <Icon className={handleClassName} icon="circle" />
           Item 1
         </MockItem>
-      ),
+      )
     },
     {
       id: "2",
@@ -80,7 +80,7 @@ const HandleComponent: typeof DragAndDropList<Item> = (args) => {
           <Icon className={handleClassName} icon="circle" />
           Item 2
         </MockItem>
-      ),
+      )
     },
     {
       id: "3",
@@ -89,8 +89,8 @@ const HandleComponent: typeof DragAndDropList<Item> = (args) => {
           <Icon className={handleClassName} icon="circle" />
           Item 3
         </MockItem>
-      ),
-    },
+      )
+    }
   ]);
 
   return (
@@ -106,7 +106,7 @@ export const Handle: Story = () => {
       style={{
         padding: "24px",
         display: "flex",
-        justifyContent: "space-around",
+        justifyContent: "space-around"
       }}
     >
       <HandleComponent handleClassName={handleClassName} />
@@ -118,13 +118,13 @@ const SharedComponent: typeof DragAndDropList<Item> = (args) => {
   const [list1, setList1] = useState<Item[]>([
     { id: "1", content: <MockItem>Item 1</MockItem> },
     { id: "2", content: <MockItem>Item 2</MockItem> },
-    { id: "3", content: <MockItem>Item 3</MockItem> },
+    { id: "3", content: <MockItem>Item 3</MockItem> }
   ]);
 
   const [list2, setList2] = useState<Item[]>([
     { id: "4", content: <MockItem>Item 4</MockItem> },
     { id: "5", content: <MockItem>Item 5</MockItem> },
-    { id: "6", content: <MockItem>Item 6</MockItem> },
+    { id: "6", content: <MockItem>Item 6</MockItem> }
   ]);
 
   return (
@@ -155,7 +155,7 @@ export const Shared: Story = () => {
       style={{
         padding: "24px",
         display: "flex",
-        justifyContent: "space-around",
+        justifyContent: "space-around"
       }}
     >
       <SharedComponent />
@@ -169,7 +169,7 @@ export const Copy: Story = () => {
       style={{
         padding: "24px",
         display: "flex",
-        justifyContent: "space-around",
+        justifyContent: "space-around"
       }}
     >
       <SharedComponent group={{ name: "shared", pull: "clone" }} />

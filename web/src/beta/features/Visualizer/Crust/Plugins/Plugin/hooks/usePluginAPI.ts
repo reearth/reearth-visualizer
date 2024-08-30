@@ -5,7 +5,7 @@ import type { MutableRefObject, RefObject } from "react";
 
 import type {
   InfoboxBlock as Block,
-  InfoboxBlock,
+  InfoboxBlock
 } from "../../../Infobox/types";
 import { StoryBlock } from "../../../StoryPanel/types";
 import type { MapRef } from "../../../types";
@@ -24,7 +24,7 @@ import type {
   SketchEventType,
   TimelineEventType,
   UIEventType,
-  ViewerEventType,
+  ViewerEventType
 } from "../../pluginAPI/types";
 import { defaultIsMarshalable } from "../../PluginFrame";
 import type { API as IFrameAPI } from "../../PluginFrame";
@@ -48,7 +48,7 @@ export function usePluginAPI({
   onPluginPopupShow,
   setUIVisibility,
   onRender,
-  onResize,
+  onResize
 }: {
   pluginId: string | undefined;
   extensionId: string | undefined;
@@ -71,12 +71,12 @@ export function usePluginAPI({
           height?: string | number;
           extended?: boolean;
         }
-      | undefined,
+      | undefined
   ) => void;
   onResize?: (
     width: string | number | undefined,
     height: string | number | undefined,
-    extended: boolean | undefined,
+    extended: boolean | undefined
   ) => void;
 }): {
   staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
@@ -132,39 +132,39 @@ export function usePluginAPI({
       "mouseEnter",
       "mouseLeave",
       "wheel",
-      "resize",
+      "resize"
     ]);
 
     initAndMergeEvents(ctx.selectionModeEvents, selectionModeEventsRef, [
       "marqueeStart",
       "marqueeMove",
-      "marqueeEnd",
+      "marqueeEnd"
     ]);
 
     initAndMergeEvents(ctx.cameraEvents, cameraEventsRef, ["move"]);
 
     initAndMergeEvents(ctx.timelineEvents, timelineEventsRef, [
       "tick",
-      "commit",
+      "commit"
     ]);
 
     initAndMergeEvents(ctx.layersEvents, layersEventsRef, [
       "select",
       "edit",
       "visible",
-      "load",
+      "load"
     ]);
 
     initAndMergeEvents(ctx.sketchEvents, sketchEventsRef, [
       "create",
-      "toolChange",
+      "toolChange"
     ]);
 
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
       ctx?.pluginInstances.addPluginMessageSender(
         instanceId,
-        pluginMessageSender,
+        pluginMessageSender
       );
       ctx.pluginInstances.runTimesCache.increment(instanceId);
     }
@@ -184,7 +184,7 @@ export function usePluginAPI({
     timelineEventsRef,
     layersEventsRef,
     sketchEventsRef,
-    pluginMessageSender,
+    pluginMessageSender
   ]);
 
   const onDispose = useCallback(() => {
@@ -230,7 +230,7 @@ export function usePluginAPI({
     cameraEventsRef,
     timelineEventsRef,
     layersEventsRef,
-    sketchEventsRef,
+    sketchEventsRef
   ]);
 
   const isMarshalable = useCallback(
@@ -241,7 +241,7 @@ export function usePluginAPI({
         !!mapRef?.current?.layers?.isComputedLayer(target)
       );
     },
-    [mapRef],
+    [mapRef]
   );
 
   const staticExposed = useMemo(():
@@ -254,7 +254,7 @@ export function usePluginAPI({
           id: pluginId,
           extensionType,
           extensionId,
-          property: pluginProperty,
+          property: pluginProperty
         },
         viewerEventsOn: (type, e, { once } = {}) => {
           if (once) {
@@ -270,7 +270,7 @@ export function usePluginAPI({
           const rawBlock = getBlock() as InfoboxBlock | StoryBlock;
           const block = {
             ...rawBlock,
-            property: rawBlock.propertyForPluginAPI,
+            property: rawBlock.propertyForPluginAPI
           };
           block.propertyForPluginAPI = undefined;
           block.propertyItemsForPluginBlock = undefined;
@@ -285,7 +285,7 @@ export function usePluginAPI({
           onRender?.(
             typeof extended !== "undefined" || options
               ? { extended, ...options }
-              : undefined,
+              : undefined
           );
           setUIVisibility(true);
         },
@@ -312,7 +312,7 @@ export function usePluginAPI({
           onPluginModalShow?.({
             id: widget?.id ?? block?.id,
             background: options?.background,
-            clickBgToClose: options?.clickBgToClose,
+            clickBgToClose: options?.clickBgToClose
           });
         },
         closeModal: () => {
@@ -323,7 +323,7 @@ export function usePluginAPI({
           onPluginModalShow?.({
             id: widget?.id ?? block?.id,
             background: options.background,
-            clickBgToClose: options.clickBgToClose,
+            clickBgToClose: options.clickBgToClose
           });
         },
         postMessageModal: modal.postMessage,
@@ -348,16 +348,16 @@ export function usePluginAPI({
                 onPluginPopupShow?.({
                   id: widget?.id ?? block?.id,
                   ref: externalRef,
-                  ...opt,
+                  ...opt
                 });
                 rendered = true;
               }
-            },
+            }
           });
           onPluginPopupShow?.({
             id: widget?.id ?? block?.id,
             ref: externalRef,
-            ...opt,
+            ...opt
           });
         },
         closePopup: () => {
@@ -371,7 +371,7 @@ export function usePluginAPI({
           onPluginPopupShow?.({
             id: widget?.id ?? block?.id,
             ...opt,
-            ref: externalRef,
+            ref: externalRef
           });
         },
         postMessagePopup: popup.postMessage,
@@ -413,7 +413,7 @@ export function usePluginAPI({
         overrideViewerProperty: ctx.overrideViewerProperty,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
-        timelineManagerRef: ctx.timelineManagerRef,
+        timelineManagerRef: ctx.timelineManagerRef
       });
     };
   }, [
@@ -437,7 +437,7 @@ export function usePluginAPI({
     onPluginPopupShow,
     setUIVisibility,
     onRender,
-    onResize,
+    onResize
   ]);
 
   useEffect(() => {
@@ -458,7 +458,7 @@ export function usePluginAPI({
     onPreInit,
     onDispose,
     onModalClose,
-    onPopupClose,
+    onPopupClose
   };
 }
 
@@ -467,7 +467,7 @@ function initAndMergeEvents<T extends Record<string, any[]>>(
   eventsRef: MutableRefObject<
     [Events<T>, EventEmitter<T>, (() => void) | undefined] | undefined
   >,
-  eventKeys: (keyof T)[],
+  eventKeys: (keyof T)[]
 ) {
   const e = events<T>();
   let cancel: (() => void) | undefined;
@@ -475,7 +475,7 @@ function initAndMergeEvents<T extends Record<string, any[]>>(
     const source: Events<T> = {
       on: ctxEvents.on,
       off: ctxEvents.off,
-      once: ctxEvents.once,
+      once: ctxEvents.once
     };
     cancel = mergeEvents<T>(source, e[1], eventKeys);
   }

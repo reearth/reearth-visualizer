@@ -41,7 +41,7 @@ const CatalogCard: React.FC<Props> = ({
   onSelect,
   onActionClick,
   onOpenChange,
-  onLayerStyleNameUpdate,
+  onLayerStyleNameUpdate
 }) => {
   const [isOpenAction, setIsOpenAction] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -67,7 +67,7 @@ const CatalogCard: React.FC<Props> = ({
         setNewName(newName);
       }
     },
-    [isNameEditable],
+    [isNameEditable]
   );
 
   const handleNameSubmit = useCallback(() => {
@@ -83,7 +83,7 @@ const CatalogCard: React.FC<Props> = ({
       else setNewName(name);
       setIsEditing(false);
     },
-    [handleNameSubmit, name, newName],
+    [handleNameSubmit, name, newName]
   );
 
   const handleActionClick = (e: React.MouseEvent) => {

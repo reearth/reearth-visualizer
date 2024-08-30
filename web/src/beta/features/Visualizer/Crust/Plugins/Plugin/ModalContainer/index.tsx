@@ -4,7 +4,7 @@ import {
   ForwardRefRenderFunction,
   useRef,
   useImperativeHandle,
-  useCallback,
+  useCallback
 } from "react";
 
 export type PluginModalInfo = {
@@ -58,7 +58,7 @@ const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
     ? theme.zIndexes.visualizer.pluginModal
     : theme.zIndexes.hidden,
   transition: "opacity 0.25s",
-  opacity: visible ? "1" : "0",
+  opacity: visible ? "1" : "0"
 }));
 
 const Background = styled("div")<{ visible: boolean; background?: string }>(
@@ -73,8 +73,8 @@ const Background = styled("div")<{ visible: boolean; background?: string }>(
     visibility: visible ? "visible" : "hidden",
     zIndex: visible
       ? theme.zIndexes.visualizer.pluginModal
-      : theme.zIndexes.hidden,
-  }),
+      : theme.zIndexes.hidden
+  })
 );
 
 export default forwardRef(ModalContainer);

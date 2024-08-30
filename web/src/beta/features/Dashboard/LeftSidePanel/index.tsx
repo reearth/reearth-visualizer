@@ -3,7 +3,7 @@ import {
   SidebarSection,
   SidebarTopSectionWrapper,
   SidebarVersion,
-  SidebarWrapper,
+  SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { FC } from "react";
@@ -31,7 +31,7 @@ const LeftSidePanel: FC<Props> = ({
   isPersonal,
   workspaces,
   onSignOut,
-  onWorkspaceChange,
+  onWorkspaceChange
 }) => {
   const t = useT();
 

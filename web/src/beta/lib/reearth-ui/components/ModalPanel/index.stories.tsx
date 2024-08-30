@@ -6,7 +6,7 @@ import { Button } from "../Button";
 import { ModalPanel, ModalPanelProps } from ".";
 
 const meta: Meta<ModalPanelProps> = {
-  component: ModalPanel,
+  component: ModalPanel
 };
 
 export default meta;
@@ -19,7 +19,7 @@ const MockChild: FC = () => (
       color: "#e0e0e0",
       fontSize: "14px",
       width: "417px",
-      padding: "24px",
+      padding: "24px"
     }}
   >
     <p>
@@ -43,8 +43,8 @@ export const Default: Story = {
   args: {
     title: "Modal Panel Title",
     children: <MockChild />,
-    actions: <Button title="Ok" appearance="primary" />,
-  },
+    actions: <Button title="Ok" appearance="primary" />
+  }
 };
 
 export const MultipleActions: Story = {
@@ -63,6 +63,6 @@ export const MultipleActions: Story = {
         <Button size="normal" title="Cancel" />
         <Button size="normal" title="Apply" appearance="primary" />
       </>
-    ),
-  },
+    )
+  }
 };
