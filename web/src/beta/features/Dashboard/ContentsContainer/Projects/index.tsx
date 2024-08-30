@@ -52,7 +52,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
     ],
-    [t],
+    [t]
   );
 
   return (
@@ -163,17 +163,20 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                       />
-                    ),
+                    )
                   )}
                 </ProjectsGroup>
               </ProjectsContainer>
+              {isLoading && (
+                <LoadingWrapper>
+                  <Loading relative />
+                </LoadingWrapper>
+              )}
             </ProjectsWrapper>
           </ContentWrapper>
         </ManagerContent>
       ) : isLoading ? (
-        <LoadingWrapper>
-          <Loading relative />
-        </LoadingWrapper>
+        <Loading relative />
       ) : (
         <ManagerEmptyContent>
           <Typography size="h5" color={theme.content.weak}>
@@ -249,7 +252,7 @@ const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
           gap: theme.spacing.normal,
         }
       : {}),
-  }),
+  })
 );
 
 const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
@@ -282,5 +285,5 @@ const ActionCol = styled("div")(() => ({
 
 const LoadingWrapper = styled("div")(() => ({
   width: "100%",
-  height: "100%",
+  height: 100,
 }));

@@ -99,66 +99,73 @@ const AssetsManager: FC<AssetsManagerProps> = ({
         onSearch={handleSearch}
       />
       {filteredAssets?.length ? (
-        <ManagerContent>
-          <ContentWrapper size={size}>
-            <PathWrapper size={size}>
-              <Breadcrumb
-                items={paths}
-                size="large"
-                onClick={handlePathClick}
-              />
-            </PathWrapper>
-            <LayoutWrapper>
-              {layout === "list" && (
-                <ListHeader size={size} width={contentWidth}>
-                  <ThumbnailSpacer />
-                  <Col width={50}>
-                    <Typography weight="bold" size="body">
-                      {t("Name")}
-                    </Typography>
-                  </Col>
-                  <Col width={30}>
-                    <Typography weight="bold" size="body">
-                      {t("Uploaded At")}
-                    </Typography>
-                  </Col>
-                  <Col width={30}>
-                    <Typography weight="bold" size="body">
-                      {t("Size")}
-                    </Typography>
-                  </Col>
-                </ListHeader>
-              )}
-              <AssetsWrapper ref={assetsWrapperRef}>
-                <AssetsContent size={size} ref={assetsContentRef}>
-                  {/* TODO: Group of folders */}
-                  <AssetsGroup layout={layout} size={size}>
-                    {filteredAssets?.map((asset) =>
-                      layout === "grid" ? (
-                        <AssetGridItem
-                          key={asset.id}
-                          asset={asset}
-                          layout={layout}
-                          selectedAssetIds={selectedAssetIds}
-                          onSelect={handleAssetSelect}
-                        />
-                      ) : (
-                        <AssetListItem
-                          key={asset.id}
-                          asset={asset}
-                          layout={layout}
-                          selectedAssetIds={selectedAssetIds}
-                          onSelect={handleAssetSelect}
-                        />
-                      ),
-                    )}
-                  </AssetsGroup>
-                </AssetsContent>
-              </AssetsWrapper>
-            </LayoutWrapper>
-          </ContentWrapper>
-        </ManagerContent>
-      ) : loading || loadingMore ? (
+        <>
+          <ManagerContent>
+            <ContentWrapper size={size}>
+              <PathWrapper size={size}>
+                <Breadcrumb
+                  items={paths}
+                  size="large"
+                  onClick={handlePathClick}
+                />
+              </PathWrapper>
+              <LayoutWrapper>
+                {layout === "list" && (
+                  <ListHeader size={size} width={contentWidth}>
+                    <ThumbnailSpacer />
+                    <Col width={50}>
+                      <Typography weight="bold" size="body">
+                        {t("Name")}
+                      </Typography>
+                    </Col>
+                    <Col width={30}>
+                      <Typography weight="bold" size="body">
+                        {t("Uploaded At")}
+                      </Typography>
+                    </Col>
+                    <Col width={30}>
+                      <Typography weight="bold" size="body">
+                        {t("Size")}
+                      </Typography>
+                    </Col>
+                  </ListHeader>
+                )}
+                <AssetsWrapper ref={assetsWrapperRef}>
+                  <AssetsContent size={size} ref={assetsContentRef}>
+                    {/* TODO: Group of folders */}
+                    <AssetsGroup layout={layout} size={size}>
+                      {filteredAssets?.map((asset) =>
+                        layout === "grid" ? (
+                          <AssetGridItem
+                            key={asset.id}
+                            asset={asset}
+                            layout={layout}
+                            selectedAssetIds={selectedAssetIds}
+                            onSelect={handleAssetSelect}
+                          />
+                        ) : (
+                          <AssetListItem
+                            key={asset.id}
+                            asset={asset}
+                            layout={layout}
+                            selectedAssetIds={selectedAssetIds}
+                            onSelect={handleAssetSelect}
+                          />
+                        )
+                      )}
+                    </AssetsGroup>
+                  </AssetsContent>
+                </AssetsWrapper>
+              </LayoutWrapper>
+            </ContentWrapper>
+          </ManagerContent>
+          {loadingMore && (
+            <LoadingWrapper>
+              <Loading relative />
+            </LoadingWrapper>
+          )}
+        </>
+      ) : loading ? (
         <LoadingWrapper>
           <Loading relative />
         </LoadingWrapper>
@@ -182,13 +189,13 @@ const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
     gap: theme.spacing.normal,
     flex: 1,
     height: 0,
-  }),
+  })
 );
 
 const PathWrapper = styled("div")<{ size: AssetsManagerSize }>(
   ({ theme, size }) => ({
     padding: `0 ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-  }),
+  })
 );
 
 const AssetsWrapper = styled("div")(() => ({
@@ -208,7 +215,7 @@ const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
     padding: `${theme.spacing.smallest}px ${
       size === "large" ? theme.spacing.large : theme.spacing.small
     }px ${size === "large" ? theme.spacing.large : theme.spacing.small}px`,
-  }),
+  })
 );
 
 const LayoutWrapper = styled("div")(() => ({
@@ -249,7 +256,7 @@ const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
     }px`,
     gap: theme.spacing.small,
     width: width === 0 ? "100%" : width,
-  }),
+  })
 );
 
 const ThumbnailSpacer = styled("div")(() => ({
