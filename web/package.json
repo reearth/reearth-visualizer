@@ -97,7 +97,7 @@
         "vite-plugin-svgr": "4.2.0",
         "vite-tsconfig-paths": "4.2.1",
         "vitest": "1.6.0",
-        "web-streams-polyfill": "4.0.0"
+        "web-streams-polyfill": "3.2.1"
     },
     "dependencies": {
         "@apollo/client": "3.11.2",
