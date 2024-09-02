@@ -2,7 +2,7 @@ import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/Bl
 import { CommonBlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 
@@ -22,7 +22,11 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
-
+  const LinkRenderer = ({ href, children }: { href?: string; children?: ReactNode }) => (
+    <a href={href} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  )
   return (
     <BlockWrapper
       name={block?.name}
@@ -34,7 +38,7 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
     >
       {evaluatedSrc !== undefined ? (
         <Wrapper>
-          <ReactMarkdown remarkPlugins={plugins} linkTarget="_blank">
+          <ReactMarkdown remarkPlugins={plugins} components={{ a: LinkRenderer }}>
             {evaluatedSrc || ""}
           </ReactMarkdown>
         </Wrapper>

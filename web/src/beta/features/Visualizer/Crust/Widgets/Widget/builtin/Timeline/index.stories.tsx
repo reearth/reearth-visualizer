@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { contextEvents } from "../../storybook";
 
@@ -9,7 +9,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-const Template: Story<Props> = (args) => <Component {...args} />;
+const Template: StoryFn<Props> = (args) => <Component {...args} />;
 
 export const Default = Template.bind({});
 
