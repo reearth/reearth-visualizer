@@ -13,6 +13,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -26,6 +27,8 @@ type NLSLayer struct {
 	sceneRepo     repo.Scene
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
+	policyRepo    repo.Policy
+	workspaceRepo accountrepo.Workspace
 	transaction   usecasex.Transaction
 }
 
@@ -38,6 +41,8 @@ func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
 		sceneRepo:       r.Scene,
 		propertyRepo:    r.Property,
 		pluginRepo:      r.Plugin,
+		policyRepo:      r.Policy,
+		workspaceRepo:   r.Workspace,
 		transaction:     r.Transaction,
 	}
 }
@@ -85,6 +90,30 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}.Initialize()
 	if err != nil {
 		return nil, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, err
+	}
+
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		s, err := i.nlslayerRepo.CountByScene(ctx, s.ID())
+		if err != nil {
+			return nil, err
+		}
+		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
+			return nil, err
+		}
 	}
 
 	if inp.Schema != nil {

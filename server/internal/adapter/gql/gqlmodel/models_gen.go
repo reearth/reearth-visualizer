@@ -1120,6 +1120,9 @@ type Policy struct {
 	AssetStorageSize      *int64 `json:"assetStorageSize,omitempty"`
 	DatasetSchemaCount    *int   `json:"datasetSchemaCount,omitempty"`
 	DatasetCount          *int   `json:"datasetCount,omitempty"`
+	NlsLayersCount        *int   `json:"nlsLayersCount,omitempty"`
+	PageCount             *int   `json:"pageCount,omitempty"`
+	BlocksCount           *int   `json:"blocksCount,omitempty"`
 }
 
 type Polygon struct {
