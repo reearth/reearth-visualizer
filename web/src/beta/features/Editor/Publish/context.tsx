@@ -13,12 +13,12 @@ export interface PublishPageContextType {
 }
 
 const PublishPageContext = createContext<PublishPageContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const PublishPageProvider = ({
   value,
-  children,
+  children
 }: {
   value: PublishPageContextType;
   children: ReactNode;

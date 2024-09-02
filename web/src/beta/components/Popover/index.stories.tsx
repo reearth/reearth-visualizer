@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import * as Popover from "./";
 
 export default {
-  component: Popover.Provider,
+  component: Popover.Provider
 } as Meta;
 
 type Story = StoryObj<typeof Popover.Provider>;
@@ -38,8 +38,8 @@ export const Controlled: Story = {
     open: true,
     initialOpen: false,
     placement: "top",
-    modal: true,
-  },
+    modal: true
+  }
 };
 
 export const Uncontrolled: Story = {
@@ -72,8 +72,8 @@ export const Uncontrolled: Story = {
     offset: {
       mainAxis: 20,
       crossAxis: 300,
-      alignmentAxis: 0,
+      alignmentAxis: 0
     },
-    modal: true,
-  },
+    modal: true
+  }
 };

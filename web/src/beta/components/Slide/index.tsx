@@ -14,7 +14,7 @@ const Slide: React.FC<Props> = ({ className, children, pos }) => {
         {React.Children.map(children, (child) =>
           React.isValidElement(child) ? (
             <Page key={child.key ?? undefined}>{child}</Page>
-          ) : null,
+          ) : null
         )}
       </Inner>
     </Wrapper>

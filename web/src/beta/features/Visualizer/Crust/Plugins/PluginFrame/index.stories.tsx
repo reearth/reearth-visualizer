@@ -6,7 +6,7 @@ import Component, { Props, Ref } from ".";
 
 export default {
   component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
 export const Default: Story<Props> = (args) => <Component {...args} />;
@@ -20,12 +20,12 @@ Default.args = {
     style: {
       width: "300px",
       height: "300px",
-      backgroundColor: "#fff",
-    },
+      backgroundColor: "#fff"
+    }
   },
   exposed: ({ main: { render, postMessage } }) => ({
     console: {
-      log: action("console.log"),
+      log: action("console.log")
     },
     reearth: {
       on(type: string, value: (message: any) => void) {
@@ -35,14 +35,14 @@ Default.args = {
       },
       ui: {
         show: render,
-        postMessage,
-      },
-    },
+        postMessage
+      }
+    }
   }),
   onMessage: (message: any) => {
     action("onMessage")(message);
     return cb?.(message);
-  },
+  }
 };
 
 export const HiddenIFrame: Story<Props> = (args) => <Component {...args} />;
@@ -54,12 +54,12 @@ HiddenIFrame.args = {
     style: {
       width: "300px",
       height: "300px",
-      backgroundColor: "#fff",
-    },
+      backgroundColor: "#fff"
+    }
   },
   exposed: ({ main: { render, postMessage } }) => ({
     console: {
-      log: action("console.log"),
+      log: action("console.log")
     },
     reearth: {
       on(type: string, value: (message: any) => void) {
@@ -69,14 +69,14 @@ HiddenIFrame.args = {
       },
       ui: {
         show: render,
-        postMessage,
-      },
-    },
+        postMessage
+      }
+    }
   }),
   onMessage: (message: any) => {
     action("onMessage")(message);
     return cb?.(message);
-  },
+  }
 };
 
 export const SourceCode: Story<Props> = (args) => <Component {...args} />;
@@ -85,9 +85,9 @@ SourceCode.args = {
   sourceCode: `console.log("Hello")`,
   exposed: {
     console: {
-      log: action("console.log"),
-    },
-  },
+      log: action("console.log")
+    }
+  }
 };
 
 export const AutoResize: Story<Props> = (args) => {
@@ -99,7 +99,7 @@ export const AutoResize: Story<Props> = (args) => {
         ref.current
           ?.arena()
           ?.evalCode(
-            `"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`,
+            `"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`
           );
       }}
       ref={ref}
@@ -134,5 +134,5 @@ AutoResize.args = {
   `,
   autoResize: "both",
   uiVisible: true,
-  exposed: ({ main: { render, resize } }) => ({ render, resize }),
+  exposed: ({ main: { render, resize } }) => ({ render, resize })
 };

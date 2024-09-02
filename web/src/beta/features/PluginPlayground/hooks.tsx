@@ -1,6 +1,6 @@
+import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { useMemo } from "react";
 
-import { TabItem } from "@reearth/beta/lib/reearth-ui";
 
 import Console from "./Console";
 import PluginInspector from "./PluginInspector";
@@ -15,10 +15,10 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer />,
-      },
+        children: <Viewer />
+      }
     ],
-    [],
+    []
   );
 
   const BottomAreaTabs: TabItem[] = useMemo(
@@ -26,10 +26,10 @@ export default () => {
       {
         id: "console",
         name: "Console",
-        children: <Console />,
-      },
+        children: <Console />
+      }
     ],
-    [],
+    []
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -37,10 +37,10 @@ export default () => {
       {
         id: "plugins",
         name: "Plugins",
-        children: <Plugins />,
-      },
+        children: <Plugins />
+      }
     ],
-    [],
+    []
   );
 
   const RightAreaTabs: TabItem[] = useMemo(
@@ -48,16 +48,16 @@ export default () => {
       {
         id: "plugin-inspector",
         name: "Plugin Inspector",
-        children: <PluginInspector />,
-      },
+        children: <PluginInspector />
+      }
     ],
-    [],
+    []
   );
 
   return {
     MainAreaTabs,
     BottomAreaTabs,
     SubRightAreaTabs,
-    RightAreaTabs,
+    RightAreaTabs
   };
 };

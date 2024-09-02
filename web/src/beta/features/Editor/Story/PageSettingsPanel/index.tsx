@@ -22,11 +22,11 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     checkedLayers,
     visibleItems,
     handleAllLayersCheck,
-    handleLayerCheck,
+    handleLayerCheck
   } = useHooks({
     layers,
     selectedPage: selectedStoryPage,
-    onPageUpdate: handleStoryPageUpdate,
+    onPageUpdate: handleStoryPageUpdate
   });
 
   const t = useT();
@@ -95,13 +95,13 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
-  padding: theme.spacing.smallest,
+  padding: theme.spacing.smallest
 }));
 
 const LayerWrapper = styled("div")(() => ({
   width: "100%",
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "column"
 }));
 
 const AllLayers = styled("div")(({ theme }) => ({
@@ -110,7 +110,7 @@ const AllLayers = styled("div")(({ theme }) => ({
   borderBottom: `1px solid ${theme.outline.weak}`,
   marginBottom: theme.spacing.small,
   paddingBottom: theme.spacing.small,
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const LayerList = styled("div")(() => ({
@@ -119,12 +119,12 @@ const LayerList = styled("div")(() => ({
   height: "352px",
   overflowY: "auto",
   overflowX: "hidden",
-  width: "100%",
+  width: "100%"
 }));
 
 const Layer = styled("div")(() => ({
   display: "flex",
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const Title = styled("div")(({ theme }) => ({
@@ -133,5 +133,5 @@ const Title = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));

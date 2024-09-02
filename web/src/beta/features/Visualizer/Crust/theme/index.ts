@@ -30,7 +30,7 @@ const defaultThemeType = "dark";
 const premade: Record<string, Theme | undefined> = {
   dark,
   light,
-  forest,
+  forest
 };
 
 export function mask(color?: string) {
@@ -51,7 +51,7 @@ export function publishTheme(sceneThemeOptions?: WidgetThemeOptions): Theme {
     ...sceneThemeOptions,
     themeBackgroundColor: sceneThemeOptions?.themeBackgroundColor || "#dfe5f0",
     themeTextColor: sceneThemeOptions?.themeTextColor || "#434343",
-    themeSelectColor: sceneThemeOptions?.themeSelectColor || "#C52C63",
+    themeSelectColor: sceneThemeOptions?.themeSelectColor || "#C52C63"
   };
 
   const isBackgroundDark = isDark(options?.themeBackgroundColor);
@@ -69,6 +69,6 @@ export function publishTheme(sceneThemeOptions?: WidgetThemeOptions): Theme {
       : "#FFFFFF",
     weakText: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
     mainIcon: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
-    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String(),
+    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String()
   };
 }

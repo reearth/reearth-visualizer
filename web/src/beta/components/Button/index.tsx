@@ -33,7 +33,7 @@ const Button: React.FC<Props> = ({
   margin,
   onClick,
   onMouseEnter,
-  onMouseLeave,
+  onMouseLeave
 }) => {
   const hasText = useMemo(() => {
     return !!text || !!children;

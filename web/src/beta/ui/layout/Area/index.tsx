@@ -10,7 +10,7 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { Panel } from "../Panel";
@@ -69,9 +69,9 @@ export const Area = forwardRef<AreaRef, AreaProps>(
       storageId,
       passive,
       children,
-      onResize,
+      onResize
     },
-    ref,
+    ref
   ) => {
     const sizeStorageKey = storageId
       ? `reearth-visualizer-${storageId}-size`
@@ -86,21 +86,21 @@ export const Area = forwardRef<AreaRef, AreaProps>(
           ? localStorage.getItem(sizeStorageKey)
           : undefined) ??
           initialWidth ??
-          DEFAULT_WIDTH,
+          DEFAULT_WIDTH
       ),
       height: Number(
         (sizeStorageKey && direction === "row"
           ? localStorage.getItem(sizeStorageKey)
           : undefined) ??
           initialHeight ??
-          DEFAULT_HEIGHT,
-      ),
+          DEFAULT_HEIGHT
+      )
     });
 
     const [collapsed, setCollapsed] = useState<boolean>(
       collapsedStorageKey
         ? localStorage.getItem(collapsedStorageKey) === "1"
-        : false,
+        : false
     );
 
     const resizableRef = useRef<HTMLDivElement>(null);
@@ -175,13 +175,13 @@ export const Area = forwardRef<AreaRef, AreaProps>(
           if (sizeStorageKey) {
             localStorage.setItem(
               sizeStorageKey,
-              direction === "row" ? height.toString() : width.toString(),
+              direction === "row" ? height.toString() : width.toString()
             );
           }
 
           return {
             width,
-            height,
+            height
           };
         });
       },
@@ -190,8 +190,8 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         resizableEdge,
         sizeStorageKey,
         collapsedStorageKey,
-        direction,
-      ],
+        direction
+      ]
     );
 
     const onMouseUp = () => {
@@ -240,7 +240,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
           (resizableEdge === "top" || resizableEdge === "bottom")) ||
         (direction === "column" &&
           (resizableEdge === "left" || resizableEdge === "right")),
-      [direction, resizableEdge],
+      [direction, resizableEdge]
     );
 
     const uncollapse = useCallback(() => {
@@ -261,13 +261,13 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         if (sizeStorageKey) {
           localStorage.setItem(
             sizeStorageKey,
-            direction === "row" ? h.toString() : w.toString(),
+            direction === "row" ? h.toString() : w.toString()
           );
         }
 
         return {
           width: w,
-          height: h,
+          height: h
         };
       });
     }, [
@@ -275,7 +275,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
       sizeStorageKey,
       collapsedStorageKey,
       initialWidth,
-      initialHeight,
+      initialHeight
     ]);
 
     const collapse = useCallback(() => {
@@ -290,13 +290,13 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         if (sizeStorageKey) {
           localStorage.setItem(
             sizeStorageKey,
-            direction === "row" ? height.toString() : width.toString(),
+            direction === "row" ? height.toString() : width.toString()
           );
         }
 
         return {
           width,
-          height,
+          height
         };
       });
     }, [direction, collapsedStorageKey, sizeStorageKey]);
@@ -304,7 +304,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
     useImperativeHandle(ref, () => ({
       collapse() {
         collapse();
-      },
+      }
     }));
 
     return (
@@ -339,7 +339,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         )}
       </StyledArea>
     );
-  },
+  }
 );
 
 Area.displayName = "Area";
@@ -361,7 +361,7 @@ const StyledArea = styled("div")<{
     height,
     backgroundColor,
     asWrapper,
-    passive,
+    passive
   }) => ({
     position: "relative",
     display: "flex",
@@ -383,11 +383,11 @@ const StyledArea = styled("div")<{
       padding: theme.spacing.micro / 2,
       gap: theme.spacing.micro,
       display: "flex",
-      flexDirection: direction,
+      flexDirection: direction
     }),
     maxHeight: "100%",
-    maxWidth: "100%",
-  }),
+    maxWidth: "100%"
+  })
 );
 
 const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(
@@ -399,8 +399,8 @@ const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(
     top: edge === "bottom" ? "calc(100% - 4px)" : edge === "top" ? "0" : 0,
     cursor: edge === "right" || edge === "left" ? "ew-resize" : "ns-resize",
     zIndex: 1,
-    background: color ?? "none",
-  }),
+    background: color ?? "none"
+  })
 );
 
 const StyledIconButton = styled(IconButton)<{ vertical?: boolean }>(
@@ -408,9 +408,9 @@ const StyledIconButton = styled(IconButton)<{ vertical?: boolean }>(
     height: "100%",
     width: "100%",
     ["svg"]: {
-      transform: vertical ? "rotate(90deg)" : "none",
-    },
-  }),
+      transform: vertical ? "rotate(90deg)" : "none"
+    }
+  })
 );
 
 export const Window = styled("div")(({ theme }) => ({
@@ -420,20 +420,20 @@ export const Window = styled("div")(({ theme }) => ({
   padding: 1,
   boxSizing: "border-box",
   ["*"]: {
-    boxSizing: "border-box",
+    boxSizing: "border-box"
   },
   ["* ::-webkit-scrollbar"]: {
-    width: "8px",
+    width: "8px"
   },
   ["* ::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px",
+    borderRadius: "10px"
   },
   ["* ::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter,
-  },
+    background: theme.relative.lighter
+  }
 }));

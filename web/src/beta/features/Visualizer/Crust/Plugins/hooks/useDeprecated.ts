@@ -31,7 +31,7 @@ export default ({ built }: Props) => {
       "convertScreenToPositionOffset",
       "isPositionVisible",
       "toWindowPosition",
-      "pickManyFromViewport",
+      "pickManyFromViewport"
     ].forEach((name) => {
       addWarning(scene, name, `reearth.scene.${name}`);
     });
@@ -53,7 +53,7 @@ export default ({ built }: Props) => {
       "setTime",
       "setSpeed",
       "setStepType",
-      "setRangeType",
+      "setRangeType"
     ].forEach((name) => {
       addWarning(clock, name, `reearth.clock.${name}`);
     });
@@ -81,7 +81,7 @@ export default ({ built }: Props) => {
     ["getAsync", "setAsync", "deleteAsync", "keysAsync", "dropStore"].forEach(
       (name) => {
         addWarning(clientStorage, name, `reearth.clientStorage.${name}`);
-      },
+      }
     );
 
     addEventWarning(d, "on");
@@ -108,7 +108,7 @@ export default ({ built }: Props) => {
       "moveRight",
       "flyToGround",
       "overrideScreenSpaceController",
-      "forceHorizontalRoll",
+      "forceHorizontalRoll"
     ].forEach((name) => {
       addWarning(d, name, `reearth.camera.${name}`);
     });
@@ -129,7 +129,7 @@ export default ({ built }: Props) => {
       "overriddenInfobox",
       "defaultInfobox",
       "isLayer",
-      "overriddenProperties",
+      "overriddenProperties"
     ].forEach((name) => {
       addWarning(d, name, `reearth.layers.${name}`);
     });
@@ -147,7 +147,7 @@ export default ({ built }: Props) => {
       "createDataOnly",
       "enableRelativeHeight",
       "allowRightClickToAbort",
-      "allowAutoResetInteractionMode",
+      "allowAutoResetInteractionMode"
     ].forEach((name) => {
       addWarning(d, name, `reearth.sketch.${name}`);
     });
@@ -158,7 +158,7 @@ export default ({ built }: Props) => {
     deprecated,
     cameraDeprecated,
     layersDeprecated,
-    sketchDeprecated,
+    sketchDeprecated
   };
 };
 
@@ -284,7 +284,7 @@ const deprecatedMap = {
   "event layerSelectWithRectMove":
     "marqueeMove event on reearth.viewer.interactionMode.selectionMode",
   "event layerSelectWithRectEnd":
-    "marqueeEnd event on reearth.viewer.interactionMode.selectionMode",
+    "marqueeEnd event on reearth.viewer.interactionMode.selectionMode"
 };
 
 function addProperty(obj: object, name: string, value: unknown) {
@@ -292,7 +292,7 @@ function addProperty(obj: object, name: string, value: unknown) {
     get() {
       return value;
     },
-    enumerable: false,
+    enumerable: false
   });
 }
 
@@ -301,7 +301,7 @@ function addWarning(obj: object, name: string, value: string) {
     get() {
       return warning(value);
     },
-    enumerable: false,
+    enumerable: false
   });
 }
 
@@ -313,11 +313,11 @@ function addEventWarning(obj: object, name: string, isOnce = false) {
           `event ${eventName}`,
           isOnce
             ? "Please use method on with option {once: true} instead of once."
-            : "",
+            : ""
         );
       };
     },
-    enumerable: false,
+    enumerable: false
   });
 }
 
@@ -333,6 +333,6 @@ function warning(name: string, additional?: string) {
       suggestion ? ` ${suggestion}` : ""
     }${additional ? ` ${additional}` : ""}`,
     warningStyle,
-    "",
+    ""
   );
 }

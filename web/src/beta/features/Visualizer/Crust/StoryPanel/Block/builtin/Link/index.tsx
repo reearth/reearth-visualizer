@@ -17,7 +17,7 @@ const LinkBlock: FC<Props> = ({
 }) => {
   const linkButtons = useMemo(
     () => (block?.property?.default ?? []) as LinkBlockType[],
-    [block?.property?.default],
+    [block?.property?.default]
   );
 
   // if there's no item add 1 button.

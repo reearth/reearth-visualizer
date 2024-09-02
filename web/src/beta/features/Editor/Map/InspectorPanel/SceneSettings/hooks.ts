@@ -41,7 +41,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
         return updatedLayers ? updatedLayers : prev;
       });
     },
-    [onPageUpdate, pageId],
+    [onPageUpdate, pageId]
   );
 
   const handleAllLayersCheck = useCallback(() => {
@@ -58,6 +58,6 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
     checkedLayers,
     allCheckedLayers,
     handleLayerCheck,
-    handleAllLayersCheck,
+    handleAllLayersCheck
   };
 };

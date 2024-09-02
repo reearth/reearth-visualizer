@@ -3,13 +3,13 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
-  ContentWrapper,
+  ContentWrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
   Button,
   Icon,
   RadioGroup,
-  TextInput,
+  TextInput
 } from "@reearth/beta/lib/reearth-ui";
 import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -33,9 +33,9 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const dataSourceOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("From Assets"), value: "local" },
-      { label: t("From Web"), value: "url" },
+      { label: t("From Web"), value: "url" }
     ],
-    [t],
+    [t]
   );
 
   const handleSubmit = () => {
@@ -53,10 +53,10 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           type: "csv",
           csv: {
             latColumn: lat,
-            lngColumn: lng,
-          },
-        },
-      },
+            lngColumn: lng
+          }
+        }
+      }
     });
     onClose();
   };
@@ -108,7 +108,7 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <Icon icon="lightBulb" color={theme.warning.main} size="large" />
           <TextWrapper>
             {t(
-              "Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.",
+              "Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below."
             )}
           </TextWrapper>
         </Warning>
@@ -148,20 +148,20 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 const Warning = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const TextWrapper = styled("div")(({ theme }) => ({
   color: theme.warning.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 const CoordinateWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   alignItems: "center",
-  width: "100%",
+  width: "100%"
 }));
 
 export default CSV;

@@ -13,7 +13,7 @@ export default ({
   propertyId,
   propertyListField,
   displayTypeField,
-  onPropertyUpdate,
+  onPropertyUpdate
 }: {
   propertyId?: string;
   displayTypeField?: DisplayTypeField;
@@ -24,19 +24,19 @@ export default ({
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
 }) => {
   const [currentPropertyList, setCurrentPropertyList] = useState<ListItem[]>(
-    propertyListField?.value ?? [],
+    propertyListField?.value ?? []
   );
   const [isDragging, setIsDragging] = useState(false);
 
   const displayOptions = displayTypeField?.choices?.map(
     ({ key, title }: { key: string; title: string }) => ({
       value: key,
-      label: title,
-    }),
+      label: title
+    })
   );
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default ({
         await onPropertyUpdate?.(propertyId, "default", fieldId, itemId, vt, v);
       };
     },
-    [propertyId, onPropertyUpdate],
+    [propertyId, onPropertyUpdate]
   );
 
   const handlePropertyValueRemove = useCallback(
@@ -64,17 +64,17 @@ export default ({
         const newValue = propertyListField.value?.filter((_, i) => i !== idx);
         await handlePropertyValueUpdate(
           "propertyList",
-          propertyListField.type,
+          propertyListField.type
         )(newValue);
       }
     },
-    [propertyListField, handlePropertyValueUpdate],
+    [propertyListField, handlePropertyValueUpdate]
   );
 
   const handlePropertyListUpdate = useCallback(
     (newList: ListItem[]) =>
       handlePropertyValueUpdate("propertyList", "array")(newList),
-    [handlePropertyValueUpdate],
+    [handlePropertyValueUpdate]
   );
 
   const handleKeyBlur = useCallback(
@@ -84,7 +84,7 @@ export default ({
       setCurrentPropertyList(newList);
       handlePropertyListUpdate(newList);
     },
-    [currentPropertyList, handlePropertyListUpdate],
+    [currentPropertyList, handlePropertyListUpdate]
   );
 
   const handleValueBlur = useCallback(
@@ -94,13 +94,13 @@ export default ({
       setCurrentPropertyList(newList);
       handlePropertyListUpdate(newList);
     },
-    [currentPropertyList, handlePropertyListUpdate],
+    [currentPropertyList, handlePropertyListUpdate]
   );
 
   const handleDisplayTypeUpdate = useCallback(
     (value?: string | string[]) =>
       handlePropertyValueUpdate("displayType", "string")(value),
-    [handlePropertyValueUpdate],
+    [handlePropertyValueUpdate]
   );
 
   const handleItemAdd = useCallback(() => {
@@ -110,8 +110,8 @@ export default ({
       {
         id: generateUniqueId(),
         key: `Field ${(currentPropertyList ?? []).length + 1 || 1}`,
-        value: `Value ${(currentPropertyList ?? []).length + 1 || 1}`,
-      },
+        value: `Value ${(currentPropertyList ?? []).length + 1 || 1}`
+      }
     ];
     handlePropertyValueUpdate("propertyList", propertyListField.type)(newList);
   }, [currentPropertyList, propertyListField, handlePropertyValueUpdate]);
@@ -127,10 +127,10 @@ export default ({
         key: string;
         value: string;
       },
-      targetIndex: number,
+      targetIndex: number
     ) => {
       const itemIndex = currentPropertyList.findIndex(
-        (li) => li.id === item.id,
+        (li) => li.id === item.id
       );
       if (itemIndex === -1) return;
 
@@ -144,17 +144,17 @@ export default ({
         "propertyList",
         undefined,
         "array",
-        newList,
+        newList
       );
     },
-    [currentPropertyList, onPropertyUpdate, propertyId],
+    [currentPropertyList, onPropertyUpdate, propertyId]
   );
 
   const handleMoveEnd = useCallback(
     (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
         const itemToMove = currentPropertyList?.find(
-          (item) => item.id === itemId,
+          (item) => item.id === itemId
         );
         if (itemToMove) {
           handleItemDrop(itemToMove, newIndex);
@@ -162,7 +162,7 @@ export default ({
       }
       setIsDragging(false);
     },
-    [currentPropertyList, handleItemDrop],
+    [currentPropertyList, handleItemDrop]
   );
 
   return {
@@ -175,7 +175,7 @@ export default ({
     handleItemAdd,
     handlePropertyValueRemove,
     handleMoveStart,
-    handleMoveEnd,
+    handleMoveEnd
   };
 };
 

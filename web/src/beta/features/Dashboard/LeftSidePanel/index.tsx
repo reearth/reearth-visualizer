@@ -1,12 +1,14 @@
 import {
   SidebarMenuItem,
   SidebarSection,
+  SidebarTopSectionWrapper,
   SidebarVersion,
-  SidebarWrapper,
+  SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { FC } from "react";
 
+import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
 import { Profile } from "./profile";
@@ -29,7 +31,7 @@ const LeftSidePanel: FC<Props> = ({
   isPersonal,
   workspaces,
   onSignOut,
-  onWorkspaceChange,
+  onWorkspaceChange
 }) => {
   const t = useT();
 
@@ -44,7 +46,7 @@ const LeftSidePanel: FC<Props> = ({
           onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
-        <>
+        <SidebarTopSectionWrapper>
           {topTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
@@ -55,7 +57,8 @@ const LeftSidePanel: FC<Props> = ({
               disabled={tab.disabled}
             />
           ))}
-        </>
+          <StarredProject workspaceId={currentWorkspace?.id} />
+        </SidebarTopSectionWrapper>
       </SidebarSection>
       <SidebarSection>
         <>

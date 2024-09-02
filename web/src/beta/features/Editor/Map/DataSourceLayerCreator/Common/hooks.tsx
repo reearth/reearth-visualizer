@@ -19,24 +19,24 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     () => [
       { label: t("From Assets"), value: "local" },
       { label: t("From Web"), value: "url" },
-      { label: t("From Value"), value: "value" },
+      { label: t("From Value"), value: "value" }
     ],
-    [t],
+    [t]
   );
 
   const fileFormatOptions = [
     {
       value: "geojson",
-      label: "GeoJSON",
+      label: "GeoJSON"
     },
     {
       value: "kml",
-      label: "KML",
+      label: "KML"
     },
     {
       value: "czml",
-      label: "CZML",
-    },
+      label: "CZML"
+    }
   ];
 
   const isValidExtension = useCallback(() => {
@@ -79,10 +79,10 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
           type: fileFormat.toLowerCase() as DataType,
           value: parsedValue,
           geojson: {
-            useAsResource: prioritizePerformance,
-          },
-        },
-      },
+            useAsResource: prioritizePerformance
+          }
+        }
+      }
     });
     onClose();
   };
@@ -116,6 +116,6 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     handleValueChange,
     handleFileFormatChange,
     handleDataSourceTypeChange,
-    handleSubmit,
+    handleSubmit
   };
 };

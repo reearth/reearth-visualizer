@@ -9,7 +9,7 @@ export type {
   Widget,
   InternalWidget,
   WidgetAlignment,
-  WidgetLocation,
+  WidgetLocation
 } from "../types";
 
 export type Location = {

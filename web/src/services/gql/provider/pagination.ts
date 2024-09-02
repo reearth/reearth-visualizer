@@ -4,7 +4,7 @@ import { isEqual } from "lodash-es";
 export function paginationMerge(
   existing: any,
   incoming: any,
-  { readField }: { readField: ReadFieldFunction },
+  { readField }: { readField: ReadFieldFunction }
 ) {
   if (existing && incoming && isEqual(existing, incoming)) return incoming;
 
@@ -13,7 +13,7 @@ export function paginationMerge(
   let offset = offsetFromCursor(
     merged,
     incoming?.pageInfo.startCursor,
-    readField,
+    readField
   );
   if (offset < 0) offset = merged.length;
 
@@ -23,14 +23,14 @@ export function paginationMerge(
 
   return {
     ...incoming,
-    edges: merged,
+    edges: merged
   };
 }
 
 function offsetFromCursor(
   items: any,
   cursor: string,
-  readField: ReadFieldFunction,
+  readField: ReadFieldFunction
 ) {
   if (items.length < 1) return -1;
   for (let i = 0; i < items.length; ++i) {

@@ -5,13 +5,13 @@ import {
   CreateStoryInput,
   CreateStoryMutation,
   MutationCreateStoryArgs,
-  UpdateStoryInput,
+  UpdateStoryInput
 } from "@reearth/services/gql/__gen__/graphql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import {
   CREATE_STORY,
   PUBLISH_STORY,
-  UPDATE_STORY,
+  UPDATE_STORY
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
@@ -33,7 +33,7 @@ export default () => {
   const useStoriesQuery = useCallback(({ sceneId, lang }: StoryQueryProps) => {
     const { data, ...rest } = useQuery(GET_SCENE, {
       variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId,
+      skip: !sceneId
     });
 
     const stories = useMemo(() => getStories(data), [data]);
@@ -47,10 +47,10 @@ export default () => {
   >(CREATE_STORY);
   const useCreateStory = useCallback(
     async (
-      input: CreateStoryInput,
+      input: CreateStoryInput
     ): Promise<MutationReturn<CreateStoryMutation>> => {
       const { data, errors } = await createStoryMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.createStory?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create story.") });
@@ -59,22 +59,22 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfully created a story!"),
+        text: t("Successfully created a story!")
       });
 
       return { data, status: "success" };
     },
-    [createStoryMutation, setNotification, t],
+    [createStoryMutation, setNotification, t]
   );
 
   const [updateStoryMutation] = useMutation(UPDATE_STORY, {
-    refetchQueries: ["GetScene"],
+    refetchQueries: ["GetScene"]
   });
   const useUpdateStory = useCallback(
     async (input: UpdateStoryInput) => {
       if (!input.storyId) return { status: "error" };
       const { data, errors } = await updateStoryMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.updateStory) {
         setNotification({ type: "error", text: t("Failed to update story.") });
@@ -83,12 +83,12 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfully updated a story!"),
+        text: t("Successfully updated a story!")
       });
 
       return { data, status: "success" };
     },
-    [updateStoryMutation, t, setNotification],
+    [updateStoryMutation, t, setNotification]
   );
 
   const [publishStoryMutation, { loading: publishStoryLoading }] =
@@ -101,7 +101,7 @@ export default () => {
       const gqlStatus = toGqlStatus(s);
 
       const { data, errors } = await publishStoryMutation({
-        variables: { storyId, alias, status: gqlStatus },
+        variables: { storyId, alias, status: gqlStatus }
       });
 
       if (errors || !data?.publishStory) {
@@ -118,22 +118,22 @@ export default () => {
             ? t("Successfully published your story!")
             : s == "published"
               ? t(
-                  "Successfully published your story with search engine indexing!",
+                  "Successfully published your story with search engine indexing!"
                 )
               : t(
-                  "Successfully unpublished your story. Now nobody can access your story.",
-                ),
+                  "Successfully unpublished your story. Now nobody can access your story."
+                )
       });
       return { data: data.publishStory.story, status: "success" };
     },
-    [publishStoryMutation, t, setNotification],
+    [publishStoryMutation, t, setNotification]
   );
 
   const {
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
-    useUpdateStoryPage,
+    useUpdateStoryPage
   } = usePages();
 
   const {
@@ -141,7 +141,7 @@ export default () => {
     useInstalledStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
-    useMoveStoryBlock,
+    useMoveStoryBlock
   } = useBlocks();
 
   return {
@@ -158,6 +158,6 @@ export default () => {
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
-    usePublishStory,
+    usePublishStory
   };
 };

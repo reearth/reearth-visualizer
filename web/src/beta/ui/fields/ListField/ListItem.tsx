@@ -24,7 +24,7 @@ const ListItem: FC<ItemProps> = ({
   isEditable,
   onItemDelete,
   onItemSelect,
-  onItemNameUpdate,
+  onItemNameUpdate
 }) => {
   const [localTitle, setLocalTitle] = useState(item.title);
   const [itemNameRenameId, setItemNameRenameId] = useState("");
@@ -33,7 +33,7 @@ const ListItem: FC<ItemProps> = ({
     (id: string) => {
       onItemDelete?.(id);
     },
-    [onItemDelete],
+    [onItemDelete]
   );
 
   const optionsMenu = useMemo<PopupMenuItem[]>(() => {
@@ -42,8 +42,8 @@ const ListItem: FC<ItemProps> = ({
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
-        onClick: () => handleItemDelete(item.id),
-      },
+        onClick: () => handleItemDelete(item.id)
+      }
     ];
 
     if (isEditable) {
@@ -51,7 +51,7 @@ const ListItem: FC<ItemProps> = ({
         id: "rename",
         title: "Rename",
         icon: "pencilSimple" as const,
-        onClick: () => setItemNameRenameId(item.id),
+        onClick: () => setItemNameRenameId(item.id)
       });
     }
 
@@ -105,11 +105,11 @@ export default ListItem;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.micro,
+  gap: theme.spacing.micro
 }));
 
 const EntryItemWrapper = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -119,5 +119,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.regular,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));

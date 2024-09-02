@@ -9,16 +9,16 @@ test("usePostMessage", () => {
   const iFrame: P = {
     current: {
       postMessage: vi.fn(),
-      resize: () => {},
-    },
+      resize: () => {}
+    }
   };
 
   const { result, rerender } = renderHook(
     ({ iFrame, pending }: { iFrame: P; pending?: boolean }) =>
       usePostMessage(iFrame, pending),
     {
-      initialProps: { iFrame: nullIFrame },
-    },
+      initialProps: { iFrame: nullIFrame }
+    }
   );
 
   result.current({ hoge: true });

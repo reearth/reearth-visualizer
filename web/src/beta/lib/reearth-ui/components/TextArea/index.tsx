@@ -24,7 +24,7 @@ export const TextArea: FC<TextAreaProps> = ({
   maxLength,
   appearance,
   onChange,
-  onBlur,
+  onBlur
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -39,7 +39,7 @@ export const TextArea: FC<TextAreaProps> = ({
       setCurrentValue(newValue);
       onChange?.(newValue);
     },
-    [onChange],
+    [onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -83,7 +83,7 @@ export const TextArea: FC<TextAreaProps> = ({
 
 const Wrapper = styled("div")(() => ({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "column"
 }));
 
 const TextAreaWrapper = styled("div")<{
@@ -97,7 +97,7 @@ const TextAreaWrapper = styled("div")<{
   borderRadius: theme.radius.small,
   background: "transparent",
   display: "flex",
-  boxShadow: theme.shadow.input,
+  boxShadow: theme.shadow.input
 }));
 
 const StyledTextArea = styled.textarea<{
@@ -123,15 +123,14 @@ const StyledTextArea = styled.textarea<{
   minHeight: fonts.lineHeights.body * 2 + theme.spacing.smallest * 2,
   overflowX: "hidden",
   boxSizing: "border-box",
-  pointerEvents: disabled ? "none" : "inherit",
-  "::placeholder": {
-    color: theme.content.weak,
-  },
+    "::placeholder": {
+    color: theme.content.weak
+  }
 }));
 
 const CharacterCount = styled.span(({ theme }) => ({
   alignSelf: "flex-end",
   fontSize: fonts.sizes.body,
   color: theme.content.weak,
-  marginLeft: theme.spacing.small,
+  marginLeft: theme.spacing.small
 }));

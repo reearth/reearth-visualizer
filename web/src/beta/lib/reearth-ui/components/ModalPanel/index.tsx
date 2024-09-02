@@ -17,7 +17,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   actions,
   layout,
   onCancel,
-  appearance = "normal",
+  appearance = "normal"
 }) => {
   return (
     <Wrapper>
@@ -51,7 +51,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   background: theme.bg[1],
-  borderRadius: theme.radius.large,
+  borderRadius: theme.radius.large
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
@@ -64,17 +64,17 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   borderBottom: `1px solid ${theme.outline.weaker}`,
   borderTopRightRadius: theme.radius.large,
-  borderTopLeftRadius: theme.radius.large,
+  borderTopLeftRadius: theme.radius.large
 }));
 
 const Title = styled("div")(() => ({
   flex: "1 0 0",
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));
 
 const Content = styled("div")(() => ({
-  alignSelf: "stretch",
+  alignSelf: "stretch"
 }));
 
 const ActionWrapper = styled("div")<{ showBorder: boolean }>(
@@ -87,8 +87,8 @@ const ActionWrapper = styled("div")<{ showBorder: boolean }>(
     display: "flex",
     alignItems: "flex-start",
     borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
-    gap: theme.spacing.normal,
-  }),
+    gap: theme.spacing.normal
+  })
 );
 
 const CommonLayout = styled("div")(({ theme }) => ({
@@ -97,5 +97,5 @@ const CommonLayout = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.large,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));

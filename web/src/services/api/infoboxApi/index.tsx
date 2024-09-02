@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import {
   CreateNlsInfoboxInput,
   CreateNlsInfoboxMutation,
-  MutationCreateNlsInfoboxArgs,
+  MutationCreateNlsInfoboxArgs
 } from "@reearth/services/gql";
 import { CREATE_NLSINFOBOX } from "@reearth/services/gql/queries/infobox";
 import { useT } from "@reearth/services/i18n";
@@ -26,10 +26,10 @@ export default () => {
   >(CREATE_NLSINFOBOX, { refetchQueries: ["GetScene"] });
   const useCreateNLSInfobox = useCallback(
     async (
-      input: CreateNlsInfoboxInput,
+      input: CreateNlsInfoboxInput
     ): Promise<MutationReturn<CreateNlsInfoboxMutation>> => {
       const { data, errors } = await createNLSInfoboxMutation({
-        variables: { input },
+        variables: { input }
       });
       if (errors || !data?.createNLSInfobox?.layer?.id) {
         setNotification({ type: "error", text: t("Failed to add layer.") });
@@ -38,19 +38,19 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfully added a new layer"),
+        text: t("Successfully added a new layer")
       });
 
       return { data, status: "success" };
     },
-    [createNLSInfoboxMutation, setNotification, t],
+    [createNLSInfoboxMutation, setNotification, t]
   );
 
   const {
     useInstallableInfoboxBlocksQuery,
     useCreateInfoboxBlock,
     useDeleteInfoboxBlock,
-    useMoveInfoboxBlock,
+    useMoveInfoboxBlock
   } = useBlocks();
 
   return {
@@ -59,6 +59,6 @@ export default () => {
     useInstallableInfoboxBlocksQuery,
     useCreateInfoboxBlock,
     useDeleteInfoboxBlock,
-    useMoveInfoboxBlock,
+    useMoveInfoboxBlock
   };
 };

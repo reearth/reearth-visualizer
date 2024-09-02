@@ -2,7 +2,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import {
   getAuthInfo,
   getSignInCallbackUrl,
-  logInToTenant,
+  logInToTenant
 } from "@reearth/services/config";
 import React, { createContext, ReactNode, useState } from "react";
 
@@ -23,7 +23,7 @@ const CognitoWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
-  children,
+  children
 }) => {
   const [authInfo] = useState(() => {
     logInToTenant(); // note that it includes side effect
@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
         authorizationParams={{
           audience: audience,
           scope: "openid profile email offline_access",
-          redirect_uri: getSignInCallbackUrl(),
+          redirect_uri: getSignInCallbackUrl()
         }}
         useRefreshTokens
         useRefreshTokensFallback

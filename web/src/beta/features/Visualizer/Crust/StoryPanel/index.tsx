@@ -2,7 +2,7 @@ import { BlockProvider } from "@reearth/beta/features/Visualizer/shared/contexts
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import {
   BlockProps,
-  InstallableBlock,
+  InstallableBlock
 } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
@@ -32,12 +32,12 @@ export type StoryPanelProps = {
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onStoryBlockDelete?: (
     pageId?: string | undefined,
-    blockId?: string | undefined,
+    blockId?: string | undefined
   ) => Promise<void>;
   onPropertyValueUpdate?: (
     propertyId?: string,
@@ -45,22 +45,22 @@ export type StoryPanelProps = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
   renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
 };
@@ -81,9 +81,9 @@ export const StoryPanel = memo(
         onPropertyItemAdd,
         onPropertyItemMove,
         onPropertyItemDelete,
-        renderBlock,
+        renderBlock
       },
-      ref: Ref<StoryPanelRef>,
+      ref: Ref<StoryPanelRef>
     ) => {
       const {
         pageInfo,
@@ -101,14 +101,14 @@ export const StoryPanel = memo(
         handlePageSelect,
         handleBlockSelect,
         handleBlockDoubleClick,
-        handleCurrentPageChange,
+        handleCurrentPageChange
       } = useHooks(
         {
           selectedStory,
           isEditable,
-          onStoryPageChange,
+          onStoryPageChange
         },
-        ref,
+        ref
       );
 
       const panelContext: StoryPanelContext = useMemo(
@@ -122,27 +122,27 @@ export const StoryPanel = memo(
             setCurrentPageId(pageId);
             setLayerOverride(undefined);
             element.scrollIntoView({
-              behavior: "instant",
+              behavior: "instant"
             } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
-          },
+          }
         }),
-        [selectedStory?.pages, setCurrentPageId, setLayerOverride],
+        [selectedStory?.pages, setCurrentPageId, setLayerOverride]
       );
 
       const editModeContext = useMemo(
         () => ({
           disableSelection,
-          onSelectionDisable: handleSelectionDisable,
+          onSelectionDisable: handleSelectionDisable
         }),
-        [disableSelection, handleSelectionDisable],
+        [disableSelection, handleSelectionDisable]
       );
 
       const blockContext = useMemo(
         () => ({
           layerOverride,
-          onLayerOverride: handleLayerOverride,
+          onLayerOverride: handleLayerOverride
         }),
-        [layerOverride, handleLayerOverride],
+        [layerOverride, handleLayerOverride]
       );
 
       return (
@@ -187,11 +187,11 @@ export const StoryPanel = memo(
                 </BlockProvider>
               </EditModeProvider>
             </PanelProvider>,
-            storyWrapperRef.current,
+            storyWrapperRef.current
           )) ?? <div />
       );
-    },
-  ),
+    }
+  )
 );
 
 export default StoryPanel;
@@ -201,6 +201,6 @@ const PanelWrapper = styled("div")<{ bgColor?: string }>(
     flex: `0 0 ${STORY_PANEL_WIDTH}px`,
     background: bgColor,
     width: `${STORY_PANEL_WIDTH}px`,
-    color: theme.content.weak,
-  }),
+    color: theme.content.weak
+  })
 );

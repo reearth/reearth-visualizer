@@ -16,7 +16,7 @@ export const Icon: FC<IconProps> = ({
   icon,
   size = "normal",
   color,
-  className,
+  className
 }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {

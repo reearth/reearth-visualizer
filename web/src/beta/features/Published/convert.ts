@@ -5,7 +5,7 @@ export const processProperty = (p: any): any => {
   return mapValues(p, (g) =>
     Array.isArray(g)
       ? g.map((h) => processPropertyGroup(h))
-      : processPropertyGroup(g),
+      : processPropertyGroup(g)
   );
 };
 
@@ -21,7 +21,7 @@ const processPropertyGroup = (g: any): any => {
         "lng" in v &&
         "altitude" in v
           ? { ...vv, height: vv.altitude }
-          : vv,
+          : vv
       );
     }
     if (
@@ -33,7 +33,7 @@ const processPropertyGroup = (g: any): any => {
     ) {
       return {
         ...v,
-        height: v.altitude,
+        height: v.altitude
       };
     }
     return v;

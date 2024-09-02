@@ -1,12 +1,12 @@
 import {
   FILE_TYPES,
-  IMAGE_TYPES,
+  IMAGE_TYPES
 } from "@reearth/beta/features/AssetsManager/constants";
 import {
   AssetField,
   InputField,
   NumberField,
-  SwitchField,
+  SwitchField
 } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { useT } from "@reearth/services/i18n";
@@ -17,7 +17,7 @@ import { FieldProp, ValueProp } from ".";
 type Props = {
   field: FieldProp;
   setFields?: (
-    v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[]),
+    v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])
   ) => void;
 };
 
@@ -36,7 +36,7 @@ export const FieldComponent = ({ field, setFields }: Props) => {
         });
       });
     },
-    [field.id, setFields],
+    [field.id, setFields]
   );
 
   return field?.type === "Text" ? (

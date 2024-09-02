@@ -10,7 +10,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate,
+  onProjectUpdate
 }) => {
   const theme = useTheme();
 
@@ -25,12 +25,12 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
+    handleProjectStarClick
   } = useHooks({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect,
+    onProjectSelect
   });
 
   return (
@@ -93,8 +93,8 @@ const Card = styled("div")(() => ({
   flexDirection: "column",
   height: "220px",
   "@media (max-width: 567px)": {
-    height: "171px",
-  },
+    height: "171px"
+  }
 }));
 
 const CardImage = styled("div")<{
@@ -110,7 +110,7 @@ const CardImage = styled("div")<{
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
-  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
+  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`
 }));
 
 const StarButtonWrapper = styled("div")<{
@@ -121,25 +121,25 @@ const StarButtonWrapper = styled("div")<{
   position: "absolute",
   top: "10px",
   right: "10px",
-  opacity: isSelected || isStarred || isHovered ? 1 : 0,
+  opacity: isSelected || isStarred || isHovered ? 1 : 0
 }));
 
 const CardFooter = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  padding: `0 ${theme.spacing.smallest}`,
+  padding: `0 ${theme.spacing.smallest}`
 }));
 
 const PublishStatus = styled("div")(({ theme }) => ({
   height: "12px",
   width: "12px",
   borderRadius: "50%",
-  background: theme.publish.main,
+  background: theme.publish.main
 }));
 
 const CardTitleWrapper = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 const CardTitle = styled("div")(({ theme }) => ({
@@ -153,5 +153,5 @@ const CardTitle = styled("div")(({ theme }) => ({
   WebkitLineClamp: 1,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  cursor: "pointer",
+  cursor: "pointer"
 }));

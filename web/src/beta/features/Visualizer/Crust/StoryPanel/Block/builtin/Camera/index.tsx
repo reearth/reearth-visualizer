@@ -17,7 +17,7 @@ const CameraBlock: FC<Props> = ({
 }) => {
   const cameraButtons = useMemo(
     () => (block?.property?.default ?? []) as CameraBlockType[],
-    [block?.property?.default],
+    [block?.property?.default]
   );
 
   // if there's no item add 1 button.

@@ -23,7 +23,7 @@ const EditModal: FC<EditPanelProps> = ({
   timePeriodValues,
   setTimePeriodValues,
   onClose,
-  onChange,
+  onChange
 }) => {
   const t = useT();
   const {
@@ -33,12 +33,12 @@ const EditModal: FC<EditPanelProps> = ({
     setDisabledFields,
     handleChange,
     handleSubmit,
-    handleTimePointPopup,
+    handleTimePointPopup
   } = useHooks({
     timePeriodValues,
     onChange,
     onClose,
-    setTimePeriodValues,
+    setTimePeriodValues
   });
 
   const timezoneMatches = useMemo(() => {
@@ -106,7 +106,7 @@ const EditModal: FC<EditPanelProps> = ({
             <Warning>
               <Icon icon="warning" size="large" />
               {t(
-                "Please make sure the Current time must between the Start time and End Time.",
+                "Please make sure the Current time must between the Start time and End Time."
               )}
             </Warning>
           )}
@@ -121,7 +121,7 @@ const FieldsWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.largest,
   padding: theme.spacing.super,
   flexDirection: "column",
-  background: theme.bg[0],
+  background: theme.bg[0]
 }));
 
 const Warning = styled("div")(({ theme }) => ({
@@ -131,7 +131,7 @@ const Warning = styled("div")(({ theme }) => ({
   color: theme.dangerous.main,
   alignItems: "center",
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 export default EditModal;

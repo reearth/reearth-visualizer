@@ -92,7 +92,7 @@ export function commonReearth({
   deprecated,
   cameraDeprecated,
   layersDeprecated,
-  sketchDeprecated,
+  sketchDeprecated
 }: {
   engineName: GlobalThis["reearth"]["engine"]["name"];
   // viewer
@@ -182,7 +182,7 @@ export function commonReearth({
     engine: {
       get name() {
         return engineName;
-      },
+      }
     },
     viewer: {
       get property() {
@@ -201,7 +201,7 @@ export function commonReearth({
         },
         get isBuilt() {
           return !!getIsBuilt();
-        },
+        }
       },
       capture: captureScreen,
       tools: {
@@ -213,10 +213,10 @@ export function commonReearth({
         cartographicToCartesian,
         cartesianToCartographic,
         transformByOffsetOnScreen,
-        isPositionVisibleOnGlobe,
+        isPositionVisibleOnGlobe
       },
       on: viewerEventsOn,
-      off: viewerEventsOff,
+      off: viewerEventsOff
     },
     camera: merge(cameraDeprecated, {
       get position() {
@@ -248,7 +248,7 @@ export function commonReearth({
       enableForceHorizontalRoll,
       on: cameraEventsOn,
       off: cameraEventsOff,
-      cameraDeprecated,
+      cameraDeprecated
     }),
     get timeline() {
       return getTimeline();
@@ -277,20 +277,12 @@ export function commonReearth({
       },
       get find() {
         return (
-          cb: (
-            layer: LazyLayer,
-            index: number,
-            parents: LazyLayer[],
-          ) => boolean,
+          cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean
         ) => getLayers()?.find(cb);
       },
       get findAll() {
         return (
-          cb: (
-            layer: LazyLayer,
-            index: number,
-            parents: LazyLayer[],
-          ) => boolean,
+          cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean
         ) => getLayers()?.findAll(cb);
       },
       get findById() {
@@ -336,7 +328,7 @@ export function commonReearth({
         return sendToBack;
       },
       on: layersEventsOn,
-      off: layersEventsOff,
+      off: layersEventsOff
     }),
     sketch: merge(sketchDeprecated, {
       get tool() {
@@ -352,12 +344,12 @@ export function commonReearth({
         return overrideSketchOptions;
       },
       on: sketchEventsOn,
-      off: sketchEventsOff,
+      off: sketchEventsOff
     }),
     extension: {
       get list() {
         return getExtensionList();
-      },
-    },
+      }
+    }
   });
 }

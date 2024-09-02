@@ -10,7 +10,7 @@ import {
   FileType,
   GENERAL_FILE_TYPE_ACCEPT_STRING,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES,
+  IMAGE_FILE_TYPES
 } from "./constants";
 import { Asset, sortOptionValue, SortType } from "./types";
 
@@ -20,14 +20,14 @@ const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
 const typeToGQLField = {
   date: AssetSortField.Date,
   name: AssetSortField.Name,
-  size: AssetSortField.Size,
+  size: AssetSortField.Size
 };
 
 export default ({
   workspaceId,
   allowMultipleSelection,
   assetsTypes,
-  onSelectChange,
+  onSelectChange
 }: {
   workspaceId?: string;
   allowMultipleSelection: boolean;
@@ -37,7 +37,7 @@ export default ({
   // sort
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>({
     type: "date",
-    reverse: true,
+    reverse: true
   });
   const t = useT();
 
@@ -62,9 +62,9 @@ export default ({
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
       { value: "size", label: t("Size Small to Large") },
-      { value: "size-reverse", label: t("Size Large to Small") },
+      { value: "size-reverse", label: t("Size Large to Small") }
     ],
-    [t],
+    [t]
   );
 
   const handleSortChange = useCallback((value: string) => {
@@ -104,31 +104,31 @@ export default ({
     useAssetsQuery({
       teamId: workspaceId ?? "",
       pagination: {
-        first: ASSETS_PER_PAGE,
+        first: ASSETS_PER_PAGE
       },
       sort: {
         direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
-        field: typeToGQLField[sort.type ?? "date"],
+        field: typeToGQLField[sort.type ?? "date"]
       },
-      keyword: searchTerm,
+      keyword: searchTerm
     });
 
   const assetsExts = useMemo(
     () =>
       assetsTypes
         ?.map((t) =>
-          t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t,
+          t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t
         )
         .flat(),
-    [assetsTypes],
+    [assetsTypes]
   );
 
   const filteredAssets = useMemo(() => {
     if (!assetsExts || !assets) return assets;
     return assets.filter((a) =>
       assetsExts.includes(
-        (a.url.split(".").pop()?.toLowerCase() as FileType) ?? "",
-      ),
+        (a.url.split(".").pop()?.toLowerCase() as FileType) ?? ""
+      )
     );
   }, [assets, assetsExts]);
 
@@ -143,9 +143,9 @@ export default ({
       variables: {
         pagination: {
           first: ASSETS_PER_PAGE,
-          after: endCursor,
-        },
-      },
+          after: endCursor
+        }
+      }
     });
     setLoadingMore(false);
     isLoadingMoreRef.current = false;
@@ -224,10 +224,10 @@ export default ({
       if (!files) return;
       await useCreateAssets({
         teamId: workspaceId ?? "",
-        file: files,
+        file: files
       });
     },
-    [workspaceId, useCreateAssets],
+    [workspaceId, useCreateAssets]
   );
 
   // upload
@@ -236,17 +236,17 @@ export default ({
     (files) => handleAssetsCreate?.(files),
     {
       accept: GENERAL_FILE_TYPE_ACCEPT_STRING,
-      multiple: true,
-    },
+      multiple: true
+    }
   );
 
   // layout
   const [layout, setLayout] = useState(
     ["grid", "list"].includes(
-      localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? "",
+      localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? ""
     )
       ? (localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) as ManagerLayout)
-      : "grid",
+      : "grid"
   );
   const handleLayoutChange = useCallback((newLayout?: ManagerLayout) => {
     if (!newLayout) return;
@@ -258,7 +258,7 @@ export default ({
   // path
   // TODO: support path with folder
   const [paths, _setPaths] = useState<BreadcrumbItem[]>([
-    { id: "assets", title: "Assets" },
+    { id: "assets", title: "Assets" }
   ]);
   const handlePathClick = useCallback((_id?: string) => {}, []);
 
@@ -272,13 +272,13 @@ export default ({
         selectAsset(
           selectedAssetIds.includes(assetId)
             ? selectedAssetIds.filter((a) => a !== assetId)
-            : [...selectedAssetIds, assetId],
+            : [...selectedAssetIds, assetId]
         );
       } else {
         selectAsset(assetId ? [assetId] : []);
       }
     },
-    [selectedAssetIds, allowMultipleSelection],
+    [selectedAssetIds, allowMultipleSelection]
   );
 
   useEffect(() => {
@@ -306,7 +306,7 @@ export default ({
     onSelectChange(
       selectedAssetIds
         .map((id) => assets.find((a) => a.id === id))
-        .filter((a) => !!a) as Asset[],
+        .filter((a) => !!a) as Asset[]
     );
   }, [selectedAssetIds, assets, onSelectChange]);
 
@@ -337,6 +337,6 @@ export default ({
     handleAssetUpload,
     contentWidth,
     loading,
-    loadingMore,
+    loadingMore
   };
 };

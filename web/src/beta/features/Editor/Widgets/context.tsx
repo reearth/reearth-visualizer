@@ -14,7 +14,7 @@ export interface WidgetsPageContextType {
   handleShowWASEditorToggle: () => void;
   handleDeviceChange: (device: Device) => void;
   selectWidgetArea: (
-    update?: SetStateAction<WidgetAreaState | undefined>,
+    update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;
   sceneId?: string;
   selectedWidget?: SelectedWidget;
@@ -24,12 +24,12 @@ export interface WidgetsPageContextType {
 }
 
 const WidgetsPageContext = createContext<WidgetsPageContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const WidgetsPageProvider = ({
   value,
-  children,
+  children
 }: {
   value: WidgetsPageContextType;
   children: ReactNode;

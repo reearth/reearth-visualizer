@@ -17,22 +17,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -43,7 +43,7 @@ const Content: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove,
+  onPropertyItemMove
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
@@ -52,7 +52,7 @@ const Content: FC<Props> = ({
 
   const handleFlyTo = useMemo(
     () => visualizer.current?.engine.flyTo,
-    [visualizer],
+    [visualizer]
   );
 
   const handleClick = useCallback(
@@ -64,10 +64,10 @@ const Content: FC<Props> = ({
       const item = cameraButtons.find((i) => i.id === itemId);
       if (!item?.cameraPosition?.value) return;
       handleFlyTo?.(item.cameraPosition?.value, {
-        duration: item.cameraDuration?.value || 2,
+        duration: item.cameraDuration?.value || 2
       });
     },
-    [cameraButtons, isEditable, handleFlyTo],
+    [cameraButtons, isEditable, handleFlyTo]
   );
 
   return (
@@ -108,7 +108,7 @@ const Content: FC<Props> = ({
 export default Content;
 
 const Wrapper = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
@@ -116,7 +116,7 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexWrap: "wrap",
   gap: theme.spacing.smallest,
-  maxWidth: "400px",
+  maxWidth: "400px"
 }));
 
 const StyledButton = styled(Button)<{
@@ -130,6 +130,6 @@ const StyledButton = styled(Button)<{
 
   ":hover": {
     color: bgColor,
-    backgroundColor: color ?? theme.primary.main,
-  },
+    backgroundColor: color ?? theme.primary.main
+  }
 }));

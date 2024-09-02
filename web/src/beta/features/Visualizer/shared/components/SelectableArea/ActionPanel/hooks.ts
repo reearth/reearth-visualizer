@@ -7,7 +7,7 @@ import {
   SetStateAction,
   useCallback,
   useMemo,
-  useState,
+  useState
 } from "react";
 
 import type { ActionItem } from "../../ActionPanel";
@@ -35,7 +35,7 @@ export default ({
   setShowPadding,
   onRemove,
   onEditModeToggle,
-  onSettingsToggle,
+  onSettingsToggle
 }: Props) => {
   const t = useT();
   const handleRemove = useCallback(() => {
@@ -56,7 +56,7 @@ export default ({
         onClick: () => {
           setShowPadding(true);
           onSettingsToggle?.();
-        },
+        }
       });
     }
     if (onRemove) {
@@ -64,7 +64,7 @@ export default ({
         id: "delete",
         title: t("Remove"),
         icon: "trash",
-        onClick: handleRemove,
+        onClick: handleRemove
       });
     }
     return menuItems;
@@ -76,7 +76,7 @@ export default ({
     setShowPadding,
     onSettingsToggle,
     t,
-    handleRemove,
+    handleRemove
   ]);
 
   const actionItems: ActionItem[] = useMemo(() => {
@@ -84,8 +84,8 @@ export default ({
     const menuItems: ActionItem[] = [
       {
         name: title ?? t("Block"),
-        icon: iconName,
-      },
+        icon: iconName
+      }
     ];
 
     if (
@@ -96,7 +96,7 @@ export default ({
       menuItems.push({
         icon: editMode ? "exit" : "editMode",
         hide: !isSelected,
-        onClick: () => onEditModeToggle?.(!editMode),
+        onClick: () => onEditModeToggle?.(!editMode)
       });
     }
 
@@ -104,7 +104,7 @@ export default ({
       menuItems.push({
         icon: "settingFilled",
         hide: !isSelected,
-        onClick: onSettingsToggle,
+        onClick: onSettingsToggle
       });
     }
 
@@ -117,7 +117,7 @@ export default ({
     contentSettings,
     t,
     onEditModeToggle,
-    onSettingsToggle,
+    onSettingsToggle
   ]);
 
   const handlePopupMenuClick = useCallback((e: MouseEvent) => {
@@ -130,6 +130,6 @@ export default ({
     actionItems,
     openMenu,
     handlePopupMenuClick,
-    setOpenMenu,
+    setOpenMenu
   };
 };

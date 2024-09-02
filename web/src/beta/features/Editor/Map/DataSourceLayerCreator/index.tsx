@@ -27,7 +27,7 @@ export type DataSourceOptType = {
 const DataSourceLayerCreator: FC<DataProps> = ({
   sceneId,
   onClose,
-  onSubmit,
+  onSubmit
 }) => {
   const t = useT();
 
@@ -37,34 +37,34 @@ const DataSourceLayerCreator: FC<DataProps> = ({
       name: t("Common"),
       children: (
         <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      ),
+      )
     },
     {
       id: "csv",
       name: t("CSV"),
-      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     },
     {
       id: "wms",
       name: t("WMS"),
       children: (
         <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      ),
+      )
     },
     {
       id: "vectorTiles",
       name: t("Vector Tile"),
       children: (
         <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      ),
+      )
     },
     {
       id: "threeDTiles",
       name: t("3D Tiles"),
       children: (
         <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      ),
-    },
+      )
+    }
   ];
 
   return (
@@ -78,7 +78,7 @@ const DataSourceLayerCreator: FC<DataProps> = ({
   );
 };
 const Wrapper = styled("div")(() => ({
-  height: "440px",
+  height: "440px"
 }));
 
 export default DataSourceLayerCreator;

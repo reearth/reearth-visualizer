@@ -14,7 +14,7 @@ export const Radio: FC<RadioProps> = ({
   label,
   disabled,
   checked,
-  onChange,
+  onChange
 }) => {
   const handleChange = () => {
     if (disabled) return;
@@ -41,7 +41,7 @@ export const Radio: FC<RadioProps> = ({
 const RadioWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 const RadioIndicator = styled("div")<{ checked?: boolean }>(
@@ -49,8 +49,8 @@ const RadioIndicator = styled("div")<{ checked?: boolean }>(
     width: "6px",
     height: "6px",
     borderRadius: "50%",
-    background: checked ? theme.select.main : theme.content.main,
-  }),
+    background: checked ? theme.select.main : theme.content.main
+  })
 );
 
 const RadioLabel = styled("div")<{ disabled?: boolean }>(
@@ -60,15 +60,15 @@ const RadioLabel = styled("div")<{ disabled?: boolean }>(
     fontWeight: theme.fonts.weight.regular,
     minWidth: "40px",
     cursor: disabled ? "not-allowed" : "pointer",
-    flexGrow: 1,
-  }),
+    flexGrow: 1
+  })
 );
 
 const RadioInput = styled("input")(() => ({
   position: "absolute",
   opacity: 0,
   width: 0,
-  height: 0,
+  height: 0
 }));
 
 const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
@@ -84,6 +84,6 @@ const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    cursor: disabled ? "not-allowed" : "pointer",
-  }),
+    cursor: disabled ? "not-allowed" : "pointer"
+  })
 );

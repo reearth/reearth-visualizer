@@ -17,7 +17,7 @@ export declare type Timeline = {
   readonly setSpeed?: (speed: number) => void;
   readonly setStepType?: (stepType: "rate" | "fixed") => void;
   readonly setRangeType?: (
-    rangeType: "unbounded" | "clamped" | "bounced",
+    rangeType: "unbounded" | "clamped" | "bounced"
   ) => void;
   readonly on: TimelineEvents["on"];
   readonly off: TimelineEvents["off"];
@@ -43,10 +43,10 @@ export declare type TimelineEvents = {
   readonly on: <T extends keyof TimelineEventType>(
     type: T,
     callback: (...args: TimelineEventType[T]) => void,
-    options?: { once?: boolean },
+    options?: { once?: boolean }
   ) => void;
   readonly off: <T extends keyof TimelineEventType>(
     type: T,
-    callback: (...args: TimelineEventType[T]) => void,
+    callback: (...args: TimelineEventType[T]) => void
   ) => void;
 };

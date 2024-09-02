@@ -29,13 +29,13 @@ const FloatedPanel: React.FC<Props> = ({
   onEnter,
   onEntered,
   onExit,
-  onExited,
+  onExited
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useClickAway(ref, (e) => onClickAway?.(e));
   const transition = useTransition(!!visible, 200, {
     mountOnEnter: true,
-    unmountOnExit: true,
+    unmountOnExit: true
   });
 
   // visibleがtrueの時のみ更新することで、InfoBoxを閉じるアニメーションが走る際に中身が消えないようにする

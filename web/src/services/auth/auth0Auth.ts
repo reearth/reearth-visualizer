@@ -12,7 +12,7 @@ export const useAuth0Auth = (): AuthHook => {
     isLoading,
     loginWithRedirect,
     logout,
-    getAccessTokenSilently,
+    getAccessTokenSilently
   } = useAuth0();
 
   return {
@@ -30,9 +30,9 @@ export const useAuth0Auth = (): AuthHook => {
         logoutParams: {
           returnTo: error
             ? `${window.location.origin}?${errorKey}=${encodeURIComponent(error?.message)}`
-            : window.location.origin,
-        },
+            : window.location.origin
+        }
       });
-    },
+    }
   };
 };

@@ -8,7 +8,7 @@ import { Workspace } from "../../type";
 import ListItem from "./ListItem";
 
 const Members: FC<{ currentWorkspace?: Workspace }> = ({
-  currentWorkspace,
+  currentWorkspace
 }) => {
   const t = useT();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -24,7 +24,7 @@ const Members: FC<{ currentWorkspace?: Workspace }> = ({
     const filtered = currentWorkspace.members.filter(
       (member) =>
         member?.user?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member?.user?.email?.toLowerCase().includes(searchQuery.toLowerCase()),
+        member?.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredMembers(filtered);
   };
@@ -80,7 +80,7 @@ const Wrapper = styled("div")(() => ({
   display: "grid",
   gridTemplateRows: "auto 1fr",
   boxSizing: "border-box",
-  height: "100%",
+  height: "100%"
 }));
 
 const Search = styled("div")(({ theme }) => ({
@@ -91,8 +91,8 @@ const Search = styled("div")(({ theme }) => ({
   padding: theme.spacing.largest,
   "@media (min-width: 650px)": {
     maxWidth: "550px",
-    gridTemplateColumns: "2fr 1fr",
-  },
+    gridTemplateColumns: "2fr 1fr"
+  }
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({
@@ -101,12 +101,12 @@ const ListWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal,
   overflowY: "auto",
   boxSizing: "border-box",
-  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
 const TemplateWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  height: "70vh",
+  height: "70vh"
 }));

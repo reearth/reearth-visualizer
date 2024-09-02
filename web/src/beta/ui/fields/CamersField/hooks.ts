@@ -14,7 +14,7 @@ export const handleCameraeRadianToDegree = (camera: Camera) => ({
   heading: radiansToDegrees(camera.heading),
   pitch: radiansToDegrees(camera.pitch),
   roll: radiansToDegrees(camera.roll),
-  fov: camera?.fov,
+  fov: camera?.fov
 });
 
 export const handleCameraDegreeToRadian = (camera: Camera) => ({
@@ -24,14 +24,14 @@ export const handleCameraDegreeToRadian = (camera: Camera) => ({
   heading: degreesToRadians(camera.heading),
   pitch: degreesToRadians(camera.pitch),
   roll: degreesToRadians(camera.roll),
-  fov: camera?.fov,
+  fov: camera?.fov
 });
 
 export default ({
   camera,
   onFlyTo,
   onSave,
-  onClose,
+  onClose
 }: {
   camera?: Camera;
   onFlyTo?: (c?: Camera) => void;
@@ -39,7 +39,7 @@ export default ({
   onClose?: () => void;
 }) => {
   const [newCamera, setNewCamera] = useState<Camera | undefined>(
-    camera ? handleCameraeRadianToDegree(camera) : undefined,
+    camera ? handleCameraeRadianToDegree(camera) : undefined
   );
 
   useEffect(() => {
@@ -53,11 +53,11 @@ export default ({
       if (update === undefined || !newCamera) return;
       const updated: Camera = {
         ...newCamera,
-        [key]: update,
+        [key]: update
       };
       onFlyTo?.(handleCameraDegreeToRadian(updated));
     },
-    [newCamera, onFlyTo],
+    [newCamera, onFlyTo]
   );
 
   const handleFieldChange = useCallback((key: keyof Camera, value?: number) => {
@@ -101,6 +101,6 @@ export default ({
     handleTrippleFieldBlur,
     handleFieldChange,
     handleFieldBlur,
-    handleSave,
+    handleSave
   };
 };

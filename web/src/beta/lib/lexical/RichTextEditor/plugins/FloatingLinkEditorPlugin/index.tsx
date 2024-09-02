@@ -3,7 +3,7 @@ import "./index.css";
 import {
   $isAutoLinkNode,
   $isLinkNode,
-  TOGGLE_LINK_COMMAND,
+  TOGGLE_LINK_COMMAND
 } from "@lexical/link";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $findMatchingParent, mergeRegister } from "@lexical/utils";
@@ -18,7 +18,7 @@ import {
   LexicalEditor,
   NodeSelection,
   RangeSelection,
-  SELECTION_CHANGE_COMMAND,
+  SELECTION_CHANGE_COMMAND
 } from "lexical";
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
@@ -33,7 +33,7 @@ function FloatingLinkEditor({
   isLink,
   setIsLink,
   anchorElem,
-  scrollableContainerId,
+  scrollableContainerId
 }: {
   editor: LexicalEditor;
   isLink: boolean;
@@ -127,7 +127,7 @@ function FloatingLinkEditor({
     anchorElem.parentElement,
     editor,
     scrollableContainerId,
-    updateLinkEditor,
+    updateLinkEditor
   ]);
 
   useEffect(() => {
@@ -144,7 +144,7 @@ function FloatingLinkEditor({
           updateLinkEditor();
           return true;
         },
-        COMMAND_PRIORITY_LOW,
+        COMMAND_PRIORITY_LOW
       ),
       editor.registerCommand(
         KEY_ESCAPE_COMMAND,
@@ -155,8 +155,8 @@ function FloatingLinkEditor({
           }
           return false;
         },
-        COMMAND_PRIORITY_HIGH,
-      ),
+        COMMAND_PRIORITY_HIGH
+      )
     );
   }, [editor, updateLinkEditor, setIsLink, isLink]);
 
@@ -173,7 +173,7 @@ function FloatingLinkEditor({
   }, [isEditMode]);
 
   const monitorInputInteraction = (
-    event: React.KeyboardEvent<HTMLInputElement>,
+    event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -265,7 +265,7 @@ function FloatingLinkEditor({
 function useFloatingLinkEditorToolbar(
   editor: LexicalEditor,
   anchorElem: HTMLElement,
-  scrollableContainerId?: string,
+  scrollableContainerId?: string
 ): JSX.Element | null {
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLink, setIsLink] = useState(false);
@@ -300,8 +300,8 @@ function useFloatingLinkEditorToolbar(
           setActiveEditor(newEditor);
           return false;
         },
-        COMMAND_PRIORITY_CRITICAL,
-      ),
+        COMMAND_PRIORITY_CRITICAL
+      )
     );
   }, [editor, updateToolbar]);
 
@@ -313,13 +313,13 @@ function useFloatingLinkEditorToolbar(
       scrollableContainerId={scrollableContainerId}
       setIsLink={setIsLink}
     />,
-    anchorElem,
+    anchorElem
   );
 }
 
 export default function FloatingLinkEditorPlugin({
   anchorElem = document.body,
-  scrollableContainerId,
+  scrollableContainerId
 }: {
   anchorElem?: HTMLElement;
   scrollableContainerId?: string;
@@ -328,6 +328,6 @@ export default function FloatingLinkEditorPlugin({
   return useFloatingLinkEditorToolbar(
     editor,
     anchorElem,
-    scrollableContainerId,
+    scrollableContainerId
   );
 }

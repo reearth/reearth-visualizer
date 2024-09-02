@@ -27,7 +27,7 @@ export const Panel: FC<PanelProps> = ({
   background = "default",
   areaRef,
   showCollapseArea,
-  children,
+  children
 }) => {
   const theme = useTheme();
 
@@ -37,7 +37,7 @@ export const Panel: FC<PanelProps> = ({
 
   const initialCollapsed = useMemo(
     () => !!(storageKey ? localStorage.getItem(storageKey) === "1" : collapsed),
-    [storageKey, collapsed],
+    [storageKey, collapsed]
   );
 
   const backgroundStyle = useMemo(() => {
@@ -56,7 +56,7 @@ export const Panel: FC<PanelProps> = ({
         localStorage.setItem(storageKey, collapsed ? "1" : "0");
       }
     },
-    [storageKey],
+    [storageKey]
   );
 
   const collapseArea = useCallback(
@@ -64,7 +64,7 @@ export const Panel: FC<PanelProps> = ({
       e.stopPropagation();
       areaRef?.current?.collapse();
     },
-    [areaRef],
+    [areaRef]
   );
 
   const actions = useMemo(() => {
@@ -111,7 +111,7 @@ const Wrapper = styled("div")<{ extend?: boolean }>(({ theme, extend }) => ({
   flexDirection: "column",
   flex: extend ? 1 : "0 0 auto",
   borderRadius: theme.radius.small,
-  minHeight: 0,
+  minHeight: 0
 }));
 
 const ContentWrapper = styled("div")<{ background?: string; extend?: boolean }>(
@@ -119,6 +119,6 @@ const ContentWrapper = styled("div")<{ background?: string; extend?: boolean }>(
     display: "flex",
     flex: extend ? 1 : "0 0 auto",
     background: background,
-    borderRadius: theme.radius.small,
-  }),
+    borderRadius: theme.radius.small
+  })
 );

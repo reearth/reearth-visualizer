@@ -8,55 +8,55 @@ const config: StorybookConfig = {
   addons: ["@storybook/addon-essentials", "@storybook/addon-styling"],
   framework: {
     name: "@storybook/react-vite",
-    options: {},
+    options: {}
   },
   core: {
-    disableTelemetry: true,
+    disableTelemetry: true
   },
   staticDirs: ["./public"],
   viteFinal(config, { configType }) {
     return mergeConfig(config, {
       define: {
-        "process.env.QTS_DEBUG": "false", // quickjs-emscripten
+        "process.env.QTS_DEBUG": "false" // quickjs-emscripten
       },
       build:
         configType === "PRODUCTION"
           ? {
               // https://github.com/storybookjs/builder-vite/issues/409
               minify: false,
-              sourcemap: false,
+              sourcemap: false
             }
           : {},
       resolve: {
         alias: [
           {
             find: "crypto",
-            replacement: "crypto-js",
+            replacement: "crypto-js"
           },
           {
             find: "@reearth/core",
-            replacement: resolve(__dirname, "..", "node_modules/@reearth/core"),
+            replacement: resolve(__dirname, "..", "node_modules/@reearth/core")
           },
           // quickjs-emscripten
           {
             find: "@reearth",
-            replacement: resolve(__dirname, "..", "src"),
-          },
-        ],
+            replacement: resolve(__dirname, "..", "src")
+          }
+        ]
       },
       server: {
         watch: {
           // https://github.com/storybookjs/storybook/issues/22253#issuecomment-1673229400
-          ignored: ["**/.env"],
-        },
+          ignored: ["**/.env"]
+        }
       },
       optimizeDeps: {
-        exclude: ["storybook"],
-      },
+        exclude: ["storybook"]
+      }
     });
   },
   docs: {
-    autodocs: true,
-  },
+    autodocs: true
+  }
 };
 module.exports = config;

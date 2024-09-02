@@ -4,7 +4,7 @@ export type Easing = keyof IEasingMap;
 
 export function interval(
   callback: (t: number) => boolean,
-  delay?: number,
+  delay?: number
 ): () => void {
   let prev = 0;
   let raf = 0;
@@ -34,7 +34,7 @@ export function interval(
 export function intervalDuring(
   callback: (time: number) => void,
   duration: number,
-  delay?: number,
+  delay?: number
 ): () => void {
   if (duration < 0) return () => {};
   return interval((d) => {
@@ -48,7 +48,7 @@ export function tweenInterval(
   callback: (v: number, t: number) => void,
   easing: Easing | ((t: number) => number),
   duration: number,
-  delay?: number,
+  delay?: number
 ): () => void {
   const e = typeof easing === "function" ? easing : tweenEasing[easing];
   return intervalDuring(
@@ -56,6 +56,6 @@ export function tweenInterval(
       callback(e(d), d);
     },
     duration,
-    delay,
+    delay
   );
 }

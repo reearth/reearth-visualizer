@@ -7,9 +7,9 @@ import Component, { Props } from ".";
 export default {
   component: Component,
   argTypes: {
-    context: { control: false },
+    context: { control: false }
   },
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
 const Template: Story<Props> = (args) => (
@@ -35,25 +35,25 @@ Default.args = {
                 default: {
                   buttonTitle: "Button 1",
                   buttonColor: "white",
-                  buttonBgcolor: "red",
-                },
-              },
+                  buttonBgcolor: "red"
+                }
+              }
             },
             {
               id: "unknown",
               pluginId: "unknown",
-              extensionId: "unknown",
-            },
-          ],
-        },
-      },
-    },
+              extensionId: "unknown"
+            }
+          ]
+        }
+      }
+    }
   },
   context: {
-    ...contextEvents,
+    ...contextEvents
   },
   editing: false,
   isBuilt: false,
   isEditable: false,
-  renderWidget: ({ widget }) => <p>{widget.id}</p>,
+  renderWidget: ({ widget }) => <p>{widget.id}</p>
 };

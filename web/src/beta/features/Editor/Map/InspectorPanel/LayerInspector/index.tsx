@@ -1,7 +1,7 @@
 import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
   GeoJsonFeatureDeleteProps,
-  GeoJsonFeatureUpdateProps,
+  GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -35,7 +35,7 @@ const InspectorTabs: FC<Props> = ({
   sceneId,
   onLayerConfigUpdate,
   onGeoJsonFeatureUpdate,
-  onGeoJsonFeatureDelete,
+  onGeoJsonFeatureDelete
 }) => {
   const selectedFeature = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
@@ -44,14 +44,14 @@ const InspectorTabs: FC<Props> = ({
       selectedLayer.layer?.config?.data?.type === "mvt"
         ? selectedLayer.computedFeature
         : (selectedLayer.computedLayer?.features?.find(
-            (f) => f.id === selectedLayer.computedFeature?.id,
+            (f) => f.id === selectedLayer.computedFeature?.id
           ) ?? {});
 
     if (!id) return;
     return {
       id,
       geometry,
-      properties,
+      properties
     };
   }, [selectedLayer]);
 
@@ -66,7 +66,7 @@ const InspectorTabs: FC<Props> = ({
     const selectedFeatureId = selectedFeature.properties.id;
 
     return features?.find(
-      (feature) => feature.properties.id === selectedFeatureId,
+      (feature) => feature.properties.id === selectedFeatureId
     );
   }, [selectedLayer, selectedFeature]);
 
@@ -77,7 +77,7 @@ const InspectorTabs: FC<Props> = ({
         icon: "data",
         children: selectedLayer?.layer && (
           <DataSource selectedLayer={selectedLayer.layer} />
-        ),
+        )
       },
       {
         id: "featureInspector",
@@ -90,7 +90,7 @@ const InspectorTabs: FC<Props> = ({
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
             onGeoJsonFeatureDelete={onGeoJsonFeatureDelete}
           />
-        ),
+        )
       },
       {
         id: "layerStyle",
@@ -103,7 +103,7 @@ const InspectorTabs: FC<Props> = ({
             selectedLayerId={selectedLayer.layer.id}
             onLayerConfigUpdate={onLayerConfigUpdate}
           />
-        ),
+        )
       },
       {
         id: "infoboxSettings",
@@ -113,8 +113,8 @@ const InspectorTabs: FC<Props> = ({
             selectedLayerId={selectedLayer.layer.id}
             infobox={selectedLayer.layer?.infobox}
           />
-        ),
-      },
+        )
+      }
     ],
     [
       selectedLayer,
@@ -125,12 +125,12 @@ const InspectorTabs: FC<Props> = ({
       sceneId,
       onLayerConfigUpdate,
       onGeoJsonFeatureUpdate,
-      onGeoJsonFeatureDelete,
-    ],
+      onGeoJsonFeatureDelete
+    ]
   );
 
   const [currentTab, setCurrentTab] = useState(
-    localStorage.getItem(LAYER_INSPECTOR_TAB_STORAGE_KEY) ?? "dataSource",
+    localStorage.getItem(LAYER_INSPECTOR_TAB_STORAGE_KEY) ?? "dataSource"
   );
 
   const handleTabChange = useCallback((newTab: string) => {

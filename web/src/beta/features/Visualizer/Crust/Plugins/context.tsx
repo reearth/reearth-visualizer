@@ -6,7 +6,7 @@ const PluginContext = createContext<Context | undefined>(undefined);
 
 export const PluginProvider: FC<PropsWithChildren<{ value: Context }>> = ({
   children,
-  value,
+  value
 }) => <PluginContext.Provider value={value}>{children}</PluginContext.Provider>;
 
 export const usePluginContext = (): Context => {

@@ -28,7 +28,7 @@ const NumberInput: React.FC<Props> = ({
   disabled = false,
   placeholder,
   expandWithContent,
-  onChange,
+  onChange
 }) => {
   const [innerValue, setInnerValue] = useState<number | undefined>(value);
   const [, setNotification] = useNotification();
@@ -48,7 +48,7 @@ const NumberInput: React.FC<Props> = ({
     if (inputRef.current && expandWithContent) {
       const minWidth = Math.max(
         spacingSizes.smallest,
-        inputRef.current.value.length * 10,
+        inputRef.current.value.length * 10
       );
       inputRef.current.style.width = `${minWidth}px`;
     }
@@ -66,14 +66,14 @@ const NumberInput: React.FC<Props> = ({
       } else if (typeof max === "number" && isFinite(max) && newValue > max) {
         setNotification({
           type: "warning",
-          text: t("You have passed the maximum value."),
+          text: t("You have passed the maximum value.")
         });
         setInnerValue(undefined);
         onChange(undefined);
       } else if (typeof min === "number" && isFinite(min) && newValue < min) {
         setNotification({
           type: "warning",
-          text: t("You have passed the minimum value."),
+          text: t("You have passed the minimum value.")
         });
         setInnerValue(undefined);
         onChange(undefined);
@@ -82,7 +82,7 @@ const NumberInput: React.FC<Props> = ({
         onChange(newValue);
       }
     },
-    [onChange, max, min, setNotification, t],
+    [onChange, max, min, setNotification, t]
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +106,7 @@ const NumberInput: React.FC<Props> = ({
         handleValueChange(isNaN(newValue) ? undefined : newValue);
       }
     },
-    [value, handleValueChange],
+    [value, handleValueChange]
   );
 
   const handleFocus = useCallback(() => {
@@ -119,7 +119,7 @@ const NumberInput: React.FC<Props> = ({
       handleValueChange(newValue);
       isEditing.current = false;
     },
-    [value, handleValueChange],
+    [value, handleValueChange]
   );
 
   return (

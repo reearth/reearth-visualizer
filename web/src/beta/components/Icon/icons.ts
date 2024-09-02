@@ -238,5 +238,5 @@ export default {
   cylinder: Cylinder,
   squareOutline: SquareOutline,
   circleOutline: CircleOutline,
-  polygonExtruded: PolygonExtruded,
+  polygonExtruded: PolygonExtruded
 };

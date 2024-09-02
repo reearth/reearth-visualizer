@@ -31,7 +31,7 @@ const TimelineEditor = ({
   inEditor,
   playMode,
   padding,
-  property,
+  property
 }: TimelineProps) => {
   const t = useT();
   const {
@@ -48,7 +48,7 @@ const TimelineEditor = ({
     removeOnCommitEventListener,
     removeTickEventListener,
     setCurrentTime,
-    onTimeChange,
+    onTimeChange
   } = useTimelineBlock(timelineValues);
 
   const {
@@ -71,7 +71,7 @@ const TimelineEditor = ({
     handleOnClick,
     handleOnMouseMove,
     handleOnEndMove,
-    handleOnStartMove,
+    handleOnStartMove
   } = useHooks({
     currentTime,
     range,
@@ -92,7 +92,7 @@ const TimelineEditor = ({
     removeOnCommitEventListener,
     removeTickEventListener,
     setCurrentTime,
-    timelineValues,
+    timelineValues
   });
 
   return (
@@ -196,7 +196,7 @@ const TimelineEditor = ({
           onMouseDown={handleOnStartMove}
           isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
-            left: `${sliderPosition}%`,
+            left: `${sliderPosition}%`
           }}
         >
           <Icon icon="slider" />
@@ -214,7 +214,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   color: theme.content.weaker,
   borderRadius: theme.radius.large,
   border: `1px solid ${theme.bg[3]}`,
-  userSelect: "none",
+  userSelect: "none"
 }));
 
 const TimelineWrapper = styled("div")<{ isMinimized: boolean }>(
@@ -223,8 +223,8 @@ const TimelineWrapper = styled("div")<{ isMinimized: boolean }>(
     alignItems: "center",
     paddingBottom: theme.spacing.small - 2,
     gap: isMinimized ? "" : "25px",
-    flexDirection: isMinimized ? "column" : "row",
-  }),
+    flexDirection: isMinimized ? "column" : "row"
+  })
 );
 
 const TimelineControl = styled("div")<{ isMinimized: boolean }>(
@@ -233,8 +233,8 @@ const TimelineControl = styled("div")<{ isMinimized: boolean }>(
     alignItems: "center",
     justifyContent: "space-between",
     gap: isMinimized ? "0" : "18px",
-    width: isMinimized ? "100%" : "auto",
-  }),
+    width: isMinimized ? "100%" : "auto"
+  })
 );
 
 const StyledIcon = styled("div")<{ activeBlock: boolean }>(
@@ -244,16 +244,16 @@ const StyledIcon = styled("div")<{ activeBlock: boolean }>(
     background: activeBlock ? theme.select.main : theme.bg[4],
     padding: `${theme.spacing.smallest}px ${theme.spacing.small - 2}px ${theme.spacing.micro}px `,
     borderRadius: `${theme.radius.normal}px 0 ${theme.radius.large}px 0`,
-    marginBottom: "6px",
-  }),
+    marginBottom: "6px"
+  })
 );
 
 const PlayControl = styled("div")<{ isMinimized: boolean }>(
   ({ isMinimized, theme }) => ({
     display: "flex",
     gap: theme.spacing.small + 2,
-    marginLeft: isMinimized ? "auto" : "0",
-  }),
+    marginLeft: isMinimized ? "auto" : "0"
+  })
 );
 
 const CurrentTime = styled("div")<{ isMinimized: boolean }>(
@@ -261,21 +261,21 @@ const CurrentTime = styled("div")<{ isMinimized: boolean }>(
     color: theme.content.weaker,
     paddingRight: isMinimized ? "8px" : "0",
     fontSize: "12px",
-    marginLeft: isMinimized ? "auto" : "0",
-  }),
+    marginLeft: isMinimized ? "auto" : "0"
+  })
 );
 
 const PlayButton = styled("div")<{ isPlaying?: boolean; isClicked?: boolean }>(
   ({ isPlaying, isClicked, theme }) => ({
     color: isPlaying ? theme.select.main : "",
     cursor: isClicked ? "pointer" : "not-allowed",
-    pointerEvents: isClicked ? "auto" : "none",
-  }),
+    pointerEvents: isClicked ? "auto" : "none"
+  })
 );
 
 const InputWrapper = styled("div")(() => ({
   position: "relative",
-  cursor: "pointer",
+  cursor: "pointer"
 }));
 
 const ArrowIcon = styled(Icon)<{ open: boolean }>(({ open, theme }) => ({
@@ -283,20 +283,20 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>(({ open, theme }) => ({
   right: "-6px",
   top: "60%",
   transform: open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)",
-  color: theme.content.weaker,
+  color: theme.content.weaker
 }));
 
 const Select = styled("div")(({ theme }) => ({
   fontSize: "14px",
   lineHeight: 1,
   paddingRight: theme.spacing.normal,
-  color: theme.content.weaker,
+  color: theme.content.weaker
 }));
 
 const PopoverWrapper = styled("div")<{ isMinimized: boolean }>(
   ({ isMinimized, theme }) => ({
-    padding: isMinimized ? `0 ${theme.spacing.small + 2}px` : "0",
-  }),
+    padding: isMinimized ? `0 ${theme.spacing.small + 2}px` : "0"
+  })
 );
 
 const SelectorWrapper = styled("div")(({ theme }) => ({
@@ -309,7 +309,7 @@ const SelectorWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "space-between",
   zIndex: theme.zIndexes.visualizer.storyBlock,
-  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.25)",
+  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.25)"
 }));
 
 const InputOptions = styled("option")(({ theme }) => ({
@@ -319,9 +319,9 @@ const InputOptions = styled("option")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   fontSize: " 12px",
   ["&:hover"]: {
-    background: theme.bg[2],
+    background: theme.bg[2]
   },
-  color: theme.content.main,
+  color: theme.content.main
 }));
 
 const TimelineSlider = styled("div")(({ theme }) => ({
@@ -330,7 +330,7 @@ const TimelineSlider = styled("div")(({ theme }) => ({
   width: "100%",
   borderRadius: `0 0 ${theme.radius.large}px ${theme.radius.large}px`,
   position: "relative",
-  overflow: "hidden",
+  overflow: "hidden"
 }));
 
 const ScaleList = styled("div")(() => ({
@@ -340,7 +340,7 @@ const ScaleList = styled("div")(() => ({
   position: "absolute",
   left: "18px",
   right: "-12px",
-  cursor: "pointer",
+  cursor: "pointer"
 }));
 
 const IconWrapper = styled("div")<{ isPlaying: boolean }>(
@@ -348,8 +348,8 @@ const IconWrapper = styled("div")<{ isPlaying: boolean }>(
     position: "absolute",
     top: "4px",
     cursor: "pointer",
-    color: isPlaying ? theme.select.main : "",
-  }),
+    color: isPlaying ? theme.select.main : ""
+  })
 );
 
 const Scale = styled("div")(({ theme }) => ({
@@ -358,7 +358,7 @@ const Scale = styled("div")(({ theme }) => ({
   margin: "0 auto",
   flex: 1,
   textalign: "center",
-  width: "calc(100% / 11)",
+  width: "calc(100% / 11)"
 }));
 
 const ScaleLabel = styled("div")<{ isMinimized: boolean }>(
@@ -367,6 +367,6 @@ const ScaleLabel = styled("div")<{ isMinimized: boolean }>(
     position: "relative",
     bottom: "28px",
     right: "16px",
-    width: "34px",
-  }),
+    width: "34px"
+  })
 );

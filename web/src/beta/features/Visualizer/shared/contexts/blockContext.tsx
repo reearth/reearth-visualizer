@@ -9,7 +9,7 @@ const BlockContext = createContext<BlockContext | undefined>(undefined);
 
 export const BlockProvider: FC<PropsWithChildren<{ value: BlockContext }>> = ({
   children,
-  value,
+  value
 }) => <BlockContext.Provider value={value}>{children}</BlockContext.Provider>;
 
 export const useBlockContext = (): BlockContext => {

@@ -26,10 +26,10 @@ export const NumberInput: FC<NumberInputProps> = ({
   min,
   max,
   onChange,
-  onBlur,
+  onBlur
 }) => {
   const [currentValue, setCurrentValue] = useState<string>(
-    value?.toString() ?? "",
+    value?.toString() ?? ""
   );
   const [isFocused, setIsFocused] = useState(false);
 
@@ -55,11 +55,11 @@ export const NumberInput: FC<NumberInputProps> = ({
         }
         setCurrentValue(validatedValue);
         onChange?.(
-          currentValue === "" ? undefined : parseFloat(validatedValue),
+          currentValue === "" ? undefined : parseFloat(validatedValue)
         );
       }
     },
-    [max, min, onChange],
+    [max, min, onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -121,7 +121,7 @@ const Wrapper = styled("div")<{
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
     width: !extendWidth ? "" : "100%",
-    boxSizing: "border-box",
+    boxSizing: "border-box"
   };
 });
 
@@ -144,13 +144,13 @@ const StyledInput = styled("input")<{
   pointerEvents: disabled ? "none" : "inherit",
   overflow: "hidden",
   "::placeholder": {
-    color: theme.content.weak,
+    color: theme.content.weak
   },
-  width: "100%",
+  width: "100%"
 }));
 
 const UnitWrapper = styled("div")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));

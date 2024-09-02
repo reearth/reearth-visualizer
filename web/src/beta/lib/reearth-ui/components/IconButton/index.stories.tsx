@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { IconButton, IconButtonProps } from ".";
 
 const meta: Meta<IconButtonProps> = {
-  component: IconButton,
+  component: IconButton
 };
 
 export default meta;
@@ -15,8 +15,8 @@ export const Default: Story = {
     icon: "polyline",
     size: "normal",
     appearance: "secondary",
-    onClick: action("onClick"),
-  },
+    onClick: action("onClick")
+  }
 };
 
 export const Primary: Story = {
@@ -26,7 +26,7 @@ export const Primary: Story = {
       appearance="primary"
       onClick={action("onClick")}
     />
-  ),
+  )
 };
 
 export const Simple: Story = {
@@ -36,7 +36,7 @@ export const Simple: Story = {
       appearance="simple"
       onClick={action("onClick")}
     />
-  ),
+  )
 };
 
 export const Disabled: Story = {
@@ -47,19 +47,19 @@ export const Disabled: Story = {
       disabled
       onClick={action("onClick")}
     />
-  ),
+  )
 };
 
 export const Large: Story = {
   render: () => (
     <IconButton icon="polyline" size="large" onClick={action("onClick")} />
-  ),
+  )
 };
 
 export const Small: Story = {
   render: () => (
     <IconButton icon="polyline" size="small" onClick={action("onClick")} />
-  ),
+  )
 };
 
 export const Active: Story = {
@@ -70,5 +70,5 @@ export const Active: Story = {
       active
       onClick={action("onClick")}
     />
-  ),
+  )
 };

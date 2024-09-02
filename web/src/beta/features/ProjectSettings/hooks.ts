@@ -10,7 +10,7 @@ import {
   PublicBasicAuthSettingsType,
   PublicSettingsType,
   PublicAliasSettingsType,
-  PublicGASettingsType,
+  PublicGASettingsType
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
@@ -27,7 +27,7 @@ export default ({ projectId }: Props) => {
     useUpdateProject,
     useDeleteProject,
     useUpdateProjectBasicAuth,
-    useUpdateProjectAlias,
+    useUpdateProjectAlias
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
@@ -41,7 +41,7 @@ export default ({ projectId }: Props) => {
     async (settings: GeneralSettingsType & PublicSettingsType) => {
       await useUpdateProject({ projectId, ...settings });
     },
-    [projectId, useUpdateProject],
+    [projectId, useUpdateProject]
   );
 
   const handleDeleteProject = useCallback(async () => {
@@ -56,7 +56,7 @@ export default ({ projectId }: Props) => {
       if (!projectId) return;
       await useUpdateProjectBasicAuth({ projectId, ...settings });
     },
-    [projectId, useUpdateProjectBasicAuth],
+    [projectId, useUpdateProjectBasicAuth]
   );
 
   const handleUpdateProjectAlias = useCallback(
@@ -64,7 +64,7 @@ export default ({ projectId }: Props) => {
       if (!projectId) return;
       await useUpdateProjectAlias({ projectId, ...settings });
     },
-    [projectId, useUpdateProjectAlias],
+    [projectId, useUpdateProjectAlias]
   );
 
   const handleUpdateProjectGA = useCallback(
@@ -72,13 +72,13 @@ export default ({ projectId }: Props) => {
       if (!projectId) return;
       await useUpdateProject({ projectId, ...settings });
     },
-    [projectId, useUpdateProject],
+    [projectId, useUpdateProject]
   );
   const { useStoriesQuery } = useStorytellingAPI();
   const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });
   const currentStory = useMemo(
     () => (stories?.length ? stories[0] : undefined),
-    [stories],
+    [stories]
   );
 
   const { useUpdateStory } = useStorytellingAPI();
@@ -88,10 +88,10 @@ export default ({ projectId }: Props) => {
       await useUpdateStory({
         storyId: currentStory.id,
         sceneId: scene.id,
-        ...settings,
+        ...settings
       });
     },
-    [useUpdateStory, currentStory?.id, scene?.id],
+    [useUpdateStory, currentStory?.id, scene?.id]
   );
 
   const handleUpdateStoryBasicAuth = useCallback(
@@ -100,10 +100,10 @@ export default ({ projectId }: Props) => {
       await useUpdateStory({
         storyId: currentStory.id,
         sceneId: scene.id,
-        ...settings,
+        ...settings
       });
     },
-    [useUpdateStory, currentStory?.id, scene?.id],
+    [useUpdateStory, currentStory?.id, scene?.id]
   );
   const handleUpdateStoryAlias = useCallback(
     async (settings: PublicAliasSettingsType) => {
@@ -111,10 +111,10 @@ export default ({ projectId }: Props) => {
       await useUpdateStory({
         storyId: currentStory.id,
         sceneId: scene.id,
-        ...settings,
+        ...settings
       });
     },
-    [useUpdateStory, currentStory?.id, scene?.id],
+    [useUpdateStory, currentStory?.id, scene?.id]
   );
 
   const { getAccessToken } = useAuth();
@@ -129,9 +129,9 @@ export default ({ projectId }: Props) => {
   const extensions = useMemo(
     () => ({
       library: config()?.extensions?.pluginLibrary,
-      installed: config()?.extensions?.pluginInstalled,
+      installed: config()?.extensions?.pluginInstalled
     }),
-    [],
+    []
   );
 
   return {
@@ -150,6 +150,6 @@ export default ({ projectId }: Props) => {
     handleUpdateProjectGA,
     handleUpdateStory,
     handleUpdateStoryBasicAuth,
-    handleUpdateStoryAlias,
+    handleUpdateStoryAlias
   };
 };

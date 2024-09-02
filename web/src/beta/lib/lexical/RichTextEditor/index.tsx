@@ -34,7 +34,7 @@ const RichTextEditor: React.FC<Props> = ({
   editMode,
   text,
   scrollableContainerId,
-  onChange,
+  onChange
 }) => {
   const t = useT();
   const editorStateJSONStringRef = useRef<EditorStateJSONString>();
@@ -52,9 +52,9 @@ const RichTextEditor: React.FC<Props> = ({
       onError(error: Error) {
         console.error(error);
       },
-      nodes: [...Nodes],
+      nodes: [...Nodes]
     }),
-    [text],
+    [text]
   );
 
   const isEmpty = useMemo(() => isContentEmpty(text), [text]);
@@ -67,7 +67,7 @@ const RichTextEditor: React.FC<Props> = ({
         onChange?.(editorStateJSONString);
       }
     },
-    [editorStateJSONStringRef, onChange],
+    [editorStateJSONStringRef, onChange]
   );
 
   const editorRef = useRef<HTMLDivElement>(null);

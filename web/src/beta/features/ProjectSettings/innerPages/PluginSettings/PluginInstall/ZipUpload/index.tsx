@@ -15,7 +15,7 @@ const ZipUpload: React.FC<Props> = ({ icon, buttonText, onSend, loading }) => {
   const accept = ".zip";
   const handleClick = useFileInput((files) => onSend?.(files), {
     accept,
-    multiple: false,
+    multiple: false
   });
   return (
     <>

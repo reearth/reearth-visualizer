@@ -12,7 +12,7 @@ export type SharedExtensionProps = {
   onNotificationChange?: (
     type: "error" | "warning" | "info" | "success",
     text: string,
-    heading?: string,
+    heading?: string
   ) => void;
 };
 
@@ -70,7 +70,7 @@ export type Extensions = {
 };
 
 export async function loadExtensions(
-  urls?: string[],
+  urls?: string[]
 ): Promise<Extensions | undefined> {
   if (!urls) return undefined;
 
@@ -111,6 +111,6 @@ export async function loadExtensions(
     datasetImport,
     pluginLibrary,
     pluginInstalled,
-    globalModal,
+    globalModal
   };
 }

@@ -80,6 +80,7 @@ import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import More from "./Icons/More.svg?react";
+import Notebook from "./Icons/Notebook.svg?react";
 import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
 import Palette from "./Icons/Palette.svg?react";
@@ -218,6 +219,7 @@ export default {
   mapTrifold: MapTrifold,
   minus: Minus,
   more: More,
+  notebook: Notebook,
   padding: Padding,
   page: Page,
   palette: Palette,
@@ -275,5 +277,5 @@ export default {
   videoFilled: VideoFilled,
   warning: Warning,
   aToZ: AToZ,
-  zToA: ZToA,
+  zToA: ZToA
 };

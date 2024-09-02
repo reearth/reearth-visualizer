@@ -7,11 +7,11 @@ import ja from "./translations/ja.yml";
 
 const resources = {
   en: {
-    translation: en,
+    translation: en
   },
   ja: {
-    translation: ja,
-  },
+    translation: ja
+  }
 };
 
 export const availableLanguages = Object.keys(resources);
@@ -23,7 +23,7 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
   nsSeparator: false,
   keySeparator: false,
   returnEmptyString: false,
-  returnNull: false,
+  returnNull: false
 });
 
 export default i18n;

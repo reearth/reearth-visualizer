@@ -56,7 +56,7 @@ export default () => {
   const useSceneQuery = useCallback(({ sceneId, lang }: SceneQueryProps) => {
     const { data, ...rest } = useQuery(GET_SCENE, {
       variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId,
+      skip: !sceneId
     });
 
     const scene = useMemo(() => {
@@ -72,7 +72,7 @@ export default () => {
             styles: data.node.styles,
             workspaceId: data.node.teamId,
             widgetAlignSystem: data.node.widgetAlignSystem,
-            widgets: data.node.widgets,
+            widgets: data.node.widgets
           } as Scene)
         : undefined;
     }, [data]);
@@ -81,6 +81,6 @@ export default () => {
   }, []);
 
   return {
-    useSceneQuery,
+    useSceneQuery
   };
 };

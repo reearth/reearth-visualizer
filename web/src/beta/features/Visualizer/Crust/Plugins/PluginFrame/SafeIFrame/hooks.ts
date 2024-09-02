@@ -7,7 +7,7 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import { insertToBody } from "./utils";
@@ -16,7 +16,7 @@ export type RefType = {
   postMessage: (message: any) => void;
   resize: (
     width: string | number | undefined,
-    height: string | number | undefined,
+    height: string | number | undefined
   ) => void;
 };
 
@@ -34,7 +34,7 @@ export default function useHook({
   onLoad,
   onMessage,
   onClick,
-  onAutoResized,
+  onAutoResized
 }: {
   width?: number | string;
   height?: number | string;
@@ -76,9 +76,9 @@ export default function useHook({
         const height2 =
           typeof height === "number" ? height + "px" : (height ?? undefined);
         setIFrameSize(width2 || height2 ? [width2, height2] : undefined);
-      },
+      }
     }),
-    [],
+    []
   );
 
   useEffect(() => {
@@ -120,10 +120,10 @@ export default function useHook({
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
-        ...iFrameProps?.style,
-      },
+        ...iFrameProps?.style
+      }
     }),
-    [autoResize, iFrameProps, iFrameSize, visible],
+    [autoResize, iFrameProps, iFrameSize, visible]
   );
 
   useEffect(() => {
@@ -175,6 +175,6 @@ export default function useHook({
     ref: iFrameRef,
     props,
     srcDoc,
-    onLoad: onIframeLoad,
+    onLoad: onIframeLoad
   };
 }

@@ -2,7 +2,7 @@ import type { TimeEventHandler } from "@reearth/beta/features/Visualizer/Crust/W
 import {
   TickEvent,
   TickEventCallback,
-  TimelineManagerRef,
+  TimelineManagerRef
 } from "@reearth/core";
 import { useState, useCallback, useEffect, useRef } from "react";
 
@@ -15,7 +15,7 @@ const makeRange = (startTime?: number, stopTime?: number) => {
   const now = Date.now() - 3600000;
   return {
     start: startTime || now - MAX_RANGE,
-    end: stopTime || now,
+    end: stopTime || now
   };
 };
 
@@ -31,7 +31,7 @@ export const useTimeline = ({
   onSpeedChange,
   onTick,
   removeTickEventListener,
-  onExtend,
+  onExtend
 }: {
   widget: Widget;
   timelineManagerRef?: TimelineManagerRef;
@@ -48,12 +48,12 @@ export const useTimeline = ({
   const [range, setRange] = useState(() =>
     makeRange(
       timelineManagerRef?.current?.timeline?.start?.getTime(),
-      timelineManagerRef?.current?.timeline?.stop?.getTime(),
-    ),
+      timelineManagerRef?.current?.timeline?.stop?.getTime()
+    )
   );
   const [isOpened, setIsOpened] = useState(true);
   const [currentTime, setCurrentTime] = useState(() =>
-    getOrNewDate(timelineManagerRef?.current?.timeline?.current).getTime(),
+    getOrNewDate(timelineManagerRef?.current?.timeline?.current).getTime()
   );
   const isClockInitialized = useRef(false);
   const clockStartTime =
@@ -91,7 +91,7 @@ export const useTimeline = ({
       }
       return cur;
     },
-    [range, onTimeChange],
+    [range, onTimeChange]
   );
 
   const handleTimeEvent: TimeEventHandler = useCallback(
@@ -100,7 +100,7 @@ export const useTimeline = ({
       onTimeChange?.(t);
       setCurrentTime(currentTime);
     },
-    [onTimeChange],
+    [onTimeChange]
   );
 
   const handleOnPlay = useCallback(
@@ -113,7 +113,7 @@ export const useTimeline = ({
       }
       onSpeedChange?.(Math.abs(speed));
     },
-    [onPause, onPlay, onSpeedChange, speed],
+    [onPause, onPlay, onSpeedChange, speed]
   );
 
   const handleOnPlayReversed = useCallback(
@@ -126,7 +126,7 @@ export const useTimeline = ({
       }
       onSpeedChange?.(Math.abs(speed) * -1);
     },
-    [onPause, onPlay, onSpeedChange, speed],
+    [onPause, onPlay, onSpeedChange, speed]
   );
 
   const handleOnSpeedChange = useCallback(
@@ -138,10 +138,10 @@ export const useTimeline = ({
       onSpeedChange?.(
         (timelineManagerRef?.current?.options?.multiplier ?? 1) > 0
           ? absSpeed
-          : absSpeed * -1,
+          : absSpeed * -1
       );
     },
-    [onSpeedChange, timelineManagerRef],
+    [onSpeedChange, timelineManagerRef]
   );
 
   // Initialize clock value
@@ -164,7 +164,7 @@ export const useTimeline = ({
         return prev;
       });
     },
-    [],
+    []
   );
 
   const overriddenStart =
@@ -176,7 +176,7 @@ export const useTimeline = ({
   useEffect(() => {
     handleRange(
       overriddenStart ?? clockStartTime,
-      overriddenStop ?? clockStopTime,
+      overriddenStop ?? clockStopTime
     );
     setSpeed(Math.abs(clockSpeed));
   }, [
@@ -185,7 +185,7 @@ export const useTimeline = ({
     clockSpeed,
     overriddenStart,
     overriddenStop,
-    handleRange,
+    handleRange
   ]);
 
   useEffect(() => {
@@ -207,7 +207,7 @@ export const useTimeline = ({
     switchCurrentTimeToStart,
     handleRange,
     range.start,
-    range.end,
+    range.end
   ]);
 
   const onTimeChangeRef = useRef<typeof onTimeChange>();
@@ -222,7 +222,7 @@ export const useTimeline = ({
     if (overriddenCurrentTime) {
       const t = Math.max(
         Math.min(range.end, overriddenCurrentTime),
-        range.start,
+        range.start
       );
       setCurrentTime(t);
       // onTimeChangeRef.current?.(new Date(t));
@@ -249,7 +249,7 @@ export const useTimeline = ({
       onDrag: handleTimeEvent,
       onPlay: handleOnPlay,
       onPlayReversed: handleOnPlayReversed,
-      onSpeedChange: handleOnSpeedChange,
-    },
+      onSpeedChange: handleOnSpeedChange
+    }
   };
 };

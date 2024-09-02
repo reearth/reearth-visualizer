@@ -18,12 +18,12 @@ export default ({ sceneId, selectedWidget }: Props) => {
     () =>
       filterVisibleItems(
         installedWidgets?.find((w) => w.id === selectedWidget?.id)?.property
-          .items,
+          .items
       ),
-    [installedWidgets, selectedWidget],
+    [installedWidgets, selectedWidget]
   );
 
   return {
-    visibleItems,
+    visibleItems
   };
 };

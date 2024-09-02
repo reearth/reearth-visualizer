@@ -24,7 +24,7 @@ const PlaygroundNodes: Klass<LexicalNode>[] = [
   LinkNode,
   OverflowNode,
   HorizontalRuleNode,
-  MarkNode,
+  MarkNode
 ];
 
 export default PlaygroundNodes;

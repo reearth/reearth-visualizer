@@ -23,7 +23,7 @@ export default ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove,
+  onPropertyItemMove
 }: {
   items: CameraBlock[];
   propertyId?: string;
@@ -34,22 +34,22 @@ export default ({
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
-    schemaGroupId?: string,
+    schemaGroupId?: string
   ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 }) => {
   const visualizer = useVisualizer();
@@ -57,12 +57,12 @@ export default ({
 
   const handleFlyTo = useMemo(
     () => visualizer.current?.engine.flyTo,
-    [visualizer],
+    [visualizer]
   );
 
   const editorProperties = useMemo(
     () => items.find((i) => i.id === selected),
-    [items, selected],
+    [items, selected]
   );
 
   const handlePropertyValueUpdate = useCallback(
@@ -71,7 +71,7 @@ export default ({
       propertyId: string,
       fieldId: string,
       vt: any,
-      itemId?: string,
+      itemId?: string
     ) => {
       return async (v?: any) => {
         await onPropertyUpdate?.(
@@ -80,11 +80,11 @@ export default ({
           fieldId,
           itemId,
           vt,
-          v,
+          v
         );
       };
     },
-    [onPropertyUpdate],
+    [onPropertyUpdate]
   );
 
   const handleUpdate = useCallback(
@@ -92,7 +92,7 @@ export default ({
       itemId: string,
       fieldId: string,
       fieldType: keyof ValueTypes,
-      updatedValue?: ValueTypes[keyof ValueTypes],
+      updatedValue?: ValueTypes[keyof ValueTypes]
     ) => {
       if (!propertyId || !itemId) return;
 
@@ -101,24 +101,24 @@ export default ({
         propertyId,
         fieldId,
         fieldType,
-        itemId,
+        itemId
       )(updatedValue);
     },
-    [propertyId, handlePropertyValueUpdate],
+    [propertyId, handlePropertyValueUpdate]
   );
 
   const debounceOnUpdate = useMemo(
     () => debounce(handleUpdate, 500),
-    [handleUpdate],
+    [handleUpdate]
   );
 
   const listItems = useMemo(
     () =>
       items.map(({ id, title }) => ({
         id,
-        title: title?.value ?? t("New Camera Button"),
+        title: title?.value ?? t("New Camera Button")
       })),
-    [items, t],
+    [items, t]
   );
 
   const handleItemAdd = useCallback(() => {
@@ -132,7 +132,7 @@ export default ({
 
       onPropertyItemDelete?.(propertyId, "default", itemId);
     },
-    [propertyId, onPropertyItemDelete],
+    [propertyId, onPropertyItemDelete]
   );
 
   const handleItemMove = useCallback(
@@ -141,7 +141,7 @@ export default ({
 
       onPropertyItemMove?.(propertyId, "default", id, index);
     },
-    [propertyId, onPropertyItemMove],
+    [propertyId, onPropertyItemMove]
   );
 
   return {
@@ -152,6 +152,6 @@ export default ({
     handleFlyTo,
     handleItemAdd,
     handleItemRemove,
-    handleItemMove,
+    handleItemMove
   };
 };

@@ -10,13 +10,13 @@ type Params = {
 export default ({ onIsCapturingChange, camera, onFovChange }: Params) => {
   const finishCapture = useCallback(
     () => onIsCapturingChange?.(false),
-    [onIsCapturingChange],
+    [onIsCapturingChange]
   );
 
   const updateFov = useCallback(
     (fov: number) =>
       onFovChange?.(Math.max(0.01, Math.min(fov, Math.PI - 10 ** -10))),
-    [onFovChange],
+    [onFovChange]
   );
 
   const isAwayTarget = useCallback((e: Event) => {
@@ -27,7 +27,7 @@ export default ({ onIsCapturingChange, camera, onFovChange }: Params) => {
 
   const handleClickAway = useCallback(
     (e: Event) => isAwayTarget(e) && finishCapture(),
-    [isAwayTarget, finishCapture],
+    [isAwayTarget, finishCapture]
   );
 
   return { camera, updateFov, handleClickAway };

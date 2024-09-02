@@ -44,7 +44,7 @@ function defaultAuthInfo(conf = config()): AuthInfo | undefined {
     auth0ClientId: conf.auth0ClientId,
     auth0Domain: conf.auth0Domain,
     authProvider: conf.authProvider || "auth0",
-    cognito: conf.cognito,
+    cognito: conf.cognito
   };
 }
 

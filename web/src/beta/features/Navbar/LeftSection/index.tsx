@@ -1,7 +1,7 @@
 import {
   IconButton,
   PopupMenu,
-  PopupMenuItem,
+  PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -29,7 +29,7 @@ const LeftSection: React.FC<Props> = ({
   sceneId,
   page,
   onSignOut,
-  onWorkspaceChange,
+  onWorkspaceChange
 }) => {
   const t = useT();
 
@@ -39,9 +39,7 @@ const LeftSection: React.FC<Props> = ({
         icon: "setting",
         id: "setting",
         title: t("Project settings"),
-        path: currentProject?.id
-          ? `/settings/project/${currentProject.id}`
-          : "",
+        path: currentProject?.id ? `/settings/project/${currentProject.id}` : ""
       },
       {
         icon: "plugin",
@@ -49,10 +47,10 @@ const LeftSection: React.FC<Props> = ({
         title: t("Plugin"),
         path: currentProject?.id
           ? `/settings/project/${currentProject.id}/plugins`
-          : "",
-      },
+          : ""
+      }
     ],
-    [currentProject?.id, t],
+    [currentProject?.id, t]
   );
 
   return (
@@ -88,7 +86,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
   height: 32,
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const StyledLink = styled(Link)<{ disabled?: boolean }>(
@@ -98,13 +96,13 @@ const StyledLink = styled(Link)<{ disabled?: boolean }>(
     textDecoration: "none",
     pointerEvents: disabled ? "none" : "all",
     "&:hover": {
-      textDecoration: "none",
-    },
-  }),
+      textDecoration: "none"
+    }
+  })
 );
 
 const Separator = styled.div(({ theme }) => ({
   color: theme.content.weak,
   margin: `0 ${theme.spacing.smallest}px`,
-  userSelect: "none",
+  userSelect: "none"
 }));

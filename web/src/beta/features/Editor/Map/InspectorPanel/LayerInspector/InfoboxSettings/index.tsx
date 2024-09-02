@@ -17,7 +17,7 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
 
   const { visibleItems, handleInfoboxCreate } = useHooks({
     layerId: selectedLayerId,
-    property: infobox?.property,
+    property: infobox?.property
   });
 
   return (
@@ -45,7 +45,7 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
 export default Infobox;

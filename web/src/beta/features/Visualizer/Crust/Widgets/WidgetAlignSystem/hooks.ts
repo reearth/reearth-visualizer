@@ -5,11 +5,11 @@ import type { Location, Alignment } from "./types";
 
 export default function ({
   onWidgetLayoutUpdate: onWidgetLayoutUpdate,
-  onAlignmentUpdate: onAlignmentUpdate,
+  onAlignmentUpdate: onAlignmentUpdate
 }: {
   onWidgetLayoutUpdate?: (
     id: string,
-    update: { location?: Location; extended?: boolean; index?: number },
+    update: { location?: Location; extended?: boolean; index?: number }
   ) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
 }) {
@@ -19,19 +19,19 @@ export default function ({
       area: string,
       index: number,
       prevArea: string,
-      _prevIndex: number,
+      _prevIndex: number
     ) => {
       const location = area !== prevArea ? getLocationFromId(area) : undefined;
       onWidgetLayoutUpdate?.(id, { index, location });
     },
-    [onWidgetLayoutUpdate],
+    [onWidgetLayoutUpdate]
   );
 
   const handleExtend = useCallback(
     (id: string, extended: boolean) => {
       onWidgetLayoutUpdate?.(id, { extended });
     },
-    [onWidgetLayoutUpdate],
+    [onWidgetLayoutUpdate]
   );
 
   const handleAlignmentChange = useCallback(
@@ -40,7 +40,7 @@ export default function ({
       if (!l) return;
       onAlignmentUpdate?.(l, a);
     },
-    [onAlignmentUpdate],
+    [onAlignmentUpdate]
   );
 
   return { handleMove, handleExtend, handleAlignmentChange };

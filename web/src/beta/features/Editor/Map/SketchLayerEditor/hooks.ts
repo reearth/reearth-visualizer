@@ -13,12 +13,12 @@ export default function useHooks({
   customProperties,
   setPropertiesList,
   onClose,
-  onCustomPropertySchemaUpdate,
+  onCustomPropertySchemaUpdate
 }: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> &
   SketchLayerEditorProp) {
   const sketchLayers = useMemo(
     () => layers.filter(({ isSketch }) => isSketch),
-    [layers],
+    [layers]
   );
 
   const handleClose = useCallback(() => {
@@ -36,7 +36,7 @@ export default function useHooks({
     }, {});
     const inp: UpdateCustomPropertySchemaInput = {
       layerId: layerId || "",
-      schema: schemaJSON,
+      schema: schemaJSON
     };
 
     onCustomPropertySchemaUpdate?.(inp);
@@ -51,14 +51,14 @@ export default function useHooks({
       .map(([key, value]) => ({
         key,
         value: (value as string).replace(/_\d+$/, ""),
-        number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10),
+        number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10)
       }))
       .sort((a, b) => a.number - b.number);
 
     return sortedEntries.map(({ key, value }) => ({
       id: uuidv4(),
       key,
-      value,
+      value
     }));
   };
 
@@ -74,6 +74,6 @@ export default function useHooks({
 
   return {
     handleSubmit,
-    handleClose,
+    handleClose
   };
 }

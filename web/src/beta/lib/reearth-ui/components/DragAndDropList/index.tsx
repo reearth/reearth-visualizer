@@ -7,7 +7,7 @@ import {
   Store,
   ItemInterface,
   GroupOptions,
-  SortableEvent,
+  SortableEvent
 } from "react-sortablejs";
 
 export interface DragAndDropListProps<T extends ItemInterface> {
@@ -34,12 +34,12 @@ export const DragAndDropList = <T extends ItemInterface>({
   gap = "small",
   dragDisabled,
   onMoveStart,
-  onMoveEnd,
+  onMoveEnd
 }: DragAndDropListProps<T>) => {
   const handleSetList = (
     newState: ItemInterface[],
     _sortable: Sortable | null,
-    _store: Store,
+    _store: Store
   ) => {
     setItems?.(newState as T[]);
   };
@@ -52,7 +52,7 @@ export const DragAndDropList = <T extends ItemInterface>({
     (evt: SortableEvent) => {
       onMoveEnd?.(evt.item?.dataset.id, evt.newIndex);
     },
-    [onMoveEnd],
+    [onMoveEnd]
   );
 
   return (
@@ -96,8 +96,8 @@ const StyledReactSortable = styled(ReactSortable)<{
         ? theme.spacing.small
         : (gap ?? 0),
   [`.${GHOST_CLASSNAME}`]: {
-    opacity: 0,
-  },
+    opacity: 0
+  }
 }));
 
 const ItemWrapper = styled("div")(() => ({}));

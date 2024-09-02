@@ -1,7 +1,7 @@
-import { FC, ReactNode } from "react";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, ReactNode } from "react";
 
 export interface CommonFieldProps {
   commonTitle?: string;
@@ -11,7 +11,7 @@ export interface CommonFieldProps {
 const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
   commonTitle,
   description,
-  children,
+  children
 }) => {
   const theme = useTheme();
   return (
@@ -34,17 +34,17 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.small,
   ["* ::-webkit-scrollbar"]: {
-    width: "8px",
+    width: "8px"
   },
   ["* ::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px",
+    borderRadius: "10px"
   },
   ["* ::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter,
-  },
+    background: theme.relative.lighter
+  }
 }));

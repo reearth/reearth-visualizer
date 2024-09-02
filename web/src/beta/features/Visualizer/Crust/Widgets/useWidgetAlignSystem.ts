@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import {
   WAS_SECTIONS,
   WAS_AREAS,
-  WAS_ZONES,
+  WAS_ZONES
 } from "./WidgetAlignSystem/constants";
 import { isInvisibleBuiltin } from "./WidgetAlignSystem/utils";
 
@@ -13,12 +13,12 @@ import {
   type WidgetLocationOptions,
   type WidgetArea,
   type WidgetSection,
-  type WidgetZone,
+  type WidgetZone
 } from ".";
 
 export default ({
   alignSystem,
-  isMobile,
+  isMobile
 }: {
   alignSystem: WidgetAlignSystem | undefined;
   isMobile?: boolean;
@@ -43,7 +43,7 @@ export default ({
             (w) => {
               if (isInvisibleBuiltin(w, isMobile))
                 invisibleBuiltinWidgetIDs.push(w.id);
-            },
+            }
           );
         });
       });
@@ -51,7 +51,7 @@ export default ({
 
     setInvisibleWidgetIDs([
       ...invisibleBuiltinWidgetIDs,
-      ...invisiblePluginWidgetIDs,
+      ...invisiblePluginWidgetIDs
     ]);
   }, [isMobile, overriddenAlignSystem, invisiblePluginWidgetIDs]);
 
@@ -67,7 +67,7 @@ export default ({
         return a;
       });
     },
-    [],
+    []
   );
 
   const moveWidget = useCallback(
@@ -97,7 +97,7 @@ export default ({
                   const area = section[areaName];
                   if (!widget && area?.widgets) {
                     const sourceIndex = area.widgets.findIndex(
-                      (w) => w.id === widgetId,
+                      (w) => w.id === widgetId
                     );
                     if (sourceIndex !== -1) {
                       [widget] = area.widgets.splice(sourceIndex, 1);
@@ -118,7 +118,7 @@ export default ({
             alignSystem[options.zone] = {
               left: undefined,
               center: undefined,
-              right: undefined,
+              right: undefined
             };
           }
 
@@ -127,7 +127,7 @@ export default ({
             targetZone[options.section] = {
               top: undefined,
               middle: undefined,
-              bottom: undefined,
+              bottom: undefined
             };
           }
 
@@ -135,7 +135,7 @@ export default ({
           if (!targetSection[options.area]) {
             targetSection[options.area] = {
               align: "start",
-              widgets: [],
+              widgets: []
             };
           }
 
@@ -158,10 +158,10 @@ export default ({
                     ...(alignSystem[options.zone]?.[options.section]?.[
                       options.area
                     ] || {}),
-                    widgets: [...targetArea.widgets],
-                  },
-                },
-              },
+                    widgets: [...targetArea.widgets]
+                  }
+                }
+              }
             };
             return { ...next };
           }
@@ -170,7 +170,7 @@ export default ({
         });
       }, 0);
     },
-    [],
+    []
   );
 
   useEffect(() => {
@@ -181,6 +181,6 @@ export default ({
     overriddenAlignSystem,
     invisibleWidgetIDs,
     moveWidget,
-    onPluginWidgetVisibilityChange,
+    onPluginWidgetVisibilityChange
   };
 };

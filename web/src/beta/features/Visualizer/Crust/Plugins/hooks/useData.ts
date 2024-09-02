@@ -4,6 +4,6 @@ export default () => {
   const clientStorage = useClientStorage();
 
   return {
-    clientStorage,
+    clientStorage
   };
 };

@@ -2,19 +2,19 @@ import {
   type WidgetZone,
   type WidgetSection,
   type WidgetArea,
-  type Alignment,
+  type Alignment
 } from "@reearth/beta/features/Visualizer/Crust";
 import {
   BuiltinWidgets,
   Widget as RawWidget,
   WidgetAlignSystem,
   WidgetLayoutConstraint,
-  isBuiltinWidget,
+  isBuiltinWidget
 } from "@reearth/beta/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import {
   DEFAULT_LAYER_STYLE,
-  valueTypeFromGQL,
+  valueTypeFromGQL
 } from "@reearth/beta/utils/value";
 import { LayerAppearanceTypes } from "@reearth/core";
 import type { Layer } from "@reearth/core";
@@ -33,7 +33,7 @@ import {
   PropertySchemaFieldFragmentFragment,
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
-  NlsLayerCommonFragment,
+  NlsLayerCommonFragment
 } from "@reearth/services/gql";
 
 import convertInfobox from "./convert-infobox";
@@ -62,7 +62,7 @@ export type Widget = Omit<RawWidget, "layout" | "extended"> & {
 };
 
 export const convertWidgets = (
-  scene?: Partial<Scene>,
+  scene?: Partial<Scene>
 ):
   | {
       floating: Widget[];
@@ -83,14 +83,14 @@ export const convertWidgets = (
                 [`${p.plugin?.id}/${e.extensionId}`]: {
                   extendable: {
                     horizontally: e?.widgetLayout?.extendable.horizontally,
-                    vertically: e?.widgetLayout?.extendable.vertically,
+                    vertically: e?.widgetLayout?.extendable.vertically
                   },
-                  floating: !!e?.widgetLayout?.floating,
-                },
+                  floating: !!e?.widgetLayout?.floating
+                }
               }
             : b,
-        {},
-      ),
+        {}
+      )
     )
     .reduce((a, b) => ({ ...a, ...b }), {});
 
@@ -98,7 +98,7 @@ export const convertWidgets = (
     ?.filter(
       (w) =>
         w.enabled &&
-        layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating,
+        layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating
     )
     .map(
       (w): Widget => ({
@@ -106,15 +106,15 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: processProperty(w.property, undefined, undefined, undefined),
-      }),
+        property: processProperty(w.property, undefined, undefined, undefined)
+      })
     );
 
   const widgets = scene?.widgets
     ?.filter(
       (w) =>
         w.enabled &&
-        !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating,
+        !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating
     )
     .map(
       (w): Widget => ({
@@ -122,8 +122,8 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: processProperty(w.property, undefined, undefined, undefined),
-      }),
+        property: processProperty(w.property, undefined, undefined, undefined)
+      })
     );
 
   const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone | undefined => {
@@ -134,12 +134,12 @@ export const convertWidgets = (
     return {
       left,
       center,
-      right,
+      right
     };
   };
 
   const widgetSection = (
-    section?: Maybe<WidgetSectionType>,
+    section?: Maybe<WidgetSectionType>
   ): WidgetSection | undefined => {
     const top = widgetArea(section?.top);
     const middle = widgetArea(section?.middle);
@@ -148,7 +148,7 @@ export const convertWidgets = (
     return {
       top,
       middle,
-      bottom,
+      bottom
     };
   };
 
@@ -165,12 +165,12 @@ export const convertWidgets = (
         top: padding?.top ?? 6,
         bottom: padding?.bottom ?? 6,
         left: padding?.left ?? 6,
-        right: padding?.right ?? 6,
+        right: padding?.right ?? 6
       },
       gap: area?.gap ?? 6,
       widgets: areaWidgets,
       background: area?.background as string | undefined,
-      centered: area?.centered,
+      centered: area?.centered
     };
   };
 
@@ -185,10 +185,10 @@ export const convertWidgets = (
     floating: floating ?? [],
     alignSystem: {
       outer: widgetZone(scene?.widgetAlignSystem?.outer),
-      inner: widgetZone(scene?.widgetAlignSystem?.inner),
+      inner: widgetZone(scene?.widgetAlignSystem?.inner)
     },
     layoutConstraint,
-    ownBuiltinWidgets: ownBuiltinWidgets ?? [],
+    ownBuiltinWidgets: ownBuiltinWidgets ?? []
   };
 };
 
@@ -196,7 +196,7 @@ export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
   orig?: PropertyFragmentFragment | null | undefined,
   linkedDatasetId?: string | null | undefined,
-  datasets?: DatasetMap | null | undefined,
+  datasets?: DatasetMap | null | undefined
 ): P | undefined => {
   const schema = orig?.schema || parent?.schema;
   if (!schema) return;
@@ -214,10 +214,10 @@ export const processProperty = (
       [b.schemaGroupId]: {
         schema: b,
         orig: orig?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
-        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
-      },
+        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId)
+      }
     }),
-    {},
+    {}
   );
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
@@ -234,8 +234,8 @@ export const processProperty = (
               undefined,
               undefined,
               linkedDatasetId,
-              datasets,
-            ),
+              datasets
+            )
           ];
         }
 
@@ -252,10 +252,10 @@ export const processProperty = (
                 g,
                 undefined,
                 linkedDatasetId,
-                datasets,
+                datasets
               ),
-              id: g.id,
-            })),
+              id: g.id
+            }))
           ];
         }
 
@@ -270,13 +270,13 @@ export const processProperty = (
               parent,
               orig,
               linkedDatasetId,
-              datasets,
-            ),
+              datasets
+            )
           ];
         }
         return [key, null];
       })
-      .filter(([, value]) => !!value),
+      .filter(([, value]) => !!value)
   );
 
   return mergedProperty;
@@ -287,7 +287,7 @@ const processPropertyGroups = (
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined,
   linkedDatasetId: string | null | undefined,
-  datasets: DatasetMap | null | undefined,
+  datasets: DatasetMap | null | undefined
 ): any => {
   const allFields: Record<
     string,
@@ -302,10 +302,10 @@ const processPropertyGroups = (
       [b.fieldId]: {
         schema: b,
         parent: parent?.fields.find((i) => i.fieldId === b.fieldId),
-        orig: original?.fields.find((i) => i.fieldId === b.fieldId),
-      },
+        orig: original?.fields.find((i) => i.fieldId === b.fieldId)
+      }
     }),
-    {},
+    {}
   );
 
   return Object.fromEntries(
@@ -323,14 +323,14 @@ const processPropertyGroups = (
               datasets,
               datasetSchemaId,
               linkedDatasetId,
-              datasetFieldId,
-            ),
+              datasetFieldId
+            )
           ];
         }
 
         return [key, valueFromGQL(used.value, used.type)?.value];
       })
-      .filter(([, value]) => typeof value !== "undefined" && value !== null),
+      .filter(([, value]) => typeof value !== "undefined" && value !== null)
   );
 };
 
@@ -338,7 +338,7 @@ export const datasetValue = (
   datasets: DatasetMap | null | undefined,
   datasetSchemaId: string,
   datasetId: string,
-  fieldId: string,
+  fieldId: string
 ) => {
   const dataset = datasets?.[datasetSchemaId];
   if (!dataset?.schema) return;
@@ -362,7 +362,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   if (t === "camera" && val && typeof val === "object" && "altitude" in val) {
     newVal = {
       ...val,
-      height: val.altitude,
+      height: val.altitude
     };
   }
   if (
@@ -374,7 +374,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   ) {
     newVal = {
       ...val,
-      textAlign: val.textAlign.toLowerCase(),
+      textAlign: val.textAlign.toLowerCase()
     };
   }
   return { type: t, value: newVal ?? undefined, ok };
@@ -389,11 +389,11 @@ export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
-  infoboxBlockNames?: Record<string, string>,
+  infoboxBlockNames?: Record<string, string>
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      (a) => a.id === id,
+      (a) => a.id === id
     )?.value;
     if (typeof layerStyleValue === "object") {
       try {
@@ -415,11 +415,11 @@ export function processLayers(
         type: "FeatureCollection",
         features: nlsLayer.sketch?.featureCollection?.features.map((f) => ({
           ...f,
-          geometry: f.geometry[0],
-        })),
+          geometry: f.geometry[0]
+        }))
       },
       isSketchLayer: true,
-      idProperty: "id",
+      idProperty: "id"
     };
 
     return {
@@ -432,13 +432,13 @@ export function processLayers(
       infobox: convertInfobox(
         nlsLayer.infobox,
         parent?.infobox,
-        infoboxBlockNames,
+        infoboxBlockNames
       ),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
       data: nlsLayer.isSketch ? sketchLayerData : nlsLayer.config?.data,
-      ...layerStyle,
+      ...layerStyle
     };
   });
 }
