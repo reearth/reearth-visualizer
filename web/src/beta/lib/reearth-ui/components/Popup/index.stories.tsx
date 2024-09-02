@@ -1,14 +1,13 @@
+import { fonts, styled } from "@reearth/services/theme";
 import { Meta, StoryObj } from "@storybook/react";
 import { FC, useCallback, useState } from "react";
-
-import { fonts, styled } from "@reearth/services/theme";
 
 import { Button } from "../Button";
 
 import { Popup, PopupProps } from ".";
 
 const meta: Meta<PopupProps> = {
-  component: Popup,
+  component: Popup
 };
 
 export default meta;
@@ -18,7 +17,8 @@ const MockChild: FC = () => (
   <Container>
     <Title>Title</Title>
     <Content>
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum
     </Content>
   </Container>
 );
@@ -27,7 +27,8 @@ const MockChildWithClose: FC<{ onClose: () => void }> = ({ onClose }) => (
   <Container>
     <Title>Title</Title>
     <Content>
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum
     </Content>
     <Button title="Close" onClick={onClose} />
   </Container>
@@ -40,53 +41,59 @@ const Container = styled("div")(({ theme }) => ({
   height: "auto",
   color: theme.content.main,
   boxShadow: theme.shadow.card,
-  borderRadius: theme.radius.small,
+  borderRadius: theme.radius.small
 }));
 
 const Title = styled("div")(() => ({
   fontSize: fonts.sizes.h5,
-  lineHeight: `${fonts.lineHeights.h5}px`,
+  lineHeight: `${fonts.lineHeights.h5}px`
 }));
 
 const Content = styled("div")(() => ({
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  alignItems: "center",
+  alignItems: "center"
 }));
 
 export const BasicTrigger: Story = {
-  render: args => {
+  render: (args) => {
     return <Popup {...args} />;
   },
   args: {
     trigger: "Click me",
     children: <MockChild />,
-    placement: "bottom",
+    placement: "bottom"
   },
   parameters: {
     docs: {
       description: {
-        story: "When passing a string as a trigger, it will be rendered as a button.",
-      },
-    },
-  },
+        story:
+          "When passing a string as a trigger, it will be rendered as a button."
+      }
+    }
+  }
 };
 
 export const CustomTrigger: Story = {
-  render: args => <Popup {...args} trigger={<Button title="Click me" appearance="primary" />} />,
+  render: (args) => (
+    <Popup
+      {...args}
+      trigger={<Button title="Click me" appearance="primary" />}
+    />
+  ),
   args: {
     placement: "bottom",
-    children: <MockChild />,
-  },
+    children: <MockChild />
+  }
 };
 
 export const MultipleTrigger: Story = {
-  render: args => {
+  render: (args) => {
     return (
       <Wrapper>
         <Popup trigger="Click me" {...args} />
@@ -96,12 +103,12 @@ export const MultipleTrigger: Story = {
   },
   args: {
     children: <MockChild />,
-    placement: "bottom",
-  },
+    placement: "bottom"
+  }
 };
 
 export const Placement: Story = {
-  render: args => {
+  render: (args) => {
     return (
       <div
         style={{
@@ -110,8 +117,9 @@ export const Placement: Story = {
           gridTemplateRows: "1fr 1fr 1fr 1fr 1fr",
           gridTemplateColumns: "1fr 1fr 1fr",
           justifyItems: "center",
-          alignItems: "center",
-        }}>
+          alignItems: "center"
+        }}
+      >
         <Popup {...args} trigger="top-start" placement="top-start" />
         <Popup {...args} trigger="top" placement="top" />
         <Popup {...args} trigger="top-end" placement="top-end" />
@@ -131,8 +139,8 @@ export const Placement: Story = {
     );
   },
   args: {
-    children: <MockChild />,
-  },
+    children: <MockChild />
+  }
 };
 
 const ControlledComponent: FC = () => {
@@ -145,12 +153,13 @@ const ControlledComponent: FC = () => {
     <Popup
       trigger={<Button title="Click me" appearance="primary" />}
       open={open}
-      onOpenChange={setOpen}>
+      onOpenChange={setOpen}
+    >
       <MockChildWithClose onClose={handleClose} />
     </Popup>
   );
 };
 
 export const Controlled: Story = {
-  render: () => <ControlledComponent />,
+  render: () => <ControlledComponent />
 };

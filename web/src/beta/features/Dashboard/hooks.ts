@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-
 import { useMeFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
 import { useWorkspace } from "@reearth/services/state";
+import { useCallback, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { TabItems, Workspace } from "./type";
 
@@ -21,7 +20,9 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const workspaces = (data?.teams as Workspace[]) ?? [];
-  const workspace = workspaces.find(workspace => workspace.id === workspaceId);
+  const workspace = workspaces.find(
+    (workspace) => workspace.id === workspaceId
+  );
   const isPersonal = !!workspaceId && workspaceId === data?.myTeam?.id;
 
   const { tab } = useParams<{
@@ -32,12 +33,14 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const topTabs = useMemo(
     () =>
       topTabItems
-        .filter(tab => !(isPersonal && tab.id === "members"))
-        .map(tab => ({
+        .filter((tab) => !(isPersonal && tab.id === "members"))
+        .map((tab) => ({
           ...tab,
-          path: tab.path || `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`,
+          path:
+            tab.path ||
+            `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`
         })),
-    [topTabItems, isPersonal, workspaceId],
+    [topTabItems, isPersonal, workspaceId]
   );
 
   const bottomTabs = useMemo(() => bottomTabsItems, [bottomTabsItems]);
@@ -47,7 +50,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
       setCurrentWorkspace({
         ...workspace,
         personal: isPersonal,
-        members: workspace.members ?? [],
+        members: workspace.members ?? []
       });
     }
   }, [currentWorkspace, workspace, setCurrentWorkspace, isPersonal]);
@@ -59,7 +62,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspace, setCurrentWorkspace, navigate],
+    [workspace, setCurrentWorkspace, navigate]
   );
 
   return {
@@ -70,6 +73,6 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     bottomTabs,
     currentTab,
     onSignOut: logout,
-    handleWorkspaceChange,
+    handleWorkspaceChange
   };
 };

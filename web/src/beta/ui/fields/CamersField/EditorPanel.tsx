@@ -1,8 +1,12 @@
-import { FC } from "react";
-
-import { Button, NumberInput, PopupPanel, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  NumberInput,
+  PopupPanel,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import TripletInputField from "../TripletInputField";
 import TwinInputField from "../TwinInputField";
@@ -22,12 +26,12 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
     handleTrippleFieldChange,
     handleFieldBlur,
     handleFieldChange,
-    handleSave,
+    handleSave
   } = useHooks({
     camera,
     onFlyTo,
     onSave,
-    onClose,
+    onClose
   });
 
   return (
@@ -45,7 +49,8 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
             onClick={handleSave}
           />
         </ButtonWrapper>
-      }>
+      }
+    >
       <GroupWrapper>
         <TwinInputField
           values={[newCamera?.lat ?? 0, newCamera?.lng ?? 0]}
@@ -60,13 +65,17 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
           <NumberInput
             unit={"km"}
             value={newCamera?.height ?? 0}
-            onChange={value => handleFieldChange("height", value)}
-            onBlur={value => handleFieldBlur("height", value)}
+            onChange={(value) => handleFieldChange("height", value)}
+            onBlur={(value) => handleFieldBlur("height", value)}
           />
         </InputWrapper>
         <TripletInputField
           commonTitle={t("Rotation")}
-          values={[newCamera?.heading ?? 0, newCamera?.pitch ?? 0, newCamera?.roll ?? 0]}
+          values={[
+            newCamera?.heading ?? 0,
+            newCamera?.pitch ?? 0,
+            newCamera?.roll ?? 0
+          ]}
           content={[t("Heading"), t("Pitch"), t("Roll")]}
           placeholders={[t("value"), t("value"), t("value")]}
           onChange={handleTrippleFieldChange}
@@ -81,20 +90,20 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-start",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const GroupWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export default EditPanel;

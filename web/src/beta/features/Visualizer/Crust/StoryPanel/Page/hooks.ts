@@ -1,8 +1,10 @@
+import { useEditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useEditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
-
-import { DEFAULT_STORY_PAGE_GAP, DEFAULT_STORY_PAGE_PADDING } from "../constants";
+import {
+  DEFAULT_STORY_PAGE_GAP,
+  DEFAULT_STORY_PAGE_PADDING
+} from "../constants";
 import { StoryPage } from "../types";
 import { calculatePaddingValue } from "../utils";
 
@@ -12,14 +14,14 @@ export default ({
   page,
   isEditable,
   onBlockCreate,
-  onBlockMove,
+  onBlockMove
 }: {
   page?: StoryPage;
   isEditable?: boolean;
   onBlockCreate?: (
     extensionId?: string | undefined,
     pluginId?: string | undefined,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void> | undefined;
   onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
 }) => {
@@ -31,7 +33,7 @@ export default ({
 
   const disableSelection = useMemo(
     () => editModeContext?.disableSelection,
-    [editModeContext?.disableSelection],
+    [editModeContext?.disableSelection]
   );
 
   useEffect(() => page?.blocks && setStoryBlocks(page.blocks), [page?.blocks]);
@@ -44,7 +46,7 @@ export default ({
         setOpenBlocksIndex(index);
       }
     },
-    [openBlocksIndex],
+    [openBlocksIndex]
   );
 
   const property = useMemo(() => page?.property, [page?.property]);
@@ -56,53 +58,63 @@ export default ({
         value: calculatePaddingValue(
           DEFAULT_STORY_PAGE_PADDING,
           property?.panel?.padding,
-          isEditable,
+          isEditable
         ),
         title: "Padding",
         type: "spacing",
-        ui: "padding",
+        ui: "padding"
       },
       gap: {
         value: property?.panel?.gap ?? DEFAULT_STORY_PAGE_GAP,
         type: "number",
-        title: "Gap",
-      },
+        title: "Gap"
+      }
     }),
-    [property?.panel, isEditable],
+    [property?.panel, isEditable]
   );
 
   const titleProperty = useMemo(
     () => ({
       title: {
-        title: { value: property?.title?.title, title: "Title", type: "string" },
-        color: { value: property?.title?.color, title: "Color", type: "string", ui: "color" },
+        title: {
+          value: property?.title?.title,
+          title: "Title",
+          type: "string"
+        },
+        color: {
+          value: property?.title?.color,
+          title: "Color",
+          type: "string",
+          ui: "color"
+        }
       },
       panel: {
         padding: {
           value: property?.title?.padding,
           title: "Padding",
           type: "spacing",
-          ui: "padding",
-        },
-      },
+          ui: "padding"
+        }
+      }
     }),
-    [property?.title],
+    [property?.title]
   );
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
 
   const handleBlockCreate = useCallback(
-    (index: number) => (extensionId?: string | undefined, pluginId?: string | undefined) =>
-      onBlockCreate?.(extensionId, pluginId, index),
-    [onBlockCreate],
+    (index: number) =>
+      (extensionId?: string | undefined, pluginId?: string | undefined) =>
+        onBlockCreate?.(extensionId, pluginId, index),
+    [onBlockCreate]
   );
 
   const handleMoveEnd = useCallback(
     async (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        setStoryBlocks(old => {
+        setStoryBlocks((old) => {
           const items = [...old];
-          const currentIndex = old.findIndex(o => o.id === itemId);
+          const currentIndex = old.findIndex((o) => o.id === itemId);
           if (currentIndex !== -1) {
             const [movedItem] = items.splice(currentIndex, 1);
             items.splice(newIndex, 0, movedItem);
@@ -113,7 +125,7 @@ export default ({
       }
       setIsDragging(false);
     },
-    [onBlockMove, page?.id],
+    [onBlockMove, page?.id]
   );
 
   return {
@@ -129,6 +141,6 @@ export default ({
     setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
-    handleMoveEnd,
+    handleMoveEnd
   };
 };

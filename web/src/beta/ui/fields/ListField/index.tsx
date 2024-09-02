@@ -1,13 +1,13 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-
 import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
 import ListItem from "./ListItem";
 
-const LIST_FIELD_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-list-field-drag-handle";
+const LIST_FIELD_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-list-field-drag-handle";
 
 export type ListItemProps = {
   id: string;
@@ -37,13 +37,14 @@ const ListField: FC<ListFieldProps> = ({
   onItemSelect,
   onItemDelete,
   onItemMove,
-  onItemNameUpdate,
+  onItemNameUpdate
 }) => {
   const [listItems, setListItems] = useState(items ?? []);
 
   useEffect(() => {
     if (!atLeastOneItem) return;
-    const updateSelected = !selected || !items.find(({ id }) => id === selected);
+    const updateSelected =
+      !selected || !items.find(({ id }) => id === selected);
     if (updateSelected) {
       onItemSelect?.(items[0]?.id);
     }
@@ -53,9 +54,9 @@ const ListField: FC<ListFieldProps> = ({
   const handleMoveEnd = useCallback(
     (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        setListItems(old => {
+        setListItems((old) => {
           const items = [...old];
-          const currentIndex = old.findIndex(o => o.id === itemId);
+          const currentIndex = old.findIndex((o) => o.id === itemId);
           if (currentIndex !== -1) {
             const [movedItem] = items.splice(currentIndex, 1);
             items.splice(newIndex, 0, movedItem);
@@ -66,7 +67,7 @@ const ListField: FC<ListFieldProps> = ({
       }
       setIsDragging(false);
     },
-    [onItemMove],
+    [onItemMove]
   );
 
   useEffect(() => {
@@ -75,7 +76,7 @@ const ListField: FC<ListFieldProps> = ({
 
   const DraggableListItems = useMemo(
     () =>
-      listItems.map(item => ({
+      listItems.map((item) => ({
         id: item.id,
         content: (
           <ListItem
@@ -88,9 +89,17 @@ const ListField: FC<ListFieldProps> = ({
             onItemSelect={onItemSelect}
             onItemNameUpdate={onItemNameUpdate}
           />
-        ),
+        )
       })),
-    [listItems, isDragging, selected, isEditable, onItemDelete, onItemSelect, onItemNameUpdate],
+    [
+      listItems,
+      isDragging,
+      selected,
+      isEditable,
+      onItemDelete,
+      onItemSelect,
+      onItemNameUpdate
+    ]
   );
 
   const handleMoveStart = useCallback(() => {
@@ -124,7 +133,7 @@ const ListField: FC<ListFieldProps> = ({
 const FieldContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
@@ -132,7 +141,7 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.small,
   padding: theme.spacing.smallest,
   border: `1px solid ${theme.outline.weak}`,
-  overflow: "auto",
+  overflow: "auto"
 }));
 
 export default ListField;

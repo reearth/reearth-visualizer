@@ -1,4 +1,9 @@
-import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  IframeHTMLAttributes,
+  ReactNode
+} from "react";
 import type { RefObject } from "react";
 
 import useHook, { defaultIsMarshalable, IFrameType, API, Ref } from "./hooks";
@@ -24,7 +29,7 @@ export type Props = {
   popupVisible?: boolean;
   externalRef?: RefObject<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
-  exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
+  exposed?: ((api: API) => Record<string, any>) | Record<string, any>;
   onMessage?: (message: any) => void;
   onPreInit?: () => void;
   onError?: (err: any) => void;
@@ -55,11 +60,17 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
     onDispose,
     onClick,
     onMessage,
-    onRender,
+    onRender
   },
-  ref,
+  ref
 ) => {
-  const { mainIFrameRef, modalIFrameRef, popupIFrameRef, loaded, handleMessage } = useHook({
+  const {
+    mainIFrameRef,
+    modalIFrameRef,
+    popupIFrameRef,
+    loaded,
+    handleMessage
+  } = useHook({
     src,
     sourceCode,
     skip,
@@ -69,7 +80,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
     onError,
     onPreInit,
     onDispose,
-    onMessage,
+    onMessage
   });
 
   return (

@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { useSettingsNavigation } from "@reearth/beta/hooks";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import { useProjectFetcher, useStorytellingFetcher } from "@reearth/services/api";
+import {
+  useProjectFetcher,
+  useStorytellingFetcher
+} from "@reearth/services/api";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
@@ -19,7 +21,7 @@ export default ({
   storyId,
   projectId,
   sceneId,
-  selectedProjectType,
+  selectedProjectType
 }: {
   storyId?: string;
   projectId?: string;
@@ -33,7 +35,7 @@ export default ({
     publishProjectLoading,
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
-    usePublishProject,
+    usePublishProject
   } = useProjectFetcher();
 
   const { project: mapProject } = useProjectQuery(projectId);
@@ -45,12 +47,12 @@ export default ({
 
   const project: SelectedProject | undefined = useMemo(() => {
     if (selectedProjectType === "story") {
-      const story = stories?.find(s => s.id === storyId);
+      const story = stories?.find((s) => s.id === storyId);
       return story
         ? {
             id: story.id,
             alias: story.alias,
-            publishmentStatus: story.publishmentStatus,
+            publishmentStatus: story.publishmentStatus
           }
         : undefined;
     } else {
@@ -58,7 +60,7 @@ export default ({
         ? {
             id: mapProject.id,
             alias: mapProject.alias,
-            publishmentStatus: mapProject.publishmentStatus,
+            publishmentStatus: mapProject.publishmentStatus
           }
         : undefined;
     }
@@ -70,10 +72,15 @@ export default ({
   const generateAlias = useCallback(() => generateRandomString(10), []);
 
   const [validAlias, setValidAlias] = useState(false);
-  const alias = useMemo(() => project?.alias ?? generateAlias(), [project?.alias, generateAlias]);
+  const alias = useMemo(
+    () => project?.alias ?? generateAlias(),
+    [project?.alias, generateAlias]
+  );
 
-  const [checkProjectAlias, { loading: validatingAlias, data: checkProjectAliasData }] =
-    useProjectAliasCheckLazyQuery();
+  const [
+    checkProjectAlias,
+    { loading: validatingAlias, data: checkProjectAliasData }
+  ] = useProjectAliasCheckLazyQuery();
 
   const publishmentStatuses = useMemo(() => {
     return [
@@ -81,14 +88,14 @@ export default ({
         id: "map",
         title: "Scene",
         type: "default",
-        published: isPublished(mapProject?.publishmentStatus),
+        published: isPublished(mapProject?.publishmentStatus)
       },
-      ...(stories?.map(s => ({
+      ...(stories?.map((s) => ({
         id: s.id,
         title: "Story",
         type: "story",
-        published: isPublished(s.publishmentStatus),
-      })) || []),
+        published: isPublished(s.publishmentStatus)
+      })) || [])
     ];
   }, [mapProject, stories]);
 
@@ -100,7 +107,7 @@ export default ({
         checkProjectAlias({ variables: { alias: a } });
       }
     },
-    [project?.alias, checkProjectAlias],
+    [project?.alias, checkProjectAlias]
   );
 
   useEffect(() => {
@@ -109,7 +116,7 @@ export default ({
         !!project &&
         !!checkProjectAliasData &&
         (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
-          checkProjectAliasData.checkProjectAlias.available),
+          checkProjectAliasData.checkProjectAlias.available)
     );
   }, [validatingAlias, checkProjectAliasData, project]);
 
@@ -118,18 +125,20 @@ export default ({
       project?.publishmentStatus === "PUBLIC"
         ? "published"
         : project?.publishmentStatus === "LIMITED"
-        ? "limited"
-        : "unpublished",
-    [project?.publishmentStatus],
+          ? "limited"
+          : "unpublished",
+    [project?.publishmentStatus]
   );
 
   const handleProjectPublish = useCallback(
     async (alias: string | undefined, publishStatus: PublishStatus) => {
-      selectedProjectType === "story"
-        ? await usePublishStory(publishStatus, project?.id, alias)
-        : await usePublishProject(publishStatus, project?.id, alias);
+      if (selectedProjectType === "story") {
+        await usePublishStory(publishStatus, project?.id, alias);
+      } else {
+        await usePublishProject(publishStatus, project?.id, alias);
+      }
     },
-    [project?.id, selectedProjectType, usePublishStory, usePublishProject],
+    [project?.id, selectedProjectType, usePublishStory, usePublishProject]
   );
 
   const handleModalOpen = useCallback((p: publishingType) => {
@@ -152,7 +161,7 @@ export default ({
     handleModalClose,
     handleProjectPublish,
     handleProjectAliasCheck,
-    handleNavigationToSettings,
+    handleNavigationToSettings
   };
 };
 

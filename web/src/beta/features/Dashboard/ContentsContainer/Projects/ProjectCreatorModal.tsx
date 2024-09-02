@@ -1,29 +1,32 @@
-import { FC, useCallback, useState } from "react";
 
-import URLField from "@reearth/beta/components/fields/URLField";
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   Button,
   Modal,
   ModalPanel,
   TextArea,
   TextInput,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { Project } from "../../type";
 
 type ProjectCreatorModalProps = {
   visible: boolean;
   onClose?: () => void;
-  onProjectCreate: (data: Pick<Project, "name" | "description" | "imageUrl">) => void;
+  onProjectCreate: (
+    data: Pick<Project, "name" | "description" | "imageUrl">
+  ) => void;
 };
 
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   visible,
   onClose,
-  onProjectCreate,
+  onProjectCreate
 }) => {
   const t = useT();
   const [projectName, setProjectName] = useState("");
@@ -44,7 +47,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     const data = {
       name: projectName,
       description,
-      imageUrl,
+      imageUrl
     };
     onProjectCreate(data);
     onClose?.();
@@ -66,7 +69,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               disabled={!projectName}
             />
           </>
-        }>
+        }
+      >
         <ContentWrapper>
           <Form>
             <FormInputWrapper>
@@ -76,26 +80,26 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               <TextInput
                 value={projectName}
                 placeholder={t("Text")}
-                onChange={value => handleOnChange("projectName", value)}
+                onChange={(value) => handleOnChange("projectName", value)}
               />
             </FormInputWrapper>
             <FormInputWrapper>
               <Label>
-                <Typography size="body">{t("Description")}*</Typography>
+                <Typography size="body">{t("Description")}</Typography>
               </Label>
               <TextArea
                 value={description}
                 placeholder={t("Write down your content")}
                 rows={4}
-                onChange={value => handleOnChange("description", value)}
+                onChange={(value) => handleOnChange("description", value)}
               />
             </FormInputWrapper>
-            <URLField
-              name={t("Cover Image")}
-              fileType="asset"
-              entityType="image"
+            <AssetField
+              commonTitle={t("Cover Image")}
+              inputMethod="asset"
+              assetsTypes={IMAGE_TYPES}
               value={imageUrl}
-              onChange={value => handleOnChange("asset", value || "")}
+              onChange={(value) => handleOnChange("asset", value || "")}
             />
           </Form>
         </ContentWrapper>
@@ -110,20 +114,20 @@ const Form = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large,
-  padding: theme.spacing.normal,
+  padding: theme.spacing.normal
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   borderBottom: `1px solid ${theme.outline.weak}`,
-  borderTop: `1px solid ${theme.outline.weak}`,
+  borderTop: `1px solid ${theme.outline.weak}`
 }));
 
 const FormInputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest,
-  width: "100%",
+  width: "100%"
 }));
 
 const Label = styled("div")(() => ({}));

@@ -23,17 +23,21 @@ export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 export const loadUnsafeBuiltinPlugins = async (urls: string[]) => {
   return (
     await Promise.allSettled(
-      urls.map(async url => {
+      urls.map(async (url) => {
         try {
-          const plugin: UnsafeBuiltinPlugin = (await import(/* @vite-ignore */ url)).default;
+          const plugin: UnsafeBuiltinPlugin = (
+            await import(/* @vite-ignore */ url)
+          ).default;
           return plugin;
         } catch (e) {
-          throw new Error(`Specified unsafe built-in module could not find: ${url} ${e}`);
+          throw new Error(
+            `Specified unsafe built-in module could not find: ${url} ${e}`
+          );
         }
-      }),
+      })
     )
   )
-    .map(val => {
+    .map((val) => {
       switch (val.status) {
         case "fulfilled":
           return val.value;

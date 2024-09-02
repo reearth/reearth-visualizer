@@ -9,7 +9,12 @@ type Props = {
   setTimePeriodValues?: (value?: TimePeriodFieldProp) => void;
 };
 
-export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Props) => {
+export default ({
+  timePeriodValues,
+  onChange,
+  onClose,
+  setTimePeriodValues
+}: Props) => {
   const [warning, setWarning] = useState(false);
 
   const handleChange = useCallback(
@@ -18,7 +23,7 @@ export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Pr
         ...timePeriodValues,
         currentTime: timePeriodValues?.currentTime || "",
         startTime: timePeriodValues?.startTime || "",
-        endTime: timePeriodValues?.endTime || "",
+        endTime: timePeriodValues?.endTime || ""
       };
 
       switch (fieldId) {
@@ -54,7 +59,7 @@ export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Pr
       }
       setTimePeriodValues?.(updatedData);
     },
-    [timePeriodValues, setTimePeriodValues],
+    [timePeriodValues, setTimePeriodValues]
   );
 
   const [disabledFields, setDisabledFields] = useState<string[]>([]);
@@ -89,7 +94,7 @@ export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Pr
 
   const isDisabled = useMemo(() => {
     if (timePeriodValues) {
-      return Object.values(timePeriodValues).every(value => value !== "");
+      return Object.values(timePeriodValues).every((value) => value !== "");
     }
     return false;
   }, [timePeriodValues]);
@@ -101,6 +106,6 @@ export default ({ timePeriodValues, onChange, onClose, setTimePeriodValues }: Pr
     setDisabledFields,
     handleChange,
     handleTimePointPopup,
-    handleSubmit,
+    handleSubmit
   };
 };

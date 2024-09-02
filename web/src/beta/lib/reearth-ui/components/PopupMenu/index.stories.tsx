@@ -6,7 +6,7 @@ import { Button } from "../Button";
 import { PopupMenu, PopupMenuProps, PopupMenuItem } from ".";
 
 const meta: Meta<PopupMenuProps> = {
-  component: PopupMenu,
+  component: PopupMenu
 };
 
 export default meta;
@@ -16,25 +16,25 @@ type Story = StoryObj<PopupMenuProps>;
 const defaultItems: PopupMenuItem[] = [
   {
     id: "1",
-    title: "First",
+    title: "First"
   },
   {
     id: "2",
     title: "Second",
-    path: "/second",
+    path: "/second"
   },
   {
     id: "3",
     title: "Third",
-    path: "/third",
-  },
+    path: "/third"
+  }
 ];
 
 const menuItems: PopupMenuItem[] = [
   {
     id: "menu-1",
     title: "Text",
-    icon: "textT",
+    icon: "textT"
   },
   {
     id: "menu-2",
@@ -44,25 +44,25 @@ const menuItems: PopupMenuItem[] = [
       {
         id: "2-a",
         title: "menu-item",
-        icon: "book",
+        icon: "book"
       },
       {
         id: "2-b",
         title: "menu-item",
-        icon: "book",
-      },
-    ],
+        icon: "book"
+      }
+    ]
   },
   {
     id: "menu-3",
     title: "Camera",
-    icon: "camera",
+    icon: "camera"
   },
   {
     id: "menu-4",
     title: "Video",
-    icon: "videoFilled",
-  },
+    icon: "videoFilled"
+  }
 ];
 
 const multlevelItems: PopupMenuItem[] = [
@@ -72,17 +72,17 @@ const multlevelItems: PopupMenuItem[] = [
     subItem: [
       {
         id: "1-a",
-        title: "sub menu-item",
+        title: "sub menu-item"
       },
       {
         id: "1-c",
-        title: "sub menu-item",
-      },
-    ],
+        title: "sub menu-item"
+      }
+    ]
   },
   {
     id: "item-2",
-    title: "Second Item",
+    title: "Second Item"
   },
   {
     id: "item-3",
@@ -90,14 +90,14 @@ const multlevelItems: PopupMenuItem[] = [
     subItem: [
       {
         id: "3-a",
-        title: "Third sub menu-item",
+        title: "Third sub menu-item"
       },
       {
         id: "3-b",
-        title: "Third sub menu-item",
-      },
-    ],
-  },
+        title: "Third sub menu-item"
+      }
+    ]
+  }
 ];
 
 export const Default: Story = {
@@ -107,7 +107,7 @@ export const Default: Story = {
         <PopupMenu label="Dropdown Menu" menu={defaultItems} />
       </div>
     </BrowserRouter>
-  ),
+  )
 };
 
 export const CustomLabel: Story = {
@@ -120,24 +120,31 @@ export const CustomLabel: Story = {
         />
       </div>
     </BrowserRouter>
-  ),
+  )
 };
 
 export const MultilevelMenu: Story = {
   render: () => (
     <div style={{ margin: "5px", height: "120px" }}>
-      <PopupMenu label="Multilevel Menu" icon="data" menu={multlevelItems} width={200} />
+      <PopupMenu
+        label="Multilevel Menu"
+        icon="data"
+        menu={multlevelItems}
+        width={200}
+      />
     </div>
-  ),
+  )
 };
 
 export const IconsMenu: Story = {
   render: () => (
     <div style={{ margin: "5px", height: "120px" }}>
       <PopupMenu
-        label={<Button appearance="primary" iconButton={true} icon="settingFilled" />}
+        label={
+          <Button appearance="primary" iconButton={true} icon="settingFilled" />
+        }
         menu={menuItems}
       />
     </div>
-  ),
+  )
 };

@@ -8,7 +8,7 @@ export declare type Camera = {
   readonly viewport: GeoRect | undefined;
   readonly flyTo: (
     destination: LayerId | CameraPosition,
-    options?: CameraMoveOptions & { fov?: number },
+    options?: CameraMoveOptions & { fov?: number }
   ) => void;
   readonly flyToBoundingBox: (
     boundingBox: GeoRect,
@@ -16,15 +16,18 @@ export declare type Camera = {
       heading?: number;
       pitch?: number;
       range?: number;
-    },
+    }
   ) => void;
   readonly zoomIn: (amount: number, options?: CameraMoveOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraMoveOptions) => void;
   readonly lookAt: (
     destination: LookAtDestination,
-    options?: CameraMoveOptions & { fov?: number },
+    options?: CameraMoveOptions & { fov?: number }
   ) => void;
-  readonly getGlobeIntersection: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+  readonly getGlobeIntersection: (options: {
+    withTerrain?: boolean;
+    calcViewSize?: boolean;
+  }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;
@@ -35,11 +38,11 @@ export declare type Camera = {
   readonly orbit: (radian: number) => void;
   readonly enableScreenSpaceCameraController: (enabled?: boolean) => void;
   readonly overrideScreenSpaceCameraController: (
-    options?: ScreenSpaceCameraControllerOptions,
+    options?: ScreenSpaceCameraControllerOptions
   ) => void;
   readonly move: (
     direction: "forward" | "backward" | "up" | "down" | "left" | "right",
-    amount: number,
+    amount: number
   ) => void;
   readonly moveOverTerrain: (offset?: number) => void;
   readonly setView: (view: CameraPosition & { fov?: number }) => void;
@@ -106,10 +109,10 @@ export declare type CameraEvents = {
   readonly on: <T extends keyof CameraEventType>(
     type: T,
     callback: (...args: CameraEventType[T]) => void,
-    options?: { once?: boolean },
+    options?: { once?: boolean }
   ) => void;
   readonly off: <T extends keyof CameraEventType>(
     type: T,
-    callback: (...args: CameraEventType[T]) => void,
+    callback: (...args: CameraEventType[T]) => void
   ) => void;
 };

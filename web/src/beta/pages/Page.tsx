@@ -1,9 +1,12 @@
+import {
+  useMeFetcher,
+  useProjectFetcher,
+  useSceneFetcher
+} from "@reearth/services/api";
+import { AuthenticatedPage } from "@reearth/services/auth";
 import React, { ReactNode, useMemo } from "react";
 
-import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
-import { AuthenticatedPage } from "@reearth/services/auth";
-
-import Loading from "../components/Loading";
+import { Loading } from "../lib/reearth-ui";
 
 type RenderItemProps = {
   sceneId?: string;
@@ -18,7 +21,12 @@ type Props = {
   renderItem: (props: RenderItemProps) => ReactNode;
 };
 
-const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => {
+const PageWrapper: React.FC<Props> = ({
+  sceneId,
+  projectId,
+  workspaceId,
+  renderItem
+}) => {
   const { useMeQuery } = useMeFetcher();
   const { useProjectQuery } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
@@ -29,19 +37,19 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
 
   const currentProjectId = useMemo(
     () => projectId ?? scene?.projectId,
-    [projectId, scene?.projectId],
+    [projectId, scene?.projectId]
   );
 
   const currentWorkspaceId = useMemo(
     () => workspaceId ?? scene?.workspaceId,
-    [workspaceId, scene?.workspaceId],
+    [workspaceId, scene?.workspaceId]
   );
 
   const { loading: loadingProject } = useProjectQuery(currentProjectId);
 
   const loading = useMemo(
     () => loadingMe ?? loadingScene ?? loadingProject,
-    [loadingMe, loadingScene, loadingProject],
+    [loadingMe, loadingScene, loadingProject]
   );
 
   return loading ? (
@@ -51,13 +59,18 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
       {renderItem({
         sceneId,
         projectId: currentProjectId,
-        workspaceId: currentWorkspaceId,
+        workspaceId: currentWorkspaceId
       })}
     </>
   );
 };
 
-const Page: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => (
+const Page: React.FC<Props> = ({
+  sceneId,
+  projectId,
+  workspaceId,
+  renderItem
+}) => (
   <AuthenticatedPage>
     <PageWrapper
       sceneId={sceneId}

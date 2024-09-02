@@ -15,7 +15,7 @@ export default function useHooks({
   visible,
   type,
   enabled,
-  onRender,
+  onRender
 }: {
   ref?: ForwardedRef<Ref>;
   ready?: boolean;
@@ -24,7 +24,10 @@ export default function useHooks({
   enabled?: boolean;
   onRender?: (type: string) => void;
 }) {
-  const handleRender = useCallback(() => type && onRender?.(type), [type, onRender]);
+  const handleRender = useCallback(
+    () => type && onRender?.(type),
+    [type, onRender]
+  );
 
   const {
     ref: IFrameRef,
@@ -32,26 +35,26 @@ export default function useHooks({
     html,
     options,
     handleLoad,
-    reset,
+    reset
   } = useIFrame({
     ready,
     enabled,
     visible,
-    onRender: handleRender,
+    onRender: handleRender
   });
 
   useImperativeHandle(
     ref,
     (): Ref => ({
       api,
-      reset,
-    }),
+      reset
+    })
   );
 
   return {
     ref: IFrameRef,
     html,
     options,
-    handleLoad,
+    handleLoad
   };
 }

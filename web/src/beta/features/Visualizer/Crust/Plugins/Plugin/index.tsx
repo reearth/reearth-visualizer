@@ -1,6 +1,5 @@
-import { type RefObject } from "react";
-
 import type { Layer } from "@reearth/core";
+import { type RefObject } from "react";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
@@ -11,8 +10,14 @@ import useHooks from "./hooks";
 import type { PluginModalInfo } from "./ModalContainer";
 import type { PluginPopupInfo } from "./PopupContainer";
 
-export { default as PopupContainer, type PluginPopupInfo } from "./PopupContainer";
-export { default as ModalContainer, type PluginModalInfo } from "./ModalContainer";
+export {
+  default as PopupContainer,
+  type PluginPopupInfo
+} from "./PopupContainer";
+export {
+  default as ModalContainer,
+  type PluginModalInfo
+} from "./ModalContainer";
 
 export type CommonProps = {
   pluginProperty?: any; // Taken from Visualizer
@@ -25,7 +30,10 @@ export type CommonProps = {
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
 };
 
-export type ExternalPluginProps = Pick<CommonProps, "pluginProperty" | "pluginBaseUrl">;
+export type ExternalPluginProps = Pick<
+  CommonProps,
+  "pluginProperty" | "pluginBaseUrl"
+>;
 
 export type Props = {
   mapRef?: RefObject<MapRef>;
@@ -50,12 +58,12 @@ export type Props = {
           height?: string | number;
           extended?: boolean;
         }
-      | undefined,
+      | undefined
   ) => void;
   onResize?: (
     width: string | number | undefined,
     height: string | number | undefined,
-    extended: boolean | undefined,
+    extended: boolean | undefined
   ) => void;
 } & CommonProps;
 
@@ -83,7 +91,7 @@ export default function Plugin({
   onPluginPopupShow,
   onClick,
   onRender,
-  onResize,
+  onResize
 }: Props): JSX.Element | null {
   const {
     skip,
@@ -97,7 +105,7 @@ export default function Plugin({
     onPreInit,
     onDispose,
     exposed,
-    onError,
+    onError
   } = useHooks({
     mapRef,
     pluginId,
@@ -115,7 +123,7 @@ export default function Plugin({
     onPluginModalShow,
     onPluginPopupShow,
     onRender,
-    onResize,
+    onResize
   });
 
   return !skip && (src || sourceCode) ? (

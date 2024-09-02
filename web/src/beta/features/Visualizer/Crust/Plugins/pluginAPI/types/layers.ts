@@ -8,7 +8,7 @@ import {
   LayerVisibilityEvent,
   LazyLayer,
   NaiveLayer,
-  OverriddenLayer,
+  OverriddenLayer
 } from "@reearth/core";
 
 export declare type LayerId = string;
@@ -25,23 +25,33 @@ export declare type Layers = {
       | (Partial<Layer> & {
           property?: unknown;
         })
-      | null,
+      | null
   ) => void;
   readonly overridden?: OverriddenLayer[];
   readonly find: (
-    fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
+    fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean
   ) => LazyLayer | undefined;
   readonly findAll: (
-    fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
+    fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean
   ) => LazyLayer[] | undefined;
   readonly findById: (layerId: string) => LazyLayer | undefined;
-  readonly findByIds: (...layerIds: string[]) => (LazyLayer | undefined)[] | undefined;
-  readonly findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
-  readonly findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+  readonly findByIds: (
+    ...layerIds: string[]
+  ) => (LazyLayer | undefined)[] | undefined;
+  readonly findFeatureById?: (
+    layerId: string,
+    featureId: string
+  ) => Feature | undefined;
+  readonly findFeaturesByIds?: (
+    layerId: string,
+    featureId: string[]
+  ) => Feature[] | undefined;
   readonly layersInViewport?: () => LazyLayer[] | undefined;
   readonly select?: (layerId: string | undefined) => void;
   readonly selectFeature?: (layerId?: string, featureId?: string) => void;
-  readonly selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
+  readonly selectFeatures?: (
+    layers: { layerId?: string; featureId?: string[] }[]
+  ) => void;
   readonly selected?: ComputedLayer;
   readonly selectedFeature?: ComputedFeature;
   readonly bringToFront?: (layerId: string) => void;
@@ -50,7 +60,7 @@ export declare type Layers = {
   readonly getFeaturesInScreenRect: (
     rect: [x: number, y: number, width: number, height: number],
     // TODO: Get condition as expression for plugin
-    condition?: (f: ComputedFeature) => boolean,
+    condition?: (f: ComputedFeature) => boolean
   ) => ComputedFeature[] | undefined;
   readonly on: LayersEvents["on"];
   readonly off: LayersEvents["off"];
@@ -67,10 +77,10 @@ export declare type LayersEvents = {
   readonly on: <T extends keyof LayersEventType>(
     type: T,
     callback: (...args: LayersEventType[T]) => void,
-    options?: { once?: boolean },
+    options?: { once?: boolean }
   ) => void;
   readonly off: <T extends keyof LayersEventType>(
     type: T,
-    callback: (...args: LayersEventType[T]) => void,
+    callback: (...args: LayersEventType[T]) => void
   ) => void;
 };

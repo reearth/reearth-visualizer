@@ -1,11 +1,13 @@
+import {
+  PopupMenu,
+  PopupMenuItem as PopupItems
+} from "@reearth/beta/lib/reearth-ui";
 import { Meta, StoryObj } from "@storybook/react";
-
-import { PopupMenu, PopupMenuItem as PopupItems } from "@reearth/beta/lib/reearth-ui";
 
 import { Breadcrumb, BreadcrumbProp, BreadcrumbItem } from "./";
 
 const meta: Meta<BreadcrumbProp> = {
-  component: Breadcrumb,
+  component: Breadcrumb
 };
 
 export default meta;
@@ -14,14 +16,14 @@ type Story = StoryObj<BreadcrumbProp>;
 
 const defaultItems: BreadcrumbItem[] = [
   {
-    title: "First",
+    title: "First"
   },
   {
-    title: "Second",
+    title: "Second"
   },
   {
-    title: "Third",
-  },
+    title: "Third"
+  }
 ];
 
 const multiLevelItems: BreadcrumbItem[] = [
@@ -35,27 +37,27 @@ const multiLevelItems: BreadcrumbItem[] = [
         subItem: [
           {
             id: "sub-one",
-            title: "Item one",
+            title: "Item one"
           },
           {
             id: "sub-two",
-            title: "Item two",
-          },
-        ],
+            title: "Item two"
+          }
+        ]
       },
       {
         id: "two",
-        title: "Sub Item two",
+        title: "Sub Item two"
       },
       {
         id: "three",
-        title: "Sub Item three",
-      },
-    ],
+        title: "Sub Item three"
+      }
+    ]
   },
   {
-    title: "Second Item",
-  },
+    title: "Second Item"
+  }
 ];
 
 const itemMenu: BreadcrumbItem[] = [
@@ -64,31 +66,35 @@ const itemMenu: BreadcrumbItem[] = [
     subItem: [
       {
         id: "one-1",
-        title: "Sub Menu 1",
+        title: "Sub Menu 1"
       },
       {
         id: "two-2",
-        title: "Sub Menu 2",
-      },
-    ],
+        title: "Sub Menu 2"
+      }
+    ]
   },
   {
-    title: "Second Item",
+    title: "Second Item"
   },
   {
-    title: "Third Item",
-  },
+    title: "Third Item"
+  }
 ];
 
 const renderPopupMenu = (items: BreadcrumbItem[], level: number) => {
-  return items.map(item => {
+  return items.map((item) => {
     if (item.subItem) {
       return {
         ...item,
         title: (
-          <PopupMenu label={item.title} menu={item.subItem as PopupItems[]} nested={level > 0} />
+          <PopupMenu
+            label={item.title}
+            menu={item.subItem as PopupItems[]}
+            nested={level > 0}
+          />
         ),
-        subItem: undefined,
+        subItem: undefined
       };
     }
     return item;
@@ -100,7 +106,7 @@ export const Default: Story = {
     <div style={{ margin: "5px", height: "10vh" }}>
       <Breadcrumb items={defaultItems} />
     </div>
-  ),
+  )
 };
 
 export const DropdownMenu: Story = {
@@ -108,7 +114,7 @@ export const DropdownMenu: Story = {
     <div style={{ margin: "5px", height: "10vh" }}>
       <Breadcrumb items={renderPopupMenu(itemMenu, 0)} />
     </div>
-  ),
+  )
 };
 
 export const MultiLevelMenu: Story = {
@@ -116,5 +122,5 @@ export const MultiLevelMenu: Story = {
     <div style={{ margin: "5px", height: "10vh" }}>
       <Breadcrumb items={renderPopupMenu(multiLevelItems, 0)} />
     </div>
-  ),
+  )
 };

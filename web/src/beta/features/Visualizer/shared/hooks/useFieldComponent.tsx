@@ -1,5 +1,3 @@
-import { useCallback, useMemo } from "react";
-
 import {
   AssetField,
   CameraField,
@@ -12,16 +10,17 @@ import {
   SwitchField,
   TimePeriodField,
   TimePointField,
-  TwinInputField,
+  TwinInputField
 } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useMemo } from "react";
 
 export const FieldComponent = ({
   propertyId,
   groupId,
   fieldId,
   field,
-  onPropertyUpdate,
+  onPropertyUpdate
 }: {
   propertyId: string;
   groupId: string;
@@ -33,29 +32,45 @@ export const FieldComponent = ({
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 }) => {
   const t = useT();
   const handlePropertyValueUpdate = useCallback(
-    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: any,
+      itemId?: string
+    ) => {
       return async (v?: any) => {
-        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+        await onPropertyUpdate?.(
+          propertyId,
+          schemaGroupId,
+          fieldId,
+          itemId,
+          vt,
+          v
+        );
       };
     },
-    [onPropertyUpdate],
+    [onPropertyUpdate]
   );
 
   const assetsTypes = useMemo(
@@ -63,9 +78,9 @@ export const FieldComponent = ({
       field.ui === "image"
         ? ["image" as const]
         : field.ui === "file"
-        ? ["file" as const]
-        : undefined,
-    [field.ui],
+          ? ["file" as const]
+          : undefined,
+    [field.ui]
   );
 
   return field?.type === "spacing" ? (
@@ -76,7 +91,12 @@ export const FieldComponent = ({
       description={field?.description}
       min={field?.min}
       max={field?.max}
-      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onBlur={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "bool" ? (
     <SwitchField
@@ -84,7 +104,12 @@ export const FieldComponent = ({
       commonTitle={field?.title}
       value={!!field?.value}
       description={field?.description}
-      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onChange={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "latlng" ? (
     <TwinInputField
@@ -92,7 +117,12 @@ export const FieldComponent = ({
       commonTitle={field?.title}
       values={[field?.value?.lat, field?.value?.lng]}
       description={field?.description}
-      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onBlur={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "camera" ? (
     <CameraField
@@ -100,7 +130,12 @@ export const FieldComponent = ({
       commonTitle={field?.commonTitle}
       value={field?.value}
       description={field?.description}
-      onSave={handlePropertyValueUpdate(propertyId, groupId, fieldId, field?.type)}
+      onSave={handlePropertyValueUpdate(
+        propertyId,
+        groupId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "number" ? (
     <NumberField
@@ -109,17 +144,29 @@ export const FieldComponent = ({
       description={field?.description}
       min={field?.min}
       max={field?.max}
-      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onBlur={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "url" ? (
     <AssetField
       key={field.id}
       commonTitle={field.name}
       assetsTypes={assetsTypes}
-      inputMethod={field.ui === "video" || field.ui === undefined ? "URL" : "asset"}
+      inputMethod={
+        field.ui === "video" || field.ui === undefined ? "URL" : "asset"
+      }
       value={field.value}
       description={field.description}
-      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onChange={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "string" ? (
     field?.ui === "datetime" ? (
@@ -128,7 +175,12 @@ export const FieldComponent = ({
         commonTitle={field?.title}
         description={field?.description}
         value={field?.value}
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+        onChange={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
       />
     ) : field?.ui === "color" ? (
       <ColorField
@@ -136,7 +188,12 @@ export const FieldComponent = ({
         commonTitle={field?.title}
         description={field?.description}
         value={field?.value}
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+        onChange={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
       />
     ) : field?.ui === "selection" || field?.choices ? (
       <SelectField
@@ -145,12 +202,19 @@ export const FieldComponent = ({
         value={field?.value}
         description={field.description}
         options={
-          field?.choices.map(({ key, title }: { key: string; title: string }) => ({
-            value: key,
-            label: title,
-          })) || []
+          field?.choices.map(
+            ({ key, title }: { key: string; title: string }) => ({
+              value: key,
+              label: title
+            })
+          ) || []
         }
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+        onChange={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
       />
     ) : (
       <InputField
@@ -158,7 +222,12 @@ export const FieldComponent = ({
         commonTitle={field?.title}
         value={field?.value}
         description={field?.description}
-        onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+        onBlur={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
       />
     )
   ) : field?.type === "timeline" ? (
@@ -167,7 +236,12 @@ export const FieldComponent = ({
       commonTitle={field?.title}
       value={field?.value}
       description={field?.description}
-      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onChange={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : field?.type === "array" && field?.ui === "range" ? (
     <RangeField
@@ -179,7 +253,12 @@ export const FieldComponent = ({
       max={field.max}
       content={["min", "max"]}
       description={field.description}
-      onBlur={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      onBlur={handlePropertyValueUpdate(
+        groupId,
+        propertyId,
+        fieldId,
+        field?.type
+      )}
     />
   ) : (
     <div>{t("Unsupported field type")}</div>

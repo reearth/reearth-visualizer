@@ -9,8 +9,7 @@ export const config = {
   authUrl: process.env["REEARTH_WEB_AUTH0_DOMAIN"],
   signUpSecret: process.env["REEARTH_WEB_E2E_SIGNUP_SECRET"],
   authProvider: process.env["REEARTH_WEB_AUTH_PROVIDER"],
-  developerMode: process.env["REEARTH_WEB_DEVELOPER_MODE"],
-  earlyAccessAdmins: process.env["REEARTH_WEB_EARLY_ACCESS_ADMINS"],
+  earlyAccessAdmins: process.env["REEARTH_WEB_EARLY_ACCESS_ADMINS"]
 };
 
 export type Config = typeof config;

@@ -36,7 +36,7 @@ export default function ({
   onSketchTypeChange,
   onLayerVisibility,
   onLayerLoad,
-  onCameraForceHorizontalRollChange,
+  onCameraForceHorizontalRollChange
 }: Props) {
   const {
     getViewerProperty,
@@ -58,7 +58,7 @@ export default function ({
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,
-    selectionModeEvents,
+    selectionModeEvents
   } = useViewer({
     viewerProperty,
     overrideViewerProperty,
@@ -70,7 +70,7 @@ export default function ({
     built,
     onLayerSelectWithRectStart,
     onLayerSelectWithRectMove,
-    onLayerSelectWithRectEnd,
+    onLayerSelectWithRectEnd
   });
 
   const {
@@ -95,10 +95,10 @@ export default function ({
     enableForceHorizontalRoll,
     cameraEventsOn,
     cameraEventsOff,
-    cameraEvents,
+    cameraEvents
   } = useCamera({
     mapRef,
-    onCameraForceHorizontalRollChange,
+    onCameraForceHorizontalRollChange
   });
 
   const { getTimeline, timelineEvents } = useTimeline({ timelineManagerRef });
@@ -121,14 +121,14 @@ export default function ({
     sendToBack,
     layersEventsOn,
     layersEventsOff,
-    layersEvents,
+    layersEvents
   } = useLayers({
     mapRef,
     selectedLayer,
     selectedFeature,
     onLayerEdit,
     onLayerVisibility,
-    onLayerLoad,
+    onLayerLoad
   });
 
   const {
@@ -138,25 +138,26 @@ export default function ({
     overrideSketchOptions,
     sketchEventsOn,
     sketchEventsOff,
-    sketchEvents,
+    sketchEvents
   } = useSketch({
     mapRef,
     onSketchPluginFeatureCreate,
-    onSketchTypeChange,
+    onSketchTypeChange
   });
 
   const { pluginInstances, getExtensionList } = useExtension({
     alignSystem,
     floatingWidgets,
     selectedLayer,
-    selectedStory,
+    selectedStory
   });
 
   const { clientStorage } = useData();
 
-  const { deprecated, cameraDeprecated, layersDeprecated, sketchDeprecated } = useDeprecated({
-    built,
-  });
+  const { deprecated, cameraDeprecated, layersDeprecated, sketchDeprecated } =
+    useDeprecated({
+      built
+    });
 
   const value = useMemo<Context>(
     () => ({
@@ -241,7 +242,7 @@ export default function ({
         deprecated,
         cameraDeprecated,
         layersDeprecated,
-        sketchDeprecated,
+        sketchDeprecated
       }),
       overrideViewerProperty,
       pluginInstances,
@@ -252,7 +253,7 @@ export default function ({
       cameraEvents,
       timelineEvents,
       layersEvents,
-      sketchEvents,
+      sketchEvents
     }),
     [
       engineName,
@@ -346,8 +347,8 @@ export default function ({
       cameraEvents,
       timelineEvents,
       layersEvents,
-      sketchEvents,
-    ],
+      sketchEvents
+    ]
   );
 
   // expose plugin API for developers

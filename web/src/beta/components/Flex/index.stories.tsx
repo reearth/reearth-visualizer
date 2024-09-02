@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 export default {
-  component: Component,
+  component: Component
 } as Meta;
 
 const ExampleDiv = () => (
@@ -13,31 +13,31 @@ const ExampleDiv = () => (
   </>
 );
 
-export const SpaceBetween: Story<Props> = args => (
+export const SpaceBetween: Story<Props> = (args) => (
   <Component {...args}>
     <ExampleDiv />
   </Component>
 );
-export const GapChildren: Story<Props> = args => (
+export const GapChildren: Story<Props> = (args) => (
   <Component {...args}>
     <div>hoge</div>
     <div>fuga</div>
   </Component>
 );
-export const DirectionVertical: Story<Props> = args => (
+export const DirectionVertical: Story<Props> = (args) => (
   <Component {...args}>
     <ExampleDiv />
   </Component>
 );
 
 SpaceBetween.args = {
-  justify: "space-between",
+  justify: "space-between"
 };
 
 GapChildren.args = {
-  gap: "20px",
+  gap: "20px"
 };
 
 DirectionVertical.args = {
-  direction: "column",
+  direction: "column"
 };

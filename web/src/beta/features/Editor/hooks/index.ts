@@ -31,7 +31,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     visualizerSize,
     handleVisualizerResize,
     isVisualizerResizing,
-    handleFlyTo,
+    handleFlyTo
   } = useEditorVisualizer();
 
   const {
@@ -49,11 +49,11 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerConfigUpdate,
     handleLayerMove,
     handleCustomPropertySchemaClick,
-    handleCustomPropertySchemaUpdate,
+    handleCustomPropertySchemaUpdate
   } = useLayers({
     sceneId,
     isVisualizerReady,
-    visualizerRef,
+    visualizerRef
   });
 
   const {
@@ -61,16 +61,22 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleSketchFeatureCreate,
     sketchType,
     handleGeoJsonFeatureUpdate,
+    handleGeoJsonFeatureDelete
   } = useSketch({
     tab,
     nlsLayers,
     selectedLayer: selectedLayer?.layer,
     ignoreCoreLayerUnselect,
-    visualizerRef,
+    visualizerRef
   });
 
-  const { handleSceneSettingSelect, scene, selectedSceneSetting, sceneSettings } = useScene({
-    sceneId,
+  const {
+    handleSceneSettingSelect,
+    scene,
+    selectedSceneSetting,
+    sceneSettings
+  } = useScene({
+    sceneId
   });
 
   const {
@@ -80,7 +86,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerStyleAdd,
     handleLayerStyleDelete,
     handleLayerStyleNameUpdate,
-    handleLayerStyleValueUpdate,
+    handleLayerStyleValueUpdate
   } = useLayerStyles({ sceneId });
 
   const {
@@ -99,12 +105,12 @@ export default ({ sceneId, projectId, tab }: Props) => {
     openCustomPropertySchema,
     closeCustomPropertySchema,
     selectedDevice,
-    handleDeviceChange,
+    handleDeviceChange
   } = useUI({
     tab,
     handleLayerSelect,
     handleCoreLayerSelect,
-    handleSceneSettingSelect,
+    handleSceneSettingSelect
   });
 
   const {
@@ -119,9 +125,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleStoryPageMove,
     handleStoryPageUpdate,
     handleStoryBlockMove,
-    selectStoryPage,
+    selectStoryPage
   } = useStorytelling({
-    sceneId,
+    sceneId
   });
 
   const {
@@ -130,7 +136,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     selectedWidgetArea,
     selectWidgetArea,
     selectedWidget,
-    selectWidget,
+    selectWidget
   } = useWidgets({ tab });
 
   const { handlePropertyValueUpdate } = useProperty();
@@ -164,13 +170,14 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
+      handleGeoJsonFeatureDelete,
       handleLayerStyleAdd,
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
       handleLayerStyleSelect,
       layerId,
       handleCustomPropertySchemaClick,
-      handleCustomPropertySchemaUpdate,
+      handleCustomPropertySchemaUpdate
     }),
     [
       handleVisualizerResize,
@@ -198,14 +205,15 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
+      handleGeoJsonFeatureDelete,
       handleLayerStyleAdd,
       handleLayerStyleDelete,
       handleLayerStyleNameUpdate,
       handleLayerStyleSelect,
       layerId,
       handleCustomPropertySchemaClick,
-      handleCustomPropertySchemaUpdate,
-    ],
+      handleCustomPropertySchemaUpdate
+    ]
   );
 
   const storyPageValue: StoryPageContextType = useMemo(
@@ -222,7 +230,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       layers: nlsLayers,
       tab,
       handleFlyTo,
-      handleStoryPageUpdate,
+      handleStoryPageUpdate
     }),
     [
       handleVisualizerResize,
@@ -237,8 +245,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
       nlsLayers,
       tab,
       handleFlyTo,
-      handleStoryPageUpdate,
-    ],
+      handleStoryPageUpdate
+    ]
   );
 
   const widgetsPageValue: WidgetsPageContextType = useMemo(
@@ -253,7 +261,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       selectedWidget,
       selectWidget,
       selectedWidgetArea,
-      handleFlyTo,
+      handleFlyTo
     }),
     [
       handleVisualizerResize,
@@ -266,8 +274,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
       selectedWidget,
       selectWidget,
       selectedWidgetArea,
-      handleFlyTo,
-    ],
+      handleFlyTo
+    ]
   );
 
   const publishPageValue: PublishPageContextType = useMemo(
@@ -277,7 +285,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       storyId: currentProjectType === "story" ? selectedStory?.id : undefined,
       sceneId,
       selectedProjectType: currentProjectType,
-      handleProjectTypeChange,
+      handleProjectTypeChange
     }),
     [
       handleVisualizerResize,
@@ -285,8 +293,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
       currentProjectType,
       selectedStory?.id,
       projectId,
-      handleProjectTypeChange,
-    ],
+      handleProjectTypeChange
+    ]
   );
 
   return {
@@ -321,6 +329,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
     layerStyles,
     layers: nlsLayers,
     layerId,
-    handleCustomPropertySchemaUpdate,
+    handleCustomPropertySchemaUpdate
   };
 };

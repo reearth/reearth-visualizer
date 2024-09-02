@@ -1,6 +1,13 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent, ReactNode, KeyboardEvent } from "react";
-
 import { fonts, styled } from "@reearth/services/theme";
+import {
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  ChangeEvent,
+  ReactNode,
+  KeyboardEvent
+} from "react";
 
 export type TextInputProps = {
   value?: string;
@@ -31,7 +38,7 @@ export const TextInput: FC<TextInputProps> = ({
   autoFocus,
   onChange,
   onBlur,
-  onKeyDown,
+  onKeyDown
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -46,7 +53,7 @@ export const TextInput: FC<TextInputProps> = ({
       setCurrentValue(newValue ?? "");
       onChange?.(newValue);
     },
-    [onChange],
+    [onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -63,7 +70,8 @@ export const TextInput: FC<TextInputProps> = ({
       size={size}
       appearance={appearance}
       extendWidth={extendWidth}
-      status={isFocused || autoFocus ? "active" : "default"}>
+      status={isFocused || autoFocus ? "active" : "default"}
+    >
       {leftAction && (
         <ActionsWrapper>
           {leftAction.map((Action, i) => (
@@ -100,8 +108,8 @@ const Wrapper = styled("div")<{
         ? `1px solid transparent`
         : `1px solid ${theme.select.main}`
       : status === "active"
-      ? `1px solid ${theme.select.main}`
-      : `1px solid ${theme.outline.weak}`;
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.outline.weak}`;
 
   return {
     border: borderStyle,
@@ -116,7 +124,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
-    width: !extendWidth ? "" : "100%",
+    width: !extendWidth ? "" : "100%"
   };
 });
 
@@ -141,13 +149,13 @@ const StyledInput = styled("input")<{
   width: "100%",
   overflow: "hidden",
   "::placeholder": {
-    color: theme.content.weak,
-  },
+    color: theme.content.weak
+  }
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
-  flexShrink: 0,
+  flexShrink: 0
 }));

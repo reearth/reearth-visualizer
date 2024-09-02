@@ -1,7 +1,6 @@
-import { FC, useCallback, useState } from "react";
-
 import { Button, Icon, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { PropertyListItem } from ".";
 
@@ -13,7 +12,13 @@ type Props = {
   onItemRemove: () => void;
 };
 
-const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, onItemRemove }) => {
+const EditorItem: FC<Props> = ({
+  item,
+  handleClassName,
+  onKeyBlur,
+  onValueBlur,
+  onItemRemove
+}) => {
   const [currentKeyValue, setCurrentKeyValue] = useState<string>(item.key);
   const [currentValue, setCurrentValue] = useState<string>(item.value);
 
@@ -25,7 +30,7 @@ const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, 
     (newValue: string) => {
       onKeyBlur(newValue);
     },
-    [onKeyBlur],
+    [onKeyBlur]
   );
 
   const handleValueChange = useCallback((newValue: string) => {
@@ -36,7 +41,7 @@ const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, 
     (newValue: string) => {
       onValueBlur(newValue);
     },
-    [onValueBlur],
+    [onValueBlur]
   );
 
   return (
@@ -54,7 +59,13 @@ const EditorItem: FC<Props> = ({ item, handleClassName, onKeyBlur, onValueBlur, 
         onChange={handleValueChange}
         onBlur={handleValueBlur}
       />
-      <Button icon="trash" iconButton appearance="simple" size="small" onClick={onItemRemove} />
+      <Button
+        icon="trash"
+        iconButton
+        appearance="simple"
+        size="small"
+        onClick={onItemRemove}
+      />
     </Field>
   );
 };
@@ -70,13 +81,13 @@ const Field = styled("div")(({ theme }) => ({
   color: theme.content.main,
   gap: theme.spacing.micro,
   padding: theme.spacing.micro,
-  borderRadius: theme.radius.smallest,
+  borderRadius: theme.radius.smallest
 }));
 
 const HandleIcon = styled(Icon)(({ theme }) => ({
   color: theme.content.weak,
   cursor: "move",
   "&:hover": {
-    color: theme.content.main,
-  },
+    color: theme.content.main
+  }
 }));

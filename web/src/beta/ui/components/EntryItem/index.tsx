@@ -1,7 +1,19 @@
-import { FC, MouseEvent, ReactNode, useCallback, useEffect, useState } from "react";
-
-import { Icon, IconButton, IconName, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import {
+  Icon,
+  IconButton,
+  IconName,
+  PopupMenu,
+  PopupMenuItem
+} from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import {
+  FC,
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 
 export interface EntryItemAction {
   comp: ReactNode;
@@ -28,7 +40,7 @@ export const EntryItem: FC<EntryItemProps> = ({
   optionsMenu,
   optionsMenuWidth,
   actions,
-  onClick,
+  onClick
 }) => {
   const [hovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => {
@@ -59,8 +71,12 @@ export const EntryItem: FC<EntryItemProps> = ({
       onClick={onClick}
       hovered={hovered}
       highlight={highlighted}
-      smallPaddingRight={!!optionsMenu}>
-      <MainContent className={dragHandleClassName} asDragHandle={!!dragHandleClassName}>
+      smallPaddingRight={!!optionsMenu}
+    >
+      <MainContent
+        className={dragHandleClassName}
+        asDragHandle={!!dragHandleClassName}
+      >
         {icon && (
           <IconWrapper>
             <Icon icon={icon} size="small" />
@@ -69,11 +85,19 @@ export const EntryItem: FC<EntryItemProps> = ({
         {typeof title === "string" ? <Title>{title}</Title> : title}
       </MainContent>
       <Actions>
-        {actions?.map(a => (highlighted || hovered || a.keepVisible) && a.comp)}
+        {actions?.map(
+          (a) => (highlighted || hovered || a.keepVisible) && a.comp
+        )}
         {!!optionsMenu && (
           <OptionsWrapper onClick={handleOptionsClick}>
             <PopupMenu
-              label={<IconButton icon="dotsThreeVertical" size="small" appearance="simple" />}
+              label={
+                <IconButton
+                  icon="dotsThreeVertical"
+                  size="small"
+                  appearance="simple"
+                />
+              }
               placement="bottom-start"
               menu={optionsMenu}
               width={optionsMenuWidth}
@@ -101,34 +125,37 @@ const Wrapper = styled("div")<{
   borderRadius: theme.radius.small,
   backgroundColor: "transparent",
   minHeight: 28,
-  width: "100%",
+  flex: 1,
+  minWidth: 0,
   cursor: "pointer",
   ...(hovered && {
-    backgroundColor: theme.bg[1],
+    backgroundColor: theme.bg[1]
   }),
   ...(highlight && {
-    backgroundColor: theme.select.main,
+    backgroundColor: theme.select.main
   }),
   ["&:active"]: {
     backgroundColor: highlight
       ? theme.select.strong
       : hovered
-      ? theme.relative.light
-      : "transparent",
-  },
+        ? theme.relative.light
+        : "transparent"
+  }
 }));
 
-const MainContent = styled("div")<{ asDragHandle?: boolean }>(({ theme, asDragHandle }) => ({
-  flex: 1,
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.smallest,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  ...(asDragHandle && {
-    cursor: "pointer",
-  }),
-}));
+const MainContent = styled("div")<{ asDragHandle?: boolean }>(
+  ({ theme, asDragHandle }) => ({
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.smallest,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    ...(asDragHandle && {
+      cursor: "pointer"
+    })
+  })
+);
 
 const Title = styled("div")(({ theme }) => ({
   width: "100%",
@@ -137,22 +164,22 @@ const Title = styled("div")(({ theme }) => ({
   whiteSpace: "nowrap",
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 const Actions = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const OptionsWrapper = styled("div")(() => ({
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const IconWrapper = styled("div")(({ theme }) => ({
   height: 12,
   flexShrink: 0,
   fontSize: 0,
-  color: theme.content.main,
+  color: theme.content.main
 }));

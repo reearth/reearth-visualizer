@@ -1,8 +1,7 @@
-import { FC } from "react";
-
 import { Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
@@ -25,35 +24,47 @@ export type DataSourceOptType = {
   value: SourceType;
 }[];
 
-const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
+const DataSourceLayerCreator: FC<DataProps> = ({
+  sceneId,
+  onClose,
+  onSubmit
+}) => {
   const t = useT();
 
   const tabsItem: TabItem[] = [
     {
       id: "asset",
       name: t("Common"),
-      children: <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: (
+        <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+      )
     },
     {
       id: "csv",
       name: t("CSV"),
-      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     },
     {
       id: "wms",
       name: t("WMS"),
-      children: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: (
+        <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+      )
     },
     {
       id: "vectorTiles",
       name: t("Vector Tile"),
-      children: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+      children: (
+        <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+      )
     },
     {
       id: "threeDTiles",
       name: t("3D Tiles"),
-      children: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-    },
+      children: (
+        <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+      )
+    }
   ];
 
   return (
@@ -67,7 +78,7 @@ const DataSourceLayerCreator: FC<DataProps> = ({ sceneId, onClose, onSubmit }) =
   );
 };
 const Wrapper = styled("div")(() => ({
-  height: "440px",
+  height: "440px"
 }));
 
 export default DataSourceLayerCreator;

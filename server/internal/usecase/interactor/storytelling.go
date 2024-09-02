@@ -464,6 +464,28 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		return nil, nil, err
 	}
 
+	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		var pageCount = len(story.Pages().Pages())
+		if err := p.EnforcePageCount(pageCount + 1); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	story.Pages().AddAt(page, inp.Index)
 
 	if err = i.propertyRepo.Save(ctx, prop); err != nil {
@@ -787,6 +809,38 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, nil, -1, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, nil, -1, err
+		}
+
+		story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+		if err != nil {
+			return nil, nil, nil, -1, err
+		}
+
+		page := story.Pages().Page(inp.PageID)
+		if page == nil {
+			return nil, nil, nil, -1, interfaces.ErrPageNotFound
+		}
+
+		var s = page.Count()
+		if err := p.EnforceBlocksCount(s + 1); err != nil {
+			return nil, nil, nil, -1, err
+		}
 	}
 
 	_, extension, err := i.getPlugin(ctx, &inp.PluginID, &inp.ExtensionID)

@@ -11,10 +11,13 @@ export * from "./drop";
 export const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => (
   <DndProvider
     backend={HTML5Backend}
-    options={{ enableMouseEvents: true, enableTouchEvents: true }}>
+    options={{ enableMouseEvents: true, enableTouchEvents: true }}
+  >
     {children}
   </DndProvider>
 );
 
 export const useDraggingItemType = () =>
-  useDragLayer(monitor => (monitor.isDragging() ? (monitor.getItemType() as ItemType) : null));
+  useDragLayer((monitor) =>
+    monitor.isDragging() ? (monitor.getItemType() as ItemType) : null
+  );

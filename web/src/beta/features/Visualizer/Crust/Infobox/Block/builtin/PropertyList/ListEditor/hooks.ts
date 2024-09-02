@@ -13,7 +13,7 @@ export default ({
   propertyId,
   propertyListField,
   displayTypeField,
-  onPropertyUpdate,
+  onPropertyUpdate
 }: {
   propertyId?: string;
   displayTypeField?: DisplayTypeField;
@@ -24,23 +24,26 @@ export default ({
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
 }) => {
   const [currentPropertyList, setCurrentPropertyList] = useState<ListItem[]>(
-    propertyListField?.value ?? [],
+    propertyListField?.value ?? []
   );
   const [isDragging, setIsDragging] = useState(false);
 
   const displayOptions = displayTypeField?.choices?.map(
     ({ key, title }: { key: string; title: string }) => ({
       value: key,
-      label: title,
-    }),
+      label: title
+    })
   );
 
   useEffect(() => {
-    if (propertyListField?.value && !isEqual(propertyListField.value, currentPropertyList)) {
+    if (
+      propertyListField?.value &&
+      !isEqual(propertyListField.value, currentPropertyList)
+    ) {
       setCurrentPropertyList(propertyListField?.value);
     }
   }, [propertyListField?.value, currentPropertyList]);
@@ -52,47 +55,52 @@ export default ({
         await onPropertyUpdate?.(propertyId, "default", fieldId, itemId, vt, v);
       };
     },
-    [propertyId, onPropertyUpdate],
+    [propertyId, onPropertyUpdate]
   );
 
   const handlePropertyValueRemove = useCallback(
     async (idx: number) => {
       if (propertyListField) {
         const newValue = propertyListField.value?.filter((_, i) => i !== idx);
-        await handlePropertyValueUpdate("propertyList", propertyListField.type)(newValue);
+        await handlePropertyValueUpdate(
+          "propertyList",
+          propertyListField.type
+        )(newValue);
       }
     },
-    [propertyListField, handlePropertyValueUpdate],
+    [propertyListField, handlePropertyValueUpdate]
   );
 
   const handlePropertyListUpdate = useCallback(
-    (newList: ListItem[]) => handlePropertyValueUpdate("propertyList", "array")(newList),
-    [handlePropertyValueUpdate],
+    (newList: ListItem[]) =>
+      handlePropertyValueUpdate("propertyList", "array")(newList),
+    [handlePropertyValueUpdate]
   );
 
   const handleKeyBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
-      const newList = currentPropertyList.map(i => ({ ...i } as ListItem));
+      const newList = currentPropertyList.map((i) => ({ ...i }) as ListItem);
       newList[idx].key = newKeyValue ?? "";
       setCurrentPropertyList(newList);
       handlePropertyListUpdate(newList);
     },
-    [currentPropertyList, handlePropertyListUpdate],
+    [currentPropertyList, handlePropertyListUpdate]
   );
 
   const handleValueBlur = useCallback(
     (idx: number) => (newValue?: string) => {
-      const newList = currentPropertyList.map(i => ({ ...i } as ListItem));
+      const newList = currentPropertyList.map((i) => ({ ...i }) as ListItem);
       newList[idx].value = newValue ?? "";
       setCurrentPropertyList(newList);
       handlePropertyListUpdate(newList);
     },
-    [currentPropertyList, handlePropertyListUpdate],
+    [currentPropertyList, handlePropertyListUpdate]
   );
 
   const handleDisplayTypeUpdate = useCallback(
-    (value?: string | string[]) => handlePropertyValueUpdate("displayType", "string")(value),
-    [handlePropertyValueUpdate],
+    (value?: string | string[]) =>
+      handlePropertyValueUpdate("displayType", "string")(value),
+    [handlePropertyValueUpdate]
   );
 
   const handleItemAdd = useCallback(() => {
@@ -102,8 +110,8 @@ export default ({
       {
         id: generateUniqueId(),
         key: `Field ${(currentPropertyList ?? []).length + 1 || 1}`,
-        value: `Value ${(currentPropertyList ?? []).length + 1 || 1}`,
-      },
+        value: `Value ${(currentPropertyList ?? []).length + 1 || 1}`
+      }
     ];
     handlePropertyValueUpdate("propertyList", propertyListField.type)(newList);
   }, [currentPropertyList, propertyListField, handlePropertyValueUpdate]);
@@ -119,31 +127,42 @@ export default ({
         key: string;
         value: string;
       },
-      targetIndex: number,
+      targetIndex: number
     ) => {
-      const itemIndex = currentPropertyList.findIndex(li => li.id === item.id);
+      const itemIndex = currentPropertyList.findIndex(
+        (li) => li.id === item.id
+      );
       if (itemIndex === -1) return;
 
       const newList = [...currentPropertyList];
       newList.splice(itemIndex, 1);
       newList.splice(targetIndex, 0, item);
       setCurrentPropertyList(newList);
-      await onPropertyUpdate?.(propertyId, "default", "propertyList", undefined, "array", newList);
+      await onPropertyUpdate?.(
+        propertyId,
+        "default",
+        "propertyList",
+        undefined,
+        "array",
+        newList
+      );
     },
-    [currentPropertyList, onPropertyUpdate, propertyId],
+    [currentPropertyList, onPropertyUpdate, propertyId]
   );
 
   const handleMoveEnd = useCallback(
     (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        const itemToMove = currentPropertyList?.find(item => item.id === itemId);
+        const itemToMove = currentPropertyList?.find(
+          (item) => item.id === itemId
+        );
         if (itemToMove) {
           handleItemDrop(itemToMove, newIndex);
         }
       }
       setIsDragging(false);
     },
-    [currentPropertyList, handleItemDrop],
+    [currentPropertyList, handleItemDrop]
   );
 
   return {
@@ -156,10 +175,13 @@ export default ({
     handleItemAdd,
     handlePropertyValueRemove,
     handleMoveStart,
-    handleMoveEnd,
+    handleMoveEnd
   };
 };
 
 function generateUniqueId() {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }

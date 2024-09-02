@@ -6,12 +6,12 @@ import Component, { Props, Ref } from ".";
 
 export default {
   component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-export const Default: Story<Props> = args => <Component {...args} />;
+export const Default: Story<Props> = (args) => <Component {...args} />;
 
-let cb: (message: any) => void | undefined;
+let cb: (message: any) => void;
 
 Default.args = {
   src: `/plugins/plugin.js`,
@@ -20,32 +20,32 @@ Default.args = {
     style: {
       width: "300px",
       height: "300px",
-      backgroundColor: "#fff",
-    },
+      backgroundColor: "#fff"
+    }
   },
   exposed: ({ main: { render, postMessage } }) => ({
     console: {
-      log: action("console.log"),
+      log: action("console.log")
     },
     reearth: {
-      on(type: string, value: (message: any) => void | undefined) {
+      on(type: string, value: (message: any) => void) {
         if (type === "message") {
           cb = value;
         }
       },
       ui: {
         show: render,
-        postMessage,
-      },
-    },
+        postMessage
+      }
+    }
   }),
   onMessage: (message: any) => {
     action("onMessage")(message);
     return cb?.(message);
-  },
+  }
 };
 
-export const HiddenIFrame: Story<Props> = args => <Component {...args} />;
+export const HiddenIFrame: Story<Props> = (args) => <Component {...args} />;
 
 HiddenIFrame.args = {
   src: `/plugins/hidden.js`,
@@ -54,51 +54,53 @@ HiddenIFrame.args = {
     style: {
       width: "300px",
       height: "300px",
-      backgroundColor: "#fff",
-    },
+      backgroundColor: "#fff"
+    }
   },
   exposed: ({ main: { render, postMessage } }) => ({
     console: {
-      log: action("console.log"),
+      log: action("console.log")
     },
     reearth: {
-      on(type: string, value: (message: any) => void | undefined) {
+      on(type: string, value: (message: any) => void) {
         if (type === "message") {
           cb = value;
         }
       },
       ui: {
         show: render,
-        postMessage,
-      },
-    },
+        postMessage
+      }
+    }
   }),
   onMessage: (message: any) => {
     action("onMessage")(message);
     return cb?.(message);
-  },
+  }
 };
 
-export const SourceCode: Story<Props> = args => <Component {...args} />;
+export const SourceCode: Story<Props> = (args) => <Component {...args} />;
 
 SourceCode.args = {
   sourceCode: `console.log("Hello")`,
   exposed: {
     console: {
-      log: action("console.log"),
-    },
-  },
+      log: action("console.log")
+    }
+  }
 };
 
-export const AutoResize: Story<Props> = args => {
+export const AutoResize: Story<Props> = (args) => {
   const ref = useRef<Ref>(null);
   return (
     <Component
       {...args}
-      onMessage={msg => {
+      onMessage={(msg) => {
         ref.current
           ?.arena()
-          ?.evalCode(`"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`);
+          ?.evalCode(
+            `"onmessage" in globalThis && globalThis.onmessage(${JSON.stringify(msg)})`
+          );
       }}
       ref={ref}
     />
@@ -132,5 +134,5 @@ AutoResize.args = {
   `,
   autoResize: "both",
   uiVisible: true,
-  exposed: ({ main: { render, resize } }) => ({ render, resize }),
+  exposed: ({ main: { render, resize } }) => ({ render, resize })
 };

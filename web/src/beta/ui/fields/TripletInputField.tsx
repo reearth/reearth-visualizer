@@ -1,7 +1,10 @@
-import { FC, useCallback, useEffect, useState } from "react";
-
-import { NumberInput, NumberInputProps, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  NumberInput,
+  NumberInputProps,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
@@ -26,22 +29,26 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   ...props
 }) => {
   const [inputValues, setInputValues] = useState<commonTurple>(values);
-
   const theme = useTheme();
-
-  const handleChange = useCallback(() => {
-    const newValues = [...inputValues] as commonTurple;
-    setInputValues(newValues);
-    onChange?.(newValues);
-  }, [inputValues, onChange]);
-
-  const handleBlur = useCallback(() => {
-    onBlur?.(inputValues);
-  }, [inputValues, onBlur]);
 
   useEffect(() => {
     setInputValues(values);
   }, [values]);
+
+  const handleChange = useCallback(
+    (index: number, value?: number) => {
+      if (value === undefined || Number.isNaN(value)) return;
+      const newValues = [...inputValues] as commonTurple;
+      newValues[index] = value;
+      setInputValues(newValues);
+      onChange?.(newValues);
+    },
+    [inputValues, onChange]
+  );
+
+  const handleBlur = useCallback(() => {
+    onBlur?.(inputValues);
+  }, [inputValues, onBlur]);
 
   return (
     <CommonField commonTitle={commonTitle} description={description}>
@@ -51,7 +58,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
             <NumberInput
               value={value}
               placeholder={placeholders?.[index]}
-              onChange={handleChange}
+              onChange={(newValue) => handleChange(index, newValue)}
               onBlur={handleBlur}
               extendWidth
               {...props}
@@ -72,7 +79,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: `${theme.spacing.smallest}px`,
   alignItems: "flex-start",
-  width: "100%",
+  width: "100%"
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
@@ -80,5 +87,5 @@ const InputWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  width: "100%",
+  width: "100%"
 }));

@@ -1,8 +1,12 @@
-import { FC, MouseEvent, useMemo } from "react";
-
-import { Button, PopupMenu, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  PopupMenu,
+  TextInput,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
 import { convertTimeToString } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, MouseEvent, useMemo } from "react";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -12,17 +16,17 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate,
+  onProjectUpdate
 }) => {
   const theme = useTheme();
 
   const createAt: Date = useMemo(
     () => (project.createdAt ? new Date(project.createdAt) : new Date()),
-    [project.createdAt],
+    [project.createdAt]
   );
   const UpdatedAt: Date = useMemo(
     () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
-    [project.updatedAt],
+    [project.updatedAt]
   );
 
   const {
@@ -36,43 +40,47 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
+    handleProjectStarClick
   } = useHooks({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect,
+    onProjectSelect
   });
 
   return (
-    <StyledRow
-      onClick={e => onProjectSelect?.(e, project.id)}
+    <ListWrapper
+      onClick={(e) => onProjectSelect?.(e, project.id)}
       isHovered={isHovered ?? false}
       onDoubleClick={onProjectOpen}
       onMouseEnter={() => handleProjectHover?.(true)}
       onMouseLeave={() => handleProjectHover?.(false)}
-      isSelected={selectedProjectId === project.id}>
-      <ActionCell>
-        <FlexItem>
+      isSelected={selectedProjectId === project.id}
+    >
+      <ThumbnailCol>
+        <ActionWrapper>
           <StarButtonWrapper
             isStarred={isStarred ?? false}
             isHovered={isHovered ?? false}
-            isSelected={selectedProjectId === project.id}>
+            isSelected={selectedProjectId === project.id}
+          >
             <Button
               iconButton
               icon={isStarred ? "starFilled" : "star"}
-              onClick={e => handleProjectStarClick?.(e)}
+              onClick={(e) => handleProjectStarClick?.(e)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
             />
           </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
-        </FlexItem>
-      </ActionCell>
-      <ProjectNameCell>
+        </ActionWrapper>
+      </ThumbnailCol>
+      <ProjectNameCol>
         <PublishStatus status={publishStatus} />
         {!isEditing ? (
-          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>{projectName}</TitleWrapper>
+          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
+            {projectName}
+          </TitleWrapper>
         ) : (
           <TextInput
             onChange={handleProjectNameChange}
@@ -82,29 +90,32 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             appearance="present"
           />
         )}
-      </ProjectNameCell>
-      <TimeCell>
+      </ProjectNameCol>
+      <TimeCol>
         <Typography size="body">{convertTimeToString(UpdatedAt)}</Typography>
-      </TimeCell>
-      <TimeCell>
+      </TimeCol>
+      <TimeCol>
         <Typography size="body">{convertTimeToString(createAt)}</Typography>
-      </TimeCell>
-      <ActionCell
+      </TimeCol>
+      <ActionCol
         onClick={(e: MouseEvent) => {
           e.stopPropagation();
-        }}>
+        }}
+      >
         <PopupMenu
           menu={popupMenu}
-          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
+          label={
+            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+          }
         />
-      </ActionCell>
-    </StyledRow>
+      </ActionCol>
+    </ListWrapper>
   );
 };
 
 export default ProjectListViewItem;
 
-const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
+const ListWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
   ({ theme, isHovered }) => ({
     display: "flex",
     width: "100%",
@@ -113,44 +124,58 @@ const StyledRow = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
     border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
     padding: `${theme.spacing.small}px 0`,
     alignItems: "center",
-  }),
+    boxSizing: "border-box",
+    overflow: "hidden"
+  })
 );
 
 const ProjectImage = styled("div")<{ backgroundImage?: string | null }>(
   ({ theme, backgroundImage }) => ({
-    background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
+    background: backgroundImage
+      ? `url(${backgroundImage}) center/cover`
+      : theme.bg[1],
     borderRadius: theme.radius.normal,
     height: "32px",
-    width: "55px",
-  }),
+    width: "55px"
+  })
 );
 
-const FlexItem = styled("div")(({ theme }) => ({
+const ThumbnailCol = styled("div")(() => ({
+  width: 120,
+  flexShrink: 0
+}));
+
+const ActionWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
-const ActionCell = styled("div")(() => ({
-  flex: 0.2,
-}));
-
-const ProjectNameCell = styled("div")(({ theme }) => ({
+const ProjectNameCol = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.smallest,
   flex: 1,
+  flexShrink: 0
 }));
 
-const PublishStatus = styled("div")<{ status?: boolean }>(({ status, theme }) => ({
-  height: "12px",
-  width: "12px",
-  borderRadius: "50%",
-  background: status ? theme.publish.main : "transparent",
+const PublishStatus = styled("div")<{ status?: boolean }>(
+  ({ status, theme }) => ({
+    height: "12px",
+    width: "12px",
+    borderRadius: "50%",
+    background: status ? theme.publish.main : "transparent"
+  })
+);
+
+const TimeCol = styled("div")(() => ({
+  flex: "0 0 20%",
+  flexShrink: 0
 }));
 
-const TimeCell = styled("div")(() => ({
-  flex: 0.5,
+const ActionCol = styled("div")(() => ({
+  flex: "0 0 10%",
+  flexShrink: 0
 }));
 
 const StarButtonWrapper = styled("div")<{
@@ -158,7 +183,7 @@ const StarButtonWrapper = styled("div")<{
   isStarred: boolean;
   isHovered: boolean;
 }>(({ isSelected, isStarred, isHovered }) => ({
-  opacity: isSelected || isStarred || isHovered ? 1 : 0,
+  opacity: isSelected || isStarred || isHovered ? 1 : 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -171,5 +196,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   WebkitBoxOrient: "vertical",
   WebkitLineClamp: 1,
   overflow: "hidden",
-  textOverflow: "ellipsis",
+  textOverflow: "ellipsis"
 }));

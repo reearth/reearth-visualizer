@@ -1,13 +1,17 @@
-import { ReactNode, useState, useMemo, useEffect } from "react";
-import { GridSection } from "react-align";
-
 import Icon from "@reearth/beta/components/Icon";
 import Slide from "@reearth/beta/components/Slide";
 import { styled } from "@reearth/services/theme";
+import { ReactNode, useState, useMemo, useEffect } from "react";
+import { GridSection } from "react-align";
 
 import Area, { WidgetAreaType } from "./Area";
 import { WAS_AREAS } from "./constants";
-import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";
+import type {
+  WidgetZone,
+  WidgetLayoutConstraint,
+  Theme,
+  WidgetProps
+} from "./types";
 import { filterSections } from "./utils";
 
 export type Props = {
@@ -18,7 +22,7 @@ export type Props = {
   theme?: Theme;
   built?: boolean;
   isMobile?: boolean;
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   invisibleWidgetIDs?: string[];
   renderWidget?: (props: WidgetProps) => ReactNode;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -35,13 +39,20 @@ export default function MobileZone({
   children,
   invisibleWidgetIDs,
   renderWidget,
-  onWidgetAreaSelect,
+  onWidgetAreaSelect
 }: Props) {
   const filteredSections = useMemo(() => {
-    return filterSections(zone, invisibleWidgetIDs, s => s === "center" && children);
+    return filterSections(
+      zone,
+      invisibleWidgetIDs,
+      (s) => s === "center" && children
+    );
   }, [zone, children, invisibleWidgetIDs]);
 
-  const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
+  const initialPos = useMemo(
+    () => (filteredSections.length === 3 ? 1 : 0),
+    [filteredSections]
+  );
 
   const [pos, setPos] = useState(initialPos);
 
@@ -52,9 +63,9 @@ export default function MobileZone({
   return (
     <>
       <StyledSlide pos={pos} filteredSections={filteredSections.length > 1}>
-        {filteredSections.map(s => (
+        {filteredSections.map((s) => (
           <GridSection key={s} stretch>
-            {WAS_AREAS.map(a =>
+            {WAS_AREAS.map((a) =>
               s === "center" && children && a === "middle" ? (
                 <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
                   {children}
@@ -68,7 +79,14 @@ export default function MobileZone({
                   area={a}
                   widgets={zone?.[s]?.[a]?.widgets}
                   align={zone?.[s]?.[a]?.align ?? "start"}
-                  padding={zone?.[s]?.[a]?.padding ?? { top: 6, bottom: 6, left: 6, right: 6 }}
+                  padding={
+                    zone?.[s]?.[a]?.padding ?? {
+                      top: 6,
+                      bottom: 6,
+                      left: 6,
+                      right: 6
+                    }
+                  }
                   gap={zone?.[s]?.[a]?.gap ?? 6}
                   centered={zone?.[s]?.[a]?.centered ?? false}
                   backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
@@ -78,7 +96,7 @@ export default function MobileZone({
                   renderWidget={renderWidget}
                   onWidgetAreaSelect={onWidgetAreaSelect}
                 />
-              ),
+              )
             )}
           </GridSection>
         ))}
@@ -86,7 +104,9 @@ export default function MobileZone({
       {filteredSections.length > 1 ? (
         <Controls publishedTheme={theme}>
           <Control leftIcon onClick={() => pos > 0 && setPos(pos - 1)}>
-            {pos > 0 && <Icon icon="arrowLongLeft" size={24} color={theme?.mainIcon} />}
+            {pos > 0 && (
+              <Icon icon="arrowLongLeft" size={24} color={theme?.mainIcon} />
+            )}
           </Control>
           <InnerControlWrapper>
             {filteredSections.map((_, i) => (
@@ -95,7 +115,10 @@ export default function MobileZone({
               </Control>
             ))}
           </InnerControlWrapper>
-          <Control rightIcon onClick={() => pos < filteredSections.length - 1 && setPos(pos + 1)}>
+          <Control
+            rightIcon
+            onClick={() => pos < filteredSections.length - 1 && setPos(pos + 1)}
+          >
             {pos < filteredSections.length - 1 && (
               <Icon icon="arrowLongRight" size={24} color={theme?.mainIcon} />
             )}
@@ -143,5 +166,6 @@ const PageIcon = styled.div<{ current?: boolean; publishedTheme?: Theme }>`
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: ${({ current, publishedTheme }) => (current ? publishedTheme?.mainIcon : null)};
+  background: ${({ current, publishedTheme }) =>
+    current ? publishedTheme?.mainIcon : null};
 `;

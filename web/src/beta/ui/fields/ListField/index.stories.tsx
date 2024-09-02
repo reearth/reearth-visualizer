@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import ListField, { ListFieldProps } from ".";
 
 const meta: Meta<typeof ListField> = {
-  component: ListField,
+  component: ListField
 };
 
 export default meta;
@@ -22,9 +22,9 @@ export const Default: Story = (args: ListFieldProps) => {
         ...args.items,
         {
           id: randomId,
-          title: `Item ${randomId}`,
-        },
-      ],
+          title: `Item ${randomId}`
+        }
+      ]
     });
   }, [updateArgs, args.items]);
 
@@ -32,14 +32,17 @@ export const Default: Story = (args: ListFieldProps) => {
     (key: string) => {
       updateArgs({ items: args.items.filter(({ id }) => id != key) });
     },
-    [updateArgs, args.items],
+    [updateArgs, args.items]
   );
 
-  const handleSelect = useCallback((id: string) => updateArgs({ selected: id }), [updateArgs]);
+  const handleSelect = useCallback(
+    (id: string) => updateArgs({ selected: id }),
+    [updateArgs]
+  );
 
   const handleItemMove = useCallback(
     (id: string, targetIndex: number) => {
-      const currentIndex = args.items.findIndex(item => item.id === id);
+      const currentIndex = args.items.findIndex((item) => item.id === id);
       if (currentIndex === -1 || currentIndex === targetIndex) return;
 
       const updatedItems = [...args.items];
@@ -48,16 +51,16 @@ export const Default: Story = (args: ListFieldProps) => {
 
       updateArgs({ items: updatedItems });
     },
-    [updateArgs, args.items],
+    [updateArgs, args.items]
   );
   const handleItemNameUpdate = useCallback(
     (id: string, newTitle: string) => {
-      const updatedItems = args.items.map(item =>
-        item.id === id ? { ...item, title: newTitle } : item,
+      const updatedItems = args.items.map((item) =>
+        item.id === id ? { ...item, title: newTitle } : item
       );
       updateArgs({ items: updatedItems });
     },
-    [updateArgs, args.items],
+    [updateArgs, args.items]
   );
 
   return (
@@ -67,8 +70,9 @@ export const Default: Story = (args: ListFieldProps) => {
         flexDirection: "column",
         gap: "10px",
         width: "500px",
-        margin: "0 auto",
-      }}>
+        margin: "0 auto"
+      }}
+    >
       <ListField
         {...args}
         atLeastOneItem={true}
@@ -88,27 +92,27 @@ Default.args = {
   items: [
     {
       id: "1",
-      title: "Item 1",
+      title: "Item 1"
     },
     {
       id: "2",
-      title: "Item 2",
+      title: "Item 2"
     },
     {
       id: "3",
-      title: "Item 3",
+      title: "Item 3"
     },
     {
       id: "4",
-      title: "Item 4",
+      title: "Item 4"
     },
     {
       id: "5",
-      title: "Item 5",
+      title: "Item 5"
     },
     {
       id: "6",
-      title: "Item 6",
-    },
-  ],
+      title: "Item 6"
+    }
+  ]
 };

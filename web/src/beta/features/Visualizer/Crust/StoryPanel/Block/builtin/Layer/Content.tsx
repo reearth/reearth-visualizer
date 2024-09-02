@@ -1,10 +1,9 @@
-import { FC, useCallback, useContext, useState } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useContext, useState } from "react";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 
@@ -18,19 +17,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -41,7 +43,7 @@ const Content: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove,
+  onPropertyItemMove
 }) => {
   const t = useT();
   const [selected, setSelected] = useState<string>(layerButtons[0]?.id);
@@ -56,13 +58,13 @@ const Content: FC<Props> = ({
         setSelected(itemId);
         return;
       }
-      const item = layerButtons.find(i => i.id === itemId);
+      const item = layerButtons.find((i) => i.id === itemId);
 
       if (!item?.showLayers?.value) return;
 
       blockContext?.onLayerOverride?.(item.id, item.showLayers.value);
     },
-    [isEditable, layerButtons, blockContext],
+    [isEditable, layerButtons, blockContext]
   );
 
   return (
@@ -106,7 +108,7 @@ const Content: FC<Props> = ({
 export default Content;
 
 const Wrapper = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
@@ -114,18 +116,20 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexWrap: "wrap",
   gap: theme.spacing.smallest,
-  maxWidth: "400px",
+  maxWidth: "400px"
 }));
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>(
-  ({ color, bgColor, userSelected, theme }) => ({
-    color: userSelected ? bgColor ?? theme.content.strong : color,
-    backgroundColor: userSelected ? color ?? theme.primary.main : bgColor,
-    borderColor: color,
+const StyledButton = styled(Button)<{
+  color?: string;
+  bgColor?: string;
+  userSelected?: boolean;
+}>(({ color, bgColor, userSelected, theme }) => ({
+  color: userSelected ? (bgColor ?? theme.content.strong) : color,
+  backgroundColor: userSelected ? (color ?? theme.primary.main) : bgColor,
+  borderColor: color,
 
-    ":hover": {
-      color: bgColor,
-      backgroundColor: color ?? theme.primary.main,
-    },
-  }),
-);
+  ":hover": {
+    color: bgColor,
+    backgroundColor: color ?? theme.primary.main
+  }
+}));

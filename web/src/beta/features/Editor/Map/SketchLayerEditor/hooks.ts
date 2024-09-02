@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { v4 as uuidv4 } from "uuid";
-
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
+import { useCallback, useEffect, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { CustomPropertyProps } from "../SketchLayerCreator/type";
 
@@ -14,9 +13,13 @@ export default function useHooks({
   customProperties,
   setPropertiesList,
   onClose,
-  onCustomPropertySchemaUpdate,
-}: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> & SketchLayerEditorProp) {
-  const sketchLayers = useMemo(() => layers.filter(({ isSketch }) => isSketch), [layers]);
+  onCustomPropertySchemaUpdate
+}: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> &
+  SketchLayerEditorProp) {
+  const sketchLayers = useMemo(
+    () => layers.filter(({ isSketch }) => isSketch),
+    [layers]
+  );
 
   const handleClose = useCallback(() => {
     if (onClose) setPropertiesList?.([]);
@@ -33,7 +36,7 @@ export default function useHooks({
     }, {});
     const inp: UpdateCustomPropertySchemaInput = {
       layerId: layerId || "",
-      schema: schemaJSON,
+      schema: schemaJSON
     };
 
     onCustomPropertySchemaUpdate?.(inp);
@@ -48,20 +51,20 @@ export default function useHooks({
       .map(([key, value]) => ({
         key,
         value: (value as string).replace(/_\d+$/, ""),
-        number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10),
+        number: parseInt((value as string).match(/_(\d+)$/)?.[1] || "0", 10)
       }))
       .sort((a, b) => a.number - b.number);
 
     return sortedEntries.map(({ key, value }) => ({
       id: uuidv4(),
       key,
-      value,
+      value
     }));
   };
 
   useEffect(() => {
     if (setPropertiesList) {
-      const layer = sketchLayers.find(layer => layer.id === layerId);
+      const layer = sketchLayers.find((layer) => layer.id === layerId);
       if (layer) {
         const newPropertiesList = processCustomProperties(layer);
         setPropertiesList(newPropertiesList);
@@ -71,6 +74,6 @@ export default function useHooks({
 
   return {
     handleSubmit,
-    handleClose,
+    handleClose
   };
 }

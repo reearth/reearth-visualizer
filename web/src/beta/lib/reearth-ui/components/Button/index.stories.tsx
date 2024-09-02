@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Button, ButtonProps } from ".";
 
 const meta: Meta<ButtonProps> = {
-  component: Button,
+  component: Button
 };
 
 export default meta;
@@ -14,7 +14,11 @@ export const Default: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <Button title="Secondary" onClick={action("secondary-click")} />
-      <Button title="Secondary Small" size="small" onClick={action("secondary-small-click")} />
+      <Button
+        title="Secondary Small"
+        size="small"
+        onClick={action("secondary-small-click")}
+      />
       <Button title="Secondary Disabled" disabled={true} />
       <Button
         title="Secondary Icon Button"
@@ -32,7 +36,11 @@ export const Default: Story = {
         minWidth={300}
         onClick={action("secondary-min-width-click")}
       />
-      <Button iconButton={true} icon="settingFilled" onClick={action("secondary-icon-click")} />
+      <Button
+        iconButton={true}
+        icon="settingFilled"
+        onClick={action("secondary-icon-click")}
+      />
       <Button
         iconButton={true}
         icon="settingFilled"
@@ -40,13 +48,17 @@ export const Default: Story = {
         onClick={action("secondary-icon-small-click")}
       />
     </div>
-  ),
+  )
 };
 
 export const Primary: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Primary" appearance="primary" onClick={action("primary-click")} />
+      <Button
+        title="Primary"
+        appearance="primary"
+        onClick={action("primary-click")}
+      />
       <Button
         title="Primary Small"
         appearance="primary"
@@ -92,13 +104,17 @@ export const Primary: Story = {
         onClick={action("primary-icon-small-click")}
       />
     </div>
-  ),
+  )
 };
 
 export const Dangerous: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Dangerous" appearance="dangerous" onClick={action("dangerous-click")} />
+      <Button
+        title="Dangerous"
+        appearance="dangerous"
+        onClick={action("dangerous-click")}
+      />
       <Button
         title="Dangerous Small"
         appearance="dangerous"
@@ -144,13 +160,17 @@ export const Dangerous: Story = {
         onClick={action("dangerous-icon-small-click")}
       />
     </div>
-  ),
+  )
 };
 
 export const Simple: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Simple" appearance="simple" onClick={action("simple-click")} />
+      <Button
+        title="Simple"
+        appearance="simple"
+        onClick={action("simple-click")}
+      />
       <Button
         title="Simple Small"
         appearance="simple"
@@ -196,5 +216,5 @@ export const Simple: Story = {
         onClick={action("simple-icon-small-click")}
       />
     </div>
-  ),
+  )
 };

@@ -1,6 +1,5 @@
-import { useCallback } from "react";
-
 import { useWidgetsFetcher } from "@reearth/services/api";
+import { useCallback } from "react";
 
 import { SelectedWidget } from "../../hooks/useWidgets";
 
@@ -14,7 +13,7 @@ export default ({ sceneId, selectWidget }: Props) => {
     useInstallableWidgetsQuery,
     useInstalledWidgetsQuery,
     useAddWidget,
-    useRemoveWidget,
+    useRemoveWidget
     // useUpdateWidgetAlignSystem,
   } = useWidgetsFetcher();
 
@@ -25,24 +24,24 @@ export default ({ sceneId, selectWidget }: Props) => {
     async (id?: string) => {
       await useAddWidget(sceneId, id);
     },
-    [sceneId, useAddWidget],
+    [sceneId, useAddWidget]
   );
 
   const handleWidgetRemove = useCallback(
     async (id?: string) => {
       await useRemoveWidget(sceneId, id);
     },
-    [sceneId, useRemoveWidget],
+    [sceneId, useRemoveWidget]
   );
 
   const handleWidgetSelection = (id: string) => {
-    const w = installedWidgets?.find(w => w.id === id);
+    const w = installedWidgets?.find((w) => w.id === id);
     if (!w) return;
     selectWidget({
       id: w.id,
       pluginId: w.pluginId,
       extensionId: w.extensionId,
-      propertyId: w.property.id,
+      propertyId: w.property.id
     });
   };
 
@@ -51,6 +50,6 @@ export default ({ sceneId, selectWidget }: Props) => {
     installedWidgets,
     handleWidgetAdd,
     handleWidgetSelection,
-    handleWidgetRemove,
+    handleWidgetRemove
   };
 };

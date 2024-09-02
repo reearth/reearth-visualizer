@@ -1,13 +1,19 @@
-import { FC, MouseEvent, useCallback, useMemo } from "react";
-
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, MouseEvent, useCallback, useMemo } from "react";
 
 import { AssetItemProps } from "./type";
 import { getAssetType } from "./utils";
 
-const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }) => {
-  const selected = useMemo(() => selectedAssetIds.includes(asset.id), [selectedAssetIds, asset.id]);
+const AssetGridItem: FC<AssetItemProps> = ({
+  asset,
+  selectedAssetIds,
+  onSelect
+}) => {
+  const selected = useMemo(
+    () => selectedAssetIds.includes(asset.id),
+    [selectedAssetIds, asset.id]
+  );
 
   const type = useMemo(() => getAssetType(asset), [asset]);
 
@@ -20,7 +26,7 @@ const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
       e.stopPropagation();
       onSelect?.(asset.id);
     },
-    [asset, onSelect],
+    [asset, onSelect]
   );
 
   return (
@@ -32,7 +38,9 @@ const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
           ) : (
             <IconWrapper>
               <Icon icon="fileFilled" color={theme.content.weak} size={64} />
-              <StyledTypography size="body">{ext?.toUpperCase()}</StyledTypography>
+              <StyledTypography size="body">
+                {ext?.toUpperCase()}
+              </StyledTypography>
             </IconWrapper>
           )}
         </Thumbnail>
@@ -46,26 +54,28 @@ const AssetGridItem: FC<AssetItemProps> = ({ asset, selectedAssetIds, onSelect }
 
 export default AssetGridItem;
 
-const Wrapper = styled("div")<{ selected?: boolean }>(({ theme, selected }) => ({
-  display: "flex",
-  flexDirection: "column",
-  boxSizing: "border-box",
-  width: "100%",
-  padding: theme.spacing.smallest,
-  borderRadius: theme.radius.small,
-  gap: theme.spacing.smallest,
-  cursor: "pointer",
-  backgroundColor: selected ? theme.select.main : "transparent",
-  transition: "background-color 0.1s ease",
-  ["&:hover"]: {
-    background: selected ? theme.select.main : theme.relative.light,
+const Wrapper = styled("div")<{ selected?: boolean }>(
+  ({ theme, selected }) => ({
+    display: "flex",
+    flexDirection: "column",
+    boxSizing: "border-box",
+    width: "100%",
+    padding: theme.spacing.smallest,
     borderRadius: theme.radius.small,
-  },
-}));
+    gap: theme.spacing.smallest,
+    cursor: "pointer",
+    backgroundColor: selected ? theme.select.main : "transparent",
+    transition: "background-color 0.1s ease",
+    ["&:hover"]: {
+      background: selected ? theme.select.main : theme.relative.light,
+      borderRadius: theme.radius.small
+    }
+  })
+);
 
 const ThumbnailWrapper = styled("div")(() => ({
   position: "relative",
-  paddingBottom: "62.5%",
+  paddingBottom: "62.5%"
 }));
 
 const Thumbnail = styled("div")(({ theme }) => ({
@@ -78,27 +88,27 @@ const Thumbnail = styled("div")(({ theme }) => ({
   height: "100%",
   borderRadius: theme.radius.small,
   overflow: "hidden",
-  display: "flex",
+  display: "flex"
 }));
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
   background: url ? `url(${url}) center/contain no-repeat` : theme.bg[1],
   borderRadius: theme.radius.small,
-  width: "100%",
+  width: "100%"
 }));
 
 const IconWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: "100%",
+  width: "100%"
 }));
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
   position: "absolute",
   color: theme.content.weak,
   transform: "translate(0, 10px)",
-  fontWeight: "bold",
+  fontWeight: "bold"
 }));
 
 const AssetName = styled("div")(() => ({
@@ -107,5 +117,5 @@ const AssetName = styled("div")(() => ({
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  padding: "1px 0",
+  padding: "1px 0"
 }));

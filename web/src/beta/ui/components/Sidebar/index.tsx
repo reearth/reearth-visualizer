@@ -1,9 +1,8 @@
-import { FC } from "react";
-import { Link } from "react-router-dom";
-
 import { IconName, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
+import { Link } from "react-router-dom";
 
 export type SidebarMenuItemProps = {
   text?: string;
@@ -22,7 +21,7 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   active,
   disabled,
   path,
-  onClick,
+  onClick
 }) => {
   const theme = useTheme();
   return (
@@ -35,7 +34,10 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
             color={active ? theme.content.main : theme.content.weak}
           />
         )}
-        <Typography size="body" color={disabled ? theme.content.weak : theme.content.main}>
+        <Typography
+          size="body"
+          color={disabled ? theme.content.weak : theme.content.main}
+        >
           {text}
         </Typography>
       </MenuWrapper>
@@ -43,10 +45,12 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   );
 };
 
-const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(({ disabled }) => ({
-  pointerEvents: disabled ? "none" : "auto",
-  textDecoration: "none",
-}));
+const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(
+  ({ disabled }) => ({
+    pointerEvents: disabled ? "none" : "auto",
+    textDecoration: "none"
+  })
+);
 
 const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
   ({ active, theme, disabled }) => ({
@@ -60,9 +64,9 @@ const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
     cursor: disabled ? "default" : "pointer",
     ["&:hover"]: {
       background: active ? theme.select.main : theme.bg[2],
-      borderRadius: theme.radius.small,
-    },
-  }),
+      borderRadius: theme.radius.small
+    }
+  })
 );
 
 export const SidebarWrapper = styled("div")(({ theme }) => ({
@@ -70,13 +74,19 @@ export const SidebarWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   padding: `0 ${theme.spacing.smallest}px`,
   flex: 1,
-  justifyContent: "space-between",
+  justifyContent: "space-between"
+}));
+
+export const SidebarTopSectionWrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between"
 }));
 
 export const SidebarSection = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export const SidebarVersion: FC = () => {
@@ -92,5 +102,5 @@ export const SidebarVersion: FC = () => {
 };
 
 const Version = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small,
+  padding: theme.spacing.small
 }));

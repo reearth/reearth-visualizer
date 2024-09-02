@@ -1,6 +1,13 @@
-import { FC, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-
 import { styled, useTheme } from "@reearth/services/theme";
+import {
+  FC,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 
 import { Button } from "../Button";
 import { Icon } from "../Icon";
@@ -26,13 +33,13 @@ export const Selector: FC<SelectorProps> = ({
   placeholder = "Please select",
   disabled,
   maxHeight,
-  onChange,
+  onChange
 }) => {
   const theme = useTheme();
   const selectorRef = useRef<HTMLDivElement>(null);
-  const [selectedValue, setSelectedValue] = useState<string | string[] | undefined>(
-    value ?? (multiple ? [] : undefined),
-  );
+  const [selectedValue, setSelectedValue] = useState<
+    string | string[] | undefined
+  >(value ?? (multiple ? [] : undefined));
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectorWidth, setSelectorWidth] = useState<number>();
 
@@ -45,7 +52,7 @@ export const Selector: FC<SelectorProps> = ({
   useEffect(() => {
     const selectorElement = selectorRef.current;
     if (!selectorElement) return;
-    const resizeObserver = new ResizeObserver(entries => {
+    const resizeObserver = new ResizeObserver((entries) => {
       if (!entries || entries.length === 0) return;
       const { width } = entries[0].contentRect;
       setSelectorWidth(width);
@@ -64,13 +71,13 @@ export const Selector: FC<SelectorProps> = ({
       }
       return selectedValue === value;
     },
-    [multiple, selectedValue],
+    [multiple, selectedValue]
   );
 
   const handleChange = (value: string) => {
     if (multiple && Array.isArray(selectedValue)) {
       if (selectedValue.includes(value)) {
-        const newSelectedArr = selectedValue.filter(val => val !== value);
+        const newSelectedArr = selectedValue.filter((val) => val !== value);
         setSelectedValue(newSelectedArr);
         onChange?.(newSelectedArr);
       } else {
@@ -79,9 +86,9 @@ export const Selector: FC<SelectorProps> = ({
         onChange?.(newSelectedArr);
       }
     } else {
-      if (value === selectedValue) setSelectedValue(undefined);
-      else setSelectedValue(value);
       setIsOpen(!isOpen);
+      if (value === selectedValue) return;
+      setSelectedValue(value);
       onChange?.(value);
     }
   };
@@ -91,19 +98,21 @@ export const Selector: FC<SelectorProps> = ({
       e.stopPropagation();
       if (value === undefined) return;
       if (Array.isArray(selectedValue) && selectedValue.length) {
-        const newSelectedArr = selectedValue.filter(val => val !== value);
+        const newSelectedArr = selectedValue.filter((val) => val !== value);
         setSelectedValue(newSelectedArr);
         onChange?.(newSelectedArr);
       }
     },
-    [selectedValue, onChange],
+    [selectedValue, onChange]
   );
 
   const selectedLabels = useMemo(() => {
     if (Array.isArray(selectedValue)) {
-      return selectedValue.map(val => optionValues.find(item => item.value === val)?.label);
+      return selectedValue.map(
+        (val) => optionValues.find((item) => item.value === val)?.label
+      );
     }
-    return [optionValues.find(item => item.value === selectedValue)?.label];
+    return [optionValues.find((item) => item.value === selectedValue)?.label];
   }, [optionValues, selectedValue]);
 
   const renderTrigger = () => {
@@ -113,18 +122,20 @@ export const Selector: FC<SelectorProps> = ({
         isMultiple={multiple}
         isOpen={isOpen}
         disabled={disabled}
-        width={selectorWidth}>
+        width={selectorWidth}
+      >
         {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>
             {placeholder}
           </Typography>
         ) : multiple ? (
           <SelectedItems>
-            {selectedLabels.map(val => (
+            {selectedLabels.map((val) => (
               <SelectedItem key={val}>
                 <Typography
                   size="body"
-                  color={disabled ? theme.content.weaker : theme.content.main}>
+                  color={disabled ? theme.content.weaker : theme.content.main}
+                >
                   {val}
                 </Typography>
                 {!disabled && (
@@ -133,7 +144,9 @@ export const Selector: FC<SelectorProps> = ({
                     icon="close"
                     appearance="simple"
                     size="small"
-                    onClick={(e: MouseEvent<HTMLElement>) => handleUnselect(e, val)}
+                    onClick={(e: MouseEvent<HTMLElement>) =>
+                      handleUnselect(e, val)
+                    }
                   />
                 )}
               </SelectedItem>
@@ -159,7 +172,8 @@ export const Selector: FC<SelectorProps> = ({
         open={isOpen}
         onOpenChange={setIsOpen}
         disabled={disabled}
-        placement="bottom-start">
+        placement="bottom-start"
+      >
         <DropDownWrapper maxHeight={maxHeight} width={selectorWidth}>
           {optionValues.length === 0 ? (
             <DropDownItem>
@@ -172,7 +186,8 @@ export const Selector: FC<SelectorProps> = ({
               <DropDownItem
                 key={item.value ?? ""}
                 isSelected={isSelected(item.value)}
-                onClick={() => handleChange(item.value)}>
+                onClick={() => handleChange(item.value)}
+              >
                 <Typography size="body" color={theme.content.main}>
                   {item.label ?? item.value}
                 </Typography>
@@ -189,7 +204,7 @@ export const Selector: FC<SelectorProps> = ({
 };
 
 const SelectorWrapper = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 
 const SelectInput = styled("div")<{
@@ -216,7 +231,7 @@ const SelectInput = styled("div")<{
         }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   minWidth: width ? `${width}px` : "fit-content",
-  height: size == "small" ? "21px" : "28px",
+  height: size == "small" ? "21px" : "28px"
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
@@ -224,7 +239,7 @@ const SelectedItems = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
-  flexWrap: "wrap",
+  flexWrap: "wrap"
 }));
 
 const SelectedItem = styled("div")(({ theme }) => ({
@@ -233,7 +248,7 @@ const SelectedItem = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   backgroundColor: `${theme.bg[2]}`,
-  borderRadius: `${theme.radius.smallest}px`,
+  borderRadius: `${theme.radius.smallest}px`
 }));
 
 const DropDownWrapper = styled("div")<{
@@ -253,19 +268,19 @@ const DropDownWrapper = styled("div")<{
   maxHeight: maxHeight ? `${maxHeight}px` : "",
   overflowY: maxHeight ? "auto" : "hidden",
   ["::-webkit-scrollbar"]: {
-    width: "8px",
+    width: "8px"
   },
   ["::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px",
+    borderRadius: "10px"
   },
   ["::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   ["::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter,
-  },
+    background: theme.relative.lighter
+  }
 }));
 
 const DropDownItem = styled("div")<{
@@ -275,11 +290,13 @@ const DropDownItem = styled("div")<{
   alignItems: "center",
   justifyContent: "space-between",
   gap: `${theme.spacing.small}px`,
-  backgroundColor: !isSelected ? `${theme.bg[1]}` : `${theme.select.weak} !important`,
+  backgroundColor: !isSelected
+    ? `${theme.bg[1]}`
+    : `${theme.select.weak} !important`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   borderRadius: `${theme.radius.smallest}px`,
   cursor: "pointer",
   ["&:hover"]: {
-    backgroundColor: `${theme.bg[2]}`,
-  },
+    backgroundColor: `${theme.bg[2]}`
+  }
 }));

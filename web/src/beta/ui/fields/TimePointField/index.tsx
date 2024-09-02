@@ -1,8 +1,7 @@
-import { FC, useCallback, useEffect, useState } from "react";
-
 import { Button, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
@@ -25,7 +24,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
   fieldName,
   onChange,
   onTimePointPopupOpen,
-  setDisabledFields,
+  setDisabledFields
 }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
@@ -69,7 +68,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
               disabled={!dateTime}
               onClick={handleTimeSettingDelete}
               iconColor={dateTime ? theme.content.main : theme.content.weak}
-            />,
+            />
           ]}
           disabled
           placeholder={"YYYY-MM-DDThh:mm:ss±hh:mm"}
@@ -86,7 +85,8 @@ const TimePointField: FC<TimePointFieldProps> = ({
           }
           open={open}
           offset={8}
-          placement="bottom-end">
+          placement="bottom-end"
+        >
           {open && (
             <EditPanel
               setDateTime={setDateTime}
@@ -107,5 +107,5 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
   gap: theme.spacing.small,
-  flexWrap: "wrap",
+  flexWrap: "wrap"
 }));

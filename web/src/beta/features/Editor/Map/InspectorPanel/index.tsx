@@ -1,7 +1,6 @@
-import { FC, useMemo } from "react";
-
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
+import { FC, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
@@ -22,11 +21,15 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     handleFlyTo,
     handleLayerConfigUpdate,
     handleGeoJsonFeatureUpdate,
+    handleGeoJsonFeatureDelete
   } = useMapPage();
 
   const t = useT();
 
-  const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
+  const scenePropertyId = useMemo(
+    () => scene?.property?.id,
+    [scene?.property?.id]
+  );
 
   return (
     <Panel
@@ -36,7 +39,8 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
       alwaysOpen
       noPadding={!!selectedLayer}
       areaRef={areaRef}
-      showCollapseArea={showCollapseArea}>
+      showCollapseArea={showCollapseArea}
+    >
       {!!selectedSceneSetting && scenePropertyId && (
         <SceneSettings
           propertyId={scenePropertyId}
@@ -52,6 +56,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           selectedLayer={selectedLayer}
           onLayerConfigUpdate={handleLayerConfigUpdate}
           onGeoJsonFeatureUpdate={handleGeoJsonFeatureUpdate}
+          onGeoJsonFeatureDelete={handleGeoJsonFeatureDelete}
         />
       )}
     </Panel>

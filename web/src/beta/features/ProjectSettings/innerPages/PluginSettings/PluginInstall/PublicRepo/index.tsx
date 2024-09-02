@@ -1,16 +1,15 @@
-import React from "react";
-
 import {
   Button,
   IconName,
   Loading,
   Modal,
   ModalPanel,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
+import React from "react";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
@@ -29,7 +28,7 @@ const PublicRepo: React.FC<Props> = ({
   buttonText: text,
   onSend,
   serverSideError,
-  loading,
+  loading
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -40,7 +39,7 @@ const PublicRepo: React.FC<Props> = ({
     handleRepoUrlChange,
     handleOpen,
     handleSubmit,
-    handleClose,
+    handleClose
   } = useHooks(onSend, loading);
 
   return (
@@ -64,8 +63,9 @@ const PublicRepo: React.FC<Props> = ({
               title={t("Continue")}
               disabled={!repoUrl}
               onClick={handleSubmit}
-            />,
-          ]}>
+            />
+          ]}
+        >
           {loading && <Loading overlay />}
           <InputField
             commonTitle={t("Repository url:")}

@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
 import type { EditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Infobox } from "./types";
 
@@ -8,14 +7,14 @@ export default ({
   infobox,
   isEditable,
   onBlockCreate,
-  onBlockMove,
+  onBlockMove
 }: {
   infobox?: Infobox;
   isEditable?: boolean;
   onBlockCreate?: (
     pluginId: string,
     extensionId: string,
-    index?: number | undefined,
+    index?: number | undefined
   ) => Promise<void>;
   onBlockMove?: (id: string, targetIndex: number, blockId?: string) => void;
 }) => {
@@ -35,22 +34,22 @@ export default ({
           ? true
           : !!infobox.property.default.enabled.value
         : false,
-    [infobox],
+    [infobox]
   );
 
   const paddingField = useMemo(
     () => infobox?.property?.default?.padding,
-    [infobox?.property?.default?.padding],
+    [infobox?.property?.default?.padding]
   );
 
   const gapField = useMemo(
     () => infobox?.property?.default?.gap,
-    [infobox?.property?.default?.gap],
+    [infobox?.property?.default?.gap]
   );
 
   const positionField = useMemo(
     () => infobox?.property?.default?.position,
-    [infobox?.property?.default?.position],
+    [infobox?.property?.default?.position]
   );
 
   const handleBlockOpen = useCallback(
@@ -61,28 +60,33 @@ export default ({
         setOpenBlocksIndex(index);
       }
     },
-    [openBlocksIndex],
+    [openBlocksIndex]
   );
 
   const handleSelectionDisable = useCallback(
     (disabled?: boolean) => setDisableSelection(!!disabled),
-    [],
+    []
   );
 
   const handleBlockCreate = useCallback(
-    (index: number) => async (extensionId?: string | undefined, pluginId?: string | undefined) => {
-      if (!extensionId || !pluginId) return;
-      await onBlockCreate?.(pluginId, extensionId, index);
-    },
-    [onBlockCreate],
+    (index: number) =>
+      async (
+        extensionId?: string | undefined,
+        pluginId?: string | undefined
+      ) => {
+        if (!extensionId || !pluginId) return;
+        await onBlockCreate?.(pluginId, extensionId, index);
+      },
+    [onBlockCreate]
   );
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
-      if (!isEditable || blockId === selectedBlockId || disableSelection) return;
+      if (!isEditable || blockId === selectedBlockId || disableSelection)
+        return;
       setSelectedBlockId(blockId);
     },
-    [selectedBlockId, isEditable, disableSelection],
+    [selectedBlockId, isEditable, disableSelection]
   );
 
   const handleBlockDoubleClick = useCallback(
@@ -90,27 +94,29 @@ export default ({
       if (disableSelection) return;
       setSelectedBlockId(blockId);
     },
-    [disableSelection],
+    [disableSelection]
   );
 
   const editModeContext: EditModeContext = useMemo(
     () => ({
       disableSelection,
-      onSelectionDisable: handleSelectionDisable,
+      onSelectionDisable: handleSelectionDisable
     }),
-    [disableSelection, handleSelectionDisable],
+    [disableSelection, handleSelectionDisable]
   );
 
   useEffect(() => {
     if (infobox) {
-      infobox.blocks && infobox.blocks.length > 0 && setInfoboxBlocks(infobox.blocks);
+      setInfoboxBlocks(
+        infobox.blocks && infobox.blocks.length > 0 ? infobox.blocks : []
+      );
     } else {
-      infoboxBlocks.length && setInfoboxBlocks([]);
-      selectedBlockId !== undefined && setSelectedBlockId(undefined);
-      openBlocksIndex !== undefined && setOpenBlocksIndex(undefined);
-      disableSelection !== undefined && setDisableSelection(false);
+      setInfoboxBlocks([]);
+      setSelectedBlockId(undefined);
+      setOpenBlocksIndex(undefined);
+      setDisableSelection(false);
     }
-  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex, disableSelection]);
+  }, [infobox]);
 
   useEffect(() => {
     if (wrapperRef.current) {
@@ -121,9 +127,9 @@ export default ({
   const handleMoveEnd = useCallback(
     async (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        setInfoboxBlocks(old => {
+        setInfoboxBlocks((old) => {
           const items = [...old];
-          const currentIndex = old.findIndex(o => o.id === itemId);
+          const currentIndex = old.findIndex((o) => o.id === itemId);
           if (currentIndex !== -1) {
             const [movedItem] = items.splice(currentIndex, 1);
             items.splice(newIndex, 0, movedItem);
@@ -134,7 +140,7 @@ export default ({
       }
       setIsDragging(false);
     },
-    [onBlockMove],
+    [onBlockMove]
   );
 
   return {
@@ -154,6 +160,6 @@ export default ({
     handleBlockCreate,
     handleBlockSelect,
     handleBlockDoubleClick,
-    handleMoveEnd,
+    handleMoveEnd
   };
 };

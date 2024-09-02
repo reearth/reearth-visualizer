@@ -1,7 +1,6 @@
-import { FC, useCallback, useMemo, useState } from "react";
-
 import { NumberInput, NumberInputProps } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
@@ -30,12 +29,15 @@ const SpacingField: FC<SpacingFieldProps> = ({
   ...props
 }) => {
   const [spacingValues, setSpacingValues] = useState<SpacingValues>(
-    value || { top: 0, left: 0, right: 0, bottom: 0 },
+    value || { top: 0, left: 0, right: 0, bottom: 0 }
   );
 
   const processedSpacingValues = useMemo(
-    () => spacingPosition.map(position => spacingValues[position as keyof SpacingValues]),
-    [spacingValues],
+    () =>
+      spacingPosition.map(
+        (position) => spacingValues[position as keyof SpacingValues]
+      ),
+    [spacingValues]
   );
 
   const handleChange = (position: keyof SpacingValues, newValue?: number) => {
@@ -53,7 +55,9 @@ const SpacingField: FC<SpacingFieldProps> = ({
       <CenteredInput key={index} position={position}>
         <NumberInput
           value={processedSpacingValues[index]}
-          onChange={value => handleChange(position as keyof SpacingValues, value)}
+          onChange={(value) =>
+            handleChange(position as keyof SpacingValues, value)
+          }
           onBlur={handleBlur}
           unit="px"
           {...props}
@@ -82,12 +86,12 @@ const InputWrapper = styled("div")(({ theme }) => ({
   height: "97px",
   width: "100%",
   position: "relative",
-  border: `1px dashed ${theme.outline.weak}`,
+  border: `1px dashed ${theme.outline.weak}`
 }));
 
 const CenteredInput = styled("div")<{ position: string }>(({ position }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  gridArea: position,
+  gridArea: position
 }));

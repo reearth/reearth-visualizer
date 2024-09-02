@@ -1,8 +1,20 @@
-import { FC, KeyboardEvent, MouseEvent, ReactNode, useCallback, useMemo, useState } from "react";
-
-import { IconButton, Selector, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  IconButton,
+  Selector,
+  TextInput,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import {
+  FC,
+  KeyboardEvent,
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState
+} from "react";
 
 type ManagerHeaderSize = "medium" | "large";
 export type ManagerLayout = "grid" | "list";
@@ -40,7 +52,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
   deleteText,
   selectedIds,
   onCancelSelect,
-  onDelete,
+  onDelete
 }) => {
   const t = useT();
 
@@ -49,7 +61,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       if (typeof value !== "string") return;
       onSortChange?.(value);
     },
-    [onSortChange],
+    [onSortChange]
   );
 
   const handleLayoutChange = useCallback(
@@ -57,7 +69,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       e.stopPropagation();
       onLayoutChange?.(value);
     },
-    [onLayoutChange],
+    [onLayoutChange]
   );
 
   const handleCancelSelect = useCallback(
@@ -65,7 +77,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       e.stopPropagation();
       onCancelSelect?.();
     },
-    [onCancelSelect],
+    [onCancelSelect]
   );
 
   const handleDelete = useCallback(
@@ -73,7 +85,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       e.stopPropagation();
       onDelete?.(selectedIds ?? []);
     },
-    [onDelete, selectedIds],
+    [onDelete, selectedIds]
   );
 
   const showDelete = enableDelete && selectedIds && selectedIds.length > 0;
@@ -96,7 +108,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         onSearch?.(searchTerm);
       }
     },
-    [searchTerm, onSearch],
+    [searchTerm, onSearch]
   );
 
   const searchActions = useMemo(() => {
@@ -116,7 +128,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         appearance="simple"
         size="smallest"
         onClick={handleSearch}
-      />,
+      />
     ];
   }, [searchTerm, searchHovered, handleClearSearch, handleSearch]);
 
@@ -126,16 +138,25 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
       <Tools>
         {showDelete && (
           <DeleteBar>
-            <IconButton icon="close" appearance="simple" onClick={handleCancelSelect} />
+            <IconButton
+              icon="close"
+              appearance="simple"
+              onClick={handleCancelSelect}
+            />
             <Typography size="body">{deleteText ?? t("Delete")}</Typography>
-            <IconButton icon="trash" appearance="simple" onClick={handleDelete} />
+            <IconButton
+              icon="trash"
+              appearance="simple"
+              onClick={handleDelete}
+            />
           </DeleteBar>
         )}
         {!showDelete && showSearch && (
           <Search
             size={size}
             onMouseEnter={() => setSearchHovered(true)}
-            onMouseLeave={() => setSearchHovered(false)}>
+            onMouseLeave={() => setSearchHovered(false)}
+          >
             <TextInput
               size="normal"
               extendWidth
@@ -150,7 +171,11 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         {!showDelete && sortOptions && (
           <Sort>
             <Typography size="body">{t("Sort:")}</Typography>
-            <Selector value={sortValue} options={sortOptions} onChange={handleSortChange} />
+            <Selector
+              value={sortValue}
+              options={sortOptions}
+              onChange={handleSortChange}
+            />
           </Sort>
         )}
         {!showDelete && (
@@ -159,13 +184,13 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               icon="grid"
               appearance="simple"
               active={layout === "grid"}
-              onClick={e => handleLayoutChange(e, "grid")}
+              onClick={(e) => handleLayoutChange(e, "grid")}
             />
             <IconButton
               icon="list"
               appearance="simple"
               active={layout === "list"}
-              onClick={e => handleLayoutChange(e, "list")}
+              onClick={(e) => handleLayoutChange(e, "list")}
             />
           </Layouts>
         )}
@@ -174,22 +199,24 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{ size: ManagerHeaderSize }>(({ theme, size }) => ({
-  flex: 1,
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: size === "medium" ? theme.spacing.normal : theme.spacing.largest,
-  minHeight: size === "medium" ? "56px" : "76px",
-  boxSizing: "border-box",
-  flexGrow: 0,
-}));
+const Wrapper = styled("div")<{ size: ManagerHeaderSize }>(
+  ({ theme, size }) => ({
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: size === "medium" ? theme.spacing.normal : theme.spacing.largest,
+    minHeight: size === "medium" ? "56px" : "76px",
+    boxSizing: "border-box",
+    flexGrow: 0
+  })
+);
 
 const Actions = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const Tools = styled("div")(({ theme }) => ({
@@ -197,27 +224,29 @@ const Tools = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   alignItems: "center",
   gap: theme.spacing.normal,
-  flex: 1,
+  flex: 1
 }));
 
 const Sort = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
-  width: 200,
+  width: 200
 }));
 
 const Layouts = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
-const Search = styled("div")<{ size: ManagerHeaderSize }>(({ theme, size }) => ({
-  display: "flex",
-  gap: theme.spacing.small,
-  maxWidth: size === "large" ? 250 : undefined,
-  flex: 1,
-}));
+const Search = styled("div")<{ size: ManagerHeaderSize }>(
+  ({ theme, size }) => ({
+    display: "flex",
+    gap: theme.spacing.small,
+    maxWidth: size === "large" ? 250 : undefined,
+    flex: 1
+  })
+);
 
 const DeleteBar = styled("div")(({ theme }) => ({
   display: "flex",
@@ -226,5 +255,5 @@ const DeleteBar = styled("div")(({ theme }) => ({
   backgroundColor: theme.select.weak,
   borderRadius: theme.radius.small,
   height: 36,
-  padding: `0 ${theme.spacing.small}px`,
+  padding: `0 ${theme.spacing.small}px`
 }));

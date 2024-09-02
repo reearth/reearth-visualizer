@@ -7,7 +7,7 @@ export function ariaProps(props: unknown): AriaAttributes {
       .filter(([k]) => typeof k === "string" && k.startsWith("aria"))
       .map(([k, v]) => [k.replace(/^aria-?/, "").toLowerCase(), v])
       .filter(([k]) => typeof k === "string" && keys.has(k))
-      .map(([k, v]) => [`aria-${k}`, v]),
+      .map(([k, v]) => [`aria-${k}`, v])
   );
 }
 
@@ -59,5 +59,5 @@ const keys = new Set([
   "valuemax",
   "valuemin",
   "valuenow",
-  "valuetext",
+  "valuetext"
 ]);

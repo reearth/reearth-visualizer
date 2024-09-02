@@ -1,5 +1,3 @@
-import { FC, useCallback, useState } from "react";
-
 import {
   ContentWrapper,
   InputGroup,
@@ -8,11 +6,12 @@ import {
   LayerNameListWrapper,
   LayerWrapper,
   SubmitWrapper,
-  Wrapper,
+  Wrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { DataProps } from "..";
 import { generateTitle } from "../util";
@@ -28,8 +27,10 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const handleLayerNameAdd = () => {
     if (layerNameValue.trim() !== "") {
-      const exist = layersNameList.some((layer: string) => layer === layerNameValue);
-      if (!exist) setLayersNameList(prev => [...prev, layerNameValue]);
+      const exist = layersNameList.some(
+        (layer: string) => layer === layerNameValue
+      );
+      if (!exist) setLayersNameList((prev) => [...prev, layerNameValue]);
       setLayerNameValue("");
     }
   };
@@ -64,9 +65,10 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: wmsUrlValue !== "" ? wmsUrlValue : undefined,
           type: "wms",
-          layers: LayerNameList.length === 1 ? layersNameList[0] : layersNameList,
-        },
-      },
+          layers:
+            LayerNameList.length === 1 ? layersNameList[0] : layersNameList
+        }
+      }
     });
     onClose();
   };
@@ -79,7 +81,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             <TextInput
               placeholder="https://"
               value={wmsUrlValue}
-              onChange={value => handleValueChange(value)}
+              onChange={(value) => handleValueChange(value)}
             />
           </InputsWrapper>
         </InputGroup>
@@ -106,7 +108,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                     value={layerNameValue}
                     extendWidth
                     onBlur={handleBlur}
-                    onChange={value => setLayerNameValue(value)}
+                    onChange={(value) => setLayerNameValue(value)}
                   />
                   <Button
                     icon="close"

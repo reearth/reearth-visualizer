@@ -1,8 +1,7 @@
-import { memo } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { memo } from "react";
 
 import type { Theme } from "../../../types";
 
@@ -49,7 +48,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
   onRestoreRotate,
   onClickHelp,
   onZoomIn,
-  onZoomOut,
+  onZoomOut
 }) {
   const t = useT();
 
@@ -59,14 +58,17 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
     compassFocusDegree,
     isMovingAngle,
     handleOnMouseDownAngle,
-    handleOnMouseDownCompass,
+    handleOnMouseDownCompass
   } = useNavigator({ degree, onRotate, onStartOrbit, onEndOrbit, onMoveOrbit });
 
   return (
     <Container>
       <CompassContainer>
         <Compass ref={compassRef}>
-          <CompassIcon onMouseDown={handleOnMouseDownCompass} publishedTheme={theme}>
+          <CompassIcon
+            onMouseDown={handleOnMouseDownCompass}
+            publishedTheme={theme}
+          >
             <Icon
               icon="compass"
               aria-label={t("aria-label-compass")}
@@ -77,14 +79,22 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
           {isMovingAngle && (
             <CompassFocusIcon
               style={{
-                transform: `rotate(${compassFocusDegree}deg)`,
+                transform: `rotate(${compassFocusDegree}deg)`
               }}
-              data-testid="compassFocus">
+              data-testid="compassFocus"
+            >
               <Icon icon="compassFocus" color={theme?.select} size={30} />
             </CompassFocusIcon>
           )}
-          <AngleIcon onMouseDown={handleOnMouseDownAngle} publishedTheme={theme}>
-            <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
+          <AngleIcon
+            onMouseDown={handleOnMouseDownAngle}
+            publishedTheme={theme}
+          >
+            <Icon
+              icon="navigatorAngle"
+              aria-label={t("aria-label-adjust-angle")}
+              size={32}
+            />
           </AngleIcon>
         </Compass>
         {onClickHelp && <Help onClick={onClickHelp}>?</Help>}
@@ -94,7 +104,11 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
           <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
         </ToolIconButton>
         <ToolIconButton onClick={onRestoreRotate} publishedTheme={theme}>
-          <Icon icon="house" aria-label={t("aria-label-Go-to-the-home-position")} size={16} />
+          <Icon
+            icon="house"
+            aria-label={t("aria-label-Go-to-the-home-position")}
+            size={16}
+          />
         </ToolIconButton>
         <ToolIconButton onClick={onZoomOut} publishedTheme={theme}>
           <Icon icon="minus" aria-label={t("aria-label-zoom-out")} size={16} />
@@ -142,9 +156,11 @@ const CompassIcon = styled.div<{ publishedTheme?: Theme }>`
   left: 0;
   width: 64px;
   height: 64px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   & path {
-    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+    fill: ${({ theme, publishedTheme }) =>
+      publishedTheme?.mainText || theme.content.main};
   }
   & circle {
     stroke: ${({ theme, publishedTheme }) =>
@@ -163,10 +179,12 @@ const CompassFocusIcon = styled.div`
 
 const AngleIcon = styled.div<{ publishedTheme?: Theme }>`
   & circle {
-    fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
+    fill: ${({ theme, publishedTheme }) =>
+      publishedTheme?.background || theme.bg[0]};
   }
   & g {
-    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+    stroke: ${({ theme, publishedTheme }) =>
+      publishedTheme?.mainText || theme.content.main};
   }
   display: inline-block;
   height: 32px;
@@ -177,13 +195,15 @@ const Tool = styled.div<{ publishedTheme?: Theme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
+  background: ${({ theme, publishedTheme }) =>
+    publishedTheme?.background || theme.bg[0]};
   border-radius: 16px;
   margin-top: 8px;
 `;
 
 const ToolIconButton = styled.button<{ publishedTheme?: Theme }>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
+  color: ${({ theme, publishedTheme }) =>
+    publishedTheme?.mainText || theme.content.main};
   height: 32px;
   width: 32px;
   display: grid;

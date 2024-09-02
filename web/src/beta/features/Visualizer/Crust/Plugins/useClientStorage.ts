@@ -3,7 +3,11 @@ import { useRef, useMemo, useCallback } from "react";
 
 export type ClientStorage = {
   getAsync: (extensionInstanceId: string, key: string) => Promise<any>;
-  setAsync: (extensionInstanceId: string, key: string, value: any) => Promise<void>;
+  setAsync: (
+    extensionInstanceId: string,
+    key: string,
+    value: any
+  ) => Promise<void>;
   deleteAsync: (extensionInstanceId: string, key: string) => Promise<void>;
   keysAsync: (extensionInstanceId: string) => Promise<string[]>;
   dropStore: (extensionInstanceId: string) => Promise<void>;
@@ -20,7 +24,7 @@ export default () => {
     let store = clientStores.current.get(storeName);
     if (!store) {
       store = localforage.createInstance({
-        name: storeName,
+        name: storeName
       });
       clientStores.current.set(storeName, store);
     }
@@ -42,7 +46,7 @@ export default () => {
               })
               .catch((err: any) => {
                 console.log(
-                  `err get client storage value for ${extensionInstanceId} ${key}: ${err}`,
+                  `err get client storage value for ${extensionInstanceId} ${key}: ${err}`
                 );
                 reject();
               });
@@ -62,7 +66,7 @@ export default () => {
               })
               .catch((err: any) => {
                 console.log(
-                  `err set client storage value for ${extensionInstanceId} ${key} ${value}: ${err}`,
+                  `err set client storage value for ${extensionInstanceId} ${key} ${value}: ${err}`
                 );
                 reject();
               });
@@ -82,7 +86,7 @@ export default () => {
               })
               .catch((err: any) => {
                 console.log(
-                  `err delete client storage value for ${extensionInstanceId} ${key}: ${err}`,
+                  `err delete client storage value for ${extensionInstanceId} ${key}: ${err}`
                 );
                 reject();
               });
@@ -101,7 +105,9 @@ export default () => {
                 resolve(value);
               })
               .catch((err: any) => {
-                console.log(`err get client storage keys for ${extensionInstanceId}: ${err}`);
+                console.log(
+                  `err get client storage keys for ${extensionInstanceId}: ${err}`
+                );
                 reject();
               });
           }
@@ -118,7 +124,9 @@ export default () => {
               .dropInstance()
               .then(() => resolve())
               .catch((err: any) => {
-                console.log(`err drop client storage for ${extensionInstanceId}: ${err}`);
+                console.log(
+                  `err drop client storage for ${extensionInstanceId}: ${err}`
+                );
                 reject();
               })
               .finally(() => {
@@ -126,7 +134,7 @@ export default () => {
               });
           }
         });
-      },
+      }
     };
   }, [getStore]);
 

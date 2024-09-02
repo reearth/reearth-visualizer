@@ -4,13 +4,12 @@ import {
   FloatingFocusManager,
   Placement,
   OffsetOptions,
-  ShiftOptions,
+  ShiftOptions
 } from "@floating-ui/react";
-import { forwardRef, useCallback, type HTMLProps, type ReactNode } from "react";
-import { createContext, useContext } from "react";
-
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { forwardRef, useCallback, type HTMLProps, type ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 import usePopover from "./hooks";
 
@@ -34,7 +33,10 @@ type TriggerProps = {
 };
 
 const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
-  function PopoverTrigger({ children, disabled, extendWidth, ...props }, propRef) {
+  function PopoverTrigger(
+    { children, disabled, extendWidth, ...props },
+    propRef
+  ) {
     const context = usePopoverContext();
     const childrenRef = (children as any)?.ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -44,37 +46,38 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
         disabled={disabled}
         extendWidth={extendWidth}
         ref={ref}
-        {...context.getReferenceProps(props)}>
+        {...context.getReferenceProps(props)}
+      >
         {typeof children === "string" ? <Button title={children} /> : children}
       </TriggerWrapper>
     );
-  },
+  }
 );
 
-const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function Content(
-  { style, ...props },
-  propRef,
-) {
-  const { context: floatingContext, ...context } = usePopoverContext();
-  const ref = useMergeRefs([context.refs.setFloating, propRef]);
-  if (!floatingContext.open) return null;
+const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
+  function Content({ style, ...props }, propRef) {
+    const { context: floatingContext, ...context } = usePopoverContext();
+    const ref = useMergeRefs([context.refs.setFloating, propRef]);
+    if (!floatingContext.open) return null;
 
-  return (
-    <FloatingPortal>
-      <FloatingFocusManager context={floatingContext}>
-        <ContentWrapper
-          ref={ref}
-          style={{
-            ...context.floatingStyles,
-            ...style,
-          }}
-          {...context.getFloatingProps(props)}>
-          {props.children}
-        </ContentWrapper>
-      </FloatingFocusManager>
-    </FloatingPortal>
-  );
-});
+    return (
+      <FloatingPortal>
+        <FloatingFocusManager context={floatingContext}>
+          <ContentWrapper
+            ref={ref}
+            style={{
+              ...context.floatingStyles,
+              ...style
+            }}
+            {...context.getFloatingProps(props)}
+          >
+            {props.children}
+          </ContentWrapper>
+        </FloatingFocusManager>
+      </FloatingPortal>
+    );
+  }
+);
 
 export type PopupProps = {
   children?: ReactNode;
@@ -118,13 +121,14 @@ export const Popup = ({
   );
 };
 
-const TriggerWrapper = styled("div")<{ disabled?: boolean; extendWidth?: boolean }>(
-  ({ disabled, extendWidth }) => ({
-    width: extendWidth ? "100%" : "fit-content",
-    pointerEvents: disabled ? "none" : "auto",
-  }),
-);
+const TriggerWrapper = styled("div")<{
+  disabled?: boolean;
+  extendWidth?: boolean;
+}>(({ disabled, extendWidth }) => ({
+  width: extendWidth ? "100%" : "fit-content",
+  pointerEvents: disabled ? "none" : "auto"
+}));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
-  zIndex: theme.zIndexes.editor.popover,
+  zIndex: theme.zIndexes.editor.popover
 }));

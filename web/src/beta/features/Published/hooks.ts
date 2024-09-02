@@ -1,20 +1,19 @@
-import { useState, useMemo, useEffect, useRef } from "react";
-
 import {
   InternalWidget,
   WidgetAlignSystem,
   WidgetAlignment,
   BuiltinWidgets,
-  isBuiltinWidget,
+  isBuiltinWidget
 } from "@reearth/beta/features/Visualizer/Crust";
 import { Story } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import {
   convertData,
-  sceneProperty2ViewerPropertyMapping,
+  sceneProperty2ViewerPropertyMapping
 } from "@reearth/beta/utils/convert-object";
 import type { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
@@ -26,7 +25,7 @@ import type {
   WidgetZone,
   WidgetSection,
   WidgetArea,
-  WidgetAreaPadding,
+  WidgetAreaPadding
 } from "./types";
 
 export default (alias?: string) => {
@@ -34,24 +33,34 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
-  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(undefined);
+  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
+    undefined
+  );
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
+    undefined
+  );
 
-  const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } = useMemo(() => {
-    const sceneProperty = processProperty(data?.property);
-    const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
-    const cesiumIonAccessToken = sceneProperty?.default?.ion;
-    if (sceneProperty?.camera?.camera) {
-      setInitialCamera(sceneProperty?.camera?.camera);
-    }
-    return {
-      viewerProperty: sceneProperty
-        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
-        : undefined,
-      widgetThemeOptions,
-      cesiumIonAccessToken,
-    };
-  }, [data?.property]);
+  const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } =
+    useMemo(() => {
+      const sceneProperty = processProperty(data?.property);
+      const widgetThemeOptions = sceneProperty?.theme as
+        | WidgetThemeOptions
+        | undefined;
+      const cesiumIonAccessToken = sceneProperty?.default?.ion;
+      if (sceneProperty?.camera?.camera) {
+        setInitialCamera(sceneProperty?.camera?.camera);
+      }
+      return {
+        viewerProperty: sceneProperty
+          ? (convertData(
+              sceneProperty,
+              sceneProperty2ViewerPropertyMapping
+            ) as ViewerProperty)
+          : undefined,
+        widgetThemeOptions,
+        cesiumIonAccessToken
+      };
+    }, [data?.property]);
 
   useEffect(() => {
     setCurrentCamera(initialCamera);
@@ -59,11 +68,11 @@ export default (alias?: string) => {
 
   const pluginProperty = useMemo(
     () =>
-      Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
-        {},
-      ),
-    [data?.plugins],
+      Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>((a, b) => {
+        a[b] = processProperty(data?.plugins?.[b]?.property);
+        return a;
+      }, {}),
+    [data?.plugins]
   );
 
   const widgets = useMemo<
@@ -81,7 +90,8 @@ export default (alias?: string) => {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ?? []) {
+            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ??
+              []) {
               widgetsInWas.add(w);
             }
           }
@@ -90,34 +100,34 @@ export default (alias?: string) => {
     }
 
     const floatingWidgets = data?.widgets
-      .filter(w => !widgetsInWas.has(w.id))
+      .filter((w) => !widgetsInWas.has(w.id))
       .map(
         (w): InternalWidget => ({
           id: w.id,
           extended: !!w.extended,
           pluginId: w.pluginId,
           extensionId: w.extensionId,
-          property: processProperty(w.property),
-        }),
+          property: processProperty(w.property)
+        })
       );
 
     const widgets = data?.widgets
-      .filter(w => widgetsInWas.has(w.id))
+      .filter((w) => widgetsInWas.has(w.id))
       .map(
         (w): InternalWidget => ({
           id: w.id,
           extended: !!w.extended,
           pluginId: w.pluginId,
           extensionId: w.extensionId,
-          property: processProperty(w.property),
-        }),
+          property: processProperty(w.property)
+        })
       );
 
     const widgetZone = (zone?: WidgetZone | null) => {
       return {
         left: widgetSection(zone?.left),
         center: widgetSection(zone?.center),
-        right: widgetSection(zone?.right),
+        right: widgetSection(zone?.right)
       };
     };
 
@@ -125,7 +135,7 @@ export default (alias?: string) => {
       return {
         top: widgetArea(section?.top),
         middle: widgetArea(section?.middle),
-        bottom: widgetArea(section?.bottom),
+        bottom: widgetArea(section?.bottom)
       };
     };
 
@@ -133,7 +143,9 @@ export default (alias?: string) => {
       const align = area?.align.toLowerCase() as WidgetAlignment | undefined;
       const padding = area?.padding as WidgetAreaPadding | undefined;
       const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
-        .map<InternalWidget | undefined>(w => widgets?.find(w2 => w === w2.id))
+        .map<
+          InternalWidget | undefined
+        >((w) => widgets?.find((w2) => w === w2.id))
         .filter((w): w is InternalWidget => !!w);
       return {
         align: align ?? "start",
@@ -141,35 +153,44 @@ export default (alias?: string) => {
           top: padding?.top ?? 6,
           bottom: padding?.bottom ?? 6,
           left: padding?.left ?? 6,
-          right: padding?.right ?? 6,
+          right: padding?.right ?? 6
         },
         gap: area?.gap ?? 6,
         widgets: areaWidgets || [],
         background: area?.background as string | undefined,
-        centered: area?.centered,
+        centered: area?.centered
       };
     };
 
-    const ownBuiltinWidgets = data.widgets.reduce<(keyof BuiltinWidgets)[]>((res, next) => {
-      const id = `${next.pluginId}/${next.extensionId}`;
-      return isBuiltinWidget(id) && widgetsInWas.has(next.id) ? [...res, id] : res;
-    }, []);
+    const ownBuiltinWidgets = data.widgets.reduce<(keyof BuiltinWidgets)[]>(
+      (res, next) => {
+        const id = `${next.pluginId}/${next.extensionId}`;
+        if (isBuiltinWidget(id) && widgetsInWas.has(next.id)) {
+          res.push(id);
+        }
+        return res;
+      },
+      []
+    );
 
     return {
       floating: floatingWidgets,
       alignSystem: data.widgetAlignSystem
         ? {
             outer: widgetZone(data.widgetAlignSystem.outer),
-            inner: widgetZone(data.widgetAlignSystem.inner),
+            inner: widgetZone(data.widgetAlignSystem.inner)
           }
         : undefined,
-      ownBuiltinWidgets,
+      ownBuiltinWidgets
     };
   }, [data]);
 
   const actualAlias = useMemo(
-    () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
-    [alias],
+    () =>
+      alias ||
+      new URLSearchParams(window.location.search).get("alias") ||
+      undefined,
+    [alias]
   );
 
   const story = useMemo(() => {
@@ -181,29 +202,29 @@ export default (alias?: string) => {
           title: s.title,
           position: s.position,
           bgColor: s.bgColor || "#f1f1f1",
-          pages: s.pages.map(p => {
+          pages: s.pages.map((p) => {
             return {
               id: p.id,
               swipeable: p.swipeable,
               layerIds: p.layers,
               property: processProperty(p.property),
-              blocks: p.blocks.map(b => {
+              blocks: p.blocks.map((b) => {
                 return {
                   id: b.id,
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
-                  property: processNewProperty(b.property),
+                  property: processNewProperty(b.property)
                 };
-              }),
+              })
             };
-          }),
+          })
         };
     return processedStory;
   }, [data?.story]);
 
   const layers = useMemo(() => {
     const processedLayers = processLayers(
-      data?.nlsLayers?.map(l => ({
+      data?.nlsLayers?.map((l) => ({
         id: l.id,
         title: l.title,
         config: l.config,
@@ -211,15 +232,15 @@ export default (alias?: string) => {
         visible: !!l.isVisible,
         infobox: l.nlsInfobox,
         isSketch: l.isSketch,
-        sketch: l.sketchInfo,
+        sketch: l.sketchInfo
       })) ?? [],
-      data?.layerStyles,
+      data?.layerStyles
     );
     if (!story) return processedLayers;
 
-    return processedLayers?.map(layer => ({
+    return processedLayers?.map((layer) => ({
       ...layer,
-      visible: true,
+      visible: true
     }));
   }, [data?.nlsLayers, data?.layerStyles, story]);
 
@@ -245,7 +266,7 @@ export default (alias?: string) => {
         ) {
           d.property = {
             ...d.property,
-            tiles: [{ id: "___default_tile___" }],
+            tiles: [{ id: "___default_tile___" }]
           };
         }
         setData(d);
@@ -263,9 +284,9 @@ export default (alias?: string) => {
       cesiumIonAccessToken:
         typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
           ? cesiumIonAccessToken
-          : config()?.cesiumIonAccessToken,
+          : config()?.cesiumIonAccessToken
     }),
-    [cesiumIonAccessToken],
+    [cesiumIonAccessToken]
   );
 
   // GA
@@ -284,7 +305,7 @@ export default (alias?: string) => {
     visualizerRef,
     currentCamera,
     initialCamera,
-    setCurrentCamera,
+    setCurrentCamera
   };
 };
 

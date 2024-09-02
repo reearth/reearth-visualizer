@@ -1,12 +1,11 @@
-import { FC } from "react";
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
 
 const ListItem: FC<{ index?: number; keyValue?: string; value?: string }> = ({
   index,
   keyValue,
-  value,
+  value
 }) => {
   const theme = useTheme();
   return (
@@ -27,19 +26,21 @@ const ListItem: FC<{ index?: number; keyValue?: string; value?: string }> = ({
 
 export default ListItem;
 
-const PropertyWrapper = styled("div")<{ isEven?: boolean }>(({ isEven, theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  gap: theme.spacing.large,
-  background: isEven ? "#F4F4F4" : "#ffffff",
-  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-  boxSizing: "border-box",
-  wordBreak: "break-word",
-  width: "100%",
-}));
+const PropertyWrapper = styled("div")<{ isEven?: boolean }>(
+  ({ isEven, theme }) => ({
+    display: "flex",
+    justifyContent: "space-between",
+    gap: theme.spacing.large,
+    background: isEven ? "#F4F4F4" : "#ffffff",
+    padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
+    boxSizing: "border-box",
+    wordBreak: "break-word",
+    width: "100%"
+  })
+);
 
 const TextWrapper = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 function isEven(number: number) {

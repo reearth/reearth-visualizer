@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import { Meta } from "@storybook/react";
 import { useState } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import Slide from ".";
 
@@ -24,11 +23,11 @@ interface DefaultProps {
 export default {
   component: Slide,
   decorators: [
-    Story => {
+    (Story) => {
       const [pos, setPos] = useState(0);
       return <Story pos={pos} setPos={setPos} />;
-    },
-  ],
+    }
+  ]
 } as Meta;
 
 export const Default = ({ pos, setPos }: DefaultProps) => {

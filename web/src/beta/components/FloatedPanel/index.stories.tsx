@@ -4,23 +4,23 @@ import { Meta, Story } from "@storybook/react";
 import FloatedPanel, { Props } from ".";
 
 const meta: Meta<Props> = {
-  component: FloatedPanel,
+  component: FloatedPanel
 };
 
 export default meta;
 
-const Template: Story<Props> = args => <FloatedPanel {...args} />;
+const Template: Story<Props> = (args) => <FloatedPanel {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
   visible: true,
-  children: "This is the content of the floated panel",
+  children: "This is the content of the floated panel"
 };
 
 export const Hidden = Template.bind({});
 Hidden.args = {
   visible: false,
-  children: "This is the content of the floated panel",
+  children: "This is the content of the floated panel"
 };
 
 export const CustomStyles = Template.bind({});
@@ -31,5 +31,5 @@ CustomStyles.args = {
     background-color: lightblue;
     color: white;
     padding: 10px;
-  `,
+  `
 };

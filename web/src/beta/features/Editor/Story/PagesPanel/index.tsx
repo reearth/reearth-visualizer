@@ -1,20 +1,23 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-
 import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useStoryPage } from "../context";
 
 import PageItem from "./PageItem";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
-const PAGES_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-story-page-drag-handle";
+const PAGES_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-story-page-drag-handle";
 
 const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
-  const { storyPages, handleStoryPageAdd, handleStoryPageMove } = useStoryPage();
+  const { storyPages, handleStoryPageAdd, handleStoryPageMove } =
+    useStoryPage();
 
-  const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
+  const [openedPageId, setOpenedPageId] = useState<string | undefined>(
+    undefined
+  );
 
   const [isDragging, setIsDragging] = useState(false);
   const [storyPageitems, setStoryPageitems] = useState(storyPages ?? []);
@@ -30,9 +33,9 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
             dragHandleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
             isDragging={isDragging}
           />
-        ),
+        )
       })),
-    [storyPageitems, isDragging],
+    [storyPageitems, isDragging]
   );
 
   const handleMoveStart = useCallback(() => {
@@ -42,9 +45,9 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const handleMoveEnd = useCallback(
     async (itemId?: string, newIndex?: number) => {
       if (itemId !== undefined && newIndex !== undefined) {
-        setStoryPageitems(old => {
+        setStoryPageitems((old) => {
           const items = [...old];
-          const currentIndex = old.findIndex(o => o.id === itemId);
+          const currentIndex = old.findIndex((o) => o.id === itemId);
           if (currentIndex !== -1) {
             const [movedItem] = items.splice(currentIndex, 1);
             items.splice(newIndex, 0, movedItem);
@@ -55,7 +58,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       }
       setIsDragging(false);
     },
-    [handleStoryPageMove],
+    [handleStoryPageMove]
   );
 
   useEffect(() => {
@@ -69,7 +72,8 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       alwaysOpen
       storageId="editor-story-pages-panel"
       showCollapseArea={showCollapseArea}
-      areaRef={areaRef}>
+      areaRef={areaRef}
+    >
       <ButtonWrapper>
         <Button
           icon="plus"
@@ -79,7 +83,9 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           onClick={() => handleStoryPageAdd(false)}
         />
       </ButtonWrapper>
-      <Wrapper onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
+      <Wrapper
+        onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}
+      >
         {!!DraggableStoryPageItems && (
           <DragAndDropList
             items={DraggableStoryPageItems}
@@ -102,9 +108,9 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   gap: theme.spacing.normal,
   overflowY: "auto",
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  padding: `${theme.spacing.small}px 0`,
+  padding: `${theme.spacing.small}px 0`
 }));

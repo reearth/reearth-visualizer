@@ -1,10 +1,9 @@
-import { FC } from "react";
-
 import { SwitchField } from "@reearth/beta/ui/fields";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 
@@ -18,14 +17,18 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
 
   const { visibleItems, handleInfoboxCreate } = useHooks({
     layerId: selectedLayerId,
-    property: infobox?.property,
+    property: infobox?.property
   });
 
   return (
     <Wrapper>
       {visibleItems ? (
-        visibleItems.map(i => (
-          <PropertyItem key={i.id ?? ""} propertyId={infobox?.property?.id} item={i} />
+        visibleItems.map((i) => (
+          <PropertyItem
+            key={i.id ?? ""}
+            propertyId={infobox?.property?.id}
+            item={i}
+          />
         ))
       ) : (
         <SwitchField
@@ -42,7 +45,7 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
 export default Infobox;

@@ -1,8 +1,7 @@
-import { FC, useCallback, useMemo } from "react";
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/beta/utils/value";
+import { FC, useCallback, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -13,24 +12,42 @@ export type Props = BlockProps<StoryBlock>;
 const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
-    [block?.property?.default?.text?.value],
+    [block?.property?.default?.text?.value]
   );
 
   const handlePropertyValueUpdate = useCallback(
-    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: any,
+      itemId?: string
+    ) => {
       return async (v?: any) => {
-        await props.onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+        await props.onPropertyUpdate?.(
+          propertyId,
+          schemaGroupId,
+          fieldId,
+          itemId,
+          vt,
+          v
+        );
       };
     },
-    [props],
+    [props]
   );
 
   const handleTextUpdate = useCallback(
     (text: string) => {
       if (!block?.propertyId) return;
-      handlePropertyValueUpdate("default", block?.propertyId, "text", "string")(text);
+      handlePropertyValueUpdate(
+        "default",
+        block?.propertyId,
+        "text",
+        "string"
+      )(text);
     },
-    [block?.propertyId, handlePropertyValueUpdate],
+    [block?.propertyId, handlePropertyValueUpdate]
   );
 
   return (
@@ -41,7 +58,8 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
       propertyId={block?.propertyId}
       property={block?.property}
       settingsEnabled={false}
-      {...props}>
+      {...props}
+    >
       <MdEditor text={text} onUpdate={handleTextUpdate} />
     </BlockWrapper>
   );

@@ -2,9 +2,7 @@ import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
-export type CustomPropertyProp = {
-  [key: string]: string;
-};
+export type CustomPropertyProp = Record<string, string>;
 export type SketchLayerDataType =
   | "Text"
   | "TextArea"

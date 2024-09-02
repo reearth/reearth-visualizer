@@ -3,43 +3,54 @@ import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
 import type { Spacing } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 
-export const getFieldValue = (items: Item[], fieldId: string, fieldGroup?: string) => {
-  const d = items.find(i => i.schemaGroup === (fieldGroup ?? "default")) ?? items[0];
+export const getFieldValue = (
+  items: Item[],
+  fieldId: string,
+  fieldGroup?: string
+) => {
+  const d =
+    items.find((i) => i.schemaGroup === (fieldGroup ?? "default")) ?? items[0];
   const isList = d && "items" in d;
-  const schemaField = d?.schemaFields.find(sf => sf.id === fieldId);
+  const schemaField = d?.schemaFields.find((sf) => sf.id === fieldId);
   return !isList
-    ? d?.fields.find(f => f.id === schemaField?.id)?.value
-    : d.items.map(item => ({
+    ? d?.fields.find((f) => f.id === schemaField?.id)?.value
+    : d.items.map((item) => ({
         id: item.id,
-        ...item.fields.reduce((obj: { [id: string]: ValueTypes[ValueType] | undefined }, field) => {
-          obj[field.id] = field.value;
-          return obj;
-        }, {}),
+        ...item.fields.reduce(
+          (obj: Record<string, ValueTypes[ValueType] | undefined>, field) => {
+            obj[field.id] = field.value;
+            return obj;
+          },
+          {}
+        )
       }));
 };
 
 export const calculatePaddingValue = (
   defaultValue: Spacing,
   value?: Spacing,
-  editorMode?: boolean,
+  editorMode?: boolean
 ) => {
-  const calculateValue = (position: keyof Spacing, v?: number): { [key: string]: number } => {
+  const calculateValue = (
+    position: keyof Spacing,
+    v?: number
+  ): Record<string, number> => {
     if (v === undefined) {
       return {
-        [position]: editorMode ? defaultValue[position] : 0,
+        [position]: editorMode ? defaultValue[position] : 0
       };
     }
     return {
-      [position]: v,
+      [position]: v
     };
   };
 
   return value
     ? Object.assign(
         {},
-        ...Object.keys(value).map(p =>
-          calculateValue(p as keyof Spacing, value[p as keyof Spacing]),
-        ),
+        ...Object.keys(value).map((p) =>
+          calculateValue(p as keyof Spacing, value[p as keyof Spacing])
+        )
       )
     : defaultValue;
 };
@@ -56,7 +67,7 @@ const MONTH_LABEL_LIST = [
   "Sep",
   "Oct",
   "Nov",
-  "Dec",
+  "Dec"
 ];
 
 export const formatTimezone = (time: number) => {
@@ -71,11 +82,12 @@ export const formatTimezone = (time: number) => {
 export const formatDateForTimeline = (
   time: number,
   options: { detail?: boolean } = {},
-  timezone?: string,
+  timezone?: string
 ) => {
   const localTimezoneOffset = new Date().getTimezoneOffset();
   const d = new Date(
-    time + (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+    time +
+      (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000
   );
 
   const year = d.getFullYear();
@@ -94,11 +106,12 @@ export const formatDateForTimeline = (
 export const formatDateForSliderTimeline = (
   time: number,
   options: { detail?: boolean } = {},
-  timezone?: string,
+  timezone?: string
 ) => {
   const localTimezoneOffset = new Date().getTimezoneOffset();
   const d = new Date(
-    time + (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+    time +
+      (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000
   );
 
   const month = MONTH_LABEL_LIST[d.getMonth()];
@@ -156,11 +169,15 @@ export const formatRangeDateAndTime = (data: string) => {
   const time = data.slice(lastIdx + 1);
   return {
     date,
-    time,
+    time
   };
 };
 
-export const convertPositionToTime = (e: MouseEvent, start: number, end: number) => {
+export const convertPositionToTime = (
+  e: MouseEvent,
+  start: number,
+  end: number
+) => {
   const curTar = e.currentTarget as HTMLElement;
   const width = curTar.scrollWidth - 32;
   const rect = curTar.getBoundingClientRect();
@@ -188,7 +205,10 @@ export const formatISO8601 = (time: string) => {
   const splitZone = timezone.split(":");
   if (splitZone[0].length === 2) {
     return time
-      .replace(timezone, `${splitZone[0][0]}0${splitZone[0][1]}:${splitZone[1]}`)
+      .replace(
+        timezone,
+        `${splitZone[0][0]}0${splitZone[0][1]}:${splitZone[1]}`
+      )
       .replace(" ", "");
   }
   return time.replace(" ", "");

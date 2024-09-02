@@ -1,3 +1,4 @@
+import { truncMinutes } from "@reearth/beta/utils/time";
 import React, {
   ChangeEventHandler,
   MouseEvent,
@@ -8,10 +9,8 @@ import React, {
   useMemo,
   useRef,
   useState,
-  WheelEventHandler,
+  WheelEventHandler
 } from "react";
-
-import { truncMinutes } from "@reearth/beta/utils/time";
 
 import {
   BORDER_WIDTH,
@@ -22,7 +21,7 @@ import {
   PADDING_HORIZONTAL,
   HOURS_SECS,
   NORMAL_SCALE_WIDTH,
-  STRONG_SCALE_WIDTH,
+  STRONG_SCALE_WIDTH
 } from "./constants";
 import { TimeEventHandler, Range } from "./types";
 import { calcScaleInterval, formatDateForTimeline } from "./utils";
@@ -57,7 +56,7 @@ const useTimelineInteraction = ({
   setScaleWidth,
   setZoom,
   onClick,
-  onDrag,
+  onDrag
 }: InteractionOption) => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const handleOnMouseDown = useCallback(() => {
@@ -67,7 +66,7 @@ const useTimelineInteraction = ({
     setIsMouseDown(false);
   }, []);
   const handleOnMouseMove: MouseEventHandler = useCallback(
-    e => {
+    (e) => {
       if (!isMouseDown || !onDrag || !e.target) {
         return;
       }
@@ -88,7 +87,7 @@ const useTimelineInteraction = ({
         curTar.scroll(curTar.scrollLeft - scrollAmount, 0);
       }
     },
-    [onDrag, start, end, isMouseDown],
+    [onDrag, start, end, isMouseDown]
   );
 
   useEffect(() => {
@@ -99,29 +98,31 @@ const useTimelineInteraction = ({
   }, [handleOnMouseUp]);
 
   const handleOnClick: MouseEventHandler = useCallback(
-    e => {
+    (e) => {
       if (!onClick) return;
       onClick(convertPositionToTime(e, { start, end }));
     },
-    [onClick, end, start],
+    [onClick, end, start]
   );
 
   const handleOnWheel: WheelEventHandler = useCallback(
-    e => {
+    (e) => {
       const { deltaX, deltaY } = e;
       const isHorizontal = Math.abs(deltaX) > 0 || Math.abs(deltaX) < 0;
       if (isHorizontal) return;
 
-      setZoom(() => Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO));
+      setZoom(() =>
+        Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO)
+      );
     },
-    [zoom, setZoom],
+    [zoom, setZoom]
   );
 
   useEffect(() => {
     const elm = scaleElement.current;
     if (!elm) return;
 
-    const obs = new ResizeObserver(m => {
+    const obs = new ResizeObserver((m) => {
       const target = m[0].target;
       setScaleWidth(target.clientWidth);
     });
@@ -136,7 +137,7 @@ const useTimelineInteraction = ({
     onMouseDown: handleOnMouseDown,
     onMouseMove: handleOnMouseMove,
     onClick: handleOnClick,
-    onWheel: handleOnWheel,
+    onWheel: handleOnWheel
   };
 };
 
@@ -151,23 +152,23 @@ const useTimelinePlayer = ({
   currentTime,
   onPlay,
   onPlayReversed,
-  onSpeedChange,
+  onSpeedChange
 }: TimelinePlayerOptions) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const syncCurrentTimeRef = useRef(currentTime);
   const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    e => {
+    (e) => {
       onSpeedChange?.(parseInt(e.currentTarget.value, 10));
     },
-    [onSpeedChange],
+    [onSpeedChange]
   );
   const toggleIsPlaying = useCallback(() => {
     if (isPlayingReversed) {
       setIsPlayingReversed(false);
       onPlayReversed?.(false);
     }
-    setIsPlaying(p => !p);
+    setIsPlaying((p) => !p);
     onPlay?.(!isPlaying);
   }, [isPlayingReversed, onPlay, isPlaying, onPlayReversed]);
   const toggleIsPlayingReversed = useCallback(() => {
@@ -175,7 +176,7 @@ const useTimelinePlayer = ({
       setIsPlaying(false);
       onPlay?.(false);
     }
-    setIsPlayingReversed(p => !p);
+    setIsPlayingReversed((p) => !p);
     onPlayReversed?.(!isPlayingReversed);
   }, [isPlaying, isPlayingReversed, onPlay, onPlayReversed]);
   const formattedCurrentTime = useMemo(() => {
@@ -185,7 +186,7 @@ const useTimelinePlayer = ({
     const time = textDate.slice(lastIdx);
     return {
       date,
-      time,
+      time
     };
   }, [currentTime]);
 
@@ -199,7 +200,7 @@ const useTimelinePlayer = ({
     isPlaying,
     isPlayingReversed,
     toggleIsPlaying,
-    toggleIsPlayingReversed,
+    toggleIsPlayingReversed
   };
 };
 
@@ -212,14 +213,14 @@ const getRange = (range?: { [K in keyof Range]?: Range[K] }): Range => {
   if (start !== undefined && end === undefined) {
     return {
       start,
-      end: start + DAY_SECS * EPOCH_SEC,
+      end: start + DAY_SECS * EPOCH_SEC
     };
   }
 
   if (start === undefined && end !== undefined) {
     return {
       start: Math.max(end - DAY_SECS * EPOCH_SEC, 0),
-      end,
+      end
     };
   }
 
@@ -227,7 +228,7 @@ const getRange = (range?: { [K in keyof Range]?: Range[K] }): Range => {
 
   return {
     start: defaultStart,
-    end: defaultStart + DAY_SECS * EPOCH_SEC,
+    end: defaultStart + DAY_SECS * EPOCH_SEC
   };
 };
 
@@ -248,18 +249,20 @@ export const useTimeline = ({
   onDrag,
   onPlay,
   onPlayReversed,
-  onSpeedChange,
+  onSpeedChange
 }: Option) => {
   const range = useMemo(() => {
     const range = getRange(_range);
     if (process.env.NODE_ENV !== "production") {
       if (range.start > range.end) {
-        throw new Error("Out of range error. `range.start` should be less than `range.end`");
+        throw new Error(
+          "Out of range error. `range.start` should be less than `range.end`"
+        );
       }
     }
     return {
       start: truncMinutes(new Date(range.start)).getTime(),
-      end: truncMinutes(new Date(range.end)).getTime(),
+      end: truncMinutes(new Date(range.end)).getTime()
     };
   }, [_range]);
   const { start, end } = range;
@@ -275,10 +278,11 @@ export const useTimeline = ({
     scaleCount,
     scaleInterval,
     strongScaleMinutes,
-    gap: gapHorizontal,
+    gap: gapHorizontal
   } = useMemo(
-    () => calcScaleInterval(epochDiff, zoom, { gap: zoomedGap, width: scaleWidth }),
-    [epochDiff, zoom, scaleWidth, zoomedGap],
+    () =>
+      calcScaleInterval(epochDiff, zoom, { gap: zoomedGap, width: scaleWidth }),
+    [epochDiff, zoom, scaleWidth, zoomedGap]
   );
 
   // Count hours scale
@@ -286,14 +290,24 @@ export const useTimeline = ({
 
   // Convert scale count to pixel.
   const currentPosition = useMemo(() => {
-    const diff = Math.min((currentTime - start) / EPOCH_SEC / scaleInterval, scaleCount);
+    const diff = Math.min(
+      (currentTime - start) / EPOCH_SEC / scaleInterval,
+      scaleCount
+    );
     const strongScaleCount = diff / strongScaleMinutes - 1;
     return Math.max(
       (diff - strongScaleCount) * (NORMAL_SCALE_WIDTH + gapHorizontal) +
         strongScaleCount * (STRONG_SCALE_WIDTH + gapHorizontal),
-      0,
+      0
     );
-  }, [currentTime, start, scaleCount, gapHorizontal, scaleInterval, strongScaleMinutes]);
+  }, [
+    currentTime,
+    start,
+    scaleCount,
+    gapHorizontal,
+    scaleInterval,
+    strongScaleMinutes
+  ]);
 
   const events = useTimelineInteraction({
     range,
@@ -302,9 +316,14 @@ export const useTimeline = ({
     onClick,
     onDrag,
     scaleElement,
-    setScaleWidth,
+    setScaleWidth
   });
-  const player = useTimelinePlayer({ currentTime, onPlay, onPlayReversed, onSpeedChange });
+  const player = useTimelinePlayer({
+    currentTime,
+    onPlay,
+    onPlayReversed,
+    onSpeedChange
+  });
 
   return {
     startDate,
@@ -317,6 +336,6 @@ export const useTimeline = ({
     events,
     player,
     scaleElement,
-    shouldScroll: zoom !== 1,
+    shouldScroll: zoom !== 1
   };
 };

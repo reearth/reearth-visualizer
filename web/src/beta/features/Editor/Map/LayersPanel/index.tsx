@@ -1,15 +1,19 @@
-import { FC, useCallback, useMemo, useState } from "react";
-
-import { Button, PopupMenu, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  PopupMenu,
+  DragAndDropList
+} from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
 
 import LayerItem from "./LayerItem";
 
-const LAYERS_DRAG_HANDLE_CLASS_NAME = "reearth-visualizer-editor-layers-drag-handle";
+const LAYERS_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-layers-drag-handle";
 
 const LayersPanel: FC = () => {
   const {
@@ -17,7 +21,7 @@ const LayersPanel: FC = () => {
     handleLayerMove,
     handleLayerSelect,
     openDataSourceLayerCreator,
-    openSketchLayerCreator,
+    openSketchLayerCreator
   } = useMapPage();
 
   const t = useT();
@@ -30,7 +34,7 @@ const LayersPanel: FC = () => {
         icon: "file" as const,
         onClick: () => {
           openDataSourceLayerCreator();
-        },
+        }
       },
       {
         id: "add-sketch-layer",
@@ -38,8 +42,8 @@ const LayersPanel: FC = () => {
         icon: "pencilSimple" as const,
         onClick: () => {
           openSketchLayerCreator();
-        },
-      },
+        }
+      }
     ];
   }, [openDataSourceLayerCreator, openSketchLayerCreator, t]);
 
@@ -48,7 +52,7 @@ const LayersPanel: FC = () => {
 
   const DraggableLayerItems = useMemo(
     () =>
-      layers.map(layer => ({
+      layers.map((layer) => ({
         id: layer.id,
         content: (
           <LayerItem
@@ -58,9 +62,9 @@ const LayersPanel: FC = () => {
             editingLayerNameId={editingLayerNameId}
             setEditingLayerNameId={setEditingLayerNameId}
           />
-        ),
+        )
       })),
-    [layers, isDragging, editingLayerNameId],
+    [layers, isDragging, editingLayerNameId]
   );
 
   const handleMoveStart = useCallback(() => {
@@ -74,14 +78,16 @@ const LayersPanel: FC = () => {
       }
       setIsDragging(false);
     },
-    [handleLayerMove],
+    [handleLayerMove]
   );
 
   return (
     <Panel title={t("Layers")} storageId="editor-map-layers-panel" extend>
       <Wrapper>
         <PopupMenu
-          label={<Button icon="plus" title="New Layer" size="small" extendWidth />}
+          label={
+            <Button icon="plus" title="New Layer" size="small" extendWidth />
+          }
           extendTriggerWidth
           placement="bottom-end"
           menu={newLayerMenu}
@@ -108,17 +114,17 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.small,
   paddingTop: theme.spacing.smallest,
-  height: "100%",
+  height: "100%"
 }));
 
 const LayersContainer = styled("div")(() => ({
   flex: 1,
   overflowY: "auto",
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "column"
 }));
 
 const EmptySpace = styled("div")(() => ({
   flex: 1,
-  minHeight: 50,
+  minHeight: 50
 }));

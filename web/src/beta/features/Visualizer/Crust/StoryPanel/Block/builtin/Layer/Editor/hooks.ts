@@ -1,8 +1,7 @@
-import { debounce } from "lodash-es";
-import { useCallback, useMemo } from "react";
-
 import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
+import { debounce } from "lodash-es";
+import { useCallback, useMemo } from "react";
 
 import type { Field } from "../../../../types";
 
@@ -20,7 +19,7 @@ export default ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove,
+  onPropertyItemMove
 }: {
   items: LayerBlock[];
   propertyId?: string;
@@ -31,19 +30,22 @@ export default ({
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 }) => {
   const visualizer = useVisualizer();
@@ -53,35 +55,64 @@ export default ({
     () =>
       visualizer.current?.layers?.layers()?.map(({ id, title }) => ({
         value: id,
-        label: title ?? `Layer: ${id}`,
+        label: title ?? `Layer: ${id}`
       })) || [],
-    [visualizer],
+    [visualizer]
   );
-  const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
+  const editorProperties = useMemo(
+    () => items.find((i) => i.id === selected),
+    [items, selected]
+  );
 
   const handlePropertyValueUpdate = useCallback(
-    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: any,
+      itemId?: string
+    ) => {
       return async (v?: any) => {
-        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+        await onPropertyUpdate?.(
+          propertyId,
+          schemaGroupId,
+          fieldId,
+          itemId,
+          vt,
+          v
+        );
       };
     },
-    [onPropertyUpdate],
+    [onPropertyUpdate]
   );
 
   const handleUpdate = useCallback(
     (itemId: string, fieldId: string, fieldType: any, updatedValue: any) => {
       if (!propertyId || !itemId) return;
 
-      handlePropertyValueUpdate("default", propertyId, fieldId, fieldType, itemId)(updatedValue);
+      handlePropertyValueUpdate(
+        "default",
+        propertyId,
+        fieldId,
+        fieldType,
+        itemId
+      )(updatedValue);
     },
-    [propertyId, handlePropertyValueUpdate],
+    [propertyId, handlePropertyValueUpdate]
   );
 
-  const debounceOnUpdate = useMemo(() => debounce(handleUpdate, 500), [handleUpdate]);
+  const debounceOnUpdate = useMemo(
+    () => debounce(handleUpdate, 500),
+    [handleUpdate]
+  );
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, title: title?.value ?? t("New Layers Button") })),
-    [items, t],
+    () =>
+      items.map(({ id, title }) => ({
+        id,
+        title: title?.value ?? t("New Layers Button")
+      })),
+    [items, t]
   );
 
   const handleItemAdd = useCallback(() => {
@@ -95,7 +126,7 @@ export default ({
 
       onPropertyItemDelete?.(propertyId, "default", itemId);
     },
-    [propertyId, onPropertyItemDelete],
+    [propertyId, onPropertyItemDelete]
   );
 
   const handleItemMove = useCallback(
@@ -104,7 +135,7 @@ export default ({
 
       onPropertyItemMove?.(propertyId, "default", id, index);
     },
-    [propertyId, onPropertyItemMove],
+    [propertyId, onPropertyItemMove]
   );
 
   return {
@@ -114,6 +145,6 @@ export default ({
     listItems,
     handleItemAdd,
     handleItemRemove,
-    handleItemMove,
+    handleItemMove
   };
 };

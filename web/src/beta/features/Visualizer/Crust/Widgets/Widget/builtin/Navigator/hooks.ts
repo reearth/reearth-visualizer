@@ -11,7 +11,7 @@ export default function ({
   onZoomOut,
   onCameraOrbit,
   onCameraRotateRight,
-  onFlyTo,
+  onFlyTo
 }: {
   camera?: Camera;
   initialCamera?: Camera;
@@ -21,7 +21,10 @@ export default function ({
   onZoomOut?: (amount: number) => void;
   onCameraOrbit?: (orbit: number) => void;
   onCameraRotateRight?: (radian: number) => void;
-  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (
+    target: string | FlyToDestination,
+    options?: { duration?: number }
+  ) => void;
 }) {
   const [degree, setDegree] = useState(0);
   const [isHelpOpened, setIsHelpOpened] = useState(false);
@@ -33,7 +36,7 @@ export default function ({
       const radian = degreeToRadian(deg);
       onCameraRotateRight?.(radian);
     },
-    [onCameraRotateRight],
+    [onCameraRotateRight]
   );
   const handleOnStartOrbit = useCallback(() => {
     isMovingOrbit.current = true;
@@ -50,7 +53,7 @@ export default function ({
     }
   }, [initialCamera, onFlyTo]);
   const handleOnClickHelp = useCallback(() => {
-    setIsHelpOpened(prev => !prev);
+    setIsHelpOpened((prev) => !prev);
   }, []);
 
   const handleOnZoomIn = useCallback(() => {
@@ -98,7 +101,7 @@ export default function ({
       onRestoreRotate: handleOnRestoreRotate,
       onHelp: handleOnClickHelp,
       onZoomIn: handleOnZoomIn,
-      onZoomOut: handleOnZoomOut,
-    },
+      onZoomOut: handleOnZoomOut
+    }
   };
 }

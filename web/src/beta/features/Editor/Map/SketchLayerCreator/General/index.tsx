@@ -1,10 +1,14 @@
-import { FC } from "react";
-
 import { Selector, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { FC } from "react";
 
-import { ContentWrapper, InputGroup, InputsWrapper, Wrapper } from "../../shared/SharedComponent";
+import {
+  ContentWrapper,
+  InputGroup,
+  InputsWrapper,
+  Wrapper
+} from "../../shared/SharedComponent";
 
 export interface Props {
   layerName?: string;
@@ -18,7 +22,7 @@ const General: FC<Props> = ({
   layerName,
   layerStyle,
   onLayerNameChange,
-  onLayerStyleChange,
+  onLayerStyleChange
 }) => {
   const t = useT();
   const layerStyleOption = layerStyles ? layerStyles : [];
@@ -28,7 +32,11 @@ const General: FC<Props> = ({
       <ContentWrapper>
         <InputGroup label={t("Layer Name")}>
           <InputsWrapper>
-            <TextInput placeholder={t(" Text")} value={layerName} onChange={onLayerNameChange} />
+            <TextInput
+              placeholder={t(" Text")}
+              value={layerName}
+              onChange={onLayerNameChange}
+            />
           </InputsWrapper>
         </InputGroup>
 
@@ -36,7 +44,10 @@ const General: FC<Props> = ({
           <Selector
             value={layerStyle}
             maxHeight={250}
-            options={layerStyleOption?.map(v => ({ label: v.name, value: v.id }))}
+            options={layerStyleOption?.map((v) => ({
+              label: v.name,
+              value: v.id
+            }))}
             onChange={onLayerStyleChange}
           />
         </InputGroup>

@@ -1,8 +1,12 @@
-import { FC, useCallback, useState } from "react";
-
-import { Button, Selector, TextInput, Icon } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  Selector,
+  TextInput,
+  Icon
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
 
 import { dataTypes } from "../../SketchLayerCreator";
 import { CustomPropertyItemProps } from "../../SketchLayerCreator/type";
@@ -15,12 +19,14 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
   onTypeChange,
   onBlur,
   onDoubleClick,
-  onCustomPropertyDelete,
+  onCustomPropertyDelete
 }) => {
   const t = useT();
   const theme = useTheme();
 
-  const [customPropertyTitle, setCustomPropertyTitle] = useState(customPropertyItem.key);
+  const [customPropertyTitle, setCustomPropertyTitle] = useState(
+    customPropertyItem.key
+  );
   const [dataType, setDataType] = useState(customPropertyItem.value);
 
   const handleTitleChange = useCallback((value: string) => {
@@ -32,7 +38,7 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
       setDataType(value as string);
       onTypeChange?.(value as string);
     },
-    [onTypeChange],
+    [onTypeChange]
   );
 
   return (
@@ -60,18 +66,21 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
       </ProjectItemCol>
       <ProjectItemCol
         style={{
-          justifyContent: "space-between",
-        }}>
+          justifyContent: "space-between"
+        }}
+      >
         {customPropertyItem.value.trim() === "" || isEditType ? (
           <Selector
             size="small"
             value={dataType}
             placeholder={t("Please select one type")}
-            options={dataTypes.map(v => ({ value: v, label: v }))}
+            options={dataTypes.map((v) => ({ value: v, label: v }))}
             onChange={handleTypeChange}
           />
         ) : (
-          <TitleWrapper onDoubleClick={() => onDoubleClick?.("type")}>{dataType}</TitleWrapper>
+          <TitleWrapper onDoubleClick={() => onDoubleClick?.("type")}>
+            {dataType}
+          </TitleWrapper>
         )}
       </ProjectItemCol>
       <Button
@@ -94,11 +103,11 @@ const PropertyFieldWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   gap: theme.spacing.micro,
   padding: theme.spacing.micro,
-  borderRadius: theme.radius.smallest,
+  borderRadius: theme.radius.smallest
 }));
 
 const ProjectItemCol = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -108,7 +117,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.micro,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "nowrap"
 }));
 
 export default CustomPropertyItem;

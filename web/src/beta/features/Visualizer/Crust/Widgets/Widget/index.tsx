@@ -1,7 +1,6 @@
-import { ComponentType, ReactNode, useMemo } from "react";
-
 import type { TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
+import { ComponentType, ReactNode, useMemo } from "react";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
@@ -13,11 +12,15 @@ import type {
   LookAtDestination,
   Clock,
   Camera,
-  InternalWidget,
+  InternalWidget
 } from "./types";
 
 export type { WidgetLayout } from "../types";
-export { isBuiltinWidget, type BuiltinWidgets, getBuiltinWidgetOptions } from "./builtin";
+export {
+  isBuiltinWidget,
+  type BuiltinWidgets,
+  getBuiltinWidgetOptions
+} from "./builtin";
 
 export type Props = {
   widget: InternalWidget;
@@ -45,12 +48,18 @@ export type Context = {
     featureId?: string;
   };
   is2d?: boolean;
-  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
-  onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (
+    target: string | FlyToDestination,
+    options?: { duration?: number }
+  ) => void;
+  onLookAt?: (
+    camera: LookAtDestination,
+    options?: { duration?: number }
+  ) => void;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
-    options?: { reason?: string },
+    options?: { reason?: string }
   ) => void;
   onPlay?: (committer?: TimelineCommitter) => void;
   onPause?: () => void;
@@ -63,7 +72,7 @@ export type Context = {
   onCameraOrbit?: (radians: number) => void;
   onCameraRotateRight?: (radians: number) => void;
   findPhotooverlayLayer?: (
-    id: string,
+    id: string
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
 };
 
@@ -89,23 +98,26 @@ export default function WidgetComponent({
       ...widget,
       extended: {
         horizontally: actualExtended && horizontal,
-        vertically: actualExtended && vertical,
+        vertically: actualExtended && vertical
       },
-      layout: align && location ? { align, location } : undefined,
+      layout: align && location ? { align, location } : undefined
     }),
-    [widget, actualExtended, horizontal, vertical, align, location],
+    [widget, actualExtended, horizontal, vertical, align, location]
   );
 
   if (!w) return null;
 
   const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
-  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin()[builtinWidgetId] : undefined;
+  const Builtin = isBuiltinWidget(builtinWidgetId)
+    ? builtin()[builtinWidgetId]
+    : undefined;
 
   return Builtin ? (
     <div
       style={{
-        pointerEvents: editing ? "none" : "auto",
-      }}>
+        pointerEvents: editing ? "none" : "auto"
+      }}
+    >
       <Builtin {...props} editing={editing} widget={w} />
     </div>
   ) : (

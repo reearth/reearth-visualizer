@@ -803,12 +803,15 @@ type ComplexityRoot struct {
 
 	Policy struct {
 		AssetStorageSize      func(childComplexity int) int
+		BlocksCount           func(childComplexity int) int
 		DatasetCount          func(childComplexity int) int
 		DatasetSchemaCount    func(childComplexity int) int
 		ID                    func(childComplexity int) int
 		LayerCount            func(childComplexity int) int
 		MemberCount           func(childComplexity int) int
 		Name                  func(childComplexity int) int
+		NlsLayersCount        func(childComplexity int) int
+		PageCount             func(childComplexity int) int
 		ProjectCount          func(childComplexity int) int
 		PublishedProjectCount func(childComplexity int) int
 	}
@@ -1007,6 +1010,7 @@ type ComplexityRoot struct {
 		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
 		Scene             func(childComplexity int, projectID gqlmodel.ID) int
 		SearchUser        func(childComplexity int, nameOrEmail string) int
+		StarredProjects   func(childComplexity int, teamID gqlmodel.ID) int
 	}
 
 	Rect struct {
@@ -1686,6 +1690,7 @@ type QueryResolver interface {
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
 	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
+	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -5526,6 +5531,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Policy.AssetStorageSize(childComplexity), true
 
+	case "Policy.blocksCount":
+		if e.complexity.Policy.BlocksCount == nil {
+			break
+		}
+
+		return e.complexity.Policy.BlocksCount(childComplexity), true
+
 	case "Policy.datasetCount":
 		if e.complexity.Policy.DatasetCount == nil {
 			break
@@ -5567,6 +5579,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Policy.Name(childComplexity), true
+
+	case "Policy.nlsLayersCount":
+		if e.complexity.Policy.NlsLayersCount == nil {
+			break
+		}
+
+		return e.complexity.Policy.NlsLayersCount(childComplexity), true
+
+	case "Policy.pageCount":
+		if e.complexity.Policy.PageCount == nil {
+			break
+		}
+
+		return e.complexity.Policy.PageCount(childComplexity), true
 
 	case "Policy.projectCount":
 		if e.complexity.Policy.ProjectCount == nil {
@@ -6623,6 +6649,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.SearchUser(childComplexity, args["nameOrEmail"].(string)), true
+
+	case "Query.starredProjects":
+		if e.complexity.Query.StarredProjects == nil {
+			break
+		}
+
+		args, err := ec.field_Query_starredProjects_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.StarredProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
 
 	case "Rect.east":
 		if e.complexity.Rect.East == nil {
@@ -9529,6 +9567,7 @@ type ProjectEdge {
 extend type Query{
   projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
+  starredProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -10586,6 +10625,9 @@ type Policy {
   assetStorageSize: FileSize
   datasetSchemaCount: Int
   datasetCount: Int
+  nlsLayersCount: Int
+  pageCount: Int
+  blocksCount: Int
 }
 
 enum Role {
@@ -12667,6 +12709,21 @@ func (ec *executionContext) field_Query_searchUser_args(ctx context.Context, raw
 		}
 	}
 	args["nameOrEmail"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ID
+	if tmp, ok := rawArgs["teamId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		arg0, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["teamId"] = arg0
 	return args, nil
 }
 
@@ -38120,6 +38177,129 @@ func (ec *executionContext) fieldContext_Policy_datasetCount(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Policy_nlsLayersCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_nlsLayersCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NlsLayersCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_nlsLayersCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_pageCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_pageCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_pageCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_blocksCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_blocksCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BlocksCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_blocksCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Polygon_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Polygon_type(ctx, field)
 	if err != nil {
@@ -44773,6 +44953,71 @@ func (ec *executionContext) fieldContext_Query_checkProjectAlias(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_checkProjectAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_starredProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_starredProjects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().StarredProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectConnection)
+	fc.Result = res
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_starredProjects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ProjectConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_starredProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -52850,6 +53095,12 @@ func (ec *executionContext) fieldContext_Team_policy(ctx context.Context, field 
 				return ec.fieldContext_Policy_datasetSchemaCount(ctx, field)
 			case "datasetCount":
 				return ec.fieldContext_Policy_datasetCount(ctx, field)
+			case "nlsLayersCount":
+				return ec.fieldContext_Policy_nlsLayersCount(ctx, field)
+			case "pageCount":
+				return ec.fieldContext_Policy_pageCount(ctx, field)
+			case "blocksCount":
+				return ec.fieldContext_Policy_blocksCount(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Policy", field.Name)
 		},
@@ -70073,6 +70324,12 @@ func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Policy_datasetSchemaCount(ctx, field, obj)
 		case "datasetCount":
 			out.Values[i] = ec._Policy_datasetCount(ctx, field, obj)
+		case "nlsLayersCount":
+			out.Values[i] = ec._Policy_nlsLayersCount(ctx, field, obj)
+		case "pageCount":
+			out.Values[i] = ec._Policy_pageCount(ctx, field, obj)
+		case "blocksCount":
+			out.Values[i] = ec._Policy_blocksCount(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -72190,6 +72447,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_checkProjectAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "starredProjects":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_starredProjects(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

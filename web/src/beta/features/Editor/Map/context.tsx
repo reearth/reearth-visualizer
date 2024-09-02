@@ -1,5 +1,3 @@
-import { createContext, useContext, ReactNode } from "react";
-
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { FlyTo, SketchType } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -7,20 +5,24 @@ import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
 import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
+import { createContext, useContext, ReactNode } from "react";
 
 import {
   LayerConfigUpdateProps,
   LayerMoveProps,
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
-  SelectedLayer,
+  SelectedLayer
 } from "../hooks/useLayers";
 import {
   LayerStyleAddProps,
   LayerStyleNameUpdateProps,
-  LayerStyleValueUpdateProps,
+  LayerStyleValueUpdateProps
 } from "../hooks/useLayerStyles";
-import { GeoJsonFeatureUpdateProps } from "../hooks/useSketch";
+import {
+  GeoJsonFeatureDeleteProps,
+  GeoJsonFeatureUpdateProps
+} from "../hooks/useSketch";
 
 export interface MapPageContextType {
   handleVisualizerResize?: (props: AreaSize) => void;
@@ -38,7 +40,9 @@ export interface MapPageContextType {
   openCustomPropertySchema: () => void;
   layerId?: string;
   handleCustomPropertySchemaClick?: (id?: string) => void;
-  handleCustomPropertySchemaUpdate?: (inp: UpdateCustomPropertySchemaInput) => void;
+  handleCustomPropertySchemaUpdate?: (
+    inp: UpdateCustomPropertySchemaInput
+  ) => void;
   handleLayerVisibilityUpdate: (inp: LayerVisibilityUpdateProps) => void;
   handleFlyTo?: FlyTo;
   sketchEnabled: boolean;
@@ -52,22 +56,25 @@ export interface MapPageContextType {
   handleLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   handleLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   handleGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  handleGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
   handleLayerStyleAdd: (inp: LayerStyleAddProps) => void;
   handleLayerStyleDelete: (id: string) => void;
   handleLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
-  handleLayerStyleSelect: (id: string) => void;
+  handleLayerStyleSelect: (id: string | undefined) => void;
 }
 
 const MapPageContext = createContext<MapPageContextType | undefined>(undefined);
 
 export const MapPageProvider = ({
   value,
-  children,
+  children
 }: {
   value: MapPageContextType;
   children: ReactNode;
 }) => {
-  return <MapPageContext.Provider value={value}>{children}</MapPageContext.Provider>;
+  return (
+    <MapPageContext.Provider value={value}>{children}</MapPageContext.Provider>
+  );
 };
 
 export const useMapPage = (): MapPageContextType => {

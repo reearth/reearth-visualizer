@@ -1,9 +1,8 @@
-import { FC, useMemo } from "react";
-
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import RichText from "@reearth/beta/lib/lexical/RichTextEditor";
 import { ValueTypes } from "@reearth/beta/utils/value";
+import { FC, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
@@ -17,7 +16,7 @@ export type Props = BlockProps<StoryBlock>;
 const TextBlock: FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
-    [block?.property?.default?.text?.value],
+    [block?.property?.default?.text?.value]
   );
 
   return (
@@ -28,7 +27,8 @@ const TextBlock: FC<Props> = ({ block, isSelected, ...props }) => {
       propertyId={block?.propertyId}
       property={block?.property}
       settingsEnabled={false}
-      {...props}>
+      {...props}
+    >
       {props.isEditable ? (
         <TextBlockEditor
           text={text}

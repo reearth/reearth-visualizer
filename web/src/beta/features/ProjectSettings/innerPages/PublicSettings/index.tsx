@@ -1,14 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
-
 import {
   SidebarMenuItem,
   SidebarSection,
-  SidebarWrapper,
+  SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useMemo, useState } from "react";
 
-import { InnerPage, SettingsWrapper, ArchivedSettingNotice, InnerSidebar } from "../common";
+import {
+  InnerPage,
+  SettingsWrapper,
+  ArchivedSettingNotice,
+  InnerSidebar
+} from "../common";
 
 import PublicSettingsDetail from "./PublicSettingsDetail";
 
@@ -72,7 +76,7 @@ const PublicSettings: React.FC<Props> = ({
   onUpdateProject,
   onUpdateProjectBasicAuth,
   onUpdateProjectAlias,
-  onUpdateProjectGA,
+  onUpdateProjectGA
 }) => {
   const t = useT();
   const [selectedTab, selectTab] = useState(subId ? subId : "map");
@@ -84,17 +88,17 @@ const PublicSettings: React.FC<Props> = ({
         title: t("Map"),
         icon: "globeSimple" as const,
         path: `/settings/project/${project.id}/public/`,
-        active: selectedTab === "map",
+        active: selectedTab === "map"
       },
-      ...stories.map(s => ({
+      ...stories.map((s) => ({
         id: s.id,
         title: (!s.title || s.title) === "Default" ? t("Story") : s.title,
         icon: "sidebar" as const,
         path: `/settings/project/${project.id}/public/${s.id}`,
-        active: selectedTab === s.id,
-      })),
+        active: selectedTab === s.id
+      }))
     ],
-    [stories, selectedTab, project.id, t],
+    [stories, selectedTab, project.id, t]
   );
 
   const handleTabChange = useCallback((tab: string) => selectTab(tab), []);
@@ -104,7 +108,7 @@ const PublicSettings: React.FC<Props> = ({
       <InnerSidebar>
         <SidebarWrapper>
           <SidebarSection>
-            {menu?.map(s => (
+            {menu?.map((s) => (
               <SidebarMenuItem
                 key={s.id}
                 text={s.title}

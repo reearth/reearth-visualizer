@@ -1,8 +1,7 @@
-import { FC } from "react";
-
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { useWidgetsPage } from "../context";
 
@@ -21,10 +20,10 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     installedWidgets,
     handleWidgetAdd,
     handleWidgetRemove,
-    handleWidgetSelection,
+    handleWidgetSelection
   } = useHooks({
     sceneId,
-    selectWidget,
+    selectWidget
   });
 
   return (
@@ -34,11 +33,15 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       extend
       storageId="editor-widgets-widget-manager-panel"
       showCollapseArea={showCollapseArea}
-      areaRef={areaRef}>
+      areaRef={areaRef}
+    >
       <Wrapper>
-        <ActionArea installableWidgets={installableWidgets} onWidgetAdd={handleWidgetAdd} />
+        <ActionArea
+          installableWidgets={installableWidgets}
+          onWidgetAdd={handleWidgetAdd}
+        />
         <InstalledWidgetsList>
-          {installedWidgets?.map(w => (
+          {installedWidgets?.map((w) => (
             <ListItem
               key={w.id}
               item={w}
@@ -57,18 +60,18 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const InstalledWidgetsList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const EmptySpace = styled("div")(() => ({
   flex: 1,
-  minHeight: 50,
+  minHeight: 50
 }));
 
 export default WidgetManagerPanel;

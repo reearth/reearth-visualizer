@@ -12,7 +12,7 @@ export default ({ built }: Props) => {
     addWarning(d, "engineName", "reearth.engineName");
 
     const visualizer = {};
-    ["engine", "camera", "property", "overrideProperty"].forEach(name => {
+    ["engine", "camera", "property", "overrideProperty"].forEach((name) => {
       addWarning(visualizer, name, `reearth.visualizer.${name}`);
     });
     addProperty(d, "visualizer", visualizer);
@@ -31,8 +31,8 @@ export default ({ built }: Props) => {
       "convertScreenToPositionOffset",
       "isPositionVisible",
       "toWindowPosition",
-      "pickManyFromViewport",
-    ].forEach(name => {
+      "pickManyFromViewport"
+    ].forEach((name) => {
       addWarning(scene, name, `reearth.scene.${name}`);
     });
     addProperty(d, "scene", scene);
@@ -53,34 +53,36 @@ export default ({ built }: Props) => {
       "setTime",
       "setSpeed",
       "setStepType",
-      "setRangeType",
-    ].forEach(name => {
+      "setRangeType"
+    ].forEach((name) => {
       addWarning(clock, name, `reearth.clock.${name}`);
     });
     addProperty(d, "clock", clock);
 
     const interactionMode = {};
-    ["mode", "override"].forEach(name => {
+    ["mode", "override"].forEach((name) => {
       addWarning(interactionMode, name, `reearth.interactionMode.${name}`);
     });
     addProperty(d, "interactionMode", interactionMode);
 
     const plugins = {};
-    ["instances", "postMessage"].forEach(name => {
+    ["instances", "postMessage"].forEach((name) => {
       addWarning(plugins, name, `reearth.plugins.${name}`);
     });
     addProperty(d, "plugins", plugins);
 
     const plugin = {};
-    ["id", "extensionId", "extensionType", "property"].forEach(name => {
+    ["id", "extensionId", "extensionType", "property"].forEach((name) => {
       addWarning(plugin, name, `reearth.plugin.${name}`);
     });
     addProperty(d, "plugin", plugin);
 
     const clientStorage = {};
-    ["getAsync", "setAsync", "deleteAsync", "keysAsync", "dropStore"].forEach(name => {
-      addWarning(clientStorage, name, `reearth.clientStorage.${name}`);
-    });
+    ["getAsync", "setAsync", "deleteAsync", "keysAsync", "dropStore"].forEach(
+      (name) => {
+        addWarning(clientStorage, name, `reearth.clientStorage.${name}`);
+      }
+    );
 
     addEventWarning(d, "on");
     addEventWarning(d, "off");
@@ -106,8 +108,8 @@ export default ({ built }: Props) => {
       "moveRight",
       "flyToGround",
       "overrideScreenSpaceController",
-      "forceHorizontalRoll",
-    ].forEach(name => {
+      "forceHorizontalRoll"
+    ].forEach((name) => {
       addWarning(d, name, `reearth.camera.${name}`);
     });
     return d;
@@ -127,8 +129,8 @@ export default ({ built }: Props) => {
       "overriddenInfobox",
       "defaultInfobox",
       "isLayer",
-      "overriddenProperties",
-    ].forEach(name => {
+      "overriddenProperties"
+    ].forEach((name) => {
       addWarning(d, name, `reearth.layers.${name}`);
     });
     return d;
@@ -145,8 +147,8 @@ export default ({ built }: Props) => {
       "createDataOnly",
       "enableRelativeHeight",
       "allowRightClickToAbort",
-      "allowAutoResetInteractionMode",
-    ].forEach(name => {
+      "allowAutoResetInteractionMode"
+    ].forEach((name) => {
       addWarning(d, name, `reearth.sketch.${name}`);
     });
     return d;
@@ -156,7 +158,7 @@ export default ({ built }: Props) => {
     deprecated,
     cameraDeprecated,
     layersDeprecated,
-    sketchDeprecated,
+    sketchDeprecated
   };
 };
 
@@ -169,16 +171,23 @@ const deprecatedMap = {
   "reearth.scene.inEditor": "reearth.viewer.env.inEditor",
   "reearth.scene.built": "reearth.viewer.env.isBuilt",
   "reearth.scene.captureScreen": "reearth.viewer.viewport.capture",
-  "reearth.scene.getLocationFromScreen": "reearth.viewer.tools.getLocationFromScreenCoordinate",
-  "reearth.scene.sampleTerrainHeight": "reearth.viewer.tools.getTerrainHeightAsync",
+  "reearth.scene.getLocationFromScreen":
+    "reearth.viewer.tools.getLocationFromScreenCoordinate",
+  "reearth.scene.sampleTerrainHeight":
+    "reearth.viewer.tools.getTerrainHeightAsync",
   "reearth.scene.computeGlobeHeight": "reearth.viewer.tools.getGlobeHeight",
   "reearth.scene.getGlobeHeight": "reearth.viewer.tools.getGlobeHeightByCamera",
   "reearth.scene.toXYZ": "reearth.viewer.tools.cartographicToCartesian",
-  "reearth.scene.toLngLatHeight": "reearth.viewer.tools.cartesianToCartographic",
-  "reearth.scene.convertScreenToPositionOffset": "reearth.viewer.tools.transformByOffsetOnScreen",
-  "reearth.scene.isPositionVisible": "reearth.viewer.tools.isPositionVisibleOnGlobe",
-  "reearth.scene.toWindowPosition": "reearth.viewer.tools.getScreenCoordinateFromPosition",
-  "reearth.scene.pickManyFromViewport": "reearth.layers.getFeaturesFromViewport",
+  "reearth.scene.toLngLatHeight":
+    "reearth.viewer.tools.cartesianToCartographic",
+  "reearth.scene.convertScreenToPositionOffset":
+    "reearth.viewer.tools.transformByOffsetOnScreen",
+  "reearth.scene.isPositionVisible":
+    "reearth.viewer.tools.isPositionVisibleOnGlobe",
+  "reearth.scene.toWindowPosition":
+    "reearth.viewer.tools.getScreenCoordinateFromPosition",
+  "reearth.scene.pickManyFromViewport":
+    "reearth.layers.getFeaturesFromViewport",
   "reearth.clock.startTime": "reearth.timeline.startTime",
   "reearth.clock.stopTime": "reearth.timeline.stopTime",
   "reearth.clock.currentTime": "reearth.timeline.currentTime",
@@ -198,7 +207,8 @@ const deprecatedMap = {
   "reearth.interactionMode.override": "reearth.viewer.interactionMode.override",
   "reearth.plugins.instances": "reearth.extensions.list",
   "reearth.plugins.postMessage": "reearth.extensions.postMessage",
-  "reearth.plugin.id": "reearth.extension.widget.pluginId or reearth.extension.block.pluginId",
+  "reearth.plugin.id":
+    "reearth.extension.widget.pluginId or reearth.extension.block.pluginId",
   "reearth.plugin.extensionId":
     "reearth.extension.widget.extensionId or reearth.extension.block.extensionId",
   "reearth.plugin.property":
@@ -206,20 +216,24 @@ const deprecatedMap = {
   "reearth.camera.getFovInfo": "reearth.camera.getGlobeIntersection",
   "reearth.camera.flyToBBox": "reearth.camera.flyToBoundingBox",
   "reearth.camera.rotateOnCenter": "reearth.camera.rotateAround",
-  "reearth.camera.lookHorizontal": "reearth.camera.overrideScreenSpaceCameraController",
-  "reearth.camera.lookVertical": "reearth.camera.overrideScreenSpaceCameraController",
+  "reearth.camera.lookHorizontal":
+    "reearth.camera.overrideScreenSpaceCameraController",
+  "reearth.camera.lookVertical":
+    "reearth.camera.overrideScreenSpaceCameraController",
   "reearth.camera.moveForward": "reearth.camera.move",
   "reearth.camera.moveBackward": "reearth.camera.move",
   "reearth.camera.moveUp": "reearth.camera.move",
   "reearth.camera.moveDown": "reearth.camera.move",
   "reearth.camera.moveLeft": "reearth.camera.move",
   "reearth.camera.moveRight": "reearth.camera.move",
-  "reearth.camera.flyToGround": "reearth.camera.flyTo with manully getting the target height",
+  "reearth.camera.flyToGround":
+    "reearth.camera.flyTo with manully getting the target height",
   "reearth.camera.overrideScreenSpaceController":
     "reearth.camera.overrideScreenSpaceCameraController",
   "reearth.layers.overrideProperty": "reearth.layers.override",
   "reearth.layers.overriddenProperties": "reearth.layers.overridden",
-  "reearth.camera.forceHorizontalRoll": "reearth.camera.enableForceHorizontalRoll",
+  "reearth.camera.forceHorizontalRoll":
+    "reearth.camera.enableForceHorizontalRoll",
   "reearth.sketch.setType": "reearth.sketch.setTool",
   "reearth.sketch.setColor": "reearth.sketch.overrideOptions",
   "reearth.sketch.disableShadow": "reearth.sketch.overrideOptions",
@@ -227,12 +241,14 @@ const deprecatedMap = {
   "reearth.sketch.createDataOnly": "reearth.sketch.overrideOptions",
   "reearth.sketch.enableRelativeHeight": "reearth.sketch.overrideOptions",
   "reearth.sketch.allowRightClickToAbort": "reearth.sketch.overrideOptions",
-  "reearth.sketch.allowAutoResetInteractionMode": "reearth.sketch.overrideOptions",
+  "reearth.sketch.allowAutoResetInteractionMode":
+    "reearth.sketch.overrideOptions",
   "reearth.clientStorage.getAsync": "reearth.data.clientStorage.getAsync",
   "reearth.clientStorage.setAsync": "reearth.data.clientStorage.setAsync",
   "reearth.clientStorage.deleteAsync": "reearth.data.clientStorage.deleteAsync",
   "reearth.clientStorage.keysAsync": "reearth.data.clientStorage.keysAsync",
-  "reearth.clientStorage.dropStore": "reearth.data.clientStorage.dropStoreAsync",
+  "reearth.clientStorage.dropStore":
+    "reearth.data.clientStorage.dropStoreAsync",
   "event update": "update event on reearth.ui",
   "event close": "close event on reearth.ui",
   "event cameramove": "move event on reearth.camera",
@@ -268,7 +284,7 @@ const deprecatedMap = {
   "event layerSelectWithRectMove":
     "marqueeMove event on reearth.viewer.interactionMode.selectionMode",
   "event layerSelectWithRectEnd":
-    "marqueeEnd event on reearth.viewer.interactionMode.selectionMode",
+    "marqueeEnd event on reearth.viewer.interactionMode.selectionMode"
 };
 
 function addProperty(obj: object, name: string, value: unknown) {
@@ -276,7 +292,7 @@ function addProperty(obj: object, name: string, value: unknown) {
     get() {
       return value;
     },
-    enumerable: false,
+    enumerable: false
   });
 }
 
@@ -285,7 +301,7 @@ function addWarning(obj: object, name: string, value: string) {
     get() {
       return warning(value);
     },
-    enumerable: false,
+    enumerable: false
   });
 }
 
@@ -295,11 +311,13 @@ function addEventWarning(obj: object, name: string, isOnce = false) {
       return (eventName: string) => {
         warning(
           `event ${eventName}`,
-          isOnce ? "Please use method on with option {once: true} instead of once." : "",
+          isOnce
+            ? "Please use method on with option {once: true} instead of once."
+            : ""
         );
       };
     },
-    enumerable: false,
+    enumerable: false
   });
 }
 
@@ -315,6 +333,6 @@ function warning(name: string, additional?: string) {
       suggestion ? ` ${suggestion}` : ""
     }${additional ? ` ${additional}` : ""}`,
     warningStyle,
-    "",
+    ""
   );
 }

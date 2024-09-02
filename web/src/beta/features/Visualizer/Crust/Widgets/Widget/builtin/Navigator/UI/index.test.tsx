@@ -1,6 +1,5 @@
-import { expect, test, vitest } from "vitest";
-
 import { fireEvent, render, screen } from "@reearth/test/utils";
+import { expect, test, vitest } from "vitest";
 
 import Navigator from ".";
 
@@ -63,7 +62,7 @@ test("it should orbit by mouse operation", async () => {
       onStartOrbit={onStartOrbitMock}
       onEndOrbit={onEndOrbitMock}
       onMoveOrbit={onMoveOrbitMock}
-    />,
+    />
   );
 
   const angle = screen.getByLabelText("aria-label-adjust-angle");
@@ -78,7 +77,6 @@ test("it should orbit by mouse operation", async () => {
   const compassFocus = screen.queryByTestId("compassFocus");
   expect(compassFocus).toBeInTheDocument();
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(compassFocus).toHaveStyle({ transform: "rotate(90deg)" });
   expect(onStartOrbitMock).toBeCalled();
   expect(onMoveOrbitMock).toBeCalledWith(90);
@@ -86,7 +84,6 @@ test("it should orbit by mouse operation", async () => {
   onMoveOrbitMock.mockReset();
 
   fireEvent.mouseMove(window);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(compassFocus).toHaveStyle({ transform: "rotate(90deg)" });
   expect(onMoveOrbitMock).toBeCalledWith(90);
 

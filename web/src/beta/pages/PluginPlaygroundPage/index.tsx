@@ -1,8 +1,7 @@
 import PluginPlayground from "@reearth/beta/features/PluginPlayground";
+import { FC } from "react";
 
-type Props = {};
-
-const PluginPlaygroundPage: React.FC<Props> = () => {
+const PluginPlaygroundPage: FC = () => {
   return <PluginPlayground />;
 };
 

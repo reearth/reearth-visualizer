@@ -1,12 +1,23 @@
-import { useCallback, useMemo, useState, MouseEvent, useEffect } from "react";
-
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { Spacing } from "@reearth/core";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  MouseEvent,
+  useEffect,
+  useRef
+} from "react";
 
 import { calculatePaddingValue } from "../../../Crust/StoryPanel/utils";
 import { useEditModeContext } from "../../contexts/editModeContext";
 
-export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
+export const DEFAULT_BLOCK_PADDING: Spacing = {
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0
+};
 
 export default ({
   name,
@@ -14,7 +25,7 @@ export default ({
   property,
   isEditable,
   onClick,
-  onBlockDoubleClick,
+  onBlockDoubleClick
 }: {
   name?: string | null;
   isSelected?: boolean;
@@ -37,7 +48,7 @@ export default ({
 
   const disableSelection = useMemo(
     () => editModeContext?.disableSelection,
-    [editModeContext?.disableSelection],
+    [editModeContext?.disableSelection]
   );
 
   const handleEditModeToggle = useCallback(
@@ -45,20 +56,30 @@ export default ({
       editModeContext?.onSelectionDisable?.(enable);
       setEditMode?.(enable);
     },
-    [editModeContext],
+    [editModeContext]
   );
+
+  const handleSelectionDisable = useCallback(() => {
+    editModeContext?.onSelectionDisable?.(false);
+  }, [editModeContext]);
+
+  const handleSelectionDisableRef = useRef(handleSelectionDisable);
+  handleSelectionDisableRef.current = handleSelectionDisable;
 
   useEffect(
     () => () => {
       // This is necessary to prevent the selection from being permanently disabled when the block is unmounted
       if (editMode && disableSelection) {
-        editModeContext?.onSelectionDisable?.(false);
+        handleSelectionDisableRef.current?.();
       }
     },
-    [editMode, disableSelection], // eslint-disable-line react-hooks/exhaustive-deps
+    [editMode, disableSelection]
   );
 
-  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
+  const handleSettingsToggle = useCallback(
+    () => setShowSettings?.((s) => !s),
+    []
+  );
 
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
@@ -71,7 +92,7 @@ export default ({
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onClick?.(),
-    () => handleBlockDoubleClick?.(),
+    () => handleBlockDoubleClick?.()
   );
 
   const handleBlockClick = useCallback(
@@ -80,14 +101,18 @@ export default ({
       if ((showSettings && isSelected) || editMode) return;
       handleSingleClick();
     },
-    [showSettings, isSelected, editMode, handleSingleClick],
+    [showSettings, isSelected, editMode, handleSingleClick]
   );
 
-  const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
+  const defaultSettings = useMemo(
+    () => property?.default ?? property?.title,
+    [property]
+  );
 
   const groupId = useMemo(
-    () => (property?.default ? "default" : property?.title ? "title" : undefined),
-    [property],
+    () =>
+      property?.default ? "default" : property?.title ? "title" : undefined,
+    [property]
   );
 
   const generalBlockSettings = useMemo(() => {
@@ -98,9 +123,9 @@ export default ({
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
           property?.panel?.padding?.value,
-          isEditable,
-        ),
-      },
+          isEditable
+        )
+      }
     };
   }, [property?.panel, isEditable]);
 
@@ -120,6 +145,6 @@ export default ({
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
-    handleDoubleClick,
+    handleDoubleClick
   };
 };

@@ -2,8 +2,13 @@ import {
   useMergeRefs,
   FloatingPortal,
   FloatingFocusManager,
-  useTransitionStyles,
+  useTransitionStyles
 } from "@floating-ui/react";
+import {
+  PopoverContext,
+  usePopoverContext
+} from "@reearth/beta/components/Popover/context";
+import { useTheme } from "@reearth/services/theme";
 import {
   forwardRef,
   isValidElement,
@@ -11,11 +16,8 @@ import {
   MutableRefObject,
   type ButtonHTMLAttributes,
   type HTMLProps,
-  type ReactNode,
+  type ReactNode
 } from "react";
-
-import { PopoverContext, usePopoverContext } from "@reearth/beta/components/Popover/context";
-import { useTheme } from "@reearth/services/theme";
 
 import usePopover from "./hooks";
 import { PopoverOptions } from "./types";
@@ -29,7 +31,11 @@ export function Provider({
   children: ReactNode;
 } & PopoverOptions) {
   const popover = usePopover({ modal, ...restOptions });
-  return <PopoverContext.Provider value={popover}>{children}</PopoverContext.Provider>;
+  return (
+    <PopoverContext.Provider value={popover}>
+      {children}
+    </PopoverContext.Provider>
+  );
 }
 
 type TriggerProps = {
@@ -38,91 +44,114 @@ type TriggerProps = {
   asChild?: boolean;
 };
 
-export const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
-  function Trigger({ children, asChild = false, className, ...props }, propRef) {
-    const context = usePopoverContext();
-    const childrenRef = (children as any).ref;
-    const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
+export const Trigger = forwardRef<
+  HTMLElement,
+  HTMLProps<HTMLElement> & TriggerProps
+>(function Trigger(
+  { children, asChild = false, className, ...props },
+  propRef
+) {
+  const context = usePopoverContext();
+  const childrenRef = (children as any).ref;
+  const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
-    // `asChild` allows the user to pass any element as the anchor
-    if (asChild && isValidElement(children)) {
-      return cloneElement(
-        children,
-        context.getReferenceProps({
-          ref,
-          ...props,
-          ...children.props,
-          "data-state": context.open ? "open" : "closed",
-        }),
-      );
-    }
-
-    return (
-      <button
-        ref={ref}
-        className={className}
-        type="button"
-        // The user can style the trigger based on the state
-        data-state={context.open ? "open" : "closed"}
-        {...context.getReferenceProps(props)}>
-        {children}
-      </button>
+  // `asChild` allows the user to pass any element as the anchor
+  if (asChild && isValidElement(children)) {
+    return cloneElement(
+      children,
+      context.getReferenceProps({
+        ref,
+        ...props,
+        ...children.props,
+        "data-state": context.open ? "open" : "closed"
+      })
     );
-  },
-);
+  }
+
+  return (
+    <button
+      ref={ref}
+      className={className}
+      type="button"
+      // The user can style the trigger based on the state
+      data-state={context.open ? "open" : "closed"}
+      {...context.getReferenceProps(props)}
+    >
+      {children}
+    </button>
+  );
+});
 
 type ContentProps = {
   className?: string;
   attachToRoot?: boolean;
 };
 
-export const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement> & ContentProps>(
-  function Content({ style, className, attachToRoot = false, ...props }, propRef) {
-    const { context: floatingContext, ...context } = usePopoverContext();
-    const theme = useTheme();
-    const ref = useMergeRefs([context.refs.setFloating, propRef]);
-    const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
-      duration: 50,
-    });
+export const Content = forwardRef<
+  HTMLDivElement,
+  HTMLProps<HTMLDivElement> & ContentProps
+>(function Content(
+  { style, className, attachToRoot = false, ...props },
+  propRef
+) {
+  const { context: floatingContext, ...context } = usePopoverContext();
+  const theme = useTheme();
+  const ref = useMergeRefs([context.refs.setFloating, propRef]);
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(
+    floatingContext,
+    {
+      duration: 50
+    }
+  );
 
-    if (!isMounted) return null;
+  if (!isMounted) return null;
 
-    return (
-      <FloatingPortal
-        // whether to render this inside the Trigger or outside the main div
-        root={attachToRoot ? (context.refs.domReference as MutableRefObject<null>) : null}>
-        <FloatingFocusManager context={floatingContext} modal={context.modal} initialFocus={-1}>
-          <div
-            ref={ref}
-            className={className}
-            style={{
-              ...context.floatingStyles,
-              ...transitionStyles,
-              ...style,
-              zIndex: theme.zIndexes.editor.popover,
-            }}
-            {...context.getFloatingProps(props)}>
-            {props.children}
-          </div>
-        </FloatingFocusManager>
-      </FloatingPortal>
-    );
-  },
-);
+  return (
+    <FloatingPortal
+      // whether to render this inside the Trigger or outside the main div
+      root={
+        attachToRoot
+          ? (context.refs.domReference as MutableRefObject<null>)
+          : null
+      }
+    >
+      <FloatingFocusManager
+        context={floatingContext}
+        modal={context.modal}
+        initialFocus={-1}
+      >
+        <div
+          ref={ref}
+          className={className}
+          style={{
+            ...context.floatingStyles,
+            ...transitionStyles,
+            ...style,
+            zIndex: theme.zIndexes.editor.popover
+          }}
+          {...context.getFloatingProps(props)}
+        >
+          {props.children}
+        </div>
+      </FloatingFocusManager>
+    </FloatingPortal>
+  );
+});
 
-export const Close = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(
-  function PopoverClose(props, ref) {
-    const { setOpen } = usePopoverContext();
-    return (
-      <button
-        type="button"
-        ref={ref}
-        {...props}
-        onClick={event => {
-          props.onClick?.(event);
-          setOpen(false);
-        }}
-      />
-    );
-  },
-);
+export const Close = forwardRef<
+  HTMLButtonElement,
+  ButtonHTMLAttributes<HTMLButtonElement>
+>(function PopoverClose(props, ref) {
+  const { setOpen } = usePopoverContext();
+  return (
+    <button
+      type="button"
+      ref={ref}
+      {...props}
+      onClick={(event) => {
+        props.onClick?.(event);
+        setOpen(false);
+      }}
+    />
+  );
+});

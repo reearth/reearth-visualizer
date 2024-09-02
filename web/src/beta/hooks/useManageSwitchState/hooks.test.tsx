@@ -13,8 +13,8 @@ const props: Props<SwitchField> = {
   fields: [
     { id: "1", name: "First component", active: true },
     { id: "2", name: "Second component", active: false },
-    { id: "3", name: "Third component", active: false },
-  ],
+    { id: "3", name: "Third component", active: false }
+  ]
 };
 
 test("1. confirmation of initial state", () => {

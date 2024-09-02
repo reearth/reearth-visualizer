@@ -1,18 +1,27 @@
-import axios from "axios";
-import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { useGetTeamsQuery } from "@reearth/services/api/teams";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
-import { useWorkspace, useNotification, useUserId } from "@reearth/services/state";
+import {
+  useWorkspace,
+  useNotification,
+  useUserId
+} from "@reearth/services/state";
+import axios from "axios";
+import { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export type Mode = "layer" | "widget";
 
 export default () => {
   const t = useT();
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
+  const {
+    isAuthenticated,
+    isLoading,
+    error: authError,
+    login,
+    logout
+  } = useAuth();
   const [error, isErrorChecked] = useCleanUrl();
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [currentUserId, setCurrentUserId] = useUserId();
@@ -29,31 +38,37 @@ export default () => {
   const verifySignup = useCallback(
     async (token: string) => {
       const res = await axios.post(
-        (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify/" + token,
+        (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify/" + token
       );
 
       if (res.status === 200) {
         setNotification({
           type: "success",
-          text: t("Your account has been successfully verified! Feel free to login now."),
+          text: t(
+            "Your account has been successfully verified! Feel free to login now."
+          )
         });
         navigate("/login");
       } else {
         setNotification({
           type: "error",
-          text: t("Could not verify your signup. Please start the process over."),
+          text: t(
+            "Could not verify your signup. Please start the process over."
+          )
         });
         navigate("/signup");
       }
     },
-    [t, navigate, setNotification],
+    [t, navigate, setNotification]
   );
 
   useEffect(() => {
     if (!isErrorChecked || error) return;
 
     if (window.location.search) {
-      const searchParam = new URLSearchParams(window.location.search).toString().split("=");
+      const searchParam = new URLSearchParams(window.location.search)
+        .toString()
+        .split("=");
       if (searchParam[0] === "user-verification-token") {
         verifySignup(searchParam[1]);
       } else if (searchParam[0] === "pwd-reset-token") {
@@ -79,11 +94,14 @@ export default () => {
     verifySignup,
     navigate,
     setCurrentUserId,
-    setCurrentWorkspace,
+    setCurrentWorkspace
   ]);
 
   useEffect(() => {
-    if (isErrorChecked && (authError || (isAuthenticated && !loading && data?.me === null))) {
+    if (
+      isErrorChecked &&
+      (authError || (isAuthenticated && !loading && data?.me === null))
+    ) {
       logout();
     }
   }, [authError, data?.me, isAuthenticated, isErrorChecked, loading, logout]);
@@ -92,7 +110,7 @@ export default () => {
     if (error) {
       setNotification({
         type: "error",
-        text: error,
+        text: error
       });
     }
   }, [error, setNotification]);
@@ -100,6 +118,6 @@ export default () => {
   return {
     error,
     isLoading,
-    isAuthenticated,
+    isAuthenticated
   };
 };

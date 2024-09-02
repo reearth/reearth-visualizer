@@ -1,8 +1,7 @@
-import { useState, useCallback, useMemo, useRef } from "react";
-
 import { StoryPanelRef } from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useT } from "@reearth/services/i18n";
+import { useState, useCallback, useMemo, useRef } from "react";
 
 type Props = {
   sceneId: string;
@@ -12,7 +11,9 @@ export default function ({ sceneId }: Props) {
   const t = useT();
 
   const storyPanelRef = useRef<StoryPanelRef | null>(null);
-  const [selectedStoryPageId, setSelectedStoryPageId] = useState<string | undefined>(undefined);
+  const [selectedStoryPageId, setSelectedStoryPageId] = useState<
+    string | undefined
+  >(undefined);
 
   const {
     useStoriesQuery,
@@ -21,28 +22,33 @@ export default function ({ sceneId }: Props) {
     useMoveStoryPage,
     useMoveStoryBlock,
     useUpdateStoryPage,
-    useInstallableStoryBlocksQuery,
+    useInstallableStoryBlocksQuery
   } = useStorytellingAPI();
 
   const { stories } = useStoriesQuery({ sceneId });
-  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
+  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({
+    sceneId
+  });
 
-  const selectedStory = useMemo(() => (stories?.length ? stories[0] : undefined), [stories]);
+  const selectedStory = useMemo(
+    () => (stories?.length ? stories[0] : undefined),
+    [stories]
+  );
 
   const currentStoryPage = useMemo(
-    () => selectedStory?.pages?.find(p => p.id === selectedStoryPageId),
-    [selectedStory?.pages, selectedStoryPageId],
+    () => selectedStory?.pages?.find((p) => p.id === selectedStoryPageId),
+    [selectedStory?.pages, selectedStoryPageId]
   );
 
   const handleCurrentStoryPageChange = useCallback(
     (pageId?: string) => {
       if (selectedStoryPageId && selectedStoryPageId === pageId) return;
-      const newPage = selectedStory?.pages?.find(p => p.id === pageId);
+      const newPage = selectedStory?.pages?.find((p) => p.id === pageId);
       if (newPage) {
         storyPanelRef?.current?.handleCurrentPageChange(pageId);
       }
     },
-    [selectedStoryPageId, selectedStory?.pages],
+    [selectedStoryPageId, selectedStory?.pages]
   );
 
   const handleStoryPageDuplicate = useCallback(async (pageId: string) => {
@@ -54,20 +60,26 @@ export default function ({ sceneId }: Props) {
     async (pageId: string) => {
       if (!selectedStory) return;
       const pages = selectedStory?.pages ?? [];
-      const deletedPageIndex = pages.findIndex(p => p.id === pageId);
+      const deletedPageIndex = pages.findIndex((p) => p.id === pageId);
 
       await useDeleteStoryPage({
         sceneId,
         storyId: selectedStory.id,
-        pageId,
+        pageId
       });
       if (pageId === selectedStoryPageId) {
         handleCurrentStoryPageChange(
-          pages[deletedPageIndex + 1].id ?? pages[deletedPageIndex - 1].id,
+          pages[deletedPageIndex + 1].id ?? pages[deletedPageIndex - 1].id
         );
       }
     },
-    [selectedStory, sceneId, selectedStoryPageId, handleCurrentStoryPageChange, useDeleteStoryPage],
+    [
+      selectedStory,
+      sceneId,
+      selectedStoryPageId,
+      handleCurrentStoryPageChange,
+      useDeleteStoryPage
+    ]
   );
 
   const handleStoryPageAdd = useCallback(
@@ -80,10 +92,10 @@ export default function ({ sceneId }: Props) {
         title: t("Page"),
         index: selectedStory.pages?.length,
         layers: [],
-        swipeableLayers: [],
+        swipeableLayers: []
       });
     },
-    [useCreateStoryPage, sceneId, selectedStory, t],
+    [useCreateStoryPage, sceneId, selectedStory, t]
   );
 
   const handleStoryPageMove = useCallback(
@@ -92,10 +104,10 @@ export default function ({ sceneId }: Props) {
       await useMoveStoryPage({
         storyId: selectedStory.id,
         pageId: id,
-        index: targetIndex,
+        index: targetIndex
       });
     },
-    [useMoveStoryPage, selectedStory],
+    [useMoveStoryPage, selectedStory]
   );
 
   const handleStoryBlockMove = useCallback(
@@ -105,10 +117,10 @@ export default function ({ sceneId }: Props) {
         storyId: selectedStory.id,
         pageId: id,
         index: targetIndex,
-        blockId,
+        blockId
       });
     },
-    [useMoveStoryBlock, selectedStory],
+    [useMoveStoryBlock, selectedStory]
   );
 
   const handleStoryPageUpdate = useCallback(
@@ -118,10 +130,10 @@ export default function ({ sceneId }: Props) {
         sceneId,
         storyId: selectedStory.id,
         pageId,
-        layers,
+        layers
       });
     },
-    [sceneId, selectedStory, useUpdateStoryPage],
+    [sceneId, selectedStory, useUpdateStoryPage]
   );
 
   return {
@@ -136,6 +148,6 @@ export default function ({ sceneId }: Props) {
     handleStoryPageMove,
     handleStoryPageUpdate,
     handleStoryBlockMove,
-    selectStoryPage: setSelectedStoryPageId,
+    selectStoryPage: setSelectedStoryPageId
   };
 }

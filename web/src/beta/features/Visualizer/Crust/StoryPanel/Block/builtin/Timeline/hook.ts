@@ -1,23 +1,22 @@
 import {
+  calculatePaddingValue,
+  convertPositionToTime,
+  formatDateForSliderTimeline,
+  formatDateForTimeline,
+  formatRangeDateAndTime
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
+import { DEFAULT_BLOCK_PADDING } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper/hooks";
+import { getNewDate } from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
+import { TickEventCallback, TimelineCommitter } from "@reearth/core";
+import {
   ChangeEventHandler,
   MouseEventHandler,
   useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
-
-import {
-  calculatePaddingValue,
-  convertPositionToTime,
-  formatDateForSliderTimeline,
-  formatDateForTimeline,
-  formatRangeDateAndTime,
-} from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
-import { DEFAULT_BLOCK_PADDING } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper/hooks";
-import { getNewDate } from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
-import { TickEventCallback, TimelineCommitter } from "@reearth/core";
 
 import { PaddingProp } from "./Editor";
 
@@ -45,10 +44,12 @@ type TimelineProps = {
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
   onTimeChange?: (time: Date, committerId?: string) => void;
-  onCommit?: (cb: (committer: TimelineCommitter) => void) => void | undefined;
-  removeOnCommitEventListener?: (cb: (committer: TimelineCommitter) => void) => void | undefined;
-  onTick?: (cb: TickEventCallback) => void | undefined;
-  removeTickEventListener?: (cb: TickEventCallback) => void | undefined;
+  onCommit?: (cb: (committer: TimelineCommitter) => void) => void;
+  removeOnCommitEventListener?: (
+    cb: (committer: TimelineCommitter) => void
+  ) => void;
+  onTick?: (cb: TickEventCallback) => void;
+  removeTickEventListener?: (cb: TickEventCallback) => void;
   setCurrentTime?: (t: number) => void;
 };
 
@@ -74,7 +75,7 @@ export default ({
   onTick,
   removeOnCommitEventListener,
   removeTickEventListener,
-  setCurrentTime,
+  setCurrentTime
 }: TimelineProps) => {
   const [isPause, setIsPause] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -85,34 +86,38 @@ export default ({
 
   const [committer, setCommiter] = useState<TimelineCommitter>({
     source: "storyTimelineBlock",
-    id: blockId,
+    id: blockId
   });
 
   const [isOpen, setIsOpen] = useState(false);
 
   const [selected, setSelected] = useState("1sec/sec");
   const formattedCurrentTime = useMemo(() => {
-    const textDate = formatDateForTimeline(currentTime, { detail: true }, timezone);
+    const textDate = formatDateForTimeline(
+      currentTime,
+      { detail: true },
+      timezone
+    );
 
     return textDate;
   }, [currentTime, timezone]);
 
   const current = formatRangeDateAndTime(
-    formatDateForSliderTimeline(currentTime, { detail: true }, timezone),
+    formatDateForSliderTimeline(currentTime, { detail: true }, timezone)
   );
 
   const timeRange = useMemo(() => {
     if (range) {
       return {
         startTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.start, { detail: true }, timezone),
+          formatDateForSliderTimeline(range.start, { detail: true }, timezone)
         ),
         midTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.mid, { detail: true }, timezone),
+          formatDateForSliderTimeline(range.mid, { detail: true }, timezone)
         ),
         endTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.end, { detail: true }, timezone),
-        ),
+          formatDateForSliderTimeline(range.end, { detail: true }, timezone)
+        )
       };
     }
     return {};
@@ -123,40 +128,45 @@ export default ({
     return {
       padding: {
         ...property?.panel?.padding,
-        value: calculatePaddingValue(DEFAULT_BLOCK_PADDING, property?.panel?.padding?.value),
-      },
+        value: calculatePaddingValue(
+          DEFAULT_BLOCK_PADDING,
+          property?.panel?.padding?.value
+        )
+      }
     };
   }, [property?.panel]);
 
   const handlePopOver = useCallback(() => {
-    !inEditor && setIsOpen(!isOpen);
+    if (!inEditor) setIsOpen(!isOpen);
   }, [inEditor, isOpen]);
 
   const handleOnSelect = useCallback(
     (value: string, second: number) => {
       if (!inEditor) {
         setIsOpen(false);
-        value !== selected && setSelected(value);
-        isPlayingReversed
-          ? onSpeedChange?.(second * -1, committer.id)
-          : onSpeedChange?.(second, committer.id);
+        if (value !== selected) setSelected(value);
+        if (isPlayingReversed) {
+          onSpeedChange?.(second * -1, committer.id);
+        } else {
+          onSpeedChange?.(second, committer.id);
+        }
       }
     },
-    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected],
+    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected]
   );
 
   useEffect(() => {
     if (isSelected)
-      setCommiter(prev => {
+      setCommiter((prev) => {
         return { source: prev.source, id: blockId };
       });
   }, [blockId, isSelected]);
 
   const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    e => {
+    (e) => {
       onSpeedChange?.(parseInt(e.currentTarget.value, 10), committer.id);
     },
-    [committer, onSpeedChange],
+    [committer, onSpeedChange]
   );
 
   const handleOnPlay = useCallback(() => {
@@ -167,7 +177,7 @@ export default ({
       }
       onPlay?.(committer);
       setIsActive(true);
-      committer?.id && setActiveBlock(committer.id);
+      if (committer?.id) setActiveBlock(committer.id);
       onTimeChange?.(new Date(currentTime), committer.id);
       onSpeedChange?.(Math.abs(speed), committer.id);
       setIsPlaying(true);
@@ -181,7 +191,7 @@ export default ({
     onTimeChange,
     currentTime,
     onSpeedChange,
-    speed,
+    speed
   ]);
 
   const handleOnPlayReversed = useCallback(() => {
@@ -193,7 +203,7 @@ export default ({
       onPlay?.(committer);
       setIsActive(true);
       setIsPlayingReversed(true);
-      committer?.id && setActiveBlock(committer.id);
+      if (committer?.id) setActiveBlock(committer.id);
       onTimeChange?.(new Date(currentTime), committer.id);
       onSpeedChange?.(Math.abs(speed) * -1, committer.id);
     }
@@ -206,7 +216,7 @@ export default ({
     onPlay,
     onSpeedChange,
     onTimeChange,
-    speed,
+    speed
   ]);
 
   const handleOnPause = useCallback(() => {
@@ -215,7 +225,7 @@ export default ({
         setIsPlayingReversed?.(false);
         setIsPlaying?.(false);
       }
-      committer?.id && onPause?.(committer.id);
+      if (committer?.id) onPause?.(committer.id);
       setIsPause(true);
     }
   }, [committer.id, inEditor, isPlaying, isPlayingReversed, onPause]);
@@ -224,17 +234,25 @@ export default ({
     (current: Date) => {
       return setCurrentTime?.(current.getTime());
     },
-    [setCurrentTime],
+    [setCurrentTime]
   );
 
   const handleOnReset = useCallback(() => {
     if (!range) return;
     onTimeChange?.(new Date(range?.start), committer.id);
     setCurrentTime?.(range?.start);
-    isPlaying && setIsPlaying(false);
-    isPlayingReversed && setIsPlayingReversed(false);
-    committer.id && onPause(committer.id);
-  }, [range, onTimeChange, committer.id, setCurrentTime, isPlaying, isPlayingReversed, onPause]);
+    if (isPlaying) setIsPlaying(false);
+    if (isPlayingReversed) setIsPlayingReversed(false);
+    if (committer.id) onPause(committer.id);
+  }, [
+    range,
+    onTimeChange,
+    committer.id,
+    setCurrentTime,
+    isPlaying,
+    isPlayingReversed,
+    onPause
+  ]);
 
   const handleOnResetAndPlay = useCallback(() => {
     if (!range) return;
@@ -248,7 +266,7 @@ export default ({
       setCurrentTime?.(getNewDate(new Date(time)).getTime());
       handleOnPause();
     },
-    [handleOnPause, onTimeChange, setCurrentTime],
+    [handleOnPause, onTimeChange, setCurrentTime]
   );
 
   const [target, setTarget] = useState<HTMLElement | null>(null);
@@ -277,28 +295,37 @@ export default ({
         return;
       }
       if (target && target.style.pointerEvents === "none" && !inEditor) {
-        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+        const conv = convertPositionToTime(
+          e as unknown as MouseEvent,
+          range.start,
+          range.end
+        );
+        if (committer?.id) handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [committer?.id, handleOnDrag, inEditor, range, target],
+    [committer?.id, handleOnDrag, inEditor, range, target]
   );
 
   const handleOnClick: MouseEventHandler = useCallback(
-    e => {
+    (e) => {
       if (!inEditor && range) {
-        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+        const conv = convertPositionToTime(
+          e as unknown as MouseEvent,
+          range.start,
+          range.end
+        );
+        if (committer?.id) handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [inEditor, range, committer?.id, handleOnDrag],
+    [inEditor, range, committer?.id, handleOnDrag]
   );
 
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
       if (
         isActive &&
-        (committer.source !== "storyTimelineBlock" || committer.id !== activeBlock) &&
+        (committer.source !== "storyTimelineBlock" ||
+          committer.id !== activeBlock) &&
         range
       ) {
         setActiveBlock(" ");
@@ -306,19 +333,27 @@ export default ({
         setIsPlaying(false);
         setIsPlayingReversed(false);
         const currentTimeValue = timelineValues?.currentTime ?? "";
-        timelineValues
-          ? setCurrentTime?.(getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime())
-          : setCurrentTime?.(range?.start);
+        if (timelineValues) {
+          setCurrentTime?.(
+            getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime()
+          );
+        } else {
+          setCurrentTime?.(range?.start);
+        }
       }
       setIsPause(false);
     },
-    [activeBlock, isActive, range, setCurrentTime, timelineValues],
+    [activeBlock, isActive, range, setCurrentTime, timelineValues]
   );
 
   useEffect(() => {
     if (
-      (range && isPlaying && JSON.stringify(currentTime) >= JSON.stringify(range?.end)) ||
-      (range && isPlayingReversed && JSON.stringify(currentTime) <= JSON.stringify(range.start))
+      (range &&
+        isPlaying &&
+        JSON.stringify(currentTime) >= JSON.stringify(range?.end)) ||
+      (range &&
+        isPlayingReversed &&
+        JSON.stringify(currentTime) <= JSON.stringify(range.start))
     ) {
       if (playMode === "loop") {
         return handleOnResetAndPlay();
@@ -338,7 +373,7 @@ export default ({
     playMode,
     range,
     timeRange.endTime,
-    timeRange.startTime,
+    timeRange.startTime
   ]);
 
   useEffect(() => {
@@ -357,7 +392,7 @@ export default ({
     onCommit,
     onTick,
     removeOnCommitEventListener,
-    removeTickEventListener,
+    removeTickEventListener
   ]);
   const blockRef = useRef<HTMLDivElement>(null);
 
@@ -392,7 +427,8 @@ export default ({
       if (!inEditor) {
         const totalRange = range?.end - range.start;
         const currentPosition = currentTime - range.start;
-        let positionPercentage = (currentPosition / totalRange) * 90 + initialPosition;
+        let positionPercentage =
+          (currentPosition / totalRange) * 90 + initialPosition;
 
         positionPercentage = Math.round(positionPercentage);
         positionPercentage = Math.max(positionPercentage, initialPosition);
@@ -424,6 +460,6 @@ export default ({
     handleOnMouseMove,
     handleOnClick,
     handleOnEndMove,
-    handleOnStartMove,
+    handleOnStartMove
   };
 };

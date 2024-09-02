@@ -2,9 +2,12 @@ import { MutableRefObject } from "react";
 
 export function autoFillPage(
   ref: MutableRefObject<HTMLDivElement | undefined | null>,
-  onLoadMore?: () => void,
+  onLoadMore?: () => void
 ) {
-  if (ref.current && ref.current?.scrollHeight <= document.documentElement.clientHeight) {
+  if (
+    ref.current &&
+    ref.current?.scrollHeight <= document.documentElement.clientHeight
+  ) {
     onLoadMore?.();
   }
 }
@@ -12,7 +15,7 @@ export function autoFillPage(
 export function onScrollToBottom(
   { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
   onLoadMore?: () => void,
-  threshold = 5,
+  threshold = 5
 ) {
   if (
     currentTarget.scrollTop + currentTarget.clientHeight >=

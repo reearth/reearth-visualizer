@@ -1,7 +1,6 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-
 import { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, ComputedFeature, ComputedLayer } from "@reearth/core";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
@@ -12,25 +11,26 @@ export default function useHooks({
   ownBuiltinWidgets,
   viewerProperty,
   onCoreLayerSelect,
-  currentCamera,
+  currentCamera
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
-    feature: ComputedFeature | undefined,
+    feature: ComputedFeature | undefined
   ) => void;
   currentCamera?: Camera;
 }) {
   const shouldRender = useMemo(() => {
     const shouldWidgetAnimate = ownBuiltinWidgets?.some(
-      id => !!getBuiltinWidgetOptions(id).animation,
+      (id) => !!getBuiltinWidgetOptions(id).animation
     );
     return shouldWidgetAnimate;
   }, [ownBuiltinWidgets]);
 
-  const [overriddenViewerProperty, overrideViewerProperty] = useOverriddenProperty(viewerProperty);
+  const [overriddenViewerProperty, overrideViewerProperty] =
+    useOverriddenProperty(viewerProperty);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -38,11 +38,11 @@ export default function useHooks({
     async (
       layerId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
-      feature: ComputedFeature | undefined,
+      feature: ComputedFeature | undefined
     ) => {
       onCoreLayerSelect?.(layerId, await layer?.(), feature);
     },
-    [onCoreLayerSelect],
+    [onCoreLayerSelect]
   );
 
   const [visualizerCamera, setVisualizerCamera] = useVisualizerCamera();
@@ -56,6 +56,6 @@ export default function useHooks({
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
-    handleCoreLayerSelect,
+    handleCoreLayerSelect
   };
 }

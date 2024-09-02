@@ -19,8 +19,8 @@ const Timeline = ({
     onSpeedChange,
     onTimeChange,
     onTick,
-    removeTickEventListener,
-  } = {},
+    removeTickEventListener
+  } = {}
 }: Props): JSX.Element | null => {
   const { isOpened, currentTime, range, speed, events } = useTimeline({
     widget,
@@ -32,7 +32,7 @@ const Timeline = ({
     onTimeChange,
     onTick,
     removeTickEventListener,
-    onExtend,
+    onExtend
   });
 
   return (
@@ -54,10 +54,12 @@ const Widget = styled.div<{
   opened?: boolean;
 }>`
   max-width: 100vw;
-  width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "720px" : "auto")};
+  width: ${({ extended, opened }) =>
+    extended && opened ? "100%" : opened ? "720px" : "auto"};
 
   @media (max-width: 768px) {
-    width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "90vw" : "auto")};
+    width: ${({ extended, opened }) =>
+      extended && opened ? "100%" : opened ? "90vw" : "auto"};
   }
 `;
 

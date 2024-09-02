@@ -1,7 +1,12 @@
+import {
+  Map,
+  engines,
+  Engine,
+  InteractionModeType,
+  INTERACTION_MODES
+} from "@reearth/core";
 import { Meta, Story } from "@storybook/react";
 import { useRef } from "react";
-
-import { Map, engines, Engine, InteractionModeType, INTERACTION_MODES } from "@reearth/core";
 
 import { MapRef } from "./types";
 
@@ -9,10 +14,12 @@ import Component, { Props } from ".";
 
 export default {
   component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-const Template: Story<Props & { engine: Engine; interactionMode: InteractionModeType }> = args => {
+const Template: Story<
+  Props & { engine: Engine; interactionMode: InteractionModeType }
+> = (args) => {
   const ref = useRef<MapRef>(null);
   return (
     <>
@@ -30,5 +37,5 @@ const Template: Story<Props & { engine: Engine; interactionMode: InteractionMode
 export const Cesium = Template.bind({});
 
 Cesium.args = {
-  engine: engines.cesium,
+  engine: engines.cesium
 };

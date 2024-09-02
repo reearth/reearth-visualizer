@@ -1,8 +1,14 @@
-import { Dispatch, MouseEvent, SetStateAction, useCallback, useMemo, useState } from "react";
-
 import { getIconName } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { IconName, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
+import {
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState
+} from "react";
 
 import type { ActionItem } from "../../ActionPanel";
 
@@ -29,7 +35,7 @@ export default ({
   setShowPadding,
   onRemove,
   onEditModeToggle,
-  onSettingsToggle,
+  onSettingsToggle
 }: Props) => {
   const t = useT();
   const handleRemove = useCallback(() => {
@@ -50,7 +56,7 @@ export default ({
         onClick: () => {
           setShowPadding(true);
           onSettingsToggle?.();
-        },
+        }
       });
     }
     if (onRemove) {
@@ -58,7 +64,7 @@ export default ({
         id: "delete",
         title: t("Remove"),
         icon: "trash",
-        onClick: handleRemove,
+        onClick: handleRemove
       });
     }
     return menuItems;
@@ -70,7 +76,7 @@ export default ({
     setShowPadding,
     onSettingsToggle,
     t,
-    handleRemove,
+    handleRemove
   ]);
 
   const actionItems: ActionItem[] = useMemo(() => {
@@ -78,15 +84,19 @@ export default ({
     const menuItems: ActionItem[] = [
       {
         name: title ?? t("Block"),
-        icon: iconName,
-      },
+        icon: iconName
+      }
     ];
 
-    if (onEditModeToggle && !!contentSettings && Object.keys(contentSettings).length !== 0) {
+    if (
+      onEditModeToggle &&
+      !!contentSettings &&
+      Object.keys(contentSettings).length !== 0
+    ) {
       menuItems.push({
         icon: editMode ? "exit" : "editMode",
         hide: !isSelected,
-        onClick: () => onEditModeToggle?.(!editMode),
+        onClick: () => onEditModeToggle?.(!editMode)
       });
     }
 
@@ -94,12 +104,21 @@ export default ({
       menuItems.push({
         icon: "settingFilled",
         hide: !isSelected,
-        onClick: onSettingsToggle,
+        onClick: onSettingsToggle
       });
     }
 
     return menuItems;
-  }, [title, icon, isSelected, editMode, contentSettings, t, onEditModeToggle, onSettingsToggle]);
+  }, [
+    title,
+    icon,
+    isSelected,
+    editMode,
+    contentSettings,
+    t,
+    onEditModeToggle,
+    onSettingsToggle
+  ]);
 
   const handlePopupMenuClick = useCallback((e: MouseEvent) => {
     e.stopPropagation();
@@ -111,6 +130,6 @@ export default ({
     actionItems,
     openMenu,
     handlePopupMenuClick,
-    setOpenMenu,
+    setOpenMenu
   };
 };

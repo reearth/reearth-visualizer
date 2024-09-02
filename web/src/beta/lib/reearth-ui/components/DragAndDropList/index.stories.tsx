@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import { Meta, Story } from "@storybook/react";
 import { ReactNode, useState } from "react";
-
-import { styled } from "@reearth/services/theme";
 
 import { Icon } from "../Icon";
 
@@ -13,7 +12,7 @@ interface Item {
 }
 
 const meta: Meta<DragAndDropListProps<Item>> = {
-  component: DragAndDropList,
+  component: DragAndDropList
 };
 export default meta;
 
@@ -25,19 +24,19 @@ const MockItem = styled("div")(({ theme }) => ({
   padding: theme.spacing.smallest,
   border: theme.outline.weakest,
   borderRadius: theme.radius.small,
-  backgroundColor: theme.bg[1],
+  backgroundColor: theme.bg[1]
 }));
 
 const MockListContainer = styled("div")(({ theme }) => ({
   width: 300,
-  border: theme.outline.main,
+  border: theme.outline.main
 }));
 
-const DefaultComponent: typeof DragAndDropList<Item> = args => {
+const DefaultComponent: typeof DragAndDropList<Item> = (args) => {
   const [list1, setList1] = useState<Item[]>([
     { id: "1", content: <MockItem>Item 1</MockItem> },
     { id: "2", content: <MockItem>Item 2</MockItem> },
-    { id: "3", content: <MockItem>Item 3</MockItem> },
+    { id: "3", content: <MockItem>Item 3</MockItem> }
   ]);
 
   return (
@@ -47,9 +46,15 @@ const DefaultComponent: typeof DragAndDropList<Item> = args => {
   );
 };
 
-export const Default: Story<{}> = () => {
+export const Default: Story = () => {
   return (
-    <div style={{ padding: "24px", display: "flex", justifyContent: "space-around" }}>
+    <div
+      style={{
+        padding: "24px",
+        display: "flex",
+        justifyContent: "space-around"
+      }}
+    >
       <DefaultComponent />
     </div>
   );
@@ -57,7 +62,7 @@ export const Default: Story<{}> = () => {
 
 const handleClassName = "asldkfja";
 
-const HandleComponent: typeof DragAndDropList<Item> = args => {
+const HandleComponent: typeof DragAndDropList<Item> = (args) => {
   const [list1, setList1] = useState<Item[]>([
     {
       id: "1",
@@ -66,7 +71,7 @@ const HandleComponent: typeof DragAndDropList<Item> = args => {
           <Icon className={handleClassName} icon="circle" />
           Item 1
         </MockItem>
-      ),
+      )
     },
     {
       id: "2",
@@ -75,7 +80,7 @@ const HandleComponent: typeof DragAndDropList<Item> = args => {
           <Icon className={handleClassName} icon="circle" />
           Item 2
         </MockItem>
-      ),
+      )
     },
     {
       id: "3",
@@ -84,8 +89,8 @@ const HandleComponent: typeof DragAndDropList<Item> = args => {
           <Icon className={handleClassName} icon="circle" />
           Item 3
         </MockItem>
-      ),
-    },
+      )
+    }
   ]);
 
   return (
@@ -95,50 +100,78 @@ const HandleComponent: typeof DragAndDropList<Item> = args => {
   );
 };
 
-export const Handle: Story<{}> = () => {
+export const Handle: Story = () => {
   return (
-    <div style={{ padding: "24px", display: "flex", justifyContent: "space-around" }}>
+    <div
+      style={{
+        padding: "24px",
+        display: "flex",
+        justifyContent: "space-around"
+      }}
+    >
       <HandleComponent handleClassName={handleClassName} />
     </div>
   );
 };
 
-const SharedComponent: typeof DragAndDropList<Item> = args => {
+const SharedComponent: typeof DragAndDropList<Item> = (args) => {
   const [list1, setList1] = useState<Item[]>([
     { id: "1", content: <MockItem>Item 1</MockItem> },
     { id: "2", content: <MockItem>Item 2</MockItem> },
-    { id: "3", content: <MockItem>Item 3</MockItem> },
+    { id: "3", content: <MockItem>Item 3</MockItem> }
   ]);
 
   const [list2, setList2] = useState<Item[]>([
     { id: "4", content: <MockItem>Item 4</MockItem> },
     { id: "5", content: <MockItem>Item 5</MockItem> },
-    { id: "6", content: <MockItem>Item 6</MockItem> },
+    { id: "6", content: <MockItem>Item 6</MockItem> }
   ]);
 
   return (
     <>
       <MockListContainer>
-        <DragAndDropList items={list1} setItems={setList1} group="shared-group" {...args} />
+        <DragAndDropList
+          items={list1}
+          setItems={setList1}
+          group="shared-group"
+          {...args}
+        />
       </MockListContainer>
       <MockListContainer>
-        <DragAndDropList items={list2} setItems={setList2} group="shared-group" {...args} />
+        <DragAndDropList
+          items={list2}
+          setItems={setList2}
+          group="shared-group"
+          {...args}
+        />
       </MockListContainer>
     </>
   );
 };
 
-export const Shared: Story<{}> = () => {
+export const Shared: Story = () => {
   return (
-    <div style={{ padding: "24px", display: "flex", justifyContent: "space-around" }}>
+    <div
+      style={{
+        padding: "24px",
+        display: "flex",
+        justifyContent: "space-around"
+      }}
+    >
       <SharedComponent />
     </div>
   );
 };
 
-export const Copy: Story<{}> = () => {
+export const Copy: Story = () => {
   return (
-    <div style={{ padding: "24px", display: "flex", justifyContent: "space-around" }}>
+    <div
+      style={{
+        padding: "24px",
+        display: "flex",
+        justifyContent: "space-around"
+      }}
+    >
       <SharedComponent group={{ name: "shared", pull: "clone" }} />
     </div>
   );

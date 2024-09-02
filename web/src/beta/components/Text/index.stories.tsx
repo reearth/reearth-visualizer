@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import Text from ".";
 
 const meta: Meta<typeof Text> = {
-  component: Text,
+  component: Text
 };
 
 export default meta;
@@ -21,7 +21,7 @@ export const Regular: Story = {
       <Text size="body">Body Regular</Text>
       <Text size="footnote">Footnote Regular</Text>={" "}
     </div>
-  ),
+  )
 };
 
 export const Medium: Story = {
@@ -49,7 +49,7 @@ export const Medium: Story = {
         Footnote Medium
       </Text>
     </div>
-  ),
+  )
 };
 
 export const Bold: Story = {
@@ -77,5 +77,5 @@ export const Bold: Story = {
         Footnote Bold
       </Text>
     </div>
-  ),
+  )
 };

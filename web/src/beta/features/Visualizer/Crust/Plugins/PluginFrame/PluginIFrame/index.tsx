@@ -1,4 +1,10 @@
-import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode, memo } from "react";
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  IframeHTMLAttributes,
+  ReactNode,
+  memo
+} from "react";
 import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 
@@ -40,15 +46,15 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     externalRef,
     onRender,
     onClick,
-    onMessage,
+    onMessage
   },
-  ref,
+  ref
 ) => {
   const {
     ref: iFrameRef,
     html,
     options,
-    handleLoad,
+    handleLoad
   } = useHooks({ ready, ref, visible, type, enabled, onRender });
 
   const children = (
@@ -72,7 +78,11 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     </>
   );
 
-  return enabled ? (container ? createPortal(children, container) : children) : null;
+  return enabled
+    ? container
+      ? createPortal(children, container)
+      : children
+    : null;
 };
 
 export default memo(forwardRef(PluginIFrame));

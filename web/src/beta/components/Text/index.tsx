@@ -1,14 +1,18 @@
-import { CSSProperties, ReactNode, useMemo } from "react";
-
 import { useTheme } from "@reearth/services/theme";
 import {
   FontWeight,
   typography,
   FontSize,
-  UniqueTraits,
+  UniqueTraits
 } from "@reearth/services/theme/reearthTheme/common/fonts";
+import { CSSProperties, ReactNode, useMemo } from "react";
 
-type NonChangeableProperties = "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle";
+type NonChangeableProperties =
+  | "color"
+  | "fontFamily"
+  | "fontSize"
+  | "lineHeight"
+  | "fontStyle";
 
 type ChangeableProperties = Omit<CSSProperties, NonChangeableProperties>;
 
@@ -35,7 +39,7 @@ const Text: React.FC<Props> = ({
   trait,
   otherProperties,
   onClick,
-  onDoubleClick,
+  onDoubleClick
 }) => {
   const theme = useTheme();
   const defaultColor = theme.content.main;
@@ -46,9 +50,10 @@ const Text: React.FC<Props> = ({
       trait && typographyBySize && trait in typographyBySize
         ? typographyBySize[trait]
         : typographyBySize && weight in typographyBySize
-        ? typographyBySize[weight]
-        : typographyBySize && typographyBySize[size === "h1" ? "medium" : "regular"],
-    [trait, size, typographyBySize, weight],
+          ? typographyBySize[weight]
+          : typographyBySize &&
+            typographyBySize[size === "h1" ? "medium" : "regular"],
+    [trait, size, typographyBySize, weight]
   );
 
   return Typography ? (
@@ -57,10 +62,11 @@ const Text: React.FC<Props> = ({
       style={{
         userSelect: "none",
         ...otherProperties,
-        color: customColor ? undefined : color || defaultColor,
+        color: customColor ? undefined : color || defaultColor
       }}
       onClick={onClick}
-      onDoubleClick={onDoubleClick}>
+      onDoubleClick={onDoubleClick}
+    >
       {children}
     </Typography>
   ) : null;

@@ -45,10 +45,10 @@ export declare type SketchEvents = {
   readonly on: <T extends keyof SketchEventType>(
     type: T,
     callback: (...args: SketchEventType[T]) => void,
-    options?: { once?: boolean },
+    options?: { once?: boolean }
   ) => void;
   readonly off: <T extends keyof SketchEventType>(
     type: T,
-    callback: (...args: SketchEventType[T]) => void,
+    callback: (...args: SketchEventType[T]) => void
   ) => void;
 };

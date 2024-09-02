@@ -48,7 +48,7 @@ export function exposedReearth({
   startEventLoop,
   pluginPostMessage,
   // data
-  clientStorage,
+  clientStorage
 }: {
   commonReearth: CommonReearth;
   plugin?: {
@@ -90,7 +90,11 @@ export function exposedReearth({
   getBlock?: () => Reearth["extension"]["block"] | undefined;
   getLayer?: () => Layer | undefined;
   startEventLoop?: () => void;
-  pluginPostMessage: (extentionId: string, msg: unknown, sender: string) => void;
+  pluginPostMessage: (
+    extentionId: string,
+    msg: unknown,
+    sender: string
+  ) => void;
   extensionEventsOn: Reearth["extension"]["on"];
   extensionEventsOff: Reearth["extension"]["off"];
   // data
@@ -99,26 +103,33 @@ export function exposedReearth({
   return merge({
     console: {
       error: console.error,
-      log: console.log,
+      log: console.log
     },
     reearth: merge(commonReearth, {
       viewer: merge(commonReearth.viewer, {
         get overrideProperty() {
           return (property: ViewerProperty) => {
-            overrideViewerProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+            overrideViewerProperty?.(
+              plugin ? `${plugin.id}/${plugin.extensionId}` : "",
+              property
+            );
           };
         },
         tools: merge(commonReearth.viewer.tools, {
           get getTerrainHeightAsync() {
             return async (lng: number, lat: number) => {
-              const result = await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(lng, lat);
+              const result =
+                await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(
+                  lng,
+                  lat
+                );
               startEventLoop?.();
               return result;
             };
-          },
+          }
         }),
         on: viewerEventsOn,
-        off: viewerEventsOff,
+        off: viewerEventsOff
       }),
       timeline: merge(commonReearth.timeline, {
         get play() {
@@ -131,9 +142,9 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
-              },
+                      ? getBlock?.()?.id
+                      : "") ?? ""
+              }
             });
           };
         },
@@ -147,13 +158,17 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
-              },
+                      ? getBlock?.()?.id
+                      : "") ?? ""
+              }
             });
         },
         get setTime() {
-          return (time: { start: Date | string; stop: Date | string; current: Date | string }) =>
+          return (time: {
+            start: Date | string;
+            stop: Date | string;
+            current: Date | string;
+          }) =>
             timelineManagerRef?.current?.commit({
               cmd: "SET_TIME",
               payload: { ...time },
@@ -163,9 +178,9 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
-              },
+                      ? getBlock?.()?.id
+                      : "") ?? ""
+              }
             });
         },
         get setSpeed() {
@@ -179,9 +194,9 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
-              },
+                      ? getBlock?.()?.id
+                      : "") ?? ""
+              }
             });
         },
         get setStepType() {
@@ -195,9 +210,9 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
-              },
+                      ? getBlock?.()?.id
+                      : "") ?? ""
+              }
             });
         },
         get setRangeType() {
@@ -211,11 +226,11 @@ export function exposedReearth({
                   (plugin?.extensionType === "widget"
                     ? getWidget?.()?.id
                     : plugin?.extensionType === "block"
-                    ? getBlock?.()?.id
-                    : "") ?? "",
-              },
+                      ? getBlock?.()?.id
+                      : "") ?? ""
+              }
             });
-        },
+        }
       }),
       ui: {
         show: render,
@@ -223,7 +238,7 @@ export function exposedReearth({
         resize,
         close: closeUI,
         on: uiEventsOn,
-        off: uiEventsOff,
+        off: uiEventsOff
       },
       modal: {
         show: renderModal,
@@ -231,7 +246,7 @@ export function exposedReearth({
         update: updateModal,
         close: closeModal,
         on: modalEventsOn,
-        off: modalEventsOff,
+        off: modalEventsOff
       },
       popup: {
         show: renderPopup,
@@ -239,7 +254,7 @@ export function exposedReearth({
         update: updatePopup,
         close: closePopup,
         on: popupEventsOn,
-        off: popupEventsOff,
+        off: popupEventsOff
       },
       extension: merge(
         commonReearth.extension,
@@ -248,31 +263,35 @@ export function exposedReearth({
             const sender =
               (plugin?.extensionType === "widget"
                 ? getWidget?.()?.id
-                : ["infoboxBlock", "storyBlock", "block"].includes(plugin?.extensionType ?? "")
-                ? getBlock?.()?.id
-                : "") ?? "";
-            return (id: string, msg: unknown) => pluginPostMessage(id, msg, sender);
+                : ["infoboxBlock", "storyBlock", "block"].includes(
+                      plugin?.extensionType ?? ""
+                    )
+                  ? getBlock?.()?.id
+                  : "") ?? "";
+            return (id: string, msg: unknown) =>
+              pluginPostMessage(id, msg, sender);
           },
           on: extensionEventsOn,
-          off: extensionEventsOff,
+          off: extensionEventsOff
         },
         plugin?.extensionType === "widget"
           ? {
               get widget() {
                 return getWidget?.();
-              },
+              }
             }
           : {},
-        plugin?.extensionType === "infoboxBlock" || plugin?.extensionType === "storyBlock"
+        plugin?.extensionType === "infoboxBlock" ||
+          plugin?.extensionType === "storyBlock"
           ? {
               get block() {
                 return {
                   ...getBlock?.(),
-                  layer: getLayer?.(),
+                  layer: getLayer?.()
                 };
-              },
+              }
             }
-          : {},
+          : {}
       ),
       data: {
         clientStorage: {
@@ -282,9 +301,9 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
-                key,
+                    ? getBlock?.()?.id
+                    : "") ?? "",
+                key
               );
               promise.finally(() => {
                 startEventLoop?.();
@@ -295,15 +314,17 @@ export function exposedReearth({
           get setAsync() {
             return (key: string, value: unknown) => {
               const localValue =
-                typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
+                typeof value === "object"
+                  ? JSON.parse(JSON.stringify(value))
+                  : value;
               const promise = clientStorage.setAsync(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? "",
                 key,
-                localValue,
+                localValue
               );
               promise.finally(() => {
                 startEventLoop?.();
@@ -317,9 +338,9 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
-                key,
+                    ? getBlock?.()?.id
+                    : "") ?? "",
+                key
               );
               promise.finally(() => {
                 startEventLoop?.();
@@ -333,8 +354,8 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? ""
               );
               promise.finally(() => {
                 startEventLoop?.();
@@ -348,17 +369,17 @@ export function exposedReearth({
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
-                  ? getBlock?.()?.id
-                  : "") ?? "",
+                    ? getBlock?.()?.id
+                    : "") ?? ""
               );
               promise.finally(() => {
                 startEventLoop?.();
               });
               return promise;
             };
-          },
-        },
-      },
-    }),
+          }
+        }
+      }
+    })
   });
 }

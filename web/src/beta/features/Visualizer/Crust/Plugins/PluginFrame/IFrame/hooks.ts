@@ -7,12 +7,15 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 export type RefType = {
   postMessage: (message: any) => void;
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
+  resize: (
+    width: string | number | undefined,
+    height: string | number | undefined
+  ) => void;
 };
 
 export type AutoResize = "both" | "width-only" | "height-only";
@@ -29,7 +32,7 @@ export default function useHook({
   onLoad,
   onMessage,
   onClick,
-  onAutoResized,
+  onAutoResized
 }: {
   width?: number | string;
   height?: number | string;
@@ -50,13 +53,14 @@ export default function useHook({
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameSize, setIFrameSize] = useState<[string | undefined, string | undefined]>();
+  const [iFrameSize, setIFrameSize] =
+    useState<[string | undefined, string | undefined]>();
   const pendingMesages = useRef<any[]>([]);
 
   useImperativeHandle(
     ref,
     (): RefType => ({
-      postMessage: message => {
+      postMessage: (message) => {
         if (!loaded.current || !iFrameRef.current?.contentWindow) {
           pendingMesages.current.push(message);
           return;
@@ -64,17 +68,20 @@ export default function useHook({
         iFrameRef.current.contentWindow.postMessage(message, "*");
       },
       resize: (width, height) => {
-        const width2 = typeof width === "number" ? width + "px" : width ?? undefined;
-        const height2 = typeof height === "number" ? height + "px" : height ?? undefined;
+        const width2 =
+          typeof width === "number" ? width + "px" : (width ?? undefined);
+        const height2 =
+          typeof height === "number" ? height + "px" : (height ?? undefined);
         setIFrameSize(width2 || height2 ? [width2, height2] : undefined);
-      },
+      }
     }),
-    [],
+    []
   );
 
   useEffect(() => {
     const cb = (ev: MessageEvent<any>) => {
-      if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow) return;
+      if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow)
+        return;
       if (ev.data?.[autoResizeMessageKey]) {
         const { width, height } = ev.data[autoResizeMessageKey];
         if (typeof width !== "number" || typeof height !== "number") return;
@@ -174,10 +181,10 @@ export default function useHook({
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
-        ...iFrameProps?.style,
-      },
+        ...iFrameProps?.style
+      }
     }),
-    [autoResize, iFrameProps, iFrameSize, visible],
+    [autoResize, iFrameProps, iFrameSize, visible]
   );
 
   useEffect(() => {
@@ -201,18 +208,21 @@ export default function useHook({
   return {
     ref: iFrameRef,
     props,
-    onLoad: onIframeLoad,
+    onLoad: onIframeLoad
   };
 }
 
-function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
+function execScripts(
+  scripts: Iterable<HTMLScriptElement>,
+  asyncScript: boolean
+) {
   const isAsync = (script: HTMLScriptElement) =>
     script.getAttribute("type") === "module" ||
     script.getAttribute("async") ||
     script.getAttribute("defer");
 
   return Array.from(scripts)
-    .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
+    .filter((script) => (asyncScript ? isAsync(script) : !isAsync(script)))
     .reduce((chain, oldScript) => {
       return chain.then(() => runScript(oldScript));
     }, Promise.resolve());

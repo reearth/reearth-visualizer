@@ -1,8 +1,7 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
-
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { useT } from "@reearth/services/i18n";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project as ProjectType } from "../../../type";
 
@@ -13,7 +12,12 @@ type Props = {
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
 };
 
-export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }: Props) => {
+export default ({
+  project,
+  selectedProjectId,
+  onProjectUpdate,
+  onProjectSelect
+}: Props) => {
   const t = useT();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +33,7 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     if (!project || projectName === project.name) return setIsEditing(false);
     const updatedProject: ProjectType = {
       ...project,
-      name: projectName,
+      name: projectName
     };
     onProjectUpdate?.(updatedProject, project.id);
     setIsEditing(false);
@@ -37,7 +41,8 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
 
   const handleProjectNameEdit = useCallback(() => {
     setIsEditing?.(true);
-    if (selectedProjectId !== project.id || selectedProjectId) onProjectSelect?.(undefined);
+    if (selectedProjectId !== project.id || selectedProjectId)
+      onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
   useEffect(() => {
@@ -49,19 +54,19 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
       id: "rename",
       title: t("Rename"),
       icon: "pencilLine",
-      onClick: () => handleProjectNameEdit?.(),
+      onClick: () => handleProjectNameEdit?.()
     },
     {
       id: "setting",
       title: t("Project Setting"),
       path: `/settings/project/${project.id}`,
-      icon: "setting",
-    },
+      icon: "setting"
+    }
   ];
 
   const [, handleDoubleClick] = useDoubleClick(
     () => {},
-    () => handleProjectNameEdit(),
+    () => handleProjectNameEdit()
   );
 
   const handleProjectHover = useCallback((value: boolean) => {
@@ -73,7 +78,7 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
       e.stopPropagation();
       handleDoubleClick();
     },
-    [handleDoubleClick],
+    [handleDoubleClick]
   );
   const handleProjectStarClick = useCallback(
     (e: MouseEvent) => {
@@ -81,16 +86,16 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
       setIsStarred(!isStarred);
       const updatedProject: ProjectType = {
         ...project,
-        starred: !isStarred,
+        starred: !isStarred
       };
       onProjectUpdate?.(updatedProject, project.id);
     },
-    [isStarred, onProjectUpdate, project],
+    [isStarred, onProjectUpdate, project]
   );
 
   const publishStatus = useMemo(
     () => project.status === "published" || project.status === "limited",
-    [project.status],
+    [project.status]
   );
 
   return {
@@ -104,6 +109,6 @@ export default ({ project, selectedProjectId, onProjectUpdate, onProjectSelect }
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
+    handleProjectStarClick
   };
 };

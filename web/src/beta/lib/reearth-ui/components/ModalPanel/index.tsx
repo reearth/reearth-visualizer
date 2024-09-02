@@ -1,7 +1,6 @@
-import { FC, ReactNode } from "react";
-
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
+import { FC, ReactNode } from "react";
 
 export type ModalPanelProps = {
   title?: string;
@@ -18,14 +17,20 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   actions,
   layout,
   onCancel,
-  appearance = "normal",
+  appearance = "normal"
 }) => {
   return (
     <Wrapper>
       {appearance !== "simple" && (
         <HeaderWrapper>
           <Title>{title}</Title>
-          <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
+          <Button
+            iconButton
+            icon="close"
+            size="small"
+            onClick={onCancel}
+            appearance="simple"
+          />
         </HeaderWrapper>
       )}
       {layout === "common" ? (
@@ -33,7 +38,11 @@ export const ModalPanel: FC<ModalPanelProps> = ({
       ) : (
         <Content>{children}</Content>
       )}
-      {actions && <ActionWrapper showBorder={appearance !== "simple"}>{actions}</ActionWrapper>}
+      {actions && (
+        <ActionWrapper showBorder={appearance !== "simple"}>
+          {actions}
+        </ActionWrapper>
+      )}
     </Wrapper>
   );
 };
@@ -42,7 +51,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   background: theme.bg[1],
-  borderRadius: theme.radius.large,
+  borderRadius: theme.radius.large
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
@@ -55,30 +64,32 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   borderBottom: `1px solid ${theme.outline.weaker}`,
   borderTopRightRadius: theme.radius.large,
-  borderTopLeftRadius: theme.radius.large,
+  borderTopLeftRadius: theme.radius.large
 }));
 
 const Title = styled("div")(() => ({
   flex: "1 0 0",
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));
 
 const Content = styled("div")(() => ({
-  alignSelf: "stretch",
+  alignSelf: "stretch"
 }));
 
-const ActionWrapper = styled("div")<{ showBorder: boolean }>(({ theme, showBorder }) => ({
-  padding: theme.spacing.normal,
-  background: theme.bg[1],
-  borderBottomRightRadius: theme.radius.large,
-  borderBottomLeftRadius: theme.radius.large,
-  justifyContent: "flex-end",
-  display: "flex",
-  alignItems: "flex-start",
-  borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
-  gap: theme.spacing.normal,
-}));
+const ActionWrapper = styled("div")<{ showBorder: boolean }>(
+  ({ theme, showBorder }) => ({
+    padding: theme.spacing.normal,
+    background: theme.bg[1],
+    borderBottomRightRadius: theme.radius.large,
+    borderBottomLeftRadius: theme.radius.large,
+    justifyContent: "flex-end",
+    display: "flex",
+    alignItems: "flex-start",
+    borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
+    gap: theme.spacing.normal
+  })
+);
 
 const CommonLayout = styled("div")(({ theme }) => ({
   width: "100%",
@@ -86,5 +97,5 @@ const CommonLayout = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.large,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));

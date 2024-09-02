@@ -1,18 +1,17 @@
-import { Meta, StoryObj } from "@storybook/react";
-
 import { IconButton } from "@reearth/beta/lib/reearth-ui";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { EntryItem } from ".";
 
 const meta: Meta<typeof EntryItem> = {
   component: EntryItem,
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: 300 }}>
         <Story />
       </div>
-    ),
-  ],
+    )
+  ]
 };
 
 export default meta;
@@ -21,29 +20,29 @@ type Story = StoryObj<typeof EntryItem>;
 
 export const Default: Story = {
   args: {
-    title: "Item",
-  },
+    title: "Item"
+  }
 };
 
 export const Highlighted: Story = {
   args: {
     title: "Item",
-    highlighted: true,
-  },
+    highlighted: true
+  }
 };
 
 export const Icon: Story = {
   args: {
     title: "Item",
-    icon: "file",
-  },
+    icon: "file"
+  }
 };
 
 export const LongText: Story = {
   args: {
     title: "Item With A Long Long Long Long Long Long Long Long Name",
-    icon: "file",
-  },
+    icon: "file"
+  }
 };
 
 export const OptionsMenu: Story = {
@@ -53,16 +52,16 @@ export const OptionsMenu: Story = {
       {
         id: "1",
         title: "Option 1",
-        onClick: () => console.log("Option 1 clicked"),
+        onClick: () => console.log("Option 1 clicked")
       },
       {
         id: "2",
         title: "Option 2 with icon",
         icon: "setting",
-        onClick: () => console.log("Option 2 clicked"),
-      },
-    ],
-  },
+        onClick: () => console.log("Option 2 clicked")
+      }
+    ]
+  }
 };
 
 export const Actions: Story = {
@@ -78,7 +77,7 @@ export const Actions: Story = {
             appearance="simple"
             onClick={() => console.log("Action 1 clicked")}
           />
-        ),
+        )
       },
       {
         comp: (
@@ -90,10 +89,10 @@ export const Actions: Story = {
             onClick={() => console.log("Action 2 clicked")}
           />
         ),
-        keepVisible: true,
-      },
-    ],
-  },
+        keepVisible: true
+      }
+    ]
+  }
 };
 
 export const DisableHover: Story = {
@@ -110,7 +109,7 @@ export const DisableHover: Story = {
             appearance="simple"
             onClick={() => console.log("Action 1 clicked")}
           />
-        ),
+        )
       },
       {
         comp: (
@@ -122,8 +121,8 @@ export const DisableHover: Story = {
             onClick={() => console.log("Action 2 clicked")}
           />
         ),
-        keepVisible: true,
-      },
-    ],
-  },
+        keepVisible: true
+      }
+    ]
+  }
 };

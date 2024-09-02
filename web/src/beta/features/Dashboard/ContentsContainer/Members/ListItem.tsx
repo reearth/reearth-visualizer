@@ -1,7 +1,6 @@
-import { FC } from "react";
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { Member } from "../../type";
 
@@ -9,7 +8,9 @@ const ListItem: FC<{ member: Member }> = ({ member }) => {
   return (
     <StyledListItem>
       <Avatar>
-        <Typography size="body">{member.user?.name.charAt(0).toUpperCase()}</Typography>
+        <Typography size="body">
+          {member.user?.name.charAt(0).toUpperCase()}
+        </Typography>
       </Avatar>
       <TypographyWrapper>
         <Typography size="body">{member.user?.name}</Typography>
@@ -19,7 +20,8 @@ const ListItem: FC<{ member: Member }> = ({ member }) => {
       </TypographyWrapper>
       <TypographyWrapper>
         <Typography size="body">
-          {member.role.charAt(0).toUpperCase() + member.role.slice(1).toLowerCase()}
+          {member.role.charAt(0).toUpperCase() +
+            member.role.slice(1).toLowerCase()}
         </Typography>
       </TypographyWrapper>
     </StyledListItem>
@@ -35,7 +37,7 @@ const StyledListItem = styled("div")(({ theme }) => ({
   alignItems: "center",
   background: theme.bg[1],
   borderRadius: theme.radius.normal,
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const Avatar = styled("div")(({ theme }) => ({
@@ -45,10 +47,10 @@ const Avatar = styled("div")(({ theme }) => ({
   background: theme.bg[2],
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "center"
 }));
 
 const TypographyWrapper = styled("div")(() => ({
   overflow: "hidden",
-  textOverflow: "ellipsis",
+  textOverflow: "ellipsis"
 }));

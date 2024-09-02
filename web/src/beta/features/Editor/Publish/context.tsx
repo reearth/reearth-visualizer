@@ -1,6 +1,5 @@
-import { createContext, useContext, ReactNode } from "react";
-
 import { AreaSize } from "@reearth/beta/ui/layout";
+import { createContext, useContext, ReactNode } from "react";
 
 import { ProjectType } from "./PublishToolsPanel/hooks";
 
@@ -13,16 +12,22 @@ export interface PublishPageContextType {
   handleProjectTypeChange: (type: ProjectType) => void;
 }
 
-const PublishPageContext = createContext<PublishPageContextType | undefined>(undefined);
+const PublishPageContext = createContext<PublishPageContextType | undefined>(
+  undefined
+);
 
 export const PublishPageProvider = ({
   value,
-  children,
+  children
 }: {
   value: PublishPageContextType;
   children: ReactNode;
 }) => {
-  return <PublishPageContext.Provider value={value}>{children}</PublishPageContext.Provider>;
+  return (
+    <PublishPageContext.Provider value={value}>
+      {children}
+    </PublishPageContext.Provider>
+  );
 };
 
 export const usePublishPage = (): PublishPageContextType => {

@@ -1,9 +1,14 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-
 import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
 import { SketchFeature, SketchType, Geometry } from "@reearth/core";
 import { useFeatureCollectionFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 
 import { Tab } from "../../Navbar";
 
@@ -29,28 +34,42 @@ export type GeoJsonFeatureUpdateProps = {
   properties?: any;
 };
 
+export type GeoJsonFeatureDeleteProps = {
+  layerId: string;
+  featureId: string;
+};
+
 export default ({
   tab,
   nlsLayers,
   selectedLayer,
   visualizerRef,
-  ignoreCoreLayerUnselect,
+  ignoreCoreLayerUnselect
 }: Props) => {
-  const [sketchType, setSketchType] = useState<SketchType | undefined>(undefined);
-
-  const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string } | undefined>(
-    undefined,
+  const [sketchType, setSketchType] = useState<SketchType | undefined>(
+    undefined
   );
+
+  const pendingSketchSelectionRef = useRef<
+    { layerId: string; featureId: string } | undefined
+  >(undefined);
 
   const handleSketchTypeChange = useCallback(
     (type: SketchType | undefined, from: "editor" | "plugin" = "editor") => {
       setSketchType(type);
       if (from === "editor") visualizerRef.current?.sketch?.setType?.(type);
+      visualizerRef.current?.sketch?.overrideOptions?.({
+        autoResetInteractionMode: false
+      });
     },
-    [visualizerRef],
+    [visualizerRef]
   );
 
-  const { useAddGeoJsonFeature, useUpdateGeoJSONFeature } = useFeatureCollectionFetcher();
+  const {
+    useAddGeoJsonFeature,
+    useUpdateGeoJSONFeature,
+    useDeleteGeoJSONFeature
+  } = useFeatureCollectionFetcher();
 
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
@@ -59,57 +78,74 @@ export default ({
         layerId: inp.layerId,
         geometry: inp.geometry,
         type: inp.type,
-        properties: inp.properties,
+        properties: inp.properties
       });
     },
-    [selectedLayer, useAddGeoJsonFeature],
+    [selectedLayer, useAddGeoJsonFeature]
   );
 
   const handleSketchFeatureCreate = useCallback(
     async (feature: SketchFeature | null) => {
       // TODO: create a new layer if there is no selected sketch layer
       if (!feature || !selectedLayer?.id || !selectedLayer.isSketch) return;
-      // TODO: support custom properties
-      const customProperties = {};
+
       await handleSketchLayerAdd({
         type: feature.type,
         layerId: selectedLayer?.id,
-        properties: { ...feature.properties, ...customProperties },
-        geometry: feature.geometry,
+        properties: { ...feature.properties },
+        geometry: feature.geometry
       });
 
       pendingSketchSelectionRef.current = {
         layerId: selectedLayer.id,
-        featureId: feature.properties.id,
+        featureId: feature.properties.id
       };
 
       ignoreCoreLayerUnselect.current = true;
     },
-    [selectedLayer?.id, selectedLayer?.isSketch, ignoreCoreLayerUnselect, handleSketchLayerAdd],
+    [
+      selectedLayer?.id,
+      selectedLayer?.isSketch,
+      ignoreCoreLayerUnselect,
+      handleSketchLayerAdd
+    ]
   );
 
-  // Workaround: we can't get an update from core after nlsLayers got updated.
-  // Therefore we need to get and select the latest sketch feature manually delayed.
   useEffect(() => {
+    // Workaround: we can't get an notice from core after nlsLayers got updated.
+    // Therefore we need to get and select the latest sketch feature manually delayed.
     setTimeout(() => {
       if (pendingSketchSelectionRef.current) {
         const { layerId, featureId } = pendingSketchSelectionRef.current;
         const layer = visualizerRef?.current?.layers
           ?.layers?.()
-          ?.find(l => l.id === layerId)?.computed;
-        const feature = layer?.features?.find(f => f.properties?.id === featureId);
+          ?.find((l) => l.id === layerId)?.computed;
+        const feature = layer?.features?.find(
+          (f) => f.properties?.id === featureId
+        );
         if (feature) {
           visualizerRef?.current?.layers.selectFeature(layerId, feature?.id);
         }
         pendingSketchSelectionRef.current = undefined;
         ignoreCoreLayerUnselect.current = false;
       }
-    }, 1);
-  }, [nlsLayers, pendingSketchSelectionRef, visualizerRef, ignoreCoreLayerUnselect]);
+    }, 100);
+  }, [
+    nlsLayers,
+    pendingSketchSelectionRef,
+    visualizerRef,
+    ignoreCoreLayerUnselect
+  ]);
 
   useEffect(() => {
-    setSketchType(undefined);
-  }, [tab]);
+    handleSketchTypeChange(undefined);
+  }, [tab, handleSketchTypeChange]);
+
+  useEffect(() => {
+    if (!selectedLayer?.isSketch) {
+      handleSketchTypeChange(undefined);
+    }
+  }, [selectedLayer, handleSketchTypeChange]);
 
   const handleGeoJsonFeatureUpdate = useCallback(
     async (inp: GeoJsonFeatureUpdateProps) => {
@@ -117,15 +153,25 @@ export default ({
         layerId: inp.layerId,
         featureId: inp.featureId,
         geometry: inp.geometry,
-        properties: inp.properties,
+        properties: inp.properties
       });
 
       pendingSketchSelectionRef.current = {
         layerId: inp.layerId,
-        featureId: inp.properties?.id,
+        featureId: inp.properties?.id
       };
     },
-    [useUpdateGeoJSONFeature],
+    [useUpdateGeoJSONFeature]
+  );
+
+  const handleGeoJsonFeatureDelete = useCallback(
+    async (inp: GeoJsonFeatureDeleteProps) => {
+      await useDeleteGeoJSONFeature({
+        layerId: inp.layerId,
+        featureId: inp.featureId
+      });
+    },
+    [useDeleteGeoJSONFeature]
   );
 
   return {
@@ -133,5 +179,6 @@ export default ({
     handleSketchTypeChange,
     handleSketchFeatureCreate,
     handleGeoJsonFeatureUpdate,
+    handleGeoJsonFeatureDelete
   };
 };

@@ -2,7 +2,10 @@ import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "../..";
 
-import MenuButton, { Button as ButtonType, MenuItem as MenuItemType } from "./MenuButton";
+import MenuButton, {
+  Button as ButtonType,
+  MenuItem as MenuItemType
+} from "./MenuButton";
 
 export type Props = WidgetProps<Property>;
 export type Button = ButtonType;
@@ -12,7 +15,11 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const Menu = ({ widget, theme, context: { onFlyTo } = {} }: Props): JSX.Element | null => {
+const Menu = ({
+  widget,
+  theme,
+  context: { onFlyTo } = {}
+}: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = widget.property ?? {};
 
   return (

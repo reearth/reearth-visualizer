@@ -1,8 +1,8 @@
-import { FC, useMemo } from "react";
 
 import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import { CustomPropertyProps } from "../../SketchLayerCreator/type";
 import { ContentWrapper } from "../SharedComponent";
@@ -17,7 +17,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   customProperties,
   propertiesList,
   setPropertiesList,
-  setCustomProperties,
+  setCustomProperties
 }) => {
   const t = useT();
 
@@ -30,12 +30,12 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
     handleDoubleClick,
     handleMoveStart,
     handleMoveEnd,
-    handleCustomPropertyDelete,
+    handleCustomPropertyDelete
   } = useHooks({
     customProperties,
     propertiesList,
     setPropertiesList,
-    setCustomProperties,
+    setCustomProperties
   });
 
   const DraggableCustomPropertyItems = useMemo(
@@ -54,7 +54,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
             onTypeChange={handleTypeChange(idx)}
             onCustomPropertyDelete={() => handleCustomPropertyDelete(idx)}
           />
-        ),
+        )
       })),
     [
       propertiesList,
@@ -63,8 +63,8 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
       handleTitleBlur,
       handleDoubleClick,
       handleTypeChange,
-      handleCustomPropertyDelete,
-    ],
+      handleCustomPropertyDelete
+    ]
   );
 
   return (
@@ -104,14 +104,14 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
 const Title = styled("div")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 const PropertyTable = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
-  width: "100%",
+  width: "100%"
 }));
 
 const PropertyTableBody = styled("div")(({ theme }) => ({
@@ -119,21 +119,21 @@ const PropertyTableBody = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.normal,
   maxHeight: "320px",
-  overflowY: "auto",
+  overflowY: "auto"
 }));
 
 const PropertyTableRow = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
 const ActionCol = styled("div")(() => ({
-  marginRight: "12px",
+  marginRight: "12px"
 }));
 
 const PropertyHeaderCol = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 export default SketchCustomProperties;

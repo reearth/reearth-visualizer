@@ -9,15 +9,13 @@ import { processProperty as processNewProperty } from "./processNewProperty";
 export default (
   orig: NLSInfobox | null | undefined,
   parent: NLSInfobox | null | undefined,
-  blockNames?: {
-    [key: string]: string;
-  },
+  blockNames?: Record<string, string>
 ): Layer["infobox"] => {
   const used = orig || parent;
   if (!used) return;
   return {
     property: processNewProperty(parent?.property, orig?.property),
-    blocks: used.blocks?.map<InfoboxBlock>(b => ({
+    blocks: used.blocks?.map<InfoboxBlock>((b) => ({
       id: b.id,
       name: blockNames?.[b.extensionId] ?? "Infobox Block",
       pluginId: b.pluginId,
@@ -26,7 +24,7 @@ export default (
       property: processNewProperty(undefined, b.property),
       propertyForPluginAPI: processProperty(b.property),
       propertyId: b.propertyId, // required by onBlockChange
-      propertyItemsForPluginBlock: convert(b.property),
-    })),
+      propertyItemsForPluginBlock: convert(b.property)
+    }))
   };
 };

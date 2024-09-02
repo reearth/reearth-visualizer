@@ -1,8 +1,13 @@
-import { FC } from "react";
-
-import { Button, DatePicker, PopupPanel, Selector, TimePicker } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  DatePicker,
+  PopupPanel,
+  Selector,
+  TimePicker
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 
@@ -23,7 +28,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
     handleDateChange,
     handleTimezoneSelect,
     handleApply,
-    handleTimeChange,
+    handleTimeChange
   } = useHooks({ value, onChange, onClose, setDateTime });
 
   return (
@@ -42,7 +47,8 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
             onClick={handleApply}
           />
         </ButtonWrapper>
-      }>
+      }
+    >
       <EditorWrapper>
         <Wrapper>
           <Label>{t("Date")}</Label>
@@ -61,9 +67,9 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
           <InputWrapper>
             <Selector
               value={selectedTimezone.timezone}
-              options={offsetFromUTC.map(timezone => ({
+              options={offsetFromUTC.map((timezone) => ({
                 label: timezone.offset,
-                value: timezone?.timezone,
+                value: timezone?.timezone
               }))}
               maxHeight={200}
               onChange={handleTimezoneSelect}
@@ -79,30 +85,30 @@ const EditorWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   width: "100%",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const Label = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 const InputWrapper = styled("div")(() => ({
-  width: "100%",
+  width: "100%"
 }));
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-start",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 export default EditPanel;

@@ -32,6 +32,7 @@ const documents = {
     "\n  mutation RemoveAsset($assetId: ID!) {\n    removeAsset(input: { assetId: $assetId }) {\n      assetId\n    }\n  }\n": types.RemoveAssetDocument,
     "\n  mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {\n    addGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n": types.AddGeoJsonFeatureDocument,
     "\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n": types.UpdateGeoJsonFeatureDocument,
+    "\n  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){\n    deleteGeoJSONFeature(input: $input) {\n\t\t  deletedFeatureId\n    }\n  }\n": types.DeleteGeoJsonFeatureDocument,
     "\n  mutation CreateNLSInfobox($input: CreateNLSInfoboxInput!) {\n    createNLSInfobox(input: $input) {\n      layer{\n        id\n      }\n    }\n  }\n": types.CreateNlsInfoboxDocument,
     "\n  mutation RemoveNLSInfobox($input: RemoveNLSInfoboxInput!) {\n    removeNLSInfobox(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.RemoveNlsInfoboxDocument,
     "\n  mutation AddNLSInfoboxBlock($input: AddNLSInfoboxBlockInput!) {\n    addNLSInfoboxBlock(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.AddNlsInfoboxBlockDocument,
@@ -58,6 +59,7 @@ const documents = {
     "\n  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {\n    publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {\n      project {\n        id\n        alias\n        publishmentStatus\n      }\n    }\n  }\n": types.PublishProjectDocument,
     "\n  mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {\n    updateProject(input: { projectId: $projectId, archived: $archived }) {\n      project {\n        id\n        isArchived\n      }\n    }\n  }\n": types.ArchiveProjectDocument,
     "\n  mutation DeleteProject($projectId: ID!) {\n    deleteProject(input: { projectId: $projectId }) {\n      projectId\n    }\n  }\n": types.DeleteProjectDocument,
+    "\n  query GetStarredProjects($teamId: ID!) {\n    starredProjects(teamId: $teamId) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tstarred\n          scene {\n            id\n          }\n\t\t\t\t}\n\t\t\t\ttotalCount\n\t\t\t}\n  }\n": types.GetStarredProjectsDocument,
     "\n  mutation UpdatePropertyValue(\n    $propertyId: ID!\n    $schemaGroupId: ID\n    $itemId: ID\n    $fieldId: ID!\n    $value: Any\n    $type: ValueType!\n    $lang: Lang\n  ) {\n    updatePropertyValue(\n      input: {\n        propertyId: $propertyId\n        schemaGroupId: $schemaGroupId\n        itemId: $itemId\n        fieldId: $fieldId\n        value: $value\n        type: $type\n      }\n    ) {\n      property {\n        id\n        ...PropertyFragment\n        layer {\n          id\n          ...Layer1Fragment\n        }\n      }\n    }\n  }\n": types.UpdatePropertyValueDocument,
     "\n  mutation AddPropertyItem(\n    $propertyId: ID!\n    $schemaGroupId: ID!\n    $lang: Lang\n  ) {\n    addPropertyItem(\n      input: {\n        propertyId: $propertyId\n        schemaGroupId: $schemaGroupId\n      }\n    ) {\n      property {\n        id\n        ...PropertyFragment\n        layer {\n          id\n          ...Layer1Fragment\n        }\n      }\n    }\n  }\n": types.AddPropertyItemDocument,
     "\n  mutation RemovePropertyItem($propertyId: ID!, $schemaGroupId: ID!, $itemId: ID!, $lang: Lang) {\n    removePropertyItem(\n      input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId }\n    ) {\n      property {\n        id\n        ...PropertyFragment\n        layer {\n          id\n          ...Layer1Fragment\n        }\n      }\n    }\n  }\n": types.RemovePropertyItemDocument,
@@ -180,6 +182,10 @@ export function gql(source: "\n  mutation UpdateGeoJSONFeature($input: UpdateGeo
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){\n    deleteGeoJSONFeature(input: $input) {\n\t\t  deletedFeatureId\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!){\n    deleteGeoJSONFeature(input: $input) {\n\t\t  deletedFeatureId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  mutation CreateNLSInfobox($input: CreateNLSInfoboxInput!) {\n    createNLSInfobox(input: $input) {\n      layer{\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateNLSInfobox($input: CreateNLSInfoboxInput!) {\n    createNLSInfobox(input: $input) {\n      layer{\n        id\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -281,6 +287,10 @@ export function gql(source: "\n  mutation ArchiveProject($projectId: ID!, $archi
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation DeleteProject($projectId: ID!) {\n    deleteProject(input: { projectId: $projectId }) {\n      projectId\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteProject($projectId: ID!) {\n    deleteProject(input: { projectId: $projectId }) {\n      projectId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetStarredProjects($teamId: ID!) {\n    starredProjects(teamId: $teamId) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tstarred\n          scene {\n            id\n          }\n\t\t\t\t}\n\t\t\t\ttotalCount\n\t\t\t}\n  }\n"): (typeof documents)["\n  query GetStarredProjects($teamId: ID!) {\n    starredProjects(teamId: $teamId) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tstarred\n          scene {\n            id\n          }\n\t\t\t\t}\n\t\t\t\ttotalCount\n\t\t\t}\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

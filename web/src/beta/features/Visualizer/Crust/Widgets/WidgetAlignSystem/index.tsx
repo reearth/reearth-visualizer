@@ -1,7 +1,6 @@
+import { styled } from "@reearth/services/theme";
 import React, { ReactNode, useMemo } from "react";
 import { GridWrapper } from "react-align";
-
-import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 import MobileZone from "./MobileZone";
@@ -11,7 +10,7 @@ import type {
   Location,
   WidgetLayoutConstraint,
   Theme,
-  WidgetProps,
+  WidgetProps
 } from "./types";
 import { filterSections } from "./utils";
 import ZoneComponent, { WidgetAreaType } from "./Zone";
@@ -29,7 +28,7 @@ export type {
   WidgetLayoutConstraint,
   Theme,
   WidgetProps,
-  InternalWidget,
+  InternalWidget
 } from "./types";
 
 export type Props = {
@@ -38,7 +37,7 @@ export type Props = {
   invisibleWidgetIDs?: string[];
   editing?: boolean;
   built?: boolean;
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
   theme?: Theme;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -48,7 +47,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
@@ -66,11 +65,11 @@ const WidgetAlignSystem: React.FC<Props> = ({
   renderWidget,
   onWidgetAreaSelect,
   onWidgetLayoutUpdate: onWidgetLayoutUpdate,
-  onAlignmentUpdate: onAlignmentUpdate,
+  onAlignmentUpdate: onAlignmentUpdate
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
     onWidgetLayoutUpdate,
-    onAlignmentUpdate,
+    onAlignmentUpdate
   });
   const Zone = isMobile ? MobileZone : ZoneComponent;
 
@@ -87,7 +86,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
         editing={editing}
         onMove={handleMove}
         onAlignChange={handleAlignmentChange}
-        onExtend={handleExtend}>
+        onExtend={handleExtend}
+      >
         <Zone
           zoneName="outer"
           selectedWidgetArea={selectedWidgetArea}
@@ -98,7 +98,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
           built={built}
           isMobile={isMobile}
           renderWidget={renderWidget}
-          onWidgetAreaSelect={onWidgetAreaSelect}>
+          onWidgetAreaSelect={onWidgetAreaSelect}
+        >
           {(!isMobile || hasInner) && (
             <ZoneComponent
               zoneName="inner"

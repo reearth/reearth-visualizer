@@ -1,7 +1,6 @@
-import React from "react";
-
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import React from "react";
 
 import PluginList, { PluginItem } from "./PluginList";
 import PublicRepo from "./PublicRepo";
@@ -18,7 +17,7 @@ const PluginInstall: React.FC<Props> = ({
   installedPlugins,
   installFromPublicRepo,
   installByUploadingZipFile,
-  uninstallPlugin,
+  uninstallPlugin
 }) => {
   const t = useT();
 
@@ -38,7 +37,10 @@ const PluginInstall: React.FC<Props> = ({
           onSend={installFromPublicRepo}
         />
       </ButtonsWrapper>
-      <PluginList plugins={installedPlugins} uninstallPlugin={uninstallPlugin} />
+      <PluginList
+        plugins={installedPlugins}
+        uninstallPlugin={uninstallPlugin}
+      />
     </Wrapper>
   );
 };
@@ -48,11 +50,11 @@ export default PluginInstall;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.super,
+  gap: theme.spacing.super
 }));
 
 const ButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.largest,
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 }));

@@ -7,10 +7,10 @@ import Widget, { Props } from ".";
 
 export default {
   component: Widget,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-export const Default: Story<Props> = args => <Widget {...args} />;
+export const Default: Story<Props> = (args) => <Widget {...args} />;
 
 Default.args = {
   widget: {
@@ -25,7 +25,7 @@ Default.args = {
           buttonType: "menu",
           buttonTitle: "Menu",
           buttonPosition: "topleft",
-          buttonStyle: "text",
+          buttonStyle: "text"
         },
         {
           id: "google",
@@ -34,7 +34,7 @@ Default.args = {
           buttonTitle: "Google",
           buttonPosition: "topleft",
           buttonStyle: "text",
-          buttonBgcolor: "red",
+          buttonBgcolor: "red"
         },
         {
           id: "twitter",
@@ -43,7 +43,7 @@ Default.args = {
           buttonTitle: "Twitter",
           buttonPosition: "bottomright",
           buttonStyle: "text",
-          buttonBgcolor: "#0ff",
+          buttonBgcolor: "#0ff"
         },
         {
           id: "hoge",
@@ -56,16 +56,16 @@ Default.args = {
             fov: CesiumMath.toRadians(60),
             heading: 0,
             pitch: 0,
-            roll: 0,
+            roll: 0
           },
-          buttonTitle: "hoge",
+          buttonTitle: "hoge"
         },
         {
           id: "menu2",
           buttonType: "menu",
           buttonIcon: "/sample.svg",
           buttonPosition: "bottomleft",
-          buttonStyle: "icon",
+          buttonStyle: "icon"
         },
         {
           id: "menu3",
@@ -73,8 +73,8 @@ Default.args = {
           buttonTitle: "Menu",
           buttonIcon: "/sample.svg",
           buttonPosition: "bottomleft",
-          buttonStyle: "texticon",
-        },
+          buttonStyle: "texticon"
+        }
       ],
       menu: [
         {
@@ -88,23 +88,23 @@ Default.args = {
             fov: CesiumMath.toRadians(60),
             heading: 0,
             pitch: 0,
-            roll: 0,
-          },
+            roll: 0
+          }
         },
         {
           id: "hoge",
-          menuType: "border",
+          menuType: "border"
         },
         {
           id: "GitHub",
           menuType: "link",
           menuTitle: "GitHub",
-          menuLink: "https://github.com",
-        },
-      ],
-    },
+          menuLink: "https://github.com"
+        }
+      ]
+    }
   },
   isBuilt: false,
   isEditable: false,
-  context: { ...contextEvents },
+  context: { ...contextEvents }
 };

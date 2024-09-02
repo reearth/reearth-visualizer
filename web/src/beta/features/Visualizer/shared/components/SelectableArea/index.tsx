@@ -1,7 +1,6 @@
-import { FC, MouseEvent, ReactNode } from "react";
-
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
+import { FC, MouseEvent, ReactNode } from "react";
 
 import ClickAwayListener from "../../../Crust/StoryPanel/ClickAwayListener";
 
@@ -38,19 +37,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -81,13 +83,19 @@ const SelectableArea: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
-  onPropertyItemDelete,
+  onPropertyItemDelete
 }) => {
-  const { showPadding, isHovered, handleHoverChange, setShowPadding, handleClickAway } = useHooks({
+  const {
+    showPadding,
+    isHovered,
+    handleHoverChange,
+    setShowPadding,
+    handleClickAway
+  } = useHooks({
     editMode,
     isSelected,
     onEditModeToggle,
-    onClickAway,
+    onClickAway
   });
 
   return !isEditable ? (
@@ -100,7 +108,8 @@ const SelectableArea: FC<Props> = ({
         noBorder={noBorder}
         hideHoverUI={hideHoverUI}
         onMouseOver={handleHoverChange(true)}
-        onMouseOut={handleHoverChange(false)}>
+        onMouseOut={handleHoverChange(false)}
+      >
         <div onClick={onClick} onDoubleClick={onDoubleClick}>
           {children}
         </div>
@@ -142,11 +151,13 @@ const Wrapper = styled("div")<{
   noBorder?: boolean;
   hideHoverUI?: boolean;
 }>(({ isSelected, noBorder, hideHoverUI, theme }) => ({
-  border: !noBorder ? `1px solid ${isSelected ? theme.select.main : "transparent"}` : "none",
+  border: !noBorder
+    ? `1px solid ${isSelected ? theme.select.main : "transparent"}`
+    : "none",
   padding: "1px",
   position: "relative",
   transition: "all 0.3s",
   "&:hover": {
-    borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none",
-  },
+    borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none"
+  }
 }));

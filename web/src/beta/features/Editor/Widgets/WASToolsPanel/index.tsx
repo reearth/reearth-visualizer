@@ -1,9 +1,8 @@
-import { FC, useEffect } from "react";
-
 import { Switcher, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useEffect } from "react";
 
 import { useWidgetsPage } from "../context";
 
@@ -15,7 +14,7 @@ const WASToolsPanel: FC = () => {
     selectedDevice = "desktop",
     handleShowWASEditorToggle,
     handleDeviceChange,
-    selectWidgetArea,
+    selectWidgetArea
   } = useWidgetsPage();
 
   const t = useT();
@@ -29,10 +28,16 @@ const WASToolsPanel: FC = () => {
   return (
     <Panel extend>
       <StyledSecondaryNav>
-        <Devices selectedDevice={selectedDevice} onDeviceChange={handleDeviceChange} />
+        <Devices
+          selectedDevice={selectedDevice}
+          onDeviceChange={handleDeviceChange}
+        />
         <AlignSystem>
           <Typography size="body">{t("Align System")}</Typography>
-          <Switcher value={showWASEditor} onChange={handleShowWASEditorToggle} />
+          <Switcher
+            value={showWASEditor}
+            onChange={handleShowWASEditorToggle}
+          />
         </AlignSystem>
       </StyledSecondaryNav>
     </Panel>
@@ -47,10 +52,10 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   width: "100%",
   flex: 1,
-  padding: theme.spacing.small,
+  padding: theme.spacing.small
 }));
 
 const AlignSystem = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.small + 2,
+  gap: theme.spacing.small + 2
 }));

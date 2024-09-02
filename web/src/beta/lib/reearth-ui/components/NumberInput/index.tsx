@@ -1,6 +1,5 @@
-import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
-
 import { fonts, styled } from "@reearth/services/theme";
+import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
 
 export type NumberInputProps = {
   value?: number | string;
@@ -27,9 +26,11 @@ export const NumberInput: FC<NumberInputProps> = ({
   min,
   max,
   onChange,
-  onBlur,
+  onBlur
 }) => {
-  const [currentValue, setCurrentValue] = useState<string>(value?.toString() ?? "");
+  const [currentValue, setCurrentValue] = useState<string>(
+    value?.toString() ?? ""
+  );
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
@@ -53,10 +54,12 @@ export const NumberInput: FC<NumberInputProps> = ({
           }
         }
         setCurrentValue(validatedValue);
-        onChange?.(currentValue === "" ? undefined : parseFloat(validatedValue));
+        onChange?.(
+          currentValue === "" ? undefined : parseFloat(validatedValue)
+        );
       }
     },
-    [max, min, onChange],
+    [max, min, onChange]
   );
 
   const handleBlur = useCallback(() => {
@@ -77,7 +80,11 @@ export const NumberInput: FC<NumberInputProps> = ({
   }, []);
 
   return (
-    <Wrapper size={size} status={isFocused ? "active" : "default"} extendWidth={extendWidth}>
+    <Wrapper
+      size={size}
+      status={isFocused ? "active" : "default"}
+      extendWidth={extendWidth}
+    >
       <StyledInput
         value={currentValue}
         disabled={disabled}
@@ -99,7 +106,9 @@ const Wrapper = styled("div")<{
 }>(({ size, theme, status, extendWidth }) => {
   return {
     border:
-      status === "active" ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
+      status === "active"
+        ? `1px solid ${theme.select.main}`
+        : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",
@@ -112,7 +121,7 @@ const Wrapper = styled("div")<{
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
     width: !extendWidth ? "" : "100%",
-    boxSizing: "border-box",
+    boxSizing: "border-box"
   };
 });
 
@@ -123,7 +132,10 @@ const StyledInput = styled("input")<{
   outline: "none",
   border: "none",
   background: "none",
-  color: disabled && appearance !== "readonly" ? theme.content.weaker : theme.content.main,
+  color:
+    disabled && appearance !== "readonly"
+      ? theme.content.weaker
+      : theme.content.main,
   flex: 1,
   cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
   fontSize: fonts.sizes.body,
@@ -132,13 +144,13 @@ const StyledInput = styled("input")<{
   pointerEvents: disabled ? "none" : "inherit",
   overflow: "hidden",
   "::placeholder": {
-    color: theme.content.weak,
+    color: theme.content.weak
   },
-  width: "100%",
+  width: "100%"
 }));
 
 const UnitWrapper = styled("div")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  lineHeight: `${fonts.lineHeights.body}px`
 }));

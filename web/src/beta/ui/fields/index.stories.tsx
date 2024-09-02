@@ -18,11 +18,11 @@ import {
   TimePointField,
   NumberField,
   RangeField,
-  CheckboxField,
+  CheckboxField
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
-  component: InputField,
+  component: InputField
 };
 
 export default meta;
@@ -37,8 +37,9 @@ export const Components: Story = {
         gap: "20px",
         maxWidth: "500px",
         padding: "24px",
-        margin: "0 auto",
-      }}>
+        margin: "0 auto"
+      }}
+    >
       <CommonField
         commonTitle="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
@@ -83,7 +84,7 @@ export const Components: Story = {
         options={[
           { label: "Option 1", value: "option1" },
           { label: "Option 2", value: "option2" },
-          { label: "Option 3", value: "option3" },
+          { label: "Option 3", value: "option3" }
         ]}
         multiple={true}
         commonTitle="SelectField"
@@ -131,7 +132,7 @@ export const Components: Story = {
         value={{
           currentTime: "2024-07-19T11:03:56+00:00",
           startTime: "2024-07-20T11:03:56+00:00",
-          endTime: "2024-07-24T11:03:56+00:00",
+          endTime: "2024-07-24T11:03:56+00:00"
         }}
         onChange={() => {}}
         commonTitle="TimePeriodField"
@@ -150,5 +151,5 @@ export const Components: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>
-  ),
+  )
 };

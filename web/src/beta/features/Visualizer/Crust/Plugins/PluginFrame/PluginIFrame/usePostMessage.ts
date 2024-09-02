@@ -19,7 +19,7 @@ export function usePostMessage(iFrameRef: RefObject<Ref>, pending?: boolean) {
         console.error("plugin error: failed to post message", err);
       }
     },
-    [iFrameRef],
+    [iFrameRef]
   );
 
   useEffect(() => {

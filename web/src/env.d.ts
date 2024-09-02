@@ -17,9 +17,9 @@ declare global {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ImportMetaEnv {}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type ImportMetaEnv = {};
 
-interface ImportMeta {
+type ImportMeta = {
   readonly env: ImportMetaEnv;
-}
+};

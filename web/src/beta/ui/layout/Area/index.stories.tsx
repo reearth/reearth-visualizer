@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Area, AreaProps } from ".";
 
 const meta: Meta<AreaProps> = {
-  component: Area,
+  component: Area
 };
 export default meta;
 
@@ -22,7 +22,8 @@ export const Default: StoryObj<typeof Area> = {
           direction="column"
           resizableEdge="right"
           backgroundColor={colors[0]}
-          resizeHandleColor={resizeHandleColor}>
+          resizeHandleColor={resizeHandleColor}
+        >
           Left
         </Area>
         <Area direction="column" extend asWrapper>
@@ -35,7 +36,8 @@ export const Default: StoryObj<typeof Area> = {
           <Area
             resizableEdge="top"
             resizeHandleColor={resizeHandleColor}
-            backgroundColor={colors[0]}>
+            backgroundColor={colors[0]}
+          >
             Center-Bottom
           </Area>
         </Area>
@@ -43,12 +45,13 @@ export const Default: StoryObj<typeof Area> = {
           direction="column"
           resizableEdge="left"
           resizeHandleColor={resizeHandleColor}
-          backgroundColor={colors[3]}>
+          backgroundColor={colors[3]}
+        >
           Right
         </Area>
       </Area>
     </div>
-  ),
+  )
 };
 
 export const Complicated: StoryObj<typeof Area> = {
@@ -64,7 +67,8 @@ export const Complicated: StoryObj<typeof Area> = {
             resizableEdge="right"
             resizeHandleColor={resizeHandleColor}
             initialWidth={200}
-            backgroundColor={colors[1]}>
+            backgroundColor={colors[1]}
+          >
             Left
           </Area>
           <Area direction="column" extend asWrapper>
@@ -85,7 +89,8 @@ export const Complicated: StoryObj<typeof Area> = {
               resizableEdge="top"
               resizeHandleColor={resizeHandleColor}
               initialHeight={50}
-              backgroundColor={colors[5]}>
+              backgroundColor={colors[5]}
+            >
               Center-Bottom
             </Area>
           </Area>
@@ -94,7 +99,8 @@ export const Complicated: StoryObj<typeof Area> = {
             resizableEdge="left"
             initialWidth={200}
             resizeHandleColor={resizeHandleColor}
-            backgroundColor={colors[6]}>
+            backgroundColor={colors[6]}
+          >
             Right
           </Area>
           <Area
@@ -110,5 +116,5 @@ export const Complicated: StoryObj<typeof Area> = {
         </Area>
       </Area>
     </div>
-  ),
+  )
 };

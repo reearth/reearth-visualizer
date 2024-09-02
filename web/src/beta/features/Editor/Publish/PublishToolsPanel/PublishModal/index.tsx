@@ -1,15 +1,14 @@
-import { useMemo, FC } from "react";
-
 import {
   Button,
   Icon,
   Typography,
   ModalPanel,
-  Modal,
+  Modal
 } from "@reearth/beta/lib/reearth-ui/components";
 import { CommonField, SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { useMemo, FC } from "react";
 
 import { usePublishPage } from "../../context";
 
@@ -28,13 +27,16 @@ type Props = {
   publishing?: publishingType;
   validatingAlias?: boolean;
   url?: string[];
-  onPublish: (alias: string | undefined, publishStatus: PublishStatus) => void | Promise<void>;
+  onPublish: (
+    alias: string | undefined,
+    publishStatus: PublishStatus
+  ) => void | Promise<void>;
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
   onNavigateToSettings?: (
     page?: "story" | "public" | "asset" | "plugin" | undefined,
-    subId?: string,
+    subId?: string
   ) => void;
 };
 
@@ -51,7 +53,7 @@ const PublishModal: FC<Props> = ({
   onPublish,
   onCopyToClipBoard,
   onAliasValidate,
-  onNavigateToSettings,
+  onNavigateToSettings
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -67,7 +69,7 @@ const PublishModal: FC<Props> = ({
     handlePublish,
     handleClose,
     handleCopyToClipBoard,
-    handleSearchIndexChange,
+    handleSearchIndexChange
   } = useHooks(
     publishing,
     publishStatus,
@@ -75,16 +77,19 @@ const PublishModal: FC<Props> = ({
     onPublish,
     onClose,
     onAliasValidate,
-    onCopyToClipBoard,
+    onCopyToClipBoard
   );
 
   const purl = useMemo(() => {
-    return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
+    return (
+      (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "")
+    );
   }, [alias, url]);
 
   const embedCode = useMemo(
-    () => `<iframe width="560" height="315" src="${purl}" frameBorder="0"></iframe>;`,
-    [purl],
+    () =>
+      `<iframe width="560" height="315" src="${purl}" frameBorder="0"></iframe>;`,
+    [purl]
   );
 
   const publishDisabled = useMemo(
@@ -92,54 +97,54 @@ const PublishModal: FC<Props> = ({
       loading ||
       ((publishing === "publishing" || publishing === "updating") &&
         (!alias || !!validation || validatingAlias || !validAlias)),
-    [alias, loading, publishing, validation, validAlias, validatingAlias],
+    [alias, loading, publishing, validation, validAlias, validatingAlias]
   );
 
   const modalTitleText = useMemo(() => {
     return statusChanged
       ? t("Congratulations!")
       : publishing === "publishing"
-      ? isStory
-        ? t(`Publish your story`)
-        : t(`Publish your scene`)
-      : publishing === "updating"
-      ? isStory
-        ? t(`Update your story`)
-        : t(`Update your scene`)
-      : "";
+        ? isStory
+          ? t(`Publish your story`)
+          : t(`Publish your scene`)
+        : publishing === "updating"
+          ? isStory
+            ? t(`Update your story`)
+            : t(`Update your scene`)
+          : "";
   }, [t, statusChanged, publishing, isStory]);
 
   const primaryButtonText = useMemo(() => {
     return statusChanged
       ? t("Ok")
       : publishing === "publishing"
-      ? t("Publish")
-      : publishing === "updating"
-      ? t("Update")
-      : t("Unpublish");
+        ? t("Publish")
+        : publishing === "updating"
+          ? t("Update")
+          : t("Unpublish");
   }, [t, statusChanged, publishing]);
 
   const secondaryButtonText = useMemo(
     () => (!statusChanged ? t("Cancel") : t("Ok")),
-    [t, statusChanged],
+    [t, statusChanged]
   );
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
       ? isStory
         ? t(
-            `Your published story will be updated. This means all current changes will overwrite the current published story.`,
+            `Your published story will be updated. This means all current changes will overwrite the current published story.`
           )
         : t(
-            `Your published scene will be updated. This means all current changes will overwrite the current published scene.`,
+            `Your published scene will be updated. This means all current changes will overwrite the current published scene.`
           )
       : isStory
-      ? t(
-          `Your story will be published. This means anybody with the below URL will be able to view this story.`,
-        )
-      : t(
-          `Your scene will be published. This means anybody with the below URL will be able to view this scene.`,
-        );
+        ? t(
+            `Your story will be published. This means anybody with the below URL will be able to view this story.`
+          )
+        : t(
+            `Your scene will be published. This means anybody with the below URL will be able to view this scene.`
+          );
   }, [t, publishing, isStory]);
 
   const actions = useMemo(
@@ -166,8 +171,8 @@ const PublishModal: FC<Props> = ({
       publishDisabled,
       primaryButtonText,
       secondaryButtonText,
-      statusChanged,
-    ],
+      statusChanged
+    ]
   );
 
   const isPublishing = publishing !== "unpublishing";
@@ -178,11 +183,14 @@ const PublishModal: FC<Props> = ({
         title={modalTitleText}
         actions={actions}
         onCancel={handleClose}
-        appearance={isPublishing ? "normal" : "simple"}>
+        appearance={isPublishing ? "normal" : "simple"}
+      >
         {statusChanged ? (
           <Section>
             <Subtitle size="body">
-              {isStory ? t(`Your story has been published!`) : t(`Your scene has been published!`)}
+              {isStory
+                ? t(`Your story has been published!`)
+                : t(`Your scene has been published!`)}
             </Subtitle>
             <CommonField
               commonTitle={t("Public URL")}
@@ -190,15 +198,20 @@ const PublishModal: FC<Props> = ({
                 isStory
                   ? t(`* Anyone can see your story with this URL`)
                   : t(`* Anyone can see your scene with this URL`)
-              }>
+              }
+            >
               <UrlWrapper justify="space-between">
-                <UrlText publicUrl={true} onClick={() => window.open(purl, "_blank")}>
+                <UrlText
+                  publicUrl={true}
+                  onClick={() => window.open(purl, "_blank")}
+                >
                   {purl}
                 </UrlText>
                 <Typography
                   size="body"
                   color={theme.primary.main}
-                  onClick={handleCopyToClipBoard("url", purl)}>
+                  onClick={handleCopyToClipBoard("url", purl)}
+                >
                   {t("Copy")}
                 </Typography>
               </UrlWrapper>
@@ -206,14 +219,16 @@ const PublishModal: FC<Props> = ({
             <CommonField
               commonTitle={t("Embed Code")}
               description={t(
-                `* Please use this code if you want to embed your story into a webpage`,
-              )}>
+                `* Please use this code if you want to embed your story into a webpage`
+              )}
+            >
               <UrlWrapper justify="space-between">
                 <UrlText>{embedCode}</UrlText>
                 <Typography
                   size="body"
                   color={theme.primary.main}
-                  onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                  onClick={handleCopyToClipBoard("embedCode", embedCode)}
+                >
                   {t("Copy")}
                 </Typography>
               </UrlWrapper>
@@ -238,13 +253,17 @@ const PublishModal: FC<Props> = ({
               </DomainText>
               <Button
                 size="small"
-                onClick={() => onNavigateToSettings?.("public", isStory ? storyId : "")}
+                onClick={() =>
+                  onNavigateToSettings?.("public", isStory ? storyId : "")
+                }
                 title={t("Go to settings")}
               />
             </div>
             <SwitchField
               commonTitle={t("Search engine indexing")}
-              description={t("Page will be available as result on search engines")}
+              description={t(
+                "Page will be available as result on search engines"
+              )}
               onChange={handleSearchIndexChange}
             />
           </Section>
@@ -261,10 +280,10 @@ const PublishModal: FC<Props> = ({
             <Subtitle size="body">
               {isStory
                 ? t(
-                    `This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.`,
+                    `This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.`
                   )
                 : t(
-                    `This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.`,
+                    `This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.`
                   )}
             </Subtitle>
           </Section>
@@ -276,57 +295,63 @@ const PublishModal: FC<Props> = ({
 
 export default PublishModal;
 
-const Section = styled("div")<{ disabled?: boolean }>(({ disabled, theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  padding: theme.spacing.normal,
-  gap: theme.spacing.large,
-  opacity: disabled ? 0.6 : 1,
-  cursor: disabled ? "not-allowed" : "auto",
-}));
+const Section = styled("div")<{ disabled?: boolean }>(
+  ({ disabled, theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    padding: theme.spacing.normal,
+    gap: theme.spacing.large,
+    opacity: disabled ? 0.6 : 1,
+    cursor: disabled ? "not-allowed" : "auto"
+  })
+);
 
 const Subtitle = styled(Typography)({
-  textAlign: "left",
+  textAlign: "left"
 });
 
 const DomainWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.smallest
 }));
 
-const UrlWrapper = styled("div")<{ justify?: string }>(({ justify, theme }) => ({
-  display: "flex",
-  justifyContent: justify ?? "center",
-  alignItems: "center",
-  border: `1px solid ${theme.outline.weak}`,
-  borderRadius: "4px",
-  padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-  cursor: "pointer",
-}));
+const UrlWrapper = styled("div")<{ justify?: string }>(
+  ({ justify, theme }) => ({
+    display: "flex",
+    justifyContent: justify ?? "center",
+    alignItems: "center",
+    border: `1px solid ${theme.outline.weak}`,
+    borderRadius: "4px",
+    padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
+    cursor: "pointer"
+  })
+);
 
-const UrlText = styled("div")<{ publicUrl?: boolean }>(({ publicUrl, theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  cursor: "pointer",
-  fontSize: "12px",
-  whiteSpace: "break-spaces",
-  color: publicUrl ? theme.primary.main : "inherit",
-  fontWeight: publicUrl ? "bold" : "normal",
-}));
+const UrlText = styled("div")<{ publicUrl?: boolean }>(
+  ({ publicUrl, theme }) => ({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    cursor: "pointer",
+    fontSize: "12px",
+    whiteSpace: "break-spaces",
+    color: publicUrl ? theme.primary.main : "inherit",
+    fontWeight: publicUrl ? "bold" : "normal"
+  })
+);
 
 const DomainText = styled("div")(({ theme }) => ({
-  marginBottom: `${theme.spacing.small}px`,
+  marginBottom: `${theme.spacing.small}px`
 }));
 
 const Header = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.normal,
-  color: theme.warning.main,
+  color: theme.warning.main
 }));
 
 const WarningIcon = styled(Icon)({
   width: "24px",
-  height: "24px",
+  height: "24px"
 });

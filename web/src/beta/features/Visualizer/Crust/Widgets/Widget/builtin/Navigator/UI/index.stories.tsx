@@ -4,7 +4,9 @@ import Navigator, { Props } from ".";
 
 export default {
   component: Navigator,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
+  parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-export const Normal: Story<Props> = ({ ...args }) => <Navigator {...args} degree={0} />;
+export const Normal: Story<Props> = ({ ...args }) => (
+  <Navigator {...args} degree={0} />
+);

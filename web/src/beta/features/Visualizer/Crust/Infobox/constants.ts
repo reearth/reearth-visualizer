@@ -8,10 +8,16 @@ export const GAP_DEFAULT_VALUE = 20;
 // Infobox Blocks
 export const IMAGE_BUILTIN_INFOBOX_BLOCK_ID = "reearth/imageInfoboxBetaBlock";
 export const TEXT_BUILTIN_INFOBOX_BLOCK_ID = "reearth/textInfoboxBetaBlock";
-export const PROPERTY_BUILTIN_INFOBOX_BLOCK_ID = "reearth/propertyInfoboxBetaBlock";
+export const PROPERTY_BUILTIN_INFOBOX_BLOCK_ID =
+  "reearth/propertyInfoboxBetaBlock";
+export const VIDEO_BUILTIN_INFOBOX_BLOCK_ID = "reearth/videoInfoboxBetaBlock";
+export const MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID =
+  "reearth/markdownInfoboxBetaBlock";
 
 export const AVAILABLE_INFOBOX_BLOCK_IDS = [
   IMAGE_BUILTIN_INFOBOX_BLOCK_ID,
   TEXT_BUILTIN_INFOBOX_BLOCK_ID,
   PROPERTY_BUILTIN_INFOBOX_BLOCK_ID,
+  VIDEO_BUILTIN_INFOBOX_BLOCK_ID,
+  MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID
 ];

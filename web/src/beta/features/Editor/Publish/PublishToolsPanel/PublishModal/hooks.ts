@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
+import { useState, useEffect, useCallback } from "react";
 
 import { publishingType } from "./";
 
@@ -16,10 +15,13 @@ export default (
   publishing?: publishingType,
   publishStatus?: PublishStatus,
   defaultAlias?: string,
-  onPublish?: (alias: string | undefined, publishStatus: PublishStatus) => void | Promise<void>,
+  onPublish?: (
+    alias: string | undefined,
+    publishStatus: PublishStatus
+  ) => void | Promise<void>,
   onClose?: () => void,
   onAliasValidate?: (alias: string) => void,
-  onCopyToClipBoard?: () => void,
+  onCopyToClipBoard?: () => void
 ) => {
   const [copiedKey, setCopiedKey] = useState<CopiedItemKey>();
   const [alias, changeAlias] = useState(defaultAlias);
@@ -39,14 +41,14 @@ export default (
   const handleCopyToClipBoard = useCallback(
     (key: keyof CopiedItemKey, value: string | undefined) => () => {
       if (!value) return;
-      setCopiedKey(prevState => ({
+      setCopiedKey((prevState) => ({
         ...prevState,
-        [key]: true,
+        [key]: true
       }));
       navigator.clipboard.writeText(value);
       onCopyToClipBoard?.();
     },
-    [onCopyToClipBoard],
+    [onCopyToClipBoard]
   );
 
   const validate = useCallback(
@@ -64,8 +66,14 @@ export default (
         onAliasValidate?.(a);
       }
     },
-    [onAliasValidate],
+    [onAliasValidate]
   );
+
+  const generateAlias = useCallback(() => {
+    const str = generateRandomString(10);
+    changeAlias(str);
+    return str;
+  }, []);
 
   const onAliasChange = useCallback(
     (value?: string) => {
@@ -73,7 +81,7 @@ export default (
       changeAlias(a);
       validate(a);
     },
-    [validate], // eslint-disable-line react-hooks/exhaustive-deps
+    [validate, generateAlias]
   );
 
   const handleClose = useCallback(() => {
@@ -83,31 +91,38 @@ export default (
       setStatusChange(false);
       setOptions(defaultAlias ? false : true);
     }, 500);
-  }, [onClose, defaultAlias]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const generateAlias = useCallback(() => {
-    const str = generateRandomString(10);
-    changeAlias(str);
-    return str;
-  }, []);
+  }, [onClose, defaultAlias, onAliasChange]);
 
   useEffect(() => {
     onAliasChange(defaultAlias);
-  }, [defaultAlias]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [defaultAlias, onAliasChange]);
 
   const handlePublish = useCallback(async () => {
     if (!publishing) return;
-    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
+    const a =
+      publishing !== "unpublishing" ? alias || generateAlias() : undefined;
 
     const mode =
-      publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
+      publishing === "unpublishing"
+        ? "unpublished"
+        : !searchIndex
+          ? "limited"
+          : "published";
     await onPublish?.(a, mode);
     if (publishing === "unpublishing") {
       handleClose?.();
     } else {
       setStatusChange(true);
     }
-  }, [alias, generateAlias, onPublish, publishing, searchIndex, setStatusChange, handleClose]);
+  }, [
+    alias,
+    generateAlias,
+    onPublish,
+    publishing,
+    searchIndex,
+    setStatusChange,
+    handleClose
+  ]);
 
   return {
     statusChanged,
@@ -120,6 +135,6 @@ export default (
     handleClose,
     handleCopyToClipBoard,
     handleSearchIndexChange,
-    setOptions,
+    setOptions
   };
 };

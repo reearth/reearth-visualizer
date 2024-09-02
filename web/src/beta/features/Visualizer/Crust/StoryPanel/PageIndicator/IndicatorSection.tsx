@@ -1,7 +1,6 @@
-import { FC, useCallback, useMemo, useState } from "react";
-
 import { Popup } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useMemo } from "react";
 
 type Props = {
   title?: string;
@@ -10,20 +9,19 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-const IndicatorSection: FC<Props> = ({ pageNumber, currentPageNumber, title, onPageChange }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  const handleMouseOut = useCallback(() => setIsHovered(false), []);
-
+const IndicatorSection: FC<Props> = ({
+  pageNumber,
+  currentPageNumber,
+  title,
+  onPageChange
+}) => {
   const handleClick = useCallback(() => {
     onPageChange(pageNumber);
-    setIsHovered(false);
   }, [pageNumber, onPageChange]);
 
   const isHighlighted = useMemo(
     () => pageNumber <= currentPageNumber,
-    [currentPageNumber, pageNumber],
+    [currentPageNumber, pageNumber]
   );
 
   // const isLast = useMemo(() => pageNumber === totalPages, [pageNumber, totalPages]);
@@ -33,14 +31,13 @@ const IndicatorSection: FC<Props> = ({ pageNumber, currentPageNumber, title, onP
         <Indicator
           highlighted={isHighlighted}
           onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseOut}
           isFirstChild={pageNumber === 1}
         />
       }
-      open={isHovered}
+      triggerOnHover
       placement="bottom"
-      extendTriggerWidth>
+      extendTriggerWidth
+    >
       <PageNameWrapper isHighlighted={isHighlighted}>
         <TitleWrapper>{title}</TitleWrapper>
       </PageNameWrapper>
@@ -50,21 +47,24 @@ const IndicatorSection: FC<Props> = ({ pageNumber, currentPageNumber, title, onP
 
 export default IndicatorSection;
 
-const Indicator = styled("div")<{ highlighted: boolean; isFirstChild: boolean }>(
-  ({ highlighted, isFirstChild, theme }) => ({
-    height: "100%",
-    width: "100%",
-    background: highlighted ? theme.primary.strong : "#78a9ff",
-    cursor: "pointer",
-    borderLeft: !isFirstChild ? "1px solid #ffffff" : "none",
-  }),
-);
-
-const PageNameWrapper = styled("div")<{ isHighlighted: boolean }>(({ isHighlighted, theme }) => ({
-  background: isHighlighted ? theme.primary.strong : "#78a9ff",
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  maxWidth: "255px",
+const Indicator = styled("div")<{
+  highlighted: boolean;
+  isFirstChild: boolean;
+}>(({ highlighted, isFirstChild, theme }) => ({
+  height: "100%",
+  width: "100%",
+  background: highlighted ? theme.primary.strong : "#78a9ff",
+  cursor: "pointer",
+  borderLeft: !isFirstChild ? "1px solid #ffffff" : "none"
 }));
+
+const PageNameWrapper = styled("div")<{ isHighlighted: boolean }>(
+  ({ isHighlighted, theme }) => ({
+    background: isHighlighted ? theme.primary.strong : "#78a9ff",
+    padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    maxWidth: "255px"
+  })
+);
 
 const TitleWrapper = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.footnote,
@@ -72,4 +72,5 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
+  cursor: "default"
 }));

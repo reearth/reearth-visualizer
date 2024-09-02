@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo } from "react";
-
 import { MouseEventHandles, MouseEvents } from "@reearth/core";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useGet } from "../../utils";
 import {
@@ -8,7 +7,7 @@ import {
   SelectionModeEventType,
   ViewerEventType,
   Viewport,
-  ViewportSize,
+  ViewportSize
 } from "../pluginAPI/types";
 import { Props } from "../types";
 import { events, useEmit } from "../utils/events";
@@ -24,7 +23,7 @@ export default ({
   built,
   onLayerSelectWithRectStart,
   onLayerSelectWithRectMove,
-  onLayerSelectWithRectEnd,
+  onLayerSelectWithRectEnd
 }: Pick<
   Props,
   | "viewerProperty"
@@ -47,7 +46,7 @@ export default ({
     (property: any) => {
       return overrideViewerProperty?.("", property);
     },
-    [overrideViewerProperty],
+    [overrideViewerProperty]
   );
 
   const getViewport = useGet(viewport as Viewport);
@@ -56,29 +55,29 @@ export default ({
     (type?: string, encoderOptions?: number) => {
       return engineRef?.captureScreen(type, encoderOptions);
     },
-    [engineRef],
+    [engineRef]
   );
 
   // selection mode events
   const [selectionModeEvents, emitSelectionModeEvent] = useMemo(
     () => events<SelectionModeEventType>(),
-    [],
+    []
   );
 
   useEffect(() => {
-    onLayerSelectWithRectStart?.(e => {
+    onLayerSelectWithRectStart?.((e) => {
       emitSelectionModeEvent("marqueeStart", e);
     });
   }, [emitSelectionModeEvent, onLayerSelectWithRectStart]);
 
   useEffect(() => {
-    onLayerSelectWithRectMove?.(e => {
+    onLayerSelectWithRectMove?.((e) => {
       emitSelectionModeEvent("marqueeMove", e);
     });
   }, [emitSelectionModeEvent, onLayerSelectWithRectMove]);
 
   useEffect(() => {
-    onLayerSelectWithRectEnd?.(e => {
+    onLayerSelectWithRectEnd?.((e) => {
       emitSelectionModeEvent("marqueeEnd", e);
     });
   }, [emitSelectionModeEvent, onLayerSelectWithRectEnd]);
@@ -87,23 +86,23 @@ export default ({
     <T extends keyof SelectionModeEventType>(
       type: T,
       callback: (...args: SelectionModeEventType[T]) => void,
-      options?: { once?: boolean },
+      options?: { once?: boolean }
     ) => {
       return options?.once
         ? selectionModeEvents.once(type, callback)
         : selectionModeEvents.on(type, callback);
     },
-    [selectionModeEvents],
+    [selectionModeEvents]
   );
 
   const selectionModeEventsOff = useCallback(
     <T extends keyof SelectionModeEventType>(
       type: T,
-      callback: (...args: SelectionModeEventType[T]) => void,
+      callback: (...args: SelectionModeEventType[T]) => void
     ) => {
       return selectionModeEvents.off(type, callback);
     },
-    [selectionModeEvents],
+    [selectionModeEvents]
   );
 
   const getInteractionMode = useGet(
@@ -113,11 +112,16 @@ export default ({
         override: overrideInteractionMode,
         selectionMode: {
           on: selectionModeEventsOn,
-          off: selectionModeEventsOff,
-        },
+          off: selectionModeEventsOff
+        }
       }),
-      [interactionMode, overrideInteractionMode, selectionModeEventsOn, selectionModeEventsOff],
-    ),
+      [
+        interactionMode,
+        overrideInteractionMode,
+        selectionModeEventsOn,
+        selectionModeEventsOff
+      ]
+    )
   );
 
   const getInEditor = useGet(!!inEditor);
@@ -128,28 +132,28 @@ export default ({
     (x: number, y: number, withTerrain?: boolean) => {
       return engineRef?.getLocationFromScreen(x, y, withTerrain);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const getScreenCoordinateFromPosition = useCallback(
     (position: [x: number, y: number, z: number]) => {
       return engineRef?.toWindowPosition(position);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const getTerrainHeightAsync = useCallback(
     async (lng: number, lat: number) => {
       return await engineRef?.sampleTerrainHeight(lng, lat);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const getGlobeHeight = useCallback(
     (lng: number, lat: number, height?: number) => {
       return engineRef?.computeGlobeHeight(lng, lat, height);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const getGlobeHeightByCamera = useCallback(() => {
@@ -165,11 +169,11 @@ export default ({
         | {
             useGlobeEllipsoid?: boolean | undefined;
           }
-        | undefined,
+        | undefined
     ) => {
       return engineRef?.toXYZ(lng, lat, height, options);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const cartesianToCartographic = useCallback(
@@ -181,25 +185,31 @@ export default ({
         | {
             useGlobeEllipsoid?: boolean | undefined;
           }
-        | undefined,
+        | undefined
     ) => {
       return engineRef?.toLngLatHeight(x, y, z, options);
     },
-    [engineRef],
+    [engineRef]
   );
 
   const transformByOffsetOnScreen = useCallback(
-    (rawPosition: [x: number, y: number, z: number], screenOffset: [x: number, y: number]) => {
-      return engineRef?.convertScreenToPositionOffset(rawPosition, screenOffset);
+    (
+      rawPosition: [x: number, y: number, z: number],
+      screenOffset: [x: number, y: number]
+    ) => {
+      return engineRef?.convertScreenToPositionOffset(
+        rawPosition,
+        screenOffset
+      );
     },
-    [engineRef],
+    [engineRef]
   );
 
   const isPositionVisibleOnGlobe = useCallback(
     (position: [x: number, y: number, z: number]) => {
       return !!engineRef?.isPositionVisible(position);
     },
-    [engineRef],
+    [engineRef]
   );
 
   // events
@@ -212,20 +222,20 @@ export default ({
           {
             width: viewport?.width,
             height: viewport?.height,
-            isMobile: viewport?.isMobile,
-          } as ViewportSize,
+            isMobile: viewport?.isMobile
+          } as ViewportSize
         ],
-        [viewport?.width, viewport?.height, viewport?.isMobile],
-      ),
+        [viewport?.width, viewport?.height, viewport?.isMobile]
+      )
     },
-    emit,
+    emit
   );
 
   const onMouseEvent = useCallback(
     (eventType: keyof MouseEventHandles, fn: any) => {
       mapRef?.current?.engine[eventType]?.(fn);
     },
-    [mapRef],
+    [mapRef]
   );
 
   useEffect(() => {
@@ -245,14 +255,14 @@ export default ({
       mouseMove: "onMouseMove",
       mouseEnter: "onMouseEnter",
       mouseLeave: "onMouseLeave",
-      wheel: "onWheel",
+      wheel: "onWheel"
     };
     (Object.keys(mouseEventHandles) as (keyof MouseEvents)[]).forEach(
       (event: keyof MouseEvents) => {
         onMouseEvent(mouseEventHandles[event], (props: MouseEvent) => {
           emit(event, props);
         });
-      },
+      }
     );
   }, [emit, onMouseEvent]);
 
@@ -260,18 +270,23 @@ export default ({
     <T extends keyof ViewerEventType>(
       type: T,
       callback: (...args: ViewerEventType[T]) => void,
-      options?: { once?: boolean },
+      options?: { once?: boolean }
     ) => {
-      return options?.once ? viewerEvents.once(type, callback) : viewerEvents.on(type, callback);
+      return options?.once
+        ? viewerEvents.once(type, callback)
+        : viewerEvents.on(type, callback);
     },
-    [viewerEvents],
+    [viewerEvents]
   );
 
   const viewerEventsOff = useCallback(
-    <T extends keyof ViewerEventType>(type: T, callback: (...args: ViewerEventType[T]) => void) => {
+    <T extends keyof ViewerEventType>(
+      type: T,
+      callback: (...args: ViewerEventType[T]) => void
+    ) => {
       return viewerEvents.off(type, callback);
     },
-    [viewerEvents],
+    [viewerEvents]
   );
 
   return {
@@ -294,6 +309,6 @@ export default ({
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,
-    selectionModeEvents,
+    selectionModeEvents
   };
 };

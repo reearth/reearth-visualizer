@@ -1,14 +1,17 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
-import JsonView from "react18-json-view";
 
-import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
+import {
+  GeoJsonFeatureDeleteProps,
+  GeoJsonFeatureUpdateProps
+} from "@reearth/beta/features/Editor/hooks/useSketch";
 import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
 import { Geometry } from "@reearth/core";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import JsonView from "react18-json-view";
 
 import { FieldComponent } from "./CustomPropertField";
 
@@ -21,6 +24,7 @@ type Props = {
   layer?: NLSLayer;
   sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
 };
 
 export type ValueProp = string | number | boolean | undefined;
@@ -36,10 +40,44 @@ const FeatureData: FC<Props> = ({
   layer,
   sketchFeature,
   onGeoJsonFeatureUpdate,
+  onGeoJsonFeatureDelete
 }) => {
   const t = useT();
   const theme = useTheme();
   const [fields, setFields] = useState<FieldProp[]>([]);
+
+  // Initialize collapsed state from localStorage
+  const initialCollapsedStates = useMemo(() => {
+    const storedStates: Record<string, boolean> = {};
+    ["customProperties", "geometry", "properties"].forEach((id) => {
+      storedStates[id] =
+        localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) ===
+        "true";
+    });
+    return storedStates;
+  }, []);
+
+  const [collapsedStates, setCollapsedStates] = useState<
+    Record<string, boolean>
+  >(initialCollapsedStates);
+
+  const saveCollapseState = useCallback((storageId: string, state: boolean) => {
+    localStorage.setItem(
+      `reearth-visualizer-feature-${storageId}-collapsed`,
+      JSON.stringify(state)
+    );
+  }, []);
+
+  const handleCollapse = useCallback(
+    (storageId: string, state: boolean) => {
+      saveCollapseState(storageId, state);
+      setCollapsedStates((prevState) => ({
+        ...prevState,
+        [storageId]: state
+      }));
+    },
+    [saveCollapseState]
+  );
 
   useEffect(() => {
     if (!layer?.sketch?.customPropertySchema) return;
@@ -59,7 +97,7 @@ const FeatureData: FC<Props> = ({
       id: key,
       type: value.replace(/_\d+$/, ""),
       title: key,
-      value: selectedFeature?.properties?.[key],
+      value: selectedFeature?.properties?.[key]
     }));
 
     setFields(fieldArray);
@@ -68,24 +106,41 @@ const FeatureData: FC<Props> = ({
   const handleSubmit = useCallback(() => {
     if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
     const newProperties = { ...selectedFeature.properties };
-    Object.assign(newProperties, ...fields.map(f => ({ [f.title]: f.value })));
+    Object.assign(
+      newProperties,
+      ...fields.map((f) => ({ [f.title]: f.value }))
+    );
     onGeoJsonFeatureUpdate?.({
       layerId: layer.id,
       featureId: sketchFeature.id,
       geometry: selectedFeature.geometry,
-      properties: newProperties,
+      properties: newProperties
     });
-  }, [layer?.id, fields, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id]);
+  }, [
+    layer?.id,
+    fields,
+    onGeoJsonFeatureUpdate,
+    selectedFeature,
+    sketchFeature?.id
+  ]);
 
   const jsonStyle = useMemo(
     () => ({
       wordWrap: "break-word" as const,
       minWidth: 0,
       lineHeight: "1.5em",
-      fontSize: theme.fonts.sizes.body,
+      fontSize: theme.fonts.sizes.body
     }),
-    [theme.fonts.sizes.body],
+    [theme.fonts.sizes.body]
   );
+
+  const handleDeleteSketchFeature = useCallback(() => {
+    if (!layer?.id || !sketchFeature?.id) return;
+    onGeoJsonFeatureDelete?.({
+      layerId: layer.id,
+      featureId: sketchFeature.id
+    });
+  }, [layer?.id, sketchFeature?.id, onGeoJsonFeatureDelete]);
 
   return (
     <Wrapper>
@@ -94,9 +149,12 @@ const FeatureData: FC<Props> = ({
           title={t("Custom Properties")}
           size="small"
           background={theme.relative.dim}
-          headerBg={theme.relative.dim}>
+          headerBg={theme.relative.dim}
+          collapsed={collapsedStates.customProperties}
+          onCollapse={(state) => handleCollapse("customProperties", state)}
+        >
           <FieldsWrapper>
-            {fields.map(f => (
+            {fields.map((f) => (
               <FieldComponent field={f} key={f.id} setFields={setFields} />
             ))}
             {fields.length > 0 && (
@@ -120,20 +178,45 @@ const FeatureData: FC<Props> = ({
         title={t("Geometry")}
         size="small"
         background={theme.relative.dim}
-        headerBg={theme.relative.dim}>
+        headerBg={theme.relative.dim}
+        collapsed={collapsedStates.geometry}
+        onCollapse={(state) => handleCollapse("geometry", state)}
+      >
         <ValueWrapper>
-          <JsonView src={selectedFeature?.geometry} theme="vscode" dark style={jsonStyle} />
+          <JsonView
+            src={selectedFeature?.geometry}
+            theme="vscode"
+            dark
+            style={jsonStyle}
+          />
         </ValueWrapper>
       </Collapse>
       <Collapse
         title={t("Properties")}
         size="small"
         background={theme.relative.dim}
-        headerBg={theme.relative.dim}>
+        headerBg={theme.relative.dim}
+        collapsed={collapsedStates.properties}
+        onCollapse={(state) => handleCollapse("properties", state)}
+      >
         <ValueWrapper>
-          <JsonView src={selectedFeature?.properties} theme="vscode" dark style={jsonStyle} />
+          <JsonView
+            src={selectedFeature?.properties}
+            theme="vscode"
+            dark
+            style={jsonStyle}
+          />
         </ValueWrapper>
       </Collapse>
+      {!!layer?.isSketch && sketchFeature?.id && (
+        <Button
+          title={t("Delete Feature")}
+          onClick={handleDeleteSketchFeature}
+          size="small"
+          icon="trash"
+          extendWidth
+        />
+      )}
     </Wrapper>
   );
 };
@@ -145,19 +228,19 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.small,
   padding: `${theme.spacing.small}px 0`,
-  wordBreak: "break-all",
+  wordBreak: "break-all"
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  userSelect: "none",
+  userSelect: "none"
 }));
 
 const ValueWrapper = styled("div")(({ theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`
 }));

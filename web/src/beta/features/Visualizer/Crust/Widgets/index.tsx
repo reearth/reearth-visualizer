@@ -1,6 +1,12 @@
 import { Fragment, ReactNode, useCallback } from "react";
 
-import type { InternalWidget, Theme, Widget, WidgetLayout, WidgetLocationOptions } from "./types";
+import type {
+  InternalWidget,
+  Theme,
+  Widget,
+  WidgetLayout,
+  WidgetLocationOptions
+} from "./types";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import WidgetComponent, { type Context } from "./Widget";
 import WidgetAlignSystem, {
@@ -9,7 +15,7 @@ import WidgetAlignSystem, {
   type Location,
   type WidgetAlignSystem as WidgetAlignSystemType,
   type WidgetLayoutConstraint,
-  type WidgetProps as WasWidgetProps,
+  type WidgetProps as WasWidgetProps
 } from "./WidgetAlignSystem";
 
 export type {
@@ -20,19 +26,24 @@ export type {
   WidgetArea,
   WidgetZone,
   WidgetSection,
-  WidgetAreaType,
+  WidgetAreaType
 } from "./WidgetAlignSystem";
 
 export type { Context, BuiltinWidgets } from "./Widget";
 export { isBuiltinWidget } from "./Widget";
 
-export type { Widget, InternalWidget, WidgetLocationOptions, WidgetAlignment } from "./types";
+export type {
+  Widget,
+  InternalWidget,
+  WidgetLocationOptions,
+  WidgetAlignment
+} from "./types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
   floatingWidgets?: InternalWidget[];
   selectedWidgetArea?: WidgetAreaType;
-  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   editing?: boolean;
   isMobile?: boolean;
   theme?: Theme;
@@ -47,7 +58,7 @@ export type Props = {
       location?: Location;
       extended?: boolean;
       index?: number;
-    },
+    }
   ) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -78,13 +89,16 @@ export default function Widgets({
   renderWidget,
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
-  onWidgetAreaSelect,
+  onWidgetAreaSelect
 }: Props): JSX.Element | null {
-  const { overriddenAlignSystem, invisibleWidgetIDs, onPluginWidgetVisibilityChange } =
-    useWidgetAlignSystem({
-      alignSystem,
-      isMobile,
-    });
+  const {
+    overriddenAlignSystem,
+    invisibleWidgetIDs,
+    onPluginWidgetVisibilityChange
+  } = useWidgetAlignSystem({
+    alignSystem,
+    isMobile
+  });
 
   const renderWidgetInternal = useCallback(
     ({ editing, extended, layout, widget, onExtend }: WasWidgetProps) => (
@@ -99,14 +113,14 @@ export default function Widgets({
         isBuilt={isBuilt}
         isMobile={isMobile}
         context={context}
-        renderWidget={widget2 =>
+        renderWidget={(widget2) =>
           renderWidget?.({
             widget: widget2,
             editing,
             extended,
             layout,
             onExtend,
-            onVisibilityChange: onPluginWidgetVisibilityChange,
+            onVisibilityChange: onPluginWidgetVisibilityChange
           })
         }
         onExtend={onExtend}
@@ -120,8 +134,8 @@ export default function Widgets({
       isMobile,
       context,
       renderWidget,
-      onPluginWidgetVisibilityChange,
-    ],
+      onPluginWidgetVisibilityChange
+    ]
   );
 
   return (
@@ -140,11 +154,11 @@ export default function Widgets({
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAreaSelect={onWidgetAreaSelect}
       />
-      {floatingWidgets?.map(w => (
+      {floatingWidgets?.map((w) => (
         <Fragment key={w.id}>
           {renderWidgetInternal({
             widget: w,
-            editing: false,
+            editing: false
           })}
         </Fragment>
       ))}

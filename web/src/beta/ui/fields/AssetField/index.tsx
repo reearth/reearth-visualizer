@@ -1,16 +1,15 @@
-import { FC, useCallback, useEffect, useState } from "react";
-
 import AssetsSelector from "@reearth/beta/features/AssetsManager/AssetsSelector";
 import {
   AcceptedAssetsTypes,
   type FileType,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES,
+  IMAGE_FILE_TYPES
 } from "@reearth/beta/features/AssetsManager/constants";
 import { TextInput, Button } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
@@ -31,7 +30,7 @@ const AssetField: FC<AssetFieldProps> = ({
   inputMethod,
   assetsTypes,
   placeholder,
-  onChange,
+  onChange
 }) => {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -46,11 +45,13 @@ const AssetField: FC<AssetFieldProps> = ({
         onChange?.(url, name);
       } else if (
         inputMethod === "asset" &&
-        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes((url.split(".").pop() as FileType) ?? "")
+        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes(
+          (url.split(".").pop() as FileType) ?? ""
+        )
       ) {
         setNotification({
           type: "error",
-          text: t("Wrong file format"),
+          text: t("Wrong file format")
         });
         setCurrentValue(undefined);
       } else {
@@ -58,14 +59,14 @@ const AssetField: FC<AssetFieldProps> = ({
         onChange?.(url, name);
       }
     },
-    [inputMethod, onChange, setNotification, t],
+    [inputMethod, onChange, setNotification, t]
   );
 
   const { handleFileUpload } = useAssetUpload({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
     assetsTypes,
-    multiple: false,
+    multiple: false
   });
 
   useEffect(() => {
@@ -85,7 +86,13 @@ const AssetField: FC<AssetFieldProps> = ({
         />
         {inputMethod === "asset" && (
           <ButtonWrapper>
-            <Button icon={"image"} size="small" title="Choose" onClick={handleClick} extendWidth />
+            <Button
+              icon={"image"}
+              size="small"
+              title="Choose"
+              onClick={handleClick}
+              extendWidth
+            />
             <Button
               icon={"uploadSimple"}
               size="small"
@@ -104,15 +111,6 @@ const AssetField: FC<AssetFieldProps> = ({
           onAssetSelect={handleChange}
           assetsTypes={assetsTypes}
         />
-        // <AssetModal
-        //   open={open}
-        //   onModalClose={handleModalClose}
-        //   assetType={entityType}
-        //   currentWorkspace={currentWorkspace}
-        //   currentValue={currentValue}
-        //   fileFormat={fileFormat}
-        //   onSelect={handleChange}
-        // />
       )}
     </CommonField>
   );
@@ -120,15 +118,15 @@ const AssetField: FC<AssetFieldProps> = ({
 
 export default AssetField;
 
-const AssetWrapper = styled("div")<{}>(({ theme }) => ({
+const AssetWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: `${theme.spacing.smallest}px`,
-  width: "100%",
+  width: "100%"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
-  gap: `${theme.spacing.smallest}px`,
+  gap: `${theme.spacing.smallest}px`
 }));

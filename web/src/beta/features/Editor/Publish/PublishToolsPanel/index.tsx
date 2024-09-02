@@ -1,11 +1,10 @@
-import { FC } from "react";
-
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC } from "react";
 
 import { usePublishPage } from "../context";
 
@@ -13,8 +12,13 @@ import useHooks from "./hooks";
 import PublishModal from "./PublishModal";
 
 const PublishToolsPanel: FC = () => {
-  const { storyId, projectId, sceneId, selectedProjectType, handleProjectTypeChange } =
-    usePublishPage();
+  const {
+    storyId,
+    projectId,
+    sceneId,
+    selectedProjectType,
+    handleProjectTypeChange
+  } = usePublishPage();
   const t = useT();
 
   const {
@@ -30,13 +34,17 @@ const PublishToolsPanel: FC = () => {
     handleModalClose,
     handleProjectPublish,
     handleProjectAliasCheck,
-    handleNavigationToSettings,
+    handleNavigationToSettings
   } = useHooks({ storyId, projectId, sceneId, selectedProjectType });
 
-  const sceneStatus = publishmentStatuses.find(status => status?.type === "default")?.published
+  const sceneStatus = publishmentStatuses.find(
+    (status) => status?.type === "default"
+  )?.published
     ? "published"
     : "unpublished";
-  const storyStatus = publishmentStatuses.find(status => status?.type === "story")?.published
+  const storyStatus = publishmentStatuses.find(
+    (status) => status?.type === "story"
+  )?.published
     ? "published"
     : "unpublished";
 
@@ -117,20 +125,20 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
+  padding: `${theme.spacing.small}px ${theme.spacing.normal}px`
 }));
 
 const LeftSection = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.normal,
   height: "24px",
-  width: "244px",
+  width: "244px"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  height: "28px",
+  height: "28px"
 }));
 
 const TabButton = styled(EntryItem)({
@@ -138,7 +146,7 @@ const TabButton = styled(EntryItem)({
   height: "44px",
   display: "flex",
   justifyContent: "space-between",
-  alignItems: "center",
+  alignItems: "center"
 });
 
 const TabButtonWrapper = styled("div")(({ theme }) => ({
@@ -146,16 +154,19 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   gap: theme.spacing.small,
-  width: "116px",
+  width: "116px"
 }));
 
-const PublishStatus = styled("div")<{ status: string }>(({ theme, status }) => ({
-  width: "8px",
-  height: "8px",
-  backgroundColor: status !== "unpublished" ? "#24A148" : theme.content.weaker,
-  borderRadius: "50%",
-}));
+const PublishStatus = styled("div")<{ status: string }>(
+  ({ theme, status }) => ({
+    width: "8px",
+    height: "8px",
+    backgroundColor:
+      status !== "unpublished" ? "#24A148" : theme.content.weaker,
+    borderRadius: "50%"
+  })
+);
 
 const StatusWrapper = styled("div")({
-  width: "8px",
+  width: "8px"
 });

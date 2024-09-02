@@ -1,7 +1,6 @@
-import { FC, useEffect, useMemo } from "react";
-
 import { Icon, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useEffect, useMemo } from "react";
 
 import { getIconName } from "../../../Crust/StoryPanel/utils";
 import { InstallableBlock } from "../../types";
@@ -25,11 +24,11 @@ const BlockAddBar: FC<Props> = ({
   showAreaHeight,
   parentWidth,
   onBlockOpen,
-  onBlockAdd,
+  onBlockAdd
 }) => {
   const items: PopupMenuItem[] = useMemo(
     () =>
-      installableBlocks?.map?.(b => {
+      installableBlocks?.map?.((b) => {
         return {
           id: `${b.extensionId}-${b.pluginId}`,
           title: b.name,
@@ -37,13 +36,16 @@ const BlockAddBar: FC<Props> = ({
           onClick: () => {
             onBlockAdd?.(b.extensionId, b.pluginId);
             onBlockOpen();
-          },
+          }
         };
       }) ?? [],
-    [installableBlocks, onBlockAdd, onBlockOpen],
+    [installableBlocks, onBlockAdd, onBlockOpen]
   );
 
-  const persist = useMemo(() => alwaysShow || openBlocks, [alwaysShow, openBlocks]);
+  const persist = useMemo(
+    () => alwaysShow || openBlocks,
+    [alwaysShow, openBlocks]
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -61,8 +63,9 @@ const BlockAddBar: FC<Props> = ({
         id={id}
         height={showAreaHeight}
         persist={persist}
-        onClick={e => e.stopPropagation()}
-        onMouseOver={e => e.stopPropagation()}>
+        onClick={(e) => e.stopPropagation()}
+        onMouseOver={(e) => e.stopPropagation()}
+      >
         <PopupMenu
           placement="bottom-start"
           openMenu={openBlocks}
@@ -81,44 +84,47 @@ const BlockAddBar: FC<Props> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   position: "relative",
   padding: `${theme.spacing.micro}px 0`,
-  zIndex: theme.zIndexes.visualizer.storyBlockAddBar,
+  zIndex: theme.zIndexes.visualizer.storyBlockAddBar
 }));
 
-const Bar = styled("div")<{ height?: number; persist?: boolean }>(({ height, persist, theme }) => ({
-  position: "absolute",
-  left: 0,
-  right: 0,
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small + 2,
-  height: height ? `${height}px` : "1px",
-  cursor: "pointer",
-  "&:hover > *": {
-    opacity: "100%",
-  },
-  "& > *": {
-    opacity: persist ? "100%" : "0%",
-    transition: "opacity 0.4s",
-  },
-}));
+const Bar = styled("div")<{ height?: number; persist?: boolean }>(
+  ({ height, persist, theme }) => ({
+    position: "absolute",
+    left: 0,
+    right: 0,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.small + 2,
+    height: height ? `${height}px` : "1px",
+    cursor: "pointer",
+    "&:hover > *": {
+      opacity: "100%"
+    },
+    "& > *": {
+      opacity: persist ? "100%" : "0%",
+      transition: "opacity 0.4s"
+    }
+  })
+);
 
 const StyledIcon = styled(Icon)<{ persist?: boolean }>(({ theme }) => ({
   color: theme.content.main,
   background: theme.select.main,
   padding: theme.spacing.micro,
-  borderRadius: theme.radius.small,
+  borderRadius: theme.radius.small
 }));
 
 const Line = styled("div")<{ persist?: boolean }>(({ theme }) => ({
   height: "1px",
   width: "100%",
-  background: theme.select.main,
+  background: theme.select.main
 }));
 
 export default BlockAddBar;
 
 const showWhenCloseToElement =
-  (id?: string, persist?: boolean, parentWidth?: number) => (event: MouseEvent) => {
+  (id?: string, persist?: boolean, parentWidth?: number) =>
+  (event: MouseEvent) => {
     if (!id) return;
 
     const targetElement = document.getElementById(id) as HTMLElement;
@@ -148,18 +154,18 @@ const showWhenCloseToElement =
     // If the cursor is close enough to the target element, show it; otherwise, hide it
     if (distanceX < xProximityThreshold && distanceY < yProximityThreshold) {
       const children = targetElement.children;
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i] as HTMLElement;
-        if (child.style.opacity === "100%") return;
-        child.style.opacity = "100%";
+      for (const child of children) {
+        const element = child as HTMLElement;
+        if (element.style.opacity === "100%") return;
+        element.style.opacity = "100%";
       }
     } else {
       if (persist) return;
       const children = targetElement.children;
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i] as HTMLElement;
-        if (child.style.opacity === "0%") return;
-        child.style.opacity = "0%";
+      for (const child of children) {
+        const element = child as HTMLElement;
+        if (element.style.opacity === "0%") return;
+        element.style.opacity = "0%";
       }
     }
   };

@@ -1,19 +1,18 @@
-import { useCallback, useMemo } from "react";
-import useFileInput from "use-file-input";
-
 import {
   type AcceptedAssetsTypes,
   GIS_FILE_TYPES,
   IMAGE_FILE_TYPES,
-  GENERAL_FILE_TYPE_ACCEPT_STRING,
+  GENERAL_FILE_TYPE_ACCEPT_STRING
 } from "@reearth/beta/features/AssetsManager/constants";
 import { useAssetsFetcher } from "@reearth/services/api";
+import { useCallback, useMemo } from "react";
+import useFileInput from "use-file-input";
 
 export default ({
   workspaceId,
   onAssetSelect,
   assetsTypes,
-  multiple = true,
+  multiple = true
 }: {
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string, name?: string) => void;
@@ -26,7 +25,13 @@ export default ({
     return assetsTypes && assetsTypes.length > 0
       ? "." +
           assetsTypes
-            .map(t => (t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t))
+            .map((t) =>
+              t === "image"
+                ? IMAGE_FILE_TYPES
+                : t === "file"
+                  ? GIS_FILE_TYPES
+                  : t
+            )
             .flat()
             .join(",.")
       : GENERAL_FILE_TYPE_ACCEPT_STRING;
@@ -38,7 +43,7 @@ export default ({
       try {
         const result = await useCreateAssets({
           teamId: workspaceId ?? "",
-          file: files,
+          file: files
         });
         const assetUrl = result?.data[0].data?.createAsset?.asset.url;
         const assetName = result?.data[0].data?.createAsset?.asset.name;
@@ -47,12 +52,15 @@ export default ({
         console.error("Error creating assets:", error);
       }
     },
-    [workspaceId, useCreateAssets, onAssetSelect],
+    [workspaceId, useCreateAssets, onAssetSelect]
   );
-  const handleFileUpload = useFileInput(files => handleAssetsCreate?.(files), {
-    accept: acceptedExtension,
-    multiple,
-  });
+  const handleFileUpload = useFileInput(
+    (files) => handleAssetsCreate?.(files),
+    {
+      accept: acceptedExtension,
+      multiple
+    }
+  );
 
   return { handleFileUpload };
 };

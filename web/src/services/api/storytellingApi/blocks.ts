@@ -1,6 +1,4 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryBlockInput,
@@ -13,16 +11,17 @@ import {
   MutationRemoveStoryBlockArgs,
   PluginExtensionType,
   RemoveStoryBlockInput,
-  RemoveStoryBlockMutation,
+  RemoveStoryBlockMutation
 } from "@reearth/services/gql/__gen__/graphql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import {
   CREATE_STORY_BLOCK,
   MOVE_STORY_BLOCK,
-  REMOVE_STORY_BLOCK,
+  REMOVE_STORY_BLOCK
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
+import { useCallback, useMemo } from "react";
 
 import { Item, convert } from "../propertyApi/utils";
 import { SceneQueryProps } from "../sceneApi";
@@ -56,40 +55,46 @@ export default () => {
   const [, setNotification] = useNotification();
   const t = useT();
 
-  const useInstallableStoryBlocksQuery = useCallback(({ sceneId, lang }: StoryBlockQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
-      variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId,
-    });
+  const useInstallableStoryBlocksQuery = useCallback(
+    ({ sceneId, lang }: StoryBlockQueryProps) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId
+      });
 
-    const installableStoryBlocks = useMemo(() => getInstallableStoryBlocks(data), [data]);
+      const installableStoryBlocks = useMemo(
+        () => getInstallableStoryBlocks(data),
+        [data]
+      );
 
-    return { installableStoryBlocks, ...rest };
-  }, []);
+      return { installableStoryBlocks, ...rest };
+    },
+    []
+  );
 
   const useInstalledStoryBlocksQuery = useCallback(
     ({
       sceneId,
       lang,
       storyId,
-      pageId,
+      pageId
     }: StoryBlockQueryProps & {
       storyId?: string;
       pageId?: string;
     }) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
-        skip: !sceneId,
+        skip: !sceneId
       });
 
       const installedStoryBlocks = useMemo(
         () => getInstalledStoryBlocks(data, storyId, pageId),
-        [data, storyId, pageId],
+        [data, storyId, pageId]
       );
 
       return { installedStoryBlocks, ...rest };
     },
-    [],
+    []
   );
 
   const [createStoryBlockMutation] = useMutation<
@@ -98,18 +103,25 @@ export default () => {
   >(CREATE_STORY_BLOCK, { refetchQueries: ["GetScene"] });
 
   const useCreateStoryBlock = useCallback(
-    async (input: CreateStoryBlockInput): Promise<MutationReturn<CreateStoryBlockMutation>> => {
-      const { data, errors } = await createStoryBlockMutation({ variables: { input } });
+    async (
+      input: CreateStoryBlockInput
+    ): Promise<MutationReturn<CreateStoryBlockMutation>> => {
+      const { data, errors } = await createStoryBlockMutation({
+        variables: { input }
+      });
       if (errors || !data?.createStoryBlock) {
         setNotification({ type: "error", text: t("Failed to create block.") });
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfullly created a block!") });
+      setNotification({
+        type: "success",
+        text: t("Successfullly created a block!")
+      });
 
       return { data, status: "success" };
     },
-    [createStoryBlockMutation, setNotification, t],
+    [createStoryBlockMutation, setNotification, t]
   );
 
   const [removeStoryBlockMutation] = useMutation<
@@ -118,55 +130,70 @@ export default () => {
   >(REMOVE_STORY_BLOCK, { refetchQueries: ["GetScene"] });
 
   const useDeleteStoryBlock = useCallback(
-    async (input: RemoveStoryBlockInput): Promise<MutationReturn<RemoveStoryBlockMutation>> => {
-      const { data, errors } = await removeStoryBlockMutation({ variables: { input } });
+    async (
+      input: RemoveStoryBlockInput
+    ): Promise<MutationReturn<RemoveStoryBlockMutation>> => {
+      const { data, errors } = await removeStoryBlockMutation({
+        variables: { input }
+      });
       if (errors || !data?.removeStoryBlock) {
         setNotification({ type: "error", text: t("Failed to delete block.") });
 
         return { status: "error", errors };
       }
-      setNotification({ type: "info", text: t("Block was successfully deleted.") });
+      setNotification({
+        type: "info",
+        text: t("Block was successfully deleted.")
+      });
 
       return { data, status: "success" };
     },
-    [removeStoryBlockMutation, setNotification, t],
+    [removeStoryBlockMutation, setNotification, t]
   );
 
-  const [moveStoryBlockMutation] = useMutation<MoveStoryBlockMutation, MutationMoveStoryBlockArgs>(
-    MOVE_STORY_BLOCK,
-    { refetchQueries: ["GetScene"] },
-  );
+  const [moveStoryBlockMutation] = useMutation<
+    MoveStoryBlockMutation,
+    MutationMoveStoryBlockArgs
+  >(MOVE_STORY_BLOCK, { refetchQueries: ["GetScene"] });
 
   const useMoveStoryBlock = useCallback(
-    async (input: MoveStoryBlockInput): Promise<MutationReturn<MoveStoryBlockMutation>> => {
-      const { data, errors } = await moveStoryBlockMutation({ variables: { input } });
+    async (
+      input: MoveStoryBlockInput
+    ): Promise<MutationReturn<MoveStoryBlockMutation>> => {
+      const { data, errors } = await moveStoryBlockMutation({
+        variables: { input }
+      });
       if (errors || !data?.moveStoryBlock) {
         setNotification({ type: "error", text: t("Failed to move block.") });
 
         return { status: "error", errors };
       }
-      setNotification({ type: "info", text: t("Block was successfully moved.") });
+      setNotification({
+        type: "info",
+        text: t("Block was successfully moved.")
+      });
 
       return { data, status: "success" };
     },
-    [moveStoryBlockMutation, setNotification, t],
+    [moveStoryBlockMutation, setNotification, t]
   );
   return {
     useInstallableStoryBlocksQuery,
     useInstalledStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
-    useMoveStoryBlock,
+    useMoveStoryBlock
   };
 };
 
 const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
-  const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
+  const scene =
+    rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
   return scene?.plugins
-    .map(p => {
+    .map((p) => {
       const plugin = p.plugin;
       return plugin?.extensions
-        .filter(e => e.type === PluginExtensionType.StoryBlock)
+        .filter((e) => e.type === PluginExtensionType.StoryBlock)
         .map((e): InstallableStoryBlock => {
           return {
             name: e.translatedName ?? e.name,
@@ -175,7 +202,7 @@ const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
             extensionId: e.extensionId,
             icon: e.icon,
             singleOnly: !!e.singleOnly,
-            type: "StoryBlock",
+            type: "StoryBlock"
           };
         })
         .filter((sb): sb is InstallableStoryBlock => !!sb);
@@ -186,17 +213,22 @@ const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
 export const getInstalledStoryBlocks = (
   rawScene?: GetSceneQuery,
   storyId?: string,
-  pageId?: string,
+  pageId?: string
 ): InstalledStoryBlock[] | undefined => {
   if (!rawScene?.node || !storyId || !pageId) return;
-  const scene = rawScene.node.__typename === "Scene" ? rawScene.node : undefined;
+  const scene =
+    rawScene.node.__typename === "Scene" ? rawScene.node : undefined;
 
-  const page = scene?.stories.find(s => s.id === storyId)?.pages.find(p => p.id === pageId);
+  const page = scene?.stories
+    .find((s) => s.id === storyId)
+    ?.pages.find((p) => p.id === pageId);
 
   const installableStoryBlocks = getInstallableStoryBlocks(rawScene);
 
-  return page?.blocks.map(b => {
-    const block = installableStoryBlocks?.find(isb => isb.extensionId === b.extensionId);
+  return page?.blocks.map((b) => {
+    const block = installableStoryBlocks?.find(
+      (isb) => isb.extensionId === b.extensionId
+    );
 
     return {
       id: b.id,
@@ -207,8 +239,8 @@ export const getInstalledStoryBlocks = (
       icon: block?.icon,
       property: {
         id: b.property?.id ?? "",
-        items: convert(b.property, null),
-      },
+        items: convert(b.property, null)
+      }
     };
   });
 };

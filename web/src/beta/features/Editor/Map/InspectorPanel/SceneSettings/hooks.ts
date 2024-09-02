@@ -1,7 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 type SettingProps = {
   onPageUpdate?: (id: string, layers: string[]) => void;
@@ -18,7 +17,7 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
   }, [selectedPage]);
 
   const allLayersSelected = useMemo(() => {
-    const allLayerIds = layers?.map(layer => layer.id) || [];
+    const allLayerIds = layers?.map((layer) => layer.id) || [];
     return selectedLayerIds.length >= allLayerIds.length;
   }, [layers, selectedLayerIds.length]);
 
@@ -33,21 +32,23 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
   const handleLayerCheck = useCallback(
     (layerId: string) => {
       if (!pageId) return;
-      setCheckedLayer(prev => {
+      setCheckedLayer((prev) => {
         const updatedLayers = prev.includes(layerId)
-          ? prev.filter(id => id !== layerId)
+          ? prev.filter((id) => id !== layerId)
           : [...prev, layerId];
 
         onPageUpdate?.(pageId, updatedLayers);
         return updatedLayers ? updatedLayers : prev;
       });
     },
-    [onPageUpdate, pageId],
+    [onPageUpdate, pageId]
   );
 
   const handleAllLayersCheck = useCallback(() => {
     if (!pageId) return;
-    const updatedCheckedLayers = allCheckedLayers ? [] : layers?.map(layer => layer.id) || [];
+    const updatedCheckedLayers = allCheckedLayers
+      ? []
+      : layers?.map((layer) => layer.id) || [];
     setCheckedLayer(updatedCheckedLayers);
     setAllCheckedLayers(!allCheckedLayers);
     onPageUpdate?.(pageId, updatedCheckedLayers);
@@ -57,6 +58,6 @@ export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
     checkedLayers,
     allCheckedLayers,
     handleLayerCheck,
-    handleAllLayersCheck,
+    handleAllLayersCheck
   };
 };

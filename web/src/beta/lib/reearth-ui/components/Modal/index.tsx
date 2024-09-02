@@ -1,6 +1,5 @@
-import { FC, ReactNode, useMemo, useRef } from "react";
-
 import { styled } from "@reearth/services/theme";
+import { FC, ReactNode, useMemo, useRef } from "react";
 
 export type ModalProps = {
   visible: boolean;
@@ -20,9 +19,9 @@ export const Modal: FC<ModalProps> = ({ visible, children, size }) => {
       size === "small"
         ? DEFAULT_SMALL_WIDTH
         : size === "large"
-        ? DEFAULT_LARGE_WIDTH
-        : DEFAULT_MEDIUM_WIDTH,
-    [size],
+          ? DEFAULT_LARGE_WIDTH
+          : DEFAULT_MEDIUM_WIDTH,
+    [size]
   );
 
   return !visible ? null : (
@@ -43,15 +42,17 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   overflow: "auto",
   opacity: 1,
-  zIndex: theme.zIndexes.editor.modal.bg,
+  zIndex: theme.zIndexes.editor.modal.bg
 }));
 
-const ContentWrapper = styled("div")<{ modalWidth?: number }>(({ modalWidth }) => ({
-  margin: "0 auto",
-  height: "100%",
-  width: `${modalWidth}px`,
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-}));
+const ContentWrapper = styled("div")<{ modalWidth?: number }>(
+  ({ modalWidth }) => ({
+    margin: "0 auto",
+    height: "100%",
+    width: `${modalWidth}px`,
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
+  })
+);

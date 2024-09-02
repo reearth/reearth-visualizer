@@ -10,7 +10,7 @@ const fontSizes = {
   h4: 20,
   h5: 16,
   body: 12,
-  footnote: 11,
+  footnote: 11
 };
 
 export type FontSize = keyof typeof fontSizes;
@@ -22,7 +22,7 @@ const lineHeights = {
   h4: 28,
   h5: 24,
   body: 18,
-  footnote: 16,
+  footnote: 16
 };
 
 export type LineHeight = keyof typeof lineHeights;
@@ -30,18 +30,18 @@ export type LineHeight = keyof typeof lineHeights;
 const fontWeights = {
   regular: "normal",
   medium: 500,
-  bold: "bold",
+  bold: "bold"
 };
 
 export type FontWeight = keyof typeof fontWeights;
 
-const uniqueTraits = {
+const _uniqueTraits = {
   underline: "underline",
   italic: "italic",
-  strike: "strike",
+  strike: "strike"
 };
 
-export type UniqueTraits = keyof typeof uniqueTraits;
+export type UniqueTraits = keyof typeof _uniqueTraits;
 
 // H1 components
 export const H1Bold = styled.p`
@@ -182,23 +182,23 @@ type Typography = {
 export const typography: Typography = {
   h1: {
     bold: H1Bold,
-    regular: H1Regular,
+    regular: H1Regular
   },
   h2: {
     bold: H2Bold,
-    regular: H2Regular,
+    regular: H2Regular
   },
   h3: {
     bold: H3Bold,
-    regular: H3Regular,
+    regular: H3Regular
   },
   h4: {
     bold: H4Bold,
-    regular: H4Regular,
+    regular: H4Regular
   },
   h5: {
     bold: H5Bold,
-    regular: H5Regular,
+    regular: H5Regular
   },
   body: {
     bold: BodyBold,
@@ -206,18 +206,18 @@ export const typography: Typography = {
     regular: BodyRegular,
     underline: BodyRegularUnderline,
     strike: BodyRegularStrike,
-    italic: BodyRegularItalic,
+    italic: BodyRegularItalic
   },
   footnote: {
-    regular: FootnoteRegular,
-  },
+    regular: FootnoteRegular
+  }
 };
 
 const fonts = {
   typography: typography,
   weight: fontWeights,
   sizes: fontSizes,
-  lineHeights: lineHeights,
+  lineHeights: lineHeights
 };
 
 export default fonts;

@@ -5,9 +5,11 @@ const enabled = false;
 
 export default async function wdyr() {
   if (import.meta.env.DEV && enabled) {
-    const { default: whyDidYouRender } = await import("@welldone-software/why-did-you-render");
+    const { default: whyDidYouRender } = await import(
+      "@welldone-software/why-did-you-render"
+    );
     whyDidYouRender(React, {
-      trackAllPureComponents: true,
+      trackAllPureComponents: true
     });
   }
 }

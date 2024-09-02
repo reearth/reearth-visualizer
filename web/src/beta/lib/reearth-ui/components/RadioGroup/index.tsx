@@ -1,7 +1,7 @@
-import { FC, useCallback, useEffect, useState } from "react";
 
 import { Radio } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useState } from "react";
 
 export type RadioGroupProps = {
   layout?: "vertical" | "horizontal";
@@ -14,7 +14,7 @@ export const RadioGroup: FC<RadioGroupProps> = ({
   layout = "horizontal",
   value,
   options,
-  onChange,
+  onChange
 }) => {
   const [currentValue, setCurrentValue] = useState(value);
 
@@ -28,7 +28,7 @@ export const RadioGroup: FC<RadioGroupProps> = ({
       setCurrentValue(newValue);
       onChange?.(newValue);
     },
-    [onChange, currentValue],
+    [onChange, currentValue]
   );
 
   return (
@@ -50,6 +50,6 @@ const RadioGroupWrapper = styled("div")<{ layout?: "vertical" | "horizontal" }>(
   ({ layout, theme }) => ({
     display: "flex",
     flexDirection: layout === "vertical" ? "column" : "row",
-    gap: theme.spacing.normal,
-  }),
+    gap: theme.spacing.normal
+  })
 );

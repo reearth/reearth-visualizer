@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import useFileInput from "use-file-input";
-
 import { BreadcrumbItem } from "@reearth/beta/lib/reearth-ui";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { AssetSortField, SortDirection } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import useFileInput from "use-file-input";
 
 import {
   FileType,
   GENERAL_FILE_TYPE_ACCEPT_STRING,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES,
+  IMAGE_FILE_TYPES
 } from "./constants";
 import { Asset, sortOptionValue, SortType } from "./types";
 
@@ -21,14 +20,14 @@ const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
 const typeToGQLField = {
   date: AssetSortField.Date,
   name: AssetSortField.Name,
-  size: AssetSortField.Size,
+  size: AssetSortField.Size
 };
 
 export default ({
   workspaceId,
   allowMultipleSelection,
   assetsTypes,
-  onSelectChange,
+  onSelectChange
 }: {
   workspaceId?: string;
   allowMultipleSelection: boolean;
@@ -38,7 +37,7 @@ export default ({
   // sort
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>({
     type: "date",
-    reverse: false,
+    reverse: true
   });
   const t = useT();
 
@@ -46,7 +45,7 @@ export default ({
     if (!sort) return undefined;
     switch (sort.type) {
       case "date":
-        return sort.reverse ? "date-reverse" : "date";
+        return sort.reverse ? "date" : "date-reverse";
       case "name":
         return sort.reverse ? "name-reverse" : "name";
       case "size":
@@ -63,18 +62,18 @@ export default ({
       { value: "name", label: t("A To Z") },
       { value: "name-reverse", label: t("Z To A") },
       { value: "size", label: t("Size Small to Large") },
-      { value: "size-reverse", label: t("Size Large to Small") },
+      { value: "size-reverse", label: t("Size Large to Small") }
     ],
-    [t],
+    [t]
   );
 
   const handleSortChange = useCallback((value: string) => {
     switch (value) {
       case "date":
-        setSort({ type: "date", reverse: false });
+        setSort({ type: "date", reverse: true });
         break;
       case "date-reverse":
-        setSort({ type: "date", reverse: true });
+        setSort({ type: "date", reverse: false });
         break;
       case "name":
         setSort({ type: "name", reverse: false });
@@ -99,31 +98,37 @@ export default ({
   }, []);
 
   // assets
-  const { useAssetsQuery, useRemoveAssets, useCreateAssets } = useAssetsFetcher();
-  const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } = useAssetsQuery({
-    teamId: workspaceId ?? "",
-    pagination: {
-      first: ASSETS_PER_PAGE,
-    },
-    sort: {
-      direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
-      field: typeToGQLField[sort.type ?? "date"],
-    },
-    keyword: searchTerm,
-  });
+  const { useAssetsQuery, useRemoveAssets, useCreateAssets } =
+    useAssetsFetcher();
+  const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } =
+    useAssetsQuery({
+      teamId: workspaceId ?? "",
+      pagination: {
+        first: ASSETS_PER_PAGE
+      },
+      sort: {
+        direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
+        field: typeToGQLField[sort.type ?? "date"]
+      },
+      keyword: searchTerm
+    });
 
   const assetsExts = useMemo(
     () =>
       assetsTypes
-        ?.map(t => (t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t))
+        ?.map((t) =>
+          t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t
+        )
         .flat(),
-    [assetsTypes],
+    [assetsTypes]
   );
 
   const filteredAssets = useMemo(() => {
     if (!assetsExts || !assets) return assets;
-    return assets.filter(a =>
-      assetsExts.includes((a.url.split(".").pop()?.toLowerCase() as FileType) ?? ""),
+    return assets.filter((a) =>
+      assetsExts.includes(
+        (a.url.split(".").pop()?.toLowerCase() as FileType) ?? ""
+      )
     );
   }, [assets, assetsExts]);
 
@@ -138,9 +143,9 @@ export default ({
       variables: {
         pagination: {
           first: ASSETS_PER_PAGE,
-          after: endCursor,
-        },
-      },
+          after: endCursor
+        }
+      }
     });
     setLoadingMore(false);
     isLoadingMoreRef.current = false;
@@ -195,7 +200,10 @@ export default ({
     const handleScroll = () => {
       if (childElement) {
         const isScrolledToBottom =
-          childElement.scrollHeight - parentElement.scrollTop - parentElement.clientHeight < 50;
+          childElement.scrollHeight -
+            parentElement.scrollTop -
+            parentElement.clientHeight <
+          50;
         if (isScrolledToBottom) {
           loadMoreRef.current?.();
         }
@@ -216,24 +224,29 @@ export default ({
       if (!files) return;
       await useCreateAssets({
         teamId: workspaceId ?? "",
-        file: files,
+        file: files
       });
     },
-    [workspaceId, useCreateAssets],
+    [workspaceId, useCreateAssets]
   );
 
   // upload
   // currently use in dashboard only therefore we can set multiple to true always
-  const handleAssetUpload = useFileInput(files => handleAssetsCreate?.(files), {
-    accept: GENERAL_FILE_TYPE_ACCEPT_STRING,
-    multiple: true,
-  });
+  const handleAssetUpload = useFileInput(
+    (files) => handleAssetsCreate?.(files),
+    {
+      accept: GENERAL_FILE_TYPE_ACCEPT_STRING,
+      multiple: true
+    }
+  );
 
   // layout
   const [layout, setLayout] = useState(
-    ["grid", "list"].includes(localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? "")
+    ["grid", "list"].includes(
+      localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? ""
+    )
       ? (localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) as ManagerLayout)
-      : "grid",
+      : "grid"
   );
   const handleLayoutChange = useCallback((newLayout?: ManagerLayout) => {
     if (!newLayout) return;
@@ -244,7 +257,9 @@ export default ({
 
   // path
   // TODO: support path with folder
-  const [paths, _setPaths] = useState<BreadcrumbItem[]>([{ id: "assets", title: "Assets" }]);
+  const [paths, _setPaths] = useState<BreadcrumbItem[]>([
+    { id: "assets", title: "Assets" }
+  ]);
   const handlePathClick = useCallback((_id?: string) => {}, []);
 
   // select
@@ -256,14 +271,14 @@ export default ({
       if (allowMultipleSelection && ctrlPressed.current && assetId) {
         selectAsset(
           selectedAssetIds.includes(assetId)
-            ? selectedAssetIds.filter(a => a !== assetId)
-            : [...selectedAssetIds, assetId],
+            ? selectedAssetIds.filter((a) => a !== assetId)
+            : [...selectedAssetIds, assetId]
         );
       } else {
         selectAsset(assetId ? [assetId] : []);
       }
     },
-    [selectedAssetIds, allowMultipleSelection],
+    [selectedAssetIds, allowMultipleSelection]
   );
 
   useEffect(() => {
@@ -289,7 +304,9 @@ export default ({
   useEffect(() => {
     if (!onSelectChange) return;
     onSelectChange(
-      selectedAssetIds.map(id => assets.find(a => a.id === id)).filter(a => !!a) as Asset[],
+      selectedAssetIds
+        .map((id) => assets.find((a) => a.id === id))
+        .filter((a) => !!a) as Asset[]
     );
   }, [selectedAssetIds, assets, onSelectChange]);
 
@@ -320,6 +337,6 @@ export default ({
     handleAssetUpload,
     contentWidth,
     loading,
-    loadingMore,
+    loadingMore
   };
 };

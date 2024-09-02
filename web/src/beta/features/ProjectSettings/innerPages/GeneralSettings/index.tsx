@@ -1,5 +1,3 @@
-import { useCallback, useState, useMemo, FC } from "react";
-
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
@@ -8,11 +6,12 @@ import {
   Modal,
   Button,
   ModalPanel,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useState, useMemo, FC } from "react";
 
 import {
   InnerPage,
@@ -22,7 +21,7 @@ import {
   ArchivedSettingNotice,
   SettingsRow,
   SettingsRowItem,
-  Thumbnail,
+  Thumbnail
 } from "../common";
 
 export type GeneralSettingsType = {
@@ -43,18 +42,26 @@ type Props = {
   onDeleteProject: () => void;
 };
 
-const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject }) => {
+const GeneralSettings: FC<Props> = ({
+  project,
+  onUpdateProject,
+  onDeleteProject
+}) => {
   const t = useT();
 
   const [localName, setLocalName] = useState(project?.name ?? "");
-  const [localDescription, setLocalDescription] = useState(project?.description ?? "");
-  const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(project?.imageUrl ?? "");
+  const [localDescription, setLocalDescription] = useState(
+    project?.description ?? ""
+  );
+  const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(
+    project?.imageUrl ?? ""
+  );
 
   const handleSubmit = useCallback(() => {
     onUpdateProject({
       name: localName,
       description: localDescription,
-      imageUrl: localImageUrl,
+      imageUrl: localImageUrl
     });
   }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
@@ -62,7 +69,7 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
   const [deleteInputName, setDeleteInputName] = useState("");
   const deleteDisabled = useMemo(
     () => deleteInputName !== project?.name,
-    [deleteInputName, project?.name],
+    [deleteInputName, project?.name]
   );
 
   return project ? (
@@ -76,7 +83,7 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
               <InputField
                 commonTitle={t("Project Name")}
                 value={project.name}
-                onChange={name => setLocalName(name)}
+                onChange={(name) => setLocalName(name)}
               />
               <TextareaField
                 commonTitle={t("Description")}
@@ -98,7 +105,11 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
                 </SettingsRowItem>
               </SettingsRow>
               <ButtonWrapper>
-                <Button title={t("Submit")} appearance="primary" onClick={handleSubmit} />
+                <Button
+                  title={t("Submit")}
+                  appearance="primary"
+                  onClick={handleSubmit}
+                />
               </ButtonWrapper>
             </SettingsFields>
           </Collapse>
@@ -143,20 +154,23 @@ const GeneralSettings: FC<Props> = ({ project, onUpdateProject, onDeleteProject 
               appearance="dangerous"
               disabled={deleteDisabled}
               onClick={onDeleteProject}
-            />,
-          ]}>
+            />
+          ]}
+        >
           <ModalContentWrapper>
             <Typography size="body" weight="bold">
               {project?.name}
             </Typography>
             <Typography size="body">
               {t(
-                "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.",
+                "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore."
               )}
             </Typography>
             <Divider />
-            <Typography size="body">{t("Please type your project name to continue.")}</Typography>
-            <TextInput onChange={name => setDeleteInputName(name)} />
+            <Typography size="body">
+              {t("Please type your project name to continue.")}
+            </Typography>
+            <TextInput onChange={(name) => setDeleteInputName(name)} />
           </ModalContentWrapper>
         </ModalPanel>
       </Modal>
@@ -171,16 +185,16 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.large,
-  background: theme.bg[1],
+  background: theme.bg[1]
 }));
 
 const DangerItem = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
-const Divider = styled.div`
-  height: 1px;
-  background-color: ${({ theme }) => theme.outline.weaker};
-`;
+const Divider = styled("div")(({ theme }) => ({
+  height: "1px",
+  borderBlockColor: theme.outline.weaker,
+}));

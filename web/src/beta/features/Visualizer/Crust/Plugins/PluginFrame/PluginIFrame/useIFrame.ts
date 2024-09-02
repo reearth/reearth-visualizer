@@ -12,9 +12,12 @@ export type IFrameAPI = {
       width?: number | string;
       height?: number | string;
       onAutoResized?: () => void;
-    },
+    }
   ) => void;
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
+  resize: (
+    width: string | number | undefined,
+    height: string | number | undefined
+  ) => void;
   postMessage: (message: any) => void;
 };
 
@@ -22,7 +25,7 @@ export default function useIFrame({
   ready,
   enabled,
   visible: iframeCanBeVisible,
-  onRender,
+  onRender
 }: {
   ready?: boolean;
   enabled?: boolean;
@@ -42,7 +45,7 @@ export default function useIFrame({
             onAutoResized?: () => void;
           }
         | undefined
-      ),
+      )
     ]
   >(["", undefined]);
   const postMessage = usePostMessage(ref, !ready || !iFrameLoaded);
@@ -52,19 +55,25 @@ export default function useIFrame({
   const api = useMemo<IFrameAPI>(
     () => ({
       render: (html, { visible = true, ...options } = {}) => {
-        setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
+        setIFrameState([
+          html,
+          { visible: !!iframeCanBeVisible && !!visible, ...options }
+        ]);
         onRender?.();
       },
       resize: (width, height) => {
         ref.current?.resize(width, height);
       },
-      postMessage,
+      postMessage
     }),
-    [iframeCanBeVisible, onRender, postMessage],
+    [iframeCanBeVisible, onRender, postMessage]
   );
 
   useEffect(() => {
-    setIFrameState(([html, options]) => [html, { ...options, visible: !!iframeCanBeVisible }]);
+    setIFrameState(([html, options]) => [
+      html,
+      { ...options, visible: !!iframeCanBeVisible }
+    ]);
   }, [iframeCanBeVisible]);
 
   useEffect(() => {
@@ -77,6 +86,6 @@ export default function useIFrame({
     html,
     options,
     handleLoad,
-    reset,
+    reset
   };
 }

@@ -4,7 +4,9 @@ import { expect, test } from "vitest";
 import { useOverriddenProperty } from "./useOverriddenProperty";
 
 test("overriddenProperty", () => {
-  const { result } = renderHook(() => useOverriddenProperty({ a: 1, b: 2, c: { c1: 3 } }));
+  const { result } = renderHook(() =>
+    useOverriddenProperty({ a: 1, b: 2, c: { c1: 3 } })
+  );
   const [mergedProperty, overrideProperty] = result.current;
   expect(mergedProperty).toEqual({ a: 1, b: 2, c: { c1: 3 } });
 

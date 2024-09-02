@@ -1,5 +1,3 @@
-import { FC, useState } from "react";
-
 import {
   Button,
   Icon,
@@ -7,10 +5,11 @@ import {
   Markdown,
   Modal,
   ModalPanel,
-  Typography,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useState } from "react";
 
 import { type PluginItem } from ".";
 
@@ -21,7 +20,7 @@ type PluginListItemProps = {
 
 const PluginListItem: FC<PluginListItemProps> = ({
   plugin: { title, pluginId, isInstalled, bodyMarkdown },
-  uninstallPlugin,
+  uninstallPlugin
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -54,13 +53,19 @@ const PluginListItem: FC<PluginListItemProps> = ({
         <Button
           appearance={isInstalled && hovered ? "dangerous" : "secondary"}
           icon={isInstalled ? (hovered ? "trash" : "check") : "install"}
-          title={isInstalled ? (hovered ? t("Uninstall") : t("Installed")) : t("Install")}
+          title={
+            isInstalled
+              ? hovered
+                ? t("Uninstall")
+                : t("Installed")
+              : t("Install")
+          }
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           minWidth={153}
           onClick={
             isInstalled
-              ? e => {
+              ? (e) => {
                   setIsModalOpen(true);
                   e.stopPropagation();
                 }
@@ -87,17 +92,20 @@ const PluginListItem: FC<PluginListItemProps> = ({
                   setIsModalOpen(false);
                   uninstallPlugin(pluginId);
                 }}
-              />,
-            ]}>
+              />
+            ]}
+          >
             <WarningIcon>
               <Icon icon="warning" size={24} />
             </WarningIcon>
             <Typography size="body">
               {t(
-                "You are uninstalling the selected plugin. The data used by this plugin may also be deleted.",
+                "You are uninstalling the selected plugin. The data used by this plugin may also be deleted."
               )}
             </Typography>
-            <Typography size="body">{t("Please be sure before uninstalling.")}</Typography>
+            <Typography size="body">
+              {t("Please be sure before uninstalling.")}
+            </Typography>
           </ModalPanel>
         </Modal>
       </Header>
@@ -107,8 +115,9 @@ const PluginListItem: FC<PluginListItemProps> = ({
             <Markdown
               backgroundColor={theme.bg.base}
               styles={{
-                color: theme.content.main,
-              }}>
+                color: theme.content.main
+              }}
+            >
               {bodyMarkdown}
             </Markdown>
           ) : (
@@ -130,35 +139,35 @@ const Wrapper = styled("div")(({ theme }) => ({
   backgroundColor: theme.bg[1],
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 const Header = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.normal
 }));
 
 const InfoWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.normal,
-  flex: 1,
+  flex: 1
 }));
 
 const TitleWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
-  width: "70%",
+  width: "70%"
 }));
 
 const VersionWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
-  flexShrink: 0,
+  flexShrink: 0
 }));
 
 const WarningIcon = styled("div")(({ theme }) => ({
-  color: theme.dangerous.main,
+  color: theme.dangerous.main
 }));

@@ -1,7 +1,7 @@
-import JsonView from "react18-json-view";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import JsonView from "react18-json-view";
 
 import ListItem from "../ListItem";
 
@@ -30,7 +30,7 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
                   wordWrap: "break-word",
                   minWidth: 0,
                   lineHeight: "1.5em",
-                  fontSize: theme.fonts.sizes.body,
+                  fontSize: theme.fonts.sizes.body
                 }}
               />
             </ObjectWrapper>

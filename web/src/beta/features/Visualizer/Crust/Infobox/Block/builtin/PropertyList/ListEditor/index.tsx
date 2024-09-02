@@ -1,9 +1,12 @@
-import { FC, useMemo } from "react";
-
-import { Button, DragAndDropList, Typography } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  DragAndDropList,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import useHooks from "./hooks";
 import EditorItem from "./Item";
@@ -34,19 +37,22 @@ type Props = {
     fieldId?: string,
     itemId?: string,
     vt?: any,
-    v?: any,
+    v?: any
   ) => Promise<void>;
-  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
-    index?: number,
+    index?: number
   ) => Promise<void>;
   onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
-    itemId?: string,
+    itemId?: string
   ) => Promise<void>;
 };
 
@@ -57,7 +63,7 @@ const ListEditor: FC<Props> = ({
   propertyId,
   displayTypeField,
   propertyListField,
-  onPropertyUpdate,
+  onPropertyUpdate
 }) => {
   const t = useT();
 
@@ -70,8 +76,13 @@ const ListEditor: FC<Props> = ({
     handleItemAdd,
     handleMoveStart,
     handleMoveEnd,
-    handlePropertyValueRemove,
-  } = useHooks({ propertyId, propertyListField, displayTypeField, onPropertyUpdate });
+    handlePropertyValueRemove
+  } = useHooks({
+    propertyId,
+    propertyListField,
+    displayTypeField,
+    onPropertyUpdate
+  });
 
   const DraggableCurrentPropertyList = useMemo(
     () =>
@@ -86,9 +97,14 @@ const ListEditor: FC<Props> = ({
             onValueBlur={handleValueBlur(idx)}
             onItemRemove={() => handlePropertyValueRemove(idx)}
           />
-        ),
+        )
       })),
-    [currentPropertyList, handleKeyBlur, handleValueBlur, handlePropertyValueRemove],
+    [
+      currentPropertyList,
+      handleKeyBlur,
+      handleValueBlur,
+      handlePropertyValueRemove
+    ]
   );
 
   return (
@@ -99,18 +115,20 @@ const ListEditor: FC<Props> = ({
         options={displayOptions || []}
         onChange={handleDisplayTypeUpdate}
       />
-      {propertyListField && currentPropertyList && currentPropertyList.length > 0 && (
-        <>
-          <Typography size="footnote">{propertyListField.title}</Typography>
-          <FieldWrapper>
-            <DragAndDropList
-              items={DraggableCurrentPropertyList}
-              onMoveStart={handleMoveStart}
-              onMoveEnd={handleMoveEnd}
-            />
-          </FieldWrapper>
-        </>
-      )}
+      {propertyListField &&
+        currentPropertyList &&
+        currentPropertyList.length > 0 && (
+          <>
+            <Typography size="footnote">{propertyListField.title}</Typography>
+            <FieldWrapper>
+              <DragAndDropList
+                items={DraggableCurrentPropertyList}
+                onMoveStart={handleMoveStart}
+                onMoveEnd={handleMoveEnd}
+              />
+            </FieldWrapper>
+          </>
+        )}
       {displayTypeField?.value === "custom" && (
         <Button
           title={t("New Field")}
@@ -131,7 +149,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   background: theme.bg[1],
   gap: theme.spacing.small,
-  padding: theme.spacing.normal,
+  padding: theme.spacing.normal
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
@@ -140,5 +158,5 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   justifyContent: "space-between",
   gap: theme.spacing.smallest,
   alignItems: "center",
-  boxsizing: "border-box",
+  boxsizing: "border-box"
 }));

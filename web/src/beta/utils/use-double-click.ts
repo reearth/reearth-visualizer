@@ -3,7 +3,7 @@ import { useCallback, useRef } from "react";
 const useDoubleClick = (
   onClick: (() => void) | undefined,
   onDoubleClick: (() => void) | undefined,
-  delay = 200,
+  delay = 200
 ): [() => void, () => void] => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 

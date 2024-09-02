@@ -1,11 +1,15 @@
-import { useCallback, useState, FC, useEffect } from "react";
-
 import { useCurrentCamera } from "@reearth/beta/features/Editor/atoms";
-import { Button, ButtonProps, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  ButtonProps,
+  Popup,
+  TextInput
+} from "@reearth/beta/lib/reearth-ui";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { useCallback, useState, FC } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
@@ -34,16 +38,17 @@ const CameraField: FC<CameraFieldProps> = ({
   disabled,
   commonTitle,
   onSave,
-  onFlyTo,
+  onFlyTo
 }) => {
   const theme = useTheme();
   const t = useT();
   const [open, setOpen] = useState<"editor" | "capture" | null>(null);
-  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const [currentCamera] = useCurrentCamera();
 
   const handleClick = useCallback(
-    (panel: "editor" | "capture") => setOpen(current => (current === panel ? null : panel)),
-    [],
+    (panel: "editor" | "capture") =>
+      setOpen((current) => (current === panel ? null : panel)),
+    []
   );
 
   const handleClose = useCallback(() => setOpen(null), []);
@@ -53,29 +58,23 @@ const CameraField: FC<CameraFieldProps> = ({
       onSave(value);
       setOpen(null);
     },
-    [onSave],
+    [onSave]
   );
 
   const handleFlyto = useCallback(
     (c?: Partial<Camera>) => {
-      if (!value) return;
       const dest = c ?? currentCamera;
       if (dest) {
         onFlyTo?.(dest);
       }
     },
-    [currentCamera, onFlyTo, value],
+    [currentCamera, onFlyTo]
   );
 
   const handleCameraSettingDelete = useCallback(() => {
     if (!value) return;
     handleSave();
   }, [value, handleSave]);
-
-  useEffect(() => {
-    if (!value) return;
-    setCurrentCamera(value);
-  }, [setCurrentCamera, value]);
 
   const ZoomToPosition: FC = () => (
     <Button
@@ -108,7 +107,7 @@ const CameraField: FC<CameraFieldProps> = ({
               disabled={!value}
               onClick={handleCameraSettingDelete}
               iconColor={value ? theme.content.main : theme.content.weak}
-            />,
+            />
           ]}
         />
         <Popup
@@ -124,7 +123,8 @@ const CameraField: FC<CameraFieldProps> = ({
           }
           open={open === "editor"}
           offset={4}
-          placement="bottom-start">
+          placement="bottom-start"
+        >
           {open === "editor" && (
             <EditPanel
               camera={value}
@@ -147,9 +147,14 @@ const CameraField: FC<CameraFieldProps> = ({
           }
           open={open === "capture"}
           offset={4}
-          placement="bottom-start">
+          placement="bottom-start"
+        >
           {open === "capture" && (
-            <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
+            <CapturePanel
+              camera={currentCamera}
+              onSave={handleSave}
+              onClose={handleClose}
+            />
           )}
         </Popup>
       </InputWrapper>
@@ -161,7 +166,7 @@ const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   flexWrap: "wrap",
-  width: "100%",
+  width: "100%"
 }));
 
 export default CameraField;

@@ -1,6 +1,5 @@
-import { ReactNode } from "react";
-
 import { styled } from "@reearth/services/theme";
+import { ReactNode } from "react";
 
 import Text from "../Text";
 
@@ -11,7 +10,12 @@ type Props = {
   className?: string;
 };
 
-const Property: React.FC<Props> = ({ name, description, children, className }) => {
+const Property: React.FC<Props> = ({
+  name,
+  description,
+  children,
+  className
+}) => {
   return (
     <Wrapper className={className}>
       {name && <Text size="footnote">{name}</Text>}

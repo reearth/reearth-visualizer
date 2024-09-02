@@ -6,14 +6,9 @@ import { AuthContext } from "./authProvider";
 export const errorKey = "reeartherror";
 
 export const useAuth = () => {
-  let auth = useContext(AuthContext);
-
-  if (!auth) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    auth = useAuth0Auth();
-  }
-
-  return auth;
+  const auth = useContext(AuthContext);
+  const auth0Auth = useAuth0Auth();
+  return auth ? auth : auth0Auth;
 };
 
 export function useCleanUrl(): [string | undefined, boolean] {
@@ -47,7 +42,13 @@ export function useCleanUrl(): [string | undefined, boolean] {
 }
 
 export function useAuthenticationRequired(): [boolean, string | undefined] {
-  const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
+  const {
+    isAuthenticated,
+    isLoading,
+    error: authError,
+    login,
+    logout
+  } = useAuth();
 
   useEffect(() => {
     if (isLoading || isAuthenticated) {

@@ -1,9 +1,15 @@
-import { FC, useMemo } from "react";
-
 import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
-import { ManagerHeader, ManagerHeaderButton } from "@reearth/beta/ui/components/ManagerBase";
+import {
+  ManagerContent,
+  ManagerHeader,
+  ManagerHeaderButton,
+  ManagerLayout,
+  ManagerWrapper
+} from "@reearth/beta/ui/components/ManagerBase";
+import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -18,8 +24,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     selectedProject,
     projectCreatorVisible,
     wrapperRef,
+    contentRef,
+    contentWidth,
     layout,
-    favoriteProjects,
     searchTerm,
     sortValue,
     showProjectCreator,
@@ -32,7 +39,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
-    handleSearch,
+    handleSearch
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -43,13 +50,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       { value: "date-reversed", label: t("First Created") },
       { value: "date-updated", label: t("Last Updated") },
       { value: "name", label: t("A To Z") },
-      { value: "name-reverse", label: t("Z To A") },
+      { value: "name-reverse", label: t("Z To A") }
     ],
-    [t],
+    [t]
   );
 
   return (
-    <Wrapper onClick={() => handleProjectSelect(undefined)}>
+    <ManagerWrapper onClick={() => handleProjectSelect(undefined)}>
       <ManagerHeader
         size="large"
         actions={[
@@ -60,7 +67,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             icon="plus"
             appearance="primary"
             onClick={showProjectCreator}
-          />,
+          />
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}
@@ -71,119 +78,83 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         searchPlaceholder={t("Search in all assets library")}
         onSearch={handleSearch}
       />
-      <ProjectsWrapper
-        ref={wrapperRef}
-        onScroll={e => {
-          !isLoading && hasMoreProjects && handleScrollToBottom(e, handleGetMoreProjects);
-        }}>
-        <BreadcrumbContainer>
-          {favoriteProjects.length > 0 && (
-            <Breadcrumb
-              items={[
-                {
-                  title: (
-                    <Typography size="h5" weight="bold" color={theme.content.weak}>
-                      Stars
-                    </Typography>
-                  ),
-                },
-                ...(searchTerm
-                  ? [
-                      {
-                        title: (
-                          <Typography size="h5" weight="bold" color={theme.content.weak}>
-                            {`${t("Search Result for")} "${searchTerm}"`}
-                          </Typography>
-                        ),
-                      },
-                    ]
-                  : []),
-              ]}
-            />
-          )}
-        </BreadcrumbContainer>
-        {layout === "grid" && (
-          <ProjectsContainer>
-            {favoriteProjects.length > 0 && (
-              <ProjectsGrid>
-                {favoriteProjects.map(project => (
-                  <ProjectGridViewItem
-                    key={project.id}
-                    project={project}
-                    selectedProjectId={selectedProject?.id}
-                    onProjectUpdate={handleProjectUpdate}
-                    onProjectSelect={handleProjectSelect}
-                    onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                  />
-                ))}
-              </ProjectsGrid>
+      {filtedProjects?.length ? (
+        <ManagerContent>
+          <ContentWrapper>
+            <BreadcrumbContainer>
+              <Breadcrumb
+                items={[
+                  {
+                    title: (
+                      <Typography
+                        size="h5"
+                        weight="bold"
+                        color={theme.content.weak}
+                      >
+                        {t("All projects")}
+                      </Typography>
+                    )
+                  },
+                  ...(searchTerm
+                    ? [
+                        {
+                          title: (
+                            <Typography
+                              size="h5"
+                              weight="bold"
+                              color={theme.content.weak}
+                            >
+                              {`${t("Search Result for")} "${searchTerm}"`}
+                            </Typography>
+                          )
+                        }
+                      ]
+                    : [])
+                ]}
+              />
+            </BreadcrumbContainer>
+            {layout === "list" && (
+              <ListHeader width={contentWidth}>
+                <ThumbnailCol />
+                <ProjectNameCol>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Project Name")}
+                  </Typography>
+                </ProjectNameCol>
+                <TimeCol>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Updated At")}
+                  </Typography>
+                </TimeCol>
+                <TimeCol>
+                  <Typography size="body" color={theme.content.weak}>
+                    {t("Created At")}
+                  </Typography>
+                </TimeCol>
+                <ActionCol />
+              </ListHeader>
             )}
-            <Breadcrumb
-              items={[
-                {
-                  title: (
-                    <Typography
-                      size="h5"
-                      weight="bold"
-                      color={theme.content.weak}
-                      onClick={() => handleSearch(undefined)}>
-                      All Projects
-                    </Typography>
-                  ),
-                },
-                ...(searchTerm
-                  ? [
-                      {
-                        title: (
-                          <Typography size="h5" weight="bold" color={theme.content.weak}>
-                            {`${t("Search Result for")} "${searchTerm}"`}
-                          </Typography>
-                        ),
-                      },
-                    ]
-                  : []),
-              ]}
-            />
-            <ProjectsGrid>
-              {filtedProjects.map(project => (
-                <ProjectGridViewItem
-                  key={project.id}
-                  project={project}
-                  selectedProjectId={selectedProject?.id}
-                  onProjectUpdate={handleProjectUpdate}
-                  onProjectSelect={handleProjectSelect}
-                  onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                />
-              ))}
-            </ProjectsGrid>
-          </ProjectsContainer>
-        )}
-        {layout === "list" && (
-          <FlexTable>
-            <FlexTableRow>
-              <ActionCell />
-              <ProjectNameCell>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Project Name")}
-                </Typography>
-              </ProjectNameCell>
-              <TimeCell>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Last modified")}
-                </Typography>
-              </TimeCell>
-              <TimeCell>
-                <Typography size="body" color={theme.content.weak}>
-                  {t("Created time")}
-                </Typography>
-              </TimeCell>
-              <ActionCell />
-            </FlexTableRow>
-            <FlexTableBody>
-              <ProjectsContainer>
-                {favoriteProjects.length > 0 &&
-                  favoriteProjects.map(project => (
-                    <FlexTableRow key={project.id}>
+            <ProjectsWrapper
+              ref={wrapperRef}
+              onScroll={(e) => {
+                if (!isLoading && hasMoreProjects) {
+                  handleScrollToBottom(e, handleGetMoreProjects);
+                }
+              }}
+            >
+              <ProjectsContainer ref={contentRef}>
+                <ProjectsGroup layout={layout}>
+                  {filtedProjects.map((project) =>
+                    layout === "grid" ? (
+                      <ProjectGridViewItem
+                        key={project.id}
+                        project={project}
+                        selectedProjectId={selectedProject?.id}
+                        onProjectUpdate={handleProjectUpdate}
+                        onProjectSelect={handleProjectSelect}
+                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                      />
+                    ) : (
                       <ProjectListViewItem
                         key={project.id}
                         project={project}
@@ -192,56 +163,28 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                       />
-                    </FlexTableRow>
-                  ))}
-                <Breadcrumb
-                  items={[
-                    {
-                      title: (
-                        <Typography
-                          size="h5"
-                          weight="bold"
-                          color={theme.content.weak}
-                          onClick={() => handleSearch(undefined)}>
-                          All Projects
-                        </Typography>
-                      ),
-                    },
-                    ...(searchTerm
-                      ? [
-                          {
-                            title: (
-                              <Typography size="h5" weight="bold" color={theme.content.weak}>
-                                {searchTerm}
-                              </Typography>
-                            ),
-                          },
-                        ]
-                      : []),
-                  ]}
-                />
-                {filtedProjects.map(project => (
-                  <FlexTableRow key={project.id}>
-                    <ProjectListViewItem
-                      key={project.id}
-                      project={project}
-                      selectedProjectId={selectedProject?.id}
-                      onProjectUpdate={handleProjectUpdate}
-                      onProjectSelect={handleProjectSelect}
-                      onProjectOpen={() => handleProjectOpen(project.sceneId)}
-                    />
-                  </FlexTableRow>
-                ))}
+                    )
+                  )}
+                </ProjectsGroup>
               </ProjectsContainer>
-            </FlexTableBody>
-          </FlexTable>
-        )}
-        {isLoading && (
-          <LoadingWrapper>
-            <Loading relative />
-          </LoadingWrapper>
-        )}
-      </ProjectsWrapper>
+              {isLoading && (
+                <LoadingWrapper>
+                  <Loading relative />
+                </LoadingWrapper>
+              )}
+            </ProjectsWrapper>
+          </ContentWrapper>
+        </ManagerContent>
+      ) : isLoading ? (
+        <Loading relative />
+      ) : (
+        <ManagerEmptyContent>
+          <Typography size="h5" color={theme.content.weak}>
+            {t("No Project has been created yet")}
+          </Typography>
+        </ManagerEmptyContent>
+      )}
+
       {projectCreatorVisible && (
         <ProjectCreatorModal
           visible={projectCreatorVisible}
@@ -249,82 +192,98 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           onProjectCreate={handleProjectCreate}
         />
       )}
-    </Wrapper>
+    </ManagerWrapper>
   );
 };
 
 export default Projects;
 
-const Wrapper = styled("div")(() => ({
+const ContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  height: "100%",
   flexDirection: "column",
-  boxSizing: "border-box",
+  gap: theme.spacing.normal,
+  flex: 1,
+  height: 0
 }));
 
-const ProjectsWrapper = styled("div")(({ theme }) => ({
-  overflowY: "auto",
-  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`,
-  maxHeight: "calc(100vh - 76px)",
+const ProjectsWrapper = styled("div")(() => ({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  flex: 1,
+  overflow: "auto"
+}));
+
+const BreadcrumbContainer = styled("div")(({ theme }) => ({
+  padding: `0 ${theme.spacing.largest}px`
 }));
 
 const ProjectsContainer = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.large,
   flexDirection: "column",
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
-const BreadcrumbContainer = styled("div")(({ theme }) => ({
-  paddingBottom: theme.spacing.large,
-}));
-const ProjectsGrid = styled("div")(({ theme }) => ({
-  display: "grid",
-  gap: theme.spacing.normal,
-  width: "100%",
-  gridTemplateColumns: "repeat(4, 1fr)",
+const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
+  ({ theme, layout }) => ({
+    ...(layout === "grid"
+      ? {
+          display: "grid",
+          gap: theme.spacing.normal,
+          width: "100%",
+          gridTemplateColumns: "repeat(4, 1fr)",
 
-  "@media (max-width: 1200px)": {
-    gridTemplateColumns: "repeat(3, 1fr)",
-  },
-  "@media (max-width: 900px)": {
-    gridTemplateColumns: "repeat(2, 1fr)",
-  },
-  "@media (max-width: 600px)": {
-    gridTemplateColumns: "1fr",
-  },
-}));
+          "@media (max-width: 1200px)": {
+            gridTemplateColumns: "repeat(3, 1fr)"
+          },
+          "@media (max-width: 900px)": {
+            gridTemplateColumns: "repeat(2, 1fr)"
+          },
+          "@media (max-width: 600px)": {
+            gridTemplateColumns: "1fr"
+          }
+        }
+      : {}),
+    ...(layout === "list"
+      ? {
+          display: "flex",
+          flexDirection: "column",
+          gap: theme.spacing.normal
+        }
+      : {})
+  })
+);
 
-const FlexTable = styled("div")(({ theme }) => ({
+const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
   display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.normal,
+  alignItems: "center",
+  boxSizing: "border-box",
+  padding: `${theme.spacing.smallest}px ${theme.spacing.largest}px`,
+  width: width === 0 ? "100%" : width
 }));
 
-const FlexTableBody = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px",
+const ThumbnailCol = styled("div")(() => ({
+  width: 120,
+  flexShrink: 0
 }));
 
-const FlexTableRow = styled("div")(({ theme }) => ({
-  display: "flex",
-  width: "100%",
-  gap: theme.spacing.large,
-}));
-
-const ActionCell = styled("div")(() => ({
-  flex: 0.2,
-}));
-
-const ProjectNameCell = styled("div")(() => ({
+const ProjectNameCol = styled("div")(() => ({
   flex: 1,
+  flexShrink: 0
 }));
 
-const TimeCell = styled("div")(() => ({
-  flex: 0.5,
+const TimeCol = styled("div")(() => ({
+  flex: "0 0 20%",
+  flexShrink: 0
+}));
+
+const ActionCol = styled("div")(() => ({
+  flex: "0 0 10%",
+  flexShrink: 0
 }));
 
 const LoadingWrapper = styled("div")(() => ({
   width: "100%",
-  height: 100,
+  height: 100
 }));

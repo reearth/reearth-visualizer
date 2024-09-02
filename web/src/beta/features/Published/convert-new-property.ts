@@ -1,18 +1,21 @@
-import { mapValues } from "lodash-es";
-
 import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
 import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
 import { Layer, LayerAppearanceTypes } from "@reearth/core";
-import { NLSInfobox, NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
+import {
+  NLSInfobox,
+  NLSLayer,
+  SketchFeature
+} from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { mapValues } from "lodash-es";
 
 export const processNewProperty = (p: any): any => {
   if (typeof p !== "object") return p;
-  return mapValues(p, g => {
+  return mapValues(p, (g) => {
     return Array.isArray(g)
-      ? g.map(h => ({
+      ? g.map((h) => ({
           ...processNewPropertyGroup(h),
-          id: h.id,
+          id: h.id
         }))
       : processNewPropertyGroup(g);
   });
@@ -20,22 +23,32 @@ export const processNewProperty = (p: any): any => {
 
 function processNewPropertyGroup(g: any): any {
   if (typeof g !== "object") return g;
-  return mapValues(g, v => {
+  return mapValues(g, (v) => {
     if (Array.isArray(v)) {
       return {
-        value: v.map(vv =>
-          typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v // For compability
+        value: v.map((vv) =>
+          typeof v === "object" &&
+          v &&
+          "lat" in v &&
+          "lng" in v &&
+          "altitude" in v // For compability
             ? { value: { ...vv, height: vv.altitude } }
-            : vv,
-        ),
+            : vv
+        )
       };
     }
-    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
+    if (
+      typeof v === "object" &&
+      v &&
+      "lat" in v &&
+      "lng" in v &&
+      "altitude" in v
+    ) {
       return {
         value: {
           ...v,
-          height: v.altitude,
-        },
+          height: v.altitude
+        }
       };
     }
     return { value: v };
@@ -44,11 +57,11 @@ function processNewPropertyGroup(g: any): any {
 
 export function processLayers(
   newLayers?: NLSLayer[],
-  layerStyles?: LayerStyle[],
+  layerStyles?: LayerStyle[]
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      a => a.id === id,
+      (a) => a.id === id
     )?.value;
     if (typeof layerStyleValue === "object") {
       try {
@@ -61,19 +74,23 @@ export function processLayers(
     return DEFAULT_LAYER_STYLE;
   };
 
-  return newLayers?.map(nlsLayer => {
+  return newLayers?.map((nlsLayer) => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
-        features: nlsLayer.sketch?.featureCollection?.features.map((feature: SketchFeature) => {
-          return {
-            ...feature,
-            geometry: feature.geometry[0],
-          };
-        }),
+        features: nlsLayer.sketch?.featureCollection?.features.map(
+          (feature: SketchFeature) => {
+            return {
+              ...feature,
+              geometry: feature.geometry[0]
+            };
+          }
+        )
       },
+      isSketchLayer: true,
+      idProperty: "id"
     };
 
     return {
@@ -86,21 +103,23 @@ export function processLayers(
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
       data: nlsLayer.isSketch ? sketchLayerData : nlsLayer.config?.data,
-      ...layerStyle,
+      ...layerStyle
     };
   });
 }
 
-function convertInfobox(infobox: NLSInfobox | null | undefined): Layer["infobox"] {
+function convertInfobox(
+  infobox: NLSInfobox | null | undefined
+): Layer["infobox"] {
   if (!infobox) return;
   return {
     property: processNewProperty(infobox.property),
-    blocks: infobox.blocks?.map<InfoboxBlock>(b => ({
+    blocks: infobox.blocks?.map<InfoboxBlock>((b) => ({
       id: b.id,
       // name: blockNames?.[b.extensionId] ?? "Infobox Block",
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      property: processNewProperty(b.property),
-    })),
+      property: processNewProperty(b.property)
+    }))
   };
 }

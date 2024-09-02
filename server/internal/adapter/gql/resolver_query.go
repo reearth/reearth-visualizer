@@ -255,3 +255,7 @@ func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gq
 func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error) {
 	return loaders(ctx).Project.CheckAlias(ctx, alias)
 }
+
+func (r *queryResolver) StarredProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindStarredByWorkspace(ctx, teamId)
+}

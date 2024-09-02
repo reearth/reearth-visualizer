@@ -9,13 +9,13 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
   const [timelineEvents, emit] = useMemo(() => events<TimelineEventType>(), []);
 
   useEffect(() => {
-    timelineManagerRef?.current?.onTick(e => {
+    timelineManagerRef?.current?.onTick((e) => {
       emit("tick", e);
     });
   }, [timelineManagerRef, emit]);
 
   useEffect(() => {
-    timelineManagerRef?.current?.onCommit(e => {
+    timelineManagerRef?.current?.onCommit((e) => {
       emit("commit", e);
     });
   }, [timelineManagerRef, emit]);
@@ -24,23 +24,23 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
     <T extends keyof TimelineEventType>(
       type: T,
       callback: (...args: TimelineEventType[T]) => void,
-      options?: { once?: boolean },
+      options?: { once?: boolean }
     ) => {
       return options?.once
         ? timelineEvents.once(type, callback)
         : timelineEvents.on(type, callback);
     },
-    [timelineEvents],
+    [timelineEvents]
   );
 
   const timelineEventsOff = useCallback(
     <T extends keyof TimelineEventType>(
       type: T,
-      callback: (...args: TimelineEventType[T]) => void,
+      callback: (...args: TimelineEventType[T]) => void
     ) => {
       return timelineEvents.off(type, callback);
     },
-    [timelineEvents],
+    [timelineEvents]
   );
 
   // timeline
@@ -70,51 +70,57 @@ export default ({ timelineManagerRef }: Pick<Props, "timelineManagerRef">) => {
       play: () => {
         timelineManagerRef?.current?.commit({
           cmd: "PLAY",
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       pause: () => {
         timelineManagerRef?.current?.commit({
           cmd: "PAUSE",
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
-      setTime: (time: { start: Date | string; stop: Date | string; current: Date | string }) => {
+      setTime: (time: {
+        start: Date | string;
+        stop: Date | string;
+        current: Date | string;
+      }) => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: { ...time },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setSpeed: (speed: number) => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { multiplier: speed },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setStepType: (stepType: "rate" | "fixed") => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { stepType },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
       setRangeType: (rangeType: "unbounded" | "clamped" | "bounced") => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { rangeType },
-          committer: { source: "pluginAPI", id: "window" },
+          committer: { source: "pluginAPI", id: "window" }
         });
       },
-      tick: timelineManagerRef?.current?.tick as (() => Date | undefined) | undefined,
+      tick: timelineManagerRef?.current?.tick as
+        | (() => Date | undefined)
+        | undefined,
       on: timelineEventsOn,
-      off: timelineEventsOff,
+      off: timelineEventsOff
     };
   }, [timelineManagerRef, timelineEventsOn, timelineEventsOff]);
 
   return {
     getTimeline,
-    timelineEvents,
+    timelineEvents
   };
 };

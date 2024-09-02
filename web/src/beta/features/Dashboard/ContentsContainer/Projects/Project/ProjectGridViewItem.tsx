@@ -1,7 +1,6 @@
-import { FC } from "react";
-
 import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -11,7 +10,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate,
+  onProjectUpdate
 }) => {
   const theme = useTheme();
 
@@ -26,12 +25,12 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
+    handleProjectStarClick
   } = useHooks({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect,
+    onProjectSelect
   });
 
   return (
@@ -39,19 +38,21 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
       <CardImage
         backgroundImage={project.imageUrl}
         onDoubleClick={onProjectOpen}
-        onClick={e => onProjectSelect?.(e, project.id)}
+        onClick={(e) => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
         onMouseEnter={() => handleProjectHover?.(true)}
         onMouseLeave={() => handleProjectHover?.(false)}
-        isSelected={selectedProjectId === project.id}>
+        isSelected={selectedProjectId === project.id}
+      >
         <StarButtonWrapper
           isStarred={isStarred ?? false}
           isHovered={isHovered ?? false}
-          isSelected={selectedProjectId === project.id}>
+          isSelected={selectedProjectId === project.id}
+        >
           <Button
             iconButton
             icon={isStarred ? "starFilled" : "star"}
-            onClick={e => handleProjectStarClick?.(e)}
+            onClick={(e) => handleProjectStarClick?.(e)}
             iconColor={isStarred ? theme.warning.main : theme.content.main}
             appearance="simple"
           />
@@ -61,7 +62,9 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         {publishStatus && <PublishStatus />}
         <CardTitleWrapper>
           {!isEditing ? (
-            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>{projectName}</CardTitle>
+            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
+              {projectName}
+            </CardTitle>
           ) : (
             <TextInput
               onChange={handleProjectNameChange}
@@ -74,7 +77,9 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         </CardTitleWrapper>
         <PopupMenu
           menu={popupMenu}
-          label={<Button icon="dotsThreeVertical" iconButton appearance="simple" />}
+          label={
+            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+          }
         />
       </CardFooter>
     </Card>
@@ -88,8 +93,8 @@ const Card = styled("div")(() => ({
   flexDirection: "column",
   height: "220px",
   "@media (max-width: 567px)": {
-    height: "171px",
-  },
+    height: "171px"
+  }
 }));
 
 const CardImage = styled("div")<{
@@ -99,11 +104,13 @@ const CardImage = styled("div")<{
 }>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
   position: "relative",
-  background: backgroundImage ? `url(${backgroundImage}) center/cover` : theme.bg[1],
+  background: backgroundImage
+    ? `url(${backgroundImage}) center/cover`
+    : theme.bg[1],
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
-  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
+  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`
 }));
 
 const StarButtonWrapper = styled("div")<{
@@ -114,25 +121,25 @@ const StarButtonWrapper = styled("div")<{
   position: "absolute",
   top: "10px",
   right: "10px",
-  opacity: isSelected || isStarred || isHovered ? 1 : 0,
+  opacity: isSelected || isStarred || isHovered ? 1 : 0
 }));
 
 const CardFooter = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  padding: `0 ${theme.spacing.smallest}`,
+  padding: `0 ${theme.spacing.smallest}`
 }));
 
 const PublishStatus = styled("div")(({ theme }) => ({
   height: "12px",
   width: "12px",
   borderRadius: "50%",
-  background: theme.publish.main,
+  background: theme.publish.main
 }));
 
 const CardTitleWrapper = styled("div")(() => ({
-  flex: 1,
+  flex: 1
 }));
 
 const CardTitle = styled("div")(({ theme }) => ({
@@ -146,5 +153,5 @@ const CardTitle = styled("div")(({ theme }) => ({
   WebkitLineClamp: 1,
   overflow: "hidden",
   textOverflow: "ellipsis",
-  cursor: "pointer",
+  cursor: "pointer"
 }));
