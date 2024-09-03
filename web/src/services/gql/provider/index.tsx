@@ -63,7 +63,8 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       errorLink(),
       sentryLink(endpoint),
       authLink(),
-      uploadLink(endpoint)
+       // https://github.com/apollographql/apollo-client/issues/6011#issuecomment-619468320
+       uploadLink(endpoint) as unknown as ApolloLink
       
     ]),
     cache,
