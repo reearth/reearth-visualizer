@@ -1,5 +1,5 @@
 
-import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
+import { Button, DragAndDropList, Icon } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
@@ -24,6 +24,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   const {
     editTitleIndex,
     editTypeIndex,
+    warning,
     handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,
@@ -89,12 +90,21 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
             />
           )}
         </PropertyTableBody>
+        {warning && (
+            <Warning>
+              <Icon icon="warning" size="large" />
+              {t(
+                "This keyword is forbidden because is already used in property"
+              )}
+            </Warning>
+          )}
         <Button
           icon="plus"
           title={t("New Property")}
           size="small"
           onClick={handleCustomPropertyAdd}
           appearance="primary"
+          disabled={warning}
         />
       </PropertyTable>
     </ContentWrapper>
@@ -134,6 +144,16 @@ const ActionCol = styled("div")(() => ({
 
 const PropertyHeaderCol = styled("div")(() => ({
   flex: 1
+}));
+
+const Warning = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  paddingTop: theme.spacing.small,
+  color: theme.dangerous.main,
+  alignItems: "center",
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular
 }));
 
 export default SketchCustomProperties;

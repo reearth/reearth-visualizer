@@ -35,7 +35,9 @@ export default ({
           if (
             updatedData.startTime &&
             new Date(updatedData.currentTime.substring(0, 19)) <
-              new Date(updatedData.startTime.substring(0, 19))
+              new Date(updatedData.startTime.substring(0, 19)) || 
+              new Date(updatedData.currentTime.substring(0, 19)) >
+              new Date(updatedData.endTime.substring(0, 19))
           ) {
             setWarning(true);
           } else {
@@ -99,6 +101,12 @@ export default ({
     return false;
   }, [timePeriodValues]);
 
+  const handleClose = useCallback(() => {
+      setTimePeriodValues?.(undefined)
+      onClose?.();
+  
+  }, [setTimePeriodValues, onClose]);
+
   return {
     warning,
     isDisabled,
@@ -106,6 +114,7 @@ export default ({
     setDisabledFields,
     handleChange,
     handleTimePointPopup,
-    handleSubmit
+    handleSubmit,
+    handleClose
   };
 };
