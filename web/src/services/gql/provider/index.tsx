@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 
 import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
-import { authLink, sentryLink, uploadLink, errorLink } from "./links";
+import { authLink, sentryLink, errorLink, uploadLink } from "./links";
 import { paginationMerge } from "./pagination";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
@@ -64,6 +64,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       sentryLink(endpoint),
       authLink(),
       uploadLink(endpoint)
+      
     ]),
     cache,
     connectToDevTools: import.meta.env.DEV
