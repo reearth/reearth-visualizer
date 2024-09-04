@@ -263,7 +263,7 @@ export default (workspaceId?: string) => {
   };
 };
 
-const toPublishmentStatus = (s: PublishmentStatus) => {
+export const toPublishmentStatus = (s?: PublishmentStatus) => {
   switch (s) {
     case PublishmentStatus.Public:
       return "published";
