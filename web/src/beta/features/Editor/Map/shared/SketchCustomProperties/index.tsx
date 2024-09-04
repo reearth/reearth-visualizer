@@ -16,15 +16,16 @@ const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
 const SketchCustomProperties: FC<CustomPropertyProps> = ({
   customProperties,
   propertiesList,
+  warning,
   setPropertiesList,
-  setCustomProperties
+  setCustomProperties,
+  setWarning
 }) => {
   const t = useT();
 
   const {
     editTitleIndex,
     editTypeIndex,
-    warning,
     handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,
@@ -36,7 +37,9 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
     customProperties,
     propertiesList,
     setPropertiesList,
-    setCustomProperties
+    setCustomProperties,
+    setWarning
+
   });
 
   const DraggableCustomPropertyItems = useMemo(
@@ -94,7 +97,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
             <Warning>
               <Icon icon="warning" size="large" />
               {t(
-                "This keyword is forbidden because is already used in property"
+                "The keyword you want to use as the custom property title has been used in the system, please choose any other keyword"
               )}
             </Warning>
           )}
@@ -153,7 +156,8 @@ const Warning = styled("div")(({ theme }) => ({
   color: theme.dangerous.main,
   alignItems: "center",
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular
+  fontWeight: theme.fonts.weight.regular,
+  padding: `${theme.spacing.smallest}px 0`,
 }));
 
 export default SketchCustomProperties;

@@ -33,6 +33,8 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
     CustomPropertyProp[]
   >([]);
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
+  const [warning, setWarning] = useState(false);
+
   const { handleClose, handleSubmit } = useHooks({
     layers,
     layerId,
@@ -55,6 +57,7 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
               title="Apply"
               appearance="primary"
               onClick={handleSubmit}
+              disabled={warning}
             />
           </>
         }
@@ -65,6 +68,8 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
             setCustomProperties={setCustomProperties}
             propertiesList={propertiesList}
             setPropertiesList={setPropertiesList}
+            warning={warning}
+            setWarning={setWarning}
           />
         </Wrapper>
       </ModalPanel>

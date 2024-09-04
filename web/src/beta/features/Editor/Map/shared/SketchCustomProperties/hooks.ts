@@ -12,28 +12,28 @@ export default function useHooks({
   customProperties,
   propertiesList,
   setPropertiesList,
-  setCustomProperties
+  setCustomProperties,
+  setWarning,
 }: CustomPropertyProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [editTitleIndex, setEditTitleIndex] = useState<number | null>(null);
   const [editTypeIndex, setEditTypeIndex] = useState<number | null>(null);
-  const [warning, setWarning] = useState(false);
 
   const handleTitleBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
       if (!propertiesList) return;
       if (forbiddenKeywords.has(newKeyValue ?? "")) {
-        setWarning(true)
+        setWarning?.(true)
         return; 
       }
       const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
       newList[idx].key = newKeyValue ?? "";
       setPropertiesList?.(newList);
       if (editTitleIndex === idx) setEditTitleIndex(null);
-      setWarning(false)
+      setWarning?.(false)
 
     },
-    [editTitleIndex, propertiesList, setPropertiesList]
+    [editTitleIndex, propertiesList, setPropertiesList, setWarning]
   );
 
   const handleTypeChange = useCallback(
@@ -140,7 +140,6 @@ export default function useHooks({
     isDragging,
     editTitleIndex,
     editTypeIndex,
-    warning,
     handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,
