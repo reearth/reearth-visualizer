@@ -1,5 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { useRef } from "react";
 
 import Component, { Props, Ref } from ".";
@@ -9,7 +9,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-export const Default: Story<Props> = (args) => <Component {...args} />;
+export const Default: StoryFn<Props> = (args) => <Component {...args} />;
 
 let cb: (message: any) => void;
 
@@ -45,7 +45,7 @@ Default.args = {
   }
 };
 
-export const HiddenIFrame: Story<Props> = (args) => <Component {...args} />;
+export const HiddenIFrame: StoryFn<Props> = (args) => <Component {...args} />;
 
 HiddenIFrame.args = {
   src: `/plugins/hidden.js`,
@@ -57,7 +57,7 @@ HiddenIFrame.args = {
       backgroundColor: "#fff"
     }
   },
-  exposed: ({ main: { render, postMessage } }) => ({
+  exposed: ({ main: {render, postMessage } }) => ({
     console: {
       log: action("console.log")
     },
@@ -79,7 +79,7 @@ HiddenIFrame.args = {
   }
 };
 
-export const SourceCode: Story<Props> = (args) => <Component {...args} />;
+export const SourceCode: StoryFn<Props> = (args) => <Component {...args} />;
 
 SourceCode.args = {
   sourceCode: `console.log("Hello")`,
@@ -90,7 +90,7 @@ SourceCode.args = {
   }
 };
 
-export const AutoResize: Story<Props> = (args) => {
+export const AutoResize: StoryFn<Props> = (args) => {
   const ref = useRef<Ref>(null);
   return (
     <Component
