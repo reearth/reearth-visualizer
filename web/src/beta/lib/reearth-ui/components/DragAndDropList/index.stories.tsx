@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { ReactNode, useState } from "react";
 
 import { Icon } from "../Icon";
@@ -46,7 +46,7 @@ const DefaultComponent: typeof DragAndDropList<Item> = (args) => {
   );
 };
 
-export const Default: Story = () => {
+export const Default: StoryFn = () => {
   return (
     <div
       style={{
@@ -100,7 +100,7 @@ const HandleComponent: typeof DragAndDropList<Item> = (args) => {
   );
 };
 
-export const Handle: Story = () => {
+export const Handle: StoryFn = () => {
   return (
     <div
       style={{
@@ -149,7 +149,7 @@ const SharedComponent: typeof DragAndDropList<Item> = (args) => {
   );
 };
 
-export const Shared: Story = () => {
+export const Shared: StoryFn = () => {
   return (
     <div
       style={{
@@ -163,7 +163,7 @@ export const Shared: Story = () => {
   );
 };
 
-export const Copy: Story = () => {
+export const Copy: StoryFn = () => {
   return (
     <div
       style={{

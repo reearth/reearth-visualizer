@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { useRef } from "react";
 
 import Component, { Props, Ref } from ".";
@@ -12,7 +12,7 @@ export default {
   // parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = (args) => {
+export const Default: StoryFn<Props> = (args) => {
   const ref = useRef<Ref>(null);
   const postMessage = () => {
     ref.current?.postMessage({ foo: new Date().toISOString() });

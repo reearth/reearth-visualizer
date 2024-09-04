@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 
 import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
-import { authLink, sentryLink, uploadLink, errorLink } from "./links";
+import { authLink, sentryLink, errorLink, uploadLink } from "./links";
 import { paginationMerge } from "./pagination";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
@@ -63,7 +63,9 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       errorLink(),
       sentryLink(endpoint),
       authLink(),
-      uploadLink(endpoint)
+       // https://github.com/apollographql/apollo-client/issues/6011#issuecomment-619468320
+       uploadLink(endpoint) as unknown as ApolloLink
+      
     ]),
     cache,
     connectToDevTools: import.meta.env.DEV

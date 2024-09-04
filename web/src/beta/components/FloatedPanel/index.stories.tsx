@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import FloatedPanel, { Props } from ".";
 
@@ -9,7 +9,7 @@ const meta: Meta<Props> = {
 
 export default meta;
 
-const Template: Story<Props> = (args) => <FloatedPanel {...args} />;
+const Template: StoryFn<Props> = (args) => <FloatedPanel {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

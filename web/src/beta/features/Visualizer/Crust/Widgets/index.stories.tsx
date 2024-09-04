@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import { contextEvents } from "./Widget/storybook";
 
@@ -12,7 +12,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-const Template: Story<Props> = (args) => (
+const Template: StoryFn<Props> = (args) => (
   <div style={{ width: "100%", height: "100%" }}>
     <Component {...args} />
   </div>

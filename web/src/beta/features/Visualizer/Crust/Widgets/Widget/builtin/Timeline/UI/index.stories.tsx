@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { useState } from "react";
 
 import Timeline, { Props } from ".";
@@ -7,7 +7,7 @@ export default {
   component: Timeline
 } as Meta;
 
-export const Normal: Story<Props> = () => (
+export const Normal: StoryFn<Props> = () => (
   <Timeline
     currentTime={new Date("2022-06-30T12:20:00.000").getTime()}
     range={{
@@ -18,7 +18,7 @@ export const Normal: Story<Props> = () => (
   />
 );
 
-export const DefaultRange: Story<Props> = () => (
+export const DefaultRange: StoryFn<Props> = () => (
   <Timeline
     // Forward a hour
     currentTime={Date.now() + 3600000}
@@ -26,7 +26,7 @@ export const DefaultRange: Story<Props> = () => (
   />
 );
 
-export const Movable: Story<Props> = () => {
+export const Movable: StoryFn<Props> = () => {
   // Forward a hour
   const [currentTime, setCurrentTime] = useState(() => Date.now() + 3600000);
   const [isOpened, setIsOpened] = useState(false);
