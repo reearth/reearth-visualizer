@@ -60,7 +60,7 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
           />
         ) : (
           <TitleWrapper onDoubleClick={() => onDoubleClick?.("name")}>
-            {customPropertyTitle.trim()}
+            {customPropertyTitle}
           </TitleWrapper>
         )}
       </ProjectItemCol>

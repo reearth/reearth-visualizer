@@ -23,7 +23,7 @@ export default function useHooks({
     (idx: number) => (newKeyValue?: string) => {
       if (!propertiesList) return;
         const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
-        newList[idx].key = newKeyValue ?? "";
+        newList[idx].key = newKeyValue?.trim()  ?? "";
         setPropertiesList?.(newList);
         const hasForbiddenKey = newList.some(item => forbiddenKeywords.has(item.key));
       if (hasForbiddenKey) {
