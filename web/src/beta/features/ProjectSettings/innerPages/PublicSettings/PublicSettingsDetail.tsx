@@ -3,25 +3,29 @@ import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
 import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
-import { useT } from "@reearth/services/i18n";
+import { Story } from "@reearth/services/api/storytellingApi/utils";
+import { useAuth } from "@reearth/services/auth";
+import { useLang, useT } from "@reearth/services/i18n";
+import {
+  NotificationType,
+  useCurrentTheme,
+  useNotification
+} from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { useGA } from "../../../Published/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
 
 import {
   PublicAliasSettingsType,
   PublicBasicAuthSettingsType,
   PublicSettingsType,
-  PublicGASettingsType
+  PublicGASettingsType,
+  SettingsProject
 } from ".";
 
 type Props = {
-  settingsItem: PublicSettingsType &
-    PublicBasicAuthSettingsType &
-    PublicAliasSettingsType &
-    PublicGASettingsType;
+  settingsItem: SettingsProject | Story;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
@@ -80,7 +84,25 @@ const PublicSettingsDetail: React.FC<Props> = ({
     }
   }, [localGA, onUpdateGA]);
 
-  useGA(localGA);
+  const extensions = window.REEARTH_CONFIG?.extensions?.publication;
+  const [accessToken, setAccessToken] = useState<string>();
+  const { getAccessToken } = useAuth();
+  const currentLang = useLang();
+  const [currentTheme] = useCurrentTheme();
+
+  useEffect(() => {
+    getAccessToken().then((token) => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
+
+  const [, setNotification] = useNotification();
+  const onNotificationChange = useCallback(
+    (type: NotificationType, text: string, heading?: string) => {
+      setNotification({ type, text, heading });
+    },
+    [setNotification]
+  );
 
   return (
     <>
@@ -107,7 +129,10 @@ const PublicSettingsDetail: React.FC<Props> = ({
               assetsTypes={IMAGE_TYPES}
               value={localPublicInfo.publicImage}
               onChange={(publicImage) => {
-                setLocalPublicInfo((s) => ({ ...s, publicImage }));
+                setLocalPublicInfo((s) => ({
+                  ...s,
+                  publicImage: publicImage ?? ""
+                }));
               }}
             />
             <StyledImage
@@ -207,6 +232,21 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
+      {extensions && extensions.length > 0 && accessToken && (
+        <Collapse title={t("Custom Domain")} size="large">
+          {extensions.map((ext) => (
+            <ext.component
+              key={ext.id}
+              projectId={settingsItem.id}
+              projectAlias={settingsItem.alias}
+              lang={currentLang}
+              theme={currentTheme}
+              accessToken={accessToken}
+              onNotificationChange={onNotificationChange}
+            />
+          ))}
+        </Collapse>
+      )}
     </>
   );
 };
