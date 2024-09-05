@@ -22,20 +22,20 @@ export default function useHooks({
   const handleTitleBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
       if (!propertiesList) return;
-      if (forbiddenKeywords.has(newKeyValue ?? "")) {
-        setWarning?.(true)
-        return; 
+        const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
+        newList[idx].key = newKeyValue ?? "";
+        setPropertiesList?.(newList);
+        const hasForbiddenKey = newList.some(item => forbiddenKeywords.has(item.key));
+      if (hasForbiddenKey) {
+        setWarning?.(true);
+      } else {
+        setWarning?.(false);
       }
-      const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
-      newList[idx].key = newKeyValue ?? "";
-      setPropertiesList?.(newList);
       if (editTitleIndex === idx) setEditTitleIndex(null);
-      setWarning?.(false)
-
     },
     [editTitleIndex, propertiesList, setPropertiesList, setWarning]
   );
-
+  
   const handleTypeChange = useCallback(
     (idx: number) => (value?: string | string[]) => {
       if (!propertiesList) return;
