@@ -20,7 +20,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     isEditing,
     isHovered,
     isStarred,
-    publishStatus,
+    hasMapPublished,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
@@ -59,7 +59,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         </StarButtonWrapper>
       </CardImage>
       <CardFooter>
-        {publishStatus && <PublishStatus />}
+        {hasMapPublished && <PublishStatus />}
         <CardTitleWrapper>
           {!isEditing ? (
             <CardTitle onDoubleClick={handleProjectNameDoubleClick}>

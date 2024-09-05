@@ -35,7 +35,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     isEditing,
     isHovered,
     isStarred,
-    publishStatus,
+    hasMapPublished,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
@@ -76,7 +76,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
         </ActionWrapper>
       </ThumbnailCol>
       <ProjectNameCol>
-        <PublishStatus status={publishStatus} />
+        <PublishStatus status={hasMapPublished} />
         {!isEditing ? (
           <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
             {projectName}

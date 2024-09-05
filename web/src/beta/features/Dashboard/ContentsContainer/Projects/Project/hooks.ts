@@ -97,22 +97,20 @@ export default ({
     },
     [isStarred, onProjectUpdate, project]
   );
- 
-  const filteredStories = useMemo(() => {
-    return stories?.map(
-      story => ({ publishmentStatus: toPublishmentStatus(story.publishmentStatus) })
-    );
-  }, [stories]);
 
-  const publishStatus = useMemo(() => {
-    const projectStatus =
-      project.status === "published" || project.status === "limited";
-    const storyStatus = filteredStories?.some(
+  const hasMapPublished = useMemo(() => {
+    const filteredStories = stories?.map(story => ({
+      publishmentStatus: toPublishmentStatus(story.publishmentStatus),
+    }));
+
+    const projectStatus = project.status === "published" || project.status === "limited";
+    const hasStoryPublished = filteredStories?.some(
       story => story.publishmentStatus === "published" || story.publishmentStatus === "limited"
     );
 
-    return projectStatus || storyStatus;
-  }, [project.status, filteredStories]);
+    return projectStatus || hasStoryPublished;
+  }, [stories, project.status]);
+
 
 
   return {
@@ -121,7 +119,7 @@ export default ({
     isHovered,
     popupMenu,
     isStarred,
-    publishStatus,
+    hasMapPublished,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
