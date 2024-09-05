@@ -41,6 +41,8 @@ export type Story = {
   panelPosition?: Position;
   alias: string;
   pages?: Page[];
+  trackingId?: string; // Not supported yet
+  enableGa?: boolean; // Not supported yet
 };
 
 export const getStories = (rawScene?: GetSceneQuery) => {
