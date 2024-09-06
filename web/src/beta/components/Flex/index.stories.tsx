@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import Component, { Props } from ".";
 
@@ -13,18 +13,18 @@ const ExampleDiv = () => (
   </>
 );
 
-export const SpaceBetween: Story<Props> = (args) => (
+export const SpaceBetween: StoryFn<Props> = (args) => (
   <Component {...args}>
     <ExampleDiv />
   </Component>
 );
-export const GapChildren: Story<Props> = (args) => (
+export const GapChildren: StoryFn<Props> = (args) => (
   <Component {...args}>
     <div>hoge</div>
     <div>fuga</div>
   </Component>
 );
-export const DirectionVertical: Story<Props> = (args) => (
+export const DirectionVertical: StoryFn<Props> = (args) => (
   <Component {...args}>
     <ExampleDiv />
   </Component>

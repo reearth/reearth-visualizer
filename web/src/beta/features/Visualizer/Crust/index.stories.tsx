@@ -5,7 +5,7 @@ import {
   InteractionModeType,
   INTERACTION_MODES
 } from "@reearth/core";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { useRef } from "react";
 
 import { MapRef } from "./types";
@@ -17,7 +17,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-const Template: Story<
+const Template: StoryFn<
   Props & { engine: Engine; interactionMode: InteractionModeType }
 > = (args) => {
   const ref = useRef<MapRef>(null);

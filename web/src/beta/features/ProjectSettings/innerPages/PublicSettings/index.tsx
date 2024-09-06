@@ -38,21 +38,23 @@ export type PublicGASettingsType = {
   trackingId?: string;
 };
 
+export type SettingsProject = {
+  id: string;
+  publicTitle: string;
+  publicDescription: string;
+  publicImage: string;
+  isBasicAuthActive: boolean;
+  basicAuthUsername: string;
+  basicAuthPassword: string;
+  alias: string;
+  publishmentStatus: string;
+  isArchived: boolean;
+  enableGa: boolean;
+  trackingId: string;
+};
+
 type Props = {
-  project: {
-    id: string;
-    publicTitle: string;
-    publicDescription: string;
-    publicImage: string;
-    isBasicAuthActive: boolean;
-    basicAuthUsername: string;
-    basicAuthPassword: string;
-    alias: string;
-    publishmentStatus: string;
-    isArchived: boolean;
-    enableGa: boolean;
-    trackingId: string;
-  };
+  project: SettingsProject;
   stories: Story[];
   currentStory?: Story;
   subId?: string;
