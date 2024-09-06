@@ -41,6 +41,15 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
     [onTypeChange]
   );
 
+  const handleTitleBlur = useCallback(
+    (title: string) => {
+      const trimmedTitle = title.trim();
+      setCustomPropertyTitle(trimmedTitle);
+      onBlur?.(trimmedTitle);
+    },
+    [onBlur]
+  );
+
   return (
     <PropertyFieldWrapper>
       <Icon
@@ -50,13 +59,14 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
         size="small"
       />
       <ProjectItemCol>
-        {customPropertyItem.key.trim() === "" || isEditTitle ? (
+        {customPropertyItem.key === "" || isEditTitle ? (
           <TextInput
             size="small"
             value={customPropertyTitle}
             onChange={handleTitleChange}
-            onBlur={onBlur}
+            onBlur={handleTitleBlur}
             placeholder={t("Type Title here")}
+            autoFocus
           />
         ) : (
           <TitleWrapper onDoubleClick={() => onDoubleClick?.("name")}>
