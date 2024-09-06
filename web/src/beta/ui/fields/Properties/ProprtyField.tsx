@@ -13,6 +13,7 @@ import {
   SelectField,
   SpacingField,
   SwitchField,
+  TextareaField,
   TimePointField,
   TwinInputField
 } from "..";
@@ -92,6 +93,14 @@ const PropertyField: FC<Props> = ({
           />
         ) : schema.ui === "buttons" ? (
           <p key={schema.id}>Button radio field</p>
+        ) : schema.ui === "multiline" ? (
+          <TextareaField
+            key={schema.id}
+            commonTitle={schema.name}
+            value={(value as string) ?? ""}
+            description={schema.description}
+            onBlur={handleChange}
+          />
         ) : (
           <InputField
             key={schema.id}
