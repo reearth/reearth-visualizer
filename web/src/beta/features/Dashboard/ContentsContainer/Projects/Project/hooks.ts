@@ -24,7 +24,6 @@ export default ({
   const { useStoriesQuery } = useStorytellingFetcher();
   const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
 
-
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
@@ -98,20 +97,19 @@ export default ({
     [isStarred, onProjectUpdate, project]
   );
 
-  const hasMapPublished = useMemo(() => {
-    const filteredStories = stories?.map(story => ({
-      publishmentStatus: toPublishmentStatus(story.publishmentStatus),
-    }));
+  const hasMapOrStoryPublished = useMemo(() => {
+    const hasMapPublished =
+      project.status === "published" || project.status === "limited";
 
-    const projectStatus = project.status === "published" || project.status === "limited";
-    const hasStoryPublished = filteredStories?.some(
-      story => story.publishmentStatus === "published" || story.publishmentStatus === "limited"
-    );
+    const hasStoryPublished = stories?.some((story) => {
+      const publishmentStatus = toPublishmentStatus(story.publishmentStatus);
+      return (
+        publishmentStatus === "published" || publishmentStatus === "limited"
+      );
+    });
 
-    return projectStatus || hasStoryPublished;
+    return hasMapPublished || hasStoryPublished;
   }, [stories, project.status]);
-
-
 
   return {
     isEditing,
@@ -119,7 +117,7 @@ export default ({
     isHovered,
     popupMenu,
     isStarred,
-    hasMapPublished,
+    hasMapOrStoryPublished,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
