@@ -33,7 +33,8 @@ const EditModal: FC<EditPanelProps> = ({
     setDisabledFields,
     handleChange,
     handleSubmit,
-    handleTimePointPopup
+    handleTimePointPopup,
+    handleClose
   } = useHooks({
     timePeriodValues,
     onChange,
@@ -57,10 +58,10 @@ const EditModal: FC<EditPanelProps> = ({
     <Modal visible={visible} size="small">
       <ModalPanel
         title={t("Time Period Settings")}
-        onCancel={onClose}
+        onCancel={handleClose}
         actions={
           <>
-            <Button onClick={onClose} size="normal" title="Cancel" />
+            <Button onClick={handleClose} size="normal" title="Cancel" />
             <Button
               size="normal"
               title="Apply"

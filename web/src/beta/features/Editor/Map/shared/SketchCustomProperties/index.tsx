@@ -1,5 +1,5 @@
 
-import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
+import { Button, DragAndDropList, Icon } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
@@ -16,8 +16,10 @@ const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
 const SketchCustomProperties: FC<CustomPropertyProps> = ({
   customProperties,
   propertiesList,
+  warning,
   setPropertiesList,
-  setCustomProperties
+  setCustomProperties,
+  setWarning
 }) => {
   const t = useT();
 
@@ -35,7 +37,9 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
     customProperties,
     propertiesList,
     setPropertiesList,
-    setCustomProperties
+    setCustomProperties,
+    setWarning
+
   });
 
   const DraggableCustomPropertyItems = useMemo(
@@ -89,12 +93,21 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
             />
           )}
         </PropertyTableBody>
+        {warning && (
+            <Warning>
+              <Icon icon="warning" size="large" />
+              {t(
+                "The keyword you want to use as the custom property title has been used in the system, please choose any other keyword"
+              )}
+            </Warning>
+          )}
         <Button
           icon="plus"
           title={t("New Property")}
           size="small"
           onClick={handleCustomPropertyAdd}
           appearance="primary"
+          disabled={warning}
         />
       </PropertyTable>
     </ContentWrapper>
@@ -134,6 +147,17 @@ const ActionCol = styled("div")(() => ({
 
 const PropertyHeaderCol = styled("div")(() => ({
   flex: 1
+}));
+
+const Warning = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  paddingTop: theme.spacing.small,
+  color: theme.dangerous.main,
+  alignItems: "center",
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  padding: `${theme.spacing.smallest}px 0`,
 }));
 
 export default SketchCustomProperties;

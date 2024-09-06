@@ -23,6 +23,8 @@ export type CustomPropertyProps = {
   propertiesList?: PropertyListProp[];
   setCustomProperties?: (prev: CustomPropertyProp[]) => void;
   setPropertiesList?: (prev: PropertyListProp[]) => void;
+  warning?: boolean;
+  setWarning?: (val: boolean) => void;
 };
 
 export type SketchLayerProps = {
