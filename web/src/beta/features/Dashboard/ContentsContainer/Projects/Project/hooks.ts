@@ -1,9 +1,11 @@
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
+import { useStorytellingFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project as ProjectType } from "../../../type";
+import { toPublishmentStatus } from "../hooks";
 
 type Props = {
   project: ProjectType;
@@ -19,6 +21,8 @@ export default ({
   onProjectSelect
 }: Props) => {
   const t = useT();
+  const { useStoriesQuery } = useStorytellingFetcher();
+  const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
 
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
@@ -93,10 +97,19 @@ export default ({
     [isStarred, onProjectUpdate, project]
   );
 
-  const publishStatus = useMemo(
-    () => project.status === "published" || project.status === "limited",
-    [project.status]
-  );
+  const hasMapOrStoryPublished = useMemo(() => {
+    const hasMapPublished =
+      project.status === "published" || project.status === "limited";
+
+    const hasStoryPublished = stories?.some((story) => {
+      const publishmentStatus = toPublishmentStatus(story.publishmentStatus);
+      return (
+        publishmentStatus === "published" || publishmentStatus === "limited"
+      );
+    });
+
+    return hasMapPublished || hasStoryPublished;
+  }, [stories, project.status]);
 
   return {
     isEditing,
@@ -104,7 +117,7 @@ export default ({
     isHovered,
     popupMenu,
     isStarred,
-    publishStatus,
+    hasMapOrStoryPublished,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
