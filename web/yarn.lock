@@ -5751,49 +5751,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jitl/quickjs-ffi-types@npm:0.30.0":
-  version: 0.30.0
-  resolution: "@jitl/quickjs-ffi-types@npm:0.30.0"
-  checksum: 10c0/2f929808927f737827ac8545e716ad4a0497040b367e256c5df33efadb3696734d3bb532ea3bc9d09539d55356c2a6c5301457f96375b0507b3e1aa6490a020b
-  languageName: node
-  linkType: hard
-
-"@jitl/quickjs-wasmfile-debug-asyncify@npm:0.30.0":
-  version: 0.30.0
-  resolution: "@jitl/quickjs-wasmfile-debug-asyncify@npm:0.30.0"
-  dependencies:
-    "@jitl/quickjs-ffi-types": "npm:0.30.0"
-  checksum: 10c0/e7895439c5d5bdff9dcf54d716c92cb4f7bc222aee20e342111a050c43bb24461b33da6b843dd4c05f96d85883037343653e8c7f916e8037e052c1a00ee5a99d
-  languageName: node
-  linkType: hard
-
-"@jitl/quickjs-wasmfile-debug-sync@npm:0.30.0":
-  version: 0.30.0
-  resolution: "@jitl/quickjs-wasmfile-debug-sync@npm:0.30.0"
-  dependencies:
-    "@jitl/quickjs-ffi-types": "npm:0.30.0"
-  checksum: 10c0/bf57ca0e479f4c02a049be2f0c8fcc54ebf81ad4b7e8508529a5d9028e84a9a7f67c970bd3d985ef58dbc6c7f78dc88a100ca954c74e17f5feb861596736dcad
-  languageName: node
-  linkType: hard
-
-"@jitl/quickjs-wasmfile-release-asyncify@npm:0.30.0":
-  version: 0.30.0
-  resolution: "@jitl/quickjs-wasmfile-release-asyncify@npm:0.30.0"
-  dependencies:
-    "@jitl/quickjs-ffi-types": "npm:0.30.0"
-  checksum: 10c0/3ce1eb661f5298df6b50b5ea583c34c26aac02aca39937ad971125a5886242f9b8766bcece217c045924cdef766316d818aad37effd21f5b6323982f447bff4f
-  languageName: node
-  linkType: hard
-
-"@jitl/quickjs-wasmfile-release-sync@npm:0.30.0":
-  version: 0.30.0
-  resolution: "@jitl/quickjs-wasmfile-release-sync@npm:0.30.0"
-  dependencies:
-    "@jitl/quickjs-ffi-types": "npm:0.30.0"
-  checksum: 10c0/90cff293f33ba764a222d5076c5e29c2341812744c1fa362796d7b56de09c894c0ed98977c95ab12f3d4a315efa4a54b427ea8cc8e238bda17ade9fcd0db3cee
-  languageName: node
-  linkType: hard
-
 "@joshwooding/vite-plugin-react-docgen-typescript@npm:0.3.1":
   version: 0.3.1
   resolution: "@joshwooding/vite-plugin-react-docgen-typescript@npm:0.3.1"
@@ -8391,7 +8348,7 @@ __metadata:
     moment-timezone: "npm:0.5.45"
     npm-run-all: "npm:4.1.5"
     prettier: "npm:3.3.3"
-    quickjs-emscripten: "npm:0.30.0"
+    quickjs-emscripten: "npm:0.24.0"
     quickjs-emscripten-sync: "npm:1.5.2"
     rc-slider: "npm:9.7.5"
     react: "npm:18.3.1"
@@ -22057,15 +22014,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quickjs-emscripten-core@npm:0.30.0":
-  version: 0.30.0
-  resolution: "quickjs-emscripten-core@npm:0.30.0"
-  dependencies:
-    "@jitl/quickjs-ffi-types": "npm:0.30.0"
-  checksum: 10c0/ca2230c283e2dd9bb09bd19c32a492a22c5a9c7bac953e747c339d15315dbf46315354d7ebeb1e15cd44a0fd59efbc00c6af6d65d93741ba1237c4706db13970
-  languageName: node
-  linkType: hard
-
 "quickjs-emscripten-sync@npm:1.5.2":
   version: 1.5.2
   resolution: "quickjs-emscripten-sync@npm:1.5.2"
@@ -22075,16 +22023,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quickjs-emscripten@npm:0.30.0":
-  version: 0.30.0
-  resolution: "quickjs-emscripten@npm:0.30.0"
-  dependencies:
-    "@jitl/quickjs-wasmfile-debug-asyncify": "npm:0.30.0"
-    "@jitl/quickjs-wasmfile-debug-sync": "npm:0.30.0"
-    "@jitl/quickjs-wasmfile-release-asyncify": "npm:0.30.0"
-    "@jitl/quickjs-wasmfile-release-sync": "npm:0.30.0"
-    quickjs-emscripten-core: "npm:0.30.0"
-  checksum: 10c0/8fae13f4d748cdee1abcbbb8154ea896e88bf856e87b9275449baa2efd38b1423c05d833e9c22534c9e3813b8ebd0d4d9d374ba2a5a786a78d51632b2d70d7c7
+"quickjs-emscripten@npm:0.24.0":
+  version: 0.24.0
+  resolution: "quickjs-emscripten@npm:0.24.0"
+  checksum: 10c0/380c0afee18cad7b6bc5e42b63cf4fee5e7610ecfa3e5b9b8aa9c51fb55e31241e7cb7ea4187cb19d9db212a07395dec2776c7a8f066ded7fb8b1da133740882
   languageName: node
   linkType: hard
 
