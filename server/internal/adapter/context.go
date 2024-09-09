@@ -18,6 +18,7 @@ const (
 	contextOperator ContextKey = "operator"
 	ContextAuthInfo ContextKey = "authinfo"
 	contextUsecases ContextKey = "usecases"
+	contextMockAuth ContextKey = "mockauth"
 )
 
 var defaultLang = language.English
@@ -42,6 +43,10 @@ func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
 	ctx = context.WithValue(ctx, contextUsecases, u)
 	return ctx
+}
+
+func AttachMockAuth(ctx context.Context, mockAuth bool) context.Context {
+	return context.WithValue(ctx, contextMockAuth, mockAuth)
 }
 
 func User(ctx context.Context) *user.User {
@@ -90,6 +95,13 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 }
 
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
+	if IsMockAuth(ctx) {
+		return &appx.AuthInfo{
+			Sub:   "mock_sub",
+			Name:  "Mock User",
+			Email: "mock@example.com",
+		}
+	}
 	if v := ctx.Value(ContextAuthInfo); v != nil {
 		if v2, ok := v.(appx.AuthInfo); ok {
 			return &v2
@@ -100,4 +112,13 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 
 func Usecases(ctx context.Context) *interfaces.Container {
 	return ctx.Value(contextUsecases).(*interfaces.Container)
+}
+
+func IsMockAuth(ctx context.Context) bool {
+	if v := ctx.Value(contextMockAuth); v != nil {
+		if mockAuth, ok := v.(bool); ok {
+			return mockAuth
+		}
+	}
+	return false
 }
