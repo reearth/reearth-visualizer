@@ -244,17 +244,29 @@ export default function Crust({
   });
 
   const featuredInfobox = useMemo(() => {
+    if (!selectedLayerId?.featureId) return undefined;
+    const selectedDataLayer = layers?.find(
+      (l) => l.id === selectedLayer?.layerId
+    );
+    if (selectedDataLayer?.infobox) {
+      return {
+        property: selectedDataLayer?.infobox?.property,
+        blocks: [...(selectedDataLayer?.infobox?.blocks ?? [])],
+        featureId: selectedLayerId.featureId
+      };
+    }
     const selected = mapRef?.current?.layers?.find(
       (l) => l.id === selectedLayer?.layerId
     );
-    return selectedLayerId?.featureId && selected?.infobox
-      ? {
-          property: selected?.infobox?.property,
-          blocks: [...(selected?.infobox?.blocks ?? [])],
-          featureId: selectedLayerId.featureId,
-          readOnly: !layers?.find((l) => l.id === selectedLayer?.layerId)
-        }
-      : undefined;
+    if (selected?.infobox) {
+      return {
+        property: selected?.infobox?.property,
+        blocks: [...(selected?.infobox?.blocks ?? [])],
+        featureId: selectedLayerId.featureId,
+        readOnly: true
+      };
+    }
+    return undefined;
   }, [mapRef, layers, selectedLayer, selectedLayerId?.featureId]);
 
   return (
