@@ -6,7 +6,7 @@ import { FC, useCallback } from "react";
 
 import { useMapPage } from "../context";
 
-import LayerStyleEditor from "./LayerStyleEditor";
+import LayerStyleEditor from "./Editor/LayerStyleEditor";
 import LayerStyleItem from "./LayerStyleItem";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
@@ -59,6 +59,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       storageId="editor-map-scene-panel"
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
+      noPadding
     >
       <LayerStyleManager onClick={() => handleSelectLayerStyle(undefined)}>
         <ActionsWrapper>
@@ -93,13 +94,11 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
         </StylesWrapper>
       </LayerStyleManager>
       <LayerStyleEditorWrapper>
-        {selectedLayerStyleId && (
-          <LayerStyleEditor
-            selectedLayerStyleId={selectedLayerStyleId}
-            sceneId={sceneId}
-            onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
-          />
-        )}
+        <LayerStyleEditor
+          selectedLayerStyleId={selectedLayerStyleId}
+          sceneId={sceneId}
+          onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
+        />
       </LayerStyleEditorWrapper>
     </Panel>
   );
@@ -112,8 +111,9 @@ const LayerStyleManager = styled("div")(({ theme }) => ({
   alignItems: "flex-start",
   flex: 1,
   height: "30%",
-  maxHeight: 300,
-  gap: theme.spacing.small
+  maxHeight: 180,
+  gap: theme.spacing.small,
+  padding: theme.spacing.small
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({

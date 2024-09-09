@@ -1,10 +1,12 @@
-import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
+import { Button, CodeInput, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState, useEffect } from "react";
 
-import { LayerStyleValueUpdateProps } from "../../hooks/useLayerStyles";
+import { LayerStyleValueUpdateProps } from "../../../hooks/useLayerStyles";
+import SharedNoStyleMessage from "../../shared/SharedNoStyleMessage";
+import LayerStyleInterface from "../LayerStyleInterface";
 
 type LayerStyleEditorProps = {
   selectedLayerStyleId?: string;
@@ -18,6 +20,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   onLayerStyleValueUpdate
 }) => {
   const t = useT();
+
   const [styleCode, setStyleCode] = useState<string | undefined>("{}");
 
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
@@ -42,16 +45,38 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
     }
   }, [onLayerStyleValueUpdate, styleCode, selectedLayerStyleId]);
 
+  const tabsItem: TabItem[] = [
+    {
+      id: "interface",
+      name: t("Interface"),
+      children: (
+        <LayerStyleInterface selectedLayerStyleId={selectedLayerStyleId} />
+      )
+    },
+    {
+      id: "code",
+      name: t("Code"),
+      children: selectedLayerStyleId ? (
+        <CodeInput value={styleCode} onChange={setStyleCode} language="json" />
+      ) : (
+        <SharedNoStyleMessage />
+      )
+    }
+  ];
   return (
     <EditorContainer>
-      <CodeInput value={styleCode} onChange={setStyleCode} language="json" />
-      <Button
-        title={t("Save")}
-        extendWidth
-        size="small"
-        appearance="primary"
-        onClick={handleSubmit}
-      />
+      <Tabs tabs={tabsItem} position="top" alignment="end" />
+      {selectedLayerStyleId && (
+        <ButtonWrapper>
+          <Button
+            title={t("Save")}
+            extendWidth
+            size="small"
+            icon="floppyDisk"
+            onClick={handleSubmit}
+          />
+        </ButtonWrapper>
+      )}
     </EditorContainer>
   );
 };
@@ -63,7 +88,14 @@ const EditorContainer = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: theme.spacing.small
+  gap: theme.spacing.small,
+  background: theme.bg[1]
+}));
+
+const ButtonWrapper = styled("div")(({ theme }) => ({
+  borderTop: `1px solid ${theme.outline.weaker}`,
+  padding: theme.spacing.small,
+  width: "100%"
 }));
 
 export default LayerStyleEditor;
