@@ -22,11 +22,17 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
-  const LinkRenderer = ({ href, children }: { href?: string; children?: ReactNode }) => (
+  const LinkRenderer = ({
+    href,
+    children
+  }: {
+    href?: string;
+    children?: ReactNode;
+  }) => (
     <a href={href} target="_blank" rel="noreferrer">
       {children}
     </a>
-  )
+  );
   return (
     <BlockWrapper
       name={block?.name}
@@ -38,7 +44,10 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
     >
       {evaluatedSrc !== undefined ? (
         <Wrapper>
-          <ReactMarkdown remarkPlugins={plugins} components={{ a: LinkRenderer }}>
+          <ReactMarkdown
+            remarkPlugins={plugins}
+            components={{ a: LinkRenderer }}
+          >
             {evaluatedSrc || ""}
           </ReactMarkdown>
         </Wrapper>

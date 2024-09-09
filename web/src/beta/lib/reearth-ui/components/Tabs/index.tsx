@@ -59,7 +59,12 @@ export const Tabs: FC<TabsProps> = ({
 
   return (
     <Wrapper position={position} background={background}>
-      <TabsMenu position={position} tabStyle={tabStyle} alignment={alignment} background={background}>
+      <TabsMenu
+        position={position}
+        tabStyle={tabStyle}
+        alignment={alignment}
+        background={background}
+      >
         {tabs.map(({ id, icon, name }) => (
           <Tab
             key={id}
@@ -109,7 +114,7 @@ const Wrapper = styled("div")<{
 const TabsMenu = styled("div")<{
   position?: "top" | "left";
   tabStyle?: "normal" | "separated";
-  alignment?: string
+  alignment?: string;
   background?: string;
 }>(({ position, tabStyle, theme, alignment, background }) => ({
   display: "flex",
@@ -117,7 +122,12 @@ const TabsMenu = styled("div")<{
   background: background || theme.bg[0],
   padding: tabStyle === "normal" ? " " : theme.spacing.large,
   gap: theme.spacing.micro,
-  justifyContent: alignment === "end"  ? "flex-end" : alignment === "center" ? "center" : "flex-start"
+  justifyContent:
+    alignment === "end"
+      ? "flex-end"
+      : alignment === "center"
+        ? "center"
+        : "flex-start"
 }));
 
 const Tab = styled("div")<{

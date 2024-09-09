@@ -3,7 +3,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-
 export type Device = "desktop" | "mobile";
 
 export type Devices = {

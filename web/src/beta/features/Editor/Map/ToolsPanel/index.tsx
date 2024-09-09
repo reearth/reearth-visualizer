@@ -1,4 +1,3 @@
-
 import { IconButton, IconName } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
 import { styled } from "@reearth/services/theme";

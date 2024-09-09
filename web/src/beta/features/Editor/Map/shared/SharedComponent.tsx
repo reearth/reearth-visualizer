@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
-
 export const InputGroup: FC<{
   label: string;
   description?: string;

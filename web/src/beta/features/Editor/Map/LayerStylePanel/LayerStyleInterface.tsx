@@ -1,8 +1,4 @@
-import {
-  Button,
-  TabItem,
-  Tabs,
-} from "@reearth/beta/lib/reearth-ui";
+import { Button, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
@@ -18,7 +14,6 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
 }) => {
   const theme = useTheme();
   const t = useT();
-
 
   const tabsItem: TabItem[] = [
     {
@@ -80,5 +75,5 @@ const Wrapper = styled("div")(() => ({
 
 const TabsWrapper = styled("div")(() => ({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "column"
 }));

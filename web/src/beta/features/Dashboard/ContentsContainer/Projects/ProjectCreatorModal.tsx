@@ -1,4 +1,3 @@
-
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   Button,

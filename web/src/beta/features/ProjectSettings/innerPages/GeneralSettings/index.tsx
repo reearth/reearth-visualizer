@@ -196,5 +196,5 @@ const DangerItem = styled("div")(({ theme }) => ({
 
 const Divider = styled("div")(({ theme }) => ({
   height: "1px",
-  borderBlockColor: theme.outline.weaker,
+  borderBlockColor: theme.outline.weaker
 }));
