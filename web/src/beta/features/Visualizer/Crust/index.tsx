@@ -244,15 +244,18 @@ export default function Crust({
   });
 
   const featuredInfobox = useMemo(() => {
-    const selected = layers?.find((l) => l.id === selectedLayer?.layerId);
+    const selected = mapRef?.current?.layers?.find(
+      (l) => l.id === selectedLayer?.layerId
+    );
     return selectedLayerId?.featureId && selected?.infobox
       ? {
           property: selected?.infobox?.property,
           blocks: [...(selected?.infobox?.blocks ?? [])],
-          featureId: selectedLayerId.featureId
+          featureId: selectedLayerId.featureId,
+          readOnly: !layers?.find((l) => l.id === selectedLayer?.layerId)
         }
       : undefined;
-  }, [layers, selectedLayer, selectedLayerId?.featureId]);
+  }, [mapRef, layers, selectedLayer, selectedLayerId?.featureId]);
 
   return (
     <Plugins
@@ -312,7 +315,7 @@ export default function Crust({
       <Infobox
         infobox={featuredInfobox}
         installableInfoboxBlocks={installableInfoboxBlocks}
-        isEditable={!!inEditor}
+        isEditable={!!inEditor && !featuredInfobox?.readOnly}
         renderBlock={renderBlock}
         onBlockCreate={onInfoboxBlockCreate}
         onBlockDelete={onInfoboxBlockDelete}
