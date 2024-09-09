@@ -43,7 +43,9 @@ export default ({
 
   const addLayer = useCallback(
     (layer: NaiveLayer) => {
-      return layersRef?.add(layer)?.id;
+      const layerId = layersRef?.add(layer)?.id;
+      // TODO: handle infobox
+      return layerId;
     },
     [layersRef]
   );
