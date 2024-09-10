@@ -193,7 +193,7 @@ const PublishModal: FC<Props> = ({
                 : t(`Your scene has been published!`)}
             </Subtitle>
             <CommonField
-              commonTitle={t("Public URL")}
+              title={t("Public URL")}
               description={
                 isStory
                   ? t(`* Anyone can see your story with this URL`)
@@ -217,7 +217,7 @@ const PublishModal: FC<Props> = ({
               </UrlWrapper>
             </CommonField>
             <CommonField
-              commonTitle={t("Embed Code")}
+              title={t("Embed Code")}
               description={t(
                 `* Please use this code if you want to embed your story into a webpage`
               )}
@@ -260,7 +260,7 @@ const PublishModal: FC<Props> = ({
               />
             </div>
             <SwitchField
-              commonTitle={t("Search engine indexing")}
+              title={t("Search engine indexing")}
               description={t(
                 "Page will be available as result on search engines"
               )}

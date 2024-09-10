@@ -37,12 +37,12 @@ const CapturePanel: FC<PanelProps> = ({ camera, onSave, onClose }) => {
         <TripletInputField
           values={[camera?.lat ?? 0, camera?.lng ?? 0, camera?.height ?? 0]}
           content={[t("Latitude"), t("Longitude"), t("Height")]}
-          commonTitle={t("Current Position")}
+          title={t("Current Position")}
           appearance="readonly"
           disabled
         />
         <TripletInputField
-          commonTitle={t("Current Rotation")}
+          title={t("Current Rotation")}
           values={[
             radiansToDegrees(camera?.heading ?? 0),
             radiansToDegrees(camera?.pitch ?? 0),

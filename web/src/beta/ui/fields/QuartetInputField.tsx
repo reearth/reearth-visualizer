@@ -20,7 +20,7 @@ export type TripletInputFieldProps = CommonFieldProps &
   };
 
 const TripletInputField: FC<TripletInputFieldProps> = ({
-  commonTitle,
+  title,
   description,
   values,
   placeholders,
@@ -54,7 +54,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   }, [values]);
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <Wrapper>
         {inputValues.map((value, index) => (
           <InputWrapper key={index}>

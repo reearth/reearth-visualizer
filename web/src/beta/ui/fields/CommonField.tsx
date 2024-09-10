@@ -3,19 +3,19 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
 export interface CommonFieldProps {
-  commonTitle?: string;
+  title?: string;
   description?: string;
 }
 
 const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
-  commonTitle,
+  title,
   description,
   children
 }) => {
   const theme = useTheme();
   return (
     <Wrapper>
-      {commonTitle && <Typography size="body">{commonTitle}</Typography>}
+      {title && <Typography size="body">{title}</Typography>}
       {children}
       {description && (
         <Typography size="footnote" color={theme.content.weak}>

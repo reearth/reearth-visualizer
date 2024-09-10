@@ -94,7 +94,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               />
             </FormInputWrapper>
             <AssetField
-              commonTitle={t("Cover Image")}
+              title={t("Cover Image")}
               inputMethod="asset"
               assetsTypes={IMAGE_TYPES}
               value={imageUrl}

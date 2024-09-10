@@ -24,7 +24,7 @@ export type AssetFieldProps = CommonFieldProps & {
 };
 
 const AssetField: FC<AssetFieldProps> = ({
-  commonTitle,
+  title,
   description,
   value,
   inputMethod,
@@ -77,7 +77,7 @@ const AssetField: FC<AssetFieldProps> = ({
   const handleModalClose = useCallback(() => setOpen(false), []);
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <AssetWrapper>
         <TextInput
           value={currentValue}

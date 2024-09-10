@@ -81,19 +81,19 @@ const GeneralSettings: FC<Props> = ({
           <Collapse size="large" title={t("Project Info")}>
             <SettingsFields>
               <InputField
-                commonTitle={t("Project Name")}
+                title={t("Project Name")}
                 value={project.name}
                 onChange={(name) => setLocalName(name)}
               />
               <TextareaField
-                commonTitle={t("Description")}
+                title={t("Description")}
                 value={localDescription}
                 onChange={setLocalDescription}
               />
               <SettingsRow>
                 <SettingsRowItem>
                   <AssetField
-                    commonTitle={t("Thumbnail")}
+                    title={t("Thumbnail")}
                     inputMethod="asset"
                     assetsTypes={IMAGE_TYPES}
                     value={localImageUrl}

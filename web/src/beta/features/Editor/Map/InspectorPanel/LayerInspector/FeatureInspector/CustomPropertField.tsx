@@ -42,21 +42,21 @@ export const FieldComponent = ({ field, setFields }: Props) => {
   return field?.type === "Text" ? (
     <InputField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={field.value as string}
       onBlur={handleChange}
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={field.value as string}
       onBlur={handleChange}
     />
   ) : field?.type === "Asset" ? (
     <AssetField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       assetsTypes={IMAGE_TYPES}
       inputMethod={"asset"}
       value={field.value as string}
@@ -65,7 +65,7 @@ export const FieldComponent = ({ field, setFields }: Props) => {
   ) : field?.type === "URL" ? (
     <AssetField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       assetsTypes={FILE_TYPES}
       inputMethod={"URL"}
       value={field.value as string}
@@ -74,14 +74,14 @@ export const FieldComponent = ({ field, setFields }: Props) => {
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={field.value as number}
       onBlur={handleChange}
     />
   ) : field?.type === "Boolean" ? (
     <SwitchField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={field.value as boolean}
       onChange={handleChange}
     />
