@@ -1,13 +1,14 @@
 import { Button, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
 import SharedNoStyleMessage from "../../shared/SharedNoStyleMessage";
 
-
 type LayerStyleInterfaceProps = {
   selectedLayerStyleId?: string;
+  localLayerStyle?: LayerStyle;
 };
 
 const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
@@ -39,7 +40,7 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
       children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
     },
     {
-      id: "3d-data",
+      id: "3d-tiles",
       icon: "cube",
       children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
     }
