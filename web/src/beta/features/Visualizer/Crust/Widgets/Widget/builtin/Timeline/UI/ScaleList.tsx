@@ -1,4 +1,3 @@
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { PublishTheme, styled } from "@reearth/services/theme";
 import { memo } from "react";
@@ -63,8 +62,8 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(
             return (
               <LabeledScale key={idx}>
                 <ScaleLabel size="footnote" publishedTheme={publishedTheme}>
-                {label}
-              </ScaleLabel>
+                  {label}
+                </ScaleLabel>
                 <Scale
                   isHour={isHour}
                   isStrongScale={isStrongScale}
@@ -102,25 +101,27 @@ const ScaleContainer = styled("div")(({ theme }) => ({
     content: '""',
     display: "block",
     paddingRight: theme.spacing.micro - 1,
-    height: "1px",
-  },
+    height: "1px"
+  }
 }));
 
 const LabeledScale = styled("div")(() => ({
   display: "flex",
   alignItems: "flex-end",
   position: "relative",
-  height: "100%",
+  height: "100%"
 }));
 
-const ScaleLabel = styled(Typography)<StyledColorProps>(({ publishedTheme, theme }) => ({
-  position: "absolute",
-  top: 0,
-  left: 0,
-  height: "100%",
-  whiteSpace: "nowrap",
-  color: publishedTheme?.mainText || theme.content.main,
-}));
+const ScaleLabel = styled(Typography)<StyledColorProps>(
+  ({ publishedTheme, theme }) => ({
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    whiteSpace: "nowrap",
+    color: publishedTheme?.mainText || theme.content.main
+  })
+);
 
 const Scale = styled("div")<
   StyledColorProps & {
@@ -131,7 +132,7 @@ const Scale = styled("div")<
   flexShrink: 0,
   width: isStrongScale ? `${STRONG_SCALE_WIDTH}px` : `${NORMAL_SCALE_WIDTH}px`,
   height: isHour ? "16px" : "12px",
-  background: publishedTheme?.weakText,
+  background: publishedTheme?.weakText
 }));
 
 export default ScaleList;

@@ -1,4 +1,3 @@
-
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import JsonView from "react18-json-view";

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { FC } from "react";
 
-
 import Navbar, { Tab } from "../Navbar";
 
 import useHooks from "./hooks";

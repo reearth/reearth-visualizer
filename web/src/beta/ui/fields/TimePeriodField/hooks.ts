@@ -33,10 +33,10 @@ export default ({
         case "currentTime":
           updatedData.currentTime = newValue;
           if (
-            updatedData.startTime &&
-            new Date(updatedData.currentTime.substring(0, 19)) <
-              new Date(updatedData.startTime.substring(0, 19)) || 
-              new Date(updatedData.currentTime.substring(0, 19)) >
+            (updatedData.startTime &&
+              new Date(updatedData.currentTime.substring(0, 19)) <
+                new Date(updatedData.startTime.substring(0, 19))) ||
+            new Date(updatedData.currentTime.substring(0, 19)) >
               new Date(updatedData.endTime.substring(0, 19))
           ) {
             setWarning(true);
@@ -102,9 +102,8 @@ export default ({
   }, [timePeriodValues]);
 
   const handleClose = useCallback(() => {
-      setTimePeriodValues?.(undefined)
-      onClose?.();
-  
+    setTimePeriodValues?.(undefined);
+    onClose?.();
   }, [setTimePeriodValues, onClose]);
 
   return {

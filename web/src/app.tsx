@@ -1,4 +1,3 @@
-
 import GlobalModal from "@reearth/beta/features/GlobalModal";
 import NotificationBanner from "@reearth/beta/features/Notification";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
