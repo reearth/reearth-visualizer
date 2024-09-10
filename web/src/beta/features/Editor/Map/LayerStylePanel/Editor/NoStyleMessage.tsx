@@ -3,7 +3,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
-const SharedNoStyleMessage: FC = () => {
+const NoStyleMessage: FC = () => {
   const theme = useTheme();
   const t = useT();
 
@@ -16,10 +16,10 @@ const SharedNoStyleMessage: FC = () => {
   );
 };
 
-export default SharedNoStyleMessage;
+export default NoStyleMessage;
 
 const TextWrapper = styled("div")(() => ({
-  height: 480,
+  height: "100%",
   display: "flex",
   justifyContent: "center",
   alignItems: "center"

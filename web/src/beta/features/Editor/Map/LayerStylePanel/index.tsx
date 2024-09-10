@@ -2,18 +2,17 @@ import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
-import LayerStyleEditor from "./Editor/LayerStyleEditor";
+import LayerStyleEditor from "./Editor";
 import LayerStyleItem from "./LayerStyleItem";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
-    sceneId,
     selectedLayer,
     layerStyles,
     selectedLayerStyleId,
@@ -50,6 +49,11 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       }
     });
   }, [selectedLayer, selectedLayerStyleId, handleLayerConfigUpdate]);
+
+  const selectedLayerStyle = useMemo(
+    () => layerStyles?.find((a) => a.id === selectedLayerStyleId),
+    [layerStyles, selectedLayerStyleId]
+  );
 
   return (
     <Panel
@@ -95,8 +99,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       </LayerStyleManager>
       <LayerStyleEditorWrapper>
         <LayerStyleEditor
-          selectedLayerStyleId={selectedLayerStyleId}
-          sceneId={sceneId}
+          selectedLayerStyle={selectedLayerStyle}
           onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
         />
       </LayerStyleEditorWrapper>

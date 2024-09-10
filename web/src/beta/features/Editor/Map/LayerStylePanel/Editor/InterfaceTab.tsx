@@ -2,17 +2,19 @@ import { Button, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC } from "react";
+import { SetStateAction } from "jotai";
+import { Dispatch, FC } from "react";
 
-import SharedNoStyleMessage from "../../shared/SharedNoStyleMessage";
+import NoStyleMessage from "./NoStyleMessage";
 
-type LayerStyleInterfaceProps = {
-  selectedLayerStyleId?: string;
-  localLayerStyle?: LayerStyle;
+type InterfaceTabProps = {
+  layerStyle: LayerStyle | undefined;
+  setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
 };
 
-const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
-  selectedLayerStyleId
+const InterfaceTab: FC<InterfaceTabProps> = ({
+  layerStyle,
+  setLayerStyle: _todo // avoid unused variable warning
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -22,31 +24,31 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
     {
       id: "marker",
       icon: "points",
-      children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
+      children: null
     },
     {
       id: "polyline",
       icon: "polyline",
-      children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
+      children: null
     },
     {
       id: "polygon",
       icon: "polygon",
-      children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
+      children: null
     },
     {
-      id: "3d",
+      id: "threedtiles",
       icon: "buildings",
-      children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
+      children: null
     },
     {
-      id: "3d-tiles",
+      id: "model",
       icon: "cube",
-      children: selectedLayerStyleId ? null : <SharedNoStyleMessage />
+      children: null
     }
   ];
 
-  return (
+  return layerStyle ? (
     <Wrapper>
       <TabsWrapper>
         <Tabs
@@ -56,7 +58,7 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
           background={theme.bg[1]}
         />
       </TabsWrapper>
-      {selectedLayerStyleId && (
+      {layerStyle && (
         <Button
           title={t("New node")}
           extendWidth
@@ -66,10 +68,12 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
         />
       )}
     </Wrapper>
+  ) : (
+    <NoStyleMessage />
   );
 };
 
-export default LayerStyleInterface;
+export default InterfaceTab;
 
 const Wrapper = styled("div")(() => ({
   width: "100%"
