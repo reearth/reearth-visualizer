@@ -53,13 +53,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   }, [styleCode, onLayerStyleValueUpdate, layerStyle, setNotification, t]);
 
   const tabItems: TabItem[] = [
-    {
-      id: "interface",
-      name: t("Interface"),
-      children: (
-        <InterfaceTab layerStyle={layerStyle} setLayerStyle={setLayerStyle} />
-      )
-    },
+  //Making code default tab temporary
     {
       id: "code",
       name: t("Code"),
@@ -69,6 +63,13 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
           setStyleCode={setStyleCode}
           hasLayerStyleSelected={!!layerStyle?.id}
         />
+      )
+    },
+    {
+      id: "interface",
+      name: t("Interface"),
+      children: (
+        <InterfaceTab layerStyle={layerStyle} setLayerStyle={setLayerStyle} />
       )
     }
   ];
