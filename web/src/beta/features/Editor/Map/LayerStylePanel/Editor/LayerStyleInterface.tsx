@@ -3,7 +3,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
-import SharedNoStyleMessage from "../shared/SharedNoStyleMessage";
+import SharedNoStyleMessage from "../../shared/SharedNoStyleMessage";
+
 
 type LayerStyleInterfaceProps = {
   selectedLayerStyleId?: string;
@@ -15,6 +16,7 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
   const theme = useTheme();
   const t = useT();
 
+  //Null will be replaced by corresponding component on next step
   const tabsItem: TabItem[] = [
     {
       id: "marker",
@@ -60,7 +62,6 @@ const LayerStyleInterface: FC<LayerStyleInterfaceProps> = ({
           size="small"
           icon="plus"
           appearance="primary"
-          onClick={() => {}}
         />
       )}
     </Wrapper>

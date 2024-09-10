@@ -6,7 +6,8 @@ import { FC, useCallback, useState, useEffect } from "react";
 
 import { LayerStyleValueUpdateProps } from "../../../hooks/useLayerStyles";
 import SharedNoStyleMessage from "../../shared/SharedNoStyleMessage";
-import LayerStyleInterface from "../LayerStyleInterface";
+
+import LayerStyleInterface from "./LayerStyleInterface";
 
 type LayerStyleEditorProps = {
   selectedLayerStyleId?: string;
