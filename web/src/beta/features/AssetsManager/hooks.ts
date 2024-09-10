@@ -198,15 +198,14 @@ export default ({
     checkSize();
 
     const handleScroll = () => {
-      if (childElement) {
-        const isScrolledToBottom =
-          childElement.scrollHeight -
-            parentElement.scrollTop -
-            parentElement.clientHeight <
-          50;
-        if (isScrolledToBottom) {
-          loadMoreRef.current?.();
-        }
+      if (
+        childElement &&
+        childElement.scrollHeight -
+          parentElement.scrollTop -
+          parentElement.clientHeight <
+          50
+      ) {
+        loadMoreRef.current?.();
       }
     };
 
@@ -217,7 +216,7 @@ export default ({
       childObserver.disconnect();
       parentElement.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [filteredAssets]);
 
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {
