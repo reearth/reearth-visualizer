@@ -4,7 +4,7 @@ import {
   TextInput,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
-import { convertTimeToString } from "@reearth/beta/utils/time";
+import { formatRelativeTime } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
@@ -20,12 +20,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
 }) => {
   const theme = useTheme();
 
-  const createAt: Date = useMemo(
-    () => (project.createdAt ? new Date(project.createdAt) : new Date()),
+  const createAt = useMemo(
+    () =>
+      project.createdAt ? formatRelativeTime(new Date(project.createdAt)) : "",
     [project.createdAt]
   );
-  const UpdatedAt: Date = useMemo(
-    () => (project.updatedAt ? new Date(project.updatedAt) : new Date()),
+  const UpdatedAt = useMemo(
+    () =>
+      project.updatedAt ? formatRelativeTime(new Date(project.updatedAt)) : "",
     [project.updatedAt]
   );
 
@@ -92,10 +94,10 @@ const ProjectListViewItem: FC<ProjectProps> = ({
         )}
       </ProjectNameCol>
       <TimeCol>
-        <Typography size="body">{convertTimeToString(UpdatedAt)}</Typography>
+        <Typography size="body">{UpdatedAt}</Typography>
       </TimeCol>
       <TimeCol>
-        <Typography size="body">{convertTimeToString(createAt)}</Typography>
+        <Typography size="body">{createAt}</Typography>
       </TimeCol>
       <ActionCol
         onClick={(e: MouseEvent) => {
