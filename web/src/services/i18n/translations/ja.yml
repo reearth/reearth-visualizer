@@ -87,8 +87,11 @@ Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
-Style_: スタイル_
+Interface: ''
+Code: ''
 Save: 保存
+New node: ''
+Style_: スタイル_
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -97,6 +100,7 @@ Sky: 空
 Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
+No style selected: ''
 Type Title here: ''
 Please select one type: ''
 Title: ページタイトル
