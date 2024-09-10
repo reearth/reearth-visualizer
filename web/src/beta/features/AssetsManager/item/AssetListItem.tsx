@@ -1,4 +1,5 @@
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
+import { formatRelativeTime } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
 
@@ -28,15 +29,7 @@ const AssetListItem: FC<AssetItemProps> = ({
   );
 
   const formattedDate = useMemo(
-    () =>
-      new Date(asset.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      }),
+    () => formatRelativeTime(new Date(asset.createdAt)),
     [asset.createdAt]
   );
 
