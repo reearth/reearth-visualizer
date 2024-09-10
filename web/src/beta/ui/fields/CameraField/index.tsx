@@ -36,7 +36,7 @@ const CameraField: FC<CameraFieldProps> = ({
   description,
   value,
   disabled,
-  commonTitle,
+  title,
   onSave,
   onFlyTo
 }) => {
@@ -89,7 +89,7 @@ const CameraField: FC<CameraFieldProps> = ({
   );
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <InputWrapper>
         <TextInput
           value={value && t("Position Set")}

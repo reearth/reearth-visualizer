@@ -109,14 +109,14 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Public Info")} size="large">
         <SettingsFields>
           <InputField
-            commonTitle={t("Title")}
+            title={t("Title")}
             value={settingsItem.publicTitle}
             onChange={(publicTitle: string) => {
               setLocalPublicInfo((s) => ({ ...s, publicTitle }));
             }}
           />
           <TextAreaField
-            commonTitle={t("Description")}
+            title={t("Description")}
             value={localPublicInfo.publicDescription ?? ""}
             onChange={(publicDescription: string) => {
               setLocalPublicInfo((s) => ({ ...s, publicDescription }));
@@ -124,7 +124,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           />
           <ThumbnailField>
             <AssetField
-              commonTitle={t("Thumbnail")}
+              title={t("Thumbnail")}
               inputMethod="asset"
               assetsTypes={IMAGE_TYPES}
               value={localPublicInfo.publicImage}
@@ -155,14 +155,14 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Basic Authorization")} size="large">
         <SettingsFields>
           <SwitchField
-            commonTitle={t("Enable Basic Authorization")}
+            title={t("Enable Basic Authorization")}
             value={localBasicAuthorization.isBasicAuthActive}
             onChange={(isBasicAuthActive) => {
               setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
             }}
           />
           <InputField
-            commonTitle={t("Username")}
+            title={t("Username")}
             value={settingsItem.basicAuthUsername}
             onChange={(basicAuthUsername: string) => {
               setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
@@ -170,7 +170,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <InputField
-            commonTitle={t("Password")}
+            title={t("Password")}
             value={settingsItem.basicAuthPassword}
             onChange={(basicAuthPassword: string) => {
               setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
@@ -189,7 +189,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Site Setting")} size="large">
         <SettingsFields>
           <InputField
-            commonTitle={t("Site name")}
+            title={t("Site name")}
             value={settingsItem.alias}
             onChange={(alias: string) => {
               setLocalAlias(alias);
@@ -210,14 +210,14 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Google Analytics")} size="large">
         <SettingsFields>
           <SwitchField
-            commonTitle={t("Enable Google Analytics")}
+            title={t("Enable Google Analytics")}
             value={localGA.enableGa ?? false}
             onChange={(enableGa: boolean) => {
               setLocalGA((s) => ({ ...s, enableGa }));
             }}
           />
           <InputField
-            commonTitle={t("Tracking ID")}
+            title={t("Tracking ID")}
             value={settingsItem.trackingId}
             onChange={(trackingId: string) => {
               setLocalGA((s) => ({ ...s, trackingId }));

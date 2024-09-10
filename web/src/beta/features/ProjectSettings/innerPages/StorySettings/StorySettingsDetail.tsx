@@ -54,7 +54,7 @@ const StorySettingsDetail: React.FC<Props> = ({
         <SettingsRow>
           <SettingsRowItem>
             <SelectField
-              commonTitle={t("Panel Position")}
+              title={t("Panel Position")}
               value={localPanelPosition}
               options={options}
               onChange={(value) => setLocalPanelPosition(value as Position)}
@@ -62,7 +62,7 @@ const StorySettingsDetail: React.FC<Props> = ({
           </SettingsRowItem>
           <SettingsRowItem>
             <ColorField
-              commonTitle={t("Background Color")}
+              title={t("Background Color")}
               value={backgroundColor}
               onChange={(value) => setBackgroundColor(value)}
             />

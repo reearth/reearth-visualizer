@@ -87,7 +87,7 @@ export const Default: Story = (args: ListFieldProps) => {
 };
 
 Default.args = {
-  commonTitle: "List Field",
+  title: "List Field",
   description: "List field Sample description",
   items: [
     {

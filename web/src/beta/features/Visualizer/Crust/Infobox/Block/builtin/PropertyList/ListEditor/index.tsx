@@ -110,7 +110,7 @@ const ListEditor: FC<Props> = ({
   return (
     <Wrapper>
       <SelectField
-        commonTitle={displayTypeField?.title}
+        title={displayTypeField?.title}
         value={displayTypeField?.value}
         options={displayOptions || []}
         onChange={handleDisplayTypeUpdate}

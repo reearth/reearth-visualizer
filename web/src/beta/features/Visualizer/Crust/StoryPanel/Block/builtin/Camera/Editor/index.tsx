@@ -78,7 +78,7 @@ const CameraBlockEditor: FC<Props> = ({
     <EditorWrapper>
       <GroupWrapper>
         <ListField
-          commonTitle={t("Buttons List")}
+          title={t("Buttons List")}
           items={listItems}
           selected={selected}
           onItemAdd={handleItemAdd}
@@ -90,7 +90,7 @@ const CameraBlockEditor: FC<Props> = ({
         />
         <FieldGroup disabled={!editorProperties}>
           <InputField
-            commonTitle={editorProperties?.title?.title}
+            title={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
             onBlur={(value) =>
@@ -98,7 +98,7 @@ const CameraBlockEditor: FC<Props> = ({
             }
           />
           <ColorField
-            commonTitle={editorProperties?.color?.title}
+            title={editorProperties?.color?.title}
             description={editorProperties?.color?.description}
             value={editorProperties?.color?.value}
             onChange={(value) =>
@@ -106,7 +106,7 @@ const CameraBlockEditor: FC<Props> = ({
             }
           />
           <ColorField
-            commonTitle={editorProperties?.bgColor?.title}
+            title={editorProperties?.bgColor?.title}
             description={editorProperties?.bgColor?.description}
             value={editorProperties?.bgColor?.value}
             onChange={(value) =>
@@ -118,7 +118,7 @@ const CameraBlockEditor: FC<Props> = ({
 
       <FieldGroup disabled={!editorProperties}>
         <CameraField
-          commonTitle={editorProperties?.cameraPosition?.title}
+          title={editorProperties?.cameraPosition?.title}
           description={editorProperties?.cameraPosition?.description}
           value={editorProperties?.cameraPosition?.value as Camera}
           onSave={(value) =>
@@ -127,7 +127,7 @@ const CameraBlockEditor: FC<Props> = ({
           onFlyTo={handleFlyTo}
         />
         <NumberField
-          commonTitle={editorProperties?.cameraDuration?.title}
+          title={editorProperties?.cameraDuration?.title}
           description={editorProperties?.cameraDuration?.description}
           value={editorProperties?.cameraDuration?.value}
           onBlur={(value) =>
