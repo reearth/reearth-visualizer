@@ -68,7 +68,7 @@ const PublicRepo: React.FC<Props> = ({
         >
           {loading && <Loading overlay />}
           <InputField
-            commonTitle={t("Repository url:")}
+            title={t("Repository url:")}
             value={repoUrl}
             onChange={handleRepoUrlChange}
           />

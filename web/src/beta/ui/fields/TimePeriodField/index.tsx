@@ -19,7 +19,7 @@ export type TimePeriodFieldProps = CommonFieldProps & {
 };
 
 const TimePeriodField: FC<TimePeriodFieldProps> = ({
-  commonTitle,
+  title,
   description,
   value,
   onChange
@@ -56,7 +56,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
   );
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <Wrapper>
         <TimePeriodWrapper>
           <ProgressSteps>

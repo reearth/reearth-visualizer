@@ -21,7 +21,7 @@ export type SpacingFieldProps = CommonFieldProps &
 const spacingPosition = ["top", "left", "right", "bottom"];
 
 const SpacingField: FC<SpacingFieldProps> = ({
-  commonTitle,
+  title,
   description,
   value,
   onChange,
@@ -67,7 +67,7 @@ const SpacingField: FC<SpacingFieldProps> = ({
   };
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <InputWrapper>{renderInputs()}</InputWrapper>
     </CommonField>
   );

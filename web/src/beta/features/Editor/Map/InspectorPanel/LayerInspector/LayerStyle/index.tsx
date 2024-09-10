@@ -49,7 +49,7 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
 
   return (
     <SelectField
-      commonTitle={t("Layer Style")}
+      title={t("Layer Style")}
       options={layerStyleOptions}
       value={currentValue}
       maxHeight={250}
