@@ -41,7 +41,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
     }
   }, [selectedLayerStyleId, layerStyles, selectedLayerStyle]);
 
-  const handleChange = (newStyleCode?: string) => {
+  const handleChange = useCallback((newStyleCode?: string) => {
     setStyleCode(newStyleCode);
     const parsedStyle = JSON.parse(newStyleCode || "");
     setLocalLayerStyle((prev) => {
@@ -51,7 +51,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         value: parsedStyle
       };
     });
-  };
+  }, []);
 
   const handleSubmit = useCallback(() => {
     if (onLayerStyleValueUpdate && styleCode && JSON.parse(styleCode)) {
