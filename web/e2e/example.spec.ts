@@ -49,14 +49,14 @@ test("create project and add layer", async ({ page }, testInfo) => {
   });
 
   // test
-  // expect
-  //   .soft(
-  //     await page.screenshot({
-  //       path: `${testInfo.snapshotPath("test.png")}`,
-  //       fullPage: true
-  //     })
-  //   )
-  //   .toMatchSnapshot({ name: "expect.png", maxDiffPixels: 10 });
+  expect
+    .soft(
+      await page.screenshot({
+        path: `${testInfo.snapshotPath("test.png")}`,
+        fullPage: true
+      })
+    )
+    .toMatchSnapshot({ name: "expect.png", maxDiffPixels: 10 });
 
   //delete created project
   await dashboardPage.goto();
