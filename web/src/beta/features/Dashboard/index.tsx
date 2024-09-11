@@ -25,7 +25,7 @@ export const bottomTabsItems: Omit<TabItems[], "active"> = [
     icon: "puzzlePiece",
     disabled: true
   },
-  { id: "documentary", text: "Documentary", icon: "book", disabled: true },
+  { id: "documentation", text: "Documentation", icon: "book", disabled: true },
   { id: "community", text: "Community", icon: "usersFour", disabled: true },
   { id: "help", text: "Help & Support", icon: "question", disabled: true }
 ];

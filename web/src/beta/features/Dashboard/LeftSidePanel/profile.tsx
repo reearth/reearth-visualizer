@@ -41,7 +41,7 @@ export const Profile: FC<ProfileProp> = ({
   const popupMenu: PopupMenuItem[] = [
     {
       id: "workspace",
-      title: t("Switch WorkSpace"),
+      title: t("Switch Workspace"),
       icon: "arrowLeftRight",
       subItem: workspaces?.map((w) => {
         return {
