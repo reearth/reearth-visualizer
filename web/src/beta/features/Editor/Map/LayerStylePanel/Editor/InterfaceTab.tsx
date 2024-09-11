@@ -1,10 +1,19 @@
-import { Button, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
+import { Button, PopupMenu, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
-import { Dispatch, FC } from "react";
+import { Dispatch, FC, ReactNode, useCallback, useState } from "react";
 
+import Marker from "./Marker";
+import StylesNode from "./Marker/Styles";
+import {
+  markerNodeMenu,
+  polylineNodeMenu,
+  polygonNodeMenu,
+  threedtilesNodeMenu,
+  modelNodeMenu
+} from "./NodeCategory";
 import NoStyleMessage from "./NoStyleMessage";
 
 type InterfaceTabProps = {
@@ -14,39 +23,56 @@ type InterfaceTabProps = {
 
 const InterfaceTab: FC<InterfaceTabProps> = ({
   layerStyle,
-  setLayerStyle: _todo // avoid unused variable warning
+  setLayerStyle: _todo
 }) => {
   const theme = useTheme();
   const t = useT();
 
-  //Null will be replaced by corresponding component on next step
+  const [activeTab, setActiveTab] = useState<string>("marker");
+  const [dynamicContent, setDynamicContent] = useState<ReactNode>(null);
+
   const tabsItem: TabItem[] = [
     {
       id: "marker",
       icon: "points",
-      children: null
+      children: <Marker dynamicContent={dynamicContent} />
     },
-    {
-      id: "polyline",
-      icon: "polyline",
-      children: null
-    },
-    {
-      id: "polygon",
-      icon: "polygon",
-      children: null
-    },
-    {
-      id: "threedtiles",
-      icon: "buildings",
-      children: null
-    },
-    {
-      id: "model",
-      icon: "cube",
-      children: null
-    }
+    { id: "polyline", icon: "polyline", children: null },
+    { id: "polygon", icon: "polygon", children: null },
+    { id: "threedtiles", icon: "buildings", children: null },
+    { id: "model", icon: "cube", children: null }
   ];
+
+  const handleMenuClick = useCallback((id: string) => {
+    switch (id) {
+      case "style":
+        setDynamicContent(<StylesNode />);
+        break;
+      // Add cases for other menu items if needed
+      default:
+        setDynamicContent(null);
+        break;
+    }
+  }, []);
+
+  const getNodeMenu = () => {
+    const nodeMenu =
+      activeTab === "marker"
+        ? markerNodeMenu
+        : activeTab === "polyline"
+          ? polylineNodeMenu
+          : activeTab === "polygon"
+            ? polygonNodeMenu
+            : activeTab === "threedtiles"
+              ? threedtilesNodeMenu
+              : modelNodeMenu;
+
+    return nodeMenu.map((item) => ({
+      ...item,
+      onClick: () => handleMenuClick(item.id) // Attach onClick handler
+    }));
+  };
+
 
   return layerStyle ? (
     <Wrapper>
@@ -56,15 +82,24 @@ const InterfaceTab: FC<InterfaceTabProps> = ({
           position="top"
           alignment="center"
           background={theme.bg[1]}
+          noPadding
+          onChange={(id) => setActiveTab(id)}
         />
       </TabsWrapper>
       {layerStyle && (
-        <Button
-          title={t("New node")}
-          extendWidth
-          size="small"
-          icon="plus"
-          appearance="primary"
+        <PopupMenu
+          extendTriggerWidth
+          width={276}
+          menu={getNodeMenu()}
+          label={
+            <Button
+              title={t("New node")}
+              extendWidth
+              size="small"
+              icon="plus"
+              appearance="primary"
+            />
+          }
         />
       )}
     </Wrapper>
@@ -79,7 +114,8 @@ const Wrapper = styled("div")(() => ({
   width: "100%"
 }));
 
-const TabsWrapper = styled("div")(() => ({
+const TabsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
+  padding: `${theme.spacing.small}px 0`
 }));

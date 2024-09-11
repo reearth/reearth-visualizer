@@ -23,6 +23,7 @@ export type TabsProps = {
   alignment?: "start" | "end" | "center";
   background?: string;
   currentTab?: string;
+  noPadding?: boolean;
   onChange?: (tab: string) => void;
 };
 
@@ -33,6 +34,7 @@ export const Tabs: FC<TabsProps> = ({
   background,
   currentTab,
   alignment,
+  noPadding,
   onChange
 }) => {
   const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0].id);
@@ -95,7 +97,9 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      <Content>{selectedTabItem ? selectedTabItem.children : null}</Content>
+      <Content noPadding={noPadding}>
+        {selectedTabItem ? selectedTabItem.children : null}
+      </Content>
     </Wrapper>
   );
 };
@@ -149,10 +153,12 @@ const Tab = styled("div")<{
     position === "left" && tabStyle === "normal" ? theme.radius.small : ""
 }));
 
-const Content = styled("div")(({ theme }) => ({
-  padding: theme.spacing.normal,
-  minHeight: 0,
-  flex: 1,
-  height: "auto",
-  overflowY: "auto"
-}));
+const Content = styled("div")<{ noPadding?: boolean }>(
+  ({ noPadding, theme }) => ({
+    padding: noPadding ? 0 : theme.spacing.normal,
+    minHeight: 0,
+    flex: 1,
+    height: "auto",
+    overflowY: "auto"
+  })
+);
