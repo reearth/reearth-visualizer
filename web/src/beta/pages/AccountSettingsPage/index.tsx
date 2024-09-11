@@ -1,7 +1,6 @@
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { FC } from "react";
 
-
 export type Props = {
   path?: string;
 };
