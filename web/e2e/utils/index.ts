@@ -2,14 +2,17 @@
 import {
   type APIRequestContext,
   request,
+  chromium,
   test as base,
-  type Page
+  type Page,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type Locator
 } from "@playwright/test";
 
 import { config, getAccessToken, type Config } from "./config";
 
 // eslint-disable-next-line no-restricted-imports
-export { expect } from "@playwright/test";
+export { expect, chromium, type Page, type Locator } from "@playwright/test";
 
 export type Reearth = {
   initUser: () => Promise<{
