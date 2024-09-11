@@ -23,11 +23,12 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   const [, setNotification] = useNotification();
 
   const [layerStyle, setLayerStyle] = useState(selectedLayerStyle);
+  const [styleCode, setStyleCode] = useState<string | undefined>("");
+
   useEffect(() => {
     setLayerStyle(selectedLayerStyle);
   }, [selectedLayerStyle]);
 
-  const [styleCode, setStyleCode] = useState<string | undefined>("");
   useEffect(() => {
     setStyleCode(JSON.stringify(layerStyle?.value, null, 2));
   }, [layerStyle]);
@@ -35,22 +36,20 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   const handleSubmit = useCallback(() => {
     if (!layerStyle?.id) return;
     try {
-      const parsedStyle = JSON.parse(styleCode || "");
-      setLayerStyle((prev) => {
-        if (!prev?.id) return prev;
-        return {
-          ...prev,
-          value: parsedStyle
-        };
-      });
       onLayerStyleValueUpdate?.({
         styleId: layerStyle.id,
-        value: parsedStyle
+        value: layerStyle?.value
       });
     } catch (_e) {
       setNotification({ type: "error", text: t("Invalid style") });
     }
-  }, [styleCode, onLayerStyleValueUpdate, layerStyle, setNotification, t]);
+  }, [
+    layerStyle?.id,
+    layerStyle?.value,
+    onLayerStyleValueUpdate,
+    setNotification,
+    t
+  ]);
 
   const tabItems: TabItem[] = [
     {
@@ -67,6 +66,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         <CodeTab
           styleCode={styleCode}
           setStyleCode={setStyleCode}
+          setLayerStyle={setLayerStyle}
           hasLayerStyleSelected={!!layerStyle?.id}
         />
       )

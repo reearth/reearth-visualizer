@@ -84,13 +84,13 @@ export default NodeSystem;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: theme.spacing.smallest,
+  padding: theme.spacing.small,
   borderRadius: theme.radius.small,
   width: "100%",
   background: "#ffffff08",
   gap: theme.spacing.micro,
   alignItems: "flex-start",
-  minHeight: 60
+  minHeight: 50
 }));
 
 const HeaderWrapper = styled("div")(() => ({
@@ -101,7 +101,6 @@ const HeaderWrapper = styled("div")(() => ({
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
-  padding: `0 ${theme.spacing.smallest + 1}px`,
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,

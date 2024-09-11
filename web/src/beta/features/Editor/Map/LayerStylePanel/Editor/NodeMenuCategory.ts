@@ -115,6 +115,66 @@ export const markerNodeMenu: PopupMenuItem[] = [
     id: "labelPosition",
     title: "labelPosition",
     icon: "points"
+  },
+  {
+    id: "labelTypography",
+    title: "labelTypography",
+    icon: "points"
+  },
+  {
+    id: "labelBackground",
+    title: "labelBackground",
+    icon: "points"
+  },
+  {
+    id: "labelBackgroundColor",
+    title: "labelBackgroundColor",
+    icon: "points"
+  },
+  {
+    id: "labelBackgroundPaddingHorizontal",
+    title: "labelBackgroundPaddingHorizontal",
+    icon: "points"
+  },
+  {
+    id: "labelBackgroundPaddingVertical",
+    title: "labelBackgroundPaddingVertical",
+    icon: "points"
+  },
+  {
+    id: "extrude",
+    title: "extrude",
+    icon: "points"
+  },
+  {
+    id: "near",
+    title: "near",
+    icon: "points"
+  },
+  {
+    id: "far",
+    title: "far",
+    icon: "points"
+  },
+  {
+    id: "pixelOffset",
+    title: "pixelOffset",
+    icon: "points"
+  },
+  {
+    id: "eyeOffset",
+    title: "eyeOffset",
+    icon: "points"
+  },
+  {
+    id: "hideIndicator",
+    title: "hideIndicator",
+    icon: "points"
+  },
+  {
+    id: "selectedFeatureColor",
+    title: "selectedFeatureColor",
+    icon: "points"
   }
 ];
 
@@ -253,27 +313,107 @@ export const threedtilesNodeMenu: PopupMenuItem[] = [
   {
     id: "show",
     title: "show",
-    icon: "points"
+    icon: "buildings"
   },
   {
-    id: "height",
-    title: "height",
-    icon: "points"
+    id: "color",
+    title: "color",
+    icon: "buildings"
   },
   {
-    id: "style",
-    title: "style",
-    icon: "points"
+    id: "styleUrl",
+    title: "styleUrl",
+    icon: "buildings"
+  },
+  {
+    id: "shadows",
+    title: "shadows",
+    icon: "buildings"
+  },
+  {
+    id: "colorBlendMode",
+    title: "colorBlendMode",
+    icon: "buildings"
+  },
+  {
+    id: "edgeWidth",
+    title: "edgeWidth",
+    icon: "buildings"
+  },
+  {
+    id: "edgeColor",
+    title: "edgeColor",
+    icon: "buildings"
+  },
+  {
+    id: "selectedFeatureColor",
+    title: "selectedFeatureColor",
+    icon: "buildings"
+  },
+  {
+    id: "disableIndexingFeature",
+    title: "disableIndexingFeature",
+    icon: "buildings"
+  },
+  {
+    id: "tileset",
+    title: "tileset",
+    icon: "buildings"
+  },
+  {
+    id: "apiKey",
+    title: "apiKey",
+    icon: "buildings"
+  },
+  {
+    id: "experimental_clipping",
+    title: "experimental_clipping",
+    icon: "buildings"
   },
   {
     id: "pointSize",
     title: "pointSize",
-    icon: "points"
+    icon: "buildings"
   },
   {
-    id: "pointColor",
-    title: "pointColor",
-    icon: "points"
+    id: "meta",
+    title: "meta",
+    icon: "buildings"
+  },
+  {
+    id: "pbr",
+    title: "pbr",
+    icon: "buildings"
+  },
+  {
+    id: "specularEnvironmentMaps",
+    title: "specularEnvironmentMaps",
+    icon: "buildings"
+  },
+  {
+    id: "sphericalHarmonicCoefficients",
+    title: "sphericalHarmonicCoefficients",
+    icon: "buildings"
+  },
+  {
+    id: "imageBasedLightIntensity",
+    title: "imageBasedLightIntensity",
+    icon: "buildings"
+  },
+  {
+    id: "showWireframe",
+    title: "showWireframe",
+    icon: "buildings"
+  },
+  {
+    id: "meshowBoundingVolumeta",
+    title: "showBoundingVolume",
+    icon: "buildings"
+  },
+  {
+    id: "cacheBytes",
+    title: "cacheBytes",
+    icon: "buildings"
   }
 ];
 
@@ -409,4 +549,3 @@ export const modelNodeMenu: PopupMenuItem[] = [
     icon: "cube"
   }
 ];
-
