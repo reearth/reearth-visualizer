@@ -35,17 +35,17 @@ type Builder struct {
 	layerStyles *scene.StyleList
 	story       *storytelling.Story
 
-	export bool
+	exportType bool
 }
 
 func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
 	e := &encoder{}
 	return &Builder{
-		ploader:   pl,
-		tloader:   tsl,
-		nlsloader: nlsl,
-		encoder:   e,
-		export:    exp,
+		ploader:    pl,
+		tloader:    tsl,
+		nlsloader:  nlsl,
+		encoder:    e,
+		exportType: exp,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
 				LayerLoader:    ll,

@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -69,7 +70,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 			}
 			extension, err := plugin.NewExtension().
 				ID(id.PluginExtensionID(pluginJSONextension.ExtensionID)).
-				Type(plugin.ExtensionType(pluginJSONextension.Type)).
+				Type(gqlmodel.FromPluginExtension(pluginJSONextension.Type)).
 				Name(i18n.StringFrom(pluginJSONextension.Name)).
 				Description(i18n.StringFrom(pluginJSONextension.Description)).
 				Icon(pluginJSONextension.Icon).
@@ -92,10 +93,12 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 		if err != nil {
 			return nil, err
 		}
-		if err := i.pluginRepo.Save(ctx, p); err != nil {
-			return nil, err
+		if !p.ID().System() {
+			if err := i.pluginRepo.Save(ctx, p); err != nil {
+				return nil, err
+			}
+			importedPlugins = append(importedPlugins, p)
 		}
-		importedPlugins = append(importedPlugins, p)
 	}
 	return importedPlugins, nil
 }

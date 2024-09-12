@@ -16,7 +16,7 @@ func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {
 	case PublishmentStatusPrivate:
 		return project.PublishmentStatusPrivate
 	}
-	return project.PublishmentStatus(string(v))
+	return project.PublishmentStatus("")
 }
 
 func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
@@ -28,7 +28,7 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 	case project.PublishmentStatusPrivate:
 		return PublishmentStatusPrivate
 	}
-	return PublishmentStatus(string(v))
+	return PublishmentStatus("")
 }
 
 func ToProject(p *project.Project) *Project {

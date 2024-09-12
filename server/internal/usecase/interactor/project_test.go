@@ -192,7 +192,7 @@ func TestImportProject(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifp.ImportProject(ctx, projectData)
+	result, _, err := ifp.ImportProject(ctx, projectData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 

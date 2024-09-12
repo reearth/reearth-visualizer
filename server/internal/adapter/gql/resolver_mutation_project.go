@@ -143,10 +143,15 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	projectData, _ := jsonData["project"].(map[string]interface{})
-	prj, err := usecases(ctx).Project.ImportProject(ctx, projectData)
+	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, projectData)
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	pluginsData, _ := jsonData["plugins"].([]interface{})
 	_, err = usecases(ctx).Plugin.ImportPlugins(ctx, pluginsData)
@@ -174,6 +179,8 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	if err != nil {
 		return nil, err
 	}
+
+	tx.Commit()
 
 	prj, res, plgs, err := usecases(ctx).Project.ExportProject(ctx, prj.ID(), getOperator(ctx))
 	if err != nil {

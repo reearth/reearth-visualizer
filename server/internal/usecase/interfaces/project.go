@@ -68,5 +68,5 @@ type Project interface {
 	CheckAlias(context.Context, string) (bool, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 	ExportProject(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, map[string]interface{}, []*plugin.Plugin, error)
-	ImportProject(context.Context, map[string]interface{}) (*project.Project, error)
+	ImportProject(context.Context, map[string]interface{}) (*project.Project, usecasex.Tx, error)
 }

@@ -85,7 +85,7 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	case plugin.ExtensionTypeStoryBlock:
 		return PluginExtensionTypeStoryBlock
 	}
-	return PluginExtensionType(string(t))
+	return PluginExtensionType("")
 }
 
 func ToPluginWidgetLayout(wl *plugin.WidgetLayout) *WidgetLayout {

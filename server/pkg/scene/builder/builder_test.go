@@ -769,19 +769,19 @@ func TestSceneBuilder(t *testing.T) {
 		Clusters: []*clusterJSON{},
 	}
 
-	export := false
+	exportType := false
 
 	// exec
-	sb := New(lloader, ploader, dloader, tloader, tsloader, nlsloader, export).ForScene(scene)
+	sb := New(lloader, ploader, dloader, tloader, tsloader, nlsloader, exportType).ForScene(scene)
 	result, err := sb.buildScene(context.Background(), publishedAt, false, false, "")
 
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
 
 	// export mode
-	export = true
+	exportType = true
 
-	sb = New(lloader, ploader, dloader, tloader, tsloader, nlsloader, export).ForScene(scene)
+	sb = New(lloader, ploader, dloader, tloader, tsloader, nlsloader, exportType).ForScene(scene)
 	result, err = sb.buildScene(context.Background(), publishedAt, false, false, "")
 
 	expected.Property = map[string]interface{}{

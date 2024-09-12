@@ -46,21 +46,22 @@ type Storytelling struct {
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
 	return &Storytelling{
-		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
-		storytellingRepo:   r.Storytelling,
-		pluginRepo:         r.Plugin,
-		propertyRepo:       r.Property,
-		workspaceRepo:      r.Workspace,
-		policyRepo:         r.Policy,
-		projectRepo:        r.Project,
-		sceneRepo:          r.Scene,
-		layerRepo:          r.Layer,
-		datasetRepo:        r.Dataset,
-		tagRepo:            r.Tag,
-		file:               gr.File,
-		transaction:        r.Transaction,
-		nlsLayerRepo:       r.NLSLayer,
-		layerStyles:        r.Style,
+		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
+		storytellingRepo: r.Storytelling,
+		pluginRepo:       r.Plugin,
+		propertyRepo:     r.Property,
+		workspaceRepo:    r.Workspace,
+		policyRepo:       r.Policy,
+		projectRepo:      r.Project,
+		sceneRepo:        r.Scene,
+		layerRepo:        r.Layer,
+		datasetRepo:      r.Dataset,
+		tagRepo:          r.Tag,
+		file:             gr.File,
+		transaction:      r.Transaction,
+		nlsLayerRepo:     r.NLSLayer,
+		layerStyles:      r.Style,
+
 		propertySchemaRepo: r.PropertySchema,
 	}
 }

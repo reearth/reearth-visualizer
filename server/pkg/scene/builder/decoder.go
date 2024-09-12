@@ -67,7 +67,10 @@ func parseWidgetArea(widgetAreaJSON *widgetAreaJSON) *scene.WidgetArea {
 	}
 	var widgetIDs []idx.ID[id.Widget]
 	for _, widgetID := range widgetAreaJSON.WidgetIDs {
-		id, _ := gqlmodel.ToID[id.Widget](gqlmodel.ID(widgetID))
+		id, err := gqlmodel.ToID[id.Widget](gqlmodel.ID(widgetID))
+		if err != nil {
+			continue
+		}
 		widgetIDs = append(widgetIDs, id)
 	}
 	return scene.NewWidgetArea(

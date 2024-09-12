@@ -553,16 +553,22 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, ope
 	return prj, res, plgs, nil
 }
 
-func (i *Project) ImportProject(ctx context.Context, projectData map[string]interface{}) (*project.Project, error) {
+func (i *Project) ImportProject(ctx context.Context, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	var p = jsonmodel.ToProjectFromJSON(projectData)
 
 	projectID, err := id.ProjectIDFrom(string(p.ID))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	workspaceID, err := accountdomain.WorkspaceIDFrom(string(p.TeamID))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	prjBuilder := project.New().
@@ -600,12 +606,12 @@ func (i *Project) ImportProject(ctx context.Context, projectData map[string]inte
 
 	prj, err := prjBuilder.Build()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return prj, nil
+	return prj, tx, nil
 }
 
 func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {

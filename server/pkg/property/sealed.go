@@ -117,14 +117,14 @@ func sealedGroup(ctx context.Context, fields []*MergedField, d dataset.GraphLoad
 	return res, nil
 }
 
-func (s *Sealed) Interface(export bool) map[string]interface{} {
+func (s *Sealed) Interface(exportType bool) map[string]interface{} {
 	if s == nil {
 		return nil
 	}
 
 	res := map[string]interface{}{}
 	for _, item := range s.Items {
-		i := item.Interface(export)
+		i := item.Interface(exportType)
 		if i != nil {
 			res[item.SchemaGroup.String()] = i
 		}
@@ -133,7 +133,7 @@ func (s *Sealed) Interface(export bool) map[string]interface{} {
 	return res
 }
 
-func (s *SealedItem) Interface(export bool) interface{} {
+func (s *SealedItem) Interface(exportType bool) interface{} {
 	if s == nil {
 		return nil
 	}
@@ -141,7 +141,7 @@ func (s *SealedItem) Interface(export bool) interface{} {
 	if len(s.Groups) > 0 {
 		items := make([]map[string]interface{}, 0, len(s.Groups))
 		for _, g := range s.Groups {
-			i := sealedFieldsInterface(g.Fields, export)
+			i := sealedFieldsInterface(g.Fields, exportType)
 			if g.Original != nil {
 				i["id"] = g.Original.String()
 			}
@@ -150,14 +150,14 @@ func (s *SealedItem) Interface(export bool) interface{} {
 		return items
 	}
 
-	return sealedFieldsInterface(s.Fields, export)
+	return sealedFieldsInterface(s.Fields, exportType)
 }
 
-func sealedFieldsInterface(fields []*SealedField, export bool) map[string]interface{} {
+func sealedFieldsInterface(fields []*SealedField, exportType bool) map[string]interface{} {
 	item := map[string]interface{}{}
 
 	for _, f := range fields {
-		if export {
+		if exportType {
 			item[f.ID.String()] = f.Val.Value().InterfaceWithType()
 		} else {
 			item[f.ID.String()] = f.Val.Value().Interface()

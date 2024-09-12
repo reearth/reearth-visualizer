@@ -69,7 +69,7 @@ func (b *Builder) widgets(ctx context.Context, p []*property.Property) []*widget
 	sceneWidgets := b.scene.Widgets().Widgets()
 	res := make([]*widgetJSON, 0, len(sceneWidgets))
 	for _, w := range sceneWidgets {
-		if !b.export && !w.Enabled() {
+		if !b.exportType && !w.Enabled() {
 			continue
 		}
 
@@ -137,7 +137,7 @@ func toTag(t tag.Tag, m tag.Map) tagJSON {
 }
 
 func (b *Builder) property(ctx context.Context, p *property.Property) propertyJSON {
-	return property.SealProperty(ctx, p).Interface(b.export)
+	return property.SealProperty(ctx, p).Interface(b.exportType)
 }
 
 func findProperty(pp []*property.Property, i property.ID) *property.Property {
