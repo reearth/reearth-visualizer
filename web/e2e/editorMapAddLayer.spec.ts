@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import pom from "./pom";
 
-// const testTitle = "playwright_test" + uuidv4();
-const testTitle = "playwright_test";
+const testTitle = "playwright_test" + uuidv4();
 
 //use session, also could set in playwright config
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +27,7 @@ test("create project and add layer", async ({ page }, testInfo) => {
   await dashboardPage.dbClickInProjectByName(testTitle);
 
   // clocs sky box, add new layer
-  const mapPage = new pom.visualizer.scene.MapPage(page);
+  const mapPage = new pom.visualizer.editor.MapPage(page);
   const newLayerTitle = "newLayerTitle" + +uuidv4();
   await mapPage.closeSkyBox();
   await mapPage.createNewLayerBySketch(newLayerTitle);
@@ -43,20 +42,21 @@ test("create project and add layer", async ({ page }, testInfo) => {
   await page.waitForTimeout(5 * 1000);
 
   // need first time prepare expact img
-  await page.screenshot({
-    path: `${testInfo.snapshotPath("expect.png")}`,
-    fullPage: true
+  await page.locator("canvas").screenshot({
+    path: `${testInfo.snapshotPath("editorMapAddLayerExpect.png")}`
   });
 
   // test
   expect
     .soft(
-      await page.screenshot({
-        path: `${testInfo.snapshotPath("test.png")}`,
-        fullPage: true
+      await page.locator("canvas").screenshot({
+        path: `${testInfo.snapshotPath("../testSnapshot/editorMapAddLayer/test.png")}`
       })
     )
-    .toMatchSnapshot({ name: "expect.png", maxDiffPixels: 10 });
+    .toMatchSnapshot({
+      name: "editorMapAddLayerExpect.png",
+      maxDiffPixels: 10
+    });
 
   //delete created project
   await dashboardPage.goto();

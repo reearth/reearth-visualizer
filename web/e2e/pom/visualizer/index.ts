@@ -1,5 +1,5 @@
 import * as dashboard from "./dashboard";
+import * as editor from "./editor";
 import * as projectSetting from "./projectSetting";
-import * as scene from "./scene";
 
-export { dashboard, scene, projectSetting };
+export { dashboard, editor, projectSetting };
