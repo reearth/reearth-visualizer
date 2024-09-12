@@ -229,10 +229,6 @@ export default () => {
                   "Successfully unpublished your scene. Now nobody can access your scene."
                 )
       });
-
-      console.log("=======")
-      console.log(data)
-
       return { data: data.publishProject.project, status: "success" };
     },
     [publishProjectMutation, t, setNotification]
