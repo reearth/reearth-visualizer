@@ -12,6 +12,7 @@ const config: PlaywrightTestConfig = {
     headless: false
   },
   testDir: "e2e",
+  snapshotPathTemplate: "{testDir}/__screenshots__/{testFilePath}/{arg}{ext}",
   // globalSetup: "./e2e/utils/setup.ts", //old way
   globalSetup: "./e2e/auth.setup.ts",
   reporter: process.env.CI ? "github" : "list",

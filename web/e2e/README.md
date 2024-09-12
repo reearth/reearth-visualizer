@@ -16,14 +16,10 @@ web
 │ │ │ ├── projectSetting
 │ │ │ │ ├── generalPage.ts
 │ │ │ │ └── index.ts
-│ │ │ ├── scene
+│ │ │ ├── editor
 │ │ │ │ ├── index.ts
 │ │ │ │ └── MapPage.ts
 │ │ └── index.ts
-│ ├── test.spec.ts-snapshots
-│ │ ├── expect-chromium-darwin.png
-│ │ ├── result-chromium-darwin.png
-│ │ └── test-chromium-darwin.png
 │ ├── utils
 │ │ ├── .auth
 │ │ ├── config.ts //old setting
@@ -77,11 +73,7 @@ Contains the authentication setup process for the tests. You can define login fl
 
 ## Snapshots
 
-The test.spec.ts-snapshots directory stores visual snapshots, which are used for visual regression testing. Example snapshot files include:
-
-- expect-chromium-darwin.png
-- result-chromium-darwin.png
-- test-chromium-darwin.png
+Visual regression testing snapshots will be storied in `e2e/__screenshots__` directory. Test will fail on first run if you don't have the snapshots locally.
 
 ## Page Object Model (POM)
 
@@ -91,4 +83,8 @@ Key Directories:
 
 - dashboard: Manages interactions with the dashboard page via ProjectsPage.ts.
 - projectSetting: Handles interactions with the project settings page (generalPage.ts).
-- scene: Contains methods for the scene page, including MapPage.ts.
+- editor: Contains methods for the editor page, including MapPage.ts.
+
+## Memo
+
+We need to improve the implementation later.

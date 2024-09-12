@@ -2,12 +2,8 @@
 import {
   type APIRequestContext,
   request,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  chromium,
   test as base,
-  type Page,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type Locator
+  type Page
 } from "@playwright/test";
 
 import { config, getAccessToken, type Config } from "./config";
