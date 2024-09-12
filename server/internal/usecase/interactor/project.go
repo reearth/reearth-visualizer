@@ -6,6 +6,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -594,8 +595,8 @@ func (i *Project) ImportProject(ctx context.Context, projectData map[string]inte
 		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
 	}
 
-	prjBuilder = prjBuilder.Visualizer(visualizer.Visualizer(string(p.Visualizer)))
-	prjBuilder = prjBuilder.PublishmentStatus(project.PublishmentStatus(string(p.PublishmentStatus)))
+	prjBuilder = prjBuilder.Visualizer(visualizer.Visualizer(p.Visualizer))
+	prjBuilder = prjBuilder.PublishmentStatus(gqlmodel.FromPublishmentStatus(p.PublishmentStatus))
 
 	prj, err := prjBuilder.Build()
 	if err != nil {

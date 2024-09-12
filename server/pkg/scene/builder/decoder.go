@@ -114,7 +114,10 @@ func AddItemFromPropertyJSON(prop *property.Property, ps *property.Schema, pj pr
 				ptr := property.NewPointer(schemaGroupID, nil, fieldID)
 				v, ok := parsePropertyValue(value2)
 				if ok {
-					prop.UpdateValue(ps, ptr, v)
+					_, _, _, err := prop.UpdateValue(ps, ptr, v)
+					if err != nil {
+						return nil, err
+					}
 				}
 			}
 		}

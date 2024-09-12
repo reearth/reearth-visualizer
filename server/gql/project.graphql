@@ -32,8 +32,7 @@ type ProjectAliasAvailability {
 }
 
 enum Visualizer {
-  cesium
-  cesium_beta
+  CESIUM
 }
 
 enum PublishmentStatus {

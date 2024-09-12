@@ -9527,8 +9527,7 @@ type ProjectAliasAvailability {
 }
 
 enum Visualizer {
-  cesium
-  cesium_beta
+  CESIUM
 }
 
 enum PublishmentStatus {
@@ -9633,8 +9632,14 @@ type ProjectEdge {
   node: Project
 }
 
-extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
+extend type Query {
+  projects(
+    teamId: ID!
+    includeArchived: Boolean
+    pagination: Pagination
+    keyword: String
+    sort: ProjectSort
+  ): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
 }

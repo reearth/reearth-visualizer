@@ -9,7 +9,7 @@ import (
 
 // go test -v -run TestExportProject ./e2e/...
 
-func TestExportProject(t *testing.T) {
+func TestCallExportProject(t *testing.T) {
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
@@ -33,24 +33,19 @@ func TestExportProject(t *testing.T) {
 		WithJSON(requestBody).
 		Expect()
 
-	response.
-		Status(http.StatusOK)
-	// 	JSON().
-	// 	Object().
-	// 	Value("data").Object().
-	// 	Value("exportProject").Object().
-	// 	Value("projectData").Object()
+	response.Status(http.StatusOK)
 
-	// body := response.JSON().Object()
-	// if errorsValue := body.Value("errors"); errorsValue.Raw() != nil {
-	// 	t.Errorf("Errors found in response: %v", errorsValue.Raw())
-	// }
+	response.JSON().
+		Object().
+		Value("data").Object().
+		Value("exportProject").Object().
+		Value("projectData").Object()
 
 }
 
 // go test -v -run TestImportProject ./e2e/...
 
-func TestImportProject(t *testing.T) {
+func TestCallImportProject(t *testing.T) {
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
@@ -74,17 +69,12 @@ func TestImportProject(t *testing.T) {
 		WithFile("1", testFilePath).
 		Expect()
 
-	response.
-		Status(http.StatusOK)
-	// 	JSON().
-	// 	Object().
-	// 	Value("data").Object().
-	// 	Value("exportProject").Object().
-	// 	Value("projectData").Object()
+	response.Status(http.StatusOK)
 
-	// body := response.JSON().Object()
-	// if errorsValue := body.Value("errors"); errorsValue.Raw() != nil {
-	// 	t.Errorf("Errors found in response: %v", errorsValue.Raw())
-	// }
+	response.JSON().
+		Object().
+		Value("data").Object().
+		Value("exportProject").Object().
+		Value("projectData").Object()
 
 }

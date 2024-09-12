@@ -206,6 +206,7 @@ func TestImportProject(t *testing.T) {
 
 	// Exclude items that are updated upon creation.
 	delete(resultMap, "updatedAt")
+	delete(resultMap, "createdAt")
 
 	actualByte, err := json.Marshal(resultMap)
 	assert.NoError(t, err)
@@ -219,7 +220,6 @@ func TestImportProject(t *testing.T) {
     "isBasicAuthActive": false,
     "basicAuthUsername": "",
     "basicAuthPassword": "",
-    "createdAt": "2024-09-11T19:17:39.418+09:00",
     "name": "ProjectName1",
     "description": "ProjectOverview1",
     "alias": "",

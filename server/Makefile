@@ -38,4 +38,4 @@ run-db:
 gql:
 	go generate ./internal/adapter/gql
 
-.PHONY: lint test check e2e build run-app run-db gql
+.PHONY: lint test failcheck e2e build run-app run-db gql

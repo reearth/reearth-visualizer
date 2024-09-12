@@ -156,6 +156,7 @@ func TestImportScene(t *testing.T) {
 	delete(resultMap, "rootLayerId")
 	delete(resultMap, "propertyId")
 	delete(resultMap, "updatedAt")
+	delete(resultMap, "createdAt")
 	if widgets, ok := resultMap["widgets"].([]interface{}); ok {
 		for _, widget := range widgets {
 			if widgetMap, ok := widget.(map[string]interface{}); ok {
@@ -172,7 +173,6 @@ func TestImportScene(t *testing.T) {
 	var expectedMap map[string]interface{}
 	err = json.Unmarshal([]byte(fmt.Sprintf(`{
     "clusters": [],
-    "createdAt": "2024-09-11T19:17:39.428+09:00",
     "datasetSchemas": null,
     "id": "01j7g9ddv4sbf8tgt5c6xxj5xc",
     "newLayers": null,

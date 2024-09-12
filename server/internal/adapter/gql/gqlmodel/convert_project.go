@@ -54,7 +54,7 @@ func ToProject(p *project.Project) *Project {
 		ImageURL:          p.ImageURL(),
 		PublishedAt:       publishedAtRes,
 		UpdatedAt:         p.UpdatedAt(),
-		Visualizer:        ToVisualizer(p.Visualizer()),
+		Visualizer:        Visualizer(p.Visualizer()),
 		TeamID:            IDFrom(p.Workspace()),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
 		PublicTitle:       p.PublicTitle(),

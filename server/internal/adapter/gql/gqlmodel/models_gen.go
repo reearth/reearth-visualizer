@@ -2772,18 +2772,16 @@ func (e ValueType) MarshalGQL(w io.Writer) {
 type Visualizer string
 
 const (
-	VisualizerCesium     Visualizer = "cesium"
-	VisualizerCesiumBeta Visualizer = "cesium_beta"
+	VisualizerCesium Visualizer = "CESIUM"
 )
 
 var AllVisualizer = []Visualizer{
 	VisualizerCesium,
-	VisualizerCesiumBeta,
 }
 
 func (e Visualizer) IsValid() bool {
 	switch e {
-	case VisualizerCesium, VisualizerCesiumBeta:
+	case VisualizerCesium:
 		return true
 	}
 	return false

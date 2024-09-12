@@ -52,10 +52,8 @@ func ToVisualizer(v visualizer.Visualizer) Visualizer {
 	switch v {
 	case visualizer.VisualizerCesium:
 		return VisualizerCesium
-	case visualizer.VisualizerCesiumBeta:
-		return VisualizerCesiumBeta
 	}
-	return Visualizer(string(v))
+	return Visualizer("")
 }
 
 func ToVisualizerRef(v visualizer.Visualizer) *Visualizer {
