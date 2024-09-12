@@ -18,6 +18,7 @@ import Polyline from "./Polyline";
 export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
+  optionsMenu?: PopupMenuItem[];
 };
 
 const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
@@ -56,24 +57,28 @@ const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
           alignment="center"
           background={theme.bg[1]}
           noPadding
-        />
-      </TabsWrapper>
-      {layerStyle && (
-        <PopupMenu
-          extendTriggerWidth
-          width={276}
-          menu={menuItems}
-          label={
-            <Button
-              title={t("New node")}
-              extendWidth
-              size="small"
-              icon="plus"
-              appearance="primary"
-            />
+          sharedContent={
+            layerStyle ? (
+              <PopupMenu
+                extendTriggerWidth
+                width={276}
+                menu={menuItems}
+                label={
+                  <Button
+                    title={t("New node")}
+                    extendWidth
+                    size="small"
+                    icon="plus"
+                    appearance="primary"
+                  />
+                }
+              />
+            ) : (
+              <NoStyleMessage />
+            )
           }
         />
-      )}
+      </TabsWrapper>
     </Wrapper>
   ) : (
     <NoStyleMessage />
@@ -89,5 +94,6 @@ const Wrapper = styled("div")(() => ({
 const TabsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: `${theme.spacing.small}px 0`
+  padding: `${theme.spacing.small}px 0`,
+  height: "480px"
 }));

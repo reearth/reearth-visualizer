@@ -4,43 +4,38 @@ import {
   PopupMenu,
   PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
-import { styled } from "@reearth/services/theme";
-import React, { FC, ReactNode, useCallback, MouseEvent } from "react";
+import { styled, useTheme } from "@reearth/services/theme";
+import { FC, ReactNode, useCallback, MouseEvent, useState } from "react";
+
+type Tabs = "value" | "expression" | "condition";
 
 type NodeAction = {
-  key: string;
+  id: Tabs;
   icon: IconName;
-  onClick?: () => void;
-}
+};
 
 interface NodeSystemProps {
   title?: string;
-  children: ReactNode;
+  children: (activeTab: string) => ReactNode;
   optionsMenu?: PopupMenuItem[];
 }
 
-const NodeSystem: FC<NodeSystemProps> = ({
-  children,
-  title,
-  optionsMenu
-}) => {
+const NodeSystem: FC<NodeSystemProps> = ({ children, title, optionsMenu }) => {
+  const theme = useTheme();
   const handleOptionsClick = useCallback((e: MouseEvent) => {
     e.stopPropagation();
   }, []);
 
+  const [active, setActive] = useState<Tabs>("value");
+
+  const handleTabChange = useCallback((newTab: Tabs) => {
+    setActive(newTab);
+  }, []);
+
   const actions: NodeAction[] = [
-    {
-      key: "value",
-      icon: "book"
-    },
-    {
-      key: "expression",
-      icon: "bracketsCurly"
-    },
-    {
-      key: "condition",
-      icon: "if"
-    }
+    { id: "value", icon: "textAa" },
+    { id: "expression", icon: "bracketsCurly" },
+    { id: "condition", icon: "if" }
   ];
 
   return (
@@ -48,13 +43,16 @@ const NodeSystem: FC<NodeSystemProps> = ({
       <HeaderWrapper>
         <TitleWrapper>{title}</TitleWrapper>
         <Actions>
-          {actions?.map((action) => (
+          {actions.map((action) => (
             <IconButton
-              key={action.key}
+              key={action.id}
               icon={action.icon}
               size="small"
+              iconColor={
+                active === action.id ? theme.content.main : theme.content.weaker
+              }
               appearance="simple"
-              onClick={action.onClick}
+              onClick={() => handleTabChange(action.id)}
             />
           ))}
           {!!optionsMenu && (
@@ -74,7 +72,7 @@ const NodeSystem: FC<NodeSystemProps> = ({
           )}
         </Actions>
       </HeaderWrapper>
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper active={active}>{children(active)}</ContentWrapper>
     </Wrapper>
   );
 };
@@ -84,7 +82,6 @@ export default NodeSystem;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: theme.spacing.small,
   borderRadius: theme.radius.small,
   width: "100%",
   background: "#ffffff08",
@@ -93,10 +90,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   minHeight: 50
 }));
 
-const HeaderWrapper = styled("div")(() => ({
+const HeaderWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+  padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px 0 ${theme.spacing.smallest}px`,
   width: "100%"
 }));
 
@@ -120,8 +118,11 @@ const OptionsWrapper = styled("div")(() => ({
   flexShrink: 0
 }));
 
-const ContentWrapper = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column",
-  width: "100%"
-}));
+const ContentWrapper = styled("div")<{ active?: string }>(
+  ({ active, theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    padding: active === "condition" ? 0 : theme.spacing.smallest,
+    width: "100%"
+  })
+);

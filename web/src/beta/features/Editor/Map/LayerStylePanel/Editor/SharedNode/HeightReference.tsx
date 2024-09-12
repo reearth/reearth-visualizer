@@ -6,7 +6,8 @@ import { FC, useCallback, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../InterfaceTab";
 import NodeSystem from "../NodeSystem";
-
+import ConditionalTab from "../NodeSystem/ConditionTab";
+import ExpressionTab from "../NodeSystem/ExpressionTab";
 
 const options = [
   {
@@ -27,7 +28,7 @@ const HeightReferenceNode: FC<
   LayerStyleProps & {
     styleType: "marker" | "polyline" | "polygon" | "threedtiles" | "model";
   }
-> = ({ layerStyle, styleType, setLayerStyle }) => {
+> = ({ layerStyle, styleType, optionsMenu, setLayerStyle }) => {
   const [heightReferenceValue, setStyleHeightReferenceValue] = useState<
     MarkerAppearance["heightReference"]
   >(layerStyle?.value.marker?.heightReference ?? "none");
@@ -67,13 +68,28 @@ const HeightReferenceNode: FC<
     }
   }, [setLayerStyle, setNotification, heightReferenceValue, t, styleType]);
 
-  return (
-    <NodeSystem title="HeightReference">
+  const renderContent: Record<string, JSX.Element> = {
+    value: (
       <Selector
         value={heightReferenceValue}
         options={options}
         onChange={handleChange}
       />
+    ),
+    expression: <ExpressionTab value="" />,
+    condition: (
+      <ConditionalTab>
+        <Selector
+          value={heightReferenceValue}
+          options={options}
+          onChange={handleChange}
+        />
+      </ConditionalTab>
+    )
+  };
+  return (
+    <NodeSystem title="HeightReference" optionsMenu={optionsMenu}>
+      {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };

@@ -117,6 +117,7 @@ import Table from "./Icons/Table.svg?react";
 import Tag from "./Icons/Tag.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
 import Text from "./Icons/Text.svg?react";
+import TextAa from "./Icons/TextAa.svg?react";
 import TextAlignCenter from "./Icons/TextAlignCenter.svg?react";
 import TextAlignLeft from "./Icons/TextAlignLeft.svg?react";
 import TextAlignRight from "./Icons/TextAlignRight.svg?react";
@@ -257,6 +258,7 @@ export default {
   tag: Tag,
   terrian: Terrian,
   text: Text,
+  textAa: TextAa,
   textAlignCenter: TextAlignCenter,
   textAlignLeft: TextAlignLeft,
   textAlignRight: TextAlignRight,

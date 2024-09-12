@@ -6,13 +6,20 @@ import { FC, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 import NodeSystem from "../../NodeSystem";
+import ConditionalTab from "../../NodeSystem/ConditionTab";
+import ExpressionTab from "../../NodeSystem/ExpressionTab";
 
-const PointColorNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const PointColorNode: FC<LayerStyleProps> = ({
+  optionsMenu,
+  layerStyle,
+  setLayerStyle
+}) => {
+  const t = useT();
+  const [, setNotification] = useNotification();
+
   const [value, setValue] = useState<MarkerAppearance["pointColor"]>(
     layerStyle?.value.marker?.pointColor ?? null
   );
-  const t = useT();
-  const [, setNotification] = useNotification();
 
   useEffect(() => {
     if (layerStyle?.value.marker?.pointColor)
@@ -39,9 +46,18 @@ const PointColorNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     }
   }, [setLayerStyle, setNotification, setValue, t, value]);
 
+  const renderContent: Record<string, JSX.Element> = {
+    value: <ColorInput value={value} onChange={setValue} />,
+    expression: <ExpressionTab value={value} onChange={setValue} />,
+    condition: (
+      <ConditionalTab>
+        <ColorInput value={value} onChange={setValue} />
+      </ConditionalTab>
+    )
+  };
   return (
-    <NodeSystem title="PointColor">
-      <ColorInput value={value} onChange={setValue} />
+    <NodeSystem title="PointColor" optionsMenu={optionsMenu}>
+      {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };

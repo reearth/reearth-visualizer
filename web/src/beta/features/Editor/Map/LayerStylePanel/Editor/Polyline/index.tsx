@@ -10,7 +10,7 @@ import {
   useState
 } from "react";
 
-import { polylineNodeMenu } from "../NodeMenuCategory";
+import { polylineNodeMenu } from "../NodeSystem/NodeMenuCategory";
 
 import ShowNode from "./Show";
 import StylesNode from "./Styles";

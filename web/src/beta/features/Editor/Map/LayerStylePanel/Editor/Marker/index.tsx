@@ -7,11 +7,12 @@ import {
   ReactElement,
   ReactNode,
   useEffect,
+  useMemo,
   useState
 } from "react";
 
 import { LayerStyleProps } from "../InterfaceTab";
-import { markerNodeMenu } from "../NodeMenuCategory";
+import { markerNodeMenu } from "../NodeSystem/NodeMenuCategory";
 
 import { componentNode } from "./Nodes";
 
@@ -27,6 +28,30 @@ const Marker: FC<MarkerProps> = ({
   const [dynamicContent, setDynamicContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
+  const optionsMenu = useMemo(() => {
+    return [
+      {
+        id: "delete",
+        title: "Delete",
+        icon: "trash" as const,
+        onClick: (propertyKey: string) => {
+          setLayerStyle((prev) => {
+            if (!prev?.id || !prev?.value?.marker) return prev;
+            const { [propertyKey]: _, ...updatedMarker } = prev.value.marker;
+
+            return {
+              ...prev,
+              value: {
+                ...prev.value,
+                marker: updatedMarker
+              }
+            };
+          });
+        }
+      }
+    ];
+  }, [setLayerStyle]);
+
   useEffect(() => {
     if (layerStyle?.value?.marker) {
       const markerProperties = layerStyle.value.marker;
@@ -39,6 +64,10 @@ const Marker: FC<MarkerProps> = ({
               key={key}
               layerStyle={layerStyle}
               styleType="marker"
+              optionsMenu={optionsMenu.map((item) => ({
+                ...item,
+                onClick: () => item.onClick(key)
+              }))}
               setLayerStyle={setLayerStyle}
             />
           );
@@ -49,7 +78,7 @@ const Marker: FC<MarkerProps> = ({
     } else {
       setDynamicContent([]);
     }
-  }, [layerStyle, setLayerStyle]);
+  }, [layerStyle, optionsMenu, setLayerStyle]);
 
   useEffect(() => {
     const renderedKeys = new Set(
@@ -69,6 +98,7 @@ const Marker: FC<MarkerProps> = ({
               layerStyle={layerStyle}
               styleType="marker"
               setLayerStyle={setLayerStyle}
+              optionsMenu={optionsMenu}
             />
           ]);
         }
@@ -85,7 +115,14 @@ const Marker: FC<MarkerProps> = ({
       }));
 
     setMenuItems(menuWithHandlers);
-  }, [clickedItems, dynamicContent, layerStyle, setLayerStyle, setMenuItems]);
+  }, [
+    clickedItems,
+    dynamicContent,
+    layerStyle,
+    optionsMenu,
+    setLayerStyle,
+    setMenuItems
+  ]);
 
   return <Wrapper>{dynamicContent}</Wrapper>;
 };
@@ -95,6 +132,6 @@ export default Marker;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.small,
   alignItems: "flex-start"
 }));

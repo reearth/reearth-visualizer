@@ -6,6 +6,8 @@ import { FC, useCallback, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 import NodeSystem from "../../NodeSystem";
+import ConditionalTab from "../../NodeSystem/ConditionTab";
+import ExpressionTab from "../../NodeSystem/ExpressionTab";
 
 const options = [
   {
@@ -22,7 +24,11 @@ const options = [
   }
 ];
 
-const StylesNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const StylesNode: FC<LayerStyleProps> = ({
+  optionsMenu,
+  layerStyle,
+  setLayerStyle
+}) => {
   const [styleValue, setStyleValue] = useState<MarkerAppearance["style"]>(
     layerStyle?.value.marker?.style ?? "none"
   );
@@ -60,9 +66,25 @@ const StylesNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     }
   }, [setLayerStyle, setNotification, styleValue, t]);
 
-  return (
-    <NodeSystem title="Style">
+  const renderContent: Record<string, JSX.Element> = {
+    value: (
       <Selector value={styleValue} options={options} onChange={handleChange} />
+    ),
+    expression: <ExpressionTab value="" />,
+    condition: (
+      <ConditionalTab>
+        <Selector
+          value={styleValue}
+          options={options}
+          onChange={handleChange}
+        />
+      </ConditionalTab>
+    )
+  };
+
+  return (
+    <NodeSystem title="Style" optionsMenu={optionsMenu}>
+      {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };

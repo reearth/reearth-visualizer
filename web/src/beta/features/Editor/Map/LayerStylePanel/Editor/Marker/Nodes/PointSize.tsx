@@ -6,8 +6,14 @@ import { FC, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 import NodeSystem from "../../NodeSystem";
+import ConditionalTab from "../../NodeSystem/ConditionTab";
+import ExpressionTab from "../../NodeSystem/ExpressionTab";
 
-const PointSizeNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const PointSizeNode: FC<LayerStyleProps> = ({
+  optionsMenu,
+  layerStyle,
+  setLayerStyle
+}) => {
   const [value, setValue] = useState<MarkerAppearance["pointSize"]>(
     layerStyle?.value.marker?.pointSize ?? 0
   );
@@ -39,9 +45,18 @@ const PointSizeNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     }
   }, [setLayerStyle, setNotification, setValue, t, value]);
 
+  const renderContent: Record<string, JSX.Element> = {
+    value: <NumberInput value={value} onChange={setValue} />,
+    expression: <ExpressionTab value="" />,
+    condition: (
+      <ConditionalTab>
+        <NumberInput value={value} onChange={setValue} />
+      </ConditionalTab>
+    )
+  };
   return (
-    <NodeSystem title="PointSize">
-      <NumberInput value={value} onChange={setValue} />
+    <NodeSystem title="PointSize" optionsMenu={optionsMenu}>
+      {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };

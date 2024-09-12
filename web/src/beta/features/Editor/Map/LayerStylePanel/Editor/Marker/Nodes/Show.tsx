@@ -6,8 +6,14 @@ import { FC, useCallback, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 import NodeSystem from "../../NodeSystem";
+import ConditionalTab from "../../NodeSystem/ConditionTab";
+import ExpressionTab from "../../NodeSystem/ExpressionTab";
 
-const ShowNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const ShowNode: FC<LayerStyleProps> = ({
+  optionsMenu,
+  layerStyle,
+  setLayerStyle
+}) => {
   const [value, setValue] = useState<MarkerAppearance["show"]>(
     layerStyle?.value.marker?.show ?? false
   );
@@ -43,9 +49,19 @@ const ShowNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     setValue?.(value);
   }, []);
 
+  const renderContent: Record<string, JSX.Element> = {
+    value: <Switcher value={value} onChange={handleChange} />,
+    expression: <ExpressionTab value="" />,
+    condition: (
+      <ConditionalTab>
+        <Switcher value={value} onChange={handleChange} />
+      </ConditionalTab>
+    )
+  };
+
   return (
-    <NodeSystem title="Show">
-      <Switcher value={value} onChange={handleChange} />
+    <NodeSystem title="Show" optionsMenu={optionsMenu}>
+      {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };

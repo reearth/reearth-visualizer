@@ -21,14 +21,11 @@ const options = [
 const StylesNode: FC = () => {
   const [styleValue, setStyleValue] = useState("none");
 
-  const handleChange = useCallback(
-    (value: string | string[]) => {
-      if (typeof value !== "string") return;
-      setStyleValue?.(value);
-    },
-    []
-  );
-    
+  const handleChange = useCallback((value: string | string[]) => {
+    if (typeof value !== "string") return;
+    setStyleValue?.(value);
+  }, []);
+
   return (
     <NodeSystem title="Style">
       <Selector value={styleValue} options={options} onChange={handleChange} />

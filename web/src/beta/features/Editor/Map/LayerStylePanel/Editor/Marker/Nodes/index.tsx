@@ -22,7 +22,5 @@ export const componentNode: Record<
   heightReference: HeightReferenceNode,
   pointSize: PointSizeNode,
   pointColor: PointColorNode,
-  hideIndicator: StylesNode,
-  selectedFeatureColor: StylesNode,
   style: StylesNode
 };

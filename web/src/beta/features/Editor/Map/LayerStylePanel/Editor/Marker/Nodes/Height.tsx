@@ -6,17 +6,25 @@ import { FC, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 import NodeSystem from "../../NodeSystem";
+import ConditionalTab from "../../NodeSystem/ConditionTab";
+import ExpressionTab from "../../NodeSystem/ExpressionTab";
 
-const HeightNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const HeightNode: FC<LayerStyleProps> = ({
+  optionsMenu,
+  layerStyle,
+  setLayerStyle
+}) => {
   const [value, setValue] = useState<MarkerAppearance["height"]>(
-    layerStyle?.value.marker?.height ?? 0
+    (layerStyle?.value.marker?.height as number) ?? 0
   );
+
   const t = useT();
   const [, setNotification] = useNotification();
 
   useEffect(() => {
-    if (layerStyle?.value.marker?.height)
-      setValue(layerStyle?.value.marker?.height);
+    if (layerStyle?.value.marker?.height) {
+      setValue(layerStyle.value.marker.height);
+    }
   }, [layerStyle]);
 
   useEffect(() => {
@@ -28,7 +36,7 @@ const HeightNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
           value: {
             ...prev.value,
             marker: {
-              ...prev.value?.marker,
+              ...prev.value.marker,
               height: value
             }
           }
@@ -37,11 +45,21 @@ const HeightNode: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     } catch (_e) {
       setNotification({ type: "error", text: t("Invalid style") });
     }
-  }, [setLayerStyle, setNotification, setValue, t, value]);
+  }, [value, setLayerStyle, setNotification, t]);
+
+  const renderContent: Record<string, JSX.Element> = {
+    value: <NumberInput value={value} onChange={setValue} />,
+    expression: <ExpressionTab value="" />,
+    condition: (
+      <ConditionalTab>
+        <NumberInput value={value} onChange={setValue} />
+      </ConditionalTab>
+    )
+  };
 
   return (
-    <NodeSystem title="Height">
-      <NumberInput value={value} onChange={setValue} />
+    <NodeSystem title="Height" optionsMenu={optionsMenu}>
+      {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
