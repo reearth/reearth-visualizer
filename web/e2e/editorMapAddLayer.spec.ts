@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import pom from "./pom";
 
-const testTitle = "playwright_test" + uuidv4();
+const testTitle = "playwright_test_" + uuidv4();
 
 //use session, also could set in playwright config
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +28,7 @@ test("create project and add layer", async ({ page }, testInfo) => {
 
   // clocs sky box, add new layer
   const mapPage = new pom.visualizer.editor.MapPage(page);
-  const newLayerTitle = "newLayerTitle" + +uuidv4();
+  const newLayerTitle = "newLayerTitle_" + +uuidv4();
   await mapPage.closeSkyBox();
   await mapPage.createNewLayerBySketch(newLayerTitle);
 
