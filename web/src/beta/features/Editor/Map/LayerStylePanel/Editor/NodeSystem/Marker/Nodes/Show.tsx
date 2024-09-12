@@ -1,28 +1,28 @@
 import { Switcher } from "@reearth/beta/lib/reearth-ui";
-import {  PolylineAppearance } from "@reearth/core";
+import { MarkerAppearance } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import NodeSystem from "../../NodeSystem";
-import ConditionalTab from "../../NodeSystem/ConditionTab";
-import ExpressionTab from "../../NodeSystem/ExpressionTab";
+import NodeSystem from "../..";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import ConditionalTab from "../../ConditionalTab";
+import ExpressionTab from "../../ExpressionTab";
 
 const ShowNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] = useState<PolylineAppearance["show"]>(
-    layerStyle?.value.polyline?.show ?? false
+  const [value, setValue] = useState<MarkerAppearance["show"]>(
+    layerStyle?.value.marker?.show ?? false
   );
   const t = useT();
   const [, setNotification] = useNotification();
 
   useEffect(() => {
-    if (layerStyle?.value.polyline?.show)
-      setValue(layerStyle?.value.polyline?.show);
+    if (layerStyle?.value.marker?.show)
+      setValue(layerStyle?.value.marker?.show);
   }, [layerStyle]);
 
   useEffect(() => {
@@ -33,8 +33,8 @@ const ShowNode: FC<LayerStyleProps> = ({
           ...prev,
           value: {
             ...prev.value,
-            polyline: {
-              ...prev.value?.polyline,
+            marker: {
+              ...prev.value?.marker,
               show: value
             }
           }

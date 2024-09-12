@@ -1,7 +1,7 @@
 import { FC } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import HeightReferenceNode from "../../SharedNode/HeightReference";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import HeightReferenceNode from "../../../SharedNode/HeightReference";
 
 import HeightNode from "./Height";
 import PointColorNode from "./PointColor";

@@ -6,7 +6,7 @@ import { FC, useCallback, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../InterfaceTab";
 import NodeSystem from "../NodeSystem";
-import ConditionalTab from "../NodeSystem/ConditionTab";
+import ConditionalTab from "../NodeSystem/ConditionalTab";
 import ExpressionTab from "../NodeSystem/ExpressionTab";
 
 const options = [

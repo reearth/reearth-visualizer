@@ -11,8 +11,8 @@ import {
   useState
 } from "react";
 
-import { LayerStyleProps } from "../InterfaceTab";
-import { markerNodeMenu } from "../NodeSystem/NodeMenuCategory";
+import { LayerStyleProps } from "../../InterfaceTab";
+import { markerNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./Nodes";
 

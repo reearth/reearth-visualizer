@@ -11,9 +11,9 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useState } from "react";
 
-import Marker from "./Marker";
+import Marker from "./NodeSystem/Marker";
+import Polyline from "./NodeSystem/Polyline";
 import NoStyleMessage from "./NoStyleMessage";
-import Polyline from "./Polyline";
 
 export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;

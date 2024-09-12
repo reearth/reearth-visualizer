@@ -1,29 +1,28 @@
-import { ColorInput } from "@reearth/beta/lib/reearth-ui";
+import { NumberInput } from "@reearth/beta/lib/reearth-ui";
 import { PolylineAppearance } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { FC, useEffect, useState } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import NodeSystem from "../../NodeSystem";
-import ConditionalTab from "../../NodeSystem/ConditionTab";
-import ExpressionTab from "../../NodeSystem/ExpressionTab";
+import NodeSystem from "../..";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import ConditionalTab from "../../ConditionalTab";
+import ExpressionTab from "../../ExpressionTab";
 
-const StrokeColorNode: FC<LayerStyleProps> = ({
+const StrokeWidthNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
+  const [value, setValue] = useState<PolylineAppearance["strokeWidth"]>(
+    layerStyle?.value.polyline?.strokeWidth ?? 0
+  );
   const t = useT();
   const [, setNotification] = useNotification();
 
-  const [value, setValue] = useState<PolylineAppearance["strokeColor"]>(
-    layerStyle?.value.polyline?.strokeColor ?? null
-  );
-
   useEffect(() => {
-    if (layerStyle?.value.polyline?.strokeColor)
-      setValue(layerStyle?.value.polyline?.strokeColor);
+    if (layerStyle?.value.polyline?.strokeWidth)
+      setValue(layerStyle?.value.polyline?.strokeWidth);
   }, [layerStyle]);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
             ...prev.value,
             polyline: {
               ...prev.value?.polyline,
-              strokeColor: value
+              strokeWidth: value
             }
           }
         };
@@ -47,19 +46,19 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
   }, [setLayerStyle, setNotification, setValue, t, value]);
 
   const renderContent: Record<string, JSX.Element> = {
-    value: <ColorInput value={value} onChange={setValue} />,
-    expression: <ExpressionTab value={value} onChange={setValue} />,
+    value: <NumberInput value={value} onChange={setValue} />,
+    expression: <ExpressionTab value="" />,
     condition: (
       <ConditionalTab>
-        <ColorInput value={value} onChange={setValue} />
+        <NumberInput value={value} onChange={setValue} />
       </ConditionalTab>
     )
   };
   return (
-    <NodeSystem title="StrokeColor" optionsMenu={optionsMenu}>
+    <NodeSystem title="StrokeWidth" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default StrokeColorNode;
+export default StrokeWidthNode;

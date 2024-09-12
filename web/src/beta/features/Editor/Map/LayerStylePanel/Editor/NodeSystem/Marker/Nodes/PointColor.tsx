@@ -1,28 +1,29 @@
-import { NumberInput } from "@reearth/beta/lib/reearth-ui";
+import { ColorInput } from "@reearth/beta/lib/reearth-ui";
 import { MarkerAppearance } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { FC, useEffect, useState } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import NodeSystem from "../../NodeSystem";
-import ConditionalTab from "../../NodeSystem/ConditionTab";
-import ExpressionTab from "../../NodeSystem/ExpressionTab";
+import NodeSystem from "../..";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import ConditionalTab from "../../ConditionalTab";
+import ExpressionTab from "../../ExpressionTab";
 
-const PointSizeNode: FC<LayerStyleProps> = ({
+const PointColorNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] = useState<MarkerAppearance["pointSize"]>(
-    layerStyle?.value.marker?.pointSize ?? 0
-  );
   const t = useT();
   const [, setNotification] = useNotification();
 
+  const [value, setValue] = useState<MarkerAppearance["pointColor"]>(
+    layerStyle?.value.marker?.pointColor ?? null
+  );
+
   useEffect(() => {
-    if (layerStyle?.value.marker?.pointSize)
-      setValue(layerStyle?.value.marker?.pointSize);
+    if (layerStyle?.value.marker?.pointColor)
+      setValue(layerStyle?.value.marker?.pointColor);
   }, [layerStyle]);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const PointSizeNode: FC<LayerStyleProps> = ({
             ...prev.value,
             marker: {
               ...prev.value?.marker,
-              pointSize: value
+              pointColor: value
             }
           }
         };
@@ -46,19 +47,19 @@ const PointSizeNode: FC<LayerStyleProps> = ({
   }, [setLayerStyle, setNotification, setValue, t, value]);
 
   const renderContent: Record<string, JSX.Element> = {
-    value: <NumberInput value={value} onChange={setValue} />,
-    expression: <ExpressionTab value="" />,
+    value: <ColorInput value={value} onChange={setValue} />,
+    expression: <ExpressionTab value={value} onChange={setValue} />,
     condition: (
       <ConditionalTab>
-        <NumberInput value={value} onChange={setValue} />
+        <ColorInput value={value} onChange={setValue} />
       </ConditionalTab>
     )
   };
   return (
-    <NodeSystem title="PointSize" optionsMenu={optionsMenu}>
+    <NodeSystem title="PointColor" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default PointSizeNode;
+export default PointColorNode;

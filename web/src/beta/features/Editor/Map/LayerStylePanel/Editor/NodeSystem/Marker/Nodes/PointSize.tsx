@@ -4,27 +4,25 @@ import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { FC, useEffect, useState } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import NodeSystem from "../../NodeSystem";
-import ConditionalTab from "../../NodeSystem/ConditionTab";
-import ExpressionTab from "../../NodeSystem/ExpressionTab";
+import NodeSystem from "../..";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import ConditionalTab from "../../ConditionalTab";
+import ExpressionTab from "../../ExpressionTab";
 
-const HeightNode: FC<LayerStyleProps> = ({
+const PointSizeNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] = useState<MarkerAppearance["height"]>(
-    (layerStyle?.value.marker?.height as number) ?? 0
+  const [value, setValue] = useState<MarkerAppearance["pointSize"]>(
+    layerStyle?.value.marker?.pointSize ?? 0
   );
-
   const t = useT();
   const [, setNotification] = useNotification();
 
   useEffect(() => {
-    if (layerStyle?.value.marker?.height) {
-      setValue(layerStyle.value.marker.height);
-    }
+    if (layerStyle?.value.marker?.pointSize)
+      setValue(layerStyle?.value.marker?.pointSize);
   }, [layerStyle]);
 
   useEffect(() => {
@@ -36,8 +34,8 @@ const HeightNode: FC<LayerStyleProps> = ({
           value: {
             ...prev.value,
             marker: {
-              ...prev.value.marker,
-              height: value
+              ...prev.value?.marker,
+              pointSize: value
             }
           }
         };
@@ -45,7 +43,7 @@ const HeightNode: FC<LayerStyleProps> = ({
     } catch (_e) {
       setNotification({ type: "error", text: t("Invalid style") });
     }
-  }, [value, setLayerStyle, setNotification, t]);
+  }, [setLayerStyle, setNotification, setValue, t, value]);
 
   const renderContent: Record<string, JSX.Element> = {
     value: <NumberInput value={value} onChange={setValue} />,
@@ -56,12 +54,11 @@ const HeightNode: FC<LayerStyleProps> = ({
       </ConditionalTab>
     )
   };
-
   return (
-    <NodeSystem title="Height" optionsMenu={optionsMenu}>
+    <NodeSystem title="PointSize" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default HeightNode;
+export default PointSizeNode;

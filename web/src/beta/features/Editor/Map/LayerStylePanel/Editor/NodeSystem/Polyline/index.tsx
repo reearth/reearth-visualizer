@@ -11,10 +11,8 @@ import {
   useState
 } from "react";
 
-import { LayerStyleProps } from "../InterfaceTab";
-import {
-  polylineNodeMenu
-} from "../NodeSystem/NodeMenuCategory";
+import { LayerStyleProps } from "../../InterfaceTab";
+import { polylineNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./Nodes";
 

@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
+import { LayerStyleProps } from "../../../InterfaceTab";
 
 import ClampToGround from "./ClampToGround";
 import ShowNode from "./Show";

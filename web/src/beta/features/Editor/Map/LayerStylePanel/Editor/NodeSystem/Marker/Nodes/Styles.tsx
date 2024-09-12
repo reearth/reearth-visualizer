@@ -4,10 +4,10 @@ import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import NodeSystem from "../../NodeSystem";
-import ConditionalTab from "../../NodeSystem/ConditionTab";
-import ExpressionTab from "../../NodeSystem/ExpressionTab";
+import NodeSystem from "../..";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import ConditionalTab from "../../ConditionalTab";
+import ExpressionTab from "../../ExpressionTab";
 
 const options = [
   {

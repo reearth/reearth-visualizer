@@ -1,15 +1,15 @@
 import { ColorInput } from "@reearth/beta/lib/reearth-ui";
-import { MarkerAppearance } from "@reearth/core";
+import { PolylineAppearance } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { FC, useEffect, useState } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import NodeSystem from "../../NodeSystem";
-import ConditionalTab from "../../NodeSystem/ConditionTab";
-import ExpressionTab from "../../NodeSystem/ExpressionTab";
+import NodeSystem from "../..";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import ConditionalTab from "../../ConditionalTab";
+import ExpressionTab from "../../ExpressionTab";
 
-const PointColorNode: FC<LayerStyleProps> = ({
+const StrokeColorNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
@@ -17,13 +17,13 @@ const PointColorNode: FC<LayerStyleProps> = ({
   const t = useT();
   const [, setNotification] = useNotification();
 
-  const [value, setValue] = useState<MarkerAppearance["pointColor"]>(
-    layerStyle?.value.marker?.pointColor ?? null
+  const [value, setValue] = useState<PolylineAppearance["strokeColor"]>(
+    layerStyle?.value.polyline?.strokeColor ?? null
   );
 
   useEffect(() => {
-    if (layerStyle?.value.marker?.pointColor)
-      setValue(layerStyle?.value.marker?.pointColor);
+    if (layerStyle?.value.polyline?.strokeColor)
+      setValue(layerStyle?.value.polyline?.strokeColor);
   }, [layerStyle]);
 
   useEffect(() => {
@@ -34,9 +34,9 @@ const PointColorNode: FC<LayerStyleProps> = ({
           ...prev,
           value: {
             ...prev.value,
-            marker: {
-              ...prev.value?.marker,
-              pointColor: value
+            polyline: {
+              ...prev.value?.polyline,
+              strokeColor: value
             }
           }
         };
@@ -56,10 +56,10 @@ const PointColorNode: FC<LayerStyleProps> = ({
     )
   };
   return (
-    <NodeSystem title="PointColor" optionsMenu={optionsMenu}>
+    <NodeSystem title="StrokeColor" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default PointColorNode;
+export default StrokeColorNode;
