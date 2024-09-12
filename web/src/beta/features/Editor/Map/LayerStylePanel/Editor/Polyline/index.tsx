@@ -4,68 +4,128 @@ import { SetStateAction } from "jotai";
 import {
   Dispatch,
   FC,
-  isValidElement,
+  ReactElement,
   ReactNode,
   useEffect,
+  useMemo,
   useState
 } from "react";
 
-import { polylineNodeMenu } from "../NodeSystem/NodeMenuCategory";
+import { LayerStyleProps } from "../InterfaceTab";
+import {
+  polylineNodeMenu
+} from "../NodeSystem/NodeMenuCategory";
 
-import ShowNode from "./Show";
-import StylesNode from "./Styles";
+import { componentNode } from "./Nodes";
 
 type PolylineProps = {
-  setCurrentMenu: Dispatch<SetStateAction<PopupMenuItem[]>>;
-};
+  setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
+} & LayerStyleProps;
 
-const Polyline: FC<PolylineProps> = ({ setCurrentMenu }) => {
+const Polyline: FC<PolylineProps> = ({
+  layerStyle,
+  setMenuItems,
+  setLayerStyle
+}) => {
   const [dynamicContent, setDynamicContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
-  const handleMenuClick = (id: string) => {
-    setClickedItems((prevClickedItems) => {
-      const newClickedItems = new Set(prevClickedItems);
-      if (newClickedItems.has(id)) {
-        setDynamicContent((prevContent) =>
-          prevContent.filter(
-            (content) => isValidElement(content) && content.key !== id
-          )
-        );
-        newClickedItems.delete(id);
-      } else {
-        let newContent: ReactNode = null;
-        switch (id) {
-          case "show":
-            newContent = <ShowNode key={id} />;
-            break;
-          case "style":
-            newContent = <StylesNode key={id} />;
-            break;
-          default:
-            newContent = null;
-        }
+  const optionsMenu = useMemo(() => {
+    return [
+      {
+        id: "delete",
+        title: "Delete",
+        icon: "trash" as const,
+        onClick: (propertyKey: string) => {
+          setLayerStyle((prev) => {
+            if (!prev?.id || !prev?.value?.polyline) return prev;
+            const { [propertyKey]: _, ...updatedPolyline } =
+              prev.value.polyline;
 
-        if (newContent) {
-          setDynamicContent((prevContent) => [...prevContent, newContent]);
-          newClickedItems.add(id);
+            return {
+              ...prev,
+              value: {
+                ...prev.value,
+                polyline: updatedPolyline
+              }
+            };
+          });
+        }
+      }
+    ];
+  }, [setLayerStyle]);
+
+  useEffect(() => {
+    if (layerStyle?.value?.polyline) {
+      const polylineProperties = layerStyle.value.polyline;
+      const newContent: ReactNode[] = [];
+      for (const [key] of Object.entries(polylineProperties)) {
+        const Component = componentNode[key];
+        if (Component) {
+          newContent.push(
+            <Component
+              key={key}
+              layerStyle={layerStyle}
+              styleType="polyline"
+              optionsMenu={optionsMenu.map((item) => ({
+                ...item,
+                onClick: () => item.onClick(key)
+              }))}
+              setLayerStyle={setLayerStyle}
+            />
+          );
         }
       }
 
-      return newClickedItems;
-    });
-  };
+      setDynamicContent(newContent);
+    } else {
+      setDynamicContent([]);
+    }
+  }, [layerStyle, optionsMenu, setLayerStyle]);
 
   useEffect(() => {
+    const renderedKeys = new Set(
+      dynamicContent.map((content) => (content as ReactElement).key)
+    );
+
+    const handleMenuClick = (id: string) => {
+      const item = polylineNodeMenu.find((item) => item.id === id);
+
+      if (item) {
+        const Component = componentNode[item.id];
+        if (Component) {
+          setDynamicContent((prevContent) => [
+            ...prevContent,
+            <Component
+              key={item.id}
+              layerStyle={layerStyle}
+              styleType="polyline"
+              setLayerStyle={setLayerStyle}
+              optionsMenu={optionsMenu}
+            />
+          ]);
+        }
+
+        setClickedItems((prevClicked) => new Set(prevClicked).add(id));
+      }
+    };
+
     const menuWithHandlers = polylineNodeMenu
-      .filter((item) => !clickedItems.has(item.id))
+      .filter((item) => !renderedKeys.has(item.id))
       .map((item) => ({
         ...item,
         onClick: () => handleMenuClick(item.id)
       }));
 
-    setCurrentMenu(menuWithHandlers);
-  }, [setCurrentMenu, clickedItems]);
+    setMenuItems(menuWithHandlers);
+  }, [
+    clickedItems,
+    dynamicContent,
+    layerStyle,
+    optionsMenu,
+    setLayerStyle,
+    setMenuItems
+  ]);
 
   return <Wrapper>{dynamicContent}</Wrapper>;
 };
@@ -75,6 +135,6 @@ export default Polyline;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.normal,
+  gap: theme.spacing.small,
   alignItems: "flex-start"
 }));

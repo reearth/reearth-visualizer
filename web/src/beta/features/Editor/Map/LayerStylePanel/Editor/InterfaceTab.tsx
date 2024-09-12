@@ -41,7 +41,13 @@ const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     {
       id: "polyline",
       icon: "polyline",
-      children: <Polyline setCurrentMenu={setMenuItems} />
+      children: (
+        <Polyline
+          layerStyle={layerStyle}
+          setLayerStyle={setLayerStyle}
+          setMenuItems={setMenuItems}
+        />
+      )
     },
     { id: "polygon", icon: "polygon", children: null },
     { id: "threedtiles", icon: "buildings", children: null },
