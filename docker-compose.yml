@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   reearth:
     image: reearth/reearth-visualizer:latest
@@ -20,3 +20,9 @@ services:
       - 27017:27017
     volumes:
       - ./mongo:/data/db
+  reearth-redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis:/data

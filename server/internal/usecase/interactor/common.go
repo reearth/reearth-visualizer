@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/go-redis/redis/v8"
+	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -17,6 +19,7 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type ContainerConfig struct {
@@ -28,7 +31,7 @@ type ContainerConfig struct {
 
 func NewContainer(r *repo.Container, g *gateway.Container,
 	ar *accountrepo.Container, ag *accountgateway.Container,
-	config ContainerConfig) interfaces.Container {
+	redisAdapter *infraRedis.RedisAdapter, config ContainerConfig) interfaces.Container {
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
 		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)
@@ -41,7 +44,7 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Dataset:      NewDataset(r, g),
 		Layer:        NewLayer(r),
 		NLSLayer:     NewNLSLayer(r),
-		Style:        NewStyle(r),
+		Style:        NewStyle(r, redisAdapter),
 		Plugin:       NewPlugin(r, g),
 		Policy:       NewPolicy(r),
 		Project:      NewProject(r, g),
@@ -236,4 +239,64 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 	}
 
 	return nil
+}
+
+func checkRedisClient(redisClient any) (*infraRedis.RedisAdapter, bool) {
+	if redisClient == nil {
+		return nil, false
+	}
+
+	adapter, ok := redisClient.(*infraRedis.RedisAdapter)
+	if !ok || adapter == nil {
+		return nil, false
+	}
+	return adapter, true
+}
+
+func getFromCache[T any](ctx context.Context, redisClient any, cacheKey string) (T, error) {
+	var zero T
+
+	redisAdapter, ok := checkRedisClient(redisClient)
+	if !ok {
+		return zero, nil
+	}
+
+	val, err := redisAdapter.GetValue(ctx, cacheKey)
+	if err != nil {
+		if err == redis.Nil {
+			return zero, nil
+		}
+
+		return zero, err
+	}
+
+	var result T
+	if err := msgpack.Unmarshal([]byte(val), &result); err != nil {
+		return zero, err
+	}
+
+	return result, nil
+}
+
+func setToCache[T any](ctx context.Context, redisClient any, cacheKey string, data T) error {
+	redisAdapter, ok := checkRedisClient(redisClient)
+	if !ok {
+		return nil
+	}
+
+	serializedData, err := msgpack.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	return redisAdapter.SetValue(ctx, cacheKey, serializedData)
+}
+
+func deleteFromCache(ctx context.Context, redisClient any, cacheKey string) error {
+	redisAdapter, ok := checkRedisClient(redisClient)
+	if !ok {
+		return nil
+	}
+
+	return redisAdapter.RemoveValue(ctx, cacheKey)
 }

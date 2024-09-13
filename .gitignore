@@ -2,6 +2,7 @@
 node_modules
 /mongo
 /data
+/redis
 /.env
 /.env.*
 /.idea
