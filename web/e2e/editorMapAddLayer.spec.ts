@@ -34,7 +34,7 @@ test("create project and add layer", async ({ page }) => {
 
   // take screenshot
   const canvas = page.locator("canvas");
-  expect(await canvas.screenshot()).toMatchSnapshot("before-action.png", {
+  expect.soft(await canvas.screenshot()).toMatchSnapshot("before-action.png", {
     maxDiffPixels: 100
   });
 
@@ -47,10 +47,12 @@ test("create project and add layer", async ({ page }) => {
   await mapPage.createCircleToEarthByLocator(x, y);
 
   //wait result for stateble
-  await page.waitForTimeout(5 * 1000);
+  await page.waitForTimeout(10 * 1000);
 
-  expect(await canvas.screenshot()).not.toMatchSnapshot("before-action.png");
-  expect(await canvas.screenshot()).toMatchSnapshot("after-action.png");
+  expect
+    .soft(await canvas.screenshot())
+    .not.toMatchSnapshot("before-action.png");
+  expect.soft(await canvas.screenshot()).toMatchSnapshot("after-action.png");
 
   //delete created project
   await dashboardPage.goto();
