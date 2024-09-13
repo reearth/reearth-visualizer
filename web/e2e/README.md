@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project is an end-to-end (E2E) testing suite built using [Playwright](https://playwright.dev/). It follows the Page Object Model (POM) design pattern to organize tests for various components of the `visualizer` module, including `dashboard`, `projectSetting`, and `scene`.
+This project is an end-to-end (E2E) testing suite built using [Playwright](https://playwright.dev/). It follows the Page Object Model (POM) design pattern to organize tests for various components of the `visualizer` module, including `dashboard`, `projectSetting`, and `editor`.
 
 ## Project Structure
 
