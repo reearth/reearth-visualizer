@@ -12,7 +12,10 @@ import { SetStateAction } from "jotai";
 import { Dispatch, FC, useState } from "react";
 
 import Marker from "./NodeSystem/Marker";
+import ThreedModel from "./NodeSystem/Model";
+import Polygon from "./NodeSystem/Polygon";
 import Polyline from "./NodeSystem/Polyline";
+import ThreedTiles from "./NodeSystem/ThreedTiles";
 import NoStyleMessage from "./NoStyleMessage";
 
 export type LayerStyleProps = {
@@ -49,9 +52,39 @@ const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
         />
       )
     },
-    { id: "polygon", icon: "polygon", children: null },
-    { id: "threedtiles", icon: "buildings", children: null },
-    { id: "model", icon: "cube", children: null }
+    {
+      id: "polygon",
+      icon: "polygon",
+      children: (
+        <Polygon
+          layerStyle={layerStyle}
+          setLayerStyle={setLayerStyle}
+          setMenuItems={setMenuItems}
+        />
+      )
+    },
+    {
+      id: "threedtiles",
+      icon: "buildings",
+      children: (
+        <ThreedTiles
+          layerStyle={layerStyle}
+          setLayerStyle={setLayerStyle}
+          setMenuItems={setMenuItems}
+        />
+      )
+    },
+    {
+      id: "model",
+      icon: "cube",
+      children: (
+        <ThreedModel
+          layerStyle={layerStyle}
+          setLayerStyle={setLayerStyle}
+          setMenuItems={setMenuItems}
+        />
+      )
+    }
   ];
 
   return layerStyle ? (

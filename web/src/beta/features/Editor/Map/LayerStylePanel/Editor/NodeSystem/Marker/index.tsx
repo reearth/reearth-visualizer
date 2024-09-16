@@ -25,7 +25,7 @@ const Marker: FC<MarkerProps> = ({
   setMenuItems,
   setLayerStyle
 }) => {
-  const [dynamicContent, setDynamicContent] = useState<ReactNode[]>([]);
+  const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
   const optionsMenu = useMemo(() => {
@@ -63,7 +63,6 @@ const Marker: FC<MarkerProps> = ({
             <Component
               key={key}
               layerStyle={layerStyle}
-              styleType="marker"
               optionsMenu={optionsMenu.map((item) => ({
                 ...item,
                 onClick: () => item.onClick(key)
@@ -74,15 +73,15 @@ const Marker: FC<MarkerProps> = ({
         }
       }
 
-      setDynamicContent(newContent);
+      setDynamicNodeContent(newContent);
     } else {
-      setDynamicContent([]);
+      setDynamicNodeContent([]);
     }
   }, [layerStyle, optionsMenu, setLayerStyle]);
 
   useEffect(() => {
     const renderedKeys = new Set(
-      dynamicContent.map((content) => (content as ReactElement).key)
+      dynamicNodeContent.map((content) => (content as ReactElement).key)
     );
 
     const handleMenuClick = (id: string) => {
@@ -91,12 +90,11 @@ const Marker: FC<MarkerProps> = ({
       if (item) {
         const Component = componentNode[item.id];
         if (Component) {
-          setDynamicContent((prevContent) => [
+          setDynamicNodeContent((prevContent) => [
             ...prevContent,
             <Component
               key={item.id}
               layerStyle={layerStyle}
-              styleType="marker"
               setLayerStyle={setLayerStyle}
               optionsMenu={optionsMenu}
             />
@@ -117,14 +115,14 @@ const Marker: FC<MarkerProps> = ({
     setMenuItems(menuWithHandlers);
   }, [
     clickedItems,
-    dynamicContent,
+    dynamicNodeContent,
     layerStyle,
     optionsMenu,
     setLayerStyle,
     setMenuItems
   ]);
 
-  return <Wrapper>{dynamicContent}</Wrapper>;
+  return <Wrapper>{dynamicNodeContent}</Wrapper>;
 };
 
 export default Marker;

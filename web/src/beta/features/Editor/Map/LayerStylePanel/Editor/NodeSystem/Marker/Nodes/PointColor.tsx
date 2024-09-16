@@ -1,60 +1,57 @@
 import { ColorInput } from "@reearth/beta/lib/reearth-ui";
 import { MarkerAppearance } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 import NodeSystem from "../..";
 import { LayerStyleProps } from "../../../InterfaceTab";
 import ConditionalTab from "../../ConditionalTab";
 import ExpressionTab from "../../ExpressionTab";
 
+import useHooks from "./hooks";
+
+const DEFAULT_VALUE = undefined;
+
 const PointColorNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const t = useT();
-  const [, setNotification] = useNotification();
+  const [value, setValue] =
+    useState<MarkerAppearance["pointColor"]>(DEFAULT_VALUE);
+  const [expression, setExpression] = useState<string>("");
 
-  const [value, setValue] = useState<MarkerAppearance["pointColor"]>(
-    layerStyle?.value.marker?.pointColor ?? null
-  );
-
-  useEffect(() => {
-    if (layerStyle?.value.marker?.pointColor)
-      setValue(layerStyle?.value.marker?.pointColor);
-  }, [layerStyle]);
-
-  useEffect(() => {
-    try {
-      setLayerStyle((prev) => {
-        if (!prev?.id) return prev;
-        return {
-          ...prev,
-          value: {
-            ...prev.value,
-            marker: {
-              ...prev.value?.marker,
-              pointColor: value
-            }
-          }
-        };
-      });
-    } catch (_e) {
-      setNotification({ type: "error", text: t("Invalid style") });
-    }
-  }, [setLayerStyle, setNotification, setValue, t, value]);
+  const { handleChange } = useHooks({
+    apperanceTypeKey: "pointColor",
+    layerStyle,
+    value,
+    expression,
+    defaultValue: DEFAULT_VALUE,
+    setValue,
+    setExpression,
+    setLayerStyle
+  });
 
   const renderContent: Record<string, JSX.Element> = {
-    value: <ColorInput value={value} onChange={setValue} />,
-    expression: <ExpressionTab value={value} onChange={setValue} />,
+    value: (
+      <ColorInput
+        value={value}
+        onChange={(val) => handleChange("value", val)}
+      />
+    ),
+    expression: (
+      <ExpressionTab
+        value={expression}
+        onChange={(val) => handleChange("expression", val)}
+      />
+    ),
+    //TODO: will be implemented in next step
     condition: (
       <ConditionalTab>
-        <ColorInput value={value} onChange={setValue} />
+        <ColorInput />
       </ConditionalTab>
     )
   };
+
   return (
     <NodeSystem title="PointColor" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}

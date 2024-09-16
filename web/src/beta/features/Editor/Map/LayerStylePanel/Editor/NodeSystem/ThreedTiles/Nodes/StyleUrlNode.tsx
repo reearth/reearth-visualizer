@@ -1,5 +1,5 @@
-import { ColorInput } from "@reearth/beta/lib/reearth-ui";
-import { PolylineAppearance } from "@reearth/core";
+import { TextInput } from "@reearth/beta/lib/reearth-ui";
+import { Cesium3DTilesAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import NodeSystem from "../..";
@@ -9,19 +9,19 @@ import ExpressionTab from "../../ExpressionTab";
 
 import useHooks from "./hooks";
 
-const DEFAULT_VALUE = undefined;
+const DEFAULT_VALUE = "";
 
-const StrokeColorNode: FC<LayerStyleProps> = ({
+const StyleUrlNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
   const [value, setValue] =
-    useState<PolylineAppearance["strokeColor"]>(DEFAULT_VALUE);
+    useState<Cesium3DTilesAppearance["styleUrl"]>(DEFAULT_VALUE);
   const [expression, setExpression] = useState<string>("");
 
   const { handleChange } = useHooks({
-    apperanceTypeKey: "strokeColor",
+    apperanceTypeKey: "styleUrl",
     layerStyle,
     value,
     expression,
@@ -33,10 +33,7 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
 
   const renderContent: Record<string, JSX.Element> = {
     value: (
-      <ColorInput
-        value={value}
-        onChange={(val) => handleChange("value", val)}
-      />
+      <TextInput value={value} onChange={(val) => handleChange("value", val)} />
     ),
     expression: (
       <ExpressionTab
@@ -47,16 +44,16 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
     //TODO: will be implemented in next step
     condition: (
       <ConditionalTab>
-        <ColorInput />
+        <TextInput />
       </ConditionalTab>
     )
   };
 
   return (
-    <NodeSystem title="StrokeColor" optionsMenu={optionsMenu}>
+    <NodeSystem title="StyleUrl" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default StrokeColorNode;
+export default StyleUrlNode;

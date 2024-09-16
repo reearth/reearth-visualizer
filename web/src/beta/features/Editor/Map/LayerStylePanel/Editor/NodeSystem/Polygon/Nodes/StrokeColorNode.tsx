@@ -1,5 +1,5 @@
 import { ColorInput } from "@reearth/beta/lib/reearth-ui";
-import { PolylineAppearance } from "@reearth/core";
+import { PolygonAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import NodeSystem from "../..";
@@ -17,7 +17,7 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
   setLayerStyle
 }) => {
   const [value, setValue] =
-    useState<PolylineAppearance["strokeColor"]>(DEFAULT_VALUE);
+    useState<PolygonAppearance["strokeColor"]>(DEFAULT_VALUE);
   const [expression, setExpression] = useState<string>("");
 
   const { handleChange } = useHooks({

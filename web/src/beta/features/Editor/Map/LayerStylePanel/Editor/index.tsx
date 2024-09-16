@@ -75,7 +75,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
 
   return (
     <EditorContainer>
-      <Tabs tabs={tabItems} position="top" alignment="end" currentTab="code" />
+      <Tabs tabs={tabItems} position="top" alignment="end" />
       {layerStyle?.id && (
         <ButtonWrapper>
           <Button

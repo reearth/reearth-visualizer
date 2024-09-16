@@ -2,18 +2,12 @@ import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 
-import HeightNode from "./Height";
 import HeightReferenceNode from "./HeightReference";
-import PointColorNode from "./PointColor";
-import PointSizeNode from "./PointSize";
 import ShowNode from "./Show";
-import StylesNode from "./Styles";
+import UrlNode from "./Url";
 
 export const componentNode: Record<string, FC<LayerStyleProps>> = {
   show: ShowNode,
-  height: HeightNode,
   heightReference: HeightReferenceNode,
-  pointSize: PointSizeNode,
-  pointColor: PointColorNode,
-  style: StylesNode
+  url: UrlNode
 };

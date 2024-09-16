@@ -12,15 +12,15 @@ import {
 } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
-import { polylineNodeMenu } from "../NodeMenuCategory";
+import { polygonNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./Nodes";
 
-type PolylineProps = {
+type PolygonProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
 } & LayerStyleProps;
 
-const Polyline: FC<PolylineProps> = ({
+const Polygon: FC<PolygonProps> = ({
   layerStyle,
   setMenuItems,
   setLayerStyle
@@ -36,15 +36,14 @@ const Polyline: FC<PolylineProps> = ({
         icon: "trash" as const,
         onClick: (propertyKey: string) => {
           setLayerStyle((prev) => {
-            if (!prev?.id || !prev?.value?.polyline) return prev;
-            const { [propertyKey]: _, ...updatedPolyline } =
-              prev.value.polyline;
+            if (!prev?.id || !prev?.value?.polygon) return prev;
+            const { [propertyKey]: _, ...updatedPolygon } = prev.value.polygon;
 
             return {
               ...prev,
               value: {
                 ...prev.value,
-                polyline: updatedPolyline
+                polyline: updatedPolygon
               }
             };
           });
@@ -54,10 +53,10 @@ const Polyline: FC<PolylineProps> = ({
   }, [setLayerStyle]);
 
   useEffect(() => {
-    if (layerStyle?.value?.polyline) {
-      const polylineProperties = layerStyle.value.polyline;
+    if (layerStyle?.value?.polygon) {
+      const polygonProperties = layerStyle.value.polygon;
       const newContent: ReactNode[] = [];
-      for (const [key] of Object.entries(polylineProperties)) {
+      for (const [key] of Object.entries(polygonProperties)) {
         const Component = componentNode[key];
         if (Component) {
           newContent.push(
@@ -86,7 +85,7 @@ const Polyline: FC<PolylineProps> = ({
     );
 
     const handleMenuClick = (id: string) => {
-      const item = polylineNodeMenu.find((item) => item.id === id);
+      const item = polygonNodeMenu.find((item) => item.id === id);
 
       if (item) {
         const Component = componentNode[item.id];
@@ -106,7 +105,7 @@ const Polyline: FC<PolylineProps> = ({
       }
     };
 
-    const menuWithHandlers = polylineNodeMenu
+    const menuWithHandlers = polygonNodeMenu
       .filter((item) => !renderedKeys.has(item.id))
       .map((item) => ({
         ...item,
@@ -126,7 +125,7 @@ const Polyline: FC<PolylineProps> = ({
   return <Wrapper>{dynamicNodeContent}</Wrapper>;
 };
 
-export default Polyline;
+export default Polygon;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",

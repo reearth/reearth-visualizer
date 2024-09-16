@@ -1,69 +1,59 @@
 import { Switcher } from "@reearth/beta/lib/reearth-ui";
 import { PolylineAppearance } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 import NodeSystem from "../..";
 import { LayerStyleProps } from "../../../InterfaceTab";
 import ConditionalTab from "../../ConditionalTab";
 import ExpressionTab from "../../ExpressionTab";
 
-const ClampToGround: FC<LayerStyleProps> = ({
+import useHooks from "./hooks";
+
+const DEFAULT_VALUE = false;
+
+const ClampToGroundNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] = useState<PolylineAppearance["clampToGround"]>(
-    layerStyle?.value.polyline?.clampToGround ?? false
-  );
-  const t = useT();
-  const [, setNotification] = useNotification();
+  const [value, setValue] =
+    useState<PolylineAppearance["clampToGround"]>(DEFAULT_VALUE);
+  const [expression, setExpression] = useState<string>("");
 
-  useEffect(() => {
-    if (layerStyle?.value.polyline?.clampToGround)
-      setValue(layerStyle?.value.polyline?.clampToGround);
-  }, [layerStyle]);
-
-  useEffect(() => {
-    try {
-      setLayerStyle((prev) => {
-        if (!prev?.id) return prev;
-        return {
-          ...prev,
-          value: {
-            ...prev.value,
-            polyline: {
-              ...prev.value?.polyline,
-              clampToGround: value
-            }
-          }
-        };
-      });
-    } catch (_e) {
-      setNotification({ type: "error", text: t("Invalid style") });
-    }
-  }, [setLayerStyle, setNotification, setValue, t, value]);
-
-  const handleChange = useCallback((value: boolean) => {
-    setValue?.(value);
-  }, []);
+  const { handleChange } = useHooks({
+    apperanceTypeKey: "clampToGround",
+    layerStyle,
+    value,
+    expression,
+    defaultValue: DEFAULT_VALUE,
+    setValue,
+    setExpression,
+    setLayerStyle
+  });
 
   const renderContent: Record<string, JSX.Element> = {
-    value: <Switcher value={value} onChange={handleChange} />,
-    expression: <ExpressionTab value="" />,
+    value: (
+      <Switcher value={value} onChange={(val) => handleChange("value", val)} />
+    ),
+    expression: (
+      <ExpressionTab
+        value={expression}
+        onChange={(val) => handleChange("expression", val)}
+      />
+    ),
+    //TODO: will be implemented in next step
     condition: (
       <ConditionalTab>
-        <Switcher value={value} onChange={handleChange} />
+        <Switcher />
       </ConditionalTab>
     )
   };
 
   return (
-    <NodeSystem title="clampToGround" optionsMenu={optionsMenu}>
+    <NodeSystem title="ClampToGround" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default ClampToGround;
+export default ClampToGroundNode;

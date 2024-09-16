@@ -1,58 +1,52 @@
 import { NumberInput } from "@reearth/beta/lib/reearth-ui";
 import { MarkerAppearance } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 import NodeSystem from "../..";
 import { LayerStyleProps } from "../../../InterfaceTab";
 import ConditionalTab from "../../ConditionalTab";
 import ExpressionTab from "../../ExpressionTab";
 
+import useHooks from "./hooks";
+
+const DEFAULT_VALUE = 0;
+
 const HeightNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] = useState<MarkerAppearance["height"]>(
-    (layerStyle?.value.marker?.height as number) ?? 0
-  );
+  const [value, setValue] = useState<MarkerAppearance["height"]>(DEFAULT_VALUE);
+  const [expression, setExpression] = useState<string>("");
 
-  const t = useT();
-  const [, setNotification] = useNotification();
-
-  useEffect(() => {
-    if (layerStyle?.value.marker?.height) {
-      setValue(layerStyle.value.marker.height);
-    }
-  }, [layerStyle]);
-
-  useEffect(() => {
-    try {
-      setLayerStyle((prev) => {
-        if (!prev?.id) return prev;
-        return {
-          ...prev,
-          value: {
-            ...prev.value,
-            marker: {
-              ...prev.value.marker,
-              height: value
-            }
-          }
-        };
-      });
-    } catch (_e) {
-      setNotification({ type: "error", text: t("Invalid style") });
-    }
-  }, [value, setLayerStyle, setNotification, t]);
+  const { handleChange } = useHooks({
+    apperanceTypeKey: "height",
+    layerStyle,
+    value,
+    expression,
+    defaultValue: DEFAULT_VALUE,
+    setValue,
+    setExpression,
+    setLayerStyle
+  });
 
   const renderContent: Record<string, JSX.Element> = {
-    value: <NumberInput value={value} onChange={setValue} />,
-    expression: <ExpressionTab value="" />,
+    value: (
+      <NumberInput
+        value={value}
+        onChange={(val) => handleChange("value", val)}
+      />
+    ),
+    expression: (
+      <ExpressionTab
+        value={expression}
+        onChange={(val) => handleChange("expression", val)}
+      />
+    ),
+    //TODO: will be implemented in next step
     condition: (
       <ConditionalTab>
-        <NumberInput value={value} onChange={setValue} />
+        <NumberInput />
       </ConditionalTab>
     )
   };

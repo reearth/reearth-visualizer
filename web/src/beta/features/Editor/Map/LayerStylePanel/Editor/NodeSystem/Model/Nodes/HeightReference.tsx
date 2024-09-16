@@ -1,5 +1,5 @@
 import { Selector } from "@reearth/beta/lib/reearth-ui";
-import { MarkerAppearance } from "@reearth/core";
+import { ModelAppearance } from "@reearth/core";
 import { FC, useCallback, useState } from "react";
 
 import NodeSystem from "../..";
@@ -10,29 +10,37 @@ import ExpressionTab from "../../ExpressionTab";
 import useHooks from "./hooks";
 
 const options = [
-  { value: "none", label: "none" },
-  { value: "point", label: "point" },
-  { value: "image", label: "image" }
+  {
+    value: "none",
+    label: "none"
+  },
+  {
+    value: "clamp",
+    label: "clamp"
+  },
+  {
+    value: "relative",
+    label: "relative"
+  }
 ];
 
-const DEFAULT_VALUE = "none";
-
-const StylesNode: FC<LayerStyleProps> = ({
+const HeightReferenceNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] = useState<MarkerAppearance["style"]>(
-    layerStyle?.value.marker?.style ?? DEFAULT_VALUE
+  const defaultValue = "none";
+  const [value, setValue] = useState<ModelAppearance["heightReference"]>(
+    layerStyle?.value.model?.heightReference ?? defaultValue
   );
   const [expression, setExpression] = useState<string>("");
 
   const { handleChange } = useHooks({
-    apperanceTypeKey: "style",
+    apperanceTypeKey: "heightReference",
     layerStyle,
     value,
     expression,
-    defaultValue: DEFAULT_VALUE,
+    defaultValue,
     setValue,
     setExpression,
     setLayerStyle
@@ -63,20 +71,16 @@ const StylesNode: FC<LayerStyleProps> = ({
     //TODO: will be implemented in next step
     condition: (
       <ConditionalTab>
-        <Selector
-          value={value}
-          options={options}
-          onChange={(val) => handleChange("value", val as string)}
-        />
+        <Selector options={options} />
       </ConditionalTab>
     )
   };
 
   return (
-    <NodeSystem title="Style" optionsMenu={optionsMenu}>
+    <NodeSystem title="HeightReference" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default StylesNode;
+export default HeightReferenceNode;

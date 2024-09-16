@@ -1,5 +1,5 @@
-import { ColorInput } from "@reearth/beta/lib/reearth-ui";
-import { PolylineAppearance } from "@reearth/core";
+import { NumberInput } from "@reearth/beta/lib/reearth-ui";
+import { PolygonAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import NodeSystem from "../..";
@@ -9,19 +9,19 @@ import ExpressionTab from "../../ExpressionTab";
 
 import useHooks from "./hooks";
 
-const DEFAULT_VALUE = undefined;
+const DEFAULT_VALUE = 0;
 
-const StrokeColorNode: FC<LayerStyleProps> = ({
+const StrokeWidthNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
   const [value, setValue] =
-    useState<PolylineAppearance["strokeColor"]>(DEFAULT_VALUE);
+    useState<PolygonAppearance["strokeWidth"]>(DEFAULT_VALUE);
   const [expression, setExpression] = useState<string>("");
 
   const { handleChange } = useHooks({
-    apperanceTypeKey: "strokeColor",
+    apperanceTypeKey: "strokeWidth",
     layerStyle,
     value,
     expression,
@@ -33,7 +33,7 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
 
   const renderContent: Record<string, JSX.Element> = {
     value: (
-      <ColorInput
+      <NumberInput
         value={value}
         onChange={(val) => handleChange("value", val)}
       />
@@ -47,16 +47,16 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
     //TODO: will be implemented in next step
     condition: (
       <ConditionalTab>
-        <ColorInput />
+        <NumberInput />
       </ConditionalTab>
     )
   };
 
   return (
-    <NodeSystem title="StrokeColor" optionsMenu={optionsMenu}>
+    <NodeSystem title="StrokeWidth" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default StrokeColorNode;
+export default StrokeWidthNode;

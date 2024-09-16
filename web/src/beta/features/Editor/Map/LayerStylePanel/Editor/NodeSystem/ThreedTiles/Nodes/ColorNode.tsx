@@ -1,5 +1,5 @@
 import { ColorInput } from "@reearth/beta/lib/reearth-ui";
-import { PolylineAppearance } from "@reearth/core";
+import { Cesium3DTilesAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import NodeSystem from "../..";
@@ -11,17 +11,17 @@ import useHooks from "./hooks";
 
 const DEFAULT_VALUE = undefined;
 
-const StrokeColorNode: FC<LayerStyleProps> = ({
+const ColorNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
   const [value, setValue] =
-    useState<PolylineAppearance["strokeColor"]>(DEFAULT_VALUE);
+    useState<Cesium3DTilesAppearance["color"]>(DEFAULT_VALUE);
   const [expression, setExpression] = useState<string>("");
 
   const { handleChange } = useHooks({
-    apperanceTypeKey: "strokeColor",
+    apperanceTypeKey: "color",
     layerStyle,
     value,
     expression,
@@ -53,10 +53,10 @@ const StrokeColorNode: FC<LayerStyleProps> = ({
   };
 
   return (
-    <NodeSystem title="StrokeColor" optionsMenu={optionsMenu}>
+    <NodeSystem title="Color" optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default StrokeColorNode;
+export default ColorNode;
