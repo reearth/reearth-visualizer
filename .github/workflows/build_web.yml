@@ -41,7 +41,7 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -54,7 +54,7 @@ jobs:
         run: yarn build
       - name: Pack
         run: mv dist reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: reearth-web
           path: web/reearth-web.tar.gz
@@ -73,7 +73,7 @@ jobs:
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: reearth-web
       - name: Rename artifact
@@ -108,13 +108,13 @@ jobs:
         working-directory: server
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -153,7 +153,7 @@ jobs:
       - name: Extract reearth/web
         run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
       - name: Build and push docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: server
           platforms: ${{ steps.options.outputs.platforms }}
@@ -179,7 +179,7 @@ jobs:
       - name: Rename artifact
         run: mv reearth-web_rc.tar.gz $ARTIFACT
       - name: Download latest changelog
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: release.yml
           name: changelog-${{ github.event.inputs.new_tag }}
