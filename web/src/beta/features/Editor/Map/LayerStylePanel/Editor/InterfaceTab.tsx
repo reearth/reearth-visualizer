@@ -24,7 +24,12 @@ export type LayerStyleProps = {
   optionsMenu?: PopupMenuItem[];
 };
 
-const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const InterfaceTab: FC<
+  LayerStyleProps & {
+    activeTab: string;
+    setActiveTab: Dispatch<SetStateAction<string>>;
+  }
+> = ({ layerStyle, setLayerStyle, activeTab, setActiveTab }) => {
   const theme = useTheme();
   const t = useT();
   const [menuItems, setMenuItems] = useState<PopupMenuItem[]>([]);
@@ -96,6 +101,7 @@ const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
           alignment="center"
           background={theme.bg[1]}
           noPadding
+          currentTab={activeTab}
           sharedContent={
             layerStyle ? (
               <PopupMenu
@@ -116,6 +122,7 @@ const InterfaceTab: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
               <NoStyleMessage />
             )
           }
+          onChange={setActiveTab}
         />
       </TabsWrapper>
     </Wrapper>

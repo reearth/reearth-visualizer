@@ -24,6 +24,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
 
   const [layerStyle, setLayerStyle] = useState(selectedLayerStyle);
   const [styleCode, setStyleCode] = useState<string | undefined>("");
+  const [activeInterfaceTab, setActiveInterfaceTab] = useState("marker");
 
   useEffect(() => {
     setLayerStyle(selectedLayerStyle);
@@ -56,7 +57,12 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
       id: "interface",
       name: t("Interface"),
       children: (
-        <InterfaceTab layerStyle={layerStyle} setLayerStyle={setLayerStyle} />
+        <InterfaceTab
+          layerStyle={layerStyle}
+          setLayerStyle={setLayerStyle}
+          activeTab={activeInterfaceTab}
+          setActiveTab={setActiveInterfaceTab}
+        />
       )
     },
     {

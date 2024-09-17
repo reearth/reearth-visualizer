@@ -43,7 +43,7 @@ const Polygon: FC<PolygonProps> = ({
               ...prev,
               value: {
                 ...prev.value,
-                polyline: updatedPolygon
+                polygon: updatedPolygon
               }
             };
           });
