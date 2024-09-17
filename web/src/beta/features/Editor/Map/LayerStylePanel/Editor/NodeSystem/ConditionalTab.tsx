@@ -21,20 +21,8 @@ const options = [
     label: "="
   },
   {
-    value: "+",
-    label: "+"
-  },
-  {
-    value: "-",
-    label: "-"
-  },
-  {
-    value: "%",
-    label: "%"
-  },
-  {
-    value: "*",
-    label: "*"
+    value: "!=",
+    label: "!="
   },
   {
     value: ">=",
@@ -45,8 +33,12 @@ const options = [
     label: "=>"
   },
   {
-    value: "/",
-    label: "/"
+    value: "<",
+    label: "<"
+  },
+  {
+    value: ">",
+    label: ">"
   }
 ];
 
