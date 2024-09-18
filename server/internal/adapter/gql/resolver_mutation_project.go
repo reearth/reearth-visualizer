@@ -175,7 +175,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		return nil, err
 	}
 
-	_, err = usecases(ctx).StoryTelling.ImportStoryTelling(ctx, sceneData)
+	_, err = usecases(ctx).StoryTelling.ImportStory(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}

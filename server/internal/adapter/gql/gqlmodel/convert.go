@@ -67,26 +67,26 @@ func ToVisualizerRef(v visualizer.Visualizer) *Visualizer {
 
 func FromPluginExtension(p PluginExtensionType) plugin.ExtensionType {
 	switch p {
-	case PluginExtensionTypePrimitive:
-		return plugin.ExtensionTypePrimitive
-	case PluginExtensionTypeWidget:
-		return plugin.ExtensionTypeWidget
 	case PluginExtensionTypeBlock:
 		return plugin.ExtensionTypeBlock
-	case PluginExtensionTypeVisualizer:
-		return plugin.ExtensionTypeVisualizer
+	case PluginExtensionTypeCluster:
+		return plugin.ExtensionTypeCluster
 	case PluginExtensionTypeInfobox:
 		return plugin.ExtensionTypeInfobox
 	case PluginExtensionTypeInfoboxBlock:
 		return plugin.ExtensionTypeInfoboxBlock
-	case PluginExtensionTypeCluster:
-		return plugin.ExtensionTypeCluster
+	case PluginExtensionTypePrimitive:
+		return plugin.ExtensionTypePrimitive
 	case PluginExtensionTypeStory:
 		return plugin.ExtensionTypeStory
-	case PluginExtensionTypeStoryPage:
-		return plugin.ExtensionTypeStoryPage
 	case PluginExtensionTypeStoryBlock:
 		return plugin.ExtensionTypeStoryBlock
+	case PluginExtensionTypeStoryPage:
+		return plugin.ExtensionTypeStoryPage
+	case PluginExtensionTypeVisualizer:
+		return plugin.ExtensionTypeVisualizer
+	case PluginExtensionTypeWidget:
+		return plugin.ExtensionTypeWidget
 	default:
 		return plugin.ExtensionType("")
 	}

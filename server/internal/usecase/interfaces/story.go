@@ -150,5 +150,5 @@ type Storytelling interface {
 	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, error)
 	MoveBlock(context.Context, MoveBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, int, error)
 
-	ImportStoryTelling(context.Context, map[string]interface{}) (*storytelling.Story, error)
+	ImportStory(context.Context, map[string]interface{}) (*storytelling.Story, error)
 }

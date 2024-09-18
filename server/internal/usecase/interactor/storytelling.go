@@ -997,7 +997,7 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	return story, page, &inp.BlockID, inp.Index, nil
 }
 
-func (i *Storytelling) ImportStoryTelling(ctx context.Context, sceneData map[string]interface{}) (*storytelling.Story, error) {
+func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]interface{}) (*storytelling.Story, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err

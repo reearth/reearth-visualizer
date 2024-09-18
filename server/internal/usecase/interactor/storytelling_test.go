@@ -19,7 +19,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestImportStoryTelling(t *testing.T) {
+func TestImportStory(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
@@ -111,7 +111,7 @@ func TestImportStoryTelling(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportStoryTelling(ctx, sceneData)
+	result, err := ifs.ImportStory(ctx, sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
