@@ -1,3 +1,4 @@
+//not in use
 export const config = {
   api: process.env["REEARTH_WEB_API"],
   userId: process.env["REEARTH_WEB_E2E_USER_ID"],
