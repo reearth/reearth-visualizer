@@ -9,7 +9,7 @@ export { default as TwinInputField } from "./TwinInputField";
 export { default as TripletInputField } from "./TripletInputField";
 export { default as QuartetInputField } from "./QuartetInputField";
 export { default as AssetField } from "./AssetField";
-export { default as CameraField } from "./CamersField";
+export { default as CameraField } from "./CameraField";
 export { default as SpacingField } from "./SpacingField";
 export { default as TimePeriodField } from "./TimePeriodField";
 export { default as ListField } from "./ListField";

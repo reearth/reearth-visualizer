@@ -57,7 +57,7 @@ HiddenIFrame.args = {
       backgroundColor: "#fff"
     }
   },
-  exposed: ({ main: {render, postMessage } }) => ({
+  exposed: ({ main: { render, postMessage } }) => ({
     console: {
       log: action("console.log")
     },

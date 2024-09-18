@@ -1,4 +1,3 @@
-
 import { Button, DragAndDropList, Icon } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -39,7 +38,6 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
     setPropertiesList,
     setCustomProperties,
     setWarning
-
   });
 
   const DraggableCustomPropertyItems = useMemo(
@@ -94,13 +92,13 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
           )}
         </PropertyTableBody>
         {warning && (
-            <Warning>
-              <Icon icon="warning" size="large" />
-              {t(
-                "The keyword you want to use as the custom property title has been used in the system, please choose any other keyword"
-              )}
-            </Warning>
-          )}
+          <Warning>
+            <Icon icon="warning" size="large" />
+            {t(
+              "The keyword you want to use as the custom property title has been used in the system, please choose any other keyword"
+            )}
+          </Warning>
+        )}
         <Button
           icon="plus"
           title={t("New Property")}
@@ -157,7 +155,7 @@ const Warning = styled("div")(({ theme }) => ({
   alignItems: "center",
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  padding: `${theme.spacing.smallest}px 0`,
+  padding: `${theme.spacing.smallest}px 0`
 }));
 
 export default SketchCustomProperties;

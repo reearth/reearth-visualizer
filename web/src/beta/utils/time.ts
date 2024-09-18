@@ -19,7 +19,7 @@ export const truncMinutes = (d: Date) => {
   return d;
 };
 
-export const convertTimeToString = (date: Date): string => {
+export const formatRelativeTime = (date: Date): string => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
   let interval = 0;
 

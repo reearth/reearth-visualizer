@@ -244,15 +244,30 @@ export default function Crust({
   });
 
   const featuredInfobox = useMemo(() => {
-    const selected = layers?.find((l) => l.id === selectedLayer?.layerId);
-    return selectedLayerId?.featureId && selected?.infobox
-      ? {
-          property: selected?.infobox?.property,
-          blocks: [...(selected?.infobox?.blocks ?? [])],
-          featureId: selectedLayerId.featureId
-        }
-      : undefined;
-  }, [layers, selectedLayer, selectedLayerId?.featureId]);
+    if (!selectedLayerId?.featureId) return undefined;
+    const selectedDataLayer = layers?.find(
+      (l) => l.id === selectedLayer?.layerId
+    );
+    if (selectedDataLayer?.infobox) {
+      return {
+        property: selectedDataLayer?.infobox?.property,
+        blocks: [...(selectedDataLayer?.infobox?.blocks ?? [])],
+        featureId: selectedLayerId.featureId
+      };
+    }
+    const selected = mapRef?.current?.layers?.find(
+      (l) => l.id === selectedLayer?.layerId
+    );
+    if (selected?.infobox) {
+      return {
+        property: selected?.infobox?.property,
+        blocks: [...(selected?.infobox?.blocks ?? [])],
+        featureId: selectedLayerId.featureId,
+        readOnly: true
+      };
+    }
+    return undefined;
+  }, [mapRef, layers, selectedLayer, selectedLayerId?.featureId]);
 
   return (
     <Plugins
@@ -312,7 +327,7 @@ export default function Crust({
       <Infobox
         infobox={featuredInfobox}
         installableInfoboxBlocks={installableInfoboxBlocks}
-        isEditable={!!inEditor}
+        isEditable={!!inEditor && !featuredInfobox?.readOnly}
         renderBlock={renderBlock}
         onBlockCreate={onInfoboxBlockCreate}
         onBlockDelete={onInfoboxBlockDelete}

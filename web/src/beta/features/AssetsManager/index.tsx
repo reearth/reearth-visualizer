@@ -99,72 +99,70 @@ const AssetsManager: FC<AssetsManagerProps> = ({
         onSearch={handleSearch}
       />
       {filteredAssets?.length ? (
-        <>
-          <ManagerContent>
-            <ContentWrapper size={size}>
-              <PathWrapper size={size}>
-                <Breadcrumb
-                  items={paths}
-                  size="large"
-                  onClick={handlePathClick}
-                />
-              </PathWrapper>
-              <LayoutWrapper>
-                {layout === "list" && (
-                  <ListHeader size={size} width={contentWidth}>
-                    <ThumbnailSpacer />
-                    <Col width={50}>
-                      <Typography weight="bold" size="body">
-                        {t("Name")}
-                      </Typography>
-                    </Col>
-                    <Col width={30}>
-                      <Typography weight="bold" size="body">
-                        {t("Uploaded At")}
-                      </Typography>
-                    </Col>
-                    <Col width={30}>
-                      <Typography weight="bold" size="body">
-                        {t("Size")}
-                      </Typography>
-                    </Col>
-                  </ListHeader>
+        <ManagerContent>
+          <ContentWrapper size={size}>
+            <PathWrapper size={size}>
+              <Breadcrumb
+                items={paths}
+                size="large"
+                onClick={handlePathClick}
+              />
+            </PathWrapper>
+            <LayoutWrapper>
+              {layout === "list" && (
+                <ListHeader size={size} width={contentWidth}>
+                  <ThumbnailSpacer />
+                  <Col width={50}>
+                    <Typography weight="bold" size="body">
+                      {t("Name")}
+                    </Typography>
+                  </Col>
+                  <Col width={30}>
+                    <Typography weight="bold" size="body">
+                      {t("Uploaded At")}
+                    </Typography>
+                  </Col>
+                  <Col width={30}>
+                    <Typography weight="bold" size="body">
+                      {t("Size")}
+                    </Typography>
+                  </Col>
+                </ListHeader>
+              )}
+              <AssetsWrapper ref={assetsWrapperRef}>
+                <AssetsContent size={size} ref={assetsContentRef}>
+                  {/* TODO: Group of folders */}
+                  <AssetsGroup layout={layout} size={size}>
+                    {filteredAssets?.map((asset) =>
+                      layout === "grid" ? (
+                        <AssetGridItem
+                          key={asset.id}
+                          asset={asset}
+                          layout={layout}
+                          selectedAssetIds={selectedAssetIds}
+                          onSelect={handleAssetSelect}
+                        />
+                      ) : (
+                        <AssetListItem
+                          key={asset.id}
+                          asset={asset}
+                          layout={layout}
+                          selectedAssetIds={selectedAssetIds}
+                          onSelect={handleAssetSelect}
+                        />
+                      )
+                    )}
+                  </AssetsGroup>
+                </AssetsContent>
+                {loadingMore && (
+                  <LoadingWrapper>
+                    <Loading relative />
+                  </LoadingWrapper>
                 )}
-                <AssetsWrapper ref={assetsWrapperRef}>
-                  <AssetsContent size={size} ref={assetsContentRef}>
-                    {/* TODO: Group of folders */}
-                    <AssetsGroup layout={layout} size={size}>
-                      {filteredAssets?.map((asset) =>
-                        layout === "grid" ? (
-                          <AssetGridItem
-                            key={asset.id}
-                            asset={asset}
-                            layout={layout}
-                            selectedAssetIds={selectedAssetIds}
-                            onSelect={handleAssetSelect}
-                          />
-                        ) : (
-                          <AssetListItem
-                            key={asset.id}
-                            asset={asset}
-                            layout={layout}
-                            selectedAssetIds={selectedAssetIds}
-                            onSelect={handleAssetSelect}
-                          />
-                        )
-                      )}
-                    </AssetsGroup>
-                  </AssetsContent>
-                </AssetsWrapper>
-              </LayoutWrapper>
-            </ContentWrapper>
-          </ManagerContent>
-          {loadingMore && (
-            <LoadingWrapper>
-              <Loading relative />
-            </LoadingWrapper>
-          )}
-        </>
+              </AssetsWrapper>
+            </LayoutWrapper>
+          </ContentWrapper>
+        </ManagerContent>
       ) : loading ? (
         <LoadingWrapper>
           <Loading relative />
@@ -272,5 +270,6 @@ const Col = styled("div")<{ width: number }>(({ width }) => ({
 
 const LoadingWrapper = styled("div")(() => ({
   width: "100%",
-  height: 100
+  height: 100,
+  paddingBottom: 40
 }));

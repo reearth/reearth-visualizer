@@ -5,12 +5,12 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type NumberFieldProps = CommonFieldProps & NumberInputProps;
 const NumberField: FC<NumberFieldProps> = ({
-  commonTitle,
+  title,
   description,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <NumberInput {...props} />
     </CommonField>
   );

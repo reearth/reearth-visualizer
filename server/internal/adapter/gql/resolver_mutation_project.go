@@ -2,6 +2,8 @@ package gql
 
 import (
 	"context"
+	"encoding/json"
+	"io"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -106,4 +108,89 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.Del
 	}
 
 	return &gqlmodel.DeleteProjectPayload{ProjectID: input.ProjectID}, nil
+}
+
+func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error) {
+
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
+	prj, res, plgs, err := usecases(ctx).Project.ExportProject(ctx, pid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	res["project"] = gqlmodel.ToProject(prj)
+	res["plugins"] = gqlmodel.ToPlugins(plgs)
+
+	return &gqlmodel.ExportProjectPayload{
+		ProjectData: res,
+	}, nil
+
+}
+
+func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
+
+	fileBytes, err := io.ReadAll(input.File.File)
+	if err != nil {
+		return nil, err
+	}
+
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal(fileBytes, &jsonData); err != nil {
+		return nil, err
+	}
+
+	projectData, _ := jsonData["project"].(map[string]interface{})
+	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, projectData)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	pluginsData, _ := jsonData["plugins"].([]interface{})
+	_, err = usecases(ctx).Plugin.ImportPlugins(ctx, pluginsData)
+	if err != nil {
+		return nil, err
+	}
+
+	sceneData, _ := jsonData["scene"].(map[string]interface{})
+	_, err = usecases(ctx).Scene.ImportScene(ctx, prj, sceneData)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = usecases(ctx).Style.ImportStyles(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = usecases(ctx).StoryTelling.ImportStory(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+
+	prj, res, plgs, err := usecases(ctx).Project.ExportProject(ctx, prj.ID(), getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	res["project"] = gqlmodel.ToProject(prj)
+	res["plugins"] = gqlmodel.ToPlugins(plgs)
+
+	return &gqlmodel.ImportProjectPayload{
+		ProjectData: res,
+	}, nil
+
 }

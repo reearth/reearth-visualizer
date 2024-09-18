@@ -55,7 +55,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
         <TwinInputField
           values={[newCamera?.lat ?? 0, newCamera?.lng ?? 0]}
           content={[t("Latitude"), t("Longitude")]}
-          commonTitle={t("Location")}
+          title={t("Location")}
           placeholders={[t("value"), t("value")]}
           onChange={handleTwinFieldChange}
           onBlur={handleTwinFieldBlur}
@@ -70,7 +70,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
           />
         </InputWrapper>
         <TripletInputField
-          commonTitle={t("Rotation")}
+          title={t("Rotation")}
           values={[
             newCamera?.heading ?? 0,
             newCamera?.pitch ?? 0,

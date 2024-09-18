@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { Meta, StoryObj } from "@storybook/react";
 
-
 import { Markdown, Props } from ".";
 
 const markdown = `

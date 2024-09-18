@@ -9,13 +9,9 @@ export type InputFieldProps = CommonFieldProps &
     "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
   >;
 
-const InputField: FC<InputFieldProps> = ({
-  commonTitle,
-  description,
-  ...props
-}) => {
+const InputField: FC<InputFieldProps> = ({ title, description, ...props }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <TextInput {...props} />
     </CommonField>
   );

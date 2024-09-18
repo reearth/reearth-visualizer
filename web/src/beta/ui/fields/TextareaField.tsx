@@ -6,12 +6,12 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type TextAreaFieldProps = CommonFieldProps & TextAreaProps;
 
 const TextAreaField: FC<TextAreaFieldProps> = ({
-  commonTitle,
+  title,
   description,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <TextArea {...props} />
     </CommonField>
   );

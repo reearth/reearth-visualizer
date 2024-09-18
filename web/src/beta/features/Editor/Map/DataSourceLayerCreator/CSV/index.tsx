@@ -86,7 +86,7 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <InputsWrapper>
             <AssetField
               inputMethod="asset"
-              commonTitle={t("Asset")}
+              title={t("Asset")}
               value={value}
               assetsTypes={assetsTypes}
               onChange={handleValueChange}

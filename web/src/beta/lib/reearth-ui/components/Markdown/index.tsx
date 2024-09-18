@@ -29,11 +29,17 @@ export const Markdown: FC<Props> = ({
     [backgroundColor]
   );
 
-  const LinkRenderer = ({ href, children }: { href?: string; children?: ReactNode }) => (
+  const LinkRenderer = ({
+    href,
+    children
+  }: {
+    href?: string;
+    children?: ReactNode;
+  }) => (
     <a href={href} target="_blank" rel="noreferrer">
       {children}
     </a>
-  )
+  );
 
   return (
     <Wrapper
@@ -46,7 +52,8 @@ export const Markdown: FC<Props> = ({
       <ReactMarkdown
         remarkPlugins={plugins}
         className={className}
-        components={{ a: LinkRenderer }}>
+        components={{ a: LinkRenderer }}
+      >
         {children || ""}
       </ReactMarkdown>
     </Wrapper>

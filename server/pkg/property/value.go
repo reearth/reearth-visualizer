@@ -113,6 +113,16 @@ func (v *Value) Interface() interface{} {
 	return v.v.Interface()
 }
 
+func (v *Value) InterfaceWithType() interface{} {
+	if v == nil {
+		return nil
+	}
+	return map[string]interface{}{
+		"value": v.v.Interface(),
+		"type":  v.v.Type(),
+	}
+}
+
 func (v *Value) Cast(vt ValueType) *Value {
 	if v == nil {
 		return nil

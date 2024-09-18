@@ -6,14 +6,18 @@ import (
 	"io"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
@@ -25,6 +29,7 @@ type Project struct {
 	commonSceneLock
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
+	storytellingRepo  repo.Storytelling
 	userRepo          accountrepo.User
 	workspaceRepo     accountrepo.Workspace
 	sceneRepo         repo.Scene
@@ -38,6 +43,7 @@ type Project struct {
 	file              gateway.File
 	nlsLayerRepo      repo.NLSLayer
 	layerStyles       repo.Style
+	pluginRepo        repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
@@ -45,6 +51,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
 		assetRepo:         r.Asset,
 		projectRepo:       r.Project,
+		storytellingRepo:  r.Storytelling,
 		userRepo:          r.User,
 		workspaceRepo:     r.Workspace,
 		sceneRepo:         r.Scene,
@@ -58,6 +65,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		file:              gr.File,
 		nlsLayerRepo:      r.NLSLayer,
 		layerStyles:       r.Style,
+		pluginRepo:        r.Plugin,
 	}
 }
 
@@ -415,6 +423,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+				false,
 			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
 		}()
 
@@ -482,6 +491,127 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 
 	tx.Commit()
 	return nil
+}
+
+func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (*project.Project, map[string]interface{}, []*plugin.Plugin, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	pluginIDs := sce.PluginIds()
+	var filteredPluginIDs []id.PluginID
+	for _, pid := range pluginIDs {
+		if pid.String() != "reearth" {
+			filteredPluginIDs = append(filteredPluginIDs, pid)
+		}
+	}
+	plgs, err := i.pluginRepo.FindByIDs(ctx, filteredPluginIDs)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	sceneID := sce.ID()
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	storyList, err := i.storytellingRepo.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	sceneJSON, err := builder.New(
+		repo.LayerLoaderFrom(i.layerRepo),
+		repo.PropertyLoaderFrom(i.propertyRepo),
+		repo.DatasetGraphLoaderFrom(i.datasetRepo),
+		repo.TagLoaderFrom(i.tagRepo),
+		repo.TagSceneLoaderFrom(i.tagRepo, []id.SceneID{sceneID}),
+		repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+		true,
+	).ForScene(sce).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory((*storyList)[0]).BuildResult(
+		ctx,
+		time.Now(),
+		prj.CoreSupport(),
+		prj.EnableGA(),
+		prj.TrackingID(),
+	)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	res := make(map[string]interface{})
+	res["scene"] = sceneJSON
+	return prj, res, plgs, nil
+}
+
+func (i *Project) ImportProject(ctx context.Context, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var p = jsonmodel.ToProjectFromJSON(projectData)
+
+	projectID, err := id.ProjectIDFrom(string(p.ID))
+	if err != nil {
+		return nil, nil, err
+	}
+	workspaceID, err := accountdomain.WorkspaceIDFrom(string(p.TeamID))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	prjBuilder := project.New().
+		ID(projectID).
+		Workspace(workspaceID).
+		IsArchived(p.IsArchived).
+		IsBasicAuthActive(p.IsBasicAuthActive).
+		BasicAuthUsername(p.BasicAuthUsername).
+		BasicAuthPassword(p.BasicAuthPassword).
+		Name(p.Name).
+		Description(p.Description).
+		Alias(p.Alias).
+		PublicTitle(p.PublicTitle).
+		PublicDescription(p.PublicDescription).
+		PublicImage(p.PublicImage).
+		PublicNoIndex(p.PublicNoIndex).
+		CoreSupport(p.CoreSupport).
+		EnableGA(p.EnableGa).
+		TrackingID(p.TrackingID).
+		Starred(p.Starred)
+
+	if !p.CreatedAt.IsZero() {
+		prjBuilder = prjBuilder.UpdatedAt(p.CreatedAt)
+	}
+	if p.PublishedAt != nil {
+		prjBuilder = prjBuilder.PublishedAt(*p.PublishedAt)
+	}
+
+	if p.ImageURL != nil {
+		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
+	}
+
+	prjBuilder = prjBuilder.Visualizer(visualizer.Visualizer(p.Visualizer))
+	prjBuilder = prjBuilder.PublishmentStatus(gqlmodel.FromPublishmentStatus(p.PublishmentStatus))
+
+	prj, err := prjBuilder.Build()
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, nil, err
+	}
+	return prj, tx, nil
 }
 
 func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
