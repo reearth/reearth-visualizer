@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -12,8 +13,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -192,21 +195,9 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
-	pr, err := i.pluginRepo.FindByID(ctx, pid)
+	extension, err := i.getWidgePlugin(ctx, pid, eid)
 	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
-		}
 		return nil, nil, err
-	}
-
-	extension := pr.Extension(eid)
-	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
-	}
-
-	if extension.Type() != plugin.ExtensionTypeWidget {
-		return nil, nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 
 	property, err := property.New().NewID().Schema(extension.Schema()).Scene(sid).Build()
@@ -301,21 +292,9 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	}
 	_, location := scene.Widgets().Alignment().Find(param.WidgetID)
 
-	pr, err := i.pluginRepo.FindByID(ctx, widget.Plugin())
+	extension, err := i.getWidgePlugin(ctx, widget.Plugin(), widget.Extension())
 	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
-		}
 		return nil, nil, err
-	}
-
-	extension := pr.Extension(widget.Extension())
-	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
-	}
-
-	if extension.Type() != plugin.ExtensionTypeWidget {
-		return nil, nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 
 	if param.Enabled != nil {
@@ -602,8 +581,137 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 	return s, nil
 }
 
+func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, sceneData map[string]interface{}) (*scene.Scene, error) {
+	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
+	if err != nil {
+		return nil, err
+	}
+	widgets := []*scene.Widget{}
+	for _, widgetJSON := range sceneJSON.Widgets {
+		widgetID, err := id.WidgetIDFrom(widgetJSON.ID)
+		if err != nil {
+			return nil, err
+		}
+		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
+		if err != nil {
+			return nil, err
+		}
+		extensionID := id.PluginExtensionID(widgetJSON.ExtensionID)
+		extension, err := i.getWidgePlugin(ctx, pluginID, extensionID)
+		if err != nil {
+			return nil, err
+		}
+		prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sceneID).Build()
+		if err != nil {
+			return nil, err
+		}
+		ps, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
+		if err != nil {
+			return nil, err
+		}
+		prop, err = builder.AddItemFromPropertyJSON(prop, ps, widgetJSON.Property)
+		if err != nil {
+			return nil, err
+		}
+		// Save property
+		if err = i.propertyRepo.Save(ctx, prop); err != nil {
+			return nil, err
+		}
+		widget, err := scene.NewWidget(widgetID, pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
+		if err != nil {
+			return nil, err
+		}
+		widgets = append(widgets, widget)
+	}
+	clusters := []*scene.Cluster{}
+	for _, clusterJson := range sceneJSON.Clusters {
+		clusterID, err := id.ClusterIDFrom(clusterJson.ID)
+		if err != nil {
+			return nil, err
+		}
+		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sceneID).Build()
+		if err != nil {
+			return nil, err
+		}
+		if err = i.propertyRepo.Save(ctx, property); err != nil {
+			return nil, err
+		}
+		cluster, err := scene.NewCluster(clusterID, clusterJson.Name, property.ID())
+		if err != nil {
+			return nil, err
+		}
+		clusters = append(clusters, cluster)
+	}
+	clusterList := scene.NewClusterListFrom(clusters)
+	var viz = visualizer.VisualizerCesium
+	if prj.CoreSupport() {
+		viz = visualizer.VisualizerCesiumBeta
+	}
+	schema := builtin.GetPropertySchemaByVisualizer(viz)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
+	if err != nil {
+		return nil, err
+	}
+	tiles := id.PropertySchemaGroupID("tiles")
+	g := prop.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
+	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
+	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
+	if err != nil {
+		return nil, err
+	}
+	if err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
+		return nil, err
+	}
+	if err = i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer); err != nil {
+		return nil, err
+	}
+	scene, err := scene.New().
+		ID(sceneID).
+		Project(prj.ID()).
+		Workspace(prj.Workspace()).
+		RootLayer(rootLayer.ID()).
+		Widgets(scene.NewWidgets(widgets, builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem))).
+		UpdatedAt(time.Now()).
+		Property(prop.ID()).
+		Clusters(clusterList).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+	if err := i.sceneRepo.Save(ctx, scene); err != nil {
+		return nil, err
+	}
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		return nil, err
+	}
+	// operator.AddNewScene(prj.Workspace(), sceneID)
+	return scene, nil
+}
+
 func injectExtensionsToScene(s *scene.Scene, ext []plugin.ID) {
 	lo.ForEach(ext, func(p plugin.ID, _ int) {
 		s.Plugins().Add(scene.NewPlugin(p, nil))
 	})
+}
+
+func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.PluginExtensionID) (*plugin.Extension, error) {
+	pr, err := i.pluginRepo.FindByID(ctx, pid)
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			return nil, interfaces.ErrPluginNotFound
+		}
+		return nil, err
+	}
+	extension := pr.Extension(eid)
+	if extension == nil {
+		return nil, interfaces.ErrExtensionNotFound
+	}
+	if extension.Type() != plugin.ExtensionTypeWidget {
+		return nil, interfaces.ErrExtensionTypeMustBeWidget
+	}
+	return extension, nil
 }

@@ -463,7 +463,7 @@ func TestSealed_Interface(t *testing.T) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
-			res := tc.S.Interface()
+			res := tc.S.Interface(false)
 			assert.Equal(t, tc.Expected, res)
 		})
 	}
