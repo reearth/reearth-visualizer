@@ -1,15 +1,10 @@
-import { ColorInput } from "@reearth/beta/lib/reearth-ui";
 import { MarkerAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
-import NodeSystem from "../..";
 import { LayerStyleProps } from "../../../InterfaceTab";
-import ConditionalTab from "../../ConditionalTab";
-import ExpressionTab from "../../ExpressionTab";
-
-import useHooks from "./hooks";
-
-const DEFAULT_VALUE = undefined;
+import ColorInputNode, {
+  DEFAULT_COLOR_VALUE
+} from "../../common/ColorInputNode";
 
 const PointColorNode: FC<LayerStyleProps> = ({
   optionsMenu,
@@ -17,45 +12,22 @@ const PointColorNode: FC<LayerStyleProps> = ({
   setLayerStyle
 }) => {
   const [value, setValue] =
-    useState<MarkerAppearance["pointColor"]>(DEFAULT_VALUE);
+    useState<MarkerAppearance["pointColor"]>(DEFAULT_COLOR_VALUE);
   const [expression, setExpression] = useState<string>("");
 
-  const { handleChange } = useHooks({
-    apperanceTypeKey: "pointColor",
-    layerStyle,
-    value,
-    expression,
-    defaultValue: DEFAULT_VALUE,
-    setValue,
-    setExpression,
-    setLayerStyle
-  });
-
-  const renderContent: Record<string, JSX.Element> = {
-    value: (
-      <ColorInput
-        value={value}
-        onChange={(val) => handleChange("value", val)}
-      />
-    ),
-    expression: (
-      <ExpressionTab
-        value={expression}
-        onChange={(val) => handleChange("expression", val)}
-      />
-    ),
-    //TODO: will be implemented in next step
-    condition: (
-      <ConditionalTab>
-        <ColorInput />
-      </ConditionalTab>
-    )
-  };
-
   return (
-    <NodeSystem title="PointColor" optionsMenu={optionsMenu}>
-      {(activeTab) => renderContent[activeTab] || null}
-    </NodeSystem>
+    <ColorInputNode
+      appearanceType="marker"
+      appearanceTypeKey="pointColor"
+      title="PointColor"
+      optionsMenu={optionsMenu}
+      layerStyle={layerStyle}
+      setLayerStyle={setLayerStyle}
+      value={value}
+      setValue={setValue}
+      expression={expression}
+      setExpression={setExpression}
+    />
   );
 };
 

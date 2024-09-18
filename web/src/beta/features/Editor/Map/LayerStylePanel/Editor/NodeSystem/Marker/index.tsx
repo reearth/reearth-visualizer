@@ -14,7 +14,7 @@ import {
 import { LayerStyleProps } from "../../InterfaceTab";
 import { markerNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./Nodes";
+import { componentNode } from "./nodes";
 
 type MarkerProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
@@ -63,6 +63,7 @@ const Marker: FC<MarkerProps> = ({
             <Component
               key={key}
               layerStyle={layerStyle}
+              appearanceType="marker"
               optionsMenu={optionsMenu.map((item) => ({
                 ...item,
                 onClick: () => item.onClick(key)
@@ -95,6 +96,7 @@ const Marker: FC<MarkerProps> = ({
             <Component
               key={item.id}
               layerStyle={layerStyle}
+              appearanceType="marker"
               setLayerStyle={setLayerStyle}
               optionsMenu={optionsMenu}
             />

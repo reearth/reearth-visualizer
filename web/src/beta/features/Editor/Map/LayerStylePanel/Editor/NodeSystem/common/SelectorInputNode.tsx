@@ -1,46 +1,47 @@
 import { Selector } from "@reearth/beta/lib/reearth-ui";
-import { MarkerAppearance } from "@reearth/core";
-import { FC, useCallback, useState } from "react";
+import { SetStateAction } from "jotai";
+import { Dispatch, FC, useCallback } from "react";
 
-import NodeSystem from "../..";
-import { LayerStyleProps } from "../../../InterfaceTab";
-import ConditionalTab from "../../ConditionalTab";
-import ExpressionTab from "../../ExpressionTab";
+import { LayerStyleProps } from "../../InterfaceTab";
+import ConditionalTab from "../tabs/ConditionalTab";
+import ExpressionTab from "../tabs/ExpressionTab";
 
 import useHooks from "./hooks";
+import { AppearanceType, AppearanceTypeKeys } from "./type";
 
-const options = [
-  {
-    value: "none",
-    label: "none"
-  },
-  {
-    value: "clamp",
-    label: "clamp"
-  },
-  {
-    value: "relative",
-    label: "relative"
+import NodeSystem from ".";
+
+const SelectorInputNode: FC<
+  LayerStyleProps & {
+    appearanceType: AppearanceType;
+    appearanceTypeKey: AppearanceTypeKeys;
+    options: { value: string; label?: string }[];
+    title?: string;
+    value: string | undefined;
+    expression: string;
+    setValue: Dispatch<SetStateAction<any | undefined>>;
+    setExpression: (val: string) => void;
   }
-];
-
-const HeightReferenceNode: FC<LayerStyleProps> = ({
+> = ({
   optionsMenu,
+  title,
   layerStyle,
+  appearanceType,
+  appearanceTypeKey,
+  options,
+  value,
+  expression,
+  setValue,
+  setExpression,
   setLayerStyle
 }) => {
-  const defaultValue = "none";
-  const [value, setValue] = useState<MarkerAppearance["heightReference"]>(
-    layerStyle?.value.marker?.heightReference ?? defaultValue
-  );
-  const [expression, setExpression] = useState<string>("");
-
   const { handleChange } = useHooks({
-    apperanceTypeKey: "heightReference",
+    appearanceType,
+    appearanceTypeKey,
     layerStyle,
+    defaultValue: options[0].label,
     value,
     expression,
-    defaultValue,
     setValue,
     setExpression,
     setLayerStyle
@@ -77,10 +78,10 @@ const HeightReferenceNode: FC<LayerStyleProps> = ({
   };
 
   return (
-    <NodeSystem title="HeightReference" optionsMenu={optionsMenu}>
+    <NodeSystem title={title} optionsMenu={optionsMenu}>
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );
 };
 
-export default HeightReferenceNode;
+export default SelectorInputNode;

@@ -2,10 +2,10 @@ import { NumberInput } from "@reearth/beta/lib/reearth-ui";
 import { PolylineAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
-import NodeSystem from "../..";
 import { LayerStyleProps } from "../../../InterfaceTab";
-import ConditionalTab from "../../ConditionalTab";
-import ExpressionTab from "../../ExpressionTab";
+import NodeSystem from "../../common";
+import ConditionalTab from "../../tabs/ConditionalTab";
+import ExpressionTab from "../../tabs/ExpressionTab";
 
 import useHooks from "./hooks";
 

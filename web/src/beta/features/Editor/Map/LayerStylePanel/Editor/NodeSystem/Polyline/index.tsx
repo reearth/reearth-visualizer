@@ -14,7 +14,7 @@ import {
 import { LayerStyleProps } from "../../InterfaceTab";
 import { polylineNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./Nodes";
+import { componentNode } from "./nodes";
 
 type PolylineProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
@@ -64,6 +64,7 @@ const Polyline: FC<PolylineProps> = ({
             <Component
               key={key}
               layerStyle={layerStyle}
+              appearanceType="polyline"
               optionsMenu={optionsMenu.map((item) => ({
                 ...item,
                 onClick: () => item.onClick(key)
@@ -96,6 +97,7 @@ const Polyline: FC<PolylineProps> = ({
             <Component
               key={item.id}
               layerStyle={layerStyle}
+              appearanceType="polyline"
               setLayerStyle={setLayerStyle}
               optionsMenu={optionsMenu}
             />

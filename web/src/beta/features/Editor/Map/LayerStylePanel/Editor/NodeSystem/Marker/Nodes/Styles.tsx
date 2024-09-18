@@ -1,13 +1,8 @@
-import { Selector } from "@reearth/beta/lib/reearth-ui";
 import { MarkerAppearance } from "@reearth/core";
-import { FC, useCallback, useState } from "react";
+import { FC, useState } from "react";
 
-import NodeSystem from "../..";
 import { LayerStyleProps } from "../../../InterfaceTab";
-import ConditionalTab from "../../ConditionalTab";
-import ExpressionTab from "../../ExpressionTab";
-
-import useHooks from "./hooks";
+import SelectorInputNode from "../../common/SelectorInputNode";
 
 const options = [
   { value: "none", label: "none" },
@@ -15,67 +10,30 @@ const options = [
   { value: "image", label: "image" }
 ];
 
-const DEFAULT_VALUE = "none";
-
 const StylesNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
   const [value, setValue] = useState<MarkerAppearance["style"]>(
-    layerStyle?.value.marker?.style ?? DEFAULT_VALUE
+    layerStyle?.value.marker?.style ?? "none"
   );
   const [expression, setExpression] = useState<string>("");
 
-  const { handleChange } = useHooks({
-    apperanceTypeKey: "style",
-    layerStyle,
-    value,
-    expression,
-    defaultValue: DEFAULT_VALUE,
-    setValue,
-    setExpression,
-    setLayerStyle
-  });
-
-  const handleSelectorChange = useCallback(
-    (newValue?: string | string[]) => {
-      if (!newValue) return;
-      handleChange("value", newValue as string);
-    },
-    [handleChange]
-  );
-
-  const renderContent: Record<string, JSX.Element> = {
-    value: (
-      <Selector
-        value={value}
-        options={options}
-        onChange={handleSelectorChange}
-      />
-    ),
-    expression: (
-      <ExpressionTab
-        value={expression}
-        onChange={(val) => handleChange("expression", val as string)}
-      />
-    ),
-    //TODO: will be implemented in next step
-    condition: (
-      <ConditionalTab>
-        <Selector
-          value={value}
-          options={options}
-          onChange={(val) => handleChange("value", val as string)}
-        />
-      </ConditionalTab>
-    )
-  };
-
   return (
-    <NodeSystem title="Style" optionsMenu={optionsMenu}>
-      {(activeTab) => renderContent[activeTab] || null}
-    </NodeSystem>
+    <SelectorInputNode
+      appearanceType="marker"
+      appearanceTypeKey="style"
+      title="Style"
+      optionsMenu={optionsMenu}
+      options={options}
+      layerStyle={layerStyle}
+      setLayerStyle={setLayerStyle}
+      value={value}
+      setValue={setValue}
+      expression={expression}
+      setExpression={setExpression}
+    />
   );
 };
 

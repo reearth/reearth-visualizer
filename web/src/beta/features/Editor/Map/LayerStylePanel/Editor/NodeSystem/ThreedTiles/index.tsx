@@ -14,7 +14,7 @@ import {
 import { LayerStyleProps } from "../../InterfaceTab";
 import { threedtilesNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./Nodes";
+import { componentNode } from "./nodes";
 
 type ThreedTilesProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;

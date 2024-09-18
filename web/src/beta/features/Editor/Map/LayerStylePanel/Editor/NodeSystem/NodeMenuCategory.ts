@@ -3,549 +3,442 @@ import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 export const markerNodeMenu: PopupMenuItem[] = [
   {
     id: "show",
-    title: "show",
-    icon: "points"
+    title: "show"
   },
   {
     id: "height",
-    title: "height",
-    icon: "points"
+    title: "height"
   },
   {
     id: "heightReference",
-    title: "heightReference",
-    icon: "points"
+    title: "heightReference"
   },
   {
     id: "style",
-    title: "style",
-    icon: "points"
+    title: "style"
   },
   {
     id: "pointSize",
-    title: "pointSize",
-    icon: "points"
+    title: "pointSize"
   },
   {
     id: "pointColor",
-    title: "pointColor",
-    icon: "points"
+    title: "pointColor"
   },
   {
     id: "pointOutlineColor",
-    title: "pointOutlineColor",
-    icon: "points"
+    title: "pointOutlineColor"
   },
   {
     id: "pointOutlineWidth",
-    title: "pointOutlineWidth",
-    icon: "points"
+    title: "pointOutlineWidth"
   },
   {
     id: "image",
-    title: "image",
-    icon: "points"
+    title: "image"
   },
   {
     id: "imageSize",
-    title: "imageSize",
-    icon: "points"
+    title: "imageSize"
   },
   {
     id: "imageSizeInMeters",
-    title: "imageSizeInMeters",
-    icon: "points"
+    title: "imageSizeInMeters"
   },
   {
     id: "imageHorizontalOrigin",
-    title: "imageHorizontalOrigin",
-    icon: "points"
+    title: "imageHorizontalOrigin"
   },
   {
     id: "imageVerticalOrigin",
-    title: "imageVerticalOrigin",
-    icon: "points"
+    title: "imageVerticalOrigin"
   },
   {
     id: "imageColor",
-    title: "imageColor",
-    icon: "points"
+    title: "imageColor"
   },
   {
     id: "imageCrop",
-    title: "imageCrop",
-    icon: "points"
+    title: "imageCrop"
   },
   {
     id: "imageShadow",
-    title: "imageShadow",
-    icon: "points"
+    title: "imageShadow"
   },
   {
     id: "imageShadowColor",
-    title: "imageShadowColor",
-    icon: "points"
+    title: "imageShadowColor"
   },
   {
     id: "imageShadowBlur",
-    title: "imageShadowBlur",
-    icon: "points"
+    title: "imageShadowBlur"
   },
   {
     id: "imageShadowPositionX",
-    title: "imageShadowPositionX",
-    icon: "points"
+    title: "imageShadowPositionX"
   },
   {
     id: "imageShadowPositionY",
-    title: "imageShadowPositionY",
-    icon: "points"
+    title: "imageShadowPositionY"
   },
   {
     id: "label",
-    title: "label",
-    icon: "points"
+    title: "label"
   },
   {
     id: "labelText",
-    title: "labelText",
-    icon: "points"
+    title: "labelText"
   },
   {
     id: "labelPosition",
-    title: "labelPosition",
-    icon: "points"
+    title: "labelPosition"
   },
   {
     id: "labelTypography",
-    title: "labelTypography",
-    icon: "points"
+    title: "labelTypography"
   },
   {
     id: "labelBackground",
-    title: "labelBackground",
-    icon: "points"
+    title: "labelBackground"
   },
   {
     id: "labelBackgroundColor",
-    title: "labelBackgroundColor",
-    icon: "points"
+    title: "labelBackgroundColor"
   },
   {
     id: "labelBackgroundPaddingHorizontal",
-    title: "labelBackgroundPaddingHorizontal",
-    icon: "points"
+    title: "labelBackgroundPaddingHorizontal"
   },
   {
     id: "labelBackgroundPaddingVertical",
-    title: "labelBackgroundPaddingVertical",
-    icon: "points"
+    title: "labelBackgroundPaddingVertical"
   },
   {
     id: "extrude",
-    title: "extrude",
-    icon: "points"
+    title: "extrude"
   },
   {
     id: "near",
-    title: "near",
-    icon: "points"
+    title: "near"
   },
   {
     id: "far",
-    title: "far",
-    icon: "points"
+    title: "far"
   },
   {
     id: "pixelOffset",
-    title: "pixelOffset",
-    icon: "points"
+    title: "pixelOffset"
   },
   {
     id: "eyeOffset",
-    title: "eyeOffset",
-    icon: "points"
+    title: "eyeOffset"
   },
   {
     id: "hideIndicator",
-    title: "hideIndicator",
-    icon: "points"
+    title: "hideIndicator"
   },
   {
     id: "selectedFeatureColor",
-    title: "selectedFeatureColor",
-    icon: "points"
+    title: "selectedFeatureColor"
   }
 ];
 
 export const polylineNodeMenu: PopupMenuItem[] = [
   {
     id: "show",
-    title: "show",
-    icon: "polyline"
+    title: "show"
   },
   {
     id: "clampToGround",
-    title: "clampToGround",
-    icon: "polyline"
+    title: "clampToGround"
   },
   {
     id: "strokeColor",
-    title: "strokeColor",
-    icon: "polyline"
+    title: "strokeColor"
   },
   {
     id: "strokeWidth",
-    title: "strokeWidth",
-    icon: "polyline"
+    title: "strokeWidth"
   },
   {
     id: "shadows",
-    title: "shadows",
-    icon: "polyline"
+    title: "shadows"
   },
   {
     id: "near",
-    title: "near",
-    icon: "polyline"
+    title: "near"
   },
   {
     id: "far",
-    title: "far",
-    icon: "polyline"
+    title: "far"
   },
   {
     id: "classificationType",
-    title: "classificationType",
-    icon: "polyline"
+    title: "classificationType"
   },
   {
     id: "hideIndicator",
-    title: "hideIndicator",
-    icon: "polyline"
+    title: "hideIndicator"
   },
   {
     id: "selectedFeatureColor",
-    title: "selectedFeatureColor",
-    icon: "polyline"
+    title: "selectedFeatureColor"
   }
 ];
 
 export const polygonNodeMenu: PopupMenuItem[] = [
   {
     id: "show",
-    title: "show",
-    icon: "polygon"
+    title: "show"
   },
   {
     id: "fill",
-    title: "fill",
-    icon: "polygon"
+    title: "fill"
   },
   {
     id: "fillColor",
-    title: "fillColor",
-    icon: "polygon"
+    title: "fillColor"
   },
   {
     id: "stroke",
-    title: "stroke",
-    icon: "polygon"
+    title: "stroke"
   },
   {
     id: "strokeColor",
-    title: "strokeColor",
-    icon: "polygon"
+    title: "strokeColor"
   },
   {
     id: "strokeWidth",
-    title: "strokeWidth",
-    icon: "polygon"
+    title: "strokeWidth"
   },
   {
     id: "heightReference",
-    title: "heightReference",
-    icon: "points"
+    title: "heightReference"
   },
   {
     id: "shadows",
-    title: "shadows",
-    icon: "polygon"
+    title: "shadows"
   },
   {
     id: "lineJoin",
-    title: "lineJoin",
-    icon: "polygon"
+    title: "lineJoin"
   },
   {
     id: "near",
-    title: "near",
-    icon: "polygon"
+    title: "near"
   },
   {
     id: "far",
-    title: "far",
-    icon: "polygon"
+    title: "far"
   },
   {
     id: "extrudedHeight",
-    title: "extrudedHeight",
-    icon: "polygon"
+    title: "extrudedHeight"
   },
   {
     id: "classificationType",
-    title: "classificationType",
-    icon: "polygon"
+    title: "classificationType"
   },
   {
     id: "hideIndicator",
-    title: "hideIndicator",
-    icon: "polygon"
+    title: "hideIndicator"
   },
   {
     id: "selectedFeatureColor",
-    title: "selectedFeatureColor",
-    icon: "polygon"
+    title: "selectedFeatureColor"
   }
 ];
 
 export const threedtilesNodeMenu: PopupMenuItem[] = [
   {
     id: "show",
-    title: "show",
-    icon: "buildings"
+    title: "show"
   },
   {
     id: "color",
-    title: "color",
-    icon: "buildings"
+    title: "color"
   },
   {
     id: "styleUrl",
-    title: "styleUrl",
-    icon: "buildings"
+    title: "styleUrl"
   },
   {
     id: "shadows",
-    title: "shadows",
-    icon: "buildings"
+    title: "shadows"
   },
   {
     id: "colorBlendMode",
-    title: "colorBlendMode",
-    icon: "buildings"
+    title: "colorBlendMode"
   },
   {
     id: "edgeWidth",
-    title: "edgeWidth",
-    icon: "buildings"
+    title: "edgeWidth"
   },
   {
     id: "edgeColor",
-    title: "edgeColor",
-    icon: "buildings"
+    title: "edgeColor"
   },
   {
     id: "selectedFeatureColor",
-    title: "selectedFeatureColor",
-    icon: "buildings"
+    title: "selectedFeatureColor"
   },
   {
     id: "disableIndexingFeature",
-    title: "disableIndexingFeature",
-    icon: "buildings"
+    title: "disableIndexingFeature"
   },
   {
     id: "tileset",
-    title: "tileset",
-    icon: "buildings"
+    title: "tileset"
   },
   {
     id: "apiKey",
-    title: "apiKey",
-    icon: "buildings"
+    title: "apiKey"
   },
   {
     id: "experimental_clipping",
-    title: "experimental_clipping",
-    icon: "buildings"
+    title: "experimental_clipping"
   },
   {
     id: "pointSize",
-    title: "pointSize",
-    icon: "buildings"
+    title: "pointSize"
   },
   {
     id: "meta",
-    title: "meta",
-    icon: "buildings"
+    title: "meta"
   },
   {
     id: "pbr",
-    title: "pbr",
-    icon: "buildings"
+    title: "pbr"
   },
   {
     id: "specularEnvironmentMaps",
-    title: "specularEnvironmentMaps",
-    icon: "buildings"
+    title: "specularEnvironmentMaps"
   },
   {
     id: "sphericalHarmonicCoefficients",
-    title: "sphericalHarmonicCoefficients",
-    icon: "buildings"
+    title: "sphericalHarmonicCoefficients"
   },
   {
     id: "imageBasedLightIntensity",
-    title: "imageBasedLightIntensity",
-    icon: "buildings"
+    title: "imageBasedLightIntensity"
   },
   {
     id: "showWireframe",
-    title: "showWireframe",
-    icon: "buildings"
+    title: "showWireframe"
   },
   {
     id: "meshowBoundingVolumeta",
-    title: "showBoundingVolume",
-    icon: "buildings"
+    title: "showBoundingVolume"
   },
   {
     id: "cacheBytes",
-    title: "cacheBytes",
-    icon: "buildings"
+    title: "cacheBytes"
   }
 ];
 
 export const modelNodeMenu: PopupMenuItem[] = [
   {
     id: "show",
-    title: "show",
-    icon: "cube"
+    title: "show"
   },
   {
     id: "model",
-    title: "model",
-    icon: "cube"
+    title: "model"
   },
   {
     id: "url",
-    title: "url",
-    icon: "cube"
+    title: "url"
   },
   {
     id: "heightReference",
-    title: "heightReference",
-    icon: "cube"
+    title: "heightReference"
   },
   {
     id: "heading",
-    title: "heading",
-    icon: "cube"
+    title: "heading"
   },
   {
     id: "pitch",
-    title: "pitch",
-    icon: "cube"
+    title: "pitch"
   },
   {
     id: "roll",
-    title: "roll",
-    icon: "cube"
+    title: "roll"
   },
   {
     id: "scale",
-    title: "scale",
-    icon: "cube"
+    title: "scale"
   },
   {
     id: "maximumScale",
-    title: "maximumScale",
-    icon: "cube"
+    title: "maximumScale"
   },
   {
     id: "minimumPixelSize",
-    title: "minimumPixelSize",
-    icon: "cube"
+    title: "minimumPixelSize"
   },
   {
     id: "animation",
-    title: "animation",
-    icon: "cube"
+    title: "animation"
   },
   {
     id: "shadows",
-    title: "shadows",
-    icon: "cube"
+    title: "shadows"
   },
   {
     id: "colorBlend",
-    title: "colorBlend",
-    icon: "cube"
+    title: "colorBlend"
   },
   {
     id: "color",
-    title: "color",
-    icon: "cube"
+    title: "color"
   },
   {
     id: "colorBlendAmount",
-    title: "colorBlendAmount",
-    icon: "cube"
+    title: "colorBlendAmount"
   },
   {
     id: "lightColor",
-    title: "lightColor",
-    icon: "cube"
+    title: "lightColor"
   },
   {
     id: "silhouette",
-    title: "silhouette",
-    icon: "cube"
+    title: "silhouette"
   },
   {
     id: "silhouetteColor",
-    title: "silhouetteColor",
-    icon: "cube"
+    title: "silhouetteColor"
   },
   {
     id: "bearing",
-    title: "bearing",
-    icon: "cube"
+    title: "bearing"
   },
   {
     id: "silhouetteSize",
-    title: "silhouetteSize",
-    icon: "cube"
+    title: "silhouetteSize"
   },
   {
     id: "near",
-    title: "near",
-    icon: "cube"
+    title: "near"
   },
   {
     id: "far",
-    title: "far",
-    icon: "cube"
+    title: "far"
   },
   {
     id: "pbr",
-    title: "pbr",
-    icon: "cube"
+    title: "pbr"
   },
   {
     id: "specularEnvironmentMaps",
-    title: "specularEnvironmentMaps",
-    icon: "cube"
+    title: "specularEnvironmentMaps"
   },
   {
     id: "sphericalHarmonicCoefficients",
-    title: "sphericalHarmonicCoefficients",
-    icon: "cube"
+    title: "sphericalHarmonicCoefficients"
   },
   {
     id: "imageBasedLightIntensity",
-    title: "imageBasedLightIntensity",
-    icon: "cube"
+    title: "imageBasedLightIntensity"
   }
 ];

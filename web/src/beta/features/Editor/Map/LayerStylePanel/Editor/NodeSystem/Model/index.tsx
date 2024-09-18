@@ -14,7 +14,7 @@ import {
 import { LayerStyleProps } from "../../InterfaceTab";
 import { modelNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./Nodes";
+import { componentNode } from "./nodes";
 
 type ThreedModelProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
@@ -63,6 +63,7 @@ const ThreedModel: FC<ThreedModelProps> = ({
             <Component
               key={key}
               layerStyle={layerStyle}
+              appearanceType="model"
               optionsMenu={optionsMenu.map((item) => ({
                 ...item,
                 onClick: () => item.onClick(key)
@@ -97,6 +98,7 @@ const ThreedModel: FC<ThreedModelProps> = ({
               layerStyle={layerStyle}
               setLayerStyle={setLayerStyle}
               optionsMenu={optionsMenu}
+              appearanceType="model"
             />
           ]);
         }

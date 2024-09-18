@@ -1,13 +1,26 @@
 import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
+import HeightReferenceNode from "../../common/nodes/HeightReference";
+import ShowNode from "../../common/nodes/Show";
+import {
+  AppearanceType,
+  HeightReferenceAppearanceType
+} from "../../common/type";
 
-import HeightReferenceNode from "./HeightReference";
-import ShowNode from "./Show";
 import UrlNode from "./Url";
 
-export const componentNode: Record<string, FC<LayerStyleProps>> = {
+export const componentNode: Record<
+  string,
+  FC<
+    LayerStyleProps & {
+      appearanceType: AppearanceType;
+    }
+  >
+> = {
   show: ShowNode,
-  heightReference: HeightReferenceNode,
+  heightReference: HeightReferenceNode as FC<
+    LayerStyleProps & HeightReferenceAppearanceType
+  >,
   url: UrlNode
 };

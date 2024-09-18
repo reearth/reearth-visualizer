@@ -14,7 +14,7 @@ import {
 import { LayerStyleProps } from "../../InterfaceTab";
 import { polygonNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./Nodes";
+import { componentNode } from "./nodes";
 
 type PolygonProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
@@ -63,6 +63,7 @@ const Polygon: FC<PolygonProps> = ({
             <Component
               key={key}
               layerStyle={layerStyle}
+              appearanceType="polygon"
               optionsMenu={optionsMenu.map((item) => ({
                 ...item,
                 onClick: () => item.onClick(key)
@@ -97,6 +98,7 @@ const Polygon: FC<PolygonProps> = ({
               layerStyle={layerStyle}
               setLayerStyle={setLayerStyle}
               optionsMenu={optionsMenu}
+              appearanceType="polygon"
             />
           ]);
         }
