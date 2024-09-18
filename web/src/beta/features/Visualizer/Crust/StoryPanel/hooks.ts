@@ -107,10 +107,9 @@ export default (
       return visualizer?.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
         payload: {
-          start:
-            visualizer?.current?.timeline?.current?.computedTimeline?.start,
+          start: time,
           current: time,
-          stop: visualizer?.current?.timeline?.current?.computedTimeline?.stop
+          stop: time
         },
         committer: { source: "storyPage", id: currentPageId }
       });
@@ -120,11 +119,9 @@ export default (
 
   const handlePageTime = useCallback(
     (page: StoryPage) => {
-      const timePointField = page.property?.timePoint;
-      if (!timePointField?.timePoint?.value) return;
-      return onTimeChange?.(
-        new Date(formatISO8601(timePointField?.timePoint?.value) ?? "")
-      );
+      const time = page.property?.timePoint?.timePoint;
+      if (!time) return;
+      onTimeChange?.(new Date(formatISO8601(time)));
     },
     [onTimeChange]
   );
