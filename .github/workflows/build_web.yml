@@ -54,7 +54,7 @@ jobs:
         run: yarn build
       - name: Pack
         run: mv dist reearth-web && tar -zcvf reearth-web.tar.gz reearth-web
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: reearth-web
           path: web/reearth-web.tar.gz
@@ -73,7 +73,7 @@ jobs:
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: reearth-web
       - name: Rename artifact
