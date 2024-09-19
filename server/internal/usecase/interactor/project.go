@@ -1,9 +1,14 @@
 package interactor
 
 import (
+	"archive/zip"
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -13,7 +18,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
@@ -493,64 +497,68 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (*project.Project, map[string]interface{}, []*plugin.Plugin, error) {
+func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
-		return nil, nil, nil, err
-	}
-	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
-	if err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	}
 
-	pluginIDs := sce.PluginIds()
-	var filteredPluginIDs []id.PluginID
-	for _, pid := range pluginIDs {
-		if pid.String() != "reearth" {
-			filteredPluginIDs = append(filteredPluginIDs, pid)
+	// project image
+	if prj.ImageURL() != nil {
+		trimmedName := strings.TrimPrefix(prj.ImageURL().Path, "/assets/")
+		stream, err := i.file.ReadAsset(ctx, trimmedName)
+		if err != nil {
+			return nil, err
+		}
+		zipEntryPath := fmt.Sprintf("assets/%s", trimmedName)
+		zipEntry, err := zipWriter.Create(zipEntryPath)
+		if err != nil {
+			return nil, err
+		}
+		_, err = io.Copy(zipEntry, stream)
+		if err != nil {
+			_ = stream.Close()
+			return nil, err
+		}
+		if err := stream.Close(); err != nil {
+			return nil, err
 		}
 	}
-	plgs, err := i.pluginRepo.FindByIDs(ctx, filteredPluginIDs)
+
+	return prj, nil
+}
+
+func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile *os.File, data map[string]interface{}, prj *project.Project) error {
+	fileWriter, err := zipWriter.Create("project.json")
 	if err != nil {
-		return nil, nil, nil, err
+		return err
+	}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	if _, err = fileWriter.Write(jsonData); err != nil {
+		return err
 	}
 
-	sceneID := sce.ID()
-	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	storyList, err := i.storytellingRepo.FindByScene(ctx, sceneID)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	sceneJSON, err := builder.New(
-		repo.LayerLoaderFrom(i.layerRepo),
-		repo.PropertyLoaderFrom(i.propertyRepo),
-		repo.DatasetGraphLoaderFrom(i.datasetRepo),
-		repo.TagLoaderFrom(i.tagRepo),
-		repo.TagSceneLoaderFrom(i.tagRepo, []id.SceneID{sceneID}),
-		repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-		true,
-	).ForScene(sce).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory((*storyList)[0]).BuildResult(
-		ctx,
-		time.Now(),
-		prj.CoreSupport(),
-		prj.EnableGA(),
-		prj.TrackingID(),
-	)
-	if err != nil {
-		return nil, nil, nil, err
+	if err := zipWriter.Close(); err != nil {
+		return err
 	}
 
-	res := make(map[string]interface{})
-	res["scene"] = sceneJSON
-	return prj, res, plgs, nil
+	// flush once
+	if err := zipFile.Close(); err != nil {
+		return err
+	}
+	zipFile, err = os.Open(zipFile.Name())
+	if err != nil {
+		return err
+	}
+
+	if err := i.file.UploadExportProjectZip(ctx, zipFile); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (i *Project) ImportProject(ctx context.Context, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
@@ -609,6 +617,10 @@ func (i *Project) ImportProject(ctx context.Context, projectData map[string]inte
 		return nil, nil, err
 	}
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, nil, err
+	}
+	prj, err = i.projectRepo.FindByID(ctx, prj.ID())
+	if err != nil {
 		return nil, nil, err
 	}
 	return prj, tx, nil

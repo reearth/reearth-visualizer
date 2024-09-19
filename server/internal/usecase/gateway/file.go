@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/url"
+	"os"
 
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -35,4 +36,8 @@ type File interface {
 	ReadStoryFile(context.Context, string) (io.ReadCloser, error)
 	MoveStory(context.Context, string, string) error
 	RemoveStory(context.Context, string) error
+
+	ReadExportProjectZip(context.Context, string) (io.ReadCloser, error)
+	UploadExportProjectZip(context.Context, *os.File) error
+	RemoveExportProjectZip(context.Context, string) error
 }

@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
 
@@ -31,6 +32,7 @@ type Scene interface {
 	AddCluster(context.Context, id.SceneID, string, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	UpdateCluster(context.Context, UpdateClusterParam, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	RemoveCluster(context.Context, id.SceneID, id.ClusterID, *usecase.Operator) (*scene.Scene, error)
+	ExportScene(context.Context, *project.Project, *zip.Writer) (*scene.Scene, map[string]interface{}, error)
 	ImportScene(context.Context, *project.Project, map[string]interface{}) (*scene.Scene, error)
 }
 

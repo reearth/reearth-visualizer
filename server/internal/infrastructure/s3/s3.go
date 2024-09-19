@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
@@ -28,6 +29,7 @@ const (
 	pluginBasePath string = "plugins"
 	mapBasePath    string = "maps"
 	storyBasePath  string = "stories"
+	exportBasePath string = "export"
 	fileSizeLimit  int64  = 1024 * 1024 * 100 // about 100MB
 )
 
@@ -64,6 +66,8 @@ func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gatew
 		client:       s3.NewFromConfig(cfg),
 	}, nil
 }
+
+// asset
 
 func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, error) {
 	sn := sanitize.Path(name)
@@ -206,6 +210,25 @@ func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
 		return gateway.ErrInvalidFile
 	}
 	return f.delete(ctx, path.Join(storyBasePath, sn))
+}
+
+// export
+
+func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
+	sn := sanitize.Path(name)
+	if sn == "" {
+		return nil, rerror.ErrNotFound
+	}
+	return f.read(ctx, path.Join(exportBasePath, sn))
+}
+
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile *os.File) error {
+	_, err := f.upload(ctx, path.Join(exportBasePath, zipFile.Name()), zipFile)
+	return err
+}
+
+func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) error {
+	return f.delete(ctx, path.Join(exportBasePath, filename))
 }
 
 // helpers
