@@ -7,11 +7,11 @@ import {
   ReactElement,
   ReactNode,
   useEffect,
-  useMemo,
   useState
 } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
+import useHooks from "../hook";
 import { threedtilesNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./nodes";
@@ -28,30 +28,11 @@ const ThreedTiles: FC<ThreedTilesProps> = ({
   const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
-  const optionsMenu = useMemo(() => {
-    return [
-      {
-        id: "delete",
-        title: "Delete",
-        icon: "trash" as const,
-        onClick: (propertyKey: string) => {
-          setLayerStyle((prev) => {
-            if (!prev?.id || !prev?.value["3dtiles"]) return prev;
-            const { [propertyKey]: _, ...updatedThreedTile } =
-              prev.value["3dtiles"];
-
-            return {
-              ...prev,
-              value: {
-                ...prev.value,
-                ["3dtiles"]: updatedThreedTile
-              }
-            };
-          });
-        }
-      }
-    ];
-  }, [setLayerStyle]);
+  const { optionsMenu } = useHooks({
+    appearanceType: "3dtiles",
+    layerStyle,
+    setLayerStyle
+  });
 
   useEffect(() => {
     if (layerStyle?.value["3dtiles"]) {

@@ -30,7 +30,12 @@ const ColorInputNode: FC<
   conditions,
   setConditions
 }) => {
-  const { handleChange, handleConditionStatementChange } = useHooks({
+  const {
+    activeTab,
+    handleTabChange,
+    handleChange,
+    handleConditionStatementChange
+  } = useHooks({
     appearanceType,
     appearanceTypeKey,
     layerStyle,
@@ -70,7 +75,12 @@ const ColorInputNode: FC<
   };
 
   return (
-    <NodeSystem title={title} optionsMenu={optionsMenu}>
+    <NodeSystem
+      title={title}
+      optionsMenu={optionsMenu}
+      activeTab={activeTab}
+      onTabChange={handleTabChange}
+    >
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );

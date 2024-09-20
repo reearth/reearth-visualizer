@@ -7,11 +7,11 @@ import {
   ReactElement,
   ReactNode,
   useEffect,
-  useMemo,
   useState
 } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
+import useHooks from "../hook";
 import { polygonNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./nodes";
@@ -28,29 +28,11 @@ const Polygon: FC<PolygonProps> = ({
   const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
-  const optionsMenu = useMemo(() => {
-    return [
-      {
-        id: "delete",
-        title: "Delete",
-        icon: "trash" as const,
-        onClick: (propertyKey: string) => {
-          setLayerStyle((prev) => {
-            if (!prev?.id || !prev?.value?.polygon) return prev;
-            const { [propertyKey]: _, ...updatedPolygon } = prev.value.polygon;
-
-            return {
-              ...prev,
-              value: {
-                ...prev.value,
-                polygon: updatedPolygon
-              }
-            };
-          });
-        }
-      }
-    ];
-  }, [setLayerStyle]);
+  const { optionsMenu } = useHooks({
+    appearanceType: "polygon",
+    layerStyle,
+    setLayerStyle
+  });
 
   useEffect(() => {
     if (layerStyle?.value?.polygon) {

@@ -30,7 +30,12 @@ const SwitchInputNode: FC<
   conditions,
   setConditions
 }) => {
-  const { handleChange, handleConditionStatementChange } = useHooks({
+  const {
+    activeTab,
+    handleTabChange,
+    handleChange,
+    handleConditionStatementChange
+  } = useHooks({
     appearanceType,
     appearanceTypeKey,
     layerStyle,
@@ -66,7 +71,12 @@ const SwitchInputNode: FC<
   };
 
   return (
-    <NodeSystem title={title} optionsMenu={optionsMenu}>
+    <NodeSystem
+      title={title}
+      optionsMenu={optionsMenu}
+      activeTab={activeTab}
+      onTabChange={handleTabChange}
+    >
       {(activeTab) => renderContent[activeTab] || null}
     </NodeSystem>
   );

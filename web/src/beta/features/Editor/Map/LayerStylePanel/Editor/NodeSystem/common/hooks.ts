@@ -1,11 +1,11 @@
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { SetStateAction } from "jotai";
-import { Dispatch, useCallback, useEffect } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 
-import { AppearanceType, AppearanceTypeKeys, Condition } from "./type";
+import { AppearanceType, AppearanceTypeKeys, Condition, Tabs } from "./type";
 
 type UseAppearanceHookParams<T extends AppearanceType> = {
   appearanceType: T;
@@ -34,6 +34,7 @@ export default function useHooks<T extends AppearanceType>({
 }: UseAppearanceHookParams<T>) {
   const t = useT();
   const [, setNotification] = useNotification();
+  const [activeTab, setActiveTab] = useState<Tabs>("value");
 
   const styleValue = layerStyle?.value[appearanceType]?.[appearanceTypeKey];
 
@@ -50,14 +51,17 @@ export default function useHooks<T extends AppearanceType>({
           setConditions(conditionArray);
           setValue(defaultValue);
           setExpression("");
+          setActiveTab("condition");
         } else if (typeof styleValue.expression === "string") {
           setExpression(styleValue.expression as string);
           setValue(defaultValue);
+          setActiveTab("expression");
         }
       } else {
         setValue(styleValue);
         setExpression("");
         setConditions([]);
+        setActiveTab("value");
       }
     }
   }, [styleValue, setValue, setExpression, defaultValue, setConditions]);
@@ -121,7 +125,13 @@ export default function useHooks<T extends AppearanceType>({
     [conditions, setConditions]
   );
 
+  const handleTabChange = useCallback((newTab: Tabs) => {
+    setActiveTab(newTab);
+  }, []);
+
   return {
+    activeTab,
+    handleTabChange,
     handleChange,
     handleConditionStatementChange
   };

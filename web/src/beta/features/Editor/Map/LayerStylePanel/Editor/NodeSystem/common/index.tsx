@@ -5,9 +5,9 @@ import {
   PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, ReactNode, useCallback, MouseEvent, useState } from "react";
+import { FC, ReactNode, useCallback, MouseEvent } from "react";
 
-type Tabs = "value" | "expression" | "condition";
+import { Tabs } from "./type";
 
 type NodeAction = {
   id: Tabs;
@@ -18,18 +18,20 @@ interface NodeSystemProps {
   title?: string;
   children: (activeTab: string) => ReactNode;
   optionsMenu?: PopupMenuItem[];
+  activeTab: Tabs;
+  onTabChange: (newTab: Tabs) => void;
 }
 
-const NodeSystem: FC<NodeSystemProps> = ({ children, title, optionsMenu }) => {
+const NodeSystem: FC<NodeSystemProps> = ({
+  children,
+  title,
+  optionsMenu,
+  activeTab,
+  onTabChange
+}) => {
   const theme = useTheme();
   const handleOptionsClick = useCallback((e: MouseEvent) => {
     e.stopPropagation();
-  }, []);
-
-  const [active, setActive] = useState<Tabs>("value");
-
-  const handleTabChange = useCallback((newTab: Tabs) => {
-    setActive(newTab);
   }, []);
 
   const actions: NodeAction[] = [
@@ -49,10 +51,12 @@ const NodeSystem: FC<NodeSystemProps> = ({ children, title, optionsMenu }) => {
               icon={action.icon}
               size="small"
               iconColor={
-                active === action.id ? theme.content.main : theme.content.weaker
+                activeTab === action.id
+                  ? theme.content.main
+                  : theme.content.weaker
               }
               appearance="simple"
-              onClick={() => handleTabChange(action.id)}
+              onClick={() => onTabChange(action.id)}
             />
           ))}
           {!!optionsMenu && (
@@ -72,7 +76,7 @@ const NodeSystem: FC<NodeSystemProps> = ({ children, title, optionsMenu }) => {
           )}
         </Actions>
       </HeaderWrapper>
-      <ContentWrapper active={active}>{children(active)}</ContentWrapper>
+      <ContentWrapper active={activeTab}>{children(activeTab)}</ContentWrapper>
     </Wrapper>
   );
 };

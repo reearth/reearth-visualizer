@@ -46,3 +46,5 @@ export type CommonIputProp = {
   conditions: Condition[];
   setConditions: Dispatch<SetStateAction<Condition[]>>;
 } & LayerStyleProps;
+
+export type Tabs = "value" | "expression" | "condition";

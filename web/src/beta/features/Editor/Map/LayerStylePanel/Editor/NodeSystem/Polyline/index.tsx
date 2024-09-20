@@ -7,11 +7,11 @@ import {
   ReactElement,
   ReactNode,
   useEffect,
-  useMemo,
   useState
 } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
+import useHooks from "../hook";
 import { polylineNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./nodes";
@@ -28,30 +28,11 @@ const Polyline: FC<PolylineProps> = ({
   const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
-  const optionsMenu = useMemo(() => {
-    return [
-      {
-        id: "delete",
-        title: "Delete",
-        icon: "trash" as const,
-        onClick: (propertyKey: string) => {
-          setLayerStyle((prev) => {
-            if (!prev?.id || !prev?.value?.polyline) return prev;
-            const { [propertyKey]: _, ...updatedPolyline } =
-              prev.value.polyline;
-
-            return {
-              ...prev,
-              value: {
-                ...prev.value,
-                polyline: updatedPolyline
-              }
-            };
-          });
-        }
-      }
-    ];
-  }, [setLayerStyle]);
+  const { optionsMenu } = useHooks({
+    appearanceType: "polyline",
+    layerStyle,
+    setLayerStyle
+  });
 
   useEffect(() => {
     if (layerStyle?.value?.polyline) {

@@ -7,11 +7,11 @@ import {
   ReactElement,
   ReactNode,
   useEffect,
-  useMemo,
   useState
 } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
+import useHooks from "../hook";
 import { markerNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./nodes";
@@ -28,29 +28,11 @@ const Marker: FC<MarkerProps> = ({
   const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
   const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
-  const optionsMenu = useMemo(() => {
-    return [
-      {
-        id: "delete",
-        title: "Delete",
-        icon: "trash" as const,
-        onClick: (propertyKey: string) => {
-          setLayerStyle((prev) => {
-            if (!prev?.id || !prev?.value?.marker) return prev;
-            const { [propertyKey]: _, ...updatedMarker } = prev.value.marker;
-
-            return {
-              ...prev,
-              value: {
-                ...prev.value,
-                marker: updatedMarker
-              }
-            };
-          });
-        }
-      }
-    ];
-  }, [setLayerStyle]);
+  const { optionsMenu } = useHooks({
+    appearanceType: "marker",
+    layerStyle,
+    setLayerStyle
+  });
 
   useEffect(() => {
     if (layerStyle?.value?.marker) {
