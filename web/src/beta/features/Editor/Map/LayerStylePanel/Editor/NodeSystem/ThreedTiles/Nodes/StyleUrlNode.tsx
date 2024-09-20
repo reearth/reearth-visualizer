@@ -1,58 +1,36 @@
-import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { Cesium3DTilesAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import NodeSystem from "../../common";
-import ConditionalTab from "../../tabs/ConditionalTab";
-import ExpressionTab from "../../tabs/ExpressionTab";
-
-import useHooks from "./hooks";
-
-const DEFAULT_VALUE = "";
+import TextInputNode, { DEFAULT_TEXT_VALUE } from "../../common/TextInputNode";
+import { Condition } from "../../common/type";
 
 const StyleUrlNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] =
-    useState<Cesium3DTilesAppearance["styleUrl"]>(DEFAULT_VALUE);
+  const [value, setValue] = useState<Cesium3DTilesAppearance["styleUrl"]>(
+    layerStyle?.value["3dtiles"]?.styleUrl ?? DEFAULT_TEXT_VALUE
+  );
   const [expression, setExpression] = useState<string>("");
-
-  const { handleChange } = useHooks({
-    apperanceTypeKey: "styleUrl",
-    layerStyle,
-    value,
-    expression,
-    defaultValue: DEFAULT_VALUE,
-    setValue,
-    setExpression,
-    setLayerStyle
-  });
-
-  const renderContent: Record<string, JSX.Element> = {
-    value: (
-      <TextInput value={value} onChange={(val) => handleChange("value", val)} />
-    ),
-    expression: (
-      <ExpressionTab
-        value={expression}
-        onChange={(val) => handleChange("expression", val)}
-      />
-    ),
-    //TODO: will be implemented in next step
-    condition: (
-      <ConditionalTab>
-        <TextInput />
-      </ConditionalTab>
-    )
-  };
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
-    <NodeSystem title="StyleUrl" optionsMenu={optionsMenu}>
-      {(activeTab) => renderContent[activeTab] || null}
-    </NodeSystem>
+    <TextInputNode
+      appearanceType="3dtiles"
+      appearanceTypeKey="styleUrl"
+      title="StyleUrl"
+      optionsMenu={optionsMenu}
+      layerStyle={layerStyle}
+      setLayerStyle={setLayerStyle}
+      value={value}
+      setValue={setValue}
+      expression={expression}
+      setExpression={setExpression}
+      conditions={conditions}
+      setConditions={setConditions}
+    />
   );
 };
 

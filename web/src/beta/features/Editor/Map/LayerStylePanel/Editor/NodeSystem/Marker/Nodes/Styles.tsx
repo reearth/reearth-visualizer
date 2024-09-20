@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 import SelectorInputNode from "../../common/SelectorInputNode";
+import { Condition } from "../../common/type";
 
 const options = [
   { value: "none", label: "none" },
@@ -19,6 +20,7 @@ const StylesNode: FC<LayerStyleProps> = ({
     layerStyle?.value.marker?.style ?? "none"
   );
   const [expression, setExpression] = useState<string>("");
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
     <SelectorInputNode
@@ -33,6 +35,8 @@ const StylesNode: FC<LayerStyleProps> = ({
       setValue={setValue}
       expression={expression}
       setExpression={setExpression}
+      conditions={conditions}
+      setConditions={setConditions}
     />
   );
 };

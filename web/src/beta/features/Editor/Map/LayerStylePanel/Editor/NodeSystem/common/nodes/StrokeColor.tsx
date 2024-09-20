@@ -1,28 +1,28 @@
-import { Cesium3DTilesAppearance } from "@reearth/core";
+import { PolygonAppearance, PolylineAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 import ColorInputNode, {
   DEFAULT_COLOR_VALUE
 } from "../../common/ColorInputNode";
-import { Condition } from "../../common/type";
+import { AppearanceType, Condition } from "../../common/type";
 
-const ColorNode: FC<LayerStyleProps> = ({
-  optionsMenu,
-  layerStyle,
-  setLayerStyle
-}) => {
-  const [value, setValue] = useState<Cesium3DTilesAppearance["color"]>(
-    layerStyle?.value?.["3dtiles"]?.color ?? DEFAULT_COLOR_VALUE
-  );
+const StrokeColorNode: FC<
+  LayerStyleProps & {
+    appearanceType: AppearanceType;
+  }
+> = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
+  const [value, setValue] = useState<
+    PolylineAppearance["strokeColor"] | PolygonAppearance["strokeColor"]
+  >(layerStyle?.value[appearanceType]?.strokeColor ?? DEFAULT_COLOR_VALUE);
   const [expression, setExpression] = useState<string>("");
   const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
     <ColorInputNode
-      appearanceType="3dtiles"
-      appearanceTypeKey="color"
-      title="color"
+      appearanceType={appearanceType}
+      appearanceTypeKey="strokeColor"
+      title="StrokeColor"
       optionsMenu={optionsMenu}
       layerStyle={layerStyle}
       setLayerStyle={setLayerStyle}
@@ -36,4 +36,4 @@ const ColorNode: FC<LayerStyleProps> = ({
   );
 };
 
-export default ColorNode;
+export default StrokeColorNode;

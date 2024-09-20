@@ -1,14 +1,12 @@
 import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
+import ShowNode from "../../common/nodes/Show";
+import StrokeColorNode from "../../common/nodes/StrokeColor";
+import StrokeWidthNode from "../../common/nodes/StrokeWidth";
 import { AppearanceType } from "../../common/type";
 
 import FillColorNode from "./FillColorNode";
-import FillNode from "./FillNode";
-import ShowNode from "./Show";
-import StrokeColorNode from "./StrokeColorNode";
-import StrokeNode from "./StrokeNode";
-import StrokeWidthNode from "./StrokeWidthNode";
 
 export const componentNode: Record<
   string,
@@ -19,9 +17,7 @@ export const componentNode: Record<
   >
 > = {
   show: ShowNode,
-  fill: FillNode,
   fillColor: FillColorNode,
-  stroke: StrokeNode,
   strokeWidth: StrokeWidthNode,
   strokeColor: StrokeColorNode
 };

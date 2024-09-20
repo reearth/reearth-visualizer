@@ -1,27 +1,28 @@
+import { Cesium3DTilesAppearance, MarkerAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import SwitchInputNode, {
-  DEFAULT_SWITCH_VALUE
-} from "../../common/SwitchInputNode";
+import NumberInputNode, {
+  DEFAULT_NUMBER_VALUE
+} from "../../common/NumberInputNode";
 import { AppearanceType, Condition } from "../../common/type";
 
-const ClampToGroundNode: FC<
+const PointSizeNode: FC<
   LayerStyleProps & {
     appearanceType: AppearanceType;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
-  const [value, setValue] = useState<boolean | undefined>(
-    layerStyle?.value[appearanceType]?.clampToGround ?? DEFAULT_SWITCH_VALUE
-  );
-  const [expression, setExpression] = useState<string>("");
+  const [value, setValue] = useState<
+    MarkerAppearance["pointSize"] | Cesium3DTilesAppearance["pointSize"]
+  >(layerStyle?.value[appearanceType]?.pointSize ?? DEFAULT_NUMBER_VALUE);
   const [conditions, setConditions] = useState<Condition[]>([]);
 
+  const [expression, setExpression] = useState<string>("");
   return (
-    <SwitchInputNode
-      appearanceType="polyline"
-      appearanceTypeKey="clampToGround"
-      title="ClampToGroundNode"
+    <NumberInputNode
+      appearanceType={appearanceType}
+      appearanceTypeKey="pointSize"
+      title="PointSize"
       optionsMenu={optionsMenu}
       layerStyle={layerStyle}
       setLayerStyle={setLayerStyle}
@@ -35,4 +36,4 @@ const ClampToGroundNode: FC<
   );
 };
 
-export default ClampToGroundNode;
+export default PointSizeNode;

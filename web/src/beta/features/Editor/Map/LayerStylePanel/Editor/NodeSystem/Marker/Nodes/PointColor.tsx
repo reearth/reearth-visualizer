@@ -5,15 +5,18 @@ import { LayerStyleProps } from "../../../InterfaceTab";
 import ColorInputNode, {
   DEFAULT_COLOR_VALUE
 } from "../../common/ColorInputNode";
+import { Condition } from "../../common/type";
 
 const PointColorNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] =
-    useState<MarkerAppearance["pointColor"]>(DEFAULT_COLOR_VALUE);
+  const [value, setValue] = useState<MarkerAppearance["pointColor"]>(
+    layerStyle?.value?.marker?.pointColor ?? DEFAULT_COLOR_VALUE
+  );
   const [expression, setExpression] = useState<string>("");
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
     <ColorInputNode
@@ -27,6 +30,8 @@ const PointColorNode: FC<LayerStyleProps> = ({
       setValue={setValue}
       expression={expression}
       setExpression={setExpression}
+      conditions={conditions}
+      setConditions={setConditions}
     />
   );
 };

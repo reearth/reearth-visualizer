@@ -2,11 +2,11 @@ import { TextInput, TextInputProps } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-const ExpressionTab: FC<TextInputProps> = ({ value, onChange }) => {
+const ExpressionTab: FC<TextInputProps> = ({ value, onBlur }) => {
   return (
     <Wrapper>
       <Icon>=</Icon>
-      <TextInput value={value} onChange={onChange} />
+      <TextInput value={value} onBlur={onBlur} />
     </Wrapper>
   );
 };

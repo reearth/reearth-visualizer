@@ -1,26 +1,25 @@
-import { ModelAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import TextInputNode, { DEFAULT_TEXT_VALUE } from "../../common/TextInputNode";
-import { Condition } from "../../common/type";
+import NumberInputNode from "../NumberInputNode";
+import { AppearanceType, Condition } from "../type";
 
-const UrlNode: FC<LayerStyleProps> = ({
-  optionsMenu,
-  layerStyle,
-  setLayerStyle
-}) => {
-  const [value, setValue] = useState<ModelAppearance["url"]>(
-    layerStyle?.value?.model?.url ?? DEFAULT_TEXT_VALUE
+const StrokeWidthNode: FC<
+  LayerStyleProps & {
+    appearanceType: AppearanceType;
+  }
+> = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
+  const [value, setValue] = useState(
+    layerStyle?.value[appearanceType]?.strokeWidth ?? "none"
   );
   const [expression, setExpression] = useState<string>("");
   const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
-    <TextInputNode
-      appearanceType="model"
-      appearanceTypeKey="url"
-      title="Url"
+    <NumberInputNode
+      appearanceType={appearanceType}
+      appearanceTypeKey="strokeWidth"
+      title="StrokeWidth"
       optionsMenu={optionsMenu}
       layerStyle={layerStyle}
       setLayerStyle={setLayerStyle}
@@ -33,5 +32,4 @@ const UrlNode: FC<LayerStyleProps> = ({
     />
   );
 };
-
-export default UrlNode;
+export default StrokeWidthNode;

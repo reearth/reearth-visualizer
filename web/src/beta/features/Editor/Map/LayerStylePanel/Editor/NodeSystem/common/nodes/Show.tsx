@@ -2,15 +2,18 @@ import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 import SwitchInputNode, { DEFAULT_SWITCH_VALUE } from "../SwitchInputNode";
-import { AppearanceType } from "../type";
+import { AppearanceType, Condition } from "../type";
 
 const ShowNode: FC<
   LayerStyleProps & {
     appearanceType: AppearanceType;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
-  const [value, setValue] = useState<boolean | undefined>(DEFAULT_SWITCH_VALUE);
+  const [value, setValue] = useState<boolean | undefined>(
+    layerStyle?.value[appearanceType]?.show ?? DEFAULT_SWITCH_VALUE
+  );
   const [expression, setExpression] = useState<string>("");
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
     <SwitchInputNode
@@ -24,6 +27,8 @@ const ShowNode: FC<
       setValue={setValue}
       expression={expression}
       setExpression={setExpression}
+      conditions={conditions}
+      setConditions={setConditions}
     />
   );
 };

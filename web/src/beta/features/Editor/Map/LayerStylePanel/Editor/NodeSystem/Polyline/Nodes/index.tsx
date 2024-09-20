@@ -1,12 +1,12 @@
 import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
+import ShowNode from "../../common/nodes/Show";
+import StrokeColorNode from "../../common/nodes/StrokeColor";
+import StrokeWidthNode from "../../common/nodes/StrokeWidth";
 import { AppearanceType } from "../../common/type";
 
 import ClampToGroundNode from "./ClampToGround";
-import ShowNode from "./Show";
-import StrokeColorNode from "./StrokeColorNode";
-import StrokeWidthNode from "./StrokeWidthNode";
 
 export const componentNode: Record<
   string,

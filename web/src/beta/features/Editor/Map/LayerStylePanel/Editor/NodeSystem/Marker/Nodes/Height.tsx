@@ -5,15 +5,18 @@ import { LayerStyleProps } from "../../../InterfaceTab";
 import NumberInputNode, {
   DEFAULT_NUMBER_VALUE
 } from "../../common/NumberInputNode";
+import { Condition } from "../../common/type";
 
 const HeightNode: FC<LayerStyleProps> = ({
   optionsMenu,
   layerStyle,
   setLayerStyle
 }) => {
-  const [value, setValue] =
-    useState<MarkerAppearance["height"]>(DEFAULT_NUMBER_VALUE);
+  const [value, setValue] = useState<MarkerAppearance["height"]>(
+    layerStyle?.value.marker.height ?? DEFAULT_NUMBER_VALUE
+  );
   const [expression, setExpression] = useState<string>("");
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   return (
     <NumberInputNode
@@ -27,6 +30,8 @@ const HeightNode: FC<LayerStyleProps> = ({
       setValue={setValue}
       expression={expression}
       setExpression={setExpression}
+      conditions={conditions}
+      setConditions={setConditions}
     />
   );
 };

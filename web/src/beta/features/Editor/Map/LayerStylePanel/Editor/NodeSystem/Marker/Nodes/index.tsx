@@ -2,6 +2,7 @@ import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 import HeightReferenceNode from "../../common/nodes/HeightReference";
+import PointSizeNode from "../../common/nodes/PointSize";
 import ShowNode from "../../common/nodes/Show";
 import {
   AppearanceType,
@@ -10,7 +11,6 @@ import {
 
 import HeightNode from "./Height";
 import PointColorNode from "./PointColor";
-import PointSizeNode from "./PointSize";
 import StylesNode from "./Styles";
 
 export const componentNode: Record<

@@ -6,6 +6,10 @@ import {
   PolygonAppearance,
   PolylineAppearance
 } from "@reearth/core";
+import { SetStateAction } from "jotai";
+import { Dispatch } from "react";
+
+import { LayerStyleProps } from "../../InterfaceTab";
 
 export type HeightReferenceAppearanceType =
   | MarkerAppearance
@@ -30,3 +34,15 @@ export type AppearanceTypeKeys =
   | keyof PolygonAppearance
   | keyof PolylineAppearance
   | keyof Cesium3DTilesAppearance;
+
+export type Condition = [string, string | boolean | number];
+
+export type CommonIputProp = {
+  appearanceType: AppearanceType;
+  appearanceTypeKey: AppearanceTypeKeys;
+  title?: string;
+  expression: string;
+  setExpression: Dispatch<SetStateAction<string>>;
+  conditions: Condition[];
+  setConditions: Dispatch<SetStateAction<Condition[]>>;
+} & LayerStyleProps;

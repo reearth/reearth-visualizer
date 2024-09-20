@@ -2,25 +2,18 @@ import { Selector } from "@reearth/beta/lib/reearth-ui";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback } from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-import ConditionalTab from "../tabs/ConditionalTab";
-import ExpressionTab from "../tabs/ExpressionTab";
-
 import useHooks from "./hooks";
-import { AppearanceType, AppearanceTypeKeys } from "./type";
+import ConditionalTab from "./tabs/ConditionalTab";
+import ExpressionTab from "./tabs/ExpressionTab";
+import { CommonIputProp } from "./type";
 
 import NodeSystem from ".";
 
 const SelectorInputNode: FC<
-  LayerStyleProps & {
-    appearanceType: AppearanceType;
-    appearanceTypeKey: AppearanceTypeKeys;
+  CommonIputProp & {
     options: { value: string; label?: string }[];
-    title?: string;
     value: string | undefined;
-    expression: string;
     setValue: Dispatch<SetStateAction<any | undefined>>;
-    setExpression: (val: string) => void;
   }
 > = ({
   optionsMenu,
@@ -33,17 +26,21 @@ const SelectorInputNode: FC<
   expression,
   setValue,
   setExpression,
-  setLayerStyle
+  setLayerStyle,
+  conditions,
+  setConditions
 }) => {
-  const { handleChange } = useHooks({
+  const { handleChange, handleConditionStatementChange } = useHooks({
     appearanceType,
     appearanceTypeKey,
     layerStyle,
     defaultValue: options[0].label,
     value,
-    expression,
     setValue,
+    expression,
     setExpression,
+    conditions,
+    setConditions,
     setLayerStyle
   });
 
@@ -69,10 +66,16 @@ const SelectorInputNode: FC<
         onChange={(val) => handleChange("expression", val as string)}
       />
     ),
-    //TODO: will be implemented in next step
+
     condition: (
-      <ConditionalTab>
-        <Selector options={options} />
+      <ConditionalTab conditions={conditions} setConditions={setConditions}>
+        {(idx) => (
+          <Selector
+            options={options}
+            value={(conditions[idx][1] as string) || ""}
+            onChange={(val) => handleConditionStatementChange(idx, val)}
+          />
+        )}
       </ConditionalTab>
     )
   };

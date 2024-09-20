@@ -64,6 +64,7 @@ const ThreedTiles: FC<ThreedTilesProps> = ({
             <Component
               key={key}
               layerStyle={layerStyle}
+              appearanceType="3dtiles"
               optionsMenu={optionsMenu.map((item) => ({
                 ...item,
                 onClick: () => item.onClick(key)
@@ -96,6 +97,7 @@ const ThreedTiles: FC<ThreedTilesProps> = ({
             <Component
               key={item.id}
               layerStyle={layerStyle}
+              appearanceType="3dtiles"
               setLayerStyle={setLayerStyle}
               optionsMenu={optionsMenu}
             />

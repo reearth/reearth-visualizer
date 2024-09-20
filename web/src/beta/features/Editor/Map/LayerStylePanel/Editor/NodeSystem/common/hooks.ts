@@ -1,10 +1,11 @@
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
-import { useCallback, useEffect } from "react";
+import { SetStateAction } from "jotai";
+import { Dispatch, useCallback, useEffect } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
 
-import { AppearanceType, AppearanceTypeKeys } from "./type";
+import { AppearanceType, AppearanceTypeKeys, Condition } from "./type";
 
 type UseAppearanceHookParams<T extends AppearanceType> = {
   appearanceType: T;
@@ -13,11 +14,12 @@ type UseAppearanceHookParams<T extends AppearanceType> = {
   value: any;
   expression: string;
   setValue: (val: any) => void;
-  setExpression: (val: string) => void;
+  setExpression: Dispatch<SetStateAction<string>>;
+  conditions: Condition[];
+  setConditions: Dispatch<SetStateAction<Condition[]>>;
 } & LayerStyleProps;
 
 export default function useHooks<T extends AppearanceType>({
-  layerStyle,
   appearanceType,
   appearanceTypeKey,
   defaultValue,
@@ -25,6 +27,9 @@ export default function useHooks<T extends AppearanceType>({
   setValue,
   expression,
   setExpression,
+  conditions,
+  setConditions,
+  layerStyle,
   setLayerStyle
 }: UseAppearanceHookParams<T>) {
   const t = useT();
@@ -33,22 +38,40 @@ export default function useHooks<T extends AppearanceType>({
   const styleValue = layerStyle?.value[appearanceType]?.[appearanceTypeKey];
 
   useEffect(() => {
-    if (styleValue) {
-      if (typeof styleValue === "object" && "expression" in styleValue) {
-        setExpression((styleValue as { expression: string }).expression);
-        setValue(defaultValue);
+    if (styleValue !== undefined) {
+      if (typeof styleValue === "object") {
+        if (
+          typeof styleValue.expression === "object" &&
+          "conditions" in styleValue.expression
+        ) {
+          const conditionArray = (
+            styleValue.expression as { conditions: Condition[] }
+          ).conditions;
+          setConditions(conditionArray);
+          setValue(defaultValue);
+          setExpression("");
+        } else if (typeof styleValue.expression === "string") {
+          setExpression(styleValue.expression as string);
+          setValue(defaultValue);
+        }
       } else {
         setValue(styleValue);
         setExpression("");
+        setConditions([]);
       }
     }
-  }, [styleValue, setValue, setExpression, defaultValue]);
+  }, [styleValue, setValue, setExpression, defaultValue, setConditions]);
 
   useEffect(() => {
     try {
       setLayerStyle((prev) => {
         if (!prev?.id) return prev;
-        const newStyleValue = expression ? { expression } : value;
+        let newStyleValue = expression ? { expression } : value;
+
+        if (conditions.length > 0) {
+          newStyleValue = { expression: { conditions } };
+        }
+
         return {
           ...prev,
           value: {
@@ -70,7 +93,8 @@ export default function useHooks<T extends AppearanceType>({
     setNotification,
     t,
     appearanceType,
-    appearanceTypeKey
+    appearanceTypeKey,
+    conditions
   ]);
 
   const handleChange = useCallback(
@@ -78,15 +102,27 @@ export default function useHooks<T extends AppearanceType>({
       if (type === "value") {
         setValue(newValue);
         setExpression("");
+        setConditions([]);
       } else if (type === "expression") {
         setExpression(newValue as string);
         setValue(defaultValue);
+        setConditions([]);
       }
     },
-    [setValue, setExpression, defaultValue]
+    [setValue, setExpression, defaultValue, setConditions]
+  );
+
+  const handleConditionStatementChange = useCallback(
+    (idx: number, newValue: any) => {
+      const updatedConditions = [...conditions];
+      updatedConditions[idx][1] = newValue;
+      setConditions(updatedConditions);
+    },
+    [conditions, setConditions]
   );
 
   return {
-    handleChange
+    handleChange,
+    handleConditionStatementChange
   };
 }
