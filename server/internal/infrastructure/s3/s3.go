@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/url"
-	"os"
 	"path"
 	"strings"
 
@@ -22,6 +21,7 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
+	"github.com/spf13/afero"
 )
 
 const (
@@ -222,13 +222,15 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	return f.read(ctx, path.Join(exportBasePath, sn))
 }
 
-func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile *os.File) error {
-	_, err := f.upload(ctx, path.Join(exportBasePath, zipFile.Name()), zipFile)
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
+	sanitizedName := sanitize.Path(zipFile.Name())
+	_, err := f.upload(ctx, path.Join(exportBasePath, sanitizedName), zipFile)
 	return err
 }
 
 func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) error {
-	return f.delete(ctx, path.Join(exportBasePath, filename))
+	sanitizedFilename := sanitize.Path(filename)
+	return f.delete(ctx, path.Join(exportBasePath, sanitizedFilename))
 }
 
 // helpers

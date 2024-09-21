@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"time"
 
@@ -26,6 +25,7 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/spf13/afero"
 )
 
 type Project struct {
@@ -511,6 +511,11 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 		if err != nil {
 			return nil, err
 		}
+		defer func() {
+			if cerr := stream.Close(); cerr != nil {
+				fmt.Printf("Error closing file: %v\n", cerr)
+			}
+		}()
 		zipEntryPath := fmt.Sprintf("assets/%s", trimmedName)
 		zipEntry, err := zipWriter.Create(zipEntryPath)
 		if err != nil {
@@ -521,15 +526,12 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 			_ = stream.Close()
 			return nil, err
 		}
-		if err := stream.Close(); err != nil {
-			return nil, err
-		}
 	}
 
 	return prj, nil
 }
 
-func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile *os.File, data map[string]interface{}, prj *project.Project) error {
+func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
 	fileWriter, err := zipWriter.Create("project.json")
 	if err != nil {
 		return err
@@ -546,15 +548,14 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 		return err
 	}
 
-	// flush once
-	if err := zipFile.Close(); err != nil {
+	if _, err := zipFile.Seek(0, 0); err != nil {
 		return err
 	}
-	zipFile, err = os.Open(zipFile.Name())
-	if err != nil {
-		return err
-	}
-
+	defer func() {
+		if err := zipFile.Close(); err != nil {
+			fmt.Println("Failed to close zip file:", err)
+		}
+	}()
 	if err := i.file.UploadExportProjectZip(ctx, zipFile); err != nil {
 		return err
 	}

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/url"
-	"os"
 	"path"
 	"strings"
 
@@ -17,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/spf13/afero"
 	"google.golang.org/api/iterator"
 )
 
@@ -213,7 +213,7 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	return f.read(ctx, path.Join(gcsExportBasePath, sn))
 }
 
-func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile *os.File) error {
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
 	_, err := f.upload(ctx, path.Join(gcsExportBasePath, zipFile.Name()), zipFile)
 	return err
 }

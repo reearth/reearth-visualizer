@@ -5,10 +5,10 @@ import (
 	"errors"
 	"io"
 	"net/url"
-	"os"
 
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/spf13/afero"
 )
 
 var (
@@ -38,6 +38,6 @@ type File interface {
 	RemoveStory(context.Context, string) error
 
 	ReadExportProjectZip(context.Context, string) (io.ReadCloser, error)
-	UploadExportProjectZip(context.Context, *os.File) error
+	UploadExportProjectZip(context.Context, afero.File) error
 	RemoveExportProjectZip(context.Context, string) error
 }

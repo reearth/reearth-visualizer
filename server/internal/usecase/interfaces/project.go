@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"net/url"
-	"os"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -13,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/spf13/afero"
 )
 
 type CreateProjectParam struct {
@@ -70,5 +70,5 @@ type Project interface {
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 	ExportProject(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProject(context.Context, map[string]interface{}) (*project.Project, usecasex.Tx, error)
-	UploadExportProjectZip(context.Context, *zip.Writer, *os.File, map[string]interface{}, *project.Project) error
+	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]interface{}, *project.Project) error
 }

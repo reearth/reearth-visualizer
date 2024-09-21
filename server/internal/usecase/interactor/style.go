@@ -236,7 +236,9 @@ func (i *Style) ImportStyles(ctx context.Context, sceneData map[string]interface
 	if err := i.styleRepo.SaveAll(ctx, styleList); err != nil {
 		return nil, err
 	}
-
+	if len(styleIDs) == 0 {
+		return nil, nil
+	}
 	styles2, err := i.styleRepo.FindByIDs(ctx, styleIDs)
 	if err != nil {
 		return nil, err

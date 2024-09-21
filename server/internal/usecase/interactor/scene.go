@@ -666,7 +666,13 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	// widget button icon
 	for _, property := range widgetProperties {
 		for _, item := range property.Items() {
+			if item == nil {
+				continue
+			}
 			for _, field := range item.Fields(nil) {
+				if field == nil || field.Value() == nil || field.Value().Value() == nil {
+					continue
+				}
 				if field.GuessSchema().ID().String() == "buttonIcon" {
 					u, ok := field.Value().Value().(*url.URL)
 					if !ok {
@@ -715,7 +721,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	return sce, res, nil
 }
 
-func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, sceneData map[string]interface{}) (*scene.Scene, error) {
+func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
@@ -724,6 +730,16 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, sceneData
 	if err != nil {
 		return nil, err
 	}
+
+	plugins := scene.NewPlugins([]*scene.Plugin{
+		scene.NewPlugin(id.OfficialPluginID, nil),
+	})
+	for _, plg := range plgs {
+		if plg.ID().String() != "reearth" {
+			plugins.Add(scene.NewPlugin(plg.ID(), nil))
+		}
+	}
+
 	widgets := []*scene.Widget{}
 	for _, widgetJSON := range sceneJSON.Widgets {
 		widgetID, err := id.WidgetIDFrom(widgetJSON.ID)
@@ -790,9 +806,10 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, sceneData
 	if err != nil {
 		return nil, err
 	}
-	tiles := id.PropertySchemaGroupID("tiles")
-	g := prop.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
-	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
+	prop, err = builder.AddItemFromPropertyJSON(prop, schema, sceneJSON.Property)
+	if err != nil {
+		return nil, err
+	}
 	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
 	if err != nil {
 		return nil, err
@@ -812,6 +829,7 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, sceneData
 		UpdatedAt(time.Now()).
 		Property(prop.ID()).
 		Clusters(clusterList).
+		Plugins(plugins).
 		Build()
 	if err != nil {
 		return nil, err
@@ -857,7 +875,13 @@ func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.Plug
 func (i *Scene) addZipAsset(ctx context.Context, zipWriter *zip.Writer, url string) error {
 
 	parts := strings.Split(url, "/")
+	if len(parts) == 0 {
+		return errors.New("invalid URL format")
+	}
 	fileName := parts[len(parts)-1]
+	if fileName == "" {
+		return errors.New("empty filename extracted from URL")
+	}
 
 	stream, err := i.file.ReadAsset(ctx, fileName)
 	if err != nil {
