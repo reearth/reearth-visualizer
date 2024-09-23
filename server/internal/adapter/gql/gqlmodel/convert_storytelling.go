@@ -20,6 +20,7 @@ func ToStory(s *storytelling.Story) *Story {
 		CreatedAt:         s.Id().Timestamp(),
 		UpdatedAt:         s.UpdatedAt(),
 		PublishedAt:       s.PublishedAt(),
+		SceneID:           IDFrom(s.Scene()),
 		PanelPosition:     ToStoryPosition(s.PanelPosition()),
 		BgColor:           ToStoryBgColor(s.BgColor()),
 

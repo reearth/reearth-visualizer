@@ -109,7 +109,7 @@ func (e *encoder) infobox(i *merging.SealedInfobox) *infoboxJSON {
 }
 
 func (e *encoder) property(p *property.Sealed) propertyJSON {
-	return p.Interface()
+	return p.Interface(false)
 }
 
 type layerJSON struct {
@@ -183,6 +183,7 @@ type widgetJSON struct {
 	PluginID    string       `json:"pluginId"`
 	ExtensionID string       `json:"extensionId"`
 	Property    propertyJSON `json:"property"`
+	Enabled     bool         `json:"enabled"`
 	Extended    bool         `json:"extended"`
 }
 

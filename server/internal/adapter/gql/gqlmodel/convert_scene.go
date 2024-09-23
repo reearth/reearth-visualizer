@@ -64,6 +64,8 @@ func ToStyle(v *scene.Style) *Style {
 		ID:    IDFrom(v.ID()),
 		Name:  v.Name(),
 		Value: JSON(*v.Value()),
+
+		SceneID: IDFrom(v.Scene()),
 	}
 }
 
