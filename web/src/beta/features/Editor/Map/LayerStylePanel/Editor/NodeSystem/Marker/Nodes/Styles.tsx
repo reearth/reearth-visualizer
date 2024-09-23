@@ -2,7 +2,7 @@ import { MarkerAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import SelectorInputNode from "../../common/SelectorInputNode";
+import SelectorInputNode from "../../common/fieldInputNode/SelectorInputNode";
 import { Condition } from "../../common/type";
 
 const options = [

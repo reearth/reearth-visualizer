@@ -141,5 +141,5 @@ const TabsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   padding: `${theme.spacing.small}px 0`,
-  height: "480px"
+  height: 480
 }));

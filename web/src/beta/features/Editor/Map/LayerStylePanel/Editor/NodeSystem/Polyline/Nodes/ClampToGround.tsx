@@ -3,16 +3,16 @@ import { FC, useState } from "react";
 import { LayerStyleProps } from "../../../InterfaceTab";
 import SwitchInputNode, {
   DEFAULT_SWITCH_VALUE
-} from "../../common/SwitchInputNode";
+} from "../../common/fieldInputNode/SwitchInputNode";
 import { AppearanceType, Condition } from "../../common/type";
 
 const ClampToGroundNode: FC<
   LayerStyleProps & {
     appearanceType: AppearanceType;
   }
-> = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
+> = ({ optionsMenu, layerStyle, setLayerStyle }) => {
   const [value, setValue] = useState<boolean | undefined>(
-    layerStyle?.value[appearanceType]?.clampToGround ?? DEFAULT_SWITCH_VALUE
+    layerStyle?.value?.polyline.clampToGround ?? DEFAULT_SWITCH_VALUE
   );
   const [expression, setExpression] = useState<string>("");
   const [conditions, setConditions] = useState<Condition[]>([]);
@@ -21,7 +21,7 @@ const ClampToGroundNode: FC<
     <SwitchInputNode
       appearanceType="polyline"
       appearanceTypeKey="clampToGround"
-      title="ClampToGroundNode"
+      title="ClampToGround"
       optionsMenu={optionsMenu}
       layerStyle={layerStyle}
       setLayerStyle={setLayerStyle}

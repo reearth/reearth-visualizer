@@ -1,28 +1,28 @@
-import { PolygonAppearance, PolylineAppearance } from "@reearth/core";
+import { Cesium3DTilesAppearance, MarkerAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import ColorInputNode, {
-  DEFAULT_COLOR_VALUE
-} from "../../common/ColorInputNode";
+import NumberInputNode, {
+  DEFAULT_NUMBER_VALUE
+} from "../../common/fieldInputNode/NumberInputNode";
 import { AppearanceType, Condition } from "../../common/type";
 
-const StrokeColorNode: FC<
+const PointSizeNode: FC<
   LayerStyleProps & {
     appearanceType: AppearanceType;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
   const [value, setValue] = useState<
-    PolylineAppearance["strokeColor"] | PolygonAppearance["strokeColor"]
-  >(layerStyle?.value[appearanceType]?.strokeColor ?? DEFAULT_COLOR_VALUE);
-  const [expression, setExpression] = useState<string>("");
+    MarkerAppearance["pointSize"] | Cesium3DTilesAppearance["pointSize"]
+  >(layerStyle?.value[appearanceType]?.pointSize ?? DEFAULT_NUMBER_VALUE);
   const [conditions, setConditions] = useState<Condition[]>([]);
 
+  const [expression, setExpression] = useState<string>("");
   return (
-    <ColorInputNode
+    <NumberInputNode
       appearanceType={appearanceType}
-      appearanceTypeKey="strokeColor"
-      title="StrokeColor"
+      appearanceTypeKey="pointSize"
+      title="PointSize"
       optionsMenu={optionsMenu}
       layerStyle={layerStyle}
       setLayerStyle={setLayerStyle}
@@ -36,4 +36,4 @@ const StrokeColorNode: FC<
   );
 };
 
-export default StrokeColorNode;
+export default PointSizeNode;

@@ -7,7 +7,7 @@ import {
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode, useCallback, MouseEvent } from "react";
 
-import { Tabs } from "./type";
+import { Tabs } from "../type";
 
 type NodeAction = {
   id: Tabs;

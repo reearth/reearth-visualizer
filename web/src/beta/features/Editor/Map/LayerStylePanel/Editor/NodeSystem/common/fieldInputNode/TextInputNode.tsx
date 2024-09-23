@@ -1,45 +1,46 @@
-import { NumberInput } from "@reearth/beta/lib/reearth-ui";
+import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC } from "react";
 
+import ConditionalTab from "../tabs/ConditionalTab";
+import ExpressionTab from "../tabs/ExpressionTab";
+import { CommonIputProp } from "../type";
+
 import useHooks from "./hooks";
-import ConditionalTab from "./tabs/ConditionalTab";
-import ExpressionTab from "./tabs/ExpressionTab";
-import { CommonIputProp } from "./type";
 
 import NodeSystem from ".";
 
-export const DEFAULT_NUMBER_VALUE = 0;
+export const DEFAULT_TEXT_VALUE = "";
 
-const NumberInputNode: FC<
+const TextInputNode: FC<
   CommonIputProp & {
-    value: number | undefined;
-    setValue: Dispatch<SetStateAction<number | undefined>>;
+    value: string | undefined;
+    setValue: Dispatch<SetStateAction<string | undefined>>;
   }
 > = ({
   optionsMenu,
   title,
   appearanceType,
   appearanceTypeKey,
-  layerStyle,
-  setLayerStyle,
   value,
-  setValue,
   expression,
+  setValue,
   setExpression,
+  setLayerStyle,
+  layerStyle,
   conditions,
   setConditions
 }) => {
   const {
     activeTab,
     handleTabChange,
-    handleChange,
+    handleConditionChange,
     handleConditionStatementChange
   } = useHooks({
     appearanceType,
     appearanceTypeKey,
     layerStyle,
-    defaultValue: DEFAULT_NUMBER_VALUE,
+    defaultValue: DEFAULT_TEXT_VALUE,
     value,
     setValue,
     expression,
@@ -51,23 +52,23 @@ const NumberInputNode: FC<
 
   const renderContent: Record<string, JSX.Element> = {
     value: (
-      <NumberInput
+      <TextInput
         value={value}
-        onChange={(val) => handleChange("value", val)}
+        onBlur={(val) => handleConditionChange("value", val)}
       />
     ),
     expression: (
       <ExpressionTab
         value={expression}
-        onChange={(val) => handleChange("expression", val)}
+        onBlur={(val) => handleConditionChange("expression", val)}
       />
     ),
     condition: (
       <ConditionalTab conditions={conditions} setConditions={setConditions}>
         {(idx) => (
-          <NumberInput
-            value={(conditions[idx][1] as number) || ""}
-            onChange={(val) => handleConditionStatementChange(idx, val)}
+          <TextInput
+            value={(conditions[idx][1] as string) || ""}
+            onBlur={(val) => handleConditionStatementChange(idx, val)}
           />
         )}
       </ConditionalTab>
@@ -86,4 +87,4 @@ const NumberInputNode: FC<
   );
 };
 
-export default NumberInputNode;
+export default TextInputNode;

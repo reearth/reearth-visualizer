@@ -24,6 +24,7 @@ export type TabsProps = {
   background?: string;
   currentTab?: string;
   noPadding?: boolean;
+  padding?: number;
   sharedContent?: string | ReactNode;
   onChange?: (tab: string) => void;
 };
@@ -36,6 +37,7 @@ export const Tabs: FC<TabsProps> = ({
   currentTab,
   alignment,
   noPadding,
+  padding,
   sharedContent,
   onChange
 }) => {
@@ -101,7 +103,7 @@ export const Tabs: FC<TabsProps> = ({
       </TabsMenu>
       {sharedContent && <SharedContent>{sharedContent}</SharedContent>}
 
-      <Content noPadding={noPadding}>
+      <Content noPadding={noPadding} padding={padding}>
         {selectedTabItem ? selectedTabItem.children : null}
       </Content>
     </Wrapper>
@@ -157,9 +159,9 @@ const Tab = styled("div")<{
     position === "left" && tabStyle === "normal" ? theme.radius.small : ""
 }));
 
-const Content = styled("div")<{ noPadding?: boolean }>(
-  ({ noPadding, theme }) => ({
-    padding: noPadding ? 0 : theme.spacing.normal,
+const Content = styled("div")<{ noPadding?: boolean; padding?: number }>(
+  ({ noPadding, padding, theme }) => ({
+    padding: noPadding ? 0 : padding ? padding : theme.spacing.normal,
     minHeight: 0,
     flex: 1,
     height: "auto",

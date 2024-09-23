@@ -35,7 +35,7 @@ export type AppearanceTypeKeys =
   | keyof PolylineAppearance
   | keyof Cesium3DTilesAppearance;
 
-export type Condition = [string, string | boolean | number];
+export type Condition = [string, string | number | boolean];
 
 export type CommonIputProp = {
   appearanceType: AppearanceType;

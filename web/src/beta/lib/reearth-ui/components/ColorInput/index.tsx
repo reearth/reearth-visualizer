@@ -112,7 +112,7 @@ export const ColorInput: FC<ColorInputProps> = ({
         value={colorValue}
         placeholder={alphaDisabled ? "#RRGGBB" : "#RRGGBBAA"}
         onChange={handleHexInputChange}
-        onBlur={handleHexInputBlur}
+        onBlur={(value) => handleHexInputBlur(value)}
         disabled={disabled}
         size={size}
         maxLength={alphaDisabled ? 7 : 9}

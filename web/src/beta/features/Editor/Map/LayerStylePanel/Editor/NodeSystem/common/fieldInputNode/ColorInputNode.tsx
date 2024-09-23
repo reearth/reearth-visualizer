@@ -1,19 +1,21 @@
-import { Selector } from "@reearth/beta/lib/reearth-ui";
+import { ColorInput } from "@reearth/beta/lib/reearth-ui";
 import { SetStateAction } from "jotai";
-import { Dispatch, FC, useCallback } from "react";
+import { Dispatch, FC } from "react";
+
+import ConditionalTab from "../tabs/ConditionalTab";
+import ExpressionTab from "../tabs/ExpressionTab";
+import { CommonIputProp } from "../type";
 
 import useHooks from "./hooks";
-import ConditionalTab from "./tabs/ConditionalTab";
-import ExpressionTab from "./tabs/ExpressionTab";
-import { CommonIputProp } from "./type";
 
 import NodeSystem from ".";
 
-const SelectorInputNode: FC<
+export const DEFAULT_COLOR_VALUE = undefined;
+
+const ColorInputNode: FC<
   CommonIputProp & {
-    options: { value: string; label?: string }[];
     value: string | undefined;
-    setValue: Dispatch<SetStateAction<any | undefined>>;
+    setValue: Dispatch<SetStateAction<string | undefined>>;
   }
 > = ({
   optionsMenu,
@@ -21,10 +23,9 @@ const SelectorInputNode: FC<
   layerStyle,
   appearanceType,
   appearanceTypeKey,
-  options,
   value,
-  expression,
   setValue,
+  expression,
   setExpression,
   setLayerStyle,
   conditions,
@@ -33,13 +34,13 @@ const SelectorInputNode: FC<
   const {
     activeTab,
     handleTabChange,
-    handleChange,
+    handleConditionChange,
     handleConditionStatementChange
   } = useHooks({
     appearanceType,
     appearanceTypeKey,
     layerStyle,
-    defaultValue: options[0].label,
+    defaultValue: DEFAULT_COLOR_VALUE,
     value,
     setValue,
     expression,
@@ -49,34 +50,23 @@ const SelectorInputNode: FC<
     setLayerStyle
   });
 
-  const handleSelectorChange = useCallback(
-    (newValue?: string | string[]) => {
-      if (!newValue) return;
-      handleChange("value", newValue as string);
-    },
-    [handleChange]
-  );
-
   const renderContent: Record<string, JSX.Element> = {
     value: (
-      <Selector
+      <ColorInput
         value={value}
-        options={options}
-        onChange={handleSelectorChange}
+        onChange={(val) => handleConditionChange("value", val)}
       />
     ),
     expression: (
       <ExpressionTab
         value={expression}
-        onChange={(val) => handleChange("expression", val as string)}
+        onBlur={(val) => handleConditionChange("expression", val)}
       />
     ),
-
     condition: (
       <ConditionalTab conditions={conditions} setConditions={setConditions}>
         {(idx) => (
-          <Selector
-            options={options}
+          <ColorInput
             value={(conditions[idx][1] as string) || ""}
             onChange={(val) => handleConditionStatementChange(idx, val)}
           />
@@ -97,4 +87,4 @@ const SelectorInputNode: FC<
   );
 };
 
-export default SelectorInputNode;
+export default ColorInputNode;

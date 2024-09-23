@@ -2,7 +2,9 @@ import { Cesium3DTilesAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import TextInputNode, { DEFAULT_TEXT_VALUE } from "../../common/TextInputNode";
+import TextInputNode, {
+  DEFAULT_TEXT_VALUE
+} from "../../common/fieldInputNode/TextInputNode";
 import { Condition } from "../../common/type";
 
 const StyleUrlNode: FC<LayerStyleProps> = ({

@@ -143,5 +143,6 @@ const StylesGrid = styled("div")(({ theme }) => ({
 const LayerStyleEditorWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flex: 1,
-  paddingTop: theme.spacing.small
+  paddingTop: theme.spacing.small,
+  height: "70%"
 }));

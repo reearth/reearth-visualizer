@@ -2,7 +2,7 @@ import { AppearanceTypes } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import SelectorInputNode from "../SelectorInputNode";
+import SelectorInputNode from "../fieldInputNode/SelectorInputNode";
 import { Condition } from "../type";
 
 const options = [

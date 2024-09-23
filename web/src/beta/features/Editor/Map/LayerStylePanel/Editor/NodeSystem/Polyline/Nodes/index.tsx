@@ -1,9 +1,9 @@
 import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import ShowNode from "../../common/nodes/Show";
-import StrokeColorNode from "../../common/nodes/StrokeColor";
-import StrokeWidthNode from "../../common/nodes/StrokeWidth";
+import ShowNode from "../../common/sharedNode/Show";
+import StrokeColorNode from "../../common/sharedNode/StrokeColor";
+import StrokeWidthNode from "../../common/sharedNode/StrokeWidth";
 import { AppearanceType } from "../../common/type";
 
 import ClampToGroundNode from "./ClampToGround";

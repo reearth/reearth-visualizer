@@ -1,4 +1,4 @@
-import { useCallback, Dispatch, SetStateAction } from "react";
+import { useCallback, Dispatch, SetStateAction, useState } from "react";
 
 import { Condition } from "../type";
 
@@ -7,10 +7,9 @@ type Props = {
   setConditions: Dispatch<SetStateAction<Condition[]>>;
 };
 
-export const conditionRegex =
-  /(\${[^}]+}|[a-zA-Z0-9_]+)\s*(===|==|!=|>|<|>=|<=)\s*("[^"]+"|'[^']+'|[a-zA-Z0-9_]+)/;
-
 export default function useHooks({ conditions, setConditions }: Props) {
+  const [, setIsDragging] = useState(false);
+
   const handleConditionChange = useCallback(
     (
       idx: number,
@@ -27,12 +26,12 @@ export default function useHooks({ conditions, setConditions }: Props) {
       } else if (partIdx === "value") {
         currentCondition[2] = `${value}`;
       }
-
       newConditions[idx][0] = currentCondition.join(" ");
       setConditions(newConditions);
     },
     [conditions, setConditions]
   );
+
   const handleStyleConditionAdd = useCallback(() => {
     const newConditions: Condition[] = [...conditions, ["", ""]];
     setConditions(newConditions);
@@ -47,9 +46,55 @@ export default function useHooks({ conditions, setConditions }: Props) {
     [conditions, setConditions]
   );
 
+  const getProcessedCondition = useCallback((conditionString: string) => {
+    const normalized = conditionString.replace(/([=<>!]+)/g, " $1 ").trim();
+    const parts = normalized.split(" ").filter((part) => part !== "");
+
+    const variable = parts[0] || "";
+    const operator = parts[1] || "";
+
+    const value = parts.slice(2).join(" ").trim();
+    return [variable, operator, value];
+  }, []);
+
+  const handleItemDrop = useCallback(
+    (draggedIndex: number, targetIndex: number) => {
+      if (
+        targetIndex < 0 ||
+        targetIndex >= conditions.length ||
+        draggedIndex === targetIndex
+      )
+        return;
+      const newList = [...conditions];
+      const [draggedItem] = newList.splice(draggedIndex, 1);
+      newList.splice(targetIndex, 0, draggedItem);
+
+      setConditions(newList);
+    },
+    [conditions, setConditions]
+  );
+
+  const handleMoveStart = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleMoveEnd = useCallback(
+    (itemIdx?: string, newIndex?: number) => {
+      if (itemIdx !== undefined && newIndex !== undefined) {
+        const parsedIndex = parseInt(itemIdx, 10);
+        handleItemDrop(parsedIndex, newIndex);
+      }
+      setIsDragging(false);
+    },
+    [handleItemDrop]
+  );
+
   return {
     handleConditionChange,
     handleStyleConditionAdd,
-    handleStyleConditionListDelete
+    handleStyleConditionListDelete,
+    getProcessedCondition,
+    handleMoveStart,
+    handleMoveEnd
   };
 }

@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { LayerStyleProps } from "../../../InterfaceTab";
 import ColorInputNode, {
   DEFAULT_COLOR_VALUE
-} from "../../common/ColorInputNode";
+} from "../../common/fieldInputNode/ColorInputNode";
 import { Condition } from "../../common/type";
 
 const FillColorNode: FC<LayerStyleProps> = ({

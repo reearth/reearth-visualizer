@@ -11,7 +11,7 @@ import { Dispatch, FC, ReactNode, SetStateAction, useMemo } from "react";
 
 import { Condition } from "../type";
 
-import useHooks, { conditionRegex } from "./hooks";
+import useHooks from "./hooks";
 
 type ConditionalTabProp = {
   children: (idx: number) => ReactNode;
@@ -41,7 +41,10 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
   const {
     handleConditionChange,
     handleStyleConditionAdd,
-    handleStyleConditionListDelete
+    handleStyleConditionListDelete,
+    getProcessedCondition,
+    handleMoveStart,
+    handleMoveEnd
   } = useHooks({
     conditions,
     setConditions
@@ -50,7 +53,8 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
   const DraggableConditionItems = useMemo(
     () =>
       conditions.map((condition, idx) => {
-        const conditionValue = condition[0].match(conditionRegex) || [];
+        const conditionValue = getProcessedCondition(condition[0]);
+
         return {
           id: `condition-${idx}`,
           content: (
@@ -67,16 +71,16 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
                   <Typography size="body">{t("if")}</Typography>
                   <InputWapper>
                     <TextInput
-                      value={conditionValue[1] || ""}
+                      value={conditionValue[0] || ""}
                       placeholder={t("Text")}
-                      onChange={(val) =>
+                      onBlur={(val) =>
                         handleConditionChange(idx, "variable", val)
                       }
                     />
                   </InputWapper>
                   <InputWapper>
                     <Selector
-                      value={conditionValue[2] || ""}
+                      value={conditionValue[1] || ""}
                       placeholder=""
                       options={options}
                       onChange={(val) =>
@@ -86,11 +90,9 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
                   </InputWapper>
                   <InputWapper>
                     <TextInput
-                      value={conditionValue[3] || ""}
+                      value={conditionValue[2] || ""}
                       placeholder={t("Text")}
-                      onChange={(val) =>
-                        handleConditionChange(idx, "value", val)
-                      }
+                      onBlur={(val) => handleConditionChange(idx, "value", val)}
                     />
                   </InputWapper>
                 </ConditionStatement>
@@ -109,6 +111,7 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
       }),
     [
       conditions,
+      getProcessedCondition,
       t,
       children,
       handleConditionChange,
@@ -129,7 +132,11 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
       </IconButtonWrapper>
 
       {conditions && conditions.length > 0 && (
-        <DragAndDropList items={DraggableConditionItems} />
+        <DragAndDropList
+          items={DraggableConditionItems}
+          onMoveStart={handleMoveStart}
+          onMoveEnd={handleMoveEnd}
+        />
       )}
     </Wrapper>
   );

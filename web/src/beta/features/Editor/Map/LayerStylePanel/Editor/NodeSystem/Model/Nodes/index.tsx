@@ -1,8 +1,8 @@
 import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import HeightReferenceNode from "../../common/nodes/HeightReference";
-import ShowNode from "../../common/nodes/Show";
+import HeightReferenceNode from "../../common/sharedNode/HeightReference";
+import ShowNode from "../../common/sharedNode/Show";
 import {
   AppearanceType,
   HeightReferenceAppearanceType

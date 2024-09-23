@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import NumberInputNode from "../NumberInputNode";
+import NumberInputNode from "../fieldInputNode/NumberInputNode";
 import { AppearanceType, Condition } from "../type";
 
 const StrokeWidthNode: FC<

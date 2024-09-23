@@ -1,28 +1,27 @@
-import { Cesium3DTilesAppearance, MarkerAppearance } from "@reearth/core";
 import { FC, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import NumberInputNode, {
-  DEFAULT_NUMBER_VALUE
-} from "../../common/NumberInputNode";
-import { AppearanceType, Condition } from "../../common/type";
+import SwitchInputNode, {
+  DEFAULT_SWITCH_VALUE
+} from "../fieldInputNode/SwitchInputNode";
+import { AppearanceType, Condition } from "../type";
 
-const PointSizeNode: FC<
+const ShowNode: FC<
   LayerStyleProps & {
     appearanceType: AppearanceType;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
-  const [value, setValue] = useState<
-    MarkerAppearance["pointSize"] | Cesium3DTilesAppearance["pointSize"]
-  >(layerStyle?.value[appearanceType]?.pointSize ?? DEFAULT_NUMBER_VALUE);
+  const [value, setValue] = useState<boolean | undefined>(
+    layerStyle?.value[appearanceType]?.show ?? DEFAULT_SWITCH_VALUE
+  );
+  const [expression, setExpression] = useState<string>("");
   const [conditions, setConditions] = useState<Condition[]>([]);
 
-  const [expression, setExpression] = useState<string>("");
   return (
-    <NumberInputNode
+    <SwitchInputNode
       appearanceType={appearanceType}
-      appearanceTypeKey="pointSize"
-      title="PointSize"
+      appearanceTypeKey="show"
+      title="Show"
       optionsMenu={optionsMenu}
       layerStyle={layerStyle}
       setLayerStyle={setLayerStyle}
@@ -36,4 +35,4 @@ const PointSizeNode: FC<
   );
 };
 
-export default PointSizeNode;
+export default ShowNode;

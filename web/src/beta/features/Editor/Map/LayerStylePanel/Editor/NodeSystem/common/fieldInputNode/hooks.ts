@@ -1,11 +1,17 @@
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { SetStateAction } from "jotai";
-import { Dispatch, useCallback, useEffect, useState } from "react";
+import {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 
-import { LayerStyleProps } from "../../InterfaceTab";
-
-import { AppearanceType, AppearanceTypeKeys, Condition, Tabs } from "./type";
+import { LayerStyleProps } from "../../../InterfaceTab";
+import { AppearanceType, AppearanceTypeKeys, Condition, Tabs } from "../type";
 
 type UseAppearanceHookParams<T extends AppearanceType> = {
   appearanceType: T;
@@ -36,44 +42,66 @@ export default function useHooks<T extends AppearanceType>({
   const [, setNotification] = useNotification();
   const [activeTab, setActiveTab] = useState<Tabs>("value");
 
-  const styleValue = layerStyle?.value[appearanceType]?.[appearanceTypeKey];
+  const hasSetConditions = useRef(false);
+
+  const layerStyleValue = useMemo(() => {
+    return layerStyle?.value[appearanceType]?.[appearanceTypeKey];
+  }, [appearanceType, appearanceTypeKey, layerStyle?.value]);
 
   useEffect(() => {
-    if (styleValue !== undefined) {
-      if (typeof styleValue === "object") {
+    if (layerStyleValue !== undefined) {
+      if (typeof layerStyleValue === "object") {
         if (
-          typeof styleValue.expression === "object" &&
-          "conditions" in styleValue.expression
+          typeof layerStyleValue?.expression === "object" &&
+          "conditions" in layerStyleValue.expression
         ) {
           const conditionArray = (
-            styleValue.expression as { conditions: Condition[] }
+            layerStyleValue.expression as { conditions: Condition[] }
           ).conditions;
           setConditions(conditionArray);
           setValue(defaultValue);
           setExpression("");
           setActiveTab("condition");
-        } else if (typeof styleValue.expression === "string") {
-          setExpression(styleValue.expression as string);
+          hasSetConditions.current = false;
+        } else if (typeof layerStyleValue.expression === "string") {
+          setExpression(layerStyleValue.expression as string);
           setValue(defaultValue);
+          if (!hasSetConditions.current) {
+            setConditions([]);
+            hasSetConditions.current = true;
+          }
+
           setActiveTab("expression");
         }
       } else {
-        setValue(styleValue);
+        setValue(layerStyleValue);
         setExpression("");
-        setConditions([]);
+        if (!hasSetConditions.current) {
+          setConditions([]);
+          hasSetConditions.current = true;
+        }
+
         setActiveTab("value");
       }
     }
-  }, [styleValue, setValue, setExpression, defaultValue, setConditions]);
+  }, [
+    setValue,
+    setExpression,
+    defaultValue,
+    setConditions,
+    appearanceType,
+    appearanceTypeKey,
+    layerStyleValue
+  ]);
 
   useEffect(() => {
     try {
       setLayerStyle((prev) => {
         if (!prev?.id) return prev;
-        let newStyleValue = expression ? { expression } : value;
+        let newLayerStyleValue = expression ? { expression } : value;
 
         if (conditions.length > 0) {
-          newStyleValue = { expression: { conditions } };
+          newLayerStyleValue = { expression: { conditions } };
         }
 
         return {
@@ -82,7 +110,7 @@ export default function useHooks<T extends AppearanceType>({
             ...prev.value,
             [appearanceType]: {
               ...prev.value?.[appearanceType],
-              [appearanceTypeKey]: newStyleValue
+              [appearanceTypeKey]: newLayerStyleValue
             }
           }
         };
@@ -101,7 +129,7 @@ export default function useHooks<T extends AppearanceType>({
     conditions
   ]);
 
-  const handleChange = useCallback(
+  const handleConditionChange = useCallback(
     (type: "value" | "expression", newValue: any) => {
       if (type === "value") {
         setValue(newValue);
@@ -132,7 +160,7 @@ export default function useHooks<T extends AppearanceType>({
   return {
     activeTab,
     handleTabChange,
-    handleChange,
+    handleConditionChange,
     handleConditionStatementChange
   };
 }
