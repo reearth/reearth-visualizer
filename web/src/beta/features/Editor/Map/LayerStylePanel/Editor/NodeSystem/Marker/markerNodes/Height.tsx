@@ -15,23 +15,29 @@ const HeightNode: FC<LayerStyleProps> = ({
   const [value, setValue] = useState<MarkerAppearance["height"]>(
     layerStyle?.value?.marker?.height ?? DEFAULT_NUMBER_VALUE
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [expression, setExpression] = useState<string>(
+    layerStyle?.value?.marker?.height?.expression || ""
+  );
+  const [conditions, setConditions] = useState<Condition[]>(
+    layerStyle?.value?.marker?.height?.expression?.conditions || []
+  );
 
   return (
     <NumberInputNode
       appearanceType="marker"
       appearanceTypeKey="height"
       title="Height"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

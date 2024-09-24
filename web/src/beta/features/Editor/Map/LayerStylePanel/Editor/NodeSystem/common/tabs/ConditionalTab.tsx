@@ -58,7 +58,7 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
         return {
           id: `condition-${idx}`,
           content: (
-            <ContentWaper key={idx}>
+            <ContentWrapper key={idx}>
               <IconButton
                 key="dnd"
                 icon="dotsSixVertical"
@@ -69,7 +69,7 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
               <ConditionWrapper>
                 <ConditionStatement>
                   <Typography size="body">{t("if")}</Typography>
-                  <InputWapper>
+                  <InputWrapper>
                     <TextInput
                       value={conditionValue[0] || ""}
                       placeholder={t("Text")}
@@ -77,8 +77,8 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
                         handleConditionChange(idx, "variable", val)
                       }
                     />
-                  </InputWapper>
-                  <InputWapper>
+                  </InputWrapper>
+                  <InputWrapper>
                     <Selector
                       value={conditionValue[1] || ""}
                       placeholder=""
@@ -87,14 +87,14 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
                         handleConditionChange(idx, "operator", val as string)
                       }
                     />
-                  </InputWapper>
-                  <InputWapper>
+                  </InputWrapper>
+                  <InputWrapper>
                     <TextInput
                       value={conditionValue[2] || ""}
                       placeholder={t("Text")}
                       onBlur={(val) => handleConditionChange(idx, "value", val)}
                     />
-                  </InputWapper>
+                  </InputWrapper>
                 </ConditionStatement>
                 <ConditionValue>{children(idx)}</ConditionValue>{" "}
               </ConditionWrapper>
@@ -105,7 +105,7 @@ const ConditionalTab: FC<ConditionalTabProp> = ({
                 appearance="simple"
                 onClick={() => handleStyleConditionListDelete(idx)}
               />
-            </ContentWaper>
+            </ContentWrapper>
           )
         };
       }),
@@ -157,7 +157,7 @@ const IconButtonWrapper = styled("div")(() => ({
   width: "100%"
 }));
 
-const ContentWaper = styled("div")(({ theme }) => ({
+const ContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
   alignItems: "center"
@@ -176,7 +176,7 @@ const ConditionStatement = styled("div")(({ theme }) => ({
   alignItems: "center"
 }));
 
-const InputWapper = styled("div")(() => ({
+const InputWrapper = styled("div")(() => ({
   flex: 1
 }));
 

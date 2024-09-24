@@ -1,7 +1,9 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import NumberInputNode from "../fieldInputNode/NumberInputNode";
+import NumberInputNode, {
+  DEFAULT_NUMBER_VALUE
+} from "../fieldInputNode/NumberInputNode";
 import { AppearanceType, Condition } from "../type";
 
 const StrokeWidthNode: FC<
@@ -9,26 +11,43 @@ const StrokeWidthNode: FC<
     appearanceType: AppearanceType;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
-  const [value, setValue] = useState(
-    layerStyle?.value[appearanceType]?.strokeWidth ?? "none"
+  const initialValue = useMemo(
+    () =>
+      layerStyle?.value[appearanceType]?.strokeWidth ?? DEFAULT_NUMBER_VALUE,
+    [layerStyle, appearanceType]
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+
+  const initialExpression = useMemo(
+    () => layerStyle?.value[appearanceType]?.strokeWidth?.expression || "",
+    [layerStyle, appearanceType]
+  );
+  const initialConditions = useMemo(
+    () =>
+      layerStyle?.value[appearanceType]?.strokeWidth?.expression?.conditions ||
+      [],
+    [appearanceType, layerStyle?.value]
+  );
+
+  const [value, setValue] = useState(initialValue);
+  const [expression, setExpression] = useState<string>(initialExpression);
+  const [conditions, setConditions] = useState<Condition[]>(initialConditions);
 
   return (
     <NumberInputNode
       appearanceType={appearanceType}
       appearanceTypeKey="strokeWidth"
       title="StrokeWidth"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

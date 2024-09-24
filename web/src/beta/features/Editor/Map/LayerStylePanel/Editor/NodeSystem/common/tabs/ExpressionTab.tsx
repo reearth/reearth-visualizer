@@ -2,10 +2,18 @@ import { TextInput, TextInputProps } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-const ExpressionTab: FC<TextInputProps> = ({ value, onBlur }) => {
+interface ExpressionTabProps extends TextInputProps {
+  iconContent?: string;
+}
+
+const ExpressionTab: FC<ExpressionTabProps> = ({
+  value,
+  onBlur,
+  iconContent = "="
+}) => {
   return (
     <Wrapper>
-      <Icon>=</Icon>
+      <Icon>{iconContent}</Icon>
       <TextInput value={value} onBlur={onBlur} />
     </Wrapper>
   );

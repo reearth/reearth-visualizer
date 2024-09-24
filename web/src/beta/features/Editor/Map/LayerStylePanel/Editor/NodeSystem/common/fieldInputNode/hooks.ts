@@ -48,42 +48,72 @@ export default function useHooks<T extends AppearanceType>({
     return layerStyle?.value[appearanceType]?.[appearanceTypeKey];
   }, [appearanceType, appearanceTypeKey, layerStyle?.value]);
 
-  useEffect(() => {
-    if (layerStyleValue !== undefined) {
-      if (typeof layerStyleValue === "object") {
-        if (
-          typeof layerStyleValue?.expression === "object" &&
-          "conditions" in layerStyleValue.expression
-        ) {
-          const conditionArray = (
-            layerStyleValue.expression as { conditions: Condition[] }
-          ).conditions;
-          setConditions(conditionArray);
-          setValue(defaultValue);
-          setExpression("");
-          setActiveTab("condition");
-          hasSetConditions.current = false;
-        } else if (typeof layerStyleValue.expression === "string") {
-          setExpression(layerStyleValue.expression as string);
-          setValue(defaultValue);
-          if (!hasSetConditions.current) {
-            setConditions([]);
-            hasSetConditions.current = true;
-          }
+  const handleConditionExpression = useCallback(() => {
+    const conditionArray = (
+      layerStyleValue?.expression as { conditions: Condition[] }
+    ).conditions;
+    setConditions(conditionArray);
+    setValue(defaultValue);
+    setExpression("");
+    setActiveTab("condition");
+    hasSetConditions.current = false;
+  }, [
+    defaultValue,
+    layerStyleValue?.expression,
+    setConditions,
+    setExpression,
+    setValue
+  ]);
 
-          setActiveTab("expression");
-        }
-      } else {
-        setValue(layerStyleValue);
-        setExpression("");
-        if (!hasSetConditions.current) {
-          setConditions([]);
-          hasSetConditions.current = true;
-        }
-
-        setActiveTab("value");
-      }
+  const handleStringExpression = useCallback(() => {
+    setExpression(layerStyleValue?.expression as string);
+    setValue(defaultValue);
+    if (!hasSetConditions.current) {
+      setConditions([]);
+      hasSetConditions.current = true;
     }
+    setActiveTab("expression");
+  }, [
+    defaultValue,
+    layerStyleValue?.expression,
+    setConditions,
+    setExpression,
+    setValue
+  ]);
+
+  const handleNonObjectValue = useCallback(() => {
+    setValue(layerStyleValue);
+    setExpression("");
+    if (!hasSetConditions.current) {
+      setConditions([]);
+      hasSetConditions.current = true;
+    }
+    setActiveTab("value");
+  }, [layerStyleValue, setConditions, setExpression, setValue]);
+
+  useEffect(() => {
+    if (layerStyleValue === undefined) return;
+    const conditions = [
+      {
+        check: () =>
+          typeof layerStyleValue === "object" &&
+          typeof layerStyleValue?.expression === "object" &&
+          "conditions" in layerStyleValue.expression,
+        action: handleConditionExpression
+      },
+      {
+        check: () =>
+          typeof layerStyleValue === "object" &&
+          typeof layerStyleValue?.expression === "string",
+        action: handleStringExpression
+      },
+      {
+        check: () => typeof layerStyleValue !== "object",
+        action: handleNonObjectValue
+      }
+    ];
+    const conditionHandler = conditions.find(({ check }) => check());
+    conditionHandler?.action();
   }, [
     setValue,
     setExpression,
@@ -91,7 +121,10 @@ export default function useHooks<T extends AppearanceType>({
     setConditions,
     appearanceType,
     appearanceTypeKey,
-    layerStyleValue
+    layerStyleValue,
+    handleConditionExpression,
+    handleStringExpression,
+    handleNonObjectValue
   ]);
 
   useEffect(() => {
@@ -147,7 +180,7 @@ export default function useHooks<T extends AppearanceType>({
   const handleConditionStatementChange = useCallback(
     (idx: number, newValue: any) => {
       const updatedConditions = [...conditions];
-      updatedConditions[idx][1] = newValue;
+      updatedConditions[idx] = [updatedConditions[idx][0], newValue];
       setConditions(updatedConditions);
     },
     [conditions, setConditions]

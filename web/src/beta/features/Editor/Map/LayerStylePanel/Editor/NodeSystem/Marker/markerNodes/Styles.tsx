@@ -19,24 +19,30 @@ const StylesNode: FC<LayerStyleProps> = ({
   const [value, setValue] = useState<MarkerAppearance["style"]>(
     layerStyle?.value.marker?.style ?? "none"
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [expression, setExpression] = useState<string>(
+    layerStyle?.value?.marker?.style?.expression || ""
+  );
+  const [conditions, setConditions] = useState<Condition[]>(
+    layerStyle?.value?.marker?.style?.expression?.conditions || []
+  );
 
   return (
     <SelectorInputNode
       appearanceType="marker"
       appearanceTypeKey="style"
       title="Style"
-      optionsMenu={optionsMenu}
       options={options}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

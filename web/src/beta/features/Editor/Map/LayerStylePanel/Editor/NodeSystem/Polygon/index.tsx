@@ -4,7 +4,7 @@ import { SetStateAction } from "jotai";
 import { Dispatch, FC } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
-import useHooks from "../hook";
+import useDynamicNodes from "../hook";
 import { polygonNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./polygonNodes";
@@ -18,7 +18,7 @@ const Polygon: FC<PolygonProps> = ({
   setMenuItems,
   setLayerStyle
 }) => {
-  const { dynamicNodeContent } = useHooks({
+  const { dynamicNodeContent } = useDynamicNodes({
     appearanceType: "polygon",
     layerStyle,
     nodeCategoryMenu: polygonNodeMenu,

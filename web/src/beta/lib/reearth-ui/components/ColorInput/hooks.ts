@@ -34,10 +34,8 @@ const useColorPicker = ({
   const handleHexInputBlur = useCallback(
     (newValue: string) => {
       const hexPattern =
-        /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(
-          colorValue || ""
-        );
-      const color = !colorValue || hexPattern ? colorValue : newValue;
+        /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(newValue);
+      const color = hexPattern ? newValue : colorValue;
       setPickerColor(tinycolor(color).toRgb());
       onChange?.(color || "");
     },

@@ -15,23 +15,29 @@ const PointColorNode: FC<LayerStyleProps> = ({
   const [value, setValue] = useState<MarkerAppearance["pointColor"]>(
     layerStyle?.value?.marker?.pointColor ?? DEFAULT_COLOR_VALUE
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [expression, setExpression] = useState<string>(
+    layerStyle?.value?.marker?.pointColor?.expression || ""
+  );
+  const [conditions, setConditions] = useState<Condition[]>(
+    layerStyle?.value?.marker?.pointColor?.expression?.conditions || []
+  );
 
   return (
     <ColorInputNode
       appearanceType="marker"
       appearanceTypeKey="pointColor"
       title="PointColor"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

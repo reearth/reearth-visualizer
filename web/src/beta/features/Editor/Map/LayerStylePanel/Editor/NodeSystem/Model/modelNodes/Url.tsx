@@ -15,23 +15,29 @@ const UrlNode: FC<LayerStyleProps> = ({
   const [value, setValue] = useState<ModelAppearance["url"]>(
     layerStyle?.value?.model?.url ?? DEFAULT_TEXT_VALUE
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [expression, setExpression] = useState<string>(
+    layerStyle?.value?.model?.url?.expression || ""
+  );
+  const [conditions, setConditions] = useState<Condition[]>(
+    layerStyle?.value?.model?.url?.expression?.conditions || []
+  );
 
   return (
     <TextInputNode
       appearanceType="model"
       appearanceTypeKey="url"
       title="Url"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
-import ShowNode from "../../common/sharedNode//Show";
+import ShowNode from "../../common/sharedNode/Show";
 import { AppearanceType } from "../../common/type";
 
 import ColorNode from "./ColorNode";

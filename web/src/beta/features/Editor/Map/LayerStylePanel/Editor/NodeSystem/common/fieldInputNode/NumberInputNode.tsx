@@ -4,7 +4,7 @@ import { Dispatch, FC } from "react";
 
 import ConditionalTab from "../tabs/ConditionalTab";
 import ExpressionTab from "../tabs/ExpressionTab";
-import { CommonIputProp } from "../type";
+import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";
 
@@ -13,7 +13,7 @@ import NodeSystem from ".";
 export const DEFAULT_NUMBER_VALUE = 0;
 
 const NumberInputNode: FC<
-  CommonIputProp & {
+  CommonInputProp & {
     value: number | undefined;
     setValue: Dispatch<SetStateAction<number | undefined>>;
   }
@@ -50,7 +50,7 @@ const NumberInputNode: FC<
     setLayerStyle
   });
 
-  const renderContent: Record<string, JSX.Element> = {
+  const renderContent: Record<Tabs, JSX.Element> = {
     value: (
       <NumberInput
         value={value}

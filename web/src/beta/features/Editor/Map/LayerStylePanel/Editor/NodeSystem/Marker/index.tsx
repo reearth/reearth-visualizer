@@ -4,7 +4,7 @@ import { SetStateAction } from "jotai";
 import { Dispatch, FC } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
-import useHooks from "../hook";
+import useDynamicNodes from "../hook";
 import { markerNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./markerNodes";
@@ -18,7 +18,7 @@ const Marker: FC<MarkerProps> = ({
   setMenuItems,
   setLayerStyle
 }) => {
-  const { dynamicNodeContent } = useHooks({
+  const { dynamicNodeContent } = useDynamicNodes({
     appearanceType: "marker",
     layerStyle,
     nodeCategoryMenu: markerNodeMenu,

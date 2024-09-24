@@ -4,14 +4,14 @@ import { Dispatch, FC, useCallback } from "react";
 
 import ConditionalTab from "../tabs/ConditionalTab";
 import ExpressionTab from "../tabs/ExpressionTab";
-import { CommonIputProp } from "../type";
+import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";
 
 import NodeSystem from ".";
 
 const SelectorInputNode: FC<
-  CommonIputProp & {
+  CommonInputProp & {
     options: { value: string; label?: string }[];
     value: string | undefined;
     setValue: Dispatch<SetStateAction<any | undefined>>;
@@ -40,7 +40,7 @@ const SelectorInputNode: FC<
     appearanceType,
     appearanceTypeKey,
     layerStyle,
-    defaultValue: options[0].label,
+    defaultValue: options[0]?.label || "",
     value,
     setValue,
     expression,
@@ -53,12 +53,13 @@ const SelectorInputNode: FC<
   const handleSelectorChange = useCallback(
     (newValue?: string | string[]) => {
       if (!newValue) return;
-      handleConditionChange("value", newValue as string);
+      const value = Array.isArray(newValue) ? newValue[0] : newValue;
+      handleConditionChange("value", value);
     },
     [handleConditionChange]
   );
 
-  const renderContent: Record<string, JSX.Element> = {
+  const renderContent: Record<Tabs, JSX.Element> = {
     value: (
       <Selector
         value={value}

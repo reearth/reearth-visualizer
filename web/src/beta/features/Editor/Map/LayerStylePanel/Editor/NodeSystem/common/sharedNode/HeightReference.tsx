@@ -1,5 +1,5 @@
 import { AppearanceTypes } from "@reearth/core";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 import SelectorInputNode from "../fieldInputNode/SelectorInputNode";
@@ -16,27 +16,44 @@ const HeightReferenceNode: FC<
     appearanceType: keyof Pick<AppearanceTypes, "marker" | "polygon" | "model">;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
-  const [value, setValue] = useState(
-    layerStyle?.value[appearanceType]?.heightReference ?? "none"
+  const initialValue = useMemo(
+    () => layerStyle?.value[appearanceType]?.heightReference ?? "none",
+    [layerStyle, appearanceType]
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+
+  const initialExpression = useMemo(
+    () => layerStyle?.value[appearanceType]?.heightReference?.expression || "",
+    [layerStyle, appearanceType]
+  );
+  const initialConditions = useMemo(
+    () =>
+      layerStyle?.value[appearanceType]?.heightReference?.expression
+        ?.conditions || [],
+    [layerStyle, appearanceType]
+  );
+
+  const [value, setValue] = useState(initialValue);
+
+  const [expression, setExpression] = useState<string>(initialExpression);
+  const [conditions, setConditions] = useState<Condition[]>(initialConditions);
 
   return (
     <SelectorInputNode
       appearanceType={appearanceType}
       appearanceTypeKey="heightReference"
       title="HeightReference"
-      optionsMenu={optionsMenu}
       options={options}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

@@ -34,7 +34,11 @@ const InterfaceTab: FC<
   const t = useT();
   const [menuItems, setMenuItems] = useState<PopupMenuItem[]>([]);
 
-  const tabsItem: TabItem[] = [
+  const createTabsItem = (
+    layerStyle: LayerStyle | undefined,
+    setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>,
+    setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>
+  ): TabItem[] => [
     {
       id: "marker",
       icon: "points",
@@ -92,6 +96,7 @@ const InterfaceTab: FC<
     }
   ];
 
+  const tabsItem = createTabsItem(layerStyle, setLayerStyle, setMenuItems);
   return layerStyle ? (
     <Wrapper>
       <TabsWrapper>

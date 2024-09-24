@@ -4,7 +4,7 @@ import { SetStateAction } from "jotai";
 import { Dispatch, FC } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
-import useHooks from "../hook";
+import useDynamicNodes from "../hook";
 import { threedtilesNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./threedtilesNodes";
@@ -18,7 +18,7 @@ const ThreedTiles: FC<ThreedTilesProps> = ({
   setMenuItems,
   setLayerStyle
 }) => {
-  const { dynamicNodeContent } = useHooks({
+  const { dynamicNodeContent } = useDynamicNodes({
     appearanceType: "3dtiles",
     layerStyle,
     nodeCategoryMenu: threedtilesNodeMenu,

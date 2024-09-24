@@ -27,7 +27,7 @@ type Props = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
 } & LayerStyleProps;
 
-export default function useHooks({
+export default function useDynamicNodes({
   appearanceType,
   layerStyle,
   nodeCategoryMenu,
@@ -37,7 +37,6 @@ export default function useHooks({
 }: Props) {
   const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
 
-  const [clickedItems, setClickedItems] = useState<Set<string>>(new Set());
 
   const optionsMenu = useMemo(() => {
     return [
@@ -119,7 +118,6 @@ export default function useHooks({
             setLayerStyle
           })
         ]);
-        setClickedItems((prevClicked) => new Set(prevClicked).add(id));
       }
     },
     [
@@ -146,16 +144,7 @@ export default function useHooks({
       }));
 
     setMenuItems(menuItems);
-  }, [
-    clickedItems,
-    dynamicNodeContent,
-    handleMenuClick,
-    layerStyle,
-    nodeCategoryMenu,
-    optionsMenu,
-    setLayerStyle,
-    setMenuItems
-  ]);
+  }, [dynamicNodeContent, handleMenuClick, layerStyle, nodeCategoryMenu, optionsMenu, setLayerStyle, setMenuItems]);
 
   return {
     dynamicNodeContent

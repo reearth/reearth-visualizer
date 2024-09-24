@@ -1,5 +1,5 @@
 import { Cesium3DTilesAppearance, MarkerAppearance } from "@reearth/core";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { LayerStyleProps } from "../../../InterfaceTab";
 import NumberInputNode, {
@@ -12,26 +12,45 @@ const PointSizeNode: FC<
     appearanceType: AppearanceType;
   }
 > = ({ optionsMenu, layerStyle, appearanceType, setLayerStyle }) => {
+  const initialValue = useMemo(
+    () => layerStyle?.value[appearanceType]?.pointSize ?? DEFAULT_NUMBER_VALUE,
+    [layerStyle, appearanceType]
+  );
+
+  const initialExpression = useMemo(
+    () => layerStyle?.value[appearanceType]?.pointSize?.expression || "",
+    [layerStyle, appearanceType]
+  );
+  const initialConditions = useMemo(
+    () =>
+      layerStyle?.value[appearanceType]?.pointSize?.expression?.conditions ||
+      [],
+    [layerStyle, appearanceType]
+  );
+
   const [value, setValue] = useState<
     MarkerAppearance["pointSize"] | Cesium3DTilesAppearance["pointSize"]
-  >(layerStyle?.value[appearanceType]?.pointSize ?? DEFAULT_NUMBER_VALUE);
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  >(initialValue);
+  const [expression, setExpression] = useState<string>(initialExpression);
 
-  const [expression, setExpression] = useState<string>("");
+  const [conditions, setConditions] = useState<Condition[]>(initialConditions);
+
   return (
     <NumberInputNode
       appearanceType={appearanceType}
       appearanceTypeKey="pointSize"
       title="PointSize"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

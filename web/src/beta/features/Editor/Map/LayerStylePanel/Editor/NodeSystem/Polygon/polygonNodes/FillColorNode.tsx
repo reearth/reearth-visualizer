@@ -15,23 +15,29 @@ const FillColorNode: FC<LayerStyleProps> = ({
   const [value, setValue] = useState<PolygonAppearance["fillColor"]>(
     layerStyle?.value?.polygon?.fillColor ?? DEFAULT_COLOR_VALUE
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [expression, setExpression] = useState<string>(
+    layerStyle?.value?.polygon?.fillColor?.expression || ""
+  );
+  const [conditions, setConditions] = useState<Condition[]>(
+    layerStyle?.value?.polygon?.fillColor?.expression?.conditions || []
+  );
 
   return (
     <ColorInputNode
       appearanceType="polygon"
       appearanceTypeKey="fillColor"
       title="FillColor"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };

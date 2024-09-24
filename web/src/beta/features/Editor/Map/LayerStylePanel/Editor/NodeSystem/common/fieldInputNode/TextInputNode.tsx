@@ -4,7 +4,7 @@ import { Dispatch, FC } from "react";
 
 import ConditionalTab from "../tabs/ConditionalTab";
 import ExpressionTab from "../tabs/ExpressionTab";
-import { CommonIputProp } from "../type";
+import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";
 
@@ -13,7 +13,7 @@ import NodeSystem from ".";
 export const DEFAULT_TEXT_VALUE = "";
 
 const TextInputNode: FC<
-  CommonIputProp & {
+  CommonInputProp & {
     value: string | undefined;
     setValue: Dispatch<SetStateAction<string | undefined>>;
   }
@@ -50,10 +50,10 @@ const TextInputNode: FC<
     setLayerStyle
   });
 
-  const renderContent: Record<string, JSX.Element> = {
+  const renderContent: Record<Tabs, JSX.Element> = {
     value: (
       <TextInput
-        value={value}
+        value={value || ""}
         onBlur={(val) => handleConditionChange("value", val)}
       />
     ),
@@ -67,7 +67,7 @@ const TextInputNode: FC<
       <ConditionalTab conditions={conditions} setConditions={setConditions}>
         {(idx) => (
           <TextInput
-            value={(conditions[idx][1] as string) || ""}
+            value={(conditions[idx]?.[1] as string) || ""}
             onBlur={(val) => handleConditionStatementChange(idx, val)}
           />
         )}

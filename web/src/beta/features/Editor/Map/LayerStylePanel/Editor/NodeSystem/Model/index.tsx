@@ -4,7 +4,7 @@ import { SetStateAction } from "jotai";
 import { Dispatch, FC } from "react";
 
 import { LayerStyleProps } from "../../InterfaceTab";
-import useHooks from "../hook";
+import useDynamicNodes from "../hook";
 import { modelNodeMenu } from "../NodeMenuCategory";
 
 import { componentNode } from "./modelNodes";
@@ -18,7 +18,7 @@ const ThreedModel: FC<ThreedModelProps> = ({
   setMenuItems,
   setLayerStyle
 }) => {
-  const { dynamicNodeContent } = useHooks({
+  const { dynamicNodeContent } = useDynamicNodes({
     appearanceType: "model",
     layerStyle,
     nodeCategoryMenu: modelNodeMenu,

@@ -5,7 +5,7 @@ import {
   PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, ReactNode, useCallback, MouseEvent } from "react";
+import { FC, ReactNode, useCallback, MouseEvent, useMemo } from "react";
 
 import { Tabs } from "../type";
 
@@ -16,7 +16,7 @@ type NodeAction = {
 
 interface NodeSystemProps {
   title?: string;
-  children: (activeTab: string) => ReactNode;
+  children: (activeTab: Tabs) => ReactNode;
   optionsMenu?: PopupMenuItem[];
   activeTab: Tabs;
   onTabChange: (newTab: Tabs) => void;
@@ -34,12 +34,14 @@ const NodeSystem: FC<NodeSystemProps> = ({
     e.stopPropagation();
   }, []);
 
-  const actions: NodeAction[] = [
-    { id: "value", icon: "textAa" },
-    { id: "expression", icon: "bracketsCurly" },
-    { id: "condition", icon: "if" }
-  ];
-
+  const actions: NodeAction[] = useMemo(
+    () => [
+      { id: "value", icon: "textAa" },
+      { id: "expression", icon: "bracketsCurly" },
+      { id: "condition", icon: "if" }
+    ],
+    []
+  );
   return (
     <Wrapper>
       <HeaderWrapper>

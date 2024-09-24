@@ -18,7 +18,6 @@ export default function useHooks({ conditions, setConditions }: Props) {
     ) => {
       const newConditions = [...conditions];
       const currentCondition = newConditions[idx][0].split(" ");
-
       if (partIdx === "variable") {
         currentCondition[0] = value;
       } else if (partIdx === "operator") {
@@ -82,7 +81,9 @@ export default function useHooks({ conditions, setConditions }: Props) {
     (itemIdx?: string, newIndex?: number) => {
       if (itemIdx !== undefined && newIndex !== undefined) {
         const parsedIndex = parseInt(itemIdx, 10);
-        handleItemDrop(parsedIndex, newIndex);
+        if (!isNaN(parsedIndex)) {
+          handleItemDrop(parsedIndex, newIndex);
+        }
       }
       setIsDragging(false);
     },

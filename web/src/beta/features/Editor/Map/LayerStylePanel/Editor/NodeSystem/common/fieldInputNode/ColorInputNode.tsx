@@ -4,7 +4,7 @@ import { Dispatch, FC } from "react";
 
 import ConditionalTab from "../tabs/ConditionalTab";
 import ExpressionTab from "../tabs/ExpressionTab";
-import { CommonIputProp } from "../type";
+import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";
 
@@ -13,7 +13,7 @@ import NodeSystem from ".";
 export const DEFAULT_COLOR_VALUE = undefined;
 
 const ColorInputNode: FC<
-  CommonIputProp & {
+  CommonInputProp & {
     value: string | undefined;
     setValue: Dispatch<SetStateAction<string | undefined>>;
   }
@@ -50,7 +50,7 @@ const ColorInputNode: FC<
     setLayerStyle
   });
 
-  const renderContent: Record<string, JSX.Element> = {
+  const renderContent: Record<Tabs, JSX.Element> = {
     value: (
       <ColorInput
         value={value}
@@ -67,7 +67,7 @@ const ColorInputNode: FC<
       <ConditionalTab conditions={conditions} setConditions={setConditions}>
         {(idx) => (
           <ColorInput
-            value={(conditions[idx][1] as string) || ""}
+            value={(conditions[idx]?.[1] as string) || ""}
             onChange={(val) => handleConditionStatementChange(idx, val)}
           />
         )}

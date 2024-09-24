@@ -1,10 +1,9 @@
 import { Switcher } from "@reearth/beta/lib/reearth-ui";
-import { SetStateAction } from "jotai";
-import { Dispatch, FC } from "react";
+import { FC } from "react";
 
 import ConditionalTab from "../tabs/ConditionalTab";
 import ExpressionTab from "../tabs/ExpressionTab";
-import { CommonIputProp } from "../type";
+import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";
 
@@ -13,9 +12,9 @@ import NodeSystem from ".";
 export const DEFAULT_SWITCH_VALUE = false;
 
 const SwitchInputNode: FC<
-  CommonIputProp & {
+  CommonInputProp & {
     value: boolean | undefined;
-    setValue: Dispatch<SetStateAction<boolean | undefined>>;
+    setValue: (value: boolean | undefined) => void;
   }
 > = ({
   optionsMenu,
@@ -49,7 +48,7 @@ const SwitchInputNode: FC<
     setConditions,
     setLayerStyle
   });
-  const renderContent: Record<string, JSX.Element> = {
+  const renderContent: Record<Tabs, JSX.Element> = {
     value: (
       <Switcher
         value={value}
@@ -66,7 +65,7 @@ const SwitchInputNode: FC<
       <ConditionalTab conditions={conditions} setConditions={setConditions}>
         {(idx) => (
           <Switcher
-            value={conditions[idx][1] as boolean}
+            value={(conditions[idx][1] as boolean) || false}
             onChange={(val) => handleConditionStatementChange(idx, val)}
           />
         )}

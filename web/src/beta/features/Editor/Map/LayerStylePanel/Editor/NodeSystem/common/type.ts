@@ -37,7 +37,7 @@ export type AppearanceTypeKeys =
 
 export type Condition = [string, string | number | boolean];
 
-export type CommonIputProp = {
+export type CommonInputProp = {
   appearanceType: AppearanceType;
   appearanceTypeKey: AppearanceTypeKeys;
   title?: string;

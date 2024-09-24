@@ -12,25 +12,31 @@ const ClampToGroundNode: FC<
   }
 > = ({ optionsMenu, layerStyle, setLayerStyle }) => {
   const [value, setValue] = useState<boolean | undefined>(
-    layerStyle?.value?.polyline.clampToGround ?? DEFAULT_SWITCH_VALUE
+    layerStyle?.value?.polyline?.clampToGround ?? DEFAULT_SWITCH_VALUE
   );
-  const [expression, setExpression] = useState<string>("");
-  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [expression, setExpression] = useState<string>(
+    layerStyle?.value?.polyline?.clampToGround?.expression || ""
+  );
+  const [conditions, setConditions] = useState<Condition[]>(
+    layerStyle?.value?.polyline?.clampToGround?.expression?.conditions || []
+  );
 
   return (
     <SwitchInputNode
       appearanceType="polyline"
       appearanceTypeKey="clampToGround"
       title="ClampToGround"
-      optionsMenu={optionsMenu}
-      layerStyle={layerStyle}
-      setLayerStyle={setLayerStyle}
-      value={value}
-      setValue={setValue}
-      expression={expression}
-      setExpression={setExpression}
-      conditions={conditions}
-      setConditions={setConditions}
+      {...{
+        optionsMenu,
+        value,
+        setValue,
+        expression,
+        setExpression,
+        conditions,
+        setConditions,
+        layerStyle,
+        setLayerStyle
+      }}
     />
   );
 };
