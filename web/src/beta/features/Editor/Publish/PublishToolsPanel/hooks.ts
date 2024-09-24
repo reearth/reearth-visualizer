@@ -72,10 +72,7 @@ export default ({
   const generateAlias = useCallback(() => generateRandomString(10), []);
 
   const [validAlias, setValidAlias] = useState(false);
-  const alias = useMemo(
-    () => project?.alias ?? generateAlias(),
-    [project?.alias, generateAlias]
-  );
+  const [alias, setAlias] = useState<string>(project?.alias ?? generateAlias());
 
   const [
     checkProjectAlias,
@@ -109,6 +106,17 @@ export default ({
     },
     [project?.alias, checkProjectAlias]
   );
+
+  useEffect(() => {
+    if (modalOpen) {
+      if (!alias) {
+        const generatedAlias = generateAlias();
+        setAlias(generatedAlias);
+      }
+
+      handleProjectAliasCheck(alias);
+    }
+  }, [modalOpen, alias, generateAlias, handleProjectAliasCheck]);
 
   useEffect(() => {
     setValidAlias(

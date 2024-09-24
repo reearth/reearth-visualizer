@@ -325,6 +325,7 @@ export default function Crust({
         ref={pluginPopupContainerRef}
       />
       <Infobox
+        key={featuredInfobox?.featureId}
         infobox={featuredInfobox}
         installableInfoboxBlocks={installableInfoboxBlocks}
         isEditable={!!inEditor && !featuredInfobox?.readOnly}
