@@ -37,6 +37,23 @@ export default function useDynamicNodes({
 }: Props) {
   const [dynamicNodeContent, setDynamicNodeContent] = useState<ReactNode[]>([]);
 
+  const handleDelete = useCallback(
+    (propertyKey: string) => {
+      setLayerStyle((prev) => {
+        if (!prev?.id || !prev?.value[appearanceType]) return prev;
+        const { [propertyKey]: _, ...updatedModel } =
+          prev.value[appearanceType];
+        return {
+          ...prev,
+          value: {
+            ...prev.value,
+            [appearanceType]: updatedModel
+          }
+        };
+      });
+    },
+    [appearanceType, setLayerStyle]
+  );
 
   const optionsMenu = useMemo(() => {
     return [
@@ -44,24 +61,10 @@ export default function useDynamicNodes({
         id: "delete",
         title: "Delete",
         icon: "trash" as const,
-        onClick: (propertyKey: string) => {
-          setLayerStyle((prev) => {
-            if (!prev?.id || !prev?.value[appearanceType]) return prev;
-            const { [propertyKey]: _, ...updatedModel } =
-              prev.value[appearanceType];
-
-            return {
-              ...prev,
-              value: {
-                ...prev.value,
-                [appearanceType]: updatedModel
-              }
-            };
-          });
-        }
+        onClick: handleDelete
       }
     ];
-  }, [appearanceType, setLayerStyle]);
+  }, [handleDelete]);
 
   useEffect(() => {
     const properties = layerStyle?.value?.[appearanceType];
@@ -144,7 +147,15 @@ export default function useDynamicNodes({
       }));
 
     setMenuItems(menuItems);
-  }, [dynamicNodeContent, handleMenuClick, layerStyle, nodeCategoryMenu, optionsMenu, setLayerStyle, setMenuItems]);
+  }, [
+    dynamicNodeContent,
+    handleMenuClick,
+    layerStyle,
+    nodeCategoryMenu,
+    optionsMenu,
+    setLayerStyle,
+    setMenuItems
+  ]);
 
   return {
     dynamicNodeContent

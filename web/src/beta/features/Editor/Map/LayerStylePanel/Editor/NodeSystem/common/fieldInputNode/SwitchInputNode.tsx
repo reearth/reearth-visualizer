@@ -1,8 +1,8 @@
 import { Switcher } from "@reearth/beta/lib/reearth-ui";
 import { FC } from "react";
 
-import ConditionalTab from "../tabs/ConditionalTab";
-import ExpressionTab from "../tabs/ExpressionTab";
+import ConditionalTab from "../ConditionalTab";
+import ExpressionTab from "../ExpressionTab";
 import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";
@@ -65,7 +65,7 @@ const SwitchInputNode: FC<
       <ConditionalTab conditions={conditions} setConditions={setConditions}>
         {(idx) => (
           <Switcher
-            value={(conditions[idx][1] as boolean) || false}
+            value={(conditions[idx][1] as boolean) || DEFAULT_SWITCH_VALUE}
             onChange={(val) => handleConditionStatementChange(idx, val)}
           />
         )}

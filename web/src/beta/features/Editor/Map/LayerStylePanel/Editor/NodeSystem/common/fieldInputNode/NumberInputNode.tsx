@@ -2,8 +2,8 @@ import { NumberInput } from "@reearth/beta/lib/reearth-ui";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC } from "react";
 
-import ConditionalTab from "../tabs/ConditionalTab";
-import ExpressionTab from "../tabs/ExpressionTab";
+import ConditionalTab from "../ConditionalTab";
+import ExpressionTab from "../ExpressionTab";
 import { CommonInputProp, Tabs } from "../type";
 
 import useHooks from "./hooks";

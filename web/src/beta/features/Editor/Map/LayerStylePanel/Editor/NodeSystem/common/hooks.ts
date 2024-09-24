@@ -1,6 +1,6 @@
 import { useCallback, Dispatch, SetStateAction, useState } from "react";
 
-import { Condition } from "../type";
+import { Condition } from "./type";
 
 type Props = {
   conditions: Condition[];
@@ -18,14 +18,16 @@ export default function useHooks({ conditions, setConditions }: Props) {
     ) => {
       const newConditions = [...conditions];
       const currentCondition = newConditions[idx][0].split(" ");
+      const [variable = "", operator = "", ...restValue] = currentCondition;
+      const currentValue = restValue.join(" ");
+
       if (partIdx === "variable") {
-        currentCondition[0] = value;
+        newConditions[idx][0] = `${value} ${operator} ${currentValue}`.trim();
       } else if (partIdx === "operator") {
-        currentCondition[1] = value;
+        newConditions[idx][0] = `${variable} ${value} ${currentValue}`.trim();
       } else if (partIdx === "value") {
-        currentCondition[2] = `${value}`;
+        newConditions[idx][0] = `${variable} ${operator} ${value}`.trim();
       }
-      newConditions[idx][0] = currentCondition.join(" ");
       setConditions(newConditions);
     },
     [conditions, setConditions]

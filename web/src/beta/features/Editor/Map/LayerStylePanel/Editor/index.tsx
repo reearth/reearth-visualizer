@@ -86,6 +86,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         tabs={tabItems}
         position="top"
         alignment="end"
+        noOverflowY
         padding={theme.spacing.small}
       />
       {layerStyle?.id && (

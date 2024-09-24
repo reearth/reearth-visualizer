@@ -9,9 +9,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { Dispatch, FC, ReactNode, SetStateAction, useMemo } from "react";
 
-import { Condition } from "../type";
-
 import useHooks from "./hooks";
+import { Condition } from "./type";
 
 type ConditionalTabProp = {
   children: (idx: number) => ReactNode;
