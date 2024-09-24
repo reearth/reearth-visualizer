@@ -16,10 +16,10 @@ const ColorNode: FC<LayerStyleProps> = ({
     layerStyle?.value?.["3dtiles"]?.color ?? DEFAULT_COLOR_VALUE
   );
   const [expression, setExpression] = useState<string>(
-    layerStyle?.value?.["3dtiles"]?.color.expression || ""
+    layerStyle?.value?.["3dtiles"]?.color?.expression || ""
   );
   const [conditions, setConditions] = useState<Condition[]>(
-    layerStyle?.value?.["3dtiles"]?.color.expression?.conditions || []
+    layerStyle?.value?.["3dtiles"]?.color?.expression?.conditions || []
   );
 
   return (

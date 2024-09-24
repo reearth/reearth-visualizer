@@ -24,7 +24,7 @@ const ShowNode: FC<
     () => layerStyle?.value[appearanceType]?.show?.expression?.conditions || [],
     [layerStyle, appearanceType]
   );
-  
+
   const [value, setValue] = useState<boolean | undefined>(initialValue);
   const [expression, setExpression] = useState<string>(initialExpression);
   const [conditions, setConditions] = useState<Condition[]>(initialConditions);
