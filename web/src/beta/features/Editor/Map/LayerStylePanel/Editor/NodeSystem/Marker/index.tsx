@@ -7,7 +7,7 @@ import { LayerStyleProps } from "../../InterfaceTab";
 import useHooks from "../hook";
 import { markerNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./nodes";
+import { componentNode } from "./markerNodes";
 
 type MarkerProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;

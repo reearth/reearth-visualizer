@@ -7,7 +7,7 @@ import { LayerStyleProps } from "../../InterfaceTab";
 import useHooks from "../hook";
 import { polylineNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./nodes";
+import { componentNode } from "./polylineNodes";
 
 type PolylineProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;

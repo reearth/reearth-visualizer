@@ -7,7 +7,7 @@ import { LayerStyleProps } from "../../InterfaceTab";
 import useHooks from "../hook";
 import { polygonNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./nodes";
+import { componentNode } from "./polygonNodes";
 
 type PolygonProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;

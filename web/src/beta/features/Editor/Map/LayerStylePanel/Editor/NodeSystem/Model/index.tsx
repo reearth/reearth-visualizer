@@ -7,7 +7,7 @@ import { LayerStyleProps } from "../../InterfaceTab";
 import useHooks from "../hook";
 import { modelNodeMenu } from "../NodeMenuCategory";
 
-import { componentNode } from "./nodes";
+import { componentNode } from "./modelNodes";
 
 type ThreedModelProps = {
   setMenuItems: Dispatch<SetStateAction<PopupMenuItem[]>>;
