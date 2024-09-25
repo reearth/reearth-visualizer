@@ -2,7 +2,7 @@ import { Button, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import { LayerStyleValueUpdateProps } from "../../../hooks/useLayerStyles";
@@ -20,7 +20,6 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   onLayerStyleValueUpdate
 }) => {
   const t = useT();
-  const theme = useTheme();
   const [, setNotification] = useNotification();
 
   const [layerStyle, setLayerStyle] = useState(selectedLayerStyle);
@@ -87,7 +86,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         position="top"
         alignment="end"
         noOverflowY
-        padding={theme.spacing.small}
+        noPadding
       />
       {layerStyle?.id && (
         <ButtonWrapper>

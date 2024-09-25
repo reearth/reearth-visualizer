@@ -111,7 +111,7 @@ const InterfaceTab: FC<
             layerStyle ? (
               <PopupMenu
                 extendTriggerWidth
-                width={276}
+                width={315}
                 menu={menuItems}
                 label={
                   <Button
@@ -142,9 +142,9 @@ const Wrapper = styled("div")(() => ({
   width: "100%"
 }));
 
-const TabsWrapper = styled("div")(({ theme }) => ({
+const TabsWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  padding: `${theme.spacing.small}px 0`,
-  height: 480
+  height: "calc(100vh - 345px)",
+  overflowY: "auto"
 }));
