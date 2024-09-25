@@ -40,6 +40,7 @@ import Desktop from "./Icons/Desktop.svg?react";
 import DeviceMobile from "./Icons/DeviceMobile.svg?react";
 import DotsSixVertical from "./Icons/DotsSixVertical.svg?react";
 import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
+import DownloadSimple from "./Icons/DownloadSimple.svg?react";
 import EditMode from "./Icons/EditMode.svg?react";
 import Editor from "./Icons/Editor.svg?react";
 import Exit from "./Icons/Exit.svg?react";
@@ -106,6 +107,7 @@ import Rows from "./Icons/Rows.svg?react";
 import Setting from "./Icons/Setting.svg?react";
 import SettingFilled from "./Icons/SettingFilled.svg?react";
 import Sidebar from "./Icons/Sidebar.svg?react";
+import SignIn from "./Icons/SignIn.svg?react";
 import Square from "./Icons/Square.svg?react";
 import SquareFilled from "./Icons/SquareFilled.svg?react";
 import Star from "./Icons/Star.svg?react";
@@ -277,5 +279,7 @@ export default {
   videoFilled: VideoFilled,
   warning: Warning,
   aToZ: AToZ,
-  zToA: ZToA
+  zToA: ZToA,
+  downloadSimple: DownloadSimple,
+  signIn: SignIn
 };

@@ -60,14 +60,23 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       <ManagerHeader
         size="large"
         actions={[
-          <ManagerHeaderButton
-            key={"create-project"}
-            title={t("New Project")}
-            managerSize="large"
-            icon="plus"
-            appearance="primary"
-            onClick={showProjectCreator}
-          />
+          <>
+            <ManagerHeaderButton
+              key={"create-project"}
+              title={t("New Project")}
+              managerSize="large"
+              icon="plus"
+              appearance="primary"
+              onClick={showProjectCreator}
+            />
+            <ManagerHeaderButton
+              key={"import-project"}
+              title={t("Import")}
+              managerSize="large"
+              icon="signIn"
+              appearance="secondary"
+            />
+          </>
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}

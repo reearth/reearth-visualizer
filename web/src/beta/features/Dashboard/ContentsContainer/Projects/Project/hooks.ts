@@ -65,6 +65,11 @@ export default ({
       title: t("Project Setting"),
       path: `/settings/project/${project.id}`,
       icon: "setting"
+    },
+    {
+      id: "export",
+      title: t("Export"),
+      icon: "downloadSimple"
     }
   ];
 
