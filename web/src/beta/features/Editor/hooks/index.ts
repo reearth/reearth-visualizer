@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { Tab } from "../../Navbar";
 import { MapPageContextType } from "../Map/context";
@@ -59,13 +59,19 @@ export default ({ sceneId, projectId, tab }: Props) => {
   const {
     handleSketchTypeChange,
     handleSketchFeatureCreate,
+    handleSketchFeatureUpdate,
     sketchType,
     handleGeoJsonFeatureUpdate,
-    handleGeoJsonFeatureDelete
+    handleGeoJsonFeatureDelete,
+    sketchEditingFeature,
+    handleSketchGeometryEditStart,
+    handleSketchGeometryEditCancel,
+    handleSketchGeometryEditApply,
+    initSketch
   } = useSketch({
     tab,
     nlsLayers,
-    selectedLayer: selectedLayer?.layer,
+    selectedLayer,
     ignoreCoreLayerUnselect,
     visualizerRef
   });
@@ -162,6 +168,10 @@ export default ({ sceneId, projectId, tab }: Props) => {
       sketchEnabled: !!selectedLayer?.layer?.isSketch,
       sketchType,
       handleSketchTypeChange,
+      sketchEditingFeature,
+      handleSketchGeometryEditStart,
+      handleSketchGeometryEditCancel,
+      handleSketchGeometryEditApply,
       sceneSettings,
       layerStyles,
       sceneId,
@@ -198,6 +208,10 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleFlyTo,
       sketchType,
       handleSketchTypeChange,
+      sketchEditingFeature,
+      handleSketchGeometryEditStart,
+      handleSketchGeometryEditCancel,
+      handleSketchGeometryEditApply,
       sceneSettings,
       layerStyles,
       sceneId,
@@ -297,6 +311,10 @@ export default ({ sceneId, projectId, tab }: Props) => {
     ]
   );
 
+  const handleCoreAPIReady = useCallback(() => {
+    initSketch();
+  }, [initSketch]);
+
   return {
     visualizerSize,
     isVisualizerResizing,
@@ -311,6 +329,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleStoryBlockMove,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
+    handleSketchFeatureUpdate,
     handleIsVisualizerUpdate,
     handleCoreLayerSelectFromUI,
     selectStoryPage,
@@ -329,6 +348,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     layerStyles,
     layers: nlsLayers,
     layerId,
-    handleCustomPropertySchemaUpdate
+    handleCustomPropertySchemaUpdate,
+    handleCoreAPIReady
   };
 };

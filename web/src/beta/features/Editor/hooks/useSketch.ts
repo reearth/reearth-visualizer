@@ -1,5 +1,10 @@
 import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
-import { SketchFeature, SketchType, Geometry } from "@reearth/core";
+import {
+  SketchFeature,
+  SketchType,
+  Geometry,
+  SketchEditingFeature
+} from "@reearth/core";
 import { useFeatureCollectionFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import {
@@ -12,10 +17,12 @@ import {
 
 import { Tab } from "../../Navbar";
 
+import { SelectedLayer } from "./useLayers";
+
 type Props = {
   tab: Tab;
   nlsLayers: NLSLayer[];
-  selectedLayer: NLSLayer | undefined;
+  selectedLayer: SelectedLayer | undefined;
   visualizerRef: MutableRefObject<MapRef | null>;
   ignoreCoreLayerUnselect: MutableRefObject<boolean>;
 };
@@ -73,7 +80,7 @@ export default ({
 
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
-      if (!selectedLayer?.id) return;
+      if (!selectedLayer?.layer?.id) return;
       await useAddGeoJsonFeature({
         layerId: inp.layerId,
         geometry: inp.geometry,
@@ -87,45 +94,39 @@ export default ({
   const handleSketchFeatureCreate = useCallback(
     async (feature: SketchFeature | null) => {
       // TODO: create a new layer if there is no selected sketch layer
-      if (!feature || !selectedLayer?.id || !selectedLayer.isSketch) return;
+      if (
+        !feature ||
+        !selectedLayer?.layer?.id ||
+        !selectedLayer?.layer?.isSketch
+      )
+        return;
 
       await handleSketchLayerAdd({
         type: feature.type,
-        layerId: selectedLayer?.id,
+        layerId: selectedLayer?.layer?.id,
         properties: { ...feature.properties },
         geometry: feature.geometry
       });
 
       pendingSketchSelectionRef.current = {
-        layerId: selectedLayer.id,
+        layerId: selectedLayer.layer?.id,
         featureId: feature.properties.id
       };
 
       ignoreCoreLayerUnselect.current = true;
     },
-    [
-      selectedLayer?.id,
-      selectedLayer?.isSketch,
-      ignoreCoreLayerUnselect,
-      handleSketchLayerAdd
-    ]
+    [selectedLayer?.layer, ignoreCoreLayerUnselect, handleSketchLayerAdd]
   );
 
   useEffect(() => {
+    // Workaround: in order to show the indicator of the selected sketch feature we need to unselect it first.
+    visualizerRef?.current?.layers.select(undefined);
     // Workaround: we can't get an notice from core after nlsLayers got updated.
     // Therefore we need to get and select the latest sketch feature manually delayed.
     setTimeout(() => {
       if (pendingSketchSelectionRef.current) {
         const { layerId, featureId } = pendingSketchSelectionRef.current;
-        const layer = visualizerRef?.current?.layers
-          ?.layers?.()
-          ?.find((l) => l.id === layerId)?.computed;
-        const feature = layer?.features?.find(
-          (f) => f.properties?.id === featureId
-        );
-        if (feature) {
-          visualizerRef?.current?.layers.selectFeature(layerId, feature?.id);
-        }
+        visualizerRef?.current?.layers.selectFeature(layerId, featureId);
         pendingSketchSelectionRef.current = undefined;
         ignoreCoreLayerUnselect.current = false;
       }
@@ -142,7 +143,7 @@ export default ({
   }, [tab, handleSketchTypeChange]);
 
   useEffect(() => {
-    if (!selectedLayer?.isSketch) {
+    if (!selectedLayer?.layer?.isSketch) {
       handleSketchTypeChange(undefined);
     }
   }, [selectedLayer, handleSketchTypeChange]);
@@ -174,11 +175,95 @@ export default ({
     [useDeleteGeoJSONFeature]
   );
 
+  const handleSketchFeatureUpdate = useCallback(
+    async (feature: SketchFeature | null) => {
+      if (
+        !selectedLayer?.layer?.id ||
+        !selectedLayer?.computedFeature?.id ||
+        !selectedLayer.computedFeature.id !== !feature?.properties?.id ||
+        !feature
+      )
+        return;
+
+      const featureDataId =
+        selectedLayer.layer?.sketch?.featureCollection?.features?.find(
+          (f) => f.properties.id === feature.properties.id
+        )?.id;
+
+      if (!featureDataId) return;
+
+      await handleGeoJsonFeatureUpdate({
+        layerId: selectedLayer.layer.id,
+        featureId: featureDataId,
+        geometry: feature.geometry,
+        properties: {
+          ...selectedLayer.computedFeature.properties,
+          ...feature.properties
+        }
+      });
+
+      pendingSketchSelectionRef.current = {
+        layerId: selectedLayer.layer.id,
+        featureId: feature.properties.id
+      };
+    },
+    [selectedLayer, handleGeoJsonFeatureUpdate]
+  );
+
+  const [sketchEditingFeature, setSketchEditingFeatrue] = useState<
+    SketchEditingFeature | undefined
+  >();
+
+  const handleEditSketchFeature = useCallback(() => {
+    if (
+      !selectedLayer?.layer?.id ||
+      !selectedLayer?.computedFeature?.id ||
+      !selectedLayer?.layer?.isSketch
+    )
+      return;
+    visualizerRef.current?.sketch.editFeature({
+      layerId: selectedLayer.layer.id,
+      feature: selectedLayer.computedFeature
+    });
+  }, [visualizerRef, selectedLayer]);
+
+  const handleCancelEditSketchFeature = useCallback(() => {
+    visualizerRef.current?.sketch.cancelEdit();
+  }, [visualizerRef]);
+
+  const handleApplyEditSketchFeature = useCallback(() => {
+    visualizerRef.current?.sketch.applyEdit();
+  }, [visualizerRef]);
+
+  const initSketch = useCallback(() => {
+    visualizerRef.current?.sketch.overrideOptions({
+      dataOnly: true
+    });
+    visualizerRef.current?.sketch.onEditFeatureChange(setSketchEditingFeatrue);
+  }, [visualizerRef]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     visualizerRef.current?.sketch.overrideOptions({
+  //       dataOnly: true
+  //     });
+  //     visualizerRef.current?.sketch.onEditFeatureChange(
+  //       setSketchEditingFeatrue
+  //     );
+  //   }, 1000);
+  // }, [visualizerRef]);
+
   return {
     sketchType,
+    sketchEditingFeature,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
+    handleSketchFeatureUpdate,
     handleGeoJsonFeatureUpdate,
-    handleGeoJsonFeatureDelete
+    handleGeoJsonFeatureDelete,
+    handleSketchGeometryEditStart: handleEditSketchFeature,
+    handleSketchGeometryEditCancel: handleCancelEditSketchFeature,
+    handleSketchGeometryEditApply: handleApplyEditSketchFeature,
+    initSketch
   };
 };

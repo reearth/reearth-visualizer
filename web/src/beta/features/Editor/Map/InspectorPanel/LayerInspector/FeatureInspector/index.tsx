@@ -25,6 +25,10 @@ type Props = {
   sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
   onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
+  isEditingGeometry?: boolean;
+  onSketchGeometryEditStart?: () => void;
+  onSketchGeometryEditApply?: () => void;
+  onSketchGeometryEditCancel?: () => void;
 };
 
 export type ValueProp = string | number | boolean | undefined;
@@ -40,7 +44,11 @@ const FeatureData: FC<Props> = ({
   layer,
   sketchFeature,
   onGeoJsonFeatureUpdate,
-  onGeoJsonFeatureDelete
+  onGeoJsonFeatureDelete,
+  isEditingGeometry,
+  onSketchGeometryEditStart,
+  onSketchGeometryEditApply,
+  onSketchGeometryEditCancel
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -110,6 +118,7 @@ const FeatureData: FC<Props> = ({
       newProperties,
       ...fields.map((f) => ({ [f.title]: f.value }))
     );
+
     onGeoJsonFeatureUpdate?.({
       layerId: layer.id,
       featureId: sketchFeature.id,
@@ -144,6 +153,44 @@ const FeatureData: FC<Props> = ({
 
   return (
     <Wrapper>
+      {!!layer?.isSketch && sketchFeature?.id && (
+        <SketchFeatureButtons>
+          <GeometryEditButtons>
+            {isEditingGeometry ? (
+              <>
+                <Button
+                  onClick={onSketchGeometryEditApply}
+                  size="small"
+                  icon="check"
+                  appearance="primary"
+                  extendWidth
+                />
+                <Button
+                  onClick={onSketchGeometryEditCancel}
+                  size="small"
+                  icon="close"
+                  extendWidth
+                />
+              </>
+            ) : (
+              <Button
+                onClick={onSketchGeometryEditStart}
+                size="small"
+                icon="pencilLine"
+                extendWidth
+              />
+            )}
+          </GeometryEditButtons>
+          {!isEditingGeometry && (
+            <Button
+              onClick={handleDeleteSketchFeature}
+              size="small"
+              icon="trash"
+              extendWidth
+            />
+          )}
+        </SketchFeatureButtons>
+      )}
       {!!layer?.isSketch && (
         <Collapse
           title={t("Custom Properties")}
@@ -208,15 +255,6 @@ const FeatureData: FC<Props> = ({
           />
         </ValueWrapper>
       </Collapse>
-      {!!layer?.isSketch && sketchFeature?.id && (
-        <Button
-          title={t("Delete Feature")}
-          onClick={handleDeleteSketchFeature}
-          size="small"
-          icon="trash"
-          extendWidth
-        />
-      )}
     </Wrapper>
   );
 };
@@ -243,4 +281,17 @@ const ValueWrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.small,
   background: theme.bg[1],
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`
+}));
+
+const SketchFeatureButtons = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: theme.spacing.small
+}));
+
+const GeometryEditButtons = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "row",
+  gap: theme.spacing.small
 }));
