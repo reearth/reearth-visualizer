@@ -1,6 +1,9 @@
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
-import { useStorytellingFetcher } from "@reearth/services/api";
+import {
+  useStorytellingFetcher,
+  useProjectFetcher
+} from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -22,6 +25,7 @@ export default ({
 }: Props) => {
   const t = useT();
   const { useStoriesQuery } = useStorytellingFetcher();
+  const { useExportProject } = useProjectFetcher();
   const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -49,6 +53,18 @@ export default ({
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
+  const handleExportProject = useCallback(async () => {
+    if (!project.id) return;
+
+    const result = await useExportProject(project.id);
+
+    if (result.status === "success") {
+      console.log("export success");
+    } else {
+      console.error("Failed to export project:", result.status);
+    }
+  }, [useExportProject, project.id]);
+
   useEffect(() => {
     setIsStarred(project.starred);
   }, [project.starred]);
@@ -69,7 +85,8 @@ export default ({
     {
       id: "export",
       title: t("Export"),
-      icon: "downloadSimple"
+      icon: "downloadSimple",
+      onClick: () => handleExportProject()
     }
   ];
 

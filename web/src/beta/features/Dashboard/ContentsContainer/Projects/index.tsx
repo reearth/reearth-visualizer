@@ -9,7 +9,7 @@ import {
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useRef } from "react";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -39,7 +39,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
-    handleSearch
+    handleSearch,
+    handleImportProject
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -54,6 +55,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     ],
     [t]
   );
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <ManagerWrapper onClick={() => handleProjectSelect(undefined)}>
@@ -75,6 +78,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               managerSize="large"
               icon="signIn"
               appearance="secondary"
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <HiddenFileInput
+              type="file"
+              accept=".json"
+              ref={fileInputRef}
+              onChange={handleImportProject}
             />
           </>
         ]}
@@ -296,3 +306,7 @@ const LoadingWrapper = styled("div")(() => ({
   width: "100%",
   height: 100
 }));
+
+const HiddenFileInput = styled("input")({
+  display: "none"
+});

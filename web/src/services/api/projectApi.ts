@@ -21,7 +21,9 @@ import {
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
   UPDATE_PROJECT_ALIAS,
-  UPDATE_PROJECT_BASIC_AUTH
+  UPDATE_PROJECT_BASIC_AUTH,
+  EXPORT_PROJECT,
+  IMPORT_PROJECT
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -387,6 +389,76 @@ export default () => {
     [updateProjectAliasMutation, t, setNotification]
   );
 
+  const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
+  const useExportProject = useCallback(
+    async (projectId: string) => {
+      if (!projectId) return { status: "error" };
+
+      const { data, errors } = await exportProjectMutation({
+        variables: { projectId }
+      });
+
+      if (errors || !data?.exportProject) {
+        console.log("GraphQL: Failed to export project", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to export project.")
+        });
+
+        return { status: "error" };
+      }
+
+      const projectData = data.exportProject.projectData;
+
+      const blob = new Blob([JSON.stringify(projectData)], {
+        type: "application/json"
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${projectId}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      setNotification({
+        type: "success",
+        text: t("Successfully exported project!")
+      });
+      return { data: projectData, status: "success" };
+    },
+    [exportProjectMutation, t, setNotification]
+  );
+
+  const [importProjectMutation] = useMutation(IMPORT_PROJECT);
+  const useImportProject = useCallback(
+    async (file: File) => {
+      if (!file) return { status: "error" };
+
+      const { data, errors } = await importProjectMutation({
+        variables: { file }
+      });
+
+      if (errors || !data?.importProject) {
+        console.log("GraphQL: Failed to import project", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to import project.")
+        });
+
+        return { status: "error" };
+      }
+
+      const projectData = data.importProject.projectData;
+
+      setNotification({
+        type: "success",
+        text: t("Successfully imported project!")
+      });
+      return { data: projectData, status: "success" };
+    },
+    [importProjectMutation, t, setNotification]
+  );
+
   return {
     publishProjectLoading,
     useProjectQuery,
@@ -399,6 +471,8 @@ export default () => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
-    useStarredProjectsQuery
+    useStarredProjectsQuery,
+    useExportProject,
+    useImportProject
   };
 };

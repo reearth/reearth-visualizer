@@ -207,3 +207,19 @@ export const GET_STARRED_PROJECTS = gql(`
 			}
   }
 `);
+
+export const EXPORT_PROJECT = gql(`
+  mutation ExportProject($projectId: ID!) {
+    exportProject(input: { projectId: $projectId }) {
+      projectData
+    }
+  }
+`);
+
+export const IMPORT_PROJECT = gql(`
+  mutation ImportProject($file: Upload!) {
+    importProject(input: { file: $file }) {
+      projectData
+    }
+  }
+`);
