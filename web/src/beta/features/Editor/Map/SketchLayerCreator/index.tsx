@@ -42,6 +42,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
+  const [warning, setWarning] = useState(false);
 
   const handleLayerStyleChange = useCallback((value?: string | string[]) => {
     setLayerStyle(value as string);
@@ -101,6 +102,8 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
         <SketchCustomProperties
           customProperties={customProperties}
           propertiesList={propertiesList}
+          warning={warning}
+          setWarning={setWarning}
           setCustomProperties={setCustomProperties}
           setPropertiesList={setPropertiesList}
         />
@@ -121,7 +124,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
               title="Create"
               appearance="primary"
               onClick={handleSubmit}
-              disabled={!layerName}
+              disabled={!layerName || warning}
             />
           </>
         }

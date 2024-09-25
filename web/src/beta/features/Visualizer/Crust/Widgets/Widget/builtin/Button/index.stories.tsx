@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 
 import { contextEvents } from "../../storybook";
@@ -10,7 +10,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-export const Default: Story<Props> = (args) => <Button {...args} />;
+export const Default: StoryFn<Props> = (args) => <Button {...args} />;
 
 Default.args = {
   widget: {

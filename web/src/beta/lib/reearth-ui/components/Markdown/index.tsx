@@ -1,6 +1,6 @@
 import { Typography, typographyStyles } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import tinycolor from "tinycolor2";
@@ -29,9 +29,21 @@ export const Markdown: FC<Props> = ({
     [backgroundColor]
   );
 
+  const LinkRenderer = ({
+    href,
+    children
+  }: {
+    href?: string;
+    children?: ReactNode;
+  }) => (
+    <a href={href} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  );
+
   return (
     <Wrapper
-      className="markdown-body" // github-markdown-css is imported at src/services/theme/globalstyle.tsx
+      className="markdown-body"
       styles={styles}
       dark={dark}
       onClick={onClick}
@@ -40,7 +52,7 @@ export const Markdown: FC<Props> = ({
       <ReactMarkdown
         remarkPlugins={plugins}
         className={className}
-        linkTarget="_blank"
+        components={{ a: LinkRenderer }}
       >
         {children || ""}
       </ReactMarkdown>
@@ -83,7 +95,7 @@ const Wrapper = styled("div")<{ styles?: Typography; dark: boolean }>(
         ? "rgba(39, 67, 75, 0.1)"
         : "rgba(198, 203, 209, 0.1)"
     },
-    ["table tr nthOfType(2n)"]: {
+    ["table tr:nth-of-type(2n)"]: {
       backgroundColor: dark
         ? "rgba(22, 27, 34, 0.1)"
         : "rgba(246, 248, 250, 0.1)"
@@ -102,7 +114,7 @@ const Wrapper = styled("div")<{ styles?: Typography; dark: boolean }>(
     },
     ["hr"]: {
       backgroundColor: dark
-        ? "rgba(48, 54, 61, 0.1"
+        ? "rgba(48, 54, 61, 0.1)"
         : "rgba(225, 228, 232, 0.1)"
     }
   })

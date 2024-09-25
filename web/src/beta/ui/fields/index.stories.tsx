@@ -41,42 +41,42 @@ export const Components: Story = {
       }}
     >
       <CommonField
-        commonTitle="CommonField"
+        title="CommonField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
 
       <InputField
         placeholder="Text"
-        commonTitle="InputField"
+        title="InputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <NumberField
         placeholder="Value"
         value={2}
-        commonTitle="NumberField"
+        title="NumberField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TwinInputField
         values={[3.1415926, 3.1415926]}
         content={["Latitude", "Longitude"]}
-        commonTitle="TwinInputField"
+        title="TwinInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TripletInputField
         values={[3.1415926, 3.1415926, 3.1415926]}
         content={["Heading", "Pitch", "Roll"]}
-        commonTitle="TripletInputField"
+        title="TripletInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <QuartetInputField
         values={[3.1415926, 3.1415926, 3.1415926, 3.1415926]}
         content={["x", "y", "z", "w"]}
-        commonTitle="QuartetInputField"
+        title="QuartetInputField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TextareaField
         placeholder="Text"
-        commonTitle="TextareaField"
+        title="TextareaField"
         value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
@@ -87,45 +87,45 @@ export const Components: Story = {
           { label: "Option 3", value: "option3" }
         ]}
         multiple={true}
-        commonTitle="SelectField"
+        title="SelectField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
 
       <SwitchField
         value={true}
         onChange={() => {}}
-        commonTitle="SwitchField"
+        title="SwitchField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <CodeField
         value="const a = 1; const a = 1; const a = 1;"
         height={200}
-        commonTitle="CodeField"
+        title="CodeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <ColorField
         value="#000000"
-        commonTitle="ColorField"
+        title="ColorField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <AssetField
         inputMethod="asset"
         placeholder="Asset"
-        commonTitle="AssetField"
+        title="AssetField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <CameraField
         onSave={() => {}}
-        commonTitle="CameraField"
+        title="CameraField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <SpacingField
-        commonTitle="SpacingField"
+        title="SpacingField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimePointField
         value="2023-10-24T00:00:00+09:00"
-        commonTitle="TimePointField"
+        title="TimePointField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <TimePeriodField
@@ -135,19 +135,19 @@ export const Components: Story = {
           endTime: "2024-07-24T11:03:56+00:00"
         }}
         onChange={() => {}}
-        commonTitle="TimePeriodField"
+        title="TimePeriodField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <RangeField
         values={[3, 15]}
         content={["min", "max"]}
-        commonTitle="RangeField"
+        title="RangeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
       <CheckboxField
         onChange={() => {}}
         value={true}
-        commonTitle="CheckboxField"
+        title="CheckboxField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>

@@ -3,6 +3,8 @@ package scene
 import (
 	"errors"
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var ErrSceneIsLocked error = errors.New("scene is locked")
@@ -74,6 +76,17 @@ func (s *Scene) Plugins() *Plugins {
 		return nil
 	}
 	return s.plugins
+}
+
+func (s *Scene) PluginIds() []id.PluginID {
+	if s == nil {
+		return nil
+	}
+	var pluginIDs []id.PluginID
+	for _, plugin := range s.plugins.Plugins() {
+		pluginIDs = append(pluginIDs, plugin.Plugin())
+	}
+	return pluginIDs
 }
 
 func (s *Scene) UpdatedAt() time.Time {

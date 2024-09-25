@@ -6,12 +6,12 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type ColorInputFieldProps = CommonFieldProps & ColorInputProps;
 
 const ColorInputField: FC<ColorInputFieldProps> = ({
-  commonTitle,
+  title,
   description,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <ColorInput {...props} />
     </CommonField>
   );

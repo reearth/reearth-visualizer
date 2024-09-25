@@ -75,7 +75,7 @@ const CameraBlockEditor: FC<Props> = ({
     <EditorWrapper>
       <GroupWrapper>
         <ListField
-          commonTitle={t("Buttons List")}
+          title={t("Buttons List")}
           items={listItems}
           selected={selected}
           onItemAdd={handleItemAdd}
@@ -87,7 +87,7 @@ const CameraBlockEditor: FC<Props> = ({
         />
         <FieldGroup disabled={!editorProperties}>
           <InputField
-            commonTitle={editorProperties?.title?.title}
+            title={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
             onBlur={(value) =>
@@ -95,7 +95,7 @@ const CameraBlockEditor: FC<Props> = ({
             }
           />
           <ColorField
-            commonTitle={editorProperties?.color?.title}
+            title={editorProperties?.color?.title}
             description={editorProperties?.color?.description}
             value={editorProperties?.color?.value}
             onChange={(value) =>
@@ -103,7 +103,7 @@ const CameraBlockEditor: FC<Props> = ({
             }
           />
           <ColorField
-            commonTitle={editorProperties?.bgColor?.title}
+            title={editorProperties?.bgColor?.title}
             description={editorProperties?.bgColor?.description}
             value={editorProperties?.bgColor?.value}
             onChange={(value) =>
@@ -115,7 +115,7 @@ const CameraBlockEditor: FC<Props> = ({
 
       <FieldGroup disabled={!editorProperties}>
         <SelectField
-          commonTitle={editorProperties?.showLayers?.title}
+          title={editorProperties?.showLayers?.title}
           description={editorProperties?.showLayers?.description}
           options={layers}
           value={editorProperties?.showLayers?.value}

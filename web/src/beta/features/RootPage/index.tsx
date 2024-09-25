@@ -1,4 +1,3 @@
-
 import PageWrapper from "@reearth/beta/features/RootPage/PageWrapper";
 import { Loading } from "@reearth/beta/lib/reearth-ui";
 import { FC } from "react";

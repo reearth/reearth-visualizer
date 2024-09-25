@@ -27,7 +27,7 @@ export type ListFieldProps = CommonFieldProps & {
 };
 
 const ListField: FC<ListFieldProps> = ({
-  commonTitle,
+  title,
   description,
   items,
   selected,
@@ -107,7 +107,7 @@ const ListField: FC<ListFieldProps> = ({
   }, []);
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <FieldContainer>
         <Button
           onClick={onItemAdd}

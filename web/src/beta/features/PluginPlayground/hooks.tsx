@@ -1,7 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { useMemo } from "react";
 
-
 import Console from "./Console";
 import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";

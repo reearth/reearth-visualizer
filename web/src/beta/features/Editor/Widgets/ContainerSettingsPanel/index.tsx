@@ -27,7 +27,7 @@ const ContainerSettingsPanel: FC = () => {
     <Panel title={t("Container Settings")} alwaysOpen extend>
       <FieldsWrapper>
         <NumberField
-          commonTitle={t("Padding top")}
+          title={t("Padding top")}
           value={widgetArea?.padding?.top.toString()}
           onBlur={(newVal) => {
             handleWidgetAreaStateChange({
@@ -40,7 +40,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <NumberField
-          commonTitle={t("Padding right")}
+          title={t("Padding right")}
           value={widgetArea?.padding?.right.toString()}
           onBlur={(newVal) => {
             handleWidgetAreaStateChange({
@@ -53,7 +53,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <NumberField
-          commonTitle={t("Padding bottom")}
+          title={t("Padding bottom")}
           value={widgetArea?.padding?.bottom.toString()}
           onBlur={(newVal) => {
             handleWidgetAreaStateChange({
@@ -66,7 +66,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <NumberField
-          commonTitle={t("Padding left")}
+          title={t("Padding left")}
           value={widgetArea?.padding?.left.toString()}
           onBlur={(newVal) => {
             handleWidgetAreaStateChange({
@@ -80,7 +80,7 @@ const ContainerSettingsPanel: FC = () => {
         />
 
         <NumberField
-          commonTitle={t("Gap spacing")}
+          title={t("Gap spacing")}
           value={(widgetArea?.gap ?? 6).toString()}
           onBlur={(newVal) => {
             handleWidgetAreaStateChange({
@@ -90,7 +90,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <SwitchField
-          commonTitle={t("Align centered")}
+          title={t("Align centered")}
           value={!!widgetArea?.centered}
           onChange={(newVal) => {
             handleWidgetAreaStateChange({
@@ -100,7 +100,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <ColorField
-          commonTitle={t("Background color")}
+          title={t("Background color")}
           value={widgetArea?.background}
           onChange={(newVal) => {
             handleWidgetAreaStateChange({

@@ -6,11 +6,19 @@ import {
   PropertyListProp
 } from "../../SketchLayerCreator/type";
 
+const forbiddenKeywords = new Set([
+  "id",
+  "type",
+  "extrudedHeight",
+  "positions"
+]);
+
 export default function useHooks({
   customProperties,
   propertiesList,
   setPropertiesList,
-  setCustomProperties
+  setCustomProperties,
+  setWarning
 }: CustomPropertyProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [editTitleIndex, setEditTitleIndex] = useState<number | null>(null);
@@ -19,13 +27,20 @@ export default function useHooks({
   const handleTitleBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
       if (!propertiesList) return;
-
       const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
-      newList[idx].key = newKeyValue ?? "";
+      newList[idx].key = newKeyValue?.trim() ?? "";
       setPropertiesList?.(newList);
+      const hasForbiddenKey = newList.some((item) =>
+        forbiddenKeywords.has(item.key)
+      );
+      if (hasForbiddenKey) {
+        setWarning?.(true);
+      } else {
+        setWarning?.(false);
+      }
       if (editTitleIndex === idx) setEditTitleIndex(null);
     },
-    [editTitleIndex, propertiesList, setPropertiesList]
+    [editTitleIndex, propertiesList, setPropertiesList, setWarning]
   );
 
   const handleTypeChange = useCallback(

@@ -17,7 +17,7 @@ export type TimePointFieldProps = CommonFieldProps & {
 };
 
 const TimePointField: FC<TimePointFieldProps> = ({
-  commonTitle,
+  title,
   description,
   value,
   disabledField,
@@ -53,7 +53,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
   }, [value]);
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <Wrapper>
         <TextInput
           appearance="readonly"

@@ -9,7 +9,7 @@ type Widget struct {
 	extended  bool
 }
 
-func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled, extended bool) (*Widget, error) {
+func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) (*Widget, error) {
 	if !plugin.Validate() || string(extension) == "" || property.IsNil() {
 		return nil, ErrInvalidID
 	}

@@ -1,4 +1,4 @@
-import { GetSceneQuery } from "@reearth/services/gql";
+import { GetSceneQuery, PublishmentStatus } from "@reearth/services/gql";
 
 import { type Item, convert } from "../propertyApi/utils";
 
@@ -37,10 +37,12 @@ export type Story = {
   isBasicAuthActive?: boolean;
   basicAuthUsername?: string;
   basicAuthPassword?: string;
-  publishmentStatus?: string;
+  publishmentStatus?: PublishmentStatus;
   panelPosition?: Position;
   alias: string;
   pages?: Page[];
+  trackingId?: string; // Not supported yet
+  enableGa?: boolean; // Not supported yet
 };
 
 export const getStories = (rawScene?: GetSceneQuery) => {

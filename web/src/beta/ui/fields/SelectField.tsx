@@ -6,12 +6,12 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type SelectorFieldProps = CommonFieldProps & SelectorProps;
 
 const SelectorField: FC<SelectorFieldProps> = ({
-  commonTitle,
+  title,
   description,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <Selector {...props} />
     </CommonField>
   );

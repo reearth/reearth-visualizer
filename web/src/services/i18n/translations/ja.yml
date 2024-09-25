@@ -87,8 +87,13 @@ Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
-Style_: スタイル_
+Invalid style: ''
+Interface: ''
+Code: ''
 Save: 保存
+New node: ''
+No style selected: ''
+Style_: スタイル_
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -101,6 +106,7 @@ Type Title here: ''
 Please select one type: ''
 Title: ページタイトル
 Type: ''
+The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: ''
 New Property: ''
 ' Text': ''
 General: ''
@@ -202,6 +208,7 @@ You are about to change the site name for your project. Only alphanumeric charac
 Google Analytics: ''
 Enable Google Analytics: 有効
 Tracking ID: ''
+Custom Domain: ''
 Left: 左
 Right: 右
 Story Panel: ストーリーパネル

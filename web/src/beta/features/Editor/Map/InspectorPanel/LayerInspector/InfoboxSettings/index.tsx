@@ -32,7 +32,7 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
         ))
       ) : (
         <SwitchField
-          commonTitle={t("Enable Infobox")}
+          title={t("Enable Infobox")}
           description={t("Show infobox when the user clicks on a layer")}
           value={false}
           onChange={handleInfoboxCreate}
