@@ -1,3 +1,4 @@
+import { useMutation, gql } from "@apollo/client";
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
@@ -11,7 +12,8 @@ import {
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useState, useMemo, FC } from "react";
+import { useCallback, useState, useMemo, FC, useEffect } from "react";
+import useFileInput from "use-file-input";
 
 import {
   InnerPage,
@@ -41,6 +43,23 @@ type Props = {
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onDeleteProject: () => void;
 };
+
+// Export Example
+const EXPORT_PROJECT = gql`
+  mutation ExportProject($projectId: ID!) {
+    exportProject(input: { projectId: $projectId }) {
+      projectDataPath
+    }
+  }
+`;
+// Import Example
+export const IMPORT_PROJECT = gql`
+  mutation ImportProject($file: Upload!) {
+    importProject(input: { file: $file }) {
+      projectData
+    }
+  }
+`;
 
 const GeneralSettings: FC<Props> = ({
   project,
@@ -72,9 +91,85 @@ const GeneralSettings: FC<Props> = ({
     [deleteInputName, project?.name]
   );
 
+  // Export Example
+  const [
+    exportProject,
+    { data: exportData, loading: exportLoading, error: exportError }
+  ] = useMutation(EXPORT_PROJECT);
+  useEffect(() => {
+    if (exportLoading || !exportData) return;
+    if (exportError) {
+      console.error(exportError);
+    } else {
+      console.log(exportData);
+      const link = document.createElement("a");
+      link.href = `${window.origin.replace("3000", "8080")}${exportData.exportProject.projectDataPath}`;
+      document.body.appendChild(link);
+      console.log(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }, [exportData, exportLoading, exportError]);
+
+  // Import Example
+  const [
+    importProject,
+    { data: importData, loading: importLoading, error: importError }
+  ] = useMutation(IMPORT_PROJECT);
+  const handleImportProjectClick = useFileInput(
+    async (files: FileList) => {
+      console.log(files);
+      await importProject({
+        variables: { file: files[0] }
+      });
+    },
+    {
+      accept: ".reearth",
+      multiple: true
+    }
+  );
+  useEffect(() => {
+    if (importLoading) return;
+    if (importError) {
+      console.error(importError);
+    } else {
+      console.log(importData);
+    }
+  }, [importData, importLoading, importError]);
+
   return project ? (
     <InnerPage>
       <SettingsWrapper>
+        <Collapse size="large" title={t("Backup")}>
+          <SettingsFields>
+            <ButtonWrapper>
+              {/* Export Example */}
+              <Button
+                title={t("Export project")}
+                appearance="primary"
+                onClick={async () => {
+                  console.log("project.id:", project.id);
+                  try {
+                    await exportProject({
+                      variables: { projectId: project.id }
+                    });
+                  } catch (e) {
+                    console.error("Error exporting project:", e);
+                  }
+                }}
+              />
+            </ButtonWrapper>
+            <ButtonWrapper>
+              {/* Import Example */}
+              <Button
+                title={t("Import project")}
+                appearance="primary"
+                onClick={handleImportProjectClick}
+              />
+            </ButtonWrapper>
+          </SettingsFields>
+        </Collapse>
+
         {project.isArchived ? (
           <ArchivedSettingNotice />
         ) : (
