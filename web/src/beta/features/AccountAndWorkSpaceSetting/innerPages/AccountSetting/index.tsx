@@ -40,15 +40,13 @@ const AccountSetting: FC<Props> = ({
           <SettingsFields>
             <InputField
               title={t("Name")}
-              value={t(imformationData.name ? imformationData.name : "Red")}
+              value={imformationData.name ? t(imformationData.name) : ""}
               appearance="readonly"
               disabled
             />
             <InputField
               title={t("Email address")}
-              value={t(
-                imformationData.email ? imformationData.email : "red@eukarya.io"
-              )}
+              value={imformationData.email ? t(imformationData.email) : ""}
               appearance="readonly"
               disabled
             />
