@@ -15,14 +15,22 @@ export default () => {
 
   const handleUpdateUserPassword = useCallback(
     async ({ password, passwordConfirmation }: UpdatePasswordType) => {
-      await useUpdatePassword({ password, passwordConfirmation });
+      try {
+        await useUpdatePassword({ password, passwordConfirmation });
+      } catch (error) {
+        console.error("Failed to update password:", error);
+      }
     },
     [useUpdatePassword]
   );
 
   const handleDeleteUser = useCallback(async () => {
-    const userId = data.id;
-    if (userId) await useDeleteUser({ userId });
+    try {
+      const userId = data.id;
+      if (userId) await useDeleteUser({ userId });
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
   }, [data.id, useDeleteUser]);
 
   return {
