@@ -1,6 +1,25 @@
 You have passed the maximum value.: ''
 You have passed the minimum value.: ''
 Not found: ページが見つかりません
+Account: ''
+Name: 名前
+Email address: ''
+Password: パスワード
+'**********': ''
+No whitespace is allowed.: ''
+Too short.: ''
+That is terribly long.: ''
+That password is great!: ''
+That password is better.: ''
+That password is okay.: ''
+That password confuses me, but might be okay.: ''
+Change password: ''
+In order to protect your account, make sure your password is unique and strong.: ''
+New password: ''
+New password (for confirmation): ''
+'"repeatPassword" Passwords need to match': ''
+Notice: 通知
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Select Asset: ''
 Last Uploaded: 昇順（アップロード日）
 First Uploaded: 降順（アップロード日）
@@ -12,7 +31,6 @@ Upload File: ''
 Search in all assets library: ''
 Assets selected: ''
 Asset selected: ''
-Name: 名前
 Uploaded At: ''
 Size: ''
 No Asset has been uploaded yet: ''
@@ -41,6 +59,7 @@ Starred: ''
 Switch WorkSpace: ''
 Personal: ''
 Team Workspace: ''
+Account Settings: ''
 Log Out: ''
 Re:Earth Visualizer: ''
 Page: ページ
@@ -159,6 +178,7 @@ Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
+Visualizer: ''
 Unknown: 不明
 Switch workspace: ''
 Log out: ログアウト
@@ -167,10 +187,8 @@ Map: マップ
 Widgets: ウィジェット
 Error: エラー
 Warning: 注意
-Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
 Submit: 反映
@@ -201,7 +219,6 @@ Public Info: 公開詳細設定
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効化
 Username: ユーザー名
-Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
@@ -320,6 +337,10 @@ Failed to update the layerStyle.: レイヤースタイルのアップデート�
 Successfully updated a the layerStyle!: レイヤースタイルのアップデートに成功しました！
 Failed to delete the layer style.: ''
 Successfully deleted the layer style!: ''
+Failed to update user password.: ''
+Successfully updated user password!: ''
+Failed to delete user.: ''
+Successfully delete user!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
