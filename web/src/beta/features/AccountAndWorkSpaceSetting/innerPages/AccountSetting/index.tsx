@@ -17,7 +17,7 @@ import PasswordModal from "./PasswordModal";
 
 type Props = {
   imformationData: { name?: string; email?: string };
-  passwordPolicy?: PasswordPolicy;
+  passwordPolicy: PasswordPolicy;
   onUpdateUserPassword: ({
     password,
     passwordConfirmation
