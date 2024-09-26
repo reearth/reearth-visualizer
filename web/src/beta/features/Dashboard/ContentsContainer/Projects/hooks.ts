@@ -244,7 +244,7 @@ export default (workspaceId?: string) => {
       if (file) {
         const result = await useImportProject(file);
         if (result.status === "success") {
-          console.log(result.data);
+          console.log(result.status);
           await refetch();
         } else {
           console.error("Failed to import project:", result.status);

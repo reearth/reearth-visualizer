@@ -390,71 +390,97 @@ export default () => {
   );
 
   const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
+
   const useExportProject = useCallback(
     async (projectId: string) => {
       if (!projectId) return { status: "error" };
 
-      const { data, errors } = await exportProjectMutation({
-        variables: { projectId }
-      });
+      try {
+        const { data, errors } = await exportProjectMutation({
+          variables: { projectId }
+        });
 
-      if (errors || !data?.exportProject) {
-        console.log("GraphQL: Failed to export project", errors);
+        if (errors || !data?.exportProject?.projectDataPath) {
+          console.log("GraphQL: Failed to export project", errors);
+          setNotification({
+            type: "error",
+            text: t("Failed to export project.")
+          });
+
+          return { status: "error" };
+        }
+
+        const projectDataPath = data.exportProject.projectDataPath;
+
+        const backendUrl = window.origin.replace("3000", "8080");
+        const downloadUrl = `${backendUrl}${projectDataPath}`;
+
+        const response = await fetch(downloadUrl);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${projectId}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        setNotification({
+          type: "success",
+          text: t("Successfully exported project!")
+        });
+
+        return { status: "success" };
+      } catch (error) {
+        console.log("GraphQL: Failed to export project", error);
         setNotification({
           type: "error",
           text: t("Failed to export project.")
         });
-
         return { status: "error" };
       }
-
-      const projectData = data.exportProject.projectData;
-
-      const blob = new Blob([JSON.stringify(projectData)], {
-        type: "application/json"
-      });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${projectId}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
-
-      setNotification({
-        type: "success",
-        text: t("Successfully exported project!")
-      });
-      return { data: projectData, status: "success" };
     },
     [exportProjectMutation, t, setNotification]
   );
 
   const [importProjectMutation] = useMutation(IMPORT_PROJECT);
+
   const useImportProject = useCallback(
     async (file: File) => {
       if (!file) return { status: "error" };
 
-      const { data, errors } = await importProjectMutation({
-        variables: { file }
-      });
+      try {
+        const { data, errors } = await importProjectMutation({
+          variables: { file }
+        });
 
-      if (errors || !data?.importProject) {
-        console.log("GraphQL: Failed to import project", errors);
+        if (errors || !data?.importProject) {
+          console.log("GraphQL: Failed to import project", errors);
+          setNotification({
+            type: "error",
+            text: t("Failed to import project.")
+          });
+          return { status: "error" };
+        }
+
+        setNotification({
+          type: "success",
+          text: t("Successfully imported project!")
+        });
+        return { status: "success" };
+      } catch (error) {
+        console.log("GraphQL: Failed to import project", error);
         setNotification({
           type: "error",
           text: t("Failed to import project.")
         });
-
         return { status: "error" };
       }
-
-      const projectData = data.importProject.projectData;
-
-      setNotification({
-        type: "success",
-        text: t("Successfully imported project!")
-      });
-      return { data: projectData, status: "success" };
     },
     [importProjectMutation, t, setNotification]
   );

@@ -82,7 +82,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             />
             <HiddenFileInput
               type="file"
-              accept=".json"
+              accept=".zip"
               ref={fileInputRef}
               onChange={handleImportProject}
             />
