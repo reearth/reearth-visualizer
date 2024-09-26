@@ -32,6 +32,7 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
+  const [exportModalVisible, setExportModalVisible] = useState(false);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -53,6 +54,14 @@ export default ({
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
+  const openExportModal = useCallback(() => {
+    setExportModalVisible(true);
+  }, []);
+
+  const closeExportModal = useCallback(() => {
+    setExportModalVisible(false);
+  }, []);
+
   const handleExportProject = useCallback(async () => {
     if (!project.id) return;
 
@@ -60,10 +69,12 @@ export default ({
 
     if (result.status === "success") {
       console.log("export success");
+      closeExportModal();
     } else {
       console.error("Failed to export project:", result.status);
+      closeExportModal();
     }
-  }, [useExportProject, project.id]);
+  }, [useExportProject, project.id, closeExportModal]);
 
   useEffect(() => {
     setIsStarred(project.starred);
@@ -86,7 +97,7 @@ export default ({
       id: "export",
       title: t("Export"),
       icon: "downloadSimple",
-      onClick: () => handleExportProject()
+      onClick: () => openExportModal()
     }
   ];
 
@@ -144,6 +155,9 @@ export default ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
+    handleProjectStarClick,
+    exportModalVisible,
+    closeExportModal,
+    handleExportProject
   };
 };

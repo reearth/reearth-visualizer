@@ -359,6 +359,7 @@ Failed to export project.: プロジェクトのエクスポートに失敗し�
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
 Failed to import project.: プロジェクトのインポートに失敗しました。
 Successfully imported project!: プロジェクトのインポートに成功しました！
+Export Project: プロジェクトのエクスポート
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: ''
 Failed to create story.: ストーリーの作成に失敗しました。

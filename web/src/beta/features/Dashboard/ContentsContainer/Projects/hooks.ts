@@ -57,7 +57,8 @@ export default (workspaceId?: string) => {
     isRefetching,
     hasMoreProjects,
     endCursor,
-    fetchMore
+    fetchMore,
+    refetch
   } = useProjectsQuery({
     teamId: workspaceId || "",
     pagination: {
@@ -244,12 +245,13 @@ export default (workspaceId?: string) => {
         const result = await useImportProject(file);
         if (result.status === "success") {
           console.log(result.data);
+          await refetch();
         } else {
           console.error("Failed to import project:", result.status);
         }
       }
     },
-    [useImportProject]
+    [useImportProject, refetch]
   );
 
   return {

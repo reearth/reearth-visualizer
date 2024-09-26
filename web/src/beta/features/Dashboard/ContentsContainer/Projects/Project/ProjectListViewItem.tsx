@@ -2,9 +2,12 @@ import {
   Button,
   PopupMenu,
   TextInput,
-  Typography
+  Typography,
+  Modal,
+  ModalPanel
 } from "@reearth/beta/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/beta/utils/time";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
@@ -18,6 +21,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   onProjectSelect,
   onProjectUpdate
 }) => {
+  const t = useT();
   const theme = useTheme();
 
   const createAt = useMemo(
@@ -42,7 +46,10 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
+    handleProjectStarClick,
+    exportModalVisible,
+    closeExportModal,
+    handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -50,68 +57,98 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     onProjectSelect
   });
 
-  return (
-    <ListWrapper
-      onClick={(e) => onProjectSelect?.(e, project.id)}
-      isHovered={isHovered ?? false}
-      onDoubleClick={onProjectOpen}
-      onMouseEnter={() => handleProjectHover?.(true)}
-      onMouseLeave={() => handleProjectHover?.(false)}
-      isSelected={selectedProjectId === project.id}
-    >
-      <ThumbnailCol>
-        <ActionWrapper>
-          <StarButtonWrapper
-            isStarred={isStarred ?? false}
-            isHovered={isHovered ?? false}
-            isSelected={selectedProjectId === project.id}
-          >
-            <Button
-              iconButton
-              icon={isStarred ? "starFilled" : "star"}
-              onClick={(e) => handleProjectStarClick?.(e)}
-              iconColor={isStarred ? theme.warning.main : theme.content.main}
-              appearance="simple"
-            />
-          </StarButtonWrapper>
-          <ProjectImage backgroundImage={project.imageUrl} />
-        </ActionWrapper>
-      </ThumbnailCol>
-      <ProjectNameCol>
-        <PublishStatus status={hasMapOrStoryPublished} />
-        {!isEditing ? (
-          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
-            {projectName}
-          </TitleWrapper>
-        ) : (
-          <TextInput
-            onChange={handleProjectNameChange}
-            onBlur={handleProjectNameBlur}
-            value={projectName}
-            autoFocus={isEditing}
-            appearance="present"
-          />
-        )}
-      </ProjectNameCol>
-      <TimeCol>
-        <Typography size="body">{UpdatedAt}</Typography>
-      </TimeCol>
-      <TimeCol>
-        <Typography size="body">{createAt}</Typography>
-      </TimeCol>
-      <ActionCol
-        onClick={(e: MouseEvent) => {
-          e.stopPropagation();
-        }}
-      >
-        <PopupMenu
-          menu={popupMenu}
-          label={
-            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
-          }
+  const actions = useMemo(
+    () => (
+      <>
+        <Button
+          title={t("Cancel")}
+          appearance={"secondary"}
+          onClick={closeExportModal}
         />
-      </ActionCol>
-    </ListWrapper>
+        <Button
+          title={t("Export")}
+          appearance={"primary"}
+          onClick={handleExportProject}
+        />
+      </>
+    ),
+    [handleExportProject, closeExportModal, t]
+  );
+
+  return (
+    <>
+      <ListWrapper
+        onClick={(e) => onProjectSelect?.(e, project.id)}
+        isHovered={isHovered ?? false}
+        onDoubleClick={onProjectOpen}
+        onMouseEnter={() => handleProjectHover?.(true)}
+        onMouseLeave={() => handleProjectHover?.(false)}
+        isSelected={selectedProjectId === project.id}
+      >
+        <ThumbnailCol>
+          <ActionWrapper>
+            <StarButtonWrapper
+              isStarred={isStarred ?? false}
+              isHovered={isHovered ?? false}
+              isSelected={selectedProjectId === project.id}
+            >
+              <Button
+                iconButton
+                icon={isStarred ? "starFilled" : "star"}
+                onClick={(e) => handleProjectStarClick?.(e)}
+                iconColor={isStarred ? theme.warning.main : theme.content.main}
+                appearance="simple"
+              />
+            </StarButtonWrapper>
+            <ProjectImage backgroundImage={project.imageUrl} />
+          </ActionWrapper>
+        </ThumbnailCol>
+        <ProjectNameCol>
+          <PublishStatus status={hasMapOrStoryPublished} />
+          {!isEditing ? (
+            <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
+              {projectName}
+            </TitleWrapper>
+          ) : (
+            <TextInput
+              onChange={handleProjectNameChange}
+              onBlur={handleProjectNameBlur}
+              value={projectName}
+              autoFocus={isEditing}
+              appearance="present"
+            />
+          )}
+        </ProjectNameCol>
+        <TimeCol>
+          <Typography size="body">{UpdatedAt}</Typography>
+        </TimeCol>
+        <TimeCol>
+          <Typography size="body">{createAt}</Typography>
+        </TimeCol>
+        <ActionCol
+          onClick={(e: MouseEvent) => {
+            e.stopPropagation();
+          }}
+        >
+          <PopupMenu
+            menu={popupMenu}
+            label={
+              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+            }
+          />
+        </ActionCol>
+      </ListWrapper>
+      <Modal visible={exportModalVisible} size="small">
+        <ModalPanel
+          title={t("Export Project")}
+          actions={actions}
+          onCancel={closeExportModal}
+          appearance="normal"
+        >
+          <ModalContent />
+        </ModalPanel>
+      </Modal>
+    </>
   );
 };
 
@@ -199,4 +236,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   WebkitLineClamp: 1,
   overflow: "hidden",
   textOverflow: "ellipsis"
+}));
+
+const ModalContent = styled("div")(() => ({
+  width: "100%",
+  height: "272px"
 }));

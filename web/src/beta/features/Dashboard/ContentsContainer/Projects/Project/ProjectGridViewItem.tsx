@@ -1,6 +1,13 @@
-import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  PopupMenu,
+  TextInput,
+  Modal,
+  ModalPanel
+} from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -12,6 +19,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   onProjectSelect,
   onProjectUpdate
 }) => {
+  const t = useT();
   const theme = useTheme();
 
   const {
@@ -25,7 +33,10 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
+    handleProjectStarClick,
+    exportModalVisible,
+    closeExportModal,
+    handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -33,56 +44,86 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     onProjectSelect
   });
 
+  const actions = useMemo(
+    () => (
+      <>
+        <Button
+          title={t("Cancel")}
+          appearance={"secondary"}
+          onClick={closeExportModal}
+        />
+        <Button
+          title={t("Export")}
+          appearance={"primary"}
+          onClick={handleExportProject}
+        />
+      </>
+    ),
+    [handleExportProject, closeExportModal, t]
+  );
+
   return (
-    <Card>
-      <CardImage
-        backgroundImage={project.imageUrl}
-        onDoubleClick={onProjectOpen}
-        onClick={(e) => onProjectSelect?.(e, project.id)}
-        isHovered={isHovered ?? false}
-        onMouseEnter={() => handleProjectHover?.(true)}
-        onMouseLeave={() => handleProjectHover?.(false)}
-        isSelected={selectedProjectId === project.id}
-      >
-        <StarButtonWrapper
-          isStarred={isStarred ?? false}
+    <>
+      <Card>
+        <CardImage
+          backgroundImage={project.imageUrl}
+          onDoubleClick={onProjectOpen}
+          onClick={(e) => onProjectSelect?.(e, project.id)}
           isHovered={isHovered ?? false}
+          onMouseEnter={() => handleProjectHover?.(true)}
+          onMouseLeave={() => handleProjectHover?.(false)}
           isSelected={selectedProjectId === project.id}
         >
-          <Button
-            iconButton
-            icon={isStarred ? "starFilled" : "star"}
-            onClick={(e) => handleProjectStarClick?.(e)}
-            iconColor={isStarred ? theme.warning.main : theme.content.main}
-            appearance="simple"
-          />
-        </StarButtonWrapper>
-      </CardImage>
-      <CardFooter>
-        {hasMapOrStoryPublished && <PublishStatus />}
-        <CardTitleWrapper>
-          {!isEditing ? (
-            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
-              {projectName}
-            </CardTitle>
-          ) : (
-            <TextInput
-              onChange={handleProjectNameChange}
-              onBlur={handleProjectNameBlur}
-              value={projectName}
-              autoFocus={isEditing}
-              appearance="present"
+          <StarButtonWrapper
+            isStarred={isStarred ?? false}
+            isHovered={isHovered ?? false}
+            isSelected={selectedProjectId === project.id}
+          >
+            <Button
+              iconButton
+              icon={isStarred ? "starFilled" : "star"}
+              onClick={(e) => handleProjectStarClick?.(e)}
+              iconColor={isStarred ? theme.warning.main : theme.content.main}
+              appearance="simple"
             />
-          )}
-        </CardTitleWrapper>
-        <PopupMenu
-          menu={popupMenu}
-          label={
-            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
-          }
-        />
-      </CardFooter>
-    </Card>
+          </StarButtonWrapper>
+        </CardImage>
+        <CardFooter>
+          {hasMapOrStoryPublished && <PublishStatus />}
+          <CardTitleWrapper>
+            {!isEditing ? (
+              <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
+                {projectName}
+              </CardTitle>
+            ) : (
+              <TextInput
+                onChange={handleProjectNameChange}
+                onBlur={handleProjectNameBlur}
+                value={projectName}
+                autoFocus={isEditing}
+                appearance="present"
+              />
+            )}
+          </CardTitleWrapper>
+          <PopupMenu
+            menu={popupMenu}
+            label={
+              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+            }
+          />
+        </CardFooter>
+      </Card>
+      <Modal visible={exportModalVisible} size="small">
+        <ModalPanel
+          title={t("Export Project")}
+          actions={actions}
+          onCancel={closeExportModal}
+          appearance="normal"
+        >
+          <ModalContent />
+        </ModalPanel>
+      </Modal>
+    </>
   );
 };
 
@@ -154,4 +195,9 @@ const CardTitle = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis",
   cursor: "pointer"
+}));
+
+const ModalContent = styled("div")(() => ({
+  width: "100%",
+  height: "272px"
 }));
