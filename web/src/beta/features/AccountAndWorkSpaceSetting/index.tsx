@@ -44,12 +44,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
 
   return (
     <Wrapper>
-      <Navbar
-        // projectId={projectId}
-        workspaceId={meData.myTeam?.id}
-        // sceneId={sceneId}
-        page="settings"
-      />
+      <Navbar workspaceId={meData.myTeam?.id} page="settings" />
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
@@ -72,7 +67,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
             <AccountSetting
               onUpdateUserPassword={handleUpdateUserPassword}
               passwordPolicy={passwordPolicy}
-              imformationData={{ name, email }}
+              informationData={{ name, email }}
             />
           )}
         </Content>

@@ -22,18 +22,7 @@ export type PasswordPolicy = {
 };
 
 type Props = {
-  className?: string;
-  project?: {
-    id: string;
-    name: string;
-    isArchived: boolean;
-  };
-  workspace?: {
-    id: string;
-    name: string;
-  };
   isVisible: boolean;
-  archiveProject?: (archived: boolean) => void;
   onClose?: () => void;
   passwordPolicy?: PasswordPolicy;
   updatePassword?: ({
@@ -85,7 +74,7 @@ const PasswordModal: React.FC<Props> = ({
           break;
       }
     },
-    [t, password] // eslint-disable-line react-hooks/exhaustive-deps
+    [t, password, passwordPolicy] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleClose = useCallback(() => {
@@ -171,7 +160,7 @@ const PasswordModal: React.FC<Props> = ({
                   <span>
                     <Icon icon="warning" size="large" color="red" />
                   </span>
-                  "repeatPassword" Passwords need to match.
+                  {t('"repeatPassword" Passwords need to match')}
                 </PasswordMessage>
               ) : undefined}
             </PasswordField>

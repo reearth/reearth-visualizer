@@ -16,8 +16,8 @@ import { InnerPage, SettingsWrapper, SettingsFields } from "../common";
 import PasswordModal from "./PasswordModal";
 
 type Props = {
-  imformationData: { name?: string; email?: string };
-  passwordPolicy: PasswordPolicy;
+  informationData: { name?: string; email?: string };
+  passwordPolicy?: PasswordPolicy;
   onUpdateUserPassword: ({
     password,
     passwordConfirmation
@@ -27,7 +27,7 @@ type Props = {
 const AccountSetting: FC<Props> = ({
   passwordPolicy,
   onUpdateUserPassword,
-  imformationData
+  informationData
 }) => {
   const t = useT();
   const [onPasswordModalClose, setPasswordModalOnClose] =
@@ -40,13 +40,13 @@ const AccountSetting: FC<Props> = ({
           <SettingsFields>
             <InputField
               title={t("Name")}
-              value={imformationData.name ? t(imformationData.name) : ""}
+              value={informationData.name ? t(informationData.name) : ""}
               appearance="readonly"
               disabled
             />
             <InputField
               title={t("Email address")}
-              value={imformationData.email ? t(imformationData.email) : ""}
+              value={informationData.email ? t(informationData.email) : ""}
               appearance="readonly"
               disabled
             />
