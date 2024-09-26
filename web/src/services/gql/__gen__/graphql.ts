@@ -556,6 +556,15 @@ export type DuplicateStylePayload = {
   style: Style;
 };
 
+export type ExportProjectInput = {
+  projectId: Scalars['ID']['input'];
+};
+
+export type ExportProjectPayload = {
+  __typename?: 'ExportProjectPayload';
+  projectDataPath: Scalars['String']['output'];
+};
+
 export type Feature = {
   __typename?: 'Feature';
   geometry: Geometry;
@@ -607,6 +616,15 @@ export type ImportLayerPayload = {
   __typename?: 'ImportLayerPayload';
   layers: Array<Layer>;
   parentLayer: LayerGroup;
+};
+
+export type ImportProjectInput = {
+  file: Scalars['Upload']['input'];
+};
+
+export type ImportProjectPayload = {
+  __typename?: 'ImportProjectPayload';
+  projectData: Scalars['JSON']['output'];
 };
 
 export type Infobox = {
@@ -1019,9 +1037,11 @@ export type Mutation = {
   duplicateNLSLayer: DuplicateNlsLayerPayload;
   duplicateStoryPage: StoryPagePayload;
   duplicateStyle?: Maybe<DuplicateStylePayload>;
+  exportProject?: Maybe<ExportProjectPayload>;
   importDataset?: Maybe<ImportDatasetPayload>;
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   importLayer?: Maybe<ImportLayerPayload>;
+  importProject?: Maybe<ImportProjectPayload>;
   installPlugin?: Maybe<InstallPluginPayload>;
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
   moveInfoboxField?: Maybe<MoveInfoboxFieldPayload>;
@@ -1265,6 +1285,11 @@ export type MutationDuplicateStyleArgs = {
 };
 
 
+export type MutationExportProjectArgs = {
+  input: ExportProjectInput;
+};
+
+
 export type MutationImportDatasetArgs = {
   input: ImportDatasetInput;
 };
@@ -1277,6 +1302,11 @@ export type MutationImportDatasetFromGoogleSheetArgs = {
 
 export type MutationImportLayerArgs = {
   input: ImportLayerInput;
+};
+
+
+export type MutationImportProjectArgs = {
+  input: ImportProjectInput;
 };
 
 

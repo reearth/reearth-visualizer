@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -842,12 +843,14 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]int
 		return nil, err
 	}
 
+	nlayerIDs := idx.List[id.NLSLayer]{}
 	nlayers := []nlslayer.NLSLayer{}
 	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
 		nlsLayerID, err := id.NLSLayerIDFrom(nlsLayerJSON.ID)
 		if err != nil {
 			return nil, err
 		}
+		nlayerIDs = append(nlayerIDs, nlsLayerID)
 		nlayer, err := nlslayer.New().
 			ID(nlsLayerID).
 			Simple().
@@ -873,5 +876,9 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]int
 		return nil, err
 	}
 
-	return nlsLayerList, nil
+	nlayer, err := i.nlslayerRepo.FindByIDs(ctx, nlayerIDs)
+	if err != nil {
+		return nil, err
+	}
+	return nlayer, nil
 }

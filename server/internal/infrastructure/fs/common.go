@@ -5,5 +5,6 @@ const (
 	pluginDir        = "plugins"
 	publishedDir     = "published"
 	storyDir         = "stories"
+	exportDir        = "export"
 	manifestFilePath = "reearth.yml"
 )

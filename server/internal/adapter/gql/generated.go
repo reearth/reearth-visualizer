@@ -339,7 +339,7 @@ type ComplexityRoot struct {
 	}
 
 	ExportProjectPayload struct {
-		ProjectData func(childComplexity int) int
+		ProjectDataPath func(childComplexity int) int
 	}
 
 	Feature struct {
@@ -2588,12 +2588,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DuplicateStylePayload.Style(childComplexity), true
 
-	case "ExportProjectPayload.projectData":
-		if e.complexity.ExportProjectPayload.ProjectData == nil {
+	case "ExportProjectPayload.projectDataPath":
+		if e.complexity.ExportProjectPayload.ProjectDataPath == nil {
 			break
 		}
 
-		return e.complexity.ExportProjectPayload.ProjectData(childComplexity), true
+		return e.complexity.ExportProjectPayload.ProjectDataPath(childComplexity), true
 
 	case "Feature.geometry":
 		if e.complexity.Feature.Geometry == nil {
@@ -9611,7 +9611,7 @@ type DeleteProjectPayload {
 }
 
 type ExportProjectPayload {
-  projectData: JSON!
+  projectDataPath: String!
 }
 
 type ImportProjectPayload {
@@ -19090,8 +19090,8 @@ func (ec *executionContext) fieldContext_DuplicateStylePayload_style(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _ExportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ExportProjectPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ExportProjectPayload_projectData(ctx, field)
+func (ec *executionContext) _ExportProjectPayload_projectDataPath(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ExportProjectPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ExportProjectPayload_projectDataPath(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19104,7 +19104,7 @@ func (ec *executionContext) _ExportProjectPayload_projectData(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectData, nil
+		return obj.ProjectDataPath, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19116,19 +19116,19 @@ func (ec *executionContext) _ExportProjectPayload_projectData(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(gqlmodel.JSON)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ExportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ExportProjectPayload_projectDataPath(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ExportProjectPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type JSON does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -31819,8 +31819,8 @@ func (ec *executionContext) fieldContext_Mutation_exportProject(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "projectData":
-				return ec.fieldContext_ExportProjectPayload_projectData(ctx, field)
+			case "projectDataPath":
+				return ec.fieldContext_ExportProjectPayload_projectDataPath(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ExportProjectPayload", field.Name)
 		},
@@ -65746,8 +65746,8 @@ func (ec *executionContext) _ExportProjectPayload(ctx context.Context, sel ast.S
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ExportProjectPayload")
-		case "projectData":
-			out.Values[i] = ec._ExportProjectPayload_projectData(ctx, field, obj)
+		case "projectDataPath":
+			out.Values[i] = ec._ExportProjectPayload_projectDataPath(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

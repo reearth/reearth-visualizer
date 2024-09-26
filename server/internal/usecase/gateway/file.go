@@ -8,6 +8,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/spf13/afero"
 )
 
 var (
@@ -35,4 +36,8 @@ type File interface {
 	ReadStoryFile(context.Context, string) (io.ReadCloser, error)
 	MoveStory(context.Context, string, string) error
 	RemoveStory(context.Context, string) error
+
+	ReadExportProjectZip(context.Context, string) (io.ReadCloser, error)
+	UploadExportProjectZip(context.Context, afero.File) error
+	RemoveExportProjectZip(context.Context, string) error
 }

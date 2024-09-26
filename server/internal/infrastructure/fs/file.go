@@ -123,6 +123,26 @@ func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
 	return f.delete(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")))
 }
 
+// export
+
+func (f *fileRepo) ReadExportProjectZip(ctx context.Context, filename string) (io.ReadCloser, error) {
+	return f.read(ctx, filepath.Join(exportDir, sanitize.Path(filename)))
+}
+
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
+
+	file, ok := zipFile.(*os.File)
+	if !ok {
+		return errors.New("invalid file type: expected *os.File")
+	}
+	_, err := f.upload(ctx, path.Join(exportDir, sanitize.Path(file.Name())), file)
+	return err
+}
+
+func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) error {
+	return f.delete(ctx, filepath.Join(exportDir, sanitize.Path(filename)))
+}
+
 // helpers
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
