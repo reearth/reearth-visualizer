@@ -40,7 +40,6 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
     [t]
   );
   const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
-  console.log(meData);
   const { name, email } = meData;
 
   return (
