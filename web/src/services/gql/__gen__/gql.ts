@@ -60,7 +60,7 @@ const documents = {
     "\n  mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {\n    updateProject(input: { projectId: $projectId, archived: $archived }) {\n      project {\n        id\n        isArchived\n      }\n    }\n  }\n": types.ArchiveProjectDocument,
     "\n  mutation DeleteProject($projectId: ID!) {\n    deleteProject(input: { projectId: $projectId }) {\n      projectId\n    }\n  }\n": types.DeleteProjectDocument,
     "\n  query GetStarredProjects($teamId: ID!) {\n    starredProjects(teamId: $teamId) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tstarred\n          scene {\n            id\n          }\n\t\t\t\t}\n\t\t\t\ttotalCount\n\t\t\t}\n  }\n": types.GetStarredProjectsDocument,
-    "\n  mutation ExportProject($projectId: ID!) {\n    exportProject(input: { projectId: $projectId }) {\n      projectData\n    }\n  }\n": types.ExportProjectDocument,
+    "\n  mutation ExportProject($projectId: ID!) {\n    exportProject(input: { projectId: $projectId }) {\n      projectDataPath\n    }\n  }\n": types.ExportProjectDocument,
     "\n  mutation ImportProject($file: Upload!) {\n    importProject(input: { file: $file }) {\n      projectData\n    }\n  }\n": types.ImportProjectDocument,
     "\n  mutation UpdatePropertyValue(\n    $propertyId: ID!\n    $schemaGroupId: ID\n    $itemId: ID\n    $fieldId: ID!\n    $value: Any\n    $type: ValueType!\n    $lang: Lang\n  ) {\n    updatePropertyValue(\n      input: {\n        propertyId: $propertyId\n        schemaGroupId: $schemaGroupId\n        itemId: $itemId\n        fieldId: $fieldId\n        value: $value\n        type: $type\n      }\n    ) {\n      property {\n        id\n        ...PropertyFragment\n        layer {\n          id\n          ...Layer1Fragment\n        }\n      }\n    }\n  }\n": types.UpdatePropertyValueDocument,
     "\n  mutation AddPropertyItem(\n    $propertyId: ID!\n    $schemaGroupId: ID!\n    $lang: Lang\n  ) {\n    addPropertyItem(\n      input: {\n        propertyId: $propertyId\n        schemaGroupId: $schemaGroupId\n      }\n    ) {\n      property {\n        id\n        ...PropertyFragment\n        layer {\n          id\n          ...Layer1Fragment\n        }\n      }\n    }\n  }\n": types.AddPropertyItemDocument,
@@ -296,7 +296,7 @@ export function gql(source: "\n  query GetStarredProjects($teamId: ID!) {\n    s
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation ExportProject($projectId: ID!) {\n    exportProject(input: { projectId: $projectId }) {\n      projectData\n    }\n  }\n"): (typeof documents)["\n  mutation ExportProject($projectId: ID!) {\n    exportProject(input: { projectId: $projectId }) {\n      projectData\n    }\n  }\n"];
+export function gql(source: "\n  mutation ExportProject($projectId: ID!) {\n    exportProject(input: { projectId: $projectId }) {\n      projectDataPath\n    }\n  }\n"): (typeof documents)["\n  mutation ExportProject($projectId: ID!) {\n    exportProject(input: { projectId: $projectId }) {\n      projectDataPath\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

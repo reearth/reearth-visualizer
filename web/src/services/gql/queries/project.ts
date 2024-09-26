@@ -211,7 +211,7 @@ export const GET_STARRED_PROJECTS = gql(`
 export const EXPORT_PROJECT = gql(`
   mutation ExportProject($projectId: ID!) {
     exportProject(input: { projectId: $projectId }) {
-      projectData
+      projectDataPath
     }
   }
 `);
