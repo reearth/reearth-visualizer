@@ -11,8 +11,8 @@ import {
   appearanceTypes,
   appearanceTypeIcons
 } from "./appearanceNodes";
-import AppearancePanel from "./AppearancePanel";
 import { converToLayerStyleValue, convertToStyleNodes } from "./convert";
+import StylePanel from "./StylePanel";
 import { AppearanceType, StyleNode, StyleNodes } from "./types";
 
 export type LayerStyleProps = {
@@ -62,7 +62,7 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
         id: type,
         icon: appearanceTypeIcons[type],
         children: (
-          <AppearancePanel
+          <StylePanel
             key={type}
             type={type}
             appearanceNodes={appearaceNodes[type]}

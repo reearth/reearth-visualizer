@@ -6,14 +6,14 @@ import { FC, useCallback, useMemo } from "react";
 import StyleNodeComp from "./StyleNode";
 import { AppearanceNode, AppearanceType, StyleNode } from "./types";
 
-type AppearancePanelProps = {
+type Props = {
   type: AppearanceType;
   appearanceNodes: AppearanceNode[];
   styleNodes: StyleNode[];
   onStyleNodesUpdate: (type: AppearanceType, nodes: StyleNode[]) => void;
 };
 
-const AppearancePanel: FC<AppearancePanelProps> = ({
+const StylePanel: FC<Props> = ({
   type,
   appearanceNodes,
   styleNodes,
@@ -105,7 +105,7 @@ const AppearancePanel: FC<AppearancePanelProps> = ({
   );
 };
 
-export default AppearancePanel;
+export default StylePanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
