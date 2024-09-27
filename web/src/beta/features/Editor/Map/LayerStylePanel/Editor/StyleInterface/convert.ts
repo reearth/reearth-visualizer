@@ -1,10 +1,10 @@
 import { LayerAppearanceTypes } from "@reearth/core";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
-import { appearaceNodes, appearanceTypes } from "./appearanceNodes";
+import { appearanceNodes, appearanceTypes } from "./appearanceNodes";
 import { styleConditionOperators } from "./StyleNode/ConditionsTab";
 import {
-  StyleCondistionOperator,
+  StyleConditionOperator,
   StyleCondition,
   StyleNode,
   StyleNodes,
@@ -19,7 +19,7 @@ export const convertToStyleNodes = (
       ...acc,
       [cur]: Object.entries(layerStyle?.value?.[cur] || {})
         .map(([k, v]: [string, unknown]) => {
-          const nodeRef = appearaceNodes[cur].find((n) => n.id === k);
+          const nodeRef = appearanceNodes[cur].find((n) => n.id === k);
           const { valueType, value, expression, conditions } = parseStyleValue(
             v as StyleValue
           );
@@ -67,7 +67,7 @@ export const parseStyleValue = (v: StyleValue) => {
   };
 };
 
-export const converToLayerStyleValue = (
+export const convertToLayerStyleValue = (
   styleNodes: StyleNodes
 ): Partial<LayerAppearanceTypes> => {
   return appearanceTypes.reduce((acc, cur) => {
@@ -110,7 +110,7 @@ export const parseConditions = (
       const match = condition.match(operatorRegex);
 
       if (match) {
-        const operator = match[0] as StyleCondistionOperator;
+        const operator = match[0] as StyleConditionOperator;
         const [variable, value] = condition
           .split(operator)
           .map((part) => part.trim().replace(/\$\{|\}/g, ""));

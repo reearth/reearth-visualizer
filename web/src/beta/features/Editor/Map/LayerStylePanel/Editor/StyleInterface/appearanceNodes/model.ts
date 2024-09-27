@@ -1,6 +1,6 @@
 import { AppearanceNode } from "../types";
 
-import { HIGHT_REFERENCES, SHADOWS } from "./constant";
+import { HEIGHT_REFERENCES, SHADOWS } from "./constant";
 
 export const modelNodes: AppearanceNode[] = [
   {
@@ -20,7 +20,7 @@ export const modelNodes: AppearanceNode[] = [
     title: "Height Reference",
     field: "select",
     defaultValue: "clamp",
-    valueOptions: HIGHT_REFERENCES
+    valueOptions: HEIGHT_REFERENCES
   },
   {
     id: "heading",

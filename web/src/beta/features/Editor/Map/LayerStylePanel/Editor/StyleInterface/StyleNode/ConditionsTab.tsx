@@ -11,7 +11,7 @@ import { FC, useCallback, useMemo } from "react";
 
 import {
   AppearanceField,
-  StyleCondistionOperator,
+  StyleConditionOperator,
   StyleCondition
 } from "../types";
 
@@ -24,7 +24,7 @@ type Props = {
   onUpdate: (value: StyleCondition[]) => void;
 };
 
-export const styleConditionOperators: StyleCondistionOperator[] = [
+export const styleConditionOperators: StyleConditionOperator[] = [
   "===",
   "!==",
   "<",
@@ -35,7 +35,7 @@ export const styleConditionOperators: StyleCondistionOperator[] = [
 ];
 
 const OPERATION_OPTIONS: {
-  value: StyleCondistionOperator;
+  value: StyleConditionOperator;
   label: string;
 }[] = [
   { value: "===", label: "===" },
@@ -78,7 +78,7 @@ const ConditionsTab: FC<Props> = ({
     (itemIdx?: string, newIndex?: number) => {
       if (itemIdx !== undefined && newIndex !== undefined) {
         const parsedIndex = parseInt(itemIdx, 10);
-        if (!isNaN(parsedIndex)) {
+        if (!Number.isNaN(parsedIndex)) {
           handleItemDrop(parsedIndex, newIndex);
         }
       }

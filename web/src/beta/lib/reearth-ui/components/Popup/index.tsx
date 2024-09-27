@@ -127,17 +127,17 @@ export const Popup = ({
   const [extendedWidth, setExtendedWidth] = useState(0);
 
   useEffect(() => {
-    if (triggerRef.current === null) return;
+    const currentTrigger = triggerRef.current;
+    if (!currentTrigger) return;
     const observer = new ResizeObserver(() => {
-      setExtendedWidth(triggerRef.current?.clientWidth ?? 0);
+      setExtendedWidth(currentTrigger.clientWidth ?? 0);
     });
-
-    observer.observe(triggerRef.current);
-
+    observer.observe(currentTrigger);
     return () => {
       observer.disconnect();
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRef.current]);
 
   const contentStyle = useMemo(
     () => (extendContentWidth ? { width: extendedWidth } : {}),

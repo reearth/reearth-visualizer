@@ -2,7 +2,7 @@ import { CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { styled } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
-import { Dispatch, FC, useEffect, useState } from "react";
+import { Dispatch, FC, useCallback, useEffect, useState } from "react";
 
 import NoStyleMessage from "../NoStyleMessage";
 
@@ -18,22 +18,25 @@ const StyleCode: FC<CodeProps> = ({ layerStyle, setLayerStyle }) => {
     setStyleCode(JSON.stringify(layerStyle?.value, null, 2));
   }, [layerStyle]);
 
-  const handleStyleCodeChange = (newStyleCode?: string) => {
-    try {
-      const parsedStyle = JSON.parse(newStyleCode || "");
-      setLayerStyle((prev) => {
-        if (!prev?.id) return prev;
-        return {
-          ...prev,
-          value: parsedStyle
-        };
-      });
-    } catch (_error) {
-      // Do nothing
-    }
+  const handleStyleCodeChange = useCallback(
+    (newStyleCode?: string) => {
+      try {
+        const parsedStyle = JSON.parse(newStyleCode || "");
+        setLayerStyle((prev) => {
+          if (!prev?.id) return prev;
+          return {
+            ...prev,
+            value: parsedStyle
+          };
+        });
+      } catch (_error) {
+        // Do nothing
+      }
 
-    setStyleCode(newStyleCode);
-  };
+      setStyleCode(newStyleCode);
+    },
+    [setLayerStyle]
+  );
 
   return layerStyle?.id ? (
     <CodeWrapper>

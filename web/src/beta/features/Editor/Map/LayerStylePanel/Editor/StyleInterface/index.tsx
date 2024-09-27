@@ -1,4 +1,4 @@
-import { PopupMenuItem, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
+import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
@@ -7,18 +7,17 @@ import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
 import NoStyleMessage from "../NoStyleMessage";
 
 import {
-  appearaceNodes,
+  appearanceNodes,
   appearanceTypes,
   appearanceTypeIcons
 } from "./appearanceNodes";
-import { converToLayerStyleValue, convertToStyleNodes } from "./convert";
-import StylePanel from "./StylePanel";
+import { convertToLayerStyleValue, convertToStyleNodes } from "./convert";
+import { StylePanel } from "./StylePanel";
 import { AppearanceType, StyleNode, StyleNodes } from "./types";
 
 export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
-  optionsMenu?: PopupMenuItem[];
 };
 
 const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
@@ -39,7 +38,7 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
           ? {
               id: prev.id,
               name: prev.name,
-              value: converToLayerStyleValue({
+              value: convertToLayerStyleValue({
                 ...styleNodes,
                 [type]: nodes
               })
@@ -65,7 +64,7 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
           <StylePanel
             key={type}
             type={type}
-            appearanceNodes={appearaceNodes[type]}
+            appearanceNodes={appearanceNodes[type]}
             styleNodes={styleNodes[type]}
             onStyleNodesUpdate={handleStyleNodesUpdate}
           />

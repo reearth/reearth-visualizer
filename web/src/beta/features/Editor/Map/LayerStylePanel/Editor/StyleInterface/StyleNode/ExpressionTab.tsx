@@ -11,7 +11,7 @@ const ExpressionTab: FC<Props> = ({ expression, onUpdate }) => {
   return (
     <Wrapper>
       <Icon>=</Icon>
-      <TextInput value={expression} onBlur={onUpdate} />
+      <TextInput value={expression ?? ""} onBlur={onUpdate} />
     </Wrapper>
   );
 };

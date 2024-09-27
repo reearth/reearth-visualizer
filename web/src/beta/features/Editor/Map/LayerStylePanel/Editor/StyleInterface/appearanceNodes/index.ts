@@ -1,6 +1,6 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
 
-import { AppearaceNodes, AppearanceType } from "../types";
+import { AppearanceNodes, AppearanceType } from "../types";
 
 import { markerNodes } from "./marker";
 import { modelNodes } from "./model";
@@ -8,7 +8,7 @@ import { polygonNodes } from "./polygon";
 import { polylineNodes } from "./polyline";
 import { threedtilesNodes } from "./threedtiles";
 
-export const appearaceNodes: AppearaceNodes = {
+export const appearanceNodes: AppearanceNodes = {
   marker: markerNodes,
   polyline: polylineNodes,
   polygon: polygonNodes,

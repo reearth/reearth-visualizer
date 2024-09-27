@@ -25,6 +25,7 @@ const StylePanel: FC<Props> = ({
     (nodeId: string) => {
       const nodeRef = appearanceNodes.find((node) => node.id === nodeId);
       if (!nodeRef) return;
+      if (styleNodes.some((node) => node.id === nodeId)) return;
       const newStyleNodes = [...styleNodes];
       newStyleNodes.push({
         id: nodeId,
@@ -64,9 +65,10 @@ const StylePanel: FC<Props> = ({
       appearanceNodes.map((node) => ({
         id: node.id,
         title: t(node.title),
+        disabled: styleNodes.some((n) => n.id === node.id),
         onClick: () => createNode(node.id)
       })),
-    [appearanceNodes, t, createNode]
+    [appearanceNodes, t, styleNodes, createNode]
   );
 
   return (
@@ -105,7 +107,7 @@ const StylePanel: FC<Props> = ({
   );
 };
 
-export default StylePanel;
+export { StylePanel };
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",

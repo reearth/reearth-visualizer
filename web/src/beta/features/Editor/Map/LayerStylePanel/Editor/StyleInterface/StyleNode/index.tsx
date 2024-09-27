@@ -2,7 +2,7 @@ import { IconButton, IconName, PopupMenu } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
-import { appearaceNodes } from "../appearanceNodes";
+import { appearanceNodes } from "../appearanceNodes";
 import {
   StyleCondition,
   StyleNode,
@@ -31,7 +31,7 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
 
   const valueOptions = useMemo(
     () =>
-      appearaceNodes[node.type]
+      appearanceNodes[node.type]
         .find((n) => n.id === node.id)
         ?.valueOptions?.map((v) => ({
           value: v,

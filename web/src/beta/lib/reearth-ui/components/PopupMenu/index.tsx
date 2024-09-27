@@ -1,7 +1,6 @@
 import {
   Popup,
   Icon,
-  Typography,
   IconName,
   PopupProps
 } from "@reearth/beta/lib/reearth-ui";
@@ -33,6 +32,7 @@ export type PopupMenuItem = {
   selected?: boolean;
   subItem?: PopupMenuItem[];
   title?: string;
+  disabled?: boolean;
 };
 
 export type PopupMenuProps = {
@@ -95,14 +95,18 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       path,
       selected,
       subItem,
-      title
+      title,
+      disabled
     } = item;
+
     return (
       <Item
         hasBorderBottom={!!hasBorderBottom}
         key={index}
         size={size}
+        disabled={disabled}
         onClick={() => {
+          if (disabled) return;
           onClick?.(id);
           handlePopOver(false);
         }}
@@ -118,11 +122,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           {subItem ? (
             <PopupMenu label={title} menu={subItem} width={width} nested />
           ) : path ? (
-            <StyledLink to={path}>
-              <TitleWrapper size="body">{title}</TitleWrapper>
+            <StyledLink to={disabled ? "" : path}>
+              <TitleWrapper disabled={disabled}>{title}</TitleWrapper>
             </StyledLink>
           ) : (
-            <TitleWrapper size="body">{title}</TitleWrapper>
+            <TitleWrapper disabled={disabled}>{title}</TitleWrapper>
           )}
           {selected && (
             <Icon icon="check" size="small" color={theme.content.main} />
@@ -279,7 +283,8 @@ const PopupMenuWrapper = styled("div")<{
 const Item = styled("div")<{
   hasBorderBottom: boolean;
   size?: "small" | "normal";
-}>(({ hasBorderBottom, size, theme }) => ({
+  disabled?: boolean;
+}>(({ hasBorderBottom, size, disabled, theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   alignItems: "center",
@@ -289,7 +294,7 @@ const Item = styled("div")<{
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: `${theme.radius.smallest}px`,
   borderBottom: hasBorderBottom ? `1px solid ${theme.outline.weaker}` : "",
-  cursor: "pointer",
+  cursor: disabled ? "default" : "pointer",
   backgroundColor: "transparent",
   "&:hover": {
     backgroundColor: `${theme.bg[2]}`
@@ -352,8 +357,11 @@ const Group = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.micro}px`
 }));
 
-const TitleWrapper = styled(Typography)(({ theme }) => ({
-  color: theme.content.main,
-  whiteSpace: "nowrap",
-  maxWidth: "160px"
-}));
+const TitleWrapper = styled("div")<{ disabled?: boolean }>(
+  ({ theme, disabled }) => ({
+    fontSize: theme.fonts.sizes.body,
+    color: disabled ? theme.content.weak : theme.content.main,
+    whiteSpace: "nowrap",
+    maxWidth: "160px"
+  })
+);

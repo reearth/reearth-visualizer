@@ -7,7 +7,7 @@ export type AppearanceType =
 
 export type AppearanceField = "switch" | "color" | "number" | "select" | "text";
 
-export type AppearaceNodes = Record<AppearanceType, AppearanceNode[]>;
+export type AppearanceNodes = Record<AppearanceType, AppearanceNode[]>;
 
 export type AppearanceNode = {
   id: string;
@@ -40,7 +40,7 @@ export type StyleValue =
       expression: { conditions: [string, string][] } | string;
     };
 
-export type StyleCondistionOperator =
+export type StyleConditionOperator =
   | "==="
   | "!=="
   | "<"
@@ -51,7 +51,7 @@ export type StyleCondistionOperator =
 
 export type StyleCondition = {
   variable: string;
-  operator: StyleCondistionOperator;
+  operator: StyleConditionOperator;
   value: string;
   applyValue: StyleSimpleValue | undefined;
 };

@@ -16,22 +16,32 @@ type Props = {
   onUpdate: (value: StyleSimpleValue) => void;
 };
 
-const Field: FC<Props> = ({ field, value, options, onUpdate }) => {
-  return field === "switch" ? (
-    <Switcher value={value as boolean} onChange={onUpdate} />
-  ) : field === "number" ? (
-    <NumberInput value={value as number} onChange={onUpdate} />
-  ) : field === "text" ? (
-    <TextInput value={value as string} onChange={onUpdate} />
-  ) : field === "color" ? (
-    <ColorInput value={value as string} onChange={onUpdate} />
-  ) : field === "select" && options ? (
-    <Selector
-      value={value as string}
-      options={options}
-      onChange={(v) => onUpdate(v as string)}
-    />
-  ) : null;
+const fieldComponents = {
+  switch: (props: Props) => (
+    <Switcher value={props.value as boolean} onChange={props.onUpdate} />
+  ),
+  number: (props: Props) => (
+    <NumberInput value={props.value as number} onChange={props.onUpdate} />
+  ),
+  text: (props: Props) => (
+    <TextInput value={props.value as string} onChange={props.onUpdate} />
+  ),
+  color: (props: Props) => (
+    <ColorInput value={props.value as string} onChange={props.onUpdate} />
+  ),
+  select: (props: Props) =>
+    props.options ? (
+      <Selector
+        value={props.value as string}
+        options={props.options}
+        onChange={(v) => props.onUpdate(v as string)}
+      />
+    ) : null
+};
+
+const Field: FC<Props> = (props) => {
+  const FieldComponent = fieldComponents[props.field];
+  return FieldComponent ? <FieldComponent {...props} /> : null;
 };
 
 export default Field;

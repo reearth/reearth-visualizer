@@ -1,6 +1,6 @@
 import { AppearanceNode } from "../types";
 
-import { DEFAULT_SELECTED_FEATURE_COLOR, HIGHT_REFERENCES } from "./constant";
+import { DEFAULT_SELECTED_FEATURE_COLOR, HEIGHT_REFERENCES } from "./constant";
 
 export const markerNodes: AppearanceNode[] = [
   {
@@ -20,7 +20,7 @@ export const markerNodes: AppearanceNode[] = [
     title: "Height Reference",
     field: "select",
     defaultValue: "clamp",
-    valueOptions: HIGHT_REFERENCES
+    valueOptions: HEIGHT_REFERENCES
   },
   {
     id: "style",
