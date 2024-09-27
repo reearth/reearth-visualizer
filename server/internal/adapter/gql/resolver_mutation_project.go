@@ -1,15 +1,24 @@
 package gql
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"encoding/json"
-	"io"
+	"fmt"
+	"os"
+	"strings"
+	"time"
 
+	"github.com/oklog/ulid"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/spf13/afero"
+	"golang.org/x/exp/rand"
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
@@ -111,34 +120,104 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.Del
 }
 
 func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error) {
+	fs := afero.NewOsFs()
 
+	t := time.Now().UTC()
+	entropy := ulid.Monotonic(rand.New(rand.NewSource(uint64(t.UnixNano()))), 0)
+	name := ulid.MustNew(ulid.Timestamp(t), entropy)
+	zipFile, err := fs.Create(fmt.Sprintf("%s.reearth", name.String()))
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if cerr := zipFile.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+		//　delete after saving to storage
+		if cerr := os.Remove(zipFile.Name()); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
+	zipWriter := zip.NewWriter(zipFile)
+	defer func() {
+		if cerr := zipWriter.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
+
+	// export project
 	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
 	if err != nil {
 		return nil, err
 	}
-
-	prj, res, plgs, err := usecases(ctx).Project.ExportProject(ctx, pid, getOperator(ctx))
+	prj, err := usecases(ctx).Project.ExportProject(ctx, pid, zipWriter, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
-	res["project"] = gqlmodel.ToProject(prj)
-	res["plugins"] = gqlmodel.ToPlugins(plgs)
+
+	sce, data, err := usecases(ctx).Scene.ExportScene(ctx, prj, zipWriter)
+	if err != nil {
+		return nil, err
+	}
+	data["project"] = gqlmodel.ToProject(prj)
+
+	plgs, err := usecases(ctx).Plugin.ExportPlugins(ctx, sce, zipWriter)
+	if err != nil {
+		return nil, err
+	}
+	data["plugins"] = gqlmodel.ToPlugins(plgs)
+
+	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	if err != nil {
+		return nil, err
+	}
 
 	return &gqlmodel.ExportProjectPayload{
-		ProjectData: res,
+		ProjectDataPath: "/export/" + zipFile.Name(),
 	}, nil
-
 }
 
 func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
 
-	fileBytes, err := io.ReadAll(input.File.File)
+	data, assets, plugins, err := file.UncompressExportZip(input.File.File)
 	if err != nil {
 		return nil, err
 	}
 
+	// Assets file import
+	changedFileName := make(map[string]string)
+	for fileName, file := range assets {
+		parts1 := strings.Split(fileName, "/")
+		beforeName := parts1[0]
+
+		url, _, err := usecases(ctx).Asset.UploadAssetFile(ctx, beforeName, file)
+		if err != nil {
+			return nil, err
+		}
+		parts2 := strings.Split(url.Path, "/")
+		afterName := parts2[len(parts2)-1]
+
+		changedFileName[beforeName] = afterName
+	}
+
+	// Plugin file import
+	for fileName, file := range plugins {
+		parts := strings.Split(fileName, "/")
+		pid, err := id.PluginIDFrom(parts[0])
+		if err != nil {
+			return nil, err
+		}
+		if err := usecases(ctx).Plugin.ImporPluginFile(ctx, pid, parts[1], file); err != nil {
+			return nil, err
+		}
+	}
+
+	for beforeName, afterName := range changedFileName {
+		data = bytes.Replace(data, []byte(beforeName), []byte(afterName), -1)
+	}
+
 	var jsonData map[string]interface{}
-	if err := json.Unmarshal(fileBytes, &jsonData); err != nil {
+	if err := json.Unmarshal(data, &jsonData); err != nil {
 		return nil, err
 	}
 
@@ -154,43 +233,43 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}()
 
 	pluginsData, _ := jsonData["plugins"].([]interface{})
-	_, err = usecases(ctx).Plugin.ImportPlugins(ctx, pluginsData)
+	plgs, err := usecases(ctx).Plugin.ImportPlugins(ctx, pluginsData)
 	if err != nil {
 		return nil, err
 	}
 
 	sceneData, _ := jsonData["scene"].(map[string]interface{})
-	_, err = usecases(ctx).Scene.ImportScene(ctx, prj, sceneData)
+	sce, err := usecases(ctx).Scene.ImportScene(ctx, prj, plgs, sceneData)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sceneData)
+	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = usecases(ctx).Style.ImportStyles(ctx, sceneData)
+	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = usecases(ctx).StoryTelling.ImportStory(ctx, sceneData)
+	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
 
 	tx.Commit()
 
-	prj, res, plgs, err := usecases(ctx).Project.ExportProject(ctx, prj.ID(), getOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-	res["project"] = gqlmodel.ToProject(prj)
-	res["plugins"] = gqlmodel.ToPlugins(plgs)
-
 	return &gqlmodel.ImportProjectPayload{
-		ProjectData: res,
+		ProjectData: map[string]any{
+			"project":  gqlmodel.ToProject(prj),
+			"plugins":  gqlmodel.ToPlugins(plgs),
+			"scene":    gqlmodel.ToScene(sce),
+			"nlsLayer": gqlmodel.ToNLSLayers(nlayers, nil),
+			"style":    gqlmodel.ToStyles(styleList),
+			"story":    gqlmodel.ToStory(st),
+		},
 	}, nil
 
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -140,7 +141,7 @@ func TestImportScene(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportScene(ctx, prj, sceneData)
+	result, err := ifs.ImportScene(ctx, prj, []*plugin.Plugin{}, sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
@@ -176,7 +177,11 @@ func TestImportScene(t *testing.T) {
     "datasetSchemas": null,
     "id": "01j7g9ddv4sbf8tgt5c6xxj5xc",
     "newLayers": null,
-    "plugins": [],
+    "plugins": [
+        {
+            "pluginId": "reearth"
+        }
+    ],
     "projectId": "%s",
     "stories": null,
     "styles": null,
