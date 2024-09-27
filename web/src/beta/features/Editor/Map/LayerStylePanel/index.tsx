@@ -97,12 +97,10 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           </StylesGrid>
         </StylesWrapper>
       </LayerStyleManager>
-      <LayerStyleEditorWrapper>
-        <LayerStyleEditor
-          selectedLayerStyle={selectedLayerStyle}
-          onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
-        />
-      </LayerStyleEditorWrapper>
+      <LayerStyleEditor
+        selectedLayerStyle={selectedLayerStyle}
+        onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
+      />
     </Panel>
   );
 };
@@ -112,9 +110,7 @@ export default StylesPanel;
 const LayerStyleManager = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
-  flex: 1,
-  height: "30%",
-  maxHeight: 180,
+  height: 154,
   gap: theme.spacing.small,
   padding: theme.spacing.small
 }));
@@ -138,11 +134,4 @@ const StylesGrid = styled("div")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
   gap: `${theme.spacing.small}px`
-}));
-
-const LayerStyleEditorWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flex: 1,
-  paddingTop: theme.spacing.small,
-  height: "70%"
 }));

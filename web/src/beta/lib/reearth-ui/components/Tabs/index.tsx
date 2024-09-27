@@ -17,7 +17,7 @@ export type TabItem = {
 };
 
 export type TabsProps = {
-  tabs: TabItem[];
+  tabs: TabItem[] | [];
   position?: "top" | "left";
   tabStyle?: "normal" | "separated";
   alignment?: "start" | "end" | "center";
@@ -25,7 +25,8 @@ export type TabsProps = {
   currentTab?: string;
   noPadding?: boolean;
   noOverflowY?: boolean;
-  sharedContent?: string | ReactNode;
+  flexHeight?: boolean;
+  menuEdgeGap?: "small";
   onChange?: (tab: string) => void;
 };
 
@@ -38,10 +39,11 @@ export const Tabs: FC<TabsProps> = ({
   alignment,
   noPadding,
   noOverflowY,
-  sharedContent,
+  flexHeight,
+  menuEdgeGap,
   onChange
 }) => {
-  const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0].id);
+  const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0]?.id);
 
   const handleTabChange = useCallback(
     (newTab: string) => {
@@ -64,12 +66,17 @@ export const Tabs: FC<TabsProps> = ({
   }, [activeTab, tabs]);
 
   return (
-    <Wrapper position={position} background={background}>
+    <Wrapper
+      position={position}
+      flexHeight={flexHeight}
+      background={background}
+    >
       <TabsMenu
         position={position}
         tabStyle={tabStyle}
         alignment={alignment}
         background={background}
+        edgeGap={menuEdgeGap}
       >
         {tabs.map(({ id, icon, name }) => (
           <Tab
@@ -101,8 +108,6 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      {sharedContent && <SharedContent>{sharedContent}</SharedContent>}
-
       <Content noPadding={noPadding} noOverflowY={noOverflowY}>
         {selectedTabItem ? selectedTabItem.children : null}
       </Content>
@@ -113,12 +118,14 @@ export const Tabs: FC<TabsProps> = ({
 const Wrapper = styled("div")<{
   position?: "top" | "left";
   background?: string;
-}>(({ position, background, theme }) => ({
+  flexHeight?: boolean;
+}>(({ position, background, flexHeight, theme }) => ({
   display: "flex",
   flexFlow: position === "top" ? "column nowrap" : "row nowrap",
   background: background || theme.bg[1],
-  height: "100%",
-  width: "100%"
+  height: flexHeight ? "auto" : "100%",
+  width: "100%",
+  ...(flexHeight && { minHeight: 0, flex: 1 })
 }));
 
 const TabsMenu = styled("div")<{
@@ -126,11 +133,19 @@ const TabsMenu = styled("div")<{
   tabStyle?: "normal" | "separated";
   alignment?: string;
   background?: string;
-}>(({ position, tabStyle, theme, alignment, background }) => ({
+  edgeGap?: "small";
+}>(({ position, tabStyle, theme, alignment, background, edgeGap }) => ({
   display: "flex",
   flexFlow: position === "top" ? "row nowrap" : "column nowrap",
   background: background || theme.bg[0],
-  padding: tabStyle === "normal" ? " " : theme.spacing.large,
+  padding:
+    tabStyle === "normal"
+      ? edgeGap
+        ? position === "top"
+          ? `0 ${theme.spacing[edgeGap]}px`
+          : `${theme.spacing[edgeGap]}px 0`
+        : " "
+      : theme.spacing.large,
   gap: theme.spacing.micro,
   justifyContent:
     alignment === "end"
@@ -167,9 +182,7 @@ const Content = styled("div")<{
   minHeight: 0,
   flex: 1,
   height: "auto",
-  overflowY: noOverflowY ? "hidden" : "auto"
-}));
-
-const SharedContent = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small
+  overflowY: noOverflowY ? "hidden" : "auto",
+  display: "flex",
+  flexDirection: "column"
 }));

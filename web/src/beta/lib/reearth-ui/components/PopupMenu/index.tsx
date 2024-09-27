@@ -43,6 +43,7 @@ export type PopupMenuProps = {
   nested?: boolean;
   width?: number;
   extendTriggerWidth?: boolean;
+  extendContentWidth?: boolean;
   size?: "small" | "normal";
   placement?: PopupProps["placement"];
   triggerOnHover?: boolean;
@@ -56,6 +57,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   nested,
   width,
   extendTriggerWidth,
+  extendContentWidth,
   placement,
   triggerOnHover,
   iconColor,
@@ -171,7 +173,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({
 
   const renderMenuItems = (menuItems: PopupMenuItem[]) => {
     return (
-      <PopupMenuWrapper width={width} nested={nested}>
+      <PopupMenuWrapper
+        width={width}
+        nested={nested}
+        extendContentWidth={extendContentWidth}
+      >
         {menuItems.map((item, index) => {
           return renderSingleItem(item, index);
         })}
@@ -207,6 +213,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       onOpenChange={handlePopOver}
       triggerOnHover={triggerOnHover || nested ? true : false}
       extendTriggerWidth={extendTriggerWidth || nested ? true : false}
+      extendContentWidth={extendContentWidth}
       autoClose
       trigger={
         <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
@@ -231,36 +238,43 @@ const TriggerWrapper = styled("div")<{ nested?: boolean }>(
   })
 );
 
-const PopupMenuWrapper = styled("div")<{ width?: number; nested?: boolean }>(
-  ({ width, nested, theme }) => ({
-    display: "flex",
-    flexDirection: "column",
-    gap: `${theme.spacing.micro}px`,
-    padding: `${theme.spacing.micro}px`,
-    backgroundColor: `${theme.bg[1]}`,
-    boxShadow: `${theme.shadow.popup}`,
-    borderRadius: `${theme.radius.small}px`,
-    border: `1px solid ${theme.outline.weaker}`,
-    width: width ? `${width}px` : DEFAULT_MENU_WIDTH,
-    maxHeight: "250px",
-    overflowY: "auto",
-    margin: nested ? "-7px 0 0 2px" : "inherit",
-    ["::-webkit-scrollbar"]: {
-      width: "8px"
-    },
-    ["::-webkit-scrollbar-track"]: {
-      background: theme.relative.darker,
-      borderRadius: "10px"
-    },
-    ["::-webkit-scrollbar-thumb"]: {
-      background: theme.relative.light,
-      borderRadius: "4px"
-    },
-    ["::-webkit-scrollbar-thumb:hover"]: {
-      background: theme.relative.lighter
-    }
-  })
-);
+const PopupMenuWrapper = styled("div")<{
+  width?: number;
+  nested?: boolean;
+  extendContentWidth?: boolean;
+}>(({ width, nested, extendContentWidth, theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: `${theme.spacing.micro}px`,
+  padding: `${theme.spacing.micro}px`,
+  backgroundColor: `${theme.bg[1]}`,
+  boxShadow: `${theme.shadow.popup}`,
+  borderRadius: `${theme.radius.small}px`,
+  border: `1px solid ${theme.outline.weaker}`,
+  width: extendContentWidth
+    ? "100%"
+    : width
+      ? `${width}px`
+      : DEFAULT_MENU_WIDTH,
+  maxHeight: "250px",
+  overflowY: "auto",
+  boxSizing: "border-box",
+  margin: nested ? "-7px 0 0 2px" : "inherit",
+  ["::-webkit-scrollbar"]: {
+    width: "8px"
+  },
+  ["::-webkit-scrollbar-track"]: {
+    background: theme.relative.darker,
+    borderRadius: "10px"
+  },
+  ["::-webkit-scrollbar-thumb"]: {
+    background: theme.relative.light,
+    borderRadius: "4px"
+  },
+  ["::-webkit-scrollbar-thumb:hover"]: {
+    background: theme.relative.lighter
+  }
+}));
 
 const Item = styled("div")<{
   hasBorderBottom: boolean;

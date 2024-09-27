@@ -125,7 +125,8 @@ export const ColorInput: FC<ColorInputProps> = ({
 const InputWrapper = styled("div")<{ width?: number }>(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: "flex-start"
+  alignItems: "flex-start",
+  width: "100%"
 }));
 
 const Swatch = styled("div")<{

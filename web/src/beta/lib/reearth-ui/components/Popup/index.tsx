@@ -8,7 +8,16 @@ import {
 } from "@floating-ui/react";
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { forwardRef, useCallback, type HTMLProps, type ReactNode } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type HTMLProps,
+  type ReactNode
+} from "react";
 import { createContext, useContext } from "react";
 
 import usePopover from "./hooks";
@@ -85,6 +94,7 @@ export type PopupProps = {
   disabled?: boolean;
   triggerOnHover?: boolean;
   extendTriggerWidth?: boolean;
+  extendContentWidth?: boolean;
   autoClose?: boolean;
   placement?: Placement;
   open?: boolean;
@@ -100,6 +110,7 @@ export const Popup = ({
   disabled,
   triggerOnHover,
   extendTriggerWidth,
+  extendContentWidth,
   autoClose,
   ...restOptions
 }: PopupProps) => {
@@ -111,12 +122,40 @@ export const Popup = ({
     }
   }, [autoClose, popover]);
 
+  const triggerRef = useRef<HTMLElement>(null);
+
+  const [extendedWidth, setExtendedWidth] = useState(0);
+
+  useEffect(() => {
+    if (triggerRef.current === null) return;
+    const observer = new ResizeObserver(() => {
+      setExtendedWidth(triggerRef.current?.clientWidth ?? 0);
+    });
+
+    observer.observe(triggerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  const contentStyle = useMemo(
+    () => (extendContentWidth ? { width: extendedWidth } : {}),
+    [extendContentWidth, extendedWidth]
+  );
+
   return (
     <PopoverContext.Provider value={{ ...popover, setOpen: popover.setOpen }}>
-      <Trigger disabled={disabled} extendWidth={extendTriggerWidth}>
+      <Trigger
+        ref={triggerRef}
+        disabled={disabled}
+        extendWidth={extendTriggerWidth}
+      >
         {trigger}
       </Trigger>
-      <Content onClick={handleAutoClose}>{children}</Content>
+      <Content onClick={handleAutoClose} style={contentStyle}>
+        {children}
+      </Content>
     </PopoverContext.Provider>
   );
 };
