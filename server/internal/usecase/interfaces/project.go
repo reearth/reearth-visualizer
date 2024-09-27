@@ -1,17 +1,18 @@
 package interfaces
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
 	"net/url"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/spf13/afero"
 )
 
 type CreateProjectParam struct {
@@ -67,6 +68,7 @@ type Project interface {
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
 	CheckAlias(context.Context, string) (bool, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
-	ExportProject(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, map[string]interface{}, []*plugin.Plugin, error)
+	ExportProject(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProject(context.Context, map[string]interface{}) (*project.Project, usecasex.Tx, error)
+	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]interface{}, *project.Project) error
 }

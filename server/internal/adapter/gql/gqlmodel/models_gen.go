@@ -563,7 +563,7 @@ type ExportProjectInput struct {
 }
 
 type ExportProjectPayload struct {
-	ProjectData JSON `json:"projectData"`
+	ProjectDataPath string `json:"projectDataPath"`
 }
 
 type Feature struct {

@@ -3,6 +3,7 @@ package builder
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -109,17 +110,52 @@ func parseWidgetAreaPadding(paddingJSON *widgetAreaPaddingJSON) *scene.WidgetAre
 }
 
 func AddItemFromPropertyJSON(prop *property.Property, ps *property.Schema, pj propertyJSON) (*property.Property, error) {
-	for sgKey, value1 := range pj {
-		schemaGroupID := id.PropertySchemaGroupIDFromRef(&sgKey)
-		if iVal, ok := value1.(map[string]interface{}); ok {
-			for fKey, value2 := range iVal {
-				fieldID := id.PropertyFieldIDFromRef(&fKey)
-				ptr := property.NewPointer(schemaGroupID, nil, fieldID)
-				v, ok := parsePropertyValue(value2)
-				if ok {
-					_, _, _, err := prop.UpdateValue(ps, ptr, v)
+	for sgKey, value := range pj {
+
+		if items, ok := value.(map[string]interface{}); ok {
+			// simple property
+
+			sgID := id.PropertySchemaGroupIDFromRef(&sgKey)
+
+			for fieldKey, value := range items {
+
+				fieldID := id.PropertyFieldIDFromRef(&fieldKey)
+				ptr := property.NewPointer(sgID, nil, fieldID)
+				pv, ok := parsePropertyValue(value)
+
+				if ok && ps != nil {
+					_, _, _, err := prop.UpdateValue(ps, ptr, pv)
 					if err != nil {
 						return nil, err
+					}
+				}
+			}
+
+		} else if arrayProperty, ok := value.([]interface{}); ok {
+			// group property
+
+			for _, groupProperty := range arrayProperty {
+
+				sg := id.PropertySchemaGroupID(sgKey)
+				gl := prop.GetOrCreateGroupList(ps, property.PointItemBySchema(sg))
+				g := property.NewGroup().NewID().SchemaGroup(sg).MustBuild()
+				gl.Add(g, -1)
+
+				if items, ok := groupProperty.(map[string]interface{}); ok {
+
+					for fieldKey, value := range items {
+						if fieldKey == "id" {
+							continue
+						}
+						ov, ok := parsePropertyOptionalValue(value)
+						if ok {
+							fieldID := id.PropertyFieldIDFromRef(&fieldKey)
+							field := property.NewField(*fieldID).
+								Value(ov).
+								// Links(flinks).
+								Build()
+							g.AddFields(field)
+						}
 					}
 				}
 			}
@@ -135,6 +171,16 @@ func parsePropertyValue(value interface{}) (*property.Value, bool) {
 		if ok1 && ok2 {
 			return property.ValueType(fieldType).ValueFrom(fieldVal), ok
 		}
+	}
+	fmt.Printf("property is unreadable %v\n", value)
+	return nil, false
+}
+
+func parsePropertyOptionalValue(value interface{}) (*property.OptionalValue, bool) {
+	pv, ok := parsePropertyValue(value)
+	if ok {
+		ov := property.NewOptionalValue(pv.Type(), pv)
+		return ov, true
 	}
 	return nil, false
 }

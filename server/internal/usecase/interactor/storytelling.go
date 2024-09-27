@@ -1124,7 +1124,10 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, err
 	}
-
+	story, err = i.storytellingRepo.FindByID(ctx, story.Id())
+	if err != nil {
+		return nil, err
+	}
 	return story, nil
 }
 
