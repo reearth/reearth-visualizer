@@ -97,6 +97,7 @@ const PropertyField: FC<Props> = ({
           <TextareaField
             key={schema.id}
             title={schema.name}
+            resizable="height"
             value={(value as string) ?? ""}
             description={schema.description}
             onBlur={handleChange}
