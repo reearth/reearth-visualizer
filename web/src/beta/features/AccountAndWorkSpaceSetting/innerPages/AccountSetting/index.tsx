@@ -54,7 +54,7 @@ const AccountSetting: FC<Props> = ({
               <Typography size="body">{t("Password")}</Typography>
               <PasswordInputWrapper>
                 <TextInput
-                  value={t("**********")}
+                  value={"**********"}
                   appearance="readonly"
                   disabled
                   extendWidth
@@ -63,7 +63,7 @@ const AccountSetting: FC<Props> = ({
                   appearance="secondary"
                   icon="pencilSimple"
                   onClick={() => {
-                    setPasswordModalClosed(!passwordModalClosed);
+                    setPasswordModalClosed(false);
                   }}
                   size="medium"
                   hasBorder={true}
