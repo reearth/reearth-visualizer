@@ -5,21 +5,18 @@ Account: ''
 Name: 名前
 Email address: ''
 Password: パスワード
-'**********': ''
 No whitespace is allowed.: ''
 Too short.: ''
 That is terribly long.: ''
 That password is great!: ''
-That password is better.: ''
-That password is okay.: ''
+That password need more security.: ''
+That password is low security.: ''
 That password confuses me, but might be okay.: ''
 Change password: ''
 In order to protect your account, make sure your password is unique and strong.: ''
 New password: ''
 New password (for confirmation): ''
 '"repeatPassword" Passwords need to match': ''
-Notice: 通知
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Select Asset: ''
 Last Uploaded: 昇順（アップロード日）
 First Uploaded: 降順（アップロード日）
@@ -187,8 +184,10 @@ Map: マップ
 Widgets: ウィジェット
 Error: エラー
 Warning: 注意
+Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
 Submit: 反映
