@@ -393,11 +393,7 @@ export default () => {
 
   const getBackendUrl = useCallback(() => {
     const apiUrl = window.REEARTH_CONFIG?.api;
-    if (apiUrl && !apiUrl.includes("localhost")) {
-      return apiUrl.replace(/\/api$/, "");
-    } else {
-      return window.REEARTH_CONFIG?.auth0Audience;
-    }
+    return apiUrl?.replace(/\/api$/, "");
   }, []);
 
   const useExportProject = useCallback(
