@@ -93,9 +93,8 @@ Code: ''
 Save: 保存
 New node: ''
 No style selected: ''
-Style_: スタイル_
+Style: ''
 Empty: ''
-Sketch: ''
 Default: デフォルト
 Professional: ''
 Basic Geometry: ''
@@ -379,3 +378,4 @@ Failed to update widget alignment.: ウィジェットのアラインメント�
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
+Style_: スタイル_
