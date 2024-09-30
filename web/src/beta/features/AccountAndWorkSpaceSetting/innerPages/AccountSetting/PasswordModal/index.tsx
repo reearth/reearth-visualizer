@@ -9,7 +9,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import React, { useState, useCallback, useEffect } from "react";
 
 export type PasswordPolicy = {
@@ -41,6 +41,7 @@ const PasswordModal: React.FC<Props> = ({
   onPasswordUpdate
 }) => {
   const t = useT();
+  const theme = useTheme();
 
   const [password, setPassword] = useState("");
   const [regexMessage, setRegexMessage] = useState<string | undefined | null>();
@@ -156,9 +157,17 @@ const PasswordModal: React.FC<Props> = ({
                 type="password"
               />
               {isMatchPassword ? (
-                <PasswordMessage size="body" weight="regular" color="red">
+                <PasswordMessage
+                  size="body"
+                  weight="regular"
+                  color={theme.dangerous.main}
+                >
                   <span>
-                    <Icon icon="warning" size="large" color="red" />
+                    <Icon
+                      icon="warning"
+                      size="large"
+                      color={theme.dangerous.main}
+                    />
                   </span>
                   {t('"repeatPassword" Passwords need to match')}
                 </PasswordMessage>
