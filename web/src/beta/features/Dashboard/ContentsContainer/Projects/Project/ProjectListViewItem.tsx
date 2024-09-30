@@ -2,12 +2,9 @@ import {
   Button,
   PopupMenu,
   TextInput,
-  Typography,
-  Modal,
-  ModalPanel
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/beta/utils/time";
-import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
@@ -21,7 +18,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   onProjectSelect,
   onProjectUpdate
 }) => {
-  const t = useT();
   const theme = useTheme();
 
   const createAt = useMemo(
@@ -46,10 +42,10 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
-    exportModalVisible,
-    closeExportModal,
-    handleExportProject
+    handleProjectStarClick
+    // exportModalVisible,
+    // closeExportModal,
+    // handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -57,23 +53,23 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     onProjectSelect
   });
 
-  const actions = useMemo(
-    () => (
-      <>
-        <Button
-          title={t("Cancel")}
-          appearance={"secondary"}
-          onClick={closeExportModal}
-        />
-        <Button
-          title={t("Export")}
-          appearance={"primary"}
-          onClick={handleExportProject}
-        />
-      </>
-    ),
-    [handleExportProject, closeExportModal, t]
-  );
+  // const actions = useMemo(
+  //   () => (
+  //     <>
+  //       <Button
+  //         title={t("Cancel")}
+  //         appearance={"secondary"}
+  //         onClick={closeExportModal}
+  //       />
+  //       <Button
+  //         title={t("Export")}
+  //         appearance={"primary"}
+  //         onClick={handleExportProject}
+  //       />
+  //     </>
+  //   ),
+  //   [handleExportProject, closeExportModal, t]
+  // );
 
   return (
     <>
@@ -138,7 +134,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           />
         </ActionCol>
       </ListWrapper>
-      <Modal visible={exportModalVisible} size="small">
+      {/* MEMO: this modal will be used in the future */}
+      {/* <Modal visible={exportModalVisible} size="small">
         <ModalPanel
           title={t("Export Project")}
           actions={actions}
@@ -147,7 +144,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
         >
           <ModalContent />
         </ModalPanel>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
@@ -238,7 +235,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   textOverflow: "ellipsis"
 }));
 
-const ModalContent = styled("div")(() => ({
-  width: "100%",
-  height: "272px"
-}));
+// const ModalContent = styled("div")(() => ({
+//   width: "100%",
+//   height: "272px"
+// }));

@@ -32,7 +32,8 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
-  const [exportModalVisible, setExportModalVisible] = useState(false);
+  // MEMO: this modal state and function will be used in the future
+  // const [exportModalVisible, setExportModalVisible] = useState(false);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -54,13 +55,13 @@ export default ({
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
-  const openExportModal = useCallback(() => {
-    setExportModalVisible(true);
-  }, []);
+  // const openExportModal = useCallback(() => {
+  //   setExportModalVisible(true);
+  // }, []);
 
-  const closeExportModal = useCallback(() => {
-    setExportModalVisible(false);
-  }, []);
+  // const closeExportModal = useCallback(() => {
+  //   setExportModalVisible(false);
+  // }, []);
 
   const handleExportProject = useCallback(async () => {
     if (!project.id) return;
@@ -69,12 +70,10 @@ export default ({
 
     if (result.status === "success") {
       console.log("export success");
-      closeExportModal();
     } else {
       console.error("Failed to export project:", result.status);
-      closeExportModal();
     }
-  }, [useExportProject, project.id, closeExportModal]);
+  }, [useExportProject, project.id]);
 
   useEffect(() => {
     setIsStarred(project.starred);
@@ -97,7 +96,7 @@ export default ({
       id: "export",
       title: t("Export"),
       icon: "downloadSimple",
-      onClick: () => openExportModal()
+      onClick: () => handleExportProject()
     }
   ];
 
@@ -156,8 +155,6 @@ export default ({
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick,
-    exportModalVisible,
-    closeExportModal,
     handleExportProject
   };
 };

@@ -391,6 +391,11 @@ export default () => {
 
   const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
 
+  const getBackendUrl = useCallback(() => {
+    const apiUrl = window.REEARTH_CONFIG?.api;
+    return apiUrl?.replace(/\/api$/, "");
+  }, []);
+
   const useExportProject = useCallback(
     async (projectId: string) => {
       if (!projectId) return { status: "error" };
@@ -412,7 +417,7 @@ export default () => {
 
         const projectDataPath = data.exportProject.projectDataPath;
 
-        const backendUrl = window.origin.replace("3000", "8080");
+        const backendUrl = getBackendUrl();
         const downloadUrl = `${backendUrl}${projectDataPath}`;
 
         const response = await fetch(downloadUrl);
@@ -445,7 +450,7 @@ export default () => {
         return { status: "error" };
       }
     },
-    [exportProjectMutation, t, setNotification]
+    [exportProjectMutation, t, setNotification, getBackendUrl]
   );
 
   const [importProjectMutation] = useMutation(IMPORT_PROJECT);

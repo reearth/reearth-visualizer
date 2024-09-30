@@ -1,13 +1,6 @@
-import {
-  Button,
-  PopupMenu,
-  TextInput,
-  Modal,
-  ModalPanel
-} from "@reearth/beta/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -19,7 +12,6 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   onProjectSelect,
   onProjectUpdate
 }) => {
-  const t = useT();
   const theme = useTheme();
 
   const {
@@ -33,10 +25,10 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick,
-    exportModalVisible,
-    closeExportModal,
-    handleExportProject
+    handleProjectStarClick
+    // exportModalVisible,
+    // closeExportModal,
+    // handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -44,23 +36,23 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     onProjectSelect
   });
 
-  const actions = useMemo(
-    () => (
-      <>
-        <Button
-          title={t("Cancel")}
-          appearance={"secondary"}
-          onClick={closeExportModal}
-        />
-        <Button
-          title={t("Export")}
-          appearance={"primary"}
-          onClick={handleExportProject}
-        />
-      </>
-    ),
-    [handleExportProject, closeExportModal, t]
-  );
+  // const actions = useMemo(
+  //   () => (
+  //     <>
+  //       <Button
+  //         title={t("Cancel")}
+  //         appearance={"secondary"}
+  //         onClick={closeExportModal}
+  //       />
+  //       <Button
+  //         title={t("Export")}
+  //         appearance={"primary"}
+  //         onClick={handleExportProject}
+  //       />
+  //     </>
+  //   ),
+  //   [handleExportProject, closeExportModal, t]
+  // );
 
   return (
     <>
@@ -113,7 +105,8 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           />
         </CardFooter>
       </Card>
-      <Modal visible={exportModalVisible} size="small">
+      {/* MEMO: this modal will be used in the future */}
+      {/* <Modal visible={exportModalVisible} size="small">
         <ModalPanel
           title={t("Export Project")}
           actions={actions}
@@ -122,7 +115,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
         >
           <ModalContent />
         </ModalPanel>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
@@ -197,7 +190,7 @@ const CardTitle = styled("div")(({ theme }) => ({
   cursor: "pointer"
 }));
 
-const ModalContent = styled("div")(() => ({
-  width: "100%",
-  height: "272px"
-}));
+// const ModalContent = styled("div")(() => ({
+//   width: "100%",
+//   height: "272px"
+// }));
