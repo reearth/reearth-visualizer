@@ -24,7 +24,6 @@ First Created: ''
 Last Updated: ''
 New Project: 新規プロジェクト
 Import: インポート
-Export: エクスポート
 All projects: ''
 Search Result for: ''
 Project Name: プロジェクト名
@@ -33,6 +32,7 @@ Created At: ''
 No Project has been created yet: ''
 Rename: 名称変更
 Project Setting: プロジェクト設定
+Export: エクスポート
 Create new project: ''
 Project Name *: ''
 Text: ''
@@ -359,7 +359,6 @@ Failed to export project.: プロジェクトのエクスポートに失敗し�
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
 Failed to import project.: プロジェクトのインポートに失敗しました。
 Successfully imported project!: プロジェクトのインポートに成功しました！
-Export Project: プロジェクトのエクスポート
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: ''
 Failed to create story.: ストーリーの作成に失敗しました。

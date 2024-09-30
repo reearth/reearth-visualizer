@@ -9,7 +9,7 @@ import {
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useMemo, useRef } from "react";
+import { FC, useMemo, useRef, Fragment } from "react";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -63,7 +63,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       <ManagerHeader
         size="large"
         actions={[
-          <>
+          <Fragment key="action-buttons">
             <ManagerHeaderButton
               key={"create-project"}
               title={t("New Project")}
@@ -86,7 +86,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               ref={fileInputRef}
               onChange={handleImportProject}
             />
-          </>
+          </Fragment>
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}

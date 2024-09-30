@@ -147,6 +147,7 @@ export default {
   arrowsHorizontalIn: ArrowsHorizontalIn,
   arrowsHorizontalOut: ArrowsHorizontalOut,
   article: Article,
+  aToZ: AToZ,
   book: Book,
   bracketsCurly: BracketsCurly,
   buildings: Buildings,
@@ -182,6 +183,7 @@ export default {
   deviceMobile: DeviceMobile,
   dotsSixVertical: DotsSixVertical,
   dotsThreeVertical: DotsThreeVertical,
+  downloadSimple: DownloadSimple,
   editMode: EditMode,
   editor: Editor,
   exit: Exit,
@@ -249,6 +251,7 @@ export default {
   sidebar: Sidebar,
   sToL: SToL,
   lToS: LToS,
+  signIn: SignIn,
   star: Star,
   starFilled: StarFilled,
   square: Square,
@@ -278,8 +281,5 @@ export default {
   usersFour: UsersFour,
   videoFilled: VideoFilled,
   warning: Warning,
-  aToZ: AToZ,
-  zToA: ZToA,
-  downloadSimple: DownloadSimple,
-  signIn: SignIn
+  zToA: ZToA
 };
