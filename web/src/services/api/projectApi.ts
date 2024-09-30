@@ -393,7 +393,11 @@ export default () => {
 
   const getBackendUrl = useCallback(() => {
     const apiUrl = window.REEARTH_CONFIG?.api;
-    return apiUrl?.replace(/\/api$/, "");
+    if (apiUrl && !apiUrl.includes("localhost")) {
+      return apiUrl.replace(/\/api$/, "");
+    } else {
+      return window.REEARTH_CONFIG?.auth0Audience;
+    }
   }, []);
 
   const useExportProject = useCallback(
@@ -419,7 +423,6 @@ export default () => {
 
         const backendUrl = getBackendUrl();
         const downloadUrl = `${backendUrl}${projectDataPath}`;
-        console.log("downloadUrl", downloadUrl);
 
         const response = await fetch(downloadUrl);
         if (!response.ok) {
