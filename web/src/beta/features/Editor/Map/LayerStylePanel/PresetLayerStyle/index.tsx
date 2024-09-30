@@ -55,8 +55,8 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
   );
 
   useEffect(() => {
-    if (layerStyleAdded) {
-      const addedStyle = layerStyles?.find(
+    if (layerStyleAdded && layerStyles) {
+      const addedStyle = layerStyles.find(
         (style) => style.name === layerStyleAdded
       );
       onLayerStyleSelect(addedStyle?.id);

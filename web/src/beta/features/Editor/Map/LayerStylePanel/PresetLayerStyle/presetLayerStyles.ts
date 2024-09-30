@@ -23,7 +23,7 @@ export const defaultStyle = {
 export const professionalStyle = {
   marker: {
     heightReference: "clamp",
-    hideIndicator: "false",
+    hideIndicator: false,
     pointColor: "#E9373D",
     pointOutlineColor: "white",
     pointOutlineWidth: 1,
@@ -39,14 +39,14 @@ export const professionalStyle = {
       expression: "color('#E9373D',0.6)"
     },
     heightReference: "clamp",
-    hideIndicator: "false",
+    hideIndicator: false,
     selectedFeatureColor: {
       expression: "color('#F1AF02',0.6)"
     }
   },
   polyline: {
     clampToGround: true,
-    hideIndicator: "false",
+    hideIndicator: false,
     selectedFeatureColor: "#F1AF02",
     strokeColor: "#E9373D",
     strokeWidth: 2
@@ -83,7 +83,7 @@ export const pointWithLabelStyle = {
 export const polylineStyle = {
   polyline: {
     clampToGround: true,
-    hideIndicator: "false",
+    hideIndicator: false,
     selectedFeatureColor: "#F1AF02",
     strokeColor: "#E9373D",
     strokeWidth: 2
@@ -94,7 +94,7 @@ export const polygonStyle = {
   polygon: {
     fillColor: "#E9373D",
     heightReference: "clamp",
-    hideIndicator: "false",
+    hideIndicator: false,
     selectedFeatureColor: "#F1AF02"
   }
 };
@@ -106,7 +106,7 @@ export const extrudedPolygonStyle = {
     },
     fillColor: "#E9373D",
     heightReference: "clamp",
-    hideIndicator: "false",
+    hideIndicator: false,
     selectedFeatureColor: "#F1AF02"
   }
 };
@@ -182,11 +182,17 @@ export const colorBuildingsByHeight = {
   }
 };
 
-export const getLayerStyleName = (baseName: string, layerStyles?: LayerStyle[]) => {
+export const getLayerStyleName = (
+  baseName: string,
+  layerStyles?: LayerStyle[]
+) => {
   if (!layerStyles) return `${baseName}.01`;
   const nextNumber =
     layerStyles.reduce((max, style) => {
-      const match = style.name?.match(new RegExp(`^${baseName}\\.(\\d+)$`));
+      const escapedBaseName = baseName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const match = style.name?.match(
+        new RegExp(`^${escapedBaseName}\\.(\\d+)$`)
+      );
       return match ? Math.max(max, parseInt(match[1], 10)) : max;
     }, 0) + 1;
 
