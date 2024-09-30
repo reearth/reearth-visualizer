@@ -45,6 +45,9 @@ const PasswordModal: React.FC<Props> = ({
 
   const [password, setPassword] = useState("");
   const [regexMessage, setRegexMessage] = useState<string | undefined | null>();
+  const [regexMessageColor, setRegexMessageColor] = useState<
+    string | undefined
+  >();
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>();
   const [disabled, setDisabled] = useState(true);
 
@@ -54,28 +57,34 @@ const PasswordModal: React.FC<Props> = ({
       switch (true) {
         case passwordPolicy?.whitespace?.test(password ?? ""):
           setRegexMessage(t("No whitespace is allowed."));
+          setRegexMessageColor(theme.warning.main);
           break;
         case passwordPolicy?.tooShort?.test(password ?? ""):
           setRegexMessage(t("Too short."));
+          setRegexMessageColor(theme.warning.main);
           break;
         case passwordPolicy?.tooLong?.test(password ?? ""):
           setRegexMessage(t("That is terribly long."));
+          setRegexMessageColor(theme.warning.main);
           break;
         case passwordPolicy?.highSecurity?.test(password ?? ""):
           setRegexMessage(t("That password is great!"));
+          setRegexMessageColor(theme.primary.main);
           break;
         case passwordPolicy?.medSecurity?.test(password ?? ""):
-          setRegexMessage(t("That password is better."));
+          setRegexMessage(t("That password need more security."));
+          setRegexMessageColor(theme.warning.main);
           break;
         case passwordPolicy?.lowSecurity?.test(password ?? ""):
-          setRegexMessage(t("That password is okay."));
+          setRegexMessage(t("That password is low security."));
+          setRegexMessageColor(theme.dangerous.main);
           break;
         default:
           setRegexMessage(t("That password confuses me, but might be okay."));
           break;
       }
     },
-    [t, passwordPolicy]
+    [t, passwordPolicy, theme]
   );
 
   const handleClose = useCallback(() => {
@@ -142,7 +151,11 @@ const PasswordModal: React.FC<Props> = ({
                 type="password"
               />
               {password ? (
-                <PasswordMessage size="body" weight="bold">
+                <PasswordMessage
+                  size="body"
+                  weight="bold"
+                  color={regexMessageColor}
+                >
                   {regexMessage}
                 </PasswordMessage>
               ) : undefined}
