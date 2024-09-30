@@ -30,8 +30,7 @@ const AccountSetting: FC<Props> = ({
   informationData
 }) => {
   const t = useT();
-  const [onPasswordModalClose, setPasswordModalOnClose] =
-    useState<boolean>(true);
+  const [passwordModalClosed, setPasswordModalClosed] = useState<boolean>(true);
 
   return (
     <InnerPage>
@@ -64,7 +63,7 @@ const AccountSetting: FC<Props> = ({
                   appearance="secondary"
                   icon="pencilSimple"
                   onClick={() => {
-                    setPasswordModalOnClose(!onPasswordModalClose);
+                    setPasswordModalClosed(!passwordModalClosed);
                   }}
                   size="medium"
                   hasBorder={true}
@@ -76,9 +75,9 @@ const AccountSetting: FC<Props> = ({
       </SettingsWrapper>
 
       <PasswordModal
-        isVisible={!onPasswordModalClose}
+        isVisible={!passwordModalClosed}
         passwordPolicy={passwordPolicy}
-        onClose={() => setPasswordModalOnClose(!onPasswordModalClose)}
+        onClose={() => setPasswordModalClosed(!passwordModalClosed)}
         updatePassword={onUpdateUserPassword}
       />
     </InnerPage>
