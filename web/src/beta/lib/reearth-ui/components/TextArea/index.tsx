@@ -18,7 +18,7 @@ export const TextArea: FC<TextAreaProps> = ({
   value,
   placeholder,
   resizable,
-  rows = 3,
+  rows = 5,
   disabled,
   counter,
   maxLength,
@@ -109,7 +109,7 @@ const StyledTextArea = styled.textarea<{
   border: "none",
   background: theme.bg[1],
   resize: resizable === "height" ? "vertical" : "none",
-  overflow: resizable === "height" ? "scroll" : "auto",
+  overflow: "auto",
   flex: 1,
   color:
     disabled && appearance !== "readonly"
