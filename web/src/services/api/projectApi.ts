@@ -419,6 +419,7 @@ export default () => {
 
         const backendUrl = getBackendUrl();
         const downloadUrl = `${backendUrl}${projectDataPath}`;
+        console.log("downloadUrl", downloadUrl);
 
         const response = await fetch(downloadUrl);
         if (!response.ok) {
