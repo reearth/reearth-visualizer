@@ -89,6 +89,17 @@ export default ({
       console.error("Failed to export project:", result.status);
     }
   }, [useExportProject, project.id]);
+  const handleArchivedModal = useCallback((value: boolean) => {
+    setArchiveOpen(value);
+  }, []);
+
+  const handleProjectArchived = useCallback(
+    (value: boolean) => {
+      onArchiveProject?.(value, project.id);
+      setArchiveOpen(false);
+    },
+    [project, onArchiveProject]
+  );
 
   useEffect(() => {
     setIsStarred(project.starred);
@@ -118,6 +129,12 @@ export default ({
       title: t("Export"),
       icon: "downloadSimple",
       onClick: () => handleExportProject()
+    },
+    {
+      id: "archived",
+      title: t("Remove"),
+      icon: "trash",
+      onClick: () => handleArchivedModal?.(true)
     }
   ];
 
@@ -176,6 +193,7 @@ export default ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleProjectStarClick,
     handleArchivedModal,
     handleProjectArchived,
     handleExportProject
