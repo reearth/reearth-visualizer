@@ -8,6 +8,7 @@ import { useMapPage } from "../context";
 
 import LayerStyleEditor from "./Editor";
 import LayerStyleItem from "./LayerStyleItem";
+import PresetLayerStyle from "./PresetLayerStyle";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
@@ -25,13 +26,6 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   } = useMapPage();
 
   const t = useT();
-
-  const handleLayerStyleAddition = useCallback(() => {
-    handleLayerStyleAdd({
-      name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`,
-      value: {}
-    });
-  }, [layerStyles?.length, t, handleLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
     (id?: string) => {
@@ -67,11 +61,10 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     >
       <LayerStyleManager onClick={() => handleSelectLayerStyle(undefined)}>
         <ActionsWrapper>
-          <IconButton
-            icon="plus"
-            size="large"
-            onClick={handleLayerStyleAddition}
-            stopPropagationOnClick
+          <PresetLayerStyle
+            layerStyles={layerStyles}
+            onLayerStyleAdd={handleLayerStyleAdd}
+            onLayerStyleSelect={handleSelectLayerStyle}
           />
           <IconButton
             icon="return"
