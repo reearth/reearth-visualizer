@@ -51,6 +51,7 @@ export const FieldComponent = ({ field, setFields }: Props) => {
       key={field?.id}
       title={field?.title}
       value={field.value as string}
+      resizable="height"
       onBlur={handleChange}
     />
   ) : field?.type === "Asset" ? (
