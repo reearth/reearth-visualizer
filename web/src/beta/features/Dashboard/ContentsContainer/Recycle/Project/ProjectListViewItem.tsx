@@ -1,11 +1,6 @@
-import {
-  Button,
-  PopupMenu,
-  TextInput,
-  Typography
-} from "@reearth/beta/lib/reearth-ui";
+import { Button, PopupMenu, Typography } from "@reearth/beta/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/beta/utils/time";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
 import useHooks from "./hooks";
@@ -16,11 +11,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onArchiveProject,
-  onProjectUpdate
+  onArchiveProject
 }) => {
-  const theme = useTheme();
-
   const createAt = useMemo(
     () =>
       project.createdAt ? formatRelativeTime(new Date(project.createdAt)) : "",
@@ -32,22 +24,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     [project.updatedAt]
   );
 
-  const {
-    projectName,
-    popupMenu,
-    isEditing,
-    isHovered,
-    isStarred,
-    hasMapOrStoryPublished,
-    handleProjectNameChange,
-    handleProjectNameBlur,
-    handleProjectHover,
-    handleProjectNameDoubleClick,
-    handleProjectStarClick
-  } = useHooks({
+  const { popupMenu, isHovered, handleProjectHover } = useHooks({
     project,
     selectedProjectId,
-    onProjectUpdate,
     onArchiveProject,
     onProjectSelect
   });
@@ -63,38 +42,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     >
       <ThumbnailCol>
         <ActionWrapper>
-          <StarButtonWrapper
-            isStarred={isStarred ?? false}
-            isHovered={isHovered ?? false}
-            isSelected={selectedProjectId === project.id}
-          >
-            <Button
-              iconButton
-              icon={isStarred ? "starFilled" : "star"}
-              onClick={(e) => handleProjectStarClick?.(e)}
-              iconColor={isStarred ? theme.warning.main : theme.content.main}
-              appearance="simple"
-            />
-          </StarButtonWrapper>
           <ProjectImage backgroundImage={project.imageUrl} />
         </ActionWrapper>
       </ThumbnailCol>
-      <ProjectNameCol>
-        <PublishStatus status={hasMapOrStoryPublished} />
-        {!isEditing ? (
-          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
-            {projectName}
-          </TitleWrapper>
-        ) : (
-          <TextInput
-            onChange={handleProjectNameChange}
-            onBlur={handleProjectNameBlur}
-            value={projectName}
-            autoFocus={isEditing}
-            appearance="present"
-          />
-        )}
-      </ProjectNameCol>
       <TimeCol>
         <Typography size="body">{UpdatedAt}</Typography>
       </TimeCol>
@@ -155,23 +105,6 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small
 }));
 
-const ProjectNameCol = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.smallest,
-  flex: 1,
-  flexShrink: 0
-}));
-
-const PublishStatus = styled("div")<{ status?: boolean }>(
-  ({ status, theme }) => ({
-    height: "12px",
-    width: "12px",
-    borderRadius: "50%",
-    background: status ? theme.publish.main : "transparent"
-  })
-);
-
 const TimeCol = styled("div")(() => ({
   flex: "0 0 20%",
   flexShrink: 0
@@ -180,25 +113,4 @@ const TimeCol = styled("div")(() => ({
 const ActionCol = styled("div")(() => ({
   flex: "0 0 10%",
   flexShrink: 0
-}));
-
-const StarButtonWrapper = styled("div")<{
-  isSelected: boolean;
-  isStarred: boolean;
-  isHovered: boolean;
-}>(({ isSelected, isStarred, isHovered }) => ({
-  opacity: isSelected || isStarred || isHovered ? 1 : 0
-}));
-
-const TitleWrapper = styled("div")(({ theme }) => ({
-  padding: `0 ${theme.spacing.smallest + 1}px`,
-  color: theme.content.main,
-  cursor: "pointer",
-  fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
-  display: "-webkit-box",
-  WebkitBoxOrient: "vertical",
-  WebkitLineClamp: 1,
-  overflow: "hidden",
-  textOverflow: "ellipsis"
 }));

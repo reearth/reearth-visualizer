@@ -77,11 +77,12 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, includeArchived *bool, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 	return i.projectRepo.FindByWorkspace(ctx, id, repo.ProjectFilter{
-		Pagination: p,
-		Sort:       sort,
-		Keyword:    keyword,
+		IncludeArchived: includeArchived,
+		Pagination:      p,
+		Sort:            sort,
+		Keyword:         keyword,
 	})
 }
 

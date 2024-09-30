@@ -15,8 +15,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
-    projects(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+  query GetProjects($teamId: ID!, $includeArchived: Boolean, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+    projects(teamId: $teamId, includeArchived: $includeArchived, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         node {
           id

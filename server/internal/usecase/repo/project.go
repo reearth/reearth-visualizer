@@ -11,9 +11,10 @@ import (
 )
 
 type ProjectFilter struct {
-	Sort       *project.SortType
-	Keyword    *string
-	Pagination *usecasex.Pagination
+	IncludeArchived *bool
+	Sort            *project.SortType
+	Keyword         *string
+	Pagination      *usecasex.Pagination
 }
 
 type Project interface {

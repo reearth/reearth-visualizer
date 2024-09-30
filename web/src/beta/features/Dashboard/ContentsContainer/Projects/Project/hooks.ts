@@ -11,6 +11,7 @@ type Props = {
   project: ProjectType;
   selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
+  onArchiveProject?: (archive: boolean, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
 };
 
@@ -18,6 +19,7 @@ export default ({
   project,
   selectedProjectId,
   onProjectUpdate,
+  onArchiveProject,
   onProjectSelect
 }: Props) => {
   const t = useT();
@@ -28,6 +30,7 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
+  const [archiveOpen, setArchiveOpen] = useState(false);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -49,6 +52,18 @@ export default ({
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
+  const handleArchivedModal = useCallback((value: boolean) => {
+    setArchiveOpen(value);
+  }, []);
+
+  const handleProjectArchived = useCallback(
+    (value: boolean) => {
+      onArchiveProject?.(value, project.id);
+      setArchiveOpen(false);
+    },
+    [project, onArchiveProject]
+  );
+
   useEffect(() => {
     setIsStarred(project.starred);
   }, [project.starred]);
@@ -65,6 +80,12 @@ export default ({
       title: t("Project Setting"),
       path: `/settings/project/${project.id}`,
       icon: "setting"
+    },
+    {
+      id: "archived",
+      title: t("Remove"),
+      icon: "trash",
+      onClick: () => handleArchivedModal?.(true)
     }
   ];
 
@@ -118,10 +139,13 @@ export default ({
     popupMenu,
     isStarred,
     hasMapOrStoryPublished,
+    archiveOpen,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleArchivedModal,
+    handleProjectArchived,
     handleProjectStarClick
   };
 };

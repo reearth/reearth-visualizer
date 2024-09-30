@@ -452,3 +452,136 @@ func TestSortByUpdatedAt(t *testing.T) {
 	edges.Element(1).Object().Value("node").Object().Value("name").Equal("project3-test")
 	edges.Element(2).Object().Value("node").Object().Value("name").Equal("project1-test")
 }
+
+//  go test -v -run TestArchiveProject ./e2e/...
+
+func TestArchiveProject(t *testing.T) {
+
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	createProject(e, "project1-test")
+	project2ID := createProject(e, "project2-test")
+	createProject(e, "project3-test")
+
+	// Archive 'project2'
+	requestBody := GraphQLRequest{
+		OperationName: "ArchiveProject",
+		Query: `mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {
+				updateProject(input: {projectId: $projectId, archived: $archived}) {
+					project {
+						id
+						isArchived
+						__typename
+					}
+					__typename
+				}
+			}`,
+		Variables: map[string]any{
+			"projectId": project2ID,
+			"archived":  true,
+		},
+	}
+	e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	requestBody = GraphQLRequest{
+		OperationName: "GetProjects",
+		Query: `query GetProjects($teamId: ID!, $includeArchived: Boolean, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+			projects(teamId: $teamId, includeArchived: $includeArchived, pagination: $pagination, keyword: $keyword, sort: $sort) {
+				edges {
+					node {
+						id
+						...ProjectFragment
+						scene {
+							id
+							__typename
+						}
+						__typename
+					}
+					__typename
+				}
+				nodes {
+					id
+					...ProjectFragment
+					scene {
+						id
+						__typename
+					}
+					__typename
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
+					__typename
+				}
+				totalCount
+				__typename
+			}
+		}
+		fragment ProjectFragment on Project {
+			id
+			name
+			description
+			imageUrl
+			isArchived
+			isBasicAuthActive
+			basicAuthUsername
+			basicAuthPassword
+			publicTitle
+			publicDescription
+			publicImage
+			alias
+			enableGa
+			trackingId
+			publishmentStatus
+			updatedAt
+			createdAt
+			coreSupport
+			starred
+			__typename
+		}`,
+		Variables: map[string]any{
+			"teamId":          wID.String(),
+			"includeArchived": false,
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+
+	edges := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().
+		Value("data").Object().
+		Value("projects").Object().
+		Value("edges").Array()
+
+	// `project2-test` is archived and will not be retrieved
+	edges.Length().Equal(3)
+	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project3-test")
+	edges.Element(1).Object().Value("node").Object().Value("name").Equal("project1-test")
+	edges.Element(2).Object().Value("node").Object().Value("name").Equal("p1")
+}

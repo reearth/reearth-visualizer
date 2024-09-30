@@ -34,7 +34,7 @@ func (r *teamResolver) Assets(ctx context.Context, obj *gqlmodel.Team, first *in
 }
 
 func (r *teamResolver) Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByWorkspace(ctx, obj.ID, nil, nil, &gqlmodel.Pagination{
+	return loaders(ctx).Project.FindByWorkspace(ctx, obj.ID, includeArchived, nil, nil, &gqlmodel.Pagination{
 		First:  first,
 		Last:   last,
 		After:  after,

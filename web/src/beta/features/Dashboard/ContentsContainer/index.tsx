@@ -6,6 +6,7 @@ import { Workspace } from "../type";
 
 import Members from "./Members";
 import Projects from "./Projects";
+import Recycle from "./Recycle";
 
 export type ContainerProps = {
   workspaceId?: string;
@@ -23,6 +24,7 @@ const ContentsContainer: FC<ContainerProps> = ({
       {tab === "asset" && (
         <AssetsManager workspaceId={workspaceId} size="large" />
       )}
+      {tab === "bin" && <Recycle workspaceId={workspaceId} />}
       {tab === "members" && <Members currentWorkspace={currentWorkspace} />}
     </Wrapper>
   );

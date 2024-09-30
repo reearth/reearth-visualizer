@@ -2,7 +2,6 @@ import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
 import {
   ManagerContent,
   ManagerHeader,
-  ManagerHeaderButton,
   ManagerLayout,
   ManagerWrapper
 } from "@reearth/beta/ui/components/ManagerBase";
@@ -14,28 +13,21 @@ import { FC, useMemo } from "react";
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
-import ProjectCreatorModal from "./ProjectCreatorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
-    filtedProjects,
+    archivedProjects,
     isLoading,
     hasMoreProjects,
     selectedProject,
-    projectCreatorVisible,
     wrapperRef,
     contentRef,
     contentWidth,
     layout,
     searchTerm,
     sortValue,
-    showProjectCreator,
-    closeProjectCreator,
     handleGetMoreProjects,
-    handleProjectUpdate,
     handleArchiveProject,
-    handleProjectCreate,
-    handleProjectOpen,
     handleProjectSelect,
     handleScrollToBottom,
     handleLayoutChange,
@@ -60,16 +52,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     <ManagerWrapper onClick={() => handleProjectSelect(undefined)}>
       <ManagerHeader
         size="large"
-        actions={[
-          <ManagerHeaderButton
-            key={"create-project"}
-            title={t("New Project")}
-            managerSize="large"
-            icon="plus"
-            appearance="primary"
-            onClick={showProjectCreator}
-          />
-        ]}
+        actions={[]}
         sortValue={sortValue}
         sortOptions={sortOptions}
         onSortChange={handleProjectSortChange}
@@ -79,7 +62,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         searchPlaceholder={t("Search in all assets library")}
         onSearch={handleSearch}
       />
-      {filtedProjects?.length ? (
+      {archivedProjects?.length ? (
         <ManagerContent>
           <ContentWrapper>
             <BreadcrumbContainer>
@@ -92,7 +75,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         weight="bold"
                         color={theme.content.weak}
                       >
-                        {t("All projects")}
+                        {t("Projects in the trash")}
                       </Typography>
                     )
                   },
@@ -145,26 +128,22 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             >
               <ProjectsContainer ref={contentRef}>
                 <ProjectsGroup layout={layout}>
-                  {filtedProjects.map((project) =>
+                  {archivedProjects.map((project) =>
                     layout === "grid" ? (
                       <ProjectGridViewItem
                         key={project.id}
                         project={project}
                         selectedProjectId={selectedProject?.id}
-                        onProjectUpdate={handleProjectUpdate}
                         onArchiveProject={handleArchiveProject}
                         onProjectSelect={handleProjectSelect}
-                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
                       />
                     ) : (
                       <ProjectListViewItem
                         key={project.id}
                         project={project}
                         selectedProjectId={selectedProject?.id}
-                        onProjectUpdate={handleProjectUpdate}
                         onArchiveProject={handleArchiveProject}
                         onProjectSelect={handleProjectSelect}
-                        onProjectOpen={() => handleProjectOpen(project.sceneId)}
                       />
                     )
                   )}
@@ -186,14 +165,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             {t("No Project has been created yet")}
           </Typography>
         </ManagerEmptyContent>
-      )}
-
-      {projectCreatorVisible && (
-        <ProjectCreatorModal
-          visible={projectCreatorVisible}
-          onClose={closeProjectCreator}
-          onProjectCreate={handleProjectCreate}
-        />
       )}
     </ManagerWrapper>
   );

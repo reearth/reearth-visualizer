@@ -46,6 +46,13 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	result := []*project.Project{}
 	for _, d := range r.data {
 		if d.Workspace() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
+			if filter.IncludeArchived != nil {
+				if !*filter.IncludeArchived {
+					if d.IsArchived() {
+						continue
+					}
+				}
+			}
 			result = append(result, d)
 		}
 	}

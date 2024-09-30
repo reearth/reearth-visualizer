@@ -93,6 +93,12 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 		})
 	}
 
+	if uFilter.IncludeArchived != nil {
+		if !*uFilter.IncludeArchived {
+			filter = mongox.And(filter, "archived", false)
+		}
+	}
+
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 

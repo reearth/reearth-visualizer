@@ -1,4 +1,12 @@
-import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
+import {
+  Button,
+  PopupMenu,
+  Typography,
+  TextInput,
+  Modal,
+  ModalPanel
+} from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -10,6 +18,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
+  onArchiveProject,
   onProjectUpdate
 }) => {
   const theme = useTheme();
@@ -21,17 +30,23 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     isHovered,
     isStarred,
     hasMapOrStoryPublished,
+    archiveOpen,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
+    handleArchivedModal,
+    handleProjectArchived,
     handleProjectStarClick
   } = useHooks({
     project,
     selectedProjectId,
     onProjectUpdate,
+    onArchiveProject,
     onProjectSelect
   });
+
+  const t = useT();
 
   return (
     <Card>
@@ -81,10 +96,51 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
             <Button icon="dotsThreeVertical" iconButton appearance="simple" />
           }
         />
+        <Modal size="small" visible={archiveOpen}>
+          <ModalPanel
+            title={t("Remove")}
+            onCancel={() => handleArchivedModal(false)}
+            actions={
+              <>
+                <Button
+                  key="cancel"
+                  title={t("Cancel")}
+                  appearance="secondary"
+                  onClick={() => handleArchivedModal(false)}
+                  size="normal"
+                />
+                <Button
+                  size="normal"
+                  key="delete"
+                  appearance="dangerous"
+                  title={t("Delete")}
+                  onClick={() => handleProjectArchived(true)}
+                  disabled={!projectName}
+                />
+              </>
+            }
+          >
+            <ModalContentWrapper>
+              <Typography size="body">
+                {t(
+                  "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore."
+                )}
+              </Typography>
+            </ModalContentWrapper>
+          </ModalPanel>
+        </Modal>
       </CardFooter>
     </Card>
   );
 };
+
+const ModalContentWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.large,
+  padding: theme.spacing.large,
+  background: theme.bg[1]
+}));
 
 export default ProjectGridViewItem;
 

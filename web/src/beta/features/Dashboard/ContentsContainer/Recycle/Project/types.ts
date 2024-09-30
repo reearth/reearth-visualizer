@@ -7,6 +7,5 @@ export type ProjectProps = {
   selectedProjectId?: string;
   onProjectOpen?: () => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
-  onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onArchiveProject?: (archive: boolean, projectId: string) => void;
 };

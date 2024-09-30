@@ -237,7 +237,7 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 }
 
 func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
+	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, includeArchived, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {

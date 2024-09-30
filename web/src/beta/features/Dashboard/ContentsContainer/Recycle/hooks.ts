@@ -7,8 +7,7 @@ import { useProjectFetcher } from "@reearth/services/api";
 import {
   ProjectSortField,
   PublishmentStatus,
-  SortDirection,
-  Visualizer
+  SortDirection
 } from "@reearth/services/gql";
 import {
   useCallback,
@@ -18,7 +17,6 @@ import {
   useEffect,
   useRef
 } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Project } from "../../type";
 
@@ -34,14 +32,8 @@ export type SortType =
   | "date-updated";
 
 export default (workspaceId?: string) => {
-  const {
-    useProjectsQuery,
-    useUpdateProject,
-    useCreateProject,
-    useArchiveProject,
-    useStarredProjectsQuery
-  } = useProjectFetcher();
-  const navigate = useNavigate();
+  const { useProjectsQuery, useStarredProjectsQuery, useArchiveProject } =
+    useProjectFetcher();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -68,9 +60,9 @@ export default (workspaceId?: string) => {
     keyword: searchTerm
   });
 
-  const filtedProjects = useMemo(() => {
+  const archivedProjects = useMemo(() => {
     return (projects ?? [])
-      .filter((project) => project?.isArchived === false)
+      .filter((project) => project?.isArchived === true)
       .filter((project) => project?.coreSupport === true)
       .map<Project | undefined>((project) =>
         project
@@ -138,56 +130,12 @@ export default (workspaceId?: string) => {
     }
   }, []);
 
-  // project create
-  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
-
-  const showProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(true);
-  }, []);
-  const closeProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(false);
-  }, []);
-
-  const handleProjectCreate = useCallback(
-    async (data: Pick<Project, "name" | "description" | "imageUrl">) => {
-      if (!workspaceId) return;
-      await useCreateProject(
-        workspaceId,
-        Visualizer.Cesium,
-        data.name,
-        true,
-        data.description,
-        data.imageUrl || ""
-      );
-    },
-    [useCreateProject, workspaceId]
-  );
-
-  // project update
-  const handleProjectUpdate = useCallback(
-    async (project: Project, projectId: string) => {
-      await useUpdateProject({ projectId, ...project });
-      // if (sortBy) refetch();
-    },
-    [useUpdateProject]
-  );
-
   // archive project
   const handleArchiveProject = useCallback(
     async (archived: boolean, projectId: string) => {
       await useArchiveProject({ projectId, archived });
     },
     [useArchiveProject]
-  );
-
-  // project open
-  const handleProjectOpen = useCallback(
-    (sceneId?: string) => {
-      if (sceneId) {
-        navigate(`/scene/${sceneId}/map`);
-      }
-    },
-    [navigate]
   );
 
   // selection
@@ -198,13 +146,13 @@ export default (workspaceId?: string) => {
       e?.stopPropagation();
       if (projectId) {
         setSelectedProject(
-          filtedProjects.find((project) => project.id === projectId)
+          archivedProjects.find((project) => project.id === projectId)
         );
       } else {
         setSelectedProject(undefined);
       }
     },
-    [filtedProjects]
+    [archivedProjects]
   );
 
   // layout
@@ -248,25 +196,19 @@ export default (workspaceId?: string) => {
   }, []);
 
   return {
-    filtedProjects,
+    archivedProjects,
     hasMoreProjects,
     isLoading,
     selectedProject,
     wrapperRef,
     contentRef,
     layout,
-    projectCreatorVisible,
     searchTerm,
     sortValue,
     contentWidth,
     starredProjects,
-    showProjectCreator,
-    closeProjectCreator,
     handleGetMoreProjects,
-    handleProjectUpdate,
     handleArchiveProject,
-    handleProjectOpen,
-    handleProjectCreate,
     handleProjectSelect,
     handleScrollToBottom: onScrollToBottom,
     handleLayoutChange,
