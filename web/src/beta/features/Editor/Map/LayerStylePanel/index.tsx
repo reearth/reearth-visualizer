@@ -64,6 +64,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           <PresetLayerStyle
             layerStyles={layerStyles}
             onLayerStyleAdd={handleLayerStyleAdd}
+            onLayerStyleSelect={handleSelectLayerStyle}
           />
           <IconButton
             icon="return"

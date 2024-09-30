@@ -5,7 +5,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { FC, useCallback } from "react";
+import { useState, useEffect, FC, useCallback } from "react";
 
 import { LayerStyleAddProps } from "../../../hooks/useLayerStyles";
 
@@ -20,42 +20,54 @@ import {
   threeDTilesStyle,
   simpleStyle,
   colorBuildingsByHeight,
-  sketchLayerStyle
+  getLayerStyleName
 } from "./presetLayerStyles";
 
 type PresetLayerStyleProps = {
   layerStyles: LayerStyle[] | undefined;
   onLayerStyleAdd: (inp: LayerStyleAddProps) => void;
+  onLayerStyleSelect: (id: string | undefined) => void;
 };
 
 const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
   layerStyles,
-  onLayerStyleAdd
+  onLayerStyleAdd,
+  onLayerStyleSelect
 }) => {
   const t = useT();
+  const [layerStyleAdded, setLayerStyleAdded] = useState<string | undefined>(
+    undefined
+  );
 
   const handleLayerStyleAddition = useCallback(
     (value?: Record<string, unknown>, styleName?: string) => {
+      const name = getLayerStyleName(
+        styleName ? styleName : t("Style"),
+        layerStyles
+      );
       onLayerStyleAdd({
-        name: styleName
-          ? styleName
-          : `${t("Style_")}${layerStyles?.length ?? 0 + 1}`,
+        name,
         value: value || {}
       });
+      setLayerStyleAdded(name);
     },
-    [onLayerStyleAdd, t, layerStyles?.length]
+    [t, layerStyles, onLayerStyleAdd]
   );
+
+  useEffect(() => {
+    if (layerStyleAdded) {
+      const addedStyle = layerStyles?.find(
+        (style) => style.name === layerStyleAdded
+      );
+      onLayerStyleSelect(addedStyle?.id);
+    }
+  }, [layerStyles, onLayerStyleSelect, layerStyleAdded]);
 
   const menuItems: PopupMenuItem[] = [
     {
       id: "empty",
       title: t("Empty"),
       onClick: () => handleLayerStyleAddition({})
-    },
-    {
-      id: "sketch",
-      title: t("Sketch"),
-      onClick: () => handleLayerStyleAddition(sketchLayerStyle, "Sketch")
     },
     {
       id: "default",
@@ -81,7 +93,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
           id: "pointWithLabel",
           title: t("Point with label"),
           onClick: () =>
-            handleLayerStyleAddition(pointWithLabelStyle, "Point with label")
+            handleLayerStyleAddition(pointWithLabelStyle, "Point_with_label")
         },
         {
           id: "polyline",
@@ -94,15 +106,15 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
           onClick: () => handleLayerStyleAddition(polygonStyle, "Polygon")
         },
         {
-          id: "threedTiles",
-          title: t("3D Tiles"),
-          onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D Tiles")
-        },
-        {
           id: "extrudedPolygon",
           title: t("Extruded polygon"),
           onClick: () =>
-            handleLayerStyleAddition(extrudedPolygonStyle, "Extruded polygon")
+            handleLayerStyleAddition(extrudedPolygonStyle, "Extruded_polygon")
+        },
+        {
+          id: "threedTiles",
+          title: t("3D Tiles"),
+          onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D_tiles")
         }
       ]
     },
@@ -114,7 +126,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
         {
           id: "simpleStyle",
           title: t("Simple Style"),
-          onClick: () => handleLayerStyleAddition(simpleStyle, "Simple Style")
+          onClick: () => handleLayerStyleAddition(simpleStyle, "Simple_style")
         }
       ]
     },
@@ -129,7 +141,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
           onClick: () =>
             handleLayerStyleAddition(
               colorBuildingsByHeight,
-              "Color buildings by height"
+              "Color_buildings_by_height"
             )
         }
       ]

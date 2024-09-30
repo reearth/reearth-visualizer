@@ -1,3 +1,5 @@
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+
 export const defaultStyle = {
   marker: {
     heightReference: "clamp"
@@ -180,32 +182,13 @@ export const colorBuildingsByHeight = {
   }
 };
 
-export const sketchLayerStyle = {
-  marker: {
-    height: 0,
-    heightReference: "clamp",
-    hideIndicator: true,
-    selectedFeatureColor: "#00bebe"
-  },
-  polygon: {
-    classificationType: "terrain",
-    extrudedHeight: {
-      expression: "${extrudedHeight}"
-    },
-    fillColor: "#FFFFFF",
-    height: 0,
-    heightReference: "clamp",
-    hideIndicator: true,
-    selectedFeatureColor: "#00bebe",
-    shadows: "enabled"
-  },
-  polyline: {
-    clampToGround: true,
-    height: 0,
-    hideIndicator: true,
-    selectedFeatureColor: "#00bebe",
-    shadows: "enabled",
-    strokeColor: "#FFFFFF",
-    strokeWidth: 2
-  }
+export const getLayerStyleName = (baseName: string, layerStyles?: LayerStyle[]) => {
+  if (!layerStyles) return `${baseName}.01`;
+  const nextNumber =
+    layerStyles.reduce((max, style) => {
+      const match = style.name?.match(new RegExp(`^${baseName}\\.(\\d+)$`));
+      return match ? Math.max(max, parseInt(match[1], 10)) : max;
+    }, 0) + 1;
+
+  return `${baseName}.${nextNumber.toString().padStart(2, "0")}`;
 };
