@@ -113,13 +113,13 @@ export const parseConditions = (
         const operator = match[0] as StyleConditionOperator;
         const [variable, value] = condition
           .split(operator)
-          .map((part) => part.trim().replace(/\$\{|\}/g, ""));
+          .map((part) => part.trim());
 
         return {
           variable,
           operator,
           value,
-          applyValue
+          applyValue: unwrapColor(applyValue)
         };
       }
       return null;
@@ -134,7 +134,23 @@ export const generateConditions = (
   return conditions.map((c) => {
     return [
       `${c.variable} ${c.operator} ${c.value}`,
-      (c.applyValue ?? "").toString()
+      wrapColor((c.applyValue ?? "").toString())
     ];
   });
+};
+
+export const wrapColor = (maybeColor: string) => {
+  // check if color is a valid hex string
+  if (/^#[0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8}$/i.test(maybeColor)) {
+    return `color('${maybeColor}')`;
+  }
+  return maybeColor;
+};
+
+export const unwrapColor = (maybeWrappedColor: string) => {
+  // check if color is wrapped with color()
+  if (/^color\('.+'\)$/.test(maybeWrappedColor)) {
+    return maybeWrappedColor.slice(7, -2);
+  }
+  return maybeWrappedColor;
 };
