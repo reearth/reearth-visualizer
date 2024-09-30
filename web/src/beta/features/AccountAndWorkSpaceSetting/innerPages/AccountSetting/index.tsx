@@ -77,7 +77,7 @@ const AccountSetting: FC<Props> = ({
       <PasswordModal
         isVisible={!passwordModalClosed}
         passwordPolicy={passwordPolicy}
-        onClose={() => setPasswordModalClosed(!passwordModalClosed)}
+        onClose={() => setPasswordModalClosed(true)}
         updatePassword={onUpdateUserPassword}
       />
     </InnerPage>
