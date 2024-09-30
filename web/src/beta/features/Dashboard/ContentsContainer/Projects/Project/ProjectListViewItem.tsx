@@ -53,24 +53,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     onProjectSelect
   });
 
-  // const actions = useMemo(
-  //   () => (
-  //     <>
-  //       <Button
-  //         title={t("Cancel")}
-  //         appearance={"secondary"}
-  //         onClick={closeExportModal}
-  //       />
-  //       <Button
-  //         title={t("Export")}
-  //         appearance={"primary"}
-  //         onClick={handleExportProject}
-  //       />
-  //     </>
-  //   ),
-  //   [handleExportProject, closeExportModal, t]
-  // );
-
   return (
     <>
       <ListWrapper
