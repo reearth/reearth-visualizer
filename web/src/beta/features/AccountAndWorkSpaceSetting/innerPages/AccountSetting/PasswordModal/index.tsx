@@ -133,60 +133,56 @@ const PasswordModal: React.FC<Props> = ({
         ]}
       >
         <ModalContentWrapper>
-          <div>
-            <SubText>
-              <Typography size="body" weight="bold">
-                {t(
-                  `In order to protect your account, make sure your password is unique and strong.`
-                )}
-              </Typography>
-            </SubText>
-            <PasswordField direction="column">
-              <Typography size="body" weight="bold">
-                {t("New password")}
-              </Typography>
-              <TextInput
-                value={password}
-                onChange={handlePasswordChange}
-                type="password"
-              />
-              {password ? (
-                <PasswordMessage
-                  size="body"
-                  weight="bold"
-                  color={regexMessageColor}
-                >
-                  {regexMessage}
-                </PasswordMessage>
-              ) : undefined}
-            </PasswordField>
-            <PasswordField direction="column">
-              <Typography size="body" weight="bold">
-                {t("New password (for confirmation)")}
-              </Typography>
-              <TextInput
-                value={passwordConfirmation}
-                onChange={setPasswordConfirmation}
-                type="password"
-              />
-              {isMatchPassword ? (
-                <PasswordMessage
-                  size="body"
-                  weight="regular"
-                  color={theme.dangerous.main}
-                >
-                  <span>
-                    <Icon
-                      icon="warning"
-                      size="large"
-                      color={theme.dangerous.main}
-                    />
-                  </span>
-                  {t('"repeatPassword" Passwords need to match')}
-                </PasswordMessage>
-              ) : undefined}
-            </PasswordField>
-          </div>
+          <Typography size="body" weight="regular">
+            {t(
+              `In order to protect your account, make sure your password is unique and strong.`
+            )}
+          </Typography>
+          <PasswordField direction="column">
+            <Typography size="body" weight="bold">
+              {t("New password")}
+            </Typography>
+            <TextInput
+              value={password}
+              onChange={handlePasswordChange}
+              type="password"
+            />
+            {password ? (
+              <PasswordMessage
+                size="body"
+                weight="bold"
+                color={regexMessageColor}
+              >
+                {regexMessage}
+              </PasswordMessage>
+            ) : undefined}
+          </PasswordField>
+          <PasswordField direction="column">
+            <Typography size="body" weight="bold">
+              {t("New password (for confirmation)")}
+            </Typography>
+            <TextInput
+              value={passwordConfirmation}
+              onChange={setPasswordConfirmation}
+              type="password"
+            />
+            {isMatchPassword ? (
+              <PasswordMessage
+                size="body"
+                weight="regular"
+                color={theme.dangerous.main}
+              >
+                <span>
+                  <Icon
+                    icon="warning"
+                    size="large"
+                    color={theme.dangerous.main}
+                  />
+                </span>
+                {t('"repeatPassword" Passwords need to match')}
+              </PasswordMessage>
+            ) : undefined}
+          </PasswordField>
         </ModalContentWrapper>
       </ModalPanel>
     </Modal>
@@ -200,10 +196,6 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.large,
   background: theme.bg[1]
 }));
-
-const SubText = styled.div`
-  margin: ${({ theme }) => `${theme.spacing.large}px auto`};
-`;
 
 const PasswordField = styled(Flex)`
   height: 50px;
