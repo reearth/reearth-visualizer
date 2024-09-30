@@ -1,5 +1,3 @@
-import { Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 export const InnerPage = styled("div")<{
@@ -49,31 +47,8 @@ export const SettingsRowItem = styled("div")(() => ({
   width: "100%"
 }));
 
-export const Thumbnail = styled("div")<{ src?: string }>(({ src, theme }) => ({
-  width: "100%",
-  paddingBottom: "52.3%",
-  fontSize: 0,
-  background: src
-    ? `url(${src}) center/contain no-repeat`
-    : theme.relative.dark,
-  borderRadius: theme.radius.small
-}));
-
 export const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
   gap: theme.spacing.small
 }));
-
-export const ArchivedSettingNotice: React.FC = () => {
-  const t = useT();
-  return (
-    <Collapse title={t("Notice")} size="large">
-      <Typography size="body">
-        {t(
-          "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings."
-        )}
-      </Typography>
-    </Collapse>
-  );
-};
