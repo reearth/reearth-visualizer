@@ -74,7 +74,7 @@ const PasswordModal: React.FC<Props> = ({
           break;
       }
     },
-    [t, password, passwordPolicy] // eslint-disable-line react-hooks/exhaustive-deps
+    [t, passwordPolicy]
   );
 
   const handleClose = useCallback(() => {
