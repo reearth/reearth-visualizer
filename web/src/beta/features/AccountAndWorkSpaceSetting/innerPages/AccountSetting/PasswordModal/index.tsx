@@ -189,13 +189,16 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1]
 }));
 
-const PasswordField = styled(Flex)`
-  height: 50px;
-  transition: all 0.2s;
-  &:has(p ~ p) {
-    height: 68px;
+const PasswordField = styled(Flex)(({ theme }) => ({
+  height: "50px",
+  transition: "all 0.2s",
+  "& > *:first-child": {
+    marginBottom: theme.spacing.small
+  },
+  "&:has(p ~ p)": {
+    height: "68px"
   }
-`;
+}));
 
 const PasswordMessage = styled(Typography)`
   margin-top: ${metricsSizes["s"]}px;
