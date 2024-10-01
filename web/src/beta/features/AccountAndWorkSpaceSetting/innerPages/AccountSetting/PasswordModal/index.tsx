@@ -133,32 +133,26 @@ const PasswordModal: React.FC<Props> = ({
         ]}
       >
         <ModalContentWrapper>
-          <Typography size="body" weight="regular">
+          <Typography size="body">
             {t(
               `In order to protect your account, make sure your password is unique and strong.`
             )}
           </Typography>
           <PasswordField direction="column">
-            <Typography size="body" weight="bold">
-              {t("New password")}
-            </Typography>
+            <Typography size="body">{t("New password")}</Typography>
             <TextInput
               value={password}
               onChange={handlePasswordChange}
               type="password"
             />
             {password ? (
-              <PasswordMessage
-                size="body"
-                weight="bold"
-                color={regexMessageColor}
-              >
+              <PasswordMessage size="body" color={regexMessageColor}>
                 {regexMessage}
               </PasswordMessage>
             ) : undefined}
           </PasswordField>
           <PasswordField direction="column">
-            <Typography size="body" weight="bold">
+            <Typography size="body">
               {t("New password (for confirmation)")}
             </Typography>
             <TextInput
@@ -207,7 +201,6 @@ const PasswordField = styled(Flex)`
 
 const PasswordMessage = styled(Typography)`
   margin-top: ${metricsSizes["s"]}px;
-  font-style: italic;
   display: flex;
 `;
 
