@@ -166,13 +166,11 @@ const PasswordModal: React.FC<Props> = ({
                 weight="regular"
                 color={theme.dangerous.main}
               >
-                <span>
-                  <Icon
-                    icon="warning"
-                    size="large"
-                    color={theme.dangerous.main}
-                  />
-                </span>
+                <Icon
+                  icon="warning"
+                  size="large"
+                  color={theme.dangerous.main}
+                />
                 {t('"repeatPassword" Passwords need to match')}
               </PasswordMessage>
             ) : undefined}
