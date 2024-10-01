@@ -2,7 +2,7 @@ import { CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { styled } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
-import { Dispatch, FC, useCallback, useEffect, useState } from "react";
+import { Dispatch, FC, useCallback, useEffect, useRef, useState } from "react";
 
 import NoStyleMessage from "../NoStyleMessage";
 
@@ -13,36 +13,34 @@ type CodeProps = {
 
 const StyleCode: FC<CodeProps> = ({ layerStyle, setLayerStyle }) => {
   const [styleCode, setStyleCode] = useState<string | undefined>("");
+  const styleCodeRef = useRef<string | undefined>(styleCode);
+  styleCodeRef.current = styleCode;
 
   useEffect(() => {
     setStyleCode(JSON.stringify(layerStyle?.value, null, 2));
   }, [layerStyle]);
 
-  const handleStyleCodeChange = useCallback(
-    (newStyleCode?: string) => {
-      try {
-        const parsedStyle = JSON.parse(newStyleCode || "");
-        setLayerStyle((prev) => {
-          if (!prev?.id) return prev;
-          return {
-            ...prev,
-            value: parsedStyle
-          };
-        });
-      } catch (_error) {
-        // Do nothing
-      }
-
-      setStyleCode(newStyleCode);
-    },
-    [setLayerStyle]
-  );
+  const updateStyle = useCallback(() => {
+    try {
+      const parsedStyle = JSON.parse(styleCodeRef.current || "");
+      setLayerStyle((prev) => {
+        if (!prev?.id) return prev;
+        return {
+          ...prev,
+          value: parsedStyle
+        };
+      });
+    } catch (_error) {
+      // Do nothing
+    }
+  }, [setLayerStyle]);
 
   return layerStyle?.id ? (
     <CodeWrapper>
       <CodeInput
         value={styleCode}
-        onChange={handleStyleCodeChange}
+        onChange={setStyleCode}
+        onBlur={updateStyle}
         language="json"
         showLines={false}
       />

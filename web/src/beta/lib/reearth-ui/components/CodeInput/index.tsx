@@ -45,7 +45,8 @@ export const CodeInput: FC<CodeInputProps> = ({
       },
       scrollbar: {
         horizontal: "hidden"
-      }
+      },
+      tabSize: 2
     }),
     [disabled, showLines]
   );
