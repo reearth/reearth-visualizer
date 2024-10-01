@@ -47,6 +47,20 @@ func serveFiles(
 	)
 
 	ec.GET(
+		"/export/:filename",
+		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
+			filename := ctx.Param("filename")
+			r, err := repo.ReadExportProjectZip(ctx.Request().Context(), filename)
+			if err != nil {
+				return nil, "", rerror.ErrNotFound
+			}
+			// download and then delete
+			err = repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+			return r, filename, err
+		}),
+	)
+
+	ec.GET(
 		"/plugins/:plugin/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			pid, err := id.PluginIDFrom(ctx.Param("plugin"))

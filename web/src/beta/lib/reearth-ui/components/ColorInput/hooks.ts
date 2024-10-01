@@ -31,15 +31,16 @@ const useColorPicker = ({
     setColorValue(value);
   }, []);
 
-  const handleHexInputBlur = useCallback(() => {
-    const hexPattern =
-      /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(
-        colorValue || ""
-      );
-    const color = !colorValue || hexPattern ? colorValue : value;
-    setPickerColor(tinycolor(color).toRgb());
-    onChange?.(color || "");
-  }, [colorValue, onChange, value]);
+  const handleHexInputBlur = useCallback(
+    (newValue: string) => {
+      const hexPattern =
+        /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(newValue);
+      const color = hexPattern ? newValue : colorValue;
+      setPickerColor(tinycolor(color).toRgb());
+      onChange?.(color || "");
+    },
+    [colorValue, onChange]
+  );
 
   const handlePickerColorChange = useCallback((newColor: RgbaColor) => {
     setPickerColor(newColor);
