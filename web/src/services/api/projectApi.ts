@@ -21,7 +21,9 @@ import {
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
   UPDATE_PROJECT_ALIAS,
-  UPDATE_PROJECT_BASIC_AUTH
+  UPDATE_PROJECT_BASIC_AUTH,
+  EXPORT_PROJECT,
+  IMPORT_PROJECT
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -387,6 +389,107 @@ export default () => {
     [updateProjectAliasMutation, t, setNotification]
   );
 
+  const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
+
+  const getBackendUrl = useCallback(() => {
+    const apiUrl = window.REEARTH_CONFIG?.api;
+    return apiUrl?.replace(/\/api$/, "");
+  }, []);
+
+  const useExportProject = useCallback(
+    async (projectId: string) => {
+      if (!projectId) return { status: "error" };
+
+      try {
+        const { data, errors } = await exportProjectMutation({
+          variables: { projectId }
+        });
+
+        if (errors || !data?.exportProject?.projectDataPath) {
+          console.log("GraphQL: Failed to export project", errors);
+          setNotification({
+            type: "error",
+            text: t("Failed to export project.")
+          });
+
+          return { status: "error" };
+        }
+
+        const projectDataPath = data.exportProject.projectDataPath;
+
+        const backendUrl = getBackendUrl();
+        const downloadUrl = `${backendUrl}${projectDataPath}`;
+
+        const response = await fetch(downloadUrl);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${projectId}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        setNotification({
+          type: "success",
+          text: t("Successfully exported project!")
+        });
+
+        return { status: "success" };
+      } catch (error) {
+        console.log("GraphQL: Failed to export project", error);
+        setNotification({
+          type: "error",
+          text: t("Failed to export project.")
+        });
+        return { status: "error" };
+      }
+    },
+    [exportProjectMutation, t, setNotification, getBackendUrl]
+  );
+
+  const [importProjectMutation] = useMutation(IMPORT_PROJECT);
+
+  const useImportProject = useCallback(
+    async (file: File) => {
+      if (!file) return { status: "error" };
+
+      try {
+        const { data, errors } = await importProjectMutation({
+          variables: { file }
+        });
+
+        if (errors || !data?.importProject) {
+          console.log("GraphQL: Failed to import project", errors);
+          setNotification({
+            type: "error",
+            text: t("Failed to import project.")
+          });
+          return { status: "error" };
+        }
+
+        setNotification({
+          type: "success",
+          text: t("Successfully imported project!")
+        });
+        return { status: "success" };
+      } catch (error) {
+        console.log("GraphQL: Failed to import project", error);
+        setNotification({
+          type: "error",
+          text: t("Failed to import project.")
+        });
+        return { status: "error" };
+      }
+    },
+    [importProjectMutation, t, setNotification]
+  );
+
   return {
     publishProjectLoading,
     useProjectQuery,
@@ -399,6 +502,8 @@ export default () => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
-    useStarredProjectsQuery
+    useStarredProjectsQuery,
+    useExportProject,
+    useImportProject
   };
 };

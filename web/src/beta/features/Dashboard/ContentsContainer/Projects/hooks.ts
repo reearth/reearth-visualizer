@@ -39,7 +39,8 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useArchiveProject,
-    useStarredProjectsQuery
+    useStarredProjectsQuery,
+    useImportProject
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -57,7 +58,8 @@ export default (workspaceId?: string) => {
     isRefetching,
     hasMoreProjects,
     endCursor,
-    fetchMore
+    fetchMore,
+    refetch
   } = useProjectsQuery({
     includeArchived: true,
     teamId: workspaceId || "",
@@ -247,6 +249,19 @@ export default (workspaceId?: string) => {
     };
   }, []);
 
+  const handleImportProject = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        const result = await useImportProject(file);
+        if (result.status === "success") {
+          await refetch();
+        }
+      }
+    },
+    [useImportProject, refetch]
+  );
+
   return {
     filtedProjects,
     hasMoreProjects,
@@ -271,7 +286,8 @@ export default (workspaceId?: string) => {
     handleScrollToBottom: onScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
-    handleSearch
+    handleSearch,
+    handleImportProject
   };
 };
 

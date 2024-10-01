@@ -9,7 +9,7 @@ import {
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useRef, Fragment } from "react";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -40,7 +40,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
-    handleSearch
+    handleSearch,
+    handleImportProject
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -56,19 +57,55 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     [t]
   );
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // const actions = useMemo(
+  //   () => (
+  //     <>
+  //       <Button
+  //         title={t("Cancel")}
+  //         appearance={"secondary"}
+  //         onClick={closeExportModal}
+  //       />
+  //       <Button
+  //         title={t("Export")}
+  //         appearance={"primary"}
+  //         onClick={handleExportProject}
+  //       />
+  //     </>
+  //   ),
+  //   [handleExportProject, closeExportModal, t]
+  // );
+
   return (
     <ManagerWrapper onClick={() => handleProjectSelect(undefined)}>
       <ManagerHeader
         size="large"
         actions={[
-          <ManagerHeaderButton
-            key={"create-project"}
-            title={t("New Project")}
-            managerSize="large"
-            icon="plus"
-            appearance="primary"
-            onClick={showProjectCreator}
-          />
+          <Fragment key="action-buttons">
+            <ManagerHeaderButton
+              key={"create-project"}
+              title={t("New Project")}
+              managerSize="large"
+              icon="plus"
+              appearance="primary"
+              onClick={showProjectCreator}
+            />
+            <ManagerHeaderButton
+              key={"import-project"}
+              title={t("Import")}
+              managerSize="large"
+              icon="signIn"
+              appearance="secondary"
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <HiddenFileInput
+              type="file"
+              accept=".zip"
+              ref={fileInputRef}
+              onChange={handleImportProject}
+            />
+          </Fragment>
         ]}
         sortValue={sortValue}
         sortOptions={sortOptions}
@@ -290,3 +327,7 @@ const LoadingWrapper = styled("div")(() => ({
   width: "100%",
   height: 100
 }));
+
+const HiddenFileInput = styled("input")({
+  display: "none"
+});

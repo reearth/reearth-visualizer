@@ -44,6 +44,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick
+    // exportModalVisible,
+    // closeExportModal,
+    // handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -53,67 +56,80 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   });
 
   return (
-    <ListWrapper
-      onClick={(e) => onProjectSelect?.(e, project.id)}
-      isHovered={isHovered ?? false}
-      onDoubleClick={onProjectOpen}
-      onMouseEnter={() => handleProjectHover?.(true)}
-      onMouseLeave={() => handleProjectHover?.(false)}
-      isSelected={selectedProjectId === project.id}
-    >
-      <ThumbnailCol>
-        <ActionWrapper>
-          <StarButtonWrapper
-            isStarred={isStarred ?? false}
-            isHovered={isHovered ?? false}
-            isSelected={selectedProjectId === project.id}
-          >
-            <Button
-              iconButton
-              icon={isStarred ? "starFilled" : "star"}
-              onClick={(e) => handleProjectStarClick?.(e)}
-              iconColor={isStarred ? theme.warning.main : theme.content.main}
-              appearance="simple"
-            />
-          </StarButtonWrapper>
-          <ProjectImage backgroundImage={project.imageUrl} />
-        </ActionWrapper>
-      </ThumbnailCol>
-      <ProjectNameCol>
-        <PublishStatus status={hasMapOrStoryPublished} />
-        {!isEditing ? (
-          <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
-            {projectName}
-          </TitleWrapper>
-        ) : (
-          <TextInput
-            onChange={handleProjectNameChange}
-            onBlur={handleProjectNameBlur}
-            value={projectName}
-            autoFocus={isEditing}
-            appearance="present"
-          />
-        )}
-      </ProjectNameCol>
-      <TimeCol>
-        <Typography size="body">{UpdatedAt}</Typography>
-      </TimeCol>
-      <TimeCol>
-        <Typography size="body">{createAt}</Typography>
-      </TimeCol>
-      <ActionCol
-        onClick={(e: MouseEvent) => {
-          e.stopPropagation();
-        }}
+    <>
+      <ListWrapper
+        onClick={(e) => onProjectSelect?.(e, project.id)}
+        isHovered={isHovered ?? false}
+        onDoubleClick={onProjectOpen}
+        onMouseEnter={() => handleProjectHover?.(true)}
+        onMouseLeave={() => handleProjectHover?.(false)}
+        isSelected={selectedProjectId === project.id}
       >
-        <PopupMenu
-          menu={popupMenu}
-          label={
-            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
-          }
-        />
-      </ActionCol>
-    </ListWrapper>
+        <ThumbnailCol>
+          <ActionWrapper>
+            <StarButtonWrapper
+              isStarred={isStarred ?? false}
+              isHovered={isHovered ?? false}
+              isSelected={selectedProjectId === project.id}
+            >
+              <Button
+                iconButton
+                icon={isStarred ? "starFilled" : "star"}
+                onClick={(e) => handleProjectStarClick?.(e)}
+                iconColor={isStarred ? theme.warning.main : theme.content.main}
+                appearance="simple"
+              />
+            </StarButtonWrapper>
+            <ProjectImage backgroundImage={project.imageUrl} />
+          </ActionWrapper>
+        </ThumbnailCol>
+        <ProjectNameCol>
+          <PublishStatus status={hasMapOrStoryPublished} />
+          {!isEditing ? (
+            <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
+              {projectName}
+            </TitleWrapper>
+          ) : (
+            <TextInput
+              onChange={handleProjectNameChange}
+              onBlur={handleProjectNameBlur}
+              value={projectName}
+              autoFocus={isEditing}
+              appearance="present"
+            />
+          )}
+        </ProjectNameCol>
+        <TimeCol>
+          <Typography size="body">{UpdatedAt}</Typography>
+        </TimeCol>
+        <TimeCol>
+          <Typography size="body">{createAt}</Typography>
+        </TimeCol>
+        <ActionCol
+          onClick={(e: MouseEvent) => {
+            e.stopPropagation();
+          }}
+        >
+          <PopupMenu
+            menu={popupMenu}
+            label={
+              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+            }
+          />
+        </ActionCol>
+      </ListWrapper>
+      {/* MEMO: this modal will be used in the future */}
+      {/* <Modal visible={exportModalVisible} size="small">
+        <ModalPanel
+          title={t("Export Project")}
+          actions={actions}
+          onCancel={closeExportModal}
+          appearance="normal"
+        >
+          <ModalContent />
+        </ModalPanel>
+      </Modal> */}
+    </>
   );
 };
 
@@ -202,3 +218,8 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis"
 }));
+
+// const ModalContent = styled("div")(() => ({
+//   width: "100%",
+//   height: "272px"
+// }));
