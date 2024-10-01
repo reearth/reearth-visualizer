@@ -11,6 +11,7 @@ export type IconButtonProps = {
   disabled?: boolean;
   className?: string;
   iconRotate?: string;
+  iconColor?: string;
   stopPropagationOnClick?: boolean;
   onClick?: (e: MouseEvent) => void;
 };
@@ -23,6 +24,7 @@ export const IconButton: FC<IconButtonProps> = ({
   active,
   className,
   iconRotate,
+  iconColor,
   stopPropagationOnClick,
   onClick
 }) => {
@@ -45,7 +47,7 @@ export const IconButton: FC<IconButtonProps> = ({
       iconRotate={iconRotate}
       onClick={handleClick}
     >
-      <Icon icon={icon} />
+      <Icon icon={icon} color={iconColor} />
     </StyledButton>
   );
 };

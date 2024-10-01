@@ -88,6 +88,7 @@ const GeneralSettings: FC<Props> = ({
               <TextareaField
                 title={t("Description")}
                 value={localDescription}
+                resizable="height"
                 onChange={setLocalDescription}
               />
               <SettingsRow>

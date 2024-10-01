@@ -118,6 +118,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <TextAreaField
             title={t("Description")}
             value={localPublicInfo.publicDescription ?? ""}
+            resizable="height"
             onChange={(publicDescription: string) => {
               setLocalPublicInfo((s) => ({ ...s, publicDescription }));
             }}

@@ -36,6 +36,7 @@ export const CodeInput: FC<CodeInputProps> = ({
       },
       selectOnLineNumbers: true,
       fontSize: fonts.sizes.body,
+      fontFamily: fonts.fontFamilies.code,
       lineNumbers: showLines ? "on" : "off",
       readOnly: disabled ? true : false,
       wordWrap: "on",
@@ -44,7 +45,8 @@ export const CodeInput: FC<CodeInputProps> = ({
       },
       scrollbar: {
         horizontal: "hidden"
-      }
+      },
+      tabSize: 2
     }),
     [disabled, showLines]
   );

@@ -392,9 +392,8 @@ export function processLayers(
   infoboxBlockNames?: Record<string, string>
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
-    const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      (a) => a.id === id
-    )?.value;
+    const layerStyleValue: Partial<LayerAppearanceTypes> | undefined =
+      layerStyles?.find((a) => a.id === id)?.value;
     if (typeof layerStyleValue === "object") {
       try {
         return layerStyleValue;
