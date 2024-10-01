@@ -116,7 +116,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
     tab,
     handleLayerSelect,
     handleCoreLayerSelect,
-    handleSceneSettingSelect
+    handleSceneSettingSelect,
+    handleSketchTypeChange,
+    handleSketchGeometryEditCancel
   });
 
   const {

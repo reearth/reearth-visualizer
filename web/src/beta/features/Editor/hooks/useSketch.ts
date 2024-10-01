@@ -139,14 +139,8 @@ export default ({
   ]);
 
   useEffect(() => {
-    handleSketchTypeChange(undefined);
+    handleSketchTypeChange(undefined, "editor");
   }, [tab, handleSketchTypeChange]);
-
-  useEffect(() => {
-    if (!selectedLayer?.layer?.isSketch) {
-      handleSketchTypeChange(undefined);
-    }
-  }, [selectedLayer, handleSketchTypeChange]);
 
   const handleGeoJsonFeatureUpdate = useCallback(
     async (inp: GeoJsonFeatureUpdateProps) => {
@@ -227,9 +221,12 @@ export default ({
     });
   }, [visualizerRef, selectedLayer]);
 
-  const handleCancelEditSketchFeature = useCallback(() => {
-    visualizerRef.current?.sketch.cancelEdit();
-  }, [visualizerRef]);
+  const handleCancelEditSketchFeature = useCallback(
+    (ignoreAutoReSelect?: boolean) => {
+      visualizerRef.current?.sketch.cancelEdit(ignoreAutoReSelect);
+    },
+    [visualizerRef]
+  );
 
   const handleApplyEditSketchFeature = useCallback(() => {
     visualizerRef.current?.sketch.applyEdit();
@@ -241,17 +238,6 @@ export default ({
     });
     visualizerRef.current?.sketch.onEditFeatureChange(setSketchEditingFeatrue);
   }, [visualizerRef]);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     visualizerRef.current?.sketch.overrideOptions({
-  //       dataOnly: true
-  //     });
-  //     visualizerRef.current?.sketch.onEditFeatureChange(
-  //       setSketchEditingFeatrue
-  //     );
-  //   }, 1000);
-  // }, [visualizerRef]);
 
   return {
     sketchType,
