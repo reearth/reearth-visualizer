@@ -89,12 +89,13 @@ Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
-Invalid style: ''
 Interface: ''
 Code: ''
+Invalid style: ''
 Save: 保存
-New node: ''
 No style selected: ''
+if: ''
+New node: ''
 Style: ''
 Empty: ''
 Default: デフォルト

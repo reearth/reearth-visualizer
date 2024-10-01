@@ -3,6 +3,9 @@ import { styled } from "../../styled";
 export const fontFamilies =
   "Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif;";
 
+export const codeFontFamilies =
+  "source-code-pro, Menlo, Monaco, Consolas, Courier New, monospace";
+
 const fontSizes = {
   h1: 38,
   h2: 30,
@@ -217,7 +220,11 @@ const fonts = {
   typography: typography,
   weight: fontWeights,
   sizes: fontSizes,
-  lineHeights: lineHeights
+  lineHeights: lineHeights,
+  fontFamilies: {
+    normal: fontFamilies,
+    code: codeFontFamilies
+  }
 };
 
 export default fonts;
