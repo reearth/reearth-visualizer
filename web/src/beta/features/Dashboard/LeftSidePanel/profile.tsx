@@ -8,7 +8,6 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 import { FC } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Workspace } from "../type";
 
@@ -38,7 +37,6 @@ export const Profile: FC<ProfileProp> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const popupMenu: PopupMenuItem[] = [
     {
@@ -57,12 +55,6 @@ export const Profile: FC<ProfileProp> = ({
           onClick: () => onWorkspaceChange?.(w.id)
         };
       })
-    },
-    {
-      id: "accountSettings",
-      title: t("Account Settings"),
-      icon: "user",
-      onClick: () => navigate("/settings/account")
     },
     {
       id: "signOut",

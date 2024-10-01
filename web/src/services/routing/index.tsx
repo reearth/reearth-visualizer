@@ -1,4 +1,3 @@
-import AccountSettingPage from "@reearth/beta/pages/AccountSettingsPage";
 import RootPage from "@reearth/beta/pages/RootPage";
 import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
@@ -34,10 +33,6 @@ export const AppRoutes = () => {
     {
       path: "settings/project/:projectId/:tab?/:subId?",
       element: <ProjectSettings />
-    },
-    {
-      path: "settings/account",
-      element: <AccountSettingPage />
     },
     {
       path: "graphql",

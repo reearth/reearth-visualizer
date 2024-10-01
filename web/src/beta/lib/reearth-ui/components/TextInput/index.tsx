@@ -23,7 +23,6 @@ export type TextInputProps = {
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  type?: string;
 };
 
 export const TextInput: FC<TextInputProps> = ({
@@ -39,8 +38,7 @@ export const TextInput: FC<TextInputProps> = ({
   autoFocus,
   onChange,
   onBlur,
-  onKeyDown,
-  type
+  onKeyDown
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -92,7 +90,6 @@ export const TextInput: FC<TextInputProps> = ({
         appearance={appearance}
         autoFocus={autoFocus}
         onKeyDown={onKeyDown}
-        type={type}
       />
       {actions && <ActionsWrapper>{actions}</ActionsWrapper>}
     </Wrapper>
