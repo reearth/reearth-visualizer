@@ -38,14 +38,16 @@ Last Created: ''
 First Created: ''
 Last Updated: ''
 New Project: 新規プロジェクト
+Import: インポート
 All projects: ''
 Search Result for: ''
 Project Name: プロジェクト名
 Updated At: ''
 Created At: ''
 No Project has been created yet: ''
-Rename: ''
-Project Setting: ''
+Rename: 名称変更
+Project Setting: プロジェクト設定
+Export: エクスポート
 Create new project: ''
 Project Name *: ''
 Text: ''
@@ -374,6 +376,10 @@ Successfully archive project!: プロジェクトのアーカイブに成功し�
 Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
+Failed to export project.: プロジェクトのエクスポートに失敗しました。
+Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to import project.: プロジェクトのインポートに失敗しました。
+Successfully imported project!: プロジェクトのインポートに成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: ''
 Failed to create story.: ストーリーの作成に失敗しました。
