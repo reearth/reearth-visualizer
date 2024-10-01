@@ -1,9 +1,11 @@
+import { LayerAppearanceTypes } from "@reearth/core";
+
 import { GetSceneQuery } from "../../gql";
 
 export type LayerStyle = {
   id: string;
   name: string;
-  value?: any;
+  value?: Partial<LayerAppearanceTypes>;
 };
 
 export const getLayerStyles = (rawScene?: GetSceneQuery) => {
