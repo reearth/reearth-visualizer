@@ -91,11 +91,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   },
   ["* ::-webkit-scrollbar-track"]: {
     background: theme.relative.darker,
-    borderRadius: "10px"
+    borderRadius: theme.radius.large
   },
   ["* ::-webkit-scrollbar-thumb"]: {
     background: theme.relative.light,
-    borderRadius: "4px"
+    borderRadius: theme.radius.small
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
     background: theme.relative.lighter
