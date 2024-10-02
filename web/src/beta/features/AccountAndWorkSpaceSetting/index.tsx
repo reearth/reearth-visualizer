@@ -45,7 +45,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
 
   return (
     <Wrapper>
-      <Navbar workspaceId={meData.myTeam?.id} page="settings" />
+      <Navbar page="settings" />
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
