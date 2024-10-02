@@ -155,39 +155,37 @@ const FeatureData: FC<Props> = ({
     <Wrapper>
       {!!layer?.isSketch && sketchFeature?.id && (
         <SketchFeatureButtons>
-          <GeometryEditButtons>
-            {isEditingGeometry ? (
-              <>
-                <Button
-                  onClick={onSketchGeometryEditApply}
-                  size="small"
-                  icon="check"
-                  appearance="primary"
-                  extendWidth
-                />
-                <Button
-                  onClick={onSketchGeometryEditCancel}
-                  size="small"
-                  icon="close"
-                  extendWidth
-                />
-              </>
-            ) : (
+          {isEditingGeometry ? (
+            <>
+              <Button
+                onClick={onSketchGeometryEditApply}
+                size="small"
+                icon="check"
+                appearance="primary"
+                extendWidth
+              />
+              <Button
+                onClick={onSketchGeometryEditCancel}
+                size="small"
+                icon="close"
+                extendWidth
+              />
+            </>
+          ) : (
+            <>
               <Button
                 onClick={onSketchGeometryEditStart}
                 size="small"
                 icon="pencilLine"
                 extendWidth
               />
-            )}
-          </GeometryEditButtons>
-          {!isEditingGeometry && (
-            <Button
-              onClick={handleDeleteSketchFeature}
-              size="small"
-              icon="trash"
-              extendWidth
-            />
+              <Button
+                onClick={handleDeleteSketchFeature}
+                size="small"
+                icon="trash"
+                extendWidth
+              />
+            </>
           )}
         </SketchFeatureButtons>
       )}
@@ -284,13 +282,6 @@ const ValueWrapper = styled("div")(({ theme }) => ({
 }));
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  gap: theme.spacing.small
-}));
-
-const GeometryEditButtons = styled("div")(({ theme }) => ({
-  width: "100%",
   display: "flex",
   flexDirection: "row",
   gap: theme.spacing.small
