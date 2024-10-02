@@ -8,10 +8,14 @@ import { events } from "../utils/events";
 export default ({
   mapRef,
   onSketchPluginFeatureCreate,
+  onSketchPluginFeatureUpdate,
   onSketchTypeChange
 }: Pick<
   Props,
-  "mapRef" | "onSketchPluginFeatureCreate" | "onSketchTypeChange"
+  | "mapRef"
+  | "onSketchPluginFeatureCreate"
+  | "onSketchPluginFeatureUpdate"
+  | "onSketchTypeChange"
 >) => {
   const getSketchTool = useCallback(
     () => mapRef?.current?.sketch?.getType(),
@@ -49,6 +53,19 @@ export default ({
       sketchPluginFeatureCreateEventBinded.current = true;
     }
   }, [emit, onSketchPluginFeatureCreate]);
+
+  const sketchPluginFeatureUpdateEventBinded = useRef(false);
+  useEffect(() => {
+    if (
+      !sketchPluginFeatureUpdateEventBinded.current &&
+      onSketchPluginFeatureUpdate
+    ) {
+      onSketchPluginFeatureUpdate?.((e) => {
+        emit("update", e);
+      });
+      sketchPluginFeatureUpdateEventBinded.current = true;
+    }
+  }, [emit, onSketchPluginFeatureUpdate]);
 
   const sketchTypeChangeEventBinded = useRef(false);
   useEffect(() => {

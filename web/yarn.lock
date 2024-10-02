@@ -8186,9 +8186,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.14":
-  version: 0.0.7-alpha.14
-  resolution: "@reearth/core@npm:0.0.7-alpha.14"
+"@reearth/core@npm:0.0.7-alpha.15":
+  version: 0.0.7-alpha.15
+  resolution: "@reearth/core@npm:0.0.7-alpha.15"
   dependencies:
     "@radix-ui/react-checkbox": "npm:1.1.1"
     "@radix-ui/react-dialog": "npm:1.1.1"
@@ -8197,6 +8197,7 @@ __metadata:
     "@radix-ui/react-separator": "npm:1.1.0"
     "@radix-ui/react-slot": "npm:1.1.0"
     "@radix-ui/react-switch": "npm:1.1.0"
+    "@radix-ui/react-toggle": "npm:1.1.0"
     "@reearth/cesium-mvt-imagery-provider": "npm:1.5.4"
     "@rot1024/use-transition": "npm:1.0.0"
     "@seznam/compose-react-refs": "npm:1.0.6"
@@ -8240,7 +8241,7 @@ __metadata:
     cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/c3d742702ea3396ec4a2774bcd89f62c7686cda31e3587e05a9e2f9cff2400957af4924f426eec0b6a10c3653cdec4959f48ed8bd75c409a21a7db082e6352a5
+  checksum: 10c0/38e5d4950a116ff52ef5a04eb0614d499721291dd51fe8e442ba4a087417bca580c6748a169dcda505d0d218c9fda760e2d173f503e70d7bcf733a675e7e05f4
   languageName: node
   linkType: hard
 
@@ -8280,7 +8281,7 @@ __metadata:
     "@monaco-editor/react": "npm:4.6.0"
     "@playwright/test": "npm:1.46.1"
     "@popperjs/core": "npm:2.11.8"
-    "@reearth/core": "npm:0.0.7-alpha.14"
+    "@reearth/core": "npm:0.0.7-alpha.15"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
