@@ -45,6 +45,9 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           <ProjectImage backgroundImage={project.imageUrl} />
         </ActionWrapper>
       </ThumbnailCol>
+      <ProjectNameCol>
+        <TitleWrapper>{project.name}</TitleWrapper>
+      </ProjectNameCol>
       <TimeCol>
         <Typography size="body">{UpdatedAt}</Typography>
       </TimeCol>
@@ -113,4 +116,25 @@ const TimeCol = styled("div")(() => ({
 const ActionCol = styled("div")(() => ({
   flex: "0 0 10%",
   flexShrink: 0
+}));
+
+const ProjectNameCol = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
+  flex: 1,
+  flexShrink: 0
+}));
+
+const TitleWrapper = styled("div")(({ theme }) => ({
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  cursor: "pointer",
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis"
 }));

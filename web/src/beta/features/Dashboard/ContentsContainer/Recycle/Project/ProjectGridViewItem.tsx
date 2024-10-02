@@ -33,6 +33,9 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
       />
       <CardFooter>
         {hasMapOrStoryPublished && <PublishStatus />}
+        <CardTitleWrapper>
+          <CardTitle>{project.name}</CardTitle>
+        </CardTitleWrapper>
         <PopupMenu
           menu={popupMenu}
           label={
@@ -83,4 +86,22 @@ const PublishStatus = styled("div")(({ theme }) => ({
   width: "12px",
   borderRadius: "50%",
   background: theme.publish.main
+}));
+
+const CardTitleWrapper = styled("div")(() => ({
+  flex: 1
+}));
+
+const CardTitle = styled("div")(({ theme }) => ({
+  flex: "1",
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  cursor: "pointer"
 }));
