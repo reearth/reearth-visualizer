@@ -68,7 +68,7 @@ export default ({
   return {
     workspaces,
     currentProject,
-    workspace,
+    currentWorkspace,
     handleWorkspaceChange,
     handleLogout
   };
