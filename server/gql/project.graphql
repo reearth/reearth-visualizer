@@ -116,7 +116,7 @@ type DeleteProjectPayload {
 }
 
 type ExportProjectPayload {
-  projectData: JSON!
+  projectDataPath: String!
 }
 
 type ImportProjectPayload {

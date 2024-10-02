@@ -1,5 +1,5 @@
 import { AreaSize } from "@reearth/beta/ui/layout";
-import { FlyTo, SketchType } from "@reearth/core";
+import { FlyTo, SketchEditingFeature, SketchType } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
@@ -48,6 +48,10 @@ export interface MapPageContextType {
   sketchEnabled: boolean;
   sketchType: SketchType | undefined;
   handleSketchTypeChange: (type: SketchType | undefined) => void;
+  sketchEditingFeature?: SketchEditingFeature;
+  handleSketchGeometryEditStart: () => void;
+  handleSketchGeometryEditCancel: () => void;
+  handleSketchGeometryEditApply: () => void;
   sceneSettings?: Item[];
   layerStyles?: LayerStyle[];
   sceneId?: string;

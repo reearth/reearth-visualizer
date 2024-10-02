@@ -5,12 +5,14 @@ import { IconName, Icon } from "../Icon";
 
 export type IconButtonProps = {
   icon: IconName;
-  size?: "normal" | "small" | "smallest" | "large";
+  size?: "normal" | "small" | "smallest" | "medium" | "large";
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;
   disabled?: boolean;
   className?: string;
+  hasBorder?: boolean;
   iconRotate?: string;
+  iconColor?: string;
   stopPropagationOnClick?: boolean;
   onClick?: (e: MouseEvent) => void;
 };
@@ -23,8 +25,10 @@ export const IconButton: FC<IconButtonProps> = ({
   active,
   className,
   iconRotate,
+  iconColor,
   stopPropagationOnClick,
-  onClick
+  onClick,
+  hasBorder
 }) => {
   const handleClick = useCallback(
     (e: MouseEvent) => {
@@ -44,39 +48,46 @@ export const IconButton: FC<IconButtonProps> = ({
       active={active}
       iconRotate={iconRotate}
       onClick={handleClick}
+      hasBorder={hasBorder}
     >
-      <Icon icon={icon} />
+      <Icon icon={icon} color={iconColor} />
     </StyledButton>
   );
 };
 
 const StyledButton = styled("button")<{
-  size: "normal" | "small" | "smallest" | "large";
+  size: "normal" | "small" | "smallest" | "medium" | "large";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;
   iconRotate?: string;
-}>(({ appearance, size, active, iconRotate, theme }) => ({
+  hasBorder?: boolean;
+}>(({ appearance, size, active, iconRotate, theme, hasBorder }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
+  border: hasBorder ? `1px solid ${theme.outline.weak}` : "none",
   flexShrink: 0,
   width:
     size === "smallest"
       ? "16px"
       : size === "small"
         ? "20px"
-        : size === "large"
-          ? "36px"
-          : "24px",
+        : size === "medium"
+          ? "28px"
+          : size === "large"
+            ? "36px"
+            : "24px",
   height:
     size === "smallest"
       ? "16px"
       : size === "small"
         ? "20px"
-        : size === "large"
-          ? "36px"
-          : "24px",
+        : size === "medium"
+          ? "28px"
+          : size === "large"
+            ? "36px"
+            : "24px",
   borderRadius:
     size === "small" ? `${theme.radius.small}px` : `${theme.radius.normal}px`,
   color: active

@@ -1,6 +1,22 @@
 You have passed the maximum value.: ''
 You have passed the minimum value.: ''
 Not found: ページが見つかりません
+Account: ''
+Name: 名前
+Email address: ''
+Password: パスワード
+No whitespace is allowed.: ''
+Too short.: ''
+That is terribly long.: ''
+That password is great!: ''
+That password need more security.: ''
+That password is low security.: ''
+That password confuses me, but might be okay.: ''
+Change password: ''
+In order to protect your account, make sure your password is unique and strong.: ''
+New password: ''
+New password (for confirmation): ''
+'"repeatPassword" Passwords need to match': ''
 Select Asset: ''
 Last Uploaded: 昇順（アップロード日）
 First Uploaded: 降順（アップロード日）
@@ -12,7 +28,6 @@ Upload File: ''
 Search in all assets library: ''
 Assets selected: ''
 Asset selected: ''
-Name: 名前
 Uploaded At: ''
 Size: ''
 No Asset has been uploaded yet: ''
@@ -23,14 +38,16 @@ Last Created: ''
 First Created: ''
 Last Updated: ''
 New Project: 新規プロジェクト
+Import: インポート
 All projects: ''
 Search Result for: ''
 Project Name: プロジェクト名
 Updated At: ''
 Created At: ''
 No Project has been created yet: ''
-Rename: ''
-Project Setting: ''
+Rename: 名称変更
+Project Setting: プロジェクト設定
+Export: エクスポート
 Create new project: ''
 Project Name *: ''
 Text: ''
@@ -41,6 +58,7 @@ Starred: ''
 Switch WorkSpace: ''
 Personal: ''
 Team Workspace: ''
+Account Settings: ''
 Log Out: ''
 Re:Earth Visualizer: ''
 Page: ページ
@@ -79,7 +97,6 @@ Save & Apply: ''
 No custom properties: ''
 Geometry: ジオメトリ
 Properties: プロパティ
-Delete Feature: ''
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
 Layer Style: レイヤースタイル
@@ -87,13 +104,26 @@ Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
-Invalid style: ''
 Interface: ''
 Code: ''
+Invalid style: ''
 Save: 保存
-New node: ''
 No style selected: ''
-Style_: スタイル_
+if: ''
+New node: ''
+Style: ''
+Empty: ''
+Default: デフォルト
+Professional: ''
+Basic Geometry: ''
+Points: ''
+Point with label: ''
+Polyline: ''
+Polygon: ''
+Extruded polygon: ''
+Simple Style: ''
+Plateau: ''
+Color buildings by height: ''
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -159,6 +189,7 @@ Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
+Visualizer: ''
 Unknown: 不明
 Switch workspace: ''
 Log out: ログアウト
@@ -201,7 +232,6 @@ Public Info: 公開詳細設定
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効化
 Username: ユーザー名
-Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
@@ -320,6 +350,10 @@ Failed to update the layerStyle.: レイヤースタイルのアップデート�
 Successfully updated a the layerStyle!: レイヤースタイルのアップデートに成功しました！
 Failed to delete the layer style.: ''
 Successfully deleted the layer style!: ''
+Failed to update user password.: ''
+Successfully updated user password!: ''
+Failed to delete user.: ''
+Successfully delete user!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
@@ -327,7 +361,6 @@ Successfully upgraded plugin!: プラグインのアップグレードに成功�
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
-Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。
@@ -342,6 +375,10 @@ Successfully archive project!: プロジェクトのアーカイブに成功し�
 Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
+Failed to export project.: プロジェクトのエクスポートに失敗しました。
+Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to import project.: プロジェクトのインポートに失敗しました。
+Successfully imported project!: プロジェクトのインポートに成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: ''
 Failed to create story.: ストーリーの作成に失敗しました。
@@ -367,3 +404,4 @@ Failed to update widget alignment.: ウィジェットのアラインメント�
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
+Style_: スタイル_
