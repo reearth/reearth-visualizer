@@ -89,6 +89,7 @@ export default ({
       console.error("Failed to export project:", result.status);
     }
   }, [useExportProject, project.id]);
+
   const handleArchivedModal = useCallback((value: boolean) => {
     setArchiveOpen(value);
   }, []);
