@@ -174,7 +174,7 @@ export default ({
       if (
         !selectedLayer?.layer?.id ||
         !selectedLayer?.computedFeature?.id ||
-        !selectedLayer.computedFeature.id !== !feature?.properties?.id ||
+        selectedLayer.computedFeature.id !== feature?.properties?.id ||
         !feature
       )
         return;
@@ -204,7 +204,7 @@ export default ({
     [selectedLayer, handleGeoJsonFeatureUpdate]
   );
 
-  const [sketchEditingFeature, setSketchEditingFeatrue] = useState<
+  const [sketchEditingFeature, setSketchEditingFeature] = useState<
     SketchEditingFeature | undefined
   >();
 
@@ -236,7 +236,7 @@ export default ({
     visualizerRef.current?.sketch.overrideOptions({
       dataOnly: true
     });
-    visualizerRef.current?.sketch.onEditFeatureChange(setSketchEditingFeatrue);
+    visualizerRef.current?.sketch.onEditFeatureChange(setSketchEditingFeature);
   }, [visualizerRef]);
 
   return {
