@@ -33,6 +33,7 @@ export default function ({
   onLayerSelectWithRectMove,
   onLayerSelectWithRectEnd,
   onSketchPluginFeatureCreate,
+  onSketchPluginFeatureUpdate,
   onSketchTypeChange,
   onLayerVisibility,
   onLayerLoad,
@@ -142,6 +143,7 @@ export default function ({
   } = useSketch({
     mapRef,
     onSketchPluginFeatureCreate,
+    onSketchPluginFeatureUpdate,
     onSketchTypeChange
   });
 

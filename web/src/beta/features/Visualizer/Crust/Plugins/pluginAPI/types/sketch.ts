@@ -38,6 +38,7 @@ export declare type SketchOptions = {
 
 export declare type SketchEventType = {
   create: [props: SketchEventProps];
+  update: [props: SketchEventProps];
   toolChange: [props: SketchType | undefined];
 };
 

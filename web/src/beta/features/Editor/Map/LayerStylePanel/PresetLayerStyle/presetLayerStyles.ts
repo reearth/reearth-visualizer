@@ -23,7 +23,7 @@ export const defaultStyle = {
 export const professionalStyle = {
   marker: {
     heightReference: "clamp",
-    hideIndicator: false,
+    hideIndicator: true,
     pointColor: "#E9373D",
     pointOutlineColor: "white",
     pointOutlineWidth: 1,
@@ -39,14 +39,14 @@ export const professionalStyle = {
       expression: "color('#E9373D',0.6)"
     },
     heightReference: "clamp",
-    hideIndicator: false,
+    hideIndicator: true,
     selectedFeatureColor: {
       expression: "color('#F1AF02',0.6)"
     }
   },
   polyline: {
     clampToGround: true,
-    hideIndicator: false,
+    hideIndicator: true,
     selectedFeatureColor: "#F1AF02",
     strokeColor: "#E9373D",
     strokeWidth: 2
@@ -83,7 +83,7 @@ export const pointWithLabelStyle = {
 export const polylineStyle = {
   polyline: {
     clampToGround: true,
-    hideIndicator: false,
+    hideIndicator: true,
     selectedFeatureColor: "#F1AF02",
     strokeColor: "#E9373D",
     strokeWidth: 2
@@ -94,7 +94,7 @@ export const polygonStyle = {
   polygon: {
     fillColor: "#E9373D",
     heightReference: "clamp",
-    hideIndicator: false,
+    hideIndicator: true,
     selectedFeatureColor: "#F1AF02"
   }
 };
@@ -106,7 +106,7 @@ export const extrudedPolygonStyle = {
     },
     fillColor: "#E9373D",
     heightReference: "clamp",
-    hideIndicator: false,
+    hideIndicator: true,
     selectedFeatureColor: "#F1AF02"
   }
 };

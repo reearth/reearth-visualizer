@@ -207,6 +207,7 @@ export default function Crust({
     onLayerEdit,
     handleInteractionModeChange,
     onSketchPluginFeatureCreate,
+    onSketchPluginFeatureUpdate,
     onSketchTypeChange,
     onLayerVisibility,
     onLayerLoad,
@@ -293,6 +294,7 @@ export default function Crust({
       onLayerSelectWithRectMove={onLayerSelectWithRectMove}
       onLayerSelectWithRectEnd={onLayerSelectWithRectEnd}
       onSketchPluginFeatureCreate={onSketchPluginFeatureCreate}
+      onSketchPluginFeatureUpdate={onSketchPluginFeatureUpdate}
       onLayerVisibility={onLayerVisibility}
       onLayerLoad={onLayerLoad}
       onSketchTypeChange={onSketchTypeChange}
