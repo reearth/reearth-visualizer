@@ -1,6 +1,9 @@
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
-import { useStorytellingFetcher } from "@reearth/services/api";
+import {
+  useStorytellingFetcher,
+  useProjectFetcher
+} from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -22,12 +25,15 @@ export default ({
 }: Props) => {
   const t = useT();
   const { useStoriesQuery } = useStorytellingFetcher();
+  const { useExportProject } = useProjectFetcher();
   const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
 
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
+  // MEMO: this modal state and function will be used in the future
+  // const [exportModalVisible, setExportModalVisible] = useState(false);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -49,6 +55,26 @@ export default ({
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
+  // const openExportModal = useCallback(() => {
+  //   setExportModalVisible(true);
+  // }, []);
+
+  // const closeExportModal = useCallback(() => {
+  //   setExportModalVisible(false);
+  // }, []);
+
+  const handleExportProject = useCallback(async () => {
+    if (!project.id) return;
+
+    const result = await useExportProject(project.id);
+
+    if (result.status === "success") {
+      console.log("export success");
+    } else {
+      console.error("Failed to export project:", result.status);
+    }
+  }, [useExportProject, project.id]);
+
   useEffect(() => {
     setIsStarred(project.starred);
   }, [project.starred]);
@@ -65,6 +91,12 @@ export default ({
       title: t("Project Setting"),
       path: `/settings/project/${project.id}`,
       icon: "setting"
+    },
+    {
+      id: "export",
+      title: t("Export"),
+      icon: "downloadSimple",
+      onClick: () => handleExportProject()
     }
   ];
 
@@ -122,6 +154,7 @@ export default ({
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
+    handleProjectStarClick,
+    handleExportProject
   };
 };
