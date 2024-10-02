@@ -59,7 +59,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         layout={layout}
         onLayoutChange={handleLayoutChange}
         showSearch
-        searchPlaceholder={t("Search in all assets library")}
+        searchPlaceholder={t("Search in archived projects")}
         onSearch={handleSearch}
       />
       {archivedProjects?.length ? (
@@ -162,7 +162,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       ) : (
         <ManagerEmptyContent>
           <Typography size="h5" color={theme.content.weak}>
-            {t("No Project has been created yet")}
+            {t("No archived projects available")}
           </Typography>
         </ManagerEmptyContent>
       )}

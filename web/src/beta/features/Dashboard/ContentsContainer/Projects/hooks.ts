@@ -40,7 +40,6 @@ export default (workspaceId?: string) => {
     useCreateProject,
     useArchiveProject,
     useStarredProjectsQuery,
-    useArchiveProject,
     useImportProject
   } = useProjectFetcher();
   const navigate = useNavigate();

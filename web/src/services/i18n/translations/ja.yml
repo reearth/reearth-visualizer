@@ -26,6 +26,7 @@ Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
 Upload File: ''
 Search in all assets library: ''
+Search in archived projects: ''
 Assets selected: ''
 Asset selected: ''
 Uploaded At: ''
@@ -40,16 +41,17 @@ Last Updated: ''
 New Project: 新規プロジェクト
 Import: インポート
 All projects: ''
-Projects in the trash: ''
+Projects in the trash: 'ゴミ箱内のプロジェクト'
 Search Result for: ''
 Project Name: プロジェクト名
 Updated At: ''
 Created At: ''
 No Project has been created yet: ''
+No archived projects available: ''
 Rename: 名称変更
 Project Setting: プロジェクト設定
 Export: エクスポート
-Restore: ''
+Restore from Trash: 'ゴミ箱から戻す'
 Create new project: ''
 Project Name *: ''
 Text: ''

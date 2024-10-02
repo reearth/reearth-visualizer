@@ -58,18 +58,6 @@ export default ({
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
 
-  const handleArchivedModal = useCallback((value: boolean) => {
-    setArchiveOpen(value);
-  }, []);
-
-  const handleProjectArchived = useCallback(
-    (value: boolean) => {
-      onArchiveProject?.(value, project.id);
-      setArchiveOpen(false);
-    },
-    [project, onArchiveProject]
-  );
-
   // const openExportModal = useCallback(() => {
   //   setExportModalVisible(true);
   // }, []);
@@ -118,12 +106,6 @@ export default ({
       title: t("Project Setting"),
       path: `/settings/project/${project.id}`,
       icon: "setting"
-    },
-    {
-      id: "archived",
-      title: t("Remove"),
-      icon: "trash",
-      onClick: () => handleArchivedModal?.(true)
     },
     {
       id: "export",

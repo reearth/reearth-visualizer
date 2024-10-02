@@ -28,7 +28,7 @@ export default ({ project, onArchiveProject }: Props) => {
   const popupMenu: PopupMenuItem[] = [
     {
       id: "archived",
-      title: t("Restore"),
+      title: t("Restore from Trash"),
       icon: "trash",
       onClick: () => onArchiveProject?.(false, project.id)
     }
