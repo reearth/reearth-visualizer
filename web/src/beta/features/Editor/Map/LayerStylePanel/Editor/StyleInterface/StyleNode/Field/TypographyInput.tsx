@@ -23,7 +23,7 @@ const fontFamilyOptions = [
   { value: "YuGothic", label: "游ゴシック" }
 ];
 
-const fonwWeightOptions = [
+const fontWeightOptions = [
   { value: "lighter", label: "lighter" },
   { value: "normal", label: "normal" },
   { value: "bold", label: "bold" },
@@ -54,7 +54,7 @@ const TypographyInput: FC<Props> = ({ value, onChange }) => {
       </PropertyItem>
       <PropertyItem title={t("font weight")}>
         <Selector
-          options={fonwWeightOptions}
+          options={fontWeightOptions}
           value={value?.fontWeight}
           onChange={(v) =>
             onChange?.({
