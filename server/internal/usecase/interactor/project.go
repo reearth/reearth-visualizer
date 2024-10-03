@@ -89,6 +89,10 @@ func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	return i.projectRepo.FindStarredByWorkspace(ctx, id)
 }
 
+func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
+	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
+}
+
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	if err := i.CanWriteWorkspace(p.WorkspaceID, operator); err != nil {
 		return nil, err

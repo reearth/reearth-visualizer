@@ -843,6 +843,7 @@ type ComplexityRoot struct {
 		ImageURL          func(childComplexity int) int
 		IsArchived        func(childComplexity int) int
 		IsBasicAuthActive func(childComplexity int) int
+		IsDeleted         func(childComplexity int) int
 		Name              func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
@@ -1009,13 +1010,14 @@ type ComplexityRoot struct {
 		CheckProjectAlias func(childComplexity int, alias string) int
 		DatasetSchemas    func(childComplexity int, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		Datasets          func(childComplexity int, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		DeletedProjects   func(childComplexity int, teamID gqlmodel.ID) int
 		Layer             func(childComplexity int, id gqlmodel.ID) int
 		Me                func(childComplexity int) int
 		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Plugin            func(childComplexity int, id gqlmodel.ID) int
 		Plugins           func(childComplexity int, id []gqlmodel.ID) int
-		Projects          func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
+		Projects          func(childComplexity int, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
 		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
 		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
 		Scene             func(childComplexity int, projectID gqlmodel.ID) int
@@ -1700,9 +1702,10 @@ type QueryResolver interface {
 	Layer(ctx context.Context, id gqlmodel.ID) (gqlmodel.Layer, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
-	Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
+	Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
 	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	DeletedProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -5749,6 +5752,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.IsBasicAuthActive(childComplexity), true
 
+	case "Project.isDeleted":
+		if e.complexity.Project.IsDeleted == nil {
+			break
+		}
+
+		return e.complexity.Project.IsDeleted(childComplexity), true
+
 	case "Project.name":
 		if e.complexity.Project.Name == nil {
 			break
@@ -6573,6 +6583,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Datasets(childComplexity, args["datasetSchemaId"].(gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
+	case "Query.deletedProjects":
+		if e.complexity.Query.DeletedProjects == nil {
+			break
+		}
+
+		args, err := ec.field_Query_deletedProjects_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.DeletedProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+
 	case "Query.layer":
 		if e.complexity.Query.Layer == nil {
 			break
@@ -6650,7 +6672,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["includeArchived"].(*bool), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
+		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
 
 	case "Query.propertySchema":
 		if e.complexity.Query.PropertySchema == nil {
@@ -9519,6 +9541,7 @@ extend type Mutation {
   enableGa: Boolean!
   trackingId: String!
   starred: Boolean!
+  isDeleted: Boolean!
 }
 
 type ProjectAliasAvailability {
@@ -9635,13 +9658,13 @@ type ProjectEdge {
 extend type Query {
   projects(
     teamId: ID!
-    includeArchived: Boolean
     pagination: Pagination
     keyword: String
     sort: ProjectSort
-  ): ProjectConnection!
+  ): ProjectConnection! # not included deleted projects
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
+  deletedProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -12615,6 +12638,21 @@ func (ec *executionContext) field_Query_datasets_args(ctx context.Context, rawAr
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_deletedProjects_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ID
+	if tmp, ok := rawArgs["teamId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		arg0, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["teamId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_layer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -12720,42 +12758,33 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 		}
 	}
 	args["teamId"] = arg0
-	var arg1 *bool
-	if tmp, ok := rawArgs["includeArchived"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("includeArchived"))
-		arg1, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["includeArchived"] = arg1
-	var arg2 *gqlmodel.Pagination
+	var arg1 *gqlmodel.Pagination
 	if tmp, ok := rawArgs["pagination"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
-		arg2, err = ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination(ctx, tmp)
+		arg1, err = ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["pagination"] = arg2
-	var arg3 *string
+	args["pagination"] = arg1
+	var arg2 *string
 	if tmp, ok := rawArgs["keyword"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
-		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["keyword"] = arg3
-	var arg4 *gqlmodel.ProjectSort
+	args["keyword"] = arg2
+	var arg3 *gqlmodel.ProjectSort
 	if tmp, ok := rawArgs["sort"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sort"))
-		arg4, err = ec.unmarshalOProjectSort2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSort(ctx, tmp)
+		arg3, err = ec.unmarshalOProjectSort2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSort(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["sort"] = arg4
+	args["sort"] = arg3
 	return args, nil
 }
 
@@ -39845,6 +39874,50 @@ func (ec *executionContext) fieldContext_Project_starred(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_isDeleted(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_isDeleted(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDeleted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_isDeleted(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectAliasAvailability) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
 	if err != nil {
@@ -40072,6 +40145,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(ctx context.Con
 				return ec.fieldContext_Project_trackingId(ctx, field)
 			case "starred":
 				return ec.fieldContext_Project_starred(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_Project_isDeleted(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -40307,6 +40382,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_trackingId(ctx, field)
 			case "starred":
 				return ec.fieldContext_Project_starred(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_Project_isDeleted(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -40403,6 +40480,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(ctx context.Cont
 				return ec.fieldContext_Project_trackingId(ctx, field)
 			case "starred":
 				return ec.fieldContext_Project_starred(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_Project_isDeleted(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -45154,7 +45233,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["includeArchived"].(*bool), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
+		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45325,6 +45404,71 @@ func (ec *executionContext) fieldContext_Query_starredProjects(ctx context.Conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_starredProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_deletedProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_deletedProjects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().DeletedProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectConnection)
+	fc.Result = res
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_deletedProjects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ProjectConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_deletedProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -47727,6 +47871,8 @@ func (ec *executionContext) fieldContext_Scene_project(ctx context.Context, fiel
 				return ec.fieldContext_Project_trackingId(ctx, field)
 			case "starred":
 				return ec.fieldContext_Project_starred(ctx, field)
+			case "isDeleted":
+				return ec.fieldContext_Project_isDeleted(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -71030,6 +71176,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "isDeleted":
+			out.Values[i] = ec._Project_isDeleted(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -72916,6 +73067,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_starredProjects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "deletedProjects":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_deletedProjects(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

@@ -35,6 +35,7 @@ type ProjectDocument struct {
 	TrackingID        string
 	// Scene             string
 	Starred bool
+	Deleted bool
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]

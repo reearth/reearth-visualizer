@@ -1174,6 +1174,7 @@ type Project struct {
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 	Starred           bool              `json:"starred"`
+	IsDeleted         bool              `json:"isDeleted"`
 }
 
 func (Project) IsNode()        {}
