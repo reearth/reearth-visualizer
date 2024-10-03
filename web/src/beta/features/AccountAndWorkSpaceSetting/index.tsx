@@ -13,6 +13,7 @@ import Navbar from "../Navbar";
 
 import useHook from "./hooks";
 import AccountSetting from "./innerPages/AccountSetting";
+import WorkspaceSetting from "./innerPages/WorkspaceSetting";
 
 type Props = {
   sceneId?: string;
@@ -22,9 +23,9 @@ type Props = {
 };
 
 export const accountSettingTabs = [
-  { id: "account", text: "Account", icon: "user" }
+  { id: "account", text: "Account", icon: "user" },
+  { id: "workspace", text: "Workspace", icon: "users" }
   // TODO: enable these when page ready
-  // { id: "workspace", text: "Workspace", icon: "users" },
   // { id: "members", text: "Members", icon: "usersFour" }
 ] as const;
 
@@ -70,6 +71,9 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
               passwordPolicy={passwordPolicy}
               informationData={{ name, email }}
             />
+          )}
+          {tab === "workspace" && (
+            <WorkspaceSetting informationData={{ name, email }} />
           )}
         </Content>
       </MainSection>

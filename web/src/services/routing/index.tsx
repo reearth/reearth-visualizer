@@ -1,5 +1,6 @@
 import AccountSettingPage from "@reearth/beta/pages/AccountSettingsPage";
 import RootPage from "@reearth/beta/pages/RootPage";
+import WorkspaceSettingPage from "@reearth/beta/pages/WorkspaceSettingPage";
 import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -38,6 +39,10 @@ export const AppRoutes = () => {
     {
       path: "settings/account",
       element: <AccountSettingPage />
+    },
+    {
+      path: "settings/workSpace",
+      element: <WorkspaceSettingPage />
     },
     {
       path: "graphql",
