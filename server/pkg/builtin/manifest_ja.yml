@@ -90,11 +90,10 @@ extensions:
             title: 光の強さ
             description: "選択したタイルマップの光の強さを変更します。 最小値: 0 最大値: 30"
       globeDepthTestAgainstTerrain:
-        title: 地面と地形に対する表示
+        title: 地下を隠す
         fields:
           depthTestAgainstTerrain:
-            title: 地形の下を非表示
-            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
+            title: 有効化
       skyBox:
         title: スカイボックス
         fields:

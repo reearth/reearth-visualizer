@@ -196,12 +196,11 @@ extensions:
                 value: true
         - id: globeDepthTestAgainstTerrain
           collection: globe
-          title: Globe DepthTest Against Ground and Terrain
+          title: Hide objects under ground
           fields:
             - id: depthTestAgainstTerrain
               type: bool
               title: Enable
-              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
         - id: skyBox
           collection: sky
           title: Sky Box
