@@ -21,7 +21,7 @@ export type TypographyProps = {
   size: FontSize;
   trait?: UniqueTraits;
   weight?: FontWeight;
-  color?: string;
+  color?: string | "main" | "weak" | "strong" | "weaker" | "withBackground";
   className?: string;
   otherProperties?: Partial<ChangeableProperties>;
   onClick?: () => void;
@@ -52,12 +52,25 @@ export const Typography: FC<TypographyProps> = ({
   const memoizedStyle = useMemo(
     () => ({
       ...otherProperties,
-      color: color || theme.content.main,
+      color:
+        color === "main"
+          ? theme.content.main
+          : color === "weak"
+            ? theme.content.weak
+            : color === "strong"
+              ? theme.content.strong
+              : color === "weaker"
+                ? theme.content.weaker
+                : color === "withBackground"
+                  ? theme.content.withBackground
+                  : color
+                    ? color
+                    : theme.content.main,
       textOverflow: "ellipsis",
       overflow: "hidden",
       flexShrink: 0
     }),
-    [otherProperties, theme.content.main, color]
+    [otherProperties, theme.content, color]
   );
 
   return ThemeTypography ? (

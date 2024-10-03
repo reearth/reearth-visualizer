@@ -8,7 +8,10 @@ import {
   StyleCondition,
   StyleNode,
   StyleNodes,
-  StyleValue
+  StyleValue,
+  ExpressionCondition,
+  Expression,
+  StyleValueType
 } from "./types";
 
 export const convertToStyleNodes = (
@@ -32,7 +35,9 @@ export const convertToStyleNodes = (
             value,
             expression,
             conditions,
-            notSupported: !nodeRef
+            notSupported: !nodeRef,
+            disableExpression: nodeRef?.disableExpression,
+            disableConditions: nodeRef?.disableConditions
           };
         })
         .filter((n) => n !== null)
@@ -40,30 +45,67 @@ export const convertToStyleNodes = (
   }, {} as StyleNodes);
 };
 
-export const parseStyleValue = (v: StyleValue) => {
-  if (typeof v === "object") {
-    if ("expression" in v) {
-      if (typeof v.expression === "object" && "conditions" in v.expression) {
-        return {
-          valueType: "conditions",
-          value: undefined,
-          expression: undefined,
-          conditions: parseConditions(v.expression.conditions)
-        };
+export const checkExpressionAndConditions = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  v: any
+): StyleValueType => {
+  if (
+    typeof v === "string" ||
+    typeof v === "number" ||
+    typeof v === "boolean"
+  ) {
+    return "value";
+  }
+
+  if (
+    typeof v === "object" &&
+    "expression" in v &&
+    typeof v.expression === "string"
+  ) {
+    return "expression";
+  }
+
+  if (
+    typeof v === "object" &&
+    "expression" in v &&
+    typeof v.expression === "object" &&
+    "conditions" in v.expression
+  ) {
+    return "conditions";
+  }
+
+  // only check one level deep
+  let hasDeepExpression = false;
+  if (typeof v === "object" && !("expression" in v)) {
+    for (const key in v) {
+      if (typeof v[key] === "object" && "expression" in v[key]) {
+        hasDeepExpression = true;
+        if (
+          typeof v[key].expression === "object" &&
+          "conditions" in v[key].expression
+        ) {
+          return "deepConditions";
+        }
       }
-      return {
-        valueType: "expression",
-        value: undefined,
-        expression: v.expression,
-        conditions: undefined
-      };
     }
   }
+  if (hasDeepExpression) return "deepExpression";
+
+  // some unknown type could be included
+  return "value";
+};
+
+export const parseStyleValue = (v: StyleValue) => {
+  const valueType = checkExpressionAndConditions(v);
   return {
-    valueType: "value",
-    value: v,
-    expression: undefined,
-    conditions: undefined
+    valueType,
+    value: valueType === "value" ? v : undefined,
+    expression:
+      valueType === "expression" ? (v as Expression).expression : undefined,
+    conditions:
+      valueType === "conditions"
+        ? parseConditions((v as ExpressionCondition).expression.conditions)
+        : undefined
   };
 };
 

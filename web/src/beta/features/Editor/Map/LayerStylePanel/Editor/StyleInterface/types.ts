@@ -5,7 +5,13 @@ export type AppearanceType =
   | "3dtiles"
   | "model";
 
-export type AppearanceField = "switch" | "color" | "number" | "select" | "text";
+export type AppearanceField =
+  | "switch"
+  | "color"
+  | "number"
+  | "select"
+  | "text"
+  | "typography";
 
 export type AppearanceNodes = Record<AppearanceType, AppearanceNode[]>;
 
@@ -15,6 +21,8 @@ export type AppearanceNode = {
   field: AppearanceField;
   defaultValue: StyleValue;
   valueOptions?: string[];
+  disableExpression?: boolean;
+  disableConditions?: boolean;
 };
 
 export type StyleNodes = Record<AppearanceType, StyleNode[]>;
@@ -29,16 +37,41 @@ export type StyleNode = {
   expression?: string;
   conditions?: StyleCondition[];
   notSupported?: boolean;
+  disableExpression?: boolean;
+  disableConditions?: boolean;
 };
 
-export type StyleValueType = "value" | "expression" | "conditions";
-export type StyleSimpleValue = string | number | boolean | undefined;
-export type StyleValue =
-  | StyleSimpleValue
-  | number[]
-  | {
-      expression: { conditions: [string, string][] } | string;
-    };
+export type StyleValueType =
+  | "value"
+  | "expression"
+  | "conditions"
+  | "deepExpression" // not supported yet
+  | "deepConditions"; // not supported yet
+
+export type StyleSimpleValue =
+  | string
+  | number
+  | boolean
+  | undefined
+  | Typography;
+
+export type Typography = {
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: "normal" | "bold" | "bolder" | "lighter";
+  color?: string;
+  italic?: boolean;
+  underline?: boolean;
+};
+
+export type Expression = {
+  expression: string;
+};
+
+export type ExpressionCondition = {
+  expression: { conditions: [string, string][] };
+};
+export type StyleValue = StyleSimpleValue | Expression | ExpressionCondition;
 
 export type StyleConditionOperator =
   | "==="
