@@ -17,7 +17,12 @@ export type DataProps = {
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
-export type SourceType = "url" | "local" | "value";
+export type SourceType =
+  | "url"
+  | "local"
+  | "value"
+  | "osm-buildings"
+  | "google-photorealistic";
 
 export type DataSourceOptType = {
   label: string;
