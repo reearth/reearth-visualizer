@@ -78,10 +78,15 @@ export const checkExpressionAndConditions = (
   let hasDeepExpression = false;
   if (typeof v === "object" && !("expression" in v)) {
     for (const key in v) {
-      if (typeof v[key] === "object" && "expression" in v[key]) {
+      if (
+        typeof v[key] === "object" &&
+        v[key] !== null &&
+        "expression" in v[key]
+      ) {
         hasDeepExpression = true;
         if (
           typeof v[key].expression === "object" &&
+          v[key].expression !== null &&
           "conditions" in v[key].expression
         ) {
           return "deepConditions";
