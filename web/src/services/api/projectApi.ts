@@ -1,4 +1,10 @@
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import {
+  Reference,
+  StoreObject,
+  useLazyQuery,
+  useMutation,
+  useQuery
+} from "@apollo/client";
 import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
@@ -302,8 +308,26 @@ export default () => {
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
-    refetchQueries: ["GetProject"]
+    refetchQueries: ["GetProject"],
+    update(cache, { data }) {
+      if (data?.deleteProject?.projectId) {
+        cache.modify({
+          fields: {
+            projects(existingData = {}, { readField }) {
+              return {
+                ...existingData,
+                edges: existingData.edges.filter(
+                  (e: { node: Reference | StoreObject | undefined }) =>
+                    readField("id", e.node) !== data?.deleteProject?.projectId
+                )
+              };
+            }
+          }
+        });
+      }
+    }
   });
+
   const useDeleteProject = useCallback(
     async (input: DeleteProjectInput) => {
       if (!input.projectId) return { status: "error" };
