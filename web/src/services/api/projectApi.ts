@@ -316,7 +316,7 @@ export default () => {
             projects(existingData = {}, { readField }) {
               return {
                 ...existingData,
-                edges: existingData.edges.filter(
+                edges: (existingData.edges || []).filter(
                   (e: { node: Reference | StoreObject | undefined }) =>
                     readField("id", e.node) !== data?.deleteProject?.projectId
                 )
