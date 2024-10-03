@@ -52,25 +52,18 @@ export const Typography: FC<TypographyProps> = ({
   const memoizedStyle = useMemo(
     () => ({
       ...otherProperties,
-      color:
-        color === "main"
-          ? theme.content.main
-          : color === "weak"
-            ? theme.content.weak
-            : color === "strong"
-              ? theme.content.strong
-              : color === "weaker"
-                ? theme.content.weaker
-                : color === "withBackground"
-                  ? theme.content.withBackground
-                  : color
-                    ? color
-                    : theme.content.main,
+      color: ["main", "weak", "strong", "weaker", "withBackground"].includes(
+        color ?? ""
+      )
+        ? theme.content[color as keyof typeof theme.content]
+        : color
+          ? color
+          : theme.content.main,
       textOverflow: "ellipsis",
       overflow: "hidden",
       flexShrink: 0
     }),
-    [otherProperties, theme.content, color]
+    [otherProperties, color, theme]
   );
 
   return ThemeTypography ? (
