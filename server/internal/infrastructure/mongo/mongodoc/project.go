@@ -78,6 +78,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		TrackingID:        project.TrackingID(),
 		// Scene:             project.Scene().String(),
 		Starred: project.Starred(),
+		Deleted: project.IsDeleted(),
 	}, pid
 }
 

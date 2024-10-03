@@ -452,3 +452,83 @@ func TestSortByUpdatedAt(t *testing.T) {
 	edges.Element(1).Object().Value("node").Object().Value("name").Equal("project3-test")
 	edges.Element(2).Object().Value("node").Object().Value("name").Equal("project1-test")
 }
+
+//  go test -v -run TestDeleteProjects ./e2e/...
+
+func TestDeleteProjects(t *testing.T) {
+
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	createProject(e, "project1-test")
+	project2ID := createProject(e, "project2-test")
+	createProject(e, "project3-test")
+
+	// Deleted 'project2'
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateProject",
+		Query: `mutation UpdateProject($input: UpdateProjectInput!) {
+			updateProject(input: $input) {
+				project {
+					id
+					name
+					isDeleted
+					updatedAt
+					__typename
+				}
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"input": map[string]any{
+				"projectId": project2ID,
+				"deleted":   true,
+			},
+		},
+	}
+
+	e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	// check
+	requestBody = GraphQLRequest{
+		OperationName: "GetDeletedProjects",
+		Query: `
+			query GetDeletedProjects($teamId: ID!) {
+				deletedProjects(teamId: $teamId) {
+					nodes {
+						id
+						name
+						isDeleted
+					}
+					totalCount
+				}
+			}`,
+		Variables: map[string]any{
+			"teamId": wID,
+		},
+	}
+	deletedProjects := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().Value("data").Object().Value("deletedProjects").Object()
+
+	deletedProjects.Value("totalCount").Equal(1)
+	deletedProjects.Value("nodes").Array().Length().Equal(1)
+	deletedProjects.Value("nodes").Array().First().Object().Value("name").Equal("project2-test")
+}

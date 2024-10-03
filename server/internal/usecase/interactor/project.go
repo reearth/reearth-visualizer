@@ -232,6 +232,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.SetStarred(*p.Starred)
 	}
 
+	if p.Deleted != nil {
+		prj.SetDeleted(*p.Deleted)
+	}
+
 	if p.PublicTitle != nil {
 		prj.UpdatePublicTitle(*p.PublicTitle)
 	}

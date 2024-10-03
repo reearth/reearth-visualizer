@@ -81,6 +81,7 @@ input UpdateProjectInput {
   trackingId: String
   sceneId: ID
   starred: Boolean
+  deleted: Boolean
 }
 
 input PublishProjectInput {

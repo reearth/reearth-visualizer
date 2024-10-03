@@ -1870,6 +1870,7 @@ type UpdateProjectInput struct {
 	TrackingID        *string  `json:"trackingId,omitempty"`
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
+	Deleted           *bool    `json:"deleted,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {

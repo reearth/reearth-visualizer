@@ -46,6 +46,7 @@ type UpdateProjectParam struct {
 	TrackingID        *string
 	SceneID           *id.SceneID
 	Starred           *bool
+	Deleted           *bool
 }
 
 type PublishProjectParam struct {
