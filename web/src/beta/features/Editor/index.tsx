@@ -40,6 +40,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleStoryBlockMove,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
+    handleSketchFeatureUpdate,
     handleIsVisualizerUpdate,
     handleCoreLayerSelectFromUI,
     selectStoryPage,
@@ -58,7 +59,8 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     layerStyles,
     layers,
     layerId,
-    handleCustomPropertySchemaUpdate
+    handleCustomPropertySchemaUpdate,
+    handleCoreAPIReady
   } = useHooks({ sceneId, tab, projectId });
 
   // TODO remove DndProvider, use DragAndDropContext instead
@@ -88,8 +90,10 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               onStoryBlockMove={handleStoryBlockMove}
               onSketchTypeChange={handleSketchTypeChange}
               onSketchFeatureCreate={handleSketchFeatureCreate}
+              onSketchFeatureUpdate={handleSketchFeatureUpdate}
               onVisualizerReady={handleIsVisualizerUpdate}
               onCoreLayerSelect={handleCoreLayerSelectFromUI}
+              onCoreAPIReady={handleCoreAPIReady}
               setSelectedStoryPageId={selectStoryPage}
               selectWidgetArea={selectWidgetArea}
             />

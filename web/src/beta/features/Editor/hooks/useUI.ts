@@ -1,3 +1,4 @@
+import { SketchType } from "@reearth/core";
 import { useCallback, useEffect, useState } from "react";
 
 import { Tab } from "../../Navbar";
@@ -12,13 +13,20 @@ type Props = {
   handleLayerSelect: (props: LayerSelectProps) => void;
   handleCoreLayerSelect: (props: LayerSelectProps) => void;
   handleSceneSettingSelect: (collection?: string) => void;
+  handleSketchTypeChange: (
+    type: SketchType | undefined,
+    from: "editor" | "plugin"
+  ) => void;
+  handleSketchGeometryEditCancel: (ignoreAutoReSelect?: boolean) => void;
 };
 
 export default ({
   tab,
   handleLayerSelect,
   handleCoreLayerSelect,
-  handleSceneSettingSelect
+  handleSceneSettingSelect,
+  handleSketchTypeChange,
+  handleSketchGeometryEditCancel
 }: Props) => {
   const [currentProjectType, setCurrentProjectType] =
     useState<VisualizerProjectType>(tab === "story" ? "story" : "default");
@@ -48,9 +56,16 @@ export default ({
   const handleLayerSelectFromUI = useCallback(
     (layerId?: string) => {
       handleSceneSettingSelect(undefined);
+      handleSketchTypeChange(undefined, "editor");
+      handleSketchGeometryEditCancel(true);
       handleLayerSelect({ layerId });
     },
-    [handleLayerSelect, handleSceneSettingSelect]
+    [
+      handleLayerSelect,
+      handleSketchTypeChange,
+      handleSceneSettingSelect,
+      handleSketchGeometryEditCancel
+    ]
   );
 
   const handleCoreLayerSelectFromUI = useCallback(
@@ -64,12 +79,19 @@ export default ({
   const handleSceneSettingSelectFromUI = useCallback(
     (collection?: string) => {
       handleLayerSelect(undefined);
+      handleSketchTypeChange(undefined, "editor");
+      handleSketchGeometryEditCancel(true);
       // change to select layer could effect the scene setting selection
       requestAnimationFrame(() => {
         handleSceneSettingSelect(collection);
       });
     },
-    [handleLayerSelect, handleSceneSettingSelect]
+    [
+      handleLayerSelect,
+      handleSceneSettingSelect,
+      handleSketchTypeChange,
+      handleSketchGeometryEditCancel
+    ]
   );
 
   // modals

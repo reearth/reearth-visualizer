@@ -22,9 +22,10 @@ type Props = {
 };
 
 export const accountSettingTabs = [
-  { id: "account", text: "Account", icon: "user" },
-  { id: "workspace", text: "Workspace", icon: "users" },
-  { id: "members", text: "Members", icon: "usersFour" }
+  { id: "account", text: "Account", icon: "user" }
+  // TODO: enable these when page ready
+  // { id: "workspace", text: "Workspace", icon: "users" },
+  // { id: "members", text: "Members", icon: "usersFour" }
 ] as const;
 
 const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
@@ -44,7 +45,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
 
   return (
     <Wrapper>
-      <Navbar workspaceId={meData.myTeam?.id} page="settings" />
+      <Navbar page="settings" />
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>

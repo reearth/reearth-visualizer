@@ -61,6 +61,7 @@ export type Props = PropsWithChildren<{
   ) => void;
   onLayerSelectWithRectEnd?: (cb: (e: LayerSelectWithRectEnd) => void) => void;
   onSketchPluginFeatureCreate?: (cb: SketchEventCallback) => void;
+  onSketchPluginFeatureUpdate?: (cb: SketchEventCallback) => void;
   onSketchTypeChange?: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility?: (cb: (e: LayerVisibilityEvent) => void) => void;
   onLayerLoad?: (cb: (e: LayerLoadEvent) => void) => void;

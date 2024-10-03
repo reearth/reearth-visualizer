@@ -32,8 +32,10 @@ export type Props = {
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onSketchFeatureUpdate?: (feature: SketchFeature | null) => void;
   onVisualizerReady: (value: boolean) => void;
   onCoreLayerSelect: (props: LayerSelectProps) => void;
+  onCoreAPIReady?: () => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
   selectWidgetArea: (
     update?: SetStateAction<WidgetAreaState | undefined>
@@ -57,8 +59,10 @@ const EditorVisualizer: React.FC<Props> = ({
   onStoryBlockMove: handleStoryBlockMove,
   onSketchTypeChange,
   onSketchFeatureCreate,
+  onSketchFeatureUpdate,
   onVisualizerReady,
   onCoreLayerSelect,
+  onCoreAPIReady,
   setSelectedStoryPageId,
   selectWidgetArea
 }) => {
@@ -126,7 +130,9 @@ const EditorVisualizer: React.FC<Props> = ({
       handleZoomToLayer={zoomToLayer}
       handleSketchTypeChange={onSketchTypeChange}
       handleSketchFeatureCreate={onSketchFeatureCreate}
+      handleSketchFeatureUpdate={onSketchFeatureUpdate}
       handleMount={handleMount}
+      handleCoreAPIReady={onCoreAPIReady}
       // story
       showStoryPanel={showStoryPanel}
       storyPanelRef={storyPanelRef}
