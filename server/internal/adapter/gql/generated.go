@@ -9662,7 +9662,7 @@ extend type Query {
     pagination: Pagination
     keyword: String
     sort: ProjectSort
-  ): ProjectConnection! # not included deleted projects
+  ): ProjectConnection!
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
