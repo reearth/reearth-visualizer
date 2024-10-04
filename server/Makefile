@@ -20,7 +20,6 @@ lint:
 test:
 	go test -race -short -v ./...
 
-# make failcheck TEST_DIR=./internal/usecase/interactor
 failcheck:
 	go test -race -short -failfast -p 1 $(TEST_DIR)
 

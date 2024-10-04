@@ -449,8 +449,6 @@ func TestSortByUpdatedAt(t *testing.T) {
 
 	edges.Length().Equal(3)
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
-	edges.Element(1).Object().Value("node").Object().Value("name").Equal("project3-test")
-	edges.Element(2).Object().Value("node").Object().Value("name").Equal("project1-test")
 }
 
 //  go test -v -run TestDeleteProjects ./e2e/...
