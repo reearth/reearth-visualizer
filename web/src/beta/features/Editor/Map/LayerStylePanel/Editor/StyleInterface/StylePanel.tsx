@@ -33,7 +33,9 @@ const StylePanel: FC<Props> = ({
         field: nodeRef.field,
         type,
         valueType: "value",
-        value: nodeRef.defaultValue
+        value: nodeRef.defaultValue,
+        disableExpression: nodeRef.disableExpression,
+        disableConditions: nodeRef.disableConditions
       });
       onStyleNodesUpdate(type, newStyleNodes);
     },
