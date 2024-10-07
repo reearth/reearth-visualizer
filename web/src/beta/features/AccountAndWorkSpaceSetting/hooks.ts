@@ -7,7 +7,8 @@ export type UpdatePasswordType = {
 };
 
 export default () => {
-  const { useMeQuery, useUpdatePassword, useDeleteUser } = useMeFetcher();
+  const { useMeQuery, useUpdatePassword, updateLanguage, useDeleteUser } =
+    useMeFetcher();
 
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
@@ -24,6 +25,17 @@ export default () => {
     [useUpdatePassword]
   );
 
+  const handleUpdateUserLanguage = useCallback(
+    async ({ lang }: { lang: string }) => {
+      try {
+        await updateLanguage(lang);
+      } catch (error) {
+        console.error("Failed to update password:", error);
+      }
+    },
+    [updateLanguage]
+  );
+
   const handleDeleteUser = useCallback(async () => {
     try {
       const userId = data.id;
@@ -37,6 +49,7 @@ export default () => {
     meData: data,
     passwordPolicy,
     handleUpdateUserPassword,
+    handleUpdateUserLanguage,
     handleDeleteUser
   };
 };

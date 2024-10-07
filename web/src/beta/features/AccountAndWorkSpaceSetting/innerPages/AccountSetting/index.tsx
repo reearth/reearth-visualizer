@@ -4,7 +4,7 @@ import {
   Typography,
   IconButton
 } from "@reearth/beta/lib/reearth-ui";
-import { InputField } from "@reearth/beta/ui/fields";
+import { InputField, SelectField } from "@reearth/beta/ui/fields";
 import { PasswordPolicy } from "@reearth/services/config/passwordPolicy";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -22,14 +22,34 @@ type Props = {
     password,
     passwordConfirmation
   }: UpdatePasswordType) => Promise<void>;
+  onUpdateUserLanguage: ({ lang }: { lang: string }) => Promise<void>;
 };
 
 const AccountSetting: FC<Props> = ({
   passwordPolicy,
   onUpdateUserPassword,
+  onUpdateUserLanguage,
   informationData
 }) => {
   const t = useT();
+
+  const options = [
+    {
+      label: t("Auto"),
+      value: "und"
+    },
+    {
+      label: "English",
+      value: "en"
+    },
+    {
+      label: "日本語",
+      value: "ja"
+    }
+  ];
+  type LanguageOption = (typeof options)[number]["value"];
+  const [languageLabel, setLanguageLabel] = useState<LanguageOption>("und");
+
   const [changePasswordModal, setChangePasswordModal] =
     useState<boolean>(false);
 
@@ -71,6 +91,17 @@ const AccountSetting: FC<Props> = ({
                 />
               </PasswordInputWrapper>
             </PasswordWrapper>
+            <SelectField
+              title={t("Language")}
+              value={languageLabel}
+              options={options}
+              onChange={(value) => {
+                if (typeof value === "string") {
+                  setLanguageLabel(value);
+                  onUpdateUserLanguage({ lang: value });
+                }
+              }}
+            />
           </SettingsFields>
         </Collapse>
       </SettingsWrapper>

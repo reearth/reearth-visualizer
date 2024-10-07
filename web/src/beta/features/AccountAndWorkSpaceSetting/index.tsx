@@ -40,7 +40,12 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
       })),
     [t]
   );
-  const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
+  const {
+    meData,
+    passwordPolicy,
+    handleUpdateUserPassword,
+    handleUpdateUserLanguage
+  } = useHook();
   const { name, email } = meData;
 
   return (
@@ -69,6 +74,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
               onUpdateUserPassword={handleUpdateUserPassword}
               passwordPolicy={passwordPolicy}
               informationData={{ name, email }}
+              onUpdateUserLanguage={handleUpdateUserLanguage}
             />
           )}
         </Content>
