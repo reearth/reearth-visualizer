@@ -426,7 +426,7 @@ func checkPrefix(ctx context.Context, bucket *storage.BucketHandle, prefix strin
 			break
 		}
 		fmt.Printf("attrs.Prefix %s \n", attrs.Prefix)
-		if attrs.Prefix == prefix {
+		if attrs.Prefix == prefix+"/" {
 			return true
 		}
 	}
@@ -435,7 +435,7 @@ func checkPrefix(ctx context.Context, bucket *storage.BucketHandle, prefix strin
 
 func checkObject(ctx context.Context, bucket *storage.BucketHandle, prefix string, objectName string) bool {
 	it := bucket.Objects(ctx, &storage.Query{
-		Prefix:    prefix,
+		Prefix:    prefix + "/",
 		Delimiter: "/",
 	})
 	for {
