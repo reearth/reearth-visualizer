@@ -85,6 +85,9 @@ WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
 Data Source Manager: データソースマネージャー
+Cesium OSM 3D Tiles: ''
+Google Photorealistic 3D Tiles: ''
+URL: ''
 Choose layer to add: レイヤーの選択
 layer name: レイヤー名
 Layer name: ''
