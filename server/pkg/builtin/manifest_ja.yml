@@ -68,9 +68,6 @@ extensions:
           terrainExaggerationRelativeHeight:
             title: 地形の強調の基準
             description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
-          depthTestAgainstTerrain:
-            title: 地形の下を非表示
-            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
       globeLighting:
         title: 太陽光の明るさ
         fields:
@@ -92,6 +89,11 @@ extensions:
           globeAtmosphereIntensity:
             title: 光の強さ
             description: "選択したタイルマップの光の強さを変更します。 最小値: 0 最大値: 30"
+      globeDepthTestAgainstTerrain:
+        title: 地下を隠す
+        fields:
+          depthTestAgainstTerrain:
+            title: 有効化
       skyBox:
         title: スカイボックス
         fields:

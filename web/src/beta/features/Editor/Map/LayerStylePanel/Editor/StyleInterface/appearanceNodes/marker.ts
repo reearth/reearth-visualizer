@@ -82,5 +82,32 @@ export const markerNodes: AppearanceNode[] = [
     title: "Selected Feature Color",
     field: "color",
     defaultValue: DEFAULT_SELECTED_FEATURE_COLOR
+  },
+  {
+    id: "label",
+    title: "Label",
+    field: "switch",
+    defaultValue: true
+  },
+  {
+    id: "labelText",
+    title: "Label Text",
+    field: "text",
+    defaultValue: ""
+  },
+  {
+    id: "labelTypography",
+    title: "Label Typography",
+    field: "typography",
+    defaultValue: {
+      fontFamily: "Arial",
+      fontSize: 12,
+      fontWeight: "normal",
+      color: "#000000",
+      italic: false,
+      underline: false
+    },
+    disableExpression: true,
+    disableConditions: true
   }
 ];
