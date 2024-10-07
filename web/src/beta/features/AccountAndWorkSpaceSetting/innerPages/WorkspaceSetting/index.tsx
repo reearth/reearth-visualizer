@@ -9,9 +9,11 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
+import { Workspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
+import { WorkspacePayload } from "../../hooks";
 import {
   InnerPage,
   SettingsWrapper,
@@ -20,77 +22,119 @@ import {
 } from "../common";
 
 type Props = {
-  informationData: { name?: string; email?: string };
+  currentWorkspace: Workspace | undefined;
+  handleUpdateWorkspace: ({ teamId, name }: WorkspacePayload) => Promise<void>;
+  handleDeleteWorkspace: (teamId: string) => Promise<void>;
 };
 
-const WorkspaceSetting: FC<Props> = ({ informationData }) => {
+const WorkspaceSetting: FC<Props> = ({
+  currentWorkspace,
+  handleUpdateWorkspace,
+  handleDeleteWorkspace
+}) => {
   const t = useT();
   const theme = useTheme();
-  const [changePasswordModal, setChangePasswordModal] =
+  const [workspaceName, setWorkspaceName] = useState<string>(
+    currentWorkspace?.name ?? ""
+  );
+  const [workspaceNameConfirm, setWorkspaceNameConfirm] = useState<string>("");
+  const [deleteWorkspaceModal, setDeleteWorkspaceModal] =
     useState<boolean>(false);
 
   return (
     <InnerPage>
       <SettingsWrapper>
-        <Collapse size="large" title={t("Account")}>
+        <Collapse size="large" title={t("Workspace")}>
           <SettingsFields>
             <InputField
-              title={t("Name")}
-              value={informationData.name ? t(informationData.name) : ""}
+              title={t("Workspace Name")}
+              value={currentWorkspace?.name ? t(currentWorkspace.name) : ""}
+              onChange={(name) => {
+                setWorkspaceName(name);
+              }}
+              appearance={currentWorkspace?.personal ? "readonly" : "present"}
+              disabled={currentWorkspace?.personal}
             />
             <ButtonWrapper>
               <Button
                 title={t("Submit")}
                 appearance="primary"
-                onClick={() => {}}
+                disabled={currentWorkspace?.personal}
+                onClick={() => {
+                  if (currentWorkspace?.id) {
+                    handleUpdateWorkspace({
+                      teamId: currentWorkspace?.id,
+                      name: workspaceName
+                    });
+                  }
+                }}
               />
             </ButtonWrapper>
           </SettingsFields>
         </Collapse>
-        <Collapse size="large" title={t("Danger Zone")}>
-          <SettingsFields>
-            <DangerItem>
-              <Typography size="body" weight="bold">
-                {t("Remove this workspace")}
-              </Typography>
-              <Typography size="body">
-                {t("This process will remove this wprkspace")}
-              </Typography>
-              <ButtonWrapper>
-                <Button
-                  title={t("Remove workspace")}
-                  appearance="dangerous"
-                  onClick={() => {}}
-                />
-              </ButtonWrapper>
-            </DangerItem>
-          </SettingsFields>
-        </Collapse>
+        {currentWorkspace?.personal && (
+          <Collapse size="large" title={t("Danger Zone")}>
+            <SettingsFields>
+              <DangerItem>
+                <Typography size="body" weight="bold">
+                  {t("Remove this workspace")}
+                </Typography>
+                <Typography size="body">
+                  {t("This process will remove this wprkspace")}
+                </Typography>
+                <ButtonWrapper>
+                  <Button
+                    title={t("Remove workspace")}
+                    appearance="dangerous"
+                    onClick={() => {
+                      setDeleteWorkspaceModal(true);
+                    }}
+                  />
+                </ButtonWrapper>
+              </DangerItem>
+            </SettingsFields>
+          </Collapse>
+        )}
       </SettingsWrapper>
 
-      <Modal visible={false} size="small">
+      <Modal
+        visible={
+          deleteWorkspaceModal &&
+          !!currentWorkspace?.policy?.projectCount &&
+          currentWorkspace?.policy?.projectCount === 0
+        }
+        size="small"
+      >
         <ModalPanel
           title={t("Delete workspace")}
-          onCancel={() => {}}
+          onCancel={() => {
+            setDeleteWorkspaceModal(false);
+          }}
           actions={[
             <Button
               key="cancel"
               title={t("Cancel")}
               appearance="secondary"
-              onClick={() => {}}
+              onClick={() => {
+                if (currentWorkspace?.id)
+                  handleDeleteWorkspace(currentWorkspace?.id);
+                setDeleteWorkspaceModal(false);
+              }}
             />,
             <Button
               key="delete"
               title={t("I am sure I want to delete this project.")}
               appearance="dangerous"
-              disabled={false}
-              onClick={() => {}}
+              disabled={workspaceNameConfirm !== currentWorkspace?.name}
+              onClick={() => {
+                setDeleteWorkspaceModal(false);
+              }}
             />
           ]}
         >
           <ModalContentWrapper>
             <Typography size="body" weight="bold">
-              {/* {project?.name} */}workspace name
+              {currentWorkspace?.name}
             </Typography>
             <Typography size="body">
               {t("This action cannot be undone. ")}
@@ -103,34 +147,42 @@ const WorkspaceSetting: FC<Props> = ({ informationData }) => {
             <Typography size="body">
               {t("Please type your project name to continue.")}
             </Typography>
-            <TextInput onChange={() => {}} />
+            <TextInput
+              placeholder="your worksace name"
+              onChange={(name) => {
+                setWorkspaceNameConfirm(name);
+              }}
+            />
           </ModalContentWrapper>
         </ModalPanel>
       </Modal>
-      <Modal visible={false} size="small">
+
+      <Modal
+        visible={
+          deleteWorkspaceModal &&
+          !!currentWorkspace?.policy?.projectCount &&
+          currentWorkspace?.policy?.projectCount > 0
+        }
+        size="small"
+      >
         <ModalContentWrapper>
           <Icon icon="warning" size="large" color={theme.warning.main} />
           <Typography size="body">
-            {t("Custom Domain will be removed.")}
+            {t("You are going to delete workspace.")}
           </Typography>
           <Typography size="body">
             {t(
-              "Are you sure you want to remove this custom domain? If removed by accident, you will have to add the details again and the verification time will start over."
+              "Please to make sure you don’t have any projects in your workspace, then you can continue."
             )}
           </Typography>
           <ButtonnWrapper>
             <Button
-              key="cancel"
-              title={t("Cancel")}
+              key="ok"
+              title={t("Ok")}
               appearance="secondary"
-              onClick={() => {}}
-            />
-            <Button
-              key="delete"
-              title={t("Remove")}
-              appearance="dangerous"
-              disabled={false}
-              onClick={() => {}}
+              onClick={() => {
+                setDeleteWorkspaceModal(false);
+              }}
             />
           </ButtonnWrapper>
         </ModalContentWrapper>
@@ -150,7 +202,8 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.large,
-  background: theme.bg[1]
+  background: theme.bg[1],
+  borderRadius: theme.radius.large
 }));
 
 const ButtonnWrapper = styled("div")(({ theme }) => ({

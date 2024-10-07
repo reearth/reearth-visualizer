@@ -1,5 +1,6 @@
 import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
 import { Role } from "@reearth/services/gql";
+import { useWorkspace } from "@reearth/services/state";
 import { useCallback } from "react";
 
 export type UpdatePasswordType = {
@@ -9,9 +10,9 @@ export type UpdatePasswordType = {
 
 export type WorkspacePayload = {
   name: string;
-  userId: string;
+  userId?: string;
   teamId: string;
-  role: Role;
+  role?: Role;
 };
 
 export default () => {
@@ -40,6 +41,8 @@ export default () => {
     }
   }, [data.id, useDeleteUser]);
 
+  const [currentWorkspace] = useWorkspace();
+
   const {
     useWorkspaceQuery,
     useWorkspacesQuery,
@@ -49,6 +52,7 @@ export default () => {
     useAddMemberToWorkspace,
     useRemoveMemberFromWorkspace
   } = useWorkspaceFetcher();
+
   // Fetch a specific workspace
   const handleFetchWorkspace = useCallback(
     (workspaceId: string) => {
@@ -119,9 +123,15 @@ export default () => {
   const handleAddMemberToWorkspace = useCallback(
     async ({ teamId, userId, role }: WorkspacePayload) => {
       try {
-        const { status } = await useAddMemberToWorkspace(teamId, userId, role);
-        if (status === "success") {
-          console.log("Member added successfully");
+        if (userId && role) {
+          const { status } = await useAddMemberToWorkspace(
+            teamId,
+            userId,
+            role
+          );
+          if (status === "success") {
+            console.log("Member added successfully");
+          }
         }
       } catch (error) {
         console.error("Failed to add member to workspace:", error);
@@ -134,9 +144,11 @@ export default () => {
   const handleRemoveMemberFromWorkspace = useCallback(
     async ({ teamId, userId }: WorkspacePayload) => {
       try {
-        const { status } = await useRemoveMemberFromWorkspace(teamId, userId);
-        if (status === "success") {
-          console.log("Member removed successfully");
+        if (userId) {
+          const { status } = await useRemoveMemberFromWorkspace(teamId, userId);
+          if (status === "success") {
+            console.log("Member removed successfully");
+          }
         }
       } catch (error) {
         console.error("Failed to remove member from workspace:", error);
@@ -150,6 +162,7 @@ export default () => {
     passwordPolicy,
     handleUpdateUserPassword,
     handleDeleteUser,
+    currentWorkspace,
     handleFetchWorkspace,
     handleFetchWorkspaces,
     handleCreateWorkspace,

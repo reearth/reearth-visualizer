@@ -24,9 +24,9 @@ type Props = {
 
 export const accountSettingTabs = [
   { id: "account", text: "Account", icon: "user" },
-  { id: "workspace", text: "Workspace", icon: "users" }
+  { id: "workspace", text: "Workspace", icon: "usersFour" }
   // TODO: enable these when page ready
-  // { id: "members", text: "Members", icon: "usersFour" }
+  // { id: "members", text: "Members", icon: "users" }
 ] as const;
 
 const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
@@ -41,7 +41,14 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
       })),
     [t]
   );
-  const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
+  const {
+    meData,
+    passwordPolicy,
+    handleUpdateUserPassword,
+    currentWorkspace,
+    handleUpdateWorkspace,
+    handleDeleteWorkspace
+  } = useHook();
   const { name, email } = meData;
 
   return (
@@ -73,7 +80,11 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
             />
           )}
           {tab === "workspace" && (
-            <WorkspaceSetting informationData={{ name, email }} />
+            <WorkspaceSetting
+              currentWorkspace={currentWorkspace}
+              handleUpdateWorkspace={handleUpdateWorkspace}
+              handleDeleteWorkspace={handleDeleteWorkspace}
+            />
           )}
         </Content>
       </MainSection>
