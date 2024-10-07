@@ -217,6 +217,7 @@ const Visualizer: FC<VisualizerProps> = ({
     currentCamera
   });
 
+  console.log("layers", layers);
   return (
     <Wrapper storyPanelPosition={story?.position}>
       <StoryWrapper ref={storyWrapperRef} />

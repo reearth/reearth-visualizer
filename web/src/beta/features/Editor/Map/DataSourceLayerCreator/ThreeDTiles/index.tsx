@@ -12,16 +12,10 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { DataProps, DataSourceOptType, SourceType } from "..";
 import { generateTitle } from "../util";
 
-const osmBuildings =
-  "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyBCrWyh4_rWvf8LpDhsI1WMgREY7EoRTPU";
-
-const googlePhotorealistic =
-  "https://assets.ion.cesium.com/us-east-1/asset_depot/96188/OpenStreetMap/CWT/2024-03-04/tileset.json?v=17";
-
 const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
-  const [value, setValue] = useState(osmBuildings);
+  const [value, setValue] = useState("");
   const [sourceType, setSourceType] = useState<SourceType>("osm-buildings");
 
   const dataSourceOptions: DataSourceOptType = useMemo(
@@ -38,13 +32,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const handleDataSourceTypeChange = useCallback((newValue: string) => {
     setSourceType(newValue as SourceType);
-    if (newValue === "google-photorealistic") {
-      setValue(googlePhotorealistic);
-    } else if (newValue === "osm-buildings") {
-      setValue(osmBuildings);
-    } else {
-      setValue("");
-    }
+    setValue("");
   }, []);
 
   const title = useMemo(() => {
@@ -66,7 +54,12 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       config: {
         data: {
           url: value !== "" ? value : undefined,
-          type: "3dtiles"
+          type:
+            sourceType === "osm-buildings"
+              ? "osm-buildings"
+              : sourceType === "google-photorealistic"
+                ? "google-photorealistic"
+                : "3dtiles"
         }
       }
     });
@@ -100,7 +93,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={!value}
+          disabled={!value && sourceType === "url"}
         />
       </SubmitWrapper>
     </Wrapper>
