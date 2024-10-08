@@ -16,12 +16,7 @@ import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { WorkspacePayload } from "../../hooks";
-import {
-  InnerPage,
-  SettingsWrapper,
-  SettingsFields,
-  ButtonWrapper
-} from "../common";
+import { InnerPage, SettingsWrapper, SettingsFields } from "../common";
 
 type Props = {
   handleFetchWorkspaces: () => {
@@ -63,9 +58,7 @@ const WorkspaceSetting: FC<Props> = ({
             <InputField
               title={t("Workspace Name")}
               value={currentWorkspace?.name ? t(currentWorkspace.name) : ""}
-              onChange={(name) => {
-                setWorkspaceName(name);
-              }}
+              onChange={setWorkspaceName}
               appearance={currentWorkspace?.personal ? "readonly" : "present"}
               disabled={currentWorkspace?.personal}
             />
@@ -99,7 +92,7 @@ const WorkspaceSetting: FC<Props> = ({
                   {t("Remove this workspace")}
                 </Typography>
                 <Typography size="body">
-                  {t("This process will remove this wprkspace")}
+                  {t("This process will remove this workspace")}
                 </Typography>
                 <ButtonWrapper>
                   <Button
@@ -138,9 +131,11 @@ const WorkspaceSetting: FC<Props> = ({
             />,
             <Button
               key="delete"
-              title={t("I am sure I want to delete this project.")}
+              title={t("I am sure I want to delete this workspace.")}
               appearance="dangerous"
-              disabled={workspaceNameConfirm !== currentWorkspace?.name}
+              disabled={
+                workspaceNameConfirm.trim() !== currentWorkspace?.name.trim()
+              }
               onClick={() => {
                 if (currentWorkspace?.id) {
                   handleDeleteWorkspace(currentWorkspace?.id);
@@ -165,10 +160,10 @@ const WorkspaceSetting: FC<Props> = ({
               )}
             </Typography>
             <Typography size="body">
-              {t("Please type your project name to continue.")}
+              {t("Please type your workspace name to continue.")}
             </Typography>
             <TextInput
-              placeholder="your worksace name"
+              placeholder="your workspace name"
               onChange={(name) => {
                 setWorkspaceNameConfirm(name);
               }}
@@ -184,14 +179,14 @@ const WorkspaceSetting: FC<Props> = ({
         <ModalContentWrapper>
           <Icon icon="warning" size="large" color={theme.warning.main} />
           <Typography size="body">
-            {t("You are going to delete workspace.")}
+            {t("You are going to delete a workspace.")}
           </Typography>
           <Typography size="body">
             {t(
               "Please to make sure you don’t have any projects in your workspace, then you can continue."
             )}
           </Typography>
-          <ButtonnWrapper>
+          <ButtonWrapper>
             <Button
               key="ok"
               title={t("Ok")}
@@ -200,7 +195,7 @@ const WorkspaceSetting: FC<Props> = ({
                 setDeleteWorkspaceModal(false);
               }}
             />
-          </ButtonnWrapper>
+          </ButtonWrapper>
         </ModalContentWrapper>
       </Modal>
     </InnerPage>
@@ -222,9 +217,10 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.large
 }));
 
-const ButtonnWrapper = styled("div")(({ theme }) => ({
+const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
-  background: theme.bg[1]
+  background: theme.bg[1],
+  gap: theme.spacing.small
 }));
 export default WorkspaceSetting;
