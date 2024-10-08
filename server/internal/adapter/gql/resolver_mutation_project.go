@@ -125,7 +125,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	t := time.Now().UTC()
 	entropy := ulid.Monotonic(rand.New(rand.NewSource(uint64(t.UnixNano()))), 0)
 	name := ulid.MustNew(ulid.Timestamp(t), entropy)
-	zipFile, err := fs.Create(fmt.Sprintf("%s.reearth", name.String()))
+	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", name.String()))
 	if err != nil {
 		return nil, err
 	}
