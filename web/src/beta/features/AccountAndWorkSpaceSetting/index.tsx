@@ -44,8 +44,9 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
   const {
     meData,
     passwordPolicy,
+    handleFetchWorkspaces,
     handleUpdateUserPassword,
-    currentWorkspace,
+    projectsCount,
     handleUpdateWorkspace,
     handleDeleteWorkspace
   } = useHook();
@@ -81,9 +82,10 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
           )}
           {tab === "workspace" && (
             <WorkspaceSetting
-              currentWorkspace={currentWorkspace}
+              handleFetchWorkspaces={handleFetchWorkspaces}
               handleUpdateWorkspace={handleUpdateWorkspace}
               handleDeleteWorkspace={handleDeleteWorkspace}
+              projectsCount={projectsCount}
             />
           )}
         </Content>

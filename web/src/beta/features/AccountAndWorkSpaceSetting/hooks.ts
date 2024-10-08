@@ -1,4 +1,8 @@
-import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
+import {
+  useMeFetcher,
+  useProjectFetcher,
+  useWorkspaceFetcher
+} from "@reearth/services/api";
 import { Role } from "@reearth/services/gql";
 import { useWorkspace } from "@reearth/services/state";
 import { useCallback } from "react";
@@ -9,6 +13,13 @@ export type UpdatePasswordType = {
 };
 
 export type WorkspacePayload = {
+  name: string;
+  userId?: string;
+  teamId: string;
+  role?: Role;
+};
+
+export type Projects = {
   name: string;
   userId?: string;
   teamId: string;
@@ -42,6 +53,13 @@ export default () => {
   }, [data.id, useDeleteUser]);
 
   const [currentWorkspace] = useWorkspace();
+
+  const { useProjectsQuery } = useProjectFetcher();
+  // Fetch all projects base from workspaceId
+  const { projects } = useProjectsQuery({
+    teamId: currentWorkspace?.id || "",
+    pagination: { first: 16 }
+  });
 
   const {
     useWorkspaceQuery,
@@ -162,7 +180,7 @@ export default () => {
     passwordPolicy,
     handleUpdateUserPassword,
     handleDeleteUser,
-    currentWorkspace,
+    projectsCount: projects?.length,
     handleFetchWorkspace,
     handleFetchWorkspaces,
     handleCreateWorkspace,

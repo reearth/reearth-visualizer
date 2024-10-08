@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import {
   Collapse,
   TextInput,
@@ -9,9 +10,10 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
-import { Workspace } from "@reearth/services/state";
+import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { WorkspacePayload } from "../../hooks";
 import {
@@ -22,24 +24,36 @@ import {
 } from "../common";
 
 type Props = {
-  currentWorkspace: Workspace | undefined;
+  handleFetchWorkspaces: () => {
+    workspaces: Workspace[] | undefined;
+    loading: boolean;
+    error: ApolloError | undefined;
+  };
   handleUpdateWorkspace: ({ teamId, name }: WorkspacePayload) => Promise<void>;
   handleDeleteWorkspace: (teamId: string) => Promise<void>;
+  projectsCount?: number;
 };
 
 const WorkspaceSetting: FC<Props> = ({
-  currentWorkspace,
+  handleFetchWorkspaces,
   handleUpdateWorkspace,
-  handleDeleteWorkspace
+  handleDeleteWorkspace,
+  projectsCount
 }) => {
   const t = useT();
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [workspaceName, setWorkspaceName] = useState<string>(
     currentWorkspace?.name ?? ""
   );
   const [workspaceNameConfirm, setWorkspaceNameConfirm] = useState<string>("");
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] =
     useState<boolean>(false);
+
+  const { workspaces } = handleFetchWorkspaces();
+  const personalWorkspace = workspaces?.find((workspace) => workspace.personal);
 
   return (
     <InnerPage>
@@ -66,6 +80,11 @@ const WorkspaceSetting: FC<Props> = ({
                       teamId: currentWorkspace?.id,
                       name: workspaceName
                     });
+                    const renamedWorkspace = {
+                      ...currentWorkspace,
+                      name: workspaceName
+                    };
+                    setCurrentWorkspace(renamedWorkspace);
                   }
                 }}
               />
@@ -99,9 +118,7 @@ const WorkspaceSetting: FC<Props> = ({
 
       <Modal
         visible={
-          deleteWorkspaceModal &&
-          !!currentWorkspace?.policy?.projectCount &&
-          currentWorkspace?.policy?.projectCount === 0
+          deleteWorkspaceModal && (!projectsCount || projectsCount === 0)
         }
         size="small"
       >
@@ -116,8 +133,6 @@ const WorkspaceSetting: FC<Props> = ({
               title={t("Cancel")}
               appearance="secondary"
               onClick={() => {
-                if (currentWorkspace?.id)
-                  handleDeleteWorkspace(currentWorkspace?.id);
                 setDeleteWorkspaceModal(false);
               }}
             />,
@@ -127,7 +142,12 @@ const WorkspaceSetting: FC<Props> = ({
               appearance="dangerous"
               disabled={workspaceNameConfirm !== currentWorkspace?.name}
               onClick={() => {
-                setDeleteWorkspaceModal(false);
+                if (currentWorkspace?.id) {
+                  handleDeleteWorkspace(currentWorkspace?.id);
+                  setCurrentWorkspace(personalWorkspace);
+                  setDeleteWorkspaceModal(false);
+                  navigate(`/`);
+                }
               }}
             />
           ]}
@@ -158,11 +178,7 @@ const WorkspaceSetting: FC<Props> = ({
       </Modal>
 
       <Modal
-        visible={
-          deleteWorkspaceModal &&
-          !!currentWorkspace?.policy?.projectCount &&
-          currentWorkspace?.policy?.projectCount > 0
-        }
+        visible={deleteWorkspaceModal && !!projectsCount && projectsCount > 0}
         size="small"
       >
         <ModalContentWrapper>
