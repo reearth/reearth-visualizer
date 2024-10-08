@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"io"
 	"mime"
 	"net/http"
@@ -24,6 +25,7 @@ func serveFiles(
 		return func(ctx echo.Context) error {
 			reader, filename, err := handler(ctx)
 			if err != nil {
+				fmt.Printf("file handler err: %s\n", err.Error())
 				return err
 			}
 			ct := "application/octet-stream"
@@ -50,12 +52,20 @@ func serveFiles(
 		"/export/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
+
 			r, err := repo.ReadExportProjectZip(ctx.Request().Context(), filename)
 			if err != nil {
-				return nil, "", rerror.ErrNotFound
+				return nil, "", err
 			}
+			fmt.Printf("download: %s \n", filename)
+
 			// download and then delete
 			err = repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+			if err != nil {
+				return nil, "", err
+			}
+			fmt.Printf("delete: %s \n", filename)
+
 			return r, filename, err
 		}),
 	)
