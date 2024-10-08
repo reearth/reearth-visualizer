@@ -6,6 +6,7 @@ import (
 	"mime"
 	"net/http"
 	"path"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -59,11 +60,16 @@ func serveFiles(
 			}
 			fmt.Printf("download: %s \n", filename)
 
-			// download and then delete
-			err = repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
-			if err != nil {
-				fmt.Printf("delete err: %s \n", err.Error())
-			}
+			go func() {
+				// download and then delete
+				time.Sleep(3 * time.Second)
+				err := repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+				if err != nil {
+					fmt.Printf("delete err: %s \n", err.Error())
+				} else {
+					fmt.Printf("file deleted: %s \n", filename)
+				}
+			}()
 
 			return r, filename, nil
 		}),

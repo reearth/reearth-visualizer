@@ -210,7 +210,13 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	if sn == "" {
 		return nil, gateway.ErrInvalidFile
 	}
-	return f.read(ctx, path.Join(gcsExportBasePath, sn))
+	r, err := f.read(ctx, path.Join(gcsExportBasePath, sn))
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			r, err = f.read(ctx, path.Join(gcsExportBasePath, name))
+		}
+	}
+	return r, err
 }
 
 func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
