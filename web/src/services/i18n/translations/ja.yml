@@ -17,6 +17,22 @@ In order to protect your account, make sure your password is unique and strong.:
 New password: ''
 New password (for confirmation): ''
 '"repeatPassword" Passwords need to match': ''
+Workspace: ''
+Workspace Name: ''
+Submit: 反映
+Danger Zone: 重要操作
+Remove this workspace: ''
+This process will remove this wprkspace: ''
+Remove workspace: ''
+Delete workspace: ''
+Cancel: キャンセル
+I am sure I want to delete this project.: このプロジェクトを削除します。
+'This action cannot be undone. ': ''
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
+Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
+You are going to delete workspace.: ''
+Please to make sure you don’t have any projects in your workspace, then you can continue.: ''
+Ok: 確認
 Select Asset: ''
 Last Uploaded: 昇順（アップロード日）
 First Uploaded: 降順（アップロード日）
@@ -159,8 +175,6 @@ Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
-Ok: 確認
-Cancel: キャンセル
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
 Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
@@ -212,14 +226,10 @@ Something went wrong. Please try again later.: 何らかの問題が発生しま
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
-Submit: 反映
-Danger Zone: 重要操作
 Delete this project: プロジェクトを削除
 This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
-I am sure I want to delete this project.: このプロジェクトを削除します。
 This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
-Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -412,4 +422,14 @@ Failed to update widget alignment.: ウィジェットのアラインメント�
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
+Failed to delete workspace.: ''
+Successfully deleted workspace!: ''
+Failed to update workspace.: ''
+Successfully updated workspace!: ''
+Failed to add member to workspace.: ''
+Successfully added member to workspace!: ''
+Failed to remove member from workspace.: ''
+Successfully removed member from workspace!: ''
+Failed to update member in workspace.: ''
+Successfully updated member in workspace!: ''
 Style_: スタイル_
