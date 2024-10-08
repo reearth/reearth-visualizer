@@ -1,7 +1,7 @@
 import { Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
@@ -27,6 +27,7 @@ export type SourceType =
 export type DataSourceOptType = {
   label: string;
   value: SourceType;
+  children?: ReactNode;
 }[];
 
 const DataSourceLayerCreator: FC<DataProps> = ({

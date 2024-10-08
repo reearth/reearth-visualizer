@@ -3,7 +3,8 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
-  ContentWrapper
+  ContentWrapper,
+  LinkWapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -17,33 +18,86 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const [value, setValue] = useState("");
   const [sourceType, setSourceType] = useState<SourceType>("osm-buildings");
+  const [googleMapApiKey, setGoogleMapApiKey] = useState("");
+  const googlePhotorealistic = sourceType === "google-photorealistic";
+
+  const renderGooglePhotorealisticInput = useMemo(() => {
+    if (googlePhotorealistic) {
+      return (
+        <InputGroup
+          label={
+            <>
+              {t("Google Map APIKey ")} ( {t("You can apply a key ")}
+              <LinkWapper
+                to="https://developers.google.com/maps/documentation/javascript/get-api-key"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("here")}
+              </LinkWapper>
+              )
+            </>
+          }
+        >
+          <InputsWrapper>
+            <TextInput
+              value={googleMapApiKey}
+              onChange={(value) => setGoogleMapApiKey(value)}
+            />
+          </InputsWrapper>
+        </InputGroup>
+      );
+    } else return undefined;
+  }, [googleMapApiKey, googlePhotorealistic, t]);
+
+  const renderUrlInput = useMemo(() => {
+    if (sourceType === "url") {
+      return (
+        <InputGroup label={t("Resource URL")}>
+          <InputsWrapper>
+            <TextInput
+              placeholder="https://"
+              value={value}
+              onChange={(value) => setValue(value)}
+            />
+          </InputsWrapper>
+        </InputGroup>
+      );
+    } else return undefined;
+  }, [sourceType, t, value]);
 
   const dataSourceOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("Cesium OSM 3D Tiles"), value: "osm-buildings" },
       {
         label: t("Google Photorealistic 3D Tiles"),
-        value: "google-photorealistic"
+        value: "google-photorealistic",
+        children: renderGooglePhotorealisticInput
       },
-      { label: t("URL"), value: "url" }
+      {
+        label: t("URL"),
+        value: "url",
+        children: renderUrlInput
+      }
     ],
-    [t]
+    [renderGooglePhotorealisticInput, renderUrlInput, t]
   );
 
   const handleDataSourceTypeChange = useCallback((newValue: string) => {
     setSourceType(newValue as SourceType);
     setValue("");
+    setGoogleMapApiKey("");
   }, []);
 
   const title = useMemo(() => {
-    if (sourceType === "google-photorealistic") {
+    if (googlePhotorealistic) {
       return t("Google Photorealistic 3D Tiles");
     } else if (sourceType === "osm-buildings") {
       return t("Cesium OSM 3D Tiles");
     } else {
       return generateTitle(value);
     }
-  }, [sourceType, t, value]);
+  }, [googlePhotorealistic, sourceType, t, value]);
 
   const handleSubmit = () => {
     onSubmit({
@@ -54,10 +108,13 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       config: {
         data: {
           url: value !== "" ? value : undefined,
+          serviceTokens: {
+            googleMapApiKey: googleMapApiKey || undefined
+          },
           type:
             sourceType === "osm-buildings"
               ? "osm-buildings"
-              : sourceType === "google-photorealistic"
+              : googlePhotorealistic
                 ? "google-photorealistic"
                 : "3dtiles"
         }
@@ -75,25 +132,16 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           options={dataSourceOptions}
           onChange={handleDataSourceTypeChange}
         />
-        {sourceType === "url" && (
-          <InputGroup label={t("Resource URL")}>
-            <InputsWrapper>
-              <TextInput
-                placeholder="https://"
-                value={value}
-                onChange={(value) => setValue(value)}
-              />
-            </InputsWrapper>
-          </InputGroup>
-        )}
       </ContentWrapper>
-
       <SubmitWrapper>
         <Button
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={!value && sourceType === "url"}
+          disabled={
+            (!value && sourceType === "url") ||
+            (!googleMapApiKey && googlePhotorealistic)
+          }
         />
       </SubmitWrapper>
     </Wrapper>
