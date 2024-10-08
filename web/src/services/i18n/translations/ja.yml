@@ -22,15 +22,15 @@ Workspace Name: ''
 Submit: 反映
 Danger Zone: 重要操作
 Remove this workspace: ''
-This process will remove this wprkspace: ''
+This process will remove this workspace: ''
 Remove workspace: ''
 Delete workspace: ''
 Cancel: キャンセル
-I am sure I want to delete this project.: このプロジェクトを削除します。
+I am sure I want to delete this workspace.: ''
 'This action cannot be undone. ': ''
 This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
-Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
-You are going to delete workspace.: ''
+Please type your workspace name to continue.: ''
+You are going to delete a workspace.: ''
 Please to make sure you don’t have any projects in your workspace, then you can continue.: ''
 Ok: 確認
 Select Asset: ''
@@ -229,7 +229,9 @@ Thumbnail: サムネイル画像
 Delete this project: プロジェクトを削除
 This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
+I am sure I want to delete this project.: このプロジェクトを削除します。
 This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
+Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
