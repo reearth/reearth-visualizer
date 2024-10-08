@@ -74,7 +74,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
         <Content>
           {tab === "account" && (
             <AccountSetting
-              onUpdateUserPassword={handleUpdateUserPassword}
+              handleUpdateUserPassword={handleUpdateUserPassword}
               passwordPolicy={passwordPolicy}
               informationData={{ name, email }}
             />

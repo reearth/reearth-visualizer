@@ -72,7 +72,7 @@ const WorkspaceSetting: FC<Props> = ({
             </ButtonWrapper>
           </SettingsFields>
         </Collapse>
-        {currentWorkspace?.personal && (
+        {!currentWorkspace?.personal && (
           <Collapse size="large" title={t("Danger Zone")}>
             <SettingsFields>
               <DangerItem>

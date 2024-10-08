@@ -18,7 +18,7 @@ import PasswordModal from "./PasswordModal";
 type Props = {
   informationData: { name?: string; email?: string };
   passwordPolicy?: PasswordPolicy;
-  onUpdateUserPassword: ({
+  handleUpdateUserPassword: ({
     password,
     passwordConfirmation
   }: UpdatePasswordType) => Promise<void>;
@@ -26,7 +26,7 @@ type Props = {
 
 const AccountSetting: FC<Props> = ({
   passwordPolicy,
-  onUpdateUserPassword,
+  handleUpdateUserPassword,
   informationData
 }) => {
   const t = useT();
@@ -79,7 +79,7 @@ const AccountSetting: FC<Props> = ({
         isVisible={changePasswordModal}
         passwordPolicy={passwordPolicy}
         onClose={() => setChangePasswordModal(false)}
-        onPasswordUpdate={onUpdateUserPassword}
+        handleUpdateUserPassword={handleUpdateUserPassword}
       />
     </InnerPage>
   );
