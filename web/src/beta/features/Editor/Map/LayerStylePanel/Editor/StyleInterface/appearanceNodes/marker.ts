@@ -102,7 +102,7 @@ export const markerNodes: AppearanceNode[] = [
     defaultValue: {
       fontFamily: "Arial",
       fontSize: 12,
-      fontWeight: "normal",
+      fontWeight: "400",
       color: "#000000",
       italic: false,
       underline: false
