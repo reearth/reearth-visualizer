@@ -60,12 +60,12 @@ func serveFiles(
 			fmt.Printf("download: %s \n", filename)
 
 			// download and then delete
-			err2 := repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
-			if err2 != nil {
-				fmt.Printf("delete err: %s \n", err2.Error())
+			err = repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+			if err != nil {
+				fmt.Printf("delete err: %s \n", err.Error())
 			}
 
-			return r, filename, err
+			return r, filename, nil
 		}),
 	)
 
