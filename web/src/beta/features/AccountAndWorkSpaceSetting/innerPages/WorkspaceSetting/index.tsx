@@ -225,7 +225,6 @@ const ModalContentWrapper = styled("div")(({ theme }) => ({
 const ButtonnWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
-  gap: theme.spacing.large,
   background: theme.bg[1]
 }));
 export default WorkspaceSetting;
