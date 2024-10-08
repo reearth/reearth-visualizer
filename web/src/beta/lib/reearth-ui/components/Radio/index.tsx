@@ -1,11 +1,12 @@
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 export type RadioProps = {
   value?: string;
   label?: string;
   disabled?: boolean;
   checked?: boolean;
+  content?: ReactNode;
   onChange?: (value: string) => void;
 };
 
@@ -14,6 +15,7 @@ export const Radio: FC<RadioProps> = ({
   label,
   disabled,
   checked,
+  content,
   onChange
 }) => {
   const handleChange = () => {
@@ -22,21 +24,31 @@ export const Radio: FC<RadioProps> = ({
   };
 
   return (
-    <RadioWrapper onClick={handleChange}>
-      <RadioInput
-        type="radio"
-        value={value}
-        checked={checked}
-        disabled={disabled}
-        onChange={handleChange}
-      />
-      <RadioButton checked={checked} disabled={disabled}>
-        {checked && !disabled && <RadioIndicator checked={checked} />}
-      </RadioButton>
-      {label && <RadioLabel disabled={disabled}>{label}</RadioLabel>}
-    </RadioWrapper>
+    <Wrapper>
+      <RadioWrapper onClick={handleChange}>
+        <RadioInput
+          type="radio"
+          value={value}
+          checked={checked}
+          disabled={disabled}
+          onChange={handleChange}
+        />
+        <RadioButton checked={checked} disabled={disabled}>
+          {checked && !disabled && <RadioIndicator checked={checked} />}
+        </RadioButton>
+        {label && <RadioLabel disabled={disabled}>{label}</RadioLabel>}
+      </RadioWrapper>
+      {content && <RadioContent>{content}</RadioContent>}
+    </Wrapper>
   );
 };
+
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.smallest,
+  flexDirection: "column",
+  alignItems: "flex-start"
+}));
 
 const RadioWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -87,3 +99,8 @@ const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
     cursor: disabled ? "not-allowed" : "pointer"
   })
 );
+
+const RadioContent = styled("div")(({ theme }) => ({
+  padding: `${theme.spacing.small}px ${theme.spacing.large}px 0 ${theme.spacing.large}px`,
+  width: "100%"
+}));

@@ -1,7 +1,7 @@
 import { Modal, ModalPanel, TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
@@ -17,11 +17,17 @@ export type DataProps = {
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
-export type SourceType = "url" | "local" | "value";
+export type SourceType =
+  | "url"
+  | "local"
+  | "value"
+  | "osm-buildings"
+  | "google-photorealistic";
 
 export type DataSourceOptType = {
   label: string;
   value: SourceType;
+  children?: ReactNode;
 }[];
 
 const DataSourceLayerCreator: FC<DataProps> = ({
