@@ -32,25 +32,37 @@ export const threedtilesNodes: AppearanceNode[] = [
     id: "colorBlendMode",
     title: "Color Blend Mode",
     field: "select",
-    defaultValue: "replace",
-    valueOptions: ["highlight", "replace", "mix", "multiply"]
-  },
-  {
-    id: "edgeWidth",
-    title: "Edge Width",
-    field: "number",
-    defaultValue: 1
-  },
-  {
-    id: "edgeColor",
-    title: "Edge Color",
-    field: "color",
-    defaultValue: "#ffffff"
+    defaultValue: "default",
+    valueOptions: ["highlight", "replace", "mix", "default"]
   },
   {
     id: "selectedFeatureColor",
     title: "Selected Feature Color",
     field: "color",
     defaultValue: DEFAULT_SELECTED_FEATURE_COLOR
+  },
+  {
+    id: "tileset",
+    title: "Tileset",
+    field: "text",
+    defaultValue: ""
+  },
+  {
+    id: "pbr",
+    title: "Pbr",
+    field: "switch",
+    defaultValue: true
+  },
+  {
+    id: "showWireframe",
+    title: "Show Wire Frame",
+    field: "switch",
+    defaultValue: false
+  },
+  {
+    id: "showBoundingVolume",
+    title: "Show Bounding Volume",
+    field: "switch",
+    defaultValue: false
   }
 ];

@@ -4,6 +4,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
 
+import { LayerStyleWithActiveTab } from "../hooks";
 import NoStyleMessage from "../NoStyleMessage";
 
 import {
@@ -18,18 +19,37 @@ import { AppearanceType, StyleNode, StyleNodes } from "./types";
 export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
+  layerStyleWithActiveTab: LayerStyleWithActiveTab[];
+  setLayerStyleWithActiveTab: Dispatch<
+    SetStateAction<LayerStyleWithActiveTab[]>
+  >;
 };
 
-const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const StyleInterface: FC<LayerStyleProps> = ({
+  layerStyle,
+  setLayerStyle,
+  layerStyleWithActiveTab,
+  setLayerStyleWithActiveTab
+}) => {
   const theme = useTheme();
 
   const [styleNodes, setStyleNodes] = useState<StyleNodes>(
     convertToStyleNodes(layerStyle)
   );
+  const [activeTab, setActiveTab] = useState<AppearanceType>("marker");
 
   useEffect(() => {
     setStyleNodes(convertToStyleNodes(layerStyle));
-  }, [layerStyle]);
+
+    const newLayerStyleWithActiveTab = layerStyleWithActiveTab.find(
+      (tab) => tab.id === layerStyle?.id
+    );
+    if (newLayerStyleWithActiveTab) {
+      setActiveTab(newLayerStyleWithActiveTab.tab);
+    } else {
+      setActiveTab("marker");
+    }
+  }, [layerStyle, layerStyleWithActiveTab]);
 
   const handleStyleNodesUpdate = useCallback(
     (type: AppearanceType, nodes: StyleNode[]) => {
@@ -49,11 +69,22 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     [styleNodes, setLayerStyle]
   );
 
-  const [activeTab, setActiveTab] = useState<AppearanceType>("marker");
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      const appearanceTab = tab as AppearanceType;
+      setActiveTab(appearanceTab);
 
-  const handleTabChange = useCallback((tab: string) => {
-    setActiveTab(tab as AppearanceType);
-  }, []);
+      setLayerStyleWithActiveTab((prev) =>
+        layerStyle
+          ? [
+              ...prev.filter((lt) => lt.id !== layerStyle.id),
+              { id: layerStyle.id, tab: appearanceTab }
+            ]
+          : prev
+      );
+    },
+    [layerStyle, setLayerStyleWithActiveTab]
+  );
 
   const appearanceTypeTabs: TabItem[] = useMemo(
     () =>

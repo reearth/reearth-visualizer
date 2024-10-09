@@ -8,17 +8,23 @@ import { LayerStyleValueUpdateProps } from "../../../hooks/useLayerStyles";
 
 import StyleCode from "./StyleCode";
 import StyleInterface from "./StyleInterface";
+import { AppearanceType } from "./StyleInterface/types";
 
 type Props = {
   selectedLayerStyle?: LayerStyle;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
 };
 
+export type LayerStyleWithActiveTab = { id: string; tab: AppearanceType };
+
 export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
   const t = useT();
   const [, setNotification] = useNotification();
 
   const [layerStyle, setLayerStyle] = useState(selectedLayerStyle);
+  const [layerStyleWithActiveTab, setLayerStyleWithActiveTab] = useState<
+    LayerStyleWithActiveTab[]
+  >([]);
 
   useEffect(() => {
     setLayerStyle(selectedLayerStyle);
@@ -34,6 +40,8 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
             layerStyle={layerStyle}
             setLayerStyle={setLayerStyle}
             key={layerStyle?.id}
+            layerStyleWithActiveTab={layerStyleWithActiveTab}
+            setLayerStyleWithActiveTab={setLayerStyleWithActiveTab}
           />
         )
       },
@@ -45,7 +53,13 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
         )
       }
     ],
-    [layerStyle, t, setLayerStyle]
+    [
+      t,
+      layerStyle,
+      setLayerStyle,
+      layerStyleWithActiveTab,
+      setLayerStyleWithActiveTab
+    ]
   );
 
   const handleSave = useCallback(() => {
