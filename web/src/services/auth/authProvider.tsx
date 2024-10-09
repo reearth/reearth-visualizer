@@ -9,6 +9,7 @@ import React, { createContext, ReactNode, useState } from "react";
 import { useAuth0Auth } from "./auth0Auth";
 import type { AuthHook } from "./authHook";
 import { useCognitoAuth } from "./cognitoAuth";
+import { useMockAuth } from "./mockAuth";
 
 export const AuthContext = createContext<AuthHook | null>(null);
 
@@ -22,13 +23,22 @@ const CognitoWrapper = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
+const MockWrapper = ({ children }: { children: ReactNode }) => {
+  const mockAuth = useMockAuth();
+  return <AuthContext.Provider value={mockAuth}>{children}</AuthContext.Provider>;
+};
+
 export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
   children
 }) => {
   const [authInfo] = useState(() => {
-    logInToTenant(); // note that it includes side effect
+    logInToTenant();
     return getAuthInfo();
   });
+
+  if (authInfo?.useMockAuth) {
+    return <MockWrapper>{children}</MockWrapper>;
+  }
 
   if (authInfo?.authProvider === "auth0") {
     const domain = authInfo.auth0Domain;
@@ -54,7 +64,6 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
   }
 
   if (authInfo?.authProvider === "cognito") {
-    // No specific provider needed for Cognito/AWS Amplify
     return <CognitoWrapper>{children}</CognitoWrapper>;
   }
 
