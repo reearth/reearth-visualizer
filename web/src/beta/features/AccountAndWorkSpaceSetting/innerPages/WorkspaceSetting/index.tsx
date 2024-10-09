@@ -59,7 +59,7 @@ const WorkspaceSetting: FC<Props> = ({
               title={t("Workspace Name")}
               value={currentWorkspace?.name ? t(currentWorkspace.name) : ""}
               onChange={setWorkspaceName}
-              appearance={currentWorkspace?.personal ? "readonly" : "present"}
+              appearance={currentWorkspace?.personal ? "readonly" : undefined}
               disabled={currentWorkspace?.personal}
             />
             <ButtonWrapper>
