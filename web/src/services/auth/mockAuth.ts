@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from "react";
 
-import type { AuthHook } from './authHook';
+import type { AuthHook } from "./authHook";
 
 export const useMockAuth = (): AuthHook => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,10 +37,16 @@ export const useMockAuth = (): AuthHook => {
     return new Promise<string>((resolve, reject) => {
       if (isAuthenticated) {
         setTimeout(() => {
-          resolve('mock_access_token_' + Date.now());
+          resolve("mock_access_token_" + Date.now());
         }, 100);
       } else {
-        reject(new Error('Not authenticated'));
+        setTimeout(() => {
+          setIsAuthenticated(true);
+          setIsLoading(false);
+          setError(null);
+          resolve("mock_access_token_" + Date.now());
+        }, 500);
+        // reject(new Error("Not authenticated"));
       }
     });
   }, [isAuthenticated]);
@@ -51,6 +57,6 @@ export const useMockAuth = (): AuthHook => {
     error,
     getAccessToken,
     login,
-    logout,
+    logout
   };
 };

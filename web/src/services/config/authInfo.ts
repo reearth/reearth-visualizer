@@ -10,15 +10,10 @@ export type AuthInfo = {
   auth0Audience?: string;
   authProvider?: string;
   cognito?: CognitoParams;
-  useMockAuth?: boolean;
 };
 
 export function getAuthInfo(conf = config()): AuthInfo | undefined {
-  const authInfo = getMultitenantAuthInfo(conf) || defaultAuthInfo(conf);
-  
-  if (process.env.REEARTH_WEB_USE_MOCK_AUTH === "true") {
-    return { ...authInfo, useMockAuth: true, authProvider: "mock" };
-  }
+  return getMultitenantAuthInfo(conf) || defaultAuthInfo(conf);
 }
 
 export function getSignInCallbackUrl() {

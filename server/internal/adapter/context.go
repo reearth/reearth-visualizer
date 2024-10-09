@@ -19,6 +19,7 @@ const (
 	ContextAuthInfo ContextKey = "authinfo"
 	contextUsecases ContextKey = "usecases"
 	contextMockAuth ContextKey = "mockauth"
+	contextMockUser ContextKey = "mockuser"
 )
 
 var defaultLang = language.English
@@ -47,6 +48,10 @@ func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Contex
 
 func AttachMockAuth(ctx context.Context, mockAuth bool) context.Context {
 	return context.WithValue(ctx, contextMockAuth, mockAuth)
+}
+
+func AttachMockUser(ctx context.Context, mockUser string) context.Context {
+	return context.WithValue(ctx, contextMockUser, mockUser)
 }
 
 func User(ctx context.Context) *user.User {
@@ -96,8 +101,12 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 	if IsMockAuth(ctx) {
+		mockUser, ok := MockUser(ctx)
+		if !ok {
+			mockUser = user.NewID().String()
+		}
 		return &appx.AuthInfo{
-			Sub:   "mock_sub",
+			Sub:   mockUser,
 			Name:  "Mock User",
 			Email: "mock@example.com",
 		}
@@ -121,4 +130,13 @@ func IsMockAuth(ctx context.Context) bool {
 		}
 	}
 	return false
+}
+
+func MockUser(ctx context.Context) (string, bool) {
+	if v := ctx.Value(contextMockUser); v != nil {
+		if mockUser, ok := v.(string); ok {
+			return mockUser, true
+		}
+	}
+	return "", false
 }

@@ -25,7 +25,9 @@ const CognitoWrapper = ({ children }: { children: ReactNode }) => {
 
 const MockWrapper = ({ children }: { children: ReactNode }) => {
   const mockAuth = useMockAuth();
-  return <AuthContext.Provider value={mockAuth}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={mockAuth}>{children}</AuthContext.Provider>
+  );
 };
 
 export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
@@ -36,7 +38,7 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
     return getAuthInfo();
   });
 
-  if (authInfo?.useMockAuth) {
+  if (authInfo?.authProvider === "mock") {
     return <MockWrapper>{children}</MockWrapper>;
   }
 

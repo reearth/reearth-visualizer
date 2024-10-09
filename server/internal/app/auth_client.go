@@ -45,12 +45,18 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			if adapter.IsMockAuth(ctx) {
 				// Create a mock user based on the auth info
 				uId, _ := user.IDFrom(au.Sub)
-				mockUser := user.New().
-					ID(uId).
-					Name(au.Name).
-					Email(au.Email).
-					MustBuild()
-				u = mockUser
+				if u2, err := multiUser.FetchByID(ctx, user.IDList{uId}); err == nil {
+					if len(u2) > 0 {
+						u = u2[0]
+					}
+				} else {
+					mockUser := user.New().
+						ID(uId).
+						Name(au.Name).
+						Email(au.Email).
+						MustBuild()
+					u = mockUser
+				}
 			} else {
 				// debug mode
 				if cfg.Debug {
@@ -86,13 +92,14 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 						return err
 					}
 				}
-			}
 
-			// save a new sub
-			if u != nil && au != nil {
-				if err := addAuth0SubToUser(ctx, u, user.AuthFrom(au.Sub), cfg); err != nil {
-					return err
+				// save a new sub
+				if u != nil && au != nil {
+					if err := addAuth0SubToUser(ctx, u, user.AuthFrom(au.Sub), cfg); err != nil {
+						return err
+					}
 				}
+
 			}
 
 			if u != nil {
