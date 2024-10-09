@@ -1,12 +1,10 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"mime"
 	"net/http"
 	"path"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -26,7 +24,6 @@ func serveFiles(
 		return func(ctx echo.Context) error {
 			reader, filename, err := handler(ctx)
 			if err != nil {
-				fmt.Printf("file handler err: %s\n", err.Error())
 				return err
 			}
 			ct := "application/octet-stream"
@@ -53,25 +50,13 @@ func serveFiles(
 		"/export/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
-
 			r, err := repo.ReadExportProjectZip(ctx.Request().Context(), filename)
 			if err != nil {
-				return nil, "", err
+				return nil, "", rerror.ErrNotFound
 			}
-			fmt.Printf("download: %s \n", filename)
-
-			go func() {
-				// download and then delete
-				time.Sleep(3 * time.Second)
-				err := repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
-				if err != nil {
-					fmt.Printf("delete err: %s \n", err.Error())
-				} else {
-					fmt.Printf("file deleted: %s \n", filename)
-				}
-			}()
-
-			return r, filename, nil
+			// download and then delete
+			err = repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+			return r, filename, err
 		}),
 	)
 

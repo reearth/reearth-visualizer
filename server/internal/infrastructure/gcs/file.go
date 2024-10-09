@@ -109,7 +109,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 func (f *fileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
 	sn := sanitize.Path(filename)
 	if sn == "" {
-		return nil, gateway.ErrInvalidFile
+		return nil, rerror.ErrNotFound
 	}
 	return f.read(ctx, path.Join(gcsPluginBasePath, pid.String(), sn))
 }
@@ -133,7 +133,7 @@ func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
 
 func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
-		return nil, gateway.ErrInvalidFile
+		return nil, rerror.ErrNotFound
 	}
 	return f.read(ctx, path.Join(gcsMapBasePath, sanitize.Path(name)+".json"))
 }
@@ -170,7 +170,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 func (f *fileRepo) ReadStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
-		return nil, gateway.ErrInvalidFile
+		return nil, rerror.ErrNotFound
 	}
 	return f.read(ctx, path.Join(gcsStoryBasePath, sanitize.Path(name)+".json"))
 }
@@ -208,15 +208,20 @@ func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
 func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
 	sn := sanitize.Path(name)
 	if sn == "" {
-		return nil, gateway.ErrInvalidFile
+		return nil, rerror.ErrNotFound
 	}
-	r, err := f.read(ctx, path.Join(gcsExportBasePath, sn))
+	bucket, err := f.bucket(ctx)
 	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			r, err = f.read(ctx, path.Join(gcsExportBasePath, name))
-		}
+		log.Errorfc(ctx, "gcs: read bucket err: %+v\n", err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
-	return r, err
+	if ok := checkPrefix(ctx, bucket, gcsExportBasePath); !ok {
+		return nil, errors.New("Prefix not exist")
+	}
+	if ok := checkObject(ctx, bucket, gcsExportBasePath, path.Join(gcsExportBasePath, sn)); !ok {
+		return nil, errors.New("Object not exist")
+	}
+	return f.read(ctx, path.Join(gcsExportBasePath, sn))
 }
 
 func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
@@ -409,4 +414,39 @@ func getGCSObjectNameFromURL(base, u *url.URL) string {
 func newAssetID() string {
 	// TODO: replace
 	return id.NewAssetID().String()
+}
+
+func checkPrefix(ctx context.Context, bucket *storage.BucketHandle, prefix string) bool {
+	it := bucket.Objects(ctx, &storage.Query{
+		Delimiter: "/",
+	})
+	for {
+		attrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		fmt.Printf("attrs.Prefix %s \n", attrs.Prefix)
+		if attrs.Prefix == prefix+"/" {
+			return true
+		}
+	}
+	return false
+}
+
+func checkObject(ctx context.Context, bucket *storage.BucketHandle, prefix string, objectName string) bool {
+	it := bucket.Objects(ctx, &storage.Query{
+		Prefix:    prefix + "/",
+		Delimiter: "/",
+	})
+	for {
+		attrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		fmt.Printf("attrs.Name %s \n", attrs.Name)
+		if attrs.Name == objectName {
+			return true
+		}
+	}
+	return false
 }
