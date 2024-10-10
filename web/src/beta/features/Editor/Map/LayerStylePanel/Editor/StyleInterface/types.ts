@@ -55,10 +55,21 @@ export type StyleSimpleValue =
   | undefined
   | Typography;
 
+export type FontWeight =
+  | "100"
+  | "200"
+  | "300"
+  | "400"
+  | "500"
+  | "600"
+  | "700"
+  | "800"
+  | "900";
+
 export type Typography = {
   fontFamily?: string;
   fontSize?: number;
-  fontWeight?: "normal" | "bold" | "bolder" | "lighter";
+  fontWeight?: FontWeight;
   color?: string;
   italic?: boolean;
   underline?: boolean;

@@ -7,7 +7,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
-import { Typography } from "../../types";
+import { FontWeight, Typography } from "../../types";
 
 import BooleanSelectorField from "./BooleanSelectorInput";
 
@@ -22,12 +22,16 @@ const fontFamilyOptions = [
   { value: "Verdana", label: "Verdana" },
   { value: "YuGothic", label: "游ゴシック" }
 ];
-
 const fontWeightOptions = [
-  { value: "lighter", label: "lighter" },
-  { value: "normal", label: "normal" },
-  { value: "bold", label: "bold" },
-  { value: "bolder", label: "bolder" }
+  { value: "100", label: "Thin (100)" },
+  { value: "200", label: "Extra Light (200)" },
+  { value: "300", label: "Light (300)" },
+  { value: "400", label: "Normal (400)" },
+  { value: "500", label: "Medium (500)" },
+  { value: "600", label: "Semi Bold (600)" },
+  { value: "700", label: "Bold (700)" },
+  { value: "800", label: "Extra Bold (800)" },
+  { value: "900", label: "Black (900)" }
 ];
 
 type Props = {
@@ -59,7 +63,7 @@ const TypographyInput: FC<Props> = ({ value, onChange }) => {
           onChange={(v) =>
             onChange?.({
               ...value,
-              fontWeight: v as "lighter" | "normal" | "bold" | "bolder"
+              fontWeight: v as FontWeight
             })
           }
         />
