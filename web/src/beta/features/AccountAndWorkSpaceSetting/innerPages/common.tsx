@@ -46,9 +46,3 @@ export const SettingsRow = styled("div")(({ theme }) => ({
 export const SettingsRowItem = styled("div")(() => ({
   width: "100%"
 }));
-
-export const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "flex-end",
-  gap: theme.spacing.small
-}));

@@ -13,6 +13,7 @@ import Navbar from "../Navbar";
 
 import useHook from "./hooks";
 import AccountSetting from "./innerPages/AccountSetting";
+import WorkspaceSetting from "./innerPages/WorkspaceSetting";
 
 type Props = {
   sceneId?: string;
@@ -22,10 +23,10 @@ type Props = {
 };
 
 export const accountSettingTabs = [
-  { id: "account", text: "Account", icon: "user" }
+  { id: "account", text: "Account", icon: "user" },
+  { id: "workspace", text: "Workspace", icon: "usersFour" }
   // TODO: enable these when page ready
-  // { id: "workspace", text: "Workspace", icon: "users" },
-  // { id: "members", text: "Members", icon: "usersFour" }
+  // { id: "members", text: "Members", icon: "users" }
 ] as const;
 
 const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
@@ -40,7 +41,15 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
       })),
     [t]
   );
-  const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
+  const {
+    meData,
+    passwordPolicy,
+    handleFetchWorkspaces,
+    handleUpdateUserPassword,
+    projectsCount,
+    handleUpdateWorkspace,
+    handleDeleteWorkspace
+  } = useHook();
   const { name, email } = meData;
 
   return (
@@ -66,9 +75,17 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
         <Content>
           {tab === "account" && (
             <AccountSetting
-              onUpdateUserPassword={handleUpdateUserPassword}
+              handleUpdateUserPassword={handleUpdateUserPassword}
               passwordPolicy={passwordPolicy}
               informationData={{ name, email }}
+            />
+          )}
+          {tab === "workspace" && (
+            <WorkspaceSetting
+              handleFetchWorkspaces={handleFetchWorkspaces}
+              handleUpdateWorkspace={handleUpdateWorkspace}
+              handleDeleteWorkspace={handleDeleteWorkspace}
+              projectsCount={projectsCount}
             />
           )}
         </Content>

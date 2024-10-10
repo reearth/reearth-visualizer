@@ -298,6 +298,9 @@ const Item = styled("div")<{
   backgroundColor: "transparent",
   "&:hover": {
     backgroundColor: `${theme.bg[2]}`
+  },
+  "&:nth-child(2)": {
+    borderBottom: `1px solid ${theme.outline.weak}`
   }
 }));
 
