@@ -1809,6 +1809,7 @@ export type Project = Node & {
   imageUrl?: Maybe<Scalars['URL']['output']>;
   isArchived: Scalars['Boolean']['output'];
   isBasicAuthActive: Scalars['Boolean']['output'];
+  isDeleted: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   publicDescription: Scalars['String']['output'];
   publicImage: Scalars['String']['output'];
@@ -2060,6 +2061,7 @@ export type Query = {
   checkProjectAlias: ProjectAliasAvailability;
   datasetSchemas: DatasetSchemaConnection;
   datasets: DatasetConnection;
+  deletedProjects: ProjectConnection;
   layer?: Maybe<Layer>;
   me?: Maybe<Me>;
   node?: Maybe<Node>;
@@ -2106,6 +2108,11 @@ export type QueryDatasetsArgs = {
 };
 
 
+export type QueryDeletedProjectsArgs = {
+  teamId: Scalars['ID']['input'];
+};
+
+
 export type QueryLayerArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2134,7 +2141,6 @@ export type QueryPluginsArgs = {
 
 
 export type QueryProjectsArgs = {
-  includeArchived?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<ProjectSort>;

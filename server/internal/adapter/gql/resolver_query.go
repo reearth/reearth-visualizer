@@ -236,7 +236,7 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
-func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, includeArchived *bool, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
+func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
 }
 
@@ -258,4 +258,8 @@ func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string) (*g
 
 func (r *queryResolver) StarredProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindStarredByWorkspace(ctx, teamId)
+}
+
+func (r *queryResolver) DeletedProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindDeletedByWorkspace(ctx, teamId)
 }
