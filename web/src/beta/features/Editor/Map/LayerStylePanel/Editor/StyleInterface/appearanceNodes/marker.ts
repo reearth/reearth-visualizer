@@ -103,7 +103,7 @@ export const markerNodes: AppearanceNode[] = [
     id: "imageShadow",
     title: "Image Shadow",
     field: "switch",
-    defaultValue: "false"
+    defaultValue: false
   },
   {
     id: "imageShadowColor",

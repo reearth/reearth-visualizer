@@ -1,6 +1,6 @@
 import { AppearanceNode } from "../types";
 
-import { CLASSFICATION_TYPE, DEFAULT_SELECTED_FEATURE_COLOR, SHADOWS } from "./constant";
+import { CLASSIFICATION_TYPE, DEFAULT_SELECTED_FEATURE_COLOR, SHADOWS } from "./constant";
 
 export const polylineNodes: AppearanceNode[] = [
   {
@@ -52,7 +52,7 @@ export const polylineNodes: AppearanceNode[] = [
     title: "Classification Type",
     field: "select",
     defaultValue: "both",
-    valueOptions: CLASSFICATION_TYPE
+    valueOptions: CLASSIFICATION_TYPE
   },
   {
     id: "hideIndicator",

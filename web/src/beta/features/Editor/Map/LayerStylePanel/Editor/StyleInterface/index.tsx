@@ -37,25 +37,25 @@ const StyleInterface: FC<LayerStyleProps> = ({
     convertToStyleNodes(layerStyle)
   );
 
-  const newLayerStyleWithActiveTab = useMemo(
+  const currentLayerStyleForTab = useMemo(
     () => layerStyleWithActiveTab.find((tab) => tab.id === layerStyle?.id),
     [layerStyle?.id, layerStyleWithActiveTab]
   );
 
   const [activeTab, setActiveTab] = useState<AppearanceType>(
-    newLayerStyleWithActiveTab?.tab || "marker"
+    currentLayerStyleForTab?.tab || "marker"
   );
 
   useEffect(() => {
     setStyleNodes(convertToStyleNodes(layerStyle));
 
-    if (newLayerStyleWithActiveTab) {
-      setActiveTab(newLayerStyleWithActiveTab.tab);
+    if (currentLayerStyleForTab) {
+      setActiveTab(currentLayerStyleForTab.tab);
     }
   }, [
     layerStyle,
     layerStyleWithActiveTab,
-    newLayerStyleWithActiveTab,
+    currentLayerStyleForTab,
     setLayerStyleWithActiveTab
   ]);
 
@@ -79,17 +79,19 @@ const StyleInterface: FC<LayerStyleProps> = ({
 
   const handleTabChange = useCallback(
     (tab: string) => {
+      if (!layerStyle) return;
+
       const appearanceTab = tab as AppearanceType;
       setActiveTab(appearanceTab);
 
-      setLayerStyleWithActiveTab((prev) =>
-        layerStyle
-          ? [
-              ...prev.filter((lt) => lt.id !== layerStyle.id),
-              { id: layerStyle.id, tab: appearanceTab }
-            ]
-          : prev
-      );
+      setLayerStyleWithActiveTab((prev) => {
+        const newLayerStylesMap = new Map(prev.map((item) => [item.id, item]));
+        newLayerStylesMap.set(layerStyle.id, {
+          id: layerStyle.id,
+          tab: appearanceTab
+        });
+        return Array.from(newLayerStylesMap.values());
+      });
     },
     [layerStyle, setLayerStyleWithActiveTab]
   );

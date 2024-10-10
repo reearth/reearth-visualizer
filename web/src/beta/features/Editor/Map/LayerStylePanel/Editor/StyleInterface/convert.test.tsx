@@ -31,7 +31,7 @@ const mockLayerStyle: LayerStyle = {
       heightReference: "clamp"
     },
     polyline: {
-      clampToGround: true,
+      clampToGround: true
     },
     "3dtiles": {}
   }
@@ -58,8 +58,7 @@ const mockStyleNodes: StyleNodes = {
           operator: "===",
           value: "'medium'",
           applyValue: "12"
-        },
-
+        }
       ],
       notSupported: false
     }
@@ -128,10 +127,10 @@ describe("convertToStyleNodes", () => {
   });
 
   it("should correctly convert 'polyline' layer style", () => {
-    const strokeColorNode = styleNodes.polyline.find(
+    const clampToGroundNode = styleNodes.polyline.find(
       (n) => n.id === "clampToGround"
     );
-    expect(strokeColorNode?.value).toBe(true);
+    expect(clampToGroundNode?.value).toBe(true);
   });
 
   it("should return empty nodes if 'layerStyle' is undefined", () => {
@@ -160,7 +159,6 @@ describe("convertToLayerStyleValue", () => {
           "${marker-size} === 'medium'",
           "12"
         ]);
-       
       }
     }
   });
@@ -168,11 +166,11 @@ describe("convertToLayerStyleValue", () => {
   it("should correctly convert polyline and polygon nodes to LayerStyle", () => {
     expect(layerStyle?.polyline).toHaveProperty("strokeColor");
     expect(layerStyle?.polyline?.strokeColor).toBe("#FFFFFF");
-     if (typeof layerStyle?.polygon?.fillColor === "object") {
-       expect(layerStyle.polygon.fillColor.expression).toBe(
-         "color('#ffffff',0.8)"
-       );
-     }
+    if (typeof layerStyle?.polygon?.fillColor === "object") {
+      expect(layerStyle.polygon.fillColor.expression).toBe(
+        "color('#ffffff',0.8)"
+      );
+    }
   });
 
   it("should correctly handle empty 3dtiles node to LayerStyle", () => {
@@ -201,7 +199,6 @@ describe("parseStyleValue", () => {
       conditions: undefined
     });
   });
-
 });
 
 describe("parseConditions", () => {
@@ -233,7 +230,7 @@ describe("generateConditions", () => {
   it("should generate conditions'", () => {
     expect(conditions).toEqual([
       ["${marker-size} === 'small'", "8"],
-      ["${marker-size} === 'medium'", "12"],
+      ["${marker-size} === 'medium'", "12"]
     ]);
   });
 });
