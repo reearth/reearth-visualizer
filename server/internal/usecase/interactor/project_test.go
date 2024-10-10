@@ -218,6 +218,7 @@ func TestImportProject(t *testing.T) {
     "id": "01j7g9ddttkpnt3esk8h4w7xhv",
     "isArchived": false,
     "isBasicAuthActive": false,
+    "isDeleted": false,
     "basicAuthUsername": "",
     "basicAuthPassword": "",
     "name": "ProjectName1",

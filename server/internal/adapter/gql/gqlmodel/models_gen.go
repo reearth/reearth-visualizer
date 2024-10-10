@@ -1174,6 +1174,7 @@ type Project struct {
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 	Starred           bool              `json:"starred"`
+	IsDeleted         bool              `json:"isDeleted"`
 }
 
 func (Project) IsNode()        {}
@@ -1869,6 +1870,7 @@ type UpdateProjectInput struct {
 	TrackingID        *string  `json:"trackingId,omitempty"`
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
+	Deleted           *bool    `json:"deleted,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
