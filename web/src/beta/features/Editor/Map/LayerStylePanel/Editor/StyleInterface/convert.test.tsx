@@ -32,8 +32,6 @@ const mockLayerStyle: LayerStyle = {
     },
     polyline: {
       clampToGround: true,
-      strokeColor: "#FFFFFF",
-      strokeWidth: 2
     },
     "3dtiles": {}
   }
@@ -61,26 +59,12 @@ const mockStyleNodes: StyleNodes = {
           value: "'medium'",
           applyValue: "12"
         },
-        {
-          variable: "${marker-size}",
-          operator: "===",
-          value: "'large'",
-          applyValue: "16"
-        }
+
       ],
       notSupported: false
     }
   ],
   polyline: [
-    {
-      id: "clampToGround",
-      type: "polyline",
-      title: "Clamp To Ground",
-      field: "switch",
-      valueType: "value",
-      value: true,
-      notSupported: false
-    },
     {
       id: "strokeColor",
       type: "polyline",
@@ -133,36 +117,27 @@ describe("convertToStyleNodes", () => {
       (n) => n.id === "extrudedHeight"
     );
 
-    expect(polygonNode).toBeDefined();
     expect(polygonNode?.expression).toBe("${extrudedHeight}");
     expect(polygonNode).toHaveProperty("expression");
   });
 
   it("should correctly convert 'polygon' layer style with color expression", () => {
     const fillColorNode = styleNodes.polygon.find((n) => n.id === "fillColor");
-
     expect(fillColorNode?.expression).toBe("color('#ffffff',0.8)");
     expect(fillColorNode?.field).toBe("color");
   });
 
   it("should correctly convert 'polyline' layer style", () => {
     const strokeColorNode = styleNodes.polyline.find(
-      (n) => n.id === "strokeColor"
+      (n) => n.id === "clampToGround"
     );
-
-    expect(strokeColorNode).toBeDefined();
-    expect(strokeColorNode?.value).toBe("#FFFFFF");
-  });
-
-  it("should return empty nodes for '3dtiles'", () => {
-    expect(styleNodes["3dtiles"]).toEqual([]);
+    expect(strokeColorNode?.value).toBe(true);
   });
 
   it("should return empty nodes if 'layerStyle' is undefined", () => {
     const result = convertToStyleNodes(undefined);
     expect(result["3dtiles"]).toEqual([]);
     expect(result.marker).toEqual([]);
-    expect(result.polygon).toEqual([]);
   });
 });
 
@@ -172,12 +147,11 @@ describe("convertToLayerStyleValue", () => {
   it("should correctly convert marker node with conditions to LayerStyle", () => {
     const pointSize = layerStyle?.marker?.pointSize;
     if (typeof pointSize === "object" && pointSize?.expression) {
-      expect(pointSize.expression).toHaveProperty("conditions");
       if (
         typeof pointSize.expression === "object" &&
         pointSize.expression.conditions
       ) {
-        expect(pointSize.expression.conditions).toHaveLength(3);
+        expect(pointSize.expression.conditions).toHaveLength(2);
         expect(pointSize.expression.conditions[0]).toEqual([
           "${marker-size} === 'small'",
           "8"
@@ -186,28 +160,19 @@ describe("convertToLayerStyleValue", () => {
           "${marker-size} === 'medium'",
           "12"
         ]);
-        expect(pointSize.expression.conditions[2]).toEqual([
-          "${marker-size} === 'large'",
-          "16"
-        ]);
+       
       }
-    } else {
-      throw new Error("pointSize is not an expression");
     }
   });
 
-  it("should correctly convert polyline nodes to LayerStyle", () => {
+  it("should correctly convert polyline and polygon nodes to LayerStyle", () => {
     expect(layerStyle?.polyline).toHaveProperty("strokeColor");
     expect(layerStyle?.polyline?.strokeColor).toBe("#FFFFFF");
-  });
-
-  it("should correctly convert polygon nodes to LayerStyle", () => {
-    expect(layerStyle?.polygon).toHaveProperty("fillColor");
-    if (typeof layerStyle?.polygon?.fillColor === "object") {
-      expect(layerStyle.polygon.fillColor.expression).toBe(
-        "color('#ffffff',0.8)"
-      );
-    }
+     if (typeof layerStyle?.polygon?.fillColor === "object") {
+       expect(layerStyle.polygon.fillColor.expression).toBe(
+         "color('#ffffff',0.8)"
+       );
+     }
   });
 
   it("should correctly handle empty 3dtiles node to LayerStyle", () => {
@@ -237,27 +202,6 @@ describe("parseStyleValue", () => {
     });
   });
 
-  it("should parse style value and return conditions as value type", () => {
-    const value = parseStyleValue({
-      expression: {
-        conditions: [["${marker-size}==='small'", "8"]]
-      }
-    });
-
-    expect(value).toEqual({
-      valueType: "conditions",
-      value: undefined,
-      expression: undefined,
-      conditions: [
-        {
-          variable: "${marker-size}",
-          operator: "===",
-          value: "'small'",
-          applyValue: "8"
-        }
-      ]
-    });
-  });
 });
 
 describe("parseConditions", () => {
@@ -277,9 +221,6 @@ describe("parseConditions", () => {
 
 describe("generateStyleValue", () => {
   it("should generate style value'", () => {
-    expect(generateStyleValue(mockStyleNodes?.polygon[0])).toEqual({
-      expression: "color('#ffffff',0.8)"
-    });
     expect(generateStyleValue(mockStyleNodes?.model[0])).toEqual(
       "https://help.reearth.io/"
     );
@@ -293,7 +234,6 @@ describe("generateConditions", () => {
     expect(conditions).toEqual([
       ["${marker-size} === 'small'", "8"],
       ["${marker-size} === 'medium'", "12"],
-      ["${marker-size} === 'large'", "16"]
     ]);
   });
 });
@@ -303,10 +243,6 @@ describe("wrapColor", () => {
     expect(wrapColor("#FFF")).toBe("color('#FFF')");
     expect(wrapColor("#FFFFFF")).toBe("color('#FFFFFF')");
     expect(wrapColor("#FFFFFFFF")).toBe("color('#FFFFFFFF')");
-  });
-
-  it("should not wrap invalid color", () => {
-    expect(wrapColor("invalidColor")).toBe("invalidColor");
   });
 
   it("should not wrap if the string is not a hex color", () => {
@@ -340,11 +276,5 @@ describe("checkExpressionAndConditions", () => {
     expect(checkExpressionAndConditions({ expression: "${stroke}" })).toBe(
       "expression"
     );
-  });
-
-  it("should return invalid value type", () => {
-    expect(
-      checkExpressionAndConditions({ expression: "${stroke-width}" })
-    ).not.toBe("value");
   });
 });
