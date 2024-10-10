@@ -36,20 +36,28 @@ const StyleInterface: FC<LayerStyleProps> = ({
   const [styleNodes, setStyleNodes] = useState<StyleNodes>(
     convertToStyleNodes(layerStyle)
   );
-  const [activeTab, setActiveTab] = useState<AppearanceType>("marker");
+
+  const newLayerStyleWithActiveTab = useMemo(
+    () => layerStyleWithActiveTab.find((tab) => tab.id === layerStyle?.id),
+    [layerStyle?.id, layerStyleWithActiveTab]
+  );
+
+  const [activeTab, setActiveTab] = useState<AppearanceType>(
+    newLayerStyleWithActiveTab?.tab || "marker"
+  );
 
   useEffect(() => {
     setStyleNodes(convertToStyleNodes(layerStyle));
 
-    const newLayerStyleWithActiveTab = layerStyleWithActiveTab.find(
-      (tab) => tab.id === layerStyle?.id
-    );
     if (newLayerStyleWithActiveTab) {
       setActiveTab(newLayerStyleWithActiveTab.tab);
-    } else {
-      setActiveTab("marker");
     }
-  }, [layerStyle, layerStyleWithActiveTab]);
+  }, [
+    layerStyle,
+    layerStyleWithActiveTab,
+    newLayerStyleWithActiveTab,
+    setLayerStyleWithActiveTab
+  ]);
 
   const handleStyleNodesUpdate = useCallback(
     (type: AppearanceType, nodes: StyleNode[]) => {
