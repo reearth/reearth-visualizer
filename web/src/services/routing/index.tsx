@@ -1,6 +1,4 @@
-import AccountSettingPage from "@reearth/beta/pages/AccountSettingsPage";
 import RootPage from "@reearth/beta/pages/RootPage";
-import WorkspaceSettingPage from "@reearth/beta/pages/WorkspaceSettingPage";
 import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -9,6 +7,12 @@ const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
 const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const ProjectSettings = lazy(
   () => import("@reearth/beta/pages/ProjectSettingsPage")
+);
+const AccountSettingPage = lazy(
+  () => import("@reearth/beta/pages/AccountSettingsPage")
+);
+const WorkspaceSettingPage = lazy(
+  () => import("@reearth/beta/pages/WorkspaceSettingPage")
 );
 const PluginPlaygroundPage = lazy(
   () => import("@reearth/beta/pages/PluginPlaygroundPage")
