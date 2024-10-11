@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import useHook from "./hooks";
-import Workspace from "./innerPages/WorkspacesPage/Workspaces";
+import Workspace from "./innerPages/Workspaces/Workspaces";
 
 type Props = {
   tab: string;
