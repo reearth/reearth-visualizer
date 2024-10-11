@@ -15,7 +15,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { WorkspacePayload } from "../hooks";
+import { WorkspacePayload } from "../../hooks";
 
 type Props = {
   handleFetchWorkspaces: () => {
