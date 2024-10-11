@@ -212,7 +212,7 @@ const ConditionsTab: FC<Props> = ({
     <InfoWrapper>
       <Typography size="body" color="weak">
         {t(
-          "UI doesn't support conditions on this property, please edit code directly."
+          "Condition is incompatible with the current system for this node or value."
         )}
       </Typography>
     </InfoWrapper>

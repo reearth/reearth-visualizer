@@ -223,6 +223,8 @@ export const markerNodes: AppearanceNode[] = [
     id: "selectedFeatureColor",
     title: "Selected Feature Color",
     field: "color",
-    defaultValue: DEFAULT_SELECTED_FEATURE_COLOR
+    defaultValue: DEFAULT_SELECTED_FEATURE_COLOR,
+    disableExpression: true,
+    disableConditions: true
   }
 ];

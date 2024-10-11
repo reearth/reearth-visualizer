@@ -53,11 +53,13 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
 
   useEffect(() => {
     setStyleNodes(convertToStyleNodes(layerStyle));
+  }, [layerStyle, layerStyleWithActiveTab, currentLayerStyleForTab]);
 
+  useEffect(() => {
     if (currentLayerStyleForTab) {
       setActiveTab(currentLayerStyleForTab.tab);
     }
-  }, [layerStyle, layerStyleWithActiveTab, currentLayerStyleForTab]);
+  }, [layerStyle?.id, currentLayerStyleForTab]);
 
   const handleStyleNodesUpdate = useCallback(
     (type: AppearanceType, nodes: StyleNode[]) => {
