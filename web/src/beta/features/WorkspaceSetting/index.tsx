@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import useHook from "./hooks";
+import Members from "./innerPages/Members/Members";
 import Workspace from "./innerPages/WorkspacesPage/Workspaces";
 
 type Props = {
@@ -29,6 +30,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
           projectsCount={projectsCount}
         />
       )}
+      {tab === "members" && <Members />}
     </>
   );
 };
