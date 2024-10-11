@@ -1,6 +1,6 @@
-import NotFound from "@reearth/beta/components/NotFound";
 import Editor from "@reearth/beta/features/Editor";
 import { isTab } from "@reearth/beta/features/Navbar";
+import { NotFound } from "@reearth/beta/lib/reearth-ui";
 import Page from "@reearth/beta/pages/Page";
 import { FC } from "react";
 import { useParams } from "react-router-dom";

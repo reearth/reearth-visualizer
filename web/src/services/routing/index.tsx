@@ -12,8 +12,11 @@ const ProjectSettings = lazy(
 const PluginPlaygroundPage = lazy(
   () => import("@reearth/beta/pages/PluginPlaygroundPage")
 );
-const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
-const GraphQLPlayground = lazy(
+const NotFound = lazy(() =>
+  import("@reearth/beta/lib/reearth-ui").then((module) => ({
+    default: module.NotFound
+  }))
+);const GraphQLPlayground = lazy(
   () => import("@reearth/beta/pages/GraphQLPlayground")
 );
 
