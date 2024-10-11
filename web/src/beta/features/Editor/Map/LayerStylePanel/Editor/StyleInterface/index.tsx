@@ -32,7 +32,15 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
 
   const layerStyleWithActiveTab: LayerStyleWithActiveTab[] = useMemo(() => {
     const savedData = localStorage.getItem(LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY);
-    return savedData ? JSON.parse(savedData) : [];
+    if (savedData) {
+      try {
+        return JSON.parse(savedData);
+      } catch (error) {
+        console.error("Failed to parse layer style active tab data:", error);
+        return [];
+      }
+    }
+    return [];
   }, []);
 
   const currentLayerStyleForTab = useMemo(() => {
