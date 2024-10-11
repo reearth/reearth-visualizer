@@ -39,8 +39,9 @@ const WorkspaceSetting: FC<Props> = ({
   const navigate = useNavigate();
 
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
+
   const [workspaceName, setWorkspaceName] = useState<string>(
-    currentWorkspace?.name || ""
+    currentWorkspace?.name ?? ""
   );
   const [workspaceNameConfirm, setWorkspaceNameConfirm] = useState<string>("");
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] =
@@ -56,7 +57,7 @@ const WorkspaceSetting: FC<Props> = ({
           <SettingsFields>
             <InputField
               title={t("Workspace Name")}
-              value={workspaceName ? t(workspaceName) : ""}
+              value={currentWorkspace?.name ? t(currentWorkspace?.name) : ""}
               onChange={setWorkspaceName}
               appearance={currentWorkspace?.personal ? "readonly" : undefined}
               disabled={currentWorkspace?.personal}
