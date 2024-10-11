@@ -101,8 +101,8 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 	if IsMockAuth(ctx) {
-		mockUser, ok := MockUser(ctx)
-		if !ok {
+		mockUser, _ := MockUser(ctx)
+		if mockUser == "" {
 			mockUser = user.NewID().String()
 		}
 		return &appx.AuthInfo{
