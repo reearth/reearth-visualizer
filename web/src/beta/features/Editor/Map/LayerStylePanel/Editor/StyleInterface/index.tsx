@@ -4,7 +4,6 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import { LayerStyleWithActiveTab } from "../hooks";
 import NoStyleMessage from "../NoStyleMessage";
 
 import {
@@ -19,28 +18,26 @@ import { AppearanceType, StyleNode, StyleNodes } from "./types";
 export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
-  layerStyleWithActiveTab: LayerStyleWithActiveTab[];
-  setLayerStyleWithActiveTab: Dispatch<
-    SetStateAction<LayerStyleWithActiveTab[]>
-  >;
 };
+export type LayerStyleWithActiveTab = { id: string; tab: AppearanceType };
 
-const StyleInterface: FC<LayerStyleProps> = ({
-  layerStyle,
-  setLayerStyle,
-  layerStyleWithActiveTab,
-  setLayerStyleWithActiveTab
-}) => {
+const LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY = `reearth-visualizer-layer-style-active-tab`;
+
+const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
   const theme = useTheme();
 
   const [styleNodes, setStyleNodes] = useState<StyleNodes>(
     convertToStyleNodes(layerStyle)
   );
 
-  const currentLayerStyleForTab = useMemo(
-    () => layerStyleWithActiveTab.find((tab) => tab.id === layerStyle?.id),
-    [layerStyle?.id, layerStyleWithActiveTab]
-  );
+  const layerStyleWithActiveTab: LayerStyleWithActiveTab[] = useMemo(() => {
+    const savedData = localStorage.getItem(LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY);
+    return savedData ? JSON.parse(savedData) : [];
+  }, []);
+
+  const currentLayerStyleForTab = useMemo(() => {
+    return layerStyleWithActiveTab?.find(({ id }) => id === layerStyle?.id);
+  }, [layerStyleWithActiveTab, layerStyle?.id]);
 
   const [activeTab, setActiveTab] = useState<AppearanceType>(
     currentLayerStyleForTab?.tab || "marker"
@@ -52,12 +49,7 @@ const StyleInterface: FC<LayerStyleProps> = ({
     if (currentLayerStyleForTab) {
       setActiveTab(currentLayerStyleForTab.tab);
     }
-  }, [
-    layerStyle,
-    layerStyleWithActiveTab,
-    currentLayerStyleForTab,
-    setLayerStyleWithActiveTab
-  ]);
+  }, [layerStyle, layerStyleWithActiveTab, currentLayerStyleForTab]);
 
   const handleStyleNodesUpdate = useCallback(
     (type: AppearanceType, nodes: StyleNode[]) => {
@@ -79,21 +71,22 @@ const StyleInterface: FC<LayerStyleProps> = ({
 
   const handleTabChange = useCallback(
     (tab: string) => {
-      if (!layerStyle) return;
-
       const appearanceTab = tab as AppearanceType;
       setActiveTab(appearanceTab);
 
-      setLayerStyleWithActiveTab((prev) => {
-        const newLayerStylesMap = new Map(prev.map((item) => [item.id, item]));
-        newLayerStylesMap.set(layerStyle.id, {
-          id: layerStyle.id,
-          tab: appearanceTab
-        });
-        return Array.from(newLayerStylesMap.values());
-      });
+      const updatedLayerStyleWithActiveTab = layerStyle
+        ? [
+            ...layerStyleWithActiveTab.filter(({ id }) => id !== layerStyle.id),
+            { id: layerStyle.id, tab: appearanceTab }
+          ]
+        : layerStyleWithActiveTab;
+
+      localStorage.setItem(
+        LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY,
+        JSON.stringify(updatedLayerStyleWithActiveTab)
+      );
     },
-    [layerStyle, setLayerStyleWithActiveTab]
+    [layerStyle, layerStyleWithActiveTab]
   );
 
   const appearanceTypeTabs: TabItem[] = useMemo(
