@@ -1,16 +1,6 @@
-import {
-  useMeFetcher,
-  useProjectFetcher,
-  useWorkspaceFetcher
-} from "@reearth/services/api";
+import { useProjectFetcher, useWorkspaceFetcher } from "@reearth/services/api";
 import { Role } from "@reearth/services/gql";
-import { useWorkspace } from "@reearth/services/state";
 import { useCallback } from "react";
-
-export type UpdatePasswordType = {
-  password: string;
-  passwordConfirmation: string;
-};
 
 export type WorkspacePayload = {
   name: string;
@@ -26,40 +16,16 @@ export type Projects = {
   role?: Role;
 };
 
-export default () => {
-  const { useMeQuery, useUpdatePassword, useDeleteUser } = useMeFetcher();
-  const { me: data } = useMeQuery();
+type Props = { workspaceId?: string };
 
-  const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
-
-  const handleUpdateUserPassword = useCallback(
-    async ({ password, passwordConfirmation }: UpdatePasswordType) => {
-      try {
-        await useUpdatePassword({ password, passwordConfirmation });
-      } catch (error) {
-        console.error("Failed to update password:", error);
-      }
-    },
-    [useUpdatePassword]
-  );
-
-  const handleDeleteUser = useCallback(async () => {
-    try {
-      const userId = data.id;
-      if (userId) await useDeleteUser({ userId });
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-    }
-  }, [data.id, useDeleteUser]);
-
-  const [currentWorkspace] = useWorkspace();
-
+export default ({ workspaceId }: Props) => {
   const { useProjectsQuery } = useProjectFetcher();
   // Fetch all projects base from workspaceId
   const { projects } = useProjectsQuery({
-    teamId: currentWorkspace?.id || "",
+    teamId: workspaceId || "",
     pagination: { first: 16 }
   });
+  const projectsCount = projects?.length;
 
   const {
     useWorkspaceQuery,
@@ -176,11 +142,7 @@ export default () => {
   );
 
   return {
-    meData: data,
-    passwordPolicy,
-    handleUpdateUserPassword,
-    handleDeleteUser,
-    projectsCount: projects?.length,
+    projectsCount,
     handleFetchWorkspace,
     handleFetchWorkspaces,
     handleCreateWorkspace,

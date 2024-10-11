@@ -1,4 +1,5 @@
-import AccountAndWorkSpaceSetting from "@reearth/beta/features/AccountAndWorkSpaceSetting";
+import AccountSetting from "@reearth/beta/features/AccountSetting";
+import AccountSettingBase from "@reearth/beta/ui/components/AccountSettingBase";
 import { FC } from "react";
 
 import Page from "../Page";
@@ -6,7 +7,9 @@ import Page from "../Page";
 const AccountSettingPage: FC = () => (
   <Page
     renderItem={(props) => (
-      <AccountAndWorkSpaceSetting {...props} tab="account" />
+      <AccountSettingBase {...props} tab="account">
+        <AccountSetting />
+      </AccountSettingBase>
     )}
   />
 );

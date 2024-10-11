@@ -45,7 +45,11 @@ export const AppRoutes = () => {
       element: <AccountSettingPage />
     },
     {
-      path: "settings/workspace",
+      path: "settings/workspaces/:workspaceId",
+      element: <WorkspaceSettingPage />
+    },
+    {
+      path: "settings/workspaces/:workspaceId/members",
       element: <WorkspaceSettingPage />
     },
     {

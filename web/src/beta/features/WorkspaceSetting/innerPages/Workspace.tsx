@@ -15,8 +15,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { WorkspacePayload } from "../../hooks";
-import { InnerPage, SettingsWrapper, SettingsFields } from "../common";
+import { WorkspacePayload } from "../hooks";
 
 type Props = {
   handleFetchWorkspaces: () => {
@@ -223,4 +222,33 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   gap: theme.spacing.small
 }));
+
+const InnerPage = styled("div")<{
+  wide?: boolean;
+  transparent?: boolean;
+}>(({ wide, transparent, theme }) => ({
+  boxSizing: "border-box",
+  display: "flex",
+  width: "100%",
+  maxWidth: wide ? 950 : 750,
+  backgroundColor: transparent ? "none" : theme.bg[1],
+  borderRadius: theme.radius.normal
+}));
+
+const SettingsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  flex: 1,
+  ["> div:not(:last-child)"]: {
+    borderBottom: `1px solid ${theme.outline.weaker}`
+  }
+}));
+
+const SettingsFields = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.largest
+}));
+
 export default WorkspaceSetting;

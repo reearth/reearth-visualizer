@@ -1,3 +1,4 @@
+import Navbar from "@reearth/beta/features/Navbar";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
@@ -6,55 +7,40 @@ import {
   SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
+import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
-
-import Navbar from "../Navbar";
-
-import useHook from "./hooks";
-import AccountSetting from "./innerPages/AccountSetting";
-import WorkspaceSetting from "./innerPages/WorkspaceSetting";
+import { FC, ReactNode, useMemo } from "react";
 
 type Props = {
-  sceneId?: string;
-  projectId?: string;
-  workspaceId?: string;
   tab: string;
+  workspaceId?: string;
+  children: ReactNode;
 };
 
 export const accountSettingTabs = [
   { id: "account", text: "Account", icon: "user" },
-  { id: "workspace", text: "Workspace", icon: "usersFour" }
+  { id: "workspaces", text: "Workspaces", icon: "usersFour" }
   // TODO: enable these when page ready
   // { id: "members", text: "Members", icon: "users" }
 ] as const;
 
-const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
+const AccountSettingBase: FC<Props> = ({ tab, children, workspaceId }) => {
   const t = useT();
+  const [currentWorkspace] = useWorkspace();
   const tabs = useMemo(
     () =>
       accountSettingTabs.map((tab) => ({
         id: tab.id,
         icon: tab.icon,
         text: t(tab.text),
-        path: `/settings/${tab.id}`
+        path: `/settings/${tab.id}/${tab.id !== "account" ? workspaceId || currentWorkspace?.id : ""}`
       })),
-    [t]
+    [workspaceId, t, currentWorkspace?.id]
   );
-  const {
-    meData,
-    passwordPolicy,
-    handleFetchWorkspaces,
-    handleUpdateUserPassword,
-    projectsCount,
-    handleUpdateWorkspace,
-    handleDeleteWorkspace
-  } = useHook();
-  const { name, email } = meData;
 
   return (
     <Wrapper>
-      <Navbar page="settings" />
+      <Navbar page="settings" workspaceId={workspaceId} />
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
@@ -72,23 +58,7 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
-        <Content>
-          {tab === "account" && (
-            <AccountSetting
-              handleUpdateUserPassword={handleUpdateUserPassword}
-              passwordPolicy={passwordPolicy}
-              informationData={{ name, email }}
-            />
-          )}
-          {tab === "workspace" && (
-            <WorkspaceSetting
-              handleFetchWorkspaces={handleFetchWorkspaces}
-              handleUpdateWorkspace={handleUpdateWorkspace}
-              handleDeleteWorkspace={handleDeleteWorkspace}
-              projectsCount={projectsCount}
-            />
-          )}
-        </Content>
+        <Content>{children}</Content>
       </MainSection>
     </Wrapper>
   );
@@ -147,4 +117,4 @@ const Content = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.super}px`
 }));
 
-export default AccountAndWorkSpaceSetting;
+export default AccountSettingBase;

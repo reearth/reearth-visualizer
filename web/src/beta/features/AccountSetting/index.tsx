@@ -5,33 +5,20 @@ import {
   IconButton
 } from "@reearth/beta/lib/reearth-ui";
 import { InputField } from "@reearth/beta/ui/fields";
-import { PasswordPolicy } from "@reearth/services/config/passwordPolicy";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
-import { UpdatePasswordType } from "../../hooks";
-import { InnerPage, SettingsWrapper, SettingsFields } from "../common";
-
+import useHook from "./hooks";
 import PasswordModal from "./PasswordModal";
 
-type Props = {
-  informationData: { name?: string; email?: string };
-  passwordPolicy?: PasswordPolicy;
-  handleUpdateUserPassword: ({
-    password,
-    passwordConfirmation
-  }: UpdatePasswordType) => Promise<void>;
-};
-
-const AccountSetting: FC<Props> = ({
-  passwordPolicy,
-  handleUpdateUserPassword,
-  informationData
-}) => {
+const AccountSetting: FC = () => {
   const t = useT();
   const [changePasswordModal, setChangePasswordModal] =
     useState<boolean>(false);
+
+  const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
+  const { name, email } = meData;
 
   return (
     <InnerPage>
@@ -40,13 +27,13 @@ const AccountSetting: FC<Props> = ({
           <SettingsFields>
             <InputField
               title={t("Name")}
-              value={informationData.name ? t(informationData.name) : ""}
+              value={name ? t(name) : ""}
               appearance="readonly"
               disabled
             />
             <InputField
               title={t("Email address")}
-              value={informationData.email ? t(informationData.email) : ""}
+              value={email ? t(email) : ""}
               appearance="readonly"
               disabled
             />
@@ -96,4 +83,32 @@ const PasswordInputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
   alignItems: "center"
+}));
+
+const InnerPage = styled("div")<{
+  wide?: boolean;
+  transparent?: boolean;
+}>(({ wide, transparent, theme }) => ({
+  boxSizing: "border-box",
+  display: "flex",
+  width: "100%",
+  maxWidth: wide ? 950 : 750,
+  backgroundColor: transparent ? "none" : theme.bg[1],
+  borderRadius: theme.radius.normal
+}));
+
+const SettingsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  flex: 1,
+  ["> div:not(:last-child)"]: {
+    borderBottom: `1px solid ${theme.outline.weaker}`
+  }
+}));
+
+const SettingsFields = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.largest
 }));
