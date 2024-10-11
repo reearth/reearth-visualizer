@@ -14,13 +14,11 @@ type Props = {
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
 };
 
-
 export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
   const t = useT();
   const [, setNotification] = useNotification();
 
   const [layerStyle, setLayerStyle] = useState(selectedLayerStyle);
-
 
   useEffect(() => {
     setLayerStyle(selectedLayerStyle);
@@ -47,7 +45,7 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
         )
       }
     ],
-    [t, layerStyle, setLayerStyle]
+    [layerStyle, t, setLayerStyle]
   );
 
   const handleSave = useCallback(() => {

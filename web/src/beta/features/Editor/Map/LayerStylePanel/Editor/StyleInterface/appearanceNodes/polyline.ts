@@ -1,6 +1,10 @@
 import { AppearanceNode } from "../types";
 
-import { CLASSIFICATION_TYPE, DEFAULT_SELECTED_FEATURE_COLOR, SHADOWS } from "./constant";
+import {
+  CLASSIFICATION_TYPE,
+  DEFAULT_SELECTED_FEATURE_COLOR,
+  SHADOWS
+} from "./constant";
 
 export const polylineNodes: AppearanceNode[] = [
   {

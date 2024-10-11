@@ -1,6 +1,11 @@
 import { AppearanceNode } from "../types";
 
-import { CLASSIFICATION_TYPE, DEFAULT_SELECTED_FEATURE_COLOR, HEIGHT_REFERENCES, SHADOWS } from "./constant";
+import {
+  CLASSIFICATION_TYPE,
+  DEFAULT_SELECTED_FEATURE_COLOR,
+  HEIGHT_REFERENCES,
+  SHADOWS
+} from "./constant";
 
 export const polygonNodes: AppearanceNode[] = [
   {
