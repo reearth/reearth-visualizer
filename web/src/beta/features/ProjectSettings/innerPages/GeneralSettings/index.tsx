@@ -1,17 +1,11 @@
 import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
-import {
-  Collapse,
-  TextInput,
-  Modal,
-  Button,
-  ModalPanel,
-  Typography
-} from "@reearth/beta/lib/reearth-ui";
+import ProjectDeleteModal from "@reearth/beta/features/Dashboard/ContentsContainer/Projects/ProjectDeleteModal";
+import { Collapse, Button, Typography } from "@reearth/beta/lib/reearth-ui";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useState, useMemo, FC } from "react";
+import { useCallback, useState, FC } from "react";
 
 import {
   InnerPage,
@@ -66,11 +60,14 @@ const GeneralSettings: FC<Props> = ({
   }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
   const [deleteModelVisible, setDeleteModelVisible] = useState(false);
-  const [deleteInputName, setDeleteInputName] = useState("");
-  const deleteDisabled = useMemo(
-    () => deleteInputName !== project?.name,
-    [deleteInputName, project?.name]
-  );
+
+  const handleDeleteModelOpen = useCallback(() => {
+    setDeleteModelVisible(true);
+  }, []);
+
+  const handleDeleteModelClose = useCallback(() => {
+    setDeleteModelVisible(false);
+  }, []);
 
   return project ? (
     <InnerPage>
@@ -128,74 +125,28 @@ const GeneralSettings: FC<Props> = ({
                 <Button
                   title={t("Delete project")}
                   appearance="dangerous"
-                  onClick={() => setDeleteModelVisible(true)}
+                  onClick={handleDeleteModelOpen}
                 />
               </ButtonWrapper>
             </DangerItem>
           </SettingsFields>
         </Collapse>
       </SettingsWrapper>
-
-      <Modal visible={deleteModelVisible} size="small">
-        <ModalPanel
-          title={t("Delete project")}
-          onCancel={() => setDeleteModelVisible(false)}
-          actions={[
-            <Button
-              key="cancel"
-              title={t("Cancel")}
-              appearance="secondary"
-              onClick={() => {
-                setDeleteModelVisible(false);
-              }}
-            />,
-            <Button
-              key="delete"
-              title={t("I am sure I want to delete this project.")}
-              appearance="dangerous"
-              disabled={deleteDisabled}
-              onClick={onDeleteProject}
-            />
-          ]}
-        >
-          <ModalContentWrapper>
-            <Typography size="body" weight="bold">
-              {project?.name}
-            </Typography>
-            <Typography size="body">
-              {t(
-                "This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore."
-              )}
-            </Typography>
-            <Divider />
-            <Typography size="body">
-              {t("Please type your project name to continue.")}
-            </Typography>
-            <TextInput onChange={(name) => setDeleteInputName(name)} />
-          </ModalContentWrapper>
-        </ModalPanel>
-      </Modal>
+      {deleteModelVisible && (
+        <ProjectDeleteModal
+          isVisible={deleteModelVisible}
+          onClose={handleDeleteModelClose}
+          onProjectDelete={onDeleteProject}
+        />
+      )}
     </InnerPage>
   ) : null;
 };
 
 export default GeneralSettings;
 
-const ModalContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.large,
-  padding: theme.spacing.large,
-  background: theme.bg[1]
-}));
-
 const DangerItem = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large
-}));
-
-const Divider = styled("div")(({ theme }) => ({
-  height: "1px",
-  borderBlockColor: theme.outline.weaker
 }));

@@ -29,7 +29,8 @@ import {
   UPDATE_PROJECT_ALIAS,
   UPDATE_PROJECT_BASIC_AUTH,
   EXPORT_PROJECT,
-  IMPORT_PROJECT
+  IMPORT_PROJECT,
+  GET_DELETED_PROJECTS
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -104,6 +105,20 @@ export default () => {
     );
 
     return { starredProjects, ...rest };
+  }, []);
+
+  const useDeletedProjectsQuery = useCallback((teamId?: string) => {
+    const { data, ...rest } = useQuery(GET_DELETED_PROJECTS, {
+      variables: { teamId: teamId ?? "" },
+      skip: !teamId
+    });
+
+    const deletedProjects = useMemo(
+      () => data?.deletedProjects.nodes,
+      [data?.deletedProjects]
+    );
+
+    return { deletedProjects, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
@@ -243,7 +258,7 @@ export default () => {
   );
 
   const [updateProjectMutation] = useMutation(UPDATE_PROJECT, {
-    refetchQueries: ["GetProject", "GetStarredProjects"]
+    refetchQueries: ["GetProject", "GetStarredProjects", "GetDeletedProjects"]
   });
   const useUpdateProject = useCallback(
     async (input: UpdateProjectInput) => {
@@ -308,7 +323,7 @@ export default () => {
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
-    refetchQueries: ["GetProject"],
+    refetchQueries: ["GetProject", "GetStarredProjects"],
     update(cache, { data }) {
       if (data?.deleteProject?.projectId) {
         cache.modify({
@@ -528,6 +543,7 @@ export default () => {
     useUpdateProjectAlias,
     useStarredProjectsQuery,
     useExportProject,
-    useImportProject
+    useImportProject,
+    useDeletedProjectsQuery
   };
 };

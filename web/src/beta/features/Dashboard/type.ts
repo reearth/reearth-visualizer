@@ -13,6 +13,7 @@ export type Project = {
   createdAt?: Date;
   projectType?: ProjectType;
   starred?: boolean;
+  deleted?: boolean
 };
 
 export type TabItems = {
