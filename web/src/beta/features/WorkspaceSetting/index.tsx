@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import useHook from "./hooks";
 import Members from "./innerPages/Members/Members";
-import Workspace from "./innerPages/WorkspacesPage/Workspaces";
+import Workspace from "./innerPages/Workspaces/Workspaces";
 
 type Props = {
   tab: string;
@@ -16,10 +16,12 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
     handleFetchWorkspaces,
     // handleCreateWorkspace,
     handleUpdateWorkspace,
-    handleDeleteWorkspace
-    // handleAddMemberToWorkspace,
-    // handleRemoveMemberFromWorkspace
+    handleDeleteWorkspace,
+    handleAddMemberToWorkspace,
+    // handleRemoveMemberFromWorkspace,
+    debounceOnUpdate
   } = useHook({ workspaceId });
+
   return (
     <>
       {tab === "workspaces" && (
@@ -30,7 +32,12 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
           projectsCount={projectsCount}
         />
       )}
-      {tab === "members" && <Members />}
+      {tab === "members" && (
+        <Members
+          debounceOnUpdate={debounceOnUpdate}
+          handleAddMemberToWorkspace={handleAddMemberToWorkspace}
+        />
+      )}
     </>
   );
 };

@@ -2,7 +2,8 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   GET_ME,
   DELETE_ME,
-  UPDATE_ME
+  UPDATE_ME,
+  GET_USER_BY_SEARCH
 } from "@reearth/services/gql/queries/user";
 import { useCallback } from "react";
 
@@ -77,9 +78,35 @@ export default () => {
     [deleteMeMutation, setNotification, t]
   );
 
+  const useSearchUser = useCallback(
+    (nameOrEmail: string, options?: { skip?: boolean }) => {
+      const { data, loading, error } = useQuery(GET_USER_BY_SEARCH, {
+        variables: { nameOrEmail },
+        skip: options?.skip
+      });
+
+      if (error) {
+        console.log("GraphQL: Failed to search user", error);
+        setNotification({
+          type: "error",
+          text: t("Failed to search user.")
+        });
+        return { status: "error", user: null };
+      }
+
+      if (!loading && data?.searchUser) {
+        return { status: "success", user: data.searchUser };
+      }
+
+      return { status: loading ? "loading" : "idle", user: null };
+    },
+    [setNotification, t]
+  );
+
   return {
     useMeQuery,
     useUpdatePassword,
-    useDeleteUser
+    useDeleteUser,
+    useSearchUser
   };
 };

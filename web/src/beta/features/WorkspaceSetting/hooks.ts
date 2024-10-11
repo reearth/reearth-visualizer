@@ -1,4 +1,8 @@
-import { useProjectFetcher, useWorkspaceFetcher } from "@reearth/services/api";
+import {
+  useMeFetcher,
+  useProjectFetcher,
+  useWorkspaceFetcher
+} from "@reearth/services/api";
 import { Role } from "@reearth/services/gql";
 import { useCallback } from "react";
 
@@ -141,6 +145,27 @@ export default ({ workspaceId }: Props) => {
     [useRemoveMemberFromWorkspace]
   );
 
+  const { useSearchUser } = useMeFetcher();
+  const handleSearchUser = useCallback(
+    (nameOrEmail: string) => {
+      try {
+        const { user, status } = useSearchUser(nameOrEmail);
+        if (status === "success") {
+          console.log("Search Member successfully");
+        }
+        return user;
+      } catch (err) {
+        console.error("Failed to search user:", err);
+        return { error: err };
+      }
+    },
+    [useSearchUser]
+  );
+
+  // const debounceOnUpdate = useMemo(() => {
+  //   return debounce(handleSearchUser, 500);
+  // }, [handleSearchUser]);
+
   return {
     projectsCount,
     handleFetchWorkspace,
@@ -149,6 +174,7 @@ export default ({ workspaceId }: Props) => {
     handleUpdateWorkspace,
     handleDeleteWorkspace,
     handleAddMemberToWorkspace,
-    handleRemoveMemberFromWorkspace
+    handleRemoveMemberFromWorkspace,
+    debounceOnUpdate: handleSearchUser
   };
 };
