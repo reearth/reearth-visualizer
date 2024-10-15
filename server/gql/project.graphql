@@ -24,6 +24,7 @@ type Project implements Node {
   enableGa: Boolean!
   trackingId: String!
   starred: Boolean!
+  isDeleted: Boolean!
 }
 
 type ProjectAliasAvailability {
@@ -80,6 +81,7 @@ input UpdateProjectInput {
   trackingId: String
   sceneId: ID
   starred: Boolean
+  deleted: Boolean
 }
 
 input PublishProjectInput {
@@ -140,13 +142,13 @@ type ProjectEdge {
 extend type Query {
   projects(
     teamId: ID!
-    includeArchived: Boolean
     pagination: Pagination
     keyword: String
     sort: ProjectSort
-  ): ProjectConnection!
+  ): ProjectConnection! # not included deleted projects
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
+  deletedProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {

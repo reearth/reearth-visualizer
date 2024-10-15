@@ -38,6 +38,7 @@ type Project struct {
 	trackingId        string
 	sceneId           SceneID
 	starred           bool
+	isDeleted         bool
 }
 
 func (p *Project) ID() ID {
@@ -141,6 +142,10 @@ func (p *Project) Starred() bool {
 	return p.starred
 }
 
+func (p *Project) IsDeleted() bool {
+	return p.isDeleted
+}
+
 func (p *Project) SetArchived(isArchived bool) {
 	p.isArchived = isArchived
 }
@@ -177,6 +182,10 @@ func (p *Project) SetImageURL(imageURL *url.URL) {
 
 func (p *Project) SetStarred(starred bool) {
 	p.starred = starred
+}
+
+func (p *Project) SetDeleted(isDeleted bool) {
+	p.isDeleted = isDeleted
 }
 
 func (p *Project) UpdateName(name string) {
