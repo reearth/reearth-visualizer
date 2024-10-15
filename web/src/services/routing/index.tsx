@@ -12,11 +12,9 @@ const ProjectSettings = lazy(
 const PluginPlaygroundPage = lazy(
   () => import("@reearth/beta/pages/PluginPlaygroundPage")
 );
-const NotFound = lazy(() =>
-  import("@reearth/beta/lib/reearth-ui").then((module) => ({
-    default: module.NotFound
-  }))
-);const GraphQLPlayground = lazy(
+const NotFoundPage = lazy(() => import("@reearth/beta/pages/NotFound"));
+
+const GraphQLPlayground = lazy(
   () => import("@reearth/beta/pages/GraphQLPlayground")
 );
 
@@ -60,7 +58,7 @@ export const AppRoutes = () => {
     },
     {
       path: "*",
-      element: <NotFound />
+      element: <NotFoundPage />
     }
   ]);
 

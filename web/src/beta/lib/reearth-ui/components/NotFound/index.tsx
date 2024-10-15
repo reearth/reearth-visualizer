@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../Button";
 import { Typography } from "../Typography";
 
-export const NotFound: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
+export const NotFound: FC = () => {
   const theme = useTheme();
   const t = useT();
   const navigate = useNavigate();
 
   const handleClick = useCallback(() => {
-    navigate(`/dashboard/${workspaceId}/`);
-  }, [navigate, workspaceId]);
+    navigate("/");
+  }, [navigate]);
 
   return (
     <Wrapper>

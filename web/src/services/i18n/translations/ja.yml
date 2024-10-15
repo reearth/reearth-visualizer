@@ -1,6 +1,3 @@
-You have passed the maximum value.: ''
-You have passed the minimum value.: ''
-Not found: ページが見つかりません
 Account: ''
 Name: 名前
 Email address: ''
@@ -252,8 +249,6 @@ Right: 右
 Story Panel: ストーリーパネル
 Panel Position: パネルポジション
 Background Color: 背景色
-Something went wrong.: 失敗しました。
-Couldn't find the Re:Earth project you were after.: そのRe:Earthプロジェクトは見つかりませんでした。
 Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
 Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
 New Field: 新しいフィールド
@@ -300,6 +295,8 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Oops, This Page Not Found!: ''
+Go to Dashboard: ''
 'Sort:': ''
 Wrong file format: ファイルのフォーマットが異なります
 Not set: 未設定
