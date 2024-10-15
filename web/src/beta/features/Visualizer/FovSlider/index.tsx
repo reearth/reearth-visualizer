@@ -1,6 +1,6 @@
 import FloatedPanel from "@reearth/beta/components/FloatedPanel";
 import Slider from "@reearth/beta/components/Slider";
-import Text from "@reearth/beta/components/Text";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -35,13 +35,13 @@ const FovSlider: React.FC<Props> = ({
     <StyledFloatedPanel visible={visible} onClickAway={handleClickAway}>
       <Wrapper data-camera-popup>
         <FovField>
-          <Text
+          <Typography
             size="footnote"
             color={theme.content.withBackground}
             otherProperties={{ marginRight: "16px" }}
           >
             {t("Angle")}
-          </Text>
+          </Typography>
           <FieldForm>
             <FieldSlider>
               <Slider
@@ -53,8 +53,8 @@ const FovSlider: React.FC<Props> = ({
               />
             </FieldSlider>
             <FieldDescriptions>
-              <Text size="footnote">{t("Narrow")}</Text>
-              <Text size="footnote">{t("Wide")}</Text>
+              <Typography size="footnote">{t("Narrow")}</Typography>
+              <Typography size="footnote">{t("Wide")}</Typography>
             </FieldDescriptions>
           </FieldForm>
         </FovField>
@@ -63,40 +63,40 @@ const FovSlider: React.FC<Props> = ({
   );
 };
 
-const StyledFloatedPanel = styled(FloatedPanel)`
-  top: 10px;
-  right: 10px;
-`;
+const StyledFloatedPanel = styled(FloatedPanel)(() => ({
+  top: 10,
+  right: 10
+}));
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 220px;
-  background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
-  padding: 10px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: 220,
+  background: theme.bg[1],
+  boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
+  borderRadius: theme.radius.small + 1,
+  padding: theme.spacing.small + 2
+}));
 
-const FovField = styled.div`
-  display: flex;
-`;
+const FovField = styled("div")(() => ({
+  display: "flex"
+}));
 
-const FieldForm = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-`;
+const FieldForm = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  flex: 1
+}));
 
-const FieldSlider = styled.div`
-  display: flex;
-  flex: 1;
-  padding: 0 8px;
-`;
+const FieldSlider = styled("div")(({ theme }) => ({
+  display: "flex",
+  padding: `0 ${theme.spacing.small}px`,
+  flex: 1
+}));
 
-const FieldDescriptions = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+const FieldDescriptions = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between"
+}));
 
 export default FovSlider;
