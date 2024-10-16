@@ -144,7 +144,7 @@ import TextBolder from "./Icons/TextBolder.svg?react";
 import TextItalic from "./Icons/TextItalic.svg?react";
 import TextT from "./Icons/TextT.svg?react";
 import TextUnderline from "./Icons/TextUnderline.svg?react";
-import Timeline from "./Icons/timeline.svg?react";
+import Timeline from "./Icons/Timeline.svg?react";
 import TimeOrder from "./Icons/TimeOrder.svg?react";
 import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
