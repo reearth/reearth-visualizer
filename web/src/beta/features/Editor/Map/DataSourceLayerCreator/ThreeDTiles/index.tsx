@@ -4,7 +4,7 @@ import {
   Wrapper,
   InputsWrapper,
   ContentWrapper,
-  LinkWapper
+  LinkWrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -28,13 +28,13 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           label={
             <>
               {t("Google Map APIKey ")} ( {t("You can apply a key ")}
-              <LinkWapper
+              <LinkWrapper
                 to="https://developers.google.com/maps/documentation/javascript/get-api-key"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {t("here")}
-              </LinkWapper>
+              </LinkWrapper>
               )
             </>
           }

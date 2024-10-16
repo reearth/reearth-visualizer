@@ -98,7 +98,7 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   }
 }));
 
-export const LinkWapper = styled(Link)(({ theme }) => ({
+export const LinkWrapper = styled(Link)(({ theme }) => ({
   textDecoration: "none",
   color: theme.select.strong,
   paddingRight: theme.spacing.micro
