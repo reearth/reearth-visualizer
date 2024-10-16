@@ -1,4 +1,4 @@
-import Button from "@reearth/beta/components/Button";
+import Button from "@reearth/beta/ui/widgetui/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

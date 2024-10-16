@@ -3,7 +3,7 @@ import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import Slider, { Props } from ".";
+import { Slider, SliderProps } from ".";
 
 const meta: Meta<typeof Slider> = {
   component: Slider
@@ -13,7 +13,7 @@ type Story = StoryObj<typeof Slider>;
 
 export default meta;
 
-export const Default: Story = (args: Props) => {
+export const Default: Story = (args: SliderProps) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback(

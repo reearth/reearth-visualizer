@@ -1,5 +1,4 @@
-import Flex from "@reearth/beta/components/Flex";
-import Icon from "@reearth/beta/components/Icon";
+import { Icon } from "@reearth/beta/lib/reearth-ui/components/";
 import { styled, useTheme } from "@reearth/services/theme";
 import {
   brandBlue,
@@ -16,28 +15,27 @@ const RootPage: React.FC<Props> = ({ loading }) => {
   const theme = useTheme();
 
   return (
-    <Wrapper
-      justify="center"
-      align="center"
-      direction="column"
-      gap={100}
-      bg={window.REEARTH_CONFIG?.brand?.background}
-    >
+    <Wrapper bg={window.REEARTH_CONFIG?.brand?.background}>
       {window.REEARTH_CONFIG?.brand?.logoUrl ? (
         <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ width: 200 }} />
       ) : (
-        <Icon icon="logo" size={200} />
+        <Icon icon="reearthLogo" size={200} />
       )}
       {loading && <RingLoader size={35} color={theme.primary.strong} />}
     </Wrapper>
   );
 };
 
-const Wrapper = styled(Flex)<{ bg?: string }>`
-  height: 100%;
-  background: ${({ bg }) =>
+const Wrapper = styled.div<{ bg?: string }>(({ bg }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 100,
+  height: "100%",
+  background:
     bg ||
-    `linear-gradient(70deg, ${brandBlue} 10%, ${brandRed} 60%, ${brandBlue} 90%)`};
-`;
+    `linear-gradient(70deg, ${brandBlue} 10%, ${brandRed} 60%, ${brandBlue} 90%)`
+}));
 
 export default RootPage;

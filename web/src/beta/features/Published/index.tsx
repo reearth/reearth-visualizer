@@ -1,5 +1,5 @@
+import NotFound from "@reearth/beta/features/NotFound";
 import Visualizer from "@reearth/beta/features/Visualizer";
-import { NotFound } from "@reearth/beta/lib/reearth-ui";
 
 import useHooks from "./hooks";
 

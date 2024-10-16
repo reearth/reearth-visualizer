@@ -102,6 +102,8 @@ import Polyline from "./Icons/Polyline.svg?react";
 import PublicGitHubRepo from "./Icons/PublicGitHubRepo.svg?react";
 import PuzzlePiece from "./Icons/PuzzlePiece.svg?react";
 import Question from "./Icons/Question.svg?react";
+import ReearthLogo from "./Icons/ReearthLogo.svg?react";
+import ReearthLogoColorful from "./Icons/ReearthLogoColorful.svg?react";
 import Return from "./Icons/Return.svg?react";
 import Rows from "./Icons/Rows.svg?react";
 import Setting from "./Icons/Setting.svg?react";
@@ -245,6 +247,8 @@ export default {
   publicGitHubRepo: PublicGitHubRepo,
   puzzlePiece: PuzzlePiece,
   question: Question,
+  reearthLogo: ReearthLogo,
+  reearthLogoColorful: ReearthLogoColorful,
   return: Return,
   rows: Rows,
   setting: Setting,

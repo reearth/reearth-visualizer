@@ -2,7 +2,7 @@ import { styled } from "@reearth/services/theme";
 import { Meta } from "@storybook/react";
 import { useState } from "react";
 
-import Slide from ".";
+import { Slide } from ".";
 
 const Wrapper = styled.div`
   width: 200px;

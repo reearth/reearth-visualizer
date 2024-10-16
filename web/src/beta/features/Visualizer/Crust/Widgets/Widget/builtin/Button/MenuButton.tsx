@@ -1,6 +1,6 @@
-import Flex from "@reearth/beta/components/Flex";
-import Icon from "@reearth/beta/components/Icon";
 import { Typography } from "@reearth/beta/lib/reearth-ui";
+import Flex from "@reearth/beta/ui/widgetui/Flex";
+import Icon from "@reearth/beta/ui/widgetui/Icon";
 import { styled, mask } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 import { useRef, useCallback, useState } from "react";
@@ -232,7 +232,6 @@ const Button = styled("div")<{ button?: Button; publishedTheme?: Theme }>(
   })
 );
 
-
 const MenuWrapper = styled("div")(({ theme }) => ({
   zIndex: theme.zIndexes.visualizer.widget,
   borderRadius: theme.radius.smallest + 1,
@@ -250,7 +249,6 @@ const MenuInnerWrapper = styled("div")<{
   color: button?.buttonColor || publishedTheme?.mainText,
   whiteSpace: "nowrap"
 }));
-
 
 const MenuItem = styled(Flex)<{
   item?: MenuItem;

@@ -1,11 +1,10 @@
-import { NotFound } from "@reearth/beta/lib/reearth-ui";
+import NotFound from "@reearth/beta/features/NotFound";
 import { FC } from "react";
 
 import Page from "../Page";
 
 const NotFoundPage: FC = () => {
-
-  return <Page  renderItem={() => <NotFound />} />;
+  return <Page renderItem={() => <NotFound />} />;
 };
 
 export default NotFoundPage;

@@ -1,5 +1,5 @@
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
+import Icon from "@reearth/beta/ui/widgetui/Icon";
+import Text from "@reearth/beta/ui/widgetui/Text";
 import { styled } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 import { ReactNode, useMemo } from "react";

@@ -1,5 +1,5 @@
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
+import Icon from "@reearth/beta/ui/widgetui/Icon";
+import Text from "@reearth/beta/ui/widgetui/Text";
 import { styled, PublishTheme } from "@reearth/services/theme";
 import { memo } from "react";
 

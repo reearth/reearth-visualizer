@@ -1,4 +1,4 @@
-import Icon from "@reearth/beta/components/Icon";
+import Icon from "@reearth/beta/ui/widgetui/Icon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { memo } from "react";

@@ -6,12 +6,12 @@ import "rc-slider/assets/index.css";
 
 const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
 
-export type Props = {
+export type SliderProps = {
   min?: number;
   max?: number;
 } & ComponentProps<typeof SliderWithTooltip>;
 
-const Slider: React.FC<Props> = ({ ...props }) => {
+export const Slider: React.FC<SliderProps> = ({ ...props }) => {
   const calculatedStep = props.step
     ? props.step
     : props.max
@@ -68,5 +68,3 @@ const SliderStyled = styled.div<{ disabled: boolean }>`
     box-shadow: ${({ theme }) => theme.shadow.button};
   }
 `;
-
-export default Slider;

@@ -1,4 +1,4 @@
-import Icon from "@reearth/beta/components/Icon";
+import Icon from "@reearth/beta/ui/widgetui/Icon";
 import useHooks from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
 import { Popup } from "@reearth/beta/lib/reearth-ui";

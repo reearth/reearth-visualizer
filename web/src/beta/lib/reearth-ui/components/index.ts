@@ -26,4 +26,5 @@ export * from "./Radio";
 export * from "./RadioGroup";
 export * from "./CheckBox";
 export * from "./Markdown";
-export * from "./NotFound";
+export * from "./Slider";
+export * from "./Slide";

@@ -1,7 +1,7 @@
 import { Meta } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
 
-import { NotFound } from ".";
+import NotFound from ".";
 
 export default {
   component: NotFound

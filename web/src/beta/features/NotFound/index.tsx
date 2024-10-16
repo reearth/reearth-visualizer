@@ -1,12 +1,10 @@
+import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "../Button";
-import { Typography } from "../Typography";
-
-export const NotFound: FC = () => {
+const NotFound: FC = () => {
   const theme = useTheme();
   const t = useT();
   const navigate = useNavigate();
@@ -36,6 +34,8 @@ export const NotFound: FC = () => {
     </Wrapper>
   );
 };
+
+export default NotFound;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
