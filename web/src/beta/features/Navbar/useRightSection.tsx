@@ -11,7 +11,7 @@ import { Tab } from ".";
 type Props = {
   currentTab?: Tab;
   sceneId?: string;
-  page: "editor" | "settings";
+  page: "editor" | "settings" | "projectSettings";
 };
 
 const useRightSide = ({ currentTab, page, sceneId }: Props) => {

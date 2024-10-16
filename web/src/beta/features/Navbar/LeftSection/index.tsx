@@ -18,7 +18,7 @@ type Props = {
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
   sceneId?: string;
-  page: "editor" | "settings";
+  page: "editor" | "settings" | "projectSettings";
   onSignOut: () => void;
   onWorkspaceChange?: (workspaceId: string) => void;
 };
@@ -70,7 +70,7 @@ const LeftSection: React.FC<Props> = ({
       >
         <IconButton icon="grid" appearance="simple" size="large" />
       </StyledLink>
-      {page !== "editor" && (
+      {page === "projectSettings" && (
         <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
           <IconButton icon="editor" appearance="simple" size="large" />
         </StyledLink>

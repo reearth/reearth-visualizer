@@ -1,11 +1,14 @@
+import useAccountSettingsTabs from "@reearth/beta/hooks/useAccountSettingsTabs";
 import {
   Collapse,
   TextInput,
   Typography,
   IconButton
 } from "@reearth/beta/lib/reearth-ui";
+import SettingBase from "@reearth/beta/ui/components/SettingBase";
 import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
+import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
@@ -20,55 +23,63 @@ const AccountSetting: FC = () => {
   const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
   const { name, email } = meData;
 
+  const [currentWorkspace] = useWorkspace();
+
+  const { tabs } = useAccountSettingsTabs({
+    workspaceId: currentWorkspace?.id ?? ""
+  });
+
   return (
-    <InnerPage>
-      <SettingsWrapper>
-        <Collapse size="large" title={t("Account")}>
-          <SettingsFields>
-            <InputField
-              title={t("Name")}
-              value={name ? t(name) : ""}
-              appearance="readonly"
-              disabled
-            />
-            <InputField
-              title={t("Email address")}
-              value={email ? t(email) : ""}
-              appearance="readonly"
-              disabled
-            />
+    <SettingBase tabs={tabs} tab={"account"}>
+      <InnerPage>
+        <SettingsWrapper>
+          <Collapse size="large" title={t("Account")}>
+            <SettingsFields>
+              <InputField
+                title={t("Name")}
+                value={name ? t(name) : ""}
+                appearance="readonly"
+                disabled
+              />
+              <InputField
+                title={t("Email address")}
+                value={email ? t(email) : ""}
+                appearance="readonly"
+                disabled
+              />
 
-            <PasswordWrapper>
-              <Typography size="body">{t("Password")}</Typography>
-              <PasswordInputWrapper>
-                <TextInput
-                  value={"**********"}
-                  appearance="readonly"
-                  disabled
-                  extendWidth
-                />
-                <IconButton
-                  appearance="secondary"
-                  icon="pencilSimple"
-                  onClick={() => {
-                    setChangePasswordModal(true);
-                  }}
-                  size="medium"
-                  hasBorder={true}
-                />
-              </PasswordInputWrapper>
-            </PasswordWrapper>
-          </SettingsFields>
-        </Collapse>
-      </SettingsWrapper>
+              <PasswordWrapper>
+                <Typography size="body">{t("Password")}</Typography>
+                <PasswordInputWrapper>
+                  <TextInput
+                    value={"**********"}
+                    appearance="readonly"
+                    disabled
+                    extendWidth
+                  />
+                  <IconButton
+                    appearance="secondary"
+                    icon="pencilSimple"
+                    onClick={() => {
+                      setChangePasswordModal(true);
+                    }}
+                    size="medium"
+                    hasBorder={true}
+                  />
+                </PasswordInputWrapper>
+              </PasswordWrapper>
+            </SettingsFields>
+          </Collapse>
+        </SettingsWrapper>
 
-      <PasswordModal
-        isVisible={changePasswordModal}
-        passwordPolicy={passwordPolicy}
-        onClose={() => setChangePasswordModal(false)}
-        handleUpdateUserPassword={handleUpdateUserPassword}
-      />
-    </InnerPage>
+        <PasswordModal
+          isVisible={changePasswordModal}
+          passwordPolicy={passwordPolicy}
+          onClose={() => setChangePasswordModal(false)}
+          handleUpdateUserPassword={handleUpdateUserPassword}
+        />
+      </InnerPage>
+    </SettingBase>
   );
 };
 export default AccountSetting;

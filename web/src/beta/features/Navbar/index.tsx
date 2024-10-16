@@ -10,7 +10,7 @@ type Props = {
   workspaceId?: string;
   isDashboard?: boolean;
   currentTab?: Tab;
-  page?: "editor" | "settings";
+  page?: "editor" | "settings" | "projectSettings";
 };
 
 export const Tabs = ["map", "story", "widgets", "publish"] as const;

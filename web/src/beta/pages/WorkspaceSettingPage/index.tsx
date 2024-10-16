@@ -1,22 +1,20 @@
 import WorkspaceSetting from "@reearth/beta/features/WorkspaceSetting";
-import AccountSettingBase from "@reearth/beta/ui/components/AccountSettingBase";
 import { FC } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Page from "../Page";
 
-const WorkspaceSettingPage: FC = () => {
-  const { pathname } = useLocation();
-  const tab = pathname.includes("members") ? "members" : "workspaces";
+type WorkspaceSettingPageProps = {
+  tab: "workspace" | "members";
+};
 
-  const { workspaceId } = useParams();
-
+const WorkspaceSettingPage: FC<WorkspaceSettingPageProps> = ({ tab }) => {
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   return (
     <Page
-      renderItem={(props) => (
-        <AccountSettingBase {...props} tab={tab} workspaceId={workspaceId}>
-          <WorkspaceSetting tab={tab} workspaceId={workspaceId} />
-        </AccountSettingBase>
+      workspaceId={workspaceId}
+      renderItem={({ workspaceId }) => (
+        <WorkspaceSetting tab={tab} workspaceId={workspaceId} />
       )}
     />
   );

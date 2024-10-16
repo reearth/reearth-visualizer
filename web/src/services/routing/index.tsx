@@ -46,11 +46,11 @@ export const AppRoutes = () => {
     },
     {
       path: "settings/workspaces/:workspaceId",
-      element: <WorkspaceSettingPage />
+      element: <WorkspaceSettingPage tab="workspace" />
     },
     {
       path: "settings/workspaces/:workspaceId/members",
-      element: <WorkspaceSettingPage />
+      element: <WorkspaceSettingPage tab="members" />
     },
     {
       path: "graphql",

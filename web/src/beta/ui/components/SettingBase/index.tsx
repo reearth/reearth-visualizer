@@ -1,4 +1,5 @@
 import Navbar from "@reearth/beta/features/Navbar";
+import { IconName } from "@reearth/beta/lib/reearth-ui";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
@@ -6,51 +7,23 @@ import {
   SidebarVersion,
   SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
-import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode } from "react";
 
 type Props = {
   tab: string;
+  tabs: {
+    id: string;
+    text?: string;
+    icon?: IconName;
+    path?: string;
+    disabled?: boolean;
+  }[];
   workspaceId?: string;
   children: ReactNode;
 };
 
-export const accountSettingTabs = [
-  { id: "account", text: "Account", icon: "user", path: "/settings/account" },
-  {
-    id: "workspaces",
-    text: "Workspaces",
-    icon: "usersFour",
-    path: "/settings/workspaces/:workspaceId"
-  }
-  // TODO: enable these when page ready
-  // {
-  //   id: "members",
-  //   text: "Members",
-  //   icon: "users",
-  //   path: "/settings/workspaces/:workspaceId/members"
-  // }
-] as const;
-
-const AccountSettingBase: FC<Props> = ({ tab, children, workspaceId }) => {
-  const t = useT();
-  const [currentWorkspace] = useWorkspace();
-  const tabs = useMemo(
-    () =>
-      accountSettingTabs.map((tab) => ({
-        id: tab.id,
-        icon: tab.icon,
-        text: t(tab.text),
-        path: tab.path.replace(
-          ":workspaceId",
-          workspaceId || currentWorkspace?.id || ""
-        )
-      })),
-    [workspaceId, t, currentWorkspace?.id]
-  );
-
+const SettingBase: FC<Props> = ({ tabs, tab, children, workspaceId }) => {
   return (
     <Wrapper>
       <Navbar page="settings" workspaceId={workspaceId} />
@@ -65,6 +38,7 @@ const AccountSettingBase: FC<Props> = ({ tab, children, workspaceId }) => {
                   text={t.text}
                   active={t.id === tab}
                   icon={t.icon}
+                  disabled={t.disabled}
                 />
               ))}
             </SidebarSection>
@@ -130,4 +104,4 @@ const Content = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.super}px`
 }));
 
-export default AccountSettingBase;
+export default SettingBase;

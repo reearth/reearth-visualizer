@@ -1,3 +1,5 @@
+import useAccountSettingsTabs from "@reearth/beta/hooks/useAccountSettingsTabs";
+import SettingBase from "@reearth/beta/ui/components/SettingBase";
 import { FC } from "react";
 
 import useProjectsHook from "../Dashboard/ContentsContainer/Projects/hooks";
@@ -18,9 +20,12 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   } = useWorkspaceHook();
 
   const { filtedProjects } = useProjectsHook(workspaceId);
+
+  const { tabs } = useAccountSettingsTabs({ workspaceId: workspaceId ?? "" });
+
   return (
-    <>
-      {tab === "workspaces" && (
+    <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
+      {tab === "workspace" && (
         <Workspace
           handleFetchWorkspaces={handleFetchWorkspaces}
           handleUpdateWorkspace={handleUpdateWorkspace}
@@ -28,7 +33,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
           projectsCount={filtedProjects?.length}
         />
       )}
-    </>
+    </SettingBase>
   );
 };
 
