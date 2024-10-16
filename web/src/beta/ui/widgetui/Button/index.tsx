@@ -1,4 +1,4 @@
-import Icon from "@reearth/beta/ui/widgetui/Icon";
+import { Icon, IconName } from "@reearth/beta/lib/reearth-ui";
 import Text from "@reearth/beta/ui/widgetui/Text";
 import { styled } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
@@ -13,7 +13,7 @@ export interface Props {
   buttonType?: Type;
   disabled?: boolean;
   text?: string;
-  icon?: string;
+  icon?: IconName;
   iconPosition?: "left" | "right";
   margin?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -44,7 +44,7 @@ const Button: React.FC<Props> = ({
   const WrappedIcon = useMemo(() => {
     return icon ? (
       <IconWrapper text={hasText} iconPosition={iconPosition} size={size}>
-        <Icon icon={icon} size={iSize} notransition />
+        <Icon icon={icon} size={iSize} />
       </IconWrapper>
     ) : null;
   }, [hasText, iSize, icon, iconPosition, size]);

@@ -1,6 +1,5 @@
-import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import Flex from "@reearth/beta/ui/widgetui/Flex";
-import Icon from "@reearth/beta/ui/widgetui/Icon";
 import { styled, mask } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 import { useRef, useCallback, useState } from "react";
@@ -24,7 +23,7 @@ export type Button = {
 export type MenuItem = {
   id: string;
   menuTitle?: string;
-  menuIcon?: string;
+  menuIcon?: IconName;
   menuType?: "link" | "camera" | "border";
   menuLink?: string;
   menuCamera?: Camera;

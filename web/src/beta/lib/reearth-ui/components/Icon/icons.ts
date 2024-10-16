@@ -1,6 +1,10 @@
+/// <reference types="vite-plugin-svgr/client" />
+
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
+import ArrowLongLeft from "./Icons/ArrowLongLeft.svg?react";
+import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
 import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
 import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
 import Article from "./Icons/Article.svg?react";
@@ -29,6 +33,8 @@ import ClockAfternoon from "./Icons/ClockAfternoon.svg?react";
 import ClockClockwise from "./Icons/ClockClockwise.svg?react";
 import ClockFilled from "./Icons/ClockFilled.svg?react";
 import Close from "./Icons/Close.svg?react";
+import Compass from "./Icons/Compass.svg?react";
+import CompassFocus from "./Icons/CompassFocus.svg?react";
 import Copy from "./Icons/Copy.svg?react";
 import Crosshair from "./Icons/Crosshair.svg?react";
 import Cube from "./Icons/Cube.svg?react";
@@ -43,6 +49,7 @@ import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
 import DownloadSimple from "./Icons/DownloadSimple.svg?react";
 import EditMode from "./Icons/EditMode.svg?react";
 import Editor from "./Icons/Editor.svg?react";
+import Ellipse from "./Icons/Ellipse.svg?react";
 import Exit from "./Icons/Exit.svg?react";
 import ExitFilled from "./Icons/ExitFilled.svg?react";
 import Extrude from "./Icons/Extrude.svg?react";
@@ -60,6 +67,7 @@ import FolderSimplePlus from "./Icons/FolderSimplePlus.svg?react";
 import GlobeSimple from "./Icons/GlobeSimple.svg?react";
 import Grid from "./Icons/Grid.svg?react";
 import Hand from "./Icons/Hand.svg?react";
+import Home from "./Icons/Home.svg?react";
 import If from "./Icons/If.svg?react";
 import Image from "./Icons/Image.svg?react";
 import ImageFilled from "./Icons/ImageFilled.svg?react";
@@ -81,16 +89,22 @@ import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import More from "./Icons/More.svg?react";
+import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
 import Notebook from "./Icons/Notebook.svg?react";
 import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
 import Palette from "./Icons/Palette.svg?react";
 import Paperclip from "./Icons/Paperclip.svg?react";
 import PaperPlaneTilt from "./Icons/PaperPlaneTilt.svg?react";
+import Pause from "./Icons/Pause.svg?react";
 import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
 import Play from "./Icons/Play.svg?react";
+import PlayLeft from "./Icons/PlayLeft.svg?react";
+import PlayLeftFilled from "./Icons/PlayLeftFilled.svg?react";
+import PlayRight from "./Icons/PlayRight.svg?react";
+import PlayRightFilled from "./Icons/PlayRightFilled.svg?react";
 import Plugin from "./Icons/plugin.svg?react";
 import PluginInstall from "./Icons/PluginInstall.svg?react";
 import PluginUpdate from "./Icons/PluginUpdate.svg?react";
@@ -130,6 +144,7 @@ import TextBolder from "./Icons/TextBolder.svg?react";
 import TextItalic from "./Icons/TextItalic.svg?react";
 import TextT from "./Icons/TextT.svg?react";
 import TextUnderline from "./Icons/TextUnderline.svg?react";
+import Timeline from "./Icons/timeline.svg?react";
 import TimeOrder from "./Icons/TimeOrder.svg?react";
 import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
@@ -147,6 +162,8 @@ export default {
   addStyle: AddStyle,
   appearance: Appearance,
   arrowLeftRight: ArrowLeftRight,
+  arrowLongLeft: ArrowLongLeft,
+  arrowLongRight: ArrowLongRight,
   arrowsHorizontalIn: ArrowsHorizontalIn,
   arrowsHorizontalOut: ArrowsHorizontalOut,
   article: Article,
@@ -175,6 +192,8 @@ export default {
   clockAfternoon: ClockAfternoon,
   clockClockwise: ClockClockwise,
   close: Close,
+  compass: Compass,
+  compassFocus: CompassFocus,
   copy: Copy,
   crosshair: Crosshair,
   cube: Cube,
@@ -189,6 +208,7 @@ export default {
   downloadSimple: DownloadSimple,
   editMode: EditMode,
   editor: Editor,
+  ellipse: Ellipse,
   exit: Exit,
   exitFilled: ExitFilled,
   extrude: Extrude,
@@ -206,6 +226,7 @@ export default {
   globeSimple: GlobeSimple,
   grid: Grid,
   hand: Hand,
+  home: Home,
   if: If,
   image: Image,
   imageFilled: ImageFilled,
@@ -226,16 +247,22 @@ export default {
   mapTrifold: MapTrifold,
   minus: Minus,
   more: More,
+  navigatorAngle: NavigatorAngle,
   notebook: Notebook,
   padding: Padding,
   page: Page,
   palette: Palette,
   paperclip: Paperclip,
   paperPlaneTilt: PaperPlaneTilt,
+  pause: Pause,
   pencilFilled: PencilFilled,
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,
   play: Play,
+  playLeft: PlayLeft,
+  playRight: PlayRight,
+  playLeftFilled: PlayLeftFilled,
+  playRightFilled: PlayRightFilled,
   plugin: Plugin,
   plus: Plus,
   pluginInstall: PluginInstall,
@@ -276,6 +303,7 @@ export default {
   textItalic: TextItalic,
   textT: TextT,
   textUnderline: TextUnderline,
+  timeline: Timeline,
   timeOrder: TimeOrder,
   timeOrderInverse: TimeOrderInverse,
   trash: Trash,

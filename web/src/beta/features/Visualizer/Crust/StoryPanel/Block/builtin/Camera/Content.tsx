@@ -1,5 +1,5 @@
-import Button from "@reearth/beta/ui/widgetui/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import Button from "@reearth/beta/ui/widgetui/Button";
 import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -80,7 +80,7 @@ const Content: FC<Props> = ({
               key={id}
               color={color?.value}
               bgColor={bgColor?.value}
-              icon="cameraButtonStoryBlock"
+              icon="camera"
               buttonType="primary"
               text={title?.value ?? t("New Camera")}
               size="small"
