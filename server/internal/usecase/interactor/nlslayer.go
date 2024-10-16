@@ -13,6 +13,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
@@ -833,23 +834,19 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	return inp.FeatureID, nil
 }
 
-func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]interface{}) (nlslayer.NLSLayerList, error) {
+func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (nlslayer.NLSLayerList, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
-	if err != nil {
-		return nil, err
-	}
+
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
 	nlayerIDs := idx.List[id.NLSLayer]{}
 	nlayers := []nlslayer.NLSLayer{}
 	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
-		nlsLayerID, err := id.NLSLayerIDFrom(nlsLayerJSON.ID)
-		if err != nil {
-			return nil, err
-		}
+		nlsLayerID := id.NewNLSLayerID()
 		nlayerIDs = append(nlayerIDs, nlsLayerID)
 		nlayer, err := nlslayer.New().
 			ID(nlsLayerID).
@@ -872,11 +869,11 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]int
 		nlsLayerList[i] = &layer
 	}
 
-	if err := i.nlslayerRepo.SaveAll(ctx, nlsLayerList); err != nil {
+	if err := i.nlslayerRepo.Filtered(writableFilter).SaveAll(ctx, nlsLayerList); err != nil {
 		return nil, err
 	}
 
-	nlayer, err := i.nlslayerRepo.FindByIDs(ctx, nlayerIDs)
+	nlayer, err := i.nlslayerRepo.Filtered(readableFilter).FindByIDs(ctx, nlayerIDs)
 	if err != nil {
 		return nil, err
 	}

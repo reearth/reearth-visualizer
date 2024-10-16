@@ -53,6 +53,11 @@ func (b *SchemaFieldBuilder) Name(name i18n.String) *SchemaFieldBuilder {
 	return b
 }
 
+func (b *SchemaFieldBuilder) Title(title i18n.String) *SchemaFieldBuilder {
+	b.p.title = title.Clone()
+	return b
+}
+
 func (b *SchemaFieldBuilder) Description(description i18n.String) *SchemaFieldBuilder {
 	b.p.description = description.Clone()
 	return b

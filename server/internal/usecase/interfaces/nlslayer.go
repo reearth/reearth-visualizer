@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
+	"github.com/reearth/reearthx/idx"
 )
 
 type AddNLSLayerSimpleInput struct {
@@ -86,5 +87,5 @@ type NLSLayer interface {
 	AddGeoJSONFeature(context.Context, AddNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	UpdateGeoJSONFeature(context.Context, UpdateNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	DeleteGeoJSONFeature(context.Context, DeleteNLSLayerGeoJSONFeatureParams, *usecase.Operator) (id.FeatureID, error)
-	ImportNLSLayers(context.Context, map[string]interface{}) (nlslayer.NLSLayerList, error)
+	ImportNLSLayers(context.Context, idx.ID[id.Scene], map[string]interface{}) (nlslayer.NLSLayerList, error)
 }
