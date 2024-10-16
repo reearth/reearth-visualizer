@@ -84,7 +84,8 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	}
 
 	var filter any = bson.M{
-		"team": id.String(),
+		"team":    id.String(),
+		"deleted": false,
 	}
 
 	if uFilter.Keyword != nil {
