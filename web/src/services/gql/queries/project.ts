@@ -233,6 +233,7 @@ export const GET_DELETED_PROJECTS = gql(`
 				id
 				name
 				isDeleted
+        imageUrl
 				}
 			totalCount
 		}

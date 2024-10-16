@@ -258,7 +258,7 @@ export default () => {
   );
 
   const [updateProjectMutation] = useMutation(UPDATE_PROJECT, {
-    refetchQueries: ["GetProject", "GetStarredProjects", "GetDeletedProjects"]
+    refetchQueries: ["GetProject", "GetStarredProjects"]
   });
   const useUpdateProject = useCallback(
     async (input: UpdateProjectInput) => {
@@ -285,6 +285,34 @@ export default () => {
       return { data: data?.updateProject?.project, status: "success" };
     },
     [updateProjectMutation, t, setNotification]
+  );
+
+  const [updateProjectRecyleBinMutation] = useMutation(UPDATE_PROJECT, {
+    refetchQueries: ["GetProjects", "GetDeletedProjects"]
+  });
+  const useUpdateProjectRecyleBin = useCallback(
+    async (input: { projectId: string; deleted: boolean }) => {
+      if (!input.projectId) return { status: "error" };
+      const { data, errors } = await updateProjectRecyleBinMutation({
+        variables: { ...input }
+      });
+
+      if (errors || !data?.updateProject) {
+        console.log("GraphQL: Failed to move project to trash", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to update project.")
+        });
+
+        return { status: "error" };
+      }
+      setNotification({
+        type: "success",
+        text: t("Successfully moved the project to trash!")
+      });
+      return { data: data?.updateProject?.project, status: "success" };
+    },
+    [updateProjectRecyleBinMutation, setNotification, t]
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
@@ -323,7 +351,7 @@ export default () => {
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
-    refetchQueries: ["GetProject", "GetStarredProjects"],
+    refetchQueries: ["GetProject", "GetStarredProjects", "GetDeletedProjects"],
     update(cache, { data }) {
       if (data?.deleteProject?.projectId) {
         cache.modify({
@@ -544,6 +572,7 @@ export default () => {
     useStarredProjectsQuery,
     useExportProject,
     useImportProject,
+    useUpdateProjectRecyleBin,
     useDeletedProjectsQuery
   };
 };

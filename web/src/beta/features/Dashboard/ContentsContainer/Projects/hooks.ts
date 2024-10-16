@@ -40,6 +40,7 @@ export default (workspaceId?: string) => {
     useCreateProject,
     useStarredProjectsQuery,
     useImportProject,
+    useUpdateProjectRecyleBin
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -172,17 +173,19 @@ export default (workspaceId?: string) => {
   );
 
   // project delete
-  const handleProjectDelete = useCallback(
-    async (project: Project) => {
-       const updatedProject: Project = {
-         ...project,
-         deleted: !project.deleted
-       };
-       handleProjectUpdate?.(updatedProject, project.id);
-    },
-    [handleProjectUpdate]
-  );
-  
+ const handleProjectDelete = useCallback(
+   async (project: Project) => {
+     const updatedProject = {
+       projectId: project.id,
+       deleted: !project.deleted
+     };
+
+     await useUpdateProjectRecyleBin(updatedProject);
+   },
+   [useUpdateProjectRecyleBin]
+ );
+
+
   // project open
   const handleProjectOpen = useCallback(
     (sceneId?: string) => {
@@ -262,7 +265,6 @@ export default (workspaceId?: string) => {
     },
     [useImportProject, refetch]
   );
-console.log("filtedProjects", filtedProjects);
   return {
     filtedProjects,
     hasMoreProjects,
@@ -288,7 +290,7 @@ console.log("filtedProjects", filtedProjects);
     handleProjectSortChange,
     handleSearch,
     handleImportProject,
-    handleProjectDelete,
+    handleProjectDelete
   };
 };
 

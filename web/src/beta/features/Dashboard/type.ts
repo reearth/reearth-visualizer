@@ -7,13 +7,20 @@ export type Project = {
   imageUrl?: string | null;
   status?: "published" | "limited" | "unpublished";
   isArchived?: boolean;
-  description: string;
+  description?: string;
   sceneId?: string;
   updatedAt?: Date;
   createdAt?: Date;
   projectType?: ProjectType;
   starred?: boolean;
   deleted?: boolean
+};
+
+export type DeletedProject = {
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+  isDeleted?: boolean;
 };
 
 export type TabItems = {
