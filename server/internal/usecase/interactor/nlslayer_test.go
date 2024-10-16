@@ -312,10 +312,8 @@ func TestImportNLSLayers(t *testing.T) {
 	actual := string(resultJSON)
 
 	// expected
-	var expectedMap []map[string]interface{}
-	err = json.Unmarshal([]byte(fmt.Sprintf(`[
-    {
-        "id": "01j7g9gwj6qbv286pcwwmwq5ds",
+	exp := fmt.Sprintf(`[{
+        "id": "%s",
         "layerType": "simple",
         "sceneId": "%s",
         "config": {
@@ -330,9 +328,10 @@ func TestImportNLSLayers(t *testing.T) {
         },
         "title": "japan_architecture (2).csv",
         "visible": true,
-        "isSketch": false
-    }
-]`, scene.ID())), &expectedMap)
+     "isSketch": false
+    }]`, result.IDs().LayerAt(0), scene.ID())
+	var expectedMap []map[string]interface{}
+	err = json.Unmarshal([]byte(exp), &expectedMap)
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)
 	assert.NoError(t, err)
