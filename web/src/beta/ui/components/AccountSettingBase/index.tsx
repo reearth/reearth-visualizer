@@ -18,10 +18,20 @@ type Props = {
 };
 
 export const accountSettingTabs = [
-  { id: "account", text: "Account", icon: "user" },
-  { id: "workspaces", text: "Workspaces", icon: "usersFour" }
+  { id: "account", text: "Account", icon: "user", path: "/settings/account" },
+  {
+    id: "workspaces",
+    text: "Workspaces",
+    icon: "usersFour",
+    path: "/settings/workspaces/:workspaceId"
+  }
   // TODO: enable these when page ready
-  // { id: "members", text: "Members", icon: "users" }
+  // {
+  //   id: "members",
+  //   text: "Members",
+  //   icon: "users",
+  //   path: "/settings/workspaces/:workspaceId/members"
+  // }
 ] as const;
 
 const AccountSettingBase: FC<Props> = ({ tab, children, workspaceId }) => {
@@ -33,7 +43,10 @@ const AccountSettingBase: FC<Props> = ({ tab, children, workspaceId }) => {
         id: tab.id,
         icon: tab.icon,
         text: t(tab.text),
-        path: `/settings/${tab.id}/${tab.id !== "account" ? workspaceId || currentWorkspace?.id : ""}`
+        path: tab.path.replace(
+          ":workspaceId",
+          workspaceId || currentWorkspace?.id || ""
+        )
       })),
     [workspaceId, t, currentWorkspace?.id]
   );

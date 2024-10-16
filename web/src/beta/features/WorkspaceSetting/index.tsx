@@ -1,6 +1,8 @@
 import { FC } from "react";
 
-import useHook from "./hooks";
+import useProjectsHook from "../Dashboard/ContentsContainer/Projects/hooks";
+
+import useWorkspaceHook from "./hooks";
 import Workspace from "./innerPages/Workspaces/Workspaces";
 
 type Props = {
@@ -10,15 +12,12 @@ type Props = {
 
 const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   const {
-    projectsCount,
-    // handleFetchWorkspace,
     handleFetchWorkspaces,
-    // handleCreateWorkspace,
     handleUpdateWorkspace,
     handleDeleteWorkspace
-    // handleAddMemberToWorkspace,
-    // handleRemoveMemberFromWorkspace
-  } = useHook({ workspaceId });
+  } = useWorkspaceHook();
+
+  const { filtedProjects } = useProjectsHook(workspaceId);
   return (
     <>
       {tab === "workspaces" && (
@@ -26,7 +25,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
           handleFetchWorkspaces={handleFetchWorkspaces}
           handleUpdateWorkspace={handleUpdateWorkspace}
           handleDeleteWorkspace={handleDeleteWorkspace}
-          projectsCount={projectsCount}
+          projectsCount={filtedProjects?.length}
         />
       )}
     </>
