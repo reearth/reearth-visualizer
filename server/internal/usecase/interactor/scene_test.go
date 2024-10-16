@@ -19,6 +19,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// go test -v -run TestImportScene ./internal/usecase/interactor/...
 func TestImportScene(t *testing.T) {
 	ctx := context.Background()
 

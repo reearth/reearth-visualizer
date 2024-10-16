@@ -111,7 +111,7 @@ func TestImportStory(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportStory(ctx, sceneData)
+	result, err := ifs.ImportStory(ctx, scene.ID(), sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 

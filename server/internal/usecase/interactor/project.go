@@ -583,17 +583,13 @@ func (i *Project) ImportProject(ctx context.Context, teamID string, projectData 
 
 	var p = jsonmodel.ToProjectFromJSON(projectData)
 
-	projectID, err := id.ProjectIDFrom(string(p.ID))
-	if err != nil {
-		return nil, nil, err
-	}
 	workspaceID, err := accountdomain.WorkspaceIDFrom(teamID)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	prjBuilder := project.New().
-		ID(projectID).
+		ID(project.NewID()).
 		Workspace(workspaceID).
 		IsArchived(p.IsArchived).
 		IsBasicAuthActive(p.IsBasicAuthActive).

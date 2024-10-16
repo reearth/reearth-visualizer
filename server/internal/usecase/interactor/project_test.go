@@ -143,6 +143,8 @@ func TestProject_Create(t *testing.T) {
 	assert.Nil(t, got)
 }
 
+// go test -v -run TestImportProject ./internal/usecase/interactor/...
+
 func TestImportProject(t *testing.T) {
 
 	ctx := context.Background()
