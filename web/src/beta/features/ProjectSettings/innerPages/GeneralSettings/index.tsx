@@ -1,4 +1,3 @@
-import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   Collapse,
@@ -8,6 +7,7 @@ import {
   ModalPanel,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import defaultBetaProjectImage from "@reearth/beta/ui/assets/defaultBetaProjectImage.png";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

@@ -1,6 +1,5 @@
-import Flex from "@reearth/beta/components/Flex";
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
+import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
+import Flex from "@reearth/beta/ui/widgetui/Flex";
 import { styled, mask } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 import { useRef, useCallback, useState } from "react";
@@ -24,7 +23,7 @@ export type Button = {
 export type MenuItem = {
   id: string;
   menuTitle?: string;
-  menuIcon?: string;
+  menuIcon?: IconName;
   menuType?: "link" | "camera" | "border";
   menuLink?: string;
   menuCamera?: Camera;
@@ -149,9 +148,9 @@ export default function MenuButton({
         {(b?.buttonStyle === "icon" || b?.buttonStyle === "texticon") &&
           b?.buttonIcon && <img src={b?.buttonIcon} width={20} height={20} />}
         {b?.buttonStyle !== "icon" && (
-          <Text
-            size="footnote"
-            customColor
+          <Typography
+            size="body"
+            color={b?.buttonColor}
             otherProperties={{
               marginLeft:
                 b?.buttonIcon && b?.buttonStyle === "texticon"
@@ -160,7 +159,7 @@ export default function MenuButton({
             }}
           >
             {b?.buttonTitle}
-          </Text>
+          </Typography>
         )}
       </Button>
       <MenuWrapper
@@ -181,15 +180,15 @@ export default function MenuButton({
               >
                 <Flex align="center">
                   {i.menuIcon && <Icon icon={i.menuIcon} size={20} />}
-                  <Text
+                  <Typography
                     size="footnote"
-                    customColor
+                    color={b?.buttonColor}
                     otherProperties={{
                       marginLeft: i.menuIcon ? "5px" : undefined
                     }}
                   >
                     {i.menuTitle}
-                  </Text>
+                  </Typography>
                 </Flex>
               </MenuItem>
             ))}
@@ -199,79 +198,84 @@ export default function MenuButton({
     </Wrapper>
   );
 }
+const Wrapper = styled("div")<{ button?: Button; publishedTheme?: Theme }>(
+  ({ theme, button, publishedTheme }) => ({
+    borderRadius: `${spacingSizes["smallest"]}px`,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.micro,
+    "&, > div": {
+      backgroundColor: button?.buttonBgcolor || publishedTheme?.background
+    }
+  })
+);
 
-const Wrapper = styled.div<{ button?: Button; publishedTheme?: Theme }>`
-  border-radius: ${spacingSizes["smallest"]}px;
-  &,
-  > div {
-    background-color: ${({ button, publishedTheme }) =>
-      button?.buttonBgcolor || publishedTheme};
-  }
-`;
+const Button = styled("div")<{ button?: Button; publishedTheme?: Theme }>(
+  ({ theme, button, publishedTheme }) => ({
+    borderRadius: `${spacingSizes["smallest"]}px`,
+    display: "flex",
+    minWidth: 35,
+    height: 35,
+    padding: `0 ${theme.spacing.small + 2}px`,
+    lineHeight: 35,
+    boxSizing: "border-box",
+    color: button ? button?.buttonColor : publishedTheme?.mainText,
+    cursor: "pointer",
+    alignItems: "center",
+    userSelect: "none",
+    ["&:hover"]: {
+      background: publishedTheme
+        ? publishedTheme?.mask
+        : mask(button?.buttonBgcolor)
+    }
+  })
+);
 
-const Button = styled.div<{ button?: Button; publishedTheme?: Theme }>`
-  display: flex;
-  border-radius: ${spacingSizes["smallest"]}px;
-  min-width: 35px;
-  height: 35px;
-  padding: 0 10px;
-  line-height: 35px;
-  box-sizing: border-box;
-  color: ${({ button, publishedTheme }) =>
-    button?.buttonColor || publishedTheme?.mainText};
-  cursor: pointer;
-  align-items: center;
-  user-select: none;
+const MenuWrapper = styled("div")(({ theme }) => ({
+  zIndex: theme.zIndexes.visualizer.widget,
+  borderRadius: theme.radius.smallest + 1,
+  maxHeight: "30vh",
+  overflow: "auto",
+  WebkitOverflowScrolling: "touch"
+}));
 
-  &:hover {
-    background: ${({ publishedTheme, button }) =>
-      mask(button?.buttonBgcolor) || publishedTheme?.mask};
-  }
-`;
-
-const MenuWrapper = styled.div`
-  z-index: ${({ theme }) => theme.zIndexes.visualizer.widget};
-  border-radius: 3px;
-  max-height: 30vh;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-`;
-
-const MenuInnerWrapper = styled.div<{
+const MenuInnerWrapper = styled("div")<{
   button?: Button;
   publishedTheme?: Theme;
-}>`
-  min-width: 35px;
-  width: 100%;
-  color: ${({ button, publishedTheme }) =>
-    button?.buttonColor || publishedTheme?.mainText};
-  white-space: nowrap;
-`;
+}>(({ button, publishedTheme }) => ({
+  minWidth: 35,
+  width: "100%",
+  color: button?.buttonColor || publishedTheme?.mainText,
+  whiteSpace: "nowrap"
+}));
 
 const MenuItem = styled(Flex)<{
   item?: MenuItem;
   button?: Button;
   publishedTheme?: Theme;
-}>`
-  min-height: ${({ item }) => (item?.menuType === "border" ? null : "25px")};
-  border-radius: ${({ item }) => (item?.menuType === "border" ? null : "3px")};
-  padding: ${({ item }) =>
-    item?.menuType === "border" ? "0 10px" : "2px 10px"};
-  cursor: ${({ item }) => (item?.menuType === "border" ? null : "pointer")};
-  background: ${({ publishedTheme, item, button }) =>
+}>(({ item, button, publishedTheme, theme }) => ({
+  minHeight: item?.menuType === "border" ? undefined : "25px",
+  borderRadius:
+    item?.menuType === "border" ? undefined : theme.radius.small - 1,
+  padding:
+    item?.menuType === "border"
+      ? `0 ${theme.spacing.small + 2}px`
+      : `${theme.spacing.micro}px ${theme.spacing.small + 2}px`,
+  cursor: item?.menuType === "border" ? undefined : "pointer",
+  background:
     item?.menuType === "border"
       ? mask(button?.buttonBgcolor) || publishedTheme?.mask
-      : null};
-  border-bottom: ${({ item, publishedTheme, button }) =>
+      : undefined,
+  borderBottom:
     item?.menuType === "border"
       ? `1px solid ${button?.buttonColor || publishedTheme?.weakText}`
-      : null};
-  user-select: none;
+      : undefined,
+  userSelect: "none",
 
-  &:hover {
-    background: ${({ publishedTheme, item, button }) =>
+  "&:hover": {
+    background:
       item?.menuType === "border"
-        ? null
-        : mask(button?.buttonBgcolor) || publishedTheme?.mask};
+        ? undefined
+        : mask(button?.buttonBgcolor) || publishedTheme?.mask
   }
-`;
+}));

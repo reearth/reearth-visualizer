@@ -1,4 +1,4 @@
-import NotFound from "@reearth/beta/components/NotFound";
+import NotFound from "@reearth/beta/features/NotFound";
 import ProjectSettings, {
   isProjectSettingTab
 } from "@reearth/beta/features/ProjectSettings";
