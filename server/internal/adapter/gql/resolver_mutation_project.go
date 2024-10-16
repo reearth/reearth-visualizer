@@ -223,7 +223,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	projectData, _ := jsonData["project"].(map[string]interface{})
-	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, projectData)
+	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, string(input.TeamID), projectData)
 	if err != nil {
 		return nil, err
 	}
