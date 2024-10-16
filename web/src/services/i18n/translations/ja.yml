@@ -201,6 +201,8 @@ Log out: ログアウト
 Asset management: ''
 Map: マップ
 Widgets: ウィジェット
+Oops, This Page Not Found!: ''
+Go to Dashboard: ''
 Error: エラー
 Warning: 注意
 Notice: 通知
@@ -263,9 +265,6 @@ aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
-Angle: 角度
-Narrow: 狭い
-Wide: 広い
 Spacing settings: 余白設定
 Remove: 削除
 Block: ブロック
@@ -295,8 +294,6 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Oops, This Page Not Found!: ''
-Go to Dashboard: ''
 'Sort:': ''
 Wrong file format: ファイルのフォーマットが異なります
 Not set: 未設定
