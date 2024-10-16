@@ -108,9 +108,13 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       config: {
         data: {
           url: value !== "" ? value : undefined,
-          serviceTokens: {
-            googleMapApiKey: googleMapsApiKey || undefined
-          },
+          ...(googlePhotorealistic
+            ? {
+                serviceTokens: {
+                  googleMapApiKey: googleMapsApiKey || undefined
+                }
+              }
+            : {}),
           type:
             sourceType === "osm-buildings"
               ? "osm-buildings"
