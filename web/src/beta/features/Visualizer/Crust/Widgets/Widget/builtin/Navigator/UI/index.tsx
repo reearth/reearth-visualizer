@@ -71,7 +71,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
           >
             <CompassIconWrapper
               icon="compass"
-              aria-label={t("aria-label-compass")}
+              ariaLabel={t("aria-label-compass")}
               compassDegree={compassDegree}
               size={64}
             />
@@ -92,7 +92,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
           >
             <Icon
               icon="navigatorAngle"
-              aria-label={t("aria-label-adjust-angle")}
+              ariaLabel={t("aria-label-adjust-angle")}
               size={32}
             />
           </AngleIcon>
@@ -101,16 +101,16 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
       </CompassContainer>
       <Tool publishedTheme={theme}>
         <ToolIconButton onClick={onZoomIn} publishedTheme={theme}>
-          <Icon icon="plus" aria-label={t("aria-label-zoom-in")} />
+          <Icon icon="plus" ariaLabel={t("aria-label-zoom-in")} />
         </ToolIconButton>
         <ToolIconButton onClick={onRestoreRotate} publishedTheme={theme}>
           <Icon
             icon="home"
-            aria-label={t("aria-label-Go-to-the-home-position")}
+            ariaLabel={t("aria-label-Go-to-the-home-position")}
           />
         </ToolIconButton>
         <ToolIconButton onClick={onZoomOut} publishedTheme={theme}>
-          <Icon icon="minus" aria-label={t("aria-label-zoom-out")} />
+          <Icon icon="minus" ariaLabel={t("aria-label-zoom-out")} />
         </ToolIconButton>
       </Tool>
     </Container>
