@@ -18,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -997,15 +998,15 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	return story, page, &inp.BlockID, inp.Index, nil
 }
 
-func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]interface{}) (*storytelling.Story, error) {
+func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (*storytelling.Story, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
-	if err != nil {
-		return nil, err
-	}
+	// sceneID, err := id.SceneIDFrom(sceneJSON.ID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	storyJSON := sceneJSON.Story
 
 	pages := []*storytelling.Page{}
@@ -1013,10 +1014,10 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 
 		blocks := []*storytelling.Block{}
 		for _, blockJSON := range pageJSON.Blocks {
-			blockID, err := id.BlockIDFrom(blockJSON.ID)
-			if err != nil {
-				return nil, err
-			}
+			// blockID, err := id.BlockIDFrom(blockJSON.ID)
+			// if err != nil {
+			// 	return nil, err
+			// }
 			pluginID, err := id.PluginIDFrom(blockJSON.PluginId)
 			if err != nil {
 				return nil, err
@@ -1046,7 +1047,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 				return nil, err
 			}
 			block, err := storytelling.NewBlock().
-				ID(blockID).
+				ID(id.NewBlockID()).
 				Property(prop.ID()).
 				Plugin(pluginID).
 				Extension(extensionID).
@@ -1057,10 +1058,6 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 			blocks = append(blocks, block)
 		}
 
-		pageID, err := id.PageIDFrom(pageJSON.ID)
-		if err != nil {
-			return nil, err
-		}
 		schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 		prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 		if err != nil {
@@ -1079,7 +1076,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 			return nil, err
 		}
 		page, err := storytelling.NewPage().
-			ID(pageID).
+			ID(id.NewPageID()).
 			Property(prop.ID()).
 			Title(pageJSON.Title).
 			Swipeable(pageJSON.Swipeable).

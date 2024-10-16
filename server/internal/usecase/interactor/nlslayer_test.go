@@ -261,6 +261,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	assert.Equal(t, 0, len(featureCollection.Features()))
 }
 
+// go test -v -run TestImportNLSLayers ./internal/usecase/interactor/...
 func TestImportNLSLayers(t *testing.T) {
 	ctx := context.Background()
 
@@ -300,7 +301,7 @@ func TestImportNLSLayers(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifl.ImportNLSLayers(ctx, sceneData)
+	result, err := ifl.ImportNLSLayers(ctx, scene.ID(), sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
