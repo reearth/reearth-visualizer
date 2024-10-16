@@ -10,13 +10,15 @@ export type IconProps = {
   size?: "large" | "normal" | "small" | number;
   color?: string;
   className?: string;
+  ariaLabel?: string;
 };
 
 export const Icon: FC<IconProps> = ({
   icon,
   size = "normal",
   color,
-  className
+  className,
+  ariaLabel
 }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
@@ -36,6 +38,11 @@ export const Icon: FC<IconProps> = ({
   }, [icon, theme]);
 
   return SvgIcon ? (
-    <SvgIcon size={size} color={color} className={className} />
+    <SvgIcon
+      size={size}
+      color={color}
+      className={className}
+      aria-label={ariaLabel}
+    />
   ) : null;
 };

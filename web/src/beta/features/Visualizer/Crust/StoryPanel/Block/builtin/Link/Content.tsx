@@ -1,5 +1,5 @@
-import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import Button from "@reearth/beta/ui/widgetui/Button";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useContext, useState } from "react";
@@ -72,7 +72,7 @@ const Content: FC<Props> = ({
               key={id}
               color={color?.value}
               bgColor={bgColor?.value}
-              icon="linkButtonStoryBlock"
+              icon="linkSimple"
               buttonType="primary"
               text={title?.value ?? t("New Link Button")}
               size="small"

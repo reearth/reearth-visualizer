@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import tinycolor from "tinycolor2";
 
-export type Props = {
+export type MarkdownProps = {
   className?: string;
   children?: string;
   styles?: Typography;
@@ -16,7 +16,7 @@ export type Props = {
 
 const plugins = [gfm];
 
-export const Markdown: FC<Props> = ({
+export const Markdown: FC<MarkdownProps> = ({
   className,
   styles,
   backgroundColor,
