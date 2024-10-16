@@ -45,13 +45,18 @@ No Project has been created yet: ''
 Rename: 名称変更
 Project Setting: プロジェクト設定
 Export: エクスポート
+Remove: 削除
 Create new project: ''
 Project Name *: ''
 Text: ''
 Description: プロジェクト概要
 Write down your content: ''
 Cover Image: ''
+Your project will be move to trash.: ''
+This means the project will no longer be published. But you can still see and restore you project from recycle bin.: ''
 Starred: ''
+Recover: ''
+Delete: 削除
 Switch WorkSpace: ''
 Personal: ''
 Team Workspace: ''
@@ -216,9 +221,6 @@ Danger Zone: 重要操作
 Delete this project: プロジェクトを削除
 This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
-I am sure I want to delete this project.: このプロジェクトを削除します。
-This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
-Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -228,7 +230,6 @@ Installed Plugins: ''
 Uninstall: アンインストール
 Installed: インストール済み
 Install: インストール
-Delete: 削除
 You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
 Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
 No description.: ''
@@ -266,7 +267,6 @@ aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
 Spacing settings: 余白設定
-Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプです
 Write your story :): ストーリーを書きましょう!
@@ -371,6 +371,7 @@ Successfully published your project with search engine indexing!: 検索エン�
 Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
+Successfully moved the project to trash!: ''
 Failed to archive project.: プロジェクトの非編集状態に失敗しました。
 Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
 Successfully archive project!: プロジェクトのアーカイブに成功しました！
