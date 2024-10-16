@@ -34,7 +34,7 @@ export const useMockAuth = (): AuthHook => {
   }, []);
 
   const getAccessToken = useCallback(() => {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve) => {
       if (isAuthenticated) {
         setTimeout(() => {
           resolve("mock_access_token_" + Date.now());
@@ -46,7 +46,6 @@ export const useMockAuth = (): AuthHook => {
           setError(null);
           resolve("mock_access_token_" + Date.now());
         }, 500);
-        // reject(new Error("Not authenticated"));
       }
     });
   }, [isAuthenticated]);
