@@ -13,6 +13,7 @@ help:
 	@echo "  run-app    Run the application"
 	@echo "  run-db     Run the MongoDB database using Docker Compose"
 	@echo "  gql        Generate GraphQL code"
+	@echo "  mockuser   Create a mock user by executing a curl request"
 
 lint:
 	golangci-lint run --fix
@@ -38,4 +39,7 @@ run-db:
 gql:
 	go generate ./internal/adapter/gql
 
-.PHONY: lint test failcheck e2e build run-app run-db gql
+mockuser:
+	mockuser:; curl -H 'Content-Type: application/json' -d '{"email": "mock@example.com", "username": "Mock User"}' http://localhost:8080/api/signup
+
+.PHONY: lint test failcheck e2e build run-app run-db gql mockuser
