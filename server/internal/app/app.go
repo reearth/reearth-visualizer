@@ -67,7 +67,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				ctx := r.Context()
 				ctx = adapter.AttachMockAuth(ctx, true)
-				ctx = adapter.AttachMockUser(ctx, cfg.Config.UseMockUser())
 				next.ServeHTTP(w, r.WithContext(ctx))
 			})
 		}

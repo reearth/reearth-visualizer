@@ -70,8 +70,7 @@ type Config struct {
 	// system extensions
 	Ext_Plugin []string `pp:",omitempty"`
 
-	MockAuth bool   `pp:",omitempty"`
-	MockUser string `pp:",omitempty"`
+	MockAuth bool `pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
@@ -129,13 +128,6 @@ func (c *Config) Print() string {
 
 func (c *Config) UseMockAuth() bool {
 	return c.Dev && c.MockAuth
-}
-
-func (c *Config) UseMockUser() string {
-	if c.Dev {
-		return c.MockUser
-	}
-	return ""
 }
 
 func (c *Config) secrets() []string {
