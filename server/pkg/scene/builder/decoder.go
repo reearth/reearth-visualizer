@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -66,14 +65,12 @@ func parseWidgetArea(widgetAreaJSON *widgetAreaJSON) *scene.WidgetArea {
 	if widgetAreaJSON == nil {
 		return nil
 	}
+
 	var widgetIDs []idx.ID[id.Widget]
-	for _, widgetID := range widgetAreaJSON.WidgetIDs {
-		id, err := gqlmodel.ToID[id.Widget](gqlmodel.ID(widgetID))
-		if err != nil {
-			continue
-		}
-		widgetIDs = append(widgetIDs, id)
+	for range widgetAreaJSON.WidgetIDs {
+		widgetIDs = append(widgetIDs, id.NewWidgetID())
 	}
+
 	return scene.NewWidgetArea(
 		widgetIDs,
 		parseWidgetAlign(widgetAreaJSON.Align),

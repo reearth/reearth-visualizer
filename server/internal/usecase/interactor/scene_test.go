@@ -10,15 +10,19 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
+// go test -v -run TestImportScene ./internal/usecase/interactor/...
 func TestImportScene(t *testing.T) {
 	ctx := context.Background()
 
@@ -31,6 +35,8 @@ func TestImportScene(t *testing.T) {
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
 	_ = db.Project.Save(ctx, prj)
+	sce, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	_ = db.Scene.Save(ctx, sce)
 
 	var sceneData map[string]interface{}
 	err := json.Unmarshal([]byte(`{
@@ -141,7 +147,7 @@ func TestImportScene(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportScene(ctx, prj, []*plugin.Plugin{}, sceneData)
+	result, err := ifs.ImportScene(ctx, sce, prj, []*plugin.Plugin{}, sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
@@ -158,10 +164,27 @@ func TestImportScene(t *testing.T) {
 	delete(resultMap, "propertyId")
 	delete(resultMap, "updatedAt")
 	delete(resultMap, "createdAt")
+
 	if widgets, ok := resultMap["widgets"].([]interface{}); ok {
 		for _, widget := range widgets {
 			if widgetMap, ok := widget.(map[string]interface{}); ok {
+				delete(widgetMap, "id") // id is skip
 				delete(widgetMap, "propertyId")
+			}
+		}
+	}
+
+	if widgetAlignSystem, ok := resultMap["widgetAlignSystem"].(map[string]interface{}); ok {
+		if outer, ok := widgetAlignSystem["outer"].(map[string]interface{}); ok {
+			if left, ok := outer["left"].(map[string]interface{}); ok {
+				if top, ok := left["top"].(map[string]interface{}); ok {
+					delete(top, "widgetIds")
+				}
+			}
+			if right, ok := outer["right"].(map[string]interface{}); ok {
+				if top, ok := right["top"].(map[string]interface{}); ok {
+					delete(top, "widgetIds")
+				}
 			}
 		}
 	}
@@ -171,17 +194,12 @@ func TestImportScene(t *testing.T) {
 	actual := string(resultJSON)
 
 	// expected
-	var expectedMap map[string]interface{}
-	err = json.Unmarshal([]byte(fmt.Sprintf(`{
+	exp := fmt.Sprintf(`{
     "clusters": [],
     "datasetSchemas": null,
-    "id": "01j7g9ddv4sbf8tgt5c6xxj5xc",
+    "id": "%s",
     "newLayers": null,
-    "plugins": [
-        {
-            "pluginId": "reearth"
-        }
-    ],
+    "plugins": [],
     "projectId": "%s",
     "stories": null,
     "styles": null,
@@ -279,11 +297,7 @@ func TestImportScene(t *testing.T) {
                         "left": 0,
                         "right": 0,
                         "top": 0
-                    },
-                    "widgetIds": [
-                        "01j7g9h4f1k93vspn3gdtz67az",
-                        "01j7g9jr89rjq1egrb1hhcd8jy"
-                    ]
+                    }
                 }
             },
             "right": {
@@ -305,10 +319,7 @@ func TestImportScene(t *testing.T) {
                         "left": 0,
                         "right": 0,
                         "top": 0
-                    },
-                    "widgetIds": [
-                        "01j7g9jckefd0zxyy34bbygmhy"
-                    ]
+                    }
                 }
             }
         }
@@ -318,18 +329,18 @@ func TestImportScene(t *testing.T) {
             "enabled": false,
             "extended": false,
             "extensionId": "button",
-            "id": "01j7g9h4f1k93vspn3gdtz67az",
             "pluginId": "reearth"
         },
         {
             "enabled": false,
             "extended": false,
             "extensionId": "navigator",
-            "id": "01j7g9jckefd0zxyy34bbygmhy",
             "pluginId": "reearth"
         }
     ]
-}`, prj.ID(), prj.Workspace())), &expectedMap)
+  }`, result.ID(), prj.ID(), prj.Workspace())
+	var expectedMap map[string]interface{}
+	err = json.Unmarshal([]byte(exp), &expectedMap)
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)
 	assert.NoError(t, err)

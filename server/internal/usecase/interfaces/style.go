@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/idx"
 )
 
 type AddStyleInput struct {
@@ -27,5 +28,5 @@ type Style interface {
 	UpdateStyle(context.Context, UpdateStyleInput, *usecase.Operator) (*scene.Style, error)
 	RemoveStyle(context.Context, id.StyleID, *usecase.Operator) (id.StyleID, error)
 	DuplicateStyle(context.Context, id.StyleID, *usecase.Operator) (*scene.Style, error)
-	ImportStyles(context.Context, map[string]interface{}) (scene.StyleList, error)
+	ImportStyles(context.Context, idx.ID[id.Scene], map[string]interface{}) (scene.StyleList, error)
 }
