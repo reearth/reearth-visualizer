@@ -40,6 +40,6 @@ gql:
 	go generate ./internal/adapter/gql
 
 mockuser:
-	mockuser:; curl -H 'Content-Type: application/json' -d '{"email": "mock@example.com", "username": "Mock User"}' http://localhost:8080/api/signup
+	curl -H 'Content-Type: application/json' -d '{"email": "mock@example.com", "username": "Mock User"}' http://localhost:8080/api/signup
 
 .PHONY: lint test failcheck e2e build run-app run-db gql mockuser
