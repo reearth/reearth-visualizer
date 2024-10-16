@@ -18,7 +18,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const [value, setValue] = useState("");
   const [sourceType, setSourceType] = useState<SourceType>("osm-buildings");
-  const [googleMapApiKey, setGoogleMapApiKey] = useState("");
+  const [googleMapsApiKey, setGoogleMapsApiKey] = useState("");
   const googlePhotorealistic = sourceType === "google-photorealistic";
 
   const renderGooglePhotorealisticInput = useMemo(() => {
@@ -27,7 +27,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         <InputGroup
           label={
             <>
-              {t("Google Map APIKey ")} ( {t("You can apply a key ")}
+              {t("Google Maps API Key ")} ( {t("You can apply a key ")}
               <LinkWrapper
                 to="https://developers.google.com/maps/documentation/javascript/get-api-key"
                 target="_blank"
@@ -41,14 +41,14 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         >
           <InputsWrapper>
             <TextInput
-              value={googleMapApiKey}
-              onChange={(value) => setGoogleMapApiKey(value)}
+              value={googleMapsApiKey}
+              onChange={(value) => setGoogleMapsApiKey(value)}
             />
           </InputsWrapper>
         </InputGroup>
       );
     } else return undefined;
-  }, [googleMapApiKey, googlePhotorealistic, t]);
+  }, [googleMapsApiKey, googlePhotorealistic, t]);
 
   const renderUrlInput = useMemo(() => {
     if (sourceType === "url") {
@@ -86,7 +86,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const handleDataSourceTypeChange = useCallback((newValue: string) => {
     setSourceType(newValue as SourceType);
     setValue("");
-    setGoogleMapApiKey("");
+    setGoogleMapsApiKey("");
   }, []);
 
   const title = useMemo(() => {
@@ -109,7 +109,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: value !== "" ? value : undefined,
           serviceTokens: {
-            googleMapApiKey: googleMapApiKey || undefined
+            googleMapApiKey: googleMapsApiKey || undefined
           },
           type:
             sourceType === "osm-buildings"
@@ -140,7 +140,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           onClick={handleSubmit}
           disabled={
             (!value && sourceType === "url") ||
-            (!googleMapApiKey && googlePhotorealistic)
+            (!googleMapsApiKey && googlePhotorealistic)
           }
         />
       </SubmitWrapper>
