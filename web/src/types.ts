@@ -79,4 +79,4 @@ export type OmitFuncProps3<
 
 export type ProjectType = "beta";
 
-export type Version = "classic" | "visualizer";
+export type VersionForExtension = "classic" | "visualizer";
