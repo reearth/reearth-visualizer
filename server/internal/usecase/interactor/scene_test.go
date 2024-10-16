@@ -159,9 +159,11 @@ func TestImportScene(t *testing.T) {
 	delete(resultMap, "propertyId")
 	delete(resultMap, "updatedAt")
 	delete(resultMap, "createdAt")
+
 	if widgets, ok := resultMap["widgets"].([]interface{}); ok {
 		for _, widget := range widgets {
 			if widgetMap, ok := widget.(map[string]interface{}); ok {
+				delete(widgetMap, "id") // id is skip
 				delete(widgetMap, "propertyId")
 			}
 		}
@@ -172,11 +174,10 @@ func TestImportScene(t *testing.T) {
 	actual := string(resultJSON)
 
 	// expected
-	var expectedMap map[string]interface{}
-	err = json.Unmarshal([]byte(fmt.Sprintf(`{
+	exp := fmt.Sprintf(`{
     "clusters": [],
     "datasetSchemas": null,
-    "id": "01j7g9ddv4sbf8tgt5c6xxj5xc",
+    "id": "%s",
     "newLayers": null,
     "plugins": [
         {
@@ -319,18 +320,18 @@ func TestImportScene(t *testing.T) {
             "enabled": false,
             "extended": false,
             "extensionId": "button",
-            "id": "01j7g9h4f1k93vspn3gdtz67az",
             "pluginId": "reearth"
         },
         {
             "enabled": false,
             "extended": false,
             "extensionId": "navigator",
-            "id": "01j7g9jckefd0zxyy34bbygmhy",
             "pluginId": "reearth"
         }
     ]
-}`, prj.ID(), prj.Workspace())), &expectedMap)
+  }`, result.ID(), prj.ID(), prj.Workspace())
+	var expectedMap map[string]interface{}
+	err = json.Unmarshal([]byte(exp), &expectedMap)
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)
 	assert.NoError(t, err)
