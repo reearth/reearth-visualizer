@@ -50,6 +50,8 @@ const InspectorTabs: FC<Props> = ({
     if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
       selectedLayer.layer?.config?.data?.type === "3dtiles" ||
+      selectedLayer.layer?.config?.data?.type === "osm-buildings" ||
+      selectedLayer.layer?.config?.data?.type === "google-photorealistic" ||
       selectedLayer.layer?.config?.data?.type === "mvt"
         ? selectedLayer.computedFeature
         : (selectedLayer.computedLayer?.features?.find(
