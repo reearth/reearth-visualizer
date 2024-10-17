@@ -1,7 +1,9 @@
+Auto: ''
 Account: ''
 Name: 名前
 Email address: ''
 Password: パスワード
+Language: ''
 No whitespace is allowed.: ''
 Too short.: ''
 That is terribly long.: ''
@@ -14,22 +16,6 @@ In order to protect your account, make sure your password is unique and strong.:
 New password: ''
 New password (for confirmation): ''
 '"repeatPassword" Passwords need to match': ''
-Workspace: ''
-Workspace Name: ''
-Submit: 反映
-Danger Zone: 重要操作
-Remove this workspace: ''
-This process will remove this workspace: ''
-Remove workspace: ''
-Delete workspace: ''
-Cancel: キャンセル
-I am sure I want to delete this workspace.: ''
-'This action cannot be undone. ': ''
-This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
-Please type your workspace name to continue.: ''
-You are going to delete a workspace.: ''
-Please to make sure you don’t have any projects in your workspace, then you can continue.: ''
-Ok: 確認
 Select Asset: ''
 Last Uploaded: 昇順（アップロード日）
 First Uploaded: 降順（アップロード日）
@@ -173,6 +159,8 @@ Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
+Ok: 確認
+Cancel: キャンセル
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
 Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
@@ -226,6 +214,8 @@ Something went wrong. Please try again later.: 何らかの問題が発生しま
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
+Submit: 反映
+Danger Zone: 重要操作
 Delete this project: プロジェクトを削除
 This process will remove this project to recycle bin.: ''
 Delete project: プロジェクト削除
@@ -282,6 +272,18 @@ Spacing settings: 余白設定
 Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプです
+Workspace: ''
+Workspace Name: ''
+Remove this workspace: ''
+This process will remove this workspace: ''
+Remove workspace: ''
+Delete workspace: ''
+I am sure I want to delete this workspace.: ''
+'This action cannot be undone. ': ''
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
+Please type your workspace name to continue.: ''
+You are going to delete a workspace.: ''
+Please to make sure you don’t have any projects in your workspace, then you can continue.: ''
 Write your story :): ストーリーを書きましょう!
 Normal: 標準テキスト
 Heading 1: 見出し1
@@ -369,6 +371,8 @@ Failed to update user password.: ''
 Successfully updated user password!: ''
 Failed to delete user.: ''
 Successfully delete user!: ''
+Failed to change language.: ''
+Successfully updated user language!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
