@@ -161,3 +161,8 @@ func (b *Builder) Starred(starred bool) *Builder {
 	b.p.starred = starred
 	return b
 }
+
+func (b *Builder) Deleted(deleted bool) *Builder {
+	b.p.isDeleted = deleted
+	return b
+}

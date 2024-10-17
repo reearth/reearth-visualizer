@@ -39,7 +39,8 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject
+    useImportProject,
+    useUpdateProjectRecyleBin
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -67,7 +68,6 @@ export default (workspaceId?: string) => {
     sort: pagination(sortValue).sortBy,
     keyword: searchTerm
   });
-
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
       .filter((project) => project?.coreSupport === true)
@@ -84,7 +84,8 @@ export default (workspaceId?: string) => {
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
-              starred: project.starred
+              starred: project.starred,
+              deleted: project.isDeleted
             }
           : undefined
       )
@@ -171,6 +172,20 @@ export default (workspaceId?: string) => {
     [useUpdateProject]
   );
 
+  // project delete
+ const handleProjectDelete = useCallback(
+   async (project: Project) => {
+     const updatedProject = {
+       projectId: project.id,
+       deleted: !project.deleted
+     };
+
+     await useUpdateProjectRecyleBin(updatedProject);
+   },
+   [useUpdateProjectRecyleBin]
+ );
+
+
   // project open
   const handleProjectOpen = useCallback(
     (sceneId?: string) => {
@@ -250,7 +265,6 @@ export default (workspaceId?: string) => {
     },
     [useImportProject, refetch]
   );
-
   return {
     filtedProjects,
     hasMoreProjects,
@@ -275,7 +289,8 @@ export default (workspaceId?: string) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject
+    handleImportProject,
+    handleProjectDelete
   };
 };
 

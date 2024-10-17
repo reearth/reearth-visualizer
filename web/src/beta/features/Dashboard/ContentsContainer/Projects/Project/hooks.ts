@@ -15,13 +15,15 @@ type Props = {
   selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
+  onProjectDelete?: (projectId?: string) => void;
 };
 
 export default ({
   project,
   selectedProjectId,
   onProjectUpdate,
-  onProjectSelect
+  onProjectSelect,
+  onProjectDelete
 }: Props) => {
   const t = useT();
   const { useStoriesQuery } = useStorytellingFetcher();
@@ -32,6 +34,8 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
+    const [projectDeleteModalVisible, setProjectDeleteModalVisible] = useState(false);
+
   // MEMO: this modal state and function will be used in the future
   // const [exportModalVisible, setExportModalVisible] = useState(false);
 
@@ -79,6 +83,14 @@ export default ({
     setIsStarred(project.starred);
   }, [project.starred]);
 
+   const handleDeleteModelOpen = useCallback(() => {
+     setProjectDeleteModalVisible(true);
+   }, []);
+
+   const handleDeleteModelClose = useCallback(() => {
+     setProjectDeleteModalVisible(false);
+   }, []);
+  
   const popupMenu: PopupMenuItem[] = [
     {
       id: "rename",
@@ -97,6 +109,12 @@ export default ({
       title: t("Export"),
       icon: "downloadSimple",
       onClick: () => handleExportProject()
+    },
+    {
+      id: "remove",
+      title: t("Remove"),
+      icon: "trash",
+      onClick: () => handleDeleteModelOpen()
     }
   ];
 
@@ -143,6 +161,12 @@ export default ({
     return hasMapPublished || hasStoryPublished;
   }, [stories, project.status]);
 
+  const handleProjectDelete = useCallback((projectId?: string) => {
+     if (!projectId) return;
+    onProjectDelete?.(projectId);
+    handleDeleteModelClose()
+ }, [handleDeleteModelClose, onProjectDelete])
+
   return {
     isEditing,
     projectName,
@@ -150,11 +174,15 @@ export default ({
     popupMenu,
     isStarred,
     hasMapOrStoryPublished,
+    projectDeleteModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick,
-    handleExportProject
+    handleExportProject,
+    handleDeleteModelOpen,
+    handleDeleteModelClose,
+    handleProjectDelete
   };
 };

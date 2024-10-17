@@ -1,0 +1,112 @@
+import { Button, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
+import { FC, useCallback, useState } from "react";
+
+import { Project } from "../../../type";
+
+type Prop = {
+  project?: Project;
+  onProjectDelete?: (projectId?: string) => void;
+  onProjectRecovery?: (projectId?: string) => void;
+};
+const RecyleBinProjectItem: FC<Prop> = ({
+  project,
+  onProjectDelete,
+  onProjectRecovery
+}) => {
+  const t = useT();
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleProjectHover = useCallback((value: boolean) => {
+    setIsHovered(value);
+  }, []);
+
+  const popupMenu: PopupMenuItem[] = [
+    {
+      id: "recover",
+      title: t("Recover"),
+      icon: "arrowCounterClockWise",
+      onClick: () => onProjectRecovery?.(project?.id)
+    },
+    {
+      id: "delete",
+      title: t("Delete"),
+      icon: "trash",
+      onClick: () => onProjectDelete?.(project?.id)
+    }
+  ];
+
+  return (
+    <Card>
+      <CardImage
+        backgroundImage={project?.imageUrl}
+        isHovered={isHovered ?? false}
+        onMouseEnter={() => handleProjectHover(true)}
+        onMouseLeave={() => handleProjectHover(false)}
+      />
+      <CardFooter>
+        <CardTitleWrapper>
+          <CardTitle>{project?.name}</CardTitle>
+        </CardTitleWrapper>
+        <PopupMenu
+          menu={popupMenu}
+          label={
+            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+          }
+        />
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default RecyleBinProjectItem;
+
+const Card = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  height: "220px",
+  "@media (max-width: 567px)": {
+    height: "171px"
+  }
+}));
+
+const CardImage = styled("div")<{
+  backgroundImage?: string | null;
+  isHovered: boolean;
+}>(({ theme, backgroundImage, isHovered }) => ({
+  flex: 1,
+  position: "relative",
+  background: backgroundImage
+    ? `url(${backgroundImage}) center/cover`
+    : theme.bg[1],
+  borderRadius: theme.radius.normal,
+  boxSizing: "border-box",
+  cursor: "pointer",
+  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`
+}));
+
+const CardFooter = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
+  padding: `0 ${theme.spacing.smallest}`
+}));
+
+const CardTitleWrapper = styled("div")(() => ({
+  flex: 1
+}));
+
+const CardTitle = styled("div")(({ theme }) => ({
+  flex: "1",
+  padding: `0 ${theme.spacing.smallest + 1}px`,
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  cursor: "pointer"
+}));

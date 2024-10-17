@@ -97,6 +97,7 @@ export const UPDATE_PROJECT = gql(`
     $enableGa: Boolean
     $trackingId: String
     $starred:Boolean
+    $deleted: Boolean
   ) {
     updateProject(
       input: {
@@ -112,6 +113,7 @@ export const UPDATE_PROJECT = gql(`
         enableGa: $enableGa
         trackingId: $trackingId
         starred: $starred
+        deleted: $deleted
       }
     ) {
       project {
@@ -221,5 +223,19 @@ export const IMPORT_PROJECT = gql(`
     importProject(input: { file: $file }) {
       projectData
     }
+  }
+`);
+
+export const GET_DELETED_PROJECTS = gql(`
+  query GetDeletedProjects($teamId: ID!) {
+    deletedProjects(teamId: $teamId) {
+			nodes {
+				id
+				name
+				isDeleted
+        imageUrl
+				}
+			totalCount
+		}
   }
 `);

@@ -29,7 +29,8 @@ import {
   UPDATE_PROJECT_ALIAS,
   UPDATE_PROJECT_BASIC_AUTH,
   EXPORT_PROJECT,
-  IMPORT_PROJECT
+  IMPORT_PROJECT,
+  GET_DELETED_PROJECTS
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -104,6 +105,20 @@ export default () => {
     );
 
     return { starredProjects, ...rest };
+  }, []);
+
+  const useDeletedProjectsQuery = useCallback((teamId?: string) => {
+    const { data, ...rest } = useQuery(GET_DELETED_PROJECTS, {
+      variables: { teamId: teamId ?? "" },
+      skip: !teamId
+    });
+
+    const deletedProjects = useMemo(
+      () => data?.deletedProjects.nodes,
+      [data?.deletedProjects]
+    );
+
+    return { deletedProjects, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
@@ -272,6 +287,34 @@ export default () => {
     [updateProjectMutation, t, setNotification]
   );
 
+  const [updateProjectRecyleBinMutation] = useMutation(UPDATE_PROJECT, {
+    refetchQueries: ["GetProjects", "GetStarredProjects", "GetDeletedProjects"]
+  });
+  const useUpdateProjectRecyleBin = useCallback(
+    async (input: { projectId: string; deleted: boolean }) => {
+      if (!input.projectId) return { status: "error" };
+      const { data, errors } = await updateProjectRecyleBinMutation({
+        variables: { ...input }
+      });
+
+      if (errors || !data?.updateProject) {
+        console.log("GraphQL: Failed to move project to trash", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to update project.")
+        });
+
+        return { status: "error" };
+      }
+      setNotification({
+        type: "success",
+        text: t("Successfully moved the project to trash!")
+      });
+      return { data: data?.updateProject?.project, status: "success" };
+    },
+    [updateProjectRecyleBinMutation, setNotification, t]
+  );
+
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
     refetchQueries: ["GetProject"]
   });
@@ -308,7 +351,7 @@ export default () => {
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
-    refetchQueries: ["GetProject"],
+    refetchQueries: ["GetProject", "GetDeletedProjects"],
     update(cache, { data }) {
       if (data?.deleteProject?.projectId) {
         cache.modify({
@@ -528,6 +571,8 @@ export default () => {
     useUpdateProjectAlias,
     useStarredProjectsQuery,
     useExportProject,
-    useImportProject
+    useImportProject,
+    useUpdateProjectRecyleBin,
+    useDeletedProjectsQuery
   };
 };

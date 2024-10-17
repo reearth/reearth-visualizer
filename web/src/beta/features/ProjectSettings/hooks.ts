@@ -25,9 +25,9 @@ export default ({ projectId }: Props) => {
   const {
     useProjectQuery,
     useUpdateProject,
-    useDeleteProject,
     useUpdateProjectBasicAuth,
-    useUpdateProjectAlias
+    useUpdateProjectAlias,
+    useUpdateProjectRecyleBin
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
@@ -44,12 +44,24 @@ export default ({ projectId }: Props) => {
     [projectId, useUpdateProject]
   );
 
-  const handleDeleteProject = useCallback(async () => {
-    const { status } = await useDeleteProject({ projectId });
+ 
+  const handleProjectDelete = useCallback(async () => {
+    const updatedProject = {
+      projectId,
+      deleted: !project?.isDeleted
+    };
+
+    const { status } = await useUpdateProjectRecyleBin(updatedProject);
     if (status === "success") {
       navigate(`/dashboard/${workspaceId}/`);
     }
-  }, [workspaceId, projectId, useDeleteProject, navigate]);
+  }, [
+    navigate,
+    project?.isDeleted,
+    projectId,
+    useUpdateProjectRecyleBin,
+    workspaceId
+  ]);
 
   const handleUpdateProjectBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {
@@ -144,7 +156,7 @@ export default ({ projectId }: Props) => {
     accessToken,
     extensions,
     handleUpdateProject,
-    handleDeleteProject,
+    handleProjectDelete,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
