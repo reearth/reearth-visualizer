@@ -726,11 +726,7 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 	if err != nil {
 		return nil, err
 	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
-	if err != nil {
-		return nil, err
-	}
-
+	sceneID := scene.NewID()
 	plugins := scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(id.OfficialPluginID, nil),
 	})
@@ -742,10 +738,6 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 
 	widgets := []*scene.Widget{}
 	for _, widgetJSON := range sceneJSON.Widgets {
-		widgetID, err := id.WidgetIDFrom(widgetJSON.ID)
-		if err != nil {
-			return nil, err
-		}
 		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
 		if err != nil {
 			return nil, err
@@ -771,7 +763,8 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 		if err = i.propertyRepo.Save(ctx, prop); err != nil {
 			return nil, err
 		}
-		widget, err := scene.NewWidget(widgetID, pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
+
+		widget, err := scene.NewWidget(id.NewWidgetID(), pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
 		if err != nil {
 			return nil, err
 		}
@@ -779,10 +772,6 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 	}
 	clusters := []*scene.Cluster{}
 	for _, clusterJson := range sceneJSON.Clusters {
-		clusterID, err := id.ClusterIDFrom(clusterJson.ID)
-		if err != nil {
-			return nil, err
-		}
 		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sceneID).Build()
 		if err != nil {
 			return nil, err
@@ -790,7 +779,7 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 		if err = i.propertyRepo.Save(ctx, property); err != nil {
 			return nil, err
 		}
-		cluster, err := scene.NewCluster(clusterID, clusterJson.Name, property.ID())
+		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
 		if err != nil {
 			return nil, err
 		}

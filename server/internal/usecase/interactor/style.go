@@ -201,12 +201,8 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	return duplicatedStyle, nil
 }
 
-func (i *Style) ImportStyles(ctx context.Context, sceneData map[string]interface{}) (scene.StyleList, error) {
+func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (scene.StyleList, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
-	if err != nil {
-		return nil, err
-	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -214,10 +210,7 @@ func (i *Style) ImportStyles(ctx context.Context, sceneData map[string]interface
 	styleIDs := idx.List[id.Style]{}
 	styles := []*scene.Style{}
 	for _, layerStyleJson := range sceneJSON.LayerStyles {
-		styleID, err := id.StyleIDFrom(layerStyleJson.ID)
-		if err != nil {
-			return nil, err
-		}
+		styleID := id.NewStyleID()
 		styleIDs = append(styleIDs, styleID)
 		style, err := scene.NewStyle().
 			ID(styleID).

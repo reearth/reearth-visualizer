@@ -223,7 +223,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	projectData, _ := jsonData["project"].(map[string]interface{})
-	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, projectData)
+	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, string(input.TeamID), projectData)
 	if err != nil {
 		return nil, err
 	}
@@ -245,17 +245,17 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		return nil, err
 	}
 
-	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sceneData)
+	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
 	if err != nil {
 		return nil, err
 	}
 
-	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sceneData)
+	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sce.ID(), sceneData)
 	if err != nil {
 		return nil, err
 	}
 
-	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sceneData)
+	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData)
 	if err != nil {
 		return nil, err
 	}
