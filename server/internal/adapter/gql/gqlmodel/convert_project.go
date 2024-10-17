@@ -65,6 +65,7 @@ func ToProject(p *project.Project) *Project {
 		EnableGa:          p.EnableGA(),
 		TrackingID:        p.TrackingID(),
 		Starred:           p.Starred(),
+		IsDeleted:         p.IsDeleted(),
 	}
 }
 
