@@ -114,6 +114,7 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	filter := bson.M{
 		"team":    id.String(),
 		"starred": true,
+		"deleted": false,
 	}
 
 	return r.find(ctx, filter)
