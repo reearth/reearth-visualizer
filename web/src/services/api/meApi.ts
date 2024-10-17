@@ -77,9 +77,33 @@ export default () => {
     [deleteMeMutation, setNotification, t]
   );
 
+  const updateLanguage = useCallback(
+    async (lang: string) => {
+      if (!lang) return;
+      const { data, errors } = await updateMeMutation({ variables: { lang } });
+      console.log(data);
+      if (errors || !data?.updateMe) {
+        console.log("GraphQL: Failed to update language", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to change language.")
+        });
+        return { status: "error" };
+      } else {
+        setNotification({
+          type: "success",
+          text: t("Successfully updated user language!")
+        });
+        return { data: data?.updateMe, status: "success" };
+      }
+    },
+    [updateMeMutation, t, setNotification]
+  );
+
   return {
     useMeQuery,
     useUpdatePassword,
-    useDeleteUser
+    useDeleteUser,
+    updateLanguage
   };
 };

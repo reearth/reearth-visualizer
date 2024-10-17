@@ -6,7 +6,7 @@ import {
   IconButton
 } from "@reearth/beta/lib/reearth-ui";
 import SettingBase from "@reearth/beta/ui/components/SettingBase";
-import { InputField } from "@reearth/beta/ui/fields";
+import { InputField, SelectField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -20,7 +20,12 @@ const AccountSetting: FC = () => {
   const [changePasswordModal, setChangePasswordModal] =
     useState<boolean>(false);
 
-  const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
+  const {
+    meData,
+    passwordPolicy,
+    handleUpdateUserPassword,
+    handleUpdateUserLanguage
+  } = useHook();
   const { name, email } = meData;
 
   const [currentWorkspace] = useWorkspace();
@@ -28,6 +33,23 @@ const AccountSetting: FC = () => {
   const { tabs } = useAccountSettingsTabs({
     workspaceId: currentWorkspace?.id ?? ""
   });
+
+  const options = [
+    {
+      label: t("Auto"),
+      value: "und"
+    },
+    {
+      label: "English",
+      value: "en"
+    },
+    {
+      label: "日本語",
+      value: "ja"
+    }
+  ];
+  type LanguageOption = (typeof options)[number]["value"];
+  const [languageLabel, setLanguageLabel] = useState<LanguageOption>("und");
 
   return (
     <SettingBase tabs={tabs} tab={"account"}>
@@ -68,6 +90,17 @@ const AccountSetting: FC = () => {
                   />
                 </PasswordInputWrapper>
               </PasswordWrapper>
+              <SelectField
+                title={t("Language")}
+                value={languageLabel}
+                options={options}
+                onChange={(value) => {
+                  if (typeof value === "string") {
+                    setLanguageLabel(value);
+                    handleUpdateUserLanguage({ lang: value });
+                  }
+                }}
+              />
             </SettingsFields>
           </Collapse>
         </SettingsWrapper>
