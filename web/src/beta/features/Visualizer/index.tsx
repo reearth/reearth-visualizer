@@ -233,6 +233,7 @@ const Visualizer: FC<VisualizerProps> = ({
         camera={visualizerCamera}
         interactionMode={interactionMode}
         shouldRender={shouldRender}
+        displayCredits={false}
         onCameraChange={onCameraChange}
         onLayerSelect={handleCoreLayerSelect}
         onLayerDrop={handleLayerDrop}
