@@ -244,6 +244,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
               theme={currentTheme}
               accessToken={accessToken}
               onNotificationChange={onNotificationChange}
+              version={"visualizer"}
             />
           ))}
         </Collapse>
