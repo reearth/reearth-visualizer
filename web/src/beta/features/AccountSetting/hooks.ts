@@ -38,7 +38,7 @@ export default () => {
       try {
         await updateLanguage(lang);
       } catch (error) {
-        console.error("Failed to update password:", error);
+        console.error("Failed to update language:", error);
       }
     },
     [updateLanguage]
