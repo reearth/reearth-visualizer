@@ -288,7 +288,7 @@ export default () => {
   );
 
   const [updateProjectRecyleBinMutation] = useMutation(UPDATE_PROJECT, {
-    refetchQueries: ["GetProjects", "GetDeletedProjects"]
+    refetchQueries: ["GetProjects", "GetStarredProjects", "GetDeletedProjects"]
   });
   const useUpdateProjectRecyleBin = useCallback(
     async (input: { projectId: string; deleted: boolean }) => {
@@ -351,7 +351,7 @@ export default () => {
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
-    refetchQueries: ["GetProject", "GetStarredProjects", "GetDeletedProjects"],
+    refetchQueries: ["GetProject", "GetDeletedProjects"],
     update(cache, { data }) {
       if (data?.deleteProject?.projectId) {
         cache.modify({

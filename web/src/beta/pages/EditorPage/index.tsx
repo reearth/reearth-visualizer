@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 const EditorPage: FC = () => {
   const { sceneId, tab } = useParams<{ sceneId: string; tab: string }>();
 
+  console.log("sceneId", sceneId);
   return !sceneId || !tab || !isTab(tab) ? (
     <NotFound />
   ) : (
