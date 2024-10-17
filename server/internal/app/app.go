@@ -59,10 +59,23 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// auth
 	authConfig := cfg.Config.JWTProviders()
 	log.Infof("auth: config: %#v", authConfig)
-	e.Use(
-		echo.WrapMiddleware(lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))),
-		attachOpMiddleware(cfg),
-	)
+
+	var wrapHandler func(http.Handler) http.Handler
+	if cfg.Config.UseMockAuth() {
+		log.Infof("Using mock auth for local development")
+		wrapHandler = func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				ctx := r.Context()
+				ctx = adapter.AttachMockAuth(ctx, true)
+				next.ServeHTTP(w, r.WithContext(ctx))
+			})
+		}
+	} else {
+		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+	}
+
+	e.Use(echo.WrapMiddleware(wrapHandler))
+	e.Use(attachOpMiddleware(cfg))
 
 	// enable pprof
 	if e.Debug {

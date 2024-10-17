@@ -54,6 +54,7 @@ const PluginSettings: React.FC<Props> = ({
                 <ext.component
                   key={ext.id}
                   theme={"dark"}
+                  version={"visualizer"}
                   lang={currentLang}
                   accessToken={accessToken}
                   installedPlugins={marketplacePlugins}
