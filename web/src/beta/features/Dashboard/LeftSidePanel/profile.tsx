@@ -59,6 +59,13 @@ export const Profile: FC<ProfileProp> = ({
       })
     },
     {
+      id: "workspaceSettings",
+      title: t("Workspace Settings"),
+      icon: "setting",
+      hasBorderBottom: true,
+      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
+    },
+    {
       id: "accountSettings",
       title: t("Account Settings"),
       icon: "user",

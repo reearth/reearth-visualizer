@@ -25,7 +25,7 @@ type Props = {
   isVisible: boolean;
   onClose?: () => void;
   passwordPolicy?: PasswordPolicy;
-  onPasswordUpdate?: ({
+  handleUpdateUserPassword?: ({
     password,
     passwordConfirmation
   }: {
@@ -38,7 +38,7 @@ const PasswordModal: React.FC<Props> = ({
   isVisible,
   onClose,
   passwordPolicy,
-  onPasswordUpdate
+  handleUpdateUserPassword
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -95,10 +95,10 @@ const PasswordModal: React.FC<Props> = ({
 
   const handleSave = useCallback(() => {
     if (password === passwordConfirmation) {
-      onPasswordUpdate?.({ password, passwordConfirmation });
+      handleUpdateUserPassword?.({ password, passwordConfirmation });
       handleClose();
     }
-  }, [onPasswordUpdate, handleClose, password, passwordConfirmation]);
+  }, [handleUpdateUserPassword, handleClose, password, passwordConfirmation]);
 
   useEffect(() => {
     if (

@@ -1,3 +1,5 @@
+import Navbar from "@reearth/beta/features/Navbar";
+import { IconName } from "@reearth/beta/lib/reearth-ui";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
@@ -5,47 +7,26 @@ import {
   SidebarVersion,
   SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
-
-import Navbar from "../Navbar";
-
-import useHook from "./hooks";
-import AccountSetting from "./innerPages/AccountSetting";
+import { FC, ReactNode } from "react";
 
 type Props = {
-  sceneId?: string;
-  projectId?: string;
-  workspaceId?: string;
   tab: string;
+  tabs: {
+    id: string;
+    text?: string;
+    icon?: IconName;
+    path?: string;
+    disabled?: boolean;
+  }[];
+  workspaceId?: string;
+  children: ReactNode;
 };
 
-export const accountSettingTabs = [
-  { id: "account", text: "Account", icon: "user" }
-  // TODO: enable these when page ready
-  // { id: "workspace", text: "Workspace", icon: "users" },
-  // { id: "members", text: "Members", icon: "usersFour" }
-] as const;
-
-const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
-  const t = useT();
-  const tabs = useMemo(
-    () =>
-      accountSettingTabs.map((tab) => ({
-        id: tab.id,
-        icon: tab.icon,
-        text: t(tab.text),
-        path: `/settings/${tab.id}`
-      })),
-    [t]
-  );
-  const { meData, passwordPolicy, handleUpdateUserPassword } = useHook();
-  const { name, email } = meData;
-
+const SettingBase: FC<Props> = ({ tabs, tab, children, workspaceId }) => {
   return (
     <Wrapper>
-      <Navbar page="settings" />
+      <Navbar page="settings" workspaceId={workspaceId} />
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
@@ -57,21 +38,14 @@ const AccountAndWorkSpaceSetting: FC<Props> = ({ tab }) => {
                   text={t.text}
                   active={t.id === tab}
                   icon={t.icon}
+                  disabled={t.disabled}
                 />
               ))}
             </SidebarSection>
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
-        <Content>
-          {tab === "account" && (
-            <AccountSetting
-              onUpdateUserPassword={handleUpdateUserPassword}
-              passwordPolicy={passwordPolicy}
-              informationData={{ name, email }}
-            />
-          )}
-        </Content>
+        <Content>{children}</Content>
       </MainSection>
     </Wrapper>
   );
@@ -130,4 +104,4 @@ const Content = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.super}px`
 }));
 
-export default AccountAndWorkSpaceSetting;
+export default SettingBase;

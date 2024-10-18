@@ -76,7 +76,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         projectId={projectId}
         workspaceId={workspaceId}
         sceneId={sceneId}
-        page="settings"
+        page="projectSettings"
       />
       <MainSection>
         <LeftSidePanel>

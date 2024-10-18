@@ -1,17 +1,17 @@
 import { useMeFetcher } from "@reearth/services/api";
 import { useCallback } from "react";
 
-export type UpdatePasswordType = {
+type UpdatePasswordType = {
   password: string;
   passwordConfirmation: string;
 };
 
 export default () => {
-  const { useMeQuery, useUpdatePassword, useDeleteUser } = useMeFetcher();
+  const { useMeQuery, useUpdatePassword, useDeleteUser, updateLanguage } =
+    useMeFetcher();
+  const { me: data } = useMeQuery();
 
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
-
-  const { me: data } = useMeQuery();
 
   const handleUpdateUserPassword = useCallback(
     async ({ password, passwordConfirmation }: UpdatePasswordType) => {
@@ -33,10 +33,22 @@ export default () => {
     }
   }, [data.id, useDeleteUser]);
 
+  const handleUpdateUserLanguage = useCallback(
+    async ({ lang }: { lang: string }) => {
+      try {
+        await updateLanguage(lang);
+      } catch (error) {
+        console.error("Failed to update language:", error);
+      }
+    },
+    [updateLanguage]
+  );
+
   return {
     meData: data,
     passwordPolicy,
     handleUpdateUserPassword,
-    handleDeleteUser
+    handleDeleteUser,
+    handleUpdateUserLanguage
   };
 };

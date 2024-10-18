@@ -79,7 +79,7 @@ const Content = styled("div")(() => ({
 
 const ActionWrapper = styled("div")<{ showBorder: boolean }>(
   ({ theme, showBorder }) => ({
-    padding: theme.spacing.normal,
+    padding: theme.spacing.large,
     background: theme.bg[1],
     borderBottomRightRadius: theme.radius.large,
     borderBottomLeftRadius: theme.radius.large,
