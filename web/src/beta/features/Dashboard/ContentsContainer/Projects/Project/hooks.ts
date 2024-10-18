@@ -15,7 +15,7 @@ type Props = {
   selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
-  onProjectDelete?: (projectId?: string) => void;
+  onProjectRemove?: (projectId?: string) => void;
 };
 
 export default ({
@@ -23,7 +23,7 @@ export default ({
   selectedProjectId,
   onProjectUpdate,
   onProjectSelect,
-  onProjectDelete
+  onProjectRemove
 }: Props) => {
   const t = useT();
   const { useStoriesQuery } = useStorytellingFetcher();
@@ -34,7 +34,7 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
-    const [projectDeleteModalVisible, setProjectDeleteModalVisible] = useState(false);
+    const [projectRemoveModalVisible, setProjectRemoveModalVisible] = useState(false);
 
   // MEMO: this modal state and function will be used in the future
   // const [exportModalVisible, setExportModalVisible] = useState(false);
@@ -83,14 +83,10 @@ export default ({
     setIsStarred(project.starred);
   }, [project.starred]);
 
-   const handleDeleteModelOpen = useCallback(() => {
-     setProjectDeleteModalVisible(true);
+   const handleProjectRemoveModal = useCallback((value: boolean) => {
+     setProjectRemoveModalVisible(value);
    }, []);
 
-   const handleDeleteModelClose = useCallback(() => {
-     setProjectDeleteModalVisible(false);
-   }, []);
-  
   const popupMenu: PopupMenuItem[] = [
     {
       id: "rename",
@@ -114,7 +110,7 @@ export default ({
       id: "remove",
       title: t("Remove"),
       icon: "trash",
-      onClick: () => handleDeleteModelOpen()
+      onClick: () => handleProjectRemoveModal(true)
     }
   ];
 
@@ -161,11 +157,11 @@ export default ({
     return hasMapPublished || hasStoryPublished;
   }, [stories, project.status]);
 
-  const handleProjectDelete = useCallback((projectId?: string) => {
+  const handleProjectRemove = useCallback((projectId?: string) => {
      if (!projectId) return;
-    onProjectDelete?.(projectId);
-    handleDeleteModelClose()
- }, [handleDeleteModelClose, onProjectDelete])
+    onProjectRemove?.(projectId);
+    handleProjectRemoveModal(false);
+ }, [handleProjectRemoveModal, onProjectRemove])
 
   return {
     isEditing,
@@ -174,15 +170,14 @@ export default ({
     popupMenu,
     isStarred,
     hasMapOrStoryPublished,
-    projectDeleteModalVisible,
+    projectRemoveModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick,
     handleExportProject,
-    handleDeleteModelOpen,
-    handleDeleteModelClose,
-    handleProjectDelete
+   handleProjectRemoveModal,
+    handleProjectRemove
   };
 };

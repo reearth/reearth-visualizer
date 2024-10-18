@@ -3,14 +3,14 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
-import { Project } from "../../type";
+import { Project } from "../../../type";
 
 type Prop = {
   project?: Project;
   onProjectDelete?: (projectId?: string) => void;
   onProjectRecovery?: (projectId?: string) => void;
 };
-const RecycleBinProject: FC<Prop> = ({
+const RecycleBinItem: FC<Prop> = ({
   project,
   onProjectDelete,
   onProjectRecovery
@@ -27,13 +27,13 @@ const RecycleBinProject: FC<Prop> = ({
       id: "recover",
       title: t("Recover"),
       icon: "arrowCounterClockWise",
-      onClick: () => onProjectRecovery?.(project?.id)
+      onClick: () => project?.id && onProjectRecovery?.(project.id)
     },
     {
       id: "delete",
       title: t("Delete"),
       icon: "trash",
-      onClick: () => onProjectDelete?.(project?.id)
+      onClick: () => project?.id && onProjectDelete?.(project.id)
     }
   ];
 
@@ -60,7 +60,7 @@ const RecycleBinProject: FC<Prop> = ({
   );
 };
 
-export default RecycleBinProject;
+export default RecycleBinItem;
 
 const Card = styled("div")(() => ({
   display: "flex",

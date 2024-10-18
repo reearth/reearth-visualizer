@@ -57,8 +57,14 @@ Cover Image: ''
 Your project will be move to trash.: ''
 This means the project will no longer be published. But you can still see and restore you project from recycle bin.: ''
 Starred: ''
+No Project in recycle bin.: ''
 Recover: ''
 Delete: 削除
+Delete project: プロジェクト削除
+Cancel: キャンセル
+I am sure I want to delete this project: ''
+This action cannot be undone. This will permanently delete the project totally. You will lost all your project data: ''
+Please type your project name to continue.: ''
 Switch WorkSpace: ''
 Personal: ''
 Team Workspace: ''
@@ -171,7 +177,6 @@ Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Cancel: キャンセル
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
 Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
@@ -227,9 +232,9 @@ Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
-Delete this project: プロジェクトを削除
-This process will remove this project to recycle bin.: ''
-Delete project: プロジェクト削除
+Remove this project: ''
+This process will move this project to recycle bin.: ''
+Remove project: ''
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -394,7 +399,10 @@ Successfully published your project with search engine indexing!: 検索エン�
 Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
+Failed to moved the project to trash.: ''
+Failde restored the project!: ''
 Successfully moved the project to trash!: ''
+Successfully restored the project!: ''
 Failed to archive project.: プロジェクトの非編集状態に失敗しました。
 Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
 Successfully archive project!: プロジェクトのアーカイブに成功しました！

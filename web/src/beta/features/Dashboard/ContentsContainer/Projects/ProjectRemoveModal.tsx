@@ -12,14 +12,15 @@ import { FC } from "react";
 type Props = {
   isVisible: boolean;
   onClose: () => void;
-  onProjectDelete: () => void;
+  onProjectRemove: () => void;
 };
-const ProjectDeleteModal: FC<Props> = ({
+const ProjectRemoveModal: FC<Props> = ({
   isVisible,
   onClose,
-  onProjectDelete
+  onProjectRemove
 }) => {
   const t = useT();
+  
   return (
     <Modal size="small" visible={isVisible}>
       <ModalPanel
@@ -30,7 +31,7 @@ const ProjectDeleteModal: FC<Props> = ({
               size="normal"
               title="Remove"
               appearance="dangerous"
-              onClick={onProjectDelete}
+              onClick={onProjectRemove}
             />
           </>
         }
@@ -52,7 +53,7 @@ const ProjectDeleteModal: FC<Props> = ({
   );
 };
 
-export default ProjectDeleteModal;
+export default ProjectRemoveModal;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",

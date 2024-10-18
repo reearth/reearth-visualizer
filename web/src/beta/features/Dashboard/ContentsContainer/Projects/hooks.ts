@@ -10,8 +10,6 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
@@ -45,7 +43,6 @@ export default (workspaceId?: string) => {
     useUpdateProjectRecycleBin
   } = useProjectFetcher();
   const navigate = useNavigate();
-  const t = useT();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -54,7 +51,6 @@ export default (workspaceId?: string) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const { starredProjects } = useStarredProjectsQuery(workspaceId);
-  const [, setNotification] = useNotification();
 
   const {
     projects,
@@ -72,7 +68,7 @@ export default (workspaceId?: string) => {
     sort: pagination(sortValue).sortBy,
     keyword: searchTerm
   });
-  
+
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
       .filter((project) => project?.coreSupport === true)
@@ -181,29 +177,17 @@ export default (workspaceId?: string) => {
     [useUpdateProject]
   );
 
-  // project delete
-
-  const handleProjectDelete = useCallback(
+  // project remove
+  const handleProjectRemove = useCallback(
     async (project: Project) => {
       const updatedProject = {
         projectId: project.id,
-        deleted: !project.deleted
+        deleted: true
       };
 
-      const { status } = await useUpdateProjectRecycleBin(updatedProject);
-      if (status === "success") {
-        setNotification({
-          type: "success",
-          text: t("Successfully moved the project to trash!")
-        });
-      } else {
-        setNotification({
-          type: "error",
-          text: t("Failed to move project to the trash.")
-        });
-      }
+      await useUpdateProjectRecycleBin(updatedProject);
     },
-    [setNotification, t, useUpdateProjectRecycleBin]
+    [useUpdateProjectRecycleBin]
   );
 
   // project open
@@ -310,7 +294,7 @@ export default (workspaceId?: string) => {
     handleProjectSortChange,
     handleSearch,
     handleImportProject,
-    handleProjectDelete
+    handleProjectRemove
   };
 };
 

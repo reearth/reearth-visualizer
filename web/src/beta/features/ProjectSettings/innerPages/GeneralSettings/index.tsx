@@ -1,10 +1,6 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
-import ProjectDeleteModal from "@reearth/beta/features/Dashboard/ContentsContainer/Projects/ProjectDeleteModal";
-import {
-  Collapse,
-  Button,
-  Typography
-} from "@reearth/beta/lib/reearth-ui";
+import ProjectRemoveModal from "@reearth/beta/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
+import { Collapse, Button, Typography } from "@reearth/beta/lib/reearth-ui";
 import defaultBetaProjectImage from "@reearth/beta/ui/assets/defaultBetaProjectImage.png";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -37,13 +33,13 @@ type Props = {
     isArchived: boolean;
   };
   onUpdateProject: (settings: GeneralSettingsType) => void;
-  onDeleteProject: () => void;
+  onProjectRemove: () => void;
 };
 
 const GeneralSettings: FC<Props> = ({
   project,
   onUpdateProject,
-  onDeleteProject
+  onProjectRemove
 }) => {
   const t = useT();
 
@@ -63,14 +59,11 @@ const GeneralSettings: FC<Props> = ({
     });
   }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
-  const [deleteModelVisible, setDeleteModelVisible] = useState(false);
+  const [projectRemoveModelVisible, setProjectRemoveModelVisible] =
+    useState(false);
 
-  const handleDeleteModelOpen = useCallback(() => {
-    setDeleteModelVisible(true);
-  }, []);
-
-  const handleDeleteModelClose = useCallback(() => {
-    setDeleteModelVisible(false);
+  const handleProjectRemoveModal = useCallback((value: boolean) => {
+    setProjectRemoveModelVisible(value);
   }, []);
 
   return project ? (
@@ -120,27 +113,27 @@ const GeneralSettings: FC<Props> = ({
           <SettingsFields>
             <DangerItem>
               <Typography size="body" weight="bold">
-                {t("Delete this project")}
+                {t("Remove this project")}
               </Typography>
               <Typography size="body">
-                {t("This process will remove this project to recycle bin.")}
+                {t("This process will move this project to recycle bin.")}
               </Typography>
               <ButtonWrapper>
                 <Button
-                  title={t("Delete project")}
+                  title={t("Remove project")}
                   appearance="dangerous"
-                  onClick={handleDeleteModelOpen}
+                  onClick={() => handleProjectRemoveModal(true)}
                 />
               </ButtonWrapper>
             </DangerItem>
           </SettingsFields>
         </Collapse>
       </SettingsWrapper>
-      {deleteModelVisible && (
-        <ProjectDeleteModal
-          isVisible={deleteModelVisible}
-          onClose={handleDeleteModelClose}
-          onProjectDelete={onDeleteProject}
+      {projectRemoveModelVisible && (
+        <ProjectRemoveModal
+          isVisible={projectRemoveModelVisible}
+          onClose={() => handleProjectRemoveModal(false)}
+          onProjectRemove={onProjectRemove}
         />
       )}
     </InnerPage>

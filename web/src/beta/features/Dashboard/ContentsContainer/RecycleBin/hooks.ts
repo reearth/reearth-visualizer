@@ -1,7 +1,5 @@
 import { useProjectFetcher } from "@reearth/services/api";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DeletedProject } from "../../type";
 
@@ -11,12 +9,11 @@ export default (workspaceId?: string) => {
     useUpdateProjectRecycleBin,
     useDeleteProject
   } = useProjectFetcher();
-  const t = useT();
-  const { deletedProjects } = useDeletedProjectsQuery(workspaceId);
+  const { deletedProjects, loading } = useDeletedProjectsQuery(workspaceId);
   const [filteredDeletedProjects, setFilteredDeletedProjects] = useState<
     DeletedProject[]
   >([]);
-  const [, setNotification] = useNotification();
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   useEffect(() => {
     const mappedProjects = (deletedProjects ?? [])
@@ -33,28 +30,20 @@ export default (workspaceId?: string) => {
     setFilteredDeletedProjects(mappedProjects);
   }, [deletedProjects]);
 
+  const isLoading = useMemo(() => loading, [loading]);
+
   const handleProjectRecovery = useCallback(
     async (project?: DeletedProject) => {
       if (!project) return;
       const updatedProject = {
         projectId: project.id,
-        deleted: !project.isDeleted
+        deleted: false
       };
 
-      const { status } = await useUpdateProjectRecycleBin(updatedProject);
-      if (status === "success") {
-        setNotification({
-          type: "success",
-          text: t("Successfully recover the project!")
-        });
-      } else {
-        setNotification({
-          type: "error",
-          text: t("Failed to recover the project.")
-        });
-      }
+      await useUpdateProjectRecycleBin(updatedProject);
     },
-    [setNotification, t, useUpdateProjectRecycleBin]
+
+    [useUpdateProjectRecycleBin]
   );
 
   const handleProjectDelete = useCallback(
@@ -65,8 +54,15 @@ export default (workspaceId?: string) => {
     [useDeleteProject]
   );
 
+  const handleDeleteModalClose = useCallback((value: boolean) => {
+    setDeleteModalVisible(value);
+  }, []);
+
   return {
     filteredDeletedProjects,
+    isLoading,
+    deleteModalVisible,
+    handleDeleteModalClose,
     handleProjectDelete,
     handleProjectRecovery
   };
