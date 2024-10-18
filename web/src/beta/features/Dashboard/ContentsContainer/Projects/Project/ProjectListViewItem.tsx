@@ -8,6 +8,8 @@ import { formatRelativeTime } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
+import ProjectRemoveModal from "../ProjectRemoveModal";
+
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
 
@@ -16,7 +18,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate
+  onProjectUpdate,
+  onProjectRemove
 }) => {
   const theme = useTheme();
 
@@ -38,11 +41,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     isHovered,
     isStarred,
     hasMapOrStoryPublished,
+    projectRemoveModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
+    handleProjectStarClick,
+    handleProjectRemoveModal,
+    handleProjectRemove
     // exportModalVisible,
     // closeExportModal,
     // handleExportProject
@@ -50,7 +56,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect
+    onProjectSelect,
+    onProjectRemove
   });
 
   return (
@@ -116,6 +123,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           />
         </ActionCol>
       </ListWrapper>
+      {projectRemoveModalVisible && (
+        <ProjectRemoveModal
+          isVisible={projectRemoveModalVisible}
+          onClose={() => handleProjectRemoveModal(false)}
+          onProjectRemove={() => handleProjectRemove(project.id)}
+        />
+      )}
       {/* MEMO: this modal will be used in the future */}
       {/* <Modal visible={exportModalVisible} size="small">
         <ModalPanel

@@ -21,5 +21,6 @@ export const projectFragment = gql`
     createdAt
     coreSupport
     starred
+    isDeleted
   }
 `;

@@ -37,7 +37,7 @@ const HeaderProfile: React.FC<Props> = ({
 
   const popupMenu: PopupMenuItem[] = [
     {
-      icon: "switch",
+      icon: "arrowLeftRight",
       id: "switchWorkspace",
       subItem: workspaces.map((w) => {
         return {

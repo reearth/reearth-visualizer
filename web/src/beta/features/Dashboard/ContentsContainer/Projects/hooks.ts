@@ -39,7 +39,8 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject
+    useImportProject,
+    useUpdateProjectRemove
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -84,7 +85,8 @@ export default (workspaceId?: string) => {
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
-              starred: project.starred
+              starred: project.starred,
+              isDeleted: project.isDeleted
             }
           : undefined
       )
@@ -251,6 +253,19 @@ export default (workspaceId?: string) => {
     [useImportProject, refetch]
   );
 
+  // project remove
+  const handleProjectRemove = useCallback(
+    async (project: Project) => {
+      const updatedProject = {
+        projectId: project.id,
+        deleted: true
+      };
+
+      await useUpdateProjectRemove(updatedProject);
+    },
+    [useUpdateProjectRemove]
+  );
+
   return {
     filtedProjects,
     hasMoreProjects,
@@ -275,7 +290,8 @@ export default (workspaceId?: string) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject
+    handleImportProject,
+    handleProjectRemove
   };
 };
 

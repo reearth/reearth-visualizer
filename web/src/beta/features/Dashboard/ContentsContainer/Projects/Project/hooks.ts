@@ -15,13 +15,15 @@ type Props = {
   selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
+  onProjectRemove?: (projectId?: string) => void;
 };
 
 export default ({
   project,
   selectedProjectId,
   onProjectUpdate,
-  onProjectSelect
+  onProjectSelect,
+  onProjectRemove
 }: Props) => {
   const t = useT();
   const { useStoriesQuery } = useStorytellingFetcher();
@@ -32,6 +34,8 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
+  const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
+    useState(false);
   // MEMO: this modal state and function will be used in the future
   // const [exportModalVisible, setExportModalVisible] = useState(false);
 
@@ -79,6 +83,10 @@ export default ({
     setIsStarred(project.starred);
   }, [project.starred]);
 
+  const handleProjectRemoveModal = useCallback((value: boolean) => {
+    setProjectRemoveModalVisible(value);
+  }, []);
+
   const popupMenu: PopupMenuItem[] = [
     {
       id: "rename",
@@ -97,6 +105,12 @@ export default ({
       title: t("Export"),
       icon: "downloadSimple",
       onClick: () => handleExportProject()
+    },
+    {
+      id: "remove",
+      title: t("Remove"),
+      icon: "trash",
+      onClick: () => handleProjectRemoveModal(true)
     }
   ];
 
@@ -143,6 +157,15 @@ export default ({
     return hasMapPublished || hasStoryPublished;
   }, [stories, project.status]);
 
+  const handleProjectRemove = useCallback(
+    (projectId?: string) => {
+      if (!projectId) return;
+      onProjectRemove?.(projectId);
+      handleProjectRemoveModal(false);
+    },
+    [handleProjectRemoveModal, onProjectRemove]
+  );
+
   return {
     isEditing,
     projectName,
@@ -150,11 +173,14 @@ export default ({
     popupMenu,
     isStarred,
     hasMapOrStoryPublished,
+    projectRemoveModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick,
-    handleExportProject
+    handleExportProject,
+    handleProjectRemoveModal,
+    handleProjectRemove
   };
 };
