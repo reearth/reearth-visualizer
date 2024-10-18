@@ -10,7 +10,7 @@ type Prop = {
   onProjectDelete?: (projectId?: string) => void;
   onProjectRecovery?: (projectId?: string) => void;
 };
-const RecyleBinProject: FC<Prop> = ({
+const RecycleBinProject: FC<Prop> = ({
   project,
   onProjectDelete,
   onProjectRecovery
@@ -60,7 +60,7 @@ const RecyleBinProject: FC<Prop> = ({
   );
 };
 
-export default RecyleBinProject;
+export default RecycleBinProject;
 
 const Card = styled("div")(() => ({
   display: "flex",

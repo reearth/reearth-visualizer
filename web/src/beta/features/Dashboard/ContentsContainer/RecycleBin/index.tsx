@@ -6,7 +6,7 @@ import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 import useHooks from "./hooks";
-import RecyleBinProject from "./RecyleBinProject";
+import RecycleBinProject from "./RecycleBinProject";
 
 const RecyleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const { deletedProjects, handleProjectRecovery, handleProjectDelete } =
@@ -20,7 +20,7 @@ const RecyleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             <ProjectsContainer>
               <ProjectsGroup>
                 {deletedProjects?.map((project) => (
-                  <RecyleBinProject
+                  <RecycleBinProject
                     key={project?.id}
                     project={project}
                     onProjectRecovery={() => handleProjectRecovery(project)}
