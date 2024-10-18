@@ -8,11 +8,13 @@ import ProjectDeleteModal from "../ProjectDeleteModal";
 
 type Prop = {
   project?: DeletedProject;
+  disabled?: boolean;
   onProjectDelete: () => void;
   onProjectRecovery?: (projectId?: string) => void;
 };
 const RecycleBinItem: FC<Prop> = ({
   project,
+  disabled,
   onProjectRecovery,
   onProjectDelete
 }) => {
@@ -65,6 +67,7 @@ const RecycleBinItem: FC<Prop> = ({
       {deleteModalVisible && (
         <ProjectDeleteModal
           isVisible={deleteModalVisible}
+          disabled={disabled}
           projectName={project?.name || ""}
           onClose={handleDeleteModalClose}
           onProjectDelete={onProjectDelete}

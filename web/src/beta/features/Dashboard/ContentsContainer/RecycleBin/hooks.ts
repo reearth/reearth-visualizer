@@ -4,19 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DeletedProject } from "../../type";
 
 export default (workspaceId?: string) => {
-  const {
-    useDeletedProjectsQuery,
-    useUpdateProjectRecycleBin,
-    useDeleteProject
-  } = useProjectFetcher();
-  const { deletedProjects, loading } = useDeletedProjectsQuery(workspaceId);
-  const [filteredDeletedProjects, setFilteredDeletedProjects] = useState<
-    DeletedProject[]
-  >([]);
+  const { useDeletedProjectsQuery, useUpdateProjectRemove, useDeleteProject } =
+    useProjectFetcher();
+  const { deletedProjects, loading, refetch } =
+    useDeletedProjectsQuery(workspaceId);
+  const [disabled, setDisabled] = useState(false);
 
-  useEffect(() => {
-    const mappedProjects = (deletedProjects ?? [])
-      .map<DeletedProject | undefined>((project) => {
+  const filteredDeletedProjects = useMemo(
+    () =>
+      (deletedProjects ?? []).map<DeletedProject | undefined>((project) => {
         if (!project) return undefined;
         return {
           id: project.id,
@@ -24,10 +20,9 @@ export default (workspaceId?: string) => {
           imageUrl: project.imageUrl,
           isDeleted: project.isDeleted
         };
-      })
-      .filter(Boolean) as DeletedProject[];
-    setFilteredDeletedProjects(mappedProjects);
-  }, [deletedProjects]);
+      }),
+    [deletedProjects]
+  );
 
   const isLoading = useMemo(() => loading, [loading]);
 
@@ -39,22 +34,28 @@ export default (workspaceId?: string) => {
         deleted: false
       };
 
-      await useUpdateProjectRecycleBin(updatedProject);
+      await useUpdateProjectRemove(updatedProject);
     },
 
-    [useUpdateProjectRecycleBin]
+    [useUpdateProjectRemove]
   );
 
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   const handleProjectDelete = useCallback(
-    async (projectId?: string) => {
+    async (projectId: string) => {
       if (!projectId) return;
+      setDisabled(!disabled);
       await useDeleteProject({ projectId });
     },
-    [useDeleteProject]
+    [disabled, useDeleteProject]
   );
   return {
     filteredDeletedProjects,
     isLoading,
+    disabled,
     handleProjectDelete,
     handleProjectRecovery
   };

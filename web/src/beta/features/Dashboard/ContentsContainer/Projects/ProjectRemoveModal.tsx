@@ -11,16 +11,18 @@ import { FC } from "react";
 
 type Props = {
   isVisible: boolean;
+  disabled?: boolean;
   onClose: () => void;
   onProjectRemove: () => void;
 };
 const ProjectRemoveModal: FC<Props> = ({
   isVisible,
+  disabled,
   onClose,
   onProjectRemove
 }) => {
   const t = useT();
-  
+
   return (
     <Modal size="small" visible={isVisible}>
       <ModalPanel
@@ -31,6 +33,7 @@ const ProjectRemoveModal: FC<Props> = ({
               size="normal"
               title="Remove"
               appearance="dangerous"
+              disabled={disabled}
               onClick={onProjectRemove}
             />
           </>

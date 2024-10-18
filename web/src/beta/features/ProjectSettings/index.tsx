@@ -46,6 +46,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     currentStory,
     accessToken,
     extensions,
+    disabled,
     handleUpdateProject,
     handleProjectRemove,
     handleUpdateProjectBasicAuth,
@@ -101,6 +102,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               project={project}
               onUpdateProject={handleUpdateProject}
               onProjectRemove={handleProjectRemove}
+              disabled={disabled}
             />
           )}
           {tab === "story" && currentStory && (

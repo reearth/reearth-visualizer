@@ -15,8 +15,9 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
     filteredDeletedProjects,
     isLoading,
+    disabled,
     handleProjectRecovery,
-    handleProjectDelete
+    handleProjectDelete,
   } = useHooks(workspaceId);
 
   const t = useT();
@@ -34,20 +35,22 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     <RecycleBinItem
                       key={project?.id}
                       project={project}
+                      disabled={disabled}
                       onProjectRecovery={() => handleProjectRecovery(project)}
-                      onProjectDelete={() => handleProjectDelete(project.id)}
+                      onProjectDelete={() =>
+                        project && handleProjectDelete(project.id)
+                      }
                     />
                   ))}
                 </ProjectsGroup>
               </ProjectsContainer>
-              {isLoading && (
-                <LoadingWrapper>
-                  <Loading relative />
-                </LoadingWrapper>
-              )}
             </ProjectsWrapper>
           </ContentWrapper>
         </ManagerContent>
+      ) : isLoading ? (
+        <LoadingWrapper>
+          <Loading relative />
+        </LoadingWrapper>
       ) : (
         <ManagerEmptyContent>
           <Typography size="h5" color={theme.content.weak}>
@@ -95,6 +98,9 @@ const ProjectsGroup = styled("div")(({ theme }) => ({
 }));
 
 const LoadingWrapper = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   width: "100%",
-  height: 100
+  height: "100vh"
 }));
