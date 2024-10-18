@@ -32,12 +32,14 @@ type Props = {
     imageUrl?: string | null;
     isArchived: boolean;
   };
+  disabled?: boolean,
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onProjectRemove: () => void;
 };
 
 const GeneralSettings: FC<Props> = ({
   project,
+  disabled,
   onUpdateProject,
   onProjectRemove
 }) => {
@@ -134,6 +136,7 @@ const GeneralSettings: FC<Props> = ({
           isVisible={projectRemoveModalVisible}
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={onProjectRemove}
+          disabled={disabled}
         />
       )}
     </InnerPage>

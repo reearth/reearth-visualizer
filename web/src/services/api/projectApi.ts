@@ -287,13 +287,13 @@ export default () => {
     [updateProjectMutation, t, setNotification]
   );
 
-  const [updateProjectRecycleBinMutation] = useMutation(UPDATE_PROJECT, {
+  const [updateProjectRemoveMutation] = useMutation(UPDATE_PROJECT, {
     refetchQueries: ["GetProjects", "GetStarredProjects", "GetDeletedProjects"]
   });
-  const useUpdateProjectRecycleBin = useCallback(
+  const useUpdateProjectRemove = useCallback(
     async (input: { projectId: string; deleted: boolean }) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectRecycleBinMutation({
+      const { data, errors } = await updateProjectRemoveMutation({
         variables: { ...input }
       });
 
@@ -303,7 +303,7 @@ export default () => {
           type: "error",
           text: input.deleted
             ? t("Failed to moved the project to trash.")
-            : t("Failed restored the project!")
+            : t("Failed to restored the project!")
         });
 
         return { status: "error" };
@@ -316,7 +316,7 @@ export default () => {
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [updateProjectRecycleBinMutation, setNotification, t]
+    [updateProjectRemoveMutation, setNotification, t]
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
@@ -355,7 +355,7 @@ export default () => {
   );
 
   const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
-    refetchQueries: ["GetProject", "GetDeletedProjects"],
+    refetchQueries: ["GetDeletedProjects"],
     update(cache, { data }) {
       if (data?.deleteProject?.projectId) {
         cache.modify({
@@ -576,7 +576,7 @@ export default () => {
     useStarredProjectsQuery,
     useExportProject,
     useImportProject,
-    useUpdateProjectRecycleBin,
+    useUpdateProjectRemove,
     useDeletedProjectsQuery
   };
 };

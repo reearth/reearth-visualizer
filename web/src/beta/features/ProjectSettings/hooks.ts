@@ -27,11 +27,12 @@ export default ({ projectId }: Props) => {
     useUpdateProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
-    useUpdateProjectRecycleBin
+    useUpdateProjectRemove
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
   const { project } = useProjectQuery(projectId);
+  const [disabled, setDisabled] = useState(false);
 
   const { scene } = useSceneQuery({ sceneId: project?.scene?.id });
 
@@ -44,23 +45,18 @@ export default ({ projectId }: Props) => {
     [projectId, useUpdateProject]
   );
 
-  const handleProjectRemove= useCallback(async () => {
+  const handleProjectRemove = useCallback(async () => {
     const updatedProject = {
       projectId,
-      deleted: !project?.isDeleted
+      deleted: true
     };
-
-    const { status } = await useUpdateProjectRecycleBin(updatedProject);
+    setDisabled(!disabled);
+    
+    const { status } = await useUpdateProjectRemove(updatedProject);
     if (status === "success") {
       navigate(`/dashboard/${workspaceId}/`);
     }
-  }, [
-    navigate,
-    project?.isDeleted,
-    projectId,
-    useUpdateProjectRecycleBin,
-    workspaceId
-  ]);
+  }, [disabled, navigate, projectId, useUpdateProjectRemove, workspaceId]);
 
   const handleUpdateProjectBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {
@@ -154,6 +150,7 @@ export default ({ projectId }: Props) => {
     currentStory,
     accessToken,
     extensions,
+    disabled,
     handleUpdateProject,
     handleProjectRemove,
     handleUpdateProjectBasicAuth,

@@ -12,12 +12,14 @@ import { FC, useState } from "react";
 type Props = {
   isVisible: boolean;
   projectName: string;
+  disabled?: boolean;
   onClose: () => void;
   onProjectDelete: () => void;
 };
 const ProjectDeleteModal: FC<Props> = ({
   isVisible,
   projectName,
+  disabled,
   onClose,
   onProjectDelete
 }) => {
@@ -40,7 +42,7 @@ const ProjectDeleteModal: FC<Props> = ({
             key="delete"
             title={t("I am sure I want to delete this project")}
             appearance="dangerous"
-            disabled={deleteInputName !== projectName}
+            disabled={deleteInputName !== projectName || disabled}
             onClick={onProjectDelete}
           />
         ]}

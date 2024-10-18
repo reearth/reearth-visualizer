@@ -40,7 +40,7 @@ export default (workspaceId?: string) => {
     useCreateProject,
     useStarredProjectsQuery,
     useImportProject,
-    useUpdateProjectRecycleBin
+    useUpdateProjectRemove
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -86,7 +86,7 @@ export default (workspaceId?: string) => {
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
               starred: project.starred,
-              deleted: project.isDeleted
+              isDeleted: project.isDeleted
             }
           : undefined
       )
@@ -121,10 +121,6 @@ export default (workspaceId?: string) => {
     }
     autoFillPage(wrapperRef, handleGetMoreProjects);
   }, [handleGetMoreProjects, projects, hasMoreProjects, isLoading]);
-
-  useEffect(() => {
-    refetch();
-  }, [searchTerm, sortValue, refetch]);
 
   const handleProjectSortChange = useCallback(
     (value?: string) => {
@@ -175,19 +171,6 @@ export default (workspaceId?: string) => {
       // if (sortBy) refetch();
     },
     [useUpdateProject]
-  );
-
-  // project remove
-  const handleProjectRemove = useCallback(
-    async (project: Project) => {
-      const updatedProject = {
-        projectId: project.id,
-        deleted: true
-      };
-
-      await useUpdateProjectRecycleBin(updatedProject);
-    },
-    [useUpdateProjectRecycleBin]
   );
 
   // project open
@@ -269,6 +252,20 @@ export default (workspaceId?: string) => {
     },
     [useImportProject, refetch]
   );
+
+  // project remove
+  const handleProjectRemove = useCallback(
+    async (project: Project) => {
+      const updatedProject = {
+        projectId: project.id,
+        deleted: true
+      };
+
+      await useUpdateProjectRemove(updatedProject);
+    },
+    [useUpdateProjectRemove]
+  );
+
   return {
     filtedProjects,
     hasMoreProjects,

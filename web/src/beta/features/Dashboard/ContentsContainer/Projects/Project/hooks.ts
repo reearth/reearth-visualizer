@@ -34,8 +34,8 @@ export default ({
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
-    const [projectRemoveModalVisible, setProjectRemoveModalVisible] = useState(false);
-
+  const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
+    useState(false);
   // MEMO: this modal state and function will be used in the future
   // const [exportModalVisible, setExportModalVisible] = useState(false);
 
@@ -83,9 +83,9 @@ export default ({
     setIsStarred(project.starred);
   }, [project.starred]);
 
-   const handleProjectRemoveModal = useCallback((value: boolean) => {
-     setProjectRemoveModalVisible(value);
-   }, []);
+  const handleProjectRemoveModal = useCallback((value: boolean) => {
+    setProjectRemoveModalVisible(value);
+  }, []);
 
   const popupMenu: PopupMenuItem[] = [
     {
@@ -157,11 +157,14 @@ export default ({
     return hasMapPublished || hasStoryPublished;
   }, [stories, project.status]);
 
-  const handleProjectRemove = useCallback((projectId?: string) => {
-     if (!projectId) return;
-    onProjectRemove?.(projectId);
-    handleProjectRemoveModal(false);
- }, [handleProjectRemoveModal, onProjectRemove])
+  const handleProjectRemove = useCallback(
+    (projectId?: string) => {
+      if (!projectId) return;
+      onProjectRemove?.(projectId);
+      handleProjectRemoveModal(false);
+    },
+    [handleProjectRemoveModal, onProjectRemove]
+  );
 
   return {
     isEditing,
@@ -177,7 +180,7 @@ export default ({
     handleProjectNameDoubleClick,
     handleProjectStarClick,
     handleExportProject,
-   handleProjectRemoveModal,
+    handleProjectRemoveModal,
     handleProjectRemove
   };
 };
