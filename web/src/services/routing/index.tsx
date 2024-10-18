@@ -1,4 +1,3 @@
-import AccountSettingPage from "@reearth/beta/pages/AccountSettingsPage";
 import RootPage from "@reearth/beta/pages/RootPage";
 import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
@@ -8,6 +7,12 @@ const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
 const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const ProjectSettings = lazy(
   () => import("@reearth/beta/pages/ProjectSettingsPage")
+);
+const AccountSettingPage = lazy(
+  () => import("@reearth/beta/pages/AccountSettingsPage")
+);
+const WorkspaceSettingPage = lazy(
+  () => import("@reearth/beta/pages/WorkspaceSettingPage")
 );
 const PluginPlaygroundPage = lazy(
   () => import("@reearth/beta/pages/PluginPlaygroundPage")
@@ -39,6 +44,14 @@ export const AppRoutes = () => {
     {
       path: "settings/account",
       element: <AccountSettingPage />
+    },
+    {
+      path: "settings/workspaces/:workspaceId",
+      element: <WorkspaceSettingPage tab="workspace" />
+    },
+    {
+      path: "settings/workspaces/:workspaceId/members",
+      element: <WorkspaceSettingPage tab="members" />
     },
     {
       path: "graphql",

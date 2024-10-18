@@ -1,7 +1,9 @@
+Auto: ''
 Account: ''
 Name: 名前
 Email address: ''
 Password: パスワード
+Language: ''
 No whitespace is allowed.: ''
 Too short.: ''
 That is terribly long.: ''
@@ -55,6 +57,7 @@ Starred: ''
 Switch WorkSpace: ''
 Personal: ''
 Team Workspace: ''
+Workspace Settings: ''
 Account Settings: ''
 Log Out: ''
 Re:Earth Visualizer: ''
@@ -275,6 +278,18 @@ Spacing settings: 余白設定
 Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプです
+Workspace: ''
+Workspace Name: ''
+Remove this workspace: ''
+This process will remove this workspace: ''
+Remove workspace: ''
+Delete workspace: ''
+I am sure I want to delete this workspace.: ''
+'This action cannot be undone. ': ''
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
+Please type your workspace name to continue.: ''
+You are going to delete a workspace.: ''
+Please to make sure you don’t have any projects in your workspace, then you can continue.: ''
 Write your story :): ストーリーを書きましょう!
 Normal: 標準テキスト
 Heading 1: 見出し1
@@ -362,6 +377,8 @@ Failed to update user password.: ''
 Successfully updated user password!: ''
 Failed to delete user.: ''
 Successfully delete user!: ''
+Failed to change language.: ''
+Successfully updated user language!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
@@ -412,4 +429,14 @@ Failed to update widget alignment.: ウィジェットのアラインメント�
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
+Failed to delete workspace.: ''
+Successfully deleted workspace!: ''
+Failed to update workspace.: ''
+Successfully updated workspace!: ''
+Failed to add member to workspace.: ''
+Successfully added member to workspace!: ''
+Failed to remove member from workspace.: ''
+Successfully removed member from workspace!: ''
+Failed to update member in workspace.: ''
+Successfully updated member in workspace!: ''
 Style_: スタイル_

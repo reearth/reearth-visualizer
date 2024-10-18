@@ -1,14 +1,10 @@
-import AccountAndWorkSpaceSetting from "@reearth/beta/features/AccountAndWorkSpaceSetting";
+import AccountSetting from "@reearth/beta/features/AccountSetting";
 import { FC } from "react";
 
 import Page from "../Page";
 
 const AccountSettingPage: FC = () => (
-  <Page
-    renderItem={(props) => (
-      <AccountAndWorkSpaceSetting {...props} tab="account" />
-    )}
-  />
+  <Page renderItem={() => <AccountSetting />} />
 );
 
 export default AccountSettingPage;

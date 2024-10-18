@@ -54,6 +54,19 @@ const HeaderProfile: React.FC<Props> = ({
       title: t("Switch workspace")
     },
     {
+      id: "workspaceSettings",
+      title: t("Workspace Settings"),
+      icon: "setting",
+      hasBorderBottom: true,
+      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
+    },
+    {
+      id: "accountSettings",
+      title: t("Account Settings"),
+      icon: "user",
+      onClick: () => navigate("/settings/account")
+    },
+    {
       icon: "exit",
       id: "logOut",
       hasBorderBottom: true,
