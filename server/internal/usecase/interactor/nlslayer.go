@@ -833,12 +833,8 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	return inp.FeatureID, nil
 }
 
-func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]interface{}) (nlslayer.NLSLayerList, error) {
+func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (nlslayer.NLSLayerList, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
-	if err != nil {
-		return nil, err
-	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -846,10 +842,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]int
 	nlayerIDs := idx.List[id.NLSLayer]{}
 	nlayers := []nlslayer.NLSLayer{}
 	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
-		nlsLayerID, err := id.NLSLayerIDFrom(nlsLayerJSON.ID)
-		if err != nil {
-			return nil, err
-		}
+		nlsLayerID := id.NewNLSLayerID()
 		nlayerIDs = append(nlayerIDs, nlsLayerID)
 		nlayer, err := nlslayer.New().
 			ID(nlsLayerID).

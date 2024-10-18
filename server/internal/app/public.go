@@ -192,8 +192,10 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 	}
 }
 
+type keyType struct{}
+
 func PublishedAuthMiddleware() echo.MiddlewareFunc {
-	key := struct{}{}
+	key := keyType{}
 	return middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
 		Validator: func(user string, password string, c echo.Context) (bool, error) {
 			md, ok := c.Request().Context().Value(key).(interfaces.ProjectPublishedMetadata)

@@ -9621,6 +9621,7 @@ input ExportProjectInput {
 }
 
 input ImportProjectInput {
+  teamId: ID!
   file: Upload!
 }
 
@@ -9662,7 +9663,7 @@ extend type Query {
     pagination: Pagination
     keyword: String
     sort: ProjectSort
-  ): ProjectConnection!
+  ): ProjectConnection! # not included deleted projects
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
@@ -60553,13 +60554,20 @@ func (ec *executionContext) unmarshalInputImportProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"file"}
+	fieldsInOrder := [...]string{"teamId", "file"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "teamId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TeamID = data
 		case "file":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
 			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)

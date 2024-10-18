@@ -17,6 +17,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// go test -v -run TestImportStyles ./internal/usecase/interactor/...
+
 func TestImportStyles(t *testing.T) {
 	ctx := context.Background()
 
@@ -53,7 +55,7 @@ func TestImportStyles(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportStyles(ctx, sceneData)
+	result, err := ifs.ImportStyles(ctx, scene.ID(), sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
@@ -64,25 +66,26 @@ func TestImportStyles(t *testing.T) {
 	actual := string(resultJSON)
 
 	// expected
+	exp := fmt.Sprintf(`[
+		{
+		  "id": "%s",
+		  "sceneId": "%s",
+		  "name": "スタイル_0",
+		  "value": {
+			"color": "red"
+		  }
+		},
+		{
+		  "id": "%s",
+		  "sceneId": "%s",
+		  "name": "スタイル_1",
+		  "value": {
+			"font": "bold"
+		  }
+		}
+	  ]`, temp[0].ID, scene.ID(), temp[1].ID, scene.ID())
 	var expectedMap []map[string]interface{}
-	err = json.Unmarshal([]byte(fmt.Sprintf(`[
-      {
-        "id": "01j7hzqgycv76hxsygmcrb47m6",
-        "sceneId": "%s",
-        "name": "スタイル_0",
-        "value": {
-          "color": "red"
-        }
-      },
-      {
-        "id": "01j7hzrgc3ag8m1ftzye05csgx",
-        "sceneId": "%s",
-        "name": "スタイル_1",
-        "value": {
-          "font": "bold"
-        }
-      }
-    ]`, scene.ID(), scene.ID())), &expectedMap)
+	err = json.Unmarshal([]byte(exp), &expectedMap)
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)
 	assert.NoError(t, err)
