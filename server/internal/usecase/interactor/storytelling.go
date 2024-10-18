@@ -335,7 +335,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	newAlias := prevAlias
 	if inp.Alias != nil && *inp.Alias != prevAlias {
-		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(rerror.ErrNotFound, err) {
+		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, err
 		} else if publishedStory != nil && story.Id() != publishedStory.Id() {
 			return nil, interfaces.ErrProjectAliasAlreadyUsed
