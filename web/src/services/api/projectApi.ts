@@ -293,26 +293,13 @@ export default () => {
   const useUpdateProjectRecycleBin = useCallback(
     async (input: { projectId: string; deleted: boolean }) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectRecycleBinMutation({
+      const { data } = await updateProjectRecycleBinMutation({
         variables: { ...input }
       });
 
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to move project to trash", errors);
-        setNotification({
-          type: "error",
-          text: t("Failed to update project.")
-        });
-
-        return { status: "error" };
-      }
-      setNotification({
-        type: "success",
-        text: t("Successfully moved the project to trash!")
-      });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [updateProjectRecycleBinMutation, setNotification, t]
+    [updateProjectRecycleBinMutation]
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {

@@ -9,8 +9,11 @@ import useHooks from "./hooks";
 import RecycleBinProject from "./RecycleBinProject";
 
 const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
-  const { deletedProjects, handleProjectRecovery, handleProjectDelete } =
-    useHooks(workspaceId);
+  const {
+    filteredDeletedProjects,
+    handleProjectRecovery,
+    handleProjectDelete
+  } = useHooks(workspaceId);
 
   return (
     <ManagerWrapper>
@@ -19,7 +22,7 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           <ProjectsWrapper>
             <ProjectsContainer>
               <ProjectsGroup>
-                {deletedProjects?.map((project) => (
+                {filteredDeletedProjects?.map((project) => (
                   <RecycleBinProject
                     key={project?.id}
                     project={project}

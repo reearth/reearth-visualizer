@@ -2,6 +2,8 @@ import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
+import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -30,6 +32,8 @@ export default ({ projectId }: Props) => {
     useUpdateProjectRecycleBin
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const { project } = useProjectQuery(projectId);
 
@@ -44,7 +48,6 @@ export default ({ projectId }: Props) => {
     [projectId, useUpdateProject]
   );
 
- 
   const handleProjectDelete = useCallback(async () => {
     const updatedProject = {
       projectId,
@@ -53,12 +56,23 @@ export default ({ projectId }: Props) => {
 
     const { status } = await useUpdateProjectRecycleBin(updatedProject);
     if (status === "success") {
+      setNotification({
+        type: "success",
+        text: t("Successfully moved the project to trash!")
+      });
       navigate(`/dashboard/${workspaceId}/`);
+    } else {
+      setNotification({
+        type: "error",
+        text: t("Failed to move project to the trash.")
+      });
     }
   }, [
     navigate,
     project?.isDeleted,
     projectId,
+    setNotification,
+    t,
     useUpdateProjectRecycleBin,
     workspaceId
   ]);
