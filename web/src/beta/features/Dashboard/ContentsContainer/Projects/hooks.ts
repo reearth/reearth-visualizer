@@ -40,7 +40,7 @@ export default (workspaceId?: string) => {
     useCreateProject,
     useStarredProjectsQuery,
     useImportProject,
-    useUpdateProjectRecyleBin
+    useUpdateProjectRecycleBin
   } = useProjectFetcher();
   const navigate = useNavigate();
 
@@ -180,9 +180,9 @@ export default (workspaceId?: string) => {
        deleted: !project.deleted
      };
 
-     await useUpdateProjectRecyleBin(updatedProject);
+     await useUpdateProjectRecycleBin(updatedProject);
    },
-   [useUpdateProjectRecyleBin]
+   [useUpdateProjectRecycleBin]
  );
 
 

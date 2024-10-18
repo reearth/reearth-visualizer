@@ -287,13 +287,13 @@ export default () => {
     [updateProjectMutation, t, setNotification]
   );
 
-  const [updateProjectRecyleBinMutation] = useMutation(UPDATE_PROJECT, {
+  const [updateProjectRecycleBinMutation] = useMutation(UPDATE_PROJECT, {
     refetchQueries: ["GetProjects", "GetStarredProjects", "GetDeletedProjects"]
   });
-  const useUpdateProjectRecyleBin = useCallback(
+  const useUpdateProjectRecycleBin = useCallback(
     async (input: { projectId: string; deleted: boolean }) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectRecyleBinMutation({
+      const { data, errors } = await updateProjectRecycleBinMutation({
         variables: { ...input }
       });
 
@@ -312,7 +312,7 @@ export default () => {
       });
       return { data: data?.updateProject?.project, status: "success" };
     },
-    [updateProjectRecyleBinMutation, setNotification, t]
+    [updateProjectRecycleBinMutation, setNotification, t]
   );
 
   const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
@@ -572,7 +572,7 @@ export default () => {
     useStarredProjectsQuery,
     useExportProject,
     useImportProject,
-    useUpdateProjectRecyleBin,
+    useUpdateProjectRecycleBin,
     useDeletedProjectsQuery
   };
 };

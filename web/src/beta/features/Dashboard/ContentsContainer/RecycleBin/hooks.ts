@@ -6,7 +6,7 @@ import { DeletedProject } from "../../type";
 export default (workspaceId?: string) => {
   const {
     useDeletedProjectsQuery,
-    useUpdateProjectRecyleBin,
+    useUpdateProjectRecycleBin,
     useDeleteProject
   } = useProjectFetcher();
 
@@ -36,9 +36,9 @@ useEffect(() => {
         deleted: !project.isDeleted
       };
 
-      await useUpdateProjectRecyleBin(updatedProject);
+      await useUpdateProjectRecycleBin(updatedProject);
     },
-    [useUpdateProjectRecyleBin]
+    [useUpdateProjectRecycleBin]
   );
 
   const handleProjectDelete = useCallback(

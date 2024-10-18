@@ -8,7 +8,7 @@ import { FC } from "react";
 import useHooks from "./hooks";
 import RecycleBinProject from "./RecycleBinProject";
 
-const RecyleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
+const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const { deletedProjects, handleProjectRecovery, handleProjectDelete } =
     useHooks(workspaceId);
 
@@ -36,7 +36,7 @@ const RecyleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   );
 };
 
-export default RecyleBin;
+export default RecycleBin;
 
 const ContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",

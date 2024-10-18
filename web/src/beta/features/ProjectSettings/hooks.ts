@@ -27,7 +27,7 @@ export default ({ projectId }: Props) => {
     useUpdateProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
-    useUpdateProjectRecyleBin
+    useUpdateProjectRecycleBin
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
@@ -51,7 +51,7 @@ export default ({ projectId }: Props) => {
       deleted: !project?.isDeleted
     };
 
-    const { status } = await useUpdateProjectRecyleBin(updatedProject);
+    const { status } = await useUpdateProjectRecycleBin(updatedProject);
     if (status === "success") {
       navigate(`/dashboard/${workspaceId}/`);
     }
@@ -59,7 +59,7 @@ export default ({ projectId }: Props) => {
     navigate,
     project?.isDeleted,
     projectId,
-    useUpdateProjectRecyleBin,
+    useUpdateProjectRecycleBin,
     workspaceId
   ]);
 
