@@ -3,24 +3,30 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
-import { Project } from "../../../type";
+import { DeletedProject } from "../../../type";
+import ProjectDeleteModal from "../ProjectDeleteModal";
 
 type Prop = {
-  project?: Project;
-  onProjectDelete?: (projectId?: string) => void;
+  project?: DeletedProject;
+  onProjectDelete: () => void;
   onProjectRecovery?: (projectId?: string) => void;
 };
 const RecycleBinItem: FC<Prop> = ({
   project,
-  onProjectDelete,
-  onProjectRecovery
+  onProjectRecovery,
+  onProjectDelete
 }) => {
   const t = useT();
   const [isHovered, setIsHovered] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const handleProjectHover = useCallback((value: boolean) => {
     setIsHovered(value);
   }, []);
+
+  const handleDeleteModalClose = useCallback(() => {
+    setDeleteModalVisible(!deleteModalVisible);
+  }, [deleteModalVisible]);
 
   const popupMenu: PopupMenuItem[] = [
     {
@@ -33,7 +39,7 @@ const RecycleBinItem: FC<Prop> = ({
       id: "delete",
       title: t("Delete"),
       icon: "trash",
-      onClick: () => project?.id && onProjectDelete?.(project.id)
+      onClick: handleDeleteModalClose
     }
   ];
 
@@ -56,6 +62,14 @@ const RecycleBinItem: FC<Prop> = ({
           }
         />
       </CardFooter>
+      {deleteModalVisible && (
+        <ProjectDeleteModal
+          isVisible={deleteModalVisible}
+          projectName={project?.name || ""}
+          onClose={handleDeleteModalClose}
+          onProjectDelete={onProjectDelete}
+        />
+      )}
     </Card>
   );
 };

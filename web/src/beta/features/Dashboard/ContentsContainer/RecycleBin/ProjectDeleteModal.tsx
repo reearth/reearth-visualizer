@@ -9,17 +9,15 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
-import { Project } from "../../type";
-
 type Props = {
   isVisible: boolean;
-  project: Project;
+  projectName: string;
   onClose: () => void;
   onProjectDelete: () => void;
 };
 const ProjectDeleteModal: FC<Props> = ({
   isVisible,
-  project,
+  projectName,
   onClose,
   onProjectDelete
 }) => {
@@ -42,14 +40,14 @@ const ProjectDeleteModal: FC<Props> = ({
             key="delete"
             title={t("I am sure I want to delete this project")}
             appearance="dangerous"
-            disabled={deleteInputName !== project?.name}
+            disabled={deleteInputName !== projectName}
             onClick={onProjectDelete}
           />
         ]}
       >
         <ModalContentWrapper>
           <Typography size="body" weight="bold">
-            {project?.name}
+            {projectName}
           </Typography>
           <Typography size="body">
             {t(

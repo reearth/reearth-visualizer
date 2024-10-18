@@ -303,7 +303,7 @@ export default () => {
           type: "error",
           text: input.deleted
             ? t("Failed to moved the project to trash.")
-            : t("Failde restored the project!")
+            : t("Failded restored the project!")
         });
 
         return { status: "error" };

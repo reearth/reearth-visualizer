@@ -59,11 +59,11 @@ const GeneralSettings: FC<Props> = ({
     });
   }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
-  const [projectRemoveModelVisible, setProjectRemoveModelVisible] =
+  const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
     useState(false);
 
   const handleProjectRemoveModal = useCallback((value: boolean) => {
-    setProjectRemoveModelVisible(value);
+    setProjectRemoveModalVisible(value);
   }, []);
 
   return project ? (
@@ -129,9 +129,9 @@ const GeneralSettings: FC<Props> = ({
           </SettingsFields>
         </Collapse>
       </SettingsWrapper>
-      {projectRemoveModelVisible && (
+      {projectRemoveModalVisible && (
         <ProjectRemoveModal
-          isVisible={projectRemoveModelVisible}
+          isVisible={projectRemoveModalVisible}
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={onProjectRemove}
         />

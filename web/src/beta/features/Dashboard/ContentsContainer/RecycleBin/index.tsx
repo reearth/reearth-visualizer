@@ -10,14 +10,11 @@ import { FC } from "react";
 
 import useHooks from "./hooks";
 import RecycleBinItem from "./items/RecycleBinItem";
-import ProjectDeleteModal from "./ProjectDeleteModal";
 
 const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
     filteredDeletedProjects,
     isLoading,
-    deleteModalVisible,
-    handleDeleteModalClose,
     handleProjectRecovery,
     handleProjectDelete
   } = useHooks(workspaceId);
@@ -27,29 +24,19 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
   return (
     <ManagerWrapper>
-      {filteredDeletedProjects.length ? (
+      {filteredDeletedProjects?.length ? (
         <ManagerContent>
           <ContentWrapper>
             <ProjectsWrapper>
               <ProjectsContainer>
                 <ProjectsGroup>
                   {filteredDeletedProjects?.map((project) => (
-                    <>
-                      <RecycleBinItem
-                        key={project?.id}
-                        project={project}
-                        onProjectRecovery={() => handleProjectRecovery(project)}
-                        onProjectDelete={() => handleDeleteModalClose(true)}
-                      />
-                      {deleteModalVisible && (
-                        <ProjectDeleteModal
-                          isVisible={deleteModalVisible}
-                          project={project}
-                          onClose={() => handleDeleteModalClose(false)}
-                          onProjectDelete={() => handleProjectDelete(project)}
-                        />
-                      )}
-                    </>
+                    <RecycleBinItem
+                      key={project?.id}
+                      project={project}
+                      onProjectRecovery={() => handleProjectRecovery(project)}
+                      onProjectDelete={() => handleProjectDelete(project.id)}
+                    />
                   ))}
                 </ProjectsGroup>
               </ProjectsContainer>

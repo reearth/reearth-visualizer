@@ -13,7 +13,6 @@ export default (workspaceId?: string) => {
   const [filteredDeletedProjects, setFilteredDeletedProjects] = useState<
     DeletedProject[]
   >([]);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   useEffect(() => {
     const mappedProjects = (deletedProjects ?? [])
@@ -47,22 +46,15 @@ export default (workspaceId?: string) => {
   );
 
   const handleProjectDelete = useCallback(
-    async (project?: DeletedProject) => {
-      if (!project) return;
-      await useDeleteProject({ projectId: project.id });
+    async (projectId?: string) => {
+      if (!projectId) return;
+      await useDeleteProject({ projectId });
     },
     [useDeleteProject]
   );
-
-  const handleDeleteModalClose = useCallback((value: boolean) => {
-    setDeleteModalVisible(value);
-  }, []);
-
   return {
     filteredDeletedProjects,
     isLoading,
-    deleteModalVisible,
-    handleDeleteModalClose,
     handleProjectDelete,
     handleProjectRecovery
   };
