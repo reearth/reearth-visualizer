@@ -3,14 +3,14 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
-import { Project } from "../../../type";
+import { Project } from "../../type";
 
 type Prop = {
   project?: Project;
   onProjectDelete?: (projectId?: string) => void;
   onProjectRecovery?: (projectId?: string) => void;
 };
-const RecyleBinProjectItem: FC<Prop> = ({
+const RecyleBinProject: FC<Prop> = ({
   project,
   onProjectDelete,
   onProjectRecovery
@@ -60,7 +60,7 @@ const RecyleBinProjectItem: FC<Prop> = ({
   );
 };
 
-export default RecyleBinProjectItem;
+export default RecyleBinProject;
 
 const Card = styled("div")(() => ({
   display: "flex",
