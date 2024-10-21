@@ -7,7 +7,7 @@ type UpdatePasswordType = {
 };
 
 export default () => {
-  const { useMeQuery, useUpdatePassword, useDeleteUser, updateLanguage } =
+  const { useMeQuery, useUpdatePassword, useDeleteUser, useUpdateLanguage } =
     useMeFetcher();
   const { me: data } = useMeQuery();
 
@@ -36,12 +36,12 @@ export default () => {
   const handleUpdateUserLanguage = useCallback(
     async ({ lang }: { lang: string }) => {
       try {
-        await updateLanguage(lang);
+        await useUpdateLanguage(lang);
       } catch (error) {
         console.error("Failed to update language:", error);
       }
     },
-    [updateLanguage]
+    [useUpdateLanguage]
   );
 
   return {

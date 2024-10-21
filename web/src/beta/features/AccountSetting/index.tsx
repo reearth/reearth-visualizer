@@ -26,8 +26,6 @@ const AccountSetting: FC = () => {
     handleUpdateUserPassword,
     handleUpdateUserLanguage
   } = useHook();
-  const { name, email } = meData;
-
   const [currentWorkspace] = useWorkspace();
 
   const { tabs } = useAccountSettingsTabs({
@@ -48,8 +46,6 @@ const AccountSetting: FC = () => {
       value: "ja"
     }
   ];
-  type LanguageOption = (typeof options)[number]["value"];
-  const [languageLabel, setLanguageLabel] = useState<LanguageOption>("und");
 
   return (
     <SettingBase tabs={tabs} tab={"account"}>
@@ -59,13 +55,13 @@ const AccountSetting: FC = () => {
             <SettingsFields>
               <InputField
                 title={t("Name")}
-                value={name ? t(name) : ""}
+                value={meData.name ? t(meData.name) : ""}
                 appearance="readonly"
                 disabled
               />
               <InputField
                 title={t("Email address")}
-                value={email ? t(email) : ""}
+                value={meData.email ? t(meData.email) : ""}
                 appearance="readonly"
                 disabled
               />
@@ -92,13 +88,10 @@ const AccountSetting: FC = () => {
               </PasswordWrapper>
               <SelectField
                 title={t("Language")}
-                value={languageLabel}
+                value={meData.lang ?? "und"}
                 options={options}
                 onChange={(value) => {
-                  if (typeof value === "string") {
-                    setLanguageLabel(value);
-                    handleUpdateUserLanguage({ lang: value });
-                  }
+                  handleUpdateUserLanguage({ lang: value as string });
                 }}
               />
             </SettingsFields>
