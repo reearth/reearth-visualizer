@@ -302,8 +302,8 @@ export default () => {
         setNotification({
           type: "error",
           text: input.deleted
-            ? t("Failed to moved the project to trash.")
-            : t("Failed to restored the project!")
+            ? t("Failed to move the project to trash.")
+            : t("Failed to restore the project!")
         });
 
         return { status: "error" };

@@ -14,15 +14,17 @@ export default (workspaceId?: string) => {
 
   const filteredDeletedProjects = useMemo(
     () =>
-      (deletedProjects ?? []).map<DeletedProject | undefined>((project) => {
-        if (!project) return undefined;
-        return {
-          id: project.id,
-          name: project.name,
-          imageUrl: project.imageUrl,
-          isDeleted: project.isDeleted
-        };
-      }),
+      (deletedProjects ?? [])
+        .map((project) => {
+          if (!project) return undefined;
+          return {
+            id: project.id,
+            name: project.name,
+            imageUrl: project.imageUrl,
+            isDeleted: project.isDeleted
+          };
+        })
+        .filter(Boolean),
     [deletedProjects]
   );
 
@@ -49,17 +51,24 @@ export default (workspaceId?: string) => {
   const handleProjectDelete = useCallback(
     async (projectId: string) => {
       if (!projectId) return;
-      setDisabled(!disabled);
-      await useDeleteProject({ projectId });
-      client.cache.evict({
-        id: client.cache.identify({
-          __typename: "Project",
-          id: projectId
-        })
-      });
-      client.cache.gc();
+      setDisabled(true);
+
+      try {
+        await useDeleteProject({ projectId });
+        client.cache.evict({
+          id: client.cache.identify({
+            __typename: "Project",
+            id: projectId
+          })
+        });
+        client.cache.gc();
+      } catch (error) {
+        console.error("Failed to delete project:", error);
+      } finally {
+        setDisabled(false);
+      }
     },
-    [client.cache, disabled, useDeleteProject]
+    [client, useDeleteProject]
   );
   return {
     filteredDeletedProjects,

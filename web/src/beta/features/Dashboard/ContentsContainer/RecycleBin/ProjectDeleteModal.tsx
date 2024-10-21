@@ -53,7 +53,7 @@ const ProjectDeleteModal: FC<Props> = ({
           </Typography>
           <Typography size="body">
             {t(
-              "This action cannot be undone. This will permanently delete the project totally. You will lost all your project data"
+              "This action cannot be undone. This will permanently delete the project totally. You will lose all your project data"
             )}
           </Typography>
           <Typography size="body">

@@ -43,11 +43,11 @@ const ProjectRemoveModal: FC<Props> = ({
         <Wrapper>
           <WarningIcon icon="warning" />
           <Typography size="body">
-            {t("Your project will be move to trash.")}
+            {t("Your project will be moved to trash.")}
           </Typography>
           <Typography size="body">
             {t(
-              "This means the project will no longer be published. But you can still see and restore you project from recycle bin."
+              "This means the project will no longer be published. But you can still see and restore your project from the recycle bin."
             )}
           </Typography>
         </Wrapper>

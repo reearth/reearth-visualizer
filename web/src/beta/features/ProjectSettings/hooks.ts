@@ -70,19 +70,43 @@ export default ({ projectId }: Props) => {
     });
   }, [scene?.stories]);
 
+  const handleProjectPublish = useCallback(
+    async (projectId: string) => {
+      if (projectPublished) {
+        await usePublishProject("unpublished", projectId);
+      }
+      if (storiesPublished && scene?.stories) {
+        await Promise.all(
+          scene.stories.map(async (story) => {
+            const publishmentStatus = toPublishmentStatus(
+              story.publishmentStatus
+            );
+            if (
+              publishmentStatus === "published" ||
+              publishmentStatus === "limited"
+            ) {
+              await usePublishStory("unpublished", story.id);
+            }
+          })
+        );
+      }
+    },
+    [
+      projectPublished,
+      scene?.stories,
+      storiesPublished,
+      usePublishProject,
+      usePublishStory
+    ]
+  );
+
   const handleProjectRemove = useCallback(async () => {
     const updatedProject = {
       projectId,
       deleted: true
     };
     setDisabled(!disabled);
-    const storyId = scene?.stories?.map((story) => story.id)[0] || "";
-    if (projectPublished) {
-      await usePublishProject("unpublished", projectId);
-    }
-    if (storiesPublished) {
-      await usePublishStory("unpublished", storyId);
-    }
+    handleProjectPublish(projectId);
     const { status } = await useUpdateProjectRemove(updatedProject);
     client.cache.evict({
       id: client.cache.identify({
@@ -94,19 +118,7 @@ export default ({ projectId }: Props) => {
     if (status === "success") {
       navigate(`/dashboard/${workspaceId}/`);
     }
-  }, [
-    client.cache,
-    disabled,
-    navigate,
-    projectId,
-    projectPublished,
-    scene?.stories,
-    storiesPublished,
-    usePublishProject,
-    usePublishStory,
-    useUpdateProjectRemove,
-    workspaceId
-  ]);
+  }, [client.cache, disabled, handleProjectPublish, navigate, projectId, useUpdateProjectRemove, workspaceId]);
 
   const handleUpdateProjectBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {

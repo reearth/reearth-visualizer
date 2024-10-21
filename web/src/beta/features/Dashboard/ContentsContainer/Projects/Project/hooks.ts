@@ -15,7 +15,7 @@ type Props = {
   selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
-  onProjectRemove?: (projectId?: string) => void;
+  onProjectRemove?: (projectId: string) => void;
 };
 
 export default ({
@@ -160,29 +160,36 @@ export default ({
     return projectPublished || storiesPublished;
   }, [projectPublished, storiesPublished]);
 
-  const handleProjectRemove = useCallback(
-    async (projectId?: string) => {
-      if (!projectId) return;
-      const storyId = stories?.map((story) => story.id)[0] || "";
+  const handleProjectPublish = useCallback(
+    async (projectId: string) => {
       if (projectPublished) {
         await usePublishProject("unpublished", projectId);
       }
-      if (storiesPublished) {
-        await usePublishStory("unpublished", storyId);
-      }
 
-      onProjectRemove?.(projectId);
-      handleProjectRemoveModal(false);
+      if (storiesPublished && stories?.length) {
+        const storyPromises = stories.map((story) =>
+          usePublishStory("unpublished", story.id)
+        );
+        await Promise.all(storyPromises);
+      }
     },
     [
-      handleProjectRemoveModal,
-      onProjectRemove,
       projectPublished,
       stories,
       storiesPublished,
       usePublishProject,
       usePublishStory
     ]
+  );
+
+  const handleProjectRemove = useCallback(
+    async (projectId: string) => {
+      if (!projectId) return;
+      handleProjectPublish(projectId);
+      onProjectRemove?.(projectId);
+      handleProjectRemoveModal(false);
+    },
+    [handleProjectRemoveModal, handleProjectPublish, onProjectRemove]
   );
 
   return {

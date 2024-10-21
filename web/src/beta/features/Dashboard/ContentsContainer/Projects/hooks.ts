@@ -277,7 +277,7 @@ export default (workspaceId?: string) => {
       client.cache.gc();
     },
 
-    [client.cache, usePublishProject, useUpdateProjectRemove]
+    [client, usePublishProject, useUpdateProjectRemove]
   );
 
   return {
