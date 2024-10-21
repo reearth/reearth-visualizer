@@ -13,7 +13,7 @@ export type Project = {
   createdAt?: Date;
   projectType?: ProjectType;
   starred?: boolean;
-  isDeleted?: boolean
+  isDeleted?: boolean;
 };
 
 export type DeletedProject = {

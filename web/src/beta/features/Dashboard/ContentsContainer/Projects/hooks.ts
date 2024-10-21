@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import {
   autoFillPage,
@@ -40,9 +41,11 @@ export default (workspaceId?: string) => {
     useCreateProject,
     useStarredProjectsQuery,
     useImportProject,
-    useUpdateProjectRemove
+    useUpdateProjectRemove,
+    usePublishProject
   } = useProjectFetcher();
   const navigate = useNavigate();
+  const client = useApolloClient();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -260,10 +263,21 @@ export default (workspaceId?: string) => {
         projectId: project.id,
         deleted: true
       };
-
+      if (project?.status === "limited") {
+        await usePublishProject("unpublished", project.id);
+      }
       await useUpdateProjectRemove(updatedProject);
+
+      client.cache.evict({
+        id: client.cache.identify({
+          __typename: "Project",
+          id: project.id
+        })
+      });
+      client.cache.gc();
     },
-    [useUpdateProjectRemove]
+
+    [client.cache, usePublishProject, useUpdateProjectRemove]
   );
 
   return {

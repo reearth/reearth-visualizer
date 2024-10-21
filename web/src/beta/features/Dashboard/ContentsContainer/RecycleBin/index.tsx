@@ -17,7 +17,7 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     isLoading,
     disabled,
     handleProjectRecovery,
-    handleProjectDelete,
+    handleProjectDelete
   } = useHooks(workspaceId);
 
   const t = useT();

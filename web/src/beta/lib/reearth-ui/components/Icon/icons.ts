@@ -161,7 +161,7 @@ import ZToA from "./Icons/ZToA.svg?react";
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
-  arrowCounterClockWise:ArrowCounterClockWise,
+  arrowCounterClockWise: ArrowCounterClockWise,
   arrowLeftRight: ArrowLeftRight,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,

@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useProjectFetcher } from "@reearth/services/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -9,6 +10,7 @@ export default (workspaceId?: string) => {
   const { deletedProjects, loading, refetch } =
     useDeletedProjectsQuery(workspaceId);
   const [disabled, setDisabled] = useState(false);
+  const client = useApolloClient();
 
   const filteredDeletedProjects = useMemo(
     () =>
@@ -49,8 +51,15 @@ export default (workspaceId?: string) => {
       if (!projectId) return;
       setDisabled(!disabled);
       await useDeleteProject({ projectId });
+      client.cache.evict({
+        id: client.cache.identify({
+          __typename: "Project",
+          id: projectId
+        })
+      });
+      client.cache.gc();
     },
-    [disabled, useDeleteProject]
+    [client.cache, disabled, useDeleteProject]
   );
   return {
     filteredDeletedProjects,

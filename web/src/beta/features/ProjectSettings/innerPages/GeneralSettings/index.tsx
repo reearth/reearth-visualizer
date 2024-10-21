@@ -32,7 +32,7 @@ type Props = {
     imageUrl?: string | null;
     isArchived: boolean;
   };
-  disabled?: boolean,
+  disabled?: boolean;
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onProjectRemove: () => void;
 };

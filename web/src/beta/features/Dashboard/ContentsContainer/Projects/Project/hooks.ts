@@ -26,8 +26,8 @@ export default ({
   onProjectRemove
 }: Props) => {
   const t = useT();
-  const { useStoriesQuery } = useStorytellingFetcher();
-  const { useExportProject } = useProjectFetcher();
+  const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
+  const { useExportProject, usePublishProject } = useProjectFetcher();
   const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -143,27 +143,46 @@ export default ({
     [isStarred, onProjectUpdate, project]
   );
 
-  const hasMapOrStoryPublished = useMemo(() => {
-    const hasMapPublished =
-      project.status === "published" || project.status === "limited";
+  const projectPublished = useMemo(() => {
+    return project.status === "published" || project.status === "limited";
+  }, [project.status]);
 
-    const hasStoryPublished = stories?.some((story) => {
+  const storiesPublished = useMemo(() => {
+    return stories?.some((story) => {
       const publishmentStatus = toPublishmentStatus(story.publishmentStatus);
       return (
         publishmentStatus === "published" || publishmentStatus === "limited"
       );
     });
+  }, [stories]);
 
-    return hasMapPublished || hasStoryPublished;
-  }, [stories, project.status]);
+  const hasMapOrStoryPublished = useMemo(() => {
+    return projectPublished || storiesPublished;
+  }, [projectPublished, storiesPublished]);
 
   const handleProjectRemove = useCallback(
-    (projectId?: string) => {
+    async (projectId?: string) => {
       if (!projectId) return;
+      const storyId = stories?.map((story) => story.id)[0] || "";
+      if (projectPublished) {
+        await usePublishProject("unpublished", projectId);
+      }
+      if (storiesPublished) {
+        await usePublishStory("unpublished", storyId);
+      }
+
       onProjectRemove?.(projectId);
       handleProjectRemoveModal(false);
     },
-    [handleProjectRemoveModal, onProjectRemove]
+    [
+      handleProjectRemoveModal,
+      onProjectRemove,
+      projectPublished,
+      stories,
+      storiesPublished,
+      usePublishProject,
+      usePublishStory
+    ]
   );
 
   return {

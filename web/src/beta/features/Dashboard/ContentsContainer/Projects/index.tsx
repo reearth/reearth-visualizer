@@ -331,5 +331,3 @@ const LoadingWrapper = styled("div")(() => ({
 const HiddenFileInput = styled("input")({
   display: "none"
 });
-
-
