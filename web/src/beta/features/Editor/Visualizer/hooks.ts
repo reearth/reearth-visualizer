@@ -145,6 +145,7 @@ export default ({
     }));
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
+  console.log("layers", layers);
   const handleCoreLayerSelect = useCallback(
     (
       layerId?: string,
