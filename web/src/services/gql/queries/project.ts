@@ -217,8 +217,14 @@ export const EXPORT_PROJECT = gql(`
 `);
 
 export const IMPORT_PROJECT = gql(`
-  mutation ImportProject($file: Upload!) {
-    importProject(input: { file: $file }) {
+  mutation ImportProject(
+    $teamId: ID!
+    $file: Upload!
+   ) {
+    importProject(input: { 
+      teamId: $teamId
+      file: $file 
+     }) {
       projectData
     }
   }

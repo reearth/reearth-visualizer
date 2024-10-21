@@ -480,12 +480,11 @@ export default () => {
   const [importProjectMutation] = useMutation(IMPORT_PROJECT);
 
   const useImportProject = useCallback(
-    async (file: File) => {
+    async (file: File, workspaceId: string) => {
       if (!file) return { status: "error" };
-
       try {
         const { data, errors } = await importProjectMutation({
-          variables: { file }
+          variables: { file: file, teamId: workspaceId }
         });
 
         if (errors || !data?.importProject) {

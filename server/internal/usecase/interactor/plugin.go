@@ -17,6 +17,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -112,15 +113,19 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 	var pluginIDs []id.PluginID
 	for _, pluginJSON := range pluginsJSON {
 		pid, err := jsonmodel.ToPluginID(pluginJSON.ID)
+		pid = pid.WithImport()
 		if err != nil {
+			fmt.Println("######### 1")
 			return nil, err
 		}
 		pluginIDs = append(pluginIDs, pid)
 
 		var extensions []*plugin.Extension
+		var propertySchemas property.SchemaList
 		for _, pluginJSONextension := range pluginJSON.Extensions {
 			psid, err := jsonmodel.ToPropertySchemaID(pluginJSONextension.PropertySchemaID)
 			if err != nil {
+				fmt.Println("######### 2")
 				return nil, err
 			}
 			extension, err := plugin.NewExtension().
@@ -133,10 +138,17 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 				Schema(psid).
 				Build()
 			if err != nil {
+				fmt.Println("######### 3")
 				return nil, err
 			}
 			extensions = append(extensions, extension)
+
+			ps := property.NewSchema().
+				ID(psid).
+				MustBuild()
+			propertySchemas = append(propertySchemas, ps)
 		}
+
 		p, err := plugin.New().
 			ID(pid).
 			Name(i18n.StringFrom(pluginJSON.Name)).
@@ -146,16 +158,24 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 			Extensions(extensions).
 			Build()
 		if err != nil {
+			fmt.Println("######### 4")
 			return nil, err
 		}
 		if !p.ID().System() {
 			if err := i.pluginRepo.Save(ctx, p); err != nil {
+				fmt.Println("######### 5")
 				return nil, err
 			}
 		}
+		if err := i.propertySchemaRepo.SaveAll(ctx, propertySchemas); err != nil {
+			fmt.Println("######### 6")
+			return nil, err
+		}
 	}
+
 	plgs, err := i.pluginRepo.FindByIDs(ctx, pluginIDs)
 	if err != nil {
+		fmt.Println("######### 7")
 		return nil, err
 	}
 

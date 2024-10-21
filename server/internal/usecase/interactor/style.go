@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -204,6 +205,7 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (scene.StyleList, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
+		fmt.Println("****** 1")
 		return nil, err
 	}
 
@@ -219,6 +221,7 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 			Scene(sceneID).
 			Build()
 		if err != nil {
+			fmt.Println("****** 2")
 			return nil, err
 		}
 		styles = append(styles, style)
@@ -227,13 +230,16 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 	// save
 	styleList := scene.StyleList(styles)
 	if err := i.styleRepo.SaveAll(ctx, styleList); err != nil {
+		fmt.Println("****** 3")
 		return nil, err
 	}
 	if len(styleIDs) == 0 {
+		fmt.Println("****** 4")
 		return nil, nil
 	}
 	styles2, err := i.styleRepo.FindByIDs(ctx, styleIDs)
 	if err != nil {
+		fmt.Println("****** 5")
 		return nil, err
 	}
 	return *styles2, nil

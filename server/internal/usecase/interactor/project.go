@@ -270,6 +270,8 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdatePublicDescription(*p.PublicDescription)
 	}
 
+	prj.SetDeleted(false)
+
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate && p.Alias != nil && *p.Alias != oldAlias {
 		if err := i.file.MoveBuiltScene(ctx, oldAlias, *p.Alias); err != nil {
 			// ignore ErrNotFound

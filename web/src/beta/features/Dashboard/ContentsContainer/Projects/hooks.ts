@@ -242,13 +242,13 @@ export default (workspaceId?: string) => {
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file) {
-        const result = await useImportProject(file);
+        const result = await useImportProject(file, workspaceId || "");
         if (result.status === "success") {
           await refetch();
         }
       }
     },
-    [useImportProject, refetch]
+    [useImportProject, refetch, workspaceId]
   );
 
   return {

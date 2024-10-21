@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -91,8 +92,11 @@ func (r *Plugin) Save(ctx context.Context, plugin *plugin.Plugin) error {
 	if plugin.ID().System() {
 		return errors.New("cannnot save system plugin")
 	}
-	if s := plugin.ID().Scene(); s != nil && !r.f.CanWrite(*s) {
-		return repo.ErrOperationDenied
+	fmt.Printf("==== plugin.ID().Import() %t\n", plugin.ID().Import())
+	if s := plugin.ID().Scene(); s != nil {
+		if !plugin.ID().Import() && !r.f.CanWrite(*s) {
+			return repo.ErrOperationDenied
+		}
 	}
 	doc, id := mongodoc.NewPlugin(plugin)
 	return r.client.SaveOne(ctx, id, doc)

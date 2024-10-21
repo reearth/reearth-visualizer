@@ -1,6 +1,8 @@
 package mongodoc
 
 import (
+	"fmt"
+
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -131,7 +133,10 @@ func NewPropertySchemas(ps []*property.Schema, f scene.IDList) ([]interface{}, [
 		if d == nil {
 			continue
 		}
+		fmt.Printf("XXX %s\n", d.Scene())
+		fmt.Printf("YYY %v\n", f)
 		if s := d.Scene(); s != nil && f != nil && !f.Has(*s) {
+			fmt.Println("!!!!!!!!!!!ERROR2")
 			continue
 		}
 		r, id := NewPropertySchema(d)

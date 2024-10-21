@@ -721,12 +721,11 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	return sce, res, nil
 }
 
-func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
+func (i *Scene) ImportScene(ctx context.Context, sceneID idx.ID[id.Scene], prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
-	sceneID := scene.NewID()
 	plugins := scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(id.OfficialPluginID, nil),
 	})
@@ -738,6 +737,7 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 
 	widgets := []*scene.Widget{}
 	for _, widgetJSON := range sceneJSON.Widgets {
+
 		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
 		if err != nil {
 			return nil, err
@@ -745,27 +745,38 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 		extensionID := id.PluginExtensionID(widgetJSON.ExtensionID)
 		extension, err := i.getWidgePlugin(ctx, pluginID, extensionID)
 		if err != nil {
+			if errors.Is(err, interfaces.ErrPluginNotFound) {
+				fmt.Println("------ 2 NG")
+				fmt.Printf("%s\n", err.Error())
+				continue
+			}
 			return nil, err
 		}
+		fmt.Println("------ 2 OK")
+		fmt.Printf("%s\n", extensionID.String())
 		prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sceneID).Build()
 		if err != nil {
+			fmt.Println("------ 3")
 			return nil, err
 		}
+		fmt.Printf("extension.Schema() :%s\n", extension.Schema().String())
 		ps, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
 		if err != nil {
+			fmt.Println("------ 4")
 			return nil, err
 		}
 		prop, err = builder.AddItemFromPropertyJSON(prop, ps, widgetJSON.Property)
 		if err != nil {
+			fmt.Println("------ 5")
 			return nil, err
 		}
-		// Save property
 		if err = i.propertyRepo.Save(ctx, prop); err != nil {
+			fmt.Println("------ 6")
 			return nil, err
 		}
-
 		widget, err := scene.NewWidget(id.NewWidgetID(), pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
 		if err != nil {
+			fmt.Println("------ 7")
 			return nil, err
 		}
 		widgets = append(widgets, widget)
@@ -774,13 +785,16 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 	for _, clusterJson := range sceneJSON.Clusters {
 		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sceneID).Build()
 		if err != nil {
+			fmt.Println("------ 8")
 			return nil, err
 		}
 		if err = i.propertyRepo.Save(ctx, property); err != nil {
+			fmt.Println("------ 9")
 			return nil, err
 		}
 		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
 		if err != nil {
+			fmt.Println("------ 11")
 			return nil, err
 		}
 		clusters = append(clusters, cluster)
@@ -793,20 +807,25 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 	schema := builtin.GetPropertySchemaByVisualizer(viz)
 	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 	if err != nil {
+		fmt.Println("------ 12")
 		return nil, err
 	}
 	prop, err = builder.AddItemFromPropertyJSON(prop, schema, sceneJSON.Property)
 	if err != nil {
+		fmt.Println("------ 13")
 		return nil, err
 	}
 	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
 	if err != nil {
+		fmt.Println("------ 14")
 		return nil, err
 	}
 	if err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
+		fmt.Println("------ 15")
 		return nil, err
 	}
 	if err = i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer); err != nil {
+		fmt.Println("------ 16")
 		return nil, err
 	}
 	scene, err := scene.New().
@@ -821,19 +840,23 @@ func (i *Scene) ImportScene(ctx context.Context, prj *project.Project, plgs []*p
 		Plugins(plugins).
 		Build()
 	if err != nil {
+		fmt.Println("------ 17")
 		return nil, err
 	}
 	if err := i.sceneRepo.Save(ctx, scene); err != nil {
+		fmt.Println("------ 18")
 		return nil, err
 	}
 	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		fmt.Println("------ 19")
 		return nil, err
 	}
 	// operator.AddNewScene(prj.Workspace(), sceneID)
-	scene, err = i.sceneRepo.FindByID(ctx, sceneID)
-	if err != nil {
-		return nil, err
-	}
+	// scene, err = i.sceneRepo.FindByID(ctx, sceneID)
+	// if err != nil {
+	// 	fmt.Println("------ 20")
+	// 	return nil, err
+	// }
 	return scene, nil
 }
 

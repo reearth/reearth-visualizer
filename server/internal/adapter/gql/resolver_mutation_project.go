@@ -17,6 +17,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/spf13/afero"
 	"golang.org/x/exp/rand"
 )
@@ -178,9 +179,24 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	}, nil
 }
 
+func replaceScene(sceneID idx.ID[id.Scene], tempdata []byte) (idx.ID[id.Scene], string, []byte, error) {
+
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal(tempdata, &jsonData); err != nil {
+		return sceneID, "", nil, err
+	}
+
+	sceneData, _ := jsonData["scene"].(map[string]interface{})
+	oldSceneID := sceneData["id"].(string)
+
+	data := bytes.Replace(tempdata, []byte(oldSceneID), []byte(sceneID.String()), -1)
+
+	return sceneID, oldSceneID, data, nil
+}
+
 func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
 
-	data, assets, plugins, err := file.UncompressExportZip(input.File.File)
+	tempData, assets, plugins, err := file.UncompressExportZip(input.File.File)
 	if err != nil {
 		return nil, err
 	}
@@ -201,28 +217,11 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		changedFileName[beforeName] = afterName
 	}
 
-	// Plugin file import
-	for fileName, file := range plugins {
-		parts := strings.Split(fileName, "/")
-		pid, err := id.PluginIDFrom(parts[0])
-		if err != nil {
-			return nil, err
-		}
-		if err := usecases(ctx).Plugin.ImporPluginFile(ctx, pid, parts[1], file); err != nil {
-			return nil, err
-		}
-	}
-
-	for beforeName, afterName := range changedFileName {
-		data = bytes.Replace(data, []byte(beforeName), []byte(afterName), -1)
-	}
-
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(data, &jsonData); err != nil {
+	var tempJsonData map[string]interface{}
+	if err := json.Unmarshal(tempData, &tempJsonData); err != nil {
 		return nil, err
 	}
-
-	projectData, _ := jsonData["project"].(map[string]interface{})
+	projectData, _ := tempJsonData["project"].(map[string]interface{})
 	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, string(input.TeamID), projectData)
 	if err != nil {
 		return nil, err
@@ -233,30 +232,69 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		}
 	}()
 
+	// need to create a Scene firstｓ
+	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), getOperator(ctx))
+	// replace with the new SceneID
+	sceneID, oldSceneID, data, err := replaceScene(sce.ID(), tempData)
+
+	// Plugin file import
+	for fileName, file := range plugins {
+
+		parts := strings.Split(fileName, "/")
+		oldPID := parts[0]
+		fileName := parts[1]
+
+		newPluginID := strings.Replace(oldPID, oldSceneID, sceneID.String(), 1)
+
+		pid, err := id.PluginIDFrom(newPluginID)
+		if err != nil {
+			return nil, err
+		}
+		if err := usecases(ctx).Plugin.ImporPluginFile(ctx, pid, fileName, file); err != nil {
+			return nil, err
+		}
+	}
+
+	// replace with the new file path and ID
+	for beforeName, afterName := range changedFileName {
+		data = bytes.Replace(data, []byte(beforeName), []byte(afterName), -1)
+	}
+
+	//　replaceed Data
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal(data, &jsonData); err != nil {
+		return nil, err
+	}
+
 	pluginsData, _ := jsonData["plugins"].([]interface{})
 	plgs, err := usecases(ctx).Plugin.ImportPlugins(ctx, pluginsData)
 	if err != nil {
 		return nil, err
 	}
 
+	// Scene update
 	sceneData, _ := jsonData["scene"].(map[string]interface{})
-	sce, err := usecases(ctx).Scene.ImportScene(ctx, prj, plgs, sceneData)
+	sce, err = usecases(ctx).Scene.ImportScene(ctx, sceneID, prj, plgs, sceneData)
 	if err != nil {
+		fmt.Println("====== 4")
 		return nil, err
 	}
 
 	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
 	if err != nil {
+		fmt.Println("====== 5")
 		return nil, err
 	}
 
 	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sce.ID(), sceneData)
 	if err != nil {
+		fmt.Println("====== 6")
 		return nil, err
 	}
 
 	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData)
 	if err != nil {
+		fmt.Println("====== 7")
 		return nil, err
 	}
 

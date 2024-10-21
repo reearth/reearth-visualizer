@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -106,7 +107,7 @@ func (r *PropertySchema) SaveAll(ctx context.Context, m property.SchemaList) err
 	if len(m) == 0 {
 		return nil
 	}
-
+	fmt.Printf("ZZZZZ r.f.Writable.Strings() %v\n", r.f.Writable.Strings())
 	docs, ids := mongodoc.NewPropertySchemas(savable, r.f.Writable)
 	return r.client.SaveAll(ctx, ids, docs)
 }

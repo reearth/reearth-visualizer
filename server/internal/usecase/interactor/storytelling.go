@@ -1003,10 +1003,6 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	if err != nil {
 		return nil, err
 	}
-	// sceneID, err := id.SceneIDFrom(sceneJSON.ID)
-	// if err != nil {
-	// 	return nil, err
-	// }
 	storyJSON := sceneJSON.Story
 
 	pages := []*storytelling.Page{}
@@ -1014,10 +1010,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 
 		blocks := []*storytelling.Block{}
 		for _, blockJSON := range pageJSON.Blocks {
-			// blockID, err := id.BlockIDFrom(blockJSON.ID)
-			// if err != nil {
-			// 	return nil, err
-			// }
+
 			pluginID, err := id.PluginIDFrom(blockJSON.PluginId)
 			if err != nil {
 				return nil, err
@@ -1088,8 +1081,6 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 		pages = append(pages, page)
 	}
 
-	storyID, _ := id.StoryIDFrom(storyJSON.ID)
-
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 	if err != nil {
@@ -1108,7 +1099,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 		return nil, err
 	}
 	story, err := storytelling.NewStory().
-		ID(storyID).
+		ID(id.NewStoryID()).
 		Property(prop.ID()).
 		Scene(sceneID).
 		PanelPosition(storytelling.Position(storyJSON.PanelPosition)).
