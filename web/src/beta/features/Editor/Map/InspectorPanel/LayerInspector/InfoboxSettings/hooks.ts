@@ -1,4 +1,3 @@
-
 import { filterVisibleItems } from "@reearth/beta/ui/fields/utils";
 import { useInfoboxFetcher } from "@reearth/services/api";
 import { Item, convert } from "@reearth/services/api/propertyApi/utils";

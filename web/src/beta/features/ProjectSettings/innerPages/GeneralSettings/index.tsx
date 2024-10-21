@@ -1,4 +1,3 @@
-import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   Collapse,
@@ -8,6 +7,7 @@ import {
   ModalPanel,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import defaultBetaProjectImage from "@reearth/beta/ui/assets/defaultBetaProjectImage.png";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -81,19 +81,20 @@ const GeneralSettings: FC<Props> = ({
           <Collapse size="large" title={t("Project Info")}>
             <SettingsFields>
               <InputField
-                commonTitle={t("Project Name")}
+                title={t("Project Name")}
                 value={project.name}
                 onChange={(name) => setLocalName(name)}
               />
               <TextareaField
-                commonTitle={t("Description")}
+                title={t("Description")}
                 value={localDescription}
+                resizable="height"
                 onChange={setLocalDescription}
               />
               <SettingsRow>
                 <SettingsRowItem>
                   <AssetField
-                    commonTitle={t("Thumbnail")}
+                    title={t("Thumbnail")}
                     inputMethod="asset"
                     assetsTypes={IMAGE_TYPES}
                     value={localImageUrl}
@@ -196,5 +197,5 @@ const DangerItem = styled("div")(({ theme }) => ({
 
 const Divider = styled("div")(({ theme }) => ({
   height: "1px",
-  borderBlockColor: theme.outline.weaker,
+  borderBlockColor: theme.outline.weaker
 }));

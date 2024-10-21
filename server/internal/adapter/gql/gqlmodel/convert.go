@@ -6,6 +6,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -62,6 +63,33 @@ func ToVisualizerRef(v visualizer.Visualizer) *Visualizer {
 	}
 	v2 := ToVisualizer(v)
 	return &v2
+}
+
+func FromPluginExtension(p PluginExtensionType) plugin.ExtensionType {
+	switch p {
+	case PluginExtensionTypeBlock:
+		return plugin.ExtensionTypeBlock
+	case PluginExtensionTypeCluster:
+		return plugin.ExtensionTypeCluster
+	case PluginExtensionTypeInfobox:
+		return plugin.ExtensionTypeInfobox
+	case PluginExtensionTypeInfoboxBlock:
+		return plugin.ExtensionTypeInfoboxBlock
+	case PluginExtensionTypePrimitive:
+		return plugin.ExtensionTypePrimitive
+	case PluginExtensionTypeStory:
+		return plugin.ExtensionTypeStory
+	case PluginExtensionTypeStoryBlock:
+		return plugin.ExtensionTypeStoryBlock
+	case PluginExtensionTypeStoryPage:
+		return plugin.ExtensionTypeStoryPage
+	case PluginExtensionTypeVisualizer:
+		return plugin.ExtensionTypeVisualizer
+	case PluginExtensionTypeWidget:
+		return plugin.ExtensionTypeWidget
+	default:
+		return plugin.ExtensionType("")
+	}
 }
 
 func FromFile(f *graphql.Upload) *file.File {

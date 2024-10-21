@@ -2,18 +2,18 @@ import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
-import LayerStyleEditor from "./LayerStyleEditor";
+import LayerStyleEditor from "./Editor";
 import LayerStyleItem from "./LayerStyleItem";
+import PresetLayerStyle from "./PresetLayerStyle";
 
 type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
 const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
-    sceneId,
     selectedLayer,
     layerStyles,
     selectedLayerStyleId,
@@ -26,13 +26,6 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   } = useMapPage();
 
   const t = useT();
-
-  const handleLayerStyleAddition = useCallback(() => {
-    handleLayerStyleAdd({
-      name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`,
-      value: {}
-    });
-  }, [layerStyles?.length, t, handleLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
     (id?: string) => {
@@ -51,6 +44,11 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     });
   }, [selectedLayer, selectedLayerStyleId, handleLayerConfigUpdate]);
 
+  const selectedLayerStyle = useMemo(
+    () => layerStyles?.find((a) => a.id === selectedLayerStyleId),
+    [layerStyles, selectedLayerStyleId]
+  );
+
   return (
     <Panel
       title={t("Layer Style")}
@@ -59,14 +57,14 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       storageId="editor-map-scene-panel"
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
+      noPadding
     >
       <LayerStyleManager onClick={() => handleSelectLayerStyle(undefined)}>
         <ActionsWrapper>
-          <IconButton
-            icon="plus"
-            size="large"
-            onClick={handleLayerStyleAddition}
-            stopPropagationOnClick
+          <PresetLayerStyle
+            layerStyles={layerStyles}
+            onLayerStyleAdd={handleLayerStyleAdd}
+            onLayerStyleSelect={handleSelectLayerStyle}
           />
           <IconButton
             icon="return"
@@ -92,15 +90,10 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           </StylesGrid>
         </StylesWrapper>
       </LayerStyleManager>
-      <LayerStyleEditorWrapper>
-        {selectedLayerStyleId && (
-          <LayerStyleEditor
-            selectedLayerStyleId={selectedLayerStyleId}
-            sceneId={sceneId}
-            onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
-          />
-        )}
-      </LayerStyleEditorWrapper>
+      <LayerStyleEditor
+        selectedLayerStyle={selectedLayerStyle}
+        onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
+      />
     </Panel>
   );
 };
@@ -110,10 +103,9 @@ export default StylesPanel;
 const LayerStyleManager = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
-  flex: 1,
-  height: "30%",
-  maxHeight: 300,
-  gap: theme.spacing.small
+  height: 154,
+  gap: theme.spacing.small,
+  padding: theme.spacing.small
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
@@ -135,11 +127,4 @@ const StylesGrid = styled("div")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
   gap: `${theme.spacing.small}px`
-}));
-
-const LayerStyleEditorWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flex: 1,
-  height: "70%",
-  paddingTop: theme.spacing.small
 }));

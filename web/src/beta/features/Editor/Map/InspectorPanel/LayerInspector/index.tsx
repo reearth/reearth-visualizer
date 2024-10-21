@@ -4,6 +4,7 @@ import {
   GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
+import { SketchEditingFeature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -26,6 +27,10 @@ type Props = {
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
   onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
+  sketchEditingFeature?: SketchEditingFeature;
+  onSketchGeometryEditStart?: () => void;
+  onSketchGeometryEditCancel?: () => void;
+  onSketchGeometryEditApply?: () => void;
 };
 
 const InspectorTabs: FC<Props> = ({
@@ -35,12 +40,18 @@ const InspectorTabs: FC<Props> = ({
   sceneId,
   onLayerConfigUpdate,
   onGeoJsonFeatureUpdate,
-  onGeoJsonFeatureDelete
+  onGeoJsonFeatureDelete,
+  sketchEditingFeature,
+  onSketchGeometryEditStart,
+  onSketchGeometryEditCancel,
+  onSketchGeometryEditApply
 }) => {
   const selectedFeature = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
       selectedLayer.layer?.config?.data?.type === "3dtiles" ||
+      selectedLayer.layer?.config?.data?.type === "osm-buildings" ||
+      selectedLayer.layer?.config?.data?.type === "google-photorealistic" ||
       selectedLayer.layer?.config?.data?.type === "mvt"
         ? selectedLayer.computedFeature
         : (selectedLayer.computedLayer?.features?.find(
@@ -87,8 +98,15 @@ const InspectorTabs: FC<Props> = ({
             selectedFeature={selectedFeature}
             layer={selectedLayer?.layer}
             sketchFeature={selectedSketchFeature}
+            isEditingGeometry={
+              selectedSketchFeature?.properties?.id ===
+              sketchEditingFeature?.feature?.id
+            }
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
             onGeoJsonFeatureDelete={onGeoJsonFeatureDelete}
+            onSketchGeometryEditStart={onSketchGeometryEditStart}
+            onSketchGeometryEditApply={onSketchGeometryEditApply}
+            onSketchGeometryEditCancel={onSketchGeometryEditCancel}
           />
         )
       },
@@ -125,7 +143,11 @@ const InspectorTabs: FC<Props> = ({
       sceneId,
       onLayerConfigUpdate,
       onGeoJsonFeatureUpdate,
-      onGeoJsonFeatureDelete
+      onGeoJsonFeatureDelete,
+      sketchEditingFeature,
+      onSketchGeometryEditStart,
+      onSketchGeometryEditCancel,
+      onSketchGeometryEditApply
     ]
   );
 

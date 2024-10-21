@@ -1,8 +1,10 @@
 package interfaces
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
+	"net/url"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/asset"
@@ -34,4 +36,5 @@ type Asset interface {
 	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *string, *asset.SortType, *usecasex.Pagination, *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error)
 	Create(context.Context, CreateAssetParam, *usecase.Operator) (*asset.Asset, error)
 	Remove(context.Context, id.AssetID, *usecase.Operator) (id.AssetID, error)
+	UploadAssetFile(context.Context, string, *zip.File) (*url.URL, int64, error)
 }

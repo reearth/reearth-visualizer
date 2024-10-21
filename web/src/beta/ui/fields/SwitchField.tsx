@@ -6,12 +6,12 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type SwitchFieldProps = CommonFieldProps & SwitcherProps;
 
 const SwitchField: FC<SwitchFieldProps> = ({
-  commonTitle,
+  title,
   description,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <Switcher {...props} />
     </CommonField>
   );

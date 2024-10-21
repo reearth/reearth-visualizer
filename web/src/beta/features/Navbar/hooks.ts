@@ -30,9 +30,15 @@ export default ({
       !currentWorkspace ||
       (workspace && workspace.id !== currentWorkspace?.id)
     ) {
-      setCurrentWorkspace(workspace);
+      if (workspace) {
+        setCurrentWorkspace(workspace);
+      } else {
+        setCurrentWorkspace(
+          workspaces?.find((workspace) => workspace.personal)
+        );
+      }
     }
-  }, [currentWorkspace, setCurrentWorkspace, workspace]);
+  }, [currentWorkspace, setCurrentWorkspace, workspace, workspaces]);
 
   const currentProject:
     | {
@@ -68,7 +74,7 @@ export default ({
   return {
     workspaces,
     currentProject,
-    workspace,
+    currentWorkspace,
     handleWorkspaceChange,
     handleLogout
   };

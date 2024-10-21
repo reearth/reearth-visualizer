@@ -1,11 +1,10 @@
+import AccountSetting from "@reearth/beta/features/AccountSetting";
 import { FC } from "react";
 
-import { Typography } from "@reearth/beta/lib/reearth-ui";
+import Page from "../Page";
 
-export type Props = {
-  path?: string;
-};
+const AccountSettingPage: FC = () => (
+  <Page renderItem={() => <AccountSetting />} />
+);
 
-const AccountPage: FC<Props> = () => <Typography size="h4">Account page</Typography>;
-
-export default AccountPage;
+export default AccountSettingPage;

@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/project"
@@ -65,6 +66,18 @@ func ToProject(p *project.Project) *Project {
 		TrackingID:        p.TrackingID(),
 		Starred:           p.Starred(),
 	}
+}
+
+func ToProjectFromJSON(data map[string]any) *Project {
+	var p Project
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return nil
+	}
+	if err := json.Unmarshal(bytes, &p); err != nil {
+		return nil
+	}
+	return &p
 }
 
 func ProjectSortTypeFrom(pst *ProjectSort) *project.SortType {

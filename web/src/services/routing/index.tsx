@@ -8,10 +8,17 @@ const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const ProjectSettings = lazy(
   () => import("@reearth/beta/pages/ProjectSettingsPage")
 );
+const AccountSettingPage = lazy(
+  () => import("@reearth/beta/pages/AccountSettingsPage")
+);
+const WorkspaceSettingPage = lazy(
+  () => import("@reearth/beta/pages/WorkspaceSettingPage")
+);
 const PluginPlaygroundPage = lazy(
   () => import("@reearth/beta/pages/PluginPlaygroundPage")
 );
-const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
+const NotFoundPage = lazy(() => import("@reearth/beta/pages/NotFound"));
+
 const GraphQLPlayground = lazy(
   () => import("@reearth/beta/pages/GraphQLPlayground")
 );
@@ -35,6 +42,18 @@ export const AppRoutes = () => {
       element: <ProjectSettings />
     },
     {
+      path: "settings/account",
+      element: <AccountSettingPage />
+    },
+    {
+      path: "settings/workspaces/:workspaceId",
+      element: <WorkspaceSettingPage tab="workspace" />
+    },
+    {
+      path: "settings/workspaces/:workspaceId/members",
+      element: <WorkspaceSettingPage tab="members" />
+    },
+    {
       path: "graphql",
       element: <GraphQLPlayground />
     },
@@ -52,7 +71,7 @@ export const AppRoutes = () => {
     },
     {
       path: "*",
-      element: <NotFound />
+      element: <NotFoundPage />
     }
   ]);
 

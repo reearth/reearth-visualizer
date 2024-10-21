@@ -8,7 +8,9 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -197,4 +199,49 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 
 	tx.Commit()
 	return duplicatedStyle, nil
+}
+
+func (i *Style) ImportStyles(ctx context.Context, sceneData map[string]interface{}) (scene.StyleList, error) {
+	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	styleIDs := idx.List[id.Style]{}
+	styles := []*scene.Style{}
+	for _, layerStyleJson := range sceneJSON.LayerStyles {
+		styleID, err := id.StyleIDFrom(layerStyleJson.ID)
+		if err != nil {
+			return nil, err
+		}
+		styleIDs = append(styleIDs, styleID)
+		style, err := scene.NewStyle().
+			ID(styleID).
+			Name(layerStyleJson.Name).
+			Value((*scene.StyleValue)(layerStyleJson.Value)).
+			Scene(sceneID).
+			Build()
+		if err != nil {
+			return nil, err
+		}
+		styles = append(styles, style)
+	}
+
+	// save
+	styleList := scene.StyleList(styles)
+	if err := i.styleRepo.SaveAll(ctx, styleList); err != nil {
+		return nil, err
+	}
+	if len(styleIDs) == 0 {
+		return nil, nil
+	}
+	styles2, err := i.styleRepo.FindByIDs(ctx, styleIDs)
+	if err != nil {
+		return nil, err
+	}
+	return *styles2, nil
 }

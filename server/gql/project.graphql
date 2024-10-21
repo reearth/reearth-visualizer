@@ -24,6 +24,7 @@ type Project implements Node {
   enableGa: Boolean!
   trackingId: String!
   starred: Boolean!
+  isDeleted: Boolean!
 }
 
 type ProjectAliasAvailability {
@@ -80,6 +81,7 @@ input UpdateProjectInput {
   trackingId: String
   sceneId: ID
   starred: Boolean
+  deleted: Boolean
 }
 
 input PublishProjectInput {
@@ -97,6 +99,14 @@ input ProjectSort {
   direction: SortDirection!
 }
 
+input ExportProjectInput {
+  projectId: ID!
+}
+
+input ImportProjectInput {
+  file: Upload!
+}
+
 # Payload
 
 type ProjectPayload {
@@ -105,6 +115,14 @@ type ProjectPayload {
 
 type DeleteProjectPayload {
   projectId: ID!
+}
+
+type ExportProjectPayload {
+  projectDataPath: String!
+}
+
+type ImportProjectPayload {
+  projectData: JSON!
 }
 
 # Connection
@@ -121,10 +139,16 @@ type ProjectEdge {
   node: Project
 }
 
-extend type Query{
-  projects(teamId: ID!, includeArchived: Boolean, pagination: Pagination, keyword: String, sort: ProjectSort): ProjectConnection!
+extend type Query {
+  projects(
+    teamId: ID!
+    pagination: Pagination
+    keyword: String
+    sort: ProjectSort
+  ): ProjectConnection! # not included deleted projects
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
+  deletedProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -132,4 +156,6 @@ extend type Mutation {
   updateProject(input: UpdateProjectInput!): ProjectPayload
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
+  exportProject(input: ExportProjectInput!): ExportProjectPayload
+  importProject(input: ImportProjectInput!): ImportProjectPayload
 }

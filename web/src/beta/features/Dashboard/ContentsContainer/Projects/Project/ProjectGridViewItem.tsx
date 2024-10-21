@@ -20,12 +20,15 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     isEditing,
     isHovered,
     isStarred,
-    publishStatus,
+    hasMapOrStoryPublished,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick
+    // exportModalVisible,
+    // closeExportModal,
+    // handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -34,55 +37,68 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   });
 
   return (
-    <Card>
-      <CardImage
-        backgroundImage={project.imageUrl}
-        onDoubleClick={onProjectOpen}
-        onClick={(e) => onProjectSelect?.(e, project.id)}
-        isHovered={isHovered ?? false}
-        onMouseEnter={() => handleProjectHover?.(true)}
-        onMouseLeave={() => handleProjectHover?.(false)}
-        isSelected={selectedProjectId === project.id}
-      >
-        <StarButtonWrapper
-          isStarred={isStarred ?? false}
+    <>
+      <Card>
+        <CardImage
+          backgroundImage={project.imageUrl}
+          onDoubleClick={onProjectOpen}
+          onClick={(e) => onProjectSelect?.(e, project.id)}
           isHovered={isHovered ?? false}
+          onMouseEnter={() => handleProjectHover?.(true)}
+          onMouseLeave={() => handleProjectHover?.(false)}
           isSelected={selectedProjectId === project.id}
         >
-          <Button
-            iconButton
-            icon={isStarred ? "starFilled" : "star"}
-            onClick={(e) => handleProjectStarClick?.(e)}
-            iconColor={isStarred ? theme.warning.main : theme.content.main}
-            appearance="simple"
-          />
-        </StarButtonWrapper>
-      </CardImage>
-      <CardFooter>
-        {publishStatus && <PublishStatus />}
-        <CardTitleWrapper>
-          {!isEditing ? (
-            <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
-              {projectName}
-            </CardTitle>
-          ) : (
-            <TextInput
-              onChange={handleProjectNameChange}
-              onBlur={handleProjectNameBlur}
-              value={projectName}
-              autoFocus={isEditing}
-              appearance="present"
+          <StarButtonWrapper
+            isStarred={isStarred ?? false}
+            isHovered={isHovered ?? false}
+            isSelected={selectedProjectId === project.id}
+          >
+            <Button
+              iconButton
+              icon={isStarred ? "starFilled" : "star"}
+              onClick={(e) => handleProjectStarClick?.(e)}
+              iconColor={isStarred ? theme.warning.main : theme.content.main}
+              appearance="simple"
             />
-          )}
-        </CardTitleWrapper>
-        <PopupMenu
-          menu={popupMenu}
-          label={
-            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
-          }
-        />
-      </CardFooter>
-    </Card>
+          </StarButtonWrapper>
+        </CardImage>
+        <CardFooter>
+          {hasMapOrStoryPublished && <PublishStatus />}
+          <CardTitleWrapper>
+            {!isEditing ? (
+              <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
+                {projectName}
+              </CardTitle>
+            ) : (
+              <TextInput
+                onChange={handleProjectNameChange}
+                onBlur={handleProjectNameBlur}
+                value={projectName}
+                autoFocus={isEditing}
+                appearance="present"
+              />
+            )}
+          </CardTitleWrapper>
+          <PopupMenu
+            menu={popupMenu}
+            label={
+              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+            }
+          />
+        </CardFooter>
+      </Card>
+      {/* MEMO: this modal will be used in the future */}
+      {/* <Modal visible={exportModalVisible} size="small">
+        <ModalPanel
+          title={t("Export Project")}
+          actions={actions}
+          onCancel={closeExportModal}
+          appearance="normal"
+        >
+          <ModalContent />
+        </ModalPanel>
+      </Modal> */}
+    </>
   );
 };
 
@@ -155,3 +171,8 @@ const CardTitle = styled("div")(({ theme }) => ({
   textOverflow: "ellipsis",
   cursor: "pointer"
 }));
+
+// const ModalContent = styled("div")(() => ({
+//   width: "100%",
+//   height: "272px"
+// }));

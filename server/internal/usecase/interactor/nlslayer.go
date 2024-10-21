@@ -13,7 +13,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -829,4 +831,54 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 
 	tx.Commit()
 	return inp.FeatureID, nil
+}
+
+func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneData map[string]interface{}) (nlslayer.NLSLayerList, error) {
+	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	nlayerIDs := idx.List[id.NLSLayer]{}
+	nlayers := []nlslayer.NLSLayer{}
+	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
+		nlsLayerID, err := id.NLSLayerIDFrom(nlsLayerJSON.ID)
+		if err != nil {
+			return nil, err
+		}
+		nlayerIDs = append(nlayerIDs, nlsLayerID)
+		nlayer, err := nlslayer.New().
+			ID(nlsLayerID).
+			Simple().
+			Scene(sceneID).
+			Title(nlsLayerJSON.Title).
+			LayerType(nlslayer.LayerType(nlsLayerJSON.LayerType)).
+			Config((*nlslayer.Config)(nlsLayerJSON.Config)).
+			IsVisible(nlsLayerJSON.IsVisible).
+			IsSketch(nlsLayerJSON.IsSketch).
+			Build()
+		if err != nil {
+			return nil, err
+		}
+		nlayers = append(nlayers, nlayer)
+	}
+
+	nlsLayerList := make(nlslayer.NLSLayerList, len(nlayers))
+	for i, layer := range nlayers {
+		nlsLayerList[i] = &layer
+	}
+
+	if err := i.nlslayerRepo.SaveAll(ctx, nlsLayerList); err != nil {
+		return nil, err
+	}
+
+	nlayer, err := i.nlslayerRepo.FindByIDs(ctx, nlayerIDs)
+	if err != nil {
+		return nil, err
+	}
+	return nlayer, nil
 }

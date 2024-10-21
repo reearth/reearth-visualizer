@@ -8,14 +8,14 @@ export type CodeFieldProps = CommonFieldProps &
   CodeInputProps & { height?: number; width?: number };
 
 const CodeField: FC<CodeFieldProps> = ({
-  commonTitle,
+  title,
   description,
   height,
   width,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <CodeInputWrapper height={height} width={width}>
         <CodeInput {...props} />
       </CodeInputWrapper>

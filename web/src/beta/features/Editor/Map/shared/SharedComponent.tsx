@@ -1,9 +1,9 @@
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
-
+import { Link } from "react-router-dom";
 
 export const InputGroup: FC<{
-  label: string;
+  label: string | ReactNode;
   description?: string;
   children: ReactNode;
 }> = ({ label, description, children }) => {
@@ -96,4 +96,10 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   ["* ::-webkit-scrollbar-thumb:hover"]: {
     background: theme.relative.lighter
   }
+}));
+
+export const LinkWrapper = styled(Link)(({ theme }) => ({
+  textDecoration: "none",
+  color: theme.select.strong,
+  paddingRight: theme.spacing.micro
 }));

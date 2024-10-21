@@ -1,5 +1,4 @@
-import Icon from "@reearth/beta/components/Icon";
-import Slide from "@reearth/beta/components/Slide";
+import { Icon, Slide } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";

@@ -558,6 +558,14 @@ type DuplicateStylePayload struct {
 	Style *Style `json:"style"`
 }
 
+type ExportProjectInput struct {
+	ProjectID ID `json:"projectId"`
+}
+
+type ExportProjectPayload struct {
+	ProjectDataPath string `json:"projectDataPath"`
+}
+
 type Feature struct {
 	Type       string   `json:"type"`
 	Geometry   Geometry `json:"geometry"`
@@ -604,6 +612,14 @@ type ImportLayerInput struct {
 type ImportLayerPayload struct {
 	Layers      []Layer     `json:"layers"`
 	ParentLayer *LayerGroup `json:"parentLayer"`
+}
+
+type ImportProjectInput struct {
+	File graphql.Upload `json:"file"`
+}
+
+type ImportProjectPayload struct {
+	ProjectData JSON `json:"projectData"`
 }
 
 type Infobox struct {
@@ -1158,6 +1174,7 @@ type Project struct {
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 	Starred           bool              `json:"starred"`
+	IsDeleted         bool              `json:"isDeleted"`
 }
 
 func (Project) IsNode()        {}
@@ -1853,6 +1870,7 @@ type UpdateProjectInput struct {
 	TrackingID        *string  `json:"trackingId,omitempty"`
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
+	Deleted           *bool    `json:"deleted,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {

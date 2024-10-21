@@ -6,12 +6,12 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type CheckBoxFieldProps = CommonFieldProps & CheckBoxProps;
 
 const CheckBoxField: FC<CheckBoxFieldProps> = ({
-  commonTitle,
+  title,
   description,
   ...props
 }) => {
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <CheckBox {...props} />
     </CommonField>
   );

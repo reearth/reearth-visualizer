@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 
 import Navigator, { Props } from ".";
 
@@ -7,6 +7,6 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as Meta;
 
-export const Normal: Story<Props> = ({ ...args }) => (
+export const Normal: StoryFn<Props> = ({ ...args }) => (
   <Navigator {...args} degree={0} />
 );

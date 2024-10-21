@@ -73,7 +73,9 @@ type VisualizerProps = {
   handleZoomToLayer?: (layerId: string | undefined) => void;
   handleSketchTypeChange?: (type: SketchType | undefined) => void;
   handleSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  handleSketchFeatureUpdate?: (feature: SketchFeature | null) => void;
   handleMount?: () => void;
+  handleCoreAPIReady?: () => void;
   //
   widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignEditorActivated?: boolean;
@@ -172,7 +174,9 @@ const Visualizer: FC<VisualizerProps> = ({
   handleZoomToLayer,
   handleSketchTypeChange,
   handleSketchFeatureCreate,
+  handleSketchFeatureUpdate,
   handleMount,
+  handleCoreAPIReady,
   // story
   showStoryPanel,
   storyPanelRef,
@@ -229,13 +233,16 @@ const Visualizer: FC<VisualizerProps> = ({
         camera={visualizerCamera}
         interactionMode={interactionMode}
         shouldRender={shouldRender}
+        displayCredits={false}
         onCameraChange={onCameraChange}
         onLayerSelect={handleCoreLayerSelect}
         onLayerDrop={handleLayerDrop}
         onZoomToLayer={handleZoomToLayer}
         onSketchTypeChangeProp={handleSketchTypeChange}
         onSketchFeatureCreate={handleSketchFeatureCreate}
+        onSketchFeatureUpdate={handleSketchFeatureUpdate}
         onMount={handleMount}
+        onAPIReady={handleCoreAPIReady}
       >
         <Crust
           engineName={engine}

@@ -1,3 +1,5 @@
+import { VersionForExtension } from "@reearth/types";
+
 export type ExtensionType =
   | "dataset-import"
   | "publication"
@@ -14,6 +16,7 @@ export type SharedExtensionProps = {
     text: string,
     heading?: string
   ) => void;
+  version?: VersionForExtension;
 };
 
 export type DatasetImportExtensionProps = {

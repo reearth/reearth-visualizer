@@ -9,7 +9,7 @@ import {
 import { config, getAccessToken, type Config } from "./config";
 
 // eslint-disable-next-line no-restricted-imports
-export { expect } from "@playwright/test";
+export { expect, chromium, type Page, type Locator } from "@playwright/test";
 
 export type Reearth = {
   initUser: () => Promise<{

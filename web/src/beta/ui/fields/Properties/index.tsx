@@ -105,9 +105,7 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
     <FieldsWrapper>
       {isList && !!item && (
         <ListField
-          commonTitle={
-            item.title || (item.id === "default" ? "defaultItemName" : "")
-          }
+          title={item.title || (item.id === "default" ? "defaultItemName" : "")}
           items={propertyListItems}
           selected={selected}
           onItemSelect={select}

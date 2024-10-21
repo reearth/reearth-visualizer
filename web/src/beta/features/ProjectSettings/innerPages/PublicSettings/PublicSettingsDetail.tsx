@@ -1,27 +1,31 @@
-import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/defaultBetaProjectImage.png";
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
+import defaultBetaProjectImage from "@reearth/beta/ui/assets/defaultBetaProjectImage.png";
 import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
-import { useT } from "@reearth/services/i18n";
+import { Story } from "@reearth/services/api/storytellingApi/utils";
+import { useAuth } from "@reearth/services/auth";
+import { useLang, useT } from "@reearth/services/i18n";
+import {
+  NotificationType,
+  useCurrentTheme,
+  useNotification
+} from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { useGA } from "../../../Published/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
 
 import {
   PublicAliasSettingsType,
   PublicBasicAuthSettingsType,
   PublicSettingsType,
-  PublicGASettingsType
+  PublicGASettingsType,
+  SettingsProject
 } from ".";
 
 type Props = {
-  settingsItem: PublicSettingsType &
-    PublicBasicAuthSettingsType &
-    PublicAliasSettingsType &
-    PublicGASettingsType;
+  settingsItem: SettingsProject | Story;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
@@ -80,34 +84,56 @@ const PublicSettingsDetail: React.FC<Props> = ({
     }
   }, [localGA, onUpdateGA]);
 
-  useGA(localGA);
+  const extensions = window.REEARTH_CONFIG?.extensions?.publication;
+  const [accessToken, setAccessToken] = useState<string>();
+  const { getAccessToken } = useAuth();
+  const currentLang = useLang();
+  const [currentTheme] = useCurrentTheme();
+
+  useEffect(() => {
+    getAccessToken().then((token) => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
+
+  const [, setNotification] = useNotification();
+  const onNotificationChange = useCallback(
+    (type: NotificationType, text: string, heading?: string) => {
+      setNotification({ type, text, heading });
+    },
+    [setNotification]
+  );
 
   return (
     <>
       <Collapse title={t("Public Info")} size="large">
         <SettingsFields>
           <InputField
-            commonTitle={t("Title")}
+            title={t("Title")}
             value={settingsItem.publicTitle}
             onChange={(publicTitle: string) => {
               setLocalPublicInfo((s) => ({ ...s, publicTitle }));
             }}
           />
           <TextAreaField
-            commonTitle={t("Description")}
+            title={t("Description")}
             value={localPublicInfo.publicDescription ?? ""}
+            resizable="height"
             onChange={(publicDescription: string) => {
               setLocalPublicInfo((s) => ({ ...s, publicDescription }));
             }}
           />
           <ThumbnailField>
             <AssetField
-              commonTitle={t("Thumbnail")}
+              title={t("Thumbnail")}
               inputMethod="asset"
               assetsTypes={IMAGE_TYPES}
               value={localPublicInfo.publicImage}
               onChange={(publicImage) => {
-                setLocalPublicInfo((s) => ({ ...s, publicImage }));
+                setLocalPublicInfo((s) => ({
+                  ...s,
+                  publicImage: publicImage ?? ""
+                }));
               }}
             />
             <StyledImage
@@ -130,14 +156,14 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Basic Authorization")} size="large">
         <SettingsFields>
           <SwitchField
-            commonTitle={t("Enable Basic Authorization")}
+            title={t("Enable Basic Authorization")}
             value={localBasicAuthorization.isBasicAuthActive}
             onChange={(isBasicAuthActive) => {
               setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
             }}
           />
           <InputField
-            commonTitle={t("Username")}
+            title={t("Username")}
             value={settingsItem.basicAuthUsername}
             onChange={(basicAuthUsername: string) => {
               setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
@@ -145,7 +171,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <InputField
-            commonTitle={t("Password")}
+            title={t("Password")}
             value={settingsItem.basicAuthPassword}
             onChange={(basicAuthPassword: string) => {
               setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
@@ -164,7 +190,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Site Setting")} size="large">
         <SettingsFields>
           <InputField
-            commonTitle={t("Site name")}
+            title={t("Site name")}
             value={settingsItem.alias}
             onChange={(alias: string) => {
               setLocalAlias(alias);
@@ -185,14 +211,14 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Google Analytics")} size="large">
         <SettingsFields>
           <SwitchField
-            commonTitle={t("Enable Google Analytics")}
+            title={t("Enable Google Analytics")}
             value={localGA.enableGa ?? false}
             onChange={(enableGa: boolean) => {
               setLocalGA((s) => ({ ...s, enableGa }));
             }}
           />
           <InputField
-            commonTitle={t("Tracking ID")}
+            title={t("Tracking ID")}
             value={settingsItem.trackingId}
             onChange={(trackingId: string) => {
               setLocalGA((s) => ({ ...s, trackingId }));
@@ -207,6 +233,22 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
+      {extensions && extensions.length > 0 && accessToken && (
+        <Collapse title={t("Custom Domain")} size="large">
+          {extensions.map((ext) => (
+            <ext.component
+              key={ext.id}
+              projectId={settingsItem.id}
+              projectAlias={settingsItem.alias}
+              lang={currentLang}
+              theme={currentTheme}
+              accessToken={accessToken}
+              onNotificationChange={onNotificationChange}
+              version={"visualizer"}
+            />
+          ))}
+        </Collapse>
+      )}
     </>
   );
 };

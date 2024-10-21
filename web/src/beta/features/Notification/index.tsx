@@ -1,4 +1,3 @@
-
 import { IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
@@ -13,7 +12,8 @@ export type Notification = {
 };
 
 const NotificationBanner: FC = () => {
-  const { isHovered, visible, notification, setModal, setIsHovered } = useHooks();
+  const { isHovered, visible, notification, setModal, setIsHovered } =
+    useHooks();
   const theme = useTheme();
 
   return (
@@ -69,31 +69,32 @@ const StyledNotificationBanner = styled("div")<{
   width: 312,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: theme.radius.normal,
-  boxShadow: "rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
+  boxShadow:
+    "rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
   backgroundColor:
     type === "error"
       ? theme.dangerous.main
       : type === "warning"
-      ? theme.warning.main
-      : type === "success"
-      ? theme.select.strong
-      : theme.secondary.main,
+        ? theme.warning.main
+        : type === "success"
+          ? theme.select.strong
+          : theme.secondary.main,
   color: theme.content.main,
   zIndex: visible ? theme.zIndexes.editor.notificationBar : 0,
   opacity: visible ? "1" : "0",
   pointerEvents: visible ? "auto" : "none",
   transition: "all 0.5s",
   "&:hover": {
-    padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
-  },
+    padding: `${theme.spacing.small}px ${theme.spacing.normal}px`
+  }
 }));
 
 const HeadingArea = styled("div")(() => ({
   display: "flex",
   justifyContent: "space-between",
-  width: "100%",
+  width: "100%"
 }));
 
 const IconWrapper = styled("div")<{ show: boolean }>(({ show }) => ({
-  opacity: show ? "100%" : "0",
+  opacity: show ? "100%" : "0"
 }));

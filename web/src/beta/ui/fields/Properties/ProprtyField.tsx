@@ -13,6 +13,7 @@ import {
   SelectField,
   SpacingField,
   SwitchField,
+  TextareaField,
   TimePointField,
   TwinInputField
 } from "..";
@@ -63,7 +64,7 @@ const PropertyField: FC<Props> = ({
         schema.ui === "datetime" ? (
           <TimePointField
             key={schema.id}
-            commonTitle={schema.name}
+            title={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
@@ -71,7 +72,7 @@ const PropertyField: FC<Props> = ({
         ) : schema.ui === "color" ? (
           <ColorField
             key={schema.id}
-            commonTitle={schema.name}
+            title={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
@@ -79,7 +80,7 @@ const PropertyField: FC<Props> = ({
         ) : schema.ui === "selection" || schema.choices ? (
           <SelectField
             key={schema.id}
-            commonTitle={schema.name}
+            title={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
             options={
@@ -92,10 +93,19 @@ const PropertyField: FC<Props> = ({
           />
         ) : schema.ui === "buttons" ? (
           <p key={schema.id}>Button radio field</p>
+        ) : schema.ui === "multiline" ? (
+          <TextareaField
+            key={schema.id}
+            title={schema.name}
+            resizable="height"
+            value={(value as string) ?? ""}
+            description={schema.description}
+            onBlur={handleChange}
+          />
         ) : (
           <InputField
             key={schema.id}
-            commonTitle={schema.name}
+            title={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
             onBlur={handleChange}
@@ -104,7 +114,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "url" ? (
         <AssetField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           assetsTypes={assetTypes}
           inputMethod={
             schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"
@@ -116,7 +126,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "spacing" ? (
         <SpacingField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           value={(value as SpacingValues) ?? ""}
           description={schema.description}
           min={schema.min}
@@ -126,7 +136,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "bool" ? (
         <SwitchField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           value={!!value}
           description={schema.description}
           onChange={handleChange}
@@ -134,7 +144,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "number" ? (
         <NumberField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           value={(value as number) ?? ""}
           unit={schema.suffix}
           min={schema.min}
@@ -145,7 +155,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "latlng" ? (
         <TwinInputField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
           description={schema.description}
           onBlur={handleChange}
@@ -153,7 +163,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "camera" ? (
         <CameraField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           value={value as Camera}
           description={schema.description}
           onSave={handleChange}
@@ -162,7 +172,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "array" && schema.ui === "range" ? (
         <RangeField
           key={schema.id}
-          commonTitle={schema.name}
+          title={schema.name}
           values={value as number[]}
           unit={schema.suffix}
           min={schema.min}

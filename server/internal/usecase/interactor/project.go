@@ -1,11 +1,17 @@
 package interactor
 
 import (
+	"archive/zip"
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"strings"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -14,10 +20,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/spf13/afero"
 )
 
 type Project struct {
@@ -25,6 +33,7 @@ type Project struct {
 	commonSceneLock
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
+	storytellingRepo  repo.Storytelling
 	userRepo          accountrepo.User
 	workspaceRepo     accountrepo.Workspace
 	sceneRepo         repo.Scene
@@ -38,6 +47,7 @@ type Project struct {
 	file              gateway.File
 	nlsLayerRepo      repo.NLSLayer
 	layerStyles       repo.Style
+	pluginRepo        repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
@@ -45,6 +55,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
 		assetRepo:         r.Asset,
 		projectRepo:       r.Project,
+		storytellingRepo:  r.Storytelling,
 		userRepo:          r.User,
 		workspaceRepo:     r.Workspace,
 		sceneRepo:         r.Scene,
@@ -58,6 +69,7 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		file:              gr.File,
 		nlsLayerRepo:      r.NLSLayer,
 		layerStyles:       r.Style,
+		pluginRepo:        r.Plugin,
 	}
 }
 
@@ -75,6 +87,10 @@ func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 
 func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
 	return i.projectRepo.FindStarredByWorkspace(ctx, id)
+}
+
+func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
+	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
 }
 
 func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -214,6 +230,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	if p.Starred != nil {
 		prj.SetStarred(*p.Starred)
+	}
+
+	if p.Deleted != nil {
+		prj.SetDeleted(*p.Deleted)
 	}
 
 	if p.PublicTitle != nil {
@@ -415,6 +435,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+				false,
 			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
 		}()
 
@@ -482,6 +503,136 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 
 	tx.Commit()
 	return nil
+}
+
+func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	// project image
+	if prj.ImageURL() != nil {
+		trimmedName := strings.TrimPrefix(prj.ImageURL().Path, "/assets/")
+		stream, err := i.file.ReadAsset(ctx, trimmedName)
+		if err != nil {
+			return nil, err
+		}
+		defer func() {
+			if cerr := stream.Close(); cerr != nil {
+				fmt.Printf("Error closing file: %v\n", cerr)
+			}
+		}()
+		zipEntryPath := fmt.Sprintf("assets/%s", trimmedName)
+		zipEntry, err := zipWriter.Create(zipEntryPath)
+		if err != nil {
+			return nil, err
+		}
+		_, err = io.Copy(zipEntry, stream)
+		if err != nil {
+			_ = stream.Close()
+			return nil, err
+		}
+	}
+
+	return prj, nil
+}
+
+func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
+	fileWriter, err := zipWriter.Create("project.json")
+	if err != nil {
+		return err
+	}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	if _, err = fileWriter.Write(jsonData); err != nil {
+		return err
+	}
+
+	if err := zipWriter.Close(); err != nil {
+		return err
+	}
+
+	if _, err := zipFile.Seek(0, 0); err != nil {
+		return err
+	}
+	defer func() {
+		if err := zipFile.Close(); err != nil {
+			fmt.Println("Failed to close zip file:", err)
+		}
+	}()
+	if err := i.file.UploadExportProjectZip(ctx, zipFile); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (i *Project) ImportProject(ctx context.Context, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var p = jsonmodel.ToProjectFromJSON(projectData)
+
+	projectID, err := id.ProjectIDFrom(string(p.ID))
+	if err != nil {
+		return nil, nil, err
+	}
+	workspaceID, err := accountdomain.WorkspaceIDFrom(string(p.TeamID))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	prjBuilder := project.New().
+		ID(projectID).
+		Workspace(workspaceID).
+		IsArchived(p.IsArchived).
+		IsBasicAuthActive(p.IsBasicAuthActive).
+		BasicAuthUsername(p.BasicAuthUsername).
+		BasicAuthPassword(p.BasicAuthPassword).
+		Name(p.Name).
+		Description(p.Description).
+		Alias(p.Alias).
+		PublicTitle(p.PublicTitle).
+		PublicDescription(p.PublicDescription).
+		PublicImage(p.PublicImage).
+		PublicNoIndex(p.PublicNoIndex).
+		CoreSupport(p.CoreSupport).
+		EnableGA(p.EnableGa).
+		TrackingID(p.TrackingID).
+		Starred(p.Starred)
+
+	if !p.CreatedAt.IsZero() {
+		prjBuilder = prjBuilder.UpdatedAt(p.CreatedAt)
+	}
+	if p.PublishedAt != nil {
+		prjBuilder = prjBuilder.PublishedAt(*p.PublishedAt)
+	}
+
+	if p.ImageURL != nil {
+		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
+	}
+
+	prjBuilder = prjBuilder.Visualizer(visualizer.Visualizer(p.Visualizer))
+	prjBuilder = prjBuilder.PublishmentStatus(gqlmodel.FromPublishmentStatus(p.PublishmentStatus))
+
+	prj, err := prjBuilder.Build()
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, nil, err
+	}
+	prj, err = i.projectRepo.FindByID(ctx, prj.ID())
+	if err != nil {
+		return nil, nil, err
+	}
+	return prj, tx, nil
 }
 
 func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {

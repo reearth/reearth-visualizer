@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
@@ -90,6 +91,7 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 		WorkspaceID: input.WorkspaceID,
 		Lang:        input.Lang,
 		Theme:       input.Theme,
+		MockAuth:    adapter.IsMockAuth(ctx),
 	})
 
 	if err != nil {

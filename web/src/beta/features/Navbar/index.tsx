@@ -10,7 +10,7 @@ type Props = {
   workspaceId?: string;
   isDashboard?: boolean;
   currentTab?: Tab;
-  page?: "editor" | "settings";
+  page?: "editor" | "settings" | "projectSettings";
 };
 
 export const Tabs = ["map", "story", "widgets", "publish"] as const;
@@ -31,7 +31,7 @@ const Navbar: React.FC<Props> = ({
 }) => {
   const {
     currentProject,
-    workspace,
+    currentWorkspace,
     workspaces,
     handleLogout,
     handleWorkspaceChange
@@ -50,7 +50,7 @@ const Navbar: React.FC<Props> = ({
     <Wrapper>
       <LeftSection
         currentProject={currentProject}
-        currentWorkspace={workspace}
+        currentWorkspace={currentWorkspace}
         workspaces={workspaces}
         sceneId={sceneId}
         page={page}

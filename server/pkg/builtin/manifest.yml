@@ -54,10 +54,6 @@ extensions:
                   label: Labelled
                 - key: default_road
                   label: Road Map
-                - key: stamen_watercolor
-                  label: Stamen Watercolor
-                - key: stamen_toner
-                  label: Stamen Toner
                 - key: open_street_map
                   label: OpenStreetMap
                 - key: esri_world_topo
@@ -159,14 +155,6 @@ extensions:
                 field: terrain
                 type: bool
                 value: true
-            - id: depthTestAgainstTerrain
-              type: bool
-              title: Hide objects under terrain
-              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
         - id: globeLighting
           collection: globe
           title: Globe Lighting
@@ -206,6 +194,13 @@ extensions:
                 field: globeAtmosphere
                 type: bool
                 value: true
+        - id: globeDepthTestAgainstTerrain
+          collection: globe
+          title: Hide objects under ground
+          fields:
+            - id: depthTestAgainstTerrain
+              type: bool
+              title: Enable
         - id: skyBox
           collection: sky
           title: Sky Box

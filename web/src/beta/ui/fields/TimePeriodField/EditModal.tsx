@@ -33,7 +33,8 @@ const EditModal: FC<EditPanelProps> = ({
     setDisabledFields,
     handleChange,
     handleSubmit,
-    handleTimePointPopup
+    handleTimePointPopup,
+    handleClose
   } = useHooks({
     timePeriodValues,
     onChange,
@@ -57,10 +58,10 @@ const EditModal: FC<EditPanelProps> = ({
     <Modal visible={visible} size="small">
       <ModalPanel
         title={t("Time Period Settings")}
-        onCancel={onClose}
+        onCancel={handleClose}
         actions={
           <>
-            <Button onClick={onClose} size="normal" title="Cancel" />
+            <Button onClick={handleClose} size="normal" title="Cancel" />
             <Button
               size="normal"
               title="Apply"
@@ -73,7 +74,7 @@ const EditModal: FC<EditPanelProps> = ({
       >
         <FieldsWrapper>
           <TimePointField
-            commonTitle={t("* Start Time")}
+            title={t("* Start Time")}
             description={t("Start time for the timeline")}
             onChange={(newValue) => handleChange(newValue || "", "startTime")}
             value={timePeriodValues?.startTime}
@@ -83,7 +84,7 @@ const EditModal: FC<EditPanelProps> = ({
             onTimePointPopupOpen={handleTimePointPopup}
           />
           <TimePointField
-            commonTitle={t("* Current Time")}
+            title={t("* Current Time")}
             description={t("Current time should be between start and end time")}
             onChange={(newValue) => handleChange(newValue || "", "currentTime")}
             value={timePeriodValues?.currentTime}
@@ -93,7 +94,7 @@ const EditModal: FC<EditPanelProps> = ({
             onTimePointPopupOpen={handleTimePointPopup}
           />
           <TimePointField
-            commonTitle={t("* End Time")}
+            title={t("* End Time")}
             onChange={(newValue) => handleChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
             value={timePeriodValues?.endTime}

@@ -18,7 +18,7 @@ export type RangeFieldProps = CommonFieldProps &
   };
 
 const RangeField: FC<RangeFieldProps> = ({
-  commonTitle,
+  title,
   description,
   values,
   placeholders,
@@ -45,7 +45,7 @@ const RangeField: FC<RangeFieldProps> = ({
   }, [values]);
 
   return (
-    <CommonField commonTitle={commonTitle} description={description}>
+    <CommonField title={title} description={description}>
       <Wrapper>
         <InputWrapper>
           <NumberInput

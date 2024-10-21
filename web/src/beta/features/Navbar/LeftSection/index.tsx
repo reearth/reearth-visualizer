@@ -1,10 +1,11 @@
 import {
   IconButton,
   PopupMenu,
-  PopupMenuItem
+  PopupMenuItem,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -17,7 +18,7 @@ type Props = {
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
   sceneId?: string;
-  page: "editor" | "settings";
+  page: "editor" | "settings" | "projectSettings";
   onSignOut: () => void;
   onWorkspaceChange?: (workspaceId: string) => void;
 };
@@ -32,6 +33,7 @@ const LeftSection: React.FC<Props> = ({
   onWorkspaceChange
 }) => {
   const t = useT();
+  const theme = useTheme();
 
   const menuItems: PopupMenuItem[] = useMemo(
     () => [
@@ -55,13 +57,20 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
+      {page !== "editor" && (
+        <StyledLink to={`/`}>
+          <Typography size="body" weight="bold" color={theme.dangerous.strong}>
+            {t("Visualizer")}
+          </Typography>
+        </StyledLink>
+      )}
       <StyledLink
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}
       >
         <IconButton icon="grid" appearance="simple" size="large" />
       </StyledLink>
-      {page !== "editor" && (
+      {page === "projectSettings" && (
         <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
           <IconButton icon="editor" appearance="simple" size="large" />
         </StyledLink>

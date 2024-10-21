@@ -86,7 +86,7 @@ export const FieldComponent = ({
   return field?.type === "spacing" ? (
     <SpacingField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={field?.value}
       description={field?.description}
       min={field?.min}
@@ -101,7 +101,7 @@ export const FieldComponent = ({
   ) : field?.type === "bool" ? (
     <SwitchField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={!!field?.value}
       description={field?.description}
       onChange={handlePropertyValueUpdate(
@@ -114,7 +114,7 @@ export const FieldComponent = ({
   ) : field?.type === "latlng" ? (
     <TwinInputField
       key={field?.id}
-      commonTitle={field?.title}
+      title={field?.title}
       values={[field?.value?.lat, field?.value?.lng]}
       description={field?.description}
       onBlur={handlePropertyValueUpdate(
@@ -127,7 +127,7 @@ export const FieldComponent = ({
   ) : field?.type === "camera" ? (
     <CameraField
       key={field?.id}
-      commonTitle={field?.commonTitle}
+      title={field?.title}
       value={field?.value}
       description={field?.description}
       onSave={handlePropertyValueUpdate(
@@ -139,7 +139,7 @@ export const FieldComponent = ({
     />
   ) : field?.type === "number" ? (
     <NumberField
-      commonTitle={field?.title}
+      title={field?.title}
       value={field?.value}
       description={field?.description}
       min={field?.min}
@@ -154,7 +154,7 @@ export const FieldComponent = ({
   ) : field?.type === "url" ? (
     <AssetField
       key={field.id}
-      commonTitle={field.name}
+      title={field.name}
       assetsTypes={assetsTypes}
       inputMethod={
         field.ui === "video" || field.ui === undefined ? "URL" : "asset"
@@ -172,7 +172,7 @@ export const FieldComponent = ({
     field?.ui === "datetime" ? (
       <TimePointField
         key={field.id}
-        commonTitle={field?.title}
+        title={field?.title}
         description={field?.description}
         value={field?.value}
         onChange={handlePropertyValueUpdate(
@@ -185,7 +185,7 @@ export const FieldComponent = ({
     ) : field?.ui === "color" ? (
       <ColorField
         key={field.id}
-        commonTitle={field?.title}
+        title={field?.title}
         description={field?.description}
         value={field?.value}
         onChange={handlePropertyValueUpdate(
@@ -198,7 +198,7 @@ export const FieldComponent = ({
     ) : field?.ui === "selection" || field?.choices ? (
       <SelectField
         key={field.id}
-        commonTitle={field.name}
+        title={field.name}
         value={field?.value}
         description={field.description}
         options={
@@ -219,7 +219,7 @@ export const FieldComponent = ({
     ) : (
       <InputField
         key={field.id}
-        commonTitle={field?.title}
+        title={field?.title}
         value={field?.value}
         description={field?.description}
         onBlur={handlePropertyValueUpdate(
@@ -233,7 +233,7 @@ export const FieldComponent = ({
   ) : field?.type === "timeline" ? (
     <TimePeriodField
       key={field.id}
-      commonTitle={field?.title}
+      title={field?.title}
       value={field?.value}
       description={field?.description}
       onChange={handlePropertyValueUpdate(
@@ -246,7 +246,7 @@ export const FieldComponent = ({
   ) : field?.type === "array" && field?.ui === "range" ? (
     <RangeField
       key={field.id}
-      commonTitle={field.name}
+      title={field.name}
       values={field?.value as number[]}
       unit={field.suffix}
       min={field.min}

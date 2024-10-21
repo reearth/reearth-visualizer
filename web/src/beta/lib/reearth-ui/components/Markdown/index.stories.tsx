@@ -1,8 +1,7 @@
 import { styled } from "@reearth/services/theme";
 import { Meta, StoryObj } from "@storybook/react";
 
-
-import { Markdown, Props } from ".";
+import { Markdown, MarkdownProps } from ".";
 
 const markdown = `
 > A block quote with ~strikethrough~ and a URL: https://reactjs.org.
@@ -31,7 +30,7 @@ export default meta;
 
 type Story = StoryObj<typeof Markdown>;
 
-export const Default: Story = (args: Props) => {
+export const Default: Story = (args: MarkdownProps) => {
   return (
     <Wrapper>
       <div>
