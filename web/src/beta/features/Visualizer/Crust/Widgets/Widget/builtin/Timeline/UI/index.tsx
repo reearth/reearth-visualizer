@@ -80,7 +80,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     <Container publishedTheme={theme}>
       <div style={{ width: "32px" }}>
         <CloseButton publishedTheme={theme} onClick={onClose}>
-          <Icon icon="close" size="normal"/>
+          <Icon icon="close" size="normal" />
         </CloseButton>
       </div>
       <ToolBox>
@@ -90,7 +90,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             isPlaying={isPlayingReversed}
             onClick={toggleIsPlayingReversed}
           >
-            <Icon icon="playLeft" size="normal"/>
+            <Icon icon="playLeft" size="normal" />
           </PlayButton>
         </li>
         <li>
@@ -100,7 +100,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             isPlaying={isPlaying}
             onClick={toggleIsPlaying}
           >
-            <Icon icon="playRight" size="normal"/>
+            <Icon icon="playRight" size="normal" />
           </PlayButton>
         </li>
         <li>

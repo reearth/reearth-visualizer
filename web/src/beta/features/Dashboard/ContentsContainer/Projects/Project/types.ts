@@ -8,4 +8,5 @@ export type ProjectProps = {
   onProjectOpen?: () => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
+  onProjectRemove?: (projectId?: string) => void;
 };

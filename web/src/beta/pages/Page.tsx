@@ -4,9 +4,11 @@ import {
   useSceneFetcher
 } from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
-import React, { ReactNode, useMemo } from "react";
+import { FC, ReactNode, useMemo } from "react";
 
 import { Loading } from "../lib/reearth-ui";
+
+import NotFound from "./NotFound";
 
 type RenderItemProps = {
   sceneId?: string;
@@ -21,7 +23,7 @@ type Props = {
   renderItem: (props: RenderItemProps) => ReactNode;
 };
 
-const PageWrapper: React.FC<Props> = ({
+const PageWrapper: FC<Props> = ({
   sceneId,
   projectId,
   workspaceId,
@@ -32,7 +34,6 @@ const PageWrapper: React.FC<Props> = ({
   const { useSceneQuery } = useSceneFetcher();
 
   const { loading: loadingMe } = useMeQuery();
-
   const { scene, loading: loadingScene } = useSceneQuery({ sceneId });
 
   const currentProjectId = useMemo(
@@ -45,32 +46,37 @@ const PageWrapper: React.FC<Props> = ({
     [workspaceId, scene?.workspaceId]
   );
 
-  const { loading: loadingProject } = useProjectQuery(currentProjectId);
+  const { loading: loadingProject, project } =
+    useProjectQuery(currentProjectId);
 
   const loading = useMemo(
-    () => loadingMe ?? loadingScene ?? loadingProject,
+    () => loadingMe || loadingScene || loadingProject,
     [loadingMe, loadingScene, loadingProject]
   );
 
-  return loading ? (
-    <Loading animationSize={80} />
-  ) : (
-    <>
-      {renderItem({
-        sceneId,
-        projectId: currentProjectId,
-        workspaceId: currentWorkspaceId
-      })}
-    </>
-  );
+  const renderContent = useMemo(() => {
+    if (loading) return <Loading animationSize={80} />;
+
+    if (project?.isDeleted) return <NotFound />;
+
+    return renderItem({
+      sceneId,
+      projectId: currentProjectId,
+      workspaceId: currentWorkspaceId
+    });
+  }, [
+    loading,
+    project?.isDeleted,
+    sceneId,
+    currentProjectId,
+    currentWorkspaceId,
+    renderItem
+  ]);
+
+  return renderContent;
 };
 
-const Page: React.FC<Props> = ({
-  sceneId,
-  projectId,
-  workspaceId,
-  renderItem
-}) => (
+const Page: FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => (
   <AuthenticatedPage>
     <PageWrapper
       sceneId={sceneId}
