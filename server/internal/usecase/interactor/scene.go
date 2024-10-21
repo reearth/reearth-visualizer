@@ -726,6 +726,10 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 	if err != nil {
 		return nil, err
 	}
+
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sce.ID()}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sce.ID()}}
+
 	widgets := []*scene.Widget{}
 	for _, widgetJSON := range sceneJSON.Widgets {
 		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
@@ -733,7 +737,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 			return nil, err
 		}
 		extensionID := id.PluginExtensionID(widgetJSON.ExtensionID)
-		extension, err := i.getWidgePluginFiltered(ctx, pluginID, extensionID, sce.ID())
+		extension, err := i.getWidgePluginFiltered(ctx, pluginID, extensionID, readableFilter)
 		if err != nil {
 			return nil, err
 		}
@@ -741,7 +745,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		if err != nil {
 			return nil, err
 		}
-		ps, err := i.propertySchemaRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).FindByID(ctx, extension.Schema())
+		ps, err := i.propertySchemaRepo.Filtered(readableFilter).FindByID(ctx, extension.Schema())
 		if err != nil {
 			return nil, err
 		}
@@ -750,7 +754,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 			return nil, err
 		}
 		// Save property
-		if err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).Save(ctx, prop); err != nil {
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 			return nil, err
 		}
 		widget, err := scene.NewWidget(id.NewWidgetID(), pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
@@ -766,7 +770,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 			return nil, err
 		}
 		// Save property
-		if err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).Save(ctx, property); err != nil {
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, property); err != nil {
 			return nil, err
 		}
 		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
@@ -790,7 +794,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		return nil, err
 	}
 	// Save property
-	if err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).Save(ctx, prop); err != nil {
+	if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 		return nil, err
 	}
 
@@ -846,8 +850,8 @@ func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.Plug
 	return extension, nil
 }
 
-func (i *Scene) getWidgePluginFiltered(ctx context.Context, pid id.PluginID, eid id.PluginExtensionID, sceneID idx.ID[id.Scene]) (*plugin.Extension, error) {
-	pr, err := i.pluginRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).FindByID(ctx, pid)
+func (i *Scene) getWidgePluginFiltered(ctx context.Context, pid id.PluginID, eid id.PluginExtensionID, readableFilter repo.SceneFilter) (*plugin.Extension, error) {
+	pr, err := i.pluginRepo.Filtered(readableFilter).FindByID(ctx, pid)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, interfaces.ErrPluginNotFound
