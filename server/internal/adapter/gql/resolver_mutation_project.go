@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -178,6 +179,29 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	}, nil
 }
 
+func oldSceneID(data []byte) (string, error) {
+
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal(data, &jsonData); err != nil {
+		return "", err
+	}
+
+	oldSceneData, _ := jsonData["scene"].(map[string]interface{})
+	return oldSceneData["id"].(string), nil
+}
+
+func unmarshal(data []byte) ([]interface{}, map[string]interface{}, error) {
+
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal(data, &jsonData); err != nil {
+		return nil, nil, err
+	}
+
+	pluginsData, _ := jsonData["plugins"].([]interface{})
+	sceneData, _ := jsonData["scene"].(map[string]interface{})
+	return pluginsData, sceneData, nil
+}
+
 func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
 
 	tempData, assets, plugins, err := file.UncompressExportZip(input.File.File)
@@ -221,12 +245,10 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), getOperator(ctx))
 
 	// replace with the new SceneID
-	var tempJsonData2 map[string]interface{}
-	if err := json.Unmarshal(tempData, &tempJsonData2); err != nil {
+	oldSceneID, err := oldSceneID(tempData)
+	if err != nil {
 		return nil, err
 	}
-	oldSceneData, _ := tempJsonData2["scene"].(map[string]interface{})
-	oldSceneID := oldSceneData["id"].(string)
 	tempData = bytes.Replace(tempData, []byte(oldSceneID), []byte(sce.ID().String()), -1)
 
 	// Plugin file import
@@ -237,7 +259,6 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		fileName := parts[1]
 
 		newPID := strings.Replace(oldPID, oldSceneID, sce.ID().String(), 1)
-
 		pid, err := id.PluginIDFrom(newPID)
 		if err != nil {
 			return nil, err
@@ -247,42 +268,31 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		}
 	}
 
-	//　replaceed Data
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(tempData, &jsonData); err != nil {
-		return nil, err
+	pluginsData, sceneData, _ := unmarshal(tempData)
+
+	plgs, err := usecases(ctx).Plugin.ImportPlugins(ctx, sce, pluginsData)
+	if err != nil {
+		return nil, errors.New("Fail ImportPlugins :" + err.Error())
 	}
 
-	pluginsData, _ := jsonData["plugins"].([]interface{})
-	plgs, err := usecases(ctx).Plugin.ImportPlugins(ctx, pluginsData)
+	sce, err = usecases(ctx).Scene.ImportScene(ctx, sce, prj, plgs, sceneData)
 	if err != nil {
-		return nil, err
-	}
-
-	// Scene update
-	sceneData, _ := jsonData["scene"].(map[string]interface{})
-	sce, err = usecases(ctx).Scene.ImportScene(ctx, sce.ID(), prj, plgs, sceneData)
-	if err != nil {
-		fmt.Println("====== 4")
-		return nil, err
+		return nil, errors.New("Fail ImportScene :" + err.Error())
 	}
 
 	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
 	if err != nil {
-		fmt.Println("====== 5")
-		return nil, err
+		return nil, errors.New("Fail ImportNLSLayers :" + err.Error())
 	}
 
 	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sce.ID(), sceneData)
 	if err != nil {
-		fmt.Println("====== 6")
-		return nil, err
+		return nil, errors.New("Fail ImportStyles :" + err.Error())
 	}
 
 	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData)
 	if err != nil {
-		fmt.Println("====== 7")
-		return nil, err
+		return nil, errors.New("Fail ImportStory :" + err.Error())
 	}
 
 	tx.Commit()

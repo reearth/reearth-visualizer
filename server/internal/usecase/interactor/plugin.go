@@ -3,6 +3,7 @@ package interactor
 import (
 	"archive/zip"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -107,25 +108,22 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 	return plgs, nil
 }
 
-func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) ([]*plugin.Plugin, error) {
+func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsData []interface{}) ([]*plugin.Plugin, error) {
 	var pluginsJSON = jsonmodel.ToPluginsFromJSON(pluginsData)
 
 	var pluginIDs []id.PluginID
 	for _, pluginJSON := range pluginsJSON {
 		pid, err := jsonmodel.ToPluginID(pluginJSON.ID)
-		pid = pid.WithImport()
 		if err != nil {
-			fmt.Println("######### 1")
 			return nil, err
 		}
 		pluginIDs = append(pluginIDs, pid)
 
 		var extensions []*plugin.Extension
-		var propertySchemas property.SchemaList
+
 		for _, pluginJSONextension := range pluginJSON.Extensions {
 			psid, err := jsonmodel.ToPropertySchemaID(pluginJSONextension.PropertySchemaID)
 			if err != nil {
-				fmt.Println("######### 2")
 				return nil, err
 			}
 			extension, err := plugin.NewExtension().
@@ -138,7 +136,6 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 				Schema(psid).
 				Build()
 			if err != nil {
-				fmt.Println("######### 3")
 				return nil, err
 			}
 			extensions = append(extensions, extension)
@@ -146,7 +143,10 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 			ps := property.NewSchema().
 				ID(psid).
 				MustBuild()
-			propertySchemas = append(propertySchemas, ps)
+			// Save propertySchema
+			if err := i.propertySchemaRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).Save(ctx, ps); err != nil {
+				return nil, errors.New("Save propertySchema :" + err.Error())
+			}
 		}
 
 		p, err := plugin.New().
@@ -158,24 +158,19 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsData []interface{}) (
 			Extensions(extensions).
 			Build()
 		if err != nil {
-			fmt.Println("######### 4")
 			return nil, err
 		}
 		if !p.ID().System() {
-			if err := i.pluginRepo.Save(ctx, p); err != nil {
-				fmt.Println("######### 5")
-				return nil, err
+			// Save plugin
+			if err := i.pluginRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).Save(ctx, p); err != nil {
+				return nil, errors.New("Save plugin :" + err.Error())
 			}
 		}
-		if err := i.propertySchemaRepo.SaveAll(ctx, propertySchemas); err != nil {
-			fmt.Println("######### 6")
-			return nil, err
-		}
+
 	}
 
-	plgs, err := i.pluginRepo.FindByIDs(ctx, pluginIDs)
+	plgs, err := i.pluginRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sce.ID()}}).FindByIDs(ctx, pluginIDs)
 	if err != nil {
-		fmt.Println("######### 7")
 		return nil, err
 	}
 

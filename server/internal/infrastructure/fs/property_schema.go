@@ -69,6 +69,10 @@ func (r *propertySchema) Save(ctx context.Context, p *property.Schema) error {
 	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
+func (r *propertySchema) SaveImport(ctx context.Context, p *property.Schema) error {
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
+}
+
 func (r *propertySchema) SaveAll(ctx context.Context, p property.SchemaList) error {
 	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }

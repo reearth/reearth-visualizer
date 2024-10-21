@@ -102,6 +102,20 @@ func (r *Plugin) Save(ctx context.Context, p *plugin.Plugin) error {
 	return nil
 }
 
+func (r *Plugin) SaveImport(ctx context.Context, p *plugin.Plugin) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for i, q := range r.data {
+		if q.ID().Equal(p.ID()) {
+			r.data = append(r.data[:i], r.data[i+1:]...)
+			break
+		}
+	}
+	r.data = append(r.data, p.Clone())
+	return nil
+}
+
 func (r *Plugin) Remove(ctx context.Context, id id.PluginID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()

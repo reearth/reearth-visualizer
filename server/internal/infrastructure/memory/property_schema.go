@@ -101,6 +101,18 @@ func (r *PropertySchema) Save(ctx context.Context, p *property.Schema) error {
 	return nil
 }
 
+func (r *PropertySchema) SaveImport(ctx context.Context, p *property.Schema) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	r.initMap()
+	if p.ID().Plugin().System() {
+		return errors.New("cannnot save system property schema")
+	}
+	r.data[p.ID().String()] = p
+	return nil
+}
+
 func (r *PropertySchema) SaveAll(ctx context.Context, p property.SchemaList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()

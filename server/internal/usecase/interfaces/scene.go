@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/idx"
 )
 
 var (
@@ -35,7 +34,7 @@ type Scene interface {
 	UpdateCluster(context.Context, UpdateClusterParam, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	RemoveCluster(context.Context, id.SceneID, id.ClusterID, *usecase.Operator) (*scene.Scene, error)
 	ExportScene(context.Context, *project.Project, *zip.Writer) (*scene.Scene, map[string]interface{}, error)
-	ImportScene(context.Context, idx.ID[id.Scene], *project.Project, []*plugin.Plugin, map[string]interface{}) (*scene.Scene, error)
+	ImportScene(context.Context, *scene.Scene, *project.Project, []*plugin.Plugin, map[string]interface{}) (*scene.Scene, error)
 }
 
 type UpdateWidgetParam struct {

@@ -69,6 +69,13 @@ func (r *propertySchema) Save(ctx context.Context, p *property.Schema) error {
 	return r.writer.Save(ctx, p)
 }
 
+func (r *propertySchema) SaveImport(ctx context.Context, p *property.Schema) error {
+	if r.writer == nil {
+		return rerror.ErrInternalByWithContext(ctx, errors.New("writer is not set"))
+	}
+	return r.writer.Save(ctx, p)
+}
+
 func (r *propertySchema) SaveAll(ctx context.Context, p property.SchemaList) error {
 	if r.writer == nil {
 		return rerror.ErrInternalByWithContext(ctx, errors.New("writer is not set"))

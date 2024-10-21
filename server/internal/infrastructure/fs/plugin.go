@@ -61,6 +61,10 @@ func (r *pluginRepo) Save(ctx context.Context, p *plugin.Plugin) error {
 	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
+func (r *pluginRepo) SaveImport(ctx context.Context, p *plugin.Plugin) error {
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
+}
+
 func (r *pluginRepo) Remove(ctx context.Context, pid id.PluginID) error {
 	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }

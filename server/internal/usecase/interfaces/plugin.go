@@ -23,6 +23,6 @@ type Plugin interface {
 	Upload(context.Context, io.Reader, id.SceneID, *usecase.Operator) (*plugin.Plugin, *scene.Scene, error)
 	UploadFromRemote(context.Context, *url.URL, id.SceneID, *usecase.Operator) (*plugin.Plugin, *scene.Scene, error)
 	ExportPlugins(context.Context, *scene.Scene, *zip.Writer) ([]*plugin.Plugin, error)
-	ImportPlugins(context.Context, []interface{}) ([]*plugin.Plugin, error)
+	ImportPlugins(context.Context, *scene.Scene, []interface{}) ([]*plugin.Plugin, error)
 	ImporPluginFile(context.Context, id.PluginID, string, *zip.File) error
 }

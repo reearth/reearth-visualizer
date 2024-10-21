@@ -150,6 +150,14 @@ func (r *Property) Save(ctx context.Context, p *property.Property) error {
 	return nil
 }
 
+func (r *Property) SaveImport(ctx context.Context, p *property.Property) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	r.data[p.ID()] = p
+	return nil
+}
+
 func (r *Property) SaveAll(ctx context.Context, pl property.List) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()

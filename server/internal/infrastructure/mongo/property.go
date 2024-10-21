@@ -153,6 +153,11 @@ func (r *Property) Save(ctx context.Context, property *property.Property) error 
 	return r.client.SaveOne(ctx, id, doc)
 }
 
+func (r *Property) SaveImport(ctx context.Context, property *property.Property) error {
+	doc, id := mongodoc.NewProperty(property)
+	return r.client.SaveOne(ctx, id, doc)
+}
+
 func (r *Property) SaveAll(ctx context.Context, properties property.List) error {
 	if len(properties) == 0 {
 		return nil
