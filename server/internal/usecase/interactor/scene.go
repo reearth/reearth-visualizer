@@ -851,12 +851,11 @@ func (i *Scene) ImportScene(ctx context.Context, sceneID idx.ID[id.Scene], prj *
 		fmt.Println("------ 19")
 		return nil, err
 	}
-	// operator.AddNewScene(prj.Workspace(), sceneID)
-	// scene, err = i.sceneRepo.FindByID(ctx, sceneID)
-	// if err != nil {
-	// 	fmt.Println("------ 20")
-	// 	return nil, err
-	// }
+	scene, err = i.sceneRepo.FindByID(ctx, sceneID)
+	if err != nil {
+		fmt.Println("------ 20")
+		return nil, err
+	}
 	return scene, nil
 }
 

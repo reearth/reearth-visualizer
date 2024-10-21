@@ -17,7 +17,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/idx"
 	"github.com/spf13/afero"
 	"golang.org/x/exp/rand"
 )
@@ -179,21 +178,6 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	}, nil
 }
 
-func replaceScene(sceneID idx.ID[id.Scene], tempdata []byte) (idx.ID[id.Scene], string, []byte, error) {
-
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(tempdata, &jsonData); err != nil {
-		return sceneID, "", nil, err
-	}
-
-	sceneData, _ := jsonData["scene"].(map[string]interface{})
-	oldSceneID := sceneData["id"].(string)
-
-	data := bytes.Replace(tempdata, []byte(oldSceneID), []byte(sceneID.String()), -1)
-
-	return sceneID, oldSceneID, data, nil
-}
-
 func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
 
 	tempData, assets, plugins, err := file.UncompressExportZip(input.File.File)
@@ -202,7 +186,6 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	// Assets file import
-	changedFileName := make(map[string]string)
 	for fileName, file := range assets {
 		parts1 := strings.Split(fileName, "/")
 		beforeName := parts1[0]
@@ -214,7 +197,9 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		parts2 := strings.Split(url.Path, "/")
 		afterName := parts2[len(parts2)-1]
 
-		changedFileName[beforeName] = afterName
+		// replace with the new file path and ID
+		tempData = bytes.Replace(tempData, []byte(beforeName), []byte(afterName), -1)
+
 	}
 
 	var tempJsonData map[string]interface{}
@@ -234,8 +219,15 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 
 	// need to create a Scene firstｓ
 	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), getOperator(ctx))
+
 	// replace with the new SceneID
-	sceneID, oldSceneID, data, err := replaceScene(sce.ID(), tempData)
+	var tempJsonData2 map[string]interface{}
+	if err := json.Unmarshal(tempData, &tempJsonData2); err != nil {
+		return nil, err
+	}
+	oldSceneData, _ := tempJsonData2["scene"].(map[string]interface{})
+	oldSceneID := oldSceneData["id"].(string)
+	tempData = bytes.Replace(tempData, []byte(oldSceneID), []byte(sce.ID().String()), -1)
 
 	// Plugin file import
 	for fileName, file := range plugins {
@@ -244,9 +236,9 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		oldPID := parts[0]
 		fileName := parts[1]
 
-		newPluginID := strings.Replace(oldPID, oldSceneID, sceneID.String(), 1)
+		newPID := strings.Replace(oldPID, oldSceneID, sce.ID().String(), 1)
 
-		pid, err := id.PluginIDFrom(newPluginID)
+		pid, err := id.PluginIDFrom(newPID)
 		if err != nil {
 			return nil, err
 		}
@@ -255,14 +247,9 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		}
 	}
 
-	// replace with the new file path and ID
-	for beforeName, afterName := range changedFileName {
-		data = bytes.Replace(data, []byte(beforeName), []byte(afterName), -1)
-	}
-
 	//　replaceed Data
 	var jsonData map[string]interface{}
-	if err := json.Unmarshal(data, &jsonData); err != nil {
+	if err := json.Unmarshal(tempData, &jsonData); err != nil {
 		return nil, err
 	}
 
@@ -274,7 +261,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 
 	// Scene update
 	sceneData, _ := jsonData["scene"].(map[string]interface{})
-	sce, err = usecases(ctx).Scene.ImportScene(ctx, sceneID, prj, plgs, sceneData)
+	sce, err = usecases(ctx).Scene.ImportScene(ctx, sce.ID(), prj, plgs, sceneData)
 	if err != nil {
 		fmt.Println("====== 4")
 		return nil, err
