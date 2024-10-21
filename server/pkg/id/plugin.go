@@ -11,7 +11,6 @@ type PluginID struct {
 	name    string
 	version string
 	sys     bool
-	imp     bool
 	scene   *SceneID
 }
 
@@ -114,16 +113,6 @@ func (d PluginID) WithScene(sid *SceneID) PluginID {
 	}
 }
 
-func (d PluginID) WithImport() PluginID {
-	return PluginID{
-		name:    d.name,
-		version: d.version,
-		sys:     d.sys,
-		imp:     true,
-		scene:   d.scene.CloneRef(),
-	}
-}
-
 // Clone duplicates the PluginID
 func (d PluginID) Clone() PluginID {
 	return PluginID{
@@ -159,11 +148,6 @@ func (d PluginID) Version() semver.Version {
 // System returns if the ID is built-in.
 func (d PluginID) System() bool {
 	return d.sys
-}
-
-// Import return import mode
-func (d PluginID) Import() bool {
-	return d.imp
 }
 
 // Scene returns a scene ID of the plugin. It indicates this plugin is private and available for only the specific scene.
