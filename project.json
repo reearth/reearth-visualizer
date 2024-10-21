@@ -1,8 +1,8 @@
 {
     "plugins": [
         {
-            "id": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
-            "sceneId": "01jacny3n4h9cgm1fybqckfweg",
+            "id": "01japjpr648j9t4kdn0847qn2n~reearth-plugin-communication-demo~1.0.0",
+            "sceneId": "01japjpr648j9t4kdn0847qn2n",
             "name": "Plugin Communication Demo",
             "version": "1.0.0",
             "description": "",
@@ -11,13 +11,13 @@
             "extensions": [
                 {
                     "extensionId": "widgetcomm",
-                    "pluginId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+                    "pluginId": "01japjpr648j9t4kdn0847qn2n~reearth-plugin-communication-demo~1.0.0",
                     "type": "WIDGET",
                     "name": "Communication Demo Widget",
                     "description": "",
                     "icon": "",
                     "singleOnly": false,
-                    "propertySchemaId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0/widgetcomm",
+                    "propertySchemaId": "01japjpr648j9t4kdn0847qn2n~reearth-plugin-communication-demo~1.0.0/widgetcomm",
                     "allTranslatedName": {
                         "en": "Communication Demo Widget"
                     },
@@ -26,13 +26,13 @@
                 },
                 {
                     "extensionId": "blockcomm",
-                    "pluginId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+                    "pluginId": "01japjpr648j9t4kdn0847qn2n~reearth-plugin-communication-demo~1.0.0",
                     "type": "BLOCK",
                     "name": "Communication Demo Block",
                     "description": "",
                     "icon": "",
                     "singleOnly": false,
-                    "propertySchemaId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0/blockcomm",
+                    "propertySchemaId": "01japjpr648j9t4kdn0847qn2n~reearth-plugin-communication-demo~1.0.0/blockcomm",
                     "allTranslatedName": {
                         "en": "Communication Demo Block"
                     },
@@ -48,13 +48,13 @@
         }
     ],
     "project": {
-        "id": "01jacny3hm7bxn4x9v18tc5n3n",
+        "id": "01japjpr62mzbsfv2wqwz8zvyc",
         "isArchived": false,
         "isBasicAuthActive": false,
         "basicAuthUsername": "",
         "basicAuthPassword": "",
-        "createdAt": "2024-10-17T16:26:36.596+09:00",
-        "updatedAt": "2024-10-18T07:27:36.624Z",
+        "createdAt": "2024-10-21T12:42:34.178+09:00",
+        "updatedAt": "2024-10-21T03:42:34.191Z",
         "name": "project1 export",
         "description": "aaaaa",
         "alias": "",
@@ -67,7 +67,7 @@
             "Opaque": "",
             "User": null,
             "Host": "localhost:8080",
-            "Path": "/assets/01jaf8bg819cbmnet1wzfj191z.png",
+            "Path": "/assets/01japjpr604p8dx15v1bb71bak.png",
             "RawPath": "",
             "OmitHost": false,
             "ForceQuery": false,
@@ -75,7 +75,7 @@
             "Fragment": "",
             "RawFragment": ""
         },
-        "teamId": "01jaa7tb1p10frwxd5cz3h66ev",
+        "teamId": "01japjpfy2km77y0jca3p4dxab",
         "visualizer": "CESIUM",
         "publishmentStatus": "PRIVATE",
         "coreSupport": true,
@@ -86,12 +86,12 @@
     },
     "scene": {
         "schemaVersion": 1,
-        "id": "01jacny3n4h9cgm1fybqckfweg",
-        "publishedAt": "2024-10-18T16:27:50.917714+09:00",
+        "id": "01japjpr648j9t4kdn0847qn2n",
+        "publishedAt": "2024-10-21T12:42:42.079824+09:00",
         "property": {
             "tiles": [
                 {
-                    "id": "01jacny3n4h9cgm1fybywfs6t8"
+                    "id": "01japjpr6djzf8g8m1ftwq2s38"
                 }
             ]
         },
@@ -99,7 +99,7 @@
         "layers": null,
         "widgets": [
             {
-                "id": "01jaf7v7mvjyxdwq2ky6a5n29f",
+                "id": "01japjpr6bd573mkwgpmxezqm2",
                 "pluginId": "reearth",
                 "extensionId": "button",
                 "property": {
@@ -122,8 +122,8 @@
                 "extended": false
             },
             {
-                "id": "01jaf89sky5cav6z1cq73s7td7",
-                "pluginId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+                "id": "01japjpr6djzf8g8m1fhs9z6g3",
+                "pluginId": "01japjpr648j9t4kdn0847qn2n~reearth-plugin-communication-demo~1.0.0",
                 "extensionId": "widgetcomm",
                 "property": {},
                 "enabled": false,
@@ -160,11 +160,11 @@
         "tags": [],
         "clusters": [],
         "story": {
-            "id": "01jacny3rwt2kfmt9xsesp99sg",
+            "id": "01japjpr6mgqbfd4jfq1gpqej8",
             "property": {},
             "pages": [
                 {
-                    "id": "01jacny3x0byx5whe15t19xefd",
+                    "id": "01japjpr6kev11je5xvtt2m6st",
                     "property": {
                         "title": {
                             "color": {
@@ -180,7 +180,7 @@
                     "title": "Untitled",
                     "blocks": [
                         {
-                            "id": "01jaf7tw1bf8zje2js07e778fk",
+                            "id": "01japjpr6hh6avrdqvy1dw8anj",
                             "property": {
                                 "default": {
                                     "text": {
@@ -194,12 +194,12 @@
                             "pluginId": "reearth"
                         },
                         {
-                            "id": "01jaf8cn5d2327d1awkad0mpx4",
+                            "id": "01japjpr6jpf5x8cmcr8sw9te7",
                             "property": {
                                 "default": {
                                     "src": {
                                         "type": "url",
-                                        "value": "http://localhost:8080/assets/01jaf8cw62s1d8167krtkqwggp.png"
+                                        "value": "http://localhost:8080/assets/01japjpr604p8dx15v1e0m4h0p.png"
                                     }
                                 }
                             },
@@ -213,7 +213,7 @@
                     "layers": []
                 },
                 {
-                    "id": "01jaf7vx5vh5qqkagd3bvatwz3",
+                    "id": "01japjpr6mgqbfd4jfpw71fqwf",
                     "property": {
                         "title": {
                             "color": {
@@ -229,7 +229,7 @@
                     "title": "ページ",
                     "blocks": [
                         {
-                            "id": "01jaf7wewv1354s0gyabxdtrm5",
+                            "id": "01japjpr6kev11je5xw18tkqf0",
                             "property": {
                                 "default": {
                                     "text": {
