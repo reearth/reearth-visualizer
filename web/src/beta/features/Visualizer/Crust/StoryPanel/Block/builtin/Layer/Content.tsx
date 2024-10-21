@@ -1,6 +1,6 @@
-import Button from "@reearth/beta/components/Button";
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
+import Button from "@reearth/beta/ui/widgetui/Button";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useContext, useState } from "react";
@@ -80,7 +80,7 @@ const Content: FC<Props> = ({
               color={color?.value}
               bgColor={bgColor?.value}
               userSelected={userSelected}
-              icon="showLayersStoryBlock"
+              icon="layers"
               buttonType="primary"
               text={buttonText}
               size="small"

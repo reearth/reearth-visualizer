@@ -17,7 +17,8 @@ const WorkspaceSettingPage = lazy(
 const PluginPlaygroundPage = lazy(
   () => import("@reearth/beta/pages/PluginPlaygroundPage")
 );
-const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
+const NotFoundPage = lazy(() => import("@reearth/beta/pages/NotFound"));
+
 const GraphQLPlayground = lazy(
   () => import("@reearth/beta/pages/GraphQLPlayground")
 );
@@ -46,11 +47,11 @@ export const AppRoutes = () => {
     },
     {
       path: "settings/workspaces/:workspaceId",
-      element: <WorkspaceSettingPage />
+      element: <WorkspaceSettingPage tab="workspace" />
     },
     {
       path: "settings/workspaces/:workspaceId/members",
-      element: <WorkspaceSettingPage />
+      element: <WorkspaceSettingPage tab="members" />
     },
     {
       path: "graphql",
@@ -70,7 +71,7 @@ export const AppRoutes = () => {
     },
     {
       path: "*",
-      element: <NotFound />
+      element: <NotFoundPage />
     }
   ]);
 

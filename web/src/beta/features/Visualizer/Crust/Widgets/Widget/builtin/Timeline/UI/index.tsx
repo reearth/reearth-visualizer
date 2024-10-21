@@ -1,5 +1,5 @@
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
+import { Icon } from "@reearth/beta/lib/reearth-ui";
+import Text from "@reearth/beta/ui/widgetui/Text";
 import { styled, PublishTheme } from "@reearth/services/theme";
 import { memo } from "react";
 
@@ -80,7 +80,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     <Container publishedTheme={theme}>
       <div style={{ width: "32px" }}>
         <CloseButton publishedTheme={theme} onClick={onClose}>
-          <Icon icon="cancel" size={16} />
+          <Icon icon="close" size="normal"/>
         </CloseButton>
       </div>
       <ToolBox>
@@ -90,7 +90,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             isPlaying={isPlayingReversed}
             onClick={toggleIsPlayingReversed}
           >
-            <Icon icon="playLeft" size={16} />
+            <Icon icon="playLeft" size="normal"/>
           </PlayButton>
         </li>
         <li>
@@ -100,7 +100,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             isPlaying={isPlaying}
             onClick={toggleIsPlaying}
           >
-            <Icon icon="playRight" size={16} />
+            <Icon icon="playRight" size="normal"/>
           </PlayButton>
         </li>
         <li>

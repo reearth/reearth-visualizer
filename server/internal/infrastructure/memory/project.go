@@ -45,7 +45,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 
 	result := []*project.Project{}
 	for _, d := range r.data {
-		if d.Workspace() == id && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
+		if d.Workspace() == id && !d.IsDeleted() && (filter.Keyword == nil || strings.Contains(d.Name(), *filter.Keyword)) {
 			result = append(result, d)
 		}
 	}
@@ -94,6 +94,28 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	var result []*project.Project
 	for _, p := range r.data {
 		if p.Workspace() == id && p.Starred() {
+			result = append(result, p)
+		}
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].UpdatedAt().After(result[j].UpdatedAt())
+	})
+
+	return result, nil
+}
+
+func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(id) {
+		return nil, nil
+	}
+
+	var result []*project.Project
+	for _, p := range r.data {
+		if p.Workspace() == id && p.IsDeleted() {
 			result = append(result, p)
 		}
 	}

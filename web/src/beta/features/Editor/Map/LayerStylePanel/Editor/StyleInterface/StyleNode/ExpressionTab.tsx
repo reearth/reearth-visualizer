@@ -18,7 +18,7 @@ const ExpressionTab: FC<Props> = ({ expression, disabled, onUpdate }) => {
         <InfoWrapper>
           <Typography size="body" color="weak">
             {t(
-              "UI doesn't support expression on this property, please edit code directly."
+              "Expression is incompatible with the current system for this node or value."
             )}
           </Typography>
         </InfoWrapper>

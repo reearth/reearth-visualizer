@@ -1,8 +1,4 @@
-import {
-  useMeFetcher,
-  useProjectFetcher,
-  useWorkspaceFetcher
-} from "@reearth/services/api";
+import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
 import { Role } from "@reearth/services/gql";
 import { useCallback } from "react";
 
@@ -20,17 +16,7 @@ export type Projects = {
   role?: Role;
 };
 
-type Props = { workspaceId?: string };
-
-export default ({ workspaceId }: Props) => {
-  const { useProjectsQuery } = useProjectFetcher();
-  // Fetch all projects base from workspaceId
-  const { projects } = useProjectsQuery({
-    teamId: workspaceId || "",
-    pagination: { first: 16 }
-  });
-  const projectsCount = projects?.length;
-
+export default () => {
   const {
     useWorkspaceQuery,
     useWorkspacesQuery,
@@ -167,7 +153,6 @@ export default ({ workspaceId }: Props) => {
   // }, [handleSearchUser]);
 
   return {
-    projectsCount,
     handleFetchWorkspace,
     handleFetchWorkspaces,
     handleCreateWorkspace,

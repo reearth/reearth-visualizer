@@ -1,10 +1,9 @@
-You have passed the maximum value.: ''
-You have passed the minimum value.: ''
-Not found: ページが見つかりません
+Auto: ''
 Account: ''
 Name: 名前
 Email address: ''
 Password: パスワード
+Language: ''
 No whitespace is allowed.: ''
 Too short.: ''
 That is terribly long.: ''
@@ -71,7 +70,7 @@ Description: プロジェクト概要
 Write down your content: ''
 Cover Image: ''
 Starred: ''
-Switch WorkSpace: ''
+Switch Workspace: ''
 Personal: ''
 Team Workspace: ''
 Workspace Settings: ''
@@ -102,6 +101,12 @@ WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
 Data Source Manager: データソースマネージャー
+'Google Maps API Key ': ''
+'You can apply a key ': ''
+here: ''
+Cesium OSM 3D Tiles: ''
+Google Photorealistic 3D Tiles: ''
+URL: ''
 Choose layer to add: レイヤーの選択
 layer name: レイヤー名
 Layer name: ''
@@ -127,8 +132,8 @@ Invalid style: ''
 Save: 保存
 No style selected: ''
 if: ''
-UI doesn't support conditions on this property, please edit code directly.: ''
-UI doesn't support expression on this property, please edit code directly.: ''
+Condition is incompatible with the current system for this node or value.: ''
+Expression is incompatible with the current system for this node or value.: ''
 font family: ''
 font size: ''
 font weight: ''
@@ -219,6 +224,8 @@ Log out: ログアウト
 Asset management: ''
 Map: マップ
 Widgets: ウィジェット
+Oops, This Page Not Found!: ''
+Go to Dashboard: ''
 Error: エラー
 Warning: 注意
 Notice: 通知
@@ -265,8 +272,6 @@ Right: 右
 Story Panel: ストーリーパネル
 Panel Position: パネルポジション
 Background Color: 背景色
-Something went wrong.: 失敗しました。
-Couldn't find the Re:Earth project you were after.: そのRe:Earthプロジェクトは見つかりませんでした。
 Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
 Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
 New Field: 新しいフィールド
@@ -281,13 +286,22 @@ aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
-Angle: 角度
-Narrow: 狭い
-Wide: 広い
 Spacing settings: 余白設定
 Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプです
+Workspace: ''
+Workspace Name: ''
+Remove this workspace: ''
+This process will remove this workspace: ''
+Remove workspace: ''
+Delete workspace: ''
+I am sure I want to delete this workspace.: ''
+'This action cannot be undone. ': ''
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
+Please type your workspace name to continue.: ''
+You are going to delete a workspace.: ''
+Please to make sure you don’t have any projects in your workspace, then you can continue.: ''
 Write your story :): ストーリーを書きましょう!
 Normal: 標準テキスト
 Heading 1: 見出し1
@@ -375,6 +389,8 @@ Failed to update user password.: ''
 Successfully updated user password!: ''
 Failed to delete user.: ''
 Successfully delete user!: ''
+Failed to change language.: ''
+Successfully updated user language!: ''
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。

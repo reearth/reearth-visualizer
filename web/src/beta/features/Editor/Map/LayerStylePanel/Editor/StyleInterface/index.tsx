@@ -19,6 +19,9 @@ export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
 };
+export type LayerStyleWithActiveTab = { id: string; tab: AppearanceType };
+
+const LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY = `reearth-visualizer-layer-style-active-tab`;
 
 const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
   const theme = useTheme();
@@ -27,9 +30,36 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     convertToStyleNodes(layerStyle)
   );
 
+  const layerStyleWithActiveTab: LayerStyleWithActiveTab[] = useMemo(() => {
+    const savedData = localStorage.getItem(LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY);
+    if (savedData) {
+      try {
+        return JSON.parse(savedData);
+      } catch (error) {
+        console.error("Failed to parse layer style active tab data:", error);
+        return [];
+      }
+    }
+    return [];
+  }, []);
+
+  const currentLayerStyleForTab = useMemo(() => {
+    return layerStyleWithActiveTab?.find(({ id }) => id === layerStyle?.id);
+  }, [layerStyleWithActiveTab, layerStyle?.id]);
+
+  const [activeTab, setActiveTab] = useState<AppearanceType>(
+    currentLayerStyleForTab?.tab || "marker"
+  );
+
   useEffect(() => {
     setStyleNodes(convertToStyleNodes(layerStyle));
-  }, [layerStyle]);
+  }, [layerStyle, layerStyleWithActiveTab, currentLayerStyleForTab]);
+
+  useEffect(() => {
+    if (currentLayerStyleForTab) {
+      setActiveTab(currentLayerStyleForTab.tab);
+    }
+  }, [layerStyle?.id, currentLayerStyleForTab]);
 
   const handleStyleNodesUpdate = useCallback(
     (type: AppearanceType, nodes: StyleNode[]) => {
@@ -49,11 +79,25 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
     [styleNodes, setLayerStyle]
   );
 
-  const [activeTab, setActiveTab] = useState<AppearanceType>("marker");
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      const appearanceTab = tab as AppearanceType;
+      setActiveTab(appearanceTab);
 
-  const handleTabChange = useCallback((tab: string) => {
-    setActiveTab(tab as AppearanceType);
-  }, []);
+      const updatedLayerStyleWithActiveTab = layerStyle
+        ? [
+            ...layerStyleWithActiveTab.filter(({ id }) => id !== layerStyle.id),
+            { id: layerStyle.id, tab: appearanceTab }
+          ]
+        : layerStyleWithActiveTab;
+
+      localStorage.setItem(
+        LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY,
+        JSON.stringify(updatedLayerStyleWithActiveTab)
+      );
+    },
+    [layerStyle, layerStyleWithActiveTab]
+  );
 
   const appearanceTypeTabs: TabItem[] = useMemo(
     () =>
