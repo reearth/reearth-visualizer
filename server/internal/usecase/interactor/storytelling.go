@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene"
 	scene2 "github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -1005,6 +1007,9 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	}
 	storyJSON := sceneJSON.Story
 
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+
 	pages := []*storytelling.Page{}
 	for _, pageJSON := range storyJSON.Pages {
 
@@ -1013,30 +1018,37 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 
 			pluginID, err := id.PluginIDFrom(blockJSON.PluginId)
 			if err != nil {
+				fmt.Println("--- ImportStory 1")
 				return nil, err
 			}
 			extensionID := id.PluginExtensionID(blockJSON.ExtensionId)
 			_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID)
 			if err != nil {
+				fmt.Println("--- ImportStory 2")
 				return nil, err
 			}
 			if extension.Type() != plugin.ExtensionTypeStoryBlock {
+				fmt.Println("--- ImportStory 3")
 				return nil, interfaces.ErrExtensionTypeMustBeStoryBlock
 			}
 			prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sceneID).Build()
 			if err != nil {
+				fmt.Println("--- ImportStory 4")
 				return nil, err
 			}
 			ps, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
 			if err != nil {
+				fmt.Println("--- ImportStory 5")
 				return nil, err
 			}
 			prop, err = builder.AddItemFromPropertyJSON(prop, ps, blockJSON.Property)
 			if err != nil {
+				fmt.Println("--- ImportStory 6")
 				return nil, err
 			}
 			// Save property
-			if err = i.propertyRepo.Save(ctx, prop); err != nil {
+			if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+				fmt.Println("--- ImportStory 7")
 				return nil, err
 			}
 			block, err := storytelling.NewBlock().
@@ -1046,6 +1058,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 				Extension(extensionID).
 				Build()
 			if err != nil {
+				fmt.Println("--- ImportStory 8")
 				return nil, err
 			}
 			blocks = append(blocks, block)
@@ -1054,18 +1067,22 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 		schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 		prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 		if err != nil {
+			fmt.Println("--- ImportStory 9")
 			return nil, err
 		}
 		ps, err := i.propertySchemaRepo.FindByID(ctx, schema.ID())
 		if err != nil {
+			fmt.Println("--- ImportStory 10")
 			return nil, err
 		}
 		prop, err = builder.AddItemFromPropertyJSON(prop, ps, pageJSON.Property)
 		if err != nil {
+			fmt.Println("--- ImportStory 11")
 			return nil, err
 		}
 		// Save property
-		if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+			fmt.Println("--- ImportStory 12")
 			return nil, err
 		}
 		page, err := storytelling.NewPage().
@@ -1076,6 +1093,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 			Blocks(blocks).
 			Build()
 		if err != nil {
+			fmt.Println("--- ImportStory 13")
 			return nil, err
 		}
 		pages = append(pages, page)
@@ -1084,18 +1102,22 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 	if err != nil {
+		fmt.Println("--- ImportStory 14")
 		return nil, err
 	}
 	ps, err := i.propertySchemaRepo.FindByID(ctx, schema.ID())
 	if err != nil {
+		fmt.Println("--- ImportStory 15")
 		return nil, err
 	}
 	prop, err = builder.AddItemFromPropertyJSON(prop, ps, storyJSON.Property)
 	if err != nil {
+		fmt.Println("--- ImportStory 16")
 		return nil, err
 	}
 	// Save property
-	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+	if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+		fmt.Println("--- ImportStory 17")
 		return nil, err
 	}
 	story, err := storytelling.NewStory().
@@ -1107,13 +1129,16 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 		Pages(storytelling.NewPageList(pages)).
 		Build()
 	if err != nil {
+		fmt.Println("--- ImportStory 18")
 		return nil, err
 	}
-	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+	if err := i.storytellingRepo.Filtered(writableFilter).Save(ctx, *story); err != nil {
+		fmt.Println("--- ImportStory 19")
 		return nil, err
 	}
-	story, err = i.storytellingRepo.FindByID(ctx, story.Id())
+	story, err = i.storytellingRepo.Filtered(readableFilter).FindByID(ctx, story.Id())
 	if err != nil {
+		fmt.Println("--- ImportStory 20")
 		return nil, err
 	}
 	return story, nil
