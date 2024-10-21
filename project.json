@@ -1,1 +1,260 @@
-{"plugins":[{"id":"01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0","sceneId":"01jacny3n4h9cgm1fybqckfweg","name":"Plugin Communication Demo","version":"1.0.0","description":"","author":"","repositoryUrl":"","extensions":[{"extensionId":"widgetcomm","pluginId":"01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0","type":"WIDGET","name":"Communication Demo Widget","description":"","icon":"","singleOnly":false,"propertySchemaId":"01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0/widgetcomm","allTranslatedName":{"en":"Communication Demo Widget"},"translatedName":"","translatedDescription":""},{"extensionId":"blockcomm","pluginId":"01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0","type":"BLOCK","name":"Communication Demo Block","description":"","icon":"","singleOnly":false,"propertySchemaId":"01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0/blockcomm","allTranslatedName":{"en":"Communication Demo Block"},"translatedName":"","translatedDescription":""}],"allTranslatedName":{"en":"Plugin Communication Demo"},"translatedName":"","translatedDescription":""}],"project":{"id":"01jacny3hm7bxn4x9v18tc5n3n","isArchived":false,"isBasicAuthActive":false,"basicAuthUsername":"","basicAuthPassword":"","createdAt":"2024-10-17T16:26:36.596+09:00","updatedAt":"2024-10-18T07:27:36.624Z","name":"project1 export","description":"aaaaa","alias":"","publicTitle":"","publicDescription":"","publicImage":"","publicNoIndex":false,"imageUrl":{"Scheme":"http","Opaque":"","User":null,"Host":"localhost:8080","Path":"/assets/01jaf8bg819cbmnet1wzfj191z.png","RawPath":"","OmitHost":false,"ForceQuery":false,"RawQuery":"","Fragment":"","RawFragment":""},"teamId":"01jaa7tb1p10frwxd5cz3h66ev","visualizer":"CESIUM","publishmentStatus":"PRIVATE","coreSupport":true,"enableGa":false,"trackingId":"","starred":true,"isDeleted":false},"scene":{"schemaVersion":1,"id":"01jacny3n4h9cgm1fybqckfweg","publishedAt":"2024-10-18T16:27:50.917714+09:00","property":{"tiles":[{"id":"01jacny3n4h9cgm1fybywfs6t8"}]},"plugins":{},"layers":null,"widgets":[{"id":"01jaf7v7mvjyxdwq2ky6a5n29f","pluginId":"reearth","extensionId":"button","property":{"default":{"buttonBgcolor":{"type":"string","value":"#2344b9ff"},"buttonColor":{"type":"string","value":"#ac1b1bff"},"buttonTitle":{"type":"string","value":"ddddd"}}},"enabled":false,"extended":false},{"id":"01jaf89sky5cav6z1cq73s7td7","pluginId":"01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0","extensionId":"widgetcomm","property":{},"enabled":false,"extended":false}],"widgetAlignSystem":{"inner":null,"outer":{"left":{"top":{"widgetIds":["01jaf7v7mvjyxdwq2ky6a5n29f","01jaf89sky5cav6z1cq73s7td7"],"align":"start","padding":{"top":0,"bottom":0,"left":0,"right":0},"gap":null,"centered":false,"background":null},"middle":null,"bottom":null},"center":null,"right":null}},"tags":[],"clusters":[],"story":{"id":"01jacny3rwt2kfmt9xsesp99sg","property":{},"pages":[{"id":"01jacny3x0byx5whe15t19xefd","property":{"title":{"color":{"type":"string","value":"#9a2b2bff"},"title":{"type":"string","value":"aaa"}}},"title":"Untitled","blocks":[{"id":"01jaf7tw1bf8zje2js07e778fk","property":{"default":{"text":{"type":"string","value":"{\"root\":{\"children\":[{\"children\":[{\"detail\":0,\"format\":0,\"mode\":\"normal\",\"style\":\"\",\"text\":\"aaaaa\",\"type\":\"text\",\"version\":1}],\"direction\":\"ltr\",\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1}],\"direction\":\"ltr\",\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}"}}},"plugins":null,"extensionId":"textStoryBlock","pluginId":"reearth"},{"id":"01jaf8cn5d2327d1awkad0mpx4","property":{"default":{"src":{"type":"url","value":"http://localhost:8080/assets/01jaf8cw62s1d8167krtkqwggp.png"}}},"plugins":null,"extensionId":"imageStoryBlock","pluginId":"reearth"}],"swipeable":false,"swipeableLayers":null,"layers":[]},{"id":"01jaf7vx5vh5qqkagd3bvatwz3","property":{"title":{"color":{"type":"string","value":"#a32323ff"},"title":{"type":"string","value":"ddd"}}},"title":"ページ","blocks":[{"id":"01jaf7wewv1354s0gyabxdtrm5","property":{"default":{"text":{"type":"string","value":"# Test"}}},"plugins":null,"extensionId":"mdTextStoryBlock","pluginId":"reearth"}],"swipeable":false,"swipeableLayers":null,"layers":[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true,"enableGa":false,"trackingId":""}}
+{
+    "plugins": [
+        {
+            "id": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+            "sceneId": "01jacny3n4h9cgm1fybqckfweg",
+            "name": "Plugin Communication Demo",
+            "version": "1.0.0",
+            "description": "",
+            "author": "",
+            "repositoryUrl": "",
+            "extensions": [
+                {
+                    "extensionId": "widgetcomm",
+                    "pluginId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+                    "type": "WIDGET",
+                    "name": "Communication Demo Widget",
+                    "description": "",
+                    "icon": "",
+                    "singleOnly": false,
+                    "propertySchemaId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0/widgetcomm",
+                    "allTranslatedName": {
+                        "en": "Communication Demo Widget"
+                    },
+                    "translatedName": "",
+                    "translatedDescription": ""
+                },
+                {
+                    "extensionId": "blockcomm",
+                    "pluginId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+                    "type": "BLOCK",
+                    "name": "Communication Demo Block",
+                    "description": "",
+                    "icon": "",
+                    "singleOnly": false,
+                    "propertySchemaId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0/blockcomm",
+                    "allTranslatedName": {
+                        "en": "Communication Demo Block"
+                    },
+                    "translatedName": "",
+                    "translatedDescription": ""
+                }
+            ],
+            "allTranslatedName": {
+                "en": "Plugin Communication Demo"
+            },
+            "translatedName": "",
+            "translatedDescription": ""
+        }
+    ],
+    "project": {
+        "id": "01jacny3hm7bxn4x9v18tc5n3n",
+        "isArchived": false,
+        "isBasicAuthActive": false,
+        "basicAuthUsername": "",
+        "basicAuthPassword": "",
+        "createdAt": "2024-10-17T16:26:36.596+09:00",
+        "updatedAt": "2024-10-18T07:27:36.624Z",
+        "name": "project1 export",
+        "description": "aaaaa",
+        "alias": "",
+        "publicTitle": "",
+        "publicDescription": "",
+        "publicImage": "",
+        "publicNoIndex": false,
+        "imageUrl": {
+            "Scheme": "http",
+            "Opaque": "",
+            "User": null,
+            "Host": "localhost:8080",
+            "Path": "/assets/01jaf8bg819cbmnet1wzfj191z.png",
+            "RawPath": "",
+            "OmitHost": false,
+            "ForceQuery": false,
+            "RawQuery": "",
+            "Fragment": "",
+            "RawFragment": ""
+        },
+        "teamId": "01jaa7tb1p10frwxd5cz3h66ev",
+        "visualizer": "CESIUM",
+        "publishmentStatus": "PRIVATE",
+        "coreSupport": true,
+        "enableGa": false,
+        "trackingId": "",
+        "starred": true,
+        "isDeleted": false
+    },
+    "scene": {
+        "schemaVersion": 1,
+        "id": "01jacny3n4h9cgm1fybqckfweg",
+        "publishedAt": "2024-10-18T16:27:50.917714+09:00",
+        "property": {
+            "tiles": [
+                {
+                    "id": "01jacny3n4h9cgm1fybywfs6t8"
+                }
+            ]
+        },
+        "plugins": {},
+        "layers": null,
+        "widgets": [
+            {
+                "id": "01jaf7v7mvjyxdwq2ky6a5n29f",
+                "pluginId": "reearth",
+                "extensionId": "button",
+                "property": {
+                    "default": {
+                        "buttonBgcolor": {
+                            "type": "string",
+                            "value": "#2344b9ff"
+                        },
+                        "buttonColor": {
+                            "type": "string",
+                            "value": "#ac1b1bff"
+                        },
+                        "buttonTitle": {
+                            "type": "string",
+                            "value": "ddddd"
+                        }
+                    }
+                },
+                "enabled": false,
+                "extended": false
+            },
+            {
+                "id": "01jaf89sky5cav6z1cq73s7td7",
+                "pluginId": "01jacny3n4h9cgm1fybqckfweg~reearth-plugin-communication-demo~1.0.0",
+                "extensionId": "widgetcomm",
+                "property": {},
+                "enabled": false,
+                "extended": false
+            }
+        ],
+        "widgetAlignSystem": {
+            "inner": null,
+            "outer": {
+                "left": {
+                    "top": {
+                        "widgetIds": [
+                            "01jaf7v7mvjyxdwq2ky6a5n29f",
+                            "01jaf89sky5cav6z1cq73s7td7"
+                        ],
+                        "align": "start",
+                        "padding": {
+                            "top": 0,
+                            "bottom": 0,
+                            "left": 0,
+                            "right": 0
+                        },
+                        "gap": null,
+                        "centered": false,
+                        "background": null
+                    },
+                    "middle": null,
+                    "bottom": null
+                },
+                "center": null,
+                "right": null
+            }
+        },
+        "tags": [],
+        "clusters": [],
+        "story": {
+            "id": "01jacny3rwt2kfmt9xsesp99sg",
+            "property": {},
+            "pages": [
+                {
+                    "id": "01jacny3x0byx5whe15t19xefd",
+                    "property": {
+                        "title": {
+                            "color": {
+                                "type": "string",
+                                "value": "#9a2b2bff"
+                            },
+                            "title": {
+                                "type": "string",
+                                "value": "aaa"
+                            }
+                        }
+                    },
+                    "title": "Untitled",
+                    "blocks": [
+                        {
+                            "id": "01jaf7tw1bf8zje2js07e778fk",
+                            "property": {
+                                "default": {
+                                    "text": {
+                                        "type": "string",
+                                        "value": "{\"root\":{\"children\":[{\"children\":[{\"detail\":0,\"format\":0,\"mode\":\"normal\",\"style\":\"\",\"text\":\"aaaaa\",\"type\":\"text\",\"version\":1}],\"direction\":\"ltr\",\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1}],\"direction\":\"ltr\",\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}"
+                                    }
+                                }
+                            },
+                            "plugins": null,
+                            "extensionId": "textStoryBlock",
+                            "pluginId": "reearth"
+                        },
+                        {
+                            "id": "01jaf8cn5d2327d1awkad0mpx4",
+                            "property": {
+                                "default": {
+                                    "src": {
+                                        "type": "url",
+                                        "value": "http://localhost:8080/assets/01jaf8cw62s1d8167krtkqwggp.png"
+                                    }
+                                }
+                            },
+                            "plugins": null,
+                            "extensionId": "imageStoryBlock",
+                            "pluginId": "reearth"
+                        }
+                    ],
+                    "swipeable": false,
+                    "swipeableLayers": null,
+                    "layers": []
+                },
+                {
+                    "id": "01jaf7vx5vh5qqkagd3bvatwz3",
+                    "property": {
+                        "title": {
+                            "color": {
+                                "type": "string",
+                                "value": "#a32323ff"
+                            },
+                            "title": {
+                                "type": "string",
+                                "value": "ddd"
+                            }
+                        }
+                    },
+                    "title": "ページ",
+                    "blocks": [
+                        {
+                            "id": "01jaf7wewv1354s0gyabxdtrm5",
+                            "property": {
+                                "default": {
+                                    "text": {
+                                        "type": "string",
+                                        "value": "# Test"
+                                    }
+                                }
+                            },
+                            "plugins": null,
+                            "extensionId": "mdTextStoryBlock",
+                            "pluginId": "reearth"
+                        }
+                    ],
+                    "swipeable": false,
+                    "swipeableLayers": null,
+                    "layers": []
+                }
+            ],
+            "position": "left",
+            "bgColor": ""
+        },
+        "nlsLayers": null,
+        "layerStyles": null,
+        "coreSupport": true,
+        "enableGa": false,
+        "trackingId": ""
+    }
+}
