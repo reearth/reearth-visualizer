@@ -112,7 +112,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         }}
       >
         {icon && (
-          <Icon
+          <IconWrapper
             icon={icon}
             size="small"
             color={iconColor ? iconColor : theme.content.weak}
@@ -306,6 +306,10 @@ const StyledLink = styled(Link)(() => ({
   width: "100%"
 }));
 
+const IconWrapper = styled(Icon)(() => ({
+  flexGrow: 0,
+  flexShrink: 0
+}));
 const SubMenuHeader = styled("div")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: "11px",
