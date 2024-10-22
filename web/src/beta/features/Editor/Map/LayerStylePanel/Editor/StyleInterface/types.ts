@@ -73,7 +73,6 @@ export type Typography = {
   fontWeight?: FontWeight;
   color?: string;
   italic?: boolean;
-  underline?: boolean;
 };
 
 export type Expression = {

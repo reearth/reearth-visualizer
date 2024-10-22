@@ -97,7 +97,7 @@ export const markerNodes: AppearanceNode[] = [
     title: "Image Crop",
     field: "select",
     defaultValue: "none",
-    valueOptions: ["none", "rounded", "circle"]
+    valueOptions: ["none", "circle"]
   },
   {
     id: "imageShadow",
