@@ -19,7 +19,9 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
     handleUpdateWorkspace,
     handleDeleteWorkspace,
     handleAddMemberToWorkspace,
-    debounceOnUpdate
+    handleSearchUser,
+    handleUpdateMemberOfWorkspace,
+    handleRemoveMemberFromWorkspace
   } = useWorkspaceHook();
 
   const { filtedProjects } = useProjectsHook(workspaceId);
@@ -38,8 +40,10 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
       )}
       {tab === "members" && (
         <Members
-          debounceOnUpdate={debounceOnUpdate}
+          handleSearchUser={handleSearchUser}
           handleAddMemberToWorkspace={handleAddMemberToWorkspace}
+          handleUpdateMemberOfWorkspace={handleUpdateMemberOfWorkspace}
+          handleRemoveMemberFromWorkspace={handleRemoveMemberFromWorkspace}
         />
       )}
     </SettingBase>

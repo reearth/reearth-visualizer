@@ -3,7 +3,7 @@ import { Role } from "@reearth/services/gql";
 import { useCallback } from "react";
 
 export type WorkspacePayload = {
-  name: string;
+  name?: string;
   userId?: string;
   teamId: string;
   role?: Role;
@@ -24,7 +24,8 @@ export default () => {
     useUpdateWorkspace,
     useDeleteWorkspace,
     useAddMemberToWorkspace,
-    useRemoveMemberFromWorkspace
+    useRemoveMemberFromWorkspace,
+    useUpdateMemberOfWorkspace
   } = useWorkspaceFetcher();
 
   // Fetch a specific workspace
@@ -52,9 +53,11 @@ export default () => {
   const handleCreateWorkspace = useCallback(
     async ({ name }: WorkspacePayload) => {
       try {
-        const { status } = await useCreateWorkspace(name);
-        if (status === "success") {
-          console.log("Workspace created successfully");
+        if (name) {
+          const { status } = await useCreateWorkspace(name);
+          if (status === "success") {
+            console.log("Workspace created successfully");
+          }
         }
       } catch (error) {
         console.error("Failed to create workspace:", error);
@@ -67,9 +70,11 @@ export default () => {
   const handleUpdateWorkspace = useCallback(
     async ({ teamId, name }: WorkspacePayload) => {
       try {
-        const { status } = await useUpdateWorkspace(teamId, name);
-        if (status === "success") {
-          console.log("Workspace updated successfully");
+        if (name && teamId) {
+          const { status } = await useUpdateWorkspace(teamId, name);
+          if (status === "success") {
+            console.log("Workspace updated successfully");
+          }
         }
       } catch (error) {
         console.error("Failed to update workspace:", error);
@@ -82,9 +87,11 @@ export default () => {
   const handleDeleteWorkspace = useCallback(
     async (teamId: string) => {
       try {
-        const { status } = await useDeleteWorkspace(teamId);
-        if (status === "success") {
-          console.log("Workspace deleted successfully");
+        if (teamId) {
+          const { status } = await useDeleteWorkspace(teamId);
+          if (status === "success") {
+            console.log("Workspace deleted successfully");
+          }
         }
       } catch (error) {
         console.error("Failed to delete workspace:", error);
@@ -131,11 +138,34 @@ export default () => {
     [useRemoveMemberFromWorkspace]
   );
 
+  // update a member of workspace
+  const handleUpdateMemberOfWorkspace = useCallback(
+    async ({ teamId, userId, role }: WorkspacePayload) => {
+      try {
+        if (userId && role) {
+          const { status } = await useUpdateMemberOfWorkspace(
+            teamId,
+            userId,
+            role
+          );
+          if (status === "success") {
+            console.log("Member update successfully");
+          }
+        }
+      } catch (error) {
+        console.error("Failed to update member from workspace:", error);
+      }
+    },
+    [useUpdateMemberOfWorkspace]
+  );
+
   const { useSearchUser } = useMeFetcher();
   const handleSearchUser = useCallback(
     (nameOrEmail: string) => {
       try {
-        const { user, status } = useSearchUser(nameOrEmail);
+        const { user, status } = useSearchUser(nameOrEmail, {
+          skip: !nameOrEmail
+        });
         if (status === "success") {
           console.log("Search Member successfully");
         }
@@ -148,10 +178,6 @@ export default () => {
     [useSearchUser]
   );
 
-  // const debounceOnUpdate = useMemo(() => {
-  //   return debounce(handleSearchUser, 500);
-  // }, [handleSearchUser]);
-
   return {
     handleFetchWorkspace,
     handleFetchWorkspaces,
@@ -160,6 +186,7 @@ export default () => {
     handleDeleteWorkspace,
     handleAddMemberToWorkspace,
     handleRemoveMemberFromWorkspace,
-    debounceOnUpdate: handleSearchUser
+    handleUpdateMemberOfWorkspace,
+    handleSearchUser
   };
 };

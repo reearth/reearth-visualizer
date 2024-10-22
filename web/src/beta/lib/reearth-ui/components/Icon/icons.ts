@@ -87,6 +87,7 @@ import LToS from "./Icons/LToS.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
 import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
+import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import More from "./Icons/More.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
@@ -245,6 +246,7 @@ export default {
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,
   mapTrifold: MapTrifold,
+  memberAdd: MemberAdd,
   minus: Minus,
   more: More,
   navigatorAngle: NavigatorAngle,
