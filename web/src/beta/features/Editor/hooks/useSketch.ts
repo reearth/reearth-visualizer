@@ -21,6 +21,7 @@ import { SelectedLayer } from "./useLayers";
 
 type Props = {
   tab: Tab;
+  sceneId: string;
   nlsLayers: NLSLayer[];
   selectedLayer: SelectedLayer | undefined;
   visualizerRef: MutableRefObject<MapRef | null>;
@@ -48,6 +49,7 @@ export type GeoJsonFeatureDeleteProps = {
 
 export default ({
   tab,
+  sceneId,
   nlsLayers,
   selectedLayer,
   visualizerRef,
@@ -81,14 +83,17 @@ export default ({
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
       if (!selectedLayer?.layer?.id) return;
-      await useAddGeoJsonFeature({
-        layerId: inp.layerId,
-        geometry: inp.geometry,
-        type: inp.type,
-        properties: inp.properties
-      });
+      await useAddGeoJsonFeature(
+        {
+          layerId: inp.layerId,
+          geometry: inp.geometry,
+          type: inp.type,
+          properties: inp.properties
+        },
+        sceneId
+      );
     },
-    [selectedLayer, useAddGeoJsonFeature]
+    [sceneId, selectedLayer, useAddGeoJsonFeature]
   );
 
   const handleSketchFeatureCreate = useCallback(
@@ -144,19 +149,22 @@ export default ({
 
   const handleGeoJsonFeatureUpdate = useCallback(
     async (inp: GeoJsonFeatureUpdateProps) => {
-      await useUpdateGeoJSONFeature({
-        layerId: inp.layerId,
-        featureId: inp.featureId,
-        geometry: inp.geometry,
-        properties: inp.properties
-      });
+      await useUpdateGeoJSONFeature(
+        {
+          layerId: inp.layerId,
+          featureId: inp.featureId,
+          geometry: inp.geometry,
+          properties: inp.properties
+        },
+        sceneId
+      );
 
       pendingSketchSelectionRef.current = {
         layerId: inp.layerId,
         featureId: inp.properties?.id
       };
     },
-    [useUpdateGeoJSONFeature]
+    [sceneId, useUpdateGeoJSONFeature]
   );
 
   const handleGeoJsonFeatureDelete = useCallback(

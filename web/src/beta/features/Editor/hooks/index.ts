@@ -70,6 +70,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     initSketch
   } = useSketch({
     tab,
+    sceneId,
     nlsLayers,
     selectedLayer,
     ignoreCoreLayerUnselect,

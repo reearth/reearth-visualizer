@@ -78,22 +78,28 @@ export default function ({ sceneId }: LayerStyleProps) {
 
   const handleLayerStyleNameUpdate = useCallback(
     async (inp: LayerStyleNameUpdateProps) => {
-      await useUpdateLayerStyle({
-        styleId: inp.styleId,
-        name: inp.name
-      });
+      await useUpdateLayerStyle(
+        {
+          styleId: inp.styleId,
+          name: inp.name
+        },
+        sceneId
+      );
     },
-    [useUpdateLayerStyle]
+    [sceneId, useUpdateLayerStyle]
   );
 
   const handleLayerStyleValueUpdate = useCallback(
     async (inp: LayerStyleValueUpdateProps) => {
-      await useUpdateLayerStyle({
-        styleId: inp.styleId,
-        value: inp.value
-      });
+      await useUpdateLayerStyle(
+        {
+          styleId: inp.styleId,
+          value: inp.value
+        },
+        sceneId
+      );
     },
-    [useUpdateLayerStyle]
+    [sceneId, useUpdateLayerStyle]
   );
 
   return {

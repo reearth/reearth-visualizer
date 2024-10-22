@@ -17,9 +17,12 @@ import {
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
+import { useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
+import { v4 } from "uuid";
 
 import { SceneQueryProps } from "../sceneApi";
+import { addTaskAtom, removeTaskAtom } from "../state";
 
 import { getLayerStyles } from "./utils";
 
@@ -28,6 +31,8 @@ export type LayerStylesQueryProps = SceneQueryProps;
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+  const addTask = useSetAtom(addTaskAtom);
+  const removeTask = useSetAtom(removeTaskAtom);
 
   const useGetLayerStylesQuery = useCallback(
     ({ sceneId, lang }: LayerStylesQueryProps) => {
@@ -77,16 +82,59 @@ export default () => {
   );
 
   const [updateLayerStyleMutation] = useMutation(UPDATE_LAYERSTYLE, {
-    refetchQueries: ["GetScene"]
+    // refetchQueries: ["GetScene"]
   });
   const useUpdateLayerStyle = useCallback(
     async (
-      input: UpdateStyleInput
+      input: UpdateStyleInput,
+      sceneId: string
     ): Promise<MutationReturn<UpdateStyleMutation>> => {
       if (!input.styleId) return { status: "error" };
+      const taskId = v4();
+      addTask(taskId);
+      // NOTE: value is not included in the response
+      const value = input.value;
       const { data, errors } = await updateLayerStyleMutation({
-        variables: { input }
+        variables: { input },
+        optimisticResponse: {
+          __typename: "Mutation",
+          updateStyle: {
+            __typename: "UpdateStylePayload",
+            style: {
+              __typename: "Style",
+              ...input,
+              id: input.styleId,
+              name: input.name ?? ""
+            }
+          }
+        },
+        update: (cache, { data }) => {
+          const scene = cache.readQuery({
+            query: GET_SCENE,
+            variables: { sceneId }
+          });
+
+          if (scene?.node?.__typename !== "Scene" || !data?.updateStyle) return;
+
+          cache.writeQuery({
+            query: GET_SCENE,
+            variables: { sceneId },
+            data: {
+              ...scene,
+              node: {
+                ...scene.node,
+                styles: scene.node.styles.map((l) =>
+                  l.id === input.styleId
+                    ? { ...l, ...data.updateStyle?.style, value }
+                    : l
+                )
+              }
+            }
+          });
+        }
       });
+      removeTask(taskId);
+
       if (errors || !data?.updateStyle) {
         setNotification({
           type: "error",
@@ -95,14 +143,14 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({
-        type: "success",
-        text: t("Successfully updated a the layerStyle!")
-      });
+      // setNotification({
+      //   type: "success",
+      //   text: t("Successfully updated a the layerStyle!")
+      // });
 
       return { data, status: "success" };
     },
-    [updateLayerStyleMutation, setNotification, t]
+    [updateLayerStyleMutation, setNotification, addTask, removeTask, t]
   );
 
   const [removeLayerStyleMutation] = useMutation(REMOVE_LAYERSTYLE, {

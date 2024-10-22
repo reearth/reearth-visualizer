@@ -4,10 +4,13 @@ import {
   PopupMenuItem,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import { isAnyTaskInProgressAtom } from "@reearth/services/api/state";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { RingLoader } from "react-spinners";
 
 import { Project, Workspace } from "../types";
 
@@ -55,6 +58,8 @@ const LeftSection: React.FC<Props> = ({
     [currentProject?.id, t]
   );
 
+  const [isAnyTaskInProgress] = useAtom(isAnyTaskInProgressAtom);
+
   return (
     <Wrapper>
       {page !== "editor" && (
@@ -85,6 +90,11 @@ const LeftSection: React.FC<Props> = ({
       {currentProject && (
         <PopupMenu label={currentProject.name} menu={menuItems} />
       )}
+      {isAnyTaskInProgress && (
+        <SavingIndicator>
+          <RingLoader size={16} color={theme.select.strong} />
+        </SavingIndicator>
+      )}
     </Wrapper>
   );
 };
@@ -114,4 +124,12 @@ const Separator = styled.div(({ theme }) => ({
   color: theme.content.weak,
   margin: `0 ${theme.spacing.smallest}px`,
   userSelect: "none"
+}));
+
+const SavingIndicator = styled("div")(() => ({
+  width: 26,
+  height: 26,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
 }));

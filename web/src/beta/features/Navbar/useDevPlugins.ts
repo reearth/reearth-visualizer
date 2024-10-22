@@ -57,23 +57,29 @@ export default ({ sceneId }: Props) => {
     if (!devPluginUrls || devPluginUrls.length === 0) return;
 
     const fetchExtensions = async () => {
-      const extensions = await Promise.all(
-        devPluginUrls.map(async (url) => {
-          const response = await fetch(`${url}/reearth.yml`);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch the file: ${response.statusText}`);
-          }
-          const yamlText = await response.text();
-          const data = yaml.load(yamlText) as ReearthYML;
-          return (
-            data.extensions?.map((e) => ({
-              id: e.id,
-              url: `${url}/${e.id}.js`
-            })) ?? []
-          );
-        })
-      );
-      setDevPluginExtensions(extensions.flatMap((e) => e));
+      try {
+        const extensions = await Promise.all(
+          devPluginUrls.map(async (url) => {
+            const response = await fetch(`${url}/reearth.yml`);
+            if (!response.ok) {
+              throw new Error(
+                `Failed to fetch the file: ${response.statusText}`
+              );
+            }
+            const yamlText = await response.text();
+            const data = yaml.load(yamlText) as ReearthYML;
+            return (
+              data.extensions?.map((e) => ({
+                id: e.id,
+                url: `${url}/${e.id}.js`
+              })) ?? []
+            );
+          })
+        );
+        setDevPluginExtensions(extensions.flatMap((e) => e));
+      } catch (err) {
+        console.warn("Dev plugin is enabled but cannot be fetched.", err);
+      }
     };
 
     fetchExtensions();
