@@ -1,9 +1,11 @@
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   ColorInput,
   NumberInput,
   Selector,
   TextInput
 } from "@reearth/beta/lib/reearth-ui";
+import { AssetField } from "@reearth/beta/ui/fields";
 import { FC } from "react";
 
 import { AppearanceField, StyleSimpleValue, Typography } from "../../types";
@@ -45,6 +47,14 @@ const fieldComponents = {
   typography: (props: FieldProps) => (
     <TypographyInput
       value={props.value as Typography}
+      onChange={props.onUpdate}
+    />
+  ),
+  image: (props: FieldProps) => (
+    <AssetField
+      inputMethod="asset"
+      value={props.value as string}
+      assetsTypes={IMAGE_TYPES}
       onChange={props.onUpdate}
     />
   )
