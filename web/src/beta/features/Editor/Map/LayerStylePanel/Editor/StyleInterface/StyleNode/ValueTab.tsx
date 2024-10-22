@@ -29,7 +29,7 @@ export default ValueTab;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
-  alignItems: "center",
   minHeight: 28
 }));
