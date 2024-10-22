@@ -1,3 +1,4 @@
+import { defaultStyle } from "@reearth/beta/features/Editor/Map/LayerStylePanel/PresetLayerStyle/presetLayerStyles";
 import {
   type WidgetZone,
   type WidgetSection,
@@ -12,10 +13,7 @@ import {
   isBuiltinWidget
 } from "@reearth/beta/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
-import {
-  DEFAULT_LAYER_STYLE,
-  valueTypeFromGQL
-} from "@reearth/beta/utils/value";
+import { valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { LayerAppearanceTypes } from "@reearth/core";
 import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -402,7 +400,7 @@ export function processLayers(
       }
     }
 
-    return DEFAULT_LAYER_STYLE;
+    return defaultStyle;
   };
 
   return newLayers?.map((nlsLayer) => {
