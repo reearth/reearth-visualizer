@@ -56,7 +56,7 @@ export const markerNodes: AppearanceNode[] = [
   {
     id: "image",
     title: "Image",
-    field: "text",
+    field: "image",
     defaultValue: ""
   },
   {

@@ -1,4 +1,3 @@
-import { LayerAppearanceTypes } from "@reearth/core";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
 import { Color } from "cesium";
@@ -253,20 +252,3 @@ export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   string: ""
 };
 
-export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
-  "3dtiles": {
-    show: true
-  },
-  resource: {
-    clampToGround: true
-  },
-  marker: {
-    heightReference: "clamp"
-  },
-  polygon: {
-    heightReference: "clamp"
-  },
-  polyline: {
-    clampToGround: true
-  }
-};
