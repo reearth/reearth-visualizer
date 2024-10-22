@@ -50,7 +50,7 @@ const fieldComponents = {
       onChange={props.onUpdate}
     />
   ),
-  asset: (props: FieldProps) => (
+  image: (props: FieldProps) => (
     <AssetField
       inputMethod="asset"
       value={props.value as string}

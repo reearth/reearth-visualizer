@@ -12,7 +12,7 @@ export type AppearanceField =
   | "select"
   | "text"
   | "typography"
-  | "asset";
+  | "image";
 
 export type AppearanceNodes = Record<AppearanceType, AppearanceNode[]>;
 
