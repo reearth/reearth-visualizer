@@ -23,7 +23,7 @@ export const bottomTabsItems: Omit<TabItems[], "active"> = [
     id: "plugin",
     text: "Plugin Playground",
     icon: "puzzlePiece",
-    disabled: true
+    path: "/plugin-playground"
   },
   { id: "documentation", text: "Documentation", icon: "book", disabled: true },
   { id: "community", text: "Community", icon: "usersFour", disabled: true },
