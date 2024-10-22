@@ -302,7 +302,7 @@ export default () => {
         setNotification({
           type: "error",
           text: input.deleted
-            ? t("Failed to move the project to trash.")
+            ? t("Failed to move to the recycle bin.")
             : t("Failed to restore the project!")
         });
 
@@ -311,7 +311,7 @@ export default () => {
       setNotification({
         type: "success",
         text: input.deleted
-          ? t("Successfully moved the project to trash!")
+          ? t("Successfully moved to recycle bin!")
           : t("Successfully restored the project!")
       });
       return { data: data?.updateProject?.project, status: "success" };

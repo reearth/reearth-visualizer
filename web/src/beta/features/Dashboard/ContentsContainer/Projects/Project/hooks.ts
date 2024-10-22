@@ -108,7 +108,7 @@ export default ({
     },
     {
       id: "remove",
-      title: t("Remove"),
+      title: t("Move to Recycle Bin"),
       icon: "trash",
       onClick: () => handleProjectRemoveModal(true)
     }

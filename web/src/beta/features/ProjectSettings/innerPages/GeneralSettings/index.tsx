@@ -122,7 +122,7 @@ const GeneralSettings: FC<Props> = ({
               </Typography>
               <ButtonWrapper>
                 <Button
-                  title={t("Remove project")}
+                  title={t("Move to Recycle Bin")}
                   appearance="dangerous"
                   onClick={() => handleProjectRemoveModal(true)}
                 />

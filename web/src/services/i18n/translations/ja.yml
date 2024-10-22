@@ -47,7 +47,7 @@ No Project has been created yet: ''
 Rename: 名称変更
 Project Setting: プロジェクト設定
 Export: エクスポート
-Remove: 削除
+Move to Recycle Bin: ''
 Create new project: ''
 Project Name *: ''
 Text: ''
@@ -234,7 +234,6 @@ Submit: 反映
 Danger Zone: 重要操作
 Remove this project: ''
 This process will move this project to recycle bin.: ''
-Remove project: ''
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -281,6 +280,7 @@ aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
 Spacing settings: 余白設定
+Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプです
 Workspace: ''
@@ -399,9 +399,9 @@ Successfully published your project with search engine indexing!: 検索エン�
 Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
-Failed to move the project to trash.: ''
+Failed to move to the recycle bin.: ''
 Failed to restore the project!: ''
-Successfully moved the project to trash!: ''
+Successfully moved to recycle bin!: ''
 Successfully restored the project!: ''
 Failed to archive project.: プロジェクトの非編集状態に失敗しました。
 Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
