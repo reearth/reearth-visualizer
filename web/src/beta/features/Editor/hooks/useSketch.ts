@@ -120,7 +120,9 @@ export default ({
 
   useEffect(() => {
     // Workaround: in order to show the indicator of the selected sketch feature we need to unselect it first.
-    visualizerRef?.current?.layers.select(undefined);
+    if (pendingSketchSelectionRef.current) {
+      visualizerRef?.current?.layers.select(undefined);
+    }
     // Workaround: we can't get an notice from core after nlsLayers got updated.
     // Therefore we need to get and select the latest sketch feature manually delayed.
     setTimeout(() => {
