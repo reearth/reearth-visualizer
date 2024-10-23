@@ -1,5 +1,5 @@
+import { defaultStyle } from "@reearth/beta/features/Editor/Map/LayerStylePanel/PresetLayerStyle/presetLayerStyles";
 import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
-import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
 import { Layer, LayerAppearanceTypes } from "@reearth/core";
 import {
   NLSInfobox,
@@ -70,7 +70,7 @@ export function processLayers(
       }
     }
 
-    return DEFAULT_LAYER_STYLE;
+    return defaultStyle;
   };
 
   return newLayers?.map((nlsLayer) => {
