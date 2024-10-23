@@ -98,7 +98,7 @@ export default ({
   }, []);
 
   // assets
-  const { useAssetsQuery, useRemoveAssets, useCreateAssets } =
+  const { useAssetUrlCopy, useAssetsQuery, useRemoveAssets, useCreateAssets } =
     useAssetsFetcher();
   const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } =
     useAssetsQuery({
@@ -334,6 +334,7 @@ export default ({
     assetsContentRef,
     handleSearch,
     handleAssetUpload,
+    handleAssetUrlCopy: useAssetUrlCopy,
     contentWidth,
     loading,
     loadingMore

@@ -1,4 +1,4 @@
-import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Icon, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
@@ -9,7 +9,8 @@ import { getAssetType } from "./utils";
 const AssetListItem: FC<AssetItemProps> = ({
   asset,
   selectedAssetIds,
-  onSelect
+  onSelect,
+  handleAssetUrlCopy
 }) => {
   const selected = useMemo(
     () => selectedAssetIds.includes(asset.id),
@@ -28,6 +29,15 @@ const AssetListItem: FC<AssetItemProps> = ({
     [asset, onSelect]
   );
 
+  const handleIconClick = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(asset.url);
+      handleAssetUrlCopy();
+    },
+    [asset, handleAssetUrlCopy]
+  );
+
   const formattedDate = useMemo(
     () => formatRelativeTime(new Date(asset.createdAt)),
     [asset.createdAt]
@@ -44,14 +54,31 @@ const AssetListItem: FC<AssetItemProps> = ({
           size={20}
         />
       </Thumbnail>
-      <AssetName>
-        <Typography size="body">{asset.name}</Typography>
-      </AssetName>
-      <Col width={30}>
+      <Col width={40}>
+        <AssetName>
+          <Typography size="body">{asset.name}</Typography>
+        </AssetName>
+      </Col>
+      <Col width={20}>
         <Typography size="body">{formattedDate}</Typography>
       </Col>
-      <Col width={30}>
+      <Col width={10}>
         <Typography size="body">{formattedSize}</Typography>
+      </Col>
+      <Col
+        otherProperties={{ display: "flex", alignItems: "center" }}
+        width={30}
+      >
+        <Typography otherProperties={{ width: "200px" }} size="body">
+          {asset.url}
+        </Typography>
+
+        <IconButton
+          appearance="simple"
+          icon="copy"
+          onClick={handleIconClick}
+          size="medium"
+        />
       </Col>
     </Wrapper>
   );
@@ -91,15 +118,19 @@ const AssetName = styled("div")(() => ({
   wordBreak: "break-word",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  width: "50%",
+  width: "100%",
   flexGrow: 0,
   flexShrink: 0
 }));
 
-const Col = styled("div")<{ width: number }>(({ width }) => ({
+const Col = styled("div")<{
+  width: number;
+  otherProperties?: React.CSSProperties;
+}>(({ width, otherProperties }) => ({
   width: `${width}%`,
   flexGrow: 0,
-  flexShrink: 0
+  flexShrink: 0,
+  ...otherProperties
 }));
 
 function formatBytes(bytes: number): string {

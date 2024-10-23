@@ -50,6 +50,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     selectedAssetIds,
     handleAssetSelect,
     handleAssetDelete,
+    handleAssetUrlCopy,
     assetsWrapperRef,
     assetsContentRef,
     handleSearch,
@@ -112,19 +113,24 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               {layout === "list" && (
                 <ListHeader size={size} width={contentWidth}>
                   <ThumbnailSpacer />
-                  <Col width={50}>
+                  <Col width={40}>
                     <Typography weight="bold" size="body">
                       {t("Name")}
                     </Typography>
                   </Col>
-                  <Col width={30}>
+                  <Col width={20}>
                     <Typography weight="bold" size="body">
                       {t("Uploaded At")}
                     </Typography>
                   </Col>
-                  <Col width={30}>
+                  <Col width={10}>
                     <Typography weight="bold" size="body">
                       {t("Size")}
+                    </Typography>
+                  </Col>
+                  <Col width={30}>
+                    <Typography weight="bold" size="body">
+                      {t("Path")}
                     </Typography>
                   </Col>
                 </ListHeader>
@@ -141,6 +147,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                           layout={layout}
                           selectedAssetIds={selectedAssetIds}
                           onSelect={handleAssetSelect}
+                          handleAssetUrlCopy={handleAssetUrlCopy}
                         />
                       ) : (
                         <AssetListItem
@@ -149,6 +156,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                           layout={layout}
                           selectedAssetIds={selectedAssetIds}
                           onSelect={handleAssetSelect}
+                          handleAssetUrlCopy={handleAssetUrlCopy}
                         />
                       )
                     )}
