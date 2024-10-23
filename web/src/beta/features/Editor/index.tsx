@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { FC } from "react";
 
+import CursorStatus from "../CursorStatus";
 import Navbar, { Tab } from "../Navbar";
 
 import useHooks from "./hooks";
@@ -144,6 +145,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             onCustomPropertySchemaUpdate={handleCustomPropertySchemaUpdate}
           />
         )}
+        <CursorStatus />
       </Wrapper>
     </DndProvider>
   );
