@@ -54,7 +54,7 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       ) : (
         <ManagerEmptyContent>
           <Typography size="h5" color={theme.content.weak}>
-            {t("No Project in recycle bin.")}
+            {t("No Project in Recycle bin.")}
           </Typography>
         </ManagerEmptyContent>
       )}

@@ -298,12 +298,12 @@ export default () => {
       });
 
       if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to move project to trash", errors);
+        console.log("GraphQL: Failed to move project to Recycle bin", errors);
         setNotification({
           type: "error",
           text: input.deleted
-            ? t("Failed to move to the recycle bin.")
-            : t("Failed to restore the project!")
+            ? t("Failed to move to the Recycle bin.")
+            : t("Failed to recover the project!")
         });
 
         return { status: "error" };
@@ -311,8 +311,8 @@ export default () => {
       setNotification({
         type: "success",
         text: input.deleted
-          ? t("Successfully moved to recycle bin!")
-          : t("Successfully restored the project!")
+          ? t("Successfully moved to Recycle bin!")
+          : t("Successfully recovered the project!")
       });
       return { data: data?.updateProject?.project, status: "success" };
     },

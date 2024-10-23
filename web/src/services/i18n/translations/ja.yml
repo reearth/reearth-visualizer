@@ -54,10 +54,10 @@ Text: ''
 Description: プロジェクト概要
 Write down your content: ''
 Cover Image: ''
-Your project will be moved to trash.: ''
-This means the project will no longer be published. But you can still see and restore your project from the recycle bin.: ''
+Your project will be moved to Recycle Bin.: ''
+This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: ''
 Starred: ''
-No Project in recycle bin.: ''
+No Project in Recycle bin.: ''
 Recover: ''
 Delete: ''
 Delete project: ''
@@ -233,7 +233,7 @@ Thumbnail: サムネイル画像
 Submit: 反映
 Danger Zone: 重要操作
 Remove this project: ''
-This process will move this project to recycle bin.: ''
+This process will move this project to Recycle bin.: ''
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -399,10 +399,10 @@ Successfully published your project with search engine indexing!: 検索エン�
 Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
-Failed to move to the recycle bin.: ''
-Failed to restore the project!: ''
-Successfully moved to recycle bin!: ''
-Successfully restored the project!: ''
+Failed to move to the Recycle bin.: ''
+Failed to recover the project!: ''
+Successfully moved to Recycle bin!: ''
+Successfully recovered the project!: ''
 Failed to archive project.: プロジェクトの非編集状態に失敗しました。
 Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
 Successfully archive project!: プロジェクトのアーカイブに成功しました！

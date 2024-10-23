@@ -118,7 +118,7 @@ const GeneralSettings: FC<Props> = ({
                 {t("Remove this project")}
               </Typography>
               <Typography size="body">
-                {t("This process will move this project to recycle bin.")}
+                {t("This process will move this project to Recycle bin.")}
               </Typography>
               <ButtonWrapper>
                 <Button
