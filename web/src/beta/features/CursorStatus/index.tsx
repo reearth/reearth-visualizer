@@ -1,14 +1,12 @@
 import { useHasActiveGQLTasks } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
+import { keyframes, styled } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";
-import { BounceLoader } from "react-spinners";
 
-const offsetX = 10;
-const offsetY = 10;
+const offsetX = 16;
+const offsetY = 16;
 
 const CursorStatus: FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
-  const theme = useTheme();
 
   const [enabled] = useHasActiveGQLTasks();
 
@@ -26,7 +24,7 @@ const CursorStatus: FC = () => {
   return (
     enabled && (
       <Wrapper left={mousePosition.x + offsetX} top={mousePosition.y + offsetY}>
-        <BounceLoader color={theme.publish.main} size={16} />
+        <Loader />
       </Wrapper>
     )
   );
@@ -43,3 +41,18 @@ const Wrapper = styled("div")<{ left: number; top: number }>(
     zIndex: theme.zIndexes.editor.loading
   })
 );
+
+const loaderKeyframes = keyframes`
+  100%{transform: rotate(1turn)}
+`;
+
+const Loader = styled("div")(() => ({
+  width: 30,
+  aspectRatio: 1,
+  borderRadius: "50%",
+  background:
+    "radial-gradient(farthest-side,#666 94%,#0000) top/6px 6px no-repeat, conic-gradient(#0000 30%,#666)",
+  ["-webkit-mask"]:
+    "radial-gradient(farthest-side,#0000 calc(100% - 6px),#000 0)",
+  animation: `${loaderKeyframes} 1s infinite linear`
+}));
