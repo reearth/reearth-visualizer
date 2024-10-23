@@ -147,7 +147,10 @@ const FileListItem = styled("li")<{
 
 const ButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.smallest
+  gap: theme.spacing.smallest,
+  "& > button": {
+    flexGrow: 1
+  }
 }));
 
 export default Plugins;
