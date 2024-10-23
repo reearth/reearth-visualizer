@@ -10,14 +10,17 @@ import {
   Typography,
   ModalPanel,
   TextInput,
-  IconButton
+  IconButton,
+  Icon,
+  PopupMenu
 } from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
+import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useEffect, useState } from "react";
+import { styled, useTheme, keyframes } from "@reearth/services/theme";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 import { WorkspacePayload } from "../../hooks";
@@ -30,15 +33,20 @@ type Props = {
   }: WorkspacePayload) => Promise<void>;
   handleSearchUser: (nameOrEmail: string) =>
     | {
-        __typename?: "User";
-        id: string;
-        name: string;
-        email: string;
+        searchUser: {
+          __typename?: "User";
+          id: string;
+          name: string;
+          email: string;
+        } | null;
+        seachUserStatus: string;
+        error?: undefined;
       }
     | {
         error: unknown;
-      }
-    | null;
+        searchUser?: undefined;
+        seachUserStatus?: undefined;
+      };
   handleUpdateMemberOfWorkspace: ({
     teamId,
     userId,
@@ -49,6 +57,13 @@ type Props = {
     userId
   }: WorkspacePayload) => Promise<void>;
 };
+
+type MembersData = {
+  username: string;
+  email: string;
+  role: Role;
+  id: string;
+}[];
 
 const Members: FC<Props> = ({
   handleSearchUser,
@@ -67,18 +82,20 @@ const Members: FC<Props> = ({
   ];
 
   const [currentWorkspace] = useWorkspace();
-  const data = currentWorkspace?.members?.map((member) => {
-    return {
+  const [workspaceMembers, setWorkspaceMembers] = useState<MembersData>([]);
+
+  useMemo(() => {
+    const membersData = currentWorkspace?.members?.map((member) => ({
       username: member.user.name,
       email: member.user.email,
       role: member.role,
       id: member.user.id
-    };
-  });
+    }));
+    if (membersData) setWorkspaceMembers(membersData);
+  }, [currentWorkspace]);
 
   const [addMemberModal, setAddMemberModal] = useState<boolean>(false);
   const [activeEditIndex, setActiveEditIndex] = useState<number | null>(null);
-  const [activePopupIndex, setActivePopupIndex] = useState<number | null>(null);
 
   const [memberSearchInput, setMemberSearchInput] = useState<string>("");
   const [debouncedInput, setDebouncedInput] =
@@ -101,7 +118,7 @@ const Members: FC<Props> = ({
     };
   }, [memberSearchInput]);
 
-  const searchUser = handleSearchUser(debouncedInput);
+  const { searchUser, seachUserStatus } = handleSearchUser(debouncedInput);
 
   useEffect(() => {
     if (
@@ -144,7 +161,7 @@ const Members: FC<Props> = ({
               <TableHeader>{t("Role")}</TableHeader>
               <TableHeader />
 
-              {data?.map((user, index) => (
+              {workspaceMembers?.map((user, index) => (
                 <Fragment key={index}>
                   <TableRow>{user.username}</TableRow>
                   <TableRow>{user.email}</TableRow>
@@ -162,58 +179,68 @@ const Members: FC<Props> = ({
                               userId: user.id,
                               role: roleValue as Role
                             });
+                            setWorkspaceMembers((prevMembers) => {
+                              return prevMembers.map((workspaceMember) =>
+                                workspaceMember.id === user.id
+                                  ? {
+                                      ...workspaceMember,
+                                      role: roleValue as Role
+                                    }
+                                  : workspaceMember
+                              );
+                            });
+                            setActiveEditIndex((prevIndex) =>
+                              prevIndex === index ? null : index
+                            );
                           }
                         }}
                       />
                     </TableRow>
                   )}
-                  <IconCell>
-                    <IconButton
-                      icon="dotsThreeVertical"
-                      disabled={user.role === "OWNER"}
-                      size="large"
-                      hasBorder={false}
-                      appearance="simple"
-                      onClick={() =>
-                        setActivePopupIndex((prevIndex) =>
-                          prevIndex === index ? null : index
-                        )
+                  <TableRow>
+                    <PopupMenu
+                      label={
+                        <Button
+                          icon="dotsThreeVertical"
+                          iconButton
+                          appearance="simple"
+                        />
                       }
+                      menu={[
+                        {
+                          icon: "arrowLeftRight",
+                          id: "changeRole",
+                          title: t("Change Role"),
+                          disabled: user.role === "OWNER",
+                          onClick: () => {
+                            setActiveEditIndex((prevIndex) =>
+                              prevIndex === index ? null : index
+                            );
+                          }
+                        },
+                        {
+                          icon: "close",
+                          id: "remove",
+                          title: t("Remove"),
+                          disabled: user.role === "OWNER",
+                          onClick: () => {
+                            if (currentWorkspace?.id) {
+                              handleRemoveMemberFromWorkspace({
+                                teamId: currentWorkspace?.id,
+                                userId: user.id
+                              });
+                            }
+                            setWorkspaceMembers(
+                              workspaceMembers.filter(
+                                (workspaceMember) =>
+                                  workspaceMember.id !== user.id
+                              )
+                            );
+                          }
+                        }
+                      ]}
                     />
-                    {activePopupIndex === index && (
-                      <PopupMenu>
-                        <div>
-                          <IconButton
-                            icon="editMode"
-                            appearance="simple"
-                            onClick={() => {
-                              setActivePopupIndex(null);
-                              setActiveEditIndex((prevIndex) =>
-                                prevIndex === index ? null : index
-                              );
-                            }}
-                          />
-                          <Typography size="body">{t("edit")}</Typography>
-                        </div>
-                        <div>
-                          <IconButton
-                            icon="trash"
-                            appearance="simple"
-                            onClick={() => {
-                              setActivePopupIndex(null);
-                              if (currentWorkspace?.id) {
-                                handleRemoveMemberFromWorkspace({
-                                  teamId: currentWorkspace?.id,
-                                  userId: user.id
-                                });
-                              }
-                            }}
-                          />
-                          <Typography size="body">{t("trash")}</Typography>
-                        </div>
-                      </PopupMenu>
-                    )}
-                  </IconCell>
+                  </TableRow>
                 </Fragment>
               ))}
             </Table>
@@ -241,7 +268,7 @@ const Members: FC<Props> = ({
               title={t("Add")}
               appearance="primary"
               disabled={
-                data?.some(
+                workspaceMembers?.some(
                   //existed user || no searchResult
                   (member) =>
                     memberSearchResults.find(
@@ -259,6 +286,19 @@ const Members: FC<Props> = ({
                       userId: memberSearchResult.id,
                       role: Role.Reader
                     });
+                    setWorkspaceMembers((prevMembers) => [
+                      ...prevMembers,
+                      {
+                        username: memberSearchResult.userName,
+                        email: memberSearchResult.email,
+                        role: Role.Reader,
+                        id: memberSearchResult.id
+                      }
+                    ]);
+                    setAddMemberModal(false);
+                    setMemberSearchInput("");
+                    setDebouncedInput("");
+                    setMemberSearchResults([]);
                   }
                 });
               }}
@@ -282,6 +322,17 @@ const Members: FC<Props> = ({
                 }
               }}
             />
+
+            {debouncedInput && !searchUser && seachUserStatus !== "loading" ? (
+              <SearchMemberMessage
+                size="body"
+                weight="regular"
+                color={theme.warning.main}
+              >
+                <Icon icon="warning" size="large" color={theme.warning.main} />
+                {t("Didn’t find the user")}
+              </SearchMemberMessage>
+            ) : undefined}
 
             {memberSearchResults &&
               memberSearchResults.map((memberSearchResult) => (
@@ -316,6 +367,15 @@ const Members: FC<Props> = ({
   );
 };
 
+const zoomIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
 const SettingsFields = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -344,38 +404,8 @@ const TableRow = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   lineHeight: "28px",
   display: "flex",
-  alignItems: "center"
-}));
-
-const IconCell = styled("div")(() => ({
-  lineHeight: "28px",
-  display: "flex",
   alignItems: "center",
-  position: "relative"
-}));
-
-const PopupMenu = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "4px",
-  boxShadow: `${theme.shadow.popup}`,
-  position: "absolute",
-  top: "1rem",
-  left: "1.2rem",
-  zIndex: 100,
-  "& > div": {
-    display: "flex",
-    gap: "0.5rem",
-    padding: "2px 6px",
-    alignItems: "center",
-    "&:hover": {
-      backgroundColor: theme.bg[2],
-      cursor: "pointer"
-    }
-  },
-  "& > div:not(:last-child)": {
-    borderBottom: `solid 1px ${theme.outline.weak}`
-  }
+  animation: `${zoomIn} 0.2s ease-in-out`
 }));
 
 const ModalContentWrapper = styled("div")(({ theme }) => ({
@@ -398,6 +428,7 @@ const ItemContainer = styled("div")(({ theme }) => ({
 const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
+  animation: ${zoomIn} 0.2s ease-in-out;
 `;
 
 const DeleteIcon = styled(IconButton)(() => ({
@@ -407,5 +438,10 @@ const DeleteIcon = styled(IconButton)(() => ({
     color: "red"
   }
 }));
+
+const SearchMemberMessage = styled(Typography)`
+  margin-top: ${metricsSizes["2xs"]}px;
+  display: flex;
+`;
 
 export default Members;

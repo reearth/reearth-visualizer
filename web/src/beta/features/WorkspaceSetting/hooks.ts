@@ -169,7 +169,7 @@ export default () => {
         if (status === "success") {
           console.log("Search Member successfully");
         }
-        return user;
+        return { searchUser: user, seachUserStatus: status };
       } catch (err) {
         console.error("Failed to search user:", err);
         return { error: err };
