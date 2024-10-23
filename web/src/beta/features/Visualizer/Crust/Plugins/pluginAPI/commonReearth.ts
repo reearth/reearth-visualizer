@@ -66,7 +66,6 @@ export function commonReearth({
   addLayer,
   findFeatureById,
   findFeaturesByIds,
-  layersInViewport,
   selectLayer,
   selectFeature,
   selectFeatures,
@@ -148,7 +147,6 @@ export function commonReearth({
   addLayer: GlobalThis["reearth"]["layers"]["add"];
   findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
   findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
-  layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   selectFeature: GlobalThis["reearth"]["layers"]["selectFeature"];
   selectFeatures: GlobalThis["reearth"]["layers"]["selectFeatures"];
@@ -299,9 +297,6 @@ export function commonReearth({
       },
       get findFeaturesByIds() {
         return findFeaturesByIds;
-      },
-      get layersInViewport() {
-        return layersInViewport;
       },
       get select() {
         return selectLayer;
