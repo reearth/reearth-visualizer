@@ -42,7 +42,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleSketchFeatureCreate,
     handleSketchFeatureUpdate,
     handleIsVisualizerUpdate,
-    handleCoreLayerSelectFromUI,
+    handleCoreLayerSelectFromMap,
     selectStoryPage,
     selectWidgetArea,
     mapPageValue,
@@ -92,7 +92,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               onSketchFeatureCreate={handleSketchFeatureCreate}
               onSketchFeatureUpdate={handleSketchFeatureUpdate}
               onVisualizerReady={handleIsVisualizerUpdate}
-              onCoreLayerSelect={handleCoreLayerSelectFromUI}
+              onCoreLayerSelect={handleCoreLayerSelectFromMap}
               onCoreAPIReady={handleCoreAPIReady}
               setSelectedStoryPageId={selectStoryPage}
               selectWidgetArea={selectWidgetArea}
