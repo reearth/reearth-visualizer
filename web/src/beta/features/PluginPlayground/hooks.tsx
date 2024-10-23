@@ -1,8 +1,9 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { useMemo } from "react";
 
+import Code from "./Code";
 import Console from "./Console";
-import PluginInspector from "./PluginInspector";
+// import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
 import Viewer from "./Viewer";
 
@@ -42,12 +43,23 @@ export default () => {
     []
   );
 
+  // const RightAreaTabs: TabItem[] = useMemo(
+  //   () => [
+  //     {
+  //       id: "plugin-inspector",
+  //       name: "Plugin Inspector",
+  //       children: <PluginInspector />
+  //     }
+  //   ],
+  //   []
+  // );
+
   const RightAreaTabs: TabItem[] = useMemo(
     () => [
       {
-        id: "plugin-inspector",
-        name: "Plugin Inspector",
-        children: <PluginInspector />
+        id: "code",
+        name: "code",
+        children: <Code />
       }
     ],
     []
