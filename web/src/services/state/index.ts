@@ -77,22 +77,14 @@ const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
 
 // Record active requests (queries & mutaions)
-const REQUEST_TIMEOUT = 10000;
 export type GQLTask = {
   id: string;
 };
 
 const activeGQLTasksAtom = atom<GQLTask[]>([]);
 
-const addGQLTaskAtom = atom(null, (get, set, task: GQLTask) => {
+const addGQLTaskAtom = atom(null, (_get, set, task: GQLTask) => {
   set(activeGQLTasksAtom, (prev) => [...prev, task]);
-  // Remove the task after timeout
-  setTimeout(() => {
-    const currentTasks = get(activeGQLTasksAtom);
-    if (currentTasks.find((t) => t.id === task.id)) {
-      set(removeGQLTaskAtom, task);
-    }
-  }, REQUEST_TIMEOUT);
 });
 
 const removeGQLTaskAtom = atom(null, (_get, set, task: GQLTask) => {

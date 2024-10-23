@@ -1,6 +1,6 @@
 import { useHasActiveGQLTasks } from "@reearth/services/state";
 import { keyframes, styled } from "@reearth/services/theme";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 const offsetX = 16;
 const offsetY = 16;
@@ -10,16 +10,17 @@ const CursorStatus: FC = () => {
 
   const [enabled] = useHasActiveGQLTasks();
 
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      setMousePosition({
-        x: event.clientX,
-        y: event.clientY
-      });
-    };
-
-    return document.addEventListener("mousemove", handleMouseMove);
+  const handleMouseMove = useCallback((event: MouseEvent) => {
+    setMousePosition({
+      x: event.clientX,
+      y: event.clientY
+    });
   }, []);
+
+  useEffect(() => {
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => document.removeEventListener("mousemove", handleMouseMove);
+  }, [handleMouseMove]);
 
   return (
     enabled && (
