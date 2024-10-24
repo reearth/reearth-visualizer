@@ -59,10 +59,10 @@ type Props = {
 };
 
 type MembersData = {
-  username: string;
-  email: string;
-  role: Role;
   id: string;
+  role: Role;
+  username?: string;
+  email?: string;
 }[];
 
 const Members: FC<Props> = ({
@@ -85,12 +85,14 @@ const Members: FC<Props> = ({
   const [workspaceMembers, setWorkspaceMembers] = useState<MembersData>([]);
 
   useEffect(() => {
-    const membersData = currentWorkspace?.members?.map((member) => ({
-      username: member.user.name,
-      email: member.user.email,
-      role: member.role,
-      id: member.user.id
-    }));
+    const membersData = currentWorkspace?.members
+      ?.filter((m) => !!m.user)
+      .map((member) => ({
+        id: member.userId,
+        role: member.role,
+        username: member.user?.name,
+        email: member.user?.email
+      }));
     if (membersData) setWorkspaceMembers(membersData);
   }, [currentWorkspace]);
 
