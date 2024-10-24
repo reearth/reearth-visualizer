@@ -2281,6 +2281,32 @@ extensions:
                   label: Desktop only
                 - key: mobile
                   label: Mobile only
+  - id: dataAttribution
+    type: widget
+    name: Data Attribution
+    description: A data Attribution widget.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: bottom
+    schema:
+      groups:
+        - id: default
+          title: Data Attribution
+          fields:
+            - id: description
+              title: Credit Description
+              type: string
+              defaultValue: New Credit
+            - id: logo
+              type: url
+              title: Logo
+              ui: image
+            - id: creditUrl
+              type: url
+              title: Credit Url
   - id: story
     name: Story
     type: story

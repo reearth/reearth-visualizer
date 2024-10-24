@@ -9,6 +9,8 @@ import {
 } from "@reearth/core";
 import { useMemo, type RefObject, useContext } from "react";
 
+import { useVisualizerCredits } from "../atoms";
+
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
@@ -217,6 +219,7 @@ export default function Crust({
   } = useContext(coreContext);
 
   const widgetTheme = usePublishTheme(widgetThemeOptions);
+  const [visualizerCredits] = useVisualizerCredits();
 
   const selectedLayerId = useMemo(
     () => ({
@@ -241,7 +244,8 @@ export default function Crust({
     viewerProperty,
     initialCamera,
     selectedLayerId,
-    timelineManagerRef: mapRef?.current?.timeline
+    timelineManagerRef: mapRef?.current?.timeline,
+    credits: visualizerCredits
   });
 
   const featuredInfobox = useMemo(() => {

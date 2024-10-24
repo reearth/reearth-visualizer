@@ -2,7 +2,8 @@ import { Camera } from "@reearth/beta/utils/value";
 import {
   TimelineManagerRef,
   TimelineCommitter,
-  ViewerProperty
+  ViewerProperty,
+  Credit
 } from "@reearth/core";
 import { RefObject, useMemo } from "react";
 
@@ -14,7 +15,8 @@ export const useWidgetContext = ({
   selectedLayerId,
   viewerProperty,
   initialCamera,
-  timelineManagerRef
+  timelineManagerRef,
+  credits
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -23,9 +25,17 @@ export const useWidgetContext = ({
         selectedLayerId,
         viewerProperty,
         initialCamera,
-        timelineManagerRef
+        timelineManagerRef,
+        credits
       }),
-    [mapRef, viewerProperty, initialCamera, selectedLayerId, timelineManagerRef]
+    [
+      mapRef,
+      selectedLayerId,
+      viewerProperty,
+      initialCamera,
+      timelineManagerRef,
+      credits
+    ]
   );
 
 export function widgetContextFromMapRef({
@@ -33,7 +43,8 @@ export function widgetContextFromMapRef({
   selectedLayerId,
   viewerProperty,
   initialCamera,
-  timelineManagerRef
+  timelineManagerRef,
+  credits
 }: {
   mapRef?: RefObject<MapRef>;
   selectedLayerId?: {
@@ -43,6 +54,7 @@ export function widgetContextFromMapRef({
   viewerProperty?: ViewerProperty;
   initialCamera?: Camera;
   timelineManagerRef?: TimelineManagerRef;
+  credits?: Credit[];
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
@@ -55,6 +67,7 @@ export function widgetContextFromMapRef({
     initialCamera,
     is2d: viewerProperty?.scene?.mode === "2d",
     selectedLayerId,
+    credits,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);
       if (!l || l.type !== "simple") {

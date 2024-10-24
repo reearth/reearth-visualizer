@@ -1,4 +1,4 @@
-import type { TickEvent } from "@reearth/core";
+import type { Credit, TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 import { ComponentType, ReactNode, useMemo } from "react";
 
@@ -48,6 +48,7 @@ export type Context = {
     featureId?: string;
   };
   is2d?: boolean;
+  credits?: Credit[];
   onFlyTo?: (
     target: string | FlyToDestination,
     options?: { duration?: number }

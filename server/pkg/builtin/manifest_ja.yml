@@ -964,7 +964,7 @@ extensions:
       default:
         title: デフォルト
         fields:
-          buttonTitle:
+          buttonTitle: 
             title: タイトル
           buttonStyle:
             title: 表示方法
@@ -1132,6 +1132,19 @@ extensions:
               always: 常に
               desktop: デスクトップのみ
               mobile: モバイルのみ
+  dataAttribution:
+    name: データの帰属
+    description: データ アトリビューション ウィジェット
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          description:
+            title: クレジットの説明
+          logo:
+            title: ロゴ
+          creditUrl:
+            title: クレジット URL
   story:
     name: ストーリー
     description: ストーリーテリングのストーリー

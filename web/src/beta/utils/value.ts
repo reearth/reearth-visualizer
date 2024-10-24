@@ -136,6 +136,11 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Array]: "array",
   [GQLValueType.Timeline]: "timeline"
 };
+export type Credit = {
+  description?: string;
+  img?: string;
+  link?: string;
+};
 
 export type ValueType = keyof ValueTypes;
 
@@ -251,4 +256,3 @@ export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
   string: ""
 };
-
