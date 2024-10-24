@@ -20,7 +20,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
     filtedProjects,
     isLoading,
-    hasMoreProjects,
     selectedProject,
     projectCreatorVisible,
     wrapperRef,
@@ -31,16 +30,15 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     sortValue,
     showProjectCreator,
     closeProjectCreator,
-    handleGetMoreProjects,
     handleProjectUpdate,
     handleProjectCreate,
     handleProjectOpen,
     handleProjectSelect,
-    handleScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject
+    handleImportProject,
+    handleProjectRemove
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -171,14 +169,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                 <ActionCol />
               </ListHeader>
             )}
-            <ProjectsWrapper
-              ref={wrapperRef}
-              onScroll={(e) => {
-                if (!isLoading && hasMoreProjects) {
-                  handleScrollToBottom(e, handleGetMoreProjects);
-                }
-              }}
-            >
+            <ProjectsWrapper ref={wrapperRef}>
               <ProjectsContainer ref={contentRef}>
                 <ProjectsGroup layout={layout}>
                   {filtedProjects.map((project) =>
@@ -190,6 +181,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectUpdate={handleProjectUpdate}
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                        onProjectRemove={() => handleProjectRemove(project)}
                       />
                     ) : (
                       <ProjectListViewItem
@@ -199,6 +191,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectUpdate={handleProjectUpdate}
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                        onProjectRemove={() => handleProjectRemove(project)}
                       />
                     )
                   )}

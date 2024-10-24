@@ -44,16 +44,27 @@ Project Name: ''
 Updated At: ''
 Created At: ''
 No Project has been created yet: ''
-Rename: ''
-Project Setting: ''
-Export: ''
+Rename: 名称変更
+Project Setting: プロジェクト設定
+Export: エクスポート
+Move to Recycle Bin: ''
 Create new project: ''
 Project Name *: ''
 Text: ''
 Description: ''
 Write down your content: ''
 Cover Image: ''
+Your project will be moved to Recycle Bin.: ''
+This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: ''
 Starred: ''
+No Project in Recycle bin.: ''
+Recover: ''
+Delete: ''
+Delete project: ''
+Cancel: ''
+I am sure I want to delete this project: ''
+This action cannot be undone. This will permanently delete the project totally. You will lose all your project data: ''
+Please type your project name to continue.: ''
 Switch Workspace: ''
 Personal: ''
 Team Workspace: ''
@@ -155,53 +166,52 @@ New Property: ''
 General: ''
 New Sketch Layer: ''
 Custom properties Schema Setting: ''
-Story: ''
-Publish: ''
-Unpublish: ''
-Update: ''
-Congratulations!: ''
-Publish your story: ''
-Publish your scene: ''
-Update your story: ''
-Update your scene: ''
-Ok: ''
-Cancel: ''
-Your published story will be updated. This means all current changes will overwrite the current published story.: ''
-Your published scene will be updated. This means all current changes will overwrite the current published scene.: ''
-Your story will be published. This means anybody with the below URL will be able to view this story.: ''
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: ''
-Your story has been published!: ''
-Your scene has been published!: ''
-Public URL: ''
-'* Anyone can see your story with this URL': ''
-'* Anyone can see your scene with this URL': ''
-Copy: ''
-Embed Code: ''
-'* Please use this code if you want to embed your story into a webpage': ''
-Publish domain: ''
-Need to change domain related settings?: ''
-Go to settings: ''
-Search engine indexing: ''
-Page will be available as result on search engines: ''
-Your story will be unpublished.: ''
-Your scene will be unpublished.: ''
-This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: ''
-This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: ''
-Page Settings: ''
-All Layers: ''
-Untitled: ''
-Container Settings: ''
-Padding top: ''
-Padding right: ''
-Padding bottom: ''
-Padding left: ''
-Gap spacing: ''
-Align centered: ''
-Background color: ''
-Align System: ''
-Widget Manager: ''
-Project settings: ''
-Plugin: ''
+Story: ストーリー
+Publish: 公開
+Unpublish: 非公開にする
+Update: 更新する
+Congratulations!: おめでとうございます！
+Publish your story: ストーリーを公開する
+Publish your scene: シーンを公開する
+Update your story: ストーリーを更新する
+Update your scene: シーンを更新する
+Ok: 確認
+Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
+Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
+Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
+Your story has been published!: ストーリーが公開されました。
+Your scene has been published!: シーンが公開されました。
+Public URL: 公開URL
+'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+Copy: コピー
+Embed Code: 埋め込み用コード
+'* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
+Publish domain: 公開ドメイン
+Need to change domain related settings?: ドメイン設定を変更しますか？
+Go to settings: 設定へ
+Search engine indexing: 検索可能にする
+Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
+Your story will be unpublished.: ストーリーを非公開にする
+Your scene will be unpublished.: シーンを非公開にする
+This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: URLを知っている人でもこのストーリーを見ることができなくなります。このストーリーを埋め込んだWebサイトへ影響を及ぼす可能性があります。
+This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: URLを知っている人でもこのシーンを見ることができなくなります。このシーンを埋め込んだWebサイトへ影響を及ぼす可能性があります。
+Page Settings: ページ設定
+All Layers: 全てのレイヤー
+Untitled: タイトルなし
+Container Settings: コンテナ設定
+Padding top: 上の余白
+Padding right: 右の余白
+Padding bottom: 下の余白
+Padding left: 左の余白
+Gap spacing: 間隔
+Align centered: 中央に配置
+Background color: 背景色
+Align System: アラインシステム
+Widget Manager: ウィジェット管理
+Project settings: プロジェクト設定
+Plugin: プラグイン
 Visualizer: ''
 Unknown: ''
 Switch workspace: ''
@@ -211,34 +221,29 @@ Map: ''
 Widgets: ''
 Oops, This Page Not Found!: ''
 Go to Dashboard: ''
-Error: ''
-Warning: ''
-Notice: ''
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
-Something went wrong. Please try again later.: ''
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: ''
-Project Info: ''
-Thumbnail: ''
-Submit: ''
-Danger Zone: ''
-Delete this project: ''
-This process will remove this project to recycle bin.: ''
-Delete project: ''
-I am sure I want to delete this project.: ''
-This process will remove this project to Recycle bin. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: ''
-Please type your project name to continue.: ''
-Plugin Marketplace: ''
-Public Installed: ''
-Personal Installed: ''
-Zip file from PC: ''
-Public GitHub repository: ''
+Error: エラー
+Warning: 注意
+Notice: 通知
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
+Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
+Project Info: プロジェクト情報
+Thumbnail: サムネイル画像
+Submit: 反映
+Danger Zone: 重要操作
+Remove this project: ''
+This process will move this project to Recycle bin.: ''
+Plugin Marketplace: プラグインマーケットプレイス
+Public Installed: 公開インストール済み
+Personal Installed: 個人インストール済み
+Zip file from PC: PCからZipファイルをアップロード
+Public GitHub repository: GitHubパブリックレポジトリ
 Installed Plugins: ''
-Uninstall: ''
-Installed: ''
-Install: ''
-Delete: ''
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: ''
-Please be sure before uninstalling.: ''
+Uninstall: アンインストール
+Installed: インストール済み
+Install: インストール
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
+Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
 No description.: ''
 Import GitHub repository: ''
 Continue: ''
@@ -393,32 +398,36 @@ Successfully delete user!: ''
 Failed to search user.: ''
 Failed to change language.: ''
 Successfully updated user language!: ''
-Failed to install plugin.: ''
-Successfully installed plugin!: ''
-Failed to upgrade plugin.: ''
-Successfully upgraded plugin!: ''
-Failed to uninstall plugin.: ''
-Successfully uninstalled plugin.: ''
-Failed to create project.: ''
-Failed to create story page on project creation.: ''
-Successfully created project!: ''
-Failed to publish project.: ''
-Successfully published your scene!: ''
-Successfully published your project with search engine indexing!: ''
-Successfully unpublished your scene. Now nobody can access your scene.: ''
-Failed to update project.: ''
-Successfully updated project!: ''
-Failed to archive project.: ''
-Failed to unarchive project.: ''
-Successfully archive project!: ''
-Successfully unarchived the project. You can now edit this project.: ''
-Failed to delete project.: ''
-Successfully delete project!: ''
-Failed to export project.: ''
-Successfully exported project!: ''
-Failed to import project.: ''
-Successfully imported project!: ''
-Failed to update property.: ''
+Failed to install plugin.: プラグインのインストールに失敗しました。
+Successfully installed plugin!: プラグインがインストールされました。
+Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
+Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
+Failed to uninstall plugin.: プラグインの削除に失敗しました。
+Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
+Failed to create project.: プロジェクトの作成に失敗しました。
+Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
+Successfully created project!: 新しいプロジェクトの作成に成功しました！
+Failed to publish project.: プロジェクト公開に失敗しました。
+Successfully published your scene!: シーンの公開に成功しました！
+Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
+Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
+Failed to update project.: プロジェクトのアップデートに失敗しました。
+Successfully updated project!: プロジェクトのアップデートに成功しました！
+Failed to move to the Recycle bin.: ''
+Failed to recover the project!: ''
+Successfully moved to Recycle bin!: ''
+Successfully recovered the project!: ''
+Failed to archive project.: プロジェクトの非編集状態に失敗しました。
+Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
+Successfully archive project!: プロジェクトのアーカイブに成功しました！
+Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
+Failed to delete project.: プロジェクトの削除に失敗しました。
+Successfully delete project!: プロジェクトの削除に成功しました！
+Failed to export project.: プロジェクトのエクスポートに失敗しました。
+Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to import project.: プロジェクトのインポートに失敗しました。
+Successfully imported project!: プロジェクトのインポートに成功しました！
+Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: ''
 Failed to create story.: ''
 Successfully created a story!: ''
