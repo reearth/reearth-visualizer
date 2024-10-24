@@ -834,48 +834,124 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	return inp.FeatureID, nil
 }
 
-func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (nlslayer.NLSLayerList, error) {
+func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (nlslayer.NLSLayerList, map[string]idx.ID[id.NLSLayer], error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
 	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
 	nlayerIDs := idx.List[id.NLSLayer]{}
-	nlayers := []nlslayer.NLSLayer{}
+	replaceNLSLayerIDs := make(map[string]idx.ID[id.NLSLayer])
 	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
-		nlsLayerID := id.NewNLSLayerID()
-		nlayerIDs = append(nlayerIDs, nlsLayerID)
-		nlayer, err := nlslayer.New().
-			ID(nlsLayerID).
+		newNLSLayerID := id.NewNLSLayerID()
+		nlayerIDs = append(nlayerIDs, newNLSLayerID)
+		replaceNLSLayerIDs[nlsLayerJSON.ID] = newNLSLayerID
+
+		nlBuilder := nlslayer.New().
+			ID(newNLSLayerID).
 			Simple().
 			Scene(sceneID).
 			Title(nlsLayerJSON.Title).
 			LayerType(nlslayer.LayerType(nlsLayerJSON.LayerType)).
 			Config((*nlslayer.Config)(nlsLayerJSON.Config)).
 			IsVisible(nlsLayerJSON.IsVisible).
-			IsSketch(nlsLayerJSON.IsSketch).
-			Build()
-		if err != nil {
-			return nil, err
+			IsSketch(nlsLayerJSON.IsSketch)
+
+		// Infobox --------
+		if nlsLayerJSON.Infobox != nil {
+			schema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
+			prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
+			if err != nil {
+				return nil, nil, err
+			}
+			prop, err = builder.AddItemFromPropertyJSON(prop, schema, nlsLayerJSON.Infobox.Property)
+			if err != nil {
+				return nil, nil, err
+			}
+			// Save property
+			if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+				return nil, nil, err
+			}
+
+			blocks := make([]*nlslayer.InfoboxBlock, 0)
+			if nlsLayerJSON.Infobox != nil {
+				for _, b := range nlsLayerJSON.Infobox.Blocks {
+					schemaB := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
+					propB, err := property.New().NewID().Schema(schemaB.ID()).Scene(sceneID).Build()
+					if err != nil {
+						return nil, nil, err
+					}
+					propB, err = builder.AddItemFromPropertyJSON(propB, schemaB, b.Property)
+					if err != nil {
+						return nil, nil, err
+					}
+					// Save property
+					if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, propB); err != nil {
+						return nil, nil, err
+					}
+					extensionID := id.PluginExtensionID(b.ExtensionId)
+					pluginID, _ := id.PluginIDFrom(b.PluginId)
+					ibf, err := nlslayer.NewInfoboxBlock().
+						NewID().
+						Plugin(pluginID).
+						Extension(extensionID).
+						Property(propB.ID()).
+						Build()
+					if err != nil {
+						return nil, nil, err
+					}
+					blocks = append(blocks, ibf)
+				}
+			}
+			nlBuilder = nlBuilder.Infobox(nlslayer.NewInfobox(blocks, prop.ID()))
 		}
-		nlayers = append(nlayers, nlayer)
-	}
 
-	nlsLayerList := make(nlslayer.NLSLayerList, len(nlayers))
-	for i, layer := range nlayers {
-		nlsLayerList[i] = &layer
-	}
+		// SketchInfo --------
+		if nlsLayerJSON.SketchInfo != nil {
+			i := nlsLayerJSON.SketchInfo
+			feature := make([]nlslayer.Feature, 0)
+			for _, v := range i.FeatureCollection.Features {
+				var geometry nlslayer.Geometry
+				for _, g := range v.Geometry {
+					if geometryMap, ok := g.(map[string]any); ok {
+						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
+						if err != nil {
+							return nil, nil, err
+						}
+					}
+				}
+				f, err := nlslayer.NewFeatureWithNewId(v.Type, geometry)
+				if err != nil {
+					return nil, nil, err
+				}
+				feature = append(feature, *f)
+			}
+			featureCollection := nlslayer.NewFeatureCollection(
+				i.FeatureCollection.Type,
+				feature,
+			)
+			sketchInfo := nlslayer.NewSketchInfo(
+				i.PropertySchema,
+				featureCollection,
+			)
+			nlBuilder = nlBuilder.Sketch(sketchInfo)
+		}
 
-	if err := i.nlslayerRepo.Filtered(writableFilter).SaveAll(ctx, nlsLayerList); err != nil {
-		return nil, err
+		nlayer, err := nlBuilder.Build()
+		if err != nil {
+			return nil, nil, err
+		}
+		if err := i.nlslayerRepo.Filtered(writableFilter).Save(ctx, nlayer); err != nil {
+			return nil, nil, err
+		}
 	}
 
 	nlayer, err := i.nlslayerRepo.Filtered(readableFilter).FindByIDs(ctx, nlayerIDs)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return nlayer, nil
+	return nlayer, replaceNLSLayerIDs, nil
 }

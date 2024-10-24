@@ -23,52 +23,52 @@ func ParseSceneJSON(ctx context.Context, sceneJSONData map[string]interface{}) (
 	return &result, nil
 }
 
-func ParserWidgetAlignSystem(widgetAlignSystemJSON *widgetAlignSystemJSON) *scene.WidgetAlignSystem {
+func ParserWidgetAlignSystem(widgetAlignSystemJSON *widgetAlignSystemJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) *scene.WidgetAlignSystem {
 	if widgetAlignSystemJSON == nil {
 		return nil
 	}
 	was := scene.NewWidgetAlignSystem()
 	if widgetAlignSystemJSON.Inner != nil {
-		parseWidgetZone(was.Zone(scene.WidgetZoneInner), widgetAlignSystemJSON.Inner)
+		parseWidgetZone(was.Zone(scene.WidgetZoneInner), widgetAlignSystemJSON.Inner, replaceWidgetIDs)
 	}
 	if widgetAlignSystemJSON.Outer != nil {
-		parseWidgetZone(was.Zone(scene.WidgetZoneOuter), widgetAlignSystemJSON.Outer)
+		parseWidgetZone(was.Zone(scene.WidgetZoneOuter), widgetAlignSystemJSON.Outer, replaceWidgetIDs)
 	}
 	return was
 }
 
-func parseWidgetZone(zone *scene.WidgetZone, widgetZoneJSON *widgetZoneJSON) {
+func parseWidgetZone(zone *scene.WidgetZone, widgetZoneJSON *widgetZoneJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) {
 	if zone == nil || widgetZoneJSON == nil {
 		return
 	}
 	if widgetZoneJSON.Left != nil {
-		setWidgetSection(zone.Section(scene.WidgetSectionLeft), widgetZoneJSON.Left)
+		setWidgetSection(zone.Section(scene.WidgetSectionLeft), widgetZoneJSON.Left, replaceWidgetIDs)
 	}
 	if widgetZoneJSON.Center != nil {
-		setWidgetSection(zone.Section(scene.WidgetSectionCenter), widgetZoneJSON.Center)
+		setWidgetSection(zone.Section(scene.WidgetSectionCenter), widgetZoneJSON.Center, replaceWidgetIDs)
 	}
 	if widgetZoneJSON.Right != nil {
-		setWidgetSection(zone.Section(scene.WidgetSectionRight), widgetZoneJSON.Right)
+		setWidgetSection(zone.Section(scene.WidgetSectionRight), widgetZoneJSON.Right, replaceWidgetIDs)
 	}
 }
 
-func setWidgetSection(section *scene.WidgetSection, widgetSectionJSON *widgetSectionJSON) {
+func setWidgetSection(section *scene.WidgetSection, widgetSectionJSON *widgetSectionJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) {
 	if section == nil || widgetSectionJSON == nil {
 		return
 	}
-	section.SetArea(scene.WidgetAreaTop, parseWidgetArea(widgetSectionJSON.Top))
-	section.SetArea(scene.WidgetAreaMiddle, parseWidgetArea(widgetSectionJSON.Middle))
-	section.SetArea(scene.WidgetAreaBottom, parseWidgetArea(widgetSectionJSON.Bottom))
+	section.SetArea(scene.WidgetAreaTop, parseWidgetArea(widgetSectionJSON.Top, replaceWidgetIDs))
+	section.SetArea(scene.WidgetAreaMiddle, parseWidgetArea(widgetSectionJSON.Middle, replaceWidgetIDs))
+	section.SetArea(scene.WidgetAreaBottom, parseWidgetArea(widgetSectionJSON.Bottom, replaceWidgetIDs))
 }
 
-func parseWidgetArea(widgetAreaJSON *widgetAreaJSON) *scene.WidgetArea {
+func parseWidgetArea(widgetAreaJSON *widgetAreaJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) *scene.WidgetArea {
 	if widgetAreaJSON == nil {
 		return nil
 	}
 
 	var widgetIDs []idx.ID[id.Widget]
-	for range widgetAreaJSON.WidgetIDs {
-		widgetIDs = append(widgetIDs, id.NewWidgetID())
+	for _, oldId := range widgetAreaJSON.WidgetIDs {
+		widgetIDs = append(widgetIDs, replaceWidgetIDs[oldId])
 	}
 
 	return scene.NewWidgetArea(

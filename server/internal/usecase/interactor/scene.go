@@ -731,6 +731,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 	writableFilter := repo.SceneFilter{Writable: scene.IDList{sce.ID()}}
 
 	widgets := []*scene.Widget{}
+	replaceWidgetIDs := make(map[string]idx.ID[id.Widget])
 	for _, widgetJSON := range sceneJSON.Widgets {
 		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
 		if err != nil {
@@ -757,12 +758,16 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 			return nil, err
 		}
-		widget, err := scene.NewWidget(id.NewWidgetID(), pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
+
+		newWidgetID := id.NewWidgetID()
+		replaceWidgetIDs[widgetJSON.ID] = newWidgetID
+		widget, err := scene.NewWidget(newWidgetID, pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
 		if err != nil {
 			return nil, err
 		}
 		widgets = append(widgets, widget)
 	}
+
 	clusters := []*scene.Cluster{}
 	for _, clusterJson := range sceneJSON.Clusters {
 		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sce.ID()).Build()
@@ -805,12 +810,13 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		}
 	}
 
+	alignSystem := builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem, replaceWidgetIDs)
 	s2, err := scene.New().
 		ID(sce.ID()).
 		Project(prj.ID()).
 		Workspace(prj.Workspace()).
 		RootLayer(sce.RootLayer()).
-		Widgets(scene.NewWidgets(widgets, builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem))).
+		Widgets(scene.NewWidgets(widgets, alignSystem)).
 		UpdatedAt(time.Now()).
 		Property(prop.ID()).
 		Clusters(clusterList).

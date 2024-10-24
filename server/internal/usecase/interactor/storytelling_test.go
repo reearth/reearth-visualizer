@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -113,7 +114,7 @@ func TestImportStory(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportStory(ctx, scene.ID(), sceneData)
+	result, err := ifs.ImportStory(ctx, scene.ID(), sceneData, map[string]idx.ID[id.NLSLayer]{})
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 

@@ -280,7 +280,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		return nil, errors.New("Fail ImportScene :" + err.Error())
 	}
 
-	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
+	nlayers, replaceNLSLayerIDs, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
 	if err != nil {
 		return nil, errors.New("Fail ImportNLSLayers :" + err.Error())
 	}
@@ -290,7 +290,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		return nil, errors.New("Fail ImportStyles :" + err.Error())
 	}
 
-	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData)
+	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData, replaceNLSLayerIDs)
 	if err != nil {
 		return nil, errors.New("Fail ImportStory :" + err.Error())
 	}

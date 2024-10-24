@@ -140,11 +140,12 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 			chs = append(chs, *chBuilder.MustBuild())
 		}
 	}
-
 	fieldId := fieldMap["fieldId"].(string)
 	fid := id.PropertyFieldIDFromRef(&fieldId)
 	fiBuilder := property.NewSchemaField().ID(*fid)
-	fiBuilder = fiBuilder.Choices(chs)
+	if len(chs) > 0 {
+		fiBuilder = fiBuilder.Choices(chs)
+	}
 
 	if v, ok := fieldMap["type"].(string); ok {
 		t := gqlmodel.ToPropertyValueType(v)
@@ -270,6 +271,25 @@ func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]interfac
 
 }
 
+func parseWidgetLayout(model *jsonmodel.WidgetLayout) *plugin.WidgetLayout {
+	if model == nil {
+		return nil
+	}
+	location := plugin.WidgetLocation{
+		Zone:    plugin.WidgetZoneType(model.DefaultLocation.Zone),
+		Section: plugin.WidgetSectionType(model.DefaultLocation.Section),
+		Area:    plugin.WidgetAreaType(model.DefaultLocation.Area),
+	}
+	wl := plugin.NewWidgetLayout(
+		model.Extendable.Horizontally,
+		model.Extendable.Vertically,
+		model.Extended,
+		model.Floating,
+		&location,
+	)
+	return &wl
+}
+
 func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsData []interface{}, schemasData []interface{}) ([]*plugin.Plugin, property.SchemaList, error) {
 	var pluginsJSON = jsonmodel.ToPluginsFromJSON(pluginsData)
 
@@ -298,6 +318,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsDat
 				Description(i18n.StringFrom(pluginJSONextension.Description)).
 				Icon(pluginJSONextension.Icon).
 				SingleOnly(*pluginJSONextension.SingleOnly).
+				WidgetLayout(parseWidgetLayout(pluginJSONextension.WidgetLayout)).
 				Schema(psid).
 				Build()
 			if err != nil {

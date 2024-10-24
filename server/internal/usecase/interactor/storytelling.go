@@ -999,7 +999,7 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	return story, page, &inp.BlockID, inp.Index, nil
 }
 
-func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (*storytelling.Story, error) {
+func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}, replaceNLSLayerIDs map[string]idx.ID[id.NLSLayer]) (*storytelling.Story, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
@@ -1072,12 +1072,17 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 			return nil, err
 		}
+		var nlslayerIDs []idx.ID[id.NLSLayer]
+		for _, oldId := range pageJSON.Layers {
+			nlslayerIDs = append(nlslayerIDs, replaceNLSLayerIDs[oldId])
+		}
 		page, err := storytelling.NewPage().
 			ID(id.NewPageID()).
 			Property(prop.ID()).
 			Title(pageJSON.Title).
 			Swipeable(pageJSON.Swipeable).
 			Blocks(blocks).
+			Layers(nlslayerIDs).
 			Build()
 		if err != nil {
 			return nil, err
@@ -1104,6 +1109,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	}
 	story, err := storytelling.NewStory().
 		ID(id.NewStoryID()).
+		Title(storyJSON.Title).
 		Property(prop.ID()).
 		Scene(sceneID).
 		PanelPosition(storytelling.Position(storyJSON.PanelPosition)).
