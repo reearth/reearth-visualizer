@@ -1,4 +1,4 @@
-import { atom, useAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 export * from "./devPlugins";
@@ -75,3 +75,24 @@ export const useWorkspace = () => useAtom(workspace);
 
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
+
+// Record active requests (queries & mutaions)
+export type GQLTask = {
+  id: string;
+};
+
+const activeGQLTasksAtom = atom<GQLTask[]>([]);
+
+const addGQLTaskAtom = atom(null, (_get, set, task: GQLTask) => {
+  set(activeGQLTasksAtom, (prev) => [...prev, task]);
+});
+
+const removeGQLTaskAtom = atom(null, (_get, set, task: GQLTask) => {
+  set(activeGQLTasksAtom, (prev) => prev.filter((t) => t.id !== task.id));
+});
+
+const hasActiveGQLTasksAtom = atom((get) => get(activeGQLTasksAtom).length > 0);
+
+export const useAddGQLTask = () => useSetAtom(addGQLTaskAtom);
+export const useRemoveGQLTask = () => useSetAtom(removeGQLTaskAtom);
+export const useHasActiveGQLTasks = () => useAtom(hasActiveGQLTasksAtom);

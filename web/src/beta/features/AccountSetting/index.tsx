@@ -12,6 +12,8 @@ import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
+import CursorStatus from "../CursorStatus";
+
 import useHook from "./hooks";
 import PasswordModal from "./PasswordModal";
 
@@ -105,6 +107,7 @@ const AccountSetting: FC = () => {
           handleUpdateUserPassword={handleUpdateUserPassword}
         />
       </InnerPage>
+      <CursorStatus />
     </SettingBase>
   );
 };

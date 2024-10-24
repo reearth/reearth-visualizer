@@ -80,12 +80,6 @@ const TypographyInput: FC<Props> = ({ value, onChange }) => {
           onChange={(v) => onChange?.({ ...value, italic: v })}
         />
       </PropertyItem>
-      <PropertyItem title={t("underline")}>
-        <BooleanSelectorField
-          value={value?.underline}
-          onChange={(v) => onChange?.({ ...value, underline: v })}
-        />
-      </PropertyItem>
     </Wrapper>
   );
 };

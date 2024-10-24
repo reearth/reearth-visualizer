@@ -2,6 +2,8 @@ import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
+import CursorStatus from "../CursorStatus";
+
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
 import LeftSidePanel from "./LeftSidePanel";
@@ -61,6 +63,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         workspaceId={workspaceId}
         currentWorkspace={currentWorkspace}
       />
+      <CursorStatus />
     </Wrapper>
   );
 };
