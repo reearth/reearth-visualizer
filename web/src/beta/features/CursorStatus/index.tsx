@@ -7,7 +7,7 @@ const offsetY = 16;
 
 const CursorStatus: FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
-
+  const [inView, setInView] = useState(true);
   const [enabled] = useHasActiveGQLTasks();
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
@@ -17,13 +17,28 @@ const CursorStatus: FC = () => {
     });
   }, []);
 
+  const handleMouseEnter = useCallback(() => {
+    setInView(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setInView(false);
+  }, []);
+
   useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);
-    return () => document.removeEventListener("mousemove", handleMouseMove);
-  }, [handleMouseMove]);
+    document.addEventListener("mouseenter", handleMouseEnter);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseenter", handleMouseEnter);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [handleMouseMove, handleMouseEnter, handleMouseLeave]);
 
   return (
-    enabled && (
+    enabled &&
+    inView && (
       <Wrapper left={mousePosition.x + offsetX} top={mousePosition.y + offsetY}>
         <Loader />
       </Wrapper>
@@ -47,12 +62,13 @@ const loaderKeyframes = keyframes`
   100%{transform: rotate(1turn)}
 `;
 
+const loaderColor = "#aaa";
+
 const Loader = styled("div")(() => ({
-  width: 30,
+  width: 24,
   aspectRatio: 1,
   borderRadius: "50%",
-  background:
-    "radial-gradient(farthest-side,#666 94%,#0000) top/6px 6px no-repeat, conic-gradient(#0000 30%,#666)",
+  background: `radial-gradient(farthest-side,${loaderColor} 94%,#0000) top/6px 6px no-repeat, conic-gradient(#0000 30%,${loaderColor})`,
   ["-webkit-mask"]:
     "radial-gradient(farthest-side,#0000 calc(100% - 6px),#000 0)",
   animation: `${loaderKeyframes} 1s infinite linear`
