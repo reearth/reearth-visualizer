@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"testing"
 
@@ -143,6 +144,8 @@ func TestProject_Create(t *testing.T) {
 	assert.Nil(t, got)
 }
 
+// go test -v -run TestImportProject ./internal/usecase/interactor/...
+
 func TestImportProject(t *testing.T) {
 
 	ctx := context.Background()
@@ -152,6 +155,7 @@ func TestImportProject(t *testing.T) {
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
 	})
 
+	teamID := "01j7g9ddttkpnt3esk8h4w7xhv"
 	var projectData map[string]interface{}
 	err := json.Unmarshal([]byte(`{
     "id": "01j7g9ddttkpnt3esk8h4w7xhv",
@@ -192,7 +196,7 @@ func TestImportProject(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, _, err := ifp.ImportProject(ctx, projectData)
+	result, _, err := ifp.ImportProject(ctx, teamID, projectData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
@@ -213,9 +217,8 @@ func TestImportProject(t *testing.T) {
 	actual := string(actualByte)
 
 	// expected
-	var expectedMap map[string]interface{}
-	err = json.Unmarshal([]byte(`{
-    "id": "01j7g9ddttkpnt3esk8h4w7xhv",
+	exp := fmt.Sprintf(`{
+    "id": "%s",
     "isArchived": false,
     "isBasicAuthActive": false,
     "isDeleted": false,
@@ -241,14 +244,17 @@ func TestImportProject(t *testing.T) {
       "Fragment": "",
       "RawFragment": ""
     },
-    "teamId": "01j7g99pb1q1vf684af39bajw5",
+    "teamId": "%s",
     "visualizer": "cesium",
     "publishmentStatus": "PRIVATE",
     "coreSupport": true,
     "enableGa": false,
     "trackingId": "",
     "starred": false
-  }`), &expectedMap)
+	}`, result.ID().String(), teamID)
+
+	var expectedMap map[string]interface{}
+	err = json.Unmarshal([]byte(exp), &expectedMap)
 
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)

@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/value"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -205,4 +206,33 @@ func ToValueType(t value.Type) ValueType {
 
 func FromValueType(t ValueType) value.Type {
 	return value.Type(strings.ToLower(string(t)))
+}
+
+func ToPropertyValueType(t string) property.ValueType {
+	switch t {
+	case ValueTypeBool.String():
+		return property.ValueTypeBool
+	case ValueTypeNumber.String():
+		return property.ValueTypeNumber
+	case ValueTypeString.String():
+		return property.ValueTypeString
+	case ValueTypeRef.String():
+		return property.ValueTypeRef
+	case ValueTypeURL.String():
+		return property.ValueTypeURL
+	case ValueTypeLatlng.String():
+		return property.ValueTypeLatLng
+	case ValueTypeLatlngheight.String():
+		return property.ValueTypeLatLngHeight
+	case ValueTypeCoordinates.String():
+		return property.ValueTypeCoordinates
+	case ValueTypePolygon.String():
+		return property.ValueTypePolygon
+	case ValueTypeRect.String():
+		return property.ValueTypeRect
+	case ValueTypeArray.String():
+		return property.ValueTypeArray
+	default:
+		return property.ValueTypeUnknown
+	}
 }

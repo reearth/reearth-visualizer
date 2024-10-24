@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 func ToPropertyValue(v *property.Value) *interface{} {
@@ -242,6 +243,12 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 	}
 }
 
+func ToPropertySchemas(ps []*property.Schema) []*PropertySchema {
+	return lo.Map(ps, func(s *property.Schema, _ int) *PropertySchema {
+		return ToPropertySchema(s)
+	})
+}
+
 func ToPropertyLinkableFields(sid id.PropertySchemaID, l property.LinkableFields) *PropertyLinkableFields {
 	var latlng, url *id.PropertyFieldID
 	if l.LatLng != nil {
@@ -322,6 +329,47 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		ui2 = PropertySchemaFieldUIDatetime
 	}
 	if ui2 != PropertySchemaFieldUI("") {
+		return &ui2
+	}
+	return nil
+}
+
+func FromPropertySchemaFieldUI(ui *string) *property.SchemaFieldUI {
+	if ui == nil {
+		return nil
+	}
+
+	var ui2 property.SchemaFieldUI
+	switch *ui {
+	case PropertySchemaFieldUIMultiline.String():
+		ui2 = property.SchemaFieldUIMultiline
+	case PropertySchemaFieldUISelection.String():
+		ui2 = property.SchemaFieldUISelection
+	case PropertySchemaFieldUIColor.String():
+		ui2 = property.SchemaFieldUIColor
+	case PropertySchemaFieldUIRange.String():
+		ui2 = property.SchemaFieldUIRange
+	case PropertySchemaFieldUISlider.String():
+		ui2 = property.SchemaFieldUISlider
+	case PropertySchemaFieldUIImage.String():
+		ui2 = property.SchemaFieldUIImage
+	case PropertySchemaFieldUIVideo.String():
+		ui2 = property.SchemaFieldUIVideo
+	case PropertySchemaFieldUIFile.String():
+		ui2 = property.SchemaFieldUIFile
+	case PropertySchemaFieldUILayer.String():
+		ui2 = property.SchemaFieldUILayer
+	case PropertySchemaFieldUICameraPose.String():
+		ui2 = property.SchemaFieldUICameraPose
+	case PropertySchemaFieldUIPadding.String():
+		ui2 = property.SchemaFieldUIPadding
+	case PropertySchemaFieldUIMargin.String():
+		ui2 = property.SchemaFieldUIMargin
+	case PropertySchemaFieldUIDatetime.String():
+		ui2 = property.SchemaFieldUIDateTime
+	}
+
+	if ui2 != "" {
 		return &ui2
 	}
 	return nil
