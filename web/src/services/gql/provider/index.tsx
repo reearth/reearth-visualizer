@@ -4,8 +4,12 @@ import {
   ApolloLink,
   InMemoryCache
 } from "@apollo/client";
-import { useAddGQLTask, useRemoveGQLTask } from "@reearth/services/state";
-import type { ReactNode } from "react";
+import {
+  GQLTask,
+  useAddGQLTask,
+  useRemoveGQLTask
+} from "@reearth/services/state";
+import { useCallback, type ReactNode } from "react";
 
 import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
@@ -61,10 +65,28 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const addGQLTask = useAddGQLTask();
   const removeGQLTask = useRemoveGQLTask();
 
+  const addTask = useCallback(
+    (task: GQLTask) => {
+      requestAnimationFrame(() => {
+        addGQLTask(task);
+      });
+    },
+    [addGQLTask]
+  );
+
+  const removeTask = useCallback(
+    (task: GQLTask) => {
+      requestAnimationFrame(() => {
+        removeGQLTask(task);
+      });
+    },
+    [removeGQLTask]
+  );
+
   const client = new ApolloClient({
     uri: endpoint,
     link: ApolloLink.from([
-      taskLink(addGQLTask, removeGQLTask),
+      taskLink(addTask, removeTask),
       errorLink(),
       sentryLink(endpoint),
       authLink(),
