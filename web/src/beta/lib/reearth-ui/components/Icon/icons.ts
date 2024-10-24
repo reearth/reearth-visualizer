@@ -2,6 +2,7 @@
 
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
+import ArrowCounterClockWise from "./Icons/ArrowCounterClockWise.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
 import ArrowLongLeft from "./Icons/ArrowLongLeft.svg?react";
 import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
@@ -131,7 +132,6 @@ import Star from "./Icons/Star.svg?react";
 import StarFilled from "./Icons/StarFilled.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
-import Switch from "./Icons/switch.svg?react";
 import Table from "./Icons/Table.svg?react";
 import Tag from "./Icons/Tag.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
@@ -162,6 +162,7 @@ import ZToA from "./Icons/ZToA.svg?react";
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
+  arrowCounterClockWise: ArrowCounterClockWise,
   arrowLeftRight: ArrowLeftRight,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
@@ -291,7 +292,6 @@ export default {
   square: Square,
   squareFilled: SquareFilled,
   swiper: Swiper,
-  switch: Switch,
   table: Table,
   tag: Tag,
   terrian: Terrian,
