@@ -69,24 +69,43 @@ const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
   })
 );
 
-export const SidebarWrapper = styled("div")(({ theme }) => ({
+export const SidebarWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
-  padding: `0 ${theme.spacing.smallest}px`,
   flex: 1,
-  justifyContent: "space-between"
+  justifyContent: "space-between",
+  maxHeight: "100vh",
+  minHeight: 520
 }));
 
-export const SidebarTopSectionWrapper = styled("div")(() => ({
+export const SidebarButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between"
+  justifyContent: "space-between",
+  gap: theme.spacing.smallest,
+  padding: `0 ${theme.spacing.smallest}px`
 }));
 
-export const SidebarSection = styled("div")(({ theme }) => ({
+export const SidebarMainSection = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.small
+  gap: theme.spacing.smallest,
+  flex: 1,
+  minHeight: 200
+}));
+
+export const SidebarFooterSection = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+  flexShrink: 0
+}));
+
+export const SidebarDivider = styled("div")(({ theme }) => ({
+  height: "1px",
+  backgroundColor: theme.outline.weaker,
+  margin: `0 ${theme.spacing.smallest}px`,
+  flexShrink: 0
 }));
 
 export const SidebarVersion: FC = () => {
@@ -102,5 +121,5 @@ export const SidebarVersion: FC = () => {
 };
 
 const Version = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small
+  padding: `${theme.spacing.smallest}px ${theme.spacing.normal}px ${theme.spacing.small}px`
 }));
