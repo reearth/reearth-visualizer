@@ -75,7 +75,7 @@ export const SidebarWrapper = styled("div")(() => ({
   flex: 1,
   justifyContent: "space-between",
   maxHeight: "100vh",
-  minHeight: 520
+  minHeight: 542
 }));
 
 export const SidebarButtonsWrapper = styled("div")(({ theme }) => ({
@@ -90,8 +90,7 @@ export const SidebarMainSection = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest,
-  flex: 1,
-  minHeight: 200
+  flex: 1
 }));
 
 export const SidebarFooterSection = styled("div")(({ theme }) => ({
