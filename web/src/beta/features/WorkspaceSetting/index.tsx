@@ -14,6 +14,11 @@ type Props = {
   workspaceId?: string;
 };
 
+enum TABS {
+  WORKSPACE = "workspace",
+  MEMBERS = "members"
+}
+
 const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   const {
     handleFetchWorkspaces,
@@ -31,7 +36,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
 
   return (
     <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
-      {tab === "workspace" && (
+      {tab === TABS.WORKSPACE && (
         <Workspace
           handleFetchWorkspaces={handleFetchWorkspaces}
           handleUpdateWorkspace={handleUpdateWorkspace}
@@ -39,7 +44,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
           projectsCount={filtedProjects?.length}
         />
       )}
-      {tab === "members" && (
+      {tab === TABS.MEMBERS && (
         <Members
           handleSearchUser={handleSearchUser}
           handleAddMemberToWorkspace={handleAddMemberToWorkspace}

@@ -20,7 +20,7 @@ import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme, keyframes } from "@reearth/services/theme";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 import { WorkspacePayload } from "../../hooks";
@@ -39,13 +39,13 @@ type Props = {
           name: string;
           email: string;
         } | null;
-        seachUserStatus: string;
+        searchUserStatus: string;
         error?: undefined;
       }
     | {
         error: unknown;
         searchUser?: undefined;
-        seachUserStatus?: undefined;
+        searchUserStatus?: undefined;
       };
   handleUpdateMemberOfWorkspace: ({
     teamId,
@@ -84,7 +84,7 @@ const Members: FC<Props> = ({
   const [currentWorkspace] = useWorkspace();
   const [workspaceMembers, setWorkspaceMembers] = useState<MembersData>([]);
 
-  useMemo(() => {
+  useEffect(() => {
     const membersData = currentWorkspace?.members?.map((member) => ({
       username: member.user.name,
       email: member.user.email,
@@ -118,7 +118,7 @@ const Members: FC<Props> = ({
     };
   }, [memberSearchInput]);
 
-  const { searchUser, seachUserStatus } = handleSearchUser(debouncedInput);
+  const { searchUser, searchUserStatus } = handleSearchUser(debouncedInput);
 
   useEffect(() => {
     if (
@@ -278,7 +278,7 @@ const Members: FC<Props> = ({
                 ) || memberSearchResults.length === 0
               }
               onClick={() => {
-                memberSearchResults.map((memberSearchResult) => {
+                memberSearchResults.forEach((memberSearchResult) => {
                   if (currentWorkspace?.id) {
                     handleAddMemberToWorkspace({
                       name: memberSearchResult.userName,
@@ -323,7 +323,7 @@ const Members: FC<Props> = ({
               }}
             />
 
-            {debouncedInput && !searchUser && seachUserStatus !== "loading" ? (
+            {debouncedInput && !searchUser && searchUserStatus !== "loading" ? (
               <SearchMemberMessage
                 size="body"
                 weight="regular"
