@@ -391,7 +391,7 @@ const Table = styled.div`
   grid-template-columns: 5fr 2.5fr 2fr 1fr;
   gap: 16px;
   padding: 10px;
-  color: white;
+  color: ${({ theme }) => theme.content.main};
 `;
 
 const TableHeader = styled("div")(({ theme }) => ({
