@@ -124,7 +124,7 @@ const AssetName = styled("div")(() => ({
   wordBreak: "break-word",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  width: "100%",
+  width: "50%",
   flexGrow: 0,
   flexShrink: 0
 }));
