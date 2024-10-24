@@ -62,14 +62,13 @@ const loaderKeyframes = keyframes`
   100%{transform: rotate(1turn)}
 `;
 
-const loaderColor = "#aaa";
+const loaderColor = "#ccc";
 
 const Loader = styled("div")(() => ({
   width: 24,
   aspectRatio: 1,
   borderRadius: "50%",
-  background: `radial-gradient(farthest-side,${loaderColor} 94%,#0000) top/6px 6px no-repeat, conic-gradient(#0000 30%,${loaderColor})`,
-  ["-webkit-mask"]:
-    "radial-gradient(farthest-side,#0000 calc(100% - 6px),#000 0)",
+  background: `radial-gradient(farthest-side,${loaderColor} 100%,#0000) top/6px 6px no-repeat, conic-gradient(#0000 30%,${loaderColor})`,
+  WebkitMask: "radial-gradient(farthest-side,#0000 calc(100% - 6px),#000 0)",
   animation: `${loaderKeyframes} 1s infinite linear`
 }));
