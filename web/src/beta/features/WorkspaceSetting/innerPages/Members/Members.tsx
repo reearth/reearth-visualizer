@@ -85,15 +85,16 @@ const Members: FC<Props> = ({
   const [workspaceMembers, setWorkspaceMembers] = useState<MembersData>([]);
 
   useEffect(() => {
-    const membersData = currentWorkspace?.members
-      ?.filter((m) => !!m.user)
-      .map((member) => ({
-        id: member.userId,
-        role: member.role,
-        username: member.user?.name,
-        email: member.user?.email
-      }));
-    if (membersData) setWorkspaceMembers(membersData);
+    setWorkspaceMembers(
+      currentWorkspace?.members
+        ?.filter((m) => !!m.user)
+        .map((member) => ({
+          id: member.userId,
+          role: member.role,
+          username: member.user?.name,
+          email: member.user?.email
+        })) ?? []
+    );
   }, [currentWorkspace]);
 
   const [addMemberModal, setAddMemberModal] = useState<boolean>(false);
