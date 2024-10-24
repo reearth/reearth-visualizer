@@ -2,6 +2,7 @@ import useAccountSettingsTabs from "@reearth/beta/hooks/useAccountSettingsTabs";
 import SettingBase from "@reearth/beta/ui/components/SettingBase";
 import { FC } from "react";
 
+import CursorStatus from "../CursorStatus";
 import useProjectsHook from "../Dashboard/ContentsContainer/Projects/hooks";
 
 import useWorkspaceHook from "./hooks";
@@ -33,6 +34,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
           projectsCount={filtedProjects?.length}
         />
       )}
+      <CursorStatus />
     </SettingBase>
   );
 };
