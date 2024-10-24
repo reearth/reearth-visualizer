@@ -19,6 +19,7 @@ export default (
       const sub = forward(operation).subscribe({
         next: (result) => {
           if (result.errors) {
+            clearTimeout(timeoutId);
             removeTask({ id: taskId });
           }
           observer.next(result);
@@ -36,6 +37,7 @@ export default (
       });
 
       return () => {
+        clearTimeout(timeoutId);
         sub.unsubscribe();
         removeTask({ id: taskId });
       };
