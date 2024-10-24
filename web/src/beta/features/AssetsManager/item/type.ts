@@ -7,5 +7,4 @@ export type AssetItemProps = {
   selectedAssetIds: string[];
   layout: ManagerLayout;
   onSelect: (assetId: string) => void;
-  handleAssetUrlCopy: () => void;
 };

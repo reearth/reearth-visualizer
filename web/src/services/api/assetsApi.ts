@@ -123,16 +123,8 @@ export default () => {
     [removeAssetMutation, t, setNotification]
   );
 
-  const useAssetUrlCopy = useCallback(() => {
-    setNotification({
-      type: "success",
-      text: t("Asset url copied")
-    });
-  }, [t, setNotification]);
-
   return {
     useAssetsQuery,
-    useAssetUrlCopy,
     useCreateAssets,
     useRemoveAssets
   };

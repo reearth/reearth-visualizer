@@ -1,5 +1,7 @@
 import { Icon, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/beta/utils/time";
+import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
 
@@ -9,13 +11,14 @@ import { getAssetType } from "./utils";
 const AssetListItem: FC<AssetItemProps> = ({
   asset,
   selectedAssetIds,
-  onSelect,
-  handleAssetUrlCopy
+  onSelect
 }) => {
   const selected = useMemo(
     () => selectedAssetIds.includes(asset.id),
     [selectedAssetIds, asset.id]
   );
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const type = useMemo(() => getAssetType(asset), [asset]);
 
@@ -33,9 +36,12 @@ const AssetListItem: FC<AssetItemProps> = ({
     (e: MouseEvent) => {
       e.stopPropagation();
       navigator.clipboard.writeText(asset.url);
-      handleAssetUrlCopy();
+      setNotification({
+        type: "success",
+        text: t("Asset url copied")
+      });
     },
-    [asset, handleAssetUrlCopy]
+    [asset.url, setNotification, t]
   );
 
   const formattedDate = useMemo(
@@ -68,11 +74,11 @@ const AssetListItem: FC<AssetItemProps> = ({
       <Col
         otherProperties={{ display: "flex", alignItems: "center" }}
         width={30}
+        title={asset.url}
       >
         <Typography otherProperties={{ width: "200px" }} size="body">
           {asset.url}
         </Typography>
-
         <IconButton
           appearance="simple"
           icon="copy"

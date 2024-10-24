@@ -50,7 +50,6 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     selectedAssetIds,
     handleAssetSelect,
     handleAssetDelete,
-    handleAssetUrlCopy,
     assetsWrapperRef,
     assetsContentRef,
     handleSearch,
@@ -147,7 +146,6 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                           layout={layout}
                           selectedAssetIds={selectedAssetIds}
                           onSelect={handleAssetSelect}
-                          handleAssetUrlCopy={handleAssetUrlCopy}
                         />
                       ) : (
                         <AssetListItem
@@ -156,7 +154,6 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                           layout={layout}
                           selectedAssetIds={selectedAssetIds}
                           onSelect={handleAssetSelect}
-                          handleAssetUrlCopy={handleAssetUrlCopy}
                         />
                       )
                     )}
