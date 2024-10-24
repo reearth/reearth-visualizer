@@ -28,10 +28,10 @@ type Props = {
 export const styleConditionOperators: StyleConditionOperator[] = [
   "===",
   "!==",
-  "<",
   "<=",
-  ">",
   ">=",
+  "<",
+  ">",
   "startsWith"
 ];
 

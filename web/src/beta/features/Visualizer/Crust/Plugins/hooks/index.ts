@@ -111,7 +111,6 @@ export default function ({
     addLayer,
     findFeatureById,
     findFeaturesByIds,
-    layersInViewport,
     selectLayer,
     selectFeature,
     selectFeatures,
@@ -218,7 +217,6 @@ export default function ({
         addLayer,
         findFeatureById,
         findFeaturesByIds,
-        layersInViewport,
         selectLayer,
         selectFeature,
         selectFeatures,
@@ -259,7 +257,6 @@ export default function ({
     }),
     [
       engineName,
-      // viewer
       getViewerProperty,
       overrideViewerPropertyCommon,
       getViewport,
@@ -267,7 +264,6 @@ export default function ({
       getInteractionMode,
       getInEditor,
       getIsBuilt,
-      // viewer tools
       getLocationFromScreenCoordinate,
       getScreenCoordinateFromPosition,
       getTerrainHeightAsync,
@@ -277,10 +273,8 @@ export default function ({
       cartesianToCartographic,
       transformByOffsetOnScreen,
       isPositionVisibleOnGlobe,
-      // viewer events
       viewerEventsOn,
       viewerEventsOff,
-      // camera
       getCameraPosition,
       getCameraFov,
       getCameraAspectRatio,
@@ -300,19 +294,15 @@ export default function ({
       move,
       moveOverTerrain,
       enableForceHorizontalRoll,
-      // camera events
       cameraEventsOn,
       cameraEventsOff,
-      // timeline
       getTimeline,
-      // layers
       getLayers,
       hideLayer,
       showLayer,
       addLayer,
       findFeatureById,
       findFeaturesByIds,
-      layersInViewport,
       selectLayer,
       selectFeature,
       selectFeatures,
@@ -321,25 +311,19 @@ export default function ({
       getFeaturesInScreenRect,
       bringToFront,
       sendToBack,
-      // layers events
       layersEventsOn,
       layersEventsOff,
-      // sketch
       getSketchTool,
       setSketchTool,
       getSketchOptions,
       overrideSketchOptions,
-      // sketch events
       sketchEventsOn,
       sketchEventsOff,
-      // extension
       getExtensionList,
-      // deprecated
       deprecated,
       cameraDeprecated,
       layersDeprecated,
       sketchDeprecated,
-      // others
       overrideViewerProperty,
       pluginInstances,
       clientStorage,
