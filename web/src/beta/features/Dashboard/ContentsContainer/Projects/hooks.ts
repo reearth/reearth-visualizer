@@ -1,8 +1,5 @@
+import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
-import {
-  autoFillPage,
-  onScrollToBottom
-} from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
 import {
   ProjectSortField,
@@ -45,9 +42,6 @@ export default (workspaceId?: string) => {
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
-
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   const { starredProjects } = useStarredProjectsQuery(workspaceId);
 
@@ -113,12 +107,10 @@ export default (workspaceId?: string) => {
     return loading || isRefetching;
   }, [isRefetching, loading]);
 
-  useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreProjects) {
-      handleGetMoreProjects();
-    }
-    autoFillPage(wrapperRef, handleGetMoreProjects);
-  }, [handleGetMoreProjects, projects, hasMoreProjects, isLoading]);
+  const { wrapperRef, contentRef } = useLoadMore({
+    data: filtedProjects,
+    onLoadMore: handleGetMoreProjects
+  });
 
   const handleProjectSortChange = useCallback(
     (value?: string) => {
@@ -236,7 +228,7 @@ export default (workspaceId?: string) => {
       parentObserver.disconnect();
       childObserver.disconnect();
     };
-  }, []);
+  }, [wrapperRef, contentRef]);
 
   const handleImportProject = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,7 +263,6 @@ export default (workspaceId?: string) => {
     handleProjectOpen,
     handleProjectCreate,
     handleProjectSelect,
-    handleScrollToBottom: onScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
