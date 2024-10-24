@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useProjectFetcher } from "@reearth/services/api";
@@ -36,9 +37,12 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject
+    useImportProject,
+    useUpdateProjectRemove,
+    usePublishProject
   } = useProjectFetcher();
   const navigate = useNavigate();
+  const client = useApolloClient();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -78,7 +82,8 @@ export default (workspaceId?: string) => {
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
-              starred: project.starred
+              starred: project.starred,
+              isDeleted: project.isDeleted
             }
           : undefined
       )
@@ -243,6 +248,30 @@ export default (workspaceId?: string) => {
     [useImportProject, refetch]
   );
 
+  // project remove
+  const handleProjectRemove = useCallback(
+    async (project: Project) => {
+      const updatedProject = {
+        projectId: project.id,
+        deleted: true
+      };
+      if (project?.status === "limited") {
+        await usePublishProject("unpublished", project.id);
+      }
+      await useUpdateProjectRemove(updatedProject);
+
+      client.cache.evict({
+        id: client.cache.identify({
+          __typename: "Project",
+          id: project.id
+        })
+      });
+      client.cache.gc();
+    },
+
+    [client, usePublishProject, useUpdateProjectRemove]
+  );
+
   return {
     filtedProjects,
     hasMoreProjects,
@@ -266,7 +295,8 @@ export default (workspaceId?: string) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject
+    handleImportProject,
+    handleProjectRemove
   };
 };
 

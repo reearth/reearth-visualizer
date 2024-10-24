@@ -37,7 +37,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject
+    handleImportProject,
+    handleProjectRemove
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -180,6 +181,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectUpdate={handleProjectUpdate}
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                        onProjectRemove={() => handleProjectRemove(project)}
                       />
                     ) : (
                       <ProjectListViewItem
@@ -189,6 +191,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectUpdate={handleProjectUpdate}
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
+                        onProjectRemove={() => handleProjectRemove(project)}
                       />
                     )
                   )}
