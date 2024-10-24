@@ -2,9 +2,10 @@ import Navbar from "@reearth/beta/features/Navbar";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
-  SidebarSection,
+  SidebarMainSection,
   SidebarVersion,
-  SidebarWrapper
+  SidebarWrapper,
+  SidebarButtonsWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -84,17 +85,19 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
-            <SidebarSection>
-              {tabs?.map((t) => (
-                <SidebarMenuItem
-                  key={t.id}
-                  path={t.path}
-                  text={t.text}
-                  active={t.id === tab}
-                  icon={t.icon}
-                />
-              ))}
-            </SidebarSection>
+            <SidebarMainSection>
+              <SidebarButtonsWrapper>
+                {tabs?.map((t) => (
+                  <SidebarMenuItem
+                    key={t.id}
+                    path={t.path}
+                    text={t.text}
+                    active={t.id === tab}
+                    icon={t.icon}
+                  />
+                ))}
+              </SidebarButtonsWrapper>
+            </SidebarMainSection>
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
