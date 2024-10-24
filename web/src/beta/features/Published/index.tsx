@@ -1,7 +1,7 @@
-import NotFound from "@reearth/beta/features/NotFound";
 import Visualizer from "@reearth/beta/features/Visualizer";
 
 import useHooks from "./hooks";
+import NotFound from "./NotFound";
 
 export type Props = {
   alias?: string;

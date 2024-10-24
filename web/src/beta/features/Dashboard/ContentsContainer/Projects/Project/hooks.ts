@@ -15,23 +15,27 @@ type Props = {
   selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
+  onProjectRemove?: (projectId: string) => void;
 };
 
 export default ({
   project,
   selectedProjectId,
   onProjectUpdate,
-  onProjectSelect
+  onProjectSelect,
+  onProjectRemove
 }: Props) => {
   const t = useT();
-  const { useStoriesQuery } = useStorytellingFetcher();
-  const { useExportProject } = useProjectFetcher();
+  const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
+  const { useExportProject, usePublishProject } = useProjectFetcher();
   const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
 
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
   const [isHovered, setIsHovered] = useState(false);
   const [isStarred, setIsStarred] = useState(project.starred);
+  const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
+    useState(false);
   // MEMO: this modal state and function will be used in the future
   // const [exportModalVisible, setExportModalVisible] = useState(false);
 
@@ -79,6 +83,10 @@ export default ({
     setIsStarred(project.starred);
   }, [project.starred]);
 
+  const handleProjectRemoveModal = useCallback((value: boolean) => {
+    setProjectRemoveModalVisible(value);
+  }, []);
+
   const popupMenu: PopupMenuItem[] = [
     {
       id: "rename",
@@ -97,6 +105,12 @@ export default ({
       title: t("Export"),
       icon: "downloadSimple",
       onClick: () => handleExportProject()
+    },
+    {
+      id: "remove",
+      title: t("Move to Recycle Bin"),
+      icon: "trash",
+      onClick: () => handleProjectRemoveModal(true)
     }
   ];
 
@@ -129,19 +143,54 @@ export default ({
     [isStarred, onProjectUpdate, project]
   );
 
-  const hasMapOrStoryPublished = useMemo(() => {
-    const hasMapPublished =
-      project.status === "published" || project.status === "limited";
+  const projectPublished = useMemo(() => {
+    return project.status === "published" || project.status === "limited";
+  }, [project.status]);
 
-    const hasStoryPublished = stories?.some((story) => {
+  const storiesPublished = useMemo(() => {
+    return stories?.some((story) => {
       const publishmentStatus = toPublishmentStatus(story.publishmentStatus);
       return (
         publishmentStatus === "published" || publishmentStatus === "limited"
       );
     });
+  }, [stories]);
 
-    return hasMapPublished || hasStoryPublished;
-  }, [stories, project.status]);
+  const hasMapOrStoryPublished = useMemo(() => {
+    return projectPublished || storiesPublished;
+  }, [projectPublished, storiesPublished]);
+
+  const handleProjectPublish = useCallback(
+    async (projectId: string) => {
+      if (projectPublished) {
+        await usePublishProject("unpublished", projectId);
+      }
+
+      if (storiesPublished && stories?.length) {
+        const storyPromises = stories.map((story) =>
+          usePublishStory("unpublished", story.id)
+        );
+        await Promise.all(storyPromises);
+      }
+    },
+    [
+      projectPublished,
+      stories,
+      storiesPublished,
+      usePublishProject,
+      usePublishStory
+    ]
+  );
+
+  const handleProjectRemove = useCallback(
+    async (projectId: string) => {
+      if (!projectId) return;
+      handleProjectPublish(projectId);
+      onProjectRemove?.(projectId);
+      handleProjectRemoveModal(false);
+    },
+    [handleProjectRemoveModal, handleProjectPublish, onProjectRemove]
+  );
 
   return {
     isEditing,
@@ -150,11 +199,14 @@ export default ({
     popupMenu,
     isStarred,
     hasMapOrStoryPublished,
+    projectRemoveModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
     handleProjectStarClick,
-    handleExportProject
+    handleExportProject,
+    handleProjectRemoveModal,
+    handleProjectRemove
   };
 };

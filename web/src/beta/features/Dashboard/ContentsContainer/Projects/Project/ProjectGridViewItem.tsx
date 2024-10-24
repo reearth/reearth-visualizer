@@ -2,6 +2,8 @@ import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
+import ProjectRemoveModal from "../ProjectRemoveModal";
+
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
 
@@ -10,7 +12,8 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate
+  onProjectUpdate,
+  onProjectRemove
 }) => {
   const theme = useTheme();
 
@@ -21,11 +24,14 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     isHovered,
     isStarred,
     hasMapOrStoryPublished,
+    projectRemoveModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
+    handleProjectStarClick,
+    handleProjectRemoveModal,
+    handleProjectRemove
     // exportModalVisible,
     // closeExportModal,
     // handleExportProject
@@ -33,7 +39,8 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect
+    onProjectSelect,
+    onProjectRemove
   });
 
   return (
@@ -87,6 +94,13 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           />
         </CardFooter>
       </Card>
+      {projectRemoveModalVisible && (
+        <ProjectRemoveModal
+          isVisible={projectRemoveModalVisible}
+          onClose={() => handleProjectRemoveModal(false)}
+          onProjectRemove={() => handleProjectRemove(project.id)}
+        />
+      )}
       {/* MEMO: this modal will be used in the future */}
       {/* <Modal visible={exportModalVisible} size="small">
         <ModalPanel
