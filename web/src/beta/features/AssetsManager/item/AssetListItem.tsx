@@ -1,5 +1,7 @@
-import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Icon, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/beta/utils/time";
+import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
 
@@ -15,6 +17,8 @@ const AssetListItem: FC<AssetItemProps> = ({
     () => selectedAssetIds.includes(asset.id),
     [selectedAssetIds, asset.id]
   );
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const type = useMemo(() => getAssetType(asset), [asset]);
 
@@ -26,6 +30,18 @@ const AssetListItem: FC<AssetItemProps> = ({
       onSelect?.(asset.id);
     },
     [asset, onSelect]
+  );
+
+  const handleIconClick = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(asset.url);
+      setNotification({
+        type: "success",
+        text: t("Asset url copied")
+      });
+    },
+    [asset.url, setNotification, t]
   );
 
   const formattedDate = useMemo(
@@ -44,14 +60,31 @@ const AssetListItem: FC<AssetItemProps> = ({
           size={20}
         />
       </Thumbnail>
-      <AssetName>
-        <Typography size="body">{asset.name}</Typography>
-      </AssetName>
-      <Col width={30}>
+      <Col width={40}>
+        <AssetName>
+          <Typography size="body">{asset.name}</Typography>
+        </AssetName>
+      </Col>
+      <Col width={20}>
         <Typography size="body">{formattedDate}</Typography>
       </Col>
-      <Col width={30}>
+      <Col width={10}>
         <Typography size="body">{formattedSize}</Typography>
+      </Col>
+      <Col
+        otherProperties={{ display: "flex", alignItems: "center" }}
+        width={30}
+        title={asset.url}
+      >
+        <Typography otherProperties={{ width: "200px" }} size="body">
+          {asset.url}
+        </Typography>
+        <IconButton
+          appearance="simple"
+          icon="copy"
+          onClick={handleIconClick}
+          size="medium"
+        />
       </Col>
     </Wrapper>
   );
@@ -96,10 +129,14 @@ const AssetName = styled("div")(() => ({
   flexShrink: 0
 }));
 
-const Col = styled("div")<{ width: number }>(({ width }) => ({
+const Col = styled("div")<{
+  width: number;
+  otherProperties?: React.CSSProperties;
+}>(({ width, otherProperties }) => ({
   width: `${width}%`,
   flexGrow: 0,
-  flexShrink: 0
+  flexShrink: 0,
+  ...otherProperties
 }));
 
 function formatBytes(bytes: number): string {
