@@ -1,10 +1,9 @@
 import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { TeamMember } from "@reearth/services/gql";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-import { Member } from "../../type";
-
-const ListItem: FC<{ member: Member }> = ({ member }) => {
+const ListItem: FC<{ member: TeamMember }> = ({ member }) => {
   return (
     <StyledListItem>
       <Avatar>

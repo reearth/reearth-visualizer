@@ -1,4 +1,5 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { TeamMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 
 export type Project = {
@@ -47,7 +48,7 @@ export type Member = {
 export type Workspace = {
   id: string;
   name: string;
-  members?: Member[];
+  members?: TeamMember[];
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;
