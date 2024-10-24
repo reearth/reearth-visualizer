@@ -2295,6 +2295,8 @@ extensions:
       groups:
         - id: default
           title: Data Attribution
+          list: true
+          representativeField: description
           fields:
             - id: description
               title: Credit Description
