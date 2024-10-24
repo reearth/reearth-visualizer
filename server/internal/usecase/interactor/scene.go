@@ -763,6 +763,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		}
 		widgets = append(widgets, widget)
 	}
+
 	clusters := []*scene.Cluster{}
 	for _, clusterJson := range sceneJSON.Clusters {
 		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sce.ID()).Build()
@@ -805,12 +806,13 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		}
 	}
 
+	alignSystem := builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem, widgets)
 	s2, err := scene.New().
 		ID(sce.ID()).
 		Project(prj.ID()).
 		Workspace(prj.Workspace()).
 		RootLayer(sce.RootLayer()).
-		Widgets(scene.NewWidgets(widgets, builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem))).
+		Widgets(scene.NewWidgets(widgets, alignSystem)).
 		UpdatedAt(time.Now()).
 		Property(prop.ID()).
 		Clusters(clusterList).

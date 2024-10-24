@@ -10,6 +10,7 @@ import (
 
 type storyJSON struct {
 	ID            string       `json:"id"`
+	Title         string       `json:"title"`
 	Property      propertyJSON `json:"property"`
 	Pages         []pageJSON   `json:"pages"`
 	PanelPosition string       `json:"position"`

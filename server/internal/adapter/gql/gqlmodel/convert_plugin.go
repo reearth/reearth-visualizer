@@ -2,6 +2,7 @@ package gqlmodel
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearthx/util"
@@ -123,6 +124,14 @@ func ToPluginWidgetZoneType(t plugin.WidgetZoneType) WidgetZoneType {
 	case plugin.WidgetZoneOuter:
 		return WidgetZoneTypeOuter
 	}
+
+	t2 := plugin.WidgetZoneType(strings.ToLower(string(t)))
+	switch t2 {
+	case plugin.WidgetZoneInner:
+		return WidgetZoneTypeInner
+	case plugin.WidgetZoneOuter:
+		return WidgetZoneTypeOuter
+	}
 	return ""
 }
 
@@ -135,11 +144,31 @@ func ToPluginWidgetSectionType(t plugin.WidgetSectionType) WidgetSectionType {
 	case plugin.WidgetSectionRight:
 		return WidgetSectionTypeRight
 	}
+
+	t2 := plugin.WidgetSectionType(strings.ToLower(string(t)))
+	switch t2 {
+	case plugin.WidgetSectionLeft:
+		return WidgetSectionTypeLeft
+	case plugin.WidgetSectionCenter:
+		return WidgetSectionTypeCenter
+	case plugin.WidgetSectionRight:
+		return WidgetSectionTypeRight
+	}
 	return ""
 }
 
 func ToPluginWidgetAreaType(t plugin.WidgetAreaType) WidgetAreaType {
 	switch t {
+	case plugin.WidgetAreaTop:
+		return WidgetAreaTypeTop
+	case plugin.WidgetAreaMiddle:
+		return WidgetAreaTypeMiddle
+	case plugin.WidgetAreaBottom:
+		return WidgetAreaTypeBottom
+	}
+
+	t2 := plugin.WidgetAreaType(strings.ToLower(string(t)))
+	switch t2 {
 	case plugin.WidgetAreaTop:
 		return WidgetAreaTypeTop
 	case plugin.WidgetAreaMiddle:

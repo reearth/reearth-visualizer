@@ -1104,6 +1104,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	}
 	story, err := storytelling.NewStory().
 		ID(id.NewStoryID()).
+		Title(storyJSON.Title).
 		Property(prop.ID()).
 		Scene(sceneID).
 		PanelPosition(storytelling.Position(storyJSON.PanelPosition)).

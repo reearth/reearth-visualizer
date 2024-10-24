@@ -78,6 +78,7 @@ func (b *Builder) widgets(ctx context.Context, p []*property.Property) []*widget
 			PluginID:    w.Plugin().String(),
 			ExtensionID: string(w.Extension()),
 			Property:    b.property(ctx, findProperty(p, w.Property())),
+			Enabled:     w.Enabled(),
 			Extended:    w.Extended(),
 		})
 	}
