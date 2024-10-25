@@ -33,7 +33,9 @@ const Plugins: FC = () => {
   const [selectedPluginId, setSelectedPluginId] = useState<string>(
     mockPlugins[0]?.id || ""
   );
-  const [selectedFileId, setSelectedFileId] = useState<string>();
+  const [selectedFileId, setSelectedFileId] = useState<string>(
+    mockFiles[0]?.id || ""
+  );
 
   const onClickPluginItem = (id: string) => {
     setSelectedPluginId(id);
