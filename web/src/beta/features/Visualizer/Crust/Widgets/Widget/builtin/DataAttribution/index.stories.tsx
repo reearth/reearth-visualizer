@@ -35,7 +35,7 @@ Default.args = {
     }
   },
   context: {
-    credits: [
+    getCredits: () => [
       { html: '<a href="#">Credit 1</a>' },
       { html: '<a href="#">Credit 2</a>' }
     ]

@@ -55,7 +55,10 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                       {credit.description}
                     </Typography>
                     {credit.img && !credit.description && (
-                      <StyledImage src={credit.img} />
+                      <StyledImage
+                        src={credit.img}
+                        alt={t("Credit provider logo")}
+                      />
                     )}
                   </StyledLink>
                 ) : (
@@ -64,7 +67,10 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                       {credit.description}
                     </Typography>
                     {credit.img && !credit.description && (
-                      <StyledImage src={credit.img} />
+                      <StyledImage
+                        src={credit.img}
+                        alt={t("Credit provider logo")}
+                      />
                     )}
                   </>
                 )}

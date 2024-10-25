@@ -21,11 +21,16 @@ const DataAttribution = ({
   const handleModalClose = useCallback(() => setVisible(false), []);
 
   const [visualizerCredits, setVisualizerCredits] = useVisualizerCredits();
-
   useEffect(() => {
-    const credits = getCredits?.();
-    if (!credits) return;
-    setVisualizerCredits(credits);
+    const updateCredits = () => {
+      const credits = getCredits?.();
+      if (credits) {
+        setVisualizerCredits(credits);
+      }
+    };
+    updateCredits();
+    const intervalId = setInterval(updateCredits, 3000);
+    return () => clearInterval(intervalId);
   }, [getCredits, setVisualizerCredits]);
 
   return (
