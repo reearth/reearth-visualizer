@@ -47,6 +47,7 @@ extensions:
               type: string
               title: Tile type
               defaultValue: default
+              # placeholder: please enter tile type // Example
               choices:
                 - key: default
                   label: Default

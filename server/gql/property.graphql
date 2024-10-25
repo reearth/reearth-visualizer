@@ -45,6 +45,7 @@ type PropertySchemaField {
   allTranslatedDescription: TranslatedString
   translatedTitle(lang: Lang): String!
   translatedDescription(lang: Lang): String!
+  placeholder: String
 }
 
 enum PropertySchemaFieldUI {
