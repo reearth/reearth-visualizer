@@ -456,11 +456,11 @@ const UserInfo = styled.div`
   animation: ${zoomIn} 0.2s ease-in-out;
 `;
 
-const DeleteIcon = styled(IconButton)(() => ({
+const DeleteIcon = styled(IconButton)(({ theme }) => ({
   cursor: "pointer",
-  color: "#fff",
+  color: theme.content.main,
   "&:hover": {
-    color: "red"
+    color: theme.dangerous.main
   }
 }));
 
