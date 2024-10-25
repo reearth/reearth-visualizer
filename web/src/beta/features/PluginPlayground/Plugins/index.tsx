@@ -30,26 +30,28 @@ const mockFiles = [
 ];
 
 const Plugins: FC = () => {
-  const [selectedPlugin, setSelectedPlugin] = useState<number>(0);
-  const [selectedFile, setSelectedFile] = useState<number>(0);
+  const [selectedPluginId, setSelectedPluginId] = useState<string>(
+    mockPlugins[0]?.id || ""
+  );
+  const [selectedFileId, setSelectedFileId] = useState<string>();
 
-  const onClickPluginItem = (i: number) => {
-    setSelectedPlugin(i);
+  const onClickPluginItem = (id: string) => {
+    setSelectedPluginId(id);
   };
 
-  const onClickFileItem = (i: number) => {
-    setSelectedFile(i);
+  const onClickFileItem = (id: string) => {
+    setSelectedFileId(id);
   };
 
   return (
     <Wrapper>
       <PluginListWrapper>
         <PluginList>
-          {mockPlugins.map((plugin, i) => (
+          {mockPlugins.map((plugin) => (
             <PluginListItem
               key={plugin.id}
-              selected={selectedPlugin === i}
-              onClick={() => onClickPluginItem(i)}
+              selected={selectedPluginId === plugin.id}
+              onClick={() => onClickPluginItem(plugin.id)}
             >
               {plugin.name}
             </PluginListItem>
@@ -62,11 +64,11 @@ const Plugins: FC = () => {
           <Button title="Upload" />
         </ButtonsWrapper>
         <FileList>
-          {mockFiles.map((file, i) => (
+          {mockFiles.map((file) => (
             <FileListItem
               key={file.id}
-              selected={selectedFile === i}
-              onClick={() => onClickFileItem(i)}
+              selected={selectedFileId === file.id}
+              onClick={() => onClickFileItem(file.id)}
             >
               <Icon icon="file" />
               {file.name}
@@ -99,10 +101,7 @@ const PluginList = styled("ul")(() => ({
 const PluginListItem = styled("li")<{
   selected?: boolean;
 }>(({ theme, selected }) => ({
-  paddingTop: theme.spacing.smallest,
-  paddingRight: theme.spacing.small,
-  paddingLeft: theme.spacing.normal,
-  paddingBottom: theme.spacing.smallest,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
   borderRadius: theme.radius.small,
   backgroundColor: selected ? theme.select.main : "transparent",
   cursor: "pointer",
@@ -114,7 +113,7 @@ const PluginListItem = styled("li")<{
 const FileListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: "4px",
+  padding: theme.spacing.small,
   width: "50%",
   borderLeft: `1px solid ${theme.outline.weaker}`,
   gap: theme.spacing.small
@@ -133,10 +132,7 @@ const FileListItem = styled("li")<{
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
-  paddingTop: theme.spacing.smallest,
-  paddingRight: theme.spacing.small,
-  paddingLeft: theme.spacing.normal,
-  paddingBottom: theme.spacing.smallest,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
   borderRadius: theme.radius.small,
   backgroundColor: selected ? theme.select.main : "transparent",
   cursor: "pointer",
