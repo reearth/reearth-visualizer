@@ -40,11 +40,10 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
         />
       </IconWrapper>
       <Title>{t("Data provided by:")}</Title>
-
       <ContentWrapper>
         <Content>
           {processedCredits &&
-            processedCredits?.map((credit, i) => (
+            processedCredits.map((credit, i) => (
               <ListItems key={i}>
                 {credit.link ? (
                   <StyledLink
@@ -55,11 +54,19 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                     <Typography color="#000" size="body">
                       {credit.description}
                     </Typography>
+                    {credit.img && !credit.description && (
+                      <StyledImage src={credit.img} />
+                    )}
                   </StyledLink>
                 ) : (
-                  <Typography color="#000" size="body">
-                    {credit.description}
-                  </Typography>
+                  <>
+                    <Typography color="#000" size="body">
+                      {credit.description}
+                    </Typography>
+                    {credit.img && !credit.description && (
+                      <StyledImage src={credit.img} />
+                    )}
+                  </>
                 )}
               </ListItems>
             ))}
@@ -74,11 +81,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  background: "#ffffff",
+  background: "#fff",
   color: "#000",
   boxShadow: theme.shadow.card,
   borderRadius: theme.radius.large,
-  padding: theme.spacing.small,
+  padding: theme.spacing.small
 }));
 
 const IconWrapper = styled("div")(() => ({
@@ -119,6 +126,14 @@ const ListItems = styled("li")(() => ({
 
 const StyledLink = styled(Link)(() => ({
   color: "#000"
+}));
+
+const StyledImage = styled("img")(({ theme }) => ({
+  maxHeight: 45,
+  maxWidth: 40,
+  display: "flex",
+  background: theme.bg[3],
+  padding: theme.spacing.micro
 }));
 
 const Footer = styled("div")(() => ({
