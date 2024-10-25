@@ -48,7 +48,6 @@ export type Context = {
     featureId?: string;
   };
   is2d?: boolean;
-  credits?: Credit[];
   onFlyTo?: (
     target: string | FlyToDestination,
     options?: { duration?: number }
@@ -75,6 +74,7 @@ export type Context = {
   findPhotooverlayLayer?: (
     id: string
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
+  getCredits?: () => Credit[] | undefined
 };
 
 export type ComponentProps<P = any> = Omit<Props, "widget" | "renderWidget"> & {

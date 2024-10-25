@@ -1,7 +1,8 @@
+import { useVisualizerCredits } from "@reearth/beta/features/Visualizer/atoms";
 import { Modal } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 
@@ -12,13 +13,20 @@ export type Props = WidgetProps;
 const DataAttribution = ({
   theme,
   widget,
-  context: { credits } = {}
+  context: { getCredits } = {}
 }: Props): JSX.Element | null => {
   const t = useT();
   const [visible, setVisible] = useState(false);
-
   const handleModalOpen = useCallback(() => setVisible(true), []);
   const handleModalClose = useCallback(() => setVisible(false), []);
+
+  const [visualizerCredits, setVisualizerCredits] = useVisualizerCredits();
+
+  useEffect(() => {
+    const credits = getCredits?.();
+    if (!credits) return;
+    setVisualizerCredits(credits);
+  }, [getCredits, setVisualizerCredits]);
 
   return (
     <Wrapper>
@@ -28,15 +36,29 @@ const DataAttribution = ({
           onClose={handleModalClose}
           theme={theme}
           widget={widget}
-          credits={credits}
+          credits={visualizerCredits}
         />
       </Modal>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(() => ({
-  width: "100%"
+const Wrapper = styled("div")(({ theme }) => ({
+  width: "100%",
+  ["* ::-webkit-scrollbar"]: {
+    width: "8px"
+  },
+  ["* ::-webkit-scrollbar-track"]: {
+    background: theme.relative.darker,
+    borderRadius: "10px"
+  },
+  ["* ::-webkit-scrollbar-thumb"]: {
+    background: theme.relative.light,
+    borderRadius: "4px"
+  },
+  ["* ::-webkit-scrollbar-thumb:hover"]: {
+    background: theme.relative.darker
+  }
 }));
 
 const DataLink = styled("div")(({ theme }) => ({

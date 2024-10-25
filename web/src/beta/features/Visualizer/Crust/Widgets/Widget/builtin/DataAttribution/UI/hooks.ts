@@ -12,7 +12,7 @@ type WidgetCredit = {
 
 export const useDataAttribution = ({
   credits,
-  widget
+  widget,
 }: {
   credits?: Credit[];
   widget: Widget;
@@ -53,7 +53,7 @@ export const useDataAttribution = ({
         .filter(Boolean) as ProcessesCredit[],
     [credits, parseCreditHtml]
   );
-  
+
   useEffect(() => {
     const widgetProcessedCredits = widgetCredits
       .filter(

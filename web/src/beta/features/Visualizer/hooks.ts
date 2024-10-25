@@ -1,13 +1,8 @@
 import { Camera } from "@reearth/beta/utils/value";
-import {
-  ViewerProperty,
-  ComputedFeature,
-  ComputedLayer,
-  Credit
-} from "@reearth/core";
+import { ViewerProperty, ComputedFeature, ComputedLayer } from "@reearth/core";
 import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
-import { useVisualizerCamera, useVisualizerCredits } from "./atoms";
+import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
@@ -55,22 +50,12 @@ export default function useHooks({
     setVisualizerCamera(currentCamera);
   }, [currentCamera, setVisualizerCamera]);
 
-  const [, setVisualizerCredits] = useVisualizerCredits();
-
-  const handleCreditsUpdate = useCallback(
-    (credits: Credit[]) => {
-      setVisualizerCredits(credits);
-    },
-    [setVisualizerCredits]
-  );
-
   return {
     shouldRender,
     overriddenViewerProperty,
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
-    handleCoreLayerSelect,
-    handleCreditsUpdate
+    handleCoreLayerSelect
   };
 }

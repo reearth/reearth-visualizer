@@ -209,8 +209,7 @@ const Visualizer: FC<VisualizerProps> = ({
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
-    handleCoreLayerSelect,
-    handleCreditsUpdate
+    handleCoreLayerSelect
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
@@ -244,7 +243,6 @@ const Visualizer: FC<VisualizerProps> = ({
         onSketchFeatureUpdate={handleSketchFeatureUpdate}
         onMount={handleMount}
         onAPIReady={handleCoreAPIReady}
-        onCreditsUpdate={handleCreditsUpdate}
       >
         <Crust
           engineName={engine}

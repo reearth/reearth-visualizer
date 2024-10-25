@@ -43,8 +43,7 @@ export function widgetContextFromMapRef({
   selectedLayerId,
   viewerProperty,
   initialCamera,
-  timelineManagerRef,
-  credits
+  timelineManagerRef
 }: {
   mapRef?: RefObject<MapRef>;
   selectedLayerId?: {
@@ -67,7 +66,6 @@ export function widgetContextFromMapRef({
     initialCamera,
     is2d: viewerProperty?.scene?.mode === "2d",
     selectedLayerId,
-    credits,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);
       if (!l || l.type !== "simple") {
@@ -137,6 +135,7 @@ export function widgetContextFromMapRef({
         }
       }),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
-    onZoomOut: (...args) => engine()?.zoomOut(...args)
+    onZoomOut: (...args) => engine()?.zoomOut(...args),
+    getCredits: () => engine()?.getCredits()
   };
 }

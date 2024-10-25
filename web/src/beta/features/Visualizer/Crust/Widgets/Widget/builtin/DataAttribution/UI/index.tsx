@@ -23,7 +23,10 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
   onClose
 }) => {
   const t = useT();
-  const { processedCredits } = useDataAttribution({ credits, widget });
+  const { processedCredits } = useDataAttribution({
+    credits,
+    widget
+  });
 
   return (
     <Wrapper>
@@ -36,9 +39,9 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
           iconColor={theme?.weakIcon ? theme?.weakIcon : "#000"}
         />
       </IconWrapper>
+      <Title>{t("Data provided by:")}</Title>
 
       <ContentWrapper>
-        <Title>{t("Data provided by:")}</Title>
         <Content>
           {processedCredits &&
             processedCredits?.map((credit, i) => (
@@ -61,8 +64,8 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
               </ListItems>
             ))}
         </Content>
-        <Footer />
       </ContentWrapper>
+      <Footer />
     </Wrapper>
   );
 };
@@ -71,12 +74,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  gap: theme.spacing.small,
   background: "#ffffff",
   color: "#000",
   boxShadow: theme.shadow.card,
   borderRadius: theme.radius.large,
-  padding: theme.spacing.small
+  padding: theme.spacing.small,
 }));
 
 const IconWrapper = styled("div")(() => ({
@@ -89,13 +91,15 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.largest}px`,
   alignItems: "flex-start",
   gap: theme.spacing.small + 2,
-  alignSelf: "stretch"
+  alignSelf: "stretch",
+  maxHeight: 200,
+  overflowY: "auto"
 }));
 
 const Title = styled("div")(({ theme }) => ({
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
-  paddingBottom: theme.spacing.small
+  padding: `0 ${theme.spacing.largest}px ${theme.spacing.large}px ${theme.spacing.largest}px`
 }));
 
 const Content = styled("ul")(({ theme }) => ({
