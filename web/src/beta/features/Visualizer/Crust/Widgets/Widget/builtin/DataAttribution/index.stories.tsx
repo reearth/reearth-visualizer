@@ -21,24 +21,23 @@ Default.args = {
     extended: {
       horizontally: false,
       vertically: false
-        },
-       
+    },
+
     property: {
       default: [
         {
           description: "Testing",
-          logo: "http://localhost:8080/assets/01jb0cxyw452dxn3p7gf2f3g1h.jpg",
+          logo: "./mock-logo.png",
           creditUrl: "https://www.sample.com/",
-          id: "01jb0csj957b7sxdycch7byvc4"
+          id: "01"
         }
       ]
     }
   },
   context: {
     credits: [
-      {
-        html: `<a href="https://cesium.com/" target="_blank"> <img src="http://localhost:3000/cesium-1.118.0/Assets/Images/ion-credit.png" title="Cesium ion" /></a>`
-      }
+      { html: '<a href="#">Credit 1</a>' },
+      { html: '<a href="#">Credit 2</a>' }
     ]
   }
 };

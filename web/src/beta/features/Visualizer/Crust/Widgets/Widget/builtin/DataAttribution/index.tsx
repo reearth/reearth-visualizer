@@ -23,16 +23,14 @@ const DataAttribution = ({
   return (
     <Wrapper>
       <DataLink onClick={handleModalOpen}>{t("Data Attribution")}</DataLink>
-      {visible && (
-        <Modal size="small" visible={visible}>
-          <DataAttributionUI
-            onClose={handleModalClose}
-            theme={theme}
-            widget={widget}
-            credits={credits}
-          />
-        </Modal>
-      )}
+      <Modal size="small" visible={visible}>
+        <DataAttributionUI
+          onClose={handleModalClose}
+          theme={theme}
+          widget={widget}
+          credits={credits}
+        />
+      </Modal>
     </Wrapper>
   );
 };

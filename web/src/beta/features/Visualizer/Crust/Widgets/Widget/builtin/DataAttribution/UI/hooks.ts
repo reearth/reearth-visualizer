@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Widget } from "../../../types";
 
+type WidgetCredit = {
+  description?: string;
+  logo?: string;
+  creditUrl: string;
+};
+
 export const useDataAttribution = ({
   credits,
   widget
@@ -40,31 +46,35 @@ export const useDataAttribution = ({
     []
   );
 
+  const processedCoreCredits = useMemo(
+    () =>
+      credits
+        ?.map((credit) => parseCreditHtml(credit.html))
+        .filter(Boolean) as ProcessesCredit[],
+    [credits, parseCreditHtml]
+  );
+  
   useEffect(() => {
-    const parsedCoreCredits = credits?.map((credit) =>
-      parseCreditHtml(credit.html)
-    );
-
     const widgetProcessedCredits = widgetCredits
       .filter(
-        (widgetCredit: any) =>
+        (widgetCredit: WidgetCredit) =>
           widgetCredit.description ||
           widgetCredit.logo ||
           widgetCredit.creditUrl
       )
-      .map((widgetCredit: any) => ({
+      .map((widgetCredit: WidgetCredit) => ({
         description: widgetCredit.description || "",
         img: widgetCredit.logo,
         link: widgetCredit.creditUrl
       }));
 
     const combinedCredits = [
-      ...(parsedCoreCredits?.filter(Boolean) as ProcessesCredit[]),
+      ...processedCoreCredits,
       ...widgetProcessedCredits
     ];
 
     setProcessedCredits(combinedCredits);
-  }, [credits, parseCreditHtml, widgetCredits]);
+  }, [credits, parseCreditHtml, processedCoreCredits, widgetCredits]);
 
   return {
     processedCredits

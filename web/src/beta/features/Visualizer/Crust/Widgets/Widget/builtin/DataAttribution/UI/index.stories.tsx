@@ -10,7 +10,7 @@ export default {
 
 export const Normal: StoryFn<DataAttributionProps> = (args) => (
   <MemoryRouter>
-    <div style={{ width: "416px",}}>
+    <div style={{ width: "100%", maxWidth: "416px" }}>
       <DataAttributionUI
         {...args}
         widget={{
@@ -23,16 +23,15 @@ export const Normal: StoryFn<DataAttributionProps> = (args) => (
             default: [
               {
                 description: "Testing",
-                logo: "http://localhost:8080/assets/01jb0cxyw452dxn3p7gf2f3g1h.jpg",
                 creditUrl: "https://www.sample.com/",
-                id: "01jb0csj957b7sxdycch7byvc4"
+                id: "01"
               }
             ]
           }
         }}
         credits={[
           {
-            html: `<a href="https://cesium.com/" target="_blank"> <img src="http://localhost:3000/cesium-1.118.0/Assets/Images/ion-credit.png" title="Cesium ion" /></a>`
+            html: `<a href="https://example.com" target="_blank">Example Credit</a>`
           }
         ]}
       />

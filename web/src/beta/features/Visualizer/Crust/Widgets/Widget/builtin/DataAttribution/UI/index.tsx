@@ -44,7 +44,11 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
             processedCredits?.map((credit, i) => (
               <ListItems key={i}>
                 {credit.link ? (
-                  <StyledLink target="_blank" to={`${credit.link}`}>
+                  <StyledLink
+                    target="_blank"
+                    to={`${credit.link}`}
+                    rel="noopener noreferrer"
+                  >
                     <Typography color="#000" size="body">
                       {credit.description}
                     </Typography>
