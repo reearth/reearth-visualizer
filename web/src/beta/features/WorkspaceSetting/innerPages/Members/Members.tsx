@@ -67,7 +67,7 @@ type MemberData = {
 
 type MembersData = MemberData[];
 
-type memberSearchResult = {
+type MemberSearchResult = {
   userName: string;
   email: string;
   id: string;
@@ -111,7 +111,7 @@ const Members: FC<Props> = ({
   const [debouncedInput, setDebouncedInput] =
     useState<string>(memberSearchInput);
   const [memberSearchResults, setMemberSearchResults] = useState<
-    memberSearchResult[]
+    MemberSearchResult[]
   >([]);
 
   useEffect(() => {
@@ -223,7 +223,7 @@ const Members: FC<Props> = ({
   };
 
   const handleDeleteUserForSearchResult = (
-    memberSearchResult: memberSearchResult
+    memberSearchResult: MemberSearchResult
   ) => {
     setMemberSearchInput("");
     setDebouncedInput("");
