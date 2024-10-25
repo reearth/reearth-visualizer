@@ -71,20 +71,18 @@ const AssetListItem: FC<AssetItemProps> = ({
       <Col width={10}>
         <Typography size="body">{formattedSize}</Typography>
       </Col>
-      <Col
-        otherProperties={{ display: "flex", alignItems: "center" }}
-        width={30}
-        title={asset.url}
-      >
+      <Col width={30} title={asset.url} style={{ flex: 1 }}>
         <Typography otherProperties={{ width: "200px" }} size="body">
           {asset.url}
         </Typography>
-        <IconButton
-          appearance="simple"
-          icon="copy"
-          onClick={handleIconClick}
-          size="medium"
-        />
+        <div style={{ flexGrow: 1 }}>
+          <IconButton
+            appearance="simple"
+            icon="copy"
+            onClick={handleIconClick}
+            size="medium"
+          />
+        </div>
       </Col>
     </Wrapper>
   );
@@ -131,12 +129,12 @@ const AssetName = styled("div")(() => ({
 
 const Col = styled("div")<{
   width: number;
-  otherProperties?: React.CSSProperties;
-}>(({ width, otherProperties }) => ({
+}>(({ width }) => ({
   width: `${width}%`,
   flexGrow: 0,
   flexShrink: 0,
-  ...otherProperties
+  display: "flex",
+  alignItems: "center"
 }));
 
 function formatBytes(bytes: number): string {
