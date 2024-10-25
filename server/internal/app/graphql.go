@@ -66,7 +66,7 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 		// show more detailed error messgage in debug mode
 		func(ctx context.Context, e error) *gqlerror.Error {
 			if dev {
-				return gqlerror.ErrorPathf(graphql.GetFieldContext(ctx).Path(), e.Error())
+				return gqlerror.ErrorPathf(graphql.GetFieldContext(ctx).Path(), "%s", e.Error())
 			}
 			return graphql.DefaultErrorPresenter(ctx, e)
 		},

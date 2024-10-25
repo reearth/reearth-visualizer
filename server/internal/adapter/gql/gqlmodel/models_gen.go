@@ -615,7 +615,8 @@ type ImportLayerPayload struct {
 }
 
 type ImportProjectInput struct {
-	File graphql.Upload `json:"file"`
+	TeamID ID             `json:"teamId"`
+	File   graphql.Upload `json:"file"`
 }
 
 type ImportProjectPayload struct {
