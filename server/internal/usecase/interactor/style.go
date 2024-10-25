@@ -201,23 +201,19 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	return duplicatedStyle, nil
 }
 
-func (i *Style) ImportStyles(ctx context.Context, sceneData map[string]interface{}) (scene.StyleList, error) {
+func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (scene.StyleList, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
-	if err != nil {
-		return nil, err
-	}
+
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
 	styleIDs := idx.List[id.Style]{}
 	styles := []*scene.Style{}
 	for _, layerStyleJson := range sceneJSON.LayerStyles {
-		styleID, err := id.StyleIDFrom(layerStyleJson.ID)
-		if err != nil {
-			return nil, err
-		}
+		styleID := id.NewStyleID()
 		styleIDs = append(styleIDs, styleID)
 		style, err := scene.NewStyle().
 			ID(styleID).
@@ -231,15 +227,15 @@ func (i *Style) ImportStyles(ctx context.Context, sceneData map[string]interface
 		styles = append(styles, style)
 	}
 
-	// save
+	// Save style
 	styleList := scene.StyleList(styles)
-	if err := i.styleRepo.SaveAll(ctx, styleList); err != nil {
+	if err := i.styleRepo.Filtered(writableFilter).SaveAll(ctx, styleList); err != nil {
 		return nil, err
 	}
 	if len(styleIDs) == 0 {
 		return nil, nil
 	}
-	styles2, err := i.styleRepo.FindByIDs(ctx, styleIDs)
+	styles2, err := i.styleRepo.Filtered(readableFilter).FindByIDs(ctx, styleIDs)
 	if err != nil {
 		return nil, err
 	}
