@@ -14,7 +14,8 @@ import {
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
   UpdateProjectBasicAuthMutationVariables,
-  UpdateProjectAliasMutationVariables
+  UpdateProjectAliasMutationVariables,
+  ImportProjectInput
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -527,12 +528,12 @@ export default () => {
   const [importProjectMutation] = useMutation(IMPORT_PROJECT);
 
   const useImportProject = useCallback(
-    async (file: File) => {
-      if (!file) return { status: "error" };
+    async (input: ImportProjectInput) => {
+      if (!input) return { status: "error" };
 
       try {
         const { data, errors } = await importProjectMutation({
-          variables: { file }
+          variables: { ...input }
         });
 
         if (errors || !data?.importProject) {

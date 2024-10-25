@@ -70,13 +70,7 @@ export default ({
   const handleExportProject = useCallback(async () => {
     if (!project.id) return;
 
-    const result = await useExportProject(project.id);
-
-    if (result.status === "success") {
-      console.log("export success");
-    } else {
-      console.error("Failed to export project:", result.status);
-    }
+    await useExportProject(project.id);
   }, [useExportProject, project.id]);
 
   useEffect(() => {
