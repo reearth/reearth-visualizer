@@ -20,7 +20,7 @@ import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme, keyframes } from "@reearth/services/theme";
-import { FC, useEffect, useState } from "react";
+import { FC, KeyboardEvent, useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 import { WorkspacePayload } from "../../hooks";
@@ -58,12 +58,20 @@ type Props = {
   }: WorkspacePayload) => Promise<void>;
 };
 
-type MembersData = {
+type MemberData = {
   id: string;
   role: Role;
   username?: string;
   email?: string;
-}[];
+};
+
+type MembersData = MemberData[];
+
+type memberSearchResult = {
+  userName: string;
+  email: string;
+  id: string;
+};
 
 const Members: FC<Props> = ({
   handleSearchUser,
@@ -72,7 +80,6 @@ const Members: FC<Props> = ({
   handleRemoveMemberFromWorkspace
 }) => {
   const theme = useTheme();
-
   const t = useT();
   const roles = [
     { value: "READER", label: t("Reader") },
@@ -104,11 +111,7 @@ const Members: FC<Props> = ({
   const [debouncedInput, setDebouncedInput] =
     useState<string>(memberSearchInput);
   const [memberSearchResults, setMemberSearchResults] = useState<
-    {
-      userName: string;
-      email: string;
-      id: string;
-    }[]
+    memberSearchResult[]
   >([]);
 
   useEffect(() => {
@@ -142,6 +145,104 @@ const Members: FC<Props> = ({
     }
   }, [memberSearchResults, searchUser]);
 
+  const handleNewMemberClick = () => {
+    setAddMemberModal(true);
+  };
+
+  const handleCloseAddMemberModal = () => {
+    setAddMemberModal(false);
+  };
+
+  const handleChangeRoleButtonClick = (index: number) => {
+    setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
+
+  const handleChangeRole = async (
+    user: MemberData,
+    index: number,
+    roleValue: string | string[]
+  ) => {
+    if (currentWorkspace?.id) {
+      await handleUpdateMemberOfWorkspace({
+        teamId: currentWorkspace?.id,
+        userId: user.id,
+        role: roleValue as Role
+      });
+      setWorkspaceMembers((prevMembers) => {
+        return prevMembers.map((workspaceMember) =>
+          workspaceMember.id === user.id
+            ? {
+                ...workspaceMember,
+                role: roleValue as Role
+              }
+            : workspaceMember
+        );
+      });
+      setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
+    }
+  };
+
+  const handleRemoveMemberButtonClick = (userId: string) => {
+    if (currentWorkspace?.id) {
+      handleRemoveMemberFromWorkspace({
+        teamId: currentWorkspace?.id,
+        userId
+      });
+      setWorkspaceMembers(
+        workspaceMembers.filter(
+          (workspaceMember) => workspaceMember.id !== userId
+        )
+      );
+    }
+  };
+
+  const handleAddMember = () => {
+    memberSearchResults.forEach((memberSearchResult) => {
+      if (currentWorkspace?.id) {
+        handleAddMemberToWorkspace({
+          name: memberSearchResult.userName,
+          teamId: currentWorkspace?.id,
+          userId: memberSearchResult.id,
+          role: Role.Reader
+        });
+        setWorkspaceMembers((prevMembers) => [
+          ...prevMembers,
+          {
+            username: memberSearchResult.userName,
+            email: memberSearchResult.email,
+            role: Role.Reader,
+            id: memberSearchResult.id
+          }
+        ]);
+        setAddMemberModal(false);
+        setMemberSearchInput("");
+        setDebouncedInput("");
+        setMemberSearchResults([]);
+      }
+    });
+  };
+
+  const handleDeleteUserForSearchResult = (
+    memberSearchResult: memberSearchResult
+  ) => {
+    setMemberSearchInput("");
+    setDebouncedInput("");
+    setMemberSearchResults(
+      memberSearchResults.filter(
+        (element) => element.id !== memberSearchResult.id
+      )
+    );
+  };
+
+  const handleUserSearchInputOnKeyDown = (
+    e: KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Enter" && memberSearchInput.trim() !== "") {
+      setMemberSearchInput("");
+      setDebouncedInput(memberSearchInput.trim());
+    }
+  };
+
   return (
     <InnerPage>
       <SettingsWrapper>
@@ -152,9 +253,7 @@ const Members: FC<Props> = ({
                 title={t("New member")}
                 appearance="primary"
                 disabled={currentWorkspace?.personal}
-                onClick={() => {
-                  setAddMemberModal(true);
-                }}
+                onClick={handleNewMemberClick}
                 icon="memberAdd"
               />
             </ButtonWrapper>
@@ -175,27 +274,8 @@ const Members: FC<Props> = ({
                       <SelectField
                         value={user.role}
                         options={roles}
-                        onChange={(roleValue) => {
-                          if (currentWorkspace?.id) {
-                            handleUpdateMemberOfWorkspace({
-                              teamId: currentWorkspace?.id,
-                              userId: user.id,
-                              role: roleValue as Role
-                            });
-                            setWorkspaceMembers((prevMembers) => {
-                              return prevMembers.map((workspaceMember) =>
-                                workspaceMember.id === user.id
-                                  ? {
-                                      ...workspaceMember,
-                                      role: roleValue as Role
-                                    }
-                                  : workspaceMember
-                              );
-                            });
-                            setActiveEditIndex((prevIndex) =>
-                              prevIndex === index ? null : index
-                            );
-                          }
+                        onChange={async (roleValue) => {
+                          await handleChangeRole(user, index, roleValue);
                         }}
                       />
                     </TableRow>
@@ -215,31 +295,14 @@ const Members: FC<Props> = ({
                           id: "changeRole",
                           title: t("Change Role"),
                           disabled: user.role === "OWNER",
-                          onClick: () => {
-                            setActiveEditIndex((prevIndex) =>
-                              prevIndex === index ? null : index
-                            );
-                          }
+                          onClick: () => handleChangeRoleButtonClick(index)
                         },
                         {
                           icon: "close",
                           id: "remove",
                           title: t("Remove"),
                           disabled: user.role === "OWNER",
-                          onClick: () => {
-                            if (currentWorkspace?.id) {
-                              handleRemoveMemberFromWorkspace({
-                                teamId: currentWorkspace?.id,
-                                userId: user.id
-                              });
-                            }
-                            setWorkspaceMembers(
-                              workspaceMembers.filter(
-                                (workspaceMember) =>
-                                  workspaceMember.id !== user.id
-                              )
-                            );
-                          }
+                          onClick: () => handleRemoveMemberButtonClick(user.id)
                         }
                       ]}
                     />
@@ -254,57 +317,27 @@ const Members: FC<Props> = ({
       <Modal visible={!!addMemberModal} size="small">
         <ModalPanel
           title={t("Add a team member")}
-          onCancel={() => {
-            setAddMemberModal(false);
-          }}
+          onCancel={handleCloseAddMemberModal}
           actions={[
             <Button
               key="cancel"
               title={t("Cancel")}
               appearance="secondary"
-              onClick={() => {
-                setAddMemberModal(false);
-              }}
+              onClick={handleCloseAddMemberModal}
             />,
             <Button
               key="add"
               title={t("Add")}
               appearance="primary"
               disabled={
-                workspaceMembers?.some(
-                  //existed user || no searchResult
-                  (member) =>
-                    memberSearchResults.find(
-                      (memberSearchResult) =>
-                        memberSearchResult.email === member.email
-                    )
+                workspaceMembers?.some((member) =>
+                  memberSearchResults.find(
+                    (memberSearchResult) =>
+                      memberSearchResult.email === member.email
+                  )
                 ) || memberSearchResults.length === 0
               }
-              onClick={() => {
-                memberSearchResults.forEach((memberSearchResult) => {
-                  if (currentWorkspace?.id) {
-                    handleAddMemberToWorkspace({
-                      name: memberSearchResult.userName,
-                      teamId: currentWorkspace?.id,
-                      userId: memberSearchResult.id,
-                      role: Role.Reader
-                    });
-                    setWorkspaceMembers((prevMembers) => [
-                      ...prevMembers,
-                      {
-                        username: memberSearchResult.userName,
-                        email: memberSearchResult.email,
-                        role: Role.Reader,
-                        id: memberSearchResult.id
-                      }
-                    ]);
-                    setAddMemberModal(false);
-                    setMemberSearchInput("");
-                    setDebouncedInput("");
-                    setMemberSearchResults([]);
-                  }
-                });
-              }}
+              onClick={handleAddMember}
             />
           ]}
         >
@@ -318,12 +351,7 @@ const Members: FC<Props> = ({
               onChange={(input) => {
                 setMemberSearchInput(input);
               }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && memberSearchInput.trim() !== "") {
-                  setMemberSearchInput("");
-                  setDebouncedInput(memberSearchInput.trim());
-                }
-              }}
+              onKeyDown={handleUserSearchInputOnKeyDown}
             />
 
             {debouncedInput && !searchUser && searchUserStatus !== "loading" ? (
@@ -352,13 +380,7 @@ const Members: FC<Props> = ({
                     hasBorder={false}
                     appearance="simple"
                     onClick={() => {
-                      setMemberSearchInput("");
-                      setDebouncedInput("");
-                      setMemberSearchResults(
-                        memberSearchResults.filter(
-                          (element) => element.id !== memberSearchResult.id
-                        )
-                      );
+                      handleDeleteUserForSearchResult(memberSearchResult);
                     }}
                   />
                 </ItemContainer>

@@ -32,9 +32,6 @@ export default () => {
   const handleFetchWorkspace = useCallback(
     (workspaceId: string) => {
       const { workspace, loading, error } = useWorkspaceQuery(workspaceId);
-      if (error) {
-        console.error("Failed to fetch workspace:", error);
-      }
       return { workspace, loading, error };
     },
     [useWorkspaceQuery]
@@ -43,24 +40,14 @@ export default () => {
   // Fetch all workspaces
   const handleFetchWorkspaces = useCallback(() => {
     const { workspaces, loading, error } = useWorkspacesQuery();
-    if (error) {
-      console.error("Failed to fetch workspaces:", error);
-    }
     return { workspaces, loading, error };
   }, [useWorkspacesQuery]);
 
   // Create a new workspace
   const handleCreateWorkspace = useCallback(
     async ({ name }: WorkspacePayload) => {
-      try {
-        if (name) {
-          const { status } = await useCreateWorkspace(name);
-          if (status === "success") {
-            console.log("Workspace created successfully");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to create workspace:", error);
+      if (name) {
+        await useCreateWorkspace(name);
       }
     },
     [useCreateWorkspace]
@@ -69,15 +56,8 @@ export default () => {
   // Update an existing workspace
   const handleUpdateWorkspace = useCallback(
     async ({ teamId, name }: WorkspacePayload) => {
-      try {
-        if (name && teamId) {
-          const { status } = await useUpdateWorkspace(teamId, name);
-          if (status === "success") {
-            console.log("Workspace updated successfully");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to update workspace:", error);
+      if (name && teamId) {
+        await useUpdateWorkspace(teamId, name);
       }
     },
     [useUpdateWorkspace]
@@ -86,15 +66,8 @@ export default () => {
   // Delete a workspace
   const handleDeleteWorkspace = useCallback(
     async (teamId: string) => {
-      try {
-        if (teamId) {
-          const { status } = await useDeleteWorkspace(teamId);
-          if (status === "success") {
-            console.log("Workspace deleted successfully");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to delete workspace:", error);
+      if (teamId) {
+        await useDeleteWorkspace(teamId);
       }
     },
     [useDeleteWorkspace]
@@ -103,19 +76,8 @@ export default () => {
   // Add a member to a workspace
   const handleAddMemberToWorkspace = useCallback(
     async ({ teamId, userId, role }: WorkspacePayload) => {
-      try {
-        if (userId && role) {
-          const { status } = await useAddMemberToWorkspace(
-            teamId,
-            userId,
-            role
-          );
-          if (status === "success") {
-            console.log("Member added successfully");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to add member to workspace:", error);
+      if (userId && role) {
+        await useAddMemberToWorkspace(teamId, userId, role);
       }
     },
     [useAddMemberToWorkspace]
@@ -124,15 +86,8 @@ export default () => {
   // Remove a member from a workspace
   const handleRemoveMemberFromWorkspace = useCallback(
     async ({ teamId, userId }: WorkspacePayload) => {
-      try {
-        if (userId) {
-          const { status } = await useRemoveMemberFromWorkspace(teamId, userId);
-          if (status === "success") {
-            console.log("Member removed successfully");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to remove member from workspace:", error);
+      if (userId) {
+        await useRemoveMemberFromWorkspace(teamId, userId);
       }
     },
     [useRemoveMemberFromWorkspace]
@@ -141,19 +96,8 @@ export default () => {
   // update a member of workspace
   const handleUpdateMemberOfWorkspace = useCallback(
     async ({ teamId, userId, role }: WorkspacePayload) => {
-      try {
-        if (userId && role) {
-          const { status } = await useUpdateMemberOfWorkspace(
-            teamId,
-            userId,
-            role
-          );
-          if (status === "success") {
-            console.log("Member update successfully");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to update member from workspace:", error);
+      if (userId && role) {
+        await useUpdateMemberOfWorkspace(teamId, userId, role);
       }
     },
     [useUpdateMemberOfWorkspace]
@@ -162,18 +106,11 @@ export default () => {
   const { useSearchUser } = useMeFetcher();
   const handleSearchUser = useCallback(
     (nameOrEmail: string) => {
-      try {
-        const { user, status } = useSearchUser(nameOrEmail, {
-          skip: !nameOrEmail
-        });
-        if (status === "success") {
-          console.log("Search Member successfully");
-        }
-        return { searchUser: user, searchUserStatus: status };
-      } catch (err) {
-        console.error("Failed to search user:", err);
-        return { error: err };
-      }
+      const { user, status } = useSearchUser(nameOrEmail, {
+        skip: !nameOrEmail
+      });
+
+      return { searchUser: user, searchUserStatus: status };
     },
     [useSearchUser]
   );
