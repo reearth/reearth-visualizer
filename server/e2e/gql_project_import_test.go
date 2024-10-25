@@ -257,6 +257,8 @@ fragment PropertySchemaFieldFragment on PropertySchemaField {
   ui
   min
   max
+  placeholder
+  translatedPlaceholder(lang: $lang)
   choices {
     key
     icon

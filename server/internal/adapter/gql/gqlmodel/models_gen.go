@@ -1301,6 +1301,7 @@ type PropertySchemaField struct {
 	Type                     ValueType                    `json:"type"`
 	Title                    string                       `json:"title"`
 	Description              string                       `json:"description"`
+	Placeholder              string                       `json:"placeholder"`
 	Prefix                   *string                      `json:"prefix,omitempty"`
 	Suffix                   *string                      `json:"suffix,omitempty"`
 	DefaultValue             interface{}                  `json:"defaultValue,omitempty"`
@@ -1311,8 +1312,10 @@ type PropertySchemaField struct {
 	IsAvailableIf            *PropertyCondition           `json:"isAvailableIf,omitempty"`
 	AllTranslatedTitle       map[string]string            `json:"allTranslatedTitle,omitempty"`
 	AllTranslatedDescription map[string]string            `json:"allTranslatedDescription,omitempty"`
+	AllTranslatedPlaceholder map[string]string            `json:"allTranslatedPlaceholder,omitempty"`
 	TranslatedTitle          string                       `json:"translatedTitle"`
 	TranslatedDescription    string                       `json:"translatedDescription"`
+	TranslatedPlaceholder    string                       `json:"translatedPlaceholder"`
 }
 
 type PropertySchemaFieldChoice struct {

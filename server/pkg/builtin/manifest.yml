@@ -47,6 +47,7 @@ extensions:
               type: string
               title: Tile type
               defaultValue: default
+              placeholder: please enter tile type
               choices:
                 - key: default
                   label: Default
@@ -71,6 +72,7 @@ extensions:
                 field: tile_type
                 type: string
                 value: url
+              placeholder: please enter tile url
             - id: tile_zoomLevel
               type: array
               title: zoom level
@@ -79,6 +81,7 @@ extensions:
               ui: range
               min: 0
               max: 30
+              placeholder: please enter tile zoomLevel
             - id: tile_opacity
               type: number
               title: Opacity
@@ -87,6 +90,7 @@ extensions:
               ui: slider
               min: 0
               max: 1
+              placeholder: please enter tile opacity
         - id: terrain
           collection: terrain
           title: Terrain

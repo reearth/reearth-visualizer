@@ -1,6 +1,8 @@
 package manifest
 
-import "github.com/reearth/reearth/server/pkg/i18n"
+import (
+	"github.com/reearth/reearth/server/pkg/i18n"
+)
 
 type TranslationExtension struct {
 	Description    *string                   `json:"description,omitempty"`
@@ -12,10 +14,11 @@ type TranslationPropertySchema map[string]TranslationPropertySchemaGroup
 
 type TranslationPropertySchemaField struct {
 	Choices     map[string]string `json:"choices,omitempty"`
-	Title       *string           `json:"title,omitempty"`
 	Description *string           `json:"description,omitempty"`
+	Placeholder *string           `json:"placeholder,omitempty"`
 	Prefix      *string           `json:"prefix,omitempty"`
 	Suffix      *string           `json:"suffix,omitempty"`
+	Title       *string           `json:"title,omitempty"`
 }
 
 type TranslationPropertySchemaGroup struct {
@@ -47,6 +50,7 @@ type TranslatedPropertySchemaField struct {
 	Title       i18n.String
 	Prefix      i18n.String
 	Suffix      i18n.String
+	Placeholder i18n.String
 }
 
 type TranslatedPropertySchemaGroup struct {
@@ -257,6 +261,13 @@ func (t *TranslatedPropertySchema) setPropertySchema(schemas map[string]Translat
 						tf.Suffix = i18n.String{}
 					}
 					tf.Suffix[l] = *f.Suffix
+				}
+
+				if f.Placeholder != nil {
+					if tf.Placeholder == nil {
+						tf.Placeholder = i18n.String{}
+					}
+					tf.Placeholder[l] = *f.Placeholder
 				}
 
 				if len(f.Choices) > 0 {

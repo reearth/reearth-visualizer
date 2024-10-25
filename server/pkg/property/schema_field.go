@@ -17,6 +17,7 @@ type SchemaField struct {
 	max          *float64
 	choices      []SchemaFieldChoice
 	cond         *Condition
+	placeholder  i18n.String
 }
 
 type SchemaFieldChoice struct {
@@ -103,6 +104,13 @@ func (p *SchemaField) MinMax() (*float64, *float64) {
 		return nil, nil
 	}
 	return p.Min(), p.Max()
+}
+
+func (p *SchemaField) Placeholder() i18n.String {
+	if p == nil {
+		return nil
+	}
+	return p.placeholder.Clone()
 }
 
 func (p *SchemaField) Choices() []SchemaFieldChoice {

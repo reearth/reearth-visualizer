@@ -164,6 +164,12 @@
             "null"
           ]
         },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "choices": {
           "type": "array",
           "items": {

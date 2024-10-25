@@ -23,6 +23,7 @@ extensions:
         fields:
           tile_type:
             title: 種類
+            placeholder: タイルタイプを選択
             choices:
               default: デフォルト
               default_label: ラベル付き地図
@@ -34,11 +35,14 @@ extensions:
               url: URL
           tile_url:
             title: URL
+            placeholder: URLを入力
           tile_zoomLevel:
             title: ズームレベル
+            placeholder: ズームレベルを入力
             description: "選択したタイルマップのズームレベルを変更します。 最小値: 0 最大値: 1"
           tile_opacity:
             title: 不透明度
+            placeholder: 不透明度を入力
             description: "選択したタイルマップの不透明度を変更します。 最小値: 0 最大値: 1"
       terrain:
         title: 地形
@@ -168,6 +172,7 @@ extensions:
             title: 名前
           tile_type:
             title: 種類
+            placeholder: 種類を選択
             choices:
               default: デフォルト
               default_label: ラベル付き地図
@@ -180,12 +185,16 @@ extensions:
               japan_gsi_standard: 地理院地図 標準地図
               url: URL
           tile_url:
+            placeholder: URLを入力
             title: URL
           tile_minLevel:
+            placeholder: 最小レベルを入力
             title: 最小レベル
           tile_maxLevel:
+            placeholder: 最大レベルを入力
             title: 最大レベル
           tile_opacity:
+            placeholder: 不透明性を入力
             title: 不透明性
       terrain:
         title: 地形

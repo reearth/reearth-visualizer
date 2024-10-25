@@ -23,6 +23,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 		MinRef       *float64
 		Max          float64
 		MaxRef       *float64
+		Placeholder  i18n.String
 		Choices      []SchemaFieldChoice
 		Cond         *Condition
 		Expected     struct {
@@ -36,6 +37,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 			Ui           SchemaFieldUI
 			Min          *float64
 			Max          *float64
+			Placeholder  i18n.String
 			Choices      []SchemaFieldChoice
 			Cond         *Condition
 		}
@@ -71,6 +73,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 				MinRef(tt.MinRef).
 				Min(tt.Min).
 				Max(tt.Max).
+				Placeholder(tt.Placeholder).
 				UI(tt.Ui).
 				UIRef(&tt.Ui).
 				Build()
@@ -84,6 +87,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 				assert.Equal(t, tt.Expected.Description, res.Description())
 				assert.Equal(t, tt.Expected.Prefix, res.Prefix())
 				assert.Equal(t, tt.Expected.Suffix, res.Suffix())
+				assert.Equal(t, tt.Expected.Placeholder, res.Placeholder())
 				assert.Equal(t, tt.Expected.Choices, res.Choices())
 				assert.Equal(t, tt.Expected.Cond, res.IsAvailableIf())
 				assert.Equal(t, tt.Expected.Fname, res.Title())
