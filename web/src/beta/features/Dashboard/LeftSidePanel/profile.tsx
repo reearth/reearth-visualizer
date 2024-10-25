@@ -110,7 +110,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  borderBottom: `1px solid ${theme.outline.weaker}`,
   alignContent: "center",
   padding: theme.spacing.normal
 }));

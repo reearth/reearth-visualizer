@@ -35,6 +35,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   const { tabs } = useAccountSettingsTabs({ workspaceId: workspaceId ?? "" });
 
   return (
+
     <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
       {tab === TABS.WORKSPACE && (
         <Workspace
@@ -53,7 +54,7 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
         />
       )}
       <CursorStatus />
-    </SettingBase>
+    </>
   );
 };
 

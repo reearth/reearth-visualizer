@@ -1,7 +1,8 @@
 import {
   SidebarMenuItem,
-  SidebarSection,
-  SidebarWrapper
+  SidebarMainSection,
+  SidebarWrapper,
+  SidebarButtonsWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -109,18 +110,20 @@ const PublicSettings: React.FC<Props> = ({
     <InnerPage wide>
       <InnerSidebar>
         <SidebarWrapper>
-          <SidebarSection>
-            {menu?.map((s) => (
-              <SidebarMenuItem
-                key={s.id}
-                text={s.title}
-                icon={s.icon}
-                active={s.active}
-                path={s.path}
-                onClick={() => handleTabChange(s.id)}
-              />
-            ))}
-          </SidebarSection>
+          <SidebarMainSection>
+            <SidebarButtonsWrapper>
+              {menu?.map((s) => (
+                <SidebarMenuItem
+                  key={s.id}
+                  text={s.title}
+                  icon={s.icon}
+                  active={s.active}
+                  path={s.path}
+                  onClick={() => handleTabChange(s.id)}
+                />
+              ))}
+            </SidebarButtonsWrapper>
+          </SidebarMainSection>
         </SidebarWrapper>
       </InnerSidebar>
       <SettingsWrapper>
