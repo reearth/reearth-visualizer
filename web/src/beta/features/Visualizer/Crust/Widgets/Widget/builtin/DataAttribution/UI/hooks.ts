@@ -1,25 +1,8 @@
 import { Credit as ProcessesCredit } from "@reearth/beta/utils/value";
 import { Credit } from "@reearth/core";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Widget } from "../../../types";
-
-const parseCreditHtml = (html?: string): ProcessesCredit | undefined => {
-  if (!html) return undefined;
-
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-
-  const imgElement = tempDiv.querySelector("img");
-  const description =
-    imgElement?.getAttribute("title") || tempDiv.textContent || "";
-  const img = imgElement?.src;
-
-  const linkElement = tempDiv.querySelector("a");
-  const link = linkElement ? linkElement.href : undefined;
-
-  return { description, img, link };
-};
 
 export const useDataAttribution = ({
   credits,
@@ -35,6 +18,26 @@ export const useDataAttribution = ({
   const widgetCredits = useMemo(
     () => widget?.property.default || [],
     [widget?.property.default]
+  );
+
+  const parseCreditHtml = useCallback(
+    (html?: string): ProcessesCredit | undefined => {
+      if (!html) return undefined;
+
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = html;
+
+      const imgElement = tempDiv.querySelector("img");
+      const description =
+        imgElement?.getAttribute("title") || tempDiv.textContent || "";
+      const img = imgElement?.src;
+
+      const linkElement = tempDiv.querySelector("a");
+      const link = linkElement ? linkElement.href : undefined;
+
+      return { description, img, link };
+    },
+    []
   );
 
   useEffect(() => {
@@ -61,7 +64,7 @@ export const useDataAttribution = ({
     ];
 
     setProcessedCredits(combinedCredits);
-  }, [credits, widgetCredits]);
+  }, [credits, parseCreditHtml, widgetCredits]);
 
   return {
     processedCredits

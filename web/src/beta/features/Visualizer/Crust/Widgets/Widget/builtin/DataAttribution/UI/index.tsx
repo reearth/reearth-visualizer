@@ -33,7 +33,7 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
           size="normal"
           onClick={onClose}
           appearance="simple"
-          iconColor={theme?.weakIcon}
+          iconColor={theme?.weakIcon ? theme?.weakIcon : "#000"}
         />
       </IconWrapper>
 
@@ -41,7 +41,7 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
         <Title>{t("Data provided by:")}</Title>
         <Content>
           {processedCredits &&
-            processedCredits.map((credit, i) => (
+            processedCredits?.map((credit, i) => (
               <ListItems key={i}>
                 {credit.link ? (
                   <StyledLink target="_blank" to={`${credit.link}`}>
