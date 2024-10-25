@@ -104,6 +104,7 @@ input ExportProjectInput {
 }
 
 input ImportProjectInput {
+  teamId: ID!
   file: Upload!
 }
 

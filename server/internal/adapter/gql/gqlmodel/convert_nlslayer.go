@@ -77,6 +77,9 @@ func ToNLSLayer(l nlslayer.NLSLayer, parent *id.NLSLayerID) NLSLayer {
 
 func ToNLSLayers(layers nlslayer.NLSLayerList, parent *id.NLSLayerID) []NLSLayer {
 	return util.Map(layers, func(l *nlslayer.NLSLayer) NLSLayer {
+		if l == nil {
+			return nil
+		}
 		return ToNLSLayer(*l, parent)
 	})
 }

@@ -14,10 +14,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
+
+// go test -v -run TestImportStory ./internal/usecase/interactor/...
 
 func TestImportStory(t *testing.T) {
 	ctx := context.Background()
@@ -111,7 +114,7 @@ func TestImportStory(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportStory(ctx, sceneData)
+	result, err := ifs.ImportStory(ctx, scene.ID(), sceneData, map[string]idx.ID[id.NLSLayer]{})
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
@@ -124,12 +127,14 @@ func TestImportStory(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Exclude items that are updated upon creation.
+	delete(resultMap, "id")
 	delete(resultMap, "propertyId")
 	delete(resultMap, "updatedAt")
 	delete(resultMap, "createdAt")
 	if pages, ok := resultMap["pages"].([]interface{}); ok {
 		for _, page := range pages {
 			if pageMap, ok := page.(map[string]interface{}); ok {
+				delete(pageMap, "id") // id is skip
 				delete(pageMap, "propertyId")
 				delete(pageMap, "updatedAt")
 				delete(pageMap, "createdAt")
@@ -137,6 +142,7 @@ func TestImportStory(t *testing.T) {
 				if blocks, ok := pageMap["blocks"].([]interface{}); ok {
 					for _, block := range blocks {
 						if blockMap, ok := block.(map[string]interface{}); ok {
+							delete(blockMap, "id") // id is skip
 							delete(blockMap, "propertyId")
 						}
 					}
@@ -151,26 +157,21 @@ func TestImportStory(t *testing.T) {
 	// expected
 	var expectedMap map[string]interface{}
 	err = json.Unmarshal([]byte(fmt.Sprintf(`{
-    "id": "01j7g9ddvkarms2gmc59ysw66r",
     "title": "",
     "alias": "",
     "pages": [
         {
-            "id": "01j7g9ddwk4a12x1t8wm865s6h",
             "title": "Untitled",
             "blocks": [
                 {
-                    "id": "01j7g9mdnjk1jafw592btqx6t7",
                     "pluginId": "reearth",
                     "extensionId": "textStoryBlock"
                 },
                 {
-                    "id": "01j7g9n3x4yqae71crdjcpeyc0",
                     "pluginId": "reearth",
                     "extensionId": "mdTextStoryBlock"
                 },
                 {
-                    "id": "01j7g9nnnap0cwa1farwd841xc",
                     "pluginId": "reearth",
                     "extensionId": "imageStoryBlock"
                 }

@@ -71,6 +71,6 @@ type Project interface {
 	CheckAlias(context.Context, string) (bool, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 	ExportProject(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProject(context.Context, map[string]interface{}) (*project.Project, usecasex.Tx, error)
+	ImportProject(context.Context, string, map[string]interface{}) (*project.Project, usecasex.Tx, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]interface{}, *project.Project) error
 }
