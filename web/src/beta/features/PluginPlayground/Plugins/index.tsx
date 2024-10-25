@@ -14,31 +14,29 @@ const mockPlugins = [
   }
 ];
 
-const mockFiles = [
-  {
-    id: "1",
-    name: "widget.js"
-  },
-  {
-    id: "2",
-    name: "table.js"
-  },
-  {
-    id: "3",
-    name: "reearth.yml"
-  }
-];
+type Props = {
+  files: {
+    name: string;
+    sourceCode: string;
+  }[];
+  selectedFile: {
+    name: string;
+    sourceCode: string;
+  };
+  selectFile: (fileName: string, sourceCode: string) => void;
+  handleFileUpload: () => void;
+};
 
-const Plugins: FC = () => {
+const Plugins: FC<Props> = ({
+  files,
+  selectFile,
+  selectedFile,
+  handleFileUpload
+}) => {
   const [selectedPlugin, setSelectedPlugin] = useState<number>(0);
-  const [selectedFile, setSelectedFile] = useState<number>(0);
 
   const onClickPluginItem = (i: number) => {
     setSelectedPlugin(i);
-  };
-
-  const onClickFileItem = (i: number) => {
-    setSelectedFile(i);
   };
 
   return (
@@ -59,14 +57,14 @@ const Plugins: FC = () => {
       <FileListWrapper>
         <ButtonsWrapper>
           <Button icon="plus" title="File" />
-          <Button title="Upload" />
+          <Button title="Upload" onClick={handleFileUpload} />
         </ButtonsWrapper>
         <FileList>
-          {mockFiles.map((file, i) => (
+          {files.map((file) => (
             <FileListItem
-              key={file.id}
-              selected={selectedFile === i}
-              onClick={() => onClickFileItem(i)}
+              key={file.name}
+              selected={selectedFile.name === file.name}
+              onClick={() => selectFile(file.name, file.sourceCode)}
             >
               <Icon icon="file" />
               {file.name}
