@@ -144,10 +144,10 @@ function config(): Plugin {
             ? { cesiumIonAccessToken: remoteCesiumIonToken }
             : {}),
           // If Cesium version becomes outdated, you can set the Ion token as an environment variables here.
-          // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
+          // ex: `REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
           // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
-          ...(process.env.CESIUM_ION_ACCESS_TOKEN
-            ? { cesiumIonAccessToken: process.env.CESIUM_ION_ACCESS_TOKEN }
+          ...(envs.REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN
+            ? { cesiumIonAccessToken: envs.REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN }
             : {}),
           ...readEnv("REEARTH_WEB", {
             source: envs
