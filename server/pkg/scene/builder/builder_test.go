@@ -755,6 +755,7 @@ func TestSceneBuilder(t *testing.T) {
 						"a": "hogehoge",
 					},
 				},
+				Enabled:  true,
 				Extended: true,
 			},
 		},
