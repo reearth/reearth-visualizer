@@ -4,28 +4,67 @@ import useFileInput from "use-file-input";
 
 import Code from "./Code";
 import Console from "./Console";
-// import PluginInspector from "./PluginInspector";
+import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
 import Viewer from "./Viewer";
 
-export default () => {
-  const [files, setFiles] = useState<
-    {
-      name: string;
-      sourceCode: string;
-    }[]
-  >([]);
-  const [selectedFile, setSelectedFile] = useState<{
-    name: string;
-    sourceCode: string;
-  }>();
-  const [fileName, setFileName] = useState<string>("");
-  const [executableSourceCode, setExecutableSourceCode] = useState<string>("");
+export type FileType = {
+  id: string;
+  title: string;
+  sourceCode: string;
+};
 
-  const selectFile = useCallback((fileName: string, sourceCode: string) => {
-    setFileName(fileName);
-    setExecutableSourceCode(sourceCode);
-    setSelectedFile({ name: fileName, sourceCode });
+const REEARTH_YML_FILE = {
+  id: "reearth-yml",
+  title: "reearth.yml",
+  sourceCode: `
+id: reearth-visualizer-plugin-shadcn-template
+name: Visualizer plugin shadcn template
+version: 1.0.0
+extensions:
+- id: demo
+  type: widget
+  name: Demo
+  schema:
+    groups:
+      - id: appearance
+        title: Appearance
+        defaultLocation:
+          - zone: inner
+            section: right
+            area: bottom
+        fields:
+          - id: primary_color
+            title: Primary color
+            type: string
+            ui: color
+  `
+} as const;
+
+export const ALLOWED_FILE_EXTENSIONS = ["yaml", "yml", "js"] as const;
+
+export default () => {
+  const [files, setFiles] = useState<FileType[]>([REEARTH_YML_FILE]);
+  const [selectedFile, setSelectedFile] = useState<FileType>(REEARTH_YML_FILE);
+
+  const selectFile = useCallback((file: FileType) => {
+    setSelectedFile(file);
+  }, []);
+
+  const addFile = useCallback((file: FileType) => {
+    setFiles((files) => [...files, file]);
+  }, []);
+
+  const updateFileTitle = useCallback((id: string, newTitle: string) => {
+    setFiles((files) =>
+      files.map((file) =>
+        file.id === id ? { ...file, title: newTitle } : file
+      )
+    );
+  }, []);
+
+  const deleteFile = useCallback((id: string) => {
+    setFiles((files) => files.filter((file) => file.id !== id));
   }, []);
 
   const handleFileUpload = useFileInput((files) => {
@@ -37,11 +76,15 @@ export default () => {
       const body = e2?.target?.result;
       if (typeof body != "string") return;
       const fileItem = {
-        name: file.name,
+        id:
+          // gerate unique id
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15),
+        title: file.name,
         sourceCode: body
       };
-      setFileName(file.name);
-      setExecutableSourceCode(body);
+      // Note: When a new file is uploaded, select that file
+      setSelectedFile(fileItem);
       setFiles((files) => [...files, fileItem]);
     };
     reader.readAsText(file);
@@ -79,36 +122,46 @@ export default () => {
         children: (
           <Plugins
             files={files}
-            selectedFile={selectedFile ?? files?.[0]}
+            selectedFile={selectedFile}
             selectFile={selectFile}
+            addFile={addFile}
+            updateFileTitle={updateFileTitle}
+            deleteFile={deleteFile}
             handleFileUpload={handleFileUpload}
           />
         )
       }
     ],
-    [selectFile, handleFileUpload, files, selectedFile]
+    [
+      files,
+      selectedFile,
+      selectFile,
+      addFile,
+      updateFileTitle,
+      deleteFile,
+      handleFileUpload
+    ]
   );
-
-  // const RightAreaTabs: TabItem[] = useMemo(
-  //   () => [
-  //     {
-  //       id: "plugin-inspector",
-  //       name: "Plugin Inspector",
-  //       children: <PluginInspector />
-  //     }
-  //   ],
-  //   []
-  // );
 
   const RightAreaTabs: TabItem[] = useMemo(
     () => [
       {
         id: "code",
         name: "code",
-        children: <Code fileName={fileName} sourceCode={executableSourceCode} />
+        children: (
+          <Code
+            fileName={selectedFile.title}
+            sourceCode={selectedFile.sourceCode}
+          />
+        )
+      },
+      {
+        id: "plugin-inspector",
+        name: "Plugin Inspector",
+        children: <PluginInspector />
       }
     ],
-    [fileName, executableSourceCode]
+    [selectedFile]
   );
 
   return {
