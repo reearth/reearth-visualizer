@@ -96,7 +96,7 @@ export default ({
     },
     {
       id: "export",
-      title: t("Export"),
+      title: t("Export Experimental"),
       icon: "downloadSimple",
       onClick: () => handleExportProject()
     },

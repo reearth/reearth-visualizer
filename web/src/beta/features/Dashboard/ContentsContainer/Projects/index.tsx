@@ -90,7 +90,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             />
             <ManagerHeaderButton
               key={"import-project"}
-              title={t("Import")}
+              title={t("Import Experimental")}
               managerSize="large"
               icon="signIn"
               appearance="secondary"
