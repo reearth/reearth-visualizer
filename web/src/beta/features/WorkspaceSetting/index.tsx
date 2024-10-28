@@ -35,25 +35,27 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   const { tabs } = useAccountSettingsTabs({ workspaceId: workspaceId ?? "" });
 
   return (
-    <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
-      {tab === TABS.WORKSPACE && (
-        <Workspace
-          handleFetchWorkspaces={handleFetchWorkspaces}
-          handleUpdateWorkspace={handleUpdateWorkspace}
-          handleDeleteWorkspace={handleDeleteWorkspace}
-          projectsCount={filtedProjects?.length}
-        />
-      )}
-      {tab === TABS.MEMBERS && (
-        <Members
-          handleSearchUser={handleSearchUser}
-          handleAddMemberToWorkspace={handleAddMemberToWorkspace}
-          handleUpdateMemberOfWorkspace={handleUpdateMemberOfWorkspace}
-          handleRemoveMemberFromWorkspace={handleRemoveMemberFromWorkspace}
-        />
-      )}
+    <>
+      <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
+        {tab === TABS.WORKSPACE && (
+          <Workspace
+            handleFetchWorkspaces={handleFetchWorkspaces}
+            handleUpdateWorkspace={handleUpdateWorkspace}
+            handleDeleteWorkspace={handleDeleteWorkspace}
+            projectsCount={filtedProjects?.length}
+          />
+        )}
+        {tab === TABS.MEMBERS && (
+          <Members
+            handleSearchUser={handleSearchUser}
+            handleAddMemberToWorkspace={handleAddMemberToWorkspace}
+            handleUpdateMemberOfWorkspace={handleUpdateMemberOfWorkspace}
+            handleRemoveMemberFromWorkspace={handleRemoveMemberFromWorkspace}
+          />
+        )}
+      </SettingBase>
       <CursorStatus />
-    </SettingBase>
+    </>
   );
 };
 

@@ -50,65 +50,67 @@ const AccountSetting: FC = () => {
   ];
 
   return (
-    <SettingBase tabs={tabs} tab={"account"}>
-      <InnerPage>
-        <SettingsWrapper>
-          <Collapse size="large" title={t("Account")}>
-            <SettingsFields>
-              <InputField
-                title={t("Name")}
-                value={meData.name ? t(meData.name) : ""}
-                appearance="readonly"
-                disabled
-              />
-              <InputField
-                title={t("Email address")}
-                value={meData.email ? t(meData.email) : ""}
-                appearance="readonly"
-                disabled
-              />
+    <>
+      <SettingBase tabs={tabs} tab={"account"}>
+        <InnerPage>
+          <SettingsWrapper>
+            <Collapse size="large" title={t("Account")}>
+              <SettingsFields>
+                <InputField
+                  title={t("Name")}
+                  value={meData.name ? t(meData.name) : ""}
+                  appearance="readonly"
+                  disabled
+                />
+                <InputField
+                  title={t("Email address")}
+                  value={meData.email ? t(meData.email) : ""}
+                  appearance="readonly"
+                  disabled
+                />
 
-              <PasswordWrapper>
-                <Typography size="body">{t("Password")}</Typography>
-                <PasswordInputWrapper>
-                  <TextInput
-                    value={"**********"}
-                    appearance="readonly"
-                    disabled
-                    extendWidth
-                  />
-                  <IconButton
-                    appearance="secondary"
-                    icon="pencilSimple"
-                    onClick={() => {
-                      setChangePasswordModal(true);
-                    }}
-                    size="medium"
-                    hasBorder={true}
-                  />
-                </PasswordInputWrapper>
-              </PasswordWrapper>
-              <SelectField
-                title={t("Language")}
-                value={meData.lang ?? "und"}
-                options={options}
-                onChange={(value) => {
-                  handleUpdateUserLanguage({ lang: value as string });
-                }}
-              />
-            </SettingsFields>
-          </Collapse>
-        </SettingsWrapper>
+                <PasswordWrapper>
+                  <Typography size="body">{t("Password")}</Typography>
+                  <PasswordInputWrapper>
+                    <TextInput
+                      value={"**********"}
+                      appearance="readonly"
+                      disabled
+                      extendWidth
+                    />
+                    <IconButton
+                      appearance="secondary"
+                      icon="pencilSimple"
+                      onClick={() => {
+                        setChangePasswordModal(true);
+                      }}
+                      size="medium"
+                      hasBorder={true}
+                    />
+                  </PasswordInputWrapper>
+                </PasswordWrapper>
+                <SelectField
+                  title={t("Language")}
+                  value={meData.lang ?? "und"}
+                  options={options}
+                  onChange={(value) => {
+                    handleUpdateUserLanguage({ lang: value as string });
+                  }}
+                />
+              </SettingsFields>
+            </Collapse>
+          </SettingsWrapper>
 
-        <PasswordModal
-          isVisible={changePasswordModal}
-          passwordPolicy={passwordPolicy}
-          onClose={() => setChangePasswordModal(false)}
-          handleUpdateUserPassword={handleUpdateUserPassword}
-        />
-      </InnerPage>
+          <PasswordModal
+            isVisible={changePasswordModal}
+            passwordPolicy={passwordPolicy}
+            onClose={() => setChangePasswordModal(false)}
+            handleUpdateUserPassword={handleUpdateUserPassword}
+          />
+        </InnerPage>
+      </SettingBase>
       <CursorStatus />
-    </SettingBase>
+    </>
   );
 };
 export default AccountSetting;
