@@ -71,18 +71,16 @@ const AssetListItem: FC<AssetItemProps> = ({
       <Col width={10}>
         <Typography size="body">{formattedSize}</Typography>
       </Col>
-      <Col width={30} title={asset.url} style={{ flex: 1 }}>
+      <Col width={30} title={asset.url}>
         <Typography otherProperties={{ width: "200px" }} size="body">
           {asset.url}
         </Typography>
-        <div style={{ flexGrow: 1 }}>
-          <IconButton
-            appearance="simple"
-            icon="copy"
-            onClick={handleIconClick}
-            size="medium"
-          />
-        </div>
+        <IconButton
+          appearance="simple"
+          icon="copy"
+          onClick={handleIconClick}
+          size="medium"
+        />
       </Col>
     </Wrapper>
   );
