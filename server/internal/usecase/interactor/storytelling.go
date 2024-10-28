@@ -1073,8 +1073,10 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 			return nil, err
 		}
 		var nlslayerIDs []idx.ID[id.NLSLayer]
-		for _, oldId := range pageJSON.Layers {
-			nlslayerIDs = append(nlslayerIDs, replaceNLSLayerIDs[oldId])
+		if replaceNLSLayerIDs != nil {
+			for _, oldId := range pageJSON.Layers {
+				nlslayerIDs = append(nlslayerIDs, replaceNLSLayerIDs[oldId])
+			}
 		}
 		page, err := storytelling.NewPage().
 			ID(id.NewPageID()).
