@@ -599,21 +599,21 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail scene :" + err.Error())
 	}
 
 	sceneID := sce.ID()
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail nlsLayer :" + err.Error())
 	}
 	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail layerStyles :" + err.Error())
 	}
 	storyList, err := i.storytellingRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail storytelling :" + err.Error())
 	}
 	story := (*storyList)[0]
 	sceneJSON, err := builder.New(
@@ -632,7 +632,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		prj.TrackingID(),
 	)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
 	}
 
 	// nlsLayer file resources
@@ -645,9 +645,8 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			if ok {
 				url, ok := data["url"].(string)
 				if ok {
-					err := i.addZipAsset(ctx, zipWriter, url)
-					if err != nil {
-						return nil, nil, err
+					if err := i.addZipAsset(ctx, zipWriter, url); err != nil {
+						return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
 					}
 				}
 			}
@@ -660,7 +659,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	}
 	widgetProperties, err := i.propertyRepo.FindByIDs(ctx, widgetPropertyIDs)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail widgetProperties :" + err.Error())
 	}
 
 	// widget button icon
@@ -678,9 +677,8 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					if !ok {
 						continue
 					}
-					err := i.addZipAsset(ctx, zipWriter, u.Path)
-					if err != nil {
-						return nil, nil, err
+					if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+						return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
 					}
 				}
 			}
@@ -695,7 +693,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	}
 	pageProperties, err := i.propertyRepo.FindByIDs(ctx, pagePropertyIDs)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("Fail property :" + err.Error())
 	}
 	// page block src
 	for _, property := range pageProperties {
@@ -706,9 +704,8 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					if !ok {
 						continue
 					}
-					err := i.addZipAsset(ctx, zipWriter, u.Path)
-					if err != nil {
-						return nil, nil, err
+					if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+						return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
 					}
 				}
 			}

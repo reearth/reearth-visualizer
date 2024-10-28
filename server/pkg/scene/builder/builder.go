@@ -136,13 +136,13 @@ func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSu
 
 	sceneData, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Fail buildScene :" + err.Error())
 	}
 
 	if b.story != nil {
 		story, err := b.buildStory(ctx)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("Fail buildStory :" + err.Error())
 		}
 		sceneData.Story = story
 	}
@@ -150,7 +150,7 @@ func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSu
 	if b.nlsLayer != nil {
 		nlsLayers, err := b.buildNLSLayers(ctx)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("Fail buildNLSLayers :" + err.Error())
 		}
 		sceneData.NLSLayers = nlsLayers
 	}
@@ -158,7 +158,7 @@ func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSu
 	if b.layerStyles != nil {
 		layerStyles, err := b.buildLayerStyles(ctx)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("Fail buildLayerStyles :" + err.Error())
 		}
 		sceneData.LayerStyles = layerStyles
 	}
