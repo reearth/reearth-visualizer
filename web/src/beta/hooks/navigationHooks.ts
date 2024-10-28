@@ -27,7 +27,7 @@ export const useSettingsNavigation = ({
     (page?: "public" | "story" | "asset" | "plugin", subId?: string) => {
       if (!projectId || !page) return;
       navigate(
-        `/settings/project/${projectId}/${page}${subId ? `/${subId}` : ""}`
+        `/settings/projects/${projectId}/${page}${subId ? `/${subId}` : ""}`
       );
     },
     [projectId, navigate]
