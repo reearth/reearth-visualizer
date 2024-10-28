@@ -20,8 +20,7 @@ export const accountSettingTabs: {
     id: "members",
     text: "Members",
     icon: "users",
-    path: "/settings/workspaces/:workspaceId/members",
-    disabled: true
+    path: "/settings/workspaces/:workspaceId/members"
   }
 ] as const;
 

@@ -2,13 +2,16 @@ import Navbar from "@reearth/beta/features/Navbar";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
-  SidebarSection,
+  SidebarMainSection,
   SidebarVersion,
-  SidebarWrapper
+  SidebarWrapper,
+  SidebarButtonsWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useMemo } from "react";
+
+import CursorStatus from "../CursorStatus";
 
 import useHooks from "./hooks";
 import GeneralSettings from "./innerPages/GeneralSettings";
@@ -46,8 +49,9 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     currentStory,
     accessToken,
     extensions,
+    disabled,
     handleUpdateProject,
-    handleDeleteProject,
+    handleProjectRemove,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
@@ -81,17 +85,19 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
-            <SidebarSection>
-              {tabs?.map((t) => (
-                <SidebarMenuItem
-                  key={t.id}
-                  path={t.path}
-                  text={t.text}
-                  active={t.id === tab}
-                  icon={t.icon}
-                />
-              ))}
-            </SidebarSection>
+            <SidebarMainSection>
+              <SidebarButtonsWrapper>
+                {tabs?.map((t) => (
+                  <SidebarMenuItem
+                    key={t.id}
+                    path={t.path}
+                    text={t.text}
+                    active={t.id === tab}
+                    icon={t.icon}
+                  />
+                ))}
+              </SidebarButtonsWrapper>
+            </SidebarMainSection>
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
@@ -100,7 +106,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
             <GeneralSettings
               project={project}
               onUpdateProject={handleUpdateProject}
-              onDeleteProject={handleDeleteProject}
+              onProjectRemove={handleProjectRemove}
+              disabled={disabled}
             />
           )}
           {tab === "story" && currentStory && (
@@ -136,6 +143,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           )}
         </Content>
       </MainSection>
+      <CursorStatus />
     </Wrapper>
   );
 };

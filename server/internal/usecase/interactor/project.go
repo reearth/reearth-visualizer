@@ -379,7 +379,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newAlias := prevAlias
 	if params.Alias != nil {
-		if prj2, err := i.projectRepo.FindByPublicName(ctx, *params.Alias); err != nil && !errors.Is(rerror.ErrNotFound, err) {
+		if prj2, err := i.projectRepo.FindByPublicName(ctx, *params.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, err
 		} else if prj2 != nil && prj.ID() != prj2.ID() {
 			return nil, interfaces.ErrProjectAliasAlreadyUsed
@@ -509,7 +509,11 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 
 	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("project " + err.Error())
+	}
+	if prj.IsDeleted() {
+		fmt.Printf("Error Deleted project: %v\n", prj.ID())
+		return nil, errors.New("This project is deleted")
 	}
 
 	// project image
@@ -517,7 +521,8 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 		trimmedName := strings.TrimPrefix(prj.ImageURL().Path, "/assets/")
 		stream, err := i.file.ReadAsset(ctx, trimmedName)
 		if err != nil {
-			return nil, err
+			return prj, nil // skip if external URL
+			// return nil, errors.New("assets " + err.Error())
 		}
 		defer func() {
 			if cerr := stream.Close(); cerr != nil {
@@ -570,7 +575,7 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProject(ctx context.Context, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
+func (i *Project) ImportProject(ctx context.Context, teamID string, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
 
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -579,17 +584,13 @@ func (i *Project) ImportProject(ctx context.Context, projectData map[string]inte
 
 	var p = jsonmodel.ToProjectFromJSON(projectData)
 
-	projectID, err := id.ProjectIDFrom(string(p.ID))
-	if err != nil {
-		return nil, nil, err
-	}
-	workspaceID, err := accountdomain.WorkspaceIDFrom(string(p.TeamID))
+	workspaceID, err := accountdomain.WorkspaceIDFrom(teamID)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	prjBuilder := project.New().
-		ID(projectID).
+		ID(project.NewID()).
 		Workspace(workspaceID).
 		IsArchived(p.IsArchived).
 		IsBasicAuthActive(p.IsBasicAuthActive).

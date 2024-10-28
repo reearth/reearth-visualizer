@@ -2,6 +2,7 @@
 
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
+import ArrowCounterClockWise from "./Icons/ArrowCounterClockWise.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
 import ArrowLongLeft from "./Icons/ArrowLongLeft.svg?react";
 import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
@@ -87,6 +88,7 @@ import LToS from "./Icons/LToS.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
 import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
+import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import More from "./Icons/More.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
@@ -130,7 +132,6 @@ import Star from "./Icons/Star.svg?react";
 import StarFilled from "./Icons/StarFilled.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
-import Switch from "./Icons/switch.svg?react";
 import Table from "./Icons/Table.svg?react";
 import Tag from "./Icons/Tag.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
@@ -161,6 +162,7 @@ import ZToA from "./Icons/ZToA.svg?react";
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
+  arrowCounterClockWise: ArrowCounterClockWise,
   arrowLeftRight: ArrowLeftRight,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
@@ -245,6 +247,7 @@ export default {
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,
   mapTrifold: MapTrifold,
+  memberAdd: MemberAdd,
   minus: Minus,
   more: More,
   navigatorAngle: NavigatorAngle,
@@ -289,7 +292,6 @@ export default {
   square: Square,
   squareFilled: SquareFilled,
   swiper: Swiper,
-  switch: Switch,
   table: Table,
   tag: Tag,
   terrian: Terrian,

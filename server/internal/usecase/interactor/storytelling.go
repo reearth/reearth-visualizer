@@ -14,10 +14,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene"
 	scene2 "github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -334,7 +336,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	newAlias := prevAlias
 	if inp.Alias != nil && *inp.Alias != prevAlias {
-		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(rerror.ErrNotFound, err) {
+		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, err
 		} else if publishedStory != nil && story.Id() != publishedStory.Id() {
 			return nil, interfaces.ErrProjectAliasAlreadyUsed
@@ -997,26 +999,22 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	return story, page, &inp.BlockID, inp.Index, nil
 }
 
-func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]interface{}) (*storytelling.Story, error) {
+func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}, replaceNLSLayerIDs map[string]idx.ID[id.NLSLayer]) (*storytelling.Story, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
 	}
-	sceneID, err := id.SceneIDFrom(sceneJSON.ID)
-	if err != nil {
-		return nil, err
-	}
 	storyJSON := sceneJSON.Story
+
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
 	pages := []*storytelling.Page{}
 	for _, pageJSON := range storyJSON.Pages {
 
 		blocks := []*storytelling.Block{}
 		for _, blockJSON := range pageJSON.Blocks {
-			blockID, err := id.BlockIDFrom(blockJSON.ID)
-			if err != nil {
-				return nil, err
-			}
+
 			pluginID, err := id.PluginIDFrom(blockJSON.PluginId)
 			if err != nil {
 				return nil, err
@@ -1042,11 +1040,11 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 				return nil, err
 			}
 			// Save property
-			if err = i.propertyRepo.Save(ctx, prop); err != nil {
+			if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 				return nil, err
 			}
 			block, err := storytelling.NewBlock().
-				ID(blockID).
+				ID(id.NewBlockID()).
 				Property(prop.ID()).
 				Plugin(pluginID).
 				Extension(extensionID).
@@ -1057,10 +1055,6 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 			blocks = append(blocks, block)
 		}
 
-		pageID, err := id.PageIDFrom(pageJSON.ID)
-		if err != nil {
-			return nil, err
-		}
 		schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 		prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 		if err != nil {
@@ -1075,23 +1069,28 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 			return nil, err
 		}
 		// Save property
-		if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 			return nil, err
 		}
+		var nlslayerIDs []idx.ID[id.NLSLayer]
+		if replaceNLSLayerIDs != nil {
+			for _, oldId := range pageJSON.Layers {
+				nlslayerIDs = append(nlslayerIDs, replaceNLSLayerIDs[oldId])
+			}
+		}
 		page, err := storytelling.NewPage().
-			ID(pageID).
+			ID(id.NewPageID()).
 			Property(prop.ID()).
 			Title(pageJSON.Title).
 			Swipeable(pageJSON.Swipeable).
 			Blocks(blocks).
+			Layers(nlslayerIDs).
 			Build()
 		if err != nil {
 			return nil, err
 		}
 		pages = append(pages, page)
 	}
-
-	storyID, _ := id.StoryIDFrom(storyJSON.ID)
 
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
@@ -1107,11 +1106,12 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 		return nil, err
 	}
 	// Save property
-	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+	if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 		return nil, err
 	}
 	story, err := storytelling.NewStory().
-		ID(storyID).
+		ID(id.NewStoryID()).
+		Title(storyJSON.Title).
 		Property(prop.ID()).
 		Scene(sceneID).
 		PanelPosition(storytelling.Position(storyJSON.PanelPosition)).
@@ -1121,10 +1121,10 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneData map[string]int
 	if err != nil {
 		return nil, err
 	}
-	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+	if err := i.storytellingRepo.Filtered(writableFilter).Save(ctx, *story); err != nil {
 		return nil, err
 	}
-	story, err = i.storytellingRepo.FindByID(ctx, story.Id())
+	story, err = i.storytellingRepo.Filtered(readableFilter).FindByID(ctx, story.Id())
 	if err != nil {
 		return nil, err
 	}
