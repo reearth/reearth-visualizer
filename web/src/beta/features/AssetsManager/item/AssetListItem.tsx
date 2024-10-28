@@ -72,9 +72,6 @@ const AssetListItem: FC<AssetItemProps> = ({
         <Typography size="body">{formattedSize}</Typography>
       </Col>
       <Col width={30} title={asset.url}>
-        <Typography otherProperties={{ width: "200px" }} size="body">
-          {asset.url}
-        </Typography>
         <IconButton
           appearance="simple"
           icon="copy"
