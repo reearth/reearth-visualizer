@@ -1,4 +1,6 @@
+import NotFound from "@reearth/beta/features/NotFound";
 import WorkspaceSetting from "@reearth/beta/features/WorkspaceSetting";
+import { config } from "@reearth/services/config";
 import { FC } from "react";
 import { useParams } from "react-router-dom";
 
@@ -13,9 +15,13 @@ const WorkspaceSettingPage: FC<WorkspaceSettingPageProps> = ({ tab }) => {
   return (
     <Page
       workspaceId={workspaceId}
-      renderItem={({ workspaceId }) => (
-        <WorkspaceSetting tab={tab} workspaceId={workspaceId} />
-      )}
+      renderItem={({ workspaceId }) =>
+        config()?.disableWorkspaceManagement ? (
+          <NotFound />
+        ) : (
+          <WorkspaceSetting tab={tab} workspaceId={workspaceId} />
+        )
+      }
     />
   );
 };

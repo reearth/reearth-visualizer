@@ -4,6 +4,7 @@ import {
   PopupMenuItem,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -40,6 +41,22 @@ export const Profile: FC<ProfileProp> = ({
   const theme = useTheme();
   const navigate = useNavigate();
 
+  const workspaceManagementMenu: PopupMenuItem[] = [
+    {
+      id: "workspaceSettings",
+      title: t("Workspace Settings"),
+      icon: "setting",
+      hasBorderBottom: true,
+      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
+    },
+    {
+      id: "accountSettings",
+      title: t("Account Settings"),
+      icon: "user",
+      onClick: () => navigate("/settings/account")
+    }
+  ];
+
   const popupMenu: PopupMenuItem[] = [
     {
       id: "workspace",
@@ -58,19 +75,7 @@ export const Profile: FC<ProfileProp> = ({
         };
       })
     },
-    {
-      id: "workspaceSettings",
-      title: t("Workspace Settings"),
-      icon: "setting",
-      hasBorderBottom: true,
-      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
-    },
-    {
-      id: "accountSettings",
-      title: t("Account Settings"),
-      icon: "user",
-      onClick: () => navigate("/settings/account")
-    },
+    ...(config()?.disableWorkspaceManagement ? [] : workspaceManagementMenu),
     {
       id: "signOut",
       title: t("Log Out"),

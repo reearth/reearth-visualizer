@@ -1,4 +1,5 @@
 import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +36,22 @@ const HeaderProfile: React.FC<Props> = ({
     }
   }, [currentWorkspace?.id, navigate]);
 
+  const workspaceManagementMenu: PopupMenuItem[] = [
+    {
+      id: "workspaceSettings",
+      title: t("Workspace Settings"),
+      icon: "setting",
+      hasBorderBottom: true,
+      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
+    },
+    {
+      id: "accountSettings",
+      title: t("Account Settings"),
+      icon: "user",
+      onClick: () => navigate("/settings/account")
+    }
+  ];
+
   const popupMenu: PopupMenuItem[] = [
     {
       icon: "arrowLeftRight",
@@ -53,19 +70,7 @@ const HeaderProfile: React.FC<Props> = ({
       }),
       title: t("Switch workspace")
     },
-    {
-      id: "workspaceSettings",
-      title: t("Workspace Settings"),
-      icon: "setting",
-      hasBorderBottom: true,
-      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
-    },
-    {
-      id: "accountSettings",
-      title: t("Account Settings"),
-      icon: "user",
-      onClick: () => navigate("/settings/account")
-    },
+    ...(config()?.disableWorkspaceManagement ? [] : workspaceManagementMenu),
     {
       icon: "exit",
       id: "logOut",
