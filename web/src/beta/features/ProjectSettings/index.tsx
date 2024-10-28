@@ -69,7 +69,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         id: tab.id,
         icon: tab.icon,
         text: t(tab.text),
-        path: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`
+        path: `/settings/projects/${projectId}/${tab.id === "general" ? "" : tab.id}`
       })),
     [projectId, t]
   );

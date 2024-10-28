@@ -97,7 +97,7 @@ export default ({
     {
       id: "setting",
       title: t("Project Setting"),
-      path: `/settings/project/${project.id}`,
+      path: `/settings/projects/${project.id}`,
       icon: "setting"
     },
     {
