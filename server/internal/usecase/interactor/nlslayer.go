@@ -840,6 +840,10 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 		return nil, nil, err
 	}
 
+	if sceneJSON.NLSLayers == nil {
+		return nil, nil, nil
+	}
+
 	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
 	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 

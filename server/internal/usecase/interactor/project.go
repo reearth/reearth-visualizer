@@ -509,7 +509,7 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 
 	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("project " + err.Error())
 	}
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
@@ -521,7 +521,8 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 		trimmedName := strings.TrimPrefix(prj.ImageURL().Path, "/assets/")
 		stream, err := i.file.ReadAsset(ctx, trimmedName)
 		if err != nil {
-			return nil, err
+			return prj, nil // skip if external URL
+			// return nil, errors.New("assets " + err.Error())
 		}
 		defer func() {
 			if cerr := stream.Close(); cerr != nil {

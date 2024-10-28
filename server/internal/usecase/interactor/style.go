@@ -207,6 +207,10 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 		return nil, err
 	}
 
+	if sceneJSON.LayerStyles == nil {
+		return nil, nil
+	}
+
 	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
 	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
