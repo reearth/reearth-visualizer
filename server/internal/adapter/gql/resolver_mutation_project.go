@@ -128,9 +128,9 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	t := time.Now().UTC()
 	entropy := ulid.Monotonic(rand.New(rand.NewSource(uint64(t.UnixNano()))), 0)
 	name := ulid.MustNew(ulid.Timestamp(t), entropy)
-	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", name.String()))
+	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", strings.ToLower(name.String())))
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Fail Zip Create :" + err.Error())
 	}
 	defer func() {
 		if cerr := zipFile.Close(); cerr != nil && err == nil {
@@ -155,25 +155,25 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	}
 	prj, err := usecases(ctx).Project.ExportProject(ctx, pid, zipWriter, getOperator(ctx))
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
 	sce, data, err := usecases(ctx).Scene.ExportScene(ctx, prj, zipWriter)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Fail ExportScene :" + err.Error())
 	}
 	data["project"] = gqlmodel.ToProject(prj)
 
 	plgs, schemas, err := usecases(ctx).Plugin.ExportPlugins(ctx, sce, zipWriter)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Fail ExportPlugins :" + err.Error())
 	}
 	data["plugins"] = gqlmodel.ToPlugins(plgs)
 	data["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 
 	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
 
 	return &gqlmodel.ExportProjectPayload{

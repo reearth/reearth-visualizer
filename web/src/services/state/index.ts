@@ -1,6 +1,8 @@
 import { atom, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
+import { TeamMember } from "../gql";
+
 export * from "./devPlugins";
 
 export { default as useSetError, useError } from "./gqlErrorHandling";
@@ -49,7 +51,7 @@ export type Policy = {
 export type Workspace = {
   id: string;
   name: string;
-  members?: any[];
+  members?: TeamMember[];
   assets?: any;
   projects?: any;
   personal?: boolean;

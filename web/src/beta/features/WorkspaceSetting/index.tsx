@@ -6,6 +6,7 @@ import CursorStatus from "../CursorStatus";
 import useProjectsHook from "../Dashboard/ContentsContainer/Projects/hooks";
 
 import useWorkspaceHook from "./hooks";
+import Members from "./innerPages/Members/Members";
 import Workspace from "./innerPages/Workspaces/Workspaces";
 
 type Props = {
@@ -13,11 +14,20 @@ type Props = {
   workspaceId?: string;
 };
 
+enum TABS {
+  WORKSPACE = "workspace",
+  MEMBERS = "members"
+}
+
 const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   const {
     handleFetchWorkspaces,
     handleUpdateWorkspace,
-    handleDeleteWorkspace
+    handleDeleteWorkspace,
+    handleAddMemberToWorkspace,
+    handleSearchUser,
+    handleUpdateMemberOfWorkspace,
+    handleRemoveMemberFromWorkspace
   } = useWorkspaceHook();
 
   const { filtedProjects } = useProjectsHook(workspaceId);
@@ -27,12 +37,20 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
   return (
     <>
       <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
-        {tab === "workspace" && (
+        {tab === TABS.WORKSPACE && (
           <Workspace
             handleFetchWorkspaces={handleFetchWorkspaces}
             handleUpdateWorkspace={handleUpdateWorkspace}
             handleDeleteWorkspace={handleDeleteWorkspace}
             projectsCount={filtedProjects?.length}
+          />
+        )}
+        {tab === TABS.MEMBERS && (
+          <Members
+            handleSearchUser={handleSearchUser}
+            handleAddMemberToWorkspace={handleAddMemberToWorkspace}
+            handleUpdateMemberOfWorkspace={handleUpdateMemberOfWorkspace}
+            handleRemoveMemberFromWorkspace={handleRemoveMemberFromWorkspace}
           />
         )}
       </SettingBase>

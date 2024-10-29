@@ -90,14 +90,14 @@ const PublicSettings: React.FC<Props> = ({
         id: "map",
         title: t("Map"),
         icon: "globeSimple" as const,
-        path: `/settings/project/${project.id}/public/`,
+        path: `/settings/projects/${project.id}/public/`,
         active: selectedTab === "map"
       },
       ...stories.map((s) => ({
         id: s.id,
         title: (!s.title || s.title) === "Default" ? t("Story") : s.title,
         icon: "sidebar" as const,
-        path: `/settings/project/${project.id}/public/${s.id}`,
+        path: `/settings/projects/${project.id}/public/${s.id}`,
         active: selectedTab === s.id
       }))
     ],
