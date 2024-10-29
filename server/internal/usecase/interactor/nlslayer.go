@@ -871,7 +871,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 			if err != nil {
 				return nil, nil, err
 			}
-			prop, err = builder.AddItemFromPropertyJSON(prop, schema, nlsLayerJSON.Infobox.Property)
+			prop, err = builder.AddItemFromPropertyJSON(ctx, prop, schema, nlsLayerJSON.Infobox.Property)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -888,7 +888,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 					if err != nil {
 						return nil, nil, err
 					}
-					propB, err = builder.AddItemFromPropertyJSON(propB, schemaB, b.Property)
+					propB, err = builder.AddItemFromPropertyJSON(ctx, propB, schemaB, b.Property)
 					if err != nil {
 						return nil, nil, err
 					}

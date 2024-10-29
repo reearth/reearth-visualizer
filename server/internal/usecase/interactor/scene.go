@@ -773,7 +773,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		if err != nil {
 			return nil, err
 		}
-		prop, err = builder.AddItemFromPropertyJSON(prop, ps, widgetJSON.Property)
+		prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, widgetJSON.Property)
 		if err != nil {
 			return nil, err
 		}
@@ -817,7 +817,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 	if err != nil {
 		return nil, err
 	}
-	prop, err = builder.AddItemFromPropertyJSON(prop, schema, sceneJSON.Property)
+	prop, err = builder.AddItemFromPropertyJSON(ctx, prop, schema, sceneJSON.Property)
 	if err != nil {
 		return nil, err
 	}
