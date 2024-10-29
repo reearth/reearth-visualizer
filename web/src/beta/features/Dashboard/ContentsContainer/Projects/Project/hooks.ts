@@ -36,8 +36,6 @@ export default ({
   const [isStarred, setIsStarred] = useState(project.starred);
   const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
     useState(false);
-  // MEMO: this modal state and function will be used in the future
-  // const [exportModalVisible, setExportModalVisible] = useState(false);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
@@ -96,7 +94,7 @@ export default ({
     },
     {
       id: "export",
-      title: t("Export Experimental"),
+      title: t("Export (Experimental)"),
       icon: "downloadSimple",
       onClick: () => handleExportProject()
     },

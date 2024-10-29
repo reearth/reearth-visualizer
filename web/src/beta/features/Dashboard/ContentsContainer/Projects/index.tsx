@@ -56,24 +56,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // const actions = useMemo(
-  //   () => (
-  //     <>
-  //       <Button
-  //         title={t("Cancel")}
-  //         appearance={"secondary"}
-  //         onClick={closeExportModal}
-  //       />
-  //       <Button
-  //         title={t("Export")}
-  //         appearance={"primary"}
-  //         onClick={handleExportProject}
-  //       />
-  //     </>
-  //   ),
-  //   [handleExportProject, closeExportModal, t]
-  // );
-
   return (
     <ManagerWrapper onClick={() => handleProjectSelect(undefined)}>
       <ManagerHeader
@@ -90,7 +72,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             />
             <ManagerHeaderButton
               key={"import-project"}
-              title={t("Import Experimental")}
+              title={t("Import (Experimental)")}
               managerSize="large"
               icon="signIn"
               appearance="secondary"
