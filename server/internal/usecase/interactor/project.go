@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -575,6 +576,12 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
+func removeHTTPScheme(host string) string {
+	host = strings.TrimPrefix(host, "https://")
+	host = strings.TrimPrefix(host, "http://")
+	return host
+}
+
 func (i *Project) ImportProject(ctx context.Context, teamID string, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
 
 	tx, err := i.transaction.Begin(ctx)
@@ -616,6 +623,16 @@ func (i *Project) ImportProject(ctx context.Context, teamID string, projectData 
 	}
 
 	if p.ImageURL != nil {
+		if p.ImageURL.Host == "localhost:8080" || strings.HasSuffix(p.ImageURL.Host, ".reearth.dev") || strings.HasSuffix(p.ImageURL.Host, ".reearth.io") {
+			currentHost := adapter.CurrentHost(ctx)
+			currentHostDomain := removeHTTPScheme(currentHost)
+			if currentHostDomain == "localhost:8080" {
+				p.ImageURL.Scheme = "http"
+			} else {
+				p.ImageURL.Scheme = "https"
+			}
+			p.ImageURL.Host = currentHostDomain
+		}
 		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
 	}
 

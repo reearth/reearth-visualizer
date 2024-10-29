@@ -113,6 +113,8 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				log.Debugfc(ctx, "auth: op: %#v", op)
 			}
 
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)
 		}
