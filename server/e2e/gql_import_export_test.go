@@ -26,7 +26,35 @@ func TestCallExportProject(t *testing.T) {
 	pID := createProjectWithExternalImage(e, "test")
 
 	_, _, sID := createScene(e, pID)
-	createStory(e, sID, "test", 0)
+
+	_, _, storyID := createStory(e, sID, "test", 0)
+
+	_, _, pageID := createPage(e, sID, storyID, "test", true)
+
+	_, _, _ = createBlock(e, sID, storyID, pageID, "reearth", "imageStoryBlock", nil)
+	_, _, _ = createBlock(e, sID, storyID, pageID, "reearth", "imageStoryBlock", nil)
+	_, _, _ = createBlock(e, sID, storyID, pageID, "reearth", "imageStoryBlock", nil)
+
+	_, res := fetchSceneForStories(e, sID)
+
+	blocks := res.Object().Value("data").Object().
+		Value("node").Object().
+		Value("stories").Array().First().Object().
+		Value("pages").Array().First().Object().
+		Value("blocks").Array().Iter()
+
+	propID1 := blocks[0].Object().Value("propertyId").Raw().(string)
+	propID2 := blocks[1].Object().Value("propertyId").Raw().(string)
+	propID3 := blocks[2].Object().Value("propertyId").Raw().(string)
+
+	_, res = updatePropertyValue(e, propID1, "default", "", "src", "http://localhost:8080/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png", "URL")
+	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("http://localhost:8080/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png")
+
+	_, res = updatePropertyValue(e, propID2, "default", wID.String(), "src", "https://test.com/project.jpg", "URL")
+	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("https://test.com/project.jpg")
+
+	_, res = updatePropertyValue(e, propID3, "default", wID.String(), "src", "https://api.visualizer.test.reearth.dev/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png", "URL")
+	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("https://api.visualizer.test.reearth.dev/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png")
 
 	fileName := exporProject(t, e, pID)
 
@@ -52,7 +80,7 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"imageUrl":    "https://test.com/aaaaa.jpg",
+			"imageUrl":    "https://test.com/project.jpg",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,
@@ -79,7 +107,7 @@ func exporProject(t *testing.T, e *httpexpect.Expect, p string) string {
 			"projectId": p,
 		},
 	}
-	downloadPath := e.POST("/api/graphql").
+	r := e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID.String()).
@@ -88,11 +116,12 @@ func exporProject(t *testing.T, e *httpexpect.Expect, p string) string {
 		Expect().
 		Status(http.StatusOK).
 		JSON().
-		Object().
+		Object()
+	fmt.Println(r)
+	downloadPath := r.
 		Value("data").Object().
 		Value("exportProject").Object().
 		Value("projectDataPath").String().Raw()
-	fmt.Println(downloadPath)
 
 	downloadResponse := e.GET(fmt.Sprintf("http://localhost:8080%s", downloadPath)).
 		Expect().

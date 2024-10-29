@@ -25,6 +25,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -647,7 +648,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 				if ok {
 					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
 						}
 					}
 				}
@@ -681,7 +682,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					}
 					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
 				}
@@ -710,7 +711,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					}
 					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+							log.Infofc(ctx, "Fail page block addZipAsset :", err.Error())
 						}
 					}
 				}
