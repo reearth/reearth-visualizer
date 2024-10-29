@@ -25,7 +25,7 @@ export const useWidgetContext = ({
         initialCamera,
         timelineManagerRef
       }),
-    [mapRef, viewerProperty, initialCamera, selectedLayerId, timelineManagerRef]
+    [mapRef, selectedLayerId, viewerProperty, initialCamera, timelineManagerRef]
   );
 
 export function widgetContextFromMapRef({
@@ -124,6 +124,7 @@ export function widgetContextFromMapRef({
         }
       }),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
-    onZoomOut: (...args) => engine()?.zoomOut(...args)
+    onZoomOut: (...args) => engine()?.zoomOut(...args),
+    getCredits: () => engine()?.getCredits()
   };
 }
