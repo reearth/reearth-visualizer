@@ -35,6 +35,7 @@ type ProjectDocument struct {
 	TrackingID        string
 	// Scene             string
 	Starred bool
+	Deleted bool
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -77,6 +78,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		TrackingID:        project.TrackingID(),
 		// Scene:             project.Scene().String(),
 		Starred: project.Starred(),
+		Deleted: project.IsDeleted(),
 	}, pid
 }
 
@@ -126,5 +128,6 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		TrackingID(d.TrackingID).
 		// Scene(scene).
 		Starred(d.Starred).
+		Deleted(d.Deleted).
 		Build()
 }

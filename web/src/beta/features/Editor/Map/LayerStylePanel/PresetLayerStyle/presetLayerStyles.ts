@@ -1,6 +1,7 @@
+import { LayerAppearanceTypes } from "@reearth/core";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
-export const defaultStyle = {
+export const defaultStyle: Partial<LayerAppearanceTypes> = {
   marker: {
     heightReference: "clamp"
   },

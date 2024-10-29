@@ -1,15 +1,13 @@
-import NotFound from "@reearth/beta/components/NotFound";
 import Visualizer from "@reearth/beta/features/Visualizer";
-import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";
+import NotFound from "./NotFound";
 
 export type Props = {
   alias?: string;
 };
 
 export default function Published({ alias }: Props) {
-  const t = useT();
   const {
     viewerProperty,
     pluginProperty,
@@ -27,10 +25,7 @@ export default function Published({ alias }: Props) {
   } = useHooks(alias);
 
   return error ? (
-    <NotFound
-      customHeader={t("Something went wrong.")}
-      customMessage={t("Couldn't find the Re:Earth project you were after.")}
-    />
+    <NotFound />
   ) : (
     <Visualizer
       visualizerRef={visualizerRef}

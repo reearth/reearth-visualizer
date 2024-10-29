@@ -5,7 +5,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { useState, useEffect, FC, useCallback } from "react";
+import { useEffect, FC, useCallback, useRef } from "react";
 
 import { LayerStyleAddProps } from "../../../hooks/useLayerStyles";
 
@@ -35,9 +35,8 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
   onLayerStyleSelect
 }) => {
   const t = useT();
-  const [layerStyleAdded, setLayerStyleAdded] = useState<string | undefined>(
-    undefined
-  );
+
+  const layerStyleAddedRef = useRef<string | undefined>(undefined);
 
   const handleLayerStyleAddition = useCallback(
     (value?: Record<string, unknown>, styleName?: string) => {
@@ -49,19 +48,20 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
         name,
         value: value || {}
       });
-      setLayerStyleAdded(name);
+      layerStyleAddedRef.current = name;
     },
     [t, layerStyles, onLayerStyleAdd]
   );
 
   useEffect(() => {
-    if (layerStyleAdded && layerStyles) {
+    if (layerStyleAddedRef.current && layerStyles) {
       const addedStyle = layerStyles.find(
-        (style) => style.name === layerStyleAdded
+        (style) => style.name === layerStyleAddedRef.current
       );
       onLayerStyleSelect(addedStyle?.id);
+      layerStyleAddedRef.current = undefined;
     }
-  }, [layerStyles, onLayerStyleSelect, layerStyleAdded]);
+  }, [layerStyles, onLayerStyleSelect]);
 
   const menuItems: PopupMenuItem[] = [
     {

@@ -47,10 +47,71 @@ export const modelNodes: AppearanceNode[] = [
     defaultValue: 1
   },
   {
+    id: "maximumScale",
+    title: "Maximum Scale",
+    field: "number",
+    defaultValue: 10
+  },
+  {
+    id: "minimumPixelSize",
+    title: "Minimum Pixel Size",
+    field: "number",
+    defaultValue: 100
+  },
+  {
+    id: "animation",
+    title: "Animation",
+    field: "switch",
+    defaultValue: false
+  },
+  {
     id: "shadows",
     title: "Shadows",
     field: "select",
     defaultValue: "disabled",
     valueOptions: SHADOWS
+  },
+  {
+    id: "colorBlend",
+    title: "Color Blend",
+    field: "select",
+    defaultValue: "none",
+    valueOptions: ["none", "highlight", "replace", "mix"]
+  },
+  {
+    id: "color",
+    title: "Color",
+    field: "color",
+    defaultValue: "#ffffff"
+  },
+  {
+    id: "colorBlendAmount",
+    title: "Color Blend Amount",
+    field: "number",
+    defaultValue: 0.5
+  },
+  {
+    id: "lightColor",
+    title: "Light Color",
+    field: "color",
+    defaultValue: "#ffffff"
+  },
+  {
+    id: "near",
+    title: "Near",
+    field: "number",
+    defaultValue: 0
+  },
+  {
+    id: "far",
+    title: "Far",
+    field: "number",
+    defaultValue: 10000
+  },
+  {
+    id: "pbr",
+    title: "Pbr",
+    field: "switch",
+    defaultValue: true
   }
 ];

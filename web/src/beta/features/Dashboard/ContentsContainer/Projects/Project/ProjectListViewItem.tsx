@@ -8,6 +8,8 @@ import { formatRelativeTime } from "@reearth/beta/utils/time";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
+import ProjectRemoveModal from "../ProjectRemoveModal";
+
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
 
@@ -16,7 +18,8 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   selectedProjectId,
   onProjectOpen,
   onProjectSelect,
-  onProjectUpdate
+  onProjectUpdate,
+  onProjectRemove
 }) => {
   const theme = useTheme();
 
@@ -38,19 +41,20 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     isHovered,
     isStarred,
     hasMapOrStoryPublished,
+    projectRemoveModalVisible,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
     handleProjectNameDoubleClick,
-    handleProjectStarClick
-    // exportModalVisible,
-    // closeExportModal,
-    // handleExportProject
+    handleProjectStarClick,
+    handleProjectRemoveModal,
+    handleProjectRemove
   } = useHooks({
     project,
     selectedProjectId,
     onProjectUpdate,
-    onProjectSelect
+    onProjectSelect,
+    onProjectRemove
   });
 
   return (
@@ -68,7 +72,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <StarButtonWrapper
               isStarred={isStarred ?? false}
               isHovered={isHovered ?? false}
-              isSelected={selectedProjectId === project.id}
             >
               <Button
                 iconButton
@@ -116,17 +119,13 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           />
         </ActionCol>
       </ListWrapper>
-      {/* MEMO: this modal will be used in the future */}
-      {/* <Modal visible={exportModalVisible} size="small">
-        <ModalPanel
-          title={t("Export Project")}
-          actions={actions}
-          onCancel={closeExportModal}
-          appearance="normal"
-        >
-          <ModalContent />
-        </ModalPanel>
-      </Modal> */}
+      {projectRemoveModalVisible && (
+        <ProjectRemoveModal
+          isVisible={projectRemoveModalVisible}
+          onClose={() => handleProjectRemoveModal(false)}
+          onProjectRemove={() => handleProjectRemove(project.id)}
+        />
+      )}
     </>
   );
 };
@@ -197,11 +196,10 @@ const ActionCol = styled("div")(() => ({
 }));
 
 const StarButtonWrapper = styled("div")<{
-  isSelected: boolean;
   isStarred: boolean;
   isHovered: boolean;
-}>(({ isSelected, isStarred, isHovered }) => ({
-  opacity: isSelected || isStarred || isHovered ? 1 : 0
+}>(({ isStarred, isHovered }) => ({
+  opacity: isStarred || isHovered ? 1 : 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -216,8 +214,3 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis"
 }));
-
-// const ModalContent = styled("div")(() => ({
-//   width: "100%",
-//   height: "272px"
-// }));

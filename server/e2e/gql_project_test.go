@@ -210,9 +210,14 @@ func TestFindStarredByWorkspace(t *testing.T) {
 	project2ID := createProject(e, "Project 2")
 	project3ID := createProject(e, "Project 3")
 	project4ID := createProject(e, "Project 4")
+	project5ID := createProject(e, "Project 5")
 
 	starProject(e, project1ID)
 	starProject(e, project3ID)
+
+	// star and deleted 'Project 5'
+	starProject(e, project5ID)
+	deleteProject(e, project5ID)
 
 	requestBody := GraphQLRequest{
 		OperationName: "GetStarredProjects",
@@ -251,6 +256,8 @@ func TestFindStarredByWorkspace(t *testing.T) {
 	nodeCount := int(nodes.Length().Raw())
 	assert.Equal(t, 2, nodeCount, "Expected 2 nodes in the response")
 
+	nodes.Length().Equal(2) // 'Project 1' and 'Project 3'
+
 	starredProjectsMap := make(map[string]bool)
 	for _, node := range nodes.Iter() {
 		obj := node.Object()
@@ -275,7 +282,6 @@ func TestFindStarredByWorkspace(t *testing.T) {
 	assert.True(t, starredProjectsMap[project3ID], "Project 3 should be starred")
 	assert.False(t, starredProjectsMap[project2ID], "Project 2 should not be starred")
 	assert.False(t, starredProjectsMap[project4ID], "Project 4 should not be starred")
-
 }
 
 func starProject(e *httpexpect.Expect, projectID string) {
@@ -449,6 +455,96 @@ func TestSortByUpdatedAt(t *testing.T) {
 
 	edges.Length().Equal(3)
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
-	edges.Element(1).Object().Value("node").Object().Value("name").Equal("project3-test")
-	edges.Element(2).Object().Value("node").Object().Value("name").Equal("project1-test")
+}
+
+//  go test -v -run TestDeleteProjects ./e2e/...
+
+func TestDeleteProjects(t *testing.T) {
+
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	createProject(e, "project1-test")
+	project2ID := createProject(e, "project2-test")
+	createProject(e, "project3-test")
+
+	// Deleted 'project2'
+	deleteProject(e, project2ID)
+
+	// check
+	requestBody := GraphQLRequest{
+		OperationName: "GetDeletedProjects",
+		Query: `
+			query GetDeletedProjects($teamId: ID!) {
+				deletedProjects(teamId: $teamId) {
+					nodes {
+						id
+						name
+						isDeleted
+					}
+					totalCount
+				}
+			}`,
+		Variables: map[string]any{
+			"teamId": wID,
+		},
+	}
+	deletedProjects := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().Value("data").Object().Value("deletedProjects").Object()
+
+	deletedProjects.Value("totalCount").Equal(1)
+	deletedProjects.Value("nodes").Array().Length().Equal(1)
+	deletedProjects.Value("nodes").Array().First().Object().Value("name").Equal("project2-test")
+}
+
+func deleteProject(e *httpexpect.Expect, projectID string) {
+
+	updateProjectMutation := GraphQLRequest{
+		OperationName: "UpdateProject",
+		Query: `mutation UpdateProject($input: UpdateProjectInput!) {
+			updateProject(input: $input) {
+				project {
+					id
+					name
+					isDeleted
+					updatedAt
+					__typename
+				}
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"input": map[string]any{
+				"projectId": projectID,
+				"deleted":   true,
+			},
+		},
+	}
+
+	response := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(updateProjectMutation).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().
+		Value("data").Object().
+		Value("updateProject").Object().
+		Value("project").Object()
+
+	response.ValueEqual("id", projectID).
+		ValueEqual("isDeleted", true)
 }

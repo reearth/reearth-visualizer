@@ -19,18 +19,19 @@ import Field from "./Field";
 
 type Props = {
   conditions?: StyleCondition[];
-  field: AppearanceField;
+  field?: AppearanceField;
   valueOptions?: { value: string; label: string }[];
-  onUpdate: (value: StyleCondition[]) => void;
+  disabled?: boolean;
+  onUpdate?: (value: StyleCondition[]) => void;
 };
 
 export const styleConditionOperators: StyleConditionOperator[] = [
   "===",
   "!==",
-  "<",
   "<=",
-  ">",
   ">=",
+  "<",
+  ">",
   "startsWith"
 ];
 
@@ -54,6 +55,7 @@ const ConditionsTab: FC<Props> = ({
   conditions,
   field,
   valueOptions,
+  disabled,
   onUpdate
 }) => {
   const handleItemDrop = useCallback(
@@ -69,7 +71,7 @@ const ConditionsTab: FC<Props> = ({
       const [draggedItem] = newConditions.splice(draggedIndex, 1);
       newConditions.splice(targetIndex, 0, draggedItem);
 
-      onUpdate(newConditions);
+      onUpdate?.(newConditions);
     },
     [conditions, onUpdate]
   );
@@ -89,7 +91,7 @@ const ConditionsTab: FC<Props> = ({
   const t = useT();
 
   const createCondition = useCallback(() => {
-    onUpdate([
+    onUpdate?.([
       ...(conditions ?? []),
       {
         variable: "",
@@ -107,7 +109,7 @@ const ConditionsTab: FC<Props> = ({
         ...newConditions[idx],
         [key]: value
       };
-      onUpdate(newConditions);
+      onUpdate?.(newConditions);
     },
     [conditions, onUpdate]
   );
@@ -116,7 +118,7 @@ const ConditionsTab: FC<Props> = ({
     (idx: number) => {
       const newConditions = conditions ? [...conditions] : [];
       newConditions.splice(idx, 1);
-      onUpdate(newConditions);
+      onUpdate?.(newConditions);
     },
     [conditions, onUpdate]
   );
@@ -128,7 +130,7 @@ const ConditionsTab: FC<Props> = ({
         ...newConditions[idx],
         applyValue: value
       };
-      onUpdate(newConditions);
+      onUpdate?.(newConditions);
     },
     [conditions, onUpdate]
   );
@@ -206,8 +208,16 @@ const ConditionsTab: FC<Props> = ({
     ]
   );
 
-  return (
-    <Wrapper>
+  return disabled ? (
+    <InfoWrapper>
+      <Typography size="body" color="weak">
+        {t(
+          "Condition is incompatible with the current system for this node or value."
+        )}
+      </Typography>
+    </InfoWrapper>
+  ) : (
+    <ConditionsWrapper>
       <IconButtonWrapper>
         <IconButton
           key="add"
@@ -225,17 +235,21 @@ const ConditionsTab: FC<Props> = ({
           onMoveEnd={handleMoveEnd}
         />
       )}
-    </Wrapper>
+    </ConditionsWrapper>
   );
 };
 
 export default ConditionsTab;
 
-const Wrapper = styled("div")(({ theme }) => ({
+const ConditionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest,
   paddingBottom: theme.spacing.smallest
+}));
+
+const InfoWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing.small
 }));
 
 const IconButtonWrapper = styled("div")(() => ({

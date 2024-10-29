@@ -1,7 +1,6 @@
-import Icon from "@reearth/beta/components/Icon";
 import useHooks from "@reearth/beta/features/Visualizer/Crust/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/beta/features/Visualizer/shared/hooks/useTimelineBlock";
-import { Popup } from "@reearth/beta/lib/reearth-ui";
+import { Icon, Popup } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -100,7 +99,7 @@ const TimelineEditor = ({
       <TimelineWrapper isMinimized={isMinimized}>
         <TimelineControl isMinimized={isMinimized}>
           <StyledIcon activeBlock={isActive}>
-            <Icon icon="timelineStoryBlockSolid" size={16} />
+            <Icon icon="clockFilled" size="normal" />
           </StyledIcon>
           <PlayControl isMinimized={isMinimized}>
             <PlayButton
@@ -108,7 +107,7 @@ const TimelineEditor = ({
               isPlaying={isPlayingReversed}
               onClick={toggleIsPlayingReversed}
             >
-              <Icon icon="timelinePlayLeft" size={14} />
+              <Icon icon="playLeftFilled" size={14} />
             </PlayButton>
             <PlayButton
               isPlaying={isPause}
@@ -126,7 +125,7 @@ const TimelineEditor = ({
               isPlaying={isPlaying}
               onClick={toggleIsPlaying}
             >
-              <Icon icon="timelinePlayRight" size={14} />
+              <Icon icon="playRightFilled" size={14} />
             </PlayButton>
           </PlayControl>
           <PopoverWrapper isMinimized={isMinimized}>
@@ -138,7 +137,7 @@ const TimelineEditor = ({
               trigger={
                 <InputWrapper onClick={handlePopOver}>
                   <Select>{selected && t(`${selected}`)}</Select>
-                  <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
+                  <ArrowIcon icon="caretDown" open={isOpen} />
                 </InputWrapper>
               }
             >
@@ -194,12 +193,13 @@ const TimelineEditor = ({
         </ScaleList>
         <IconWrapper
           onMouseDown={handleOnStartMove}
-          isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
             left: `${sliderPosition}%`
           }}
         >
-          <Icon icon="slider" />
+          <TimelineSliderIcon
+            isPlaying={isPlaying || isPlayingReversed || isPause}
+          />
         </IconWrapper>
       </TimelineSlider>
       <div />
@@ -333,6 +333,15 @@ const TimelineSlider = styled("div")(({ theme }) => ({
   overflow: "hidden"
 }));
 
+const TimelineSliderIcon = styled("div")<{ isPlaying: boolean }>(
+  ({ isPlaying, theme }) => ({
+    background: isPlaying ? theme.select.main : theme.bg[4],
+    height: 30,
+    width: 6,
+    borderRadius: theme.radius.smallest
+  })
+);
+
 const ScaleList = styled("div")(() => ({
   display: "flex",
   height: "38px",
@@ -343,14 +352,11 @@ const ScaleList = styled("div")(() => ({
   cursor: "pointer"
 }));
 
-const IconWrapper = styled("div")<{ isPlaying: boolean }>(
-  ({ isPlaying, theme }) => ({
-    position: "absolute",
-    top: "4px",
-    cursor: "pointer",
-    color: isPlaying ? theme.select.main : ""
-  })
-);
+const IconWrapper = styled("div")(() => ({
+  position: "absolute",
+  top: "4px",
+  cursor: "pointer"
+}));
 
 const Scale = styled("div")(({ theme }) => ({
   height: "5px",

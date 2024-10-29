@@ -2,6 +2,8 @@ import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
+import CursorStatus from "../CursorStatus";
+
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
 import LeftSidePanel from "./LeftSidePanel";
@@ -25,7 +27,7 @@ export const bottomTabsItems: Omit<TabItems[], "active"> = [
     icon: "puzzlePiece",
     disabled: true
   },
-  { id: "documentary", text: "Documentary", icon: "book", disabled: true },
+  { id: "documentation", text: "Documentation", icon: "book", disabled: true },
   { id: "community", text: "Community", icon: "usersFour", disabled: true },
   { id: "help", text: "Help & Support", icon: "question", disabled: true }
 ];
@@ -61,6 +63,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         workspaceId={workspaceId}
         currentWorkspace={currentWorkspace}
       />
+      <CursorStatus />
     </Wrapper>
   );
 };

@@ -18,7 +18,7 @@ type Props = {
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
   sceneId?: string;
-  page: "editor" | "settings";
+  page: "editor" | "settings" | "projectSettings";
   onSignOut: () => void;
   onWorkspaceChange?: (workspaceId: string) => void;
 };
@@ -41,14 +41,16 @@ const LeftSection: React.FC<Props> = ({
         icon: "setting",
         id: "setting",
         title: t("Project settings"),
-        path: currentProject?.id ? `/settings/project/${currentProject.id}` : ""
+        path: currentProject?.id
+          ? `/settings/projects/${currentProject.id}`
+          : ""
       },
       {
         icon: "plugin",
         id: "plugin",
         title: t("Plugin"),
         path: currentProject?.id
-          ? `/settings/project/${currentProject.id}/plugins`
+          ? `/settings/projects/${currentProject.id}/plugins`
           : ""
       }
     ],
@@ -70,7 +72,7 @@ const LeftSection: React.FC<Props> = ({
       >
         <IconButton icon="grid" appearance="simple" size="large" />
       </StyledLink>
-      {page !== "editor" && (
+      {page === "projectSettings" && (
         <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
           <IconButton icon="editor" appearance="simple" size="large" />
         </StyledLink>

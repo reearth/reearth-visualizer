@@ -1,4 +1,3 @@
-import { LayerAppearanceTypes } from "@reearth/core";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
 import { Color } from "cesium";
@@ -137,6 +136,11 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Array]: "array",
   [GQLValueType.Timeline]: "timeline"
 };
+export type Credit = {
+  description?: string;
+  img?: string;
+  link?: string;
+};
 
 export type ValueType = keyof ValueTypes;
 
@@ -251,22 +255,4 @@ export const typographyStyles = (t?: Typography) => {
 export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
   string: ""
-};
-
-export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
-  "3dtiles": {
-    show: true
-  },
-  resource: {
-    clampToGround: true
-  },
-  marker: {
-    heightReference: "clamp"
-  },
-  polygon: {
-    heightReference: "clamp"
-  },
-  polyline: {
-    clampToGround: true
-  }
 };

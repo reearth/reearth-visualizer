@@ -83,14 +83,24 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
-	var filter any = bson.M{
+	filter := bson.M{
 		"team": id.String(),
+		"$or": []bson.M{
+			{"deleted": false},
+			{"deleted": bson.M{"$exists": false}},
+		},
 	}
 
 	if uFilter.Keyword != nil {
-		filter = mongox.And(filter, "name", bson.M{
-			"$regex": primitive.Regex{Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword)), Options: "i"},
-		})
+		keywordFilter := bson.M{
+			"name": bson.M{
+				"$regex": primitive.Regex{
+					Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword)),
+					Options: "i",
+				},
+			},
+		}
+		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
 	}
 
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
@@ -104,6 +114,23 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	filter := bson.M{
 		"team":    id.String(),
 		"starred": true,
+		"$or": []bson.M{
+			{"deleted": false},
+			{"deleted": bson.M{"$exists": false}},
+		},
+	}
+
+	return r.find(ctx, filter)
+}
+
+func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if !r.f.CanRead(id) {
+		return nil, repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":    id.String(),
+		"deleted": true,
 	}
 
 	return r.find(ctx, filter)

@@ -155,14 +155,6 @@ extensions:
                 field: terrain
                 type: bool
                 value: true
-            - id: depthTestAgainstTerrain
-              type: bool
-              title: Hide objects under terrain
-              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
         - id: globeLighting
           collection: globe
           title: Globe Lighting
@@ -202,6 +194,13 @@ extensions:
                 field: globeAtmosphere
                 type: bool
                 value: true
+        - id: globeDepthTestAgainstTerrain
+          collection: globe
+          title: Hide objects under ground
+          fields:
+            - id: depthTestAgainstTerrain
+              type: bool
+              title: Enable
         - id: skyBox
           collection: sky
           title: Sky Box
@@ -2282,6 +2281,34 @@ extensions:
                   label: Desktop only
                 - key: mobile
                   label: Mobile only
+  - id: dataAttribution
+    type: widget
+    name: Data Attribution
+    description: A data Attribution widget.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: bottom
+    schema:
+      groups:
+        - id: default
+          title: Data Attribution
+          list: true
+          representativeField: description
+          fields:
+            - id: description
+              title: Credit Description
+              type: string
+              defaultValue: New Credit
+            - id: logo
+              type: url
+              title: Logo
+              ui: image
+            - id: creditUrl
+              type: url
+              title: Credit Url
   - id: story
     name: Story
     type: story

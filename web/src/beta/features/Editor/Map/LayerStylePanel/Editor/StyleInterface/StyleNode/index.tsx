@@ -20,10 +20,18 @@ type Props = {
   onDelete: (nodeId: string) => void;
 };
 
-const actions: { id: StyleValueType; icon: IconName }[] = [
-  { id: "value", icon: "textAa" },
-  { id: "expression", icon: "bracketsCurly" },
-  { id: "conditions", icon: "if" }
+const actions: {
+  id: StyleValueType;
+  icon: IconName;
+  match: StyleValueType[];
+}[] = [
+  { id: "value", icon: "textAa", match: ["value"] },
+  {
+    id: "expression",
+    icon: "bracketsCurly",
+    match: ["expression", "deepExpression"]
+  },
+  { id: "conditions", icon: "if", match: ["conditions", "deepConditions"] }
 ];
 
 const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
@@ -74,29 +82,6 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
     [node, onUpdate]
   );
 
-  const handleTabChange = useCallback(
-    (newTab: StyleValueType) => {
-      setActiveTab(newTab);
-      onUpdate({
-        ...node,
-        valueType: newTab,
-        ...(newTab === "conditions" && !node.conditions
-          ? {
-              conditions: [
-                {
-                  variable: "",
-                  operator: "===",
-                  value: "",
-                  applyValue: undefined
-                }
-              ]
-            }
-          : {})
-      });
-    },
-    [setActiveTab, onUpdate, node]
-  );
-
   return (
     <Wrapper>
       <HeaderWrapper>
@@ -108,12 +93,12 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
               icon={action.icon}
               size="small"
               iconColor={
-                activeTab === action.id
+                action.match.includes(activeTab)
                   ? theme.content.main
                   : theme.content.weaker
               }
               appearance="simple"
-              onClick={() => handleTabChange(action.id)}
+              onClick={() => setActiveTab(action.id)}
             />
           ))}
           {!!optionsMenu && (
@@ -146,16 +131,20 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
           <ExpressionTab
             expression={node.expression ?? ""}
             onUpdate={handleExpressionUpdate}
+            disabled={node.disableExpression}
           />
         )}
+        {activeTab === "deepExpression" && <ExpressionTab disabled />}
         {activeTab === "conditions" && (
           <ConditionsTab
             conditions={node.conditions}
             field={node.field}
             valueOptions={valueOptions}
             onUpdate={handleConditionsUpdate}
+            disabled={node.disableConditions}
           />
         )}
+        {activeTab === "deepConditions" && <ConditionsTab disabled />}
       </ContentWrapper>
     </Wrapper>
   );

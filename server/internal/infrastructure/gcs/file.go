@@ -109,7 +109,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 func (f *fileRepo) ReadPluginFile(ctx context.Context, pid id.PluginID, filename string) (io.ReadCloser, error) {
 	sn := sanitize.Path(filename)
 	if sn == "" {
-		return nil, rerror.ErrNotFound
+		return nil, gateway.ErrInvalidFile
 	}
 	return f.read(ctx, path.Join(gcsPluginBasePath, pid.String(), sn))
 }
@@ -133,7 +133,7 @@ func (f *fileRepo) RemovePlugin(ctx context.Context, pid id.PluginID) error {
 
 func (f *fileRepo) ReadBuiltSceneFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
-		return nil, rerror.ErrNotFound
+		return nil, gateway.ErrInvalidFile
 	}
 	return f.read(ctx, path.Join(gcsMapBasePath, sanitize.Path(name)+".json"))
 }
@@ -170,7 +170,7 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 func (f *fileRepo) ReadStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
-		return nil, rerror.ErrNotFound
+		return nil, gateway.ErrInvalidFile
 	}
 	return f.read(ctx, path.Join(gcsStoryBasePath, sanitize.Path(name)+".json"))
 }
@@ -208,9 +208,15 @@ func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
 func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
 	sn := sanitize.Path(name)
 	if sn == "" {
-		return nil, rerror.ErrNotFound
+		return nil, gateway.ErrInvalidFile
 	}
-	return f.read(ctx, path.Join(gcsExportBasePath, sn))
+	r, err := f.read(ctx, path.Join(gcsExportBasePath, sn))
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			r, err = f.read(ctx, path.Join(gcsExportBasePath, name))
+		}
+	}
+	return r, err
 }
 
 func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
