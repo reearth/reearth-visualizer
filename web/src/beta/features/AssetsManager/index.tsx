@@ -112,7 +112,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               {layout === "list" && (
                 <ListHeader size={size} width={contentWidth}>
                   <ThumbnailSpacer />
-                  <Col width={40}>
+                  <Col width={50}>
                     <Typography weight="bold" size="body">
                       {t("Name")}
                     </Typography>
@@ -122,12 +122,12 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                       {t("Uploaded At")}
                     </Typography>
                   </Col>
-                  <Col width={10}>
+                  <Col width={20}>
                     <Typography weight="bold" size="body">
                       {t("Size")}
                     </Typography>
                   </Col>
-                  <Col width={30}>
+                  <Col width={10}>
                     <Typography weight="bold" size="body">
                       {t("Path")}
                     </Typography>
@@ -269,6 +269,7 @@ const ThumbnailSpacer = styled("div")(() => ({
 
 const Col = styled("div")<{ width: number }>(({ width }) => ({
   width: `${width}%`,
+  minWidth: 0,
   flexGrow: 0,
   flexShrink: 0
 }));

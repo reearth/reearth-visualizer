@@ -38,7 +38,7 @@ const AssetListItem: FC<AssetItemProps> = ({
       navigator.clipboard.writeText(asset.url);
       setNotification({
         type: "success",
-        text: t("Asset url copied")
+        text: t("Asset URL copied to clipboard")
       });
     },
     [asset.url, setNotification, t]
@@ -60,7 +60,7 @@ const AssetListItem: FC<AssetItemProps> = ({
           size={20}
         />
       </Thumbnail>
-      <Col width={40}>
+      <Col width={50}>
         <AssetName>
           <Typography size="body">{asset.name}</Typography>
         </AssetName>
@@ -68,10 +68,10 @@ const AssetListItem: FC<AssetItemProps> = ({
       <Col width={20}>
         <Typography size="body">{formattedDate}</Typography>
       </Col>
-      <Col width={10}>
+      <Col width={20}>
         <Typography size="body">{formattedSize}</Typography>
       </Col>
-      <Col width={30} title={asset.url}>
+      <Col width={10} title={asset.url}>
         <IconButton
           appearance="simple"
           icon="copy"
@@ -117,7 +117,7 @@ const AssetName = styled("div")(() => ({
   wordBreak: "break-word",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  width: "50%",
+  width: "100%",
   flexGrow: 0,
   flexShrink: 0
 }));
@@ -127,9 +127,7 @@ const Col = styled("div")<{
 }>(({ width }) => ({
   width: `${width}%`,
   flexGrow: 0,
-  flexShrink: 0,
-  display: "flex",
-  alignItems: "center"
+  flexShrink: 0
 }));
 
 function formatBytes(bytes: number): string {
