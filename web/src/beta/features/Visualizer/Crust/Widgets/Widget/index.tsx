@@ -74,7 +74,7 @@ export type Context = {
   findPhotooverlayLayer?: (
     id: string
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
-  getCredits?: () => Credit[] | undefined
+  getCredits?: () => Credit[] | undefined;
 };
 
 export type ComponentProps<P = any> = Omit<Props, "widget" | "renderWidget"> & {
