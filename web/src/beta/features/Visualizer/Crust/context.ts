@@ -2,8 +2,7 @@ import { Camera } from "@reearth/beta/utils/value";
 import {
   TimelineManagerRef,
   TimelineCommitter,
-  ViewerProperty,
-  Credit
+  ViewerProperty
 } from "@reearth/core";
 import { RefObject, useMemo } from "react";
 
@@ -15,8 +14,7 @@ export const useWidgetContext = ({
   selectedLayerId,
   viewerProperty,
   initialCamera,
-  timelineManagerRef,
-  credits
+  timelineManagerRef
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -25,17 +23,9 @@ export const useWidgetContext = ({
         selectedLayerId,
         viewerProperty,
         initialCamera,
-        timelineManagerRef,
-        credits
+        timelineManagerRef
       }),
-    [
-      mapRef,
-      selectedLayerId,
-      viewerProperty,
-      initialCamera,
-      timelineManagerRef,
-      credits
-    ]
+    [mapRef, selectedLayerId, viewerProperty, initialCamera, timelineManagerRef]
   );
 
 export function widgetContextFromMapRef({
@@ -53,7 +43,6 @@ export function widgetContextFromMapRef({
   viewerProperty?: ViewerProperty;
   initialCamera?: Camera;
   timelineManagerRef?: TimelineManagerRef;
-  credits?: Credit[];
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
