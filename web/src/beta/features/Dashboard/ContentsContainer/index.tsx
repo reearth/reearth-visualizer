@@ -34,7 +34,7 @@ const ContentsContainer: FC<ContainerProps> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   flex: 1,
   background: theme.bg[0],
-  width: 0
+  minWidth: 760
 }));
 
 export default ContentsContainer;
