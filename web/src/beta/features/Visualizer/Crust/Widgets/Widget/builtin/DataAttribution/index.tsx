@@ -81,10 +81,9 @@ const DataLink = styled("div")(({ theme }) => ({
   cursor: "pointer",
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.regular,
+  fontWeight: theme.fonts.weight.bold,
   "&:hover": {
-    color: theme.select.main,
-    textDecoration: "underline"
+    color: theme.primary.strong
   }
 }));
 

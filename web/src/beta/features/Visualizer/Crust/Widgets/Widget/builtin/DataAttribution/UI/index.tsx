@@ -51,14 +51,22 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                     href={credit.link}
                     rel="noopener noreferrer"
                   >
-                    {credit.img && <StyledImage src={credit.img} />}
+                    {credit.img && (
+                      <LogoWrapper>
+                        <StyledImage src={credit.img} />
+                      </LogoWrapper>
+                    )}
                     {credit.description && (
                       <CreditText>{credit.description}</CreditText>
                     )}
                   </CreditItemLink>
                 ) : (
                   <CreditItem>
-                    {credit.img && <StyledImage src={credit.img} />}
+                    {credit.img && (
+                      <LogoWrapper>
+                        <StyledImage src={credit.img} />
+                      </LogoWrapper>
+                    )}
                     {credit.description && (
                       <CreditText>{credit.description}</CreditText>
                     )}
@@ -148,11 +156,20 @@ const CreditText = styled("span")(({ theme }) => ({
   display: "block"
 }));
 
-const StyledImage = styled("img")(({ theme }) => ({
-  maxHeight: 45,
+const LogoWrapper = styled("div")(({ theme }) => ({
+  position: "relative",
+  boxSizing: "border-box",
   background: theme.bg[3],
   padding: theme.spacing.micro,
-  verticalAlign: "middle"
+  borderRadius: theme.radius.small,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
+}));
+
+const StyledImage = styled("img")(() => ({
+  maxHeight: 30,
+  width: "auto"
 }));
 
 const Footer = styled("div")(() => ({
