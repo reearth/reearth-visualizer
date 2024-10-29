@@ -32,9 +32,6 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     handleProjectStarClick,
     handleProjectRemoveModal,
     handleProjectRemove
-    // exportModalVisible,
-    // closeExportModal,
-    // handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -101,17 +98,6 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           onProjectRemove={() => handleProjectRemove(project.id)}
         />
       )}
-      {/* MEMO: this modal will be used in the future */}
-      {/* <Modal visible={exportModalVisible} size="small">
-        <ModalPanel
-          title={t("Export Project")}
-          actions={actions}
-          onCancel={closeExportModal}
-          appearance="normal"
-        >
-          <ModalContent />
-        </ModalPanel>
-      </Modal> */}
     </>
   );
 };
@@ -185,8 +171,3 @@ const CardTitle = styled("div")(({ theme }) => ({
   textOverflow: "ellipsis",
   cursor: "pointer"
 }));
-
-// const ModalContent = styled("div")(() => ({
-//   width: "100%",
-//   height: "272px"
-// }));
