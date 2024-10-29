@@ -127,7 +127,9 @@ const Col = styled("div")<{
 }>(({ width }) => ({
   width: `${width}%`,
   flexGrow: 0,
-  flexShrink: 0
+  flexShrink: 0,
+  display: "flex",
+  alignItems: "center"
 }));
 
 function formatBytes(bytes: number): string {

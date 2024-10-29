@@ -269,7 +269,6 @@ const ThumbnailSpacer = styled("div")(() => ({
 
 const Col = styled("div")<{ width: number }>(({ width }) => ({
   width: `${width}%`,
-  minWidth: 0,
   flexGrow: 0,
   flexShrink: 0
 }));
