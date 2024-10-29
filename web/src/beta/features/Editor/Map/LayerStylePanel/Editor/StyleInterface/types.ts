@@ -12,7 +12,8 @@ export type AppearanceField =
   | "select"
   | "text"
   | "typography"
-  | "image";
+  | "image"
+  | "model";
 
 export type AppearanceNodes = Record<AppearanceType, AppearanceNode[]>;
 
