@@ -3,7 +3,6 @@ package builder
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strings"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 )
 
 func ParseSceneJSON(ctx context.Context, sceneJSONData map[string]interface{}) (*sceneJSON, error) {
@@ -171,7 +171,7 @@ func parsePropertyValue(ctx context.Context, value interface{}) (*property.Value
 				if fieldType == "url" {
 					urlVal, err := url.Parse(fieldVal)
 					if err != nil {
-						fmt.Printf("invalid url: %v\n", err.Error())
+						log.Infofc(ctx, "invalid url: %v\n", err.Error())
 						return nil, false
 					}
 					if urlVal.Host == "localhost:8080" || strings.HasSuffix(urlVal.Host, ".reearth.dev") || strings.HasSuffix(urlVal.Host, ".reearth.io") {
@@ -192,7 +192,7 @@ func parsePropertyValue(ctx context.Context, value interface{}) (*property.Value
 			}
 		}
 	}
-	fmt.Printf("property is unreadable %v\n", value)
+	log.Infofc(ctx, "property is unreadable %v\n", value)
 	return nil, false
 }
 
