@@ -12,7 +12,7 @@ export const modelNodes: AppearanceNode[] = [
   {
     id: "url",
     title: "Url",
-    field: "text",
+    field: "model",
     defaultValue: ""
   },
   {

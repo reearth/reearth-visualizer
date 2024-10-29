@@ -63,7 +63,7 @@ export const markerNodes: AppearanceNode[] = [
     id: "imageSize",
     title: "Image Size",
     field: "number",
-    defaultValue: 100
+    defaultValue: 1
   },
   {
     id: "imageSizeInMeters",
