@@ -313,7 +313,8 @@ const StyledLink = styled(Link)(() => ({
 
 const IconWrapper = styled("div")(() => ({
   flexGrow: 0,
-  flexShrink: 0
+  flexShrink: 0,
+  fontSize: 0
 }));
 const SubMenuHeader = styled("div")(({ theme }) => ({
   color: theme.content.weak,
