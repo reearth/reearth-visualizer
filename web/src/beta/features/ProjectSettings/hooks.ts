@@ -118,7 +118,15 @@ export default ({ projectId }: Props) => {
     if (status === "success") {
       navigate(`/dashboard/${workspaceId}/`);
     }
-  }, [client.cache, disabled, handleProjectPublish, navigate, projectId, useUpdateProjectRemove, workspaceId]);
+  }, [
+    client.cache,
+    disabled,
+    handleProjectPublish,
+    navigate,
+    projectId,
+    useUpdateProjectRemove,
+    workspaceId
+  ]);
 
   const handleUpdateProjectBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {

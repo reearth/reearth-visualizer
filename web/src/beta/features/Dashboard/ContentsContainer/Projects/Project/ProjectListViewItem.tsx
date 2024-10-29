@@ -72,7 +72,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             <StarButtonWrapper
               isStarred={isStarred ?? false}
               isHovered={isHovered ?? false}
-              isSelected={selectedProjectId === project.id}
             >
               <Button
                 iconButton
@@ -197,11 +196,10 @@ const ActionCol = styled("div")(() => ({
 }));
 
 const StarButtonWrapper = styled("div")<{
-  isSelected: boolean;
   isStarred: boolean;
   isHovered: boolean;
-}>(({ isSelected, isStarred, isHovered }) => ({
-  opacity: isSelected || isStarred || isHovered ? 1 : 0
+}>(({ isStarred, isHovered }) => ({
+  opacity: isStarred || isHovered ? 1 : 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({

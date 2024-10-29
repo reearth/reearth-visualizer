@@ -64,7 +64,6 @@ export default ({
     [engineRef]
   );
 
-
   const selectLayer = useCallback(
     (layerId: string | undefined) => {
       layersRef?.select(layerId);

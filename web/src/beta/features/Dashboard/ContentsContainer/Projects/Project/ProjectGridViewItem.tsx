@@ -55,7 +55,6 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           <StarButtonWrapper
             isStarred={isStarred ?? false}
             isHovered={isHovered ?? false}
-            isSelected={selectedProjectId === project.id}
           >
             <Button
               iconButton
@@ -130,14 +129,13 @@ const CardImage = styled("div")<{
 }));
 
 const StarButtonWrapper = styled("div")<{
-  isSelected: boolean;
   isStarred: boolean;
   isHovered: boolean;
-}>(({ isSelected, isStarred, isHovered }) => ({
+}>(({ isStarred, isHovered }) => ({
   position: "absolute",
   top: "10px",
   right: "10px",
-  opacity: isSelected || isStarred || isHovered ? 1 : 0
+  opacity: isStarred || isHovered ? 1 : 0
 }));
 
 const CardFooter = styled("div")(({ theme }) => ({
