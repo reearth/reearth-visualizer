@@ -241,7 +241,7 @@ export default function Crust({
     viewerProperty,
     initialCamera,
     selectedLayerId,
-    timelineManagerRef: mapRef?.current?.timeline
+    timelineManagerRef: mapRef?.current?.timeline,
   });
 
   const featuredInfobox = useMemo(() => {

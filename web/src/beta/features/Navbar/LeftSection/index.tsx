@@ -41,14 +41,16 @@ const LeftSection: React.FC<Props> = ({
         icon: "setting",
         id: "setting",
         title: t("Project settings"),
-        path: currentProject?.id ? `/settings/project/${currentProject.id}` : ""
+        path: currentProject?.id
+          ? `/settings/projects/${currentProject.id}`
+          : ""
       },
       {
         icon: "plugin",
         id: "plugin",
         title: t("Plugin"),
         path: currentProject?.id
-          ? `/settings/project/${currentProject.id}/plugins`
+          ? `/settings/projects/${currentProject.id}/plugins`
           : ""
       }
     ],

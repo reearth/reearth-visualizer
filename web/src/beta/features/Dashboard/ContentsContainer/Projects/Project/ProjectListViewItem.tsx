@@ -49,9 +49,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectStarClick,
     handleProjectRemoveModal,
     handleProjectRemove
-    // exportModalVisible,
-    // closeExportModal,
-    // handleExportProject
   } = useHooks({
     project,
     selectedProjectId,
@@ -130,17 +127,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           onProjectRemove={() => handleProjectRemove(project.id)}
         />
       )}
-      {/* MEMO: this modal will be used in the future */}
-      {/* <Modal visible={exportModalVisible} size="small">
-        <ModalPanel
-          title={t("Export Project")}
-          actions={actions}
-          onCancel={closeExportModal}
-          appearance="normal"
-        >
-          <ModalContent />
-        </ModalPanel>
-      </Modal> */}
     </>
   );
 };
@@ -230,8 +216,3 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis"
 }));
-
-// const ModalContent = styled("div")(() => ({
-//   width: "100%",
-//   height: "272px"
-// }));
