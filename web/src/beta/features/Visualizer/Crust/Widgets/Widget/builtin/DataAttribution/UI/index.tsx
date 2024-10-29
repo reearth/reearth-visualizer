@@ -1,9 +1,8 @@
-import { IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
+import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { Credit } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
-import { Link } from "react-router-dom";
 
 import { Theme, Widget } from "../../../types";
 
@@ -39,42 +38,33 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
           iconColor={theme?.weakIcon ? theme?.weakIcon : "#000"}
         />
       </IconWrapper>
-      <Title>{t("Data provided by:")}</Title>
+      <Title>{t("Data Provided by:")}</Title>
       <ContentWrapper>
         <Content>
           {processedCredits &&
             processedCredits.map((credit, i) => (
-              <ListItems key={i}>
+              <ListItem key={i}>
+                <ListMarker>•</ListMarker>
                 {credit.link ? (
-                  <StyledLink
+                  <CreditItemLink
                     target="_blank"
-                    to={`${credit.link}`}
+                    href={credit.link}
                     rel="noopener noreferrer"
                   >
-                    <Typography color="#000" size="body">
-                      {credit.description}
-                    </Typography>
-                    {credit.img && !credit.description && (
-                      <StyledImage
-                        src={credit.img}
-                        alt={t("Credit provider logo")}
-                      />
+                    {credit.img && <StyledImage src={credit.img} />}
+                    {credit.description && (
+                      <CreditText>{credit.description}</CreditText>
                     )}
-                  </StyledLink>
+                  </CreditItemLink>
                 ) : (
-                  <>
-                    <Typography color="#000" size="body">
-                      {credit.description}
-                    </Typography>
-                    {credit.img && !credit.description && (
-                      <StyledImage
-                        src={credit.img}
-                        alt={t("Credit provider logo")}
-                      />
+                  <CreditItem>
+                    {credit.img && <StyledImage src={credit.img} />}
+                    {credit.description && (
+                      <CreditText>{credit.description}</CreditText>
                     )}
-                  </>
+                  </CreditItem>
                 )}
-              </ListItems>
+              </ListItem>
             ))}
         </Content>
       </ContentWrapper>
@@ -116,30 +106,53 @@ const Title = styled("div")(({ theme }) => ({
 }));
 
 const Content = styled("ul")(({ theme }) => ({
-  padding: `0 ${theme.spacing.largest}px`,
+  width: "100%",
+  boxSizing: "border-box",
   margin: 0,
+  padding: 0,
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.micro
 }));
 
-const ListItems = styled("li")(() => ({
-  listStyleType: "disc",
-  "::marker": {
-    fontSize: "10px"
-  }
+const ListItem = styled("li")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.normal
 }));
 
-const StyledLink = styled(Link)(() => ({
-  color: "#000"
+const ListMarker = styled("div")(() => ({
+  color: "#000",
+  fontSize: fonts.sizes.body,
+  width: 5
+}));
+
+const CreditItem = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  gap: theme.spacing.small
+}));
+
+const CreditItemLink = styled("a")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  gap: theme.spacing.small
+}));
+
+const CreditText = styled("span")(({ theme }) => ({
+  color: "#000",
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  display: "block"
 }));
 
 const StyledImage = styled("img")(({ theme }) => ({
   maxHeight: 45,
-  maxWidth: 40,
-  display: "flex",
   background: theme.bg[3],
-  padding: theme.spacing.micro
+  padding: theme.spacing.micro,
+  verticalAlign: "middle"
 }));
 
 const Footer = styled("div")(() => ({

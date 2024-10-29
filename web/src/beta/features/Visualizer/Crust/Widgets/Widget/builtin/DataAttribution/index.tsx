@@ -1,5 +1,5 @@
-import { useVisualizerCredits } from "@reearth/beta/features/Visualizer/atoms";
 import { Modal } from "@reearth/beta/lib/reearth-ui";
+import { Credit } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useCallback, useEffect, useState } from "react";
@@ -20,18 +20,29 @@ const DataAttribution = ({
   const handleModalOpen = useCallback(() => setVisible(true), []);
   const handleModalClose = useCallback(() => setVisible(false), []);
 
-  const [visualizerCredits, setVisualizerCredits] = useVisualizerCredits();
+  const [visualizerCredits, setVisualizerCredits] = useState<Credit[]>([]);
+
   useEffect(() => {
-    const updateCredits = () => {
+    let intervalId: NodeJS.Timeout | null = null;
+    if (visible) {
       const credits = getCredits?.();
       if (credits) {
         setVisualizerCredits(credits);
       }
+
+      intervalId = setInterval(() => {
+        const credits = getCredits?.();
+        if (credits) {
+          setVisualizerCredits(credits);
+          console.log("update", credits);
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
     };
-    updateCredits();
-    const intervalId = setInterval(updateCredits, 3000);
-    return () => clearInterval(intervalId);
-  }, [getCredits, setVisualizerCredits]);
+  }, [getCredits, visible]);
 
   return (
     <Wrapper>
