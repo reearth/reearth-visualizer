@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -877,6 +878,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 						} else {
 							urlVal.Scheme = "https"
 						}
+						fmt.Printf("==== currentHost %s \n", currentHost)
 						data["url"] = urlVal.String()
 					}
 				}
