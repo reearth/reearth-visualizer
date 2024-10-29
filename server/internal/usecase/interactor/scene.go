@@ -642,12 +642,10 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		c := actualLayer.Config()
 		if c != nil {
 			actualConfig := *c
-			data, ok := actualConfig["data"].(map[string]any)
-			if ok {
+			if data, ok := actualConfig["data"].(map[string]any); ok {
 				u, ok := data["url"].(*url.URL)
 				if ok {
-					isReearth, u := convertReearthEnv(ctx, u)
-					if isReearth {
+					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
 							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
 						}
@@ -681,8 +679,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					if !ok {
 						continue
 					}
-					isReearth, u := convertReearthEnv(ctx, u)
-					if isReearth {
+					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
 							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
 						}
@@ -711,8 +708,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					if !ok {
 						continue
 					}
-					isReearth, u := convertReearthEnv(ctx, u)
-					if isReearth {
+					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
 							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
 						}

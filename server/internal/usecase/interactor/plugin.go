@@ -95,8 +95,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				return nil, nil, err
 			}
 
-			_, err = io.Copy(zipEntry, stream)
-			if err != nil {
+			if _, err = io.Copy(zipEntry, stream); err != nil {
 				_ = stream.Close()
 				return nil, nil, err
 			}
