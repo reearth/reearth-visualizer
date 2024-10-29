@@ -23,12 +23,12 @@ func TestCallExportProject(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e, "test")
+	pID := createProjectWithExternalImage(e, "test")
+
 	_, _, sID := createScene(e, pID)
 	createStory(e, sID, "test", 0)
 
-	fileName := "project_data.zip"
-	expor(t, e, pID, fileName)
+	fileName := exporProject(t, e, pID)
 
 	defer func() {
 		err := os.Remove(fileName)
@@ -37,7 +37,41 @@ func TestCallExportProject(t *testing.T) {
 
 }
 
-func expor(t *testing.T, e *httpexpect.Expect, p string, fileName string) {
+func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateProject",
+		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
+			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport} ) { 
+				project { 
+					id
+					__typename 
+				} 
+				__typename 
+			}
+		}`,
+		Variables: map[string]any{
+			"name":        name,
+			"description": "abc",
+			"imageUrl":    "https://test.com/aaaaa.jpg",
+			"teamId":      wID.String(),
+			"visualizer":  "CESIUM",
+			"coreSupport": true,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	return res.Path("$.data.createProject.project.id").Raw().(string)
+}
+
+func exporProject(t *testing.T, e *httpexpect.Expect, p string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "ExportProject",
 		Query:         "mutation ExportProject($projectId: ID!) { exportProject(input: {projectId: $projectId}) { projectDataPath __typename } }",
@@ -64,6 +98,9 @@ func expor(t *testing.T, e *httpexpect.Expect, p string, fileName string) {
 		Expect().
 		Status(http.StatusOK).
 		Body().Raw()
+
+	fileName := "project_data.zip"
 	err := os.WriteFile(fileName, []byte(downloadResponse), os.ModePerm)
 	assert.Nil(t, err)
+	return fileName
 }
