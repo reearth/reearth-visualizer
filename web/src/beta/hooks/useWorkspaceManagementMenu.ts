@@ -1,3 +1,4 @@
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +11,7 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
 
   const workspaceManagementMenu: PopupMenuItem[] = useMemo(
     () =>
-      workspaceId
+      workspaceId && !config()?.disableWorkspaceManagement
         ? [
             {
               id: "workspaceSettings",

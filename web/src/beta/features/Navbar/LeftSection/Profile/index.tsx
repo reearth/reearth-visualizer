@@ -1,6 +1,5 @@
 import useWorkspaceManagementMenu from "@reearth/beta/hooks/useWorkspaceManagementMenu";
 import { PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
-import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -62,7 +61,7 @@ const HeaderProfile: React.FC<Props> = ({
         }),
         title: t("Switch workspace")
       },
-      ...(config()?.disableWorkspaceManagement ? [] : workspaceManagementMenu),
+      ...workspaceManagementMenu,
       {
         icon: "exit",
         id: "logOut",

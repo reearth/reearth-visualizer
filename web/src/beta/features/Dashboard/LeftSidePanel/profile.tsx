@@ -5,7 +5,6 @@ import {
   PopupMenuItem,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
-import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -65,7 +64,7 @@ export const Profile: FC<ProfileProp> = ({
           };
         })
       },
-      ...(config()?.disableWorkspaceManagement ? [] : workspaceManagementMenu),
+      ...workspaceManagementMenu,
       {
         id: "signOut",
         title: t("Log Out"),
