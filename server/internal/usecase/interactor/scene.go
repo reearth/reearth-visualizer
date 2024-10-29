@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -24,7 +25,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -644,11 +644,13 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			actualConfig := *c
 			data, ok := actualConfig["data"].(map[string]any)
 			if ok {
-				url, ok := data["url"].(string)
+				u, ok := data["url"].(*url.URL)
 				if ok {
-					if err := i.addZipAsset(ctx, zipWriter, url); err != nil {
-						log.Infofc(ctx, "Skip addZipAsset :", err.Error())
-						// return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+					isReearth, u := convertReearthEnv(ctx, u)
+					if isReearth {
+						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+						}
 					}
 				}
 			}
@@ -679,9 +681,11 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					if !ok {
 						continue
 					}
-					if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-						log.Infofc(ctx, "Skip addZipAsset :", err.Error())
-						// return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+					isReearth, u := convertReearthEnv(ctx, u)
+					if isReearth {
+						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+						}
 					}
 				}
 			}
@@ -707,9 +711,11 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					if !ok {
 						continue
 					}
-					if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-						log.Infofc(ctx, "Skip addZipAsset :", err.Error())
-						// return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+					isReearth, u := convertReearthEnv(ctx, u)
+					if isReearth {
+						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+							return nil, nil, errors.New("Fail addZipAsset :" + err.Error())
+						}
 					}
 				}
 			}
@@ -720,6 +726,22 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	res["scene"] = sceneJSON
 
 	return sce, res, nil
+}
+
+func convertReearthEnv(ctx context.Context, u *url.URL) (bool, *url.URL) {
+	if u.Host == "localhost:8080" || strings.HasSuffix(u.Host, ".reearth.dev") || strings.HasSuffix(u.Host, ".reearth.io") {
+		currentHost := adapter.CurrentHost(ctx)
+		currentHost = strings.TrimPrefix(currentHost, "https://")
+		currentHost = strings.TrimPrefix(currentHost, "http://")
+		if currentHost == "localhost:8080" {
+			u.Scheme = "http"
+		} else {
+			u.Scheme = "https"
+		}
+		u.Host = currentHost
+		return true, u
+	}
+	return false, nil
 }
 
 func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
