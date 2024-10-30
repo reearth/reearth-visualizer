@@ -57,6 +57,14 @@ const fieldComponents = {
       assetsTypes={IMAGE_TYPES}
       onChange={props.onUpdate}
     />
+  ),
+  model: (props: FieldProps) => (
+    <AssetField
+      inputMethod="asset"
+      value={props.value as string}
+      assetsTypes={["glb"]}
+      onChange={props.onUpdate}
+    />
   )
 };
 
