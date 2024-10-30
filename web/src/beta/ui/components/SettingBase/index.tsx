@@ -65,18 +65,18 @@ const Wrapper = styled("div")(({ theme }) => ({
     boxSizing: "border-box"
   },
   ["* ::-webkit-scrollbar"]: {
-    width: "8px"
+    width: theme.scrollBar.width
   },
   ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: theme.radius.large
+    background: theme.scrollBar.scrollbarTrack.background,
+    borderRadius: theme.scrollBar.scrollbarTrack.radius
   },
   ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: theme.radius.small
+    background: theme.scrollBar.scrollbarThumb.background,
+    borderRadius: theme.scrollBar.scrollbarThumb.radius
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
+    background: theme.scrollBar.scrollbarThumbHover.background
   }
 }));
 

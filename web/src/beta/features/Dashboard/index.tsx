@@ -75,18 +75,18 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
   width: "100%",
   ["* ::-webkit-scrollbar"]: {
-    width: "8px"
+    width: theme.scrollBar.width
   },
   ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
+    background: theme.scrollBar.scrollbarTrack.background,
+    borderRadius: theme.scrollBar.scrollbarTrack.radius
   },
   ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
+    background: theme.scrollBar.scrollbarThumb.background,
+    borderRadius: theme.scrollBar.scrollbarThumb.radius
   },
   ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
+    background: theme.scrollBar.scrollbarThumbHover.background
   },
   overflowX: "hidden",
   minWidth: "630px",

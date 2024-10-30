@@ -1,6 +1,7 @@
 import fonts from "./fonts";
 import iconSizes, { IconsSizeType } from "./icons";
 import radiusSizes, { RadiusSizesType } from "./radius";
+import scrollBar, { ScrollBar } from "./scrollBar";
 import shadow, { ShadowType } from "./shadow";
 import spacingSizes, { SpacingSizesType } from "./spacing";
 import zIndexes, { ZIndex } from "./zIndex";
@@ -14,6 +15,7 @@ export type Common = {
   radius: RadiusSizesType;
   shadow: ShadowType;
   fonts: typeof fonts;
+  scrollBar: ScrollBar;
 };
 
 const common: Common = {
@@ -22,7 +24,8 @@ const common: Common = {
   icon: iconSizes,
   radius: radiusSizes,
   shadow,
-  fonts
+  fonts,
+  scrollBar
 };
 
 export default common;

@@ -269,19 +269,19 @@ const PopupMenuWrapper = styled("div")<{
   boxSizing: "border-box",
   margin: nested ? "-7px 0 0 2px" : "inherit",
   ["::-webkit-scrollbar"]: {
-    width: "8px",
+    width: theme.scrollBar.width,
     height: "8px"
   },
   ["::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
+    background: theme.scrollBar.scrollbarTrack.background,
+    borderRadius: theme.scrollBar.scrollbarTrack.radius
   },
   ["::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
+    background: theme.scrollBar.scrollbarThumb.background,
+    borderRadius: theme.scrollBar.scrollbarThumb.radius
   },
   ["::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
+    background: theme.scrollBar.scrollbarThumbHover.background
   }
 }));
 
