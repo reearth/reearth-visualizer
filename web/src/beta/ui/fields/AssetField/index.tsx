@@ -3,7 +3,8 @@ import {
   AcceptedAssetsTypes,
   type FileType,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES
+  IMAGE_FILE_TYPES,
+  MODEL_FILE_TYPES
 } from "@reearth/beta/features/AssetsManager/constants";
 import { TextInput, Button } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -45,7 +46,7 @@ const AssetField: FC<AssetFieldProps> = ({
         onChange?.(url, name);
       } else if (
         inputMethod === "asset" &&
-        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes(
+        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES, ...MODEL_FILE_TYPES].includes(
           (url.split(".").pop() as FileType) ?? ""
         )
       ) {

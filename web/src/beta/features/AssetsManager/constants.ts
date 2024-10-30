@@ -14,8 +14,6 @@ export const GIS_FILE_TYPES = [
   "geojson",
   "topojson",
   "json",
-  "glb",
-  "gltf",
   "csv",
   "shp",
   "kml",
@@ -38,7 +36,8 @@ export const GIS_FILE_TYPE_ACCEPT_STRING = "." + GIS_FILE_TYPES.join(",");
 export const MODEL_FILE_TYPE_ACCEPT_STRING = "." + MODEL_FILE_TYPES.join(",");
 
 export const GENERAL_FILE_TYPE_ACCEPT_STRING =
-  "." + [...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].join(",.");
+  "." +
+  [...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES, ...MODEL_FILE_TYPES].join(",.");
 
 export const IMAGE_TYPES = ["image" as const];
 export const FILE_TYPES = ["file" as const];
