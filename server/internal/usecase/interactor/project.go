@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -616,6 +617,17 @@ func (i *Project) ImportProject(ctx context.Context, teamID string, projectData 
 	}
 
 	if p.ImageURL != nil {
+		if p.ImageURL.Host == "localhost:8080" || strings.HasSuffix(p.ImageURL.Host, ".reearth.dev") || strings.HasSuffix(p.ImageURL.Host, ".reearth.io") {
+			currentHost := adapter.CurrentHost(ctx)
+			currentHost = strings.TrimPrefix(currentHost, "https://")
+			currentHost = strings.TrimPrefix(currentHost, "http://")
+			if currentHost == "localhost:8080" {
+				p.ImageURL.Scheme = "http"
+			} else {
+				p.ImageURL.Scheme = "https"
+			}
+			p.ImageURL.Host = currentHost
+		}
 		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
 	}
 
