@@ -44,11 +44,19 @@ const AssetField: FC<AssetFieldProps> = ({
       if (!url) {
         setCurrentValue(url);
         onChange?.(url, name);
-      } else if (
+        return;
+      }
+
+      const extension = (url.split(".").pop() ?? "").toLowerCase();
+      const acceptedTypes = [
+        ...IMAGE_FILE_TYPES,
+        ...GIS_FILE_TYPES,
+        ...MODEL_FILE_TYPES
+      ];
+
+      if (
         inputMethod === "asset" &&
-        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES, ...MODEL_FILE_TYPES].includes(
-          (url.split(".").pop() as FileType) ?? ""
-        )
+        !acceptedTypes.includes(extension as FileType)
       ) {
         setNotification({
           type: "error",
