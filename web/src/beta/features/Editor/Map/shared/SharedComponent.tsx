@@ -40,7 +40,7 @@ export const Label = styled("div")(({ theme }) => ({
 
 const Description = styled("div")(({ theme }) => ({
   color: theme.content.weak,
-  fontSize: theme.fonts.sizes.body,
+  fontSize: theme.fonts.sizes.footnote,
   fontWeight: theme.fonts.weight.regular
 }));
 

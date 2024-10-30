@@ -105,7 +105,11 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           </InputGroup>
         )}
         <Warning>
-          <Icon icon="lightBulb" color={theme.warning.main} size="large" />
+          <IconWrapper
+            icon="lightBulb"
+            color={theme.warning.main}
+            size="normal"
+          />
           <TextWrapper>
             {t(
               "Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below."
@@ -155,6 +159,11 @@ const TextWrapper = styled("div")(({ theme }) => ({
   color: theme.warning.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular
+}));
+
+const IconWrapper = styled(Icon)(() => ({
+  flexGrow: 0,
+  flexShrink: 0
 }));
 
 const CoordinateWrapper = styled("div")(({ theme }) => ({

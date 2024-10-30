@@ -6,53 +6,50 @@ import {
   ContentWrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
-  Selector,
   RadioGroup,
-  Switcher,
   Button,
   TextInput,
-  TextArea
+  TextArea,
+  Icon
 } from "@reearth/beta/lib/reearth-ui";
 import { AssetField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
 import { DataProps } from "..";
 
 import useHooks from "./hooks";
 
-const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+const KML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
   const {
     value,
-    fileFormat,
     assetsTypes,
     sourceType,
     dataSourceTypeOptions,
-    fileFormatOptions,
-    prioritizePerformance,
     handleValueChange,
     handleDataSourceTypeChange,
-    handleFileFormatChange,
-    handleSubmit,
-    setPrioritizePerformance,
-    isValidExtension
+    handleSubmit
   } = useHooks({ sceneId, onSubmit, onClose });
 
+  const theme = useTheme();
   return (
     <Wrapper>
       <ContentWrapper>
-        <InputGroup
-          label={t("File Format")}
-          description={t("File format of the data source you want to add.")}
-        >
-          <Selector
-            value={fileFormat}
-            options={fileFormatOptions}
-            onChange={handleFileFormatChange}
+        <Warning>
+          <IconWrapper
+            icon="lightBulb"
+            color={theme.warning.main}
+            size="normal"
           />
-        </InputGroup>
+          <TextWrapper>
+            {t(
+              "The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
+            )}
+          </TextWrapper>
+        </Warning>
         <InputGroup label={t("Source Type")}>
           <RadioGroup
             value={sourceType}
@@ -95,14 +92,6 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             </InputsWrapper>
           </InputGroup>
         )}
-        {fileFormat === "geojson" && (
-          <InputGroup label={t("Prioritize Performance")}>
-            <Switcher
-              value={prioritizePerformance}
-              onChange={(v) => setPrioritizePerformance(v)}
-            />
-          </InputGroup>
-        )}
       </ContentWrapper>
       <SubmitWrapper>
         <Button
@@ -110,11 +99,10 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           appearance="primary"
           onClick={handleSubmit}
           disabled={
-            ((sourceType === "url" ||
+            (sourceType === "url" ||
               sourceType === "value" ||
               sourceType === "local") &&
-              !value) ||
-            !isValidExtension()
+            !value
           }
         />
       </SubmitWrapper>
@@ -122,4 +110,21 @@ const CommonAsset: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   );
 };
 
-export default CommonAsset;
+const Warning = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center"
+}));
+
+const IconWrapper = styled(Icon)(() => ({
+  flexGrow: 0,
+  flexShrink: 0
+}));
+
+const TextWrapper = styled("div")(({ theme }) => ({
+  color: theme.warning.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular
+}));
+
+export default KML;

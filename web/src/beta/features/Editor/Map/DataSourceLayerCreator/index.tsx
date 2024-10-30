@@ -5,8 +5,10 @@ import { FC, ReactNode } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
-import CommonAsset from "./Common";
 import CSV from "./CSV";
+import CZML from "./CZML";
+import GeoJSON from "./GeoJSON";
+import KML from "./KML";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
 import WmsTiles from "./WmsTiles";
@@ -39,10 +41,10 @@ const DataSourceLayerCreator: FC<DataProps> = ({
 
   const tabsItem: TabItem[] = [
     {
-      id: "asset",
-      name: t("Common"),
+      id: "geojson",
+      name: t("GeoJSON"),
       children: (
-        <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+        <GeoJSON sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
     },
     {
@@ -70,6 +72,16 @@ const DataSourceLayerCreator: FC<DataProps> = ({
       children: (
         <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
+    },
+    {
+      id: "czml",
+      name: t("CZML"),
+      children: <CZML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+    },
+    {
+      id: "kml",
+      name: t("KML"),
+      children: <KML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     }
   ];
 
