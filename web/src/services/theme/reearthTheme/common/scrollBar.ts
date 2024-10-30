@@ -1,20 +1,38 @@
 import { rgba } from "@carbon/colors";
 
-const scrollBar = {
-  width: 8,
-  scrollbarTrack: {
+export const universalScrollBar = {
+  ["* ::-webkit-scrollbar"]: {
+    width: 8
+  },
+  ["* ::-webkit-scrollbar-track"]: {
     background: rgba("#000000", 0.15),
-    radius: 10
+    borderRadius: 10
   },
-  scrollbarThumb: {
+  ["* ::-webkit-scrollbar-thumb"]: {
     background: rgba("#ffffff", 0.1),
-    radius: 4
+    borderRadius: 4
   },
-  scrollbarThumbHover: {
+  ["* ::-webkit-scrollbar-thumb:hover"]: {
     background: rgba("#ffffff", 0.15)
   }
 };
 
-export default scrollBar;
+export const scrollBar = {
+  ["::-webkit-scrollbar"]: {
+    width: 8
+  },
+  ["::-webkit-scrollbar-track"]: {
+    background: rgba("#000000", 0.15),
+    borderRadius: 10
+  },
+  ["::-webkit-scrollbar-thumb"]: {
+    background: rgba("#ffffff", 0.1),
+    borderRadius: 4
+  },
+  ["::-webkit-scrollbar-thumb:hover"]: {
+    background: rgba("#ffffff", 0.15)
+  }
+};
 
 export type ScrollBar = typeof scrollBar;
+export type UniversalScrollBar = typeof universalScrollBar;

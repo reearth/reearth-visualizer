@@ -82,20 +82,7 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ["* ::-webkit-scrollbar"]: {
-    width: theme.scrollBar.width
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.scrollBar.scrollbarTrack.background,
-    borderRadius: theme.scrollBar.scrollbarTrack.radius
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.scrollBar.scrollbarThumb.background,
-    borderRadius: theme.scrollBar.scrollbarThumb.radius
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.scrollBar.scrollbarThumbHover.background
-  }
+  ...theme.universalScrollBar
 }));
 
 export const LinkWrapper = styled(Link)(({ theme }) => ({

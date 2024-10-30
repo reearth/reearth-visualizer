@@ -267,20 +267,7 @@ const DropDownWrapper = styled("div")<{
   border: `1px solid ${theme.outline.weaker}`,
   maxHeight: maxHeight ? `${maxHeight}px` : "",
   overflowY: maxHeight ? "auto" : "hidden",
-  ["::-webkit-scrollbar"]: {
-    width: theme.scrollBar.width
-  },
-  ["::-webkit-scrollbar-track"]: {
-    background: theme.scrollBar.scrollbarTrack.background,
-    borderRadius: theme.scrollBar.scrollbarTrack.radius
-  },
-  ["::-webkit-scrollbar-thumb"]: {
-    background: theme.scrollBar.scrollbarThumb.background,
-    borderRadius: theme.scrollBar.scrollbarThumb.radius
-  },
-  ["::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.scrollBar.scrollbarThumbHover.background
-  }
+  ...theme.scrollBar
 }));
 
 const DropDownItem = styled("div")<{

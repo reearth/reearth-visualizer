@@ -61,20 +61,7 @@ const DataAttribution = ({
 
 const Wrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  ["* ::-webkit-scrollbar"]: {
-    width: theme.scrollBar.width
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.scrollBar.scrollbarTrack.background,
-    borderRadius: theme.scrollBar.scrollbarTrack.radius
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.scrollBar.scrollbarThumb.background,
-    borderRadius: theme.scrollBar.scrollbarThumb.radius
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.scrollBar.scrollbarThumbHover.background
-  }
+  ...theme.universalScrollBar
 }));
 
 const DataLink = styled("div")(({ theme }) => ({
