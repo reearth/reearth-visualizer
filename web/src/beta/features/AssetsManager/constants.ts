@@ -13,6 +13,7 @@ export const GIS_FILE_TYPES = [
   "topojson",
   "json",
   "glb",
+  "gltf",
   "csv",
   "shp",
   "kml",

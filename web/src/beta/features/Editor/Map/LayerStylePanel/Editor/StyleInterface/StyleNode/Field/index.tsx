@@ -62,7 +62,7 @@ const fieldComponents = {
     <AssetField
       inputMethod="asset"
       value={props.value as string}
-      assetsTypes={["glb"]}
+      assetsTypes={["glb", "gltf"]}
       onChange={props.onUpdate}
     />
   )
