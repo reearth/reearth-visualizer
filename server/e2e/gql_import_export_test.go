@@ -79,44 +79,18 @@ func TestCallImportProject(t *testing.T) {
 	}, true, baseSeeder)
 
 	filePath := "test.zip"
-	file, err := os.Open(filePath)
-	if err != nil {
-		t.Fatalf("failed to open file: %v", err)
-	}
-	defer func() {
-		if cerr := file.Close(); cerr != nil && err == nil {
-			err = cerr
-		}
-	}()
-	requestBody := map[string]interface{}{
-		"operationName": "ImportProject",
-		"variables": map[string]interface{}{
-			"teamId": wID.String(),
-			"file":   nil,
-		},
-		"query": `mutation ImportProject($teamId: ID!, $file: Upload!) {  
-            importProject(input: {teamId: $teamId, file: $file}) {    
-                projectData    
-                __typename  
-            } 
-        }`,
-	}
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithMultipart().
-		WithFormField("operations", toJSONString(requestBody)).
-		WithFormField("map", `{"0": ["variables.file"]}`).
-		WithFile("0", filePath).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
 
-	r.Value("data").Object().Value("importProject").Object().Value("projectData").NotNull()
-	// projectData := r.Value("data").Object().Value("importProject").Object().Value("projectData").Raw()
-	// fmt.Println(toJSONString(projectData))
+	r := importProject(t, e, filePath)
+
+	r.Value("project").NotNull()
+	r.Value("plugins").Array()
+	r.Value("schema").Array()
+	r.Value("scene").NotNull()
+	r.Value("nlsLayer").Array()
+	r.Value("style").Array()
+	r.Value("story").NotNull()
+
+	// fmt.Println(toJSONString(r.Raw()))
 }
 
 func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
@@ -181,6 +155,46 @@ func exporProject(t *testing.T, e *httpexpect.Expect, p string) string {
 	err := os.WriteFile(fileName, []byte(downloadResponse), os.ModePerm)
 	assert.Nil(t, err)
 	return fileName
+}
+
+func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexpect.Object {
+	file, err := os.Open(filePath)
+	if err != nil {
+		t.Fatalf("failed to open file: %v", err)
+	}
+	defer func() {
+		if cerr := file.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
+	requestBody := map[string]interface{}{
+		"operationName": "ImportProject",
+		"variables": map[string]interface{}{
+			"teamId": wID.String(),
+			"file":   nil,
+		},
+		"query": `mutation ImportProject($teamId: ID!, $file: Upload!) {  
+            importProject(input: {teamId: $teamId, file: $file}) {    
+                projectData    
+                __typename  
+            } 
+        }`,
+	}
+	r := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithMultipart().
+		WithFormField("operations", toJSONString(requestBody)).
+		WithFormField("map", `{"0": ["variables.file"]}`).
+		WithFile("0", filePath).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object()
+	projectData := r.Value("data").Object().Value("importProject").Object().Value("projectData")
+	projectData.NotNull()
+	return projectData.Object()
 }
 
 func toJSONString(v interface{}) string {
