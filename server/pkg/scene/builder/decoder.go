@@ -167,9 +167,9 @@ func AddItemFromPropertyJSON(ctx context.Context, prop *property.Property, ps *p
 func parsePropertyValue(ctx context.Context, value interface{}) (*property.Value, bool) {
 	if fieldObj, ok := value.(map[string]interface{}); ok {
 		if fieldType, ok := fieldObj["type"].(string); ok {
-			if fieldVal, ok := fieldObj["value"].(string); ok {
+			if fieldVal, ok := fieldObj["value"]; ok {
 				if fieldType == "url" {
-					urlVal, err := url.Parse(fieldVal)
+					urlVal, err := url.Parse(fieldVal.(string))
 					if err != nil {
 						log.Infofc(ctx, "invalid url: %v\n", err.Error())
 						return nil, false
