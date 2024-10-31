@@ -1,6 +1,6 @@
 import NotFound from "@reearth/beta/features/NotFound";
 import ProjectSettings, {
-  isProjectSettingTab
+  ProjectSettingsTab
 } from "@reearth/beta/features/ProjectSettings";
 import Page from "@reearth/beta/pages/Page";
 import { FC, useMemo } from "react";
@@ -13,9 +13,15 @@ const ProjectSettingsPage: FC = () => {
     subId?: string;
   }>();
 
-  const namedTab = useMemo(() => tab ?? "general", [tab]);
+  const namedTab: ProjectSettingsTab = useMemo(
+    () =>
+      tab === "public" || tab === "story" || tab === "plugins"
+        ? tab
+        : "general",
+    [tab]
+  );
 
-  return !projectId || !isProjectSettingTab(namedTab) ? (
+  return !projectId ? (
     <NotFound />
   ) : (
     <Page

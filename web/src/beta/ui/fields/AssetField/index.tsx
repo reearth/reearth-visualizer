@@ -3,7 +3,8 @@ import {
   AcceptedAssetsTypes,
   type FileType,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES
+  IMAGE_FILE_TYPES,
+  MODEL_FILE_TYPES
 } from "@reearth/beta/features/AssetsManager/constants";
 import { TextInput, Button } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -43,11 +44,19 @@ const AssetField: FC<AssetFieldProps> = ({
       if (!url) {
         setCurrentValue(url);
         onChange?.(url, name);
-      } else if (
+        return;
+      }
+
+      const extension = (url.split(".").pop() ?? "").toLowerCase();
+      const acceptedTypes = [
+        ...IMAGE_FILE_TYPES,
+        ...GIS_FILE_TYPES,
+        ...MODEL_FILE_TYPES
+      ];
+
+      if (
         inputMethod === "asset" &&
-        ![...IMAGE_FILE_TYPES, ...GIS_FILE_TYPES].includes(
-          (url.split(".").pop() as FileType) ?? ""
-        )
+        !acceptedTypes.includes(extension as FileType)
       ) {
         setNotification({
           type: "error",
@@ -89,14 +98,14 @@ const AssetField: FC<AssetFieldProps> = ({
             <Button
               icon={"image"}
               size="small"
-              title="Choose"
+              title={t("Choose")}
               onClick={handleClick}
               extendWidth
             />
             <Button
               icon={"uploadSimple"}
               size="small"
-              title="Upload"
+              title={t("Upload")}
               onClick={handleFileUpload}
               extendWidth
             />
