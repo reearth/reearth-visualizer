@@ -395,7 +395,7 @@ Successfully updated the layer!: レイヤーの更新に成功しました！
 Failed to delete the feature.: フィーチャーの削除に失敗しました。
 Successfully deleted the feature!: フィーチャーの削除に成功しました！
 Failed to create block.: ブロックの作成に失敗しました。
-Successfullly created a block!: ''
+Successfully created a block!: ブロックの作成に成功しました！
 Failed to delete block.: ブロックの削除に失敗しました。
 Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
@@ -407,7 +407,7 @@ Successfully updated the custom property schema!: カスタムプロパティス
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
-Successfully updated a the layerStyle!: ''
+Successfully updated the layerStyle!: レイヤースタイルの更新に成功しました！
 Failed to delete the layer style.: レイヤースタイルの削除に失敗しました。
 Successfully deleted the layer style!: レイヤースタイルの削除に成功しました！
 Failed to update user password.: ユーザーパスワードの更新に失敗しました。
@@ -457,13 +457,13 @@ Successfully published your story!: ストーリーの公開に成功しまし�
 Successfully published your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの公開に成功しました！
 Successfully unpublished your story. Now nobody can access your story.: ストーリーは非公開状態です。現在、誰も閲覧することはできません。
 Failed to create page.: ページの作成に失敗しました。
-Successfullly created a page!: ''
+Successfully created a page!: ページの作成に成功しました！
 Failed to delete page.: ページの削除に失敗しました。
 Page was successfully deleted.: ページの削除に成功しました。
 Failed to move page.: ページの移動に失敗しました。
 Page was successfully moved.: ページの移動に成功しました。
 Failed to update page.: ページの更新に失敗しました。
-Successfullly updated a page!: ''
+Successfully updated a page!: ページの更新に成功しました！
 Failed to add widget.: ウィジェットの追加に失敗しました。
 Failed to update widget.: ウィジェットの更新に失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。
