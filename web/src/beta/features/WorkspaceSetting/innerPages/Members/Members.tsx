@@ -159,8 +159,8 @@ const Members: FC<Props> = ({
             )
           } as Workspace;
         });
-        setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
       }
+      setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
     }
   };
 
