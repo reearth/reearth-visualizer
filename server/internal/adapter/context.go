@@ -14,11 +14,12 @@ import (
 type ContextKey string
 
 const (
-	contextUser     ContextKey = "user"
-	contextOperator ContextKey = "operator"
-	ContextAuthInfo ContextKey = "authinfo"
-	contextUsecases ContextKey = "usecases"
-	contextMockAuth ContextKey = "mockauth"
+	contextUser        ContextKey = "user"
+	contextOperator    ContextKey = "operator"
+	ContextAuthInfo    ContextKey = "authinfo"
+	contextUsecases    ContextKey = "usecases"
+	contextMockAuth    ContextKey = "mockauth"
+	contextCurrentHost ContextKey = "currenthost"
 )
 
 var defaultLang = language.English
@@ -47,6 +48,10 @@ func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Contex
 
 func AttachMockAuth(ctx context.Context, mockAuth bool) context.Context {
 	return context.WithValue(ctx, contextMockAuth, mockAuth)
+}
+
+func AttachCurrentHost(ctx context.Context, currentHost string) context.Context {
+	return context.WithValue(ctx, contextCurrentHost, currentHost)
 }
 
 func User(ctx context.Context) *user.User {
@@ -121,4 +126,13 @@ func IsMockAuth(ctx context.Context) bool {
 		}
 	}
 	return false
+}
+
+func CurrentHost(ctx context.Context) string {
+	if v := ctx.Value(contextCurrentHost); v != nil {
+		if currentHost, ok := v.(string); ok {
+			return currentHost
+		}
+	}
+	return ""
 }
