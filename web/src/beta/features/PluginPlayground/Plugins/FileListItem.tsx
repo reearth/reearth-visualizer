@@ -3,12 +3,13 @@ import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
+import { FileType } from "./constants";
 import usePlugins from "./hook";
 
 type UsePluginsReturn = ReturnType<typeof usePlugins>;
 
 type Props = {
-  file: UsePluginsReturn["files"][number];
+  file: FileType;
   selected: boolean;
   onClick?: () => void;
   isEditing?: boolean;

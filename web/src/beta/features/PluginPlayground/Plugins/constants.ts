@@ -1,3 +1,9 @@
+export type PluginType = {
+  id: string;
+  title: string;
+  files: FileType[];
+};
+
 export type FileType = {
   id: string;
   title: string;

@@ -5,20 +5,25 @@ import { FC, useState } from "react";
 import FileListItem from "./FileListItem";
 import usePlugins from "./hook";
 
-type UsePluginsReturn = ReturnType<typeof usePlugins>;
-
-// TODO Implement: display uploaded files
-const mockPlugins = [
-  {
-    id: "1",
-    name: "My Plugin"
-  }
-];
+type UsePluginsReturn = Pick<
+  ReturnType<typeof usePlugins>,
+  | "plugins"
+  | "selectPlugin"
+  | "selectedPlugin"
+  | "selectFile"
+  | "selectedFile"
+  | "addFile"
+  | "updateFileTitle"
+  | "deleteFile"
+  | "handleFileUpload"
+>;
 
 type Props = UsePluginsReturn;
 
 const Plugins: FC<Props> = ({
-  files,
+  plugins,
+  selectedPlugin,
+  selectPlugin,
   selectFile,
   selectedFile,
   addFile,
@@ -26,24 +31,19 @@ const Plugins: FC<Props> = ({
   deleteFile,
   handleFileUpload
 }) => {
-  const [selectedPlugin, setSelectedPlugin] = useState<number>(0);
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
-
-  const onClickPluginItem = (i: number) => {
-    setSelectedPlugin(i);
-  };
 
   return (
     <Wrapper>
       <PluginListWrapper>
         <PluginList>
-          {mockPlugins.map((plugin, i) => (
+          {plugins.map((plugin) => (
             <PluginListItem
               key={plugin.id}
-              selected={selectedPlugin === i}
-              onClick={() => onClickPluginItem(i)}
+              selected={selectedPlugin.id === plugin.id}
+              onClick={() => selectPlugin(plugin.id)}
             >
-              {plugin.name}
+              {plugin.title}
             </PluginListItem>
           ))}
         </PluginList>
@@ -58,14 +58,14 @@ const Plugins: FC<Props> = ({
           <Button title="Upload" onClick={handleFileUpload} />
         </ButtonsWrapper>
         <FileList>
-          {files.map((file) => (
+          {selectedPlugin.files.map((file) => (
             <FileListItem
               key={file.id}
               file={file}
               selected={selectedFile.id === file.id}
               confirmFileTitle={updateFileTitle}
               deleteFile={deleteFile}
-              onClick={() => selectFile(file)}
+              onClick={() => selectFile(file.id)}
             />
           ))}
           {isAddingNewFile && (

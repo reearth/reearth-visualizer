@@ -5,19 +5,22 @@ import Code from "./Code";
 import Console from "./Console";
 import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
-import useFiles from "./Plugins/hook";
+import usePlugins from "./Plugins/hook";
 import Viewer from "./Viewer";
 
 export default () => {
   const {
-    files,
+    plugins,
+    selectPlugin,
+    selectedPlugin,
     selectedFile,
     selectFile,
     addFile,
     updateFileTitle,
     deleteFile,
-    handleFileUpload
-  } = useFiles();
+    handleFileUpload,
+    handlePluginDownload
+  } = usePlugins();
 
   // Note: currently we put visualizer in tab content, so better not have more tabs in this area,
   // otherwise visualizer will got unmount and mount when switching tabs.
@@ -50,7 +53,9 @@ export default () => {
         name: "Plugins",
         children: (
           <Plugins
-            files={files}
+            plugins={plugins}
+            selectedPlugin={selectedPlugin}
+            selectPlugin={selectPlugin}
             selectedFile={selectedFile}
             selectFile={selectFile}
             addFile={addFile}
@@ -62,7 +67,9 @@ export default () => {
       }
     ],
     [
-      files,
+      plugins,
+      selectedPlugin,
+      selectPlugin,
       selectedFile,
       selectFile,
       addFile,
@@ -87,10 +94,12 @@ export default () => {
       {
         id: "plugin-inspector",
         name: "Plugin Inspector",
-        children: <PluginInspector />
+        children: (
+          <PluginInspector handlePluginDownload={handlePluginDownload} />
+        )
       }
     ],
-    [selectedFile]
+    [selectedFile, handlePluginDownload]
   );
 
   return {
