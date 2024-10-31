@@ -21,13 +21,10 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   );
 
   const handleSubmit = () => {
-    let parsedValue = undefined;
+    let encodeUrl = undefined;
 
     if (sourceType === "value" && value !== "") {
-      {
-        parsedValue =
-          "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
-      }
+      encodeUrl = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
     }
 
     onSubmit({
@@ -37,12 +34,9 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       visible: true,
       config: {
         data: {
-          url:
-            (sourceType === "url" || sourceType === "local") && value !== ""
-              ? value
-              : parsedValue,
+          url: sourceType === "value" ? encodeUrl : value || undefined,
           type: "kml",
-          value: parsedValue
+          value: encodeUrl
         }
       }
     });
@@ -59,12 +53,9 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     setValue("");
   }, []);
 
-  const assetsTypes = useMemo(() => ["kml" as const], []);
-
   return {
     value,
     dataSourceTypeOptions,
-    assetsTypes,
     sourceType,
     handleValueChange,
     handleDataSourceTypeChange,

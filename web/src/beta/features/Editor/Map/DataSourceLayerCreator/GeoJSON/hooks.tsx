@@ -21,14 +21,26 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     [t]
   );
 
-  const handleSubmit = () => {
+  const isValidGeoJSON = (json: any): boolean => {
+    return (
+      json &&
+      typeof json === "object" &&
+      (json.type === "FeatureCollection" || json.type === "Feature")
+    );
+  };
+
+  const handleSubmit = useCallback(() => {
     let parsedValue = null;
 
     if (sourceType === "value" && value !== "") {
       try {
         parsedValue = JSON.parse(value);
-      } catch (_error) {
-        parsedValue = value;
+        if (!isValidGeoJSON(parsedValue)) {
+          throw new Error(t("Invalid GeoJSON format"));
+        }
+      } catch (error) {
+        console.error("GeoJSON parsing error:", error);
+        throw new Error(t("Please enter valid GeoJSON"));
       }
     }
 
@@ -52,7 +64,16 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       }
     });
     onClose();
-  };
+  }, [
+    layerName,
+    onClose,
+    onSubmit,
+    prioritizePerformance,
+    sceneId,
+    sourceType,
+    t,
+    value
+  ]);
 
   const handleValueChange = useCallback((value?: string, name?: string) => {
     setValue(value || "");
@@ -64,12 +85,9 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     setValue("");
   }, []);
 
-  const assetsTypes = useMemo(() => ["geojson" as const], []);
-
   return {
     value,
     dataSourceTypeOptions,
-    assetsTypes,
     sourceType,
     prioritizePerformance,
     setPrioritizePerformance,

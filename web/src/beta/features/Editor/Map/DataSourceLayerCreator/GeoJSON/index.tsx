@@ -25,7 +25,6 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const {
     value,
-    assetsTypes,
     sourceType,
     dataSourceTypeOptions,
     prioritizePerformance,
@@ -46,18 +45,18 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
 
-        {sourceType == "local" && (
+        {sourceType === "local" && (
           <InputsWrapper>
             <AssetField
               inputMethod="asset"
               title={t("Asset")}
               value={value}
-              assetsTypes={assetsTypes}
+              assetsTypes={["geojson"]}
               onChange={handleValueChange}
             />
           </InputsWrapper>
         )}
-        {sourceType == "url" && (
+        {sourceType === "url" && (
           <InputGroup label={t("Resource URL")}>
             <InputsWrapper>
               <TextInput
@@ -68,7 +67,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             </InputsWrapper>
           </InputGroup>
         )}
-        {sourceType == "value" && (
+        {sourceType === "value" && (
           <InputGroup label={t("Value")}>
             <InputsWrapper>
               <TextArea
@@ -97,12 +96,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={
-            (sourceType === "url" ||
-              sourceType === "value" ||
-              sourceType === "local") &&
-            !value
-          }
+          disabled={!value}
         />
       </SubmitWrapper>
     </Wrapper>

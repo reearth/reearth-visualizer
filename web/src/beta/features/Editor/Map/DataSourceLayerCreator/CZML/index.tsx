@@ -26,7 +26,6 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const {
     value,
-    assetsTypes,
     sourceType,
     dataSourceTypeOptions,
     handleValueChange,
@@ -39,7 +38,11 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <Wrapper>
       <ContentWrapper>
         <Warning>
-          <IconWrapper icon="lightBulb" color={theme.warning.main} size="normal" />
+          <IconWrapper
+            icon="lightBulb"
+            color={theme.warning.main}
+            size="normal"
+          />
           <TextWrapper>
             {t(
               "The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
@@ -54,18 +57,18 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
 
-        {sourceType == "local" && (
+        {sourceType === "local" && (
           <InputsWrapper>
             <AssetField
               inputMethod="asset"
               title={t("Asset")}
               value={value}
-              assetsTypes={assetsTypes}
+              assetsTypes={["czml"]}
               onChange={handleValueChange}
             />
           </InputsWrapper>
         )}
-        {sourceType == "url" && (
+        {sourceType === "url" && (
           <InputGroup label={t("Resource URL")}>
             <InputsWrapper>
               <TextInput
@@ -76,7 +79,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             </InputsWrapper>
           </InputGroup>
         )}
-        {sourceType == "value" && (
+        {sourceType === "value" && (
           <InputGroup label={t("Value")}>
             <InputsWrapper>
               <TextArea
@@ -94,12 +97,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={
-            (sourceType === "url" ||
-              sourceType === "value" ||
-              sourceType === "local") &&
-            !value
-          }
+          disabled={!value}
         />
       </SubmitWrapper>
     </Wrapper>
