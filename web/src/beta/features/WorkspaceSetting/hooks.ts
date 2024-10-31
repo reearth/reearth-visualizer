@@ -77,8 +77,10 @@ export default () => {
   const handleAddMemberToWorkspace = useCallback(
     async ({ teamId, userId, role }: WorkspacePayload) => {
       if (userId && role) {
-        await useAddMemberToWorkspace(teamId, userId, role);
+        const { status } = await useAddMemberToWorkspace(teamId, userId, role);
+        return { status };
       }
+      return { status: "error" };
     },
     [useAddMemberToWorkspace]
   );
@@ -87,8 +89,10 @@ export default () => {
   const handleRemoveMemberFromWorkspace = useCallback(
     async ({ teamId, userId }: WorkspacePayload) => {
       if (userId) {
-        await useRemoveMemberFromWorkspace(teamId, userId);
+        const { status } = await useRemoveMemberFromWorkspace(teamId, userId);
+        return { status };
       }
+      return { status: "error" };
     },
     [useRemoveMemberFromWorkspace]
   );
@@ -97,8 +101,14 @@ export default () => {
   const handleUpdateMemberOfWorkspace = useCallback(
     async ({ teamId, userId, role }: WorkspacePayload) => {
       if (userId && role) {
-        await useUpdateMemberOfWorkspace(teamId, userId, role);
+        const { status } = await useUpdateMemberOfWorkspace(
+          teamId,
+          userId,
+          role
+        );
+        return { status };
       }
+      return { status: "error" };
     },
     [useUpdateMemberOfWorkspace]
   );

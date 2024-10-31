@@ -16,9 +16,9 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
 import { metricsSizes } from "@reearth/beta/utils/metrics";
-import { Role } from "@reearth/services/gql";
+import { Role, TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-import { useWorkspace } from "@reearth/services/state";
+import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled, useTheme, keyframes } from "@reearth/services/theme";
 import { FC, KeyboardEvent, useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
@@ -30,7 +30,7 @@ type Props = {
     teamId,
     userId,
     role
-  }: WorkspacePayload) => Promise<void>;
+  }: WorkspacePayload) => Promise<{ status: string }>;
   handleSearchUser: (nameOrEmail: string) =>
     | {
         searchUser: {
@@ -51,21 +51,12 @@ type Props = {
     teamId,
     userId,
     role
-  }: WorkspacePayload) => Promise<void>;
+  }: WorkspacePayload) => Promise<{ status: string }>;
   handleRemoveMemberFromWorkspace: ({
     teamId,
     userId
-  }: WorkspacePayload) => Promise<void>;
+  }: WorkspacePayload) => Promise<{ status: string }>;
 };
-
-type MemberData = {
-  id: string;
-  role: Role;
-  username?: string;
-  email?: string;
-};
-
-type MembersData = MemberData[];
 
 type MemberSearchResult = {
   userName: string;
@@ -88,21 +79,8 @@ const Members: FC<Props> = ({
     { value: "OWNER", label: t("Owner") }
   ];
 
-  const [currentWorkspace] = useWorkspace();
-  const [workspaceMembers, setWorkspaceMembers] = useState<MembersData>([]);
-
-  useEffect(() => {
-    setWorkspaceMembers(
-      currentWorkspace?.members
-        ?.filter((m) => !!m.user)
-        .map((member) => ({
-          id: member.userId,
-          role: member.role,
-          username: member.user?.name,
-          email: member.user?.email
-        })) ?? []
-    );
-  }, [currentWorkspace]);
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
+  console.log(currentWorkspace);
 
   const [addMemberModal, setAddMemberModal] = useState<boolean>(false);
   const [activeEditIndex, setActiveEditIndex] = useState<number | null>(null);
@@ -158,62 +136,85 @@ const Members: FC<Props> = ({
   };
 
   const handleChangeRole = async (
-    user: MemberData,
+    data: TeamMember,
     index: number,
     roleValue: string | string[]
   ) => {
     if (currentWorkspace?.id) {
-      await handleUpdateMemberOfWorkspace({
+      const { status } = await handleUpdateMemberOfWorkspace({
         teamId: currentWorkspace?.id,
-        userId: user.id,
+        userId: data.userId,
         role: roleValue as Role
       });
-      setWorkspaceMembers((prevMembers) => {
-        return prevMembers.map((workspaceMember) =>
-          workspaceMember.id === user.id
-            ? {
-                ...workspaceMember,
-                role: roleValue as Role
-              }
-            : workspaceMember
-        );
-      });
-      setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
+      if (status === "success") {
+        setCurrentWorkspace((prevMembers) => {
+          return {
+            ...prevMembers,
+            members: prevMembers?.members?.map((workspaceMember) =>
+              workspaceMember.userId === data.userId
+                ? {
+                    ...workspaceMember,
+                    role: roleValue as Role
+                  }
+                : workspaceMember
+            )
+          } as Workspace;
+        });
+        setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
+      }
     }
   };
 
-  const handleRemoveMemberButtonClick = (userId: string) => {
+  const handleRemoveMemberButtonClick = async (userId: string) => {
     if (currentWorkspace?.id) {
-      handleRemoveMemberFromWorkspace({
+      const { status } = await handleRemoveMemberFromWorkspace({
         teamId: currentWorkspace?.id,
         userId
       });
-      setWorkspaceMembers(
-        workspaceMembers.filter(
-          (workspaceMember) => workspaceMember.id !== userId
-        )
-      );
+      if (status === "success") {
+        setCurrentWorkspace((prevMembers) => {
+          return {
+            ...prevMembers,
+            members: prevMembers?.members?.filter(
+              (workspaceMember) => workspaceMember.userId !== userId
+            )
+          } as Workspace;
+        });
+      }
     }
   };
 
   const handleAddMember = () => {
-    memberSearchResults.forEach((memberSearchResult) => {
+    memberSearchResults.forEach(async (memberSearchResult) => {
       if (currentWorkspace?.id) {
-        handleAddMemberToWorkspace({
+        const { status } = await handleAddMemberToWorkspace({
           name: memberSearchResult.userName,
           teamId: currentWorkspace?.id,
           userId: memberSearchResult.id,
           role: Role.Reader
         });
-        setWorkspaceMembers((prevMembers) => [
-          ...prevMembers,
-          {
-            username: memberSearchResult.userName,
-            email: memberSearchResult.email,
-            role: Role.Reader,
-            id: memberSearchResult.id
-          }
-        ]);
+
+        if (status === "success") {
+          setCurrentWorkspace((prevMembers) => {
+            return {
+              ...prevMembers,
+              members: [
+                ...(prevMembers?.members || []),
+                {
+                  __typename: "TeamMember",
+                  user: {
+                    email: memberSearchResult.email,
+                    id: memberSearchResult.id,
+                    name: memberSearchResult.userName,
+                    __typename: "User"
+                  },
+                  userId: memberSearchResult.id,
+                  role: Role.Reader
+                }
+              ]
+            } as Workspace;
+          });
+        }
         setAddMemberModal(false);
         setMemberSearchInput("");
         setDebouncedInput("");
@@ -263,19 +264,19 @@ const Members: FC<Props> = ({
               <TableHeader>{t("Role")}</TableHeader>
               <TableHeader />
 
-              {workspaceMembers?.map((user, index) => (
+              {currentWorkspace?.members?.map((data, index) => (
                 <Fragment key={index}>
-                  <TableRow>{user.username}</TableRow>
-                  <TableRow>{user.email}</TableRow>
+                  <TableRow>{data.user?.name}</TableRow>
+                  <TableRow>{data.user?.email}</TableRow>
                   {activeEditIndex !== index ? (
-                    <TableRow>{user.role}</TableRow>
+                    <TableRow>{data.role}</TableRow>
                   ) : (
                     <TableRow>
                       <SelectField
-                        value={user.role}
+                        value={data.role}
                         options={roles}
                         onChange={async (roleValue) => {
-                          await handleChangeRole(user, index, roleValue);
+                          await handleChangeRole(data, index, roleValue);
                         }}
                       />
                     </TableRow>
@@ -294,15 +295,16 @@ const Members: FC<Props> = ({
                           icon: "arrowLeftRight",
                           id: "changeRole",
                           title: t("Change Role"),
-                          disabled: user.role === "OWNER",
+                          disabled: data.role === "OWNER",
                           onClick: () => handleChangeRoleButtonClick(index)
                         },
                         {
                           icon: "close",
                           id: "remove",
                           title: t("Remove"),
-                          disabled: user.role === "OWNER",
-                          onClick: () => handleRemoveMemberButtonClick(user.id)
+                          disabled: data.role === "OWNER",
+                          onClick: () =>
+                            handleRemoveMemberButtonClick(data.userId)
                         }
                       ]}
                     />
@@ -330,10 +332,10 @@ const Members: FC<Props> = ({
               title={t("Add")}
               appearance="primary"
               disabled={
-                workspaceMembers?.some((member) =>
+                currentWorkspace?.members?.some((member) =>
                   memberSearchResults.find(
                     (memberSearchResult) =>
-                      memberSearchResult.email === member.email
+                      memberSearchResult.email === member.user?.email
                   )
                 ) || memberSearchResults.length === 0
               }
