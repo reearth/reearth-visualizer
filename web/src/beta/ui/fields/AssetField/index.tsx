@@ -98,14 +98,14 @@ const AssetField: FC<AssetFieldProps> = ({
             <Button
               icon={"image"}
               size="small"
-              title="Choose"
+              title={t("Choose")}
               onClick={handleClick}
               extendWidth
             />
             <Button
               icon={"uploadSimple"}
               size="small"
-              title="Upload"
+              title={t("Upload")}
               onClick={handleFileUpload}
               extendWidth
             />
