@@ -407,7 +407,7 @@ Successfully updated the custom property schema!: カスタムプロパティス
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
-Successfully updated the layerStyle!: レイヤースタイルの更新に成功しました！
+Successfully updated a the layerStyle!: レイヤースタイルの更新に成功しました！
 Failed to delete the layer style.: レイヤースタイルの削除に失敗しました。
 Successfully deleted the layer style!: レイヤースタイルの削除に成功しました！
 Failed to update user password.: ユーザーパスワードの更新に失敗しました。
