@@ -82,7 +82,7 @@ export const ContentWrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ...theme.universalScrollBar
+  ...theme.scrollBar
 }));
 
 export const LinkWrapper = styled(Link)(({ theme }) => ({

@@ -6,7 +6,7 @@ export const ManagerContent = styled.div(({ theme }) => ({
   flex: 1,
   height: 0,
   width: "100%",
-  ...theme.universalScrollBar,
+  ...theme.scrollBar,
   ["@media (max-width: 630px)"]: {
     width: "630px",
     overflowX: "auto"

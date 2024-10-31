@@ -76,7 +76,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   width: "100%",
   overflowX: "hidden",
   minWidth: "630px",
-  ...theme.universalScrollBar,
+  ...theme.scrollBar,
   ["@media (max-width: 630px)"]: {
     width: "630px",
     overflowX: "auto"

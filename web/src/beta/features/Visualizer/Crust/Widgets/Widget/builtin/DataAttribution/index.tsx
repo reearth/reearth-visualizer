@@ -61,7 +61,7 @@ const DataAttribution = ({
 
 const Wrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  ...theme.universalScrollBar
+  ...theme.scrollBar
 }));
 
 const DataLink = styled("div")(({ theme }) => ({

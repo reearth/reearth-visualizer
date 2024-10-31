@@ -64,7 +64,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ...theme.universalScrollBar
+  ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({

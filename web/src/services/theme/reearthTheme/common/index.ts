@@ -4,8 +4,6 @@ import radiusSizes, { RadiusSizesType } from "./radius";
 import {
   scrollBar,
   ScrollBar,
-  universalScrollBar,
-  UniversalScrollBar
 } from "./scrollBar";
 import shadow, { ShadowType } from "./shadow";
 import spacingSizes, { SpacingSizesType } from "./spacing";
@@ -21,7 +19,6 @@ export type Common = {
   shadow: ShadowType;
   fonts: typeof fonts;
   scrollBar: ScrollBar;
-  universalScrollBar: UniversalScrollBar;
 };
 
 const common: Common = {
@@ -32,7 +29,6 @@ const common: Common = {
   shadow,
   fonts,
   scrollBar,
-  universalScrollBar
 };
 
 export default common;

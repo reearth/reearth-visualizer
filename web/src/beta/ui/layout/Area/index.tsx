@@ -422,5 +422,5 @@ export const Window = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ...theme.universalScrollBar
+  ...theme.scrollBar
 }));
