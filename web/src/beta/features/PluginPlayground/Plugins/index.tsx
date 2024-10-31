@@ -2,9 +2,10 @@ import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
 
-import { FileType } from "../hooks";
-
 import FileListItem from "./FileListItem";
+import usePlugins from "./hook";
+
+type UsePluginsReturn = ReturnType<typeof usePlugins>;
 
 // TODO Implement: display uploaded files
 const mockPlugins = [
@@ -14,15 +15,7 @@ const mockPlugins = [
   }
 ];
 
-type Props = {
-  files: FileType[];
-  selectedFile: FileType;
-  selectFile: (file: FileType) => void;
-  addFile: (file: FileType) => void;
-  updateFileTitle: (id: string, newTitle: string) => void;
-  deleteFile: (id: string) => void;
-  handleFileUpload: () => void;
-};
+type Props = UsePluginsReturn;
 
 const Plugins: FC<Props> = ({
   files,
@@ -34,6 +27,7 @@ const Plugins: FC<Props> = ({
   handleFileUpload
 }) => {
   const [selectedPlugin, setSelectedPlugin] = useState<number>(0);
+  const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
   const onClickPluginItem = (i: number) => {
     setSelectedPlugin(i);
@@ -59,18 +53,7 @@ const Plugins: FC<Props> = ({
           <Button
             icon="plus"
             title="File"
-            onClick={() => {
-              const newFile = {
-                // gerate unique id
-                id:
-                  Math.random().toString(36).substring(2, 15) +
-                  Math.random().toString(36).substring(2, 15),
-                title: "",
-                sourceCode: ""
-              };
-              addFile(newFile);
-              selectFile(newFile);
-            }}
+            onClick={() => setIsAddingNewFile(true)}
           />
           <Button title="Upload" onClick={handleFileUpload} />
         </ButtonsWrapper>
@@ -80,11 +63,22 @@ const Plugins: FC<Props> = ({
               key={file.id}
               file={file}
               selected={selectedFile.id === file.id}
-              updateFileTitle={updateFileTitle}
+              confirmFileTitle={updateFileTitle}
               deleteFile={deleteFile}
               onClick={() => selectFile(file)}
             />
           ))}
+          {isAddingNewFile && (
+            <FileListItem
+              file={{ id: "", title: "", sourceCode: "" }}
+              selected={false}
+              confirmFileTitle={(value) => {
+                addFile(value);
+                setIsAddingNewFile(false);
+              }}
+              isEditing
+            />
+          )}
         </FileList>
       </FileListWrapper>
     </Wrapper>
@@ -142,7 +136,11 @@ const FileList = styled("ul")(() => ({
 
 const ButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.smallest
+  width: "100%",
+  gap: theme.spacing.smallest,
+  "& > button": {
+    flexGrow: 1
+  }
 }));
 
 export default Plugins;

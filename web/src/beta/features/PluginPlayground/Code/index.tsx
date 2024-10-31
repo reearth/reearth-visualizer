@@ -3,12 +3,12 @@ import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 type Props = {
-  fileName: string;
+  fileTitle: string;
   sourceCode: string;
 };
 
-const getLanguageByFileExtension = (fileName: string) => {
-  const ext = fileName.split(".").pop();
+const getLanguageByFileExtension = (fileTitle: string) => {
+  const ext = fileTitle.split(".").pop();
   switch (ext) {
     case "js":
       return "javascript";
@@ -20,7 +20,7 @@ const getLanguageByFileExtension = (fileName: string) => {
   }
 };
 
-const Code: FC<Props> = ({ fileName, sourceCode }) => {
+const Code: FC<Props> = ({ fileTitle, sourceCode }) => {
   return (
     <Wrapper>
       <Header>
@@ -28,7 +28,7 @@ const Code: FC<Props> = ({ fileName, sourceCode }) => {
         <p>Widget</p>
       </Header>
       <CodeInput
-        language={getLanguageByFileExtension(fileName)}
+        language={getLanguageByFileExtension(fileTitle)}
         value={sourceCode}
       />
     </Wrapper>
