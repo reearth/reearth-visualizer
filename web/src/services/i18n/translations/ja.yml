@@ -267,7 +267,7 @@ Enable Basic Authorization: 基本認証を有効にする
 Username: ユーザー名
 Site Setting: サイト設定
 Site name: サイト名
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: ''
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更しようとしています。英数字とハイフンのみが許可されています。
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
