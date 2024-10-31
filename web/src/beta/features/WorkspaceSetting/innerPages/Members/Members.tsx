@@ -80,7 +80,6 @@ const Members: FC<Props> = ({
   ];
 
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
-  console.log(currentWorkspace);
 
   const [addMemberModal, setAddMemberModal] = useState<boolean>(false);
   const [activeEditIndex, setActiveEditIndex] = useState<number | null>(null);
