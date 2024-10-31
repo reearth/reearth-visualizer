@@ -2,7 +2,8 @@ import {
   type AcceptedAssetsTypes,
   GIS_FILE_TYPES,
   IMAGE_FILE_TYPES,
-  GENERAL_FILE_TYPE_ACCEPT_STRING
+  GENERAL_FILE_TYPE_ACCEPT_STRING,
+  MODEL_FILE_TYPES
 } from "@reearth/beta/features/AssetsManager/constants";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { useCallback, useMemo } from "react";
@@ -30,7 +31,9 @@ export default ({
                 ? IMAGE_FILE_TYPES
                 : t === "file"
                   ? GIS_FILE_TYPES
-                  : t
+                  : t === "model"
+                    ? MODEL_FILE_TYPES
+                    : t
             )
             .flat()
             .join(",.")

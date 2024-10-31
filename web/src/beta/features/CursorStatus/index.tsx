@@ -1,6 +1,6 @@
 import { useHasActiveGQLTasks } from "@reearth/services/state";
 import { keyframes, styled } from "@reearth/services/theme";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 const offsetX = 16;
 const offsetY = 16;
@@ -10,10 +10,16 @@ const CursorStatus: FC = () => {
   const [inView, setInView] = useState(true);
   const [enabled] = useHasActiveGQLTasks();
 
+  const animationFrameId = useRef<number | null>(null);
   const handleMouseMove = useCallback((event: MouseEvent) => {
-    setMousePosition({
-      x: event.clientX,
-      y: event.clientY
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+    }
+    animationFrameId.current = requestAnimationFrame(() => {
+      setMousePosition({
+        x: event.clientX,
+        y: event.clientY
+      });
     });
   }, []);
 
@@ -65,7 +71,7 @@ const loaderKeyframes = keyframes`
 const loaderColor = "#ccc";
 
 const Loader = styled("div")(() => ({
-  width: 24,
+  width: 20,
   aspectRatio: 1,
   borderRadius: "50%",
   background: `radial-gradient(farthest-side,${loaderColor} 100%,#0000) top/6px 6px no-repeat, conic-gradient(#0000 30%,${loaderColor})`,
