@@ -135,14 +135,14 @@ const Members: FC<Props> = ({
   };
 
   const handleChangeRole = async (
-    data: TeamMember,
+    member: TeamMember,
     index: number,
     roleValue: string | string[]
   ) => {
     if (currentWorkspace?.id) {
       const { status } = await handleUpdateMemberOfWorkspace({
         teamId: currentWorkspace?.id,
-        userId: data.userId,
+        userId: member.userId,
         role: roleValue as Role
       });
       if (status === "success") {
@@ -150,7 +150,7 @@ const Members: FC<Props> = ({
           return {
             ...prevMembers,
             members: prevMembers?.members?.map((workspaceMember) =>
-              workspaceMember.userId === data.userId
+              workspaceMember.userId === member.userId
                 ? {
                     ...workspaceMember,
                     role: roleValue as Role
@@ -263,19 +263,19 @@ const Members: FC<Props> = ({
               <TableHeader>{t("Role")}</TableHeader>
               <TableHeader />
 
-              {currentWorkspace?.members?.map((data, index) => (
+              {currentWorkspace?.members?.map((member, index) => (
                 <Fragment key={index}>
-                  <TableRow>{data.user?.name}</TableRow>
-                  <TableRow>{data.user?.email}</TableRow>
+                  <TableRow>{member.user?.name}</TableRow>
+                  <TableRow>{member.user?.email}</TableRow>
                   {activeEditIndex !== index ? (
-                    <TableRow>{data.role}</TableRow>
+                    <TableRow>{member.role}</TableRow>
                   ) : (
                     <TableRow>
                       <SelectField
-                        value={data.role}
+                        value={member.role}
                         options={roles}
                         onChange={async (roleValue) => {
-                          await handleChangeRole(data, index, roleValue);
+                          await handleChangeRole(member, index, roleValue);
                         }}
                       />
                     </TableRow>
@@ -294,16 +294,16 @@ const Members: FC<Props> = ({
                           icon: "arrowLeftRight",
                           id: "changeRole",
                           title: t("Change Role"),
-                          disabled: data.role === "OWNER",
+                          disabled: member.role === "OWNER",
                           onClick: () => handleChangeRoleButtonClick(index)
                         },
                         {
                           icon: "close",
                           id: "remove",
                           title: t("Remove"),
-                          disabled: data.role === "OWNER",
+                          disabled: member.role === "OWNER",
                           onClick: () =>
-                            handleRemoveMemberButtonClick(data.userId)
+                            handleRemoveMemberButtonClick(member.userId)
                         }
                       ]}
                     />
