@@ -8,10 +8,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useFileInput from "use-file-input";
 
 import {
+  AcceptedAssetsTypes,
   FileType,
   GENERAL_FILE_TYPE_ACCEPT_STRING,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES
+  IMAGE_FILE_TYPES,
+  MODEL_FILE_TYPES
 } from "./constants";
 import { Asset, sortOptionValue, SortType } from "./types";
 
@@ -32,7 +34,7 @@ export default ({
 }: {
   workspaceId?: string;
   allowMultipleSelection: boolean;
-  assetsTypes?: ("image" | "file" | FileType)[];
+  assetsTypes?: AcceptedAssetsTypes;
   onSelectChange?: (assets: Asset[]) => void;
 }) => {
   // sort
@@ -118,7 +120,13 @@ export default ({
     () =>
       assetsTypes
         ?.map((t) =>
-          t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t
+          t === "image"
+            ? IMAGE_FILE_TYPES
+            : t === "file"
+              ? GIS_FILE_TYPES
+              : t === "model"
+                ? MODEL_FILE_TYPES
+                : t
         )
         .flat(),
     [assetsTypes]
