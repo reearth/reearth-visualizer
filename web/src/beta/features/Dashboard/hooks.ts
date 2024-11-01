@@ -4,7 +4,7 @@ import { useWorkspace } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { TabItems, Workspace } from "./type";
+import { Role, TabItems, Workspace } from "./type";
 
 type Props = {
   bottomTabsItems: Omit<TabItems[], "active">;
@@ -68,11 +68,11 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const userRole = useMemo(() => {
     if (!currentWorkspace || !data?.email) return undefined;
 
-    const member = currentWorkspace?.members?.find(
+    const member = currentWorkspace.members?.find(
       (member) => member?.user?.email === data.email
     );
 
-    return member ? member.role : undefined;
+    return member?.role as Role | undefined;
   }, [currentWorkspace, data?.email]);
 
   return {

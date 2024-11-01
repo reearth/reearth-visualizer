@@ -158,16 +158,16 @@ export default (workspaceId?: string, role?: Role) => {
             "It appears you don't have permissions to make changes. Please check your role, if needed contact the workspace administrator to update your permissions"
           )
         });
-      } else {
-        await useCreateProject(
-          workspaceId,
-          Visualizer.Cesium,
-          data.name,
-          true,
-          data.description,
-          data.imageUrl || ""
-        );
+        return;
       }
+      await useCreateProject(
+        workspaceId,
+        Visualizer.Cesium,
+        data.name,
+        true,
+        data.description,
+        data.imageUrl || ""
+      );
     },
     [role, setNotification, t, useCreateProject, workspaceId]
   );
