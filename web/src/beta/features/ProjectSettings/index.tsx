@@ -1,35 +1,29 @@
-import { useMemo } from "react";
-
-import Text from "@reearth/beta/components/Text";
 import Navbar from "@reearth/beta/features/Navbar";
+import {
+  DEFAULT_SIDEBAR_WIDTH,
+  SidebarMenuItem,
+  SidebarMainSection,
+  SidebarVersion,
+  SidebarWrapper,
+  SidebarButtonsWrapper
+} from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useMemo } from "react";
+
+import CursorStatus from "../CursorStatus";
 
 import useHooks from "./hooks";
-import AssetSettings from "./innerPages/AssetSettings";
 import GeneralSettings from "./innerPages/GeneralSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
-import { MenuList, MenuItem } from "./MenuList";
 
-export const projectSettingTabs = [
-  { id: "general", text: "General" },
-  { id: "story", text: "Story" },
-  { id: "public", text: "Public" },
-  { id: "asset", text: "Workspace Assets" },
-  { id: "plugins", text: "Plugin" },
-] as const;
-
-export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
-
-export function isProjectSettingTab(tab: string): tab is projectSettingsTab {
-  return projectSettingTabs.map(f => f.id).includes(tab as never);
-}
+export type ProjectSettingsTab = "general" | "story" | "public" | "plugins";
 
 type Props = {
   projectId: string;
-  tab?: projectSettingsTab;
+  tab?: ProjectSettingsTab;
   subId?: string;
 };
 
@@ -44,57 +38,88 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     currentStory,
     accessToken,
     extensions,
+    disabled,
     handleUpdateProject,
-    handleArchiveProject,
-    handleDeleteProject,
+    handleProjectRemove,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
+    handleUpdateProjectGA,
     handleUpdateStory,
     handleUpdateStoryBasicAuth,
-    handleUpdateStoryAlias,
+    handleUpdateStoryAlias
   } = useHooks({
     projectId,
-    tab,
-    subId,
+    subId
   });
 
   const tabs = useMemo(
-    () =>
-      projectSettingTabs.map(tab => ({
-        id: tab.id,
-        text: t(tab.text),
-        linkTo: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`,
-      })),
-    [projectId, t],
+    () => [
+      {
+        id: "general",
+        text: t("General"),
+        icon: "setting" as const,
+        path: `/settings/projects/${projectId}/`
+      },
+      {
+        id: "story",
+        text: t("Story"),
+        icon: "sidebar" as const,
+        path: `/settings/projects/${projectId}/story`
+      },
+      {
+        id: "public",
+        text: t("Public"),
+        icon: "paperPlaneTilt" as const,
+        path: `/settings/projects/${projectId}/public`
+      },
+      {
+        id: "plugins",
+        text: t("Plugin"),
+        icon: "puzzlePiece" as const,
+        path: `/settings/projects/${projectId}/plugins`
+      }
+    ],
+    [projectId, t]
   );
 
   return (
     <Wrapper>
-      <Navbar projectId={projectId} workspaceId={workspaceId} sceneId={sceneId} page="settings" />
-      <SecondaryNav>
-        <Title size="h5">{t("Project Settings")}</Title>
-      </SecondaryNav>
+      <Navbar
+        projectId={projectId}
+        workspaceId={workspaceId}
+        sceneId={sceneId}
+        page="projectSettings"
+      />
       <MainSection>
-        <Menu>
-          <MenuList>
-            {tabs.map(t => (
-              <MenuItem key={t.id} linkTo={t.linkTo} text={t.text} active={t.id === tab} />
-            ))}
-          </MenuList>
-        </Menu>
+        <LeftSidePanel>
+          <SidebarWrapper>
+            <SidebarMainSection>
+              <SidebarButtonsWrapper>
+                {tabs?.map((t) => (
+                  <SidebarMenuItem
+                    key={t.id}
+                    path={t.path}
+                    text={t.text}
+                    active={t.id === tab}
+                    icon={t.icon}
+                  />
+                ))}
+              </SidebarButtonsWrapper>
+            </SidebarMainSection>
+            <SidebarVersion />
+          </SidebarWrapper>
+        </LeftSidePanel>
         <Content>
           {tab === "general" && project && (
             <GeneralSettings
               project={project}
               onUpdateProject={handleUpdateProject}
-              onArchiveProject={handleArchiveProject}
-              onDeleteProject={handleDeleteProject}
+              onProjectRemove={handleProjectRemove}
+              disabled={disabled}
             />
           )}
           {tab === "story" && currentStory && (
             <StorySettings
-              projectId={projectId}
-              stories={stories}
               currentStory={currentStory}
               isArchived={!!project?.isArchived}
               onUpdateStory={handleUpdateStory}
@@ -105,12 +130,14 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               project={project}
               stories={stories}
               currentStory={currentStory}
+              subId={subId}
               onUpdateStory={handleUpdateStory}
               onUpdateStoryBasicAuth={handleUpdateStoryBasicAuth}
               onUpdateStoryAlias={handleUpdateStoryAlias}
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}
               onUpdateProjectAlias={handleUpdateProjectAlias}
+              onUpdateProjectGA={handleUpdateProjectGA}
             />
           )}
           {tab === "plugins" && (
@@ -122,48 +149,64 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               extensions={extensions}
             />
           )}
-          {tab === "asset" && workspaceId && <AssetSettings workspaceId={workspaceId} />}
         </Content>
       </MainSection>
+      <CursorStatus />
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  color: ${({ theme }) => theme.content.main};
-  background-color: ${({ theme }) => theme.bg[0]};
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+  width: "100%",
+  color: theme.content.main,
+  backgroundColor: theme.bg[0],
+  ["*"]: {
+    boxSizing: "border-box"
+  },
+  ["* ::-webkit-scrollbar"]: {
+    width: "8px"
+  },
+  ["* ::-webkit-scrollbar-track"]: {
+    background: theme.relative.darker,
+    borderRadius: "10px"
+  },
+  ["* ::-webkit-scrollbar-thumb"]: {
+    background: theme.relative.light,
+    borderRadius: "4px"
+  },
+  ["* ::-webkit-scrollbar-thumb:hover"]: {
+    background: theme.relative.lighter
+  }
+}));
 
-const SecondaryNav = styled.div`
-  color: ${({ theme }) => theme.content.main};
-  background-color: ${({ theme }) => theme.bg[1]};
-  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
-`;
+const MainSection = styled("div")(() => ({
+  display: "flex",
+  flex: 1,
+  overflow: "auto",
+  position: "relative"
+}));
 
-const Title = styled(Text)`
-  padding: 12px;
-`;
+const LeftSidePanel = styled("div")(({ theme }) => ({
+  width: DEFAULT_SIDEBAR_WIDTH,
+  height: "100%",
+  backgroundColor: theme.bg[1],
+  display: "flex",
+  padding: `${theme.spacing.large}px 0`,
+  boxSizing: "border-box"
+}));
 
-const MainSection = styled.div`
-  flex: 1;
-  overflow: auto;
-`;
-
-const Menu = styled.div`
-  position: fixed;
-  height: 100%;
-  background-color: ${({ theme }) => theme.bg[1]};
-`;
-
-const Content = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-left: 200px;
-  padding: 20px;
-`;
+const Content = styled("div")(({ theme }) => ({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  height: "100%",
+  alignItems: "center",
+  overflow: "auto",
+  padding: `${theme.spacing.super}px`
+}));
 
 export default ProjectSettings;

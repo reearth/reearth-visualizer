@@ -132,6 +132,8 @@ func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtensi
 		typ = plugin.ExtensionTypeVisualizer
 	case "infobox":
 		typ = plugin.ExtensionTypeInfobox
+	case "infoboxBlock":
+		typ = plugin.ExtensionTypeInfoboxBlock
 	case "cluster":
 		typ = plugin.ExtensionTypeCluster
 	case "story":

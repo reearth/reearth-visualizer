@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
+	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
@@ -27,6 +28,7 @@ const (
 // if its new user, create new user and attach it to context
 func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		multiUser := accountinteractor.NewMultiUser(cfg.AccountRepos, cfg.AccountGateways, cfg.Config.SignupSecret, cfg.Config.Host_Web, cfg.AccountRepos.Users)
 		return func(c echo.Context) error {
 			req := c.Request()
 			ctx := req.Context()
@@ -40,43 +42,62 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				userID = u
 			}
 
-			// debug mode
-			if cfg.Debug {
-				if userID := c.Request().Header.Get(debugUserHeader); userID != "" {
-					if uId, err := accountdomain.UserIDFrom(userID); err == nil {
-						user2, err := cfg.Repos.User.FindByID(ctx, uId)
-						if err == nil && user2 != nil {
-							u = user2
+			if adapter.IsMockAuth(ctx) {
+				// Create a mock user based on the auth info
+				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
+				if err != nil {
+					// when creating the first mock user
+					uId, _ := user.IDFrom(au.Sub)
+					mockUser = user.New().
+						ID(uId).
+						Name(au.Name).
+						Email(au.Email).
+						MustBuild()
+				}
+				u = mockUser
+			} else {
+				// debug mode
+				if cfg.Debug {
+					if userID := c.Request().Header.Get(debugUserHeader); userID != "" {
+						if uId, err := accountdomain.UserIDFrom(userID); err == nil {
+							user2, err := multiUser.FetchByID(ctx, user.IDList{uId})
+							if err == nil && len(user2) == 1 {
+								u = user2[0]
+							}
 						}
 					}
 				}
-			}
 
-			if u == nil && userID != "" {
-				if userID2, err := accountdomain.UserIDFrom(userID); err == nil {
-					u, err = cfg.Repos.User.FindByID(ctx, userID2)
+				if u == nil && userID != "" {
+					if userID2, err := accountdomain.UserIDFrom(userID); err == nil {
+						u2, err := multiUser.FetchByID(ctx, user.IDList{userID2})
+						if err != nil {
+							return err
+						}
+						if len(u2) > 0 {
+							u = u2[0]
+						}
+					} else {
+						return err
+					}
+				}
+
+				if u == nil && au != nil {
+					var err error
+					// find user
+					u, err = multiUser.FetchBySub(ctx, au.Sub)
 					if err != nil && err != rerror.ErrNotFound {
 						return err
 					}
-				} else {
-					return err
 				}
-			}
 
-			if u == nil && au != nil {
-				var err error
-				// find user
-				u, err = cfg.Repos.User.FindBySub(ctx, au.Sub)
-				if err != nil && err != rerror.ErrNotFound {
-					return err
+				// save a new sub
+				if u != nil && au != nil {
+					if err := addAuth0SubToUser(ctx, u, user.AuthFrom(au.Sub), cfg); err != nil {
+						return err
+					}
 				}
-			}
 
-			// save a new sub
-			if u != nil && au != nil {
-				if err := addAuth0SubToUser(ctx, u, user.AuthFrom(au.Sub), cfg); err != nil {
-					return err
-				}
 			}
 
 			if u != nil {
@@ -91,6 +112,8 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
 			}
+
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)

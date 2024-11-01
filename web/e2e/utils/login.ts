@@ -1,3 +1,4 @@
+//not in use
 import axios from "axios";
 
 import { config } from "./config";
@@ -13,9 +14,9 @@ export async function login(): Promise<string> {
           userName,
           password: password ? "***" : "",
           authAudience,
-          authClientId,
-        },
-      )}`,
+          authClientId
+        }
+      )}`
     );
   }
 
@@ -28,8 +29,8 @@ export async function login(): Promise<string> {
         audience: authAudience,
         client_id: authClientId,
         grant_type: "password",
-        scope: "openid profile email",
-      },
+        scope: "openid profile email"
+      }
     );
 
     if (!resp.data.access_token) {
@@ -43,8 +44,8 @@ export async function login(): Promise<string> {
         userName,
         password: password ? "***" : "",
         authAudience,
-        authClientId,
-      })}`,
+        authClientId
+      })}`
     );
   }
 }

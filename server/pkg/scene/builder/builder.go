@@ -3,6 +3,7 @@ package builder
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"time"
 
@@ -33,15 +34,18 @@ type Builder struct {
 	nlsLayer    *nlslayer.NLSLayerList
 	layerStyles *scene.StyleList
 	story       *storytelling.Story
+
+	exportType bool
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader) *Builder {
+func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
 	e := &encoder{}
 	return &Builder{
-		ploader:   pl,
-		tloader:   tsl,
-		nlsloader: nlsl,
-		encoder:   e,
+		ploader:    pl,
+		tloader:    tsl,
+		nlsloader:  nlsl,
+		encoder:    e,
+		exportType: exp,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
 				LayerLoader:    ll,
@@ -88,12 +92,12 @@ func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	return b
 }
 
-func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool) error {
+func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) error {
 	if b == nil || b.scene == nil {
 		return nil
 	}
 
-	res, err := b.buildScene(ctx, publishedAt, coreSupport)
+	res, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
 	if err != nil {
 		return err
 	}
@@ -125,7 +129,44 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 	return json.NewEncoder(w).Encode(res)
 }
 
-func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSupport bool) (*sceneJSON, error) {
+func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
+	if b == nil || b.scene == nil {
+		return nil, errors.New("invalid builder state")
+	}
+
+	sceneData, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
+	if err != nil {
+		return nil, errors.New("Fail buildScene :" + err.Error())
+	}
+
+	if b.story != nil {
+		story, err := b.buildStory(ctx)
+		if err != nil {
+			return nil, errors.New("Fail buildStory :" + err.Error())
+		}
+		sceneData.Story = story
+	}
+
+	if b.nlsLayer != nil {
+		nlsLayers, err := b.buildNLSLayers(ctx)
+		if err != nil {
+			return nil, errors.New("Fail buildNLSLayers :" + err.Error())
+		}
+		sceneData.NLSLayers = nlsLayers
+	}
+
+	if b.layerStyles != nil {
+		layerStyles, err := b.buildLayerStyles(ctx)
+		if err != nil {
+			return nil, errors.New("Fail buildLayerStyles :" + err.Error())
+		}
+		sceneData.LayerStyles = layerStyles
+	}
+
+	return sceneData, nil
+}
+
+func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	if b == nil {
 		return nil, nil
 	}
@@ -142,7 +183,7 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSup
 	}
 	layers := b.encoder.Result()
 
-	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport)
+	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport, enableGa, trackingId)
 }
 
 func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {

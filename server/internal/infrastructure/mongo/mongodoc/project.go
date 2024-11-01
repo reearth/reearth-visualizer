@@ -31,6 +31,11 @@ type ProjectDocument struct {
 	Visualizer        string
 	PublishmentStatus string
 	CoreSupport       bool
+	EnableGA          bool
+	TrackingID        string
+	// Scene             string
+	Starred bool
+	Deleted bool
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -69,6 +74,11 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
 		CoreSupport:       project.CoreSupport(),
+		EnableGA:          project.EnableGA(),
+		TrackingID:        project.TrackingID(),
+		// Scene:             project.Scene().String(),
+		Starred: project.Starred(),
+		Deleted: project.IsDeleted(),
 	}, pid
 }
 
@@ -81,6 +91,11 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// scene, err := id.SceneIDFrom(d.Scene)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	var imageURL *url.URL
 	if d.ImageURL != "" {
@@ -109,5 +124,10 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
 		CoreSupport(d.CoreSupport).
+		EnableGA(d.EnableGA).
+		TrackingID(d.TrackingID).
+		// Scene(scene).
+		Starred(d.Starred).
+		Deleted(d.Deleted).
 		Build()
 }

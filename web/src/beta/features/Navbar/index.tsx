@@ -10,7 +10,7 @@ type Props = {
   workspaceId?: string;
   isDashboard?: boolean;
   currentTab?: Tab;
-  page?: "editor" | "settings";
+  page?: "editor" | "settings" | "projectSettings";
 };
 
 export const Tabs = ["map", "story", "widgets", "publish"] as const;
@@ -27,48 +27,36 @@ const Navbar: React.FC<Props> = ({
   projectId,
   workspaceId,
   currentTab = "map",
-  isDashboard = false,
-  page = "editor",
+  page = "editor"
 }) => {
   const {
     currentProject,
-    workspace,
-    isPersonal,
-    username,
+    currentWorkspace,
     workspaces,
-    workspaceModalVisible,
     handleLogout,
-    handleWorkspaceChange,
-    handleWorkspaceCreate,
-    handleWorkspaceModalClose,
-    handleWorkspaceModalOpen,
-  } = useHook({ projectId, workspaceId });
+    handleWorkspaceChange
+  } = useHook({
+    projectId,
+    workspaceId
+  });
 
   const { rightSide } = useRightSide({
     currentTab,
     sceneId,
-    page,
+    page
   });
 
   return (
     <Wrapper>
       <LeftSection
         currentProject={currentProject}
-        dashboard={isDashboard}
-        currentWorkspace={workspace}
-        username={username}
-        personalWorkspace={isPersonal}
-        modalShown={workspaceModalVisible}
+        currentWorkspace={currentWorkspace}
         workspaces={workspaces}
         sceneId={sceneId}
         page={page}
         onWorkspaceChange={handleWorkspaceChange}
-        onWorkspaceCreate={handleWorkspaceCreate}
         onSignOut={handleLogout}
-        onModalClose={handleWorkspaceModalClose}
-        openModal={handleWorkspaceModalOpen}
       />
-
       {rightSide}
     </Wrapper>
   );
@@ -76,14 +64,16 @@ const Navbar: React.FC<Props> = ({
 
 export default Navbar;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-  height: ${NAVBAR_HEIGHT}px;
-  gap: 24px;
-  background: ${({ theme }) => theme.bg[0]};
-  z-index: ${({ theme }) => theme.zIndexes.editor.navbar};
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "0 24px",
+  height: NAVBAR_HEIGHT,
+  flexShrink: 0,
+  gap: theme.spacing.super,
+  background: theme.bg[0],
+  zIndex: theme.zIndexes.editor.navbar,
+  boxShadow: theme.shadow.card
+}));

@@ -1,8 +1,8 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
 export const GET_ASSETS = gql(`
-  query GetAssets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
-    assets(teamId: $teamId, keyword: $keyword, sort: $sort, pagination: $pagination) {
+  query GetAssets($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
+    assets(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         cursor
         node {
@@ -11,6 +11,7 @@ export const GET_ASSETS = gql(`
           name
           size
           url
+          createdAt
           contentType
         }
       }
@@ -20,6 +21,7 @@ export const GET_ASSETS = gql(`
         name
         size
         url
+        createdAt
         contentType
       }
       pageInfo {

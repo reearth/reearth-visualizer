@@ -9,7 +9,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { Klass, LexicalNode } from "lexical";
 
-const PlaygroundNodes: Array<Klass<LexicalNode>> = [
+const PlaygroundNodes: Klass<LexicalNode>[] = [
   HeadingNode,
   ListNode,
   ListItemNode,
@@ -24,7 +24,7 @@ const PlaygroundNodes: Array<Klass<LexicalNode>> = [
   LinkNode,
   OverflowNode,
   HorizontalRuleNode,
-  MarkNode,
+  MarkNode
 ];
 
 export default PlaygroundNodes;

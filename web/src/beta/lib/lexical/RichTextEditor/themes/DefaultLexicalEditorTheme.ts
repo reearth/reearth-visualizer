@@ -36,11 +36,11 @@ const theme: EditorThemeClasses = {
     symbol: "DefaultLexicalEditorTheme__tokenProperty",
     tag: "DefaultLexicalEditorTheme__tokenProperty",
     url: "DefaultLexicalEditorTheme__tokenOperator",
-    variable: "DefaultLexicalEditorTheme__tokenVariable",
+    variable: "DefaultLexicalEditorTheme__tokenVariable"
   },
   embedBlock: {
     base: "DefaultLexicalEditorTheme__embedBlock",
-    focus: "DefaultLexicalEditorTheme__embedBlockFocus",
+    focus: "DefaultLexicalEditorTheme__embedBlockFocus"
   },
   hashtag: "DefaultLexicalEditorTheme__hashtag",
   heading: {
@@ -49,7 +49,7 @@ const theme: EditorThemeClasses = {
     h3: "DefaultLexicalEditorTheme__h3",
     h4: "DefaultLexicalEditorTheme__h4",
     h5: "DefaultLexicalEditorTheme__h5",
-    h6: "DefaultLexicalEditorTheme__h6",
+    h6: "DefaultLexicalEditorTheme__h6"
   },
   image: "editor-image",
   indent: "DefaultLexicalEditorTheme__indent",
@@ -62,16 +62,16 @@ const theme: EditorThemeClasses = {
     listitemChecked: "DefaultLexicalEditorTheme__listItemChecked",
     listitemUnchecked: "DefaultLexicalEditorTheme__listItemUnchecked",
     nested: {
-      listitem: "DefaultLexicalEditorTheme__nestedListItem",
+      listitem: "DefaultLexicalEditorTheme__nestedListItem"
     },
     olDepth: [
       "DefaultLexicalEditorTheme__ol1",
       "DefaultLexicalEditorTheme__ol2",
       "DefaultLexicalEditorTheme__ol3",
       "DefaultLexicalEditorTheme__ol4",
-      "DefaultLexicalEditorTheme__ol5",
+      "DefaultLexicalEditorTheme__ol5"
     ],
-    ul: "DefaultLexicalEditorTheme__ul",
+    ul: "DefaultLexicalEditorTheme__ul"
   },
   ltr: "DefaultLexicalEditorTheme__ltr",
   mark: "DefaultLexicalEditorTheme__mark",
@@ -84,13 +84,16 @@ const theme: EditorThemeClasses = {
   tableAddRows: "DefaultLexicalEditorTheme__tableAddRows",
   tableCell: "DefaultLexicalEditorTheme__tableCell",
   tableCellActionButton: "DefaultLexicalEditorTheme__tableCellActionButton",
-  tableCellActionButtonContainer: "DefaultLexicalEditorTheme__tableCellActionButtonContainer",
+  tableCellActionButtonContainer:
+    "DefaultLexicalEditorTheme__tableCellActionButtonContainer",
   tableCellEditing: "DefaultLexicalEditorTheme__tableCellEditing",
   tableCellHeader: "DefaultLexicalEditorTheme__tableCellHeader",
-  tableCellPrimarySelected: "DefaultLexicalEditorTheme__tableCellPrimarySelected",
+  tableCellPrimarySelected:
+    "DefaultLexicalEditorTheme__tableCellPrimarySelected",
   tableCellResizer: "DefaultLexicalEditorTheme__tableCellResizer",
   tableCellSelected: "DefaultLexicalEditorTheme__tableCellSelected",
-  tableCellSortedIndicator: "DefaultLexicalEditorTheme__tableCellSortedIndicator",
+  tableCellSortedIndicator:
+    "DefaultLexicalEditorTheme__tableCellSortedIndicator",
   tableResizeRuler: "DefaultLexicalEditorTheme__tableCellResizeRuler",
   tableSelected: "DefaultLexicalEditorTheme__tableSelected",
   tableSelection: "DefaultLexicalEditorTheme__tableSelection",
@@ -102,8 +105,9 @@ const theme: EditorThemeClasses = {
     subscript: "DefaultLexicalEditorTheme__textSubscript",
     superscript: "DefaultLexicalEditorTheme__textSuperscript",
     underline: "DefaultLexicalEditorTheme__textUnderline",
-    underlineStrikethrough: "DefaultLexicalEditorTheme__textUnderlineStrikethrough",
-  },
+    underlineStrikethrough:
+      "DefaultLexicalEditorTheme__textUnderlineStrikethrough"
+  }
 };
 
 export default theme;

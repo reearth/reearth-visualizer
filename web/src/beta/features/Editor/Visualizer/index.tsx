@@ -1,18 +1,16 @@
-import { MutableRefObject, useCallback } from "react";
-
-import ContentPicker from "@reearth/beta/components/ContentPicker";
-import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
-import StoryPanel, {
+import Visualizer from "@reearth/beta/features/Visualizer";
+import { type InteractionModeType } from "@reearth/beta/features/Visualizer/Crust";
+import {
   StoryPanelRef,
-  type InstallableStoryBlock,
-} from "@reearth/beta/lib/core/StoryPanel";
-import { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
-import CoreVisualizer from "@reearth/beta/lib/core/Visualizer";
-import type { Camera } from "@reearth/beta/utils/value";
+  type InstallableStoryBlock
+} from "@reearth/beta/features/Visualizer/Crust/StoryPanel";
+import { SketchFeature, SketchType } from "@reearth/core";
+import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
-import { config } from "@reearth/services/config";
-import { styled } from "@reearth/services/theme";
+import { WidgetAreaState } from "@reearth/services/state";
+import { MutableRefObject, SetStateAction } from "react";
+
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import useHooks from "./hooks";
 
@@ -21,138 +19,146 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
-  currentCamera?: Camera;
-  // storytelling
+  interactionMode?: InteractionModeType;
+  isVisualizerResizing?: MutableRefObject<boolean>;
+  // story
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
   selectedStory?: Story;
-  installableBlocks?: InstallableStoryBlock[];
+  installableStoryBlocks?: InstallableStoryBlock[];
+  widgetAlignEditorActivated: boolean | undefined;
+  selectedLayer: SelectedLayer | undefined;
+  selectedWidgetArea: WidgetAreaState | undefined;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
-  onCameraChange: (camera: Camera) => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onSketchFeatureUpdate?: (feature: SketchFeature | null) => void;
+  onVisualizerReady: (value: boolean) => void;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
+  onCoreAPIReady?: () => void;
+  setSelectedStoryPageId: (value: string | undefined) => void;
+  selectWidgetArea: (
+    update?: SetStateAction<WidgetAreaState | undefined>
+  ) => void;
 };
 
-const Visualizer: React.FC<Props> = ({
+const EditorVisualizer: React.FC<Props> = ({
   visualizerRef,
   sceneId,
   isBuilt,
   inEditor,
-  currentCamera,
+  interactionMode,
+  isVisualizerResizing,
   storyPanelRef,
   showStoryPanel,
   selectedStory,
-  installableBlocks,
-  onStoryBlockMove,
-  onCameraChange,
+  installableStoryBlocks,
+  selectedLayer,
+  widgetAlignEditorActivated,
+  selectedWidgetArea,
+  onStoryBlockMove: handleStoryBlockMove,
+  onSketchTypeChange,
+  onSketchFeatureCreate,
+  onSketchFeatureUpdate,
+  onVisualizerReady,
+  onCoreLayerSelect,
+  onCoreAPIReady,
+  setSelectedStoryPageId,
+  selectWidgetArea
 }) => {
   const {
-    rootLayerId,
-    selectedBlockId,
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
     story,
-    blocks,
-    selectedWidgetArea,
-    widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox,
-    isVisualizerReady: _isVisualizerReady,
     zoomedLayerId,
-    handleCurrentPageChange,
+    installableInfoboxBlocks,
+    currentCamera,
+    initialCamera,
+    handleCameraUpdate,
+    handleCoreLayerSelect,
+    handleLayerDrop,
+    handleStoryPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
+    handleInfoboxBlockCreate,
+    handleInfoboxBlockMove,
+    handleInfoboxBlockRemove,
+    handleWidgetUpdate,
+    handleWidgetAlignSystemUpdate,
     handlePropertyValueUpdate,
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
-    selectLayer,
-    selectBlock,
-    onBlockChange,
-    onBlockMove,
-    onBlockRemove,
-    onBlockInsert,
-    onWidgetUpdate,
-    onWidgetAlignSystemUpdate,
-    selectWidgetArea,
-    handleDropLayer,
     handleMount,
-    zoomToLayer,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, showStoryPanel });
-
-  const renderInfoboxInsertionPopUp = useCallback<
-    NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
-  >(
-    (onSelect, onClose) => (
-      <ContentPicker items={blocks} onSelect={onSelect} onClickAway={onClose} />
-    ),
-    [blocks],
-  );
+    zoomToLayer
+  } = useHooks({
+    sceneId,
+    isBuilt,
+    storyId: selectedStory?.id,
+    showStoryPanel,
+    selectedLayer,
+    isVisualizerResizing,
+    onCoreLayerSelect,
+    onVisualizerReady,
+    setSelectedStoryPageId
+  });
 
   return (
-    <Wrapper>
-      <CoreVisualizer
-        ref={visualizerRef}
-        engine="cesium"
-        isEditable={!isBuilt}
-        isBuilt={!!isBuilt}
-        inEditor={!!inEditor}
-        layers={layers}
-        widgetAlignSystem={widgets?.alignSystem}
-        floatingWidgets={widgets?.floating}
-        widgetLayoutConstraint={widgets?.layoutConstraint}
-        ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
-        selectedBlockId={selectedBlockId}
-        selectedWidgetArea={selectedWidgetArea}
-        zoomedLayerId={zoomedLayerId}
-        rootLayerId={rootLayerId}
-        sceneProperty={sceneProperty as SceneProperty}
-        pluginProperty={pluginProperty}
-        ready={isBuilt || (!!layers && !!widgets)}
-        pluginBaseUrl={config()?.plugins}
-        widgetAlignSystemEditing={widgetAlignEditorActivated}
-        meta={engineMeta}
-        useExperimentalSandbox={useExperimentalSandbox}
-        camera={currentCamera}
-        storyPanelPosition={story?.position}
-        onCameraChange={onCameraChange}
-        onLayerSelect={selectLayer}
-        onWidgetLayoutUpdate={onWidgetUpdate}
-        onWidgetAlignmentUpdate={onWidgetAlignSystemUpdate}
-        onWidgetAreaSelect={selectWidgetArea}
-        onBlockSelect={selectBlock}
-        onBlockChange={onBlockChange}
-        onBlockMove={onBlockMove}
-        onBlockDelete={onBlockRemove}
-        onBlockInsert={onBlockInsert}
-        onLayerDrop={handleDropLayer}
-        onZoomToLayer={zoomToLayer}
-        onMount={handleMount}
-        renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
-        {showStoryPanel && (
-          <StoryPanel
-            ref={storyPanelRef}
-            selectedStory={story}
-            installableBlocks={installableBlocks}
-            isEditable={!!inEditor}
-            onCurrentPageChange={handleCurrentPageChange}
-            onBlockCreate={handleStoryBlockCreate}
-            onBlockDelete={handleStoryBlockDelete}
-            onPropertyUpdate={handlePropertyValueUpdate}
-            onPropertyItemAdd={handlePropertyItemAdd}
-            onPropertyItemMove={handlePropertyItemMove}
-            onPropertyItemDelete={handlePropertyItemDelete}
-            onBlockMove={onStoryBlockMove}
-          />
-        )}
-      </CoreVisualizer>
-    </Wrapper>
+    <Visualizer
+      engine="cesium"
+      engineMeta={engineMeta}
+      isBuilt={!!isBuilt}
+      inEditor={inEditor}
+      ready={isBuilt || (!!layers && !!widgets)}
+      layers={layers}
+      widgets={widgets}
+      story={story}
+      viewerProperty={viewerProperty}
+      pluginProperty={pluginProperty}
+      // editor
+      zoomedLayerId={zoomedLayerId}
+      visualizerRef={visualizerRef}
+      currentCamera={currentCamera}
+      initialCamera={initialCamera}
+      interactionMode={interactionMode}
+      onCameraChange={handleCameraUpdate}
+      onCoreLayerSelect={handleCoreLayerSelect}
+      handleLayerDrop={handleLayerDrop}
+      handleZoomToLayer={zoomToLayer}
+      handleSketchTypeChange={onSketchTypeChange}
+      handleSketchFeatureCreate={onSketchFeatureCreate}
+      handleSketchFeatureUpdate={onSketchFeatureUpdate}
+      handleMount={handleMount}
+      handleCoreAPIReady={onCoreAPIReady}
+      // story
+      showStoryPanel={showStoryPanel}
+      storyPanelRef={storyPanelRef}
+      installableStoryBlocks={installableStoryBlocks}
+      handleStoryPageChange={handleStoryPageChange}
+      handleStoryBlockCreate={handleStoryBlockCreate}
+      handleStoryBlockDelete={handleStoryBlockDelete}
+      handleStoryBlockMove={handleStoryBlockMove}
+      // common for story and infobox
+      handlePropertyValueUpdate={handlePropertyValueUpdate}
+      handlePropertyItemAdd={handlePropertyItemAdd}
+      handlePropertyItemMove={handlePropertyItemMove}
+      handlePropertyItemDelete={handlePropertyItemDelete}
+      // widgets
+      widgetAlignEditorActivated={widgetAlignEditorActivated}
+      selectedWidgetArea={selectedWidgetArea}
+      handleWidgetUpdate={handleWidgetUpdate}
+      handleWidgetAlignSystemUpdate={handleWidgetAlignSystemUpdate}
+      selectWidgetArea={selectWidgetArea}
+      // infobox
+      installableInfoboxBlocks={installableInfoboxBlocks}
+      handleInfoboxBlockCreate={handleInfoboxBlockCreate}
+      handleInfoboxBlockMove={handleInfoboxBlockMove}
+      handleInfoboxBlockRemove={handleInfoboxBlockRemove}
+    />
   );
 };
 
-export default Visualizer;
-
-const Wrapper = styled.div`
-  background: ${({ theme }) => theme.bg[0]};
-  height: 100%;
-`;
+export default EditorVisualizer;

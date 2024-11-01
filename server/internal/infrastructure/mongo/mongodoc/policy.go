@@ -15,6 +15,9 @@ type PolicyDocument struct {
 	DatasetCount          *int
 	DatasetSchemaCount    *int
 	AssetStorageSize      *int64
+	NLSLayersCount        *int
+	PageCount             *int
+	BlocksCount           *int
 }
 
 func (d PolicyDocument) Model() *policy.Policy {
@@ -28,6 +31,9 @@ func (d PolicyDocument) Model() *policy.Policy {
 		DatasetCount:          d.DatasetCount,
 		DatasetSchemaCount:    d.DatasetSchemaCount,
 		AssetStorageSize:      d.AssetStorageSize,
+		NLSLayersCount:        d.NLSLayersCount,
+		PageCount:             d.PageCount,
+		BlocksCount:           d.BlocksCount,
 	})
 }
 

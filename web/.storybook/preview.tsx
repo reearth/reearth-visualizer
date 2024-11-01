@@ -1,19 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ApolloProvider,
   ApolloClient,
   InMemoryCache,
   ApolloLink,
-  Observable,
+  Observable
 } from "@apollo/client";
 import { ThemeProvider } from "@emotion/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
-import type { Preview } from "@storybook/react";
+import type { Preview, ReactRenderer } from "@storybook/react";
 import React from "react";
 
-import classicDarkTheme from "../src/classic/theme/reearthTheme/darkTheme"; // temp classic imports
-import classicLightTheme from "../src/classic/theme/reearthTheme/lightTheme"; // temp classic imports
-import { Provider as DndProvider } from "../src/classic/util/use-dnd";
+import { Provider as DndProvider } from "../src/beta/utils/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
 import { GlobalStyles, darkTheme, lightTheme } from "../src/services/theme";
 
@@ -23,11 +20,11 @@ import theme from "./theme";
 const mockClient = new ApolloClient({
   link: new ApolloLink(
     () =>
-      new Observable(observer => {
+      new Observable((observer) => {
         observer.complete();
-      }),
+      })
   ),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache()
 });
 
 const preview: Preview = {
@@ -35,33 +32,27 @@ const preview: Preview = {
     backgrounds: {
       values: [
         { name: "Light", value: "lightGrey" },
-        { name: "Dark", value: "ash" },
-      ],
+        { name: "Dark", value: "ash" }
+      ]
     },
     layout: "fullscreen",
     controls: { expanded: true },
     actions: { argTypesRegex: "^on.*" },
     docs: {
-      theme,
-    },
+      theme
+    }
   },
   decorators: [
-    withThemeFromJSXProvider({
+    withThemeFromJSXProvider<ReactRenderer>({
       themes: {
-        light: {
-          classic: classicLightTheme,
-          ...lightTheme,
-        },
-        dark: {
-          classic: classicDarkTheme,
-          ...darkTheme,
-        },
+        light: lightTheme,
+        dark: darkTheme
       },
       defaultTheme: "dark",
       Provider: ThemeProvider,
-      GlobalStyles,
+      GlobalStyles
     }),
-    Story => {
+    (Story) => {
       return (
         <ApolloProvider client={mockClient}>
           <I18nProvider>
@@ -71,8 +62,8 @@ const preview: Preview = {
           </I18nProvider>
         </ApolloProvider>
       );
-    },
-  ],
+    }
+  ]
 };
 
 export default preview;

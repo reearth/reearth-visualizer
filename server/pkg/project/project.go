@@ -34,6 +34,11 @@ type Project struct {
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
 	coreSupport       bool
+	enableGa          bool
+	trackingId        string
+	sceneId           SceneID
+	starred           bool
+	isDeleted         bool
 }
 
 func (p *Project) ID() ID {
@@ -105,6 +110,18 @@ func (p *Project) CoreSupport() bool {
 	return p.coreSupport
 }
 
+func (p *Project) EnableGA() bool {
+	return p.enableGa
+}
+
+func (p *Project) TrackingID() string {
+	return p.trackingId
+}
+
+func (p *Project) Scene() SceneID {
+	return p.sceneId
+}
+
 func (p *Project) PublishmentStatus() PublishmentStatus {
 	return p.publishmentStatus
 }
@@ -119,6 +136,14 @@ func (p *Project) CreatedAt() time.Time {
 
 func (p *Project) Visualizer() visualizer.Visualizer {
 	return p.visualizer
+}
+
+func (p *Project) Starred() bool {
+	return p.starred
+}
+
+func (p *Project) IsDeleted() bool {
+	return p.isDeleted
 }
 
 func (p *Project) SetArchived(isArchived bool) {
@@ -153,6 +178,14 @@ func (p *Project) SetImageURL(imageURL *url.URL) {
 		imageURL2 := *imageURL
 		p.imageURL = &imageURL2
 	}
+}
+
+func (p *Project) SetStarred(starred bool) {
+	p.starred = starred
+}
+
+func (p *Project) SetDeleted(isDeleted bool) {
+	p.isDeleted = isDeleted
 }
 
 func (p *Project) UpdateName(name string) {
@@ -198,6 +231,18 @@ func (p *Project) UpdateVisualizer(visualizer visualizer.Visualizer) {
 
 func (p *Project) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
 	p.publishmentStatus = publishmentStatus
+}
+
+func (p *Project) UpdateEnableGA(enableGa bool) {
+	p.enableGa = enableGa
+}
+
+func (p *Project) UpdateTrackingID(trackingId string) {
+	p.trackingId = trackingId
+}
+
+func (p *Project) UpdateSceneID(sceneId SceneID) {
+	p.sceneId = sceneId
 }
 
 func (p *Project) PublicName() string {

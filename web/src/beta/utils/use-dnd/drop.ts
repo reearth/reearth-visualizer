@@ -1,5 +1,9 @@
 import { useMemo, useCallback } from "react";
-import { useDrop as useDndDrop, DropTargetHookSpec, DropTargetMonitor } from "react-dnd";
+import {
+  useDrop as useDndDrop,
+  DropTargetHookSpec,
+  DropTargetMonitor
+} from "react-dnd";
 
 import { Item, ItemType, Dropper } from "./types";
 
@@ -10,7 +14,10 @@ export type Context = {
   canDrop: boolean;
 };
 
-export type DropOptions<T extends ItemType = ItemType, E extends HTMLElement = HTMLElement> = {
+export type DropOptions<
+  T extends ItemType = ItemType,
+  E extends HTMLElement = HTMLElement
+> = {
   accept: T | T[];
   canDrop?: (item: Item<T>) => boolean;
   hover?: (item: Item<T>, context: Context) => void;
@@ -20,18 +27,23 @@ export type DropOptions<T extends ItemType = ItemType, E extends HTMLElement = H
   wrapperRef?: React.RefObject<E>;
 };
 
-export const useDrop = <T extends ItemType = ItemType, E extends HTMLElement = HTMLElement>({
+export const useDrop = <
+  T extends ItemType = ItemType,
+  E extends HTMLElement = HTMLElement
+>({
   accept,
   hover,
   canDrop,
   drop,
   shallow,
   disabled,
-  wrapperRef,
+  wrapperRef
 }: DropOptions<T, E>) => {
   const calcContext = useCallback(
     (monitor: DropTargetMonitor) => {
-      const offset = wrapperRef?.current ? monitor.getClientOffset() : undefined;
+      const offset = wrapperRef?.current
+        ? monitor.getClientOffset()
+        : undefined;
       const wrapperOffset = wrapperRef?.current
         ? wrapperRef.current.getBoundingClientRect()
         : undefined;
@@ -41,15 +53,15 @@ export const useDrop = <T extends ItemType = ItemType, E extends HTMLElement = H
               x: offset.x - wrapperOffset.left,
               y: offset.y - wrapperOffset.top,
               w: wrapperOffset.width,
-              h: wrapperOffset.height,
+              h: wrapperOffset.height
             }
           : undefined;
       return {
         canDrop: monitor.canDrop(),
-        position,
+        position
       };
     },
-    [wrapperRef],
+    [wrapperRef]
   );
 
   const options = useMemo<
@@ -72,8 +84,12 @@ export const useDrop = <T extends ItemType = ItemType, E extends HTMLElement = H
           }
         : undefined,
       canDrop: (item: Item<T>, monitor) =>
-        !disabled && (!shallow || monitor.isOver({ shallow: true })) && (!canDrop || canDrop(item)),
-      drop: drop ? (item: Item<T>, monitor) => drop(item, calcContext(monitor)) : undefined,
+        !disabled &&
+        (!shallow || monitor.isOver({ shallow: true })) &&
+        (!canDrop || canDrop(item)),
+      drop: drop
+        ? (item: Item<T>, monitor) => drop(item, calcContext(monitor))
+        : undefined,
       collect(monitor) {
         const isOver = monitor.isOver({ shallow });
         const canDrop = monitor.canDrop();
@@ -81,13 +97,14 @@ export const useDrop = <T extends ItemType = ItemType, E extends HTMLElement = H
           isOver,
           canDrop,
           isDroppable: isOver && canDrop,
-          isNotDroppable: isOver && !canDrop,
+          isNotDroppable: isOver && !canDrop
         };
-      },
+      }
     }),
-    [accept, calcContext, canDrop, disabled, drop, hover, shallow],
+    [accept, calcContext, canDrop, disabled, drop, hover, shallow]
   );
 
-  const [{ isOver, canDrop: canDrop2, isDroppable, isNotDroppable }, ref] = useDndDrop(options);
+  const [{ isOver, canDrop: canDrop2, isDroppable, isNotDroppable }, ref] =
+    useDndDrop(options);
   return { ref, isOver, canDrop: canDrop2, isDroppable, isNotDroppable };
 };

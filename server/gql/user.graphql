@@ -2,6 +2,7 @@ type User implements Node {
   id: ID!
   name: String!
   email: String!
+  host: String
 }
 
 type Me {
@@ -13,7 +14,7 @@ type Me {
   myTeamId: ID!
   auths: [String!]!
   teams: [Team!]!
-  myTeam: Team!
+  myTeam: Team
 }
 
 enum Theme {
@@ -51,7 +52,6 @@ input DeleteMeInput {
 
 # Payload
 
-
 type UpdateMePayload {
   me: Me!
 }
@@ -65,7 +65,7 @@ type DeleteMePayload {
   userId: ID!
 }
 
-extend type Query{
+extend type Query {
   me: Me
   searchUser(nameOrEmail: String!): User
 }

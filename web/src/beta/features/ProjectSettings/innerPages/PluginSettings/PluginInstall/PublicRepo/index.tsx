@@ -1,20 +1,22 @@
-import React from "react";
-
-import Button from "@reearth/beta/components/Button";
-import TextInput from "@reearth/beta/components/fields/TextField";
-import { Icons } from "@reearth/beta/components/Icon";
-import Loading from "@reearth/beta/components/Loading";
-import Modal from "@reearth/beta/components/Modal";
-import Text from "@reearth/beta/components/Text";
+import {
+  Button,
+  IconName,
+  Loading,
+  Modal,
+  ModalPanel,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
+import { InputField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
+import React from "react";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
 import useHooks from "./hooks";
 
 export type Props = {
-  icon: Icons;
+  icon: IconName;
   buttonText: string;
   onSend: (repoUrl: string) => void;
   serverSideError?: string;
@@ -26,7 +28,7 @@ const PublicRepo: React.FC<Props> = ({
   buttonText: text,
   onSend,
   serverSideError,
-  loading,
+  loading
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -37,37 +39,50 @@ const PublicRepo: React.FC<Props> = ({
     handleRepoUrlChange,
     handleOpen,
     handleSubmit,
-    handleClose,
+    handleClose
   } = useHooks(onSend, loading);
 
   return (
     <>
       <PluginInstallCardButton icon={icon} text={text} onClick={handleOpen} />
-      <Modal
-        title={t("Import GitHub repository")}
-        isVisible={isOpen}
-        onClose={handleClose}
-        button1={<Button buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}
-        button2={
-          <Button
-            buttonType="primary"
-            text={t("Continue")}
-            disabled={!repoUrl}
-            onClick={handleSubmit}
+      <Modal visible={isOpen}>
+        <ModalPanel
+          title={t("Import GitHub repository")}
+          onCancel={handleClose}
+          layout="common"
+          actions={[
+            <Button
+              key="cancel"
+              appearance="secondary"
+              title={t("Cancel")}
+              onClick={handleClose}
+            />,
+            <Button
+              key="continue"
+              appearance="primary"
+              title={t("Continue")}
+              disabled={!repoUrl}
+              onClick={handleSubmit}
+            />
+          ]}
+        >
+          {loading && <Loading overlay />}
+          <InputField
+            title={t("Repository url:")}
+            value={repoUrl}
+            onChange={handleRepoUrlChange}
           />
-        }>
-        {loading && <Loading overlay />}
-        <TextInput name={t("Repository url:")} value={repoUrl} onChange={handleRepoUrlChange} />
-        {validationErr && (
-          <Text size="body" color={theme.dangerous.main}>
-            {validationErr}
-          </Text>
-        )}
-        {serverSideError && (
-          <Text size="body" color={theme.dangerous.main}>
-            {serverSideError}
-          </Text>
-        )}
+          {validationErr && (
+            <Typography size="body" color={theme.dangerous.main}>
+              {validationErr}
+            </Typography>
+          )}
+          {serverSideError && (
+            <Typography size="body" color={theme.dangerous.main}>
+              {serverSideError}
+            </Typography>
+          )}
+        </ModalPanel>
       </Modal>
     </>
   );

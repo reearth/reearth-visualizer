@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client";
-
-import { propertyFragment, infoboxFragment } from "@reearth/services/gql/fragments";
+import {
+  propertyFragment,
+  infoboxFragment
+} from "@reearth/services/gql/fragments";
 
 export const LayerSystemFragments = gql`
   fragment LayerSystemLayer on Layer {
@@ -378,46 +380,37 @@ export const layerFragment = gql`
 export const nlsLayerSimpleFragment = gql`
   fragment NLSLayerCommon on NLSLayer {
     id
+    layerType
+    sceneId
+    config
     title
     visible
-    layerType
-    config
-    tags {
-      tagId
-      tag {
-        id
-        label
-      }
-      ... on LayerTagGroup {
-        children {
-          tagId
-          tag {
-            id
-            label
-          }
-        }
-      }
-    }
     infobox {
+      sceneId
+      layerId
       propertyId
       property {
         id
         ...PropertyFragment
       }
-      fields {
+      blocks {
         id
         pluginId
         extensionId
         propertyId
-        scenePlugin {
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
         property {
           id
           ...PropertyFragment
+        }
+      }
+    }
+    isSketch
+    sketch {
+      customPropertySchema
+      featureCollection {
+        type
+        features {
+          ...FeatureFragment
         }
       }
     }

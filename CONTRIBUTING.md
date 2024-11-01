@@ -8,7 +8,7 @@ Re:Earth has adopted a Code of Conduct that we expect project participants to fo
 
 ## Good for First Issues
 
-To help you get your feet wet and get you familiar with our contribution process, we have [a list of good](https://github.com/reearth/reearth/projects/1#column-14917909) first issues that contain bugs which have a relatively limited scope. This is a great place to get started.
+To help you get your feet wet and get you familiar with our contribution process, we have [a list of good](https://github.com/reearth/reearth-visualizer/projects/1#column-14917909) first issues that contain bugs which have a relatively limited scope. This is a great place to get started.
 
 ## Bonus for Contributors
 

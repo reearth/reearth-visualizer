@@ -4,7 +4,9 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/value"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func valueInterfaceToGqlValue(v interface{}) interface{} {
@@ -28,6 +30,8 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 		return v2
 	case *url.URL:
 		return v2.String()
+	case primitive.M:
+		return v2
 	case value.LatLng:
 		return LatLng{
 			Lat: v2.Lat,
@@ -81,7 +85,7 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 			North: v2.North,
 			South: v2.South,
 		}
-	case []any:
+	case []interface{}:
 		gqlArray := make([]any, len(v2))
 		for i, item := range v2 {
 			gqlArray[i] = valueInterfaceToGqlValue(item)
@@ -202,4 +206,33 @@ func ToValueType(t value.Type) ValueType {
 
 func FromValueType(t ValueType) value.Type {
 	return value.Type(strings.ToLower(string(t)))
+}
+
+func ToPropertyValueType(t string) property.ValueType {
+	switch t {
+	case ValueTypeBool.String():
+		return property.ValueTypeBool
+	case ValueTypeNumber.String():
+		return property.ValueTypeNumber
+	case ValueTypeString.String():
+		return property.ValueTypeString
+	case ValueTypeRef.String():
+		return property.ValueTypeRef
+	case ValueTypeURL.String():
+		return property.ValueTypeURL
+	case ValueTypeLatlng.String():
+		return property.ValueTypeLatLng
+	case ValueTypeLatlngheight.String():
+		return property.ValueTypeLatLngHeight
+	case ValueTypeCoordinates.String():
+		return property.ValueTypeCoordinates
+	case ValueTypePolygon.String():
+		return property.ValueTypePolygon
+	case ValueTypeRect.String():
+		return property.ValueTypeRect
+	case ValueTypeArray.String():
+		return property.ValueTypeArray
+	default:
+		return property.ValueTypeUnknown
+	}
 }

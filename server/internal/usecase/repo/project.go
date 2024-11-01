@@ -10,11 +10,20 @@ import (
 	"github.com/samber/lo"
 )
 
+type ProjectFilter struct {
+	Sort       *project.SortType
+	Keyword    *string
+	Pagination *usecasex.Pagination
+}
+
 type Project interface {
 	Filtered(WorkspaceFilter) Project
 	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
-	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByScene(context.Context, id.SceneID) (*project.Project, error)
+	FindByWorkspace(context.Context, accountdomain.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
+	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
+	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
@@ -30,8 +39,12 @@ func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid accountdo
 		Last:   nil,
 	}.Wrap()
 
+	filter := ProjectFilter{
+		Pagination: pagination,
+	}
+
 	for {
-		projects, info, err := repo.FindByWorkspace(ctx, tid, pagination)
+		projects, info, err := repo.FindByWorkspace(ctx, tid, filter)
 		if err != nil {
 			return err
 		}

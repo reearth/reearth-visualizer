@@ -1,4 +1,7 @@
-export function delayedObject<T extends {}>(obj: T, excludedKeys?: string[]): Readonly<T> {
+export function delayedObject<T extends object>(
+  obj: T,
+  excludedKeys?: string[]
+): Readonly<T> {
   const res: any = {};
   const descs = Object.keys(obj).reduce<PropertyDescriptorMap>(
     (a, b) => ({
@@ -8,17 +11,17 @@ export function delayedObject<T extends {}>(obj: T, excludedKeys?: string[]): Re
             value: (obj as any)[b],
             configurable: false,
             enumerable: true,
-            writable: false,
+            writable: false
           }
         : {
             get() {
               return (obj as any)[b];
             },
             configurable: false,
-            enumerable: true,
-          },
+            enumerable: true
+          }
     }),
-    {},
+    {}
   );
   Object.defineProperties(res, descs);
   return res;
@@ -26,7 +29,7 @@ export function delayedObject<T extends {}>(obj: T, excludedKeys?: string[]): Re
 
 export function objectFromGetter<T extends { [K in keyof T]: any }>(
   keys: (keyof T)[],
-  fn: (this: T, key: keyof T) => T[keyof T],
+  fn: (this: T, key: keyof T) => T[keyof T]
 ): Readonly<T> {
   const res: any = {};
   const descs = keys.reduce<PropertyDescriptorMap>(
@@ -37,10 +40,10 @@ export function objectFromGetter<T extends { [K in keyof T]: any }>(
           return fn.call(this, b);
         },
         configurable: false,
-        enumerable: true,
-      },
+        enumerable: true
+      }
     }),
-    {},
+    {}
   );
   Object.defineProperties(res, descs);
   return res;
@@ -52,8 +55,13 @@ export function clone<T>(obj: T): T {
   return obj2;
 }
 
-type BoxedTupleTypes<T extends any[]> = { [P in keyof T]: [T[P]] }[Exclude<keyof T, keyof any[]>];
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void
+type BoxedTupleTypes<T extends any[]> = { [P in keyof T]: [T[P]] }[Exclude<
+  keyof T,
+  keyof any[]
+>];
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
   ? I
   : never;
 type UnboxIntersection<T> = T extends { 0: infer U } ? U : never;

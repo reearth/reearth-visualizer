@@ -1,8 +1,12 @@
 package gqlmodel
 
 import (
+	"encoding/json"
+	"strings"
+
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 func ToPlugin(p *plugin.Plugin) *Plugin {
@@ -41,6 +45,24 @@ func ToPlugin(p *plugin.Plugin) *Plugin {
 	}
 }
 
+func ToPlugins(pl []*plugin.Plugin) []*Plugin {
+	return lo.Map(pl, func(s *plugin.Plugin, _ int) *Plugin {
+		return ToPlugin(s)
+	})
+}
+
+func ToPluginsFromJSON(data []interface{}) []*Plugin {
+	var plgs []*Plugin
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return nil
+	}
+	if err := json.Unmarshal(bytes, &plgs); err != nil {
+		return nil
+	}
+	return plgs
+}
+
 func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 	switch t {
 	case plugin.ExtensionTypePrimitive:
@@ -53,6 +75,8 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 		return PluginExtensionTypeVisualizer
 	case plugin.ExtensionTypeInfobox:
 		return PluginExtensionTypeInfobox
+	case plugin.ExtensionTypeInfoboxBlock:
+		return PluginExtensionTypeInfoboxBlock
 	case plugin.ExtensionTypeCluster:
 		return PluginExtensionTypeCluster
 	case plugin.ExtensionTypeStory:
@@ -100,6 +124,14 @@ func ToPluginWidgetZoneType(t plugin.WidgetZoneType) WidgetZoneType {
 	case plugin.WidgetZoneOuter:
 		return WidgetZoneTypeOuter
 	}
+
+	t2 := plugin.WidgetZoneType(strings.ToLower(string(t)))
+	switch t2 {
+	case plugin.WidgetZoneInner:
+		return WidgetZoneTypeInner
+	case plugin.WidgetZoneOuter:
+		return WidgetZoneTypeOuter
+	}
 	return ""
 }
 
@@ -112,11 +144,31 @@ func ToPluginWidgetSectionType(t plugin.WidgetSectionType) WidgetSectionType {
 	case plugin.WidgetSectionRight:
 		return WidgetSectionTypeRight
 	}
+
+	t2 := plugin.WidgetSectionType(strings.ToLower(string(t)))
+	switch t2 {
+	case plugin.WidgetSectionLeft:
+		return WidgetSectionTypeLeft
+	case plugin.WidgetSectionCenter:
+		return WidgetSectionTypeCenter
+	case plugin.WidgetSectionRight:
+		return WidgetSectionTypeRight
+	}
 	return ""
 }
 
 func ToPluginWidgetAreaType(t plugin.WidgetAreaType) WidgetAreaType {
 	switch t {
+	case plugin.WidgetAreaTop:
+		return WidgetAreaTypeTop
+	case plugin.WidgetAreaMiddle:
+		return WidgetAreaTypeMiddle
+	case plugin.WidgetAreaBottom:
+		return WidgetAreaTypeBottom
+	}
+
+	t2 := plugin.WidgetAreaType(strings.ToLower(string(t)))
+	switch t2 {
 	case plugin.WidgetAreaTop:
 		return WidgetAreaTypeTop
 	case plugin.WidgetAreaMiddle:

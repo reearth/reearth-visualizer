@@ -1,13 +1,18 @@
-import { useMemo, useEffect, useCallback } from "react";
-
-import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
+import type {
+  Alignment,
+  Location
+} from "@reearth/beta/features/Visualizer/Crust";
+import {
+  convertData,
+  sceneProperty2ViewerPropertyMapping
+} from "@reearth/beta/utils/convert-object";
+import { Camera } from "@reearth/beta/utils/value";
 import type {
   LatLng,
-  ValueTypes,
   ComputedLayer,
   ComputedFeature,
-} from "@reearth/beta/lib/core/mantle";
-import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+  ViewerProperty
+} from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -15,208 +20,262 @@ import {
   useStorytellingFetcher,
   usePropertyFetcher,
   useLayerStylesFetcher,
+  useInfoboxFetcher
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
-  useSceneMode,
-  useIsCapturing,
-  useSelectedBlock,
-  useWidgetAlignEditorActivated,
-  useSelectedWidgetArea,
-  useIsVisualizerReady,
-  useZoomedLayerId,
-  useSelectedLayer,
-  useSelectedStoryPageId,
-  useSelectedLayerStyle,
-  useSelectedSceneSetting,
-} from "@reearth/services/state";
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  MutableRefObject
+} from "react";
+
+import { useCurrentCamera } from "../atoms";
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
-import type { BlockType } from "./type";
 
 export default ({
   sceneId,
   storyId,
   isBuilt,
   showStoryPanel,
+  selectedLayer,
+  isVisualizerResizing,
+  onCoreLayerSelect,
+  onVisualizerReady,
+  setSelectedStoryPageId
 }: {
   sceneId?: string;
   storyId?: string;
   isBuilt?: boolean;
   showStoryPanel?: boolean;
+  selectedLayer?: SelectedLayer | undefined;
+  isVisualizerResizing?: MutableRefObject<boolean>;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
+  onVisualizerReady: (value: boolean) => void;
+  setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
-  const { useUpdatePropertyValue, useAddPropertyItem, useMovePropertyItem, useRemovePropertyItem } =
-    usePropertyFetcher();
+  const {
+    useUpdatePropertyValue,
+    useAddPropertyItem,
+    useMovePropertyItem,
+    useRemovePropertyItem
+  } = usePropertyFetcher();
+  const {
+    useInstallableInfoboxBlocksQuery,
+    useCreateInfoboxBlock,
+    useDeleteInfoboxBlock,
+    useMoveInfoboxBlock
+  } = useInfoboxFetcher();
+
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => {
+      setCurrentCamera(camera);
+    },
+    [setCurrentCamera]
+  );
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
-  const [sceneMode, setSceneMode] = useSceneMode();
-  const [isCapturing, onIsCapturingChange] = useIsCapturing();
-  const [selectedBlock, selectBlock] = useSelectedBlock();
-  const [_, selectSelectedStoryPageId] = useSelectedStoryPageId();
-  const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
-  const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
-
-  const [selectedLayer, setSelectedLayer] = useSelectedLayer();
-  const [, setSelectedLayerStyle] = useSelectedLayerStyle();
-  const [, setSelectedSceneSetting] = useSelectedSceneSetting();
-
-  const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
-  const [isVisualizerReady, setIsVisualizerReady] = useIsVisualizerReady();
-
-  const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
-
-  // Scene property
-  // TODO: Fix to use exact type through GQL typing
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
-
-  useEffect(() => {
-    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
-  }, [sceneProperty, setSceneMode]);
-
-  // Layers
-  const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
-
-  const layers = useMemo(() => {
-    const processedLayers = processLayers(nlsLayers, layerStyles);
-    if (!showStoryPanel) return processedLayers;
-    return processedLayers?.map(layer => ({
-      ...layer,
-      visible: true,
-    }));
-  }, [nlsLayers, layerStyles, showStoryPanel]);
-
-  const selectLayer = useCallback(
-    async (
-      id?: string,
-      layer?: () => Promise<ComputedLayer | undefined>,
-      feature?: ComputedFeature,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => {
-      if ((!id && !feature && !selectedLayer) ?? (id === selectedLayer?.layerId || !feature))
-        return;
-      if (id) {
-        setSelectedLayerStyle(undefined);
-        setSelectedSceneSetting(undefined);
-      }
-      setSelectedLayer(
-        id ? { layerId: id, layer: await layer?.(), feature, layerSelectionReason } : undefined,
-      );
-    },
-    [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
+  const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
+  const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
+    undefined
   );
 
-  const handleDropLayer = useCallback(
+  const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
+    const sceneProperty = processProperty(scene?.property);
+    const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    if (sceneProperty?.camera?.camera) {
+      setInitialCamera(sceneProperty?.camera?.camera);
+    }
+    return {
+      viewerProperty: sceneProperty
+        ? (convertData(
+            sceneProperty,
+            sceneProperty2ViewerPropertyMapping
+          ) as ViewerProperty)
+        : undefined,
+      cesiumIonAccessToken
+    };
+  }, [scene?.property]);
+
+  useEffect(() => {
+    setCurrentCamera(initialCamera);
+  }, [initialCamera, setCurrentCamera]);
+
+  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({
+    sceneId
+  });
+
+  const infoboxBlockNames = useMemo(
+    () =>
+      installableInfoboxBlocks
+        ?.map((ib) => ({ [ib.extensionId]: ib.name }))
+        .filter((bn): bn is Record<string, string> => !!bn)
+        .reduce((result, obj) => {
+          Object.assign(result, obj);
+          return result;
+        }, {}),
+    [installableInfoboxBlocks]
+  );
+
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(
+      nlsLayers,
+      layerStyles,
+      undefined,
+      infoboxBlockNames
+    );
+    if (!showStoryPanel) return processedLayers;
+    return processedLayers?.map((layer) => ({
+      ...layer,
+      visible: true
+    }));
+  }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
+
+  const handleCoreLayerSelect = useCallback(
+    (
+      layerId?: string,
+      computedLayer?: ComputedLayer,
+      computedFeature?: ComputedFeature
+    ) => {
+      if (
+        (!layerId && !computedFeature && !selectedLayer) ??
+        (layerId === selectedLayer?.layer?.id || !computedFeature)
+      )
+        return;
+
+      if (layerId) {
+        onCoreLayerSelect({ layerId, computedLayer, computedFeature });
+      } else {
+        onCoreLayerSelect(undefined);
+      }
+    },
+    [selectedLayer, onCoreLayerSelect]
+  );
+
+  const handleLayerDrop = useCallback(
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
     },
-    [],
+    []
   );
 
   // Widgets
-  const widgets = convertWidgets(scene);
+  const widgets = useMemo(() => convertWidgets(scene), [scene]);
 
-  const onWidgetUpdate = useCallback(
-    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+  const handleWidgetUpdate = useCallback(
+    async (
+      id: string,
+      update: { location?: Location; extended?: boolean; index?: number }
+    ) => {
       await useUpdateWidget(id, update, sceneId);
     },
-    [sceneId, useUpdateWidget],
+    [sceneId, useUpdateWidget]
   );
 
-  const onWidgetAlignSystemUpdate = useCallback(
+  const handleWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
       await useUpdateWidgetAlignSystem(
-        { zone: location.zone, section: location.section, area: location.area, align },
-        sceneId,
+        {
+          zone: location.zone,
+          section: location.section,
+          area: location.area,
+          align
+        },
+        sceneId
       );
     },
-    [sceneId, useUpdateWidgetAlignSystem],
+    [sceneId, useUpdateWidgetAlignSystem]
   );
 
   // Plugin
   const pluginProperty = useMemo(
     () =>
-      scene?.plugins.reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
-        {},
-      ),
-    [scene?.plugins],
+      scene?.plugins.reduce<Record<string, any>>((a, b) => {
+        a[b.pluginId] = processProperty(b.property);
+        return a;
+      }, {}),
+    [scene?.plugins]
   );
 
-  // Infobox - NOTE: this is from classic. TBD but will change significantly
-  const onBlockChange = useCallback(
-    async <T extends keyof ValueTypes>(
-      blockId: string,
-      _schemaGroupId: string,
-      _fid: string,
-      _v: ValueTypes[T],
-      vt: T,
-      selectedLayer?: Layer,
-    ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
-      if (!propertyId) return;
-
-      console.log("Block has been changed!");
+  const handleInfoboxBlockCreate = useCallback(
+    async (pluginId: string, extensionId: string, index?: number) => {
+      if (!selectedLayer?.layer?.id) return;
+      await useCreateInfoboxBlock({
+        layerId: selectedLayer.layer.id,
+        pluginId,
+        extensionId,
+        index
+      });
     },
-    [],
+    [selectedLayer, useCreateInfoboxBlock]
   );
 
-  const onBlockMove = useCallback(
-    async (_id: string, _fromIndex: number, _toIndex: number) => {
-      if (!selectedLayer) return;
-      console.log("Block has been moved!");
+  const handleInfoboxBlockMove = useCallback(
+    async (id: string, targetIndex: number) => {
+      if (!selectedLayer?.layer?.id) return;
+      await useMoveInfoboxBlock({
+        layerId: selectedLayer.layer.id,
+        infoboxBlockId: id,
+        index: targetIndex
+      });
     },
-    [selectedLayer],
+    [selectedLayer, useMoveInfoboxBlock]
   );
 
-  const onBlockRemove = useCallback(
-    async (_id: string) => {
-      if (!selectedLayer) return;
-      console.log("Block has been removed!");
+  const handleInfoboxBlockRemove = useCallback(
+    async (id?: string) => {
+      if (!selectedLayer?.layer?.id || !id) return;
+      await useDeleteInfoboxBlock({
+        layerId: selectedLayer.layer.id,
+        infoboxBlockId: id
+      });
     },
-    [selectedLayer],
+    [selectedLayer, useDeleteInfoboxBlock]
   );
-
-  // block selector
-  const blocks: BlockType[] = useMemo(() => [], []);
-  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
-    const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selectedLayer) {
-      console.log("Block has been inserted!");
-    }
-  };
 
   // Story
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
-  const handleCurrentPageChange = useCallback(
-    (pageId?: string) => selectSelectedStoryPageId(pageId),
-    [selectSelectedStoryPageId],
+  const handleStoryPageChange = useCallback(
+    (pageId?: string) => {
+      if (isVisualizerResizing?.current) return;
+      setSelectedStoryPageId(pageId);
+    },
+    [isVisualizerResizing, setSelectedStoryPageId]
   );
 
   const handleStoryBlockCreate = useCallback(
-    async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
+    async (
+      pageId?: string,
+      extensionId?: string,
+      pluginId?: string,
+      index?: number
+    ) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
       await useCreateStoryBlock({
         pluginId,
         extensionId,
         storyId,
         pageId,
-        index,
+        index
       });
     },
-    [storyId, useCreateStoryBlock],
+    [storyId, useCreateStoryBlock]
   );
 
   const handleStoryBlockDelete = useCallback(
@@ -224,7 +283,7 @@ export default ({
       if (!blockId || !storyId || !pageId) return;
       await useDeleteStoryBlock({ blockId, pageId, storyId });
     },
-    [storyId, useDeleteStoryBlock],
+    [storyId, useDeleteStoryBlock]
   );
 
   const handlePropertyValueUpdate = useCallback(
@@ -234,12 +293,20 @@ export default ({
       fieldId?: string,
       itemId?: string,
       vt?: any,
-      v?: any,
+      v?: any
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
-      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
+      await useUpdatePropertyValue(
+        propertyId,
+        schemaItemId,
+        itemId,
+        fieldId,
+        "en",
+        v,
+        vt
+      );
     },
-    [useUpdatePropertyValue],
+    [useUpdatePropertyValue]
   );
 
   const handlePropertyItemAdd = useCallback(
@@ -247,15 +314,21 @@ export default ({
       if (!propertyId || !schemaGroupId) return;
       await useAddPropertyItem(propertyId, schemaGroupId);
     },
-    [useAddPropertyItem],
+    [useAddPropertyItem]
   );
 
   const handlePropertyItemMove = useCallback(
-    async (propertyId?: string, schemaGroupId?: string, itemId?: string, index?: number) => {
-      if (!propertyId || !schemaGroupId || !itemId || index === undefined) return;
+    async (
+      propertyId?: string,
+      schemaGroupId?: string,
+      itemId?: string,
+      index?: number
+    ) => {
+      if (!propertyId || !schemaGroupId || !itemId || index === undefined)
+        return;
       await useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
     },
-    [useMovePropertyItem],
+    [useMovePropertyItem]
   );
 
   const handlePropertyItemDelete = useCallback(
@@ -263,14 +336,17 @@ export default ({
       if (!propertyId || !schemaGroupId || !itemId) return;
       await useRemovePropertyItem(propertyId, schemaGroupId, itemId);
     },
-    [useRemovePropertyItem],
+    [useRemovePropertyItem]
   );
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken:
+        typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
+          ? cesiumIonAccessToken
+          : config()?.cesiumIonAccessToken
     }),
-    [],
+    [cesiumIonAccessToken]
   );
 
   // TODO: Use GQL value
@@ -280,43 +356,38 @@ export default ({
     document.title = title;
   }, [isBuilt, title]);
 
+  const handleMount = useCallback(
+    () => onVisualizerReady(true),
+    [onVisualizerReady]
+  );
+
   return {
-    sceneId,
-    rootLayerId,
-    selectedBlockId: selectedBlock,
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
-    widgets,
     layers,
+    widgets,
     story,
-    blocks,
-    isCapturing,
-    sceneMode,
-    selectedWidgetArea,
-    widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
-    isVisualizerReady,
-    selectWidgetArea: setSelectedWidgetArea,
     zoomedLayerId,
-    handleCurrentPageChange,
+    installableInfoboxBlocks,
+    currentCamera,
+    initialCamera,
+    handleCameraUpdate,
+    handleCoreLayerSelect,
+    handleLayerDrop,
+    handleStoryPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
+    handleInfoboxBlockCreate,
+    handleInfoboxBlockMove,
+    handleInfoboxBlockRemove,
+    handleWidgetUpdate,
+    handleWidgetAlignSystemUpdate,
     handlePropertyValueUpdate,
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
-    selectLayer,
-    selectBlock,
-    onBlockChange,
-    onBlockMove,
-    onBlockRemove,
-    onBlockInsert,
-    onWidgetUpdate,
-    onWidgetAlignSystemUpdate,
-    onIsCapturingChange,
-    handleDropLayer,
     handleMount,
-    zoomToLayer,
+    zoomToLayer
   };
 };

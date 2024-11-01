@@ -5,14 +5,14 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 env:
-  IMAGE: reearth/reearth:nightly
-  IMAGE_GCP: us.gcr.io/reearth-oss/reearth:nightly
-  GCP_REGION: us-central1
+  IMAGE: reearth/reearth-visualizer-api:nightly
+  IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer-api:nightly
+  GCP_REGION: asia-northeast1
 jobs:
   deploy_test:
     name: Deploy app to test env
     runs-on: ubuntu-latest
-    if: github.event.repository.full_name == 'reearth/reearth'
+    if: github.event.repository.full_name == 'reearth/reearth-visualizer'
     steps:
       - uses: google-github-actions/auth@v0
         with:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
       - name: Configure docker
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - name: docker push
         run: |
           docker pull $IMAGE
@@ -28,7 +28,7 @@ jobs:
           docker push $IMAGE_GCP
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy reearth-backend \
+          gcloud run deploy reearth-visualizer-api \
             --image $IMAGE_GCP \
             --region $GCP_REGION \
             --platform managed \

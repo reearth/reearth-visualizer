@@ -1,24 +1,35 @@
-import { useCallback, useState } from "react";
-
-import Button from "@reearth/beta/components/Button";
-import Collapse from "@reearth/beta/components/Collapse";
-import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
-import TextInput from "@reearth/beta/components/fields/TextField";
-import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import URLField from "@reearth/beta/components/fields/URLField";
-import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import { useT } from "@reearth/services/i18n";
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
+import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
+import defaultBetaProjectImage from "@reearth/beta/ui/assets/defaultBetaProjectImage.png";
+import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
+import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
+import { Story } from "@reearth/services/api/storytellingApi/utils";
+import { useAuth } from "@reearth/services/auth";
+import { useLang, useT } from "@reearth/services/i18n";
+import {
+  NotificationType,
+  useCurrentTheme,
+  useNotification
+} from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { useCallback, useEffect, useState } from "react";
 
 import { SettingsFields, ButtonWrapper } from "../common";
 
-import { PublicAliasSettingsType, PublicBasicAuthSettingsType, PublicSettingsType } from ".";
+import {
+  PublicAliasSettingsType,
+  PublicBasicAuthSettingsType,
+  PublicSettingsType,
+  PublicGASettingsType,
+  SettingsProject
+} from ".";
 
 type Props = {
-  settingsItem: PublicSettingsType & PublicBasicAuthSettingsType & PublicAliasSettingsType;
+  settingsItem: SettingsProject | Story;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
+  onUpdateGA?: (settings: PublicGASettingsType) => void;
 };
 
 const PublicSettingsDetail: React.FC<Props> = ({
@@ -26,143 +37,218 @@ const PublicSettingsDetail: React.FC<Props> = ({
   onUpdate,
   onUpdateBasicAuth,
   onUpdateAlias,
+  onUpdateGA
 }) => {
   const t = useT();
 
   const [localPublicInfo, setLocalPublicInfo] = useState({
     publicTitle: settingsItem.publicTitle,
     publicDescription: settingsItem.publicDescription,
-    publicImage: settingsItem.publicImage,
+    publicImage: settingsItem.publicImage
   });
   const handleSubmitPublicInfo = useCallback(() => {
     onUpdate({
-      ...localPublicInfo,
+      ...localPublicInfo
     });
   }, [localPublicInfo, onUpdate]);
 
   const [localBasicAuthorization, setBasicAuthorization] = useState({
     isBasicAuthActive: !!settingsItem.isBasicAuthActive,
     basicAuthUsername: settingsItem.basicAuthUsername,
-    basicAuthPassword: settingsItem.basicAuthPassword,
+    basicAuthPassword: settingsItem.basicAuthPassword
   });
   const handleSubmitBasicAuthorization = useCallback(() => {
     onUpdateBasicAuth({
-      ...localBasicAuthorization,
+      ...localBasicAuthorization
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
 
   const [localAlias, setLocalAlias] = useState(settingsItem.alias);
   const handleSubmitAlias = useCallback(() => {
     onUpdateAlias({
-      alias: localAlias,
+      alias: localAlias
     });
   }, [localAlias, onUpdateAlias]);
 
+  const [localGA, setLocalGA] = useState<PublicGASettingsType>({
+    enableGa: settingsItem.enableGa,
+    trackingId: settingsItem.trackingId
+  });
+
+  const handleSubmitGA = useCallback(() => {
+    if (onUpdateGA) {
+      onUpdateGA({
+        enableGa: localGA.enableGa,
+        trackingId: localGA.trackingId
+      });
+    }
+  }, [localGA, onUpdateGA]);
+
+  const extensions = window.REEARTH_CONFIG?.extensions?.publication;
+  const [accessToken, setAccessToken] = useState<string>();
+  const { getAccessToken } = useAuth();
+  const currentLang = useLang();
+  const [currentTheme] = useCurrentTheme();
+
+  useEffect(() => {
+    getAccessToken().then((token) => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
+
+  const [, setNotification] = useNotification();
+  const onNotificationChange = useCallback(
+    (type: NotificationType, text: string, heading?: string) => {
+      setNotification({ type, text, heading });
+    },
+    [setNotification]
+  );
+
   return (
     <>
-      <Collapse title={t("Public Info")}>
+      <Collapse title={t("Public Info")} size="large">
         <SettingsFields>
-          <TextInput
-            name={t("Title")}
+          <InputField
+            title={t("Title")}
             value={settingsItem.publicTitle}
             onChange={(publicTitle: string) => {
-              setLocalPublicInfo(s => ({ ...s, publicTitle }));
+              setLocalPublicInfo((s) => ({ ...s, publicTitle }));
             }}
           />
           <TextAreaField
-            name={t("Description")}
+            title={t("Description")}
             value={localPublicInfo.publicDescription ?? ""}
+            resizable="height"
             onChange={(publicDescription: string) => {
-              setLocalPublicInfo(s => ({ ...s, publicDescription }));
+              setLocalPublicInfo((s) => ({ ...s, publicDescription }));
             }}
-            minHeight={108}
           />
           <ThumbnailField>
-            <URLField
-              name={t("Thumbnail")}
-              fileType="asset"
-              entityType="image"
+            <AssetField
+              title={t("Thumbnail")}
+              inputMethod="asset"
+              assetsTypes={IMAGE_TYPES}
               value={localPublicInfo.publicImage}
-              onChange={publicImage => {
-                setLocalPublicInfo(s => ({ ...s, publicImage }));
+              onChange={(publicImage) => {
+                setLocalPublicInfo((s) => ({
+                  ...s,
+                  publicImage: publicImage ?? ""
+                }));
               }}
             />
             <StyledImage
               src={
-                !localPublicInfo.publicImage ? defaultBetaProjectImage : localPublicInfo.publicImage
+                !localPublicInfo.publicImage
+                  ? defaultBetaProjectImage
+                  : localPublicInfo.publicImage
               }
             />
           </ThumbnailField>
           <ButtonWrapper>
             <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
+              title={t("Submit")}
+              appearance="primary"
               onClick={handleSubmitPublicInfo}
             />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Basic Authorization")}>
+      <Collapse title={t("Basic Authorization")} size="large">
         <SettingsFields>
-          <ToggleField
-            name={t("Enable Basic Authorization")}
-            checked={localBasicAuthorization.isBasicAuthActive}
-            onChange={isBasicAuthActive => {
-              setBasicAuthorization(s => ({ ...s, isBasicAuthActive }));
+          <SwitchField
+            title={t("Enable Basic Authorization")}
+            value={localBasicAuthorization.isBasicAuthActive}
+            onChange={(isBasicAuthActive) => {
+              setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
             }}
           />
-          <TextInput
-            name={t("Username")}
+          <InputField
+            title={t("Username")}
             value={settingsItem.basicAuthUsername}
             onChange={(basicAuthUsername: string) => {
-              setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
+              setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
             }}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
-          <TextInput
-            name={t("Password")}
+          <InputField
+            title={t("Password")}
             value={settingsItem.basicAuthPassword}
             onChange={(basicAuthPassword: string) => {
-              setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
+              setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
             }}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <ButtonWrapper>
             <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
+              title={t("Submit")}
+              appearance="primary"
               onClick={handleSubmitBasicAuthorization}
             />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Site Setting")}>
+      <Collapse title={t("Site Setting")} size="large">
         <SettingsFields>
-          <TextInput
-            name={t("Site name")}
+          <InputField
+            title={t("Site name")}
             value={settingsItem.alias}
             onChange={(alias: string) => {
               setLocalAlias(alias);
             }}
             description={t(
-              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.",
+              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows."
             )}
           />
           <ButtonWrapper>
             <Button
-              text={t("Submit")}
-              size="medium"
-              margin="0"
-              buttonType="primary"
+              title={t("Submit")}
+              appearance="primary"
               onClick={handleSubmitAlias}
             />
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
+      <Collapse title={t("Google Analytics")} size="large">
+        <SettingsFields>
+          <SwitchField
+            title={t("Enable Google Analytics")}
+            value={localGA.enableGa ?? false}
+            onChange={(enableGa: boolean) => {
+              setLocalGA((s) => ({ ...s, enableGa }));
+            }}
+          />
+          <InputField
+            title={t("Tracking ID")}
+            value={settingsItem.trackingId}
+            onChange={(trackingId: string) => {
+              setLocalGA((s) => ({ ...s, trackingId }));
+            }}
+          />
+          <ButtonWrapper>
+            <Button
+              title={t("Submit")}
+              appearance="primary"
+              onClick={handleSubmitGA}
+            />
+          </ButtonWrapper>
+        </SettingsFields>
+      </Collapse>
+      {extensions && extensions.length > 0 && accessToken && (
+        <Collapse title={t("Custom Domain")} size="large">
+          {extensions.map((ext) => (
+            <ext.component
+              key={ext.id}
+              projectId={settingsItem.id}
+              projectAlias={settingsItem.alias}
+              lang={currentLang}
+              theme={currentTheme}
+              accessToken={accessToken}
+              onNotificationChange={onNotificationChange}
+              version={"visualizer"}
+            />
+          ))}
+        </Collapse>
+      )}
     </>
   );
 };

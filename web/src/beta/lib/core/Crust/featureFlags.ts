@@ -1,9 +1,0 @@
-export const FEATURE_FLAGS = {
-  CAMERA_MOVE: 1 << 0,
-  CAMERA_ZOOM: 1 << 1,
-  CAMERA_TILT: 1 << 2,
-  CAMERA_LOOK: 1 << 3,
-  SINGLE_SELECTION: 1 << 4,
-  MULTIPLE_SELECTION: 1 << 5,
-  SKETCH: 1 << 6,
-};

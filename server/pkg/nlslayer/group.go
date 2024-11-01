@@ -1,9 +1,5 @@
 package nlslayer
 
-import (
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
-
 type NLSLayerGroup struct {
 	layerBase
 	children *IDList
@@ -47,21 +43,11 @@ func (l *NLSLayerGroup) HasInfobox() bool {
 	return l.layerBase.infobox != nil
 }
 
-func (l *NLSLayerGroup) Infobox() *pl.Infobox {
+func (l *NLSLayerGroup) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
 	return l.layerBase.infobox
-}
-
-func (l *NLSLayerGroup) Tags() *pl.TagList {
-	if l == nil {
-		return nil
-	}
-	if l.layerBase.tags == nil {
-		l.layerBase.tags = pl.NewTagList(nil)
-	}
-	return l.layerBase.tags
 }
 
 func (l *NLSLayerGroup) SetVisible(visible bool) {
@@ -71,7 +57,7 @@ func (l *NLSLayerGroup) SetVisible(visible bool) {
 	l.layerBase.visible = visible
 }
 
-func (l *NLSLayerGroup) SetInfobox(infobox *pl.Infobox) {
+func (l *NLSLayerGroup) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
@@ -127,4 +113,39 @@ func (l *NLSLayerGroup) Clone() Cloner {
 		children:  clonedChildren,
 		root:      l.root,
 	}
+}
+
+func (l *NLSLayerGroup) IsSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.layerBase.isSketch
+}
+
+func (l *NLSLayerGroup) SetIsSketch(isSketch bool) {
+	if l == nil {
+		return
+	}
+	l.layerBase.isSketch = isSketch
+}
+
+func (l *NLSLayerGroup) HasSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.layerBase.sketch != nil
+}
+
+func (l *NLSLayerGroup) Sketch() *SketchInfo {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.sketch
+}
+
+func (l *NLSLayerGroup) SetSketch(sketch *SketchInfo) {
+	if l == nil {
+		return
+	}
+	l.layerBase.sketch = sketch
 }

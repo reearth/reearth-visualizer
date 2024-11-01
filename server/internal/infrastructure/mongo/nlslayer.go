@@ -18,15 +18,13 @@ var (
 	nlsLayerIndexes = []string{
 		"scene",
 		"id,scene",
-		"tags.id",
-		"tags.tags.id",
-		"scene,infobox.fields",
+		"scene,infobox.blocks",
 		"group.children",
 		"group.children,scene",
 		"infobox.property",
 		"infobox.property,scene",
-		"infobox.fields.property",
-		"infobox.fields.property,scene",
+		"infobox.blocks.property",
+		"infobox.blocks.property,scene",
 	}
 	nlsLayerUniqueIndexes = []string{"id"}
 )
@@ -136,6 +134,18 @@ func (r *NLSLayer) FindByScene(ctx context.Context, id id.SceneID) (nlslayer.NLS
 	return r.find(ctx, nil, bson.M{
 		"scene": id.String(),
 	})
+}
+
+func (r *NLSLayer) CountByScene(ctx context.Context, sid id.SceneID) (int, error) {
+	if !r.f.CanRead(sid) {
+		return 0, repo.ErrOperationDenied
+	}
+
+	c, err := r.client.Count(ctx, bson.M{
+		"scene":      sid.String(),
+		"group.root": bson.M{"$ne": true},
+	})
+	return int(c), err
 }
 
 func (r *NLSLayer) Save(ctx context.Context, layer nlslayer.NLSLayer) error {
