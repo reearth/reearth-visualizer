@@ -64,20 +64,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ["* ::-webkit-scrollbar"]: {
-    width: "8px"
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: theme.radius.large
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: theme.radius.small
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  }
+  ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({
