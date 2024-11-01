@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
@@ -149,6 +150,7 @@ func TestProject_Create(t *testing.T) {
 func TestImportProject(t *testing.T) {
 
 	ctx := context.Background()
+	ctx = adapter.AttachCurrentHost(ctx, "https://xxxx.reearth.dev")
 
 	db := memory.New()
 	ifp := NewProject(db, &gateway.Container{
@@ -232,10 +234,10 @@ func TestImportProject(t *testing.T) {
     "publicImage": "",
     "publicNoIndex": false,
     "imageUrl": {
-      "Scheme": "http",
+      "Scheme": "https",
       "Opaque": "",
       "User": null,
-      "Host": "localhost:8080",
+      "Host": "xxxx.reearth.dev",
       "Path": "/assets/01j7g9d988ct8hajjxfsb6e1n6.jpeg",
       "RawPath": "",
       "OmitHost": false,

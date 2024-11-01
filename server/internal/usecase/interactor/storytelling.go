@@ -1035,7 +1035,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 			if err != nil {
 				return nil, err
 			}
-			prop, err = builder.AddItemFromPropertyJSON(prop, ps, blockJSON.Property)
+			prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, blockJSON.Property)
 			if err != nil {
 				return nil, err
 			}
@@ -1064,7 +1064,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 		if err != nil {
 			return nil, err
 		}
-		prop, err = builder.AddItemFromPropertyJSON(prop, ps, pageJSON.Property)
+		prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, pageJSON.Property)
 		if err != nil {
 			return nil, err
 		}
@@ -1101,7 +1101,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	if err != nil {
 		return nil, err
 	}
-	prop, err = builder.AddItemFromPropertyJSON(prop, ps, storyJSON.Property)
+	prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, storyJSON.Property)
 	if err != nil {
 		return nil, err
 	}

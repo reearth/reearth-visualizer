@@ -19,22 +19,11 @@ import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 
-export const projectSettingTabs = [
-  { id: "general", text: "General", icon: "setting" },
-  { id: "story", text: "Story", icon: "sidebar" },
-  { id: "public", text: "Public", icon: "paperPlaneTilt" },
-  { id: "plugins", text: "Plugin", icon: "puzzlePiece" }
-] as const;
-
-export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
-
-export function isProjectSettingTab(tab: string): tab is projectSettingsTab {
-  return projectSettingTabs.map((f) => f.id).includes(tab as never);
-}
+export type ProjectSettingsTab = "general" | "story" | "public" | "plugins";
 
 type Props = {
   projectId: string;
-  tab?: projectSettingsTab;
+  tab?: ProjectSettingsTab;
   subId?: string;
 };
 
@@ -64,13 +53,32 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
   });
 
   const tabs = useMemo(
-    () =>
-      projectSettingTabs.map((tab) => ({
-        id: tab.id,
-        icon: tab.icon,
-        text: t(tab.text),
-        path: `/settings/projects/${projectId}/${tab.id === "general" ? "" : tab.id}`
-      })),
+    () => [
+      {
+        id: "general",
+        text: t("General"),
+        icon: "setting" as const,
+        path: `/settings/projects/${projectId}/`
+      },
+      {
+        id: "story",
+        text: t("Story"),
+        icon: "sidebar" as const,
+        path: `/settings/projects/${projectId}/story`
+      },
+      {
+        id: "public",
+        text: t("Public"),
+        icon: "paperPlaneTilt" as const,
+        path: `/settings/projects/${projectId}/public`
+      },
+      {
+        id: "plugins",
+        text: t("Plugin"),
+        icon: "puzzlePiece" as const,
+        path: `/settings/projects/${projectId}/plugins`
+      }
+    ],
     [projectId, t]
   );
 
@@ -158,20 +166,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ["* ::-webkit-scrollbar"]: {
-    width: "8px"
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  }
+  ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({

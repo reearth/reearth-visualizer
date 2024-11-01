@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -264,6 +265,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 // go test -v -run TestImportNLSLayers ./internal/usecase/interactor/...
 func TestImportNLSLayers(t *testing.T) {
 	ctx := context.Background()
+	ctx = adapter.AttachCurrentHost(ctx, "https://xxxx.reearth.dev")
 
 	db := memory.New()
 	ifl := NewNLSLayer(db)
@@ -323,7 +325,7 @@ func TestImportNLSLayers(t *testing.T) {
                     "lngColumn": "lng"
                 },
                 "type": "csv",
-                "url": "http://localhost:8080/assets/01j7g9gpba44e0nxwc727nax0q.csv"
+                "url": "https://xxxx.reearth.dev/assets/01j7g9gpba44e0nxwc727nax0q.csv"
             }
         },
         "title": "japan_architecture (2).csv",

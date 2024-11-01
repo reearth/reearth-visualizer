@@ -113,7 +113,7 @@ export const SidebarVersion: FC = () => {
   return (
     <Version>
       <Typography size="body" color={theme.content.weak}>
-        {t(`Version ${__APP_VERSION__}`)}
+        {`${t(`Version`)} ${__APP_VERSION__}`}
       </Typography>
     </Version>
   );
