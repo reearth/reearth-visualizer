@@ -19,8 +19,8 @@ const MATCHERS = [
         text: match[0],
         url: match[0],
         attributes: {
-          target: "_blank",
-        },
+          target: "_blank"
+        }
       }
     );
   },
@@ -33,11 +33,11 @@ const MATCHERS = [
         text: match[0],
         url: `mailto:${match[0]}`,
         attributes: {
-          target: "_blank",
-        },
+          target: "_blank"
+        }
       }
     );
-  },
+  }
 ];
 
 export default function AutoLinkPluginWithMathers() {
@@ -45,12 +45,15 @@ export default function AutoLinkPluginWithMathers() {
 
   useEffect(() => {
     if (!editor) return;
-    const removeNodeListener = editor.registerNodeTransform(AutoLinkNode, node => {
-      if (!node) return;
-      const dom = editor.getElementByKey(node.__key);
-      if (!dom) return;
-      dom.setAttribute("target", "_blank");
-    });
+    const removeNodeListener = editor.registerNodeTransform(
+      AutoLinkNode,
+      (node) => {
+        if (!node) return;
+        const dom = editor.getElementByKey(node.__key);
+        if (!dom) return;
+        dom.setAttribute("target", "_blank");
+      }
+    );
     return () => removeNodeListener();
   }, [editor]);
   return <AutoLinkPlugin matchers={MATCHERS} />;

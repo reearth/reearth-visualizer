@@ -6,7 +6,7 @@ import type { PublishColors } from "./types";
 const publishColors: Omit<PublishColors, "custom"> = {
   dark,
   light,
-  forest,
+  forest
 };
 
 export default publishColors;

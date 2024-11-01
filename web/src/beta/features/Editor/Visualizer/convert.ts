@@ -2,20 +2,19 @@ import {
   type WidgetZone,
   type WidgetSection,
   type WidgetArea,
-  type Alignment,
-} from "@reearth/beta/lib/core/Crust";
+  type Alignment
+} from "@reearth/beta/features/Visualizer/Crust";
 import {
   BuiltinWidgets,
   Widget as RawWidget,
   WidgetAlignSystem,
   WidgetLayoutConstraint,
-  isBuiltinWidget,
-} from "@reearth/beta/lib/core/Crust/Widgets";
-import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
-import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
-import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
-import type { Layer } from "@reearth/beta/lib/core/Map";
-import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
+  isBuiltinWidget
+} from "@reearth/beta/features/Visualizer/Crust/Widgets";
+import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
+import { getLayerStyleValue } from "@reearth/beta/utils/layer-style";
+import { valueTypeFromGQL } from "@reearth/beta/utils/value";
+import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import {
@@ -24,7 +23,6 @@ import {
   type WidgetSection as WidgetSectionType,
   type WidgetArea as WidgetAreaType,
   type Scene,
-  EarthLayerFragment,
   PropertyFragmentFragment,
   PropertySchemaGroupFragmentFragment,
   PropertyItemFragmentFragment,
@@ -32,8 +30,10 @@ import {
   PropertySchemaFieldFragmentFragment,
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
-  NlsLayerCommonFragment,
+  NlsLayerCommonFragment
 } from "@reearth/services/gql";
+
+import convertInfobox from "./convert-infobox";
 
 export type P = { [key in string]: any };
 
@@ -59,7 +59,7 @@ export type Widget = Omit<RawWidget, "layout" | "extended"> & {
 };
 
 export const convertWidgets = (
-  scene?: Partial<Scene>,
+  scene?: Partial<Scene>
 ):
   | {
       floating: Widget[];
@@ -69,7 +69,7 @@ export const convertWidgets = (
     }
   | undefined => {
   const layoutConstraint = scene?.plugins
-    ?.map(p =>
+    ?.map((p) =>
       p.plugin?.extensions.reduce<{
         [w in string]: WidgetLayoutConstraint & { floating: boolean };
       }>(
@@ -80,39 +80,47 @@ export const convertWidgets = (
                 [`${p.plugin?.id}/${e.extensionId}`]: {
                   extendable: {
                     horizontally: e?.widgetLayout?.extendable.horizontally,
-                    vertically: e?.widgetLayout?.extendable.vertically,
+                    vertically: e?.widgetLayout?.extendable.vertically
                   },
-                  floating: !!e?.widgetLayout?.floating,
-                },
+                  floating: !!e?.widgetLayout?.floating
+                }
               }
             : b,
-        {},
-      ),
+        {}
+      )
     )
     .reduce((a, b) => ({ ...a, ...b }), {});
 
   const floating = scene?.widgets
-    ?.filter(w => w.enabled && layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    ?.filter(
+      (w) =>
+        w.enabled &&
+        layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating
+    )
     .map(
       (w): Widget => ({
         id: w.id,
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: processProperty(w.property, undefined, undefined, undefined),
-      }),
+        property: processProperty(w.property, undefined, undefined, undefined)
+      })
     );
 
   const widgets = scene?.widgets
-    ?.filter(w => w.enabled && !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    ?.filter(
+      (w) =>
+        w.enabled &&
+        !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating
+    )
     .map(
       (w): Widget => ({
         id: w.id,
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: processProperty(w.property, undefined, undefined, undefined),
-      }),
+        property: processProperty(w.property, undefined, undefined, undefined)
+      })
     );
 
   const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone | undefined => {
@@ -123,11 +131,13 @@ export const convertWidgets = (
     return {
       left,
       center,
-      right,
+      right
     };
   };
 
-  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | undefined => {
+  const widgetSection = (
+    section?: Maybe<WidgetSectionType>
+  ): WidgetSection | undefined => {
     const top = widgetArea(section?.top);
     const middle = widgetArea(section?.middle);
     const bottom = widgetArea(section?.bottom);
@@ -135,7 +145,7 @@ export const convertWidgets = (
     return {
       top,
       middle,
-      bottom,
+      bottom
     };
   };
 
@@ -143,7 +153,7 @@ export const convertWidgets = (
     const align = area?.align.toLowerCase() as Alignment | undefined;
     const padding = area?.padding as WidgetAreaPadding | undefined;
     const areaWidgets: Widget[] | undefined = area?.widgetIds
-      .map<Widget | undefined>(w => widgets?.find(w2 => w === w2.id))
+      .map<Widget | undefined>((w) => widgets?.find((w2) => w === w2.id))
       .filter((w): w is Widget => !!w);
     if (!areaWidgets || (areaWidgets && areaWidgets.length < 1)) return;
     return {
@@ -152,18 +162,18 @@ export const convertWidgets = (
         top: padding?.top ?? 6,
         bottom: padding?.bottom ?? 6,
         left: padding?.left ?? 6,
-        right: padding?.right ?? 6,
+        right: padding?.right ?? 6
       },
       gap: area?.gap ?? 6,
       widgets: areaWidgets,
       background: area?.background as string | undefined,
-      centered: area?.centered,
+      centered: area?.centered
     };
   };
 
   const ownBuiltinWidgets = scene?.widgets
-    ?.filter(w => w.enabled)
-    .map(w => {
+    ?.filter((w) => w.enabled)
+    .map((w) => {
       return `${w.pluginId}/${w.extensionId}` as keyof BuiltinWidgets;
     })
     .filter(isBuiltinWidget);
@@ -172,10 +182,10 @@ export const convertWidgets = (
     floating: floating ?? [],
     alignSystem: {
       outer: widgetZone(scene?.widgetAlignSystem?.outer),
-      inner: widgetZone(scene?.widgetAlignSystem?.inner),
+      inner: widgetZone(scene?.widgetAlignSystem?.inner)
     },
     layoutConstraint,
-    ownBuiltinWidgets: ownBuiltinWidgets ?? [],
+    ownBuiltinWidgets: ownBuiltinWidgets ?? []
   };
 };
 
@@ -183,7 +193,7 @@ export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
   orig?: PropertyFragmentFragment | null | undefined,
   linkedDatasetId?: string | null | undefined,
-  datasets?: DatasetMap | null | undefined,
+  datasets?: DatasetMap | null | undefined
 ): P | undefined => {
   const schema = orig?.schema || parent?.schema;
   if (!schema) return;
@@ -200,11 +210,11 @@ export const processProperty = (
       ...a,
       [b.schemaGroupId]: {
         schema: b,
-        orig: orig?.items.find(i => i.schemaGroupId === b.schemaGroupId),
-        parent: parent?.items.find(i => i.schemaGroupId === b.schemaGroupId),
-      },
+        orig: orig?.items.find((i) => i.schemaGroupId === b.schemaGroupId),
+        parent: parent?.items.find((i) => i.schemaGroupId === b.schemaGroupId)
+      }
     }),
-    {},
+    {}
   );
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
@@ -216,7 +226,13 @@ export const processProperty = (
           }
           return [
             key,
-            processPropertyGroups(schema, undefined, undefined, linkedDatasetId, datasets),
+            processPropertyGroups(
+              schema,
+              undefined,
+              undefined,
+              linkedDatasetId,
+              datasets
+            )
           ];
         }
 
@@ -227,10 +243,16 @@ export const processProperty = (
           const used = orig || parent;
           return [
             key,
-            used?.groups.map(g => ({
-              ...processPropertyGroups(schema, g, undefined, linkedDatasetId, datasets),
-              id: g.id,
-            })),
+            used?.groups.map((g) => ({
+              ...processPropertyGroups(
+                schema,
+                g,
+                undefined,
+                linkedDatasetId,
+                datasets
+              ),
+              id: g.id
+            }))
           ];
         }
 
@@ -238,11 +260,20 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
-          return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
+          return [
+            key,
+            processPropertyGroups(
+              schema,
+              parent,
+              orig,
+              linkedDatasetId,
+              datasets
+            )
+          ];
         }
         return [key, null];
       })
-      .filter(([, value]) => !!value),
+      .filter(([, value]) => !!value)
   );
 
   return mergedProperty;
@@ -253,7 +284,7 @@ const processPropertyGroups = (
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined,
   linkedDatasetId: string | null | undefined,
-  datasets: DatasetMap | null | undefined,
+  datasets: DatasetMap | null | undefined
 ): any => {
   const allFields: Record<
     string,
@@ -267,11 +298,11 @@ const processPropertyGroups = (
       ...a,
       [b.fieldId]: {
         schema: b,
-        parent: parent?.fields.find(i => i.fieldId === b.fieldId),
-        orig: original?.fields.find(i => i.fieldId === b.fieldId),
-      },
+        parent: parent?.fields.find((i) => i.fieldId === b.fieldId),
+        orig: original?.fields.find((i) => i.fieldId === b.fieldId)
+      }
     }),
-    {},
+    {}
   );
 
   return Object.fromEntries(
@@ -283,12 +314,20 @@ const processPropertyGroups = (
         const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
         const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
         if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-          return [key, datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId)];
+          return [
+            key,
+            datasetValue(
+              datasets,
+              datasetSchemaId,
+              linkedDatasetId,
+              datasetFieldId
+            )
+          ];
         }
 
         return [key, valueFromGQL(used.value, used.type)?.value];
       })
-      .filter(([, value]) => typeof value !== "undefined" && value !== null),
+      .filter(([, value]) => typeof value !== "undefined" && value !== null)
   );
 };
 
@@ -296,7 +335,7 @@ export const datasetValue = (
   datasets: DatasetMap | null | undefined,
   datasetSchemaId: string,
   datasetId: string,
-  fieldId: string,
+  fieldId: string
 ) => {
   const dataset = datasets?.[datasetSchemaId];
   if (!dataset?.schema) return;
@@ -307,7 +346,7 @@ export const datasetValue = (
   })?.[0];
 
   if (!fieldName) return;
-  return dataset.datasets.find(d => d[""] === datasetId)?.[fieldName];
+  return dataset.datasets.find((d) => d[""] === datasetId)?.[fieldName];
 };
 
 export const valueFromGQL = (val: any, type: GQLValueType) => {
@@ -320,7 +359,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   if (t === "camera" && val && typeof val === "object" && "altitude" in val) {
     newVal = {
       ...val,
-      height: val.altitude,
+      height: val.altitude
     };
   }
   if (
@@ -332,7 +371,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   ) {
     newVal = {
       ...val,
-      textAlign: val.textAlign.toLowerCase(),
+      textAlign: val.textAlign.toLowerCase()
     };
   }
   return { type: t, value: newVal ?? undefined, ok };
@@ -347,71 +386,45 @@ export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
+  infoboxBlockNames?: Record<string, string>
 ): Layer[] | undefined {
-  const getLayerStyleValue = (id?: string) => {
-    const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
-      a => a.id === id,
-    )?.value;
-    if (typeof layerStyleValue === "object") {
-      try {
-        return layerStyleValue;
-      } catch (e) {
-        console.error("Error parsing layerStyle JSON:", e);
-      }
-    }
+  return newLayers?.map((nlsLayer) => {
+    const layerStyle = getLayerStyleValue(
+      layerStyles,
+      nlsLayer.config?.layerStyleId,
+      nlsLayer.config?.data?.type
+    );
 
-    return DEFAULT_LAYER_STYLE;
-  };
+    const sketchLayerData = nlsLayer.isSketch && {
+      ...nlsLayer.config.data,
+      value: {
+        type: "FeatureCollection",
+        features: nlsLayer.sketch?.featureCollection?.features.map((f) => ({
+          ...f,
+          geometry: f.geometry[0]
+        }))
+      },
+      isSketchLayer: true,
+      idProperty: "id"
+    };
 
-  return newLayers?.map(nlsLayer => {
-    const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
     return {
       type: "simple",
       id: nlsLayer.id,
       title: nlsLayer.title,
       visible: nlsLayer.visible,
-      infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
-      tags: processLayerTags(nlsLayer.tags ?? []),
+      sketch: nlsLayer.sketch,
+      isSketch: nlsLayer.isSketch,
+      infobox: convertInfobox(
+        nlsLayer.infobox,
+        parent?.infobox,
+        infoboxBlockNames
+      ),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
-      data: nlsLayer.config?.data,
-      ...layerStyle,
+      data: nlsLayer.isSketch ? sketchLayerData : nlsLayer.config?.data,
+      ...layerStyle
     };
   });
-}
-
-const processInfobox = (
-  orig: EarthLayerFragment["infobox"] | null | undefined,
-  parent: EarthLayerFragment["infobox"] | null | undefined,
-): Layer["infobox"] => {
-  const used = orig || parent;
-  if (!used) return;
-  return {
-    property: processProperty(parent?.property, orig?.property),
-    blocks: used.fields.map<Block>(f => ({
-      id: f.id,
-      pluginId: f.pluginId,
-      extensionId: f.extensionId,
-      property: processProperty(undefined, f.property),
-      propertyId: f.propertyId, // required by onBlockChange
-    })),
-  };
-};
-
-export function processLayerTags(
-  tags: {
-    tagId: string;
-    tag?: Maybe<{ label: string }>;
-    children?: { tagId: string; tag?: Maybe<{ label: string }> }[];
-  }[],
-): Tag[] {
-  return tags.map(t => ({
-    id: t.tagId,
-    label: t.tag?.label ?? "",
-    tags: t.children?.map(tt => ({
-      id: tt.tagId,
-      label: tt.tag?.label ?? "",
-    })),
-  }));
 }

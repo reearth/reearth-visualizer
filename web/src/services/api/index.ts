@@ -9,3 +9,5 @@ export { default as useAssetsFetcher } from "./assetsApi";
 export { default as useLayersFetcher } from "./layersApi";
 export { default as useStorytellingFetcher } from "./storytellingApi";
 export { default as useLayerStylesFetcher } from "./layerStyleApi";
+export { default as useFeatureCollectionFetcher } from "./featureCollectionApi";
+export { default as useInfoboxFetcher } from "./infoboxApi";

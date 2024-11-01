@@ -1,14 +1,14 @@
 <p align="center">
-  <a href="https://github.com/reearth/reearth">
+  <a href="https://github.com/reearth/reearth-visualizer">
     <img src="./public/reearth-logo.svg" alt="Logo" width="300" height="300">
   </a>
 </p>
 
-[![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth/stargazers/)
+[![GitHub stars](https://img.shields.io/github/stars/reearth/reearth.svg?style=social&label=Star&maxAge=2592000)](https://github.com/reearth/reearth-visualizer/stargazers/)
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
-[![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth/blob/main/LICENSE)
-[![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://GitHub.com/reearth/reearth/releases/)
-[![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth/discussions)
+[![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth-visualizer/blob/main/LICENSE)
+[![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://github.com/reearth/reearth-visualizer/releases/)
+[![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth-visualizer/discussions)
 [![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
 
 <p align="center">
@@ -18,9 +18,9 @@
   ·
   <a href="https://www.figma.com/community/file/1027048965458642686">Figma</a>
   ·
-  <a href="https://github.com/reearth/reearth/issues">Issues</a>
+  <a href="https://github.com/reearth/reearth-visualizer/issues">Issues</a>
   ·
-  <a href="https://github.com/reearth/reearth/discussions">Discussions</a>
+  <a href="https://github.com/reearth/reearth-visualizer/discussions">Discussions</a>
   ·
   <a href="https://discord.gg/XJhYkQQDAu">Discord</a>
 </p>
@@ -28,6 +28,8 @@
 https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
 
 ---
+
+💡 **We are hiring full-time OSS comitters!** [https://eukarya.io/join](https://eukarya.io/join)
 
 ## Features
 
@@ -51,7 +53,7 @@ docker compose up -d
 # visit http://localhost:8080
 ```
 
-For more information, refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/set-up-reearth-in-your-environment).
+For more information, refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/).
 
 ## Cloud Service (SaaS)
 
@@ -73,21 +75,21 @@ We also maintain a cloud service [here](https://reearth.io/), which can help you
 
 ## Roadmap
 
-See the [Roadmap](https://github.com/reearth/reearth/projects/1) for a list of proposed features (and known issues).
-If your have any requests for features, they are more than welcome! Just create an issue [here](https://github.com/reearth/reearth/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with the `feature request` tag.
+See the [Roadmap](https://github.com/reearth/reearth-visualizer/projects/1) for a list of proposed features (and known issues).
+If your have any requests for features, they are more than welcome! Just create an issue [here](https://github.com/reearth/reearth-visualizer/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with the `feature request` tag.
 
 ## Community
 
-- [Discussions](https://github.com/reearth/reearth/discussions)
+- [Discussions](https://github.com/reearth/reearth-visualizer/discussions)
 - [Discord](https://discord.gg/Q6kmXnywfw): Feel free to come in!
 
 ## Contributing
 
-See [the contributing guide](contributing.md).
+See [the contributing guide](CONTRIBUTING.md).
 
 ## Contributers
 
-[![Contributers](https://contrib.rocks/image?repo=reearth/reearth)](https://github.com/reearth/reearth/graphs/contributors)
+[![Contributers](https://contrib.rocks/image?repo=reearth/reearth)](https://github.com/reearth/reearth-visualizer/graphs/contributors)
 
 Made with [contrib.rocks](https://contrib.rocks).
 

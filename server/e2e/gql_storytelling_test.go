@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createProject(e *httpexpect.Expect) string {
+func createProject(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
@@ -28,7 +28,7 @@ func createProject(e *httpexpect.Expect) string {
 			}
 		}`,
 		Variables: map[string]any{
-			"name":        "test",
+			"name":        name,
 			"description": "abc",
 			"imageUrl":    "",
 			"teamId":      wID.String(),
@@ -756,7 +756,7 @@ func TestStoryCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -802,7 +802,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -896,7 +896,7 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -933,7 +933,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -981,7 +981,7 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -1018,7 +1018,7 @@ func TestStoryPublishing(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pID := createProject(e)
+	pID := createProject(e, "test")
 
 	_, _, sID := createScene(e, pID)
 
@@ -1048,7 +1048,7 @@ func TestStoryPublishing(t *testing.T) {
 	_, err = buf.ReadFrom(rc)
 	assert.NoError(t, err)
 
-	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"title":"test","blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}],"swipeable":true,"swipeableLayers":\[],"layers":\[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true}`, sID, storyID, pageID, blockID, extensionId, pluginId))
+	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","title":"","property":{},"pages":\[{"id":"%s","property":{},"title":"test","blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}],"swipeable":true,"swipeableLayers":\[],"layers":\[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true,"enableGa":false,"trackingId":""}`, sID, storyID, pageID, blockID, extensionId, pluginId))
 	assert.Regexp(t, pub, buf.String())
 
 	resString := e.GET("/p/test-alias/data.json").

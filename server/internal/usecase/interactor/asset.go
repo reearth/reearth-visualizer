@@ -1,7 +1,10 @@
 package interactor
 
 import (
+	"archive/zip"
 	"context"
+	"fmt"
+	"net/http"
 	"net/url"
 	"path"
 
@@ -10,6 +13,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
@@ -121,4 +125,28 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 			return aid, i.repos.Asset.Remove(ctx, aid)
 		},
 	)
+}
+
+func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.File) (*url.URL, int64, error) {
+
+	readCloser, err := zipFile.Open()
+	if err != nil {
+		return nil, 0, fmt.Errorf("error opening zip file entry: %w", err)
+	}
+	defer func() {
+		if cerr := readCloser.Close(); cerr != nil {
+			fmt.Printf("Error closing file: %v\n", cerr)
+		}
+	}()
+
+	contentType := http.DetectContentType([]byte(zipFile.Name))
+
+	file := &file.File{
+		Content:     readCloser,
+		Path:        name,
+		Size:        int64(zipFile.UncompressedSize64),
+		ContentType: contentType,
+	}
+
+	return i.gateways.File.UploadAsset(ctx, file)
 }

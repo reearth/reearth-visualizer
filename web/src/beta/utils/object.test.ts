@@ -60,13 +60,13 @@ test("merge", () => {
       get a() {
         return 1;
       },
-      b: 2,
+      b: 2
     },
     {
       get c() {
         return 3;
-      },
-    },
+      }
+    }
   );
   expect(o).toEqual({ a: 1, b: 2, c: 3 });
   expect(Object.getOwnPropertyDescriptor(o, "a")?.get).toBeInstanceOf(Function);

@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
+	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -754,6 +755,7 @@ func TestSceneBuilder(t *testing.T) {
 						"a": "hogehoge",
 					},
 				},
+				Enabled:  true,
 				Extended: true,
 			},
 		},
@@ -768,10 +770,51 @@ func TestSceneBuilder(t *testing.T) {
 		Clusters: []*clusterJSON{},
 	}
 
+	exportType := false
+
 	// exec
-	sb := New(lloader, ploader, dloader, tloader, tsloader, nlsloader).ForScene(scene)
-	result, err := sb.buildScene(context.Background(), publishedAt, false)
+	sb := New(lloader, ploader, dloader, tloader, tsloader, nlsloader, exportType).ForScene(scene)
+	result, err := sb.buildScene(context.Background(), publishedAt, false, false, "")
 
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
+
+	// export mode
+	exportType = true
+
+	sb = New(lloader, ploader, dloader, tloader, tsloader, nlsloader, exportType).ForScene(scene)
+	result, err = sb.buildScene(context.Background(), publishedAt, false, false, "")
+
+	expected.Property = map[string]interface{}{
+		"A": map[string]interface{}{
+			"a": map[string]interface{}{
+				"type":  value.TypeString,
+				"value": "hogehoge",
+			},
+		},
+	}
+
+	expected.Plugins[pluginID.String()] = map[string]interface{}{
+		"A": map[string]interface{}{
+			"a": map[string]interface{}{
+				"type":  value.TypeString,
+				"value": "hogehoge",
+			},
+		},
+	}
+
+	// result.Widgets = result.Widgets[:1]
+	result.Widgets = result.Widgets[1:]
+	expected.Widgets[0].Property = map[string]interface{}{
+		"A": map[string]interface{}{
+			"a": map[string]interface{}{
+				"type":  value.TypeString,
+				"value": "hogehoge",
+			},
+		},
+	}
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
+
 }

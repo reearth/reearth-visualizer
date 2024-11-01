@@ -27,8 +27,6 @@ extensions:
               default: デフォルト
               default_label: ラベル付き地図
               default_road: 道路地図
-              stamen_watercolor: Stamen Watercolor
-              stamen_toner: Stamen Toner
               open_street_map: OpenStreetMap
               esri_world_topo: ESRI Topography
               black_marble: Black Marble
@@ -70,9 +68,6 @@ extensions:
           terrainExaggerationRelativeHeight:
             title: 地形の強調の基準
             description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
-          depthTestAgainstTerrain:
-            title: 地形の下を非表示
-            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
       globeLighting:
         title: 太陽光の明るさ
         fields:
@@ -94,6 +89,11 @@ extensions:
           globeAtmosphereIntensity:
             title: 光の強さ
             description: "選択したタイルマップの光の強さを変更します。 最小値: 0 最大値: 30"
+      globeDepthTestAgainstTerrain:
+        title: 地下を隠す
+        fields:
+          depthTestAgainstTerrain:
+            title: 有効化
       skyBox:
         title: スカイボックス
         fields:
@@ -964,7 +964,7 @@ extensions:
       default:
         title: デフォルト
         fields:
-          buttonTitle:
+          buttonTitle: 
             title: タイトル
           buttonStyle:
             title: 表示方法
@@ -1132,6 +1132,19 @@ extensions:
               always: 常に
               desktop: デスクトップのみ
               mobile: モバイルのみ
+  dataAttribution:
+    name: データの帰属
+    description: データ アトリビューション ウィジェット
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          description:
+            title: クレジットの説明
+          logo:
+            title: ロゴ
+          creditUrl:
+            title: クレジット URL
   story:
     name: ストーリー
     description: ストーリーテリングのストーリー
@@ -1286,3 +1299,97 @@ extensions:
   nextPageStoryBlock:
     name: 次ページボタン
     description: ストーリーテリングの次ページに移動するボタンブロック
+  infobox-beta:
+    name: インフォボックス
+    description: インフォボックスは、レイヤーのフィチャーに紐づけて情報を表示することができます。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          enabled:
+            title: 有効
+          position:
+            title: 位置
+            choices:
+              left: 左
+              right: 右
+          padding:
+            title: 余白
+          gap:
+            title: 間隔
+  textInfoboxBetaBlock:
+    name: テキスト
+    description: インフォボックスのテキストブロック
+    propertySchema:
+      default:
+        title: テキスト
+        fields:
+          text:
+            title: コンテンツ
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  imageInfoboxBetaBlock:
+    name: 画像
+    description: インフォボックスの画像ブロック
+    propertySchema:
+      default:
+        title: 画像ブロック
+        fields:
+          text:
+            title: コンテンツ
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  propertyInfoboxBetaBlock:
+    name: プロパティ
+    description: インフォボックスのプロパティブロック
+    propertySchema:
+      default:
+        title: プロパティブロック
+        fields:
+          display_type:
+            title: 表示タイプ
+            choices:
+              all: 全てのプロパティ
+              rootOnly: ルートプロパティ
+              custom: カスタム
+          property_list:
+            title: プロパティリスト
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  videoInfoboxBetaBlock:
+    name: ビデオ
+    description: インフォボックスビデオブロック
+    propertySchema:
+      default:
+        title: ビデオブロック
+        fields:
+          src:
+            title: ビデオ
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  markdownInfoboxBetaBlock:
+    name: MDテキスト
+    description: インフォボックスMDテキストブロック
+    propertySchema:
+      default:
+        title: MDテキストブロック
+        fields:
+          src:
+            title: コンテンツ
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白

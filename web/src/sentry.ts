@@ -5,7 +5,7 @@ export const initialize = () => {
   if (sentryDsn) {
     Sentry.init({
       dsn: sentryDsn,
-      environment: sentryEnv,
+      environment: sentryEnv
     });
   }
 };

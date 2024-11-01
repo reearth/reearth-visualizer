@@ -1,13 +1,9 @@
-import { Theme as ClassicTheme } from "@reearth/classic/theme/reearthTheme/types";
 import { Common } from "@reearth/services/theme/reearthTheme/common";
-
-export type TempTheme = Theme & {
-  classic: ClassicTheme;
-};
 
 export type Theme = Common & {
   bg: {
     transparentBlack: string;
+    base: string;
     0: string;
     1: string;
     2: string;
@@ -16,6 +12,7 @@ export type Theme = Common & {
   };
   select: {
     weaker: string;
+    weak: string;
     main: string;
     strong: string;
   };
@@ -32,6 +29,7 @@ export type Theme = Common & {
   primary: {
     main: string;
     weak: string;
+    weakest: string;
     strong: string;
   };
   content: {
@@ -48,12 +46,27 @@ export type Theme = Common & {
   };
   dangerous: {
     main: string;
+    weak: string;
+    strong: string;
   };
   warning: {
     main: string;
   };
+  relative: {
+    lightest: string;
+    lighter: string;
+    light: string;
+    dim: string;
+    dark: string;
+    darker: string;
+    darkest: string;
+  };
   placeHolder: {
     main_1: string;
     main_2: string;
+  };
+  colorSchema: string;
+  publish: {
+    main: string;
   };
 };

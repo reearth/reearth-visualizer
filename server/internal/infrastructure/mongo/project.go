@@ -2,8 +2,8 @@ package mongo
 
 import (
 	"context"
-
-	"go.mongodb.org/mongo-driver/bson"
+	"fmt"
+	"regexp"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -13,6 +13,9 @@ import (
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -23,6 +26,7 @@ var (
 type Project struct {
 	client *mongox.ClientCollection
 	f      repo.WorkspaceFilter
+	s      repo.SceneFilter
 }
 
 func NewProject(client *mongox.Client) *Project {
@@ -48,6 +52,15 @@ func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Proje
 	}, true)
 }
 
+func (r *Project) FindByScene(ctx context.Context, id id.SceneID) (*project.Project, error) {
+	if !r.s.CanRead(id) {
+		return nil, nil
+	}
+	return r.findOne(ctx, bson.M{
+		"scene": id.String(),
+	}, true)
+}
+
 func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
 	if len(ids) == 0 {
 		return nil, nil
@@ -65,13 +78,62 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 	return filterProjects(ids, res), nil
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
-	return r.paginate(ctx, bson.M{
+
+	filter := bson.M{
 		"team": id.String(),
-	}, pagination)
+		"$or": []bson.M{
+			{"deleted": false},
+			{"deleted": bson.M{"$exists": false}},
+		},
+	}
+
+	if uFilter.Keyword != nil {
+		keywordFilter := bson.M{
+			"name": bson.M{
+				"$regex": primitive.Regex{
+					Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword)),
+					Options: "i",
+				},
+			},
+		}
+		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
+	}
+
+	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
+}
+
+func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if !r.f.CanRead(id) {
+		return nil, repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":    id.String(),
+		"starred": true,
+		"$or": []bson.M{
+			{"deleted": false},
+			{"deleted": bson.M{"$exists": false}},
+		},
+	}
+
+	return r.find(ctx, filter)
+}
+
+func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if !r.f.CanRead(id) {
+		return nil, repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":    id.String(),
+		"deleted": true,
+	}
+
+	return r.find(ctx, filter)
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
@@ -149,9 +211,26 @@ func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bo
 	return c.Result[0], nil
 }
 
-func (r *Project) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+	var usort *usecasex.Sort
+	if sort != nil {
+		usort = &usecasex.Sort{
+			Key:      sort.Key,
+			Reverted: sort.Desc,
+		}
+	}
+
+	collation := options.Collation{
+		Locale:    "en",
+		Strength:  3,
+		CaseLevel: true,
+		Alternate: "shifted",
+	}
+
+	findOptions := options.Find().SetCollation(&collation)
+
 	c := mongodoc.NewProjectConsumer(r.f.Readable)
-	pageInfo, err := r.client.Paginate(ctx, filter, nil, pagination, c)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c, findOptions)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}

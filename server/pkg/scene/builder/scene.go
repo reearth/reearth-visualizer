@@ -24,9 +24,11 @@ type sceneJSON struct {
 	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
 	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
 	CoreSupport       bool                    `json:"coreSupport"`
+	EnableGA          bool                    `json:"enableGa"`
+	TrackingID        string                  `json:"trackingId"`
 }
 
-func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool) (*sceneJSON, error) {
+func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	tags, err := b.tags(ctx)
 	if err != nil {
 		return nil, err
@@ -44,6 +46,8 @@ func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*lay
 		Tags:              tags,
 		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
 		CoreSupport:       coreSupport,
+		EnableGA:          enableGa,
+		TrackingID:        trackingId,
 	}, nil
 }
 
@@ -65,7 +69,7 @@ func (b *Builder) widgets(ctx context.Context, p []*property.Property) []*widget
 	sceneWidgets := b.scene.Widgets().Widgets()
 	res := make([]*widgetJSON, 0, len(sceneWidgets))
 	for _, w := range sceneWidgets {
-		if !w.Enabled() {
+		if !b.exportType && !w.Enabled() {
 			continue
 		}
 
@@ -74,6 +78,7 @@ func (b *Builder) widgets(ctx context.Context, p []*property.Property) []*widget
 			PluginID:    w.Plugin().String(),
 			ExtensionID: string(w.Extension()),
 			Property:    b.property(ctx, findProperty(p, w.Property())),
+			Enabled:     w.Enabled(),
 			Extended:    w.Extended(),
 		})
 	}
@@ -133,12 +138,12 @@ func toTag(t tag.Tag, m tag.Map) tagJSON {
 }
 
 func (b *Builder) property(ctx context.Context, p *property.Property) propertyJSON {
-	return property.SealProperty(ctx, p).Interface()
+	return property.SealProperty(ctx, p).Interface(b.exportType)
 }
 
 func findProperty(pp []*property.Property, i property.ID) *property.Property {
 	for _, p := range pp {
-		if p.ID() == i {
+		if p != nil && p.ID() == i {
 			return p
 		}
 	}

@@ -23,16 +23,18 @@ const themeDefaults: ThemeDefaults = {
   type: "dark",
   backgroundColor: "#dfe5f0",
   textColor: "#434343",
-  selectColor: "#C52C63",
+  selectColor: "#C52C63"
 };
 
 const premadeThemes: Record<PremadeThemeType, PublishTheme> = {
   dark,
   light,
-  forest,
+  forest
 };
 
-export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishTheme {
+export function publishTheme(
+  sceneThemeOptions?: SceneThemeOptions
+): PublishTheme {
   if (sceneThemeOptions?.themeType) {
     if (sceneThemeOptions.themeType in premadeThemes) {
       return premadeThemes[sceneThemeOptions?.themeType as PremadeThemeType];
@@ -43,9 +45,12 @@ export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishThem
 
   const options = {
     ...sceneThemeOptions,
-    themeBackgroundColor: sceneThemeOptions?.themeBackgroundColor || themeDefaults.backgroundColor,
-    themeTextColor: sceneThemeOptions?.themeTextColor || themeDefaults.textColor,
-    themeSelectColor: sceneThemeOptions?.themeSelectColor || themeDefaults.selectColor,
+    themeBackgroundColor:
+      sceneThemeOptions?.themeBackgroundColor || themeDefaults.backgroundColor,
+    themeTextColor:
+      sceneThemeOptions?.themeTextColor || themeDefaults.textColor,
+    themeSelectColor:
+      sceneThemeOptions?.themeSelectColor || themeDefaults.selectColor
   };
 
   const isBackgroundDark = isDark(options?.themeBackgroundColor);
@@ -63,6 +68,6 @@ export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishThem
       : "#FFFFFF",
     weakText: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
     mainIcon: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
-    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String(),
+    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String()
   };
 }

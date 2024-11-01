@@ -1,13 +1,18 @@
 import { useQuery } from "@apollo/client";
-import { useCallback, useMemo } from "react";
-
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
+import { useCallback, useMemo } from "react";
 
 import { Scene as GqlScene } from "../gql";
 
 import { PluginExtensionType } from "./pluginsApi";
 
-export type ScenePropertyCollection = "main" | "tiles" | "terrain" | "globe" | "sky" | "camera";
+export type ScenePropertyCollection =
+  | "main"
+  | "tiles"
+  | "terrain"
+  | "globe"
+  | "sky"
+  | "camera";
 
 export type ScenePlugin = {
   id?: string;
@@ -51,7 +56,7 @@ export default () => {
   const useSceneQuery = useCallback(({ sceneId, lang }: SceneQueryProps) => {
     const { data, ...rest } = useQuery(GET_SCENE, {
       variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId,
+      skip: !sceneId
     });
 
     const scene = useMemo(() => {
@@ -67,7 +72,7 @@ export default () => {
             styles: data.node.styles,
             workspaceId: data.node.teamId,
             widgetAlignSystem: data.node.widgetAlignSystem,
-            widgets: data.node.widgets,
+            widgets: data.node.widgets
           } as Scene)
         : undefined;
     }, [data]);
@@ -76,6 +81,6 @@ export default () => {
   }, []);
 
   return {
-    useSceneQuery,
+    useSceneQuery
   };
 };

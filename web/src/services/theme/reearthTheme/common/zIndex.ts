@@ -7,26 +7,26 @@ export const zIndex = {
     storyPage: {
       indicator: {
         unselected: 210,
-        selected: 215,
-      },
+        selected: 215
+      }
     },
     pluginPopup: 300,
     pluginModal: 305,
     infobox: 400,
-    overlay: 600,
+    overlay: 600
   },
   editor: {
     navbar: 500,
     panel: 500,
-    popover: 600,
     modal: {
       bg: 700,
-      self: 705,
+      self: 705
     },
+    popover: 750,
     loading: 900,
-    notificationBar: 1000,
+    notificationBar: 1000
   },
-  hidden: -1,
+  hidden: -1
 };
 
 export default zIndex;

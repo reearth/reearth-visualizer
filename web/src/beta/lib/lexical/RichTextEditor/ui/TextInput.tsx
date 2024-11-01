@@ -17,7 +17,7 @@ export default function TextInput({
   onChange,
   placeholder = "",
   "data-test-id": dataTestId,
-  type = "text",
+  type = "text"
 }: Props): JSX.Element {
   return (
     <div className="Input__wrapper">
@@ -27,7 +27,7 @@ export default function TextInput({
         className="Input__input"
         placeholder={placeholder}
         value={value}
-        onChange={e => {
+        onChange={(e) => {
           onChange(e.target.value);
         }}
         data-test-id={dataTestId}

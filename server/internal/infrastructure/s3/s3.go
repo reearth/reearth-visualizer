@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
+	"github.com/spf13/afero"
 )
 
 const (
@@ -28,6 +29,7 @@ const (
 	pluginBasePath string = "plugins"
 	mapBasePath    string = "maps"
 	storyBasePath  string = "stories"
+	exportBasePath string = "export"
 	fileSizeLimit  int64  = 1024 * 1024 * 100 // about 100MB
 )
 
@@ -64,6 +66,8 @@ func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gatew
 		client:       s3.NewFromConfig(cfg),
 	}, nil
 }
+
+// asset
 
 func (f *fileRepo) ReadAsset(ctx context.Context, name string) (io.ReadCloser, error) {
 	sn := sanitize.Path(name)
@@ -208,6 +212,27 @@ func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
 	return f.delete(ctx, path.Join(storyBasePath, sn))
 }
 
+// export
+
+func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
+	sn := sanitize.Path(name)
+	if sn == "" {
+		return nil, rerror.ErrNotFound
+	}
+	return f.read(ctx, path.Join(exportBasePath, sn))
+}
+
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
+	sanitizedName := sanitize.Path(zipFile.Name())
+	_, err := f.upload(ctx, path.Join(exportBasePath, sanitizedName), zipFile)
+	return err
+}
+
+func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) error {
+	sanitizedFilename := sanitize.Path(filename)
+	return f.delete(ctx, path.Join(exportBasePath, sanitizedFilename))
+}
+
 // helpers
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
@@ -245,7 +270,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 		Bucket:        aws.String(f.bucketName),
 		CacheControl:  &f.cacheControl,
 		Key:           aws.String(filename),
-		ContentLength: body.Size(),
+		ContentLength: lo.ToPtr(body.Size()),
 	})
 	if err != nil {
 		log.Errorfc(ctx, "s3: upload err: %v", err)
@@ -261,7 +286,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
-	return result.ContentLength, nil
+	return lo.FromPtr(result.ContentLength), nil
 }
 
 func (f *fileRepo) copy(ctx context.Context, from, dest string) error {

@@ -1,9 +1,15 @@
 import { Auth0Provider } from "@auth0/auth0-react";
-import React, { createContext, ReactNode, Fragment } from "react";
+import {
+  getAuthInfo,
+  getSignInCallbackUrl,
+  logInToTenant
+} from "@reearth/services/config";
+import React, { createContext, ReactNode, useState } from "react";
 
+import { useAuth0Auth } from "./auth0Auth";
 import type { AuthHook } from "./authHook";
-import { useAuth0Auth } from "./authOAuth";
 import { useCognitoAuth } from "./cognitoAuth";
+import { useMockAuth } from "./mockAuth";
 
 export const AuthContext = createContext<AuthHook | null>(null);
 
@@ -17,13 +23,29 @@ const CognitoWrapper = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
-export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
-  const authProvider = window.REEARTH_CONFIG?.authProvider;
+const MockWrapper = ({ children }: { children: ReactNode }) => {
+  const mockAuth = useMockAuth();
+  return (
+    <AuthContext.Provider value={mockAuth}>{children}</AuthContext.Provider>
+  );
+};
 
-  if (authProvider === "auth0") {
-    const domain = window.REEARTH_CONFIG?.auth0Domain;
-    const clientId = window.REEARTH_CONFIG?.auth0ClientId;
-    const audience = window.REEARTH_CONFIG?.auth0Audience;
+export const AuthProvider: React.FC<{ children?: ReactNode }> = ({
+  children
+}) => {
+  const [authInfo] = useState(() => {
+    logInToTenant();
+    return getAuthInfo();
+  });
+
+  if (authInfo?.authProvider === "mock") {
+    return <MockWrapper>{children}</MockWrapper>;
+  }
+
+  if (authInfo?.authProvider === "auth0") {
+    const domain = authInfo.auth0Domain;
+    const clientId = authInfo.auth0ClientId;
+    const audience = authInfo.auth0Audience;
 
     return domain && clientId ? (
       <Auth0Provider
@@ -32,20 +54,20 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) =
         authorizationParams={{
           audience: audience,
           scope: "openid profile email offline_access",
-          redirect_uri: window.location.origin,
+          redirect_uri: getSignInCallbackUrl()
         }}
         useRefreshTokens
         useRefreshTokensFallback
-        cacheLocation="localstorage">
+        cacheLocation="localstorage"
+      >
         <Auth0Wrapper>{children}</Auth0Wrapper>
       </Auth0Provider>
     ) : null;
   }
 
-  if (authProvider === "cognito") {
-    // No specific provider needed for Cognito/AWS Amplify
+  if (authInfo?.authProvider === "cognito") {
     return <CognitoWrapper>{children}</CognitoWrapper>;
   }
 
-  return <Fragment>{children}</Fragment>; // or some default fallback
+  return null;
 };

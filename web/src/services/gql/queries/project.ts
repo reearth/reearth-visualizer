@@ -15,8 +15,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
-    projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
+  query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+    projects(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         node {
           id
@@ -42,8 +42,6 @@ export const GET_PROJECTS = gql(`
       totalCount
     }
   }
-
-  
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
@@ -96,6 +94,10 @@ export const UPDATE_PROJECT = gql(`
     $publicImage: String
     $deleteImageUrl: Boolean
     $deletePublicImage: Boolean
+    $enableGa: Boolean
+    $trackingId: String
+    $starred:Boolean
+    $deleted: Boolean
   ) {
     updateProject(
       input: {
@@ -108,6 +110,10 @@ export const UPDATE_PROJECT = gql(`
         publicImage: $publicImage
         deleteImageUrl: $deleteImageUrl
         deletePublicImage: $deletePublicImage
+        enableGa: $enableGa
+        trackingId: $trackingId
+        starred: $starred
+        deleted: $deleted
       }
     ) {
       project {
@@ -117,7 +123,6 @@ export const UPDATE_PROJECT = gql(`
     }
   }
 
-  
 `);
 
 export const UPDATE_PROJECT_BASIC_AUTH = gql(`
@@ -186,5 +191,51 @@ export const DELETE_PROJECT = gql(`
     deleteProject(input: { projectId: $projectId }) {
       projectId
     }
+  }
+`);
+
+export const GET_STARRED_PROJECTS = gql(`
+  query GetStarredProjects($teamId: ID!) {
+    starredProjects(teamId: $teamId) {
+				nodes {
+					id
+					name
+					starred
+          scene {
+            id
+          }
+				}
+				totalCount
+			}
+  }
+`);
+
+export const EXPORT_PROJECT = gql(`
+  mutation ExportProject($projectId: ID!) {
+    exportProject(input: { projectId: $projectId }) {
+      projectDataPath
+    }
+  }
+`);
+
+export const IMPORT_PROJECT = gql(`
+  mutation ImportProject($teamId: ID!, $file: Upload!) {
+    importProject(input: { teamId: $teamId, file: $file }) {
+      projectData
+    }
+  }
+`);
+
+export const GET_DELETED_PROJECTS = gql(`
+  query GetDeletedProjects($teamId: ID!) {
+    deletedProjects(teamId: $teamId) {
+			nodes {
+				id
+				name
+				isDeleted
+        imageUrl
+				}
+			totalCount
+		}
   }
 `);

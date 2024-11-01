@@ -14,10 +14,12 @@ import (
 type ContextKey string
 
 const (
-	contextUser     ContextKey = "user"
-	contextOperator ContextKey = "operator"
-	ContextAuthInfo ContextKey = "authinfo"
-	contextUsecases ContextKey = "usecases"
+	contextUser        ContextKey = "user"
+	contextOperator    ContextKey = "operator"
+	ContextAuthInfo    ContextKey = "authinfo"
+	contextUsecases    ContextKey = "usecases"
+	contextMockAuth    ContextKey = "mockauth"
+	contextCurrentHost ContextKey = "currenthost"
 )
 
 var defaultLang = language.English
@@ -42,6 +44,14 @@ func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
 	ctx = context.WithValue(ctx, contextUsecases, u)
 	return ctx
+}
+
+func AttachMockAuth(ctx context.Context, mockAuth bool) context.Context {
+	return context.WithValue(ctx, contextMockAuth, mockAuth)
+}
+
+func AttachCurrentHost(ctx context.Context, currentHost string) context.Context {
+	return context.WithValue(ctx, contextCurrentHost, currentHost)
 }
 
 func User(ctx context.Context) *user.User {
@@ -90,6 +100,13 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 }
 
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
+	if IsMockAuth(ctx) {
+		return &appx.AuthInfo{
+			Sub:   user.NewID().String(), // Use it if there is a Mock user in the DB
+			Name:  "Mock User",
+			Email: "mock@example.com",
+		}
+	}
 	if v := ctx.Value(ContextAuthInfo); v != nil {
 		if v2, ok := v.(appx.AuthInfo); ok {
 			return &v2
@@ -100,4 +117,22 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 
 func Usecases(ctx context.Context) *interfaces.Container {
 	return ctx.Value(contextUsecases).(*interfaces.Container)
+}
+
+func IsMockAuth(ctx context.Context) bool {
+	if v := ctx.Value(contextMockAuth); v != nil {
+		if mockAuth, ok := v.(bool); ok {
+			return mockAuth
+		}
+	}
+	return false
+}
+
+func CurrentHost(ctx context.Context) string {
+	if v := ctx.Value(contextCurrentHost); v != nil {
+		if currentHost, ok := v.(string); ok {
+			return currentHost
+		}
+	}
+	return ""
 }

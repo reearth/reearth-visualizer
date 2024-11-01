@@ -8,17 +8,17 @@ import (
 )
 
 type MarketplaceConfig struct {
-	Endpoint string
-	Secret   string
-	OAuth    *OAuthClientCredentialsConfig
+	Endpoint string                        `pp:",omitempty"`
+	Secret   string                        `pp:",omitempty"`
+	OAuth    *OAuthClientCredentialsConfig `pp:",omitempty"`
 }
 
 type OAuthClientCredentialsConfig struct {
-	ClientID     string
-	ClientSecret string
-	TokenURL     string
-	Scopes       []string
-	Audience     []string
+	ClientID     string   `pp:",omitempty"`
+	ClientSecret string   `pp:",omitempty"`
+	TokenURL     string   `pp:",omitempty"`
+	Scopes       []string `pp:",omitempty"`
+	Audience     []string `pp:",omitempty"`
 }
 
 func (c *OAuthClientCredentialsConfig) Config() *clientcredentials.Config {

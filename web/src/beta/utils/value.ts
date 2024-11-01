@@ -1,9 +1,6 @@
-import { Color } from "cesium";
-
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
-
-import { LayerAppearanceTypes } from "../lib/core/mantle";
+import { Color } from "cesium";
 
 export type LatLng = {
   lat: number;
@@ -24,6 +21,7 @@ export type Camera = {
   pitch: number;
   roll: number;
   fov: number;
+  aspectRatio?: number;
 };
 
 export type Spacing = {
@@ -117,7 +115,7 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
-  array: Array;
+  array: any[];
   timeline: Timeline;
 };
 
@@ -136,7 +134,12 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Ref]: "ref",
   [GQLValueType.Spacing]: "spacing",
   [GQLValueType.Array]: "array",
-  [GQLValueType.Timeline]: "timeline",
+  [GQLValueType.Timeline]: "timeline"
+};
+export type Credit = {
+  description?: string;
+  img?: string;
+  link?: string;
 };
 
 export type ValueType = keyof ValueTypes;
@@ -151,7 +154,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   if (t === "camera" && val && typeof val === "object" && "altitude" in val) {
     newVal = {
       ...val,
-      height: val.altitude,
+      height: val.altitude
     };
   }
   if (
@@ -163,7 +166,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   ) {
     newVal = {
       ...val,
-      textAlign: val.textAlign.toLowerCase(),
+      textAlign: val.textAlign.toLowerCase()
     };
   }
   return { type: t, value: newVal ?? undefined, ok };
@@ -171,12 +174,12 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
 
 export function valueToGQL<T extends ValueType>(
   val: ValueTypes[T] | null | undefined,
-  type: T,
+  type: T
 ): any {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
     return {
       ...(val as any),
-      altitude: (val as any).height,
+      altitude: (val as any).height
     };
   }
   return val ?? null;
@@ -187,39 +190,52 @@ export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
 };
 
 export const valueTypeToGQL = (t: ValueType): GQLValueType | undefined => {
-  return (Object.keys(valueTypeMapper) as GQLValueType[]).find(k => valueTypeMapper[k] === t);
+  return (Object.keys(valueTypeMapper) as GQLValueType[]).find(
+    (k) => valueTypeMapper[k] === t
+  );
 };
 
-export const toGQLSimpleValue = (v: unknown): string | number | boolean | undefined => {
-  return typeof v === "string" || typeof v === "number" || typeof v === "boolean" ? v : undefined;
+export const toGQLSimpleValue = (
+  v: unknown
+): string | number | boolean | undefined => {
+  return typeof v === "string" ||
+    typeof v === "number" ||
+    typeof v === "boolean"
+    ? v
+    : undefined;
 };
 
 export const getCSSFontFamily = (f?: string) => {
   return !f
     ? undefined
     : f === "YuGothic"
-    ? `"游ゴシック体", YuGothic, "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック", "Yu Gothic"`
-    : f;
+      ? `"游ゴシック体", YuGothic, "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック", "Yu Gothic"`
+      : f;
 };
 
 export const toCSSFont = (t?: Typography, d?: Typography) => {
   const ff = getCSSFontFamily(t?.fontFamily ?? d?.fontFamily)
     ?.replace("'", '"')
     .trim();
-  return `${t?.italic ?? d?.italic ? "italic " : ""}${
-    t?.bold ?? d?.bold ? "bold " : (t?.fontWeight ?? d?.fontWeight ?? "") + " "
+  return `${(t?.italic ?? d?.italic) ? "italic " : ""}${
+    (t?.bold ?? d?.bold)
+      ? "bold "
+      : (t?.fontWeight ?? d?.fontWeight ?? "") + " "
   }${t?.fontSize ?? d?.fontSize ?? 16}px ${
     ff ? (ff.includes(`"`) ? ff : `"${ff}"`) : "sans-serif"
   }`;
 };
 
-export const toTextDecoration = (t?: Typography) => (t?.underline ? "underline" : "none");
+export const toTextDecoration = (t?: Typography) =>
+  t?.underline ? "underline" : "none";
 
 export const toColor = (c?: string) => {
   if (!c || typeof c !== "string") return undefined;
 
   // support alpha
-  const m = c.match(/^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/);
+  const m = c.match(
+    /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/
+  );
   if (!m) return Color.fromCssColorString(c);
 
   const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
@@ -238,23 +254,5 @@ export const typographyStyles = (t?: Typography) => {
 
 export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
-  string: "",
-};
-
-export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
-  "3dtiles": {
-    show: true,
-  },
-  resource: {
-    clampToGround: true,
-  },
-  marker: {
-    heightReference: "clamp",
-  },
-  polygon: {
-    heightReference: "clamp",
-  },
-  polyline: {
-    clampToGround: true,
-  },
+  string: ""
 };

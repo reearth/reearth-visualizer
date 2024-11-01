@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-
 import { useT, useLang } from "@reearth/services/i18n";
-import { useError, useNotification, Notification } from "@reearth/services/state";
+import {
+  useError,
+  useNotification,
+  Notification
+} from "@reearth/services/state";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 export type PolicyItems =
   | "layer"
@@ -17,7 +20,7 @@ const policyItems: PolicyItems[] = [
   "dataset",
   "createProject",
   "publishProject",
-  "member",
+  "member"
 ];
 
 export default () => {
@@ -29,7 +32,8 @@ export default () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const policyLimitNotifications = window.REEARTH_CONFIG?.policy?.limitNotifications;
+  const policyLimitNotifications =
+    window.REEARTH_CONFIG?.policy?.limitNotifications;
 
   const errorHeading = t("Error");
   const warningHeading = t("Warning");
@@ -40,9 +44,9 @@ export default () => {
       notification?.type === "error"
         ? errorHeading
         : notification?.type === "warning"
-        ? warningHeading
-        : noticeHeading,
-    [notification?.type, errorHeading, warningHeading, noticeHeading],
+          ? warningHeading
+          : noticeHeading,
+    [notification?.type, errorHeading, warningHeading, noticeHeading]
   );
 
   const setModal = useCallback((show: boolean) => {
@@ -52,28 +56,30 @@ export default () => {
   useEffect(() => {
     if (!error) return;
     if (error.message?.includes("policy violation") && error.message) {
-      const limitedItem = policyItems.find(i => error.message?.includes(i));
+      const limitedItem = policyItems.find((i) => error.message?.includes(i));
       const policyItem =
-        limitedItem && policyLimitNotifications ? policyLimitNotifications[limitedItem] : undefined;
+        limitedItem && policyLimitNotifications
+          ? policyLimitNotifications[limitedItem]
+          : undefined;
       const message = policyItem
         ? typeof policyItem === "string"
           ? policyItem
           : policyItem[currentLanguage]
         : t(
-            "You have reached a policy limit. Please contact an administrator of your Re:Earth system.",
+            "You have reached a policy limit. Please contact an administrator of your Re:Earth system."
           );
 
       setNotification({
         type: "info",
         heading: noticeHeading,
         text: message,
-        duration: "persistent",
+        duration: "persistent"
       });
     } else {
       setNotification({
         type: "error",
         heading: errorHeading,
-        text: t("Something went wrong. Please try again later."),
+        text: t("Something went wrong. Please try again later.")
       });
     }
     setError(undefined);
@@ -85,11 +91,12 @@ export default () => {
     noticeHeading,
     setError,
     setNotification,
-    t,
+    t
   ]);
 
   useEffect(() => {
-    if (!notification || notification?.duration === "persistent" || isHovered) return;
+    if (!notification || notification?.duration === "persistent" || isHovered)
+      return;
     let notificationTimeout = 2000;
 
     if (notification.duration) {
@@ -111,9 +118,9 @@ export default () => {
     notification: {
       type: notification?.type,
       heading: notificationHeading,
-      text: notification?.text,
+      text: notification?.text
     } as Notification,
     setIsHovered,
-    setModal,
+    setModal
   };
 };

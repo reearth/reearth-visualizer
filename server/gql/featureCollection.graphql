@@ -1,0 +1,67 @@
+type Point {
+    type: String!
+    pointCoordinates: [Float!]!
+}
+
+type LineString {
+    type: String!
+    lineStringCoordinates: [[Float!]!]!
+}
+
+type Polygon {
+    type: String!
+    polygonCoordinates: [[[Float!]!]!]!
+}
+
+type MultiPolygon {
+    type: String!
+    multiPolygonCoordinates: [[[[Float!]!]!]!]!
+}
+
+type GeometryCollection {
+    type: String!
+    geometries: [Geometry!]!
+}
+
+union Geometry = Point | LineString | Polygon | MultiPolygon | GeometryCollection
+
+type Feature {
+    type: String! 
+    geometry: Geometry!
+    id: ID!
+    properties: JSON
+}
+
+type FeatureCollection {
+    type: String!
+    features: [Feature!]!
+}
+
+input AddGeoJSONFeatureInput {
+    type: String!
+    geometry: JSON!
+    properties: JSON
+    layerId: ID!
+}
+
+input UpdateGeoJSONFeatureInput {
+    featureId: ID!
+    geometry: JSON
+    properties: JSON
+    layerId: ID!
+}
+
+input DeleteGeoJSONFeatureInput {
+    featureId: ID!
+    layerId: ID!
+}
+
+type DeleteGeoJSONFeaturePayload {
+    deletedFeatureId: ID!
+}
+
+extend type Mutation {
+    addGeoJSONFeature(input: AddGeoJSONFeatureInput!): Feature!
+    updateGeoJSONFeature(input: UpdateGeoJSONFeatureInput!): Feature!
+    deleteGeoJSONFeature(input: DeleteGeoJSONFeatureInput!): DeleteGeoJSONFeaturePayload!
+}

@@ -1,4 +1,4 @@
-import { GetSceneQuery } from "@reearth/services/gql";
+import { GetSceneQuery, PublishmentStatus } from "@reearth/services/gql";
 
 import { type Item, convert } from "../propertyApi/utils";
 
@@ -25,7 +25,7 @@ export type Page = {
 };
 export enum Position {
   Left = "LEFT",
-  Right = "RIGHT",
+  Right = "RIGHT"
 }
 export type Story = {
   id: string;
@@ -37,38 +37,41 @@ export type Story = {
   isBasicAuthActive?: boolean;
   basicAuthUsername?: string;
   basicAuthPassword?: string;
-  publishmentStatus?: string;
+  publishmentStatus?: PublishmentStatus;
   panelPosition?: Position;
   alias: string;
   pages?: Page[];
+  trackingId?: string; // Not supported yet
+  enableGa?: boolean; // Not supported yet
 };
 
 export const getStories = (rawScene?: GetSceneQuery) => {
-  const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
-  return scene?.stories.map(s => {
+  const scene =
+    rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
+  return scene?.stories.map((s) => {
     return {
       ...s,
       publishmentStatus: s.publishmentStatus,
       panelPosition: s.panelPosition,
       bgColor: s.bgColor,
-      pages: s.pages.map(p => {
+      pages: s.pages.map((p) => {
         return {
           ...p,
           property: {
             id: p.property?.id,
-            items: convert(p.property, null),
+            items: convert(p.property, null)
           },
-          blocks: p.blocks.map(b => {
+          blocks: p.blocks.map((b) => {
             return {
               ...b,
               property: {
                 id: b.property?.id,
-                items: convert(b.property, null),
-              },
+                items: convert(b.property, null)
+              }
             };
-          }),
+          })
         };
-      }),
+      })
     } as Story;
   });
 };

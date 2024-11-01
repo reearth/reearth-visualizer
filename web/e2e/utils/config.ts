@@ -1,3 +1,4 @@
+//not in use
 export const config = {
   api: process.env["REEARTH_WEB_API"],
   userId: process.env["REEARTH_WEB_E2E_USER_ID"],
@@ -9,8 +10,7 @@ export const config = {
   authUrl: process.env["REEARTH_WEB_AUTH0_DOMAIN"],
   signUpSecret: process.env["REEARTH_WEB_E2E_SIGNUP_SECRET"],
   authProvider: process.env["REEARTH_WEB_AUTH_PROVIDER"],
-  developerMode: process.env["REEARTH_WEB_DEVELOPER_MODE"],
-  earlyAccessAdmins: process.env["REEARTH_WEB_EARLY_ACCESS_ADMINS"],
+  earlyAccessAdmins: process.env["REEARTH_WEB_EARLY_ACCESS_ADMINS"]
 };
 
 export type Config = typeof config;

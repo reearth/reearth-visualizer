@@ -141,3 +141,28 @@ func (b *Builder) PublishmentStatus(publishmentStatus PublishmentStatus) *Builde
 	b.p.publishmentStatus = publishmentStatus
 	return b
 }
+
+func (b *Builder) EnableGA(enableGa bool) *Builder {
+	b.p.enableGa = enableGa
+	return b
+}
+
+func (b *Builder) TrackingID(trackingId string) *Builder {
+	b.p.trackingId = trackingId
+	return b
+}
+
+func (b *Builder) Scene(sceneId SceneID) *Builder {
+	b.p.sceneId = sceneId
+	return b
+}
+
+func (b *Builder) Starred(starred bool) *Builder {
+	b.p.starred = starred
+	return b
+}
+
+func (b *Builder) Deleted(deleted bool) *Builder {
+	b.p.isDeleted = deleted
+	return b
+}

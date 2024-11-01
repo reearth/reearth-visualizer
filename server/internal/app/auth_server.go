@@ -43,7 +43,7 @@ type authServerUser struct {
 func (r *authServerUser) Sub(ctx context.Context, email, password, authRequestID string) (string, error) {
 	u, err := r.User.FindByNameOrEmail(ctx, email)
 	if err != nil {
-		if errors.Is(rerror.ErrNotFound, err) {
+		if errors.Is(err, rerror.ErrNotFound) {
 			return "", ErrInvalidEmailORPassword
 		}
 		return "", err

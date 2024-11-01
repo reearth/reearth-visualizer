@@ -54,10 +54,6 @@ extensions:
                   label: Labelled
                 - key: default_road
                   label: Road Map
-                - key: stamen_watercolor
-                  label: Stamen Watercolor
-                - key: stamen_toner
-                  label: Stamen Toner
                 - key: open_street_map
                   label: OpenStreetMap
                 - key: esri_world_topo
@@ -159,14 +155,6 @@ extensions:
                 field: terrain
                 type: bool
                 value: true
-            - id: depthTestAgainstTerrain
-              type: bool
-              title: Hide objects under terrain
-              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
         - id: globeLighting
           collection: globe
           title: Globe Lighting
@@ -206,6 +194,13 @@ extensions:
                 field: globeAtmosphere
                 type: bool
                 value: true
+        - id: globeDepthTestAgainstTerrain
+          collection: globe
+          title: Hide objects under ground
+          fields:
+            - id: depthTestAgainstTerrain
+              type: bool
+              title: Enable
         - id: skyBox
           collection: sky
           title: Sky Box
@@ -2286,6 +2281,34 @@ extensions:
                   label: Desktop only
                 - key: mobile
                   label: Mobile only
+  - id: dataAttribution
+    type: widget
+    name: Data Attribution
+    description: A data Attribution widget.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: bottom
+    schema:
+      groups:
+        - id: default
+          title: Data Attribution
+          list: true
+          representativeField: description
+          fields:
+            - id: description
+              title: Credit Description
+              type: string
+              defaultValue: New Credit
+            - id: logo
+              type: url
+              title: Logo
+              ui: image
+            - id: creditUrl
+              type: url
+              title: Credit Url
   - id: story
     name: Story
     type: story
@@ -2580,3 +2603,174 @@ extensions:
     name: Next Page Button
     type: storyBlock
     description: Down button that will skip to next page.
+  - id: infobox-beta
+    name: Infobox Beta
+    type: infobox
+    description: Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: enabled
+              type: bool
+              title: Enable Infobox
+              defaultValue: true
+            - id: position
+              type: string
+              title: Position
+              defaultValue: right
+              choices:
+                - key: right
+                  label: Right
+                - key: left
+                  label: Left
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+              defaultValue: { top: 20, bottom: 20, left: 20, right: 20 }
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+            - id: gap
+              type: number
+              title: Gap
+              min: 0
+              max: 40
+              suffix: px
+              description: "The gap between infobox blocks. Min: 0  Max: 40"
+              defaultValue: 20
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+  - id: textInfoboxBetaBlock
+    name: Text
+    type: infoboxBlock
+    description: Infobox Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Text Block
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: imageInfoboxBetaBlock
+    name: Image
+    type: infoboxBlock
+    description: Infobox Image Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Image Block
+          fields:
+            - id: src
+              type: string
+              title: Image
+  - id: propertyInfoboxBetaBlock
+    type: infoboxBlock
+    name: Property List Block
+    description: Infobox Property List Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Property block
+          fields:
+            - id: displayType
+              type: string
+              title: Type
+              defaultValue: all
+              description: Choose how you wish to show properties
+              choices:
+                - key: all
+                  label: All Properties
+                - key: rootOnly
+                  label: Root Properties
+                - key: custom
+                  label: Customize
+            - id: propertyList
+              type: array
+              title: Property List
+              availableIf:
+                field: displayType
+                type: string
+                value: custom
+  - id: videoInfoboxBetaBlock
+    name: Video
+    type: infoboxBlock
+    description: Infobox Video Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Video Block
+          fields:
+            - id: src
+              type: string
+              title: Video
+  - id: markdownInfoboxBetaBlock
+    name: MD Text
+    type: infoboxBlock
+    description: Infobox MD Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: MD Text Block
+          fields:
+            - id: src
+              type: string
+              title: Content

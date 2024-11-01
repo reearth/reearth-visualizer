@@ -33,6 +33,7 @@ export const styles = css`
     outline: none;
     border: none;
     cursor: pointer;
+    font-family: ${fontFamilies};
   }
 
   textarea {
@@ -90,6 +91,15 @@ export const styles = css`
 
   .Resizer.disabled:hover {
     border-color: transparent;
+  }
+
+  *:focus {
+    outline: none;
+  }
+
+  /* For Firefox */
+  body {
+    scrollbar-width: thin;
   }
 `;
 

@@ -66,6 +66,10 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 }
 
 func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
+	if len(workspaces) == 0 {
+		return nil, nil
+	}
+
 	workspaces2 := accountdomain.WorkspaceIDList(workspaces)
 	if r.f.Readable != nil {
 		workspaces2 = workspaces2.Intersect(r.f.Readable)

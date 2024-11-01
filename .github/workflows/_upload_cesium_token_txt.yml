@@ -1,0 +1,35 @@
+name: Upload Cesium Ion token
+on:
+  workflow_call:
+    inputs:
+      gcs_dst:
+        type: string
+        required: true
+    secrets:
+      credentials_json:
+        required: true
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.credentials_json }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Upload Ion token
+        id: ion_token
+        run: |
+          cesium_ion_token_txt_path="/tmp/cesium_ion_token.txt"
+          curl https://raw.githubusercontent.com/CesiumGS/cesium/main/packages/engine/Source/Core/Ion.js > /tmp/Ion.js
+          cat /tmp/Ion.js | node -e "console.log(require('fs').readFileSync(process.stdin.fd).toString().match(/const defaultAccessToken =(\n| ).*\"(.*)\";/)[2])" | tr -d '\n' >> ${cesium_ion_token_txt_path}
+          token_length=$(cat ${cesium_ion_token_txt_path} | wc -c)
+          if [ $token_length -ne 177 ]; then
+            echo "Token length is invalid. TokenLength: ${token_length}"
+            exit 1
+          fi
+          gsutil cp ${cesium_ion_token_txt_path} ${{ inputs.gcs_dst }}/cesium_ion_token.txt

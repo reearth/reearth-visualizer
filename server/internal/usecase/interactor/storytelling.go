@@ -14,10 +14,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene"
 	scene2 "github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -40,6 +42,8 @@ type Storytelling struct {
 	transaction      usecasex.Transaction
 	nlsLayerRepo     repo.NLSLayer
 	layerStyles      repo.Style
+
+	propertySchemaRepo repo.PropertySchema
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
@@ -59,6 +63,8 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		transaction:      r.Transaction,
 		nlsLayerRepo:     r.NLSLayer,
 		layerStyles:      r.Style,
+
+		propertySchemaRepo: r.PropertySchema,
 	}
 }
 
@@ -112,6 +118,11 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
 		return nil, err
 	}
 
@@ -197,6 +208,11 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		}
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return story, nil
 }
@@ -225,6 +241,11 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	// TODO: Handel ordering
 
 	if err := i.storytellingRepo.Remove(ctx, inp.StoryID); err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
 		return nil, err
 	}
 
@@ -259,6 +280,14 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	if err != nil {
 		return nil, err
 	}
+
+	// prj, err := i.projectRepo.FindByScene(ctx, story.Scene())
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// enableGa := prj.EnableGA()
+	// trackingId := prj.TrackingID()
 
 	//
 	// Commenting this out till the point we make a decision on this: @pyshx
@@ -307,7 +336,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	newAlias := prevAlias
 	if inp.Alias != nil && *inp.Alias != prevAlias {
-		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(rerror.ErrNotFound, err) {
+		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
 			return nil, err
 		} else if publishedStory != nil && story.Id() != publishedStory.Id() {
 			return nil, interfaces.ErrProjectAliasAlreadyUsed
@@ -351,7 +380,8 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true)
+				false,
+			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true, false, "")
 		}()
 
 		// Save
@@ -372,6 +402,11 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	story.SetPublishedAt(time.Now())
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
 		return nil, err
 	}
 
@@ -436,6 +471,28 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		return nil, nil, err
 	}
 
+	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		var pageCount = len(story.Pages().Pages())
+		if err := p.EnforcePageCount(pageCount + 1); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	story.Pages().AddAt(page, inp.Index)
 
 	if err = i.propertyRepo.Save(ctx, prop); err != nil {
@@ -443,6 +500,11 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
 		return nil, nil, err
 	}
 
@@ -499,6 +561,11 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return story, page, nil
 }
@@ -533,6 +600,11 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 	story.Pages().Remove(page.Id())
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
 		return nil, nil, err
 	}
 
@@ -573,6 +645,11 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 		return nil, nil, 0, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
 	tx.Commit()
 	return story, page, inp.Index, nil
 }
@@ -608,6 +685,11 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 	story.Pages().AddAt(dupPage, lo.ToPtr(story.Pages().IndexOf(page.Id())+1))
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
 		return nil, nil, err
 	}
 
@@ -656,6 +738,11 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return story, page, nil
 }
@@ -701,6 +788,11 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return story, page, nil
 }
@@ -724,6 +816,38 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, nil, -1, err
+	}
+
+	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, nil, -1, err
+		}
+
+		story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+		if err != nil {
+			return nil, nil, nil, -1, err
+		}
+
+		page := story.Pages().Page(inp.PageID)
+		if page == nil {
+			return nil, nil, nil, -1, interfaces.ErrPageNotFound
+		}
+
+		var s = page.Count()
+		if err := p.EnforceBlocksCount(s + 1); err != nil {
+			return nil, nil, nil, -1, err
+		}
 	}
 
 	_, extension, err := i.getPlugin(ctx, &inp.PluginID, &inp.ExtensionID)
@@ -767,6 +891,11 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	}
 
 	err = i.storytellingRepo.Save(ctx, *story)
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return nil, nil, nil, -1, err
 	}
@@ -816,6 +945,11 @@ func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlo
 		return nil, nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
 	tx.Commit()
 	return story, page, &inp.BlockID, nil
 }
@@ -856,8 +990,145 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 		return nil, nil, nil, inp.Index, err
 	}
 
+	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+
 	tx.Commit()
 	return story, page, &inp.BlockID, inp.Index, nil
+}
+
+func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}, replaceNLSLayerIDs map[string]idx.ID[id.NLSLayer]) (*storytelling.Story, error) {
+	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+	storyJSON := sceneJSON.Story
+
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+
+	pages := []*storytelling.Page{}
+	for _, pageJSON := range storyJSON.Pages {
+
+		blocks := []*storytelling.Block{}
+		for _, blockJSON := range pageJSON.Blocks {
+
+			pluginID, err := id.PluginIDFrom(blockJSON.PluginId)
+			if err != nil {
+				return nil, err
+			}
+			extensionID := id.PluginExtensionID(blockJSON.ExtensionId)
+			_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID)
+			if err != nil {
+				return nil, err
+			}
+			if extension.Type() != plugin.ExtensionTypeStoryBlock {
+				return nil, interfaces.ErrExtensionTypeMustBeStoryBlock
+			}
+			prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sceneID).Build()
+			if err != nil {
+				return nil, err
+			}
+			ps, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
+			if err != nil {
+				return nil, err
+			}
+			prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, blockJSON.Property)
+			if err != nil {
+				return nil, err
+			}
+			// Save property
+			if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+				return nil, err
+			}
+			block, err := storytelling.NewBlock().
+				ID(id.NewBlockID()).
+				Property(prop.ID()).
+				Plugin(pluginID).
+				Extension(extensionID).
+				Build()
+			if err != nil {
+				return nil, err
+			}
+			blocks = append(blocks, block)
+		}
+
+		schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
+		prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
+		if err != nil {
+			return nil, err
+		}
+		ps, err := i.propertySchemaRepo.FindByID(ctx, schema.ID())
+		if err != nil {
+			return nil, err
+		}
+		prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, pageJSON.Property)
+		if err != nil {
+			return nil, err
+		}
+		// Save property
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+			return nil, err
+		}
+		var nlslayerIDs []idx.ID[id.NLSLayer]
+		if replaceNLSLayerIDs != nil {
+			for _, oldId := range pageJSON.Layers {
+				nlslayerIDs = append(nlslayerIDs, replaceNLSLayerIDs[oldId])
+			}
+		}
+		page, err := storytelling.NewPage().
+			ID(id.NewPageID()).
+			Property(prop.ID()).
+			Title(pageJSON.Title).
+			Swipeable(pageJSON.Swipeable).
+			Blocks(blocks).
+			Layers(nlslayerIDs).
+			Build()
+		if err != nil {
+			return nil, err
+		}
+		pages = append(pages, page)
+	}
+
+	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
+	if err != nil {
+		return nil, err
+	}
+	ps, err := i.propertySchemaRepo.FindByID(ctx, schema.ID())
+	if err != nil {
+		return nil, err
+	}
+	prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, storyJSON.Property)
+	if err != nil {
+		return nil, err
+	}
+	// Save property
+	if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+		return nil, err
+	}
+	story, err := storytelling.NewStory().
+		ID(id.NewStoryID()).
+		Title(storyJSON.Title).
+		Property(prop.ID()).
+		Scene(sceneID).
+		PanelPosition(storytelling.Position(storyJSON.PanelPosition)).
+		BgColor(storyJSON.BgColor).
+		Pages(storytelling.NewPageList(pages)).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+	if err := i.storytellingRepo.Filtered(writableFilter).Save(ctx, *story); err != nil {
+		return nil, err
+	}
+	story, err = i.storytellingRepo.Filtered(readableFilter).FindByID(ctx, story.Id())
+	if err != nil {
+		return nil, err
+	}
+	return story, nil
 }
 
 func (i *Storytelling) getPlugin(ctx context.Context, pId *id.PluginID, eId *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {

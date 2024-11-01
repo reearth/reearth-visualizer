@@ -80,6 +80,8 @@ var (
 	ErrExtensionTypeMustBePrimitive         error = errors.New("extension type must be primitive")
 	ErrExtensionTypeMustBeBlock             error = errors.New("extension type must be block")
 	ErrInvalidExtensionType                 error = errors.New("invalid extension type")
+	ErrSketchNotFound                       error = errors.New("sketch not found")
+	ErrFeatureCollectionNotFound            error = errors.New("featureCollection not found")
 )
 
 type Layer interface {

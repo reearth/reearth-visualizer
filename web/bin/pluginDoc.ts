@@ -23,13 +23,13 @@ type P = {
 for (const s of program.getSourceFiles()) {
   if (s.fileName.substr(-5) === ".d.ts") continue;
   const decls: D[] = [];
-  ts.forEachChild(s, node => {
+  ts.forEachChild(s, (node) => {
     const d = parse(node);
     if (d) {
       decls.push(d);
     }
   });
-  const res = render(decls, n => decls.findIndex(d => d.name === n) != -1);
+  const res = render(decls, (n) => decls.findIndex((d) => d.name === n) != -1);
   // writeFileSync("./docs/plugin.md", res);
   console.log(res);
 }
@@ -50,7 +50,7 @@ function parse(node: ts.Node): D | undefined {
         name: s.name,
         type: tc.typeToString(t),
         required: (s.flags & ts.SymbolFlags.Optional) === 0,
-        desc: ts.displayPartsToString(s.getDocumentationComment(tc)),
+        desc: ts.displayPartsToString(s.getDocumentationComment(tc))
       };
     })
     .filter((p): p is P => !!p);
@@ -58,17 +58,19 @@ function parse(node: ts.Node): D | undefined {
   return {
     name: node.name.text,
     desc: ts.displayPartsToString(sym.getDocumentationComment(tc)),
-    properties,
+    properties
   };
 }
 
 function render(decls: D[], linkable: (name: string) => boolean): string {
   return decls
-    .flatMap(d => [
+    .flatMap((d) => [
       `# ${d.name}`,
       d.desc,
-      d.properties.map(p => `- ${renderHead(p, linkable)}`).join("\n"),
-      ...d.properties.filter(p => p.desc).flatMap(p => [`## ${renderHead(p, linkable)}`, p.desc]),
+      d.properties.map((p) => `- ${renderHead(p, linkable)}`).join("\n"),
+      ...d.properties
+        .filter((p) => p.desc)
+        .flatMap((p) => [`## ${renderHead(p, linkable)}`, p.desc])
     ])
     .filter(Boolean)
     .join("\n\n");
@@ -78,17 +80,37 @@ function renderHead(p: P, linkable: (name: string) => boolean): string {
   return [p.name, ": ", renderType(p.type, p.required, linkable)].join("");
 }
 
-function renderType(type: string, required: boolean, linkable: (name: string) => boolean) {
-  const ts = split(type, [") => ", "[]", "?: ", ": ", " & ", " | ", "(", ")", ", "])
-    .map(s =>
+function renderType(
+  type: string,
+  required: boolean,
+  linkable: (name: string) => boolean
+) {
+  const ts = split(type, [
+    ") => ",
+    "[]",
+    "?: ",
+    ": ",
+    " & ",
+    " | ",
+    "(",
+    ")",
+    ", "
+  ])
+    .map((s) =>
       typeof s === "string" && linkable(s)
         ? {
-            link: s,
+            link: s
           }
-        : s,
+        : s
     )
-    .map(s =>
-      typeof s === "string" ? s : "link" in s ? `[${s.link}](#${s.link})` : "s" in s ? s.s : "",
+    .map((s) =>
+      typeof s === "string"
+        ? s
+        : "link" in s
+          ? `[${s.link}](#${s.link})`
+          : "s" in s
+            ? s.s
+            : ""
     )
     .join("");
   const func = / => /.test(type);
@@ -96,7 +118,7 @@ function renderType(type: string, required: boolean, linkable: (name: string) =>
     !required && func ? "(" : "",
     ts,
     !required && func ? ")" : "",
-    !required ? " | undefined" : "",
+    !required ? " | undefined" : ""
   ].join("");
 }
 
@@ -104,9 +126,9 @@ function split(text: string, splitter: string[]): (string | { s: string })[] {
   if (!text.length) return [];
   const res: (string | { s: string })[] = [];
   let buf = "";
-  for (let i = 0; i < text.length; i++) {
-    buf += text[i];
-    const s = splitter.find(s => buf.includes(s));
+  for (const t of text) {
+    buf += t;
+    const s = splitter.find((s) => buf.includes(s));
     if (s) {
       res.push(buf.slice(0, -s.length), { s: buf.slice(-s.length) });
       buf = "";

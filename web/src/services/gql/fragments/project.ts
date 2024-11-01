@@ -14,8 +14,13 @@ export const projectFragment = gql`
     publicDescription
     publicImage
     alias
+    enableGa
+    trackingId
     publishmentStatus
     updatedAt
+    createdAt
     coreSupport
+    starred
+    isDeleted
   }
 `;

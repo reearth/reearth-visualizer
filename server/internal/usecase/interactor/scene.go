@@ -1,9 +1,16 @@
 package interactor
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"net/url"
+	"strings"
+	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -12,9 +19,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -33,6 +44,10 @@ type Scene struct {
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
 	extensions         []plugin.ID
+	nlsLayerRepo       repo.NLSLayer
+	layerStyles        repo.Style
+	storytellingRepo   repo.Storytelling
+	tagRepo            repo.Tag
 }
 
 func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
@@ -48,6 +63,10 @@ func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 		file:               g.File,
 		pluginRegistry:     g.PluginRegistry,
 		extensions:         r.Extensions,
+		nlsLayerRepo:       r.NLSLayer,
+		layerStyles:        r.Style,
+		storytellingRepo:   r.Storytelling,
+		tagRepo:            r.Tag,
 	}
 }
 
@@ -162,6 +181,10 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		return nil, err
+	}
+
 	operator.AddNewScene(ws, sceneID)
 	tx.Commit()
 	return res, err
@@ -188,21 +211,9 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
-	pr, err := i.pluginRepo.FindByID(ctx, pid)
+	extension, err := i.getWidgePlugin(ctx, pid, eid, nil)
 	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
-		}
 		return nil, nil, err
-	}
-
-	extension := pr.Extension(eid)
-	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
-	}
-
-	if extension.Type() != plugin.ExtensionTypeWidget {
-		return nil, nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 
 	property, err := property.New().NewID().Schema(extension.Schema()).Scene(sid).Build()
@@ -261,6 +272,11 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return s, widget, nil
 }
@@ -292,21 +308,9 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	}
 	_, location := scene.Widgets().Alignment().Find(param.WidgetID)
 
-	pr, err := i.pluginRepo.FindByID(ctx, widget.Plugin())
+	extension, err := i.getWidgePlugin(ctx, widget.Plugin(), widget.Extension(), nil)
 	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
-		}
 		return nil, nil, err
-	}
-
-	extension := pr.Extension(widget.Extension())
-	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
-	}
-
-	if extension.Type() != plugin.ExtensionTypeWidget {
-		return nil, nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 
 	if param.Enabled != nil {
@@ -343,6 +347,11 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	err2 = i.sceneRepo.Save(ctx, scene)
 	if err2 != nil {
 		return nil, nil, err2
+	}
+
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	tx.Commit()
@@ -397,6 +406,11 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return s, nil
 }
@@ -440,6 +454,11 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	err2 = i.sceneRepo.Save(ctx, scene)
 	if err2 != nil {
 		return nil, err2
+	}
+
+	err = updateProjectUpdatedAtByID(ctx, scene.Project(), i.projectRepo)
+	if err != nil {
+		return nil, err
 	}
 
 	tx.Commit()
@@ -488,6 +507,11 @@ func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string,
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return s, cluster, nil
 }
@@ -528,6 +552,11 @@ func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateCluste
 		return nil, nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	tx.Commit()
 	return s, cluster, nil
 }
@@ -559,12 +588,335 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 		return nil, err
 	}
 
+	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
+	if err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return s, nil
+}
+
+func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter *zip.Writer) (*scene.Scene, map[string]interface{}, error) {
+
+	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
+	if err != nil {
+		return nil, nil, errors.New("Fail scene :" + err.Error())
+	}
+
+	sceneID := sce.ID()
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, nil, errors.New("Fail nlsLayer :" + err.Error())
+	}
+	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, nil, errors.New("Fail layerStyles :" + err.Error())
+	}
+	storyList, err := i.storytellingRepo.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, nil, errors.New("Fail storytelling :" + err.Error())
+	}
+	story := (*storyList)[0]
+	sceneJSON, err := builder.New(
+		repo.LayerLoaderFrom(i.layerRepo),
+		repo.PropertyLoaderFrom(i.propertyRepo),
+		repo.DatasetGraphLoaderFrom(i.datasetRepo),
+		repo.TagLoaderFrom(i.tagRepo),
+		repo.TagSceneLoaderFrom(i.tagRepo, []id.SceneID{sceneID}),
+		repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+		true,
+	).ForScene(sce).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).BuildResult(
+		ctx,
+		time.Now(),
+		prj.CoreSupport(),
+		prj.EnableGA(),
+		prj.TrackingID(),
+	)
+	if err != nil {
+		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
+	}
+
+	// nlsLayer file resources
+	for _, nLayer := range nlsLayers {
+		actualLayer := *nLayer
+		c := actualLayer.Config()
+		if c != nil {
+			actualConfig := *c
+			if data, ok := actualConfig["data"].(map[string]any); ok {
+				u, ok := data["url"].(*url.URL)
+				if ok {
+					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
+						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
+						}
+					}
+				}
+			}
+		}
+	}
+
+	var widgetPropertyIDs []idx.ID[id.Property]
+	for _, widget := range sce.Widgets().Widgets() {
+		widgetPropertyIDs = append(widgetPropertyIDs, widget.Property())
+	}
+	widgetProperties, err := i.propertyRepo.FindByIDs(ctx, widgetPropertyIDs)
+	if err != nil {
+		return nil, nil, errors.New("Fail widgetProperties :" + err.Error())
+	}
+
+	// widget button icon
+	for _, property := range widgetProperties {
+		for _, item := range property.Items() {
+			if item == nil {
+				continue
+			}
+			for _, field := range item.Fields(nil) {
+				if field == nil || field.Value() == nil || field.Value().Value() == nil {
+					continue
+				}
+				if field.GuessSchema().ID().String() == "buttonIcon" {
+					u, ok := field.Value().Value().(*url.URL)
+					if !ok {
+						continue
+					}
+					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
+						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
+						}
+					}
+				}
+			}
+		}
+	}
+
+	var pagePropertyIDs []idx.ID[id.Property]
+	for _, page := range story.Pages().Pages() {
+		for _, block := range page.Blocks() {
+			pagePropertyIDs = append(pagePropertyIDs, block.Property())
+		}
+	}
+	pageProperties, err := i.propertyRepo.FindByIDs(ctx, pagePropertyIDs)
+	if err != nil {
+		return nil, nil, errors.New("Fail property :" + err.Error())
+	}
+	// page block src
+	for _, property := range pageProperties {
+		for _, item := range property.Items() {
+			for _, field := range item.Fields(nil) {
+				if field.GuessSchema().ID().String() == "src" {
+					u, ok := field.Value().Value().(*url.URL)
+					if !ok {
+						continue
+					}
+					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
+						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+							log.Infofc(ctx, "Fail page block addZipAsset :", err.Error())
+						}
+					}
+				}
+			}
+		}
+	}
+
+	res := make(map[string]interface{})
+	res["scene"] = sceneJSON
+
+	return sce, res, nil
+}
+
+func convertReearthEnv(ctx context.Context, u *url.URL) (bool, *url.URL) {
+	if u.Host == "localhost:8080" || strings.HasSuffix(u.Host, ".reearth.dev") || strings.HasSuffix(u.Host, ".reearth.io") {
+		currentHost := adapter.CurrentHost(ctx)
+		currentHost = strings.TrimPrefix(currentHost, "https://")
+		currentHost = strings.TrimPrefix(currentHost, "http://")
+		if currentHost == "localhost:8080" {
+			u.Scheme = "http"
+		} else {
+			u.Scheme = "https"
+		}
+		u.Host = currentHost
+		return true, u
+	}
+	return false, nil
+}
+
+func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
+	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+	if err != nil {
+		return nil, err
+	}
+
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sce.ID()}}
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{sce.ID()}}
+
+	widgets := []*scene.Widget{}
+	replaceWidgetIDs := make(map[string]idx.ID[id.Widget])
+	for _, widgetJSON := range sceneJSON.Widgets {
+		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
+		if err != nil {
+			return nil, err
+		}
+		extensionID := id.PluginExtensionID(widgetJSON.ExtensionID)
+		extension, err := i.getWidgePlugin(ctx, pluginID, extensionID, &readableFilter)
+		if err != nil {
+			return nil, err
+		}
+		prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sce.ID()).Build()
+		if err != nil {
+			return nil, err
+		}
+		ps, err := i.propertySchemaRepo.Filtered(readableFilter).FindByID(ctx, extension.Schema())
+		if err != nil {
+			return nil, err
+		}
+		prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, widgetJSON.Property)
+		if err != nil {
+			return nil, err
+		}
+		// Save property
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+			return nil, err
+		}
+
+		newWidgetID := id.NewWidgetID()
+		replaceWidgetIDs[widgetJSON.ID] = newWidgetID
+		widget, err := scene.NewWidget(newWidgetID, pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
+		if err != nil {
+			return nil, err
+		}
+		widgets = append(widgets, widget)
+	}
+
+	clusters := []*scene.Cluster{}
+	for _, clusterJson := range sceneJSON.Clusters {
+		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sce.ID()).Build()
+		if err != nil {
+			return nil, err
+		}
+		// Save property
+		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, property); err != nil {
+			return nil, err
+		}
+		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
+		if err != nil {
+			return nil, err
+		}
+		clusters = append(clusters, cluster)
+	}
+	clusterList := scene.NewClusterListFrom(clusters)
+	var viz = visualizer.VisualizerCesium
+	if prj.CoreSupport() {
+		viz = visualizer.VisualizerCesiumBeta
+	}
+	schema := builtin.GetPropertySchemaByVisualizer(viz)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sce.ID()).Build()
+	if err != nil {
+		return nil, err
+	}
+	prop, err = builder.AddItemFromPropertyJSON(ctx, prop, schema, sceneJSON.Property)
+	if err != nil {
+		return nil, err
+	}
+	// Save property
+	if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+		return nil, err
+	}
+
+	plugins := sce.Plugins()
+	for _, plg := range plgs {
+		if plg.ID().String() != "reearth" {
+			plugins.Add(scene.NewPlugin(plg.ID(), nil))
+		}
+	}
+
+	alignSystem := builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem, replaceWidgetIDs)
+	s2, err := scene.New().
+		ID(sce.ID()).
+		Project(prj.ID()).
+		Workspace(prj.Workspace()).
+		RootLayer(sce.RootLayer()).
+		Widgets(scene.NewWidgets(widgets, alignSystem)).
+		UpdatedAt(time.Now()).
+		Property(prop.ID()).
+		Clusters(clusterList).
+		Plugins(plugins).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	// Save scene (update)
+	if err := i.sceneRepo.Save(ctx, s2); err != nil {
+		return nil, err
+	}
+	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
+		return nil, err
+	}
+	s3, err := i.sceneRepo.FindByID(ctx, sce.ID())
+	if err != nil {
+		return nil, err
+	}
+	return s3, nil
 }
 
 func injectExtensionsToScene(s *scene.Scene, ext []plugin.ID) {
 	lo.ForEach(ext, func(p plugin.ID, _ int) {
 		s.Plugins().Add(scene.NewPlugin(p, nil))
 	})
+}
+
+func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.PluginExtensionID, readableFilter *repo.SceneFilter) (*plugin.Extension, error) {
+	var pr *plugin.Plugin
+	var err error
+	if readableFilter == nil {
+		pr, err = i.pluginRepo.FindByID(ctx, pid)
+	} else {
+		pr, err = i.pluginRepo.Filtered(*readableFilter).FindByID(ctx, pid)
+	}
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			return nil, interfaces.ErrPluginNotFound
+		}
+		return nil, err
+	}
+	extension := pr.Extension(eid)
+	if extension == nil {
+		return nil, interfaces.ErrExtensionNotFound
+	}
+	if extension.Type() != plugin.ExtensionTypeWidget {
+		return nil, interfaces.ErrExtensionTypeMustBeWidget
+	}
+	return extension, nil
+}
+
+func (i *Scene) addZipAsset(ctx context.Context, zipWriter *zip.Writer, url string) error {
+
+	parts := strings.Split(url, "/")
+	if len(parts) == 0 {
+		return errors.New("invalid URL format")
+	}
+	fileName := parts[len(parts)-1]
+	if fileName == "" {
+		return errors.New("empty filename extracted from URL")
+	}
+
+	stream, err := i.file.ReadAsset(ctx, fileName)
+	if err != nil {
+		return err
+	}
+	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
+	zipEntry, err := zipWriter.Create(zipEntryPath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(zipEntry, stream)
+	if err != nil {
+		_ = stream.Close()
+		return err
+	}
+	if err := stream.Close(); err != nil {
+		return err
+	}
+	return nil
 }

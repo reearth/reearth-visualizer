@@ -150,6 +150,57 @@ func TestPolicy_EnforceDatasetCount(t *testing.T) {
 	})
 }
 
+func TestPolicy_EnforceNLSLayersCount(t *testing.T) {
+	tests := []policyTest[int]{
+		{limit: 0, arg: 0, fail: false},
+		{limit: 1, arg: 0, fail: false},
+		{limit: 1, arg: 1, fail: false},
+		{limit: 1, arg: 2, fail: true},
+		{limitNil: true, arg: 100, fail: false},
+		{policyNil: true, arg: 100, fail: false},
+	}
+
+	testPolicy(t, tests, func(d int) Option {
+		return Option{NLSLayersCount: lo.ToPtr(d)}
+	}, func(p *Policy, a int) error {
+		return p.EnforceNLSLayersCount(a)
+	})
+}
+
+func TestPolicy_EnforcePageCount(t *testing.T) {
+	tests := []policyTest[int]{
+		{limit: 0, arg: 0, fail: false},
+		{limit: 1, arg: 0, fail: false},
+		{limit: 1, arg: 1, fail: false},
+		{limit: 1, arg: 2, fail: true},
+		{limitNil: true, arg: 100, fail: false},
+		{policyNil: true, arg: 100, fail: false},
+	}
+
+	testPolicy(t, tests, func(d int) Option {
+		return Option{PageCount: lo.ToPtr(d)}
+	}, func(p *Policy, a int) error {
+		return p.EnforcePageCount(a)
+	})
+}
+
+func TestPolicy_EnforceBlocksCount(t *testing.T) {
+	tests := []policyTest[int]{
+		{limit: 0, arg: 0, fail: false},
+		{limit: 1, arg: 0, fail: false},
+		{limit: 1, arg: 1, fail: false},
+		{limit: 1, arg: 2, fail: true},
+		{limitNil: true, arg: 100, fail: false},
+		{policyNil: true, arg: 100, fail: false},
+	}
+
+	testPolicy(t, tests, func(d int) Option {
+		return Option{BlocksCount: lo.ToPtr(d)}
+	}, func(p *Policy, a int) error {
+		return p.EnforceBlocksCount(a)
+	})
+}
+
 func testPolicy[T any](t *testing.T, tests []policyTest[T], f func(d T) Option, tf func(p *Policy, a T) error) {
 	t.Helper()
 	for _, tt := range tests {
@@ -191,7 +242,10 @@ func TestPolicy_Clone(t *testing.T) {
 			LayerCount:            lo.ToPtr(1),
 			AssetStorageSize:      lo.ToPtr(int64(1)),
 			DatasetSchemaCount:    lo.ToPtr(1),
-			DatasetCount:          lo.ToPtr(2),
+			DatasetCount:          lo.ToPtr(1),
+			NLSLayersCount:        lo.ToPtr(1),
+			PageCount:             lo.ToPtr(1),
+			BlocksCount:           lo.ToPtr(1),
 		},
 	}
 	got := p.Clone()
