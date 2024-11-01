@@ -268,21 +268,7 @@ const PopupMenuWrapper = styled("div")<{
   overflowY: "auto",
   boxSizing: "border-box",
   margin: nested ? "-7px 0 0 2px" : "inherit",
-  ["::-webkit-scrollbar"]: {
-    width: "8px",
-    height: "8px"
-  },
-  ["::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
-  },
-  ["::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
-  },
-  ["::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  }
+  ...theme.scrollBar
 }));
 
 const Item = styled("div")<{

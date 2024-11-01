@@ -36,6 +36,11 @@ export default ({ data, onLoadMore }: Props) => {
 
   // Check on data change
   useEffect(() => {
+    // This is useful to projects, since current query doesn't take visualizer project only
+    if (data?.length === 0) {
+      onLoadMoreRef.current?.();
+      return;
+    }
     checkForLoadMore();
   }, [data, checkForLoadMore]);
 
