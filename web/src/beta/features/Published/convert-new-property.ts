@@ -1,6 +1,6 @@
-import { defaultStyle } from "@reearth/beta/features/Editor/Map/LayerStylePanel/PresetLayerStyle/presetLayerStyles";
 import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
-import { Layer, LayerAppearanceTypes } from "@reearth/core";
+import { getLayerStyleValue } from "@reearth/beta/utils/layer-style";
+import { Layer } from "@reearth/core";
 import {
   NLSInfobox,
   NLSLayer,
@@ -59,22 +59,12 @@ export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[]
 ): Layer[] | undefined {
-  const getLayerStyleValue = (id?: string) => {
-    const layerStyleValue: Partial<LayerAppearanceTypes> | undefined =
-      layerStyles?.find((a) => a.id === id)?.value;
-    if (typeof layerStyleValue === "object") {
-      try {
-        return layerStyleValue;
-      } catch (e) {
-        console.error("Error parsing layerStyle JSON:", e);
-      }
-    }
-
-    return defaultStyle;
-  };
-
   return newLayers?.map((nlsLayer) => {
-    const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+    const layerStyle = getLayerStyleValue(
+      layerStyles,
+      nlsLayer.config?.layerStyleId,
+      (nlsLayer.config?.data?.type ?? "").toLowerCase()
+    );
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
