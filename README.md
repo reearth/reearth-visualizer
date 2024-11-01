@@ -85,7 +85,7 @@ If your have any requests for features, they are more than welcome! Just create 
 
 ## Contributing
 
-See [the contributing guide](contributing.md).
+See [the contributing guide](CONTRIBUTING.md).
 
 ## Contributers
 
