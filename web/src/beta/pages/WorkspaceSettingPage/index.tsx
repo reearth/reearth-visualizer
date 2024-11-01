@@ -17,7 +17,7 @@ const WorkspaceSettingPage: FC<WorkspaceSettingPageProps> = ({ tab }) => {
     <Page
       workspaceId={workspaceId}
       renderItem={({ workspaceId }) =>
-        disabled ? (
+        disabled || !workspaceId ? (
           <NotFound />
         ) : (
           <WorkspaceSetting tab={tab} workspaceId={workspaceId} />
