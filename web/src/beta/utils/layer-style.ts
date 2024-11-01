@@ -9,10 +9,14 @@ export const getLayerStyleValue = (
 ) => {
   const layerStyleValue: Partial<LayerAppearanceTypes> | undefined =
     layerStyles?.find((a) => a.id === id)?.value;
-  if (typeof layerStyleValue === "object") {
+
+  const typeInLowercase = type?.toLowerCase() ?? "";
+
+  if (layerStyleValue !== null && typeof layerStyleValue === "object") {
     return layerStyleValue;
   }
 
-  if (type === "czml" || type === "kml") return {};
+  if (["czml", "kml"].includes(typeInLowercase)) return {};
+
   return defaultStyle;
 };

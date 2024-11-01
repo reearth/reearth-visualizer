@@ -392,7 +392,7 @@ export function processLayers(
     const layerStyle = getLayerStyleValue(
       layerStyles,
       nlsLayer.config?.layerStyleId,
-      (nlsLayer.config?.data?.type ?? "").toLowerCase()
+      nlsLayer.config?.data?.type
     );
 
     const sketchLayerData = nlsLayer.isSketch && {
