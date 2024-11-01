@@ -20,7 +20,7 @@ import { Role, TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled, useTheme, keyframes } from "@reearth/services/theme";
-import { FC, KeyboardEvent, useEffect, useState } from "react";
+import { FC, KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 import { WorkspacePayload } from "../../hooks";
@@ -134,56 +134,63 @@ const Members: FC<Props> = ({
     setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
-  const handleChangeRole = async (
-    member: TeamMember,
-    index: number,
-    roleValue: string | string[]
-  ) => {
-    if (currentWorkspace?.id) {
-      const { status } = await handleUpdateMemberOfWorkspace({
-        teamId: currentWorkspace?.id,
-        userId: member.userId,
-        role: roleValue as Role
-      });
-      if (status === "success") {
-        setCurrentWorkspace((prevMembers) => {
-          return {
-            ...prevMembers,
-            members: prevMembers?.members?.map((workspaceMember) =>
-              workspaceMember.userId === member.userId
-                ? {
-                    ...workspaceMember,
-                    role: roleValue as Role
-                  }
-                : workspaceMember
-            )
-          } as Workspace;
+  const handleChangeRole = useCallback(
+    async (member: TeamMember, index: number, roleValue: string | string[]) => {
+      if (currentWorkspace?.id) {
+        const { status } = await handleUpdateMemberOfWorkspace({
+          teamId: currentWorkspace?.id,
+          userId: member.userId,
+          role: roleValue as Role
         });
+        if (status === "success") {
+          setCurrentWorkspace((prevMembers) => {
+            return {
+              ...prevMembers,
+              members: prevMembers?.members?.map((workspaceMember) =>
+                workspaceMember.userId === member.userId
+                  ? {
+                      ...workspaceMember,
+                      role: roleValue as Role
+                    }
+                  : workspaceMember
+              )
+            } as Workspace;
+          });
+        }
+        setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
       }
-      setActiveEditIndex((prevIndex) => (prevIndex === index ? null : index));
-    }
-  };
+    },
+    [
+      currentWorkspace?.id,
+      handleUpdateMemberOfWorkspace,
+      setCurrentWorkspace,
+      setActiveEditIndex
+    ]
+  );
 
-  const handleRemoveMemberButtonClick = async (userId: string) => {
-    if (currentWorkspace?.id) {
-      const { status } = await handleRemoveMemberFromWorkspace({
-        teamId: currentWorkspace?.id,
-        userId
-      });
-      if (status === "success") {
-        setCurrentWorkspace((prevMembers) => {
-          return {
-            ...prevMembers,
-            members: prevMembers?.members?.filter(
-              (workspaceMember) => workspaceMember.userId !== userId
-            )
-          } as Workspace;
+  const handleRemoveMemberButtonClick = useCallback(
+    async (userId: string) => {
+      if (currentWorkspace?.id) {
+        const { status } = await handleRemoveMemberFromWorkspace({
+          teamId: currentWorkspace?.id,
+          userId
         });
+        if (status === "success") {
+          setCurrentWorkspace((prevMembers) => {
+            return {
+              ...prevMembers,
+              members: prevMembers?.members?.filter(
+                (workspaceMember) => workspaceMember.userId !== userId
+              )
+            } as Workspace;
+          });
+        }
       }
-    }
-  };
+    },
+    [currentWorkspace?.id, handleRemoveMemberFromWorkspace, setCurrentWorkspace]
+  );
 
-  const handleAddMember = () => {
+  const handleAddMember = useCallback(() => {
     memberSearchResults.forEach(async (memberSearchResult) => {
       if (currentWorkspace?.id) {
         const { status } = await handleAddMemberToWorkspace({
@@ -220,7 +227,16 @@ const Members: FC<Props> = ({
         setMemberSearchResults([]);
       }
     });
-  };
+  }, [
+    memberSearchResults,
+    currentWorkspace?.id,
+    handleAddMemberToWorkspace,
+    setCurrentWorkspace,
+    setAddMemberModal,
+    setMemberSearchInput,
+    setDebouncedInput,
+    setMemberSearchResults
+  ]);
 
   const handleDeleteUserForSearchResult = (
     memberSearchResult: MemberSearchResult
