@@ -101,11 +101,6 @@ export default ({
     return false;
   }, [timePeriodValues]);
 
-  const handleClose = useCallback(() => {
-    setTimePeriodValues?.(undefined);
-    onClose?.();
-  }, [setTimePeriodValues, onClose]);
-
   return {
     warning,
     isDisabled,
@@ -114,6 +109,5 @@ export default ({
     handleChange,
     handleTimePointPopup,
     handleSubmit,
-    handleClose
   };
 };
