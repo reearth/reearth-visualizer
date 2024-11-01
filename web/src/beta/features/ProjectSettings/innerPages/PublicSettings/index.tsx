@@ -95,7 +95,7 @@ const PublicSettings: React.FC<Props> = ({
       },
       ...stories.map((s) => ({
         id: s.id,
-        title: (!s.title || s.title) === "Default" ? t("Story") : s.title,
+        title: !s.title || s.title === "Default" ? t("Story") : s.title,
         icon: "sidebar" as const,
         path: `/settings/projects/${project.id}/public/${s.id}`,
         active: selectedTab === s.id

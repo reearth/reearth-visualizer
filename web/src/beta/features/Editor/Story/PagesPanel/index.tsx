@@ -1,5 +1,6 @@
 import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -65,6 +66,8 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     setStoryPageitems(storyPages ?? []);
   }, [storyPages]);
 
+  const t = useT();
+
   return (
     <Panel
       title="Pages"
@@ -77,7 +80,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       <ButtonWrapper>
         <Button
           icon="plus"
-          title="New Page"
+          title={t("New Page")}
           size="small"
           extendWidth
           onClick={() => handleStoryPageAdd(false)}
