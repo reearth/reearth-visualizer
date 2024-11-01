@@ -38,6 +38,7 @@ export type User = {
   name: string;
   email?: string;
 };
+export type Role = "OWNER" | "READER" | "WRITER" | "MAINTAINER";
 
 export type Member = {
   role: string;

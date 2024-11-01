@@ -2,7 +2,7 @@ import AssetsManager from "@reearth/beta/features/AssetsManager";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-import { Workspace } from "../type";
+import { Role, Workspace } from "../type";
 
 import Members from "./Members";
 import Projects from "./Projects";
@@ -12,15 +12,17 @@ export type ContainerProps = {
   workspaceId?: string;
   tab?: string;
   currentWorkspace?: Workspace;
+  role?: Role;
 };
 const ContentsContainer: FC<ContainerProps> = ({
   tab,
   workspaceId,
-  currentWorkspace
+  currentWorkspace,
+  role
 }) => {
   return (
     <Wrapper>
-      {tab === "projects" && <Projects workspaceId={workspaceId} />}
+      {tab === "projects" && <Projects workspaceId={workspaceId} role={role} />}
       {tab === "asset" && (
         <AssetsManager workspaceId={workspaceId} size="large" />
       )}

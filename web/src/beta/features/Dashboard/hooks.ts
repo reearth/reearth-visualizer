@@ -65,6 +65,16 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     [workspace, setCurrentWorkspace, navigate]
   );
 
+  const userRole = useMemo(() => {
+    if (!currentWorkspace || !data?.email) return undefined;
+
+    const member = currentWorkspace?.members?.find(
+      (member) => member?.user?.email === data.email
+    );
+
+    return member ? member.role : undefined;
+  }, [currentWorkspace, data?.email]);
+
   return {
     workspaces,
     currentWorkspace,
@@ -72,6 +82,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     topTabs,
     bottomTabs,
     currentTab,
+    userRole,
     onSignOut: logout,
     handleWorkspaceChange
   };

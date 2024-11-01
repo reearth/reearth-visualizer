@@ -11,12 +11,17 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useRef, Fragment } from "react";
 
+import { Role } from "../../type";
+
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
 import ProjectCreatorModal from "./ProjectCreatorModal";
 
-const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
+const Projects: FC<{ workspaceId?: string; role?: Role }> = ({
+  workspaceId,
+  role
+}) => {
   const {
     filtedProjects,
     isLoading,
@@ -39,7 +44,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleSearch,
     handleImportProject,
     handleProjectRemove
-  } = useHooks(workspaceId);
+  } = useHooks(workspaceId, role);
 
   const theme = useTheme();
   const t = useT();

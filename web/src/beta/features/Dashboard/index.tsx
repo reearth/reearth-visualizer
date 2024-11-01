@@ -63,6 +63,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
     bottomTabs,
     workspaces,
     currentTab,
+    userRole,
     onSignOut,
     handleWorkspaceChange
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
@@ -84,6 +85,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
       <ContentsContainer
         tab={currentTab}
         workspaceId={workspaceId}
+        role={userRole}
         currentWorkspace={currentWorkspace}
       />
       <CursorStatus />

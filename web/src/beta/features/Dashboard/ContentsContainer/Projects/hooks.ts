@@ -8,6 +8,8 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
@@ -18,7 +20,7 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Project } from "../../type";
+import { Project, Role } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
 
@@ -31,7 +33,7 @@ export type SortType =
   | "name-reverse"
   | "date-updated";
 
-export default (workspaceId?: string) => {
+export default (workspaceId?: string, role?: Role) => {
   const {
     useProjectsQuery,
     useUpdateProject,
@@ -43,7 +45,7 @@ export default (workspaceId?: string) => {
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
-
+  const t = useT();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
 
@@ -144,19 +146,30 @@ export default (workspaceId?: string) => {
     setProjectCreatorVisible(false);
   }, []);
 
+  const [, setNotification] = useNotification();
+
   const handleProjectCreate = useCallback(
     async (data: Pick<Project, "name" | "description" | "imageUrl">) => {
       if (!workspaceId) return;
-      await useCreateProject(
-        workspaceId,
-        Visualizer.Cesium,
-        data.name,
-        true,
-        data.description,
-        data.imageUrl || ""
-      );
+      if (role === "READER") {
+        setNotification({
+          type: "warning",
+          text: t(
+            "It appears you don't have permissions to make changes. Please check your role, if needed contact the workspace administrator to update your permissions"
+          )
+        });
+      } else {
+        await useCreateProject(
+          workspaceId,
+          Visualizer.Cesium,
+          data.name,
+          true,
+          data.description,
+          data.imageUrl || ""
+        );
+      }
     },
-    [useCreateProject, workspaceId]
+    [role, setNotification, t, useCreateProject, workspaceId]
   );
 
   // project update
