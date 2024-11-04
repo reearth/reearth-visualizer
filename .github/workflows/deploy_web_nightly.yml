@@ -4,11 +4,15 @@ on:
 env:
   REEARTH_URL: visualizer.test.reearth.dev
   GCS_DEST: gs://reearth-visualizer-oss-static-bucket/
+
+  IMAGE: reearth/reearth-visualizer-web:nightly
+  IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer-web:nightly
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 jobs:
-  deploy_test:
+  # TODO: Remove later after migrating to Cloud Run
+  deploy_test_old:
     name: Deploy test env
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
@@ -27,3 +31,28 @@ jobs:
       - run: tar -xvf reearth-web_nightly.tar.gz
       - name: rsync
         run: gsutil -m -h "Cache-Control:no-store" rsync -x "^reearth_config\\.json$|^cesium_ion_token\\.txt$" -dr reearth-web/ $GCS_DEST
+
+  deploy_test:
+    name: Deploy app to test env
+    runs-on: ubuntu-latest
+    if: github.event.repository.full_name == 'reearth/reearth-visualizer'
+    steps:
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+      - name: Configure docker
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+      - name: docker push
+        run: |
+          docker pull $IMAGE
+          docker tag $IMAGE $IMAGE_GCP
+          docker push $IMAGE_GCP
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy reearth-visualizer-web \
+            --image $IMAGE_GCP \
+            --region $GCP_REGION \
+            --platform managed \
+            --quiet
