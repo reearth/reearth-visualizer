@@ -160,7 +160,7 @@ export default () => {
     const zipUrl = URL.createObjectURL(zipBlob);
     const link = document.createElement("a");
     link.href = zipUrl;
-    link.download = `${selectedPlugin.title || "plugin"}.zip`;
+    link.download = `${selectedPlugin.title}.zip`;
     link.click();
     URL.revokeObjectURL(zipUrl);
   }, [selectedPlugin]);
