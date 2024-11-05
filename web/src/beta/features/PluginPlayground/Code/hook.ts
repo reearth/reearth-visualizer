@@ -53,7 +53,7 @@ export default ({ files }: Props) => {
 
     if (!ymlJson || !ymlJson.extensions) return;
 
-    const widgets: Widgets = ymlJson.extensions.reduce(
+    const widgets = ymlJson.extensions.reduce<NonNullable<Widgets>>(
       (prv, cur) => {
         const file = files.find((file) => file.title === `${cur.id}.js`);
 
