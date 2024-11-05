@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/reearth/reearth-visualizer">
-    <img src="./public/visualizer-logo.svg" alt="Logo" width="300" height="300">
+    <img src="./public/visualizer-logo.svg" alt="Logo">
   </a>
 </p>
 
@@ -38,10 +38,6 @@ Visualizer is a powerful tool for visualizing GIS data, offering a range of feat
 [React](https://github.com/facebook/react), [TypeScript](https://github.com/microsoft/TypeScript), [Go](https://github.com/golang/go), [GraphQL](https://github.com/graphql), [MongoDB](https://www.mongodb.com/), [WebAssembly](https://webassembly.org/) (plugin execution), [OpenID Connect](https://openid.net/connect/)
 
 ## Getting Started
-
-## Cloud Service (SaaS)
-
-We also maintain a cloud service [here](https://reearth.io/), which can help you start your Re:Earth journey quicker.
 
 ## Environment
 
