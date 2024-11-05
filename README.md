@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/reearth/reearth-visualizer">
-    <img src="./public/visualizer-logo.svg" alt="Logo">
+    <img src="./public/visualizer-logo.svg" alt="Logo" width="300" height="300">
   </a>
 </p>
 
