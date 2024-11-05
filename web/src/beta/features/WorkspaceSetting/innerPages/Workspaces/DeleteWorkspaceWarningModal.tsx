@@ -40,7 +40,7 @@ const DeleteWorkspaceWarningModal: FC<DeleteWorkspaceWarningModalProps> = ({
           </Typography>
           <Typography size="body">
             {t(
-              "Please make sure you don't have any projects in workspace before continue."
+              "Please make sure you don't have any projects in the workspace before continuing."
             )}
           </Typography>
         </ModalContentWrapper>
