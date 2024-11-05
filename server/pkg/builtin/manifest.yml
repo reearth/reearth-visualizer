@@ -2570,7 +2570,7 @@ extensions:
               type: array
               title: Show Layers
               ui: layer
-              choices:
+              choices: []
   - id: timelineStoryBlock
     name: Timeline
     type: storyBlock

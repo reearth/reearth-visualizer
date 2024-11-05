@@ -114,6 +114,12 @@
             "null"
           ]
         },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "type": {
           "$ref": "#/definitions/valuetype"
         },
@@ -161,12 +167,6 @@
         "max": {
           "type": [
             "number",
-            "null"
-          ]
-        },
-        "placeholder": {
-          "type": [
-            "string",
             "null"
           ]
         },

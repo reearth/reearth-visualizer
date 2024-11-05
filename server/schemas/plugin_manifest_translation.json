@@ -20,6 +20,12 @@
             "null"
           ]
         },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "prefix": {
           "type": [
             "string",
@@ -27,12 +33,6 @@
           ]
         },
         "suffix": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "placeholder": {
           "type": [
             "string",
             "null"

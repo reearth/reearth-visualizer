@@ -23,7 +23,7 @@ extensions:
         fields:
           tile_type:
             title: 種類
-            placeholder: タイルタイプを選択
+            placeholder: タイルのタイプを選択
             choices:
               default: デフォルト
               default_label: ラベル付き地図
@@ -35,7 +35,7 @@ extensions:
               url: URL
           tile_url:
             title: URL
-            placeholder: URLを入力
+            placeholder: タイルのURLを入力
           tile_zoomLevel:
             title: ズームレベル
             placeholder: ズームレベルを入力
@@ -172,7 +172,7 @@ extensions:
             title: 名前
           tile_type:
             title: 種類
-            placeholder: 種類を選択
+            placeholder: タイルのタイプを選択
             choices:
               default: デフォルト
               default_label: ラベル付き地図
@@ -185,7 +185,7 @@ extensions:
               japan_gsi_standard: 地理院地図 標準地図
               url: URL
           tile_url:
-            placeholder: URLを入力
+            placeholder: タイルのURLを入力
             title: URL
           tile_minLevel:
             placeholder: 最小レベルを入力
