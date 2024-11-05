@@ -10,7 +10,33 @@ export default () => {
     {
       id: generateUniqueId(),
       title: "My Plugin",
-      files: [REEARTH_YML_FILE]
+      files: [
+        REEARTH_YML_FILE,
+        {
+          id: generateUniqueId(),
+          title: "button.js",
+          sourceCode: `reearth.ui.show(\`
+  <style>
+    body {
+      margin: 0;
+    }
+    #wrapper {
+      background: #232226;
+      height: 100%;
+      color: white;
+      border: 3px dotted red;
+      border-radius: 5px;
+      padding: 20px 0;
+    }
+  </style>
+  <div id="wrapper">
+    <h2 style="text-align: center; margin: 0;">Hello World</h2>
+  </div>
+\`);
+          
+          `
+        }
+      ]
     }
   ]);
 
@@ -98,6 +124,24 @@ export default () => {
     [selectedPlugin]
   );
 
+  const updateFileSourceCode = useCallback(
+    (sourceCode: string, id: string) => {
+      setPlugins((plugins) =>
+        plugins.map((plugin) =>
+          plugin.id === selectedPlugin.id
+            ? {
+                ...plugin,
+                files: plugin.files.map((file) =>
+                  file.id === id ? { ...file, sourceCode } : file
+                )
+              }
+            : plugin
+        )
+      );
+    },
+    [selectedPlugin]
+  );
+
   const deleteFile = useCallback(
     (id: string) => {
       setPlugins((plugins) =>
@@ -173,6 +217,7 @@ export default () => {
     selectedFile,
     addFile,
     updateFileTitle,
+    updateFileSourceCode,
     deleteFile,
     handleFileUpload,
     handlePluginDownload

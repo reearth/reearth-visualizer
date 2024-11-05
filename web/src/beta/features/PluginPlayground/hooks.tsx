@@ -2,6 +2,7 @@ import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { useMemo } from "react";
 
 import Code from "./Code";
+import useCode from "./Code/hook";
 import Console from "./Console";
 import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
@@ -17,10 +18,15 @@ export default () => {
     selectFile,
     addFile,
     updateFileTitle,
+    updateFileSourceCode,
     deleteFile,
     handleFileUpload,
     handlePluginDownload
   } = usePlugins();
+
+  const { widgets, executeCode } = useCode({
+    files: selectedPlugin.files
+  });
 
   // Note: currently we put visualizer in tab content, so better not have more tabs in this area,
   // otherwise visualizer will got unmount and mount when switching tabs.
@@ -29,10 +35,10 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer />
+        children: <Viewer widets={widgets} />
       }
     ],
-    []
+    [widgets]
   );
 
   const BottomAreaTabs: TabItem[] = useMemo(
@@ -88,6 +94,13 @@ export default () => {
           <Code
             fileTitle={selectedFile.title}
             sourceCode={selectedFile.sourceCode}
+            executeCode={executeCode}
+            onChangeSourceCode={(value) => {
+              updateFileSourceCode(
+                value ?? selectedFile.sourceCode,
+                selectedFile.id
+              );
+            }}
           />
         )
       },
@@ -99,7 +112,7 @@ export default () => {
         )
       }
     ],
-    [selectedFile, handlePluginDownload]
+    [selectedFile, handlePluginDownload, executeCode, updateFileSourceCode]
   );
 
   return {

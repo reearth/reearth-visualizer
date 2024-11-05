@@ -5,6 +5,8 @@ import { FC } from "react";
 type Props = {
   fileTitle: string;
   sourceCode: string;
+  onChangeSourceCode: (value: string | undefined) => void;
+  executeCode: () => void;
 };
 
 const getLanguageByFileExtension = (fileTitle: string) => {
@@ -20,16 +22,22 @@ const getLanguageByFileExtension = (fileTitle: string) => {
   }
 };
 
-const Code: FC<Props> = ({ fileTitle, sourceCode }) => {
+const Code: FC<Props> = ({
+  fileTitle,
+  sourceCode,
+  onChangeSourceCode,
+  executeCode
+}) => {
   return (
     <Wrapper>
       <Header>
-        <Button icon="playRight" iconButton />
+        <Button icon="playRight" iconButton onClick={executeCode} />
         <p>Widget</p>
       </Header>
       <CodeInput
         language={getLanguageByFileExtension(fileTitle)}
         value={sourceCode}
+        onChange={onChangeSourceCode}
       />
     </Wrapper>
   );
