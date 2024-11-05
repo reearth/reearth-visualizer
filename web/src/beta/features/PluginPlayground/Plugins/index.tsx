@@ -90,10 +90,10 @@ const Wrapper = styled("div")(() => ({
   height: "100%"
 }));
 
-const PluginListWrapper = styled("div")(() => ({
+const PluginListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   width: "50%",
-  padding: "4px"
+  padding: theme.spacing.smallest
 }));
 
 const PluginList = styled("ul")(() => ({
