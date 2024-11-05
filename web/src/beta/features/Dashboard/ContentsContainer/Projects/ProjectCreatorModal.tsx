@@ -59,10 +59,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
         onCancel={onClose}
         actions={
           <>
-            <Button onClick={onClose} size="normal" title="Cancel" />
+            <Button onClick={onClose} size="normal" title={t("Cancel")} />
             <Button
               size="normal"
-              title="Apply"
+              title={t("Apply")}
               appearance="primary"
               onClick={onSubmit}
               disabled={!projectName}

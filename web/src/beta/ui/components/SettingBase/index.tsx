@@ -3,9 +3,10 @@ import { IconName } from "@reearth/beta/lib/reearth-ui";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
-  SidebarSection,
+  SidebarMainSection,
   SidebarVersion,
-  SidebarWrapper
+  SidebarWrapper,
+  SidebarButtonsWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
@@ -30,18 +31,20 @@ const SettingBase: FC<Props> = ({ tabs, tab, children, workspaceId }) => {
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
-            <SidebarSection>
-              {tabs?.map((t) => (
-                <SidebarMenuItem
-                  key={t.id}
-                  path={t.path}
-                  text={t.text}
-                  active={t.id === tab}
-                  icon={t.icon}
-                  disabled={t.disabled}
-                />
-              ))}
-            </SidebarSection>
+            <SidebarMainSection>
+              <SidebarButtonsWrapper>
+                {tabs?.map((t) => (
+                  <SidebarMenuItem
+                    key={t.id}
+                    path={t.path}
+                    text={t.text}
+                    active={t.id === tab}
+                    icon={t.icon}
+                    disabled={t.disabled}
+                  />
+                ))}
+              </SidebarButtonsWrapper>
+            </SidebarMainSection>
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
@@ -61,20 +64,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ["* ::-webkit-scrollbar"]: {
-    width: "8px"
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: theme.radius.large
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: theme.radius.small
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  }
+  ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({

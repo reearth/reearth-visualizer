@@ -1,6 +1,9 @@
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useMemo } from "react";
+
+import CursorStatus from "../CursorStatus";
 
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
@@ -11,26 +14,48 @@ export type DashboardProps = {
   workspaceId?: string;
 };
 
-export const topTabItems: Omit<TabItems[], "active"> = [
-  { id: "projects", text: "Projects", icon: "grid" },
-  { id: "asset", text: "Assets", icon: "file" },
-  { id: "members", text: "Members", icon: "users" },
-  { id: "bin", text: "Recycle bin", icon: "trash" }
-];
-
-export const bottomTabsItems: Omit<TabItems[], "active"> = [
-  {
-    id: "plugin",
-    text: "Plugin Playground",
-    icon: "puzzlePiece",
-    disabled: true
-  },
-  { id: "documentation", text: "Documentation", icon: "book", disabled: true },
-  { id: "community", text: "Community", icon: "usersFour", disabled: true },
-  { id: "help", text: "Help & Support", icon: "question", disabled: true }
-];
-
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
+  const t = useT();
+  const topTabItems: Omit<TabItems[], "active"> = useMemo(
+    () => [
+      { id: "projects", text: t("Projects"), icon: "grid" },
+      { id: "asset", text: t("Assets"), icon: "file" },
+      { id: "members", text: t("Members"), icon: "users" },
+      { id: "bin", text: t("Recycle bin"), icon: "trash" }
+    ],
+    [t]
+  );
+
+  const bottomTabsItems: Omit<TabItems[], "active"> = useMemo(
+    () => [
+      {
+        id: "plugin",
+        text: t("Plugin Playground"),
+        icon: "puzzlePiece",
+        disabled: true
+      },
+      {
+        id: "documentation",
+        text: t("Documentation"),
+        icon: "book",
+        disabled: true
+      },
+      {
+        id: "community",
+        text: t("Community"),
+        icon: "usersFour",
+        disabled: true
+      },
+      {
+        id: "help",
+        text: t("Help & Support"),
+        icon: "question",
+        disabled: true
+      }
+    ],
+    [t]
+  );
+
   const {
     isPersonal,
     currentWorkspace,
@@ -61,6 +86,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         workspaceId={workspaceId}
         currentWorkspace={currentWorkspace}
       />
+      <CursorStatus />
     </Wrapper>
   );
 };
@@ -71,22 +97,9 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
   width: "100%",
-  ["* ::-webkit-scrollbar"]: {
-    width: "8px"
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  },
   overflowX: "hidden",
   minWidth: "630px",
+  ...theme.scrollBar,
   ["@media (max-width: 630px)"]: {
     width: "630px",
     overflowX: "auto"

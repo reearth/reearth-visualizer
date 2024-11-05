@@ -14,29 +14,25 @@ export const useUISelection = ({
 }) => {
   const handleLayerStyleSelected = useCallback(
     (layerStyleId: string) => {
-      handleLayerSelect(undefined);
-      handleSceneSettingSelect(undefined);
       handleLayerStyleSelect(layerStyleId);
     },
-    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect]
+    [handleLayerStyleSelect]
   );
 
   const handleLayerSelected = useCallback(
     (layerId: string) => {
-      handleLayerStyleSelect(undefined);
       handleSceneSettingSelect(undefined);
       handleLayerSelect({ layerId });
     },
-    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect]
+    [handleLayerSelect, handleSceneSettingSelect]
   );
 
   const handleSceneSettingSelected = useCallback(
     (collection?: string) => {
-      handleLayerStyleSelect(undefined);
       handleLayerSelect(undefined);
       handleSceneSettingSelect(collection);
     },
-    [handleLayerSelect, handleSceneSettingSelect, handleLayerStyleSelect]
+    [handleLayerSelect, handleSceneSettingSelect]
   );
 
   return {

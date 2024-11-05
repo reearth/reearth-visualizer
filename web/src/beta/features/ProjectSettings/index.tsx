@@ -2,13 +2,16 @@ import Navbar from "@reearth/beta/features/Navbar";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   SidebarMenuItem,
-  SidebarSection,
+  SidebarMainSection,
   SidebarVersion,
-  SidebarWrapper
+  SidebarWrapper,
+  SidebarButtonsWrapper
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useMemo } from "react";
+
+import CursorStatus from "../CursorStatus";
 
 import useHooks from "./hooks";
 import GeneralSettings from "./innerPages/GeneralSettings";
@@ -16,22 +19,11 @@ import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 
-export const projectSettingTabs = [
-  { id: "general", text: "General", icon: "setting" },
-  { id: "story", text: "Story", icon: "sidebar" },
-  { id: "public", text: "Public", icon: "paperPlaneTilt" },
-  { id: "plugins", text: "Plugin", icon: "puzzlePiece" }
-] as const;
-
-export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
-
-export function isProjectSettingTab(tab: string): tab is projectSettingsTab {
-  return projectSettingTabs.map((f) => f.id).includes(tab as never);
-}
+export type ProjectSettingsTab = "general" | "story" | "public" | "plugins";
 
 type Props = {
   projectId: string;
-  tab?: projectSettingsTab;
+  tab?: ProjectSettingsTab;
   subId?: string;
 };
 
@@ -46,8 +38,9 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     currentStory,
     accessToken,
     extensions,
+    disabled,
     handleUpdateProject,
-    handleDeleteProject,
+    handleProjectRemove,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
@@ -60,13 +53,32 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
   });
 
   const tabs = useMemo(
-    () =>
-      projectSettingTabs.map((tab) => ({
-        id: tab.id,
-        icon: tab.icon,
-        text: t(tab.text),
-        path: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`
-      })),
+    () => [
+      {
+        id: "general",
+        text: t("General"),
+        icon: "setting" as const,
+        path: `/settings/projects/${projectId}/`
+      },
+      {
+        id: "story",
+        text: t("Story"),
+        icon: "sidebar" as const,
+        path: `/settings/projects/${projectId}/story`
+      },
+      {
+        id: "public",
+        text: t("Public"),
+        icon: "paperPlaneTilt" as const,
+        path: `/settings/projects/${projectId}/public`
+      },
+      {
+        id: "plugins",
+        text: t("Plugin"),
+        icon: "puzzlePiece" as const,
+        path: `/settings/projects/${projectId}/plugins`
+      }
+    ],
     [projectId, t]
   );
 
@@ -81,17 +93,19 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
       <MainSection>
         <LeftSidePanel>
           <SidebarWrapper>
-            <SidebarSection>
-              {tabs?.map((t) => (
-                <SidebarMenuItem
-                  key={t.id}
-                  path={t.path}
-                  text={t.text}
-                  active={t.id === tab}
-                  icon={t.icon}
-                />
-              ))}
-            </SidebarSection>
+            <SidebarMainSection>
+              <SidebarButtonsWrapper>
+                {tabs?.map((t) => (
+                  <SidebarMenuItem
+                    key={t.id}
+                    path={t.path}
+                    text={t.text}
+                    active={t.id === tab}
+                    icon={t.icon}
+                  />
+                ))}
+              </SidebarButtonsWrapper>
+            </SidebarMainSection>
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
@@ -100,7 +114,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
             <GeneralSettings
               project={project}
               onUpdateProject={handleUpdateProject}
-              onDeleteProject={handleDeleteProject}
+              onProjectRemove={handleProjectRemove}
+              disabled={disabled}
             />
           )}
           {tab === "story" && currentStory && (
@@ -136,6 +151,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           )}
         </Content>
       </MainSection>
+      <CursorStatus />
     </Wrapper>
   );
 };
@@ -150,20 +166,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   ["*"]: {
     boxSizing: "border-box"
   },
-  ["* ::-webkit-scrollbar"]: {
-    width: "8px"
-  },
-  ["* ::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
-  },
-  ["* ::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
-  },
-  ["* ::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  }
+  ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({

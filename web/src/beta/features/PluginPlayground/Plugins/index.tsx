@@ -106,10 +106,7 @@ const PluginList = styled("ul")(() => ({
 const PluginListItem = styled("li")<{
   selected?: boolean;
 }>(({ theme, selected }) => ({
-  paddingTop: theme.spacing.smallest,
-  paddingRight: theme.spacing.small,
-  paddingLeft: theme.spacing.normal,
-  paddingBottom: theme.spacing.smallest,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
   borderRadius: theme.radius.small,
   backgroundColor: selected ? theme.select.main : "transparent",
   cursor: "pointer",
@@ -121,7 +118,7 @@ const PluginListItem = styled("li")<{
 const FileListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: "4px",
+  padding: theme.spacing.small,
   width: "50%",
   borderLeft: `1px solid ${theme.outline.weaker}`,
   gap: theme.spacing.small

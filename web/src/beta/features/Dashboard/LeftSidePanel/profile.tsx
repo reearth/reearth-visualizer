@@ -1,3 +1,4 @@
+import useWorkspaceManagementMenu from "@reearth/beta/hooks/useWorkspaceManagementMenu";
 import {
   Icon,
   PopupMenu,
@@ -7,8 +8,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
-import { FC } from "react";
-import { useNavigate } from "react-router-dom";
+import { FC, useMemo } from "react";
 
 import { Workspace } from "../type";
 
@@ -38,46 +38,49 @@ export const Profile: FC<ProfileProp> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const navigate = useNavigate();
 
-  const popupMenu: PopupMenuItem[] = [
-    {
-      id: "workspace",
-      title: t("Switch Workspace"),
-      icon: "arrowLeftRight",
-      subItem: workspaces?.map((w) => {
-        return {
-          customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
-          customSubMenuOrder: w.personal ? 0 : 1,
-          id: w.id || "",
-          title: w.name,
-          hasCustomSubMenu: true,
-          personal: w.personal,
-          selected: currentWorkspace?.id === w.id,
-          onClick: () => onWorkspaceChange?.(w.id)
-        };
-      })
-    },
-    {
-      id: "workspaceSettings",
-      title: t("Workspace Settings"),
-      icon: "setting",
-      hasBorderBottom: true,
-      onClick: () => navigate(`/settings/workspaces/${currentWorkspace?.id}`)
-    },
-    {
-      id: "accountSettings",
-      title: t("Account Settings"),
-      icon: "user",
-      onClick: () => navigate("/settings/account")
-    },
-    {
-      id: "signOut",
-      title: t("Log Out"),
-      icon: "exit",
-      onClick: onSignOut
-    }
-  ];
+  const { workspaceManagementMenu } = useWorkspaceManagementMenu({
+    workspaceId: currentWorkspace?.id
+  });
+
+  const popupMenu: PopupMenuItem[] = useMemo(
+    () => [
+      {
+        id: "workspace",
+        title: t("Switch Workspace"),
+        icon: "arrowLeftRight",
+        subItem: workspaces?.map((w) => {
+          return {
+            customSubMenuLabel: w.personal
+              ? t("Personal")
+              : t("Team Workspace"),
+            customSubMenuOrder: w.personal ? 0 : 1,
+            id: w.id || "",
+            title: w.name,
+            hasCustomSubMenu: true,
+            personal: w.personal,
+            selected: currentWorkspace?.id === w.id,
+            onClick: () => onWorkspaceChange?.(w.id)
+          };
+        })
+      },
+      ...workspaceManagementMenu,
+      {
+        id: "signOut",
+        title: t("Log Out"),
+        icon: "exit",
+        onClick: onSignOut
+      }
+    ],
+    [
+      currentWorkspace?.id,
+      onSignOut,
+      onWorkspaceChange,
+      t,
+      workspaces,
+      workspaceManagementMenu
+    ]
+  );
 
   return (
     <Wrapper>
@@ -110,7 +113,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  borderBottom: `1px solid ${theme.outline.weaker}`,
   alignContent: "center",
   padding: theme.spacing.normal
 }));

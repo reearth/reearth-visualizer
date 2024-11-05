@@ -38,7 +38,7 @@ export const AppRoutes = () => {
       element: <Editor />
     },
     {
-      path: "settings/project/:projectId/:tab?/:subId?",
+      path: "settings/projects/:projectId/:tab?/:subId?",
       element: <ProjectSettings />
     },
     {

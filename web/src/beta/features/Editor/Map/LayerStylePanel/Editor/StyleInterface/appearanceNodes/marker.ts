@@ -56,14 +56,14 @@ export const markerNodes: AppearanceNode[] = [
   {
     id: "image",
     title: "Image",
-    field: "text",
+    field: "image",
     defaultValue: ""
   },
   {
     id: "imageSize",
     title: "Image Size",
     field: "number",
-    defaultValue: 100
+    defaultValue: 1
   },
   {
     id: "imageSizeInMeters",
@@ -97,7 +97,7 @@ export const markerNodes: AppearanceNode[] = [
     title: "Image Crop",
     field: "select",
     defaultValue: "none",
-    valueOptions: ["none", "rounded", "circle"]
+    valueOptions: ["none", "circle"]
   },
   {
     id: "imageShadow",

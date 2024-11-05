@@ -1,4 +1,5 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { TeamMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 
 export type Project = {
@@ -7,12 +8,20 @@ export type Project = {
   imageUrl?: string | null;
   status?: "published" | "limited" | "unpublished";
   isArchived?: boolean;
-  description: string;
+  description?: string;
   sceneId?: string;
   updatedAt?: Date;
   createdAt?: Date;
   projectType?: ProjectType;
   starred?: boolean;
+  isDeleted?: boolean;
+};
+
+export type DeletedProject = {
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+  isDeleted?: boolean;
 };
 
 export type TabItems = {
@@ -39,7 +48,7 @@ export type Member = {
 export type Workspace = {
   id: string;
   name: string;
-  members?: Member[];
+  members?: TeamMember[];
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;

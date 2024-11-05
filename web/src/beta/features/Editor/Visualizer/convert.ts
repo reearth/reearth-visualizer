@@ -12,11 +12,8 @@ import {
   isBuiltinWidget
 } from "@reearth/beta/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
-import {
-  DEFAULT_LAYER_STYLE,
-  valueTypeFromGQL
-} from "@reearth/beta/utils/value";
-import { LayerAppearanceTypes } from "@reearth/core";
+import { getLayerStyleValue } from "@reearth/beta/utils/layer-style";
+import { valueTypeFromGQL } from "@reearth/beta/utils/value";
 import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
@@ -391,22 +388,12 @@ export function processLayers(
   parent?: RawNLSLayer | null | undefined,
   infoboxBlockNames?: Record<string, string>
 ): Layer[] | undefined {
-  const getLayerStyleValue = (id?: string) => {
-    const layerStyleValue: Partial<LayerAppearanceTypes> | undefined =
-      layerStyles?.find((a) => a.id === id)?.value;
-    if (typeof layerStyleValue === "object") {
-      try {
-        return layerStyleValue;
-      } catch (e) {
-        console.error("Error parsing layerStyle JSON:", e);
-      }
-    }
-
-    return DEFAULT_LAYER_STYLE;
-  };
-
   return newLayers?.map((nlsLayer) => {
-    const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+    const layerStyle = getLayerStyleValue(
+      layerStyles,
+      nlsLayer.config?.layerStyleId,
+      nlsLayer.config?.data?.type
+    );
 
     const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
