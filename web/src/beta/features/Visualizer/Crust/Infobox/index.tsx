@@ -186,7 +186,7 @@ const Infobox: FC<Props> = ({
             handleClassName={INFOBOX_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             dragDisabled={false}
-            gap={GAP_DEFAULT_VALUE}
+            gap={gapField?.value ?? GAP_DEFAULT_VALUE}
           />
         )}
       </Wrapper>

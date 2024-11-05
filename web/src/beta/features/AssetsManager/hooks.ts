@@ -1,3 +1,4 @@
+import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { BreadcrumbItem } from "@reearth/beta/lib/reearth-ui";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useAssetsFetcher } from "@reearth/services/api";
@@ -7,10 +8,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useFileInput from "use-file-input";
 
 import {
+  AcceptedAssetsTypes,
   FileType,
   GENERAL_FILE_TYPE_ACCEPT_STRING,
   GIS_FILE_TYPES,
-  IMAGE_FILE_TYPES
+  IMAGE_FILE_TYPES,
+  MODEL_FILE_TYPES
 } from "./constants";
 import { Asset, sortOptionValue, SortType } from "./types";
 
@@ -31,7 +34,7 @@ export default ({
 }: {
   workspaceId?: string;
   allowMultipleSelection: boolean;
-  assetsTypes?: ("image" | "file" | FileType)[];
+  assetsTypes?: AcceptedAssetsTypes;
   onSelectChange?: (assets: Asset[]) => void;
 }) => {
   // sort
@@ -117,7 +120,13 @@ export default ({
     () =>
       assetsTypes
         ?.map((t) =>
-          t === "image" ? IMAGE_FILE_TYPES : t === "file" ? GIS_FILE_TYPES : t
+          t === "image"
+            ? IMAGE_FILE_TYPES
+            : t === "file"
+              ? GIS_FILE_TYPES
+              : t === "model"
+                ? MODEL_FILE_TYPES
+                : t
         )
         .flat(),
     [assetsTypes]
@@ -151,26 +160,11 @@ export default ({
     isLoadingMoreRef.current = false;
   }, [hasMoreAssets, isRefetching, fetchMore, endCursor]);
 
-  const loadMoreRef = useRef<() => void>(loadMore);
-  loadMoreRef.current = loadMore;
-
-  const assetsWrapperRef = useRef<HTMLDivElement>(null);
-  const assetsContentRef = useRef<HTMLDivElement>(null);
-
-  const checkSize = useCallback(() => {
-    const parentElement = assetsWrapperRef.current;
-    const childElement = assetsContentRef.current;
-
-    if (childElement && parentElement) {
-      if (childElement.offsetHeight - 14 < parentElement.offsetHeight) {
-        loadMoreRef.current?.();
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    checkSize();
-  }, [assets, checkSize]);
+  const { wrapperRef: assetsWrapperRef, contentRef: assetsContentRef } =
+    useLoadMore({
+      data: filteredAssets,
+      onLoadMore: loadMore
+    });
 
   const [contentWidth, setContentWidth] = useState(0);
 
@@ -182,9 +176,6 @@ export default ({
 
     const checkSize = () => {
       if (childElement && parentElement) {
-        if (childElement.offsetHeight <= parentElement.offsetHeight) {
-          loadMoreRef.current?.();
-        }
         setContentWidth(childElement.offsetWidth);
       }
     };
@@ -197,26 +188,11 @@ export default ({
 
     checkSize();
 
-    const handleScroll = () => {
-      if (
-        childElement &&
-        childElement.scrollHeight -
-          parentElement.scrollTop -
-          parentElement.clientHeight <
-          50
-      ) {
-        loadMoreRef.current?.();
-      }
-    };
-
-    parentElement.addEventListener("scroll", handleScroll);
-
     return () => {
       parentObserver.disconnect();
       childObserver.disconnect();
-      parentElement.removeEventListener("scroll", handleScroll);
     };
-  }, [filteredAssets]);
+  }, [filteredAssets, assetsWrapperRef, assetsContentRef]);
 
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {
@@ -247,12 +223,15 @@ export default ({
       ? (localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) as ManagerLayout)
       : "grid"
   );
-  const handleLayoutChange = useCallback((newLayout?: ManagerLayout) => {
-    if (!newLayout) return;
-    localStorage.setItem(ASSETS_LAYOUT_STORAGE_KEY, newLayout);
-    setLayout(newLayout);
-    assetsWrapperRef.current?.scrollTo({ top: 0 });
-  }, []);
+  const handleLayoutChange = useCallback(
+    (newLayout?: ManagerLayout) => {
+      if (!newLayout) return;
+      localStorage.setItem(ASSETS_LAYOUT_STORAGE_KEY, newLayout);
+      setLayout(newLayout);
+      assetsWrapperRef.current?.scrollTo({ top: 0 });
+    },
+    [assetsWrapperRef]
+  );
 
   // path
   // TODO: support path with folder

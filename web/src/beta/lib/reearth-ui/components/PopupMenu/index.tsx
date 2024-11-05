@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
-const DEFAULT_MENU_WIDTH = 180;
+const DEFAULT_MENU_WIDTH = 190;
 
 export type CustomSubMenu = {
   title: string;
@@ -112,11 +112,13 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         }}
       >
         {icon && (
-          <Icon
-            icon={icon}
-            size="small"
-            color={iconColor ? iconColor : theme.content.weak}
-          />
+          <IconWrapper>
+            <Icon
+              icon={icon}
+              size="small"
+              color={iconColor ? iconColor : theme.content.weak}
+            />
+          </IconWrapper>
         )}
         <SubItem>
           {subItem ? (
@@ -129,7 +131,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             <TitleWrapper disabled={disabled}>{title}</TitleWrapper>
           )}
           {selected && (
-            <Icon icon="check" size="small" color={theme.content.main} />
+            <IconWrapper>
+              <Icon icon="check" size="small" color={theme.content.main} />
+            </IconWrapper>
           )}
         </SubItem>
       </Item>
@@ -264,20 +268,7 @@ const PopupMenuWrapper = styled("div")<{
   overflowY: "auto",
   boxSizing: "border-box",
   margin: nested ? "-7px 0 0 2px" : "inherit",
-  ["::-webkit-scrollbar"]: {
-    width: "8px"
-  },
-  ["::-webkit-scrollbar-track"]: {
-    background: theme.relative.darker,
-    borderRadius: "10px"
-  },
-  ["::-webkit-scrollbar-thumb"]: {
-    background: theme.relative.light,
-    borderRadius: "4px"
-  },
-  ["::-webkit-scrollbar-thumb:hover"]: {
-    background: theme.relative.lighter
-  }
+  ...theme.scrollBar
 }));
 
 const Item = styled("div")<{
@@ -306,6 +297,11 @@ const StyledLink = styled(Link)(() => ({
   width: "100%"
 }));
 
+const IconWrapper = styled("div")(() => ({
+  flexGrow: 0,
+  flexShrink: 0,
+  fontSize: 0
+}));
 const SubMenuHeader = styled("div")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: "11px",
@@ -362,6 +358,8 @@ const TitleWrapper = styled("div")<{ disabled?: boolean }>(
     fontSize: theme.fonts.sizes.body,
     color: disabled ? theme.content.weak : theme.content.main,
     whiteSpace: "nowrap",
-    maxWidth: "160px"
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: 160
   })
 );

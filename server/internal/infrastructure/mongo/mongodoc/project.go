@@ -128,5 +128,6 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		TrackingID(d.TrackingID).
 		// Scene(scene).
 		Starred(d.Starred).
+		Deleted(d.Deleted).
 		Build()
 }

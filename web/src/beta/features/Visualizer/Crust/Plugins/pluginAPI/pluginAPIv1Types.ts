@@ -84,7 +84,6 @@ export type Reearth = {
       | "selectedFeature"
       | "overriddenLayers"
     > & {
-      readonly layersInViewport?: () => LazyLayer[] | undefined;
       readonly overriddenProperties?: Record<string, any>;
       readonly overrideProperty?: (
         properties: LayerSimple["properties"] | undefined

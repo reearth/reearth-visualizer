@@ -86,7 +86,12 @@ const LayersPanel: FC = () => {
       <Wrapper>
         <PopupMenu
           label={
-            <Button icon="plus" title="New Layer" size="small" extendWidth />
+            <Button
+              icon="plus"
+              title={t("New Layer")}
+              size="small"
+              extendWidth
+            />
           }
           extendTriggerWidth
           placement="bottom-end"

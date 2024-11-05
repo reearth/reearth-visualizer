@@ -3,13 +3,15 @@ package builder
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"net/url"
+	"strings"
 
-	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 )
 
 func ParseSceneJSON(ctx context.Context, sceneJSONData map[string]interface{}) (*sceneJSON, error) {
@@ -24,56 +26,54 @@ func ParseSceneJSON(ctx context.Context, sceneJSONData map[string]interface{}) (
 	return &result, nil
 }
 
-func ParserWidgetAlignSystem(widgetAlignSystemJSON *widgetAlignSystemJSON) *scene.WidgetAlignSystem {
+func ParserWidgetAlignSystem(widgetAlignSystemJSON *widgetAlignSystemJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) *scene.WidgetAlignSystem {
 	if widgetAlignSystemJSON == nil {
 		return nil
 	}
 	was := scene.NewWidgetAlignSystem()
 	if widgetAlignSystemJSON.Inner != nil {
-		parseWidgetZone(was.Zone(scene.WidgetZoneInner), widgetAlignSystemJSON.Inner)
+		parseWidgetZone(was.Zone(scene.WidgetZoneInner), widgetAlignSystemJSON.Inner, replaceWidgetIDs)
 	}
 	if widgetAlignSystemJSON.Outer != nil {
-		parseWidgetZone(was.Zone(scene.WidgetZoneOuter), widgetAlignSystemJSON.Outer)
+		parseWidgetZone(was.Zone(scene.WidgetZoneOuter), widgetAlignSystemJSON.Outer, replaceWidgetIDs)
 	}
 	return was
 }
 
-func parseWidgetZone(zone *scene.WidgetZone, widgetZoneJSON *widgetZoneJSON) {
+func parseWidgetZone(zone *scene.WidgetZone, widgetZoneJSON *widgetZoneJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) {
 	if zone == nil || widgetZoneJSON == nil {
 		return
 	}
 	if widgetZoneJSON.Left != nil {
-		setWidgetSection(zone.Section(scene.WidgetSectionLeft), widgetZoneJSON.Left)
+		setWidgetSection(zone.Section(scene.WidgetSectionLeft), widgetZoneJSON.Left, replaceWidgetIDs)
 	}
 	if widgetZoneJSON.Center != nil {
-		setWidgetSection(zone.Section(scene.WidgetSectionCenter), widgetZoneJSON.Center)
+		setWidgetSection(zone.Section(scene.WidgetSectionCenter), widgetZoneJSON.Center, replaceWidgetIDs)
 	}
 	if widgetZoneJSON.Right != nil {
-		setWidgetSection(zone.Section(scene.WidgetSectionRight), widgetZoneJSON.Right)
+		setWidgetSection(zone.Section(scene.WidgetSectionRight), widgetZoneJSON.Right, replaceWidgetIDs)
 	}
 }
 
-func setWidgetSection(section *scene.WidgetSection, widgetSectionJSON *widgetSectionJSON) {
+func setWidgetSection(section *scene.WidgetSection, widgetSectionJSON *widgetSectionJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) {
 	if section == nil || widgetSectionJSON == nil {
 		return
 	}
-	section.SetArea(scene.WidgetAreaTop, parseWidgetArea(widgetSectionJSON.Top))
-	section.SetArea(scene.WidgetAreaMiddle, parseWidgetArea(widgetSectionJSON.Middle))
-	section.SetArea(scene.WidgetAreaBottom, parseWidgetArea(widgetSectionJSON.Bottom))
+	section.SetArea(scene.WidgetAreaTop, parseWidgetArea(widgetSectionJSON.Top, replaceWidgetIDs))
+	section.SetArea(scene.WidgetAreaMiddle, parseWidgetArea(widgetSectionJSON.Middle, replaceWidgetIDs))
+	section.SetArea(scene.WidgetAreaBottom, parseWidgetArea(widgetSectionJSON.Bottom, replaceWidgetIDs))
 }
 
-func parseWidgetArea(widgetAreaJSON *widgetAreaJSON) *scene.WidgetArea {
+func parseWidgetArea(widgetAreaJSON *widgetAreaJSON, replaceWidgetIDs map[string]idx.ID[id.Widget]) *scene.WidgetArea {
 	if widgetAreaJSON == nil {
 		return nil
 	}
+
 	var widgetIDs []idx.ID[id.Widget]
-	for _, widgetID := range widgetAreaJSON.WidgetIDs {
-		id, err := gqlmodel.ToID[id.Widget](gqlmodel.ID(widgetID))
-		if err != nil {
-			continue
-		}
-		widgetIDs = append(widgetIDs, id)
+	for _, oldId := range widgetAreaJSON.WidgetIDs {
+		widgetIDs = append(widgetIDs, replaceWidgetIDs[oldId])
 	}
+
 	return scene.NewWidgetArea(
 		widgetIDs,
 		parseWidgetAlign(widgetAreaJSON.Align),
@@ -109,7 +109,7 @@ func parseWidgetAreaPadding(paddingJSON *widgetAreaPaddingJSON) *scene.WidgetAre
 	)
 }
 
-func AddItemFromPropertyJSON(prop *property.Property, ps *property.Schema, pj propertyJSON) (*property.Property, error) {
+func AddItemFromPropertyJSON(ctx context.Context, prop *property.Property, ps *property.Schema, pj propertyJSON) (*property.Property, error) {
 	for sgKey, value := range pj {
 
 		if items, ok := value.(map[string]interface{}); ok {
@@ -121,7 +121,7 @@ func AddItemFromPropertyJSON(prop *property.Property, ps *property.Schema, pj pr
 
 				fieldID := id.PropertyFieldIDFromRef(&fieldKey)
 				ptr := property.NewPointer(sgID, nil, fieldID)
-				pv, ok := parsePropertyValue(value)
+				pv, ok := parsePropertyValue(ctx, value)
 
 				if ok && ps != nil {
 					_, _, _, err := prop.UpdateValue(ps, ptr, pv)
@@ -147,7 +147,7 @@ func AddItemFromPropertyJSON(prop *property.Property, ps *property.Schema, pj pr
 						if fieldKey == "id" {
 							continue
 						}
-						ov, ok := parsePropertyOptionalValue(value)
+						ov, ok := parsePropertyOptionalValue(ctx, value)
 						if ok {
 							fieldID := id.PropertyFieldIDFromRef(&fieldKey)
 							field := property.NewField(*fieldID).
@@ -164,20 +164,40 @@ func AddItemFromPropertyJSON(prop *property.Property, ps *property.Schema, pj pr
 	return prop, nil
 }
 
-func parsePropertyValue(value interface{}) (*property.Value, bool) {
+func parsePropertyValue(ctx context.Context, value interface{}) (*property.Value, bool) {
 	if fieldObj, ok := value.(map[string]interface{}); ok {
-		fieldType, ok1 := fieldObj["type"].(string)
-		fieldVal, ok2 := fieldObj["value"]
-		if ok1 && ok2 {
-			return property.ValueType(fieldType).ValueFrom(fieldVal), ok
+		if fieldType, ok := fieldObj["type"].(string); ok {
+			if fieldVal, ok := fieldObj["value"]; ok {
+				if fieldType == "url" {
+					urlVal, err := url.Parse(fieldVal.(string))
+					if err != nil {
+						log.Infofc(ctx, "invalid url: %v\n", err.Error())
+						return nil, false
+					}
+					if urlVal.Host == "localhost:8080" || strings.HasSuffix(urlVal.Host, ".reearth.dev") || strings.HasSuffix(urlVal.Host, ".reearth.io") {
+						currentHost := adapter.CurrentHost(ctx)
+						currentHost = strings.TrimPrefix(currentHost, "https://")
+						currentHost = strings.TrimPrefix(currentHost, "http://")
+						urlVal.Host = currentHost
+						if currentHost == "localhost:8080" {
+							urlVal.Scheme = "http"
+						} else {
+							urlVal.Scheme = "https"
+						}
+						fieldVal = urlVal.String()
+
+					}
+				}
+				return property.ValueType(fieldType).ValueFrom(fieldVal), ok
+			}
 		}
 	}
-	fmt.Printf("property is unreadable %v\n", value)
+	log.Infofc(ctx, "property is unreadable %v\n", value)
 	return nil, false
 }
 
-func parsePropertyOptionalValue(value interface{}) (*property.OptionalValue, bool) {
-	pv, ok := parsePropertyValue(value)
+func parsePropertyOptionalValue(ctx context.Context, value interface{}) (*property.OptionalValue, bool) {
+	pv, ok := parsePropertyValue(ctx, value)
 	if ok {
 		ov := property.NewOptionalValue(pv.Type(), pv)
 		return ov, true

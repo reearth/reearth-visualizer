@@ -1,7 +1,9 @@
 import {
+  SidebarButtonsWrapper,
+  SidebarDivider,
+  SidebarFooterSection,
+  SidebarMainSection,
   SidebarMenuItem,
-  SidebarSection,
-  SidebarTopSectionWrapper,
   SidebarVersion,
   SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
@@ -37,7 +39,7 @@ const LeftSidePanel: FC<Props> = ({
 
   return (
     <SidebarWrapper>
-      <SidebarSection>
+      <SidebarMainSection>
         <Profile
           currentUser={currentWorkspace?.name}
           isPersonal={isPersonal}
@@ -46,7 +48,8 @@ const LeftSidePanel: FC<Props> = ({
           onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
-        <SidebarTopSectionWrapper>
+        <SidebarDivider />
+        <SidebarButtonsWrapper>
           {topTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
@@ -57,11 +60,14 @@ const LeftSidePanel: FC<Props> = ({
               disabled={tab.disabled}
             />
           ))}
-          <StarredProject workspaceId={currentWorkspace?.id} />
-        </SidebarTopSectionWrapper>
-      </SidebarSection>
-      <SidebarSection>
-        <>
+        </SidebarButtonsWrapper>
+        <SidebarDivider />
+        <StarredProject workspaceId={currentWorkspace?.id} />
+      </SidebarMainSection>
+
+      <SidebarFooterSection>
+        <SidebarDivider />
+        <SidebarButtonsWrapper>
           {bottomTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
@@ -72,9 +78,10 @@ const LeftSidePanel: FC<Props> = ({
               disabled={tab.disabled}
             />
           ))}
-        </>
+        </SidebarButtonsWrapper>
+        <SidebarDivider />
         <SidebarVersion />
-      </SidebarSection>
+      </SidebarFooterSection>
     </SidebarWrapper>
   );
 };

@@ -157,5 +157,10 @@ const IconWrapper = styled("div")<{
       : isCollapsed
         ? "0deg"
         : "-90deg",
-  transition: "rotate 0.2s ease-in"
+  transition: "rotate 0.2s ease-in",
+  width: 16,
+  height: 16,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
 }));

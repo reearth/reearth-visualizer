@@ -53,7 +53,7 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfullly created a page!")
+        text: t("Successfully created a page!")
       });
 
       return { data, status: "success" };
@@ -140,7 +140,7 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfullly updated a page!")
+        text: t("Successfully updated a page!")
       });
 
       return { data, status: "success" };

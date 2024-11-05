@@ -1,8 +1,6 @@
+import { useApolloClient } from "@apollo/client";
+import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
-import {
-  autoFillPage,
-  onScrollToBottom
-} from "@reearth/beta/utils/infinite-scroll";
 import { useProjectFetcher } from "@reearth/services/api";
 import {
   ProjectSortField,
@@ -39,15 +37,15 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject
+    useImportProject,
+    useUpdateProjectRemove,
+    usePublishProject
   } = useProjectFetcher();
   const navigate = useNavigate();
+  const client = useApolloClient();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
-
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   const { starredProjects } = useStarredProjectsQuery(workspaceId);
 
@@ -84,7 +82,8 @@ export default (workspaceId?: string) => {
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
-              starred: project.starred
+              starred: project.starred,
+              isDeleted: project.isDeleted
             }
           : undefined
       )
@@ -113,12 +112,10 @@ export default (workspaceId?: string) => {
     return loading || isRefetching;
   }, [isRefetching, loading]);
 
-  useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreProjects) {
-      handleGetMoreProjects();
-    }
-    autoFillPage(wrapperRef, handleGetMoreProjects);
-  }, [handleGetMoreProjects, projects, hasMoreProjects, isLoading]);
+  const { wrapperRef, contentRef } = useLoadMore({
+    data: filtedProjects,
+    onLoadMore: handleGetMoreProjects
+  });
 
   const handleProjectSortChange = useCallback(
     (value?: string) => {
@@ -236,19 +233,46 @@ export default (workspaceId?: string) => {
       parentObserver.disconnect();
       childObserver.disconnect();
     };
-  }, []);
+  }, [wrapperRef, contentRef]);
 
   const handleImportProject = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file) {
-        const result = await useImportProject(file);
+        const result = await useImportProject({
+          teamId: workspaceId || "",
+          file
+        });
         if (result.status === "success") {
           await refetch();
         }
       }
     },
-    [useImportProject, refetch]
+    [useImportProject, workspaceId, refetch]
+  );
+
+  // project remove
+  const handleProjectRemove = useCallback(
+    async (project: Project) => {
+      const updatedProject = {
+        projectId: project.id,
+        deleted: true
+      };
+      if (project?.status === "limited") {
+        await usePublishProject("unpublished", project.id);
+      }
+      await useUpdateProjectRemove(updatedProject);
+
+      client.cache.evict({
+        id: client.cache.identify({
+          __typename: "Project",
+          id: project.id
+        })
+      });
+      client.cache.gc();
+    },
+
+    [client, usePublishProject, useUpdateProjectRemove]
   );
 
   return {
@@ -271,11 +295,11 @@ export default (workspaceId?: string) => {
     handleProjectOpen,
     handleProjectCreate,
     handleProjectSelect,
-    handleScrollToBottom: onScrollToBottom,
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject
+    handleImportProject,
+    handleProjectRemove
   };
 };
 

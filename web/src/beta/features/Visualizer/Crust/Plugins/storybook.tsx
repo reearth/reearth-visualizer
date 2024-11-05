@@ -199,7 +199,6 @@ export const context: Context = {
       selectedFeature: undefined,
       bringToFront: act("layers.bringToFront"),
       sendToBack: act("layers.sendToBack"),
-      getLayersInViewport: act("layers.getLayersInViewport"),
       getFeaturesInScreenRect: act("layers.getFeaturesInScreenRect"),
       on: act("layers.on"),
       off: act("layers.off")

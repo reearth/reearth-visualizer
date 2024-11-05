@@ -64,12 +64,6 @@ export default ({
     [engineRef]
   );
 
-  const layersInViewport = useCallback(() => {
-    return layersRef?.findAll(
-      (layer) => !!engineRef?.inViewport(layer?.property?.default?.location)
-    );
-  }, [engineRef, layersRef]);
-
   const selectLayer = useCallback(
     (layerId: string | undefined) => {
       layersRef?.select(layerId);
@@ -189,7 +183,6 @@ export default ({
     addLayer,
     findFeatureById,
     findFeaturesByIds,
-    layersInViewport,
     selectLayer,
     selectFeature,
     selectFeatures,
