@@ -5,6 +5,7 @@ import {
   PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
 import { InstallableWidget } from "@reearth/services/api/widgetsApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
 
 type ActionAreaProps = {
@@ -39,12 +40,14 @@ const ActionArea: FC<ActionAreaProps> = ({
     [installableWidgets, handleWidgetAdd]
   );
 
+  const t = useT();
+
   return (
     <PopupMenu
       label={
         <Button
           icon="folderSimplePlus"
-          title="Add Widget"
+          title={t("Add Widget")}
           size="small"
           extendWidth
           onClick={() => setOpen(!open)}

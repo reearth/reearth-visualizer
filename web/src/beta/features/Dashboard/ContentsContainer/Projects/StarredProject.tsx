@@ -12,21 +12,18 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
   return (
     <Wrapper>
-      <Collapse
-        iconPosition="left"
-        title={t("Starred")}
-        size="small"
-        weight="bold"
-      >
+      <Collapse iconPosition="left" title={t("Starred")} size="small" noPadding>
         <ProjectsWrapper>
-          {starredProjects?.map((statredProject) =>
-            statredProject ? (
+          {starredProjects?.map((project) =>
+            project ? (
               <Item
-                key={statredProject.id}
-                onClick={() => handleProjectOpen(statredProject?.scene?.id)}
+                key={project.id}
+                onClick={() => handleProjectOpen(project?.scene?.id)}
               >
                 <IconWrapper icon="notebook" color={theme.content.weak} />
-                <TitleWrapper>{statredProject?.name}</TitleWrapper>
+                <TitleWrapper title={project?.name}>
+                  {project?.name}
+                </TitleWrapper>
               </Item>
             ) : null
           )}
@@ -38,18 +35,19 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
 export default StarredProject;
 
-const Wrapper = styled("div")(() => ({
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  flexGrow: 1
+  paddingLeft: theme.spacing.smallest,
+  flexGrow: 1,
+  height: 0
 }));
 
 const ProjectsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  paddingLeft: theme.spacing.small,
-  height: "calc(92vh - 400px)",
-  overflowY: "auto"
+  padding: `0 ${theme.spacing.small}px`,
+  flex: 1
 }));
 
 const Item = styled("div")(({ theme }) => ({

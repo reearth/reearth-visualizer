@@ -117,14 +117,19 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                       {t("Name")}
                     </Typography>
                   </Col>
-                  <Col width={30}>
+                  <Col width={20}>
                     <Typography weight="bold" size="body">
                       {t("Uploaded At")}
                     </Typography>
                   </Col>
-                  <Col width={30}>
+                  <Col width={20}>
                     <Typography weight="bold" size="body">
                       {t("Size")}
+                    </Typography>
+                  </Col>
+                  <Col width={10}>
+                    <Typography weight="bold" size="body">
+                      {t("Path")}
                     </Typography>
                   </Col>
                 </ListHeader>

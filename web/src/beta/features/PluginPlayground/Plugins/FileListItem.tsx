@@ -98,10 +98,7 @@ const Wrapper = styled("li")(({ theme }) => ({
   justifyContent: "space-between",
   alignItems: "center",
   gap: theme.spacing.small,
-  paddingTop: theme.spacing.smallest,
-  paddingRight: theme.spacing.small,
-  paddingLeft: theme.spacing.normal,
-  paddingBottom: theme.spacing.smallest,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
   borderRadius: theme.radius.small,
   cursor: "pointer",
   "&:not(:first-child)": {

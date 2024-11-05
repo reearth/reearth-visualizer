@@ -73,7 +73,7 @@ export default () => {
         selectedPlugin.files.map((f) => f.title)
       );
       if (!result.success) {
-        return result;
+        return;
       }
       const newFile = {
         id: generateUniqueId(),
@@ -90,7 +90,6 @@ export default () => {
       );
 
       setSelectedFileId(newFile.id);
-      return result;
     },
     [selectedPlugin]
   );
@@ -103,7 +102,7 @@ export default () => {
       );
 
       if (!result.success) {
-        return result;
+        return;
       }
 
       setPlugins((plugins) =>
@@ -119,7 +118,7 @@ export default () => {
         )
       );
 
-      return result;
+      return;
     },
     [selectedPlugin]
   );
@@ -160,7 +159,9 @@ export default () => {
 
   const handleFileUpload = useFileInput((fileList) => {
     const file = fileList?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     const result = validateFileTitle(
       file.name,
       selectedPlugin.files.map((f) => f.title)

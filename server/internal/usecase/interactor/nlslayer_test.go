@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -261,8 +262,10 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	assert.Equal(t, 0, len(featureCollection.Features()))
 }
 
+// go test -v -run TestImportNLSLayers ./internal/usecase/interactor/...
 func TestImportNLSLayers(t *testing.T) {
 	ctx := context.Background()
+	ctx = adapter.AttachCurrentHost(ctx, "https://xxxx.reearth.dev")
 
 	db := memory.New()
 	ifl := NewNLSLayer(db)
@@ -300,7 +303,7 @@ func TestImportNLSLayers(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifl.ImportNLSLayers(ctx, sceneData)
+	result, _, err := ifl.ImportNLSLayers(ctx, scene.ID(), sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
@@ -311,10 +314,8 @@ func TestImportNLSLayers(t *testing.T) {
 	actual := string(resultJSON)
 
 	// expected
-	var expectedMap []map[string]interface{}
-	err = json.Unmarshal([]byte(fmt.Sprintf(`[
-    {
-        "id": "01j7g9gwj6qbv286pcwwmwq5ds",
+	exp := fmt.Sprintf(`[{
+        "id": "%s",
         "layerType": "simple",
         "sceneId": "%s",
         "config": {
@@ -324,14 +325,15 @@ func TestImportNLSLayers(t *testing.T) {
                     "lngColumn": "lng"
                 },
                 "type": "csv",
-                "url": "http://localhost:8080/assets/01j7g9gpba44e0nxwc727nax0q.csv"
+                "url": "https://xxxx.reearth.dev/assets/01j7g9gpba44e0nxwc727nax0q.csv"
             }
         },
         "title": "japan_architecture (2).csv",
         "visible": true,
-        "isSketch": false
-    }
-]`, scene.ID())), &expectedMap)
+     "isSketch": false
+    }]`, result.IDs().LayerAt(0), scene.ID())
+	var expectedMap []map[string]interface{}
+	err = json.Unmarshal([]byte(exp), &expectedMap)
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)
 	assert.NoError(t, err)

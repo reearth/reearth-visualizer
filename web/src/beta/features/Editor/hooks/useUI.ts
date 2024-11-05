@@ -68,7 +68,7 @@ export default ({
     ]
   );
 
-  const handleCoreLayerSelectFromUI = useCallback(
+  const handleCoreLayerSelectFromMap = useCallback(
     (props: LayerSelectProps) => {
       handleSceneSettingSelect(undefined);
       handleCoreLayerSelect(props);
@@ -142,7 +142,7 @@ export default ({
     currentProjectType,
     handleProjectTypeChange,
     handleLayerSelectFromUI,
-    handleCoreLayerSelectFromUI,
+    handleCoreLayerSelectFromMap,
     handleSceneSettingSelectFromUI,
     dataSourceLayerCreatorShown,
     openDataSourceLayerCreator,

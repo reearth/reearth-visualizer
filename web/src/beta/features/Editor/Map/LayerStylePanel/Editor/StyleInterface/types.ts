@@ -11,7 +11,9 @@ export type AppearanceField =
   | "number"
   | "select"
   | "text"
-  | "typography";
+  | "typography"
+  | "image"
+  | "model";
 
 export type AppearanceNodes = Record<AppearanceType, AppearanceNode[]>;
 
@@ -72,7 +74,6 @@ export type Typography = {
   fontWeight?: FontWeight;
   color?: string;
   italic?: boolean;
-  underline?: boolean;
 };
 
 export type Expression = {

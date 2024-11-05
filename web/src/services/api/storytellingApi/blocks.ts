@@ -116,7 +116,7 @@ export default () => {
       }
       setNotification({
         type: "success",
-        text: t("Successfullly created a block!")
+        text: t("Successfully created a block!")
       });
 
       return { data, status: "success" };
