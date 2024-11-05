@@ -28,4 +28,4 @@ export const REEARTH_YML_FILE = {
   disableDelete: true
 } as const satisfies FileType;
 
-export const ALLOWED_FILE_EXTENSIONS = ["yaml", "yml", "js"] as const;
+export const ALLOWED_FILE_EXTENSIONS = ["js"] as const;
