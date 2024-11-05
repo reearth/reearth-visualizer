@@ -18,7 +18,6 @@ export const validateFileTitle = (
   }
 
   const extension = fileTitle.split(".").pop();
-
   if (
     extension === undefined ||
     !ALLOWED_FILE_EXTENSIONS.includes(
@@ -28,16 +27,6 @@ export const validateFileTitle = (
     return {
       success: false,
       message: "Invalid file type"
-    } as const;
-  }
-
-  if (
-    (extension === "yaml" || extension === "yml") &&
-    existingFileTitles.some((title) => title.endsWith(".yml"))
-  ) {
-    return {
-      success: false,
-      message: "YAML file already exists"
     } as const;
   }
 
