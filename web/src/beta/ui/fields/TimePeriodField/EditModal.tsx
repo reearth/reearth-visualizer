@@ -15,13 +15,11 @@ type EditPanelProps = {
   timePeriodValues?: TimePeriodFieldProp;
   onClose?: () => void;
   onChange?: (value?: TimePeriodFieldProp) => void;
-  setTimePeriodValues?: (value?: TimePeriodFieldProp) => void;
 };
 
 const EditModal: FC<EditPanelProps> = ({
   visible,
   timePeriodValues,
-  setTimePeriodValues,
   onClose,
   onChange
 }) => {
@@ -38,7 +36,6 @@ const EditModal: FC<EditPanelProps> = ({
     timePeriodValues,
     onChange,
     onClose,
-    setTimePeriodValues
   });
 
   const timezoneMatches = useMemo(() => {

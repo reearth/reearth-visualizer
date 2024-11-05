@@ -33,15 +33,14 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
   const handleEditorModalClose = useCallback(() => {
     setOpenEditModal(false);
     if (!value) {
-      setTimePeriodValues(undefined);
+      onChange?.(undefined);
     }
-  }, [value]);
+  }, [onChange, value]);
 
   const handleEditorModalOpen = useCallback(() => setOpenEditModal(true), []);
 
   const handleTimePeriodSettingDelete = useCallback(() => {
     if (!value) return;
-    setTimePeriodValues(undefined);
     onChange?.();
   }, [value, onChange]);
 
@@ -114,7 +113,6 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
           onChange={onChange}
           onClose={handleEditorModalClose}
           visible={openEditModal}
-          setTimePeriodValues={setTimePeriodValues}
         />
       )}
     </CommonField>

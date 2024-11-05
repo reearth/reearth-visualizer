@@ -6,14 +6,12 @@ type Props = {
   timePeriodValues?: TimePeriodFieldProp;
   onChange?: (value?: TimePeriodFieldProp) => void;
   onClose?: () => void;
-  setTimePeriodValues?: (value?: TimePeriodFieldProp) => void;
 };
 
 export default ({
   timePeriodValues,
   onChange,
   onClose,
-  setTimePeriodValues
 }: Props) => {
   const [warning, setWarning] = useState(false);
 
@@ -59,9 +57,9 @@ export default ({
         default:
           break;
       }
-      setTimePeriodValues?.(updatedData);
+      onChange?.(updatedData);
     },
-    [timePeriodValues, setTimePeriodValues]
+    [timePeriodValues, onChange]
   );
 
   const [disabledFields, setDisabledFields] = useState<string[]>([]);
