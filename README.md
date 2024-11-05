@@ -8,24 +8,14 @@
 [![issues](https://img.shields.io/github/issues/reearth/reearth)](https://img.shields.io/github/issues/reearth/reearth)
 [![license](https://img.shields.io/github/license/reearth/reearth)](https://github.com/reearth/reearth-visualizer/blob/main/LICENSE)
 [![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://github.com/reearth/reearth-visualizer/releases/)
-[![discussions](https://img.shields.io/badge/discussion-welcome-green.svg)](https://github.com/reearth/reearth-visualizer/discussions)
-[![chat](https://img.shields.io/discord/870497079166910514?color=%237289DA&logo=discord)](https://discord.gg/Q6kmXnywfw)
 
 <p align="center">
   <a href="https://reearth.io">Website</a>
   ·
   <a href="https://docs.reearth.io">Documentation</a>
   ·
-  <a href="https://www.figma.com/community/file/1027048965458642686">Figma</a>
-  ·
   <a href="https://github.com/reearth/reearth-visualizer/issues">Issues</a>
-  ·
-  <a href="https://github.com/reearth/reearth-visualizer/discussions">Discussions</a>
-  ·
-  <a href="https://discord.gg/XJhYkQQDAu">Discord</a>
 </p>
-
-https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
 
 ---
 
@@ -33,27 +23,21 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 
 ## Features
 
-- 🔌 Highly extensible thanks to the robust plugin system
-- 💻 Super handy being browser-based
-- 💪 Supports standard GIS data formats (CSV, KML, CZML, GeoJSON and shapefile)
-- 📢 Easily make a project public
-- ✨ Freely style the map
+Visualizer is a powerful tool for visualizing GIS data, offering a range of features to enhance your mapping experience:
+
+- **Comprehensive WebGIS Support**: Visualizer supports various common WebGIS data types, displaying them seamlessly on a digital map using Cesium as the rendering engine.
+- **Interactive Geometry Drawing**: Draw geometric shapes directly on the map for custom annotations and spatial analysis.
+- **Conditional Layer Styling**: Modify display styles for individual layers based on conditions, allowing for personalized data visualization.
+- **Engaging Storytelling Feature**: Create interactive, page-by-page narratives with your GIS data using the built-in storytelling feature.
+- **Customizable Interface with Plugins**: Use the plugin system to create custom solutions and tailor the interface of public projects to suit your needs.
+- **Easy Project Publishing and Sharing**: Publish your projects and share them effortlessly through distribution, embedding, or custom URLs.
+- **Community Plugin Marketplace**: Add your custom plugins to the [marketplace](https://marketplace.reearth.io/) and allow other users to integrate them into their projects.
 
 ## Built with
 
 [React](https://github.com/facebook/react), [TypeScript](https://github.com/microsoft/TypeScript), [Go](https://github.com/golang/go), [GraphQL](https://github.com/graphql), [MongoDB](https://www.mongodb.com/), [WebAssembly](https://webassembly.org/) (plugin execution), [OpenID Connect](https://openid.net/connect/)
 
 ## Getting Started
-
-```sh
-mkdir reearth
-cd reearth
-curl -O https://raw.githubusercontent.com/reearth/reearth/main/docker-compose.yml
-docker compose up -d
-# visit http://localhost:8080
-```
-
-For more information, refer to the [Documentation](https://docs.reearth.io/developer-guide/intro/setup/).
 
 ## Cloud Service (SaaS)
 
@@ -75,13 +59,7 @@ We also maintain a cloud service [here](https://reearth.io/), which can help you
 
 ## Roadmap
 
-See the [Roadmap](https://github.com/reearth/reearth-visualizer/projects/1) for a list of proposed features (and known issues).
-If your have any requests for features, they are more than welcome! Just create an issue [here](https://github.com/reearth/reearth-visualizer/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) with the `feature request` tag.
-
 ## Community
-
-- [Discussions](https://github.com/reearth/reearth-visualizer/discussions)
-- [Discord](https://discord.gg/Q6kmXnywfw): Feel free to come in!
 
 ## Contributing
 
