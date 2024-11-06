@@ -13,14 +13,14 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -45,7 +45,7 @@ jobs:
           REEARTH_WEB_E2E_PASSWORD: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
           REEARTH_WEB_E2E_USER_NAME: ${{ secrets.REEARTH_WEB_E2E_USER_NAME }}
           REEARTH_WEB_E2E_SIGNUP_SECRET: ${{ secrets.REEARTH_WEB_E2E_SIGNUP_SECRET }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright
