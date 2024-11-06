@@ -133,7 +133,8 @@ const TimePeriodWrapper = styled("div")(({ theme }) => ({
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
-  height: "30px"
+  height: "30px",
+  whiteSpace: "nowrap"
 }));
 
 const NoteIcon = styled("div")(({ theme }) => ({
