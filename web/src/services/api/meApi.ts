@@ -5,7 +5,7 @@ import {
   UPDATE_ME,
   GET_USER_BY_SEARCH
 } from "@reearth/services/gql/queries/user";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useT } from "../i18n";
 import { useNotification } from "../state";
@@ -85,20 +85,17 @@ export default () => {
         skip: options?.skip
       });
 
+      const user = useMemo(() => data?.searchUser, [data]);
+
       if (error) {
         console.log("GraphQL: Failed to search user", error);
         setNotification({
           type: "error",
           text: t("Failed to search user.")
         });
-        return { status: "error", user: null };
       }
 
-      if (!loading && data?.searchUser) {
-        return { status: "success", user: data.searchUser };
-      }
-
-      return { status: loading ? "loading" : "idle", user: null };
+      return { loading, user };
     },
     [setNotification, t]
   );

@@ -1,0 +1,13 @@
+*
+
+!docker/
+!src/
+
+!.yarnrc.yml
+!index.html
+!i18next-parser.config.js
+!tsconfig.json
+!package.json
+!published.html
+!vite.config.ts
+!yarn.lock
