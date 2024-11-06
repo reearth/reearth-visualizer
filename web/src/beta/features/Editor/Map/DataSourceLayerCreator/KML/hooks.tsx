@@ -36,7 +36,6 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
         data: {
           url: sourceType === "value" ? encodeUrl : value || undefined,
           type: "kml",
-          value: encodeUrl
         }
       }
     });
