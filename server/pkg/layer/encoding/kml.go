@@ -6,7 +6,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
-	kml "github.com/twpayne/go-kml"
+	kml "github.com/twpayne/go-kml/v3"
 )
 
 type KMLEncoder struct {
