@@ -47,7 +47,7 @@ extensions:
               type: string
               title: Tile type
               defaultValue: default
-              # placeholder: please enter tile type // Example
+              placeholder: please enter tile type
               choices:
                 - key: default
                   label: Default
@@ -72,6 +72,7 @@ extensions:
                 field: tile_type
                 type: string
                 value: url
+              placeholder: please enter tile url
             - id: tile_zoomLevel
               type: array
               title: zoom level
@@ -80,6 +81,7 @@ extensions:
               ui: range
               min: 0
               max: 30
+              placeholder: please enter tile zoomLevel
             - id: tile_opacity
               type: number
               title: Opacity
@@ -88,6 +90,7 @@ extensions:
               ui: slider
               min: 0
               max: 1
+              placeholder: please enter tile opacity
         - id: terrain
           collection: terrain
           title: Terrain
@@ -330,6 +333,7 @@ extensions:
               type: string
               title: Tile type
               defaultValue: default
+              placeholder: please enter tile type
               choices:
                 - key: default
                   label: Default
@@ -354,6 +358,7 @@ extensions:
             - id: tile_url
               type: string
               title: Tile map URL
+              placeholder: please enter tile url
               availableIf:
                 field: tile_type
                 type: string
@@ -361,16 +366,19 @@ extensions:
             - id: tile_minLevel
               type: number
               title: Minimum zoom level
+              placeholder: please enter tile minLevel
               min: 0
               max: 30
             - id: tile_maxLevel
               type: number
               title: Maximum zoom level
+              placeholder: please enter tile maxLevel
               min: 0
               max: 30
             - id: tile_opacity
               type: number
               title: Opacity
+              placeholder: please enter tile opacity
               description: "Change the opacity of the selected tile map. Min: 0 Max: 1"
               defaultValue: 1
               ui: slider
@@ -2567,7 +2575,7 @@ extensions:
               type: array
               title: Show Layers
               ui: layer
-              choices:
+              choices: []
   - id: timelineStoryBlock
     name: Timeline
     type: storyBlock

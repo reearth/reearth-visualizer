@@ -29,6 +29,7 @@ type PropertySchemaFieldDocument struct {
 	Type          string
 	Name          map[string]string
 	Description   map[string]string
+	Placeholder   map[string]string
 	Prefix        string
 	Suffix        string
 	DefaultValue  interface{}
@@ -77,9 +78,10 @@ func NewPropertySchemaField(f *property.SchemaField) *PropertySchemaFieldDocumen
 	field := &PropertySchemaFieldDocument{
 		ID:            string(f.ID()),
 		Name:          f.Title(),
+		Description:   f.Description(),
+		Placeholder:   f.Placeholder(),
 		Suffix:        f.Suffix(),
 		Prefix:        f.Prefix(),
-		Description:   f.Description(),
 		Type:          string(f.Type()),
 		DefaultValue:  f.DefaultValue().Value(),
 		UI:            f.UI().StringRef(),
@@ -169,6 +171,7 @@ func ToModelPropertySchemaField(f *PropertySchemaFieldDocument) (*property.Schem
 		UIRef(property.SchemaFieldUIFromRef(f.UI)).
 		MinRef(f.Min).
 		MaxRef(f.Max).
+		Placeholder(f.Placeholder).
 		Choices(choices).
 		IsAvailableIf(toModelPropertyCondition(f.IsAvailableIf)).
 		Build()
