@@ -39,13 +39,15 @@ type PropertySchemaField {
   ui: PropertySchemaFieldUI
   min: Float
   max: Float
+  placeholder: String!
   choices: [PropertySchemaFieldChoice!]
   isAvailableIf: PropertyCondition
   allTranslatedTitle: TranslatedString
   allTranslatedDescription: TranslatedString
+  allTranslatedPlaceholder: TranslatedString
   translatedTitle(lang: Lang): String!
   translatedDescription(lang: Lang): String!
-  placeholder: String
+  translatedPlaceholder(lang: Lang): String!
 }
 
 enum PropertySchemaFieldUI {
@@ -289,7 +291,7 @@ type PropertyItemPayload {
   propertyItem: PropertyItem
 }
 
-extend type Query{
+extend type Query {
   propertySchema(id: ID!): PropertySchema
   propertySchemas(id: [ID!]!): [PropertySchema!]!
 }
@@ -298,7 +300,9 @@ extend type Mutation {
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
+  linkDatasetToPropertyValue(
+    input: LinkDatasetToPropertyValueInput!
+  ): PropertyFieldPayload
   unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
   addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
   movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
