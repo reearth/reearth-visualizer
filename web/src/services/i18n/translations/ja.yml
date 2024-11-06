@@ -297,31 +297,31 @@ Spacing settings: スペーシング設定
 Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
-Reader: 読者
-Writer: 作成者
-Maintainer: 管理者
-Owner: 所有者
+Add a team member: チームメンバーを追加
+Add: 追加
+Search by email address or user name: メールアドレスまたはユーザー名で検索
+Can't find the user: ユーザーが見つかりません
+User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
 New member: 新しいメンバー
 User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 Change Role: 役割を変更
-Add a team member: チームメンバーを追加
-Add: 追加
-Email address or a user name: メールアドレスまたはユーザー名
-Didn’t find the user: ユーザーが見つかりませんでした
-Workspace: ワークスペース
-Workspace Name: ワークスペース名
-Remove this workspace: このワークスペースを削除
-This process will remove this workspace: この操作によりワークスペースが削除されます
-Remove workspace: ワークスペースを削除
+Reader: 読者
+Writer: 作成者
+Maintainer: 管理者
+Owner: 所有者
+Update Member Role: メンバーの役割を更新
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
-'This action cannot be undone. ': この操作は元に戻せません。
+This action is permanent and cannot be reversed.: この操作は永続的で元に戻すことはできません。
 This will permanently delete the workspace and all related projects, assets and datasets for all team members.: これにより、ワークスペースと関連するすべてのプロジェクト、アセット、およびデータセットがチーム全員から完全に削除されます。
 Please type your workspace name to continue.: 続行するにはワークスペース名を入力してください。
 You are going to delete a workspace.: ワークスペースを削除しようとしています。
-Please to make sure you don’t have any projects in your workspace, then you can continue.: ワークスペース内にプロジェクトがないことを確認してください。それから続行できます。
+Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
+Workspace: ワークスペース
+Workspace Name: ワークスペース名
+This process will delete this workspace: この操作により、このワークスペースが削除されます
 Workspace Settings: ワークスペース設定
 Account Settings: アカウント設定
 Write your story :): ストーリーを書く :)
