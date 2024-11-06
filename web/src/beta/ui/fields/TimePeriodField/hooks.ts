@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { TimePeriodFieldProp } from ".";
 
@@ -13,10 +13,14 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
 
   const [localValue, setLocalValue] = useState(timePeriodValues);
 
+  useEffect(() => {
+    setLocalValue(timePeriodValues);
+  }, [timePeriodValues]);
+
   const handleChange = useCallback(
     (newValue: string, fieldId: string) => {
       const updatedData: TimePeriodFieldProp = {
-        ...localValue,
+        ...(localValue ?? {}),
         currentTime: localValue?.currentTime || "",
         startTime: localValue?.startTime || "",
         endTime: localValue?.endTime || ""
@@ -86,8 +90,8 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
       localValue?.endTime !== ""
     ) {
       onChange?.(localValue);
-      onClose?.();
     }
+    onClose?.();
   }, [localValue, onChange, onClose]);
 
   const isDisabled = useMemo(() => {
