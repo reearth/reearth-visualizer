@@ -57,7 +57,7 @@ export default defineConfig({
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
-    __REEARTH_COMMIT_HASH__: JSON.stringify(commitHash)
+    __REEARTH_COMMIT_HASH__: JSON.stringify(process.env.GITHUB_SHA || commitHash)
   },
   mode: NO_MINIFY ? "development" : undefined,
   server: {
