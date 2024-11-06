@@ -1301,13 +1301,13 @@ type PropertySchemaField struct {
 	Type                     ValueType                    `json:"type"`
 	Title                    string                       `json:"title"`
 	Description              string                       `json:"description"`
-	Placeholder              string                       `json:"placeholder"`
 	Prefix                   *string                      `json:"prefix,omitempty"`
 	Suffix                   *string                      `json:"suffix,omitempty"`
 	DefaultValue             interface{}                  `json:"defaultValue,omitempty"`
 	UI                       *PropertySchemaFieldUI       `json:"ui,omitempty"`
 	Min                      *float64                     `json:"min,omitempty"`
 	Max                      *float64                     `json:"max,omitempty"`
+	Placeholder              string                       `json:"placeholder"`
 	Choices                  []*PropertySchemaFieldChoice `json:"choices,omitempty"`
 	IsAvailableIf            *PropertyCondition           `json:"isAvailableIf,omitempty"`
 	AllTranslatedTitle       map[string]string            `json:"allTranslatedTitle,omitempty"`

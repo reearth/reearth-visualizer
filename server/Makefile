@@ -1,5 +1,11 @@
 TEST_DIR ?= ./...
 
+SCHEMATYPER := github.com/idubinskiy/schematyper
+MANIFEST_DIR := pkg/plugin/manifest
+
+DATALOADEN := github.com/vektah/dataloaden
+GQL_PACKAGE := github.com/reearth/reearth-visualizer/server/internal/adapter/gql
+
 help:
 	@echo "Usage:"
 	@echo "  make <target>"
@@ -14,8 +20,8 @@ help:
 	@echo "  run-db            Run the MongoDB database using Docker Compose"
 	@echo "  gql               Generate GraphQL code"
 	@echo "  mockuser          Create a mock user by executing a curl request"
-	@echo "  schema_translation  Generate schema_translation.go using schematyper"
-	@echo "  schema_gen        Generate schema_gen.go using schematyper"
+	@echo "  schematyper       Generate schema using schematyper"
+	@echo "  dataloaden        Generate dataloader for PropertySchemaLoader"
 
 lint:
 	golangci-lint run --fix
@@ -44,10 +50,13 @@ gql:
 mockuser:
 	curl -H 'Content-Type: application/json' -d '{"email": "mock@example.com", "username": "Mock User"}' http://localhost:8080/api/signup
 
-schema_translation:
-	go run github.com/idubinskiy/schematyper -o pkg/plugin/manifest/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
+schematyper:
+	go run $(SCHEMATYPER) -o --package manifest $(MANIFEST_DIR)/schema_translation.go --prefix Translation ./schemas/plugin_manifest_translation.json
+	go run $(SCHEMATYPER) -o --package manifest $(MANIFEST_DIR)/schema_gen.go ./schemas/plugin_manifest.json
 
-schema_gen:
-	go run github.com/idubinskiy/schematyper -o pkg/plugin/manifest/schema_gen.go --package manifest ./schemas/plugin_manifest.json
+dataloaden:
+	cd internal/adapter/gql/gqldataloader && \
+	go run $(DATALOADEN) PropertySchemaLoader ID '$(GQL_PACKAGE)/gqlmodel.PropertySchema' && \
+	go run $(DATALOADEN) PropertyLoader ID '$(GQL_PACKAGE)/gqlmodel.Property'
 
-.PHONY: lint test failcheck e2e build run-app run-db gql mockuser schema_translation schema_gen
+.PHONY: lint test failcheck e2e build run-app run-db gql mockuser schematyper dataloaden
