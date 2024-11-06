@@ -33,9 +33,9 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
   const handleEditorModalClose = useCallback(() => {
     setOpenEditModal(false);
     if (!value) {
-      onChange?.(undefined);
+      setTimePeriodValues?.(undefined);
     }
-  }, [onChange, value]);
+  }, [value]);
 
   const handleEditorModalOpen = useCallback(() => setOpenEditModal(true), []);
 

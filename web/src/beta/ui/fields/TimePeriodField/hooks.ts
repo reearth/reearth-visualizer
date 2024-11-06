@@ -8,20 +8,18 @@ type Props = {
   onClose?: () => void;
 };
 
-export default ({
-  timePeriodValues,
-  onChange,
-  onClose,
-}: Props) => {
+export default ({ timePeriodValues, onChange, onClose }: Props) => {
   const [warning, setWarning] = useState(false);
+
+  const [localValue, setLocalValue] = useState(timePeriodValues);
 
   const handleChange = useCallback(
     (newValue: string, fieldId: string) => {
       const updatedData: TimePeriodFieldProp = {
-        ...timePeriodValues,
-        currentTime: timePeriodValues?.currentTime || "",
-        startTime: timePeriodValues?.startTime || "",
-        endTime: timePeriodValues?.endTime || ""
+        ...localValue,
+        currentTime: localValue?.currentTime || "",
+        startTime: localValue?.startTime || "",
+        endTime: localValue?.endTime || ""
       };
 
       switch (fieldId) {
@@ -57,9 +55,9 @@ export default ({
         default:
           break;
       }
-      onChange?.(updatedData);
+      setLocalValue(updatedData);
     },
-    [timePeriodValues, onChange]
+    [localValue]
   );
 
   const [disabledFields, setDisabledFields] = useState<string[]>([]);
@@ -83,29 +81,30 @@ export default ({
 
   const handleSubmit = useCallback(() => {
     if (
-      timePeriodValues?.currentTime !== "" &&
-      timePeriodValues?.startTime !== "" &&
-      timePeriodValues?.endTime !== ""
+      localValue?.currentTime !== "" &&
+      localValue?.startTime !== "" &&
+      localValue?.endTime !== ""
     ) {
-      onChange?.(timePeriodValues);
+      onChange?.(localValue);
       onClose?.();
     }
-  }, [timePeriodValues, onChange, onClose]);
+  }, [localValue, onChange, onClose]);
 
   const isDisabled = useMemo(() => {
-    if (timePeriodValues) {
-      return Object.values(timePeriodValues).every((value) => value !== "");
+    if (localValue) {
+      return Object.values(localValue).every((value) => value !== "");
     }
     return false;
-  }, [timePeriodValues]);
+  }, [localValue]);
 
   return {
     warning,
     isDisabled,
     disabledFields,
+    localValue,
     setDisabledFields,
     handleChange,
     handleTimePointPopup,
-    handleSubmit,
+    handleSubmit
   };
 };
