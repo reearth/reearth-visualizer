@@ -1,5 +1,13 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { CreateTeamPayload, Role } from "@reearth/services/gql/__gen__/graphql";
+import {
+  AddMemberToWorkspaceMutationVariables,
+  CreateTeamPayload,
+  CreateWorkspaceMutationVariables,
+  DeleteWorkspaceMutationVariables,
+  RemoveMemberFromWorkspaceMutationVariables,
+  UpdateMemberOfWorkspaceMutationVariables,
+  UpdateWorkspaceMutationVariables
+} from "@reearth/services/gql/__gen__/graphql";
 import { GET_ME } from "@reearth/services/gql/queries/user";
 import {
   ADD_MEMBER_TO_WORKSPACE,
@@ -39,9 +47,11 @@ export default () => {
     refetchQueries: ["GetMe"]
   });
   const useCreateWorkspace = useCallback(
-    async (name: string): Promise<MutationReturn<Partial<Team>>> => {
+    async (
+      props: CreateWorkspaceMutationVariables
+    ): Promise<MutationReturn<Partial<Team>>> => {
       const { data, errors } = await createWorkspaceMutation({
-        variables: { name }
+        variables: props
       });
       if (errors || !data?.createTeam) {
         console.log("GraphQL: Failed to create workspace", errors);
@@ -66,9 +76,11 @@ export default () => {
     refetchQueries: ["GetMe"]
   });
   const useDeleteWorkspace = useCallback(
-    async (teamId: string): Promise<MutationReturn<null>> => {
+    async (
+      props: DeleteWorkspaceMutationVariables
+    ): Promise<MutationReturn<null>> => {
       const { data, errors } = await deleteWorkspaceMutation({
-        variables: { teamId }
+        variables: props
       });
       if (errors || !data?.deleteTeam) {
         console.log("GraphQL: Failed to delete workspace", errors);
@@ -94,11 +106,10 @@ export default () => {
   });
   const useUpdateWorkspace = useCallback(
     async (
-      teamId: string,
-      name: string
+      props: UpdateWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Team>>> => {
       const { data, errors } = await updateWorkspaceMutation({
-        variables: { teamId, name }
+        variables: props
       });
       if (errors || !data?.updateTeam) {
         console.log("GraphQL: Failed to update workspace", errors);
@@ -124,12 +135,10 @@ export default () => {
   });
   const useAddMemberToWorkspace = useCallback(
     async (
-      teamId: string,
-      userId: string,
-      role: Role
+      props: AddMemberToWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Team>>> => {
       const { data, errors } = await addMemberToWorkspaceMutation({
-        variables: { teamId, userId, role }
+        variables: props
       });
       if (errors || !data?.addMemberToTeam) {
         console.log("GraphQL: Failed to add member to workspace", errors);
@@ -158,11 +167,10 @@ export default () => {
   );
   const useRemoveMemberFromWorkspace = useCallback(
     async (
-      teamId: string,
-      userId: string
+      props: RemoveMemberFromWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Team>>> => {
       const { data, errors } = await removeMemberFromWorkspaceMutation({
-        variables: { teamId, userId }
+        variables: props
       });
       if (errors || !data?.removeMemberFromTeam) {
         console.log("GraphQL: Failed to remove member from workspace", errors);
@@ -191,12 +199,10 @@ export default () => {
   );
   const useUpdateMemberOfWorkspace = useCallback(
     async (
-      teamId: string,
-      userId: string,
-      role: Role
+      props: UpdateMemberOfWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Team>>> => {
       const { data, errors } = await updateMemberOfWorkspaceMutation({
-        variables: { teamId, userId, role }
+        variables: props
       });
       if (errors || !data?.updateMemberOfTeam) {
         console.log("GraphQL: Failed to update member in workspace", errors);
