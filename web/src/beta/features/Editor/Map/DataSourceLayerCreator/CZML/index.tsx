@@ -45,7 +45,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
           <TextWrapper>
             {t(
-              "The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
+              "Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution."
             )}
           </TextWrapper>
         </Warning>
