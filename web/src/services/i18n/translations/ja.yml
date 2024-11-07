@@ -32,9 +32,14 @@ Size: サイズ
 Path: パス
 No Asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
+Create new workspace: ワークスペースを作る
+Cancel: キャンセル
+create: 作成する
+Your workspace Name *: あなたのワークスペースの名前
+The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Use Name or Email: 名前またはメールアドレスを使用
 Find Member: メンバーを検索
-No Match your search.: 一致するメンバーが見つかりません。
+No Member match your search.: 一致するメンバーが見つかりません'
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -51,7 +56,6 @@ Project Setting: プロジェクト設定
 Export (Experimental): エクスポート（実験的）
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
-Cancel: キャンセル
 Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
@@ -312,10 +316,6 @@ Writer: 作成者
 Maintainer: 管理者
 Owner: 所有者
 Update Member Role: メンバーの役割を更新
-Create new workspace: 'ワークスペースを作る'
-create: '作成する'
-Your workspace Name *: 'あなたのワークスペースの名前'
-The name is already in use by another workspace. Please choose a different name.: 'このワークスペース名はすでに使用されています。別の名前を指定してください。'
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
 This action is permanent and cannot be reversed.: この操作は永続的で元に戻すことはできません。
@@ -327,7 +327,7 @@ Workspace: ワークスペース
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
 Workspace Settings: ワークスペース設定
-New Workspace: '新しいワークスペース'
+New Workspace: 新しいワークスペース
 Account Settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
