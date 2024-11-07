@@ -100,6 +100,9 @@ export default () => {
 
   const deleteFile = useCallback(
     (id: string) => {
+      if (id === selectedFileId) {
+        setSelectedFileId(selectedPlugin.files[0].id);
+      }
       setPlugins((plugins) =>
         plugins.map((plugin) =>
           plugin.id === selectedPlugin.id
@@ -111,7 +114,7 @@ export default () => {
         )
       );
     },
-    [selectedPlugin]
+    [selectedPlugin, selectedFileId]
   );
 
   const handleFileUpload = useFileInput((fileList) => {
