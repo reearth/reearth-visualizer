@@ -214,6 +214,8 @@ models:
         resolver: true
       translatedDescription:
         resolver: true
+      translatedPlaceholder:
+        resolver: true
   PropertySchemaFieldChoice:
     fields:
       translatedTitle:

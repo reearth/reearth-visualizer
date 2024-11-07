@@ -94,6 +94,7 @@ import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import More from "./Icons/More.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
+import NewWorkspace from "./Icons/NewWorkspace.svg?react";
 import Notebook from "./Icons/Notebook.svg?react";
 import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
@@ -252,6 +253,7 @@ export default {
   minus: Minus,
   more: More,
   navigatorAngle: NavigatorAngle,
+  newWorkspace: NewWorkspace,
   notebook: Notebook,
   padding: Padding,
   page: Page,

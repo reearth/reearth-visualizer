@@ -9,6 +9,7 @@ type SchemaField struct {
 	propertyType ValueType
 	title        i18n.String
 	description  i18n.String
+	placeholder  i18n.String
 	prefix       string
 	suffix       string
 	defaultValue *Value
@@ -103,6 +104,13 @@ func (p *SchemaField) MinMax() (*float64, *float64) {
 		return nil, nil
 	}
 	return p.Min(), p.Max()
+}
+
+func (p *SchemaField) Placeholder() i18n.String {
+	if p == nil {
+		return nil
+	}
+	return p.placeholder.Clone()
 }
 
 func (p *SchemaField) Choices() []SchemaFieldChoice {
