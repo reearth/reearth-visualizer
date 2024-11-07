@@ -1,14 +1,12 @@
-import { getTimeZone } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { Button, Icon, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
-import TimePointField from "../TimePointField";
+import { TimePeriodFieldProp } from "..";
+import TimePointField from "../../TimePointField";
 
 import useHooks from "./hooks";
-
-import { TimePeriodFieldProp } from ".";
 
 type EditPanelProps = {
   visible: boolean;
@@ -25,31 +23,16 @@ const EditModal: FC<EditPanelProps> = ({
 }) => {
   const t = useT();
   const {
-    isDisabled,
-    warning,
-    disabledFields,
+    submitDisabled,
+    timeRangeInvalid,
     localValue,
-    setDisabledFields,
     handleChange,
-    handleSubmit,
-    handleTimePointPopup
+    handleSubmit
   } = useHooks({
     timePeriodValues,
     onChange,
     onClose
   });
-
-  const timezoneMatches = useMemo(() => {
-    if (!localValue) return false;
-
-    const startTimezone = getTimeZone(localValue?.startTime);
-    const currentTimezone = getTimeZone(localValue?.currentTime);
-    const endTimezone = getTimeZone(localValue?.endTime);
-
-    const checkTimezones =
-      startTimezone === currentTimezone && currentTimezone === endTimezone;
-    return checkTimezones;
-  }, [localValue]);
 
   return (
     <Modal visible={visible} size="small">
@@ -63,7 +46,7 @@ const EditModal: FC<EditPanelProps> = ({
               size="normal"
               title="Apply"
               appearance="primary"
-              disabled={!isDisabled || warning || !timezoneMatches}
+              disabled={submitDisabled}
               onClick={handleSubmit}
             />
           </>
@@ -75,32 +58,20 @@ const EditModal: FC<EditPanelProps> = ({
             description={t("Start time for the timeline")}
             onChange={(newValue) => handleChange(newValue || "", "startTime")}
             value={localValue?.startTime}
-            fieldName={"startTime"}
-            disabledField={disabledFields.includes("startTime")}
-            setDisabledFields={setDisabledFields}
-            onTimePointPopupOpen={handleTimePointPopup}
           />
           <TimePointField
             title={t("* Current Time")}
             description={t("Current time should be between start and end time")}
             onChange={(newValue) => handleChange(newValue || "", "currentTime")}
             value={localValue?.currentTime}
-            disabledField={disabledFields.includes("currentTime")}
-            fieldName={"currentTime"}
-            setDisabledFields={setDisabledFields}
-            onTimePointPopupOpen={handleTimePointPopup}
           />
           <TimePointField
             title={t("* End Time")}
             onChange={(newValue) => handleChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
             value={localValue?.endTime}
-            fieldName={"endTime"}
-            disabledField={disabledFields.includes("endTime")}
-            setDisabledFields={setDisabledFields}
-            onTimePointPopupOpen={handleTimePointPopup}
           />
-          {warning && (
+          {timeRangeInvalid && (
             <Warning>
               <Icon icon="warning" size="large" />
               {t(

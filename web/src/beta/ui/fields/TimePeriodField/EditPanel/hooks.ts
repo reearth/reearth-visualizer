@@ -1,6 +1,7 @@
+import { getTimeZone } from "@reearth/beta/utils/time";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { TimePeriodFieldProp } from ".";
+import { TimePeriodFieldProp } from "..";
 
 type Props = {
   timePeriodValues?: TimePeriodFieldProp;
@@ -9,7 +10,7 @@ type Props = {
 };
 
 export default ({ timePeriodValues, onChange, onClose }: Props) => {
-  const [warning, setWarning] = useState(false);
+  const [timeRangeInvalid, setTimeRangeInvalid] = useState(false);
 
   const [localValue, setLocalValue] = useState(timePeriodValues);
 
@@ -39,9 +40,9 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
             new Date(updatedData.currentTime.substring(0, 19)) >
               new Date(updatedData.endTime.substring(0, 19))
           ) {
-            setWarning(true);
+            setTimeRangeInvalid(true);
           } else {
-            setWarning(false);
+            setTimeRangeInvalid(false);
           }
           break;
         case "endTime":
@@ -51,9 +52,9 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
             new Date(updatedData.currentTime.substring(0, 19)) >
               new Date(updatedData?.endTime?.substring(0, 19))
           ) {
-            setWarning(true);
+            setTimeRangeInvalid(true);
           } else {
-            setWarning(false);
+            setTimeRangeInvalid(false);
           }
           break;
         default:
@@ -63,25 +64,6 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
     },
     [localValue]
   );
-
-  const [disabledFields, setDisabledFields] = useState<string[]>([]);
-
-  const handleTimePointPopup = useCallback((fieldId?: string) => {
-    switch (fieldId) {
-      case "startTime":
-        setDisabledFields(["endTime", "currentTime"]);
-        break;
-      case "endTime":
-        setDisabledFields(["startTime", "currentTime"]);
-        break;
-      case "currentTime":
-        setDisabledFields(["startTime", "endTime"]);
-        break;
-      default:
-        setDisabledFields([]);
-        break;
-    }
-  }, []);
 
   const handleSubmit = useCallback(() => {
     if (
@@ -94,21 +76,31 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
     onClose?.();
   }, [localValue, onChange, onClose]);
 
-  const isDisabled = useMemo(() => {
-    if (localValue) {
-      return Object.values(localValue).every((value) => value !== "");
+  const submitDisabled = useMemo(() => {
+    if (
+      !localValue?.startTime ||
+      !localValue?.currentTime ||
+      !localValue?.endTime ||
+      timeRangeInvalid
+    ) {
+      return true;
     }
+
+    const startTimezone = getTimeZone(localValue?.startTime);
+    const currentTimezone = getTimeZone(localValue?.currentTime);
+    const endTimezone = getTimeZone(localValue?.endTime);
+    if (startTimezone !== currentTimezone || currentTimezone !== endTimezone) {
+      return true;
+    }
+
     return false;
-  }, [localValue]);
+  }, [localValue, timeRangeInvalid]);
 
   return {
-    warning,
-    isDisabled,
-    disabledFields,
+    timeRangeInvalid,
+    submitDisabled,
     localValue,
-    setDisabledFields,
     handleChange,
-    handleTimePointPopup,
     handleSubmit
   };
 };

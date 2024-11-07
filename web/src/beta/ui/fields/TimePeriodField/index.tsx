@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
-import EditModal from "./EditModal";
+import EditPanel from "./EditPanel";
 
 export type TimePeriodFieldProp = {
   currentTime: string;
@@ -108,11 +108,11 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
         </ButtonWrapper>
       </Wrapper>
       {openEditModal && (
-        <EditModal
+        <EditPanel
           timePeriodValues={timePeriodValues}
           onChange={onChange}
           onClose={handleEditorModalClose}
-          visible={openEditModal}
+          visible
         />
       )}
     </CommonField>

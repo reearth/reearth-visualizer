@@ -1,4 +1,5 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { getTimeZone } from "@reearth/beta/utils/time";
 import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
 import type { Spacing } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
@@ -188,12 +189,6 @@ export const convertPositionToTime = (
   const rangeDiff = end - start;
   const sec = rangeDiff * percent;
   return Math.min(Math.max(start, start + sec), end);
-};
-
-export const getTimeZone = (time: string) => {
-  const zone = time.match(/([-+]\d{1,2}:\d{2})$/);
-  const timezoneOffset = zone?.[1];
-  return timezoneOffset || "";
 };
 
 export const formatISO8601 = (time: string) => {
