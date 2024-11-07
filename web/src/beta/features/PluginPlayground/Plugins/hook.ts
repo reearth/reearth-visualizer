@@ -1,3 +1,4 @@
+import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import { useCallback, useMemo, useState } from "react";
 import useFileInput from "use-file-input";
@@ -19,6 +20,7 @@ export default () => {
   const [selectedFileId, setSelectedFileId] = useState<string>(
     REEARTH_YML_FILE.id
   );
+  const [, setNotification] = useNotification();
 
   const selectedPlugin = useMemo(
     () =>
@@ -48,6 +50,7 @@ export default () => {
         selectedPlugin.files.map((f) => f.title)
       );
       if (!result.success) {
+        setNotification({ type: "error", text: result.message });
         return;
       }
       const newFile = {
@@ -66,7 +69,7 @@ export default () => {
 
       setSelectedFileId(newFile.id);
     },
-    [selectedPlugin]
+    [selectedPlugin, setNotification]
   );
 
   const updateFileTitle = useCallback(
@@ -77,6 +80,7 @@ export default () => {
       );
 
       if (!result.success) {
+        setNotification({ type: "error", text: result.message });
         return;
       }
 
@@ -95,7 +99,7 @@ export default () => {
 
       return;
     },
-    [selectedPlugin]
+    [selectedPlugin, setNotification]
   );
 
   const deleteFile = useCallback(
@@ -127,6 +131,7 @@ export default () => {
       selectedPlugin.files.map((f) => f.title)
     );
     if (!result.success) {
+      setNotification({ type: "error", text: result.message });
       return;
     }
 
@@ -173,9 +178,11 @@ export default () => {
       link.click();
       URL.revokeObjectURL(zipUrl);
     } catch (error) {
-      console.error("Failed to download plugin:", error);
+      if (error instanceof Error) {
+        setNotification({ type: "error", text: error.message });
+      }
     }
-  }, [selectedPlugin]);
+  }, [selectedPlugin, setNotification]);
 
   return {
     plugins,
