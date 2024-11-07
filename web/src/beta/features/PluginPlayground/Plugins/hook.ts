@@ -132,8 +132,8 @@ export default () => {
 
     const reader = new FileReader();
 
-    reader.onload = async (e2) => {
-      const body = e2?.target?.result;
+    reader.onload = async (event) => {
+      const body = event?.target?.result;
       if (typeof body != "string") return;
       const fileItem = {
         id: uuidv4(),
