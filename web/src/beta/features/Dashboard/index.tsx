@@ -4,12 +4,12 @@ import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
 import CursorStatus from "../CursorStatus";
+import AddWorkspaceModal from "../WorkspaceSetting/innerPages/Workspaces/AddWorkspaceModal";
 
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
 import LeftSidePanel from "./LeftSidePanel";
 import { TabItems } from "./type";
-import AddWorkspaceModal from "../WorkspaceSetting/innerPages/Workspaces/AddWorkspaceModal";
 
 export type DashboardProps = {
   workspaceId?: string;

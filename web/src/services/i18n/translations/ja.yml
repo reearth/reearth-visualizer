@@ -312,6 +312,10 @@ Writer: 作成者
 Maintainer: 管理者
 Owner: 所有者
 Update Member Role: メンバーの役割を更新
+Create new workspace: 'ワークスペースを作る'
+create: '作る'
+Your workspace Name *: 'あなたのワークスペースの名前'
+The name is already in use by another workspace. Please choose a different name.: 'ワークスペースの名前はすでに利用してる、別の名前を変更してください。'
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
 This action is permanent and cannot be reversed.: この操作は永続的で元に戻すことはできません。
@@ -323,6 +327,7 @@ Workspace: ワークスペース
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
 Workspace Settings: ワークスペース設定
+New Workspace: '新しいワークスペース'
 Account Settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
