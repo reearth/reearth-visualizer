@@ -9,6 +9,7 @@ import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
 import LeftSidePanel from "./LeftSidePanel";
 import { TabItems } from "./type";
+import AddWorkspaceModal from "../WorkspaceSetting/innerPages/Workspaces/AddWorkspaceModal";
 
 export type DashboardProps = {
   workspaceId?: string;
@@ -68,26 +69,29 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
 
   return (
-    <Wrapper>
-      <LeftSideWrapper>
-        <LeftSidePanel
+    <>
+      <Wrapper>
+        <LeftSideWrapper>
+          <LeftSidePanel
+            tab={currentTab}
+            isPersonal={isPersonal}
+            currentWorkspace={currentWorkspace}
+            workspaces={workspaces}
+            topTabs={topTabs}
+            bottomTabs={bottomTabs}
+            onSignOut={onSignOut}
+            onWorkspaceChange={handleWorkspaceChange}
+          />
+        </LeftSideWrapper>
+        <ContentsContainer
           tab={currentTab}
-          isPersonal={isPersonal}
+          workspaceId={workspaceId}
           currentWorkspace={currentWorkspace}
-          workspaces={workspaces}
-          topTabs={topTabs}
-          bottomTabs={bottomTabs}
-          onSignOut={onSignOut}
-          onWorkspaceChange={handleWorkspaceChange}
         />
-      </LeftSideWrapper>
-      <ContentsContainer
-        tab={currentTab}
-        workspaceId={workspaceId}
-        currentWorkspace={currentWorkspace}
-      />
-      <CursorStatus />
-    </Wrapper>
+        <CursorStatus />
+      </Wrapper>
+      <AddWorkspaceModal />
+    </>
   );
 };
 

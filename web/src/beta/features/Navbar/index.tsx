@@ -1,5 +1,7 @@
 import { styled } from "@reearth/services/theme";
 
+import AddWorkspaceModal from "../WorkspaceSetting/innerPages/Workspaces/AddWorkspaceModal";
+
 import useHook from "./hooks";
 import LeftSection from "./LeftSection";
 import useRightSide from "./useRightSection";
@@ -47,18 +49,21 @@ const Navbar: React.FC<Props> = ({
   });
 
   return (
-    <Wrapper>
-      <LeftSection
-        currentProject={currentProject}
-        currentWorkspace={currentWorkspace}
-        workspaces={workspaces}
-        sceneId={sceneId}
-        page={page}
-        onWorkspaceChange={handleWorkspaceChange}
-        onSignOut={handleLogout}
-      />
-      {rightSide}
-    </Wrapper>
+    <>
+      <Wrapper>
+        <LeftSection
+          currentProject={currentProject}
+          currentWorkspace={currentWorkspace}
+          workspaces={workspaces}
+          sceneId={sceneId}
+          page={page}
+          onWorkspaceChange={handleWorkspaceChange}
+          onSignOut={handleLogout}
+        />
+        {rightSide}
+      </Wrapper>
+      <AddWorkspaceModal />
+    </>
   );
 };
 
