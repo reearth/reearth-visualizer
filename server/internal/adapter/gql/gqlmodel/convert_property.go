@@ -274,6 +274,7 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 		Type:         ToValueType(value.Type(f.Type())),
 		Title:        f.Title().String(),
 		Description:  f.Description().String(),
+		Placeholder:  f.Placeholder().String(),
 		Prefix:       stringToRef(f.Prefix()),
 		Suffix:       stringToRef(f.Suffix()),
 		DefaultValue: ToPropertyValue(f.DefaultValue()),
@@ -291,6 +292,7 @@ func ToPropertySchemaField(f *property.SchemaField) *PropertySchemaField {
 		IsAvailableIf:            ToPropertyConditon(f.IsAvailableIf()),
 		AllTranslatedTitle:       f.Title(),
 		AllTranslatedDescription: f.Description(),
+		AllTranslatedPlaceholder: f.Placeholder(),
 	}
 }
 
