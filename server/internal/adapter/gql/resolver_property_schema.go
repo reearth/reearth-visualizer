@@ -39,6 +39,13 @@ func (r *propertySchemaFieldResolver) TranslatedDescription(ctx context.Context,
 	return obj.Description, nil
 }
 
+func (r *propertySchemaFieldResolver) TranslatedPlaceholder(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *language.Tag) (string, error) {
+	if s, ok := obj.AllTranslatedPlaceholder[getLang(ctx, lang)]; ok {
+		return s, nil
+	}
+	return obj.Placeholder, nil
+}
+
 type propertyLinkableFieldsResolver struct{ *Resolver }
 
 func (r *propertyLinkableFieldsResolver) Schema(ctx context.Context, obj *gqlmodel.PropertyLinkableFields) (*gqlmodel.PropertySchema, error) {
