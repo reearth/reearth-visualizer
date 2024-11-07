@@ -1,5 +1,6 @@
 import {
   getLocalTimezoneOffset,
+  isValidDateTimeFormat,
   isValidTimezone,
   TimeZoneOffset
 } from "@reearth/beta/utils/time";
@@ -40,7 +41,7 @@ export default ({ value, onChange, onClose }: Props) => {
   }, [onClose, date, time, timezone, onChange]);
 
   useEffect(() => {
-    if (value) {
+    if (value && isValidDateTimeFormat(value)) {
       const [parsedDate, timeWithOffset] = value.split("T");
       const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
 

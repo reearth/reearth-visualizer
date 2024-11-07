@@ -165,7 +165,7 @@ export default (timelineValues?: TimelineValues) => {
       const iso8601Time = formatISO8601(timelineValues?.currentTime);
       const t = getNewDate(new Date(iso8601Time)).getTime();
       const timezoneOffset = getTimeZone(iso8601Time);
-      setTimezone(timezoneOffset);
+      setTimezone(timezoneOffset ?? "");
       return setCurrentTime(t);
     } else {
       return setCurrentTime(

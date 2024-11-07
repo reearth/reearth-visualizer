@@ -197,6 +197,7 @@ export const formatISO8601 = (time: string) => {
   // from: 2021-08-31T00:00:00+9:00
   // to: 2021-08-31T00:00:00+09:00
   const timezone = getTimeZone(time);
+  if (!timezone) return time;
   const splitZone = timezone.split(":");
   if (splitZone[0].length === 2) {
     return time

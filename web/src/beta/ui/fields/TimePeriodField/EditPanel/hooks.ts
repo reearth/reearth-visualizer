@@ -1,4 +1,4 @@
-import { getTimeZone } from "@reearth/beta/utils/time";
+import { getTimeZone, isValidDateTimeFormat } from "@reearth/beta/utils/time";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { TimePeriodFieldProp } from "..";
@@ -67,9 +67,10 @@ export default ({ timePeriodValues, onChange, onClose }: Props) => {
 
   const handleSubmit = useCallback(() => {
     if (
-      localValue?.currentTime !== "" &&
-      localValue?.startTime !== "" &&
-      localValue?.endTime !== ""
+      localValue &&
+      isValidDateTimeFormat(localValue?.startTime) &&
+      isValidDateTimeFormat(localValue?.currentTime) &&
+      isValidDateTimeFormat(localValue?.endTime)
     ) {
       onChange?.(localValue);
     }

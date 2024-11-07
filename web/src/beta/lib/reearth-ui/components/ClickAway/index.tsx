@@ -11,7 +11,7 @@ export const ClickAway: FC<ClickAwayProps> = ({ children, onClickAway }) => {
   useEffect(() => {
     if (!onClickAway) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
@@ -20,9 +20,16 @@ export const ClickAway: FC<ClickAwayProps> = ({ children, onClickAway }) => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside, {
+      passive: true
+    });
+    document.addEventListener("touchstart", handleClickOutside, {
+      passive: true
+    });
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [onClickAway]);
 

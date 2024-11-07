@@ -91,8 +91,15 @@ export const isValidTimezone = (timezone: string): boolean => {
   return TIMEZONE_OFFSETS.includes(timezone as TimeZoneOffset);
 };
 
-export const getTimeZone = (time: string) => {
-  const zone = time.match(/([-+]\d{1,2}:\d{2})$/);
-  const timezoneOffset = zone?.[1];
-  return timezoneOffset || "";
+export const getTimeZone = (time: string): TimeZoneOffset | undefined => {
+  const zone = time.match(/([-+]\d{1,2}:\d{2})$/)?.[1];
+  return !zone
+    ? undefined
+    : isValidTimezone(zone)
+      ? (zone as TimeZoneOffset)
+      : undefined;
+};
+
+export const isValidDateTimeFormat = (time: string): boolean => {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([-+]\d{2}:\d{2})$/.test(time);
 };
