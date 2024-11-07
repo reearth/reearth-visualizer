@@ -114,6 +114,12 @@
             "null"
           ]
         },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "type": {
           "$ref": "#/definitions/valuetype"
         },
