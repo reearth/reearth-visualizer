@@ -1,6 +1,7 @@
 import JSZip from "jszip";
 import { useCallback, useMemo, useState } from "react";
 import useFileInput from "use-file-input";
+import { v4 as uuidv4 } from "uuid";
 
 import { PluginType, REEARTH_YML_FILE } from "./constants";
 import { validateFileTitle } from "./utils";
@@ -8,7 +9,7 @@ import { validateFileTitle } from "./utils";
 export default () => {
   const [plugins, setPlugins] = useState<PluginType[]>([
     {
-      id: generateUniqueId(),
+      id: uuidv4(),
       title: "My Plugin",
       files: [REEARTH_YML_FILE]
     }
@@ -50,7 +51,7 @@ export default () => {
         return;
       }
       const newFile = {
-        id: generateUniqueId(),
+        id: uuidv4(),
         title,
         sourceCode: ""
       };
@@ -132,7 +133,7 @@ export default () => {
       const body = e2?.target?.result;
       if (typeof body != "string") return;
       const fileItem = {
-        id: generateUniqueId(),
+        id: uuidv4(),
         title: file.name,
         sourceCode: body
       };
@@ -178,11 +179,4 @@ export default () => {
     handleFileUpload,
     handlePluginDownload
   };
-};
-
-const generateUniqueId = () => {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
 };
