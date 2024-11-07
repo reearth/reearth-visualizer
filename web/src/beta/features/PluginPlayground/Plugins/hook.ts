@@ -1,6 +1,8 @@
+import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import { useCallback, useMemo, useState } from "react";
 import useFileInput from "use-file-input";
+import { v4 as uuidv4 } from "uuid";
 
 import { PluginType, REEARTH_YML_FILE } from "./constants";
 import { validateFileTitle } from "./utils";
@@ -8,7 +10,7 @@ import { validateFileTitle } from "./utils";
 export default () => {
   const [plugins, setPlugins] = useState<PluginType[]>([
     {
-      id: generateUniqueId(),
+      id: uuidv4(),
       title: "My Plugin",
       files: [
         REEARTH_YML_FILE,
@@ -44,6 +46,7 @@ export default () => {
   const [selectedFileId, setSelectedFileId] = useState<string>(
     REEARTH_YML_FILE.id
   );
+  const [, setNotification] = useNotification();
 
   const selectedPlugin = useMemo(
     () =>
@@ -73,10 +76,11 @@ export default () => {
         selectedPlugin.files.map((f) => f.title)
       );
       if (!result.success) {
+        setNotification({ type: "error", text: result.message });
         return;
       }
       const newFile = {
-        id: generateUniqueId(),
+        id: uuidv4(),
         title,
         sourceCode: ""
       };
@@ -91,7 +95,7 @@ export default () => {
 
       setSelectedFileId(newFile.id);
     },
-    [selectedPlugin]
+    [selectedPlugin, setNotification]
   );
 
   const updateFileTitle = useCallback(
@@ -102,6 +106,7 @@ export default () => {
       );
 
       if (!result.success) {
+        setNotification({ type: "error", text: result.message });
         return;
       }
 
@@ -120,7 +125,7 @@ export default () => {
 
       return;
     },
-    [selectedPlugin]
+    [selectedPlugin, setNotification]
   );
 
   const updateFileSourceCode = useCallback(
@@ -143,6 +148,9 @@ export default () => {
 
   const deleteFile = useCallback(
     (id: string) => {
+      if (id === selectedFileId) {
+        setSelectedFileId(selectedPlugin.files[0].id);
+      }
       setPlugins((plugins) =>
         plugins.map((plugin) =>
           plugin.id === selectedPlugin.id
@@ -154,7 +162,7 @@ export default () => {
         )
       );
     },
-    [selectedPlugin]
+    [selectedPlugin, selectedFileId]
   );
 
   const handleFileUpload = useFileInput((fileList) => {
@@ -167,16 +175,17 @@ export default () => {
       selectedPlugin.files.map((f) => f.title)
     );
     if (!result.success) {
+      setNotification({ type: "error", text: result.message });
       return;
     }
 
     const reader = new FileReader();
 
-    reader.onload = async (e2) => {
-      const body = e2?.target?.result;
+    reader.onload = async (event) => {
+      const body = event?.target?.result;
       if (typeof body != "string") return;
       const fileItem = {
-        id: generateUniqueId(),
+        id: uuidv4(),
         title: file.name,
         sourceCode: body
       };
@@ -194,21 +203,30 @@ export default () => {
   });
 
   const handlePluginDownload = useCallback(async () => {
-    const zip = new JSZip();
-    const pluginFolder = zip.folder(selectedPlugin.title);
+    try {
+      const zip = new JSZip();
+      const pluginFolder = zip.folder(selectedPlugin.title);
+      if (!pluginFolder) {
+        throw new Error("Failed to create plugin folder");
+      }
 
-    selectedPlugin.files.forEach((file) => {
-      pluginFolder?.file(file.title, file.sourceCode);
-    });
+      selectedPlugin.files.forEach((file) => {
+        pluginFolder.file(file.title, file.sourceCode);
+      });
 
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-    const zipUrl = URL.createObjectURL(zipBlob);
-    const link = document.createElement("a");
-    link.href = zipUrl;
-    link.download = `${selectedPlugin.title}.zip`;
-    link.click();
-    URL.revokeObjectURL(zipUrl);
-  }, [selectedPlugin]);
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const zipUrl = URL.createObjectURL(zipBlob);
+      const link = document.createElement("a");
+      link.href = zipUrl;
+      link.download = `${selectedPlugin.title}.zip`;
+      link.click();
+      URL.revokeObjectURL(zipUrl);
+    } catch (error) {
+      if (error instanceof Error) {
+        setNotification({ type: "error", text: error.message });
+      }
+    }
+  }, [selectedPlugin, setNotification]);
 
   return {
     plugins,
@@ -223,11 +241,4 @@ export default () => {
     handleFileUpload,
     handlePluginDownload
   };
-};
-
-const generateUniqueId = () => {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
 };
