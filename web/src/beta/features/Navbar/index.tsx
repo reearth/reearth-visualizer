@@ -1,6 +1,6 @@
 import { styled } from "@reearth/services/theme";
 
-import AddWorkspaceModal from "../AddWorkspaceModal";
+import AddWorkspaceModal from "../CreateWorkspaceModal";
 
 import useHook from "./hooks";
 import LeftSection from "./LeftSection";
