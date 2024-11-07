@@ -27,6 +27,7 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
 									ui
 									min
 									max
+									placeholder
 								}
 							}
 						}
