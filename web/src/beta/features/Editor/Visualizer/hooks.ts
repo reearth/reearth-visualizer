@@ -97,9 +97,20 @@ export default ({
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
     const cesiumIonAccessToken = sceneProperty?.default?.ion;
-    if (sceneProperty?.camera?.camera) {
-      setInitialCamera(sceneProperty?.camera?.camera);
+
+    const initialCamera =
+      sceneProperty?.camera?.camera || sceneProperty?.camera?.fov
+        ? {
+            ...(sceneProperty?.camera?.camera ?? {}),
+            ...(sceneProperty?.camera?.fov
+              ? { fov: sceneProperty.camera.fov }
+              : {})
+          }
+        : undefined;
+    if (initialCamera) {
+      setInitialCamera(initialCamera);
     }
+
     return {
       viewerProperty: sceneProperty
         ? (convertData(

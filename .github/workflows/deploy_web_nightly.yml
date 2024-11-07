@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
 env:
   REEARTH_URL: visualizer.test.reearth.dev
+  GCP_REGION: us-central1
   GCS_DEST: gs://reearth-visualizer-oss-static-bucket/
 
   IMAGE: reearth/reearth-visualizer-web:nightly
