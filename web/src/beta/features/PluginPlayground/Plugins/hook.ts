@@ -154,20 +154,27 @@ export default () => {
   });
 
   const handlePluginDownload = useCallback(async () => {
-    const zip = new JSZip();
-    const pluginFolder = zip.folder(selectedPlugin.title);
+    try {
+      const zip = new JSZip();
+      const pluginFolder = zip.folder(selectedPlugin.title);
+      if (!pluginFolder) {
+        throw new Error("Failed to create plugin folder");
+      }
 
-    selectedPlugin.files.forEach((file) => {
-      pluginFolder?.file(file.title, file.sourceCode);
-    });
+      selectedPlugin.files.forEach((file) => {
+        pluginFolder.file(file.title, file.sourceCode);
+      });
 
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-    const zipUrl = URL.createObjectURL(zipBlob);
-    const link = document.createElement("a");
-    link.href = zipUrl;
-    link.download = `${selectedPlugin.title}.zip`;
-    link.click();
-    URL.revokeObjectURL(zipUrl);
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const zipUrl = URL.createObjectURL(zipBlob);
+      const link = document.createElement("a");
+      link.href = zipUrl;
+      link.download = `${selectedPlugin.title}.zip`;
+      link.click();
+      URL.revokeObjectURL(zipUrl);
+    } catch (error) {
+      console.error("Failed to download plugin:", error);
+    }
   }, [selectedPlugin]);
 
   return {
