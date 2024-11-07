@@ -19,10 +19,7 @@ export type DataProps = {
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
-export type SourceType =
-  | "url"
-  | "local"
-  | "value"
+export type SourceType = "url" | "local" | "value";
 
 export type DataSourceOptType = {
   label: string;
@@ -40,19 +37,19 @@ const DataSourceLayerCreator: FC<DataProps> = ({
   const tabsItem: TabItem[] = [
     {
       id: "geojson",
-      name: t("GeoJSON"),
+      name: "GeoJSON",
       children: (
         <GeoJSON sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
     },
     {
       id: "csv",
-      name: t("CSV"),
+      name: "CSV",
       children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     },
     {
       id: "wms",
-      name: t("WMS"),
+      name: "WMS",
       children: (
         <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
@@ -73,12 +70,12 @@ const DataSourceLayerCreator: FC<DataProps> = ({
     },
     {
       id: "czml",
-      name: t("CZML"),
+      name: "CZML",
       children: <CZML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     },
     {
       id: "kml",
-      name: t("KML"),
+      name: "KML",
       children: <KML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     }
   ];

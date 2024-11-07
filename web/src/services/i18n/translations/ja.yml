@@ -93,23 +93,21 @@ Column Name: 列名
 Longitude Column Name: 経度の列名
 Add to Layer: レイヤーに追加
 From Value: 値から
-The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: ''
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 Input Text: テキストを入力
 Value: 値
 Input data here: ここにデータを入力
-Invalid GeoJSON format: ''
-Please enter valid GeoJSON: ''
+Invalid GeoJSON format: 不正なGeoJSON形式
+Please enter valid GeoJSON: 有効なGeoJSONを入力してください
 Prioritize Performance: パフォーマンスを優先
-If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: ''
-GeoJSON: ''
-CSV: CSV
-WMS: WMS
-Vector Tile: ベクタタイル
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
+  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
+Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
-CZML: ''
-KML: ''
 Data Source Manager: データソースマネージャー
-The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: ''
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 'Google Maps API Key ': Google Maps APIキー
 'You can apply a key ': キーを申請できます
 here: ここ
