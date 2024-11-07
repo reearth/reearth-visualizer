@@ -38,8 +38,10 @@ const AddWorkspaceModal: FC = () => {
 
   const { workspaces } = useWorkspacesQuery();
   const isDuplicatedName: boolean | undefined = useMemo(() => {
+    const name = workspaceNameConfirm.trim();
+    if (!name) return false;
     const allWorkspaceNames = workspaces?.map((workspace) => workspace.name);
-    return allWorkspaceNames?.includes(workspaceNameConfirm);
+    return allWorkspaceNames?.includes(name);
   }, [workspaceNameConfirm, workspaces]);
 
   useEffect(() => {
