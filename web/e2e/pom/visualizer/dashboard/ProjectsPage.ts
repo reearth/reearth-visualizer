@@ -33,7 +33,7 @@ export default class ProjectsPage {
     await this.page
       .locator(`div:has(> div > div:text('${name}')) button`)
       .click();
-    await this.page.getByText("Project Setting").click();
+    await this.page.getByText("Project Settings").click();
     await this.page.waitForSelector("p:text('Project Name')");
   }
 }

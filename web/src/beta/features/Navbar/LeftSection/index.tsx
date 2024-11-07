@@ -1,4 +1,5 @@
 import {
+  Icon,
   IconButton,
   PopupMenu,
   PopupMenuItem,
@@ -66,6 +67,7 @@ const LeftSection: React.FC<Props> = ({
           </Typography>
         </StyledLink>
       )}
+      <Icon icon="logo" size={30} />
       <StyledLink
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}

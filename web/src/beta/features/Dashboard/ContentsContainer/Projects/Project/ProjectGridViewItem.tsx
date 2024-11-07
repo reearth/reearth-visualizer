@@ -1,4 +1,5 @@
 import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.svg";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -44,7 +45,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     <>
       <Card>
         <CardImage
-          backgroundImage={project.imageUrl}
+          backgroundImage={project.imageUrl ?? defaultProjectBackgroundImage}
           onDoubleClick={onProjectOpen}
           onClick={(e) => onProjectSelect?.(e, project.id)}
           isHovered={isHovered ?? false}

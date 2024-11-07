@@ -47,7 +47,7 @@ Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
-Project Setting: プロジェクト設定
+Project Settings: ''
 Export (Experimental): エクスポート（実験的）
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
@@ -76,11 +76,11 @@ Plugin Playground: プラグインプレイグラウンド
 Documentation: ドキュメント
 Community: コミュニティ
 Help & Support: ヘルプ＆サポート
+Visualizer: ビジュアライザー
 Switch Workspace: ワークスペースを切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log Out: ログアウト
-Re:Earth Visualizer: Re:Earthビジュアライザー
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
@@ -224,13 +224,13 @@ Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
-Visualizer: ビジュアライザー
 Unknown: 不明
 Switch workspace: ワークスペースを切り替え
 Log out: ログアウト
 Asset management: アセット管理
 Map: マップ
 Widgets: ウィジェット
+Re:Earth Visualizer: Re:Earthビジュアライザー
 Oops, This Page Not Found!: おっと、このページは見つかりません！
 Go to Dashboard: ダッシュボードへ移動
 Error: エラー
