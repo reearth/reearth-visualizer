@@ -9,81 +9,102 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateProject(t *testing.T) {
+// go test -v -run TestCreateAndGetProject ./e2e/...
+
+func TestCreateAndGetProject(t *testing.T) {
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-	},
-		true, baseSeeder)
+	}, true, baseSeeder)
 
-	// create project with default coreSupport value (false)
+	// test1-1 => coreSupport:default deleted:false
+	// test1-2 => coreSupport:default deleted:true
+	// test2-1 => coreSupport:true    deleted:false
+	// test2-2 => coreSupport:true    deleted:true
+	// test3-1 => coreSupport:false   deleted:false
+	// test3-2 => coreSupport:false   deleted:true
+
+	// create coreSupport default(=false) project
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
 		Variables: map[string]any{
-			"name":        "test",
+			"name":        "test1-1",
 			"description": "abc",
 			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 		},
 	}
+	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false)
 
-	e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		// WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("createProject").Object().
-		Value("project").Object().
-		// ValueEqual("id", pId.String()).
-		ValueEqual("name", "test").
-		ValueEqual("description", "abc").
-		ValueEqual("imageUrl", "").
-		ValueEqual("coreSupport", false)
-
-	// create coreSupport project
+	// create coreSupport default(=false) `delete` project
 	requestBody = GraphQLRequest{
 		OperationName: "CreateProject",
-		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
 		Variables: map[string]any{
-			"name":        "test",
+			"name":        "test1-2",
 			"description": "abc",
 			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
-			"coreSupport": true,
 		},
 	}
+	id := callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false).Value("id").Raw().(string)
+	deleteProject(e, id) // delete
 
-	e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		// WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("createProject").Object().
-		Value("project").Object().
-		// ValueEqual("id", pId.String()).
-		ValueEqual("name", "test").
-		ValueEqual("description", "abc").
-		ValueEqual("imageUrl", "").
-		ValueEqual("coreSupport", true)
+	// create coreSupport:true project
+	requestBody = createGraphQLRequest("test2-1", true)
+	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("name", "test2-1").ValueEqual("coreSupport", true)
+
+	// create coreSupport:true `delete` project
+	requestBody = createGraphQLRequest("test2-2", true)
+	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false).Value("id").Raw().(string)
+	deleteProject(e, id) // delete
+
+	// create coreSupport:false project
+	requestBody = createGraphQLRequest("test3-1", false)
+	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("name", "test-false").ValueEqual("coreSupport", false)
+
+	// create coreSupport:false `delete` project
+	requestBody = createGraphQLRequest("test3-2", false)
+	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false).Value("id").Raw().(string)
+	deleteProject(e, id) // delete
+
+	// GetProjects
+	requestBody = GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         "query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {\n projects(\n teamId: $teamId\n pagination: $pagination\n keyword: $keyword\n sort: $sort\n ) {\n edges {\n node {\n id\n ...ProjectFragment\n scene {\n id\n __typename\n }\n __typename\n }\n __typename\n }\n nodes {\n id\n ...ProjectFragment\n scene {\n id\n __typename\n }\n __typename\n }\n pageInfo {\n endCursor\n hasNextPage\n hasPreviousPage\n startCursor\n __typename\n }\n totalCount\n __typename\n }\n}\n\nfragment ProjectFragment on Project {\n id\n name\n description\n imageUrl\n isArchived\n isBasicAuthActive\n basicAuthUsername\n basicAuthPassword\n publicTitle\n publicDescription\n publicImage\n alias\n enableGa\n trackingId\n publishmentStatus\n updatedAt\n createdAt\n coreSupport\n starred\n isDeleted\n __typename\n}",
+		Variables: map[string]any{
+			"teamId": wID.String(),
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+	edges := callRequest(e, requestBody).
+		Value("projects").Object().
+		Value("edges").Array()
+
+	edges.Length().Equal(1)
+
+	// check
+	for _, edge := range edges.Iter() {
+		// coreSupport true only
+		edge.Object().Value("node").Object().Value("coreSupport").Equal(true)
+		// isDeleted false only
+		edge.Object().Value("node").Object().Value("isDeleted").Equal(false)
+	}
+
 }
+
+// go test -v -run TestSortByName ./e2e/...
 
 func TestSortByName(t *testing.T) {
 	e := StartServer(t, &config.Config{
@@ -91,8 +112,7 @@ func TestSortByName(t *testing.T) {
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-	},
-		true, baseSeeder)
+	}, true, baseSeeder)
 
 	createProject(e, "a-project")
 	createProject(e, "b-project")
@@ -177,16 +197,7 @@ func TestSortByName(t *testing.T) {
 		},
 	}
 
-	edges := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
+	edges := callRequest(e, requestBody).
 		Value("projects").Object().
 		Value("edges").Array()
 
@@ -198,6 +209,7 @@ func TestSortByName(t *testing.T) {
 	edges.Element(4).Object().Value("node").Object().Value("name").Equal(seedProjectName)
 }
 
+// go test -v -run TestFindStarredByWorkspace ./e2e/...
 func TestFindStarredByWorkspace(t *testing.T) {
 
 	e := StartServer(t, &config.Config{
@@ -237,17 +249,8 @@ func TestFindStarredByWorkspace(t *testing.T) {
 		},
 	}
 
-	response := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
-
-	starredProjects := response.Value("data").Object().Value("starredProjects").Object()
+	starredProjects := callRequest(e, requestBody).
+		Value("starredProjects").Object()
 
 	totalCount := starredProjects.Value("totalCount").Raw()
 	assert.Equal(t, float64(2), totalCount, "Expected 2 starred projects")
@@ -302,22 +305,15 @@ func starProject(e *httpexpect.Expect, projectID string) {
 		},
 	}
 
-	response := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(updateProjectMutation).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
+	response := callRequest(e, updateProjectMutation).
 		Value("updateProject").Object().
 		Value("project").Object()
 
 	response.ValueEqual("id", projectID).
 		ValueEqual("starred", true)
 }
+
+// go test -v -run TestSortByUpdatedAt ./e2e/...
 
 func TestSortByUpdatedAt(t *testing.T) {
 
@@ -332,7 +328,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 	project2ID := createProject(e, "project2-test")
 	createProject(e, "project3-test")
 
-	requestBody := GraphQLRequest{
+	updateProjectMutation := GraphQLRequest{
 		OperationName: "UpdateProject",
 		Query: `mutation UpdateProject($input: UpdateProjectInput!) {
 			updateProject(input: $input) {
@@ -355,16 +351,11 @@ func TestSortByUpdatedAt(t *testing.T) {
 	}
 
 	// Update 'project2'
-	e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	callRequest(e, updateProjectMutation).
+		Value("updateProject").Object().
+		Value("project").Object()
 
-	requestBody = GraphQLRequest{
+	requestBody := GraphQLRequest{
 		OperationName: "GetProjects",
 		Query: `
 		query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
@@ -440,16 +431,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 		},
 	}
 
-	edges := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
+	edges := callRequest(e, requestBody).
 		Value("projects").Object().
 		Value("edges").Array()
 
@@ -457,7 +439,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
 }
 
-//  go test -v -run TestDeleteProjects ./e2e/...
+// go test -v -run TestDeleteProjects ./e2e/...
 
 func TestDeleteProjects(t *testing.T) {
 
@@ -493,15 +475,8 @@ func TestDeleteProjects(t *testing.T) {
 			"teamId": wID,
 		},
 	}
-	deletedProjects := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().Value("data").Object().Value("deletedProjects").Object()
+	deletedProjects := callRequest(e, requestBody).
+		Value("deletedProjects").Object()
 
 	deletedProjects.Value("totalCount").Equal(1)
 	deletedProjects.Value("nodes").Array().Length().Equal(1)
@@ -532,19 +507,39 @@ func deleteProject(e *httpexpect.Expect, projectID string) {
 		},
 	}
 
-	response := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(updateProjectMutation).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
+	response := callRequest(e, updateProjectMutation).
 		Value("updateProject").Object().
 		Value("project").Object()
 
 	response.ValueEqual("id", projectID).
 		ValueEqual("isDeleted", true)
+}
+
+func createGraphQLRequest(name string, coreSupport bool) GraphQLRequest {
+	return GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Variables: map[string]any{
+			"name":        name,
+			"description": "abc",
+			"imageUrl":    "",
+			"teamId":      wID.String(),
+			"visualizer":  "CESIUM",
+			"coreSupport": coreSupport,
+		},
+	}
+}
+
+func callRequest(e *httpexpect.Expect, requestBody GraphQLRequest) *httpexpect.Object {
+	return e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().
+		Object().
+		Value("data").Object()
 }

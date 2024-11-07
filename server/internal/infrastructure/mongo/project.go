@@ -85,9 +85,19 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 
 	filter := bson.M{
 		"team": id.String(),
-		"$or": []bson.M{
-			{"deleted": false},
-			{"deleted": bson.M{"$exists": false}},
+		"$and": []bson.M{
+			{
+				"$or": []bson.M{
+					{"deleted": false},
+					{"deleted": bson.M{"$exists": false}},
+				},
+			},
+			{
+				"$or": []bson.M{
+					{"coresupport": true},
+					{"coresupport": bson.M{"$exists": false}},
+				},
+			},
 		},
 	}
 
