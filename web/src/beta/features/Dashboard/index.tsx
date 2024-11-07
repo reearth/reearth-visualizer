@@ -3,8 +3,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
+import AddWorkspaceModal from "../AddWorkspaceModal";
 import CursorStatus from "../CursorStatus";
-import AddWorkspaceModal from "../WorkspaceSetting/innerPages/Workspaces/AddWorkspaceModal";
 
 import ContentsContainer from "./ContentsContainer";
 import useHooks from "./hooks";
