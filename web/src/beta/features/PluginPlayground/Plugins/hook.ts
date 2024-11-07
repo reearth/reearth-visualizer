@@ -15,7 +15,7 @@ export default () => {
       files: [
         REEARTH_YML_FILE,
         {
-          id: generateUniqueId(),
+          id: uuidv4(),
           title: "button.js",
           sourceCode: `reearth.ui.show(\`
   <style>
