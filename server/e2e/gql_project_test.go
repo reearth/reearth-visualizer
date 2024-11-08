@@ -523,7 +523,9 @@ func testData(e *httpexpect.Expect) {
 			"visualizer":  "CESIUM",
 		},
 	}
-	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false)
+	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
+		ValueEqual("name", "test1-1").
+		ValueEqual("coreSupport", false)
 
 	// create coreSupport default(=false) `delete` project
 	requestBody = GraphQLRequest{
@@ -537,24 +539,37 @@ func testData(e *httpexpect.Expect) {
 			"visualizer":  "CESIUM",
 		},
 	}
-	id := callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false).Value("id").Raw().(string)
+	id := callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
+		ValueEqual("name", "test1-2").
+		ValueEqual("coreSupport", false).
+		Value("id").Raw().(string)
 	deleteProject(e, id) // delete
 
 	// create coreSupport:true project
 	requestBody = createGraphQLRequest("test2-1", true)
-	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("name", "test2-1").ValueEqual("coreSupport", true)
+	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
+		ValueEqual("name", "test2-1").
+		ValueEqual("coreSupport", true)
 
 	// create coreSupport:true `delete` project
 	requestBody = createGraphQLRequest("test2-2", true)
-	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false).Value("id").Raw().(string)
+	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
+		ValueEqual("name", "test2-2").
+		ValueEqual("coreSupport", true).
+		Value("id").Raw().(string)
 	deleteProject(e, id) // delete
 
 	// create coreSupport:false project
 	requestBody = createGraphQLRequest("test3-1", false)
-	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("name", "test-false").ValueEqual("coreSupport", false)
+	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
+		ValueEqual("name", "test3-1").
+		ValueEqual("coreSupport", false)
 
 	// create coreSupport:false `delete` project
 	requestBody = createGraphQLRequest("test3-2", false)
-	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().ValueEqual("coreSupport", false).Value("id").Raw().(string)
+	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
+		ValueEqual("name", "test3-2").
+		ValueEqual("coreSupport", false).
+		Value("id").Raw().(string)
 	deleteProject(e, id) // delete
 }
