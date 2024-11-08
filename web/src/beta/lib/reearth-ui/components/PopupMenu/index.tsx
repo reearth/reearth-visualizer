@@ -33,6 +33,7 @@ export type PopupMenuItem = {
   subItem?: PopupMenuItem[];
   title?: string;
   disabled?: boolean;
+  tileComponent?: ReactNode;
 };
 
 export type PopupMenuProps = {
@@ -96,7 +97,8 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       selected,
       subItem,
       title,
-      disabled
+      disabled,
+      tileComponent
     } = item;
 
     return (
@@ -125,10 +127,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             <PopupMenu label={title} menu={subItem} width={width} nested />
           ) : path ? (
             <StyledLink to={disabled ? "" : path}>
-              <TitleWrapper disabled={disabled}>{title}</TitleWrapper>
+              <TitleWrapper disabled={disabled}>
+                {title}
+                {tileComponent}
+              </TitleWrapper>
             </StyledLink>
           ) : (
-            <TitleWrapper disabled={disabled}>{title}</TitleWrapper>
+            <TitleWrapper disabled={disabled}>
+              {title}
+              {tileComponent}
+            </TitleWrapper>
           )}
           {selected && (
             <IconWrapper>
@@ -360,6 +368,9 @@ const TitleWrapper = styled("div")<{ disabled?: boolean }>(
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    maxWidth: 160
+    maxWidth: 160,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.small
   })
 );
