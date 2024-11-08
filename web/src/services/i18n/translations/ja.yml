@@ -88,27 +88,27 @@ Re:Earth Visualizer: Re:Earthビジュアライザー
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
-From Value: 値から
-File Format: ファイル形式
-File format of the data source you want to add.: 追加したいデータソースのファイル形式
 Source Type: ソースタイプ
 Asset: アセット
 Resource URL: リソースURL
-Input Text: テキストを入力
-Value: 値
-Input data here: ここにデータを入力
-Prioritize Performance: パフォーマンスを優先
-Add to Layer: レイヤーに追加
 Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
 Latitude Column Name: 緯度の列名
 Column Name: 列名
 Longitude Column Name: 経度の列名
-Common: 共通
-CSV: CSV
-WMS: WMS
-Vector Tile: ベクタタイル
+Add to Layer: レイヤーに追加
+From Value: 値から
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Input Text: テキストを入力
+Value: 値
+Input data here: ここにデータを入力
+Invalid GeoJSON format: 不正なGeoJSON形式
+Please enter valid GeoJSON: 有効なGeoJSONを入力してください
+Prioritize Performance: パフォーマンスを優先
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
+Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 'Google Maps API Key ': Google Maps APIキー
 'You can apply a key ': キーを申請できます
 here: ここ
