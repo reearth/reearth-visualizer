@@ -1,5 +1,5 @@
 import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
-import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.svg";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.png";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
