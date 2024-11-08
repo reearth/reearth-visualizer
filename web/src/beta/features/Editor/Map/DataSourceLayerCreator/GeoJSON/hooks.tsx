@@ -1,5 +1,3 @@
-import { GisType } from "@reearth/beta/features/AssetsManager/constants";
-import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { useState, useMemo, useCallback } from "react";
 
@@ -10,7 +8,6 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   const t = useT();
 
   const [sourceType, setSourceType] = useState<SourceType>("local");
-  const [fileFormat, setFileFormat] = useState<GisType>("geojson");
 
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
@@ -24,42 +21,26 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     [t]
   );
 
-  const fileFormatOptions = [
-    {
-      value: "geojson",
-      label: "GeoJSON"
-    },
-    {
-      value: "kml",
-      label: "KML"
-    },
-    {
-      value: "czml",
-      label: "CZML"
-    }
-  ];
+  const isValidGeoJSON = (json: any): boolean => {
+    return (
+      json &&
+      typeof json === "object" &&
+      (json.type === "FeatureCollection" || json.type === "Feature")
+    );
+  };
 
-  const isValidExtension = useCallback(() => {
-    if (sourceType === "url" || sourceType === "local") {
-      const extension = value.split(".").pop()?.toLowerCase();
-      return extension === fileFormat.toLowerCase();
-    }
-    return true;
-  }, [value, fileFormat, sourceType]);
-
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     let parsedValue = null;
 
     if (sourceType === "value" && value !== "") {
-      if (fileFormat === "geojson") {
-        try {
-          parsedValue = JSON.parse(value);
-        } catch (_error) {
-          parsedValue = value;
+      try {
+        parsedValue = JSON.parse(value);
+        if (!isValidGeoJSON(parsedValue)) {
+          throw new Error(t("Invalid GeoJSON format"));
         }
-      } else {
-        parsedValue =
-          "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
+      } catch (error) {
+        console.error("GeoJSON parsing error:", error);
+        throw new Error(t("Please enter valid GeoJSON"));
       }
     }
 
@@ -73,10 +54,8 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
           url:
             (sourceType === "url" || sourceType === "local") && value !== ""
               ? value
-              : fileFormat === "czml" || fileFormat === "kml"
-                ? parsedValue
-                : undefined,
-          type: fileFormat.toLowerCase() as DataType,
+              : undefined,
+          type: "geojson",
           value: parsedValue,
           geojson: {
             useAsResource: prioritizePerformance
@@ -85,15 +64,20 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       }
     });
     onClose();
-  };
+  }, [
+    layerName,
+    onClose,
+    onSubmit,
+    prioritizePerformance,
+    sceneId,
+    sourceType,
+    t,
+    value
+  ]);
 
   const handleValueChange = useCallback((value?: string, name?: string) => {
     setValue(value || "");
     setLayerName(name || "");
-  }, []);
-
-  const handleFileFormatChange = useCallback((value: string | string[]) => {
-    setFileFormat(value as GisType);
   }, []);
 
   const handleDataSourceTypeChange = useCallback((newValue: string) => {
@@ -101,20 +85,13 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     setValue("");
   }, []);
 
-  const assetsTypes = useMemo(() => [fileFormat], [fileFormat]);
-
   return {
     value,
     dataSourceTypeOptions,
-    fileFormatOptions,
-    fileFormat,
-    assetsTypes,
     sourceType,
     prioritizePerformance,
     setPrioritizePerformance,
-    isValidExtension,
     handleValueChange,
-    handleFileFormatChange,
     handleDataSourceTypeChange,
     handleSubmit
   };

@@ -92,7 +92,6 @@ const ActionWrapper = styled("div")<{ showBorder: boolean }>(
 );
 
 const CommonLayout = styled("div")(({ theme }) => ({
-  width: "100%",
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large,

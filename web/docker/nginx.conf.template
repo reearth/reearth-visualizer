@@ -1,0 +1,35 @@
+log_format json escape=json '{'
+  '"body_bytes_sent": "$body_bytes_sent",'
+  '"http_referer": "$http_referer",'
+  '"http_user_agent": "$http_user_agent",'
+  '"remote_ip": "$remote_addr",'
+  '"remote_user": "$remote_user",'
+  '"request": "$request",'
+  '"request_id": "$request_id",'
+  '"request_method": "$request_method",'
+  '"request_time": "$request_time",'
+  '"request_uri": "$request_uri",'
+  '"server_name": "$server_name",'
+  '"status": "$status",'
+  '"time": "$time_iso8601"'
+'}';
+
+real_ip_header ${REAL_IP_HEADER};
+
+server { 
+  listen ${PORT};
+  root /usr/share/nginx/html;
+  server_name _;
+
+  access_log /dev/stdout json;
+  error_log /dev/stderr warn;
+
+  location / {
+    try_files $uri /index.html =404;
+  }
+
+  error_page 500 502 503 504 /50x.html;
+  location = /50x.html {
+      root   /usr/share/nginx/html;
+  }
+}

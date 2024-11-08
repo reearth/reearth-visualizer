@@ -8,10 +8,18 @@ import {
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, ReactNode, useCallback, useMemo, useState } from "react";
 
-import { DataProps, DataSourceOptType, SourceType } from "..";
+import { DataProps } from "..";
 import { generateTitle } from "../util";
+
+export type SourceType = "url" | "osm-buildings" | "google-photorealistic";
+
+export type DataSourceOptType = {
+  label: string;
+  value: SourceType;
+  children?: ReactNode;
+}[];
 
 const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
