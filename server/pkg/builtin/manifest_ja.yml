@@ -1317,6 +1317,7 @@ extensions:
             title: 余白
           gap:
             title: 間隔
+            description: インフォボックスのコンテンツの間隔を変更します。最小値:0 最大値:40
   textInfoboxBetaBlock:
     name: テキスト
     description: インフォボックスのテキストブロック
