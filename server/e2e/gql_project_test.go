@@ -9,8 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// go test -v -run TestCreateAndGetProject ./e2e/...
-
 func TestCreateAndGetProject(t *testing.T) {
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
@@ -20,12 +18,6 @@ func TestCreateAndGetProject(t *testing.T) {
 	}, true, baseSeeder)
 
 	testData(e)
-	// test1-1 => coreSupport:default deleted:false
-	// test1-2 => coreSupport:default deleted:true
-	// test2-1 => coreSupport:true    deleted:false
-	// test2-2 => coreSupport:true    deleted:true
-	// test3-1 => coreSupport:false   deleted:false
-	// test3-2 => coreSupport:false   deleted:true
 
 	// GetProjects
 	requestBody := GraphQLRequest{
@@ -58,8 +50,6 @@ func TestCreateAndGetProject(t *testing.T) {
 	}
 
 }
-
-// go test -v -run TestSortByName ./e2e/...
 
 func TestSortByName(t *testing.T) {
 	e := StartServer(t, &config.Config{
@@ -164,7 +154,6 @@ func TestSortByName(t *testing.T) {
 	edges.Element(4).Object().Value("node").Object().Value("name").Equal(seedProjectName)
 }
 
-// go test -v -run TestFindStarredByWorkspace ./e2e/...
 func TestFindStarredByWorkspace(t *testing.T) {
 
 	e := StartServer(t, &config.Config{
@@ -267,8 +256,6 @@ func starProject(e *httpexpect.Expect, projectID string) {
 	response.ValueEqual("id", projectID).
 		ValueEqual("starred", true)
 }
-
-// go test -v -run TestSortByUpdatedAt ./e2e/...
 
 func TestSortByUpdatedAt(t *testing.T) {
 
@@ -394,8 +381,6 @@ func TestSortByUpdatedAt(t *testing.T) {
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
 }
 
-// go test -v -run TestDeleteProjects ./e2e/...
-
 func TestDeleteProjects(t *testing.T) {
 
 	e := StartServer(t, &config.Config{
@@ -406,12 +391,6 @@ func TestDeleteProjects(t *testing.T) {
 	}, true, baseSeeder)
 
 	testData(e)
-	// test1-1 => coreSupport:default deleted:false
-	// test1-2 => coreSupport:default deleted:true
-	// test2-1 => coreSupport:true    deleted:false
-	// test2-2 => coreSupport:true    deleted:true
-	// test3-1 => coreSupport:false   deleted:false
-	// test3-2 => coreSupport:false   deleted:true
 
 	// check
 	requestBody := GraphQLRequest{
