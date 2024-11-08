@@ -1,72 +1,52 @@
-import { getTimeZone } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { Button, Icon, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
-import TimePointField from "../TimePointField";
+import { TimePeriodFieldProp } from "..";
+import TimePointField from "../../TimePointField";
 
 import useHooks from "./hooks";
-
-import { TimePeriodFieldProp } from ".";
 
 type EditPanelProps = {
   visible: boolean;
   timePeriodValues?: TimePeriodFieldProp;
   onClose?: () => void;
   onChange?: (value?: TimePeriodFieldProp) => void;
-  setTimePeriodValues?: (value?: TimePeriodFieldProp) => void;
 };
 
 const EditModal: FC<EditPanelProps> = ({
   visible,
   timePeriodValues,
-  setTimePeriodValues,
   onClose,
   onChange
 }) => {
   const t = useT();
   const {
-    isDisabled,
-    warning,
-    disabledFields,
-    setDisabledFields,
+    submitDisabled,
+    timeRangeInvalid,
+    localValue,
     handleChange,
-    handleSubmit,
-    handleTimePointPopup,
-    handleClose
+    handleSubmit
   } = useHooks({
     timePeriodValues,
     onChange,
-    onClose,
-    setTimePeriodValues
+    onClose
   });
-
-  const timezoneMatches = useMemo(() => {
-    if (!timePeriodValues) return false;
-
-    const startTimezone = getTimeZone(timePeriodValues?.startTime);
-    const currentTimezone = getTimeZone(timePeriodValues?.currentTime);
-    const endTimezone = getTimeZone(timePeriodValues?.endTime);
-
-    const checkTimezones =
-      startTimezone === currentTimezone && currentTimezone === endTimezone;
-    return checkTimezones;
-  }, [timePeriodValues]);
 
   return (
     <Modal visible={visible} size="small">
       <ModalPanel
         title={t("Time Period Settings")}
-        onCancel={handleClose}
+        onCancel={onClose}
         actions={
           <>
-            <Button onClick={handleClose} size="normal" title="Cancel" />
+            <Button onClick={onClose} size="normal" title="Cancel" />
             <Button
               size="normal"
               title="Apply"
               appearance="primary"
-              disabled={!isDisabled || warning || !timezoneMatches}
+              disabled={submitDisabled}
               onClick={handleSubmit}
             />
           </>
@@ -77,33 +57,21 @@ const EditModal: FC<EditPanelProps> = ({
             title={t("* Start Time")}
             description={t("Start time for the timeline")}
             onChange={(newValue) => handleChange(newValue || "", "startTime")}
-            value={timePeriodValues?.startTime}
-            fieldName={"startTime"}
-            disabledField={disabledFields.includes("startTime")}
-            setDisabledFields={setDisabledFields}
-            onTimePointPopupOpen={handleTimePointPopup}
+            value={localValue?.startTime}
           />
           <TimePointField
             title={t("* Current Time")}
             description={t("Current time should be between start and end time")}
             onChange={(newValue) => handleChange(newValue || "", "currentTime")}
-            value={timePeriodValues?.currentTime}
-            disabledField={disabledFields.includes("currentTime")}
-            fieldName={"currentTime"}
-            setDisabledFields={setDisabledFields}
-            onTimePointPopupOpen={handleTimePointPopup}
+            value={localValue?.currentTime}
           />
           <TimePointField
             title={t("* End Time")}
             onChange={(newValue) => handleChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
-            value={timePeriodValues?.endTime}
-            fieldName={"endTime"}
-            disabledField={disabledFields.includes("endTime")}
-            setDisabledFields={setDisabledFields}
-            onTimePointPopupOpen={handleTimePointPopup}
+            value={localValue?.endTime}
           />
-          {warning && (
+          {timeRangeInvalid && (
             <Warning>
               <Icon icon="warning" size="large" />
               {t(

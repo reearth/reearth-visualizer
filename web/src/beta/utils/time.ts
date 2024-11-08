@@ -42,3 +42,64 @@ export const formatRelativeTime = (date: Date): string => {
       return pluralize(Math.floor(seconds), "second") + " ago";
   }
 };
+
+// Time zones around the world generally fall within offsets from UTC ranging from -12:00 to +14:00
+export const TIMEZONE_OFFSETS = [
+  "-12:00",
+  "-11:00",
+  "-10:00",
+  "-09:00",
+  "-08:00",
+  "-07:00",
+  "-06:00",
+  "-05:00",
+  "-04:00",
+  "-03:00",
+  "-02:00",
+  "-01:00",
+  "+00:00",
+  "+01:00",
+  "+02:00",
+  "+03:00",
+  "+04:00",
+  "+05:00",
+  "+06:00",
+  "+07:00",
+  "+08:00",
+  "+09:00",
+  "+10:00",
+  "+11:00",
+  "+12:00",
+  "+13:00",
+  "+14:00"
+] as const;
+
+export type TimeZoneOffset = (typeof TIMEZONE_OFFSETS)[number];
+
+export const getLocalTimezoneOffset = (): TimeZoneOffset => {
+  const date = new Date();
+  const offsetMinutes = -date.getTimezoneOffset();
+  const sign = offsetMinutes >= 0 ? "+" : "-";
+  const hours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(
+    2,
+    "0"
+  );
+  return `${sign}${hours}:00` as TimeZoneOffset;
+};
+
+export const isValidTimezone = (timezone: string): boolean => {
+  return TIMEZONE_OFFSETS.includes(timezone as TimeZoneOffset);
+};
+
+export const getTimeZone = (time: string): TimeZoneOffset | undefined => {
+  const zone = time.match(/([-+]\d{1,2}:\d{2})$/)?.[1];
+  return !zone
+    ? undefined
+    : isValidTimezone(zone)
+      ? (zone as TimeZoneOffset)
+      : undefined;
+};
+
+export const isValidDateTimeFormat = (time: string): boolean => {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([-+]\d{2}:\d{2})$/.test(time);
+};
