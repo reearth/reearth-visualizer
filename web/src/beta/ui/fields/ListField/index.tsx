@@ -1,4 +1,5 @@
 import { Button, DragAndDropList } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -39,6 +40,8 @@ const ListField: FC<ListFieldProps> = ({
   onItemMove,
   onItemNameUpdate
 }) => {
+  const t = useT();
+
   const [listItems, setListItems] = useState(items ?? []);
 
   useEffect(() => {
@@ -113,7 +116,7 @@ const ListField: FC<ListFieldProps> = ({
           onClick={onItemAdd}
           icon="plus"
           appearance="secondary"
-          title="New Item"
+          title={t("New Item")}
           size="small"
           extendWidth
         />

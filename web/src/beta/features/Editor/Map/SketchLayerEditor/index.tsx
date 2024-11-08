@@ -54,7 +54,7 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
             <Button onClick={handleClose} size="normal" title="Cancel" />
             <Button
               size="normal"
-              title="Apply"
+              title={t("Apply")}
               appearance="primary"
               onClick={handleSubmit}
               disabled={warning}

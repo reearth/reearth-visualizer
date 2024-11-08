@@ -41,7 +41,6 @@ const EditModal: FC<EditPanelProps> = ({
     onClose,
     setTimePeriodValues
   });
-
   const timezoneMatches = useMemo(() => {
     if (!timePeriodValues) return false;
 
@@ -61,10 +60,10 @@ const EditModal: FC<EditPanelProps> = ({
         onCancel={handleClose}
         actions={
           <>
-            <Button onClick={handleClose} size="normal" title="Cancel" />
+            <Button onClick={handleClose} size="normal" title={t("Cancel")} />
             <Button
               size="normal"
-              title="Apply"
+              title={t("Apply")}
               appearance="primary"
               disabled={!isDisabled || warning || !timezoneMatches}
               onClick={handleSubmit}

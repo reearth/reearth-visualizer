@@ -23,13 +23,14 @@ A To Z: AからZ順
 Z To A: ZからA順
 Size Small to Large: サイズ（小から大）
 Size Large to Small: サイズ（大から小）
+Assets: アセット
 Upload File: ファイルをアップロード
 Search in all assets library: 全アセットライブラリ内を検索
 Assets selected: 選択されたアセット
 Asset selected: アセットが選択されました
 Uploaded At: アップロード日時
 Size: サイズ
-Path: パス
+Path: アセットURL
 No Asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
 Use Name or Email: 名前またはメールアドレスを使用
@@ -58,6 +59,7 @@ Text: テキスト
 Description: 説明
 Write down your content: 内容を書き込む
 Cover Image: カバー画像
+Remove: ゴミ箱へ移動
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Starred: スター付き
@@ -69,7 +71,6 @@ I am sure I want to delete this project: このプロジェクトを削除する
 This action cannot be undone. This will permanently delete the project totally. You will lose all your project data: この操作は元に戻せません。プロジェクトが完全に削除され、すべてのデータが失われます。
 Please type your project name to continue.: 続行するにはプロジェクト名を入力してください。
 Projects: プロジェクト
-Assets: アセット
 Members: メンバー
 Recycle bin: ゴミ箱
 Plugin Playground: プラグインプレイグラウンド
@@ -125,12 +126,14 @@ Geometry: ジオメトリ
 Properties: プロパティ
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
+NO STYLE: スタイルなし
 Layer Style: レイヤースタイル
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
+Property Schema: プロパティスキーマ
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
@@ -175,6 +178,7 @@ New Property: 新しいプロパティ
 ' Text': ' テキスト'
 General: 一般
 New Sketch Layer: 新しいスケッチレイヤー
+Create: 作成
 Custom properties Schema Setting: カスタムプロパティスキーマ設定
 Story: ストーリー
 Publish: 公開
@@ -294,7 +298,6 @@ aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
 Spacing settings: スペーシング設定
-Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
 Reader: 読者
@@ -339,8 +342,8 @@ Center Align: 中央揃え
 Justify Align: 両端揃え
 Left Align: 左揃え
 Right Align: 右揃え
-Outdent: インデント解除
-Indent: インデント
+Outdent: インデントを減らす
+Indent: インデントを増やす
 Bulleted List: 箇条書きリスト
 Insert Code Block: コードブロックを挿入
 Insert Link: リンクを挿入
@@ -349,6 +352,7 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Please select: 選択してください
 'Sort:': '並び替え:'
 Version: バージョン
 Wrong file format: 誤ったファイル形式
@@ -371,6 +375,9 @@ Rotation: 回転
 Position Set: 位置セット
 Edit: 編集
 Capture: キャプチャ
+New Item: 新規追加
+min: 最小
+max: 最大
 Time Period Settings: 期間設定
 '* Start Time': '* 開始時間'
 Start time for the timeline: タイムラインの開始時間
