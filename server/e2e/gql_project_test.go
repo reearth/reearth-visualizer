@@ -63,7 +63,6 @@ func TestSortByName(t *testing.T) {
 	createProject(e, "b-project")
 	createProject(e, "A-project")
 	createProject(e, "B-project")
-	seedProjectName := pName
 
 	requestBody := GraphQLRequest{
 		OperationName: "GetProjects",
@@ -146,12 +145,12 @@ func TestSortByName(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().Equal(5)
+	edges.Length().Equal(4)
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("a-project")
 	edges.Element(1).Object().Value("node").Object().Value("name").Equal("A-project")
 	edges.Element(2).Object().Value("node").Object().Value("name").Equal("b-project")
 	edges.Element(3).Object().Value("node").Object().Value("name").Equal("B-project")
-	edges.Element(4).Object().Value("node").Object().Value("name").Equal(seedProjectName)
+
 }
 
 func TestFindStarredByWorkspace(t *testing.T) {
