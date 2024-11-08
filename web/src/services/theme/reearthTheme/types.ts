@@ -51,6 +51,8 @@ export type Theme = Common & {
   };
   warning: {
     main: string;
+    weak: string;
+    weakest: string;
   };
   relative: {
     lightest: string;

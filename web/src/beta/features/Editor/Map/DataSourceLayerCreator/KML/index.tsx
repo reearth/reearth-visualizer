@@ -38,11 +38,7 @@ const KML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <Wrapper>
       <ContentWrapper>
         <Warning>
-          <IconWrapper
-            icon="lightBulb"
-            color={theme.warning.main}
-            size="normal"
-          />
+          <IconWrapper icon="flask" color={theme.warning.main} size="normal" />
           <TextWrapper>
             {t(
               "Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution."
