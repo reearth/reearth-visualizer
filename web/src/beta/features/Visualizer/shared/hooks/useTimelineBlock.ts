@@ -8,7 +8,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
 import {
-  convertOptionToSeconds,
   formatDateToSting,
   formatISO8601,
   formatTimezone
@@ -41,17 +40,25 @@ const timeRange = (startTime?: number, stopTime?: number) => {
 export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
+  const multiplier = visualizerContext?.current?.timeline?.current?.options
+    ?.multiplier as number;
+
   const playSpeedOptions = useMemo(() => {
     const speedOpt = [
-      "1sec/sec",
-      "0.5min/sec",
-      "1min/sec",
-      "0.1hr/sec",
-      "0.5hr/sec",
-      "1hr/sec"
+      {
+        timeString: "Not set",
+        seconds: multiplier
+      },
+      { timeString: "1sec/sec", seconds: 1 },
+      { timeString: "0.5min/sec", seconds: 30 },
+      { timeString: "1min/sec", seconds: 60 },
+      { timeString: "0.1hr/sec", seconds: 360 },
+      { timeString: "0.5hr/sec", seconds: 1800 },
+      { timeString: "1hr/sec", seconds: 3600 }
     ];
-    return convertOptionToSeconds(speedOpt);
-  }, []);
+
+    return speedOpt;
+  }, [multiplier]);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
