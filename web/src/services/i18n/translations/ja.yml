@@ -17,6 +17,7 @@ New password: 新しいパスワード
 New password (for confirmation): 新しいパスワード（確認用）
 '"repeatPassword" Passwords need to match': パスワードが一致している必要があります
 Select Asset: アセットを選択
+Cancel: キャンセル
 Last Uploaded: 最終アップロード日
 First Uploaded: 最初のアップロード日
 A To Z: AからZ順
@@ -52,7 +53,6 @@ Project Setting: プロジェクト設定
 Export (Experimental): エクスポート（実験的）
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
-Cancel: キャンセル
 Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
@@ -352,6 +352,7 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Loading...: 'ロード中...'
 Please select: 選択してください
 'Sort:': '並び替え:'
 Version: バージョン
