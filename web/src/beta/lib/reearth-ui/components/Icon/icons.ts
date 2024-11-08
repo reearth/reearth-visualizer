@@ -1,5 +1,4 @@
 /// <reference types="vite-plugin-svgr/client" />
-// TODO: should we move this to Icons folder?
 
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
