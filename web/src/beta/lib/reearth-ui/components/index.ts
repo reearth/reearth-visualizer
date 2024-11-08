@@ -28,3 +28,4 @@ export * from "./CheckBox";
 export * from "./Markdown";
 export * from "./Slider";
 export * from "./Slide";
+export * from "./ClickAway";

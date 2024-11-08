@@ -1,4 +1,4 @@
-import { Button } from "@reearth/beta/lib/reearth-ui";
+import { Button, ClickAway } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
@@ -20,20 +20,22 @@ export const PopupPanel: FC<PopupPanelProps> = ({
   onCancel
 }) => {
   return (
-    <Wrapper width={width}>
-      <HeaderWrapper>
-        <Title>{title}</Title>
-        <Button
-          iconButton
-          icon="close"
-          size="small"
-          onClick={onCancel}
-          appearance="simple"
-        />
-      </HeaderWrapper>
-      <Content>{children}</Content>
-      {actions && <ActionWrapper>{actions}</ActionWrapper>}
-    </Wrapper>
+    <ClickAway onClickAway={onCancel}>
+      <Wrapper width={width}>
+        <HeaderWrapper>
+          <Title>{title}</Title>
+          <Button
+            iconButton
+            icon="close"
+            size="small"
+            onClick={onCancel}
+            appearance="simple"
+          />
+        </HeaderWrapper>
+        <Content>{children}</Content>
+        {actions && <ActionWrapper>{actions}</ActionWrapper>}
+      </Wrapper>
+    </ClickAway>
   );
 };
 
