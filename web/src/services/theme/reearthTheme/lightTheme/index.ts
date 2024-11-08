@@ -51,7 +51,7 @@ const lightTheme: Theme = {
     weak: red[70],
     strong: brandRed.dark
   },
-  warning: { main: yellow[30] },
+  warning: { main: yellow[30], weak: yellow[50], weakest: yellow[70] },
   relative: {
     lightest: rgba("#ffffff", 0.2),
     lighter: rgba("#ffffff", 0.15),
