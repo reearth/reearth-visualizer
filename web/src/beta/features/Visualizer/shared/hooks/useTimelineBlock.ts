@@ -24,6 +24,8 @@ const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
 
+const RANDOM_SPEED = 100;
+
 const timeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
   const now = Date.now() - 3600000;
@@ -40,14 +42,11 @@ const timeRange = (startTime?: number, stopTime?: number) => {
 export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
-  const multiplier = visualizerContext?.current?.timeline?.current?.options
-    ?.multiplier as number;
-
   const playSpeedOptions = useMemo(() => {
     const speedOpt = [
       {
         timeString: "Not set",
-        seconds: multiplier
+        seconds: 0
       },
       { timeString: "1sec/sec", seconds: 1 },
       { timeString: "0.5min/sec", seconds: 30 },
@@ -58,7 +57,7 @@ export default (timelineValues?: TimelineValues) => {
     ];
 
     return speedOpt;
-  }, [multiplier]);
+  }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
@@ -159,10 +158,24 @@ export default (timelineValues?: TimelineValues) => {
       visualizerContext?.current?.timeline?.current?.onCommit(cb),
     [visualizerContext]
   );
+
   const handleOnSpeedChange = useCallback(
     (speed: number, committerId?: string) => {
-      onSpeedChange?.(speed, committerId);
-      setSpeed(speed);
+      const changeSpeed = (speed: number) => {
+        return new Promise<void>((resolve) => {
+          onSpeedChange(speed, committerId);
+          resolve();
+        });
+      };
+
+      changeSpeed(RANDOM_SPEED)
+        .then(() => {
+          onSpeedChange(speed, committerId);
+          setSpeed(speed);
+        })
+        .catch((error) => {
+          console.error("Error during speed change:", error);
+        });
     },
     [onSpeedChange]
   );
