@@ -15,7 +15,7 @@ fi
 # Rewrite favicon in index.html and published.html only if REEARTH_WEB_FAVICON_URL is set
 if [ -n "$REEARTH_WEB_FAVICON_URL" ]; then
   sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_WEB_FAVICON_URL}\" />|g" "$_REEARTH_HTML_FILE"
-  sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_WEB_FAVICON_URL}\" />|g" "$_REEARTH_HTML_FILE"
+  sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_WEB_FAVICON_URL}\" />|g" "$_REEARTH_PUBLISHED_HTML_FILE"
 fi
 
 # generate reearth_config.json
