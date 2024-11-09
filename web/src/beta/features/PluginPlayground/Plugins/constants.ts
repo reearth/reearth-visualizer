@@ -15,14 +15,14 @@ export type FileType = {
 export const REEARTH_YML_FILE = {
   id: "reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: test-plugin
+  sourceCode: `id: demo-widget
 name: Test plugin
 version: 1.0.0
 extensions:
-  - id: button
+  - id: demo-widget
     type: widget
-    name: Button
-    description: Button widget
+    name: Demo Widget
+    description: Demo widget
     widgetLayout:
       defaultLocation:
         zone: outer
