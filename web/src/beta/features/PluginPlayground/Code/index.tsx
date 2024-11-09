@@ -1,6 +1,8 @@
 import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useMemo, useState } from "react";
+
+import HtmlEditor from "./HtmlEditor";
 
 type Props = {
   fileTitle: string;
@@ -28,10 +30,25 @@ const Code: FC<Props> = ({
   onChangeSourceCode,
   executeCode
 }) => {
+  const ediableHtmlSourceCode = useMemo(() => {
+    const regex = /reearth\.ui\.show\(\s*`([^]*?)`\s*\);/g;
+    const match = regex.exec(sourceCode);
+    return match?.[1];
+  }, [sourceCode]);
+
+  const [opened, setOpened] = useState(false);
+
   return (
     <Wrapper>
       <Header>
         <Button icon="playRight" iconButton onClick={executeCode} />
+        <Button
+          icon="pencilSimple"
+          title="HTML Editor"
+          disabled={ediableHtmlSourceCode === undefined}
+          onClick={() => setOpened(true)}
+        />
+        <HtmlEditor opened={opened} sourceCode={ediableHtmlSourceCode ?? ""} />
         <p>Widget</p>
       </Header>
       <CodeInput
