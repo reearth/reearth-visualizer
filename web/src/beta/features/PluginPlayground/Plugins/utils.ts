@@ -4,7 +4,8 @@ export const validateFileTitle = (
   fileTitle: string,
   existingFileTitles: string[]
 ) => {
-  const notifyError = (message: string) => ({ success: false, message });
+  const notifyError = (message: string) =>
+    ({ success: false, message }) as const;
 
   if (fileTitle === "") {
     return notifyError("File name cannot be empty");
