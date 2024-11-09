@@ -65,7 +65,11 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
         </Wrapper>
         <Wrapper>
           <Label>{t("Time Zone")}</Label>
-          <InputWrapper>
+          <InputWrapper
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <Selector
               value={timezone}
               options={TIMEZONE_OFFSETS.map((offset) => ({
