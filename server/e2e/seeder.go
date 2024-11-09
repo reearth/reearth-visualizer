@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
+	"golang.org/x/text/language"
 )
 
 var (
@@ -48,6 +49,26 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
+	return baseSetup(ctx, r, u)
+}
+
+func baseSeederWithLang(ctx context.Context, r *repo.Container, lang language.Tag) error {
+	defer util.MockNow(now)()
+
+	u := user.New().
+		ID(uID).
+		Workspace(wID).
+		Name(uName).
+		Email(uEmail).
+		Lang(lang).
+		MustBuild()
+	if err := r.User.Save(ctx, u); err != nil {
+		return err
+	}
+	return baseSetup(ctx, r, u)
+}
+
+func baseSetup(ctx context.Context, r *repo.Container, u *user.User) error {
 
 	m := workspace.Member{
 		Role: workspace.RoleOwner,

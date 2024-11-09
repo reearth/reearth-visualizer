@@ -32,14 +32,19 @@ Size: サイズ
 Path: パス
 No Asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
+Create new workspace: ワークスペースを作る
+Cancel: キャンセル
+create: 作成する
+Your workspace Name *: あなたのワークスペースの名前
+The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Use Name or Email: 名前またはメールアドレスを使用
 Find Member: メンバーを検索
-No Member match your search.: 一致するメンバーが見つかりません。
+No Member match your search.: 一致するメンバーが見つかりません'
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
 New Project: 新規プロジェクト
-Import (Experimental): インポート（実験的）
+Import: インポート
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Project Name: プロジェクト名
@@ -48,10 +53,9 @@ Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
 Project Setting: プロジェクト設定
-Export (Experimental): エクスポート（実験的）
+Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
-Cancel: キャンセル
 Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
@@ -84,27 +88,27 @@ Re:Earth Visualizer: Re:Earthビジュアライザー
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
-From Value: 値から
-File Format: ファイル形式
-File format of the data source you want to add.: 追加したいデータソースのファイル形式
 Source Type: ソースタイプ
 Asset: アセット
 Resource URL: リソースURL
-Input Text: テキストを入力
-Value: 値
-Input data here: ここにデータを入力
-Prioritize Performance: パフォーマンスを優先
-Add to Layer: レイヤーに追加
 Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
 Latitude Column Name: 緯度の列名
 Column Name: 列名
 Longitude Column Name: 経度の列名
-Common: 共通
-CSV: CSV
-WMS: WMS
-Vector Tile: ベクタタイル
+Add to Layer: レイヤーに追加
+From Value: 値から
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Input Text: テキストを入力
+Value: 値
+Input data here: ここにデータを入力
+Invalid GeoJSON format: 不正なGeoJSON形式
+Please enter valid GeoJSON: 有効なGeoJSONを入力してください
+Prioritize Performance: パフォーマンスを優先
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
+Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 'Google Maps API Key ': Google Maps APIキー
 'You can apply a key ': キーを申請できます
 here: ここ
@@ -297,32 +301,33 @@ Spacing settings: スペーシング設定
 Remove: 削除
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
-Reader: 読者
-Writer: 作成者
-Maintainer: 管理者
-Owner: 所有者
+Add a team member: チームメンバーを追加
+Add: 追加
+Search by email address or user name: メールアドレスまたはユーザー名で検索
+Can't find the user: ユーザーが見つかりません
+User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
 New member: 新しいメンバー
 User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 Change Role: 役割を変更
-Add a team member: チームメンバーを追加
-Add: 追加
-Email address or a user name: メールアドレスまたはユーザー名
-Didn’t find the user: ユーザーが見つかりませんでした
-Workspace: ワークスペース
-Workspace Name: ワークスペース名
-Remove this workspace: このワークスペースを削除
-This process will remove this workspace: この操作によりワークスペースが削除されます
-Remove workspace: ワークスペースを削除
+Reader: 読者
+Writer: 作成者
+Maintainer: 管理者
+Owner: 所有者
+Update Member Role: メンバーの役割を更新
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
-'This action cannot be undone. ': この操作は元に戻せません。
+This action is permanent and cannot be reversed.: この操作は永続的で元に戻すことはできません。
 This will permanently delete the workspace and all related projects, assets and datasets for all team members.: これにより、ワークスペースと関連するすべてのプロジェクト、アセット、およびデータセットがチーム全員から完全に削除されます。
 Please type your workspace name to continue.: 続行するにはワークスペース名を入力してください。
 You are going to delete a workspace.: ワークスペースを削除しようとしています。
-Please to make sure you don’t have any projects in your workspace, then you can continue.: ワークスペース内にプロジェクトがないことを確認してください。それから続行できます。
+Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
+Workspace: ワークスペース
+Workspace Name: ワークスペース名
+This process will delete this workspace: この操作により、このワークスペースが削除されます
 Workspace Settings: ワークスペース設定
+New Workspace: 新しいワークスペース
 Account Settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
@@ -351,6 +356,7 @@ Superscript: 上付き文字
 Clear Formatting: 書式をクリア
 'Sort:': '並び替え:'
 Version: バージョン
+This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 Wrong file format: 誤ったファイル形式
 Not set: 設定されていません
 Choose: 選択

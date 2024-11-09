@@ -1,4 +1,5 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
+import { useNotification } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { ComponentProps, useCallback, useState } from "react";
 
@@ -31,27 +32,41 @@ type Props = {
 };
 
 const getYmlJson = (file: FileType) => {
-  try {
-    return yaml.load(file.sourceCode) as ReearthYML;
-  } catch (error) {
-    if (error instanceof yaml.YAMLException) {
-      console.error(error.message);
-    }
+  if (file.sourceCode === "") {
+    return { success: false, message: "YAML file is empty" } as const;
   }
-  return;
+
+  try {
+    const data = yaml.load(file.sourceCode) as ReearthYML;
+    return { success: true, data } as const;
+  } catch (error) {
+    const message =
+      error instanceof yaml.YAMLException
+        ? error.message
+        : "Failed to parse YAML";
+    return { success: false, message } as const;
+  }
 };
 
 export default ({ files }: Props) => {
   const [widgets, setWidgets] = useState<Widgets>();
+  const [, setNotification] = useNotification();
 
   const executeCode = useCallback(() => {
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
 
     if (!ymlFile) return;
 
-    const ymlJson = getYmlJson(ymlFile);
+    const getYmlResult = getYmlJson(ymlFile);
 
-    if (!ymlJson || !ymlJson.extensions) return;
+    if (!getYmlResult.success) {
+      setNotification({ type: "error", text: getYmlResult.message });
+      return;
+    }
+
+    const ymlJson = getYmlResult.data;
+
+    if (!ymlJson.extensions) return;
 
     const widgets = ymlJson.extensions.reduce<NonNullable<Widgets>>(
       (prv, cur) => {
@@ -101,7 +116,7 @@ export default ({ files }: Props) => {
       }
     );
     setWidgets(widgets);
-  }, [files]);
+  }, [files, setNotification]);
 
   return {
     executeCode,

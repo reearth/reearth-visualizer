@@ -4,17 +4,14 @@ export const validateFileTitle = (
   fileTitle: string,
   existingFileTitles: string[]
 ) => {
+  const notifyError = (message: string) =>
+    ({ success: false, message }) as const;
+
   if (fileTitle === "") {
-    return {
-      success: false,
-      message: "File name cannot be empty"
-    } as const;
+    return notifyError("File name cannot be empty");
   }
   if (existingFileTitles.includes(fileTitle)) {
-    return {
-      success: false,
-      message: "File name already exists"
-    } as const;
+    return notifyError("File name already exists");
   }
 
   const extension = fileTitle.split(".").pop();
@@ -24,10 +21,7 @@ export const validateFileTitle = (
       extension as Readonly<typeof ALLOWED_FILE_EXTENSIONS>[number]
     )
   ) {
-    return {
-      success: false,
-      message: "Invalid file type"
-    } as const;
+    return notifyError("Invalid file type");
   }
 
   return {

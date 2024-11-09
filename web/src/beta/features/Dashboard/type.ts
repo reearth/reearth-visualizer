@@ -1,6 +1,7 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
 import { TeamMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
+import { ReactNode } from "react";
 
 export type Project = {
   id: string;
@@ -31,6 +32,7 @@ export type TabItems = {
   path?: string;
   active?: boolean;
   disabled?: boolean;
+  tileComponent?: ReactNode;
 };
 
 export type User = {

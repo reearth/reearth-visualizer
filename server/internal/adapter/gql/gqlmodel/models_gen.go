@@ -1307,12 +1307,15 @@ type PropertySchemaField struct {
 	UI                       *PropertySchemaFieldUI       `json:"ui,omitempty"`
 	Min                      *float64                     `json:"min,omitempty"`
 	Max                      *float64                     `json:"max,omitempty"`
+	Placeholder              string                       `json:"placeholder"`
 	Choices                  []*PropertySchemaFieldChoice `json:"choices,omitempty"`
 	IsAvailableIf            *PropertyCondition           `json:"isAvailableIf,omitempty"`
 	AllTranslatedTitle       map[string]string            `json:"allTranslatedTitle,omitempty"`
 	AllTranslatedDescription map[string]string            `json:"allTranslatedDescription,omitempty"`
+	AllTranslatedPlaceholder map[string]string            `json:"allTranslatedPlaceholder,omitempty"`
 	TranslatedTitle          string                       `json:"translatedTitle"`
 	TranslatedDescription    string                       `json:"translatedDescription"`
+	TranslatedPlaceholder    string                       `json:"translatedPlaceholder"`
 }
 
 type PropertySchemaFieldChoice struct {
