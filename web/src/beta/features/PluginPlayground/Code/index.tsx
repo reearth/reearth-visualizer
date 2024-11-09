@@ -15,13 +15,6 @@ const getNewSourceCode = (htmlSourceCode: string, sourceCode: string) => {
   return sourceCode.replace(regex, `reearth.ui.show(\`${htmlSourceCode}\`);`);
 };
 
-type Props = {
-  fileTitle: string;
-  sourceCode: string;
-  onChangeSourceCode: (value: string | undefined) => void;
-  executeCode: () => void;
-};
-
 const getLanguageByFileExtension = (fileTitle: string) => {
   const ext = fileTitle.split(".").pop();
   switch (ext) {
@@ -33,6 +26,13 @@ const getLanguageByFileExtension = (fileTitle: string) => {
     default:
       return "plaintext";
   }
+};
+
+type Props = {
+  fileTitle: string;
+  sourceCode: string;
+  onChangeSourceCode: (value: string | undefined) => void;
+  executeCode: () => void;
 };
 
 const Code: FC<Props> = ({
