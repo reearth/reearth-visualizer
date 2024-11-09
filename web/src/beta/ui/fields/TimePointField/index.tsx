@@ -9,55 +9,52 @@ import EditPanel from "./EditPanel";
 
 export type TimePointFieldProps = CommonFieldProps & {
   value?: string;
-  disabledField?: boolean;
-  fieldName?: string;
+  disabled?: boolean;
   onChange?: (value?: string | undefined) => void;
-  onTimePointPopupOpen?: (fieldId?: string) => void;
-  setDisabledFields?: (value: string[]) => void;
+  onEditorOpen?: () => void;
+};
+
+export type TimePointFieldRef = {
+  closeEditor: () => void;
 };
 
 const TimePointField: FC<TimePointFieldProps> = ({
   title,
   description,
   value,
-  disabledField,
-  fieldName,
-  onChange,
-  onTimePointPopupOpen,
-  setDisabledFields
+  onChange
 }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
   const theme = useTheme();
 
-  const handlePopOver = useCallback(() => {
-    if (disabledField) {
-      setOpen(false);
-    } else {
-      onTimePointPopupOpen?.(fieldName);
-      setOpen(!open);
-    }
-    if (open) setDisabledFields?.([]);
-  }, [disabledField, open, onTimePointPopupOpen, setDisabledFields, fieldName]);
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
 
   const handleTimeSettingDelete = useCallback(() => {
+    setLocalValue("");
     if (!value) return;
-    setDateTime("");
     onChange?.();
   }, [value, onChange]);
 
-  const [dateTime, setDateTime] = useState(value);
-
-  useEffect(() => {
-    setDateTime(value);
-  }, [value]);
+  const handleInputBlur = useCallback(
+    (timeString: string) => {
+      if (timeString === value) return;
+      // TODO: validate timeString
+      onChange?.(timeString);
+    },
+    [value, onChange]
+  );
 
   return (
     <CommonField title={title} description={description}>
       <Wrapper>
         <TextInput
-          appearance="readonly"
-          value={value && dateTime}
+          value={localValue}
+          onBlur={handleInputBlur}
           actions={[
             <Button
               key="delete"
@@ -65,12 +62,11 @@ const TimePointField: FC<TimePointFieldProps> = ({
               size="small"
               iconButton
               appearance="simple"
-              disabled={!dateTime}
+              disabled={!localValue}
               onClick={handleTimeSettingDelete}
-              iconColor={dateTime ? theme.content.main : theme.content.weak}
+              iconColor={localValue ? theme.content.main : theme.content.weak}
             />
           ]}
-          disabled
           placeholder={"YYYY-MM-DDThh:mm:ss±hh:mm"}
         />
         <Popup
@@ -80,7 +76,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
               title={t("set")}
               icon="clock"
               size="small"
-              onClick={handlePopOver}
+              onClick={() => setOpen(true)}
             />
           }
           open={open}
@@ -89,10 +85,9 @@ const TimePointField: FC<TimePointFieldProps> = ({
         >
           {open && (
             <EditPanel
-              setDateTime={setDateTime}
-              value={dateTime}
+              value={localValue}
               onChange={onChange}
-              onClose={handlePopOver}
+              onClose={() => setOpen(false)}
             />
           )}
         </Popup>

@@ -49,6 +49,8 @@ export const TimePicker: FC<TimePickerProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         type="time"
+        min="00:00:00"
+        max="23:59:59"
         step={1}
       />
     </Wrapper>

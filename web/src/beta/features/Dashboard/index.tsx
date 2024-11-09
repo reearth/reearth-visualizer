@@ -1,8 +1,10 @@
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
+import Tooltip from "@reearth/beta/ui/components/Tooltip";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
+import AddWorkspaceModal from "../CreateWorkspaceModal";
 import CursorStatus from "../CursorStatus";
 
 import ContentsContainer from "./ContentsContainer";
@@ -32,7 +34,8 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         id: "plugin",
         text: t("Plugin Playground"),
         icon: "puzzlePiece",
-        disabled: true
+        tileComponent: <Tooltip type="experimental" />,
+        path: "/plugin-playground"
       },
       {
         id: "documentation",
@@ -68,26 +71,29 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
 
   return (
-    <Wrapper>
-      <LeftSideWrapper>
-        <LeftSidePanel
+    <>
+      <Wrapper>
+        <LeftSideWrapper>
+          <LeftSidePanel
+            tab={currentTab}
+            isPersonal={isPersonal}
+            currentWorkspace={currentWorkspace}
+            workspaces={workspaces}
+            topTabs={topTabs}
+            bottomTabs={bottomTabs}
+            onSignOut={onSignOut}
+            onWorkspaceChange={handleWorkspaceChange}
+          />
+        </LeftSideWrapper>
+        <ContentsContainer
           tab={currentTab}
-          isPersonal={isPersonal}
+          workspaceId={workspaceId}
           currentWorkspace={currentWorkspace}
-          workspaces={workspaces}
-          topTabs={topTabs}
-          bottomTabs={bottomTabs}
-          onSignOut={onSignOut}
-          onWorkspaceChange={handleWorkspaceChange}
         />
-      </LeftSideWrapper>
-      <ContentsContainer
-        tab={currentTab}
-        workspaceId={workspaceId}
-        currentWorkspace={currentWorkspace}
-      />
-      <CursorStatus />
-    </Wrapper>
+        <CursorStatus />
+      </Wrapper>
+      <AddWorkspaceModal />
+    </>
   );
 };
 
