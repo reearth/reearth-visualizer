@@ -25,6 +25,8 @@ export const CodeInput: FC<CodeInputProps> = ({
   const [currentValue, setCurrentValue] = useState<string | undefined>(value);
   const [isActive, setIsActive] = useState<boolean>(false);
 
+  console.log(value);
+  
   const options = useMemo(
     () => ({
       bracketPairColorization: {

@@ -1,8 +1,19 @@
 import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import HtmlEditor from "./HtmlEditor";
+import HtmlEditorModal from "./HtmlEditModal";
+
+const getHtmlSourceCode = (sourceCode: string) => {
+  const regex = /reearth\.ui\.show\(\s*`([^]*?)`\s*\);/g;
+  const match = regex.exec(sourceCode);
+  return match?.[1];
+};
+
+const getNewSourceCode = (htmlSourceCode: string, sourceCode: string) => {
+  const regex = /reearth\.ui\.show\(\s*`([^]*?)`\s*\);/g;
+  return sourceCode.replace(regex, `reearth.ui.show(\`${htmlSourceCode}\`);`);
+};
 
 type Props = {
   fileTitle: string;
@@ -30,33 +41,48 @@ const Code: FC<Props> = ({
   onChangeSourceCode,
   executeCode
 }) => {
-  const ediableHtmlSourceCode = useMemo(() => {
-    const regex = /reearth\.ui\.show\(\s*`([^]*?)`\s*\);/g;
-    const match = regex.exec(sourceCode);
-    return match?.[1];
-  }, [sourceCode]);
+  const ediableHtmlSourceCode = useMemo(
+    () => getHtmlSourceCode(sourceCode),
+    [sourceCode]
+  );
 
-  const [opened, setOpened] = useState(false);
+  const onSubmitHtmlEditor = useCallback(
+    (newSourceCode: string) => {
+      onChangeSourceCode(getNewSourceCode(newSourceCode, sourceCode));
+    },
+    [sourceCode, onChangeSourceCode]
+  );
+
+  const [isOpenedHtmlEditor, setIsOpenedHtmlEditor] = useState(false);
 
   return (
-    <Wrapper>
-      <Header>
-        <Button icon="playRight" iconButton onClick={executeCode} />
-        <Button
-          icon="pencilSimple"
-          title="HTML Editor"
-          disabled={ediableHtmlSourceCode === undefined}
-          onClick={() => setOpened(true)}
+    <>
+      <Wrapper>
+        <Header>
+          <Button icon="playRight" iconButton onClick={executeCode} />
+          <Button
+            icon="pencilSimple"
+            title="HTML Editor"
+            disabled={ediableHtmlSourceCode === undefined}
+            onClick={() => setIsOpenedHtmlEditor(true)}
+          />
+          <p>Widget</p>
+        </Header>
+        <CodeInput
+          language={getLanguageByFileExtension(fileTitle)}
+          value={sourceCode}
+          onChange={onChangeSourceCode}
         />
-        <HtmlEditor opened={opened} sourceCode={ediableHtmlSourceCode ?? ""} />
-        <p>Widget</p>
-      </Header>
-      <CodeInput
-        language={getLanguageByFileExtension(fileTitle)}
-        value={sourceCode}
-        onChange={onChangeSourceCode}
-      />
-    </Wrapper>
+      </Wrapper>
+      {isOpenedHtmlEditor && (
+        <HtmlEditorModal
+          isOpened={isOpenedHtmlEditor}
+          sourceCode={ediableHtmlSourceCode ?? ""}
+          onClose={() => setIsOpenedHtmlEditor(false)}
+          onSubmit={onSubmitHtmlEditor}
+        />
+      )}
+    </>
   );
 };
 
