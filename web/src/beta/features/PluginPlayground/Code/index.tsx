@@ -2,31 +2,12 @@ import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
-import HtmlEditorModal from "./HtmlEditModal";
-
-const getHtmlSourceCode = (sourceCode: string) => {
-  const regex = /reearth\.ui\.show\(\s*`([^]*?)`\s*\);/g;
-  const match = regex.exec(sourceCode);
-  return match?.[1];
-};
-
-const getNewSourceCode = (htmlSourceCode: string, sourceCode: string) => {
-  const regex = /reearth\.ui\.show\(\s*`([^]*?)`\s*\);/g;
-  return sourceCode.replace(regex, `reearth.ui.show(\`${htmlSourceCode}\`);`);
-};
-
-const getLanguageByFileExtension = (fileTitle: string) => {
-  const ext = fileTitle.split(".").pop();
-  switch (ext) {
-    case "js":
-      return "javascript";
-    case "yml":
-    case "yaml":
-      return "yaml";
-    default:
-      return "plaintext";
-  }
-};
+import HtmlEditModal from "./HtmlEditModal";
+import {
+  extractHtmlFromSourceCode,
+  getLanguageByFileExtension,
+  injectHtmlIntoSourceCode
+} from "./utils";
 
 type Props = {
   fileTitle: string;
@@ -42,13 +23,13 @@ const Code: FC<Props> = ({
   executeCode
 }) => {
   const ediableHtmlSourceCode = useMemo(
-    () => getHtmlSourceCode(sourceCode),
+    () => extractHtmlFromSourceCode(sourceCode),
     [sourceCode]
   );
 
   const onSubmitHtmlEditor = useCallback(
     (newSourceCode: string) => {
-      onChangeSourceCode(getNewSourceCode(newSourceCode, sourceCode));
+      onChangeSourceCode(injectHtmlIntoSourceCode(newSourceCode, sourceCode));
     },
     [sourceCode, onChangeSourceCode]
   );
@@ -75,7 +56,7 @@ const Code: FC<Props> = ({
         />
       </Wrapper>
       {isOpenedHtmlEditor && (
-        <HtmlEditorModal
+        <HtmlEditModal
           isOpened={isOpenedHtmlEditor}
           sourceCode={ediableHtmlSourceCode ?? ""}
           onClose={() => setIsOpenedHtmlEditor(false)}
