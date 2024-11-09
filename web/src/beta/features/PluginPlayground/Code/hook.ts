@@ -31,33 +31,20 @@ type Props = {
   files: FileType[];
 };
 
-const getYmlJson = (
-  file: FileType
-):
-  | {
-      success: true;
-      data: ReearthYML;
-    }
-  | {
-      success: false;
-      message: string;
-    } => {
+const getYmlJson = (file: FileType) => {
+  if (file.sourceCode === "") {
+    return { success: false, message: "YAML file is empty" } as const;
+  }
+
   try {
-    return {
-      success: true,
-      data: yaml.load(file.sourceCode) as ReearthYML
-    };
+    const data = yaml.load(file.sourceCode) as ReearthYML;
+    return { success: true, data } as const;
   } catch (error) {
-    if (error instanceof yaml.YAMLException) {
-      return {
-        success: false,
-        message: error.message
-      };
-    }
-    return {
-      success: false,
-      message: "Failed to parse YAML"
-    };
+    const message =
+      error instanceof yaml.YAMLException
+        ? error.message
+        : "Failed to parse YAML";
+    return { success: false, message } as const;
   }
 };
 
