@@ -3,7 +3,7 @@ const REEARTH_HTML_INJECTION_PATTERN =
 
 export const extractHtmlFromSourceCode = (sourceCode: string) => {
   const match = REEARTH_HTML_INJECTION_PATTERN.exec(sourceCode);
-  return match?.[1];
+  return match?.[2]; // 正規表現でHTML部分（第2グループ）を抽出
 };
 
 export const injectHtmlIntoSourceCode = (
@@ -12,7 +12,7 @@ export const injectHtmlIntoSourceCode = (
 ) => {
   return sourceCode.replace(
     REEARTH_HTML_INJECTION_PATTERN,
-    `reearth.ui.show(\`${htmlSourceCode}\`);`
+    (_, type) => `reearth.${type}.show(\`${htmlSourceCode}\`);`
   );
 };
 
