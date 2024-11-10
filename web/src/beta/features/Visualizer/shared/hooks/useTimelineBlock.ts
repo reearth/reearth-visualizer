@@ -24,7 +24,7 @@ const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
 
-const RANDOM_SPEED = 100;
+const TRANSITION_SPEED = 100;
 
 const timeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
@@ -162,7 +162,7 @@ export default (timelineValues?: TimelineValues) => {
   const handleOnSpeedChange = useCallback(
     async (speed: number, committerId?: string) => {
       try {
-        await onSpeedChange(RANDOM_SPEED, committerId);
+        await onSpeedChange(TRANSITION_SPEED, committerId);
         await onSpeedChange(speed, committerId);
         setSpeed(speed);
       } catch (error) {
