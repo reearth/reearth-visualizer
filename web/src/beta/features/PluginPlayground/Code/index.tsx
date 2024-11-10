@@ -28,8 +28,8 @@ const Code: FC<Props> = ({
   );
 
   const onSubmitHtmlEditor = useCallback(
-    (newSourceCode: string) => {
-      onChangeSourceCode(injectHtmlIntoSourceCode(newSourceCode, sourceCode));
+    (newHtml: string) => {
+      onChangeSourceCode(injectHtmlIntoSourceCode(newHtml, sourceCode));
     },
     [sourceCode, onChangeSourceCode]
   );
