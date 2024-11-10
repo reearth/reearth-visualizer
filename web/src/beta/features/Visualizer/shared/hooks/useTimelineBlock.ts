@@ -160,24 +160,18 @@ export default (timelineValues?: TimelineValues) => {
   );
 
   const handleOnSpeedChange = useCallback(
-    (speed: number, committerId?: string) => {
-      const changeSpeed = (speed: number) => {
-        return new Promise<void>((resolve) => {
-          onSpeedChange(speed, committerId);
-          resolve();
-        });
-      };
-
-      changeSpeed(RANDOM_SPEED)
-        .then(() => {
-          onSpeedChange(speed, committerId);
-          setSpeed(speed);
-        })
-        .catch((error) => {
-          console.error("Error during speed change:", error);
-        });
+    async (speed: number, committerId?: string) => {
+      try {
+        await onSpeedChange(RANDOM_SPEED, committerId);
+        await onSpeedChange(speed, committerId);
+        setSpeed(speed);
+      } catch (error) {
+        console.error("Error during speed change:", error);
+        setSpeed(playSpeedOptions[0].seconds);
+        throw error;
+      }
     },
-    [onSpeedChange]
+    [onSpeedChange, playSpeedOptions]
   );
 
   useEffect(() => {
