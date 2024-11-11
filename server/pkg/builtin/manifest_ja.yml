@@ -1403,3 +1403,20 @@ extensions:
         fields:
           padding:
             title: 余白
+  linkButtonStoryBlock:
+    name: リンクボタン
+    description: ストーリーテリングリンクボタン
+    propertySchema:
+      default:
+        title: リンクボタン
+        fields:
+          title:
+            title: タイトル
+          color:
+            title: 色
+          bgColor:
+            title: 背景色
+          url:
+            title: リンクURL
+
+  
