@@ -17,6 +17,7 @@ New password: 新しいパスワード
 New password (for confirmation): 新しいパスワード（確認用）
 '"repeatPassword" Passwords need to match': パスワードが一致している必要があります
 Select Asset: アセットを選択
+Cancel: キャンセル
 Last Uploaded: 最終アップロード日
 First Uploaded: 最初のアップロード日
 A To Z: AからZ順
@@ -34,7 +35,6 @@ Path: アセットURL
 No Asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
 Create new workspace: ワークスペースを作る
-Cancel: キャンセル
 create: 作成する
 Your workspace Name *: あなたのワークスペースの名前
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
@@ -98,18 +98,21 @@ Column Name: 列名
 Longitude Column Name: 経度の列名
 Add to Layer: レイヤーに追加
 From Value: 値から
-Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 Input Text: テキストを入力
 Value: 値
 Input data here: ここにデータを入力
 Invalid GeoJSON format: 不正なGeoJSON形式
 Please enter valid GeoJSON: 有効なGeoJSONを入力してください
 Prioritize Performance: パフォーマンスを優先
-If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
+  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
 Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
-Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 'Google Maps API Key ': Google Maps APIキー
 'You can apply a key ': キーを申請できます
 here: ここ
@@ -217,6 +220,7 @@ This means that anybody with the URL will become unable to view this story. This
 This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: URLを知っている人でもこのシーンを見ることができなくなります。このシーンを埋め込んだWebサイトへ影響を及ぼす可能性があります。
 Page Settings: ページ設定
 All Layers: 全てのレイヤー
+Pages: ページ
 New Page: 新しいページ
 Untitled: タイトルなし
 Container Settings: コンテナ設定
@@ -294,6 +298,7 @@ Buttons List: ボタンリスト
 New Layers Button: 新しいレイヤーボタン
 New Link Button: 新しいリンクボタン
 Add markdown text here: マークダウンテキストをここに追加
+Color: 色
 Data Attribution: データ帰属
 'Data Provided by:': データ提供元：
 aria-label-compass: コンパス
@@ -301,7 +306,7 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
-Spacing settings: スペーシング設定
+Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
 Add a team member: チームメンバーを追加
@@ -357,7 +362,7 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Loading...: 'ロード中...'
+Loading...: ロード中...
 Please select: 選択してください
 'Sort:': '並び替え:'
 Version: バージョン
