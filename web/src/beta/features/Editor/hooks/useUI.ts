@@ -8,7 +8,16 @@ import { LayerSelectProps } from "./useLayers";
 
 export type VisualizerProjectType = "default" | "story";
 
+export type SubProject = {
+  id: string;
+  type: "scene" | "story";
+  projectId: string;
+  storyId?: string;
+};
+
 type Props = {
+  projectId?: string;
+  storyId?: string;
   tab: Tab;
   handleLayerSelect: (props: LayerSelectProps) => void;
   handleCoreLayerSelect: (props: LayerSelectProps) => void;
@@ -21,6 +30,8 @@ type Props = {
 };
 
 export default ({
+  projectId,
+  storyId,
   tab,
   handleLayerSelect,
   handleCoreLayerSelect,
@@ -28,29 +39,63 @@ export default ({
   handleSketchTypeChange,
   handleSketchGeometryEditCancel
 }: Props) => {
-  const [currentProjectType, setCurrentProjectType] =
-    useState<VisualizerProjectType>(tab === "story" ? "story" : "default");
+  // Subproject = scene project or story project
+  const [activeSubProject, setActiveSubProject] = useState<
+    SubProject | undefined
+  >(
+    projectId
+      ? {
+          id: projectId,
+          type: "scene",
+          projectId
+        }
+      : undefined
+  );
 
-  const handleProjectTypeChange = useCallback(
-    (projectType: VisualizerProjectType) => setCurrentProjectType(projectType),
+  const handleActiveSubProjectChange = useCallback(
+    (subProject: SubProject | undefined) => setActiveSubProject(subProject),
     []
   );
 
+  // const [currentProjectType, setCurrentProjectType] =
+  //   useState<VisualizerProjectType>(tab === "story" ? "story" : "default");
+
+  // const handleProjectTypeChange = useCallback(
+  //   (projectType: VisualizerProjectType) => setCurrentProjectType(projectType),
+  //   []
+  // );
+
   useEffect(() => {
+    if (!projectId) return;
     switch (tab) {
       case "story":
-        if (currentProjectType !== "story") {
-          setCurrentProjectType("story");
+        if (storyId) {
+          setActiveSubProject((prev) =>
+            prev?.id === storyId
+              ? prev
+              : {
+                  id: storyId,
+                  type: "story",
+                  projectId,
+                  storyId
+                }
+          );
         }
         break;
       case "map":
       case "widgets":
-        if (currentProjectType === "story") {
-          setCurrentProjectType("default");
-        }
+        setActiveSubProject((prev) =>
+          prev?.id === projectId
+            ? prev
+            : {
+                id: projectId,
+                type: "scene",
+                projectId
+              }
+        );
         break;
     }
-  }, [tab, currentProjectType, setCurrentProjectType]);
+  }, [projectId, storyId, tab]);
 
   // ui selections
   const handleLayerSelectFromUI = useCallback(
@@ -139,8 +184,10 @@ export default ({
   // );
 
   return {
-    currentProjectType,
-    handleProjectTypeChange,
+    activeSubProject,
+    handleActiveSubProjectChange,
+    // currentProjectType,
+    // handleProjectTypeChange,
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromMap,
     handleSceneSettingSelectFromUI,

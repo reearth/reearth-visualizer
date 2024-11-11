@@ -5,11 +5,11 @@ import {
   useStorytellingFetcher,
   useProjectFetcher
 } from "@reearth/services/api";
+import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import { useT } from "@reearth/services/i18n";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project as ProjectType } from "../../../type";
-import { toPublishmentStatus } from "../hooks";
 
 type Props = {
   project: ProjectType;

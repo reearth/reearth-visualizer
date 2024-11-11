@@ -1,15 +1,19 @@
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { createContext, useContext, ReactNode } from "react";
 
-import { ProjectType } from "./PublishToolsPanel/hooks";
+import { SubProject } from "../hooks/useUI";
+
+// import { ProjectType } from "./PublishToolsPanel/hooks";
 
 export interface PublishPageContextType {
+  activeSubProject?: SubProject | undefined;
+  handleActiveSubProjectChange?: (subProject: SubProject | undefined) => void;
   handleVisualizerResize?: (props: AreaSize) => void;
-  storyId?: string;
+  // storyId?: string;
   projectId?: string;
   sceneId?: string;
-  selectedProjectType?: ProjectType;
-  handleProjectTypeChange: (type: ProjectType) => void;
+  // selectedProjectType?: ProjectType;
+  // handleProjectTypeChange: (type: ProjectType) => void;
 }
 
 const PublishPageContext = createContext<PublishPageContextType | undefined>(
