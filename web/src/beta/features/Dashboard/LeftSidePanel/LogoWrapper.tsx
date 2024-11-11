@@ -1,28 +1,19 @@
-import { Icon } from "@reearth/beta/lib/reearth-ui";
+import logoWithText from "@reearth/beta/lib/reearth-ui/components/Icon/Icons/LogoWithText.svg";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 export const LogoWrapper: FC = () => {
   return (
     <Wrapper>
-      <IconWrapper>
-        <Icon icon="logoWithText" size={100} />
-      </IconWrapper>
+      <img src={logoWithText} width={128} height={40} />
     </Wrapper>
   );
 };
 
-const IconWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  gap: theme.spacing.normal,
-  alignItems: "center",
-  justifyContent: "center"
-}));
-
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  alignContent: "center",
   justifyContent: "center",
+  alignItems: "center",
   padding: theme.spacing.normal,
   minHeight: "90px"
 }));
