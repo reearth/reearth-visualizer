@@ -5,6 +5,7 @@ import {
   Selector,
   TimePicker
 } from "@reearth/beta/lib/reearth-ui";
+import { TIMEZONE_OFFSETS } from "@reearth/beta/utils/time";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
@@ -15,21 +16,20 @@ type Props = {
   value?: string;
   onChange?: (value?: string | undefined) => void;
   onClose: () => void;
-  setDateTime?: (value?: string | undefined) => void;
 };
 
-const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
+const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
   const t = useT();
   const {
     date,
     time,
-    selectedTimezone,
-    offsetFromUTC,
+    timezone,
+    applyDisabled,
     handleDateChange,
     handleTimezoneSelect,
     handleApply,
     handleTimeChange
-  } = useHooks({ value, onChange, onClose, setDateTime });
+  } = useHooks({ value, onChange, onClose });
 
   return (
     <PopupPanel
@@ -44,6 +44,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
             size="small"
             title="Apply"
             appearance="primary"
+            disabled={applyDisabled}
             onClick={handleApply}
           />
         </ButtonWrapper>
@@ -64,12 +65,16 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
         </Wrapper>
         <Wrapper>
           <Label>{t("Time Zone")}</Label>
-          <InputWrapper>
+          <InputWrapper
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <Selector
-              value={selectedTimezone.timezone}
-              options={offsetFromUTC.map((timezone) => ({
-                label: timezone.offset,
-                value: timezone?.timezone
+              value={timezone}
+              options={TIMEZONE_OFFSETS.map((offset) => ({
+                label: offset,
+                value: offset
               }))}
               maxHeight={200}
               onChange={handleTimezoneSelect}

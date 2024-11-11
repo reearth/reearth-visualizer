@@ -8300,7 +8300,6 @@ __metadata:
     lint-staged: "npm:15.2.10"
     localforage: "npm:1.10.0"
     lodash-es: "npm:4.17.21"
-    moment-timezone: "npm:0.5.45"
     npm-run-all: "npm:4.1.5"
     prettier: "npm:3.3.3"
     quickjs-emscripten: "npm:0.24.0"
@@ -20528,22 +20527,6 @@ __metadata:
     pkg-types: "npm:^1.2.0"
     ufo: "npm:^1.5.4"
   checksum: 10c0/e5a990b9d895477f3d3dfceec9797e41d6f029ce3b1b2dcf787d4b7500b4caff4b3cdc0ae5cb82c14b469b85209fe3d7368286415c0ca5415b163219fc6b5f21
-  languageName: node
-  linkType: hard
-
-"moment-timezone@npm:0.5.45":
-  version: 0.5.45
-  resolution: "moment-timezone@npm:0.5.45"
-  dependencies:
-    moment: "npm:^2.29.4"
-  checksum: 10c0/7497f23c4b8c875dbf07c03f9a1253f79edaeedc29d5732e36bfd3c5577e25aed1924fbd84cbb713ce1920dbe822be0e21bd487851a7d13907226f289a5e568b
-  languageName: node
-  linkType: hard
-
-"moment@npm:^2.29.4":
-  version: 2.30.1
-  resolution: "moment@npm:2.30.1"
-  checksum: 10c0/865e4279418c6de666fca7786607705fd0189d8a7b7624e2e56be99290ac846f90878a6f602e34b4e0455c549b85385b1baf9966845962b313699e7cb847543a
   languageName: node
   linkType: hard
 

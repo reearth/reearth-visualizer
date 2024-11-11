@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "../CommonField";
 
-import EditModal from "./EditModal";
+import EditPanel from "./EditPanel";
 
 export type TimePeriodFieldProp = {
   currentTime: string;
@@ -29,13 +29,18 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
 
   const t = useT();
   const theme = useTheme();
-  const handleEditorModalClose = useCallback(() => setOpenEditModal(false), []);
+
+  const handleEditorModalClose = useCallback(() => {
+    setOpenEditModal(false);
+    if (!value) {
+      setTimePeriodValues?.(undefined);
+    }
+  }, [value]);
 
   const handleEditorModalOpen = useCallback(() => setOpenEditModal(true), []);
 
   const handleTimePeriodSettingDelete = useCallback(() => {
     if (!value) return;
-    setTimePeriodValues(undefined);
     onChange?.();
   }, [value, onChange]);
 
@@ -103,12 +108,11 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
         </ButtonWrapper>
       </Wrapper>
       {openEditModal && (
-        <EditModal
+        <EditPanel
           timePeriodValues={timePeriodValues}
           onChange={onChange}
           onClose={handleEditorModalClose}
-          visible={openEditModal}
-          setTimePeriodValues={setTimePeriodValues}
+          visible
         />
       )}
     </CommonField>

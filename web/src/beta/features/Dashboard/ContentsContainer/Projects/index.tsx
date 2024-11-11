@@ -7,6 +7,7 @@ import {
   ManagerWrapper
 } from "@reearth/beta/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
+import Tooltip from "@reearth/beta/ui/components/Tooltip";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useRef, Fragment } from "react";
@@ -72,11 +73,12 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
             />
             <ManagerHeaderButton
               key={"import-project"}
-              title={t("Import (Experimental)")}
+              title={t("Import")}
               managerSize="large"
               icon="signIn"
               appearance="secondary"
               onClick={() => fileInputRef.current?.click()}
+              tileComponent={<Tooltip type="experimental" />}
             />
             <HiddenFileInput
               type="file"

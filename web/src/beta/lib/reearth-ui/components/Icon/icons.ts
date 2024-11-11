@@ -61,6 +61,7 @@ import FileFilled from "./Icons/FileFilled.svg?react";
 import FileHtml from "./Icons/FileHtml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
 import FileMDFilled from "./Icons/FileMDFilled.svg?react";
+import Flask from "./Icons/Flask.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
 import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
@@ -221,6 +222,7 @@ export default {
   fileHtml: FileHtml,
   fileMD: FileMD,
   fileMDFilled: FileMDFilled,
+  flask: Flask,
   floppyDisk: FloppyDisk,
   folderFilled: FolderFilled,
   folderSimple: FolderSimple,
