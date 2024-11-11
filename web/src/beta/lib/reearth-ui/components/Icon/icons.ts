@@ -61,6 +61,7 @@ import FileFilled from "./Icons/FileFilled.svg?react";
 import FileHtml from "./Icons/FileHtml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
 import FileMDFilled from "./Icons/FileMDFilled.svg?react";
+import Flask from "./Icons/Flask.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
 import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
@@ -92,6 +93,7 @@ import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import More from "./Icons/More.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
+import NewWorkspace from "./Icons/NewWorkspace.svg?react";
 import Notebook from "./Icons/Notebook.svg?react";
 import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
@@ -221,6 +223,7 @@ export default {
   fileHtml: FileHtml,
   fileMD: FileMD,
   fileMDFilled: FileMDFilled,
+  flask: Flask,
   floppyDisk: FloppyDisk,
   folderFilled: FolderFilled,
   folderSimple: FolderSimple,
@@ -251,6 +254,7 @@ export default {
   minus: Minus,
   more: More,
   navigatorAngle: NavigatorAngle,
+  newWorkspace: NewWorkspace,
   notebook: Notebook,
   padding: Padding,
   page: Page,

@@ -15,6 +15,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 		PropertyType ValueType
 		Fname        i18n.String
 		Description  i18n.String
+		Placeholder  i18n.String
 		Prefix       string
 		Suffix       string
 		DefaultValue *Value
@@ -30,6 +31,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 			PropertyType ValueType
 			Fname        i18n.String
 			Description  i18n.String
+			Placeholder  i18n.String
 			Prefix       string
 			Suffix       string
 			DefaultValue *Value
@@ -71,6 +73,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 				MinRef(tt.MinRef).
 				Min(tt.Min).
 				Max(tt.Max).
+				Placeholder(tt.Placeholder).
 				UI(tt.Ui).
 				UIRef(&tt.Ui).
 				Build()
@@ -84,6 +87,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 				assert.Equal(t, tt.Expected.Description, res.Description())
 				assert.Equal(t, tt.Expected.Prefix, res.Prefix())
 				assert.Equal(t, tt.Expected.Suffix, res.Suffix())
+				assert.Equal(t, tt.Expected.Placeholder, res.Placeholder())
 				assert.Equal(t, tt.Expected.Choices, res.Choices())
 				assert.Equal(t, tt.Expected.Cond, res.IsAvailableIf())
 				assert.Equal(t, tt.Expected.Fname, res.Title())
