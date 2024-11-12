@@ -1150,6 +1150,7 @@ extensions:
         fields:
           description:
             title: クレジットの説明
+            defaultValue: 新しいクレジット
           logo:
             title: ロゴ
           creditUrl:
@@ -1304,7 +1305,7 @@ extensions:
           bgColor:
             title: 背景色
           showLayers:
-            title: 見えるレイヤー
+            title: 表示するレイヤー
   nextPageStoryBlock:
     name: 次ページボタン
     description: ストーリーテリングの次ページに移動するボタンブロック
@@ -1326,7 +1327,7 @@ extensions:
             title: 余白
           gap:
             title: 間隔
-            description: インフォボックスのコンテンツの間隔を変更します。最小値:0 最大値:40
+            description: "インフォボックスのコンテンツの間隔を変更します。最小値:0 最大値:40"
   textInfoboxBetaBlock:
     name: テキスト
     description: インフォボックスのテキストブロック
