@@ -15,9 +15,9 @@ const RootPage: React.FC<Props> = ({ loading }) => {
     <Wrapper bg={window.REEARTH_CONFIG?.brand?.background}>
       {window.REEARTH_CONFIG?.brand?.logoUrl ? (
         <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ width: 200 }} />
-      ) : loading ? (
-        <Loading includeLogo />
-      ) : null}
+      ) : (
+        loading && <Loading includeLogo />
+      )}
     </Wrapper>
   );
 };
