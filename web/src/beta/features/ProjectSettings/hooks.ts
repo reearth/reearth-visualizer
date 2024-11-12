@@ -3,7 +3,6 @@ import {
   useProjectFetcher,
   useSceneFetcher,
   useStorytellingFetcher
-  // useStorytellingFetcher
 } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";

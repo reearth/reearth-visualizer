@@ -39,7 +39,8 @@ export default ({
   handleSketchTypeChange,
   handleSketchGeometryEditCancel
 }: Props) => {
-  // Subproject = scene project or story project
+  // Subproject meas scene project or story project
+  // Although story is actually part of project, it is treated as a separate project for publish
   const [activeSubProject, setActiveSubProject] = useState<
     SubProject | undefined
   >(

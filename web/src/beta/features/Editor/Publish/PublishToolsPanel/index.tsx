@@ -8,20 +8,12 @@ import { FC } from "react";
 import { usePublishPage } from "../context";
 
 import useHooks from "./hooks";
-// import PublishModal from "./PublishModal";
 import PublishOrUpdateModal from "./PublishOrUpdateModal";
 import UnpublishModal from "./UnpublishModal";
 
 const PublishToolsPanel: FC = () => {
-  const {
-    // storyId,
-    projectId,
-    sceneId,
-    // selectedProjectType
-    // handleProjectTypeChange
-    activeSubProject,
-    handleActiveSubProjectChange
-  } = usePublishPage();
+  const { projectId, sceneId, activeSubProject, handleActiveSubProjectChange } =
+    usePublishPage();
 
   const t = useT();
 
@@ -33,37 +25,12 @@ const PublishToolsPanel: FC = () => {
     setUnpublishModalVisible,
     publishModalVisible,
     setPublishModalVisible
-    // publishmentStatuses,
-    // publishing,
-    // publishStatus,
-    // modalOpen,
-    // alias,
-    // validAlias,
-    // validatingAlias,
-    // publishProjectLoading,
-    // handleModalOpen
-    // handleModalClose,
-    // handleProjectPublish,
-    // handleProjectAliasCheck,
-    // handleNavigationToSettings
   } = useHooks({
     projectId,
     sceneId,
     activeSubProject,
     handleActiveSubProjectChange
   });
-
-  // const sceneStatus = publishmentStatuses.find(
-  //   (status) => status?.type === "default"
-  // )?.published
-  //   ? "published"
-  //   : "unpublished";
-
-  // const storyStatus = publishmentStatuses.find(
-  //   (status) => status?.type === "story"
-  // )?.published
-  //   ? "published"
-  //   : "unpublished";
 
   return (
     <Panel extend>
@@ -122,19 +89,6 @@ const PublishToolsPanel: FC = () => {
           onClose={() => setPublishModalVisible(false)}
         />
       )}
-      {/* <PublishModal
-        isVisible={modalOpen}
-        loading={publishProjectLoading}
-        publishing={publishing}
-        publishStatus={publishStatus}
-        projectAlias={alias}
-        validAlias={validAlias}
-        validatingAlias={validatingAlias}
-        onNavigateToSettings={handleNavigationToSettings}
-        onClose={handleModalClose}
-        onPublish={handleProjectPublish}
-        onAliasValidate={handleProjectAliasCheck}
-      /> */}
     </Panel>
   );
 };

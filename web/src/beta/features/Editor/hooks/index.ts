@@ -298,24 +298,18 @@ export default ({ sceneId, projectId, tab }: Props) => {
 
   const publishPageValue: PublishPageContextType = useMemo(
     () => ({
-      handleVisualizerResize,
+      sceneId,
       projectId,
       activeSubProject,
       handleActiveSubProjectChange,
-      // storyId: currentProjectType === "story" ? selectedStory?.id : undefined,
-      sceneId
-      // selectedProjectType: currentProjectType,
-      // handleProjectTypeChange
+      handleVisualizerResize
     }),
     [
+      sceneId,
+      projectId,
       activeSubProject,
       handleActiveSubProjectChange,
-      handleVisualizerResize,
-      sceneId,
-      // currentProjectType,
-      // selectedStory?.id,
-      projectId
-      // handleProjectTypeChange
+      handleVisualizerResize
     ]
   );
 
