@@ -87,7 +87,7 @@ const Members: FC<MembersProps> = ({ workspace }) => {
                 <Fragment key={index}>
                   <TableCell>{member.user?.name}</TableCell>
                   <TableCell>{member.user?.email}</TableCell>
-                  <TableCell>{member.role}</TableCell>
+                  <TableCell>{t(member.role)}</TableCell>
                   <TableCell justifyContent="flex-end">
                     <PopupMenu
                       label={

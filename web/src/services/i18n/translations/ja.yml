@@ -36,7 +36,8 @@ No Asset has been uploaded yet: まだアセットがアップロードされて
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
 Create new workspace: ワークスペースを作る
 create: 作成する
-Your workspace Name *: あなたのワークスペースの名前
+Your workspace Name*: 'ワークスペース名*'
+your workspace name: 'ワークスペース名'
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Use Name or Email: 名前またはメールアドレスを使用
 Find Member: メンバーを検索
@@ -81,7 +82,7 @@ Plugin Playground: プラグインプレイグラウンド
 Documentation: ドキュメント
 Community: コミュニティ
 Help & Support: ヘルプ＆サポート
-Switch Workspace: ワークスペースを切り替え
+Switch Workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log Out: ログアウト
@@ -238,7 +239,7 @@ Project settings: プロジェクト設定
 Plugin: プラグイン
 Visualizer: ビジュアライザー
 Unknown: 不明
-Switch workspace: ワークスペースを切り替え
+Switch workspace: ワークスペース切り替え
 Log out: ログアウト
 Asset management: アセット管理
 Map: マップ
@@ -274,12 +275,12 @@ Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
 Public Info: 公開情報
-Basic Authorization: 基本認証
-Enable Basic Authorization: 基本認証を有効にする
+Basic Authorization: ベーシック認証
+Enable Basic Authorization: ベーシック認証を有効にする
 Username: ユーザー名
 Site Setting: サイト設定
 Site name: サイト名
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更しようとしています。英数字とハイフンのみが許可されています。
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更します。英数字とハイフンのみ入力可能です。
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
@@ -319,15 +320,19 @@ User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 Change Role: 役割を変更
-Reader: 読者
-Writer: 作成者
+READER: 閲覧者
+WRITER: 作成者
 Maintainer: 管理者
+OWNER: 所有者
+Reader: 閲覧者
+Writer: 作成者
+MAINTAINER: 管理者
 Owner: 所有者
 Update Member Role: メンバーの役割を更新
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
-This action is permanent and cannot be reversed.: この操作は永続的で元に戻すことはできません。
-This will permanently delete the workspace and all related projects, assets and datasets for all team members.: これにより、ワークスペースと関連するすべてのプロジェクト、アセット、およびデータセットがチーム全員から完全に削除されます。
+This action is permanent and cannot be reversed.: この操作は元に戻すことができません。
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ワークスペースと、ワークスペースに関連するすべてのプロジェクト、アセット、データセットがチーム全員から完全に削除されます。
 Please type your workspace name to continue.: 続行するにはワークスペース名を入力してください。
 You are going to delete a workspace.: ワークスペースを削除しようとしています。
 Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
@@ -335,7 +340,7 @@ Workspace: ワークスペース
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
 Workspace Settings: ワークスペース設定
-New Workspace: 新しいワークスペース
+New Workspace: ワークスペース作成
 Account Settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
