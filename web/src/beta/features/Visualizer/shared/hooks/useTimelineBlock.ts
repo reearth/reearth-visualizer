@@ -24,7 +24,20 @@ const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
 
-const TRANSITION_SPEED = 100;
+const playSpeedOptions = [
+  {
+    timeString: "Not set",
+    seconds: 0
+  },
+  { timeString: "1sec/sec", seconds: 1 },
+  { timeString: "0.5min/sec", seconds: 30 },
+  { timeString: "1min/sec", seconds: 60 },
+  { timeString: "0.1hr/sec", seconds: 360 },
+  { timeString: "0.5hr/sec", seconds: 1800 },
+  { timeString: "1hr/sec", seconds: 3600 }
+];
+
+const TRANSITION_SPEED = 0;
 
 const timeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
@@ -41,23 +54,6 @@ const timeRange = (startTime?: number, stopTime?: number) => {
 
 export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
-
-  const playSpeedOptions = useMemo(() => {
-    const speedOpt = [
-      {
-        timeString: "Not set",
-        seconds: 0
-      },
-      { timeString: "1sec/sec", seconds: 1 },
-      { timeString: "0.5min/sec", seconds: 30 },
-      { timeString: "1min/sec", seconds: 60 },
-      { timeString: "0.1hr/sec", seconds: 360 },
-      { timeString: "0.5hr/sec", seconds: 1800 },
-      { timeString: "1hr/sec", seconds: 3600 }
-    ];
-
-    return speedOpt;
-  }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
@@ -160,18 +156,20 @@ export default (timelineValues?: TimelineValues) => {
   );
 
   const handleOnSpeedChange = useCallback(
-    async (speed: number, committerId?: string) => {
+    (speed: number, committerId?: string) => {
       try {
-        await onSpeedChange(TRANSITION_SPEED, committerId);
-        await onSpeedChange(speed, committerId);
-        setSpeed(speed);
+        onSpeedChange(TRANSITION_SPEED, committerId);
+        setTimeout(() => {
+          onSpeedChange(speed, committerId);
+          setSpeed(speed);
+        }, 0);
       } catch (error) {
         console.error("Error during speed change:", error);
         setSpeed(playSpeedOptions[0].seconds);
         throw error;
       }
     },
-    [onSpeedChange, playSpeedOptions]
+    [onSpeedChange]
   );
 
   useEffect(() => {

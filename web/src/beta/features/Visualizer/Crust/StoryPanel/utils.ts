@@ -130,7 +130,6 @@ export const formatDateToSting = (d: number) => {
   return date.toISOString();
 };
 
-
 export const formatRangeDateAndTime = (data: string) => {
   const lastIdx = data.lastIndexOf(" ");
   const date = data.slice(0, lastIdx);
