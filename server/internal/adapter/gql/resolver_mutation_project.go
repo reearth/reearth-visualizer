@@ -185,7 +185,11 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	if err != nil {
 		return nil, errors.New("Fail ExportAsset :" + err.Error())
 	}
-	data["assets"] = gqlmodel.ToAssets(assets)
+	assetNames := make(map[string]string)
+	for _, a := range gqlmodel.ToAssets(assets) {
+		assetNames[a.URL] = a.Name
+	}
+	data["assets"] = assetNames
 
 	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
@@ -223,27 +227,15 @@ func unmarshalAssets(data []byte) (map[string]string, error) {
 	if err := json.Unmarshal(data, &jsonData); err != nil {
 		return nil, err
 	}
-	assetsList, ok := jsonData["assets"].([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("assets field is not a list")
+
+	assets, _ := jsonData["assets"].(map[string]interface{})
+	assetNames := make(map[string]string)
+	for k, v := range assets {
+		strValue, _ := v.(string)
+		assetNames[k] = strValue
 	}
-	result := make(map[string]string)
-	for _, asset := range assetsList {
-		assetMap, ok := asset.(map[string]interface{})
-		if !ok {
-			return nil, fmt.Errorf("asset item is not a map")
-		}
-		url, ok := assetMap["url"].(string)
-		if !ok {
-			return nil, fmt.Errorf("url field is not a string")
-		}
-		name, ok := assetMap["name"].(string)
-		if !ok {
-			return nil, fmt.Errorf("name field is not a string")
-		}
-		result[url] = name
-	}
-	return result, nil
+
+	return assetNames, nil
 }
 
 func unmarshalPluginsScene(data []byte) ([]interface{}, map[string]interface{}, []interface{}, error) {
@@ -268,15 +260,15 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	// Assets file import
-	assetMap, _ := unmarshalAssets(tempData)
+	assetNames, _ := unmarshalAssets(tempData)
 	for fileName, file := range assets {
 		parts1 := strings.Split(fileName, "/")
 		beforeName := parts1[0]
 
 		realName := beforeName
-		for k, v := range assetMap {
-			if strings.HasSuffix(k, beforeName) {
-				realName = v
+		for urlPath, name := range assetNames {
+			if strings.HasSuffix(urlPath, beforeName) {
+				realName = name
 				break
 			}
 		}
