@@ -52,7 +52,7 @@ Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
-Project Setting: プロジェクト設定
+Project Setting: ''
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
@@ -84,7 +84,6 @@ Switch Workspace: ワークスペースを切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log Out: ログアウト
-Re:Earth Visualizer: Re:Earthビジュアライザー
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
@@ -108,7 +107,8 @@ If Prioritize Performance is set to True, the Visualizer will prioritize perform
 Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
-Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 'Google Maps API Key ': Google Maps APIキー
 'You can apply a key ': キーを申請できます
 here: ここ
@@ -228,14 +228,14 @@ Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
-Visualizer: ビジュアライザー
 Unknown: 不明
 Switch workspace: ワークスペースを切り替え
 Log out: ログアウト
 Asset management: アセット管理
 Map: マップ
 Widgets: ウィジェット
-Oops, This Page Not Found!: おっと、このページは見つかりません！
+Re:Earth Visualizer: Re:Earthビジュアライザー
+Oops, Page Not Found!: おっと、ページが見つかりません！
 Go to Dashboard: ダッシュボードへ移動
 Error: エラー
 Warning: 注意
