@@ -1,23 +1,17 @@
 import { useSettingsNavigation } from "@reearth/beta/hooks";
 import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
-import { SwitchField } from "@reearth/beta/ui/fields";
+import { CommonField, SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
-import {
-  DomainText,
-  DomainWrapper,
-  Section,
-  UrlText,
-  UrlWrapper
-} from "../common";
+import { Section, UrlText, UrlWrapper } from "../common";
 import { PublishItem } from "../hooks";
 
 type Props = {
   publishItem: PublishItem;
   publicUrl: string;
   searchEngineIndexEnabled: boolean;
-  handleSearchIndexEnableChange?: (checked: boolean) => void;
+  handleSearchIndexEnableChange: (checked: boolean) => void;
 };
 
 const PublishOrUpdateSection: FC<Props> = ({
@@ -53,20 +47,14 @@ const PublishOrUpdateSection: FC<Props> = ({
   return (
     <Section>
       <Typography size="body">{updateDescriptionText}</Typography>
-      <DomainWrapper>
-        <Typography size="footnote">{t("Publish domain")}</Typography>
+      <CommonField title={t("Publish domain")}>
         {publicUrl && (
           <UrlWrapper onClick={() => window.open(publicUrl, "_blank")}>
             <UrlText hasPublicUrl>{publicUrl}</UrlText>
           </UrlWrapper>
         )}
-      </DomainWrapper>
-      <div>
-        <DomainText>
-          <Typography size="footnote">
-            {t("Need to change domain related settings?")}
-          </Typography>
-        </DomainText>
+      </CommonField>
+      <CommonField title={t("Need to change domain related settings?")}>
         <Button
           size="small"
           onClick={() =>
@@ -77,7 +65,7 @@ const PublishOrUpdateSection: FC<Props> = ({
           }
           title={t("Go to settings")}
         />
-      </div>
+      </CommonField>
       <SwitchField
         title={t("Search engine indexing")}
         description={t("Page will be available as result on search engines")}

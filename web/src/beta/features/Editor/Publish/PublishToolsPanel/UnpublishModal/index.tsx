@@ -4,7 +4,7 @@ import {
   useStorytellingFetcher
 } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { Header, Section, Subtitle, WarningIcon } from "../common";
 import { PublishItem } from "../hooks";
@@ -20,12 +20,15 @@ const UnpublishModal: FC<Props> = ({ publishItem, onClose }) => {
   const { usePublishProject: publishProject } = useProjectFetcher();
   const { usePublishStory: publishStory } = useStorytellingFetcher();
 
+  const [isLoading, setIsLoading] = useState(false);
   const handleUnpublish = useCallback(async () => {
+    setIsLoading(true);
     if (publishItem.type === "story") {
       await publishStory("unpublished", publishItem.storyId);
     } else {
       await publishProject("unpublished", publishItem.projectId);
     }
+    setIsLoading(false);
     onClose();
   }, [publishItem, onClose, publishProject, publishStory]);
 
@@ -37,10 +40,11 @@ const UnpublishModal: FC<Props> = ({ publishItem, onClose }) => {
           title={t("Unpublish")}
           appearance="primary"
           onClick={handleUnpublish}
+          disabled={isLoading}
         />
       </>
     ),
-    [onClose, handleUnpublish, t]
+    [onClose, handleUnpublish, t, isLoading]
   );
 
   return (

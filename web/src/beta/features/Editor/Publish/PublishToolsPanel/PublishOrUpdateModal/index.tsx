@@ -33,7 +33,9 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
 
   const { alias, aliasValid } = useAlias({ publishItem });
 
+  const [isPublishing, setIsPublishing] = useState(false);
   const handleProjectPublish = useCallback(async () => {
+    setIsPublishing(true);
     if (publishItem.type === "story") {
       await publishStory(
         searchEngineIndexEnabled ? "published" : "limited",
@@ -47,6 +49,7 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
         alias
       );
     }
+    setIsPublishing(false);
     setPublishDone(true);
   }, [
     alias,
@@ -91,7 +94,7 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
           <Button
             title={primaryButtonText}
             appearance="primary"
-            disabled={!aliasValid}
+            disabled={!aliasValid || isPublishing}
             onClick={handleProjectPublish}
           />
         )}
@@ -103,15 +106,19 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
       aliasValid,
       primaryButtonText,
       secondaryButtonText,
-      publishDone
+      publishDone,
+      isPublishing
     ]
   );
 
   const publicUrl = useMemo(() => {
-    const url = config()?.published?.split("{}");
-    return (
-      (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "")
-    );
+    const publishedConfig = config()?.published;
+    if (!publishedConfig) return "";
+
+    const [prefix, suffix] = publishedConfig.split("{}");
+    const sanitizedAlias = alias?.replace(/^\/+|\/+$/g, "") ?? "";
+
+    return `${prefix}${sanitizedAlias}${suffix}`;
   }, [alias]);
 
   return (

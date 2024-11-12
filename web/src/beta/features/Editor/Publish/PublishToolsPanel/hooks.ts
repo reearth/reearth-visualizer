@@ -98,6 +98,6 @@ export default ({
   };
 };
 
-function isPublished(publishmentStatus?: string) {
+function isPublished(publishmentStatus?: PublishmentStatus): boolean {
   return publishmentStatus === "PUBLIC" || publishmentStatus === "LIMITED";
 }

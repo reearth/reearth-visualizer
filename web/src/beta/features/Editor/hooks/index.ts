@@ -115,8 +115,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
   const {
     activeSubProject,
     handleActiveSubProjectChange,
-    // currentProjectType,
-    // handleProjectTypeChange,
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromMap,
     handleSceneSettingSelectFromUI,

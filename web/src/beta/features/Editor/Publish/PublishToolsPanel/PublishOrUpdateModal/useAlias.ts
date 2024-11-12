@@ -14,15 +14,18 @@ export default ({ publishItem }: { publishItem: PublishItem }) => {
 
   const [aliasValid, setAliasValid] = useState(false);
   const [alias, setAlias] = useState<string | undefined>(publishItem.alias);
+  const currentValidatingAlias = useRef<string>();
 
   const createAliasCount = useRef(0);
   const createAlias = useCallback(() => {
     createAliasCount.current += 1;
     // Max try 3 times
     if (createAliasCount.current > 3) {
+      console.error("Failed to generate unique alias after 3 attempts");
       return;
     }
     const newAlias = generateAlias();
+    currentValidatingAlias.current = newAlias;
     setAlias(newAlias);
     checkProjectAlias({ variables: { alias: newAlias } });
   }, [checkProjectAlias]);
@@ -44,12 +47,15 @@ export default ({ publishItem }: { publishItem: PublishItem }) => {
 
   useEffect(() => {
     setAliasValid(
+      // Alias is valid if it is provided by data
       !!publishItem.alias ||
+        // Validating alias is not in progress
         (!validatingAlias &&
+          // Validating alias is the same as the current alias, and avaliable
           !!checkProjectAliasData &&
-          (publishItem.alias ===
-            checkProjectAliasData.checkProjectAlias.alias ||
-            checkProjectAliasData.checkProjectAlias.available))
+          currentValidatingAlias.current ===
+            checkProjectAliasData.checkProjectAlias.alias &&
+          checkProjectAliasData.checkProjectAlias.available)
     );
   }, [validatingAlias, checkProjectAliasData, publishItem, publishItem.alias]);
 

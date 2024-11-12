@@ -27,16 +27,11 @@ export const WarningIcon = styled(Icon)({
   height: "24px"
 });
 
-export const DomainWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.smallest
-}));
-
 export const UrlWrapper = styled("div")<{ justify?: string }>(
   ({ justify, theme }) => ({
     display: "flex",
     justifyContent: justify ?? "center",
+    gap: theme.spacing.small,
     alignItems: "center",
     border: `1px solid ${theme.outline.weak}`,
     borderRadius: "4px",
@@ -50,14 +45,20 @@ export const UrlText = styled("div")<{ hasPublicUrl?: boolean }>(
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    cursor: "pointer",
-    fontSize: "12px",
+
+    fontSize: theme.fonts.sizes.body,
     whiteSpace: "break-spaces",
     color: hasPublicUrl ? theme.primary.main : "inherit",
-    fontWeight: hasPublicUrl ? "bold" : "normal"
+    fontWeight: hasPublicUrl ? "bold" : "normal",
+    cursor: hasPublicUrl ? "pointer" : "default"
   })
 );
 
-export const DomainText = styled("div")(({ theme }) => ({
-  marginBottom: `${theme.spacing.small}px`
+export const UrlAction = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 35,
+  minHeight: 18,
+  flexShrink: 0
 }));

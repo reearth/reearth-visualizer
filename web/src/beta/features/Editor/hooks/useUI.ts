@@ -57,14 +57,6 @@ export default ({
     []
   );
 
-  // const [currentProjectType, setCurrentProjectType] =
-  //   useState<VisualizerProjectType>(tab === "story" ? "story" : "default");
-
-  // const handleProjectTypeChange = useCallback(
-  //   (projectType: VisualizerProjectType) => setCurrentProjectType(projectType),
-  //   []
-  // );
-
   useEffect(() => {
     if (!projectId) return;
     switch (tab) {
@@ -186,8 +178,6 @@ export default ({
   return {
     activeSubProject,
     handleActiveSubProjectChange,
-    // currentProjectType,
-    // handleProjectTypeChange,
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromMap,
     handleSceneSettingSelectFromUI,

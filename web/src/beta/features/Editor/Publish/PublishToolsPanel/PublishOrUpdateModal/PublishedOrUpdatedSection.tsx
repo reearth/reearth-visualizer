@@ -1,14 +1,14 @@
-import { Typography } from "@reearth/beta/lib/reearth-ui";
+import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import { Section, Subtitle, UrlText, UrlWrapper } from "../common";
+import { Section, Subtitle, UrlAction, UrlText, UrlWrapper } from "../common";
 
 type Props = {
   isStory?: boolean;
-  publicUrl?: string;
+  publicUrl: string;
 };
 
 const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
@@ -17,17 +17,17 @@ const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
 
   const embedCode = useMemo(
     () =>
-      `<iframe width="560" height="315" src="${publicUrl}" frameBorder="0"></iframe>;`,
+      `<iframe width="560" height="315" src="${publicUrl}" frameBorder="0"></iframe>`,
     [publicUrl]
   );
 
-  const handleCopyToClipBoard = useCallback(
-    (value: string | undefined) => () => {
-      if (!value) return;
-      navigator.clipboard.writeText(value);
-    },
-    []
-  );
+  const [urlCopied, setUrlCopied] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const handleCopyToClipBoard = useCallback((value: string | undefined) => {
+    if (!value) return;
+    navigator.clipboard.writeText(value);
+  }, []);
 
   return (
     <Section>
@@ -51,13 +51,21 @@ const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
           >
             {publicUrl}
           </UrlText>
-          <Typography
-            size="body"
-            color={theme.primary.main}
-            onClick={handleCopyToClipBoard(publicUrl)}
+          <UrlAction
+            onClick={() => {
+              handleCopyToClipBoard(publicUrl);
+              setUrlCopied(true);
+            }}
+            onMouseLeave={() => setUrlCopied(false)}
           >
-            {t("Copy")}
-          </Typography>
+            {urlCopied ? (
+              <Icon icon="check" color={theme.primary.main} />
+            ) : (
+              <Typography size="body" color={theme.primary.main}>
+                {t("Copy")}
+              </Typography>
+            )}
+          </UrlAction>
         </UrlWrapper>
       </CommonField>
       <CommonField
@@ -74,13 +82,21 @@ const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
       >
         <UrlWrapper justify="space-between">
           <UrlText>{embedCode}</UrlText>
-          <Typography
-            size="body"
-            color={theme.primary.main}
-            onClick={handleCopyToClipBoard(embedCode)}
+          <UrlAction
+            onClick={() => {
+              handleCopyToClipBoard(embedCode);
+              setCodeCopied(true);
+            }}
+            onMouseLeave={() => setCodeCopied(false)}
           >
-            {t("Copy")}
-          </Typography>
+            {codeCopied ? (
+              <Icon icon="check" color={theme.primary.main} />
+            ) : (
+              <Typography size="body" color={theme.primary.main}>
+                {t("Copy")}
+              </Typography>
+            )}
+          </UrlAction>
         </UrlWrapper>
       </CommonField>
     </Section>
