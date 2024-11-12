@@ -1,33 +1,42 @@
-import { styled, useTheme } from "@reearth/services/theme";
+import logoWithText from "@reearth/beta/lib/reearth-ui/components/Icon/Icons/LogoWithText.svg";
+import { styled } from "@reearth/services/theme";
+import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { FC } from "react";
-import { RingLoader } from "react-spinners";
+import { BarLoader } from "react-spinners";
 
 export type LoadingProps = {
-  animationSize?: number;
-  animationColor?: string;
+  color?: string;
   fixed?: boolean;
+  includeLogo?: boolean;
   relative?: boolean;
   overlay?: boolean;
+  width?: number;
 };
 
 export const Loading: FC<LoadingProps> = ({
-  animationSize,
-  animationColor,
+  color,
   fixed,
+  includeLogo = false,
   relative,
-  overlay
+  overlay,
+  width
 }) => {
-  const theme = useTheme();
-
   return (
     <LoadingWrapper fixed={fixed} overlay={overlay} relative={relative}>
-      <RingLoader
-        size={animationSize ?? 33}
-        color={animationColor ?? theme.select.main}
-      />
+      {includeLogo && (
+        <LogoWrapper>
+          <img src={logoWithText} width={343} height={106} />
+        </LogoWrapper>
+      )}
+      <BarLoader width={width ?? 344} color={color ?? brandRed.dynamicRed} />
     </LoadingWrapper>
   );
 };
+
+const LogoWrapper = styled.div(() => ({
+  display: "flex",
+  alignItems: "center"
+}));
 
 const LoadingWrapper = styled("div")<{
   fixed?: boolean;
@@ -39,6 +48,7 @@ const LoadingWrapper = styled("div")<{
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  gap: 49,
   flexDirection: "column",
   background: overlay ? theme.bg[1] : "",
   position: fixed ? "fixed" : relative ? "relative" : "absolute",
