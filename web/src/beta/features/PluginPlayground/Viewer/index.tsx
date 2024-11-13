@@ -4,10 +4,10 @@ import { ComponentProps, FC } from "react";
 import useHooks from "./hooks";
 
 type Props = {
-  widets: ComponentProps<typeof Visualizer>["widgets"];
+  widgets: ComponentProps<typeof Visualizer>["widgets"];
 };
 
-const Viewer: FC<Props> = ({ widets }) => {
+const Viewer: FC<Props> = ({ widgets }) => {
   const {
     visualizerRef,
     viewerProperty,
@@ -26,7 +26,7 @@ const Viewer: FC<Props> = ({ widets }) => {
       engineMeta={engineMeta}
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}
-      widgets={widets}
+      widgets={widgets}
     />
   );
 };
