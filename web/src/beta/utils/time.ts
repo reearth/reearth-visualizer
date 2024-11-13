@@ -42,7 +42,11 @@ export const formatRelativeTime = (date: Date, lang = "en"): string => {
         lang === "ja"
           ? jaLabel
           : label + (interval > 1 && lang !== "ja" ? "s" : "");
-      return `${interval} ${unitLabel}${lang === "ja" ? " 前" : " ago"}`;
+      if (lang === "ja") {
+        return `${interval}${unitLabel}前`;
+      } else {
+        return `${interval} ${unitLabel} ago`;
+      }
     }
   }
 
