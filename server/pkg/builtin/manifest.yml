@@ -2682,6 +2682,7 @@ extensions:
             - id: text
               type: string
               title: Content
+              placeholder: ${your property key}
               ui: multiline
   - id: imageInfoboxBetaBlock
     name: Image
@@ -2704,6 +2705,7 @@ extensions:
             - id: src
               type: string
               title: Image
+              placeholder: ${your property key}
   - id: propertyInfoboxBetaBlock
     type: infoboxBlock
     name: Property List Block
@@ -2762,6 +2764,7 @@ extensions:
             - id: src
               type: string
               title: Video
+              placeholder: ${your property key}
   - id: markdownInfoboxBetaBlock
     name: MD Text
     type: infoboxBlock
@@ -2783,3 +2786,4 @@ extensions:
             - id: src
               type: string
               title: Content
+              placeholder: ${your property key}

@@ -1335,6 +1335,7 @@ extensions:
         fields:
           text:
             title: コンテンツ
+            placeholder: ${あなたのプロパティ値}
       panel:
         title: パネル設定
         fields:
@@ -1349,6 +1350,7 @@ extensions:
         fields:
           text:
             title: コンテンツ
+            placeholder: ${あなたのプロパティ値}
       panel:
         title: パネル設定
         fields:
@@ -1383,6 +1385,7 @@ extensions:
         fields:
           src:
             title: ビデオ
+            placeholder: ${あなたのプロパティ値}
       panel:
         title: パネル設定
         fields:
@@ -1397,6 +1400,7 @@ extensions:
         fields:
           src:
             title: コンテンツ
+            placeholder: ${あなたのプロパティ値}
       panel:
         title: パネル設定
         fields:
