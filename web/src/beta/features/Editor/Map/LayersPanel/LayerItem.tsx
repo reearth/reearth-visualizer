@@ -47,7 +47,15 @@ const LayerItem: FC<LayerItemProps> = ({
 
   const handleZoomToLayer = useCallback(() => {
     handleFlyTo?.(layer.id, { duration: 0 });
-  }, [layer.id, handleFlyTo]);
+    // issue: https://github.com/CesiumGS/cesium/issues/4327
+    // delay 800ms to trigger a second flyTo,
+    // time could be related with internet speed, not a stable solution
+    if (["geojson", "kml"].includes(layer.config?.data?.type)) {
+      setTimeout(() => {
+        handleFlyTo?.(layer.id, { duration: 0 });
+      }, 800);
+    }
+  }, [layer, handleFlyTo]);
 
   const handleToggleLayerVisibility = useCallback(() => {
     handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });
