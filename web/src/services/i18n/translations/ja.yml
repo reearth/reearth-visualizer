@@ -54,7 +54,7 @@ Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
-Project Setting: プロジェクト設定
+Project Setting: ''
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
@@ -86,7 +86,6 @@ Switch Workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log Out: ログアウト
-Re:Earth Visualizer: Re:Earthビジュアライザー
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
@@ -198,10 +197,6 @@ Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
-Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
 Your story has been published!: ストーリーが公開されました。
 Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
@@ -210,6 +205,11 @@ Public URL: 公開URL
 Copy: コピー
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
+'* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
+Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
+Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
+Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
 Publish domain: 公開ドメイン
 Need to change domain related settings?: ドメイン設定を変更しますか？
 Go to settings: 設定へ
@@ -237,14 +237,14 @@ Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
-Visualizer: ビジュアライザー
 Unknown: 不明
 Switch workspace: ワークスペース切り替え
 Log out: ログアウト
 Asset management: アセット管理
 Map: マップ
 Widgets: ウィジェット
-Oops, This Page Not Found!: おっと、このページは見つかりません！
+Re:Earth Visualizer: Re:Earthビジュアライザー
+Oops, Page Not Found!: おっと、ページが見つかりません！
 Go to Dashboard: ダッシュボードへ移動
 Error: エラー
 Warning: 注意
