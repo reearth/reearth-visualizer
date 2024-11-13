@@ -10,7 +10,7 @@ describe("formatRelativeTime", () => {
   });
 
   test('returns "たっだ今" for current time in Japanese', () => {
-    expect(formatRelativeTime(now, "ja")).toBe("たっだ今");
+    expect(formatRelativeTime(now, "ja")).toBe("たった今");
   });
 
   test("returns 10 seconds ago in English", () => {
