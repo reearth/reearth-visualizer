@@ -160,7 +160,6 @@ export default (timelineValues?: TimelineValues) => {
           setSpeed(speed);
         }, 0);
       } catch (error) {
-        console.error("Error during speed change:", error);
         setSpeed(playSpeedOptions[0].seconds);
         throw error;
       }
