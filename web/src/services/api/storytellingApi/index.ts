@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { MutationReturn } from "@reearth/services/api/types";
+import { CustomOptions, MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,
   CreateStoryMutation,
@@ -29,16 +29,19 @@ export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
 
-  const useStoriesQuery = useCallback(({ sceneId, lang }: StoryQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
-      variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId
-    });
+  const useStoriesQuery = useCallback(
+    ({ sceneId, lang }: StoryQueryProps, options?: CustomOptions) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId || options?.skip
+      });
 
-    const stories = useMemo(() => getStories(data), [data]);
+      const stories = useMemo(() => getStories(data), [data]);
 
-    return { stories, ...rest };
-  }, []);
+      return { stories, ...rest };
+    },
+    []
+  );
 
   const [createStoryMutation] = useMutation<
     CreateStoryMutation,

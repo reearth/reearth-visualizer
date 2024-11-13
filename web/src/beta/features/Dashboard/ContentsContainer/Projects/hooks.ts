@@ -83,7 +83,10 @@ export default (workspaceId?: string) => {
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
               starred: project.starred,
-              isDeleted: project.isDeleted
+              isDeleted: project.isDeleted,
+              isPublished:
+                project.publishmentStatus === "PUBLIC" ||
+                project.publishmentStatus === "LIMITED"
             }
           : undefined
       )
