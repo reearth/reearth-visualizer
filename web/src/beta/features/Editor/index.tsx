@@ -33,7 +33,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedLayer,
     visualizerRef,
     storyPanelRef,
-    currentProjectType,
+    activeSubProject,
     selectedStory,
     installableStoryBlocks,
     showWASEditor,
@@ -83,7 +83,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               storyPanelRef={storyPanelRef}
               isVisualizerResizing={isVisualizerResizing}
               sceneId={sceneId}
-              showStoryPanel={currentProjectType === "story"}
+              showStoryPanel={activeSubProject?.type === "story"}
               selectedStory={selectedStory}
               installableStoryBlocks={installableStoryBlocks}
               widgetAlignEditorActivated={showWASEditor}

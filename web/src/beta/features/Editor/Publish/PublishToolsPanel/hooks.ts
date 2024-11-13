@@ -1,178 +1,103 @@
-import { useSettingsNavigation } from "@reearth/beta/hooks";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import {
   useProjectFetcher,
   useStorytellingFetcher
 } from "@reearth/services/api";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { PublishmentStatus } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
+import { useCallback, useMemo, useState } from "react";
 
-import { publishingType } from "./PublishModal";
-import { type PublishStatus } from "./PublishModal/hooks";
+import { SubProject } from "../../hooks/useUI";
 
-export type ProjectType = "default" | "story";
-
-type SelectedProject = {
+export type PublishItem = {
   id: string;
-  alias?: string;
-  publishmentStatus?: string;
+  projectId: string;
+  storyId?: string;
+  type: "scene" | "story";
+  buttonTitle: string;
+  alias: string | undefined;
+  publishmentStatus?: PublishmentStatus;
+  isPublished: boolean;
 };
 
 export default ({
-  storyId,
   projectId,
   sceneId,
-  selectedProjectType
+  activeSubProject,
+  handleActiveSubProjectChange
 }: {
-  storyId?: string;
   projectId?: string;
   sceneId?: string;
-  selectedProjectType?: ProjectType;
+  activeSubProject?: SubProject | undefined;
+  handleActiveSubProjectChange?: (subProject: SubProject | undefined) => void;
 }) => {
-  const handleNavigationToSettings = useSettingsNavigation({ projectId });
+  const { useProjectQuery } = useProjectFetcher();
+  const { useStoriesQuery } = useStorytellingFetcher();
 
-  // Regular Project
-  const {
-    publishProjectLoading,
-    useProjectQuery,
-    useProjectAliasCheckLazyQuery,
-    usePublishProject
-  } = useProjectFetcher();
-
-  const { project: mapProject } = useProjectQuery(projectId);
-
-  // Storytelling Project
-  const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
-
+  const { project } = useProjectQuery(projectId);
   const { stories } = useStoriesQuery({ sceneId });
 
-  const project: SelectedProject | undefined = useMemo(() => {
-    if (selectedProjectType === "story") {
-      const story = stories?.find((s) => s.id === storyId);
-      return story
-        ? {
-            id: story.id,
-            alias: story.alias,
-            publishmentStatus: story.publishmentStatus
-          }
-        : undefined;
-    } else {
-      return mapProject
-        ? {
-            id: mapProject.id,
-            alias: mapProject.alias,
-            publishmentStatus: mapProject.publishmentStatus
-          }
-        : undefined;
-    }
-  }, [stories, storyId, selectedProjectType, mapProject]);
+  const t = useT();
 
-  const [publishing, setPublishing] = useState<publishingType>("unpublishing");
-  const [modalOpen, setModal] = useState(false);
-
-  const generateAlias = useCallback(() => generateRandomString(10), []);
-
-  const [validAlias, setValidAlias] = useState(false);
-  const [alias, setAlias] = useState<string>(project?.alias ?? generateAlias());
-
-  const [
-    checkProjectAlias,
-    { loading: validatingAlias, data: checkProjectAliasData }
-  ] = useProjectAliasCheckLazyQuery();
-
-  const publishmentStatuses = useMemo(() => {
+  const publishItems: PublishItem[] = useMemo(() => {
+    if (!project) return [];
     return [
       {
-        id: "map",
-        title: "Scene",
-        type: "default",
-        published: isPublished(mapProject?.publishmentStatus)
+        id: project.id,
+        projectId: project.id,
+        storyId: undefined,
+        type: "scene" as const,
+        buttonTitle: t("Scene"),
+        alias: project.alias,
+        publishmentStatus: project.publishmentStatus,
+        isPublished: isPublished(project.publishmentStatus)
       },
-      ...(stories?.map((s) => ({
+      ...(stories ?? []).map((s) => ({
         id: s.id,
-        title: "Story",
-        type: "story",
-        published: isPublished(s.publishmentStatus)
-      })) || [])
+        projectId: project.id,
+        storyId: s.id,
+        type: "story" as const,
+        buttonTitle: s.title !== "Default" && s.title ? s.title : t("Story"),
+        alias: s.alias && s.alias !== project.alias ? s.alias : undefined, // correct existing alias, needs republish
+        publishmentStatus: s.publishmentStatus,
+        isPublished: isPublished(s.publishmentStatus)
+      }))
     ];
-  }, [mapProject, stories]);
+  }, [stories, project, t]);
 
-  const handleProjectAliasCheck = useCallback(
-    (a: string) => {
-      if (project?.alias === a) {
-        setValidAlias(true);
-      } else {
-        checkProjectAlias({ variables: { alias: a } });
-      }
+  // Note: the selection is managed by Editor
+  const publishItem: PublishItem | undefined = useMemo(
+    () => publishItems.find((item) => item.id === activeSubProject?.id),
+    [publishItems, activeSubProject]
+  );
+
+  const handlePublishItemSelect = useCallback(
+    (id: string) => {
+      const item = publishItems.find((item) => item.id === id);
+      if (!item) return;
+      handleActiveSubProjectChange?.({
+        id: item.id,
+        type: item.type,
+        projectId: item.projectId,
+        storyId: item.storyId
+      });
     },
-    [project?.alias, checkProjectAlias]
+    [publishItems, handleActiveSubProjectChange]
   );
 
-  useEffect(() => {
-    if (modalOpen) {
-      if (!alias) {
-        const generatedAlias = generateAlias();
-        setAlias(generatedAlias);
-      }
-
-      handleProjectAliasCheck(alias);
-    }
-  }, [modalOpen, alias, generateAlias, handleProjectAliasCheck]);
-
-  useEffect(() => {
-    setValidAlias(
-      !validatingAlias &&
-        !!project &&
-        !!checkProjectAliasData &&
-        (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
-          checkProjectAliasData.checkProjectAlias.available)
-    );
-  }, [validatingAlias, checkProjectAliasData, project]);
-
-  const publishStatus: PublishStatus = useMemo(
-    () =>
-      project?.publishmentStatus === "PUBLIC"
-        ? "published"
-        : project?.publishmentStatus === "LIMITED"
-          ? "limited"
-          : "unpublished",
-    [project?.publishmentStatus]
-  );
-
-  const handleProjectPublish = useCallback(
-    async (alias: string | undefined, publishStatus: PublishStatus) => {
-      if (selectedProjectType === "story") {
-        await usePublishStory(publishStatus, project?.id, alias);
-      } else {
-        await usePublishProject(publishStatus, project?.id, alias);
-      }
-    },
-    [project?.id, selectedProjectType, usePublishStory, usePublishProject]
-  );
-
-  const handleModalOpen = useCallback((p: publishingType) => {
-    setPublishing(p);
-    setModal(true);
-  }, []);
-
-  const handleModalClose = useCallback(() => setModal(false), []);
+  const [unpublishModalVisible, setUnpublishModalVisible] = useState(false);
+  const [publishModalVisible, setPublishModalVisible] = useState(false);
 
   return {
-    publishmentStatuses,
-    publishing,
-    publishStatus,
-    publishProjectLoading,
-    modalOpen,
-    alias,
-    validAlias,
-    validatingAlias,
-    handleModalOpen,
-    handleModalClose,
-    handleProjectPublish,
-    handleProjectAliasCheck,
-    handleNavigationToSettings
+    publishItems,
+    publishItem,
+    handlePublishItemSelect,
+    unpublishModalVisible,
+    setUnpublishModalVisible,
+    publishModalVisible,
+    setPublishModalVisible
   };
 };
 
-function isPublished(publishmentStatus?: string) {
+function isPublished(publishmentStatus?: PublishmentStatus): boolean {
   return publishmentStatus === "PUBLIC" || publishmentStatus === "LIMITED";
 }
