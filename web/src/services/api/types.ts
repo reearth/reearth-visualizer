@@ -10,3 +10,7 @@ export type MutationReturn<T> = {
   status: "success" | "error";
   errors?: readonly GraphQLFormattedError[];
 };
+
+export type CustomOptions = {
+  skip?: boolean;
+};

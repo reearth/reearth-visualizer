@@ -26,13 +26,6 @@ export const GET_PROJECTS = gql(`
           }
         }
       }
-      nodes {
-        id
-        ...ProjectFragment
-        scene {
-          id
-        }
-      }
       pageInfo {
         endCursor
         hasNextPage

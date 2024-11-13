@@ -109,8 +109,8 @@ export default ({
       ...currentPropertyList,
       {
         id: generateUniqueId(),
-        key: `Field ${(currentPropertyList ?? []).length + 1 || 1}`,
-        value: `Value ${(currentPropertyList ?? []).length + 1 || 1}`
+        key: "",
+        value: ""
       }
     ];
     handlePropertyValueUpdate("propertyList", propertyListField.type)(newList);
