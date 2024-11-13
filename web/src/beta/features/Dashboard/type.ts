@@ -17,6 +17,7 @@ export type Project = {
   projectType?: ProjectType;
   starred?: boolean;
   isDeleted?: boolean;
+  isPublished?: boolean;
 };
 
 export type DeletedProject = {
