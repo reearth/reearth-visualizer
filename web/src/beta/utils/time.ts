@@ -19,28 +19,38 @@ export const truncMinutes = (d: Date) => {
   return d;
 };
 
-export const formatRelativeTime = (date: Date): string => {
+export const formatRelativeTime = (date: Date, lang = "en"): string => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-  let interval = 0;
 
-  const pluralize = (value: number, unit: string): string => {
-    return value === 1 ? `${value} ${unit}` : `${value} ${unit}s`;
+  const units: Record<
+    string,
+    { value: number; label: string; jaLabel: string }
+  > = {
+    year: { value: 31536000, label: "year", jaLabel: "年" },
+    month: { value: 2592000, label: "month", jaLabel: "ヶ月" },
+    day: { value: 86400, label: "day", jaLabel: "日" },
+    hour: { value: 3600, label: "hour", jaLabel: "時間" },
+    minute: { value: 60, label: "minute", jaLabel: "分" },
+    second: { value: 1, label: "second", jaLabel: "秒" }
   };
 
-  switch (true) {
-    case (interval = seconds / 31536000) > 1:
-      return pluralize(Math.floor(interval), "year") + " ago";
-    case (interval = seconds / 2592000) > 1:
-      return pluralize(Math.floor(interval), "month") + " ago";
-    case (interval = seconds / 86400) > 1:
-      return pluralize(Math.floor(interval), "day") + " ago";
-    case (interval = seconds / 3600) > 1:
-      return pluralize(Math.floor(interval), "hour") + " ago";
-    case (interval = seconds / 60) > 1:
-      return pluralize(Math.floor(interval), "minute") + " ago";
-    default:
-      return pluralize(Math.floor(seconds), "second") + " ago";
+  for (const unitKey in units) {
+    const { value, label, jaLabel } = units[unitKey];
+    const interval = Math.floor(seconds / value);
+    if (interval >= 1) {
+      const unitLabel =
+        lang === "ja"
+          ? jaLabel
+          : label + (interval > 1 && lang !== "ja" ? "s" : "");
+      if (lang === "ja") {
+        return `${interval}${unitLabel}前`;
+      } else {
+        return `${interval} ${unitLabel} ago`;
+      }
+    }
   }
+
+  return lang === "ja" ? "たった今" : "just now";
 };
 
 // Time zones around the world generally fall within offsets from UTC ranging from -12:00 to +14:00

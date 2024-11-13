@@ -1,5 +1,6 @@
 import { EntryItem } from "@reearth/beta/ui/components";
 import { InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
@@ -16,16 +17,17 @@ const ListItem: FC<ListItemProps> = ({
   onItemDelete,
   onItemSelect
 }) => {
+  const t = useT();
   const optionsMenu = useMemo(
     () => [
       {
         id: "delete",
-        title: "Delete",
+        title: t("Delete"),
         icon: "trash" as const,
         onClick: () => onItemDelete?.(item.id)
       }
     ],
-    [item.id, onItemDelete]
+    [item.id, onItemDelete, t]
   );
 
   return (

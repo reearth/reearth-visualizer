@@ -1,6 +1,7 @@
 import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
 import {
@@ -38,6 +39,8 @@ const PropertyField: FC<Props> = ({
   schema,
   onFlyTo
 }) => {
+  const t = useT();
+
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
 
   const value = useMemo(
@@ -178,7 +181,7 @@ const PropertyField: FC<Props> = ({
           unit={schema.suffix}
           min={schema.min}
           max={schema.max}
-          content={["min", "max"]}
+          content={[t("min"), t("max")]}
           description={schema.description}
           onBlur={handleChange}
         />

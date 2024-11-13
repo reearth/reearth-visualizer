@@ -5,6 +5,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import {
   Dispatch,
@@ -34,6 +35,7 @@ const LayerItem: FC<LayerItemProps> = ({
   editingLayerNameId,
   setEditingLayerNameId
 }) => {
+  const t = useT();
   const {
     selectedLayerId,
     handleLayerSelect,
@@ -65,13 +67,13 @@ const LayerItem: FC<LayerItemProps> = ({
     const menu = [
       {
         id: "rename",
-        title: "Rename",
+        title: t("Rename"),
         icon: "pencilSimple" as const,
         onClick: () => setEditingLayerNameId(layer.id)
       },
       {
         id: "delete",
-        title: "Delete",
+        title: t("Delete"),
         icon: "trash" as const,
         onClick: () => handleLayerDelete(layer.id)
       }
@@ -81,7 +83,7 @@ const LayerItem: FC<LayerItemProps> = ({
       ? [
           {
             id: "customProperty",
-            title: "Property Schema",
+            title: t("Property Schema"),
             icon: "listDashes" as const,
             onClick: () => {
               openCustomPropertySchema();
@@ -98,7 +100,8 @@ const LayerItem: FC<LayerItemProps> = ({
     setEditingLayerNameId,
     handleLayerDelete,
     openCustomPropertySchema,
-    handleCustomPropertySchemaClick
+    handleCustomPropertySchemaClick,
+    t
   ]);
 
   const hoverActions: EntryItemAction[] | undefined = useMemo(
