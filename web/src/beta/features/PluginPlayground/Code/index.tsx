@@ -44,7 +44,7 @@ const Code: FC<Props> = ({
           <Button
             icon="pencilSimple"
             title="HTML Editor"
-            disabled={editableHtmlSourceCode === undefined}
+            disabled={!editableHtmlSourceCode}
             onClick={() => setIsOpenedHtmlEditor(true)}
           />
           <p>Widget</p>
