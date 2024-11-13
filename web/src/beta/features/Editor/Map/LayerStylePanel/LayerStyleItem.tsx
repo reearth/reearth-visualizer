@@ -1,5 +1,6 @@
 import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useState } from "react";
 
@@ -23,6 +24,7 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
   onDelete,
   onLayerStyleNameUpdate
 }) => {
+  const t = useT();
   const [localName, setLocalName] = useState(name);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -64,7 +66,7 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
       optionsMenu={[
         {
           id: "delete",
-          title: "Delete",
+          title: t("Delete"),
           icon: "trash" as const,
           onClick: onDelete
         }

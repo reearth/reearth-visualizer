@@ -35,7 +35,7 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer widets={widgets} />
+        children: <Viewer widgets={widgets} />
       }
     ],
     [widgets]

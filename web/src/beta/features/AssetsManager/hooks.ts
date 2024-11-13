@@ -236,7 +236,7 @@ export default ({
   // path
   // TODO: support path with folder
   const [paths, _setPaths] = useState<BreadcrumbItem[]>([
-    { id: "assets", title: "Assets" }
+    { id: "assets", title: t("Assets") }
   ]);
   const handlePathClick = useCallback((_id?: string) => {}, []);
 

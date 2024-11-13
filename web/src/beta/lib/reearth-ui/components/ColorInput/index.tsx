@@ -5,6 +5,7 @@ import {
   TextInput,
   PopupPanel
 } from "@reearth/beta/lib/reearth-ui/components";
+import { useT } from "@reearth/services/i18n";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
 import { RgbaColorPicker } from "react-colorful";
@@ -46,6 +47,7 @@ export const ColorInput: FC<ColorInputProps> = ({
     alphaDisabled,
     onChange
   });
+  const t = useT();
 
   return (
     <InputWrapper>
@@ -73,13 +75,13 @@ export const ColorInput: FC<ColorInputProps> = ({
               <Button
                 extendWidth
                 size="small"
-                title="Cancel"
+                title={t("Cancel")}
                 onClick={handlePickerCancel}
               />
               <Button
                 extendWidth
                 size="small"
-                title="Apply"
+                title={t("Apply")}
                 appearance="primary"
                 onClick={handlePickerApply}
               />

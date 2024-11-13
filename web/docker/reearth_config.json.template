@@ -6,7 +6,6 @@
     "cesiumIonAccessToken": ${REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN},
     "cloudApi": ${REEARTH_WEB_CLOUD_API},
     "currentTos": ${REEARTH_WEB_CURRENT_TOS},
-    "coverImageUrl": ${REEARTH_WEB_COVER_IMAGE_URL},
     "developerMode": ${REEARTH_WEB_DEVELOPER_MODE},
     "documentationUrl": ${REEARTH_WEB_DOCUMENTATION_URL},
     "earlyAccessAdmins": ${REEARTH_WEB_EARLY_ACCESS_ADMINS},

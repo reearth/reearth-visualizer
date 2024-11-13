@@ -130,40 +130,6 @@ export const formatDateToSting = (d: number) => {
   return date.toISOString();
 };
 
-const timeStringToSeconds = (timeString: string) => {
-  const parts = timeString.split("/");
-  const valueUnit = parts[0].trim();
-  const value = parseFloat(valueUnit);
-  const unit = valueUnit.substr(value.toString().length).trim().toLowerCase();
-
-  switch (unit) {
-    case "sec":
-    case "secs":
-      return value;
-    case "min":
-    case "mins":
-      return value * 60;
-    case "hr":
-    case "hrs":
-      return value * 3600;
-    default:
-      return NaN;
-  }
-};
-
-export const convertOptionToSeconds = (data: string[]) => {
-  const objectsArray = [];
-
-  for (const timeString of data) {
-    const seconds = timeStringToSeconds(timeString);
-    if (!isNaN(seconds)) {
-      objectsArray.push({ timeString, seconds });
-    }
-  }
-
-  return objectsArray;
-};
-
 export const formatRangeDateAndTime = (data: string) => {
   const lastIdx = data.lastIndexOf(" ");
   const date = data.slice(0, lastIdx);
