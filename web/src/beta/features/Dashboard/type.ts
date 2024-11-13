@@ -1,4 +1,5 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { PublishStatus } from "@reearth/services/api/publishTypes";
 import { TeamMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
@@ -7,7 +8,7 @@ export type Project = {
   id: string;
   name: string;
   imageUrl?: string | null;
-  status?: "published" | "limited" | "unpublished";
+  status?: PublishStatus;
   isArchived?: boolean;
   description?: string;
   sceneId?: string;
