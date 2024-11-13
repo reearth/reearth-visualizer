@@ -46,7 +46,7 @@ export const formatRelativeTime = (date: Date, lang = "en"): string => {
     }
   }
 
-  return "just now";
+  return lang === "ja" ? "たっだ今" : "just now";
 };
 
 // Time zones around the world generally fall within offsets from UTC ranging from -12:00 to +14:00
