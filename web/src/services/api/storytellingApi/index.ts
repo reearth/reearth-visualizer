@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,
@@ -17,8 +16,8 @@ import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
 import { useNotification } from "../../state";
+import { PublishStatus, toGqlStatus } from "../publishTypes";
 import { SceneQueryProps } from "../sceneApi";
-import { toGqlStatus } from "../toGqlStatus";
 
 import useBlocks from "./blocks";
 import usePages from "./pages";
