@@ -35,7 +35,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       config: {
         data: {
           url: sourceType === "value" ? encodeUrl : value || undefined,
-          type: "czml",
+          type: "czml"
         }
       }
     });

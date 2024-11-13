@@ -28,10 +28,10 @@ const ProjectRemoveModal: FC<Props> = ({
       <ModalPanel
         actions={
           <>
-            <Button size="normal" title="Cancel" onClick={onClose} />
+            <Button size="normal" title={t("Cancel")} onClick={onClose} />
             <Button
               size="normal"
-              title="Remove"
+              title={t("Remove")}
               appearance="dangerous"
               disabled={disabled}
               onClick={onProjectRemove}

@@ -73,9 +73,9 @@ const AddWorkspaceModal: FC = () => {
         ]}
       >
         <ModalContentWrapper>
-          <Typography size="body">{t("Your workspace Name *")}</Typography>
+          <Typography size="body">{t("Your workspace Name*")}</Typography>
           <TextInput
-            placeholder="your workspace name"
+            placeholder={t("your workspace name")}
             onChange={setWorkspaceNameConfirm}
           />
 

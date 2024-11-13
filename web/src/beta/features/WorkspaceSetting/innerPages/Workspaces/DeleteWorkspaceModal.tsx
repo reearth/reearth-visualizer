@@ -8,6 +8,7 @@ import {
 import { useWorkspaceFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, Workspace } from "@reearth/services/state";
+import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +51,7 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
         layout="common"
         onCancel={onClose}
         actions={[
-          <Button
+          <CancelButton
             key="cancel"
             title={t("Cancel")}
             appearance="secondary"
@@ -80,7 +81,7 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
           {t("Please type your workspace name to continue.")}
         </Typography>
         <TextInput
-          placeholder="your workspace name"
+          placeholder={t("your workspace name")}
           onChange={setWorkspaceNameConfirm}
         />
       </ModalPanel>
@@ -89,3 +90,7 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
 };
 
 export default DeleteWorkspaceModal;
+
+const CancelButton = styled(Button)(() => ({
+  whiteSpace: "nowrap"
+}));

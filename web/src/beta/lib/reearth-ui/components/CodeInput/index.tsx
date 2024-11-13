@@ -1,4 +1,5 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
+import { useT } from "@reearth/services/i18n";
 import { fonts, styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useCallback, useState, useEffect } from "react";
 
@@ -22,6 +23,7 @@ export const CodeInput: FC<CodeInputProps> = ({
   onBlur
 }) => {
   const theme = useTheme();
+  const t = useT();
   const [currentValue, setCurrentValue] = useState<string | undefined>(value);
   const [isActive, setIsActive] = useState<boolean>(false);
 
@@ -95,6 +97,7 @@ export const CodeInput: FC<CodeInputProps> = ({
         height={height}
         onChange={handleChange}
         onMount={handleEditorDidMount}
+        loading={<>{t("Loading...")}</>}
       />
     </EditorWrapper>
   );

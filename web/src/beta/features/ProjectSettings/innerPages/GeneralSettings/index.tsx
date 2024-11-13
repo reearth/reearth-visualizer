@@ -1,7 +1,7 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import ProjectRemoveModal from "@reearth/beta/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
 import { Collapse, Button, Typography } from "@reearth/beta/lib/reearth-ui";
-import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.png";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
