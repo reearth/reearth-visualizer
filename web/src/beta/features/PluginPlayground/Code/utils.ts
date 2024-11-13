@@ -1,9 +1,9 @@
 const REEARTH_HTML_INJECTION_PATTERN =
-  /reearth\.(ui|modal|popup)\.show\(\s*`([^]*?)`\s*\);/g;
+  /reearth\.(ui|modal|popup)\.show\(\s*(['"`])([^]*?)\2\s*\);/;
 
 export const extractHtmlFromSourceCode = (sourceCode: string) => {
   const match = REEARTH_HTML_INJECTION_PATTERN.exec(sourceCode);
-  return match?.[2];
+  return match?.[3];
 };
 
 export const injectHtmlIntoSourceCode = (
