@@ -22,7 +22,7 @@ const Code: FC<Props> = ({
   onChangeSourceCode,
   executeCode
 }) => {
-  const ediableHtmlSourceCode = useMemo(
+  const editableHtmlSourceCode = useMemo(
     () => extractHtmlFromSourceCode(sourceCode),
     [sourceCode]
   );
@@ -44,7 +44,7 @@ const Code: FC<Props> = ({
           <Button
             icon="pencilSimple"
             title="HTML Editor"
-            disabled={ediableHtmlSourceCode === undefined}
+            disabled={editableHtmlSourceCode === undefined}
             onClick={() => setIsOpenedHtmlEditor(true)}
           />
           <p>Widget</p>
@@ -58,7 +58,7 @@ const Code: FC<Props> = ({
       {isOpenedHtmlEditor && (
         <HtmlEditModal
           isOpened={isOpenedHtmlEditor}
-          sourceCode={ediableHtmlSourceCode ?? ""}
+          sourceCode={editableHtmlSourceCode ?? ""}
           onClose={() => setIsOpenedHtmlEditor(false)}
           onSubmit={onSubmitHtmlEditor}
         />
