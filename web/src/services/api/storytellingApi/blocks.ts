@@ -19,7 +19,7 @@ import {
   MOVE_STORY_BLOCK,
   REMOVE_STORY_BLOCK
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
@@ -54,9 +54,10 @@ export type InstalledStoryBlock = {
 export default () => {
   const [, setNotification] = useNotification();
   const t = useT();
+  const lang = useLang();
 
   const useInstallableStoryBlocksQuery = useCallback(
-    ({ sceneId, lang }: StoryBlockQueryProps) => {
+    ({ sceneId }: StoryBlockQueryProps) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
@@ -69,13 +70,12 @@ export default () => {
 
       return { installableStoryBlocks, ...rest };
     },
-    []
+    [lang]
   );
 
   const useInstalledStoryBlocksQuery = useCallback(
     ({
       sceneId,
-      lang,
       storyId,
       pageId
     }: StoryBlockQueryProps & {
@@ -94,7 +94,7 @@ export default () => {
 
       return { installedStoryBlocks, ...rest };
     },
-    []
+    [lang]
   );
 
   const [createStoryBlockMutation] = useMutation<

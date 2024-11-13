@@ -15,7 +15,7 @@ import {
   UPDATE_LAYERSTYLE
 } from "@reearth/services/gql/queries/layerStyle";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
@@ -27,10 +27,11 @@ export type LayerStylesQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
+  const lang = useLang();
   const [, setNotification] = useNotification();
 
   const useGetLayerStylesQuery = useCallback(
-    ({ sceneId, lang }: LayerStylesQueryProps) => {
+    ({ sceneId }: LayerStylesQueryProps) => {
       const { data, loading, networkStatus, fetchMore, ...rest } = useQuery(
         GET_SCENE,
         {
@@ -44,7 +45,7 @@ export default () => {
 
       return { layerStyles, loading, isRefetching, fetchMore, ...rest };
     },
-    []
+    [lang]
   );
 
   const [addLayerStyleMutation] = useMutation<
