@@ -12,6 +12,7 @@ import { FC } from "react";
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
+import LogoWrapper from "./LogoWrapper";
 import { Profile } from "./profile";
 
 type Props = {
@@ -37,6 +38,8 @@ const LeftSidePanel: FC<Props> = ({
   return (
     <SidebarWrapper>
       <SidebarMainSection>
+        <LogoWrapper />
+        <SidebarDivider />
         <Profile
           currentUser={currentWorkspace?.name}
           isPersonal={isPersonal}
@@ -45,7 +48,6 @@ const LeftSidePanel: FC<Props> = ({
           onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
-        <SidebarDivider />
         <SidebarButtonsWrapper>
           {topTabs?.map((tab) => (
             <SidebarMenuItem

@@ -96,8 +96,25 @@ export default ({ sceneId, projectId, tab }: Props) => {
   } = useLayerStyles({ sceneId });
 
   const {
-    currentProjectType,
-    handleProjectTypeChange,
+    selectedStory,
+    storyPanelRef,
+    installableStoryBlocks,
+    currentStoryPage,
+    handleCurrentStoryPageChange,
+    // handlePageDuplicate // not in use
+    handleStoryPageDelete,
+    handleStoryPageAdd,
+    handleStoryPageMove,
+    handleStoryPageUpdate,
+    handleStoryBlockMove,
+    selectStoryPage
+  } = useStorytelling({
+    sceneId
+  });
+
+  const {
+    activeSubProject,
+    handleActiveSubProjectChange,
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromMap,
     handleSceneSettingSelectFromUI,
@@ -113,29 +130,14 @@ export default ({ sceneId, projectId, tab }: Props) => {
     selectedDevice,
     handleDeviceChange
   } = useUI({
+    projectId,
+    storyId: selectedStory?.id,
     tab,
     handleLayerSelect,
     handleCoreLayerSelect,
     handleSceneSettingSelect,
     handleSketchTypeChange,
     handleSketchGeometryEditCancel
-  });
-
-  const {
-    selectedStory,
-    storyPanelRef,
-    installableStoryBlocks,
-    currentStoryPage,
-    handleCurrentStoryPageChange,
-    // handlePageDuplicate // not in use
-    handleStoryPageDelete,
-    handleStoryPageAdd,
-    handleStoryPageMove,
-    handleStoryPageUpdate,
-    handleStoryBlockMove,
-    selectStoryPage
-  } = useStorytelling({
-    sceneId
   });
 
   const {
@@ -296,20 +298,18 @@ export default ({ sceneId, projectId, tab }: Props) => {
 
   const publishPageValue: PublishPageContextType = useMemo(
     () => ({
-      handleVisualizerResize,
-      projectId,
-      storyId: currentProjectType === "story" ? selectedStory?.id : undefined,
       sceneId,
-      selectedProjectType: currentProjectType,
-      handleProjectTypeChange
+      projectId,
+      activeSubProject,
+      handleActiveSubProjectChange,
+      handleVisualizerResize
     }),
     [
-      handleVisualizerResize,
       sceneId,
-      currentProjectType,
-      selectedStory?.id,
       projectId,
-      handleProjectTypeChange
+      activeSubProject,
+      handleActiveSubProjectChange,
+      handleVisualizerResize
     ]
   );
 
@@ -323,7 +323,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     selectedLayer,
     visualizerRef,
     storyPanelRef,
-    currentProjectType,
+    activeSubProject,
     selectedStory,
     installableStoryBlocks,
     showWASEditor,
