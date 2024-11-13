@@ -2,9 +2,9 @@ import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useProjectFetcher } from "@reearth/services/api";
+import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import {
   ProjectSortField,
-  PublishmentStatus,
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
@@ -83,7 +83,10 @@ export default (workspaceId?: string) => {
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
               starred: project.starred,
-              isDeleted: project.isDeleted
+              isDeleted: project.isDeleted,
+              isPublished:
+                project.publishmentStatus === "PUBLIC" ||
+                project.publishmentStatus === "LIMITED"
             }
           : undefined
       )
@@ -301,17 +304,6 @@ export default (workspaceId?: string) => {
     handleImportProject,
     handleProjectRemove
   };
-};
-
-export const toPublishmentStatus = (s?: PublishmentStatus) => {
-  switch (s) {
-    case PublishmentStatus.Public:
-      return "published";
-    case PublishmentStatus.Limited:
-      return "limited";
-    default:
-      return "unpublished";
-  }
 };
 
 const pagination = (sort?: SortType) => {

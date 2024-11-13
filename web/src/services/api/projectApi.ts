@@ -5,7 +5,6 @@ import {
   useMutation,
   useQuery
 } from "@apollo/client";
-import { type PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
 import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
   UpdateProjectInput,
@@ -39,7 +38,8 @@ import { useCallback, useMemo } from "react";
 
 import { useNotification } from "../state";
 
-import { toGqlStatus } from "./toGqlStatus";
+import { type PublishStatus } from "./publishTypes";
+import { toGqlStatus } from "./publishTypes";
 import { MutationReturn } from "./types";
 
 import { useStorytellingFetcher } from ".";
