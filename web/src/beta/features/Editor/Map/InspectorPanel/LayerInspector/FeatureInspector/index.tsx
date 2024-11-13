@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
@@ -110,6 +110,33 @@ const FeatureData: FC<Props> = ({
 
     setFields(fieldArray);
   }, [layer?.sketch?.customPropertySchema, selectedFeature?.properties]);
+
+  const previousFields = useRef<FieldProp[]>([]);
+
+  useEffect(() => {
+    const removedFields = previousFields.current.filter(
+      (field) => !fields.some((f) => f.id === field.id)
+    );
+
+    removedFields.forEach((removedField) => {
+      if (removedField.id && selectedFeature?.properties) {
+        const { [removedField.id]: removed, ...updatedProperties } =
+          selectedFeature.properties;
+        if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
+
+        if (removed !== undefined) {
+          onGeoJsonFeatureUpdate?.({
+            layerId: layer.id,
+            featureId: sketchFeature.id,
+            geometry: selectedFeature.geometry,
+            properties: updatedProperties
+          });
+        }
+      }
+    });
+
+    previousFields.current = fields;
+  }, [fields, selectedFeature, onGeoJsonFeatureUpdate, layer, sketchFeature]);
 
   const handleSubmit = useCallback(() => {
     if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
