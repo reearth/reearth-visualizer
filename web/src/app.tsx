@@ -15,9 +15,7 @@ export default function App() {
       <GqlProvider>
         <ThemeProvider>
           <I18nProvider>
-            <Suspense
-              fallback={<Loading animationSize={80} animationColor="#3B3CD0" />}
-            >
+            <Suspense fallback={<Loading includeLogo />}>
               <NotificationBanner />
               <GlobalModal />
               <AppRoutes />
