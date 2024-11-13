@@ -222,6 +222,7 @@ export const FieldComponent = ({
         title={field?.title}
         value={field?.value}
         description={field?.description}
+        placeholder={field?.placeholder}
         onBlur={handlePropertyValueUpdate(
           groupId,
           propertyId,

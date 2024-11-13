@@ -46,6 +46,7 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
   suffix?: string;
   name?: string;
   description?: string;
+  placeholder?: string;
   isLinkable?: boolean;
   isTemplate?: boolean;
   ui?:
@@ -177,6 +178,7 @@ const toItem = (
           suffix: f.suffix ?? undefined,
           name: f.translatedTitle,
           description: f.translatedDescription,
+          placeholder: f.translatedPlaceholder,
           only: toCond(f.isAvailableIf),
           choices: f.choices?.map((c) => ({
             key: c.key,
