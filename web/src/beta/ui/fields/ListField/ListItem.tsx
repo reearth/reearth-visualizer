@@ -85,7 +85,7 @@ const ListItem: FC<ItemProps> = ({
                   isEditable ? () => setItemNameRenameId(item.id) : undefined
                 }
               >
-                {t(item.title)}
+                {item.title === "New Credit" ? t("New Credit") : item.title}
               </TitleWrapper>
             )
           }

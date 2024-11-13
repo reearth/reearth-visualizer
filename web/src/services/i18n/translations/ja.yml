@@ -293,7 +293,6 @@ Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
 New Field: 新しいフィールド
-New Credit: 新しいクレジット
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
 Buttons List: ボタンリスト
@@ -316,18 +315,18 @@ Add: 追加
 Search by email address or user name: メールアドレスまたはユーザー名で検索
 Can't find the user: ユーザーが見つかりません
 User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
+MAINTAINER: 管理者
+OWNER: 所有者
+READER: 閲覧者
+WRITER: 作成者
 New member: 新しいメンバー
 User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 Change Role: 役割を変更
-READER: 閲覧者
-WRITER: 作成者
-Maintainer: 管理者
-OWNER: 所有者
 Reader: 閲覧者
 Writer: 作成者
-MAINTAINER: 管理者
+Maintainer: 管理者
 Owner: 所有者
 Update Member Role: メンバーの役割を更新
 Delete workspace: ワークスペースを削除
@@ -394,6 +393,7 @@ Position Set: 位置セット
 Edit: 編集
 Capture: キャプチャ
 New Item: 新規追加
+New Credit: 新しいクレジット
 min: 最小
 max: 最大
 Time Period Settings: 期間設定

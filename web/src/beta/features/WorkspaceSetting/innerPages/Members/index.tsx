@@ -63,6 +63,13 @@ const Members: FC<MembersProps> = ({ workspace }) => {
     [workspace?.members]
   );
 
+  const memerRoleTranslation = {
+    MAINTAINER: t("MAINTAINER"),
+    OWNER: t("OWNER"),
+    READER: t("READER"),
+    WRITER: t("WRITER")
+  };
+
   return (
     <InnerPage>
       <SettingsWrapper>
@@ -87,7 +94,7 @@ const Members: FC<MembersProps> = ({ workspace }) => {
                 <Fragment key={index}>
                   <TableCell>{member.user?.name}</TableCell>
                   <TableCell>{member.user?.email}</TableCell>
-                  <TableCell>{t(member.role)}</TableCell>
+                  <TableCell>{memerRoleTranslation[member.role]}</TableCell>
                   <TableCell justifyContent="flex-end">
                     <PopupMenu
                       label={
