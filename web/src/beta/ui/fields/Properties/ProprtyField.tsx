@@ -108,6 +108,7 @@ const PropertyField: FC<Props> = ({
             title={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
+            placeholder={schema.placeholder}
             onBlur={handleChange}
           />
         )
