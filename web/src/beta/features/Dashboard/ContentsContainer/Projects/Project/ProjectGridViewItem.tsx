@@ -120,9 +120,8 @@ const CardImage = styled("div")<{
 }>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
   position: "relative",
-  background: backgroundImage
-    ? `url(${backgroundImage}) center/cover`
-    : theme.bg[1],
+  background: backgroundImage ? `url(${backgroundImage}) center/cover` : "",
+  backgroundColor: theme.bg[1],
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
