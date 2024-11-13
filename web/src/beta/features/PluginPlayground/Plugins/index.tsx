@@ -1,81 +1,84 @@
-import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
+import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
 
-// TODO Implement: display uploaded files
-const mockPlugins = [
-  {
-    id: "1",
-    name: "My Plugin"
-  },
-  {
-    id: "2",
-    name: "My Plugin"
-  }
-];
+import FileListItem from "./FileListItem";
+import usePlugins from "./hook";
 
-const mockFiles = [
-  {
-    id: "1",
-    name: "widget.js"
-  },
-  {
-    id: "2",
-    name: "table.js"
-  },
-  {
-    id: "3",
-    name: "reearth.yml"
-  }
-];
+type UsePluginsReturn = Pick<
+  ReturnType<typeof usePlugins>,
+  | "plugins"
+  | "selectPlugin"
+  | "selectedPlugin"
+  | "selectFile"
+  | "selectedFile"
+  | "addFile"
+  | "updateFileTitle"
+  | "deleteFile"
+  | "handleFileUpload"
+>;
 
-const Plugins: FC = () => {
-  const [selectedPluginId, setSelectedPluginId] = useState<string>(
-    mockPlugins[0]?.id || ""
-  );
-  const [selectedFileId, setSelectedFileId] = useState<string>(
-    mockFiles[0]?.id || ""
-  );
+type Props = UsePluginsReturn;
 
-  const onClickPluginItem = (id: string) => {
-    setSelectedPluginId(id);
-  };
-
-  const onClickFileItem = (id: string) => {
-    setSelectedFileId(id);
-  };
+const Plugins: FC<Props> = ({
+  plugins,
+  selectedPlugin,
+  selectPlugin,
+  selectFile,
+  selectedFile,
+  addFile,
+  updateFileTitle,
+  deleteFile,
+  handleFileUpload
+}) => {
+  const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
   return (
     <Wrapper>
       <PluginListWrapper>
         <PluginList>
-          {mockPlugins.map((plugin) => (
+          {plugins.map((plugin) => (
             <PluginListItem
               key={plugin.id}
-              selected={selectedPluginId === plugin.id}
-              onClick={() => onClickPluginItem(plugin.id)}
+              selected={selectedPlugin.id === plugin.id}
+              onClick={() => selectPlugin(plugin.id)}
             >
-              {plugin.name}
+              {plugin.title}
             </PluginListItem>
           ))}
         </PluginList>
       </PluginListWrapper>
       <FileListWrapper>
         <ButtonsWrapper>
-          <Button icon="plus" title="File" />
-          <Button title="Upload" />
+          <Button
+            icon="plus"
+            title="File"
+            onClick={() => setIsAddingNewFile(true)}
+          />
+          <Button title="Upload" onClick={handleFileUpload} />
         </ButtonsWrapper>
         <FileList>
-          {mockFiles.map((file) => (
+          {selectedPlugin.files.map((file) => (
             <FileListItem
               key={file.id}
-              selected={selectedFileId === file.id}
-              onClick={() => onClickFileItem(file.id)}
-            >
-              <Icon icon="file" />
-              {file.name}
-            </FileListItem>
+              file={file}
+              selected={selectedFile.id === file.id}
+              confirmFileTitle={updateFileTitle}
+              deleteFile={deleteFile}
+              onClick={() => selectFile(file.id)}
+            />
           ))}
+          {isAddingNewFile && (
+            <FileListItem
+              file={{ id: "", title: "", sourceCode: "" }}
+              selected={false}
+              confirmFileTitle={(value) => {
+                addFile(value);
+                setIsAddingNewFile(false);
+              }}
+              isEditing
+            />
+          )}
         </FileList>
       </FileListWrapper>
     </Wrapper>
@@ -87,10 +90,10 @@ const Wrapper = styled("div")(() => ({
   height: "100%"
 }));
 
-const PluginListWrapper = styled("div")(() => ({
+const PluginListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   width: "50%",
-  padding: "4px"
+  padding: theme.spacing.smallest
 }));
 
 const PluginList = styled("ul")(() => ({
@@ -128,23 +131,9 @@ const FileList = styled("ul")(() => ({
   listStyle: "none"
 }));
 
-const FileListItem = styled("li")<{
-  selected?: boolean;
-}>(({ theme, selected }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small,
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
-  borderRadius: theme.radius.small,
-  backgroundColor: selected ? theme.select.main : "transparent",
-  cursor: "pointer",
-  "&:not(:first-child)": {
-    marginTop: theme.spacing.smallest
-  }
-}));
-
 const ButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
+  width: "100%",
   gap: theme.spacing.smallest,
   "& > button": {
     flexGrow: 1
