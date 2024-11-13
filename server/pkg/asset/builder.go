@@ -69,6 +69,11 @@ func (b *Builder) URL(url string) *Builder {
 	return b
 }
 
+func (b *Builder) Visualizer(visualizer bool) *Builder {
+	b.a.visualizer = visualizer
+	return b
+}
+
 func (b *Builder) ContentType(contentType string) *Builder {
 	b.a.contentType = contentType
 	return b

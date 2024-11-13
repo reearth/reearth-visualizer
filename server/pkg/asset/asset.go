@@ -19,6 +19,7 @@ type Asset struct {
 	size        int64  // file size
 	url         string
 	contentType string
+	visualizer  bool
 }
 
 func (a *Asset) ID() ID {
@@ -43,6 +44,10 @@ func (a *Asset) URL() string {
 
 func (a *Asset) ContentType() string {
 	return a.contentType
+}
+
+func (a *Asset) Visualizer() bool {
+	return a.visualizer
 }
 
 func (a *Asset) CreatedAt() time.Time {

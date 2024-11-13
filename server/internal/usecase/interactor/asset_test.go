@@ -45,6 +45,7 @@ func TestAsset_Create(t *testing.T) {
 	buflen := int64(buf.Len())
 	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
 		WorkspaceID: ws.ID(),
+		Visualizer:  true,
 		File: &file.File{
 			Content:     io.NopCloser(buf),
 			Path:        "hoge.txt",
@@ -66,6 +67,7 @@ func TestAsset_Create(t *testing.T) {
 		Name("hoge.txt").
 		Size(buflen).
 		ContentType("").
+		Visualizer(true).
 		MustBuild()
 
 	assert.NoError(t, err)

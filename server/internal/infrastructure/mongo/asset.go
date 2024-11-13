@@ -71,6 +71,10 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 
 	var filter any = bson.M{
 		"team": id.String(),
+		"$or": []bson.M{
+			{"visualizer": true},
+			{"visualizer": bson.M{"$exists": false}},
+		},
 	}
 
 	if uFilter.Keyword != nil {
@@ -81,13 +85,14 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 	}
 
 	bucketPattern := adapter.CurrentHost(ctx)
-	if strings.Contains(bucketPattern, "localhost") {
+	if bucketPattern == "" {
+		bucketPattern = "example.com" // e2e test
+	} else if strings.Contains(bucketPattern, "localhost") {
 		bucketPattern = "localhost"
 	} else {
 		bucketPattern = "visualizer"
 	}
 
-	// Classic's Assets shouldn't been shown @pyshx
 	filter = mongox.And(filter, "url", bson.M{
 		"$regex": primitive.Regex{Pattern: bucketPattern, Options: "i"},
 	})

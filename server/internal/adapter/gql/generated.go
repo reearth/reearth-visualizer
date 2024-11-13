@@ -153,6 +153,7 @@ type ComplexityRoot struct {
 		Team        func(childComplexity int) int
 		TeamID      func(childComplexity int) int
 		URL         func(childComplexity int) int
+		Visualizer  func(childComplexity int) int
 	}
 
 	AssetConnection struct {
@@ -1980,6 +1981,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Asset.URL(childComplexity), true
+
+	case "Asset.visualizer":
+		if e.complexity.Asset.Visualizer == nil {
+			break
+		}
+
+		return e.complexity.Asset.Visualizer(childComplexity), true
 
 	case "AssetConnection.edges":
 		if e.complexity.AssetConnection.Edges == nil {
@@ -8622,6 +8630,7 @@ schema {
   url: String!
   contentType: String!
   team: Team
+  visualizer: Boolean!
 }
 
 enum AssetSortField {
@@ -8634,6 +8643,7 @@ enum AssetSortField {
 
 input CreateAssetInput {
   teamId: ID!
+  visualizer: Boolean!
   file: Upload!
 }
 
@@ -8670,14 +8680,20 @@ type AssetEdge {
   node: Asset
 }
 
-extend type Query{
-  assets(teamId: ID!, pagination: Pagination, keyword: String, sort: AssetSort): AssetConnection!
+extend type Query {
+  assets(
+    teamId: ID!
+    pagination: Pagination
+    keyword: String
+    sort: AssetSort
+  ): AssetConnection!
 }
 
 extend type Mutation {
   createAsset(input: CreateAssetInput!): CreateAssetPayload
   removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/cluster.graphql", Input: `type Cluster {
   id: ID!
   name: String!
@@ -14661,6 +14677,50 @@ func (ec *executionContext) fieldContext_Asset_team(ctx context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Asset_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_visualizer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visualizer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Asset_visualizer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Asset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _AssetConnection_edges(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AssetConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AssetConnection_edges(ctx, field)
 	if err != nil {
@@ -14766,6 +14826,8 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(ctx context.Conte
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Asset_visualizer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -14967,6 +15029,8 @@ func (ec *executionContext) fieldContext_AssetEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Asset_visualizer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -15628,6 +15692,8 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(ctx context.Co
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Asset_visualizer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -59778,7 +59844,7 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "file"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "file"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -59792,6 +59858,13 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 				return it, err
 			}
 			it.TeamID = data
+		case "visualizer":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visualizer"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Visualizer = data
 		case "file":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
 			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
@@ -64260,6 +64333,11 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "visualizer":
+			out.Values[i] = ec._Asset_visualizer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

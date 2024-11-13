@@ -25,6 +25,7 @@ const (
 
 type CreateAssetParam struct {
 	WorkspaceID accountdomain.WorkspaceID
+	Visualizer  bool
 	File        *file.File
 }
 
