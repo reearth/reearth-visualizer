@@ -91,7 +91,7 @@ export default ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selected, setSelected] = useState("Not set");
+  const [selected, setSelected] = useState("1sec/sec");
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(
       currentTime,

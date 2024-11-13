@@ -25,10 +25,6 @@ const calculateMidTime = (startTime: number, stopTime: number) => {
 };
 
 const playSpeedOptions = [
-  {
-    timeString: "Not set",
-    seconds: 0
-  },
   { timeString: "1sec/sec", seconds: 1 },
   { timeString: "0.5min/sec", seconds: 30 },
   { timeString: "1min/sec", seconds: 60 },
