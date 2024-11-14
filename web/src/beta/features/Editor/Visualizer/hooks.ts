@@ -122,10 +122,6 @@ export default ({
     };
   }, [scene?.property]);
 
-  useEffect(() => {
-    setCurrentCamera(initialCamera);
-  }, [initialCamera, setCurrentCamera]);
-
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({
     sceneId
   });
