@@ -13,8 +13,10 @@ export type RangeFieldProps = CommonFieldProps &
     values: number[];
     placeholders?: [string, string];
     content?: [string, string];
-    onChange?: (values: number[]) => void;
-    onBlur?: (values: number[]) => void;
+    min?: number;
+    max?: number;
+    onChange?: (values: (number | undefined)[]) => void;
+    onBlur?: (values: (number | undefined)[]) => void;
   };
 
 const RangeField: FC<RangeFieldProps> = ({
@@ -23,18 +25,52 @@ const RangeField: FC<RangeFieldProps> = ({
   values,
   placeholders,
   content,
+  min,
+  max,
   onChange,
   onBlur,
   ...props
 }) => {
-  const [inputValues, setInputValues] = useState(values);
+  const [inputValues, setInputValues] = useState<(number | undefined)[]>(
+    values ?? []
+  );
 
   const theme = useTheme();
-  const handleChange = useCallback(() => {
-    const newValues = [...inputValues];
-    setInputValues(newValues);
-    onChange?.(newValues);
-  }, [inputValues, onChange]);
+  const handleMinChange = useCallback(
+    (value: number | undefined) => {
+      setInputValues((prev) => {
+        const next = [
+          value === undefined
+            ? min
+            : min !== undefined && value < min
+              ? min
+              : value,
+          prev[1]
+        ];
+        onChange?.(next);
+        return next;
+      });
+    },
+    [min, onChange]
+  );
+
+  const handleMaxChange = useCallback(
+    (value: number | undefined) => {
+      setInputValues((prev) => {
+        const next = [
+          prev[0],
+          value === undefined
+            ? max
+            : max !== undefined && value > max
+              ? max
+              : value
+        ];
+        onChange?.(next);
+        return next;
+      });
+    },
+    [max, onChange]
+  );
 
   const handleBlur = useCallback(() => {
     onBlur?.(inputValues);
@@ -51,7 +87,7 @@ const RangeField: FC<RangeFieldProps> = ({
           <NumberInput
             value={inputValues[0]}
             placeholder={placeholders?.[0]}
-            onChange={handleChange}
+            onChange={handleMinChange}
             onBlur={handleBlur}
             extendWidth
             {...props}
@@ -65,7 +101,7 @@ const RangeField: FC<RangeFieldProps> = ({
           <NumberInput
             value={inputValues[1]}
             placeholder={placeholders?.[1]}
-            onChange={handleChange}
+            onChange={handleMaxChange}
             onBlur={handleBlur}
             extendWidth
             {...props}

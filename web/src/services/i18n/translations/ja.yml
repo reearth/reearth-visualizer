@@ -54,7 +54,7 @@ Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
-Project Setting: ''
+Project Setting: プロジェクト設定
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
@@ -149,6 +149,7 @@ No style selected: スタイルが選択されていません
 if: もし
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
+${your property name}: ${プロパティ名}
 font family: フォントファミリー
 font size: フォントサイズ
 font weight: フォントウェイト
@@ -294,7 +295,6 @@ Your account has been successfully verified! Feel free to login now.: アカウ�
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
 New Field: 新しいフィールド
 Display title: 表示タイトル
-${your property value}: ${プロパティの値}
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
 Buttons List: ボタンリスト

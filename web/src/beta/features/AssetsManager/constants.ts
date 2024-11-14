@@ -42,3 +42,4 @@ export const GENERAL_FILE_TYPE_ACCEPT_STRING =
 export const IMAGE_TYPES = ["image" as const];
 export const FILE_TYPES = ["file" as const];
 export const MODEL_TYPES = ["model" as const];
+export const ALL_TYPES = ["image" as const, "file" as const, "model" as const];

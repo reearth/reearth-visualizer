@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Project } from "../../type";
 
-const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
+const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
 const PROJECTS_PER_PAGE = 16;
 
@@ -199,19 +199,34 @@ export default (workspaceId?: string) => {
   );
 
   // layout
+  const projectsViewStateStorageKey = `${PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX}_${workspaceId}`;
+
   const [layout, setLayout] = useState(
     ["grid", "list"].includes(
-      localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? ""
+      localStorage.getItem(projectsViewStateStorageKey) ?? ""
     )
-      ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
+      ? (localStorage.getItem(projectsViewStateStorageKey) as ManagerLayout)
       : "grid"
   );
 
-  const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
-    if (!newView) return;
-    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
-    setLayout(newView);
-  }, []);
+  const handleLayoutChange = useCallback(
+    (newView?: ManagerLayout) => {
+      if (!newView) return;
+      localStorage.setItem(projectsViewStateStorageKey, newView);
+      setLayout(newView);
+    },
+    [projectsViewStateStorageKey]
+  );
+
+  useEffect(() => {
+    setLayout(
+      ["grid", "list"].includes(
+        localStorage.getItem(projectsViewStateStorageKey) ?? ""
+      )
+        ? (localStorage.getItem(projectsViewStateStorageKey) as ManagerLayout)
+        : "grid"
+    );
+  }, [projectsViewStateStorageKey, setLayout]);
 
   const [contentWidth, setContentWidth] = useState(0);
 
