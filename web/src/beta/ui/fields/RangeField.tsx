@@ -38,15 +38,10 @@ const RangeField: FC<RangeFieldProps> = ({
   const theme = useTheme();
   const handleMinChange = useCallback(
     (value: number | undefined) => {
+      const clampedValue =
+        min !== undefined && value !== undefined && value < min ? min : value;
       setInputValues((prev) => {
-        const next = [
-          value === undefined
-            ? min
-            : min !== undefined && value < min
-              ? min
-              : value,
-          prev[1]
-        ];
+        const next = [clampedValue ?? min, prev[1]];
         onChange?.(next);
         return next;
       });
@@ -56,15 +51,10 @@ const RangeField: FC<RangeFieldProps> = ({
 
   const handleMaxChange = useCallback(
     (value: number | undefined) => {
+      const clampedValue =
+        max !== undefined && value !== undefined && value > max ? max : value;
       setInputValues((prev) => {
-        const next = [
-          prev[0],
-          value === undefined
-            ? max
-            : max !== undefined && value > max
-              ? max
-              : value
-        ];
+        const next = [prev[0], clampedValue ?? max];
         onChange?.(next);
         return next;
       });
