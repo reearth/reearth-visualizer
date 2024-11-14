@@ -105,14 +105,9 @@ func TestBuildWidgetAlignSystem(t *testing.T) {
 				Inner: &widgetZoneJSON{
 					Left: &widgetSectionJSON{
 						Top: &widgetAreaJSON{
-							WidgetIDs: []string{wid.String()},
-							Align:     "start",
-							Padding: &widgetAreaPaddingJSON{
-								Top:    0,
-								Bottom: 0,
-								Left:   0,
-								Right:  0,
-							},
+							WidgetIDs:  []string{wid.String()},
+							Align:      "start",
+							Padding:    nil,
 							Gap:        nil,
 							Centered:   false,
 							Background: nil,
