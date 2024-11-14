@@ -5,11 +5,11 @@ import {
   useStorytellingFetcher,
   useProjectFetcher
 } from "@reearth/services/api";
+import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import { useT } from "@reearth/services/i18n";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project as ProjectType } from "../../../type";
-import { toPublishmentStatus } from "../hooks";
 
 type Props = {
   project: ProjectType;
@@ -29,7 +29,13 @@ export default ({
   const t = useT();
   const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
   const { useExportProject, usePublishProject } = useProjectFetcher();
-  const { stories } = useStoriesQuery({ sceneId: project?.sceneId });
+  const { stories } = useStoriesQuery(
+    {
+      sceneId: project?.sceneId
+    },
+    // We fetch stories only for check publish status, we can skip fetching stories if project is published already since the indicator shows when project OR any story is published
+    { skip: project?.isPublished }
+  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
@@ -57,14 +63,6 @@ export default ({
     if (selectedProjectId !== project.id || selectedProjectId)
       onProjectSelect?.(undefined);
   }, [onProjectSelect, project.id, selectedProjectId]);
-
-  // const openExportModal = useCallback(() => {
-  //   setExportModalVisible(true);
-  // }, []);
-
-  // const closeExportModal = useCallback(() => {
-  //   setExportModalVisible(false);
-  // }, []);
 
   const handleExportProject = useCallback(async () => {
     if (!project.id) return;

@@ -22,11 +22,16 @@ const CapturePanel: FC<PanelProps> = ({ camera, onSave, onClose }) => {
       onCancel={onClose}
       actions={
         <ButtonWrapper>
-          <Button extendWidth size="small" title="Cancel" onClick={onClose} />
           <Button
             extendWidth
             size="small"
-            title="Apply"
+            title={t("Cancel")}
+            onClick={onClose}
+          />
+          <Button
+            extendWidth
+            size="small"
+            title={t("Apply")}
             appearance="primary"
             onClick={handleSave}
           />

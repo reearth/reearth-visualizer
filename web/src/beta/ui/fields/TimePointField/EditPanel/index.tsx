@@ -38,11 +38,16 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
       onCancel={onClose}
       actions={
         <ButtonWrapper>
-          <Button extendWidth size="small" title="Cancel" onClick={onClose} />
           <Button
             extendWidth
             size="small"
-            title="Apply"
+            title={t("Cancel")}
+            onClick={onClose}
+          />
+          <Button
+            extendWidth
+            size="small"
+            title={t("Apply")}
             appearance="primary"
             disabled={applyDisabled}
             onClick={handleApply}

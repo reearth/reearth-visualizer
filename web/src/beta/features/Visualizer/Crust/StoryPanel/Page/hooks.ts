@@ -1,4 +1,5 @@
 import { useEditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
+import { useT } from "@reearth/services/i18n";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
@@ -25,6 +26,7 @@ export default ({
   ) => Promise<void> | undefined;
   onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
 }) => {
+  const t = useT();
   const editModeContext = useEditModeContext();
 
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
@@ -78,12 +80,12 @@ export default ({
       title: {
         title: {
           value: property?.title?.title,
-          title: "Title",
+          title: t("Title"),
           type: "string"
         },
         color: {
           value: property?.title?.color,
-          title: "Color",
+          title: t("Color"),
           type: "string",
           ui: "color"
         }
@@ -97,7 +99,7 @@ export default ({
         }
       }
     }),
-    [property?.title]
+    [property?.title, t]
   );
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);

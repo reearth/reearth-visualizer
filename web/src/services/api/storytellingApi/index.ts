@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { PublishStatus } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/PublishModal/hooks";
-import { MutationReturn } from "@reearth/services/api/types";
+import { CustomOptions, MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,
   CreateStoryMutation,
@@ -13,12 +12,12 @@ import {
   PUBLISH_STORY,
   UPDATE_STORY
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
 import { useNotification } from "../../state";
+import { PublishStatus, toGqlStatus } from "../publishTypes";
 import { SceneQueryProps } from "../sceneApi";
-import { toGqlStatus } from "../toGqlStatus";
 
 import useBlocks from "./blocks";
 import usePages from "./pages";
@@ -28,18 +27,22 @@ export type StoryQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
+  const lang = useLang();
   const [, setNotification] = useNotification();
 
-  const useStoriesQuery = useCallback(({ sceneId, lang }: StoryQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
-      variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId
-    });
+  const useStoriesQuery = useCallback(
+    ({ sceneId }: StoryQueryProps, options?: CustomOptions) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId || options?.skip
+      });
 
-    const stories = useMemo(() => getStories(data), [data]);
+      const stories = useMemo(() => getStories(data), [data]);
 
-    return { stories, ...rest };
-  }, []);
+      return { stories, ...rest };
+    },
+    [lang]
+  );
 
   const [createStoryMutation] = useMutation<
     CreateStoryMutation,

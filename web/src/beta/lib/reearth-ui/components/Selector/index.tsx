@@ -1,3 +1,4 @@
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import {
   FC,
@@ -30,12 +31,13 @@ export const Selector: FC<SelectorProps> = ({
   value,
   options,
   size = "normal",
-  placeholder = "Please select",
+  placeholder,
   disabled,
   maxHeight,
   onChange
 }) => {
   const theme = useTheme();
+  const t = useT();
   const selectorRef = useRef<HTMLDivElement>(null);
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
@@ -126,7 +128,7 @@ export const Selector: FC<SelectorProps> = ({
       >
         {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>
-            {placeholder}
+            {placeholder ? placeholder : t("Please select")}
           </Typography>
         ) : multiple ? (
           <SelectedItems>

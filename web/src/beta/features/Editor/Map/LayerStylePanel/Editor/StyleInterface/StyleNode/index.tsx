@@ -1,4 +1,5 @@
 import { IconButton, IconName, PopupMenu } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -50,16 +51,18 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
 
   const theme = useTheme();
 
+  const t = useT();
+
   const optionsMenu = useMemo(() => {
     return [
       {
         id: "delete",
-        title: "Delete",
+        title: t("Delete"),
         icon: "trash" as const,
         onClick: () => onDelete(node.id)
       }
     ];
-  }, [node.id, onDelete]);
+  }, [node.id, onDelete, t]);
 
   const handleValueUpdate = useCallback(
     (value: StyleSimpleValue) => {

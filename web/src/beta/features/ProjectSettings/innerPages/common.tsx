@@ -53,9 +53,8 @@ export const Thumbnail = styled("div")<{ src?: string }>(({ src, theme }) => ({
   width: "100%",
   paddingBottom: "52.3%",
   fontSize: 0,
-  background: src
-    ? `url(${src}) center/contain no-repeat`
-    : theme.relative.dark,
+  background: src ? `url(${src}) center/contain no-repeat` : "",
+  backgroundColor: theme.relative.dark,
   borderRadius: theme.radius.small
 }));
 

@@ -23,10 +23,10 @@ const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   const t = useT();
   const layerStyleOptions = useMemo(
     () => [
-      { value: "", label: "NO STYLE" },
+      { value: "", label: t("NO STYLE") },
       ...(layerStyles?.map((ls) => ({ value: ls.id, label: ls.name })) ?? [])
     ],
-    [layerStyles]
+    [layerStyles, t]
   );
 
   const handleLayerStyleChange = useCallback(
