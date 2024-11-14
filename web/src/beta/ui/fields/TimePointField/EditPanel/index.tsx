@@ -38,11 +38,16 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
       onCancel={onClose}
       actions={
         <ButtonWrapper>
-          <Button extendWidth size="small" title="Cancel" onClick={onClose} />
           <Button
             extendWidth
             size="small"
-            title="Apply"
+            title={t("Cancel")}
+            onClick={onClose}
+          />
+          <Button
+            extendWidth
+            size="small"
+            title={t("Apply")}
             appearance="primary"
             disabled={applyDisabled}
             onClick={handleApply}
@@ -65,7 +70,11 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
         </Wrapper>
         <Wrapper>
           <Label>{t("Time Zone")}</Label>
-          <InputWrapper>
+          <InputWrapper
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <Selector
               value={timezone}
               options={TIMEZONE_OFFSETS.map((offset) => ({

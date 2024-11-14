@@ -65,7 +65,6 @@ const PageItem: FC<PageItemProps> = ({
     storyPage.property.items,
     storyPage.title
   ]);
-
   const optionsMenu = useMemo(
     () => [
       {
@@ -76,12 +75,12 @@ const PageItem: FC<PageItemProps> = ({
       },
       {
         id: "delete",
-        title: "Delete",
+        title: t("Delete"),
         icon: "trash" as const,
         onClick: () => handleStoryPageDelete(storyPage.id)
       }
     ],
-    [storyPage.id, handleStoryPageDelete]
+    [storyPage.id, handleStoryPageDelete, t]
   );
 
   return (

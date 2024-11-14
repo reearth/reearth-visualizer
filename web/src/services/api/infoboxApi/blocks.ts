@@ -19,7 +19,7 @@ import {
   REMOVE_NLSINFOBOX_BLOCK
 } from "@reearth/services/gql/queries/infobox";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
@@ -55,9 +55,10 @@ export type InstalledInfoboxBlock = {
 export default () => {
   const [, setNotification] = useNotification();
   const t = useT();
+  const lang = useLang();
 
   const useInstallableInfoboxBlocksQuery = useCallback(
-    ({ sceneId, lang }: InfoboxBlockQueryProps) => {
+    ({ sceneId }: InfoboxBlockQueryProps) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
@@ -70,7 +71,7 @@ export default () => {
 
       return { installableInfoboxBlocks, ...rest };
     },
-    []
+    [lang]
   );
 
   const [createInfoboxBlockMutation] = useMutation<

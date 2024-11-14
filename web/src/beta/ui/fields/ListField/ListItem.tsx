@@ -1,5 +1,6 @@
 import { PopupMenuItem, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -35,12 +36,12 @@ const ListItem: FC<ItemProps> = ({
     },
     [onItemDelete]
   );
-
+  const t = useT();
   const optionsMenu = useMemo<PopupMenuItem[]>(() => {
     const menu: PopupMenuItem[] = [
       {
         id: "delete",
-        title: "Delete",
+        title: t("Delete"),
         icon: "trash" as const,
         onClick: () => handleItemDelete(item.id)
       }
@@ -56,7 +57,7 @@ const ListItem: FC<ItemProps> = ({
     }
 
     return menu;
-  }, [handleItemDelete, item.id, isEditable]);
+  }, [handleItemDelete, item.id, isEditable, t]);
 
   const handleTitleUpdate = useCallback(() => {
     setItemNameRenameId("");
@@ -84,7 +85,7 @@ const ListItem: FC<ItemProps> = ({
                   isEditable ? () => setItemNameRenameId(item.id) : undefined
                 }
               >
-                {item.title}
+                {item.title === "New Credit" ? t("New Credit") : item.title}
               </TitleWrapper>
             )
           }

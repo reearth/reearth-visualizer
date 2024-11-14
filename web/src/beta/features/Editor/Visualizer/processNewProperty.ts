@@ -136,6 +136,7 @@ const processPropertyGroups = (
         ui: toUi(schema.ui) || undefined,
         title: schema.translatedTitle || undefined,
         description: schema.translatedDescription || undefined,
+        placeholder: schema.translatedPlaceholder || undefined,
         choices: schema.choices || undefined,
         min: schema.min || undefined,
         max: schema.max || undefined

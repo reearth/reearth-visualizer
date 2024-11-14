@@ -23,7 +23,7 @@ const NotFound: FC = () => {
           404
         </Typography>
         <Typography size="body" color={theme.content.main}>
-          {t("Oops, This Page Not Found!")}
+          {t("Oops, Page Not Found!")}
         </Typography>
         <Button
           appearance="primary"

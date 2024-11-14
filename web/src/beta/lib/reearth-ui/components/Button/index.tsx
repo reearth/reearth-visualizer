@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
 
 import { IconName, Icon } from "../Icon";
 
@@ -15,6 +15,7 @@ export type ButtonProps = {
   extendWidth?: boolean;
   minWidth?: number;
   background?: string;
+  tileComponent?: ReactNode;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
@@ -32,6 +33,7 @@ export const Button: FC<ButtonProps> = ({
   extendWidth,
   minWidth,
   background,
+  tileComponent,
   onClick,
   onMouseEnter,
   onMouseLeave
@@ -52,6 +54,7 @@ export const Button: FC<ButtonProps> = ({
       {icon && <Icon icon={icon} color={iconColor} />}
       {!iconButton && title}
       {iconRight && <Icon icon={iconRight} />}
+      {tileComponent}
     </StyledButton>
   );
 };
