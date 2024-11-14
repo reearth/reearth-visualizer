@@ -202,7 +202,6 @@ const TimelineEditor = ({
           />
         </IconWrapper>
       </TimelineSlider>
-      <div />
     </Wrapper>
   );
 };
