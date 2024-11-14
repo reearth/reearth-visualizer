@@ -60,7 +60,7 @@ const EditorItem: FC<Props> = ({
       <TextInput
         size="small"
         value={currentValue}
-        placeholder={t("${your property value}")}
+        placeholder={t("${your property name}")}
         onChange={handleValueChange}
         onBlur={handleValueBlur}
       />

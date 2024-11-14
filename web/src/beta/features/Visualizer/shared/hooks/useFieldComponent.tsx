@@ -154,7 +154,7 @@ export const FieldComponent = ({
   ) : field?.type === "url" ? (
     <AssetField
       key={field.id}
-      title={field.name}
+      title={field.title}
       assetsTypes={assetsTypes}
       inputMethod={
         field.ui === "video" || field.ui === undefined ? "URL" : "asset"
@@ -198,7 +198,7 @@ export const FieldComponent = ({
     ) : field?.ui === "selection" || field?.choices ? (
       <SelectField
         key={field.id}
-        title={field.name}
+        title={field.title}
         value={field?.value}
         description={field.description}
         options={
@@ -247,7 +247,7 @@ export const FieldComponent = ({
   ) : field?.type === "array" && field?.ui === "range" ? (
     <RangeField
       key={field.id}
-      title={field.name}
+      title={field.title}
       values={field?.value as number[]}
       unit={field.suffix}
       min={field.min}

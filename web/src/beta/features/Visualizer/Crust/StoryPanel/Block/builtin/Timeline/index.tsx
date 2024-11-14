@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
 
-import TimelineEditor from "./Editor";
+import TimelinePlayer from "./Player";
 
 export type TimelineValues = {
   currentTime: string;
@@ -40,7 +40,7 @@ const TimelineBlock: FC<BlockProps<StoryBlock>> = ({
       property={block?.property}
       {...props}
     >
-      <TimelineEditor
+      <TimelinePlayer
         inEditor={!!props.isEditable}
         padding={props.padding}
         timelineValues={timelineValues}

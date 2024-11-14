@@ -368,7 +368,6 @@ const TitleWrapper = styled("div")<{ disabled?: boolean }>(
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    maxWidth: 160,
     display: "flex",
     alignItems: "center",
     gap: theme.spacing.small
