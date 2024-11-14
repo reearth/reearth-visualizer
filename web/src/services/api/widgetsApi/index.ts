@@ -13,7 +13,7 @@ import {
   UPDATE_WIDGET,
   UPDATE_WIDGET_ALIGN_SYSTEM
 } from "@reearth/services/gql/queries/widget";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { WidgetAreaState, useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
@@ -53,10 +53,11 @@ export type WidgetQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
+  const lang = useLang();
   const [, setNotification] = useNotification();
 
   const useInstallableWidgetsQuery = useCallback(
-    ({ sceneId, lang }: WidgetQueryProps) => {
+    ({ sceneId }: WidgetQueryProps) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
@@ -69,11 +70,11 @@ export default () => {
 
       return { installableWidgets, ...rest };
     },
-    []
+    [lang]
   );
 
   const useInstalledWidgetsQuery = useCallback(
-    ({ sceneId, lang }: WidgetQueryProps) => {
+    ({ sceneId }: WidgetQueryProps) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
@@ -83,7 +84,7 @@ export default () => {
 
       return { installedWidgets, ...rest };
     },
-    []
+    [lang]
   );
 
   const [addWidgetMutation] = useMutation(ADD_WIDGET, {

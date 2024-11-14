@@ -3,6 +3,7 @@ import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useCallback, useMemo } from "react";
 
 import { Scene as GqlScene } from "../gql";
+import { useLang } from "../i18n";
 
 import { PluginExtensionType } from "./pluginsApi";
 
@@ -53,32 +54,37 @@ export type Scene = Omit<
 };
 
 export default () => {
-  const useSceneQuery = useCallback(({ sceneId, lang }: SceneQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
-      variables: { sceneId: sceneId ?? "", lang },
-      skip: !sceneId
-    });
+  const lang = useLang();
 
-    const scene = useMemo(() => {
-      return data?.node?.__typename === "Scene"
-        ? ({
-            id: data.node.id,
-            plugins: data.node.plugins,
-            projectId: data.node.projectId,
-            property: data.node.property,
-            rootLayerId: data.node.rootLayerId,
-            newLayers: data.node.newLayers,
-            stories: data.node.stories,
-            styles: data.node.styles,
-            workspaceId: data.node.teamId,
-            widgetAlignSystem: data.node.widgetAlignSystem,
-            widgets: data.node.widgets
-          } as Scene)
-        : undefined;
-    }, [data]);
+  const useSceneQuery = useCallback(
+    ({ sceneId }: SceneQueryProps) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId
+      });
 
-    return { scene, ...rest };
-  }, []);
+      const scene = useMemo(() => {
+        return data?.node?.__typename === "Scene"
+          ? ({
+              id: data.node.id,
+              plugins: data.node.plugins,
+              projectId: data.node.projectId,
+              property: data.node.property,
+              rootLayerId: data.node.rootLayerId,
+              newLayers: data.node.newLayers,
+              stories: data.node.stories,
+              styles: data.node.styles,
+              workspaceId: data.node.teamId,
+              widgetAlignSystem: data.node.widgetAlignSystem,
+              widgets: data.node.widgets
+            } as Scene)
+          : undefined;
+      }, [data]);
+
+      return { scene, ...rest };
+    },
+    [lang]
+  );
 
   return {
     useSceneQuery
