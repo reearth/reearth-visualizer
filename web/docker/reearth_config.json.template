@@ -12,6 +12,7 @@
     "extensionUrls": ${REEARTH_WEB_EXTENSION_URLS},
     "ip": ${REEARTH_WEB_IP},
     "marketplaceUrl": ${REEARTH_WEB_MARKETPLACE_URL},
+    "multiTenant": ${REEARTH_WEB_MULTI_TENANT},
     "passwordPolicy": ${REEARTH_WEB_PASSWORD_POLICY},
     "plugins": ${REEARTH_WEB_PLUGINS},
     "policy": ${REEARTH_WEB_POLICY},
