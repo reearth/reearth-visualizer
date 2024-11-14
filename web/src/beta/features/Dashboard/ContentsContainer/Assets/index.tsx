@@ -5,7 +5,7 @@ import { FC, useCallback, useState } from "react";
 const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
 
 type Props = {
-  workspaceId: string;
+  workspaceId?: string;
 };
 
 const Assets: FC<Props> = ({ workspaceId }) => {
