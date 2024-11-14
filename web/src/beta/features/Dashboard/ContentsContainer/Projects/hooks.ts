@@ -202,11 +202,7 @@ export default (workspaceId?: string) => {
   const projectsViewStateStorageKey = `${PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX}_${workspaceId}`;
 
   const [layout, setLayout] = useState(
-    ["grid", "list"].includes(
-      localStorage.getItem(projectsViewStateStorageKey) ?? ""
-    )
-      ? (localStorage.getItem(projectsViewStateStorageKey) as ManagerLayout)
-      : "grid"
+    getLayoutFromStorage(projectsViewStateStorageKey)
   );
 
   const handleLayoutChange = useCallback(
@@ -219,13 +215,7 @@ export default (workspaceId?: string) => {
   );
 
   useEffect(() => {
-    setLayout(
-      ["grid", "list"].includes(
-        localStorage.getItem(projectsViewStateStorageKey) ?? ""
-      )
-        ? (localStorage.getItem(projectsViewStateStorageKey) as ManagerLayout)
-        : "grid"
-    );
+    setLayout(getLayoutFromStorage(projectsViewStateStorageKey));
   }, [projectsViewStateStorageKey, setLayout]);
 
   const [contentWidth, setContentWidth] = useState(0);
@@ -366,3 +356,9 @@ const pagination = (sort?: SortType) => {
 
   return { first, last, sortBy };
 };
+
+function getLayoutFromStorage(storageKey: string): ManagerLayout {
+  return ["grid", "list"].includes(localStorage.getItem(storageKey) ?? "")
+    ? (localStorage.getItem(storageKey) as ManagerLayout)
+    : "grid";
+}
