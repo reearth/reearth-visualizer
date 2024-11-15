@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd web && yarn run i18n && yarn run type && yarn run lint-staged 
+cd web yarn run type && yarn run lint-staged 
