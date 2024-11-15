@@ -111,18 +111,23 @@ const FeatureData: FC<Props> = ({
     setFields(fieldArray);
   }, [layer?.sketch?.customPropertySchema, selectedFeature?.properties]);
 
+  // Track the previous state of fields (before update)
   const previousFields = useRef<FieldProp[]>([]);
 
   useEffect(() => {
+    // Compare the previous and current fields to detect removed fields.
     const removedFields = previousFields.current.filter(
       (field) => !fields.some((f) => f.id === field.id)
     );
 
+    // For each removed field, check if its id exists in selectedFeature.properties
+    // Updates the properties of selectedFeature, ensuring updatedProperties excludes any removed field.
     removedFields.forEach((removedField) => {
       if (removedField.id && selectedFeature?.properties) {
+        if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
+
         const { [removedField.id]: removed, ...updatedProperties } =
           selectedFeature.properties;
-        if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
 
         if (removed !== undefined) {
           onGeoJsonFeatureUpdate?.({
