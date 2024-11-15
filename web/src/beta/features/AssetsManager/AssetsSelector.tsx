@@ -39,7 +39,7 @@ const AssetsSelector: FC<AssetsSelectorProps> = ({
         onCancel={onClose}
         actions={
           <>
-            <Button onClick={onClose} size="normal" title={t("Cancel")} />
+            <Button onClick={onClose} size="normal" title={t("Cancelo")} />
             <Button
               size="normal"
               title="Select"
