@@ -69,7 +69,7 @@ const PageItem: FC<PageItemProps> = ({
     () => [
       {
         id: "rename",
-        title: "Rename",
+        title: t("Rename"),
         icon: "pencilSimple" as const,
         onClick: () => setEditingPageNameId(storyPage.id)
       },

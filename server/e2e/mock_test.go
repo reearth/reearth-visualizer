@@ -41,17 +41,10 @@ func TestMockAuth(t *testing.T) {
 		Query:         "query GetMe { \n me { \n id \n name \n email\n } \n}",
 		Variables:     map[string]any{},
 	}
-	response2 := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", userId).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody2).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
+	response2 := Request(e, userId, requestBody2).
+		Object().Value("data").Object().Value("me").Object()
 
-	response2.Value("data").Object().Value("me").Object().ContainsKey("id")
-	response2.Value("data").Object().Value("me").Object().Value("name").String().Equal("Mock User")
-	response2.Value("data").Object().Value("me").Object().Value("email").String().Equal("mock@example.com")
+	response2.ContainsKey("id")
+	response2.Value("name").String().Equal("Mock User")
+	response2.Value("email").String().Equal("mock@example.com")
 }

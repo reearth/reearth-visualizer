@@ -25,7 +25,11 @@ const ExpressionTab: FC<Props> = ({ expression, disabled, onUpdate }) => {
       ) : (
         <>
           <Icon>=</Icon>
-          <TextInput value={expression ?? ""} onBlur={onUpdate} />
+          <TextInput
+            value={expression ?? ""}
+            onBlur={onUpdate}
+            placeholder={t("${your property name}")}
+          />
         </>
       )}
     </Wrapper>

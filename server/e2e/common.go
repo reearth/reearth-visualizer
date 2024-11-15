@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"net/http"
 	"testing"
@@ -21,17 +22,14 @@ import (
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/text/language"
 )
 
 type Seeder func(ctx context.Context, r *repo.Container) error
 
 func init() {
 	mongotest.Env = "REEARTH_DB"
-}
-
-func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
-	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
-	return e
 }
 
 func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container) {
@@ -54,15 +52,16 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 	return repos
 }
 
-func initGateway() *gateway.Container {
-	return &gateway.Container{
-		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	}
+func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
+	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
+	return e
 }
 
 func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	repos := initRepos(t, useMongo, seeder)
-	gateways := initGateway()
+	gateways := &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	}
 	return StartServerWithRepos(t, cfg, repos, gateways), repos, gateways
 }
 
@@ -107,12 +106,6 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 	})
 
 	return httpexpect.New(t, "http://"+l.Addr().String())
-}
-
-type GraphQLRequest struct {
-	OperationName string         `json:"operationName"`
-	Query         string         `json:"query"`
-	Variables     map[string]any `json:"variables"`
 }
 
 func StartGQLServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
@@ -169,4 +162,107 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 		}
 	})
 	return httpexpect.New(t, "http://"+l.Addr().String())
+}
+
+func Server(t *testing.T) *httpexpect.Expect {
+	c := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	return StartServer(t, c, true, baseSeeder)
+}
+
+func ServerUser(t *testing.T) (*httpexpect.Expect, *accountrepo.Container) {
+	c := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	return StartGQLServer(t, c, true, baseSeederUser)
+}
+
+func ServerEnglish(t *testing.T) *httpexpect.Expect {
+	c := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	return StartServer(t, c, true,
+		// English user Seeder
+		func(ctx context.Context, r *repo.Container) error {
+			return baseSeederWithLang(ctx, r, language.English)
+		},
+	)
+}
+
+func ServerJapanese(t *testing.T) *httpexpect.Expect {
+	c := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	return StartServer(t, c, true,
+		// Japanese user Seeder
+		func(ctx context.Context, r *repo.Container) error {
+			return baseSeederWithLang(ctx, r, language.Japanese)
+		},
+	)
+}
+
+type GraphQLRequest struct {
+	OperationName string         `json:"operationName"`
+	Query         string         `json:"query"`
+	Variables     map[string]any `json:"variables"`
+}
+
+func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
+	return e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", user).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+}
+
+func RequestQuery(t *testing.T, e *httpexpect.Expect, query string, user string) *httpexpect.Value {
+	request := GraphQLRequest{
+		Query: query,
+	}
+	jsonData, err := json.Marshal(request)
+	assert.Nil(t, err)
+	return e.POST("/api/graphql").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("Content-Type", "application/json").
+		WithHeader("X-Reearth-Debug-User", user).
+		WithBytes(jsonData).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+}
+
+func toJSONString(v interface{}) string {
+	jsonData, _ := json.Marshal(v)
+	return string(jsonData)
+}
+
+func RequestWithMultipart(e *httpexpect.Expect, user string, requestBody map[string]interface{}, filePath string) *httpexpect.Value {
+	return e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", user).
+		WithMultipart().
+		WithFormField("operations", toJSONString(requestBody)).
+		WithFormField("map", `{"0": ["variables.file"]}`).
+		WithFile("0", filePath).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
 }

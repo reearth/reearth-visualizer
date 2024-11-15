@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/samber/lo"
 )
 
@@ -70,14 +69,7 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
 	return requestBody, res, layerId
@@ -96,14 +88,7 @@ func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
@@ -153,14 +138,7 @@ func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
@@ -182,14 +160,7 @@ func duplicateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *h
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
@@ -239,14 +210,7 @@ func fetchProjectForNewLayers(e *httpexpect.Expect, pID string) (GraphQLRequest,
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(fetchProjectRequestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), fetchProjectRequestBody)
 
 	return fetchProjectRequestBody, res
 }
@@ -344,25 +308,13 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(fetchSceneRequestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), fetchSceneRequestBody)
 
 	return fetchSceneRequestBody, res
 }
 
 func TestNLSLayerCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
 	pId := createProject(e, "test")
 
@@ -507,14 +459,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -544,14 +489,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 // 		},
 // 	}
 
-// 	res := e.POST("/api/graphql").
-// 		WithHeader("Origin", "https://example.com").
-// 		WithHeader("X-Reearth-Debug-User", uID.String()).
-// 		WithHeader("Content-Type", "application/json").
-// 		WithJSON(requestBody).
-// 		Expect().
-// 		Status(http.StatusOK).
-// 		JSON()
+// 	res := Request(e, uID.String(), requestBody)
 
 // 	return requestBody, res
 // }
@@ -597,14 +535,7 @@ func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -653,14 +584,7 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (G
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContains(infoboxBlockId)
@@ -706,14 +630,7 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().Contains(infoboxBlockId)
@@ -723,12 +640,7 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 
 func TestInfoboxBlocksCRUD(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
 	pId := createProject(e, "test")
 
@@ -824,25 +736,13 @@ func addCustomProperties(
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
 
 func TestCustomProperties(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
 	pId := createProject(e, "test")
 
