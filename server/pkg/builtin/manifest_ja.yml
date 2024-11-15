@@ -1231,7 +1231,7 @@ extensions:
       default:
         title: 画像
         fields:
-          text:
+          src:
             title: コンテンツ
   videoStoryBlock:
     name: 動画
@@ -1245,7 +1245,7 @@ extensions:
       default:
         title: 動画
         fields:
-          text:
+          src:
             title: コンテンツ
   cameraButtonStoryBlock:
     name: カメラボタン
@@ -1285,6 +1285,7 @@ extensions:
             title: タイムライン設定
           playMode:
             title: プレイモード
+            description: タイムラインの再生モードを設定します
   showLayersStoryBlock:
     name: レイヤーボタン
     description: ストーリーテリングのレイヤー変更出来るボタンブロック

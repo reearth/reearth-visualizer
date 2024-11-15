@@ -12,7 +12,7 @@ import {
   PUBLISH_STORY,
   UPDATE_STORY
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
 import { useNotification } from "../../state";
@@ -27,10 +27,11 @@ export type StoryQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
+  const lang = useLang();
   const [, setNotification] = useNotification();
 
   const useStoriesQuery = useCallback(
-    ({ sceneId, lang }: StoryQueryProps, options?: CustomOptions) => {
+    ({ sceneId }: StoryQueryProps, options?: CustomOptions) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId || options?.skip
@@ -40,7 +41,7 @@ export default () => {
 
       return { stories, ...rest };
     },
-    []
+    [lang]
   );
 
   const [createStoryMutation] = useMutation<

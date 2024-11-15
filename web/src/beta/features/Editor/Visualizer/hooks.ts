@@ -28,7 +28,8 @@ import {
   useEffect,
   useCallback,
   useState,
-  MutableRefObject
+  MutableRefObject,
+  useRef
 } from "react";
 
 import { useCurrentCamera } from "../atoms";
@@ -93,6 +94,7 @@ export default ({
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
     undefined
   );
+  const isInitialized = useRef(false);
 
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
@@ -123,6 +125,8 @@ export default ({
   }, [scene?.property]);
 
   useEffect(() => {
+    if (isInitialized.current) return;
+    isInitialized.current = true;
     setCurrentCamera(initialCamera);
   }, [initialCamera, setCurrentCamera]);
 
