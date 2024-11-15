@@ -1,3 +1,7 @@
+export const isEmptyString = function (text: string): boolean {
+  return text === null || /^ *$/.test(text);
+};
+
 const usableChars =
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const generateRandomString = (len: number): string => {
