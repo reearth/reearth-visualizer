@@ -4,16 +4,11 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 func TestDatasetExport(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
 	e.GET("/api/datasets/test").
 		Expect().

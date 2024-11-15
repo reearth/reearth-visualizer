@@ -1,13 +1,9 @@
 package e2e
 
 import (
-	"encoding/json"
-	"net/http"
-	"os"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"golang.org/x/text/language"
 )
 
@@ -16,16 +12,9 @@ import (
 
 func TestCallImportProject(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
-	filePath := "test.zip"
-
-	r := importProject(t, e, filePath)
+	r := importProject(e, "test.zip")
 
 	r.Value("project").NotNull()
 	r.Value("plugins").Array()
@@ -36,24 +25,11 @@ func TestCallImportProject(t *testing.T) {
 	r.Value("story").NotNull()
 
 	sid := r.Value("scene").Object().Value("id").Raw().(string)
-
 	r = getScene(e, sid, language.English.String())
-	// fmt.Println(toJSONString(r.Raw()))
-
 	r.Value("id").Equal(sid)
-
 }
 
-func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexpect.Object {
-	file, err := os.Open(filePath)
-	if err != nil {
-		t.Fatalf("failed to open file: %v", err)
-	}
-	defer func() {
-		if cerr := file.Close(); cerr != nil && err == nil {
-			err = cerr
-		}
-	}()
+func importProject(e *httpexpect.Expect, filePath string) *httpexpect.Object {
 	requestBody := map[string]interface{}{
 		"operationName": "ImportProject",
 		"variables": map[string]interface{}{
@@ -67,18 +43,7 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
             } 
         }`,
 	}
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithMultipart().
-		WithFormField("operations", toJSONString(requestBody)).
-		WithFormField("map", `{"0": ["variables.file"]}`).
-		WithFile("0", filePath).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
+	r := RequestWithMultipart(e, uID.String(), requestBody, filePath).Object()
 	projectData := r.Value("data").Object().Value("importProject").Object().Value("projectData")
 	projectData.NotNull()
 	return projectData.Object()
@@ -93,24 +58,10 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 			"lang":    l,
 		},
 	}
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
+	r := Request(e, uID.String(), requestBody).Object()
 	v := r.Value("data").Object().Value("node")
 	v.NotNull()
 	return v.Object()
-}
-
-func toJSONString(v interface{}) string {
-	jsonData, _ := json.Marshal(v)
-	return string(jsonData)
 }
 
 const GetSceneGuery = `

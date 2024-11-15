@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
@@ -72,14 +71,7 @@ func addGeoJSONFeature(
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	featureId := res.Path("$.data.addGeoJSONFeature.id").Raw().(string)
 	return requestBody, res, featureId
@@ -150,14 +142,7 @@ func updateGeoJSONFeature(
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	fId := res.Path("$.data.updateGeoJSONFeature.id").Raw().(string)
 	return requestBody, res, fId
@@ -183,14 +168,7 @@ func deleteGeoJSONFeature(
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	fId := res.Path("$.data.deleteGeoJSONFeature.deletedFeatureId").Raw().(string)
 	return requestBody, res, fId
