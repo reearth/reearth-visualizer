@@ -66,7 +66,13 @@ export default ({ files }: Props) => {
 
     const ymlJson = getYmlResult.data;
 
-    if (!ymlJson.extensions) return;
+    if (!Array.isArray(ymlJson.extensions) || ymlJson.extensions.length === 0) {
+      setNotification({
+        type: "error",
+        text: "No extensions found in YAML file."
+      });
+      return;
+    }
 
     const widgets = ymlJson.extensions.reduce<NonNullable<Widgets>>(
       (prv, cur) => {
