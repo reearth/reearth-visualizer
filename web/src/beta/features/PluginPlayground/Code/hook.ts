@@ -55,24 +55,6 @@ export default ({ files }: Props) => {
   const executeCode = useCallback(() => {
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
 
-    const jsFiles = files.filter((file) => file.title.endsWith(".js"));
-
-    const outputs = jsFiles.map((file) => {
-      console.log(Function(file.sourceCode));
-
-      try {
-        return {
-          title: file.title,
-          output: Function(file.sourceCode)
-        };
-      } catch (error) {
-        if (error instanceof Error) {
-          return `Error in ${file.title}: ${error.message}`;
-        }
-        return "Unknown error";
-      }
-    });
-
     if (!ymlFile) return;
 
     const getYmlResult = getYmlJson(ymlFile);
