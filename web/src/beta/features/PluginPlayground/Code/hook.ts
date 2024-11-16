@@ -51,6 +51,12 @@ const getYmlJson = (file: FileType) => {
 export default ({ files }: Props) => {
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
+  const [fileOutputs, setFileOutputs] = useState<
+    {
+      title: string;
+      output: string;
+    }[]
+  >();
 
   const executeCode = useCallback(() => {
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
@@ -58,20 +64,27 @@ export default ({ files }: Props) => {
     const jsFiles = files.filter((file) => file.title.endsWith(".js"));
 
     const outputs = jsFiles.map((file) => {
-      console.log(Function(file.sourceCode));
-
+      const fn = new Function(file.sourceCode);
       try {
         return {
           title: file.title,
-          output: Function(file.sourceCode)
+          output: fn()
         };
       } catch (error) {
         if (error instanceof Error) {
-          return `Error in ${file.title}: ${error.message}`;
+          return {
+            title: file.title,
+            output: error.message
+          };
         }
-        return "Unknown error";
+        return {
+          title: file.title,
+          output: "Failed to execute"
+        };
       }
     });
+
+    setFileOutputs(outputs);
 
     if (!ymlFile) return;
 
@@ -138,6 +151,7 @@ export default ({ files }: Props) => {
 
   return {
     executeCode,
-    widgets
+    widgets,
+    fileOutputs
   };
 };

@@ -24,7 +24,7 @@ export default () => {
     handlePluginDownload
   } = usePlugins();
 
-  const { widgets, executeCode } = useCode({
+  const { widgets, executeCode, fileOutputs } = useCode({
     files: selectedPlugin.files
   });
 
@@ -46,10 +46,10 @@ export default () => {
       {
         id: "console",
         name: "Console",
-        children: <Console />
+        children: <Console fileOutputs={fileOutputs} />
       }
     ],
-    []
+    [fileOutputs]
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
