@@ -1,5 +1,12 @@
 import { fonts, styled } from "@reearth/services/theme";
-import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  FC,
+  ChangeEvent,
+  KeyboardEvent
+} from "react";
 
 export type NumberInputProps = {
   value?: number | string;
@@ -79,6 +86,16 @@ export const NumberInput: FC<NumberInputProps> = ({
     setIsFocused(true);
   }, []);
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleBlur();
+      }
+    },
+    [handleBlur]
+  );
+
   return (
     <Wrapper
       size={size}
@@ -93,6 +110,7 @@ export const NumberInput: FC<NumberInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
+        onKeyDown={handleKeyDown}
       />
       {unit && <UnitWrapper> {unit}</UnitWrapper>}
     </Wrapper>
