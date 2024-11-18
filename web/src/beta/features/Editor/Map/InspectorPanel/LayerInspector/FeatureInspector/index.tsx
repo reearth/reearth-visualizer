@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
@@ -103,47 +103,13 @@ const FeatureData: FC<Props> = ({
 
     const fieldArray = sortedValues.map(({ key, value }) => ({
       id: key,
-      type: value.replace(/_\d$/, ""),
+      type: value.replace(/_\d+$/, ""),
       title: key,
       value: selectedFeature?.properties?.[key]
     }));
 
     setFields(fieldArray);
   }, [layer?.sketch?.customPropertySchema, selectedFeature?.properties]);
-
-  // Track the previous state of fields (before update)
-  const previousFields = useRef<FieldProp[]>([]);
-
-  useEffect(() => {
-    if (!selectedFeature?.properties || !sketchFeature?.id || !layer?.id)
-      return;
-
-    // Compare the previous and current fields to detect removed fields.
-    const removedFields = previousFields.current.filter(
-      (field) => !fields.some((f) => f.id === field.id)
-    );
-
-    // Process only valid removed field's id that exist in properties
-    // Updates the properties of selectedFeature, by ensuring updatedProperties excludes any removed field.
-    removedFields
-      .filter(
-        (field) =>
-          field.id && selectedFeature.properties[field.id] !== undefined
-      )
-      .forEach((removedField) => {
-        const { [removedField.id]: removed, ...updatedProperties } =
-          selectedFeature.properties;
-
-        onGeoJsonFeatureUpdate?.({
-          layerId: layer.id,
-          featureId: sketchFeature.id,
-          geometry: selectedFeature.geometry,
-          properties: updatedProperties
-        });
-      });
-
-    previousFields.current = fields;
-  }, [fields, selectedFeature, onGeoJsonFeatureUpdate, layer, sketchFeature]);
 
   const handleSubmit = useCallback(() => {
     if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
