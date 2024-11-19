@@ -125,7 +125,7 @@ const CardImage = styled("div")<{
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
-  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`
+  boxShadow: `inset 0 0 0 1px ${isHovered ? theme.outline.weak : "transparent"}`
 }));
 
 const StarButtonWrapper = styled("div")<{

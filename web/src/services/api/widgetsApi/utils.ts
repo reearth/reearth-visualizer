@@ -1,3 +1,5 @@
+import { IconName } from "@reearth/beta/lib/reearth-ui";
+
 import { GetSceneQuery, PluginExtensionType } from "../../gql";
 import { Item, convert } from "../propertyApi/utils";
 
@@ -57,7 +59,9 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
             title: e.translatedName,
             description: e.description,
             icon:
-              e.icon || (plugin.id === "reearth" && e.extensionId) || "plugin",
+              e.icon ||
+              getBuiltinExtensionIcon(plugin.id, e.extensionId) ||
+              "plugin",
             disabled:
               (e.singleOnly &&
                 !!scene?.widgets?.find(
@@ -72,6 +76,23 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
     })
     .reduce<InstallableWidget[]>((a, b) => (b ? [...a, ...b] : a), []);
 };
+
+function getBuiltinExtensionIcon(
+  pluginId: string,
+  extensionId: string
+): IconName | undefined {
+  switch (`${pluginId}/${extensionId}`) {
+    // TODO: get the correct icon from design
+    case BUTTON_BUILTIN_WIDGET_ID:
+      return "return";
+    case NAVIGATOR_BUILTIN_WIDGET_ID:
+      return "crosshair";
+    case DATA_ATTRIBUTION_WIDGET_ID:
+      return "listDashes";
+    default:
+      return undefined;
+  }
+}
 
 export const getInstalledWidgets = (
   rawScene?: GetSceneQuery
