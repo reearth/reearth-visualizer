@@ -2,6 +2,7 @@ import { Button, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 
 import { DeletedProject } from "../../../type";
 import ProjectDeleteModal from "../ProjectDeleteModal";
@@ -48,7 +49,7 @@ const RecycleBinItem: FC<Prop> = ({
   return (
     <Card>
       <CardImage
-        backgroundImage={project?.imageUrl}
+        backgroundImage={project?.imageUrl ?? defaultProjectBackgroundImage}
         isHovered={isHovered ?? false}
         onMouseEnter={() => handleProjectHover(true)}
         onMouseLeave={() => handleProjectHover(false)}
@@ -94,9 +95,8 @@ const CardImage = styled("div")<{
 }>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
   position: "relative",
-  background: backgroundImage
-    ? `url(${backgroundImage}) center/cover`
-    : theme.bg[1],
+  background: backgroundImage ? `url(${backgroundImage}) center/cover` : "",
+  backgroundColor: theme.bg[1],
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
