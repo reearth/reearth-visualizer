@@ -55,6 +55,7 @@ const ActionArea: FC<ActionAreaProps> = ({
       }
       menu={items}
       extendTriggerWidth
+      extendContentWidth
     />
   );
 };
