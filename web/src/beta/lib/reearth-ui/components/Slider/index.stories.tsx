@@ -1,7 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
-import { useCallback } from "react";
 
 import { Slider, SliderProps } from ".";
 
@@ -14,40 +12,21 @@ type Story = StoryObj<typeof Slider>;
 export default meta;
 
 export const Default: Story = (args: SliderProps) => {
-  const [_, updateArgs] = useArgs();
-
-  const handleChange = useCallback(
-    (value: number) => updateArgs({ value: value }),
-    [updateArgs]
-  );
-
   return (
     <Wrapper>
       <div>
-        <Slider {...args} onChange={handleChange} />
+        <Slider {...args} />
       </div>
     </Wrapper>
   );
 };
 
 export const Disabled: Story = (args: SliderProps) => {
-  const [_, updateArgs] = useArgs();
-
-  const handleChange = useCallback(
-    (value: number) => updateArgs({ value: value }),
-    [updateArgs]
-  );
-
   return (
     <Wrapper>
       {[10, 25].map((value, index) => (
         <div key={index}>
-          <Slider
-            {...args}
-            value={value}
-            disabled={true}
-            onChange={handleChange}
-          />
+          <Slider {...args} value={value} disabled={true} />
         </div>
       ))}
     </Wrapper>

@@ -4,39 +4,71 @@ import { ComponentProps, FC, useCallback, useEffect, useState } from "react";
 
 import "rc-slider/assets/index.css";
 
-const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
+const RangeSliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider.Range);
 
-export type SliderProps = {
+export type RangeSliderProps = {
   min?: number;
   max?: number;
-} & ComponentProps<typeof SliderWithTooltip>;
+  onBlur?: (value: number[]) => void;
+} & ComponentProps<typeof RangeSliderWithTooltip>;
 
-export const Slider: FC<SliderProps> = ({ value, onChange, ...props }) => {
-  const calculatedStep = props.step
-    ? props.step
-    : props.max
-      ? props.max / 10
-      : 0.1;
+const calculateStep = (
+  min?: number,
+  max?: number,
+  step?: number | null
+): number => {
+  if (step != undefined) {
+    return step;
+  } else if (min !== undefined && max !== undefined) {
+    const range = max - min;
+    let calculatedStep = range / 10;
+    if (range % calculatedStep !== 0) {
+      const steps = Math.ceil(range / calculatedStep);
+      calculatedStep = range / steps;
+    }
+    return calculatedStep;
+  } else {
+    return 1;
+  }
+};
 
-  const [currentValue, setCurrentValue] = useState(value);
+export const RangeSlider: FC<RangeSliderProps> = ({
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  onBlur,
+  ...props
+}) => {
+  const calculatedStep = calculateStep(min, max, step);
+  const [currentValue, setCurrentValue] = useState<number[] | undefined>(value);
 
   useEffect(() => {
     setCurrentValue(value);
   }, [value]);
 
   const handleChange = useCallback(
-    (value: number) => {
+    (value: number[]) => {
       setCurrentValue(value);
       onChange?.(value);
     },
     [onChange]
   );
+
+  const handleBlur = useCallback(() => {
+    if (!currentValue) return;
+    onBlur?.(currentValue);
+  }, [currentValue, onBlur]);
+
   return (
     <SliderStyled disabled={props.disabled as boolean}>
-      <SliderWithTooltip
+      <RangeSliderWithTooltip
         value={currentValue}
-        step={calculatedStep}
         onChange={handleChange}
+        onBlur={handleBlur}
+        step={calculatedStep}
+        draggableTrack
         {...props}
       />
     </SliderStyled>
@@ -81,3 +113,4 @@ const SliderStyled = styled("div")<{ disabled: boolean }>(
     }
   })
 );
+
