@@ -86,15 +86,12 @@ export const NumberInput: FC<NumberInputProps> = ({
     setIsFocused(true);
   }, []);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        handleBlur();
-      }
-    },
-    [handleBlur]
-  );
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "Return") {
+      e.preventDefault();
+      (e.target as HTMLInputElement).blur();
+    }
+  }, []);
 
   return (
     <Wrapper
