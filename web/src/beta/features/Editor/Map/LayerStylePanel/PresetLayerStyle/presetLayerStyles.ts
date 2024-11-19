@@ -18,7 +18,8 @@ export const defaultStyle: Partial<LayerAppearanceTypes> = {
     clampToGround: true,
     strokeColor: "#FFFFFF",
     strokeWidth: 2
-  }
+  },
+  "3dtiles": {}
 };
 
 export const professionalStyle = {
