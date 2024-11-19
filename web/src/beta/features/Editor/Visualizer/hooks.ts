@@ -96,6 +96,16 @@ export default ({
   );
   const isInitialized = useRef(false);
 
+  // Workaround: Temporarily disable terrain when terrain is enabled
+  // We don't know the root cause yet, but it seems that terrain is not loaded properly when terrain is enabled on Editor
+  const [tempDisableTerrain, setTempDisableTerrain] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTempDisableTerrain(false);
+    }, 0);
+  }, []);
+
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
     const cesiumIonAccessToken = sceneProperty?.default?.ion;
@@ -113,16 +123,27 @@ export default ({
       setInitialCamera(initialCamera);
     }
 
+    const viewerProperty = sceneProperty
+      ? (convertData(
+          sceneProperty,
+          sceneProperty2ViewerPropertyMapping
+        ) as ViewerProperty)
+      : undefined;
+
+    if (
+      viewerProperty &&
+      tempDisableTerrain &&
+      viewerProperty.terrain &&
+      viewerProperty.terrain.enabled
+    ) {
+      viewerProperty.terrain.enabled = false;
+    }
+
     return {
-      viewerProperty: sceneProperty
-        ? (convertData(
-            sceneProperty,
-            sceneProperty2ViewerPropertyMapping
-          ) as ViewerProperty)
-        : undefined,
+      viewerProperty,
       cesiumIonAccessToken
     };
-  }, [scene?.property]);
+  }, [scene?.property, tempDisableTerrain]);
 
   useEffect(() => {
     if (isInitialized.current) return;
