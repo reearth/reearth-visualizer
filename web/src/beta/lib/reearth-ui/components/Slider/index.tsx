@@ -1,6 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import RCSlider from "rc-slider";
-import React, { ComponentProps } from "react";
+import { ComponentProps, FC } from "react";
 
 import "rc-slider/assets/index.css";
 
@@ -11,7 +11,7 @@ export type SliderProps = {
   max?: number;
 } & ComponentProps<typeof SliderWithTooltip>;
 
-export const Slider: React.FC<SliderProps> = ({ ...props }) => {
+export const Slider: FC<SliderProps> = ({ ...props }) => {
   const calculatedStep = props.step
     ? props.step
     : props.max

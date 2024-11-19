@@ -18,6 +18,7 @@ import {
   TimePointField,
   TwinInputField
 } from "..";
+import SliderField from "../SliderField";
 import { SpacingValues } from "../SpacingField";
 
 import useHooks from "./hooks";
@@ -146,16 +147,28 @@ const PropertyField: FC<Props> = ({
           onChange={handleChange}
         />
       ) : schema.type === "number" ? (
-        <NumberField
-          key={schema.id}
-          title={schema.name}
-          value={(value as number) ?? ""}
-          unit={schema.suffix}
-          min={schema.min}
-          max={schema.max}
-          description={schema.description}
-          onBlur={handleChange}
-        />
+        schema.ui === "slider" ? (
+          <SliderField
+            key={schema.id}
+            title={schema.name}
+            value={value as number}
+            min={schema.min}
+            max={schema.max}
+            description={schema.description}
+            onChange={handleChange}
+          />
+        ) : (
+          <NumberField
+            key={schema.id}
+            title={schema.name}
+            value={(value as number) ?? ""}
+            unit={schema.suffix}
+            min={schema.min}
+            max={schema.max}
+            description={schema.description}
+            onBlur={handleChange}
+          />
+        )
       ) : schema.type === "latlng" ? (
         <TwinInputField
           key={schema.id}
