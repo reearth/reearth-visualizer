@@ -1,10 +1,14 @@
-import { evalExpression, useVisualizer, Feature } from "@reearth/core";
+import { evalExpression, Feature, ComputedFeature } from "@reearth/core";
 import { isEqual } from "lodash-es";
 import { useEffect, useState } from "react";
 
 import { PropertyListItem } from "../ListEditor";
 
-export default (properties: PropertyListItem[] | undefined) => {
+type Props = {
+  selectedFeature?: ComputedFeature;
+  properties?: PropertyListItem[];
+};
+export default ({ properties, selectedFeature }: Props) => {
   const [isReady, setIsReady] = useState(false);
   const [currentValue, setCurrentValue] = useState<
     PropertyListItem[] | undefined
@@ -14,7 +18,6 @@ export default (properties: PropertyListItem[] | undefined) => {
     PropertyListItem[] | undefined
   >(undefined);
 
-  const visualizer = useVisualizer();
 
   // We want the useEffect to be called on each render to make sure evaluatedProperties is up to date
   useEffect(() => {
@@ -27,7 +30,6 @@ export default (properties: PropertyListItem[] | undefined) => {
       setEvaluatedResult(undefined);
       return;
     }
-    const selectedFeature = visualizer.current?.layers.selectedFeature();
     if (selectedFeature) {
       const simpleFeature: Feature = {
         id: selectedFeature.id,
@@ -58,7 +60,7 @@ export default (properties: PropertyListItem[] | undefined) => {
         setEvaluatedResult(es as PropertyListItem[]);
       }
     }
-  }, [isReady, currentValue, properties, evaluatedProperties, visualizer]);
+  }, [isReady, currentValue, properties, evaluatedProperties, selectedFeature]);
 
   return evaluatedProperties?.filter((ep) => ep !== undefined);
 };
