@@ -18,7 +18,7 @@ import {
   useState
 } from "react";
 
-import { PaddingProp } from "./Editor";
+import { PaddingProp } from "./Player";
 
 import { TimelineValues } from ".";
 

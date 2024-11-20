@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { FC } from "react";
 
 import CursorStatus from "../CursorStatus";
@@ -64,90 +63,87 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleCoreAPIReady
   } = useHooks({ sceneId, tab, projectId });
 
-  // TODO remove DndProvider, use DragAndDropContext instead
   return (
-    <DndProvider>
-      <Wrapper>
-        <Navbar
+    <Wrapper>
+      <Navbar
+        sceneId={sceneId}
+        projectId={projectId}
+        workspaceId={workspaceId}
+        currentTab={tab}
+      />
+      <Content>
+        <VisualizerArea style={{ ...visualizerSize }}>
+          <EditorVisualizer
+            inEditor={tab !== "publish"}
+            selectedLayer={selectedLayer}
+            visualizerRef={visualizerRef}
+            storyPanelRef={storyPanelRef}
+            isVisualizerResizing={isVisualizerResizing}
+            sceneId={sceneId}
+            showStoryPanel={activeSubProject?.type === "story"}
+            selectedStory={selectedStory}
+            installableStoryBlocks={installableStoryBlocks}
+            widgetAlignEditorActivated={showWASEditor}
+            selectedWidgetArea={selectedWidgetArea}
+            onStoryBlockMove={handleStoryBlockMove}
+            onSketchTypeChange={handleSketchTypeChange}
+            onSketchFeatureCreate={handleSketchFeatureCreate}
+            onSketchFeatureUpdate={handleSketchFeatureUpdate}
+            onVisualizerReady={handleIsVisualizerUpdate}
+            onCoreLayerSelect={handleCoreLayerSelectFromMap}
+            onCoreAPIReady={handleCoreAPIReady}
+            setSelectedStoryPageId={selectStoryPage}
+            selectWidgetArea={selectWidgetArea}
+          />
+        </VisualizerArea>
+        <Workbench>
+          {tab === "map" && (
+            <MapPageProvider value={mapPageValue}>
+              <Map />
+            </MapPageProvider>
+          )}
+          {tab === "story" && (
+            <StoryPageProvider value={storyPageValue}>
+              <Story />
+            </StoryPageProvider>
+          )}
+          {tab === "widgets" && (
+            <WidgetsPageProvider value={widgetsPageValue}>
+              <Widgets />
+            </WidgetsPageProvider>
+          )}
+          {tab === "publish" && (
+            <PublishPageProvider value={publishPageValue}>
+              <Publish />
+            </PublishPageProvider>
+          )}
+        </Workbench>
+      </Content>
+      {dataSourceLayerCreatorShown && (
+        <DataSourceLayerCreator
           sceneId={sceneId}
-          projectId={projectId}
-          workspaceId={workspaceId}
-          currentTab={tab}
+          onClose={closeDataSourceLayerCreator}
+          onSubmit={handleLayerAdd}
         />
-        <Content>
-          <VisualizerArea style={{ ...visualizerSize }}>
-            <EditorVisualizer
-              inEditor={tab !== "publish"}
-              selectedLayer={selectedLayer}
-              visualizerRef={visualizerRef}
-              storyPanelRef={storyPanelRef}
-              isVisualizerResizing={isVisualizerResizing}
-              sceneId={sceneId}
-              showStoryPanel={activeSubProject?.type === "story"}
-              selectedStory={selectedStory}
-              installableStoryBlocks={installableStoryBlocks}
-              widgetAlignEditorActivated={showWASEditor}
-              selectedWidgetArea={selectedWidgetArea}
-              onStoryBlockMove={handleStoryBlockMove}
-              onSketchTypeChange={handleSketchTypeChange}
-              onSketchFeatureCreate={handleSketchFeatureCreate}
-              onSketchFeatureUpdate={handleSketchFeatureUpdate}
-              onVisualizerReady={handleIsVisualizerUpdate}
-              onCoreLayerSelect={handleCoreLayerSelectFromMap}
-              onCoreAPIReady={handleCoreAPIReady}
-              setSelectedStoryPageId={selectStoryPage}
-              selectWidgetArea={selectWidgetArea}
-            />
-          </VisualizerArea>
-          <Workbench>
-            {tab === "map" && (
-              <MapPageProvider value={mapPageValue}>
-                <Map />
-              </MapPageProvider>
-            )}
-            {tab === "story" && (
-              <StoryPageProvider value={storyPageValue}>
-                <Story />
-              </StoryPageProvider>
-            )}
-            {tab === "widgets" && (
-              <WidgetsPageProvider value={widgetsPageValue}>
-                <Widgets />
-              </WidgetsPageProvider>
-            )}
-            {tab === "publish" && (
-              <PublishPageProvider value={publishPageValue}>
-                <Publish />
-              </PublishPageProvider>
-            )}
-          </Workbench>
-        </Content>
-        {dataSourceLayerCreatorShown && (
-          <DataSourceLayerCreator
-            sceneId={sceneId}
-            onClose={closeDataSourceLayerCreator}
-            onSubmit={handleLayerAdd}
-          />
-        )}
-        {sketchLayerCreatorShown && (
-          <SketchLayerCreator
-            onSubmit={handleLayerAdd}
-            sceneId={sceneId}
-            onClose={closeSketchLayerCreator}
-            layerStyles={layerStyles}
-          />
-        )}
-        {customPropertySchemaShown && (
-          <SketchLayerEditor
-            layers={layers}
-            layerId={layerId}
-            onClose={closeCustomPropertySchema}
-            onCustomPropertySchemaUpdate={handleCustomPropertySchemaUpdate}
-          />
-        )}
-        <CursorStatus />
-      </Wrapper>
-    </DndProvider>
+      )}
+      {sketchLayerCreatorShown && (
+        <SketchLayerCreator
+          onSubmit={handleLayerAdd}
+          sceneId={sceneId}
+          onClose={closeSketchLayerCreator}
+          layerStyles={layerStyles}
+        />
+      )}
+      {customPropertySchemaShown && (
+        <SketchLayerEditor
+          layers={layers}
+          layerId={layerId}
+          onClose={closeCustomPropertySchema}
+          onCustomPropertySchemaUpdate={handleCustomPropertySchemaUpdate}
+        />
+      )}
+      <CursorStatus />
+    </Wrapper>
   );
 };
 

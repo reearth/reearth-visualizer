@@ -127,13 +127,13 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             <PopupMenu label={title} menu={subItem} width={width} nested />
           ) : path ? (
             <StyledLink to={disabled ? "" : path}>
-              <TitleWrapper disabled={disabled}>
+              <TitleWrapper disabled={disabled} flex={!!tileComponent}>
                 {title}
                 {tileComponent}
               </TitleWrapper>
             </StyledLink>
           ) : (
-            <TitleWrapper disabled={disabled}>
+            <TitleWrapper disabled={disabled} flex={!!tileComponent}>
               {title}
               {tileComponent}
             </TitleWrapper>
@@ -302,7 +302,8 @@ const Item = styled("div")<{
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: "none",
-  width: "100%"
+  flex: 1,
+  display: "flex"
 }));
 
 const IconWrapper = styled("div")(() => ({
@@ -323,7 +324,9 @@ const SubItem = styled("div")(() => ({
   justifyContent: "space-between",
   justifyItems: "center",
   flexGrow: 1,
-  alignItems: "center"
+  alignItems: "center",
+  width: "100%",
+  overflow: "hidden"
 }));
 
 const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
@@ -361,16 +364,15 @@ const Group = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.micro}px`
 }));
 
-const TitleWrapper = styled("div")<{ disabled?: boolean }>(
-  ({ theme, disabled }) => ({
+const TitleWrapper = styled("div")<{ disabled?: boolean; flex?: boolean }>(
+  ({ theme, disabled, flex }) => ({
     fontSize: theme.fonts.sizes.body,
     color: disabled ? theme.content.weak : theme.content.main,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    maxWidth: 160,
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
+    flex: 1,
+    ...(flex ? { display: "flex", alignItems: "center" } : {})
   })
 );

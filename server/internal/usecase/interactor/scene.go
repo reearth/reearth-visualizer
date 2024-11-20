@@ -644,9 +644,9 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		if c != nil {
 			actualConfig := *c
 			if data, ok := actualConfig["data"].(map[string]any); ok {
-				u, ok := data["url"].(*url.URL)
-				if ok {
-					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
+				if urlStr, ok := data["url"].(string); ok {
+					url, _ := url.Parse(urlStr)
+					if isReearth, u := convertReearthEnv(ctx, url); isReearth {
 						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
 							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
 						}

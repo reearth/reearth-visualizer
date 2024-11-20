@@ -1,7 +1,7 @@
 import { getFieldValue } from "@reearth/beta/features/Visualizer/Crust/StoryPanel/utils";
 import { TextInput } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
-import { isEmptyString } from "@reearth/beta/utils/util";
+import { isEmptyString } from "@reearth/beta/utils/string";
 import { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -69,7 +69,7 @@ const PageItem: FC<PageItemProps> = ({
     () => [
       {
         id: "rename",
-        title: "Rename",
+        title: t("Rename"),
         icon: "pencilSimple" as const,
         onClick: () => setEditingPageNameId(storyPage.id)
       },

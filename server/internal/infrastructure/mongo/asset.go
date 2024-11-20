@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
@@ -72,14 +74,22 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 	}
 
 	if uFilter.Keyword != nil {
+		keyword := fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword))
 		filter = mongox.And(filter, "name", bson.M{
-			"$regex": primitive.Regex{Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword)), Options: "i"},
+			"$regex": primitive.Regex{Pattern: keyword, Options: "i"},
 		})
+	}
+
+	bucketPattern := adapter.CurrentHost(ctx)
+	if strings.Contains(bucketPattern, "localhost") {
+		bucketPattern = "localhost"
+	} else {
+		bucketPattern = "visualizer"
 	}
 
 	// Classic's Assets shouldn't been shown @pyshx
 	filter = mongox.And(filter, "url", bson.M{
-		"$regex": primitive.Regex{Pattern: "visualizer", Options: "i"},
+		"$regex": primitive.Regex{Pattern: bucketPattern, Options: "i"},
 	})
 
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
