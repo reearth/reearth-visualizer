@@ -125,6 +125,7 @@ const ListEditor: FC<Props> = ({
                 items={DraggableCurrentPropertyList}
                 onMoveStart={handleMoveStart}
                 onMoveEnd={handleMoveEnd}
+                handleClassName={CURRENT_PROPERTY_LIST_DRAG_HANDLE_CLASS_NAME}
               />
             </FieldWrapper>
           </>

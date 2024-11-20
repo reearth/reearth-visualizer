@@ -66,11 +66,11 @@ const StylePanel: FC<Props> = ({
     () =>
       appearanceNodes.map((node) => ({
         id: node.id,
-        title: t(node.title),
+        title: node.title,
         disabled: styleNodes.some((n) => n.id === node.id),
         onClick: () => createNode(node.id)
       })),
-    [appearanceNodes, t, styleNodes, createNode]
+    [appearanceNodes, styleNodes, createNode]
   );
 
   return (

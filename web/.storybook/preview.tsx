@@ -10,7 +10,6 @@ import { withThemeFromJSXProvider } from "@storybook/addon-styling";
 import type { Preview, ReactRenderer } from "@storybook/react";
 import React from "react";
 
-import { Provider as DndProvider } from "../src/beta/utils/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
 import { GlobalStyles, darkTheme, lightTheme } from "../src/services/theme";
 
@@ -56,9 +55,7 @@ const preview: Preview = {
       return (
         <ApolloProvider client={mockClient}>
           <I18nProvider>
-            <DndProvider>
-              <Story />
-            </DndProvider>
+            <Story />
           </I18nProvider>
         </ApolloProvider>
       );

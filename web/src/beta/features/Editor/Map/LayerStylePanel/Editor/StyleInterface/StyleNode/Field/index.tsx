@@ -28,10 +28,10 @@ const fieldComponents = {
     />
   ),
   number: (props: FieldProps) => (
-    <NumberInput value={props.value as number} onChange={props.onUpdate} />
+    <NumberInput value={props.value as number} onBlur={props.onUpdate} />
   ),
   text: (props: FieldProps) => (
-    <TextInput value={props.value as string} onChange={props.onUpdate} />
+    <TextInput value={props.value as string} onBlur={props.onUpdate} />
   ),
   color: (props: FieldProps) => (
     <ColorInput value={props.value as string} onChange={props.onUpdate} />

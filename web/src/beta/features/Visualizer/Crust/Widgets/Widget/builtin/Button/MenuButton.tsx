@@ -1,5 +1,4 @@
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
-import Flex from "@reearth/beta/ui/widgetui/Flex";
 import { styled, mask } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 import { useRef, useCallback, useState } from "react";
@@ -171,25 +170,22 @@ export default function MenuButton({
           <MenuInnerWrapper publishedTheme={theme} button={b}>
             {menuItems?.map((i) => (
               <MenuItem
-                align="center"
                 publishedTheme={theme}
                 key={i.id}
                 item={i}
                 button={b}
                 onClick={handleClick(i)}
               >
-                <Flex align="center">
-                  {i.menuIcon && <Icon icon={i.menuIcon} size={20} />}
-                  <Typography
-                    size="footnote"
-                    color={b?.buttonColor}
-                    otherProperties={{
-                      marginLeft: i.menuIcon ? "5px" : undefined
-                    }}
-                  >
-                    {i.menuTitle}
-                  </Typography>
-                </Flex>
+                {i.menuIcon && <Icon icon={i.menuIcon} size={20} />}
+                <Typography
+                  size="footnote"
+                  color={b?.buttonColor}
+                  otherProperties={{
+                    marginLeft: i.menuIcon ? "5px" : undefined
+                  }}
+                >
+                  {i.menuTitle}
+                </Typography>
               </MenuItem>
             ))}
           </MenuInnerWrapper>
@@ -249,11 +245,14 @@ const MenuInnerWrapper = styled("div")<{
   whiteSpace: "nowrap"
 }));
 
-const MenuItem = styled(Flex)<{
+const MenuItem = styled("div")<{
   item?: MenuItem;
   button?: Button;
   publishedTheme?: Theme;
 }>(({ item, button, publishedTheme, theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-start",
   minHeight: item?.menuType === "border" ? undefined : "25px",
   borderRadius:
     item?.menuType === "border" ? undefined : theme.radius.small - 1,

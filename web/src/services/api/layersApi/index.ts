@@ -18,7 +18,7 @@ import {
   UPDATE_CUSTOM_PROPERTY_SCHEMA
 } from "@reearth/services/gql/queries/layer";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
@@ -30,10 +30,11 @@ export type LayerQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
+  const lang = useLang();
   const [, setNotification] = useNotification();
 
   const useGetLayersQuery = useCallback(
-    ({ sceneId, lang }: LayerQueryProps) => {
+    ({ sceneId }: LayerQueryProps) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
@@ -43,7 +44,7 @@ export default () => {
 
       return { nlsLayers, ...rest };
     },
-    []
+    [lang]
   );
 
   const [addNLSLayerSimpleMutation] = useMutation<

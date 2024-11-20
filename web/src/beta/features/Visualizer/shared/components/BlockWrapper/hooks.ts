@@ -1,4 +1,4 @@
-import useDoubleClick from "@reearth/beta/utils/use-double-click";
+import useDoubleClick from "@reearth/beta/hooks/useDoubleClick";
 import { Spacing } from "@reearth/core";
 import {
   useCallback,
