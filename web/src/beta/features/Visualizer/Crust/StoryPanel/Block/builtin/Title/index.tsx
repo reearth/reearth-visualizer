@@ -1,6 +1,6 @@
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import { isEmptyString } from "@reearth/beta/utils/util";
+import { isEmptyString } from "@reearth/beta/utils/string";
 import { ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";

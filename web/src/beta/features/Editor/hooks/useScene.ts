@@ -1,6 +1,5 @@
 import { useSceneFetcher } from "@reearth/services/api";
 import { convert } from "@reearth/services/api/propertyApi/utils";
-import { useLang } from "@reearth/services/i18n";
 import { useState, useCallback, useMemo } from "react";
 
 type SceneProps = {
@@ -14,9 +13,7 @@ export default function ({ sceneId }: SceneProps) {
     string | undefined
   >(undefined);
 
-  const lang = useLang();
-
-  const { scene } = useSceneQuery({ sceneId, lang });
+  const { scene } = useSceneQuery({ sceneId });
   const sceneSettings = useMemo(
     () =>
       convert(scene?.property)?.filter(

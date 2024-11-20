@@ -46,15 +46,13 @@ func (c *AssetLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, key
 		return nil, err
 	}
 
-	edges := make([]*gqlmodel.AssetEdge, 0, len(assets))
-	nodes := make([]*gqlmodel.Asset, 0, len(assets))
-	for _, a := range assets {
-		asset := gqlmodel.ToAsset(a)
+	nodes := gqlmodel.ToAssets(assets)
+	edges := make([]*gqlmodel.AssetEdge, 0, len(nodes))
+	for _, asset := range nodes {
 		edges = append(edges, &gqlmodel.AssetEdge{
 			Node:   asset,
 			Cursor: usecasex.Cursor(asset.ID),
 		})
-		nodes = append(nodes, asset)
 	}
 
 	return &gqlmodel.AssetConnection{

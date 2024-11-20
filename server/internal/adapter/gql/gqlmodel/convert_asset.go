@@ -20,6 +20,16 @@ func ToAsset(a *asset.Asset) *Asset {
 	}
 }
 
+func ToAssets(assets []*asset.Asset) []*Asset {
+	result := make([]*Asset, 0, len(assets))
+
+	for _, a := range assets {
+		result = append(result, ToAsset(a))
+	}
+
+	return result
+}
+
 func AssetSortTypeFrom(ast *AssetSort) *asset.SortType {
 	if ast == nil {
 		return nil
