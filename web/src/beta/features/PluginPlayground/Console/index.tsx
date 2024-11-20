@@ -25,6 +25,7 @@ const Console: FC<Props> = ({ fileOutputs }) => {
 
 const Wrapper = styled.div(() => ({
   display: "flex",
+  flexDirection: "column",
   maxHeight: "100%",
   height: "100%",
   overflow: "auto"
