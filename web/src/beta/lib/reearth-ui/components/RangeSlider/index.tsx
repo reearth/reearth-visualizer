@@ -1,6 +1,13 @@
 import { styled } from "@reearth/services/theme";
 import RCSlider from "rc-slider";
-import { ComponentProps, FC, useCallback, useEffect, useState } from "react";
+import {
+  ComponentProps,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 
 import "rc-slider/assets/index.css";
 
@@ -41,11 +48,14 @@ export const RangeSlider: FC<RangeSliderProps> = ({
   onBlur,
   ...props
 }) => {
-  const calculatedStep = calculateStep(min, max, step);
+  const calculatedStep = useMemo(
+    () => calculateStep(min, max, step),
+    [min, max, step]
+  );
   const [currentValue, setCurrentValue] = useState<number[] | undefined>(value);
 
   useEffect(() => {
-    setCurrentValue(value);
+    if (Array.isArray(value) && value.length === 2) setCurrentValue(value);
   }, [value]);
 
   const handleChange = useCallback(
@@ -113,4 +123,3 @@ const SliderStyled = styled("div")<{ disabled: boolean }>(
     }
   })
 );
-

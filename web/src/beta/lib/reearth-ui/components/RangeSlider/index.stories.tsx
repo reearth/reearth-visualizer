@@ -14,15 +14,15 @@ export const Default: Story = {
   render: () => (
     <div
       style={{
-        height: "30px",
+        minHeight: "40px",
         padding: "12px"
       }}
     >
       <RangeSlider
-        value={[2, 50]}
+        value={[0, 50]}
         min={0}
         max={100}
-        step={10}
+        step={1}
         disabled={false}
       />
     </div>

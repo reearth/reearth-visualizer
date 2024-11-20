@@ -14,10 +14,10 @@ import {
   SwitchField,
   TextareaField,
   TimePointField,
-  TwinInputField
+  TwinInputField,
+  SliderField,
+  RangeSliderField
 } from "..";
-import RangeSliderField from "../RangeField";
-import SliderField from "../SliderField";
 import { SpacingValues } from "../SpacingField";
 
 import useHooks from "./hooks";
