@@ -9,7 +9,6 @@ import {
   ColorField,
   InputField,
   NumberField,
-  RangeField,
   SelectField,
   SpacingField,
   SwitchField,
@@ -17,6 +16,7 @@ import {
   TimePointField,
   TwinInputField
 } from "..";
+import RangeSliderField from "../RangeField";
 import SliderField from "../SliderField";
 import { SpacingValues } from "../SpacingField";
 
@@ -185,7 +185,7 @@ const PropertyField: FC<Props> = ({
           onFlyTo={onFlyTo}
         />
       ) : schema.type === "array" && schema.ui === "range" ? (
-        <RangeField
+        <RangeSliderField
           key={schema.id}
           title={schema.name}
           value={value as number[]}
