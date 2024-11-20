@@ -69,7 +69,13 @@ export default ({ files }: Props) => {
         const reearth = {
           ui: {
         show: function () {}
-          }
+          },
+          popup: {
+        show: function () {}
+          },
+        modal: {
+        show: function () {}
+          
         };
 
         let capturedConsole = [];
