@@ -1,22 +1,14 @@
 package e2e
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateProject(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	},
-		true, baseSeeder)
+	e := Server(t)
 
 	// create project with default coreSupport value (false)
 	requestBody := GraphQLRequest{
@@ -31,20 +23,11 @@ func TestCreateProject(t *testing.T) {
 		},
 	}
 
-	e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		// WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	Request(e, uID.String(), requestBody).
+		Object().Value("data").
+		Object().Value("createProject").
+		Object().Value("project").
 		Object().
-		Value("data").Object().
-		Value("createProject").Object().
-		Value("project").Object().
 		// ValueEqual("id", pId.String()).
 		ValueEqual("name", "test").
 		ValueEqual("description", "abc").
@@ -65,19 +48,10 @@ func TestCreateProject(t *testing.T) {
 		},
 	}
 
-	e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		// WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("createProject").Object().
-		Value("project").Object().
+	Request(e, uID.String(), requestBody).
+		Object().Value("data").
+		Object().Value("createProject").
+		Object().Value("project").Object().
 		// ValueEqual("id", pId.String()).
 		ValueEqual("name", "test").
 		ValueEqual("description", "abc").
@@ -86,13 +60,7 @@ func TestCreateProject(t *testing.T) {
 }
 
 func TestSortByName(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	},
-		true, baseSeeder)
+	e := Server(t)
 
 	createProject(e, "a-project")
 	createProject(e, "b-project")
@@ -177,18 +145,10 @@ func TestSortByName(t *testing.T) {
 		},
 	}
 
-	edges := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("projects").Object().
-		Value("edges").Array()
+	edges := Request(e, uID.String(), requestBody).
+		Object().Value("data").
+		Object().Value("projects").
+		Object().Value("edges").Array()
 
 	edges.Length().Equal(5)
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("a-project")
@@ -199,13 +159,8 @@ func TestSortByName(t *testing.T) {
 }
 
 func TestFindStarredByWorkspace(t *testing.T) {
+	e := Server(t)
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
 	project1ID := createProject(e, "Project 1")
 	project2ID := createProject(e, "Project 2")
 	project3ID := createProject(e, "Project 3")
@@ -237,14 +192,7 @@ func TestFindStarredByWorkspace(t *testing.T) {
 		},
 	}
 
-	response := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	response := Request(e, uID.String(), requestBody).
 		Object()
 
 	starredProjects := response.Value("data").Object().Value("starredProjects").Object()
@@ -302,31 +250,17 @@ func starProject(e *httpexpect.Expect, projectID string) {
 		},
 	}
 
-	response := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(updateProjectMutation).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("updateProject").Object().
-		Value("project").Object()
+	response := Request(e, uID.String(), updateProjectMutation).
+		Object().Value("data").
+		Object().Value("updateProject").
+		Object().Value("project").Object()
 
 	response.ValueEqual("id", projectID).
 		ValueEqual("starred", true)
 }
 
 func TestSortByUpdatedAt(t *testing.T) {
-
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
 	createProject(e, "project1-test")
 	project2ID := createProject(e, "project2-test")
@@ -355,14 +289,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 	}
 
 	// Update 'project2'
-	e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	Request(e, uID.String(), requestBody)
 
 	requestBody = GraphQLRequest{
 		OperationName: "GetProjects",
@@ -440,18 +367,10 @@ func TestSortByUpdatedAt(t *testing.T) {
 		},
 	}
 
-	edges := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("projects").Object().
-		Value("edges").Array()
+	edges := Request(e, uID.String(), requestBody).
+		Object().Value("data").
+		Object().Value("projects").
+		Object().Value("edges").Array()
 
 	edges.Length().Equal(3)
 	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
@@ -460,13 +379,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 //  go test -v -run TestDeleteProjects ./e2e/...
 
 func TestDeleteProjects(t *testing.T) {
-
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t)
 
 	createProject(e, "project1-test")
 	project2ID := createProject(e, "project2-test")
@@ -493,15 +406,10 @@ func TestDeleteProjects(t *testing.T) {
 			"teamId": wID,
 		},
 	}
-	deletedProjects := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().Value("data").Object().Value("deletedProjects").Object()
+
+	deletedProjects := Request(e, uID.String(), requestBody).
+		Object().Value("data").
+		Object().Value("deletedProjects").Object()
 
 	deletedProjects.Value("totalCount").Equal(1)
 	deletedProjects.Value("nodes").Array().Length().Equal(1)
@@ -532,18 +440,10 @@ func deleteProject(e *httpexpect.Expect, projectID string) {
 		},
 	}
 
-	response := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(updateProjectMutation).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object().
-		Value("data").Object().
-		Value("updateProject").Object().
-		Value("project").Object()
+	response := Request(e, uID.String(), updateProjectMutation).
+		Object().Value("data").
+		Object().Value("updateProject").
+		Object().Value("project").Object()
 
 	response.ValueEqual("id", projectID).
 		ValueEqual("isDeleted", true)
