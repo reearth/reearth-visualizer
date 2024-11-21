@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import type { AuthHook } from "./authHook";
 
 export const useCognitoAuth = (): AuthHook => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
