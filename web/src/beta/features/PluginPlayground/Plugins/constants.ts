@@ -15,15 +15,20 @@ export type FileType = {
 export const REEARTH_YML_FILE = {
   id: "reearth-yml",
   title: "reearth.yml",
-  sourceCode: `
-        id: test-plugin
-        name: Test plugin
-        version: 1.0.0
-        extensions:
-            - id: test-widget
-                type: widget
-                name: Test
-    `,
+  sourceCode: `id: demo-widget
+name: Test plugin
+version: 1.0.0
+extensions:
+  - id: demo-widget
+    type: widget
+    name: Demo Widget
+    description: Demo widget
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: top
+  `,
   disableEdit: true,
   disableDelete: true
 } as const satisfies FileType;
