@@ -1,9 +1,13 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
-import { FC } from "react";
+import { ComponentProps, FC } from "react";
 
 import useHooks from "./hooks";
 
-const Viewer: FC = () => {
+type Props = {
+  widgets: ComponentProps<typeof Visualizer>["widgets"];
+};
+
+const Viewer: FC<Props> = ({ widgets }) => {
   const {
     visualizerRef,
     viewerProperty,
@@ -22,6 +26,7 @@ const Viewer: FC = () => {
       engineMeta={engineMeta}
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}
+      widgets={widgets}
     />
   );
 };
