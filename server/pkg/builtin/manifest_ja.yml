@@ -130,10 +130,10 @@ extensions:
         fields:
           camera:
             title: カメラの初期位置
-            description: プロジェクトを開くたびに同じ領域が表示されるように、初期カメラ位置を設定できます。
+            description: 初期カメラ位置を設定すると、プロジェクトを開くたびに同じ場所が表示されるようになります
           allowEnterGround:
             title: 地下に入る
-            description: このプロパティが true に設定されている場合、カメラは地形内を移動でき、地下エリアに入ることができます。
+            description: 有効にすると、カメラは地形の中を移動でき、地下エリアに入ることができます。
           fov:
             title: 視野（FOV）
   cesium:
