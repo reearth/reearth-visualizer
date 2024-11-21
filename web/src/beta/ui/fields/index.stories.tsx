@@ -17,9 +17,9 @@ import {
   TimePeriodField,
   TimePointField,
   NumberField,
-  
+  RangeField,
   CheckboxField,
-  RangeSliderField
+  SliderField
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
@@ -139,9 +139,9 @@ export const Components: Story = {
         title="TimePeriodField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <RangeSliderField
-        value={[3, 15]}
-        defaultValue={[0, 2]}
+      <RangeField
+        values={[3, 15]}
+        content={["min", "max"]}
         title="RangeField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
@@ -149,6 +149,13 @@ export const Components: Story = {
         onChange={() => {}}
         value={true}
         title="CheckboxField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <SliderField
+        value={10}
+        min={0}
+        max={5}
+        title="SliderField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>
