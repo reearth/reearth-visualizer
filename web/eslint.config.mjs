@@ -37,4 +37,9 @@ const e2eConfig = [
   }
 ];
 
-export default [...config("@reearth"), ...e2eConfig, ...themeConfig];
+export default [
+  ...config("@reearth"),
+  ...e2eConfig,
+  ...themeConfig,
+  { ignores: ["bin/*"] }
+];
