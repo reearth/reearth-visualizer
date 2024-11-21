@@ -4,7 +4,7 @@ import {
   ColorField,
   InputField,
   NumberField,
-  RangeSliderField,
+  RangeField,
   SelectField,
   SpacingField,
   SwitchField,
@@ -245,15 +245,16 @@ export const FieldComponent = ({
       )}
     />
   ) : field?.type === "array" && field?.ui === "range" ? (
-    <RangeSliderField
+    <RangeField
       key={field.id}
       title={field.title}
-      value={field?.value as number[]}
+      values={field?.value as number[]}
+      unit={field.suffix}
       min={field.min}
       max={field.max}
-      defaultValue={field.defaultValue as number[]}
+      content={["min", "max"]}
       description={field.description}
-      onChange={handlePropertyValueUpdate(
+      onBlur={handlePropertyValueUpdate(
         groupId,
         propertyId,
         fieldId,

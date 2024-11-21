@@ -15,6 +15,6 @@ export { default as TimePeriodField } from "./TimePeriodField";
 export { default as ListField } from "./ListField";
 export { default as TimePointField } from "./TimePointField";
 export { default as NumberField } from "./NumberField";
-export { default as RangeSliderField } from "./RangeSliderField";
+export { default as RangeField } from "./RangeField";
 export { default as CheckboxField } from "./CheckboxField";
 export { default as SliderField } from "./SliderField";
