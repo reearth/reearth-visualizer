@@ -269,7 +269,8 @@ const ConditionWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.smallest,
   alignItems: "flex-start",
-  flex: 1
+  flex: 1,
+  minWidth: 0
 }));
 
 const ConditionStatement = styled("div")(({ theme }) => ({
