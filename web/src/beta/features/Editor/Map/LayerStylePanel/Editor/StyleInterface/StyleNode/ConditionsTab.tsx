@@ -172,7 +172,7 @@ const ConditionsTab: FC<Props> = ({
                   <InputWrapper>
                     <TextInput
                       value={condition.value || ""}
-                      placeholder={"value"}
+                      placeholder={"value or 'string'"}
                       onBlur={(val) => updateCondition(idx, "value", val)}
                     />
                   </InputWrapper>
