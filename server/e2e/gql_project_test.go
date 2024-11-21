@@ -18,10 +18,10 @@ func TestCreateProject(t *testing.T) {
 	},
 		true, baseSeeder)
 
-	// create project with default coreSupport value (false)
+	// create project with default core value (false)
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}\n ) {\n project {\n id\n name\n description\n imageUrl\n core\n __typename\n }\n __typename\n }\n}",
 		Variables: map[string]any{
 			"name":        "test",
 			"description": "abc",
@@ -49,19 +49,19 @@ func TestCreateProject(t *testing.T) {
 		ValueEqual("name", "test").
 		ValueEqual("description", "abc").
 		ValueEqual("imageUrl", "").
-		ValueEqual("coreSupport", false)
+		ValueEqual("core", false)
 
-	// create coreSupport project
+	// create core project
 	requestBody = GraphQLRequest{
 		OperationName: "CreateProject",
-		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $core: Boolean) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, core: $core}\n ) {\n project {\n id\n name\n description\n imageUrl\n core\n __typename\n }\n __typename\n }\n}",
 		Variables: map[string]any{
 			"name":        "test",
 			"description": "abc",
 			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
-			"coreSupport": true,
+			"core":        true,
 		},
 	}
 
@@ -82,7 +82,7 @@ func TestCreateProject(t *testing.T) {
 		ValueEqual("name", "test").
 		ValueEqual("description", "abc").
 		ValueEqual("imageUrl", "").
-		ValueEqual("coreSupport", true)
+		ValueEqual("core", true)
 }
 
 func TestSortByName(t *testing.T) {
@@ -161,7 +161,7 @@ func TestSortByName(t *testing.T) {
 			publishmentStatus
 			updatedAt
 			createdAt
-			coreSupport
+			core
 			starred
 			__typename
 		}`,
@@ -424,7 +424,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 			publishmentStatus
 			updatedAt
 			createdAt
-			coreSupport
+			core
 			starred
 			__typename
 		}`,

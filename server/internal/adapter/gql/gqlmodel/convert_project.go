@@ -61,7 +61,7 @@ func ToProject(p *project.Project) *Project {
 		PublicDescription: p.PublicDescription(),
 		PublicImage:       p.PublicImage(),
 		PublicNoIndex:     p.PublicNoIndex(),
-		CoreSupport:       p.CoreSupport(),
+		Core:              p.Core(),
 		EnableGa:          p.EnableGA(),
 		TrackingID:        p.TrackingID(),
 		Starred:           p.Starred(),

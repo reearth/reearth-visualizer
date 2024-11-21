@@ -72,7 +72,7 @@ func TestProject_Create(t *testing.T) {
 		Alias("aliasalias").
 		Visualizer(visualizer.VisualizerCesium).
 		UpdatedAt(got.UpdatedAt()).
-		CoreSupport(false).
+		Core(false).
 		MustBuild()
 	assert.Equal(t, want, got)
 	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId1)))
@@ -87,7 +87,7 @@ func TestProject_Create(t *testing.T) {
 		ImageURL:    lo.Must(url.Parse("https://example.com/hoge.gif")),
 		Alias:       lo.ToPtr("aliasalias"),
 		Archived:    lo.ToPtr(false),
-		CoreSupport: lo.ToPtr(true),
+		Core:        lo.ToPtr(true),
 	}, &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
 			WritableWorkspaces: workspace.IDList{ws.ID()},
@@ -103,7 +103,7 @@ func TestProject_Create(t *testing.T) {
 		Alias("aliasalias").
 		Visualizer(visualizer.VisualizerCesium).
 		UpdatedAt(got.UpdatedAt()).
-		CoreSupport(true).
+		Core(true).
 		MustBuild()
 	assert.Equal(t, want, got)
 	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId2)))
@@ -190,7 +190,7 @@ func TestImportProject(t *testing.T) {
     "teamId": "01j7g99pb1q1vf684af39bajw5",
     "visualizer": "cesium",
     "publishmentStatus": "PRIVATE",
-    "coreSupport": true,
+    "core": true,
     "enableGa": false,
     "trackingId": "",
     "starred": false
@@ -249,7 +249,7 @@ func TestImportProject(t *testing.T) {
     "teamId": "%s",
     "visualizer": "cesium",
     "publishmentStatus": "PRIVATE",
-    "coreSupport": true,
+    "core": true,
     "enableGa": false,
     "trackingId": "",
     "starred": false

@@ -100,7 +100,7 @@ func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmo
 
 	a, err := uc.Asset.Create(ctx, interfaces.CreateAssetParam{
 		WorkspaceID: prj[0].Workspace(),
-		Visualizer:  true,
+		Core:        true,
 		File:        gqlmodel.FromFile(&input.File),
 	}, getOperator(ctx))
 	if err != nil {

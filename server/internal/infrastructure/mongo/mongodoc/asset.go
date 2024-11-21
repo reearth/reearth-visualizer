@@ -17,7 +17,7 @@ type AssetDocument struct {
 	Size        int64
 	URL         string
 	ContentType string
-	Visualizer  bool
+	Core        bool
 }
 
 type AssetConsumer = Consumer[*AssetDocument, *asset.Asset]
@@ -38,7 +38,7 @@ func NewAsset(asset *asset.Asset) (*AssetDocument, string) {
 		Size:        asset.Size(),
 		URL:         asset.URL(),
 		ContentType: asset.ContentType(),
-		Visualizer:  asset.Visualizer(),
+		Core:        asset.Core(),
 	}, aid
 }
 
@@ -60,6 +60,6 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 		Size(d.Size).
 		URL(d.URL).
 		ContentType(d.ContentType).
-		Visualizer(d.Visualizer).
+		Core(d.Core).
 		Build()
 }

@@ -17,7 +17,7 @@ func ToAsset(a *asset.Asset) *Asset {
 		Size:        a.Size(),
 		URL:         a.URL(),
 		ContentType: a.ContentType(),
-		Visualizer:  a.Visualizer(),
+		Core:        a.Core(),
 	}
 }
 

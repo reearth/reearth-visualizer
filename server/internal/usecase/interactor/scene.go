@@ -125,7 +125,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 
 	var viz = visualizer.VisualizerCesium
 
-	if prj.CoreSupport() {
+	if prj.Core() {
 		viz = visualizer.VisualizerCesiumBeta
 	}
 
@@ -629,7 +629,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	).ForScene(sce).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).BuildResult(
 		ctx,
 		time.Now(),
-		prj.CoreSupport(),
+		prj.Core(),
 		prj.EnableGA(),
 		prj.TrackingID(),
 	)
@@ -806,7 +806,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 	}
 	clusterList := scene.NewClusterListFrom(clusters)
 	var viz = visualizer.VisualizerCesium
-	if prj.CoreSupport() {
+	if prj.Core() {
 		viz = visualizer.VisualizerCesiumBeta
 	}
 	schema := builtin.GetPropertySchemaByVisualizer(viz)

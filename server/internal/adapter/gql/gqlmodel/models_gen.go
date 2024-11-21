@@ -223,7 +223,7 @@ type Asset struct {
 	URL         string    `json:"url"`
 	ContentType string    `json:"contentType"`
 	Team        *Team     `json:"team,omitempty"`
-	Visualizer  bool      `json:"visualizer"`
+	Core        bool      `json:"core"`
 }
 
 func (Asset) IsNode()        {}
@@ -282,9 +282,9 @@ type Cluster struct {
 }
 
 type CreateAssetInput struct {
-	TeamID     ID             `json:"teamId"`
-	Visualizer bool           `json:"visualizer"`
-	File       graphql.Upload `json:"file"`
+	TeamID ID             `json:"teamId"`
+	Core   bool           `json:"core"`
+	File   graphql.Upload `json:"file"`
 }
 
 type CreateAssetPayload struct {
@@ -315,7 +315,7 @@ type CreateProjectInput struct {
 	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
 	Alias       *string    `json:"alias,omitempty"`
 	Archived    *bool      `json:"archived,omitempty"`
-	CoreSupport *bool      `json:"coreSupport,omitempty"`
+	Core        *bool      `json:"core,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -1173,7 +1173,7 @@ type Project struct {
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	Team              *Team             `json:"team,omitempty"`
 	Scene             *Scene            `json:"scene,omitempty"`
-	CoreSupport       bool              `json:"coreSupport"`
+	Core              bool              `json:"core"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 	Starred           bool              `json:"starred"`

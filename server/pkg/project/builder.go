@@ -122,8 +122,8 @@ func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
 	return b
 }
 
-func (b *Builder) CoreSupport(coreSupport bool) *Builder {
-	b.p.coreSupport = coreSupport
+func (b *Builder) Core(core bool) *Builder {
+	b.p.core = core
 	return b
 }
 

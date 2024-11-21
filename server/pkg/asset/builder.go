@@ -69,8 +69,8 @@ func (b *Builder) URL(url string) *Builder {
 	return b
 }
 
-func (b *Builder) Visualizer(visualizer bool) *Builder {
-	b.a.visualizer = visualizer
+func (b *Builder) Core(core bool) *Builder {
+	b.a.core = core
 	return b
 }
 

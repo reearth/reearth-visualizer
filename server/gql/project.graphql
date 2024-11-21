@@ -20,7 +20,7 @@ type Project implements Node {
   publishmentStatus: PublishmentStatus!
   team: Team
   scene: Scene
-  coreSupport: Boolean!
+  core: Boolean!
   enableGa: Boolean!
   trackingId: String!
   starred: Boolean!
@@ -58,7 +58,7 @@ input CreateProjectInput {
   imageUrl: URL
   alias: String
   archived: Boolean
-  coreSupport: Boolean
+  core: Boolean
 }
 
 input UpdateProjectInput {

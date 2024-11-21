@@ -140,7 +140,7 @@ func TestImportScene(t *testing.T) {
     "tags": [],
     "clusters": [],
     "layerStyles": null,
-    "coreSupport": true,
+    "core": true,
     "enableGa": false,
     "trackingId": ""
   }`), &sceneData)

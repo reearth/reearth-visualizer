@@ -152,8 +152,8 @@ func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, o
 	if p.Archived != nil {
 		pb = pb.IsArchived(*p.Archived)
 	}
-	if p.CoreSupport != nil {
-		pb = pb.CoreSupport(*p.CoreSupport)
+	if p.Core != nil {
+		pb = pb.Core(*p.Core)
 	}
 
 	proj, err := pb.Build()
@@ -321,7 +321,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if err != nil {
 		return nil, err
 	}
-	coreSupport := prj.CoreSupport()
+	core := prj.Core()
 	enableGa := prj.EnableGA()
 	trackingId := prj.TrackingID()
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
@@ -437,7 +437,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
 				false,
-			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
+			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), core, enableGa, trackingId)
 		}()
 
 		// Save
@@ -604,7 +604,7 @@ func (i *Project) ImportProject(ctx context.Context, teamID string, projectData 
 		PublicDescription(p.PublicDescription).
 		PublicImage(p.PublicImage).
 		PublicNoIndex(p.PublicNoIndex).
-		CoreSupport(p.CoreSupport).
+		Core(p.Core).
 		EnableGA(p.EnableGa).
 		TrackingID(p.TrackingID).
 		Starred(p.Starred)

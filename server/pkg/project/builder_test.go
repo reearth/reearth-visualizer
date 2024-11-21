@@ -54,8 +54,8 @@ func TestBuilder_IsArchived(t *testing.T) {
 
 func TestBuilder_Experimental(t *testing.T) {
 	var tb = New().NewID()
-	res := tb.CoreSupport(true).MustBuild()
-	assert.True(t, res.CoreSupport())
+	res := tb.Core(true).MustBuild()
+	assert.True(t, res.Core())
 }
 
 func TestBuilder_BasicAuthUsername(t *testing.T) {

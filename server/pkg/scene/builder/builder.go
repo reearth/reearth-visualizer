@@ -92,12 +92,12 @@ func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	return b
 }
 
-func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) error {
+func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, core bool, enableGa bool, trackingId string) error {
 	if b == nil || b.scene == nil {
 		return nil
 	}
 
-	res, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
+	res, err := b.buildScene(ctx, publishedAt, core, enableGa, trackingId)
 	if err != nil {
 		return err
 	}
@@ -129,12 +129,12 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 	return json.NewEncoder(w).Encode(res)
 }
 
-func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
+func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, core bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	if b == nil || b.scene == nil {
 		return nil, errors.New("invalid builder state")
 	}
 
-	sceneData, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
+	sceneData, err := b.buildScene(ctx, publishedAt, core, enableGa, trackingId)
 	if err != nil {
 		return nil, errors.New("Fail buildScene :" + err.Error())
 	}
@@ -166,7 +166,7 @@ func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSu
 	return sceneData, nil
 }
 
-func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
+func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, core bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	if b == nil {
 		return nil, nil
 	}
@@ -183,7 +183,7 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSup
 	}
 	layers := b.encoder.Result()
 
-	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport, enableGa, trackingId)
+	return b.sceneJSON(ctx, publishedAt, layers, p, core, enableGa, trackingId)
 }
 
 func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {

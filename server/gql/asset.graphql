@@ -7,7 +7,7 @@ type Asset implements Node {
   url: String!
   contentType: String!
   team: Team
-  visualizer: Boolean!
+  core: Boolean!
 }
 
 enum AssetSortField {
@@ -20,7 +20,7 @@ enum AssetSortField {
 
 input CreateAssetInput {
   teamId: ID!
-  visualizer: Boolean!
+  core: Boolean!
   file: Upload!
 }
 

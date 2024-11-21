@@ -30,7 +30,7 @@ type ProjectDocument struct {
 	Team              string // DON'T CHANGE NAME'
 	Visualizer        string
 	PublishmentStatus string
-	CoreSupport       bool
+	Core              bool
 	EnableGA          bool
 	TrackingID        string
 	// Scene             string
@@ -73,7 +73,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		Team:              project.Workspace().String(),
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
-		CoreSupport:       project.CoreSupport(),
+		Core:              project.Core(),
 		EnableGA:          project.EnableGA(),
 		TrackingID:        project.TrackingID(),
 		// Scene:             project.Scene().String(),
@@ -123,7 +123,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Workspace(tid).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
-		CoreSupport(d.CoreSupport).
+		Core(d.Core).
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
 		// Scene(scene).

@@ -23,7 +23,7 @@ type CreateProjectParam struct {
 	ImageURL    *url.URL
 	Alias       *string
 	Archived    *bool
-	CoreSupport *bool
+	Core        *bool
 }
 
 type UpdateProjectParam struct {
