@@ -1,23 +1,20 @@
 import { styled } from "@reearth/services/theme";
 import RCSlider from "rc-slider";
-import {
-  ComponentProps,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import "rc-slider/assets/index.css";
 
 const RangeSliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider.Range);
 
 export type RangeSliderProps = {
+  value: number[] | undefined;
   min?: number;
   max?: number;
-  onBlur?: (value: number[]) => void;
-} & ComponentProps<typeof RangeSliderWithTooltip>;
+  step?: number;
+  disabled?: boolean;
+  onChange?: (value: number[]) => void;
+  onChangeComplete?: (value: number[]) => void;
+};
 
 const calculateStep = (
   min?: number,
@@ -44,9 +41,9 @@ export const RangeSlider: FC<RangeSliderProps> = ({
   min,
   max,
   step,
+  disabled,
   onChange,
-  onBlur,
-  ...props
+  onChangeComplete
 }) => {
   const calculatedStep = useMemo(
     () => calculateStep(min, max, step),
@@ -66,20 +63,17 @@ export const RangeSlider: FC<RangeSliderProps> = ({
     [onChange]
   );
 
-  const handleBlur = useCallback(() => {
-    if (!currentValue) return;
-    onBlur?.(currentValue);
-  }, [currentValue, onBlur]);
-
   return (
-    <SliderStyled disabled={props.disabled as boolean}>
+    <SliderStyled disabled={!!disabled}>
       <RangeSliderWithTooltip
         value={currentValue}
+        min={min}
+        max={max}
+        disabled={disabled}
         onChange={handleChange}
-        onBlur={handleBlur}
+        onAfterChange={onChangeComplete}
         step={calculatedStep}
         draggableTrack
-        {...props}
       />
     </SliderStyled>
   );
