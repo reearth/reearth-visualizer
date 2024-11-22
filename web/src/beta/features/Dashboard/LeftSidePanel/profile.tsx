@@ -47,7 +47,7 @@ export const Profile: FC<ProfileProp> = ({
     () => [
       {
         id: "workspace",
-        title: t("Switch Workspace"),
+        title: t("Switch workspace"),
         icon: "arrowLeftRight",
         subItem: workspaces?.map((w) => {
           return {
@@ -67,7 +67,7 @@ export const Profile: FC<ProfileProp> = ({
       ...workspaceManagementMenu,
       {
         id: "signOut",
-        title: t("Log Out"),
+        title: t("Log out"),
         icon: "exit",
         onClick: onSignOut
       }
