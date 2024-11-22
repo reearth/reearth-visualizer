@@ -344,13 +344,15 @@ func (i PropertySchemaField) schemaField(tf *TranslatedPropertySchemaField) (*pr
 		return nil, fmt.Errorf("invalid value type: %s", i.Type)
 	}
 
-	var title, desc i18n.String
+	var title, desc, plac i18n.String
 	if tf != nil {
 		title = tf.Title.Clone()
 		desc = tf.Description.Clone()
+		plac = tf.Placeholder.Clone()
 	}
 	title = title.WithDefaultRef(i.Title)
 	desc = desc.WithDefaultRef(i.Description)
+	plac = plac.WithDefaultRef(i.Placeholder)
 
 	var prefix, suffix string
 	if i.Prefix != nil {
@@ -380,6 +382,7 @@ func (i PropertySchemaField) schemaField(tf *TranslatedPropertySchemaField) (*pr
 		ID(property.FieldID(i.ID)).
 		Name(title).
 		Description(desc).
+		Placeholder(plac).
 		Type(t).
 		Prefix(prefix).
 		Suffix(suffix).

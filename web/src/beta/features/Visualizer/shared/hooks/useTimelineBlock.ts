@@ -1,3 +1,4 @@
+import { getTimeZone } from "@reearth/beta/utils/time";
 import {
   useVisualizer,
   TickEventCallback,
@@ -7,11 +8,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
 import {
-  convertOptionToSeconds,
   formatDateToSting,
   formatISO8601,
-  formatTimezone,
-  getTimeZone
+  formatTimezone
 } from "../../Crust/StoryPanel/utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
@@ -24,6 +23,17 @@ const calculateEndTime = (date: Date) => {
 const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
+
+const playSpeedOptions = [
+  { timeString: "1sec/sec", seconds: 1 },
+  { timeString: "0.5min/sec", seconds: 30 },
+  { timeString: "1min/sec", seconds: 60 },
+  { timeString: "0.1hr/sec", seconds: 360 },
+  { timeString: "0.5hr/sec", seconds: 1800 },
+  { timeString: "1hr/sec", seconds: 3600 }
+];
+
+const TRANSITION_SPEED = 0;
 
 const timeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
@@ -40,18 +50,6 @@ const timeRange = (startTime?: number, stopTime?: number) => {
 
 export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
-
-  const playSpeedOptions = useMemo(() => {
-    const speedOpt = [
-      "1sec/sec",
-      "0.5min/sec",
-      "1min/sec",
-      "0.1hr/sec",
-      "0.5hr/sec",
-      "1hr/sec"
-    ];
-    return convertOptionToSeconds(speedOpt);
-  }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
@@ -152,10 +150,19 @@ export default (timelineValues?: TimelineValues) => {
       visualizerContext?.current?.timeline?.current?.onCommit(cb),
     [visualizerContext]
   );
+
   const handleOnSpeedChange = useCallback(
     (speed: number, committerId?: string) => {
-      onSpeedChange?.(speed, committerId);
-      setSpeed(speed);
+      try {
+        onSpeedChange(TRANSITION_SPEED, committerId);
+        setTimeout(() => {
+          onSpeedChange(speed, committerId);
+          setSpeed(speed);
+        }, 0);
+      } catch (error) {
+        setSpeed(playSpeedOptions[0].seconds);
+        throw error;
+      }
     },
     [onSpeedChange]
   );
@@ -165,7 +172,7 @@ export default (timelineValues?: TimelineValues) => {
       const iso8601Time = formatISO8601(timelineValues?.currentTime);
       const t = getNewDate(new Date(iso8601Time)).getTime();
       const timezoneOffset = getTimeZone(iso8601Time);
-      setTimezone(timezoneOffset);
+      setTimezone(timezoneOffset ?? "");
       return setCurrentTime(t);
     } else {
       return setCurrentTime(

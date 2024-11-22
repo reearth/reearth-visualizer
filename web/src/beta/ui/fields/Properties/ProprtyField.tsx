@@ -1,6 +1,7 @@
 import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
 import {
@@ -9,13 +10,14 @@ import {
   ColorField,
   InputField,
   NumberField,
-  RangeField,
   SelectField,
   SpacingField,
   SwitchField,
   TextareaField,
   TimePointField,
-  TwinInputField
+  TwinInputField,
+  SliderField,
+  RangeField
 } from "..";
 import { SpacingValues } from "../SpacingField";
 
@@ -39,7 +41,7 @@ const PropertyField: FC<Props> = ({
   onFlyTo
 }) => {
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
-
+  const t = useT();
   const value = useMemo(
     () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
     [field?.mergedValue, field?.value, schema.defaultValue]
@@ -108,6 +110,7 @@ const PropertyField: FC<Props> = ({
             title={schema.name}
             value={(value as string) ?? ""}
             description={schema.description}
+            placeholder={schema.placeholder}
             onBlur={handleChange}
           />
         )
@@ -142,16 +145,28 @@ const PropertyField: FC<Props> = ({
           onChange={handleChange}
         />
       ) : schema.type === "number" ? (
-        <NumberField
-          key={schema.id}
-          title={schema.name}
-          value={(value as number) ?? ""}
-          unit={schema.suffix}
-          min={schema.min}
-          max={schema.max}
-          description={schema.description}
-          onBlur={handleChange}
-        />
+        schema.ui === "slider" ? (
+          <SliderField
+            key={schema.id}
+            title={schema.name}
+            value={value as number}
+            min={schema.min}
+            max={schema.max}
+            description={schema.description}
+            onChangeComplete={handleChange}
+          />
+        ) : (
+          <NumberField
+            key={schema.id}
+            title={schema.name}
+            value={(value as number) ?? ""}
+            unit={schema.suffix}
+            min={schema.min}
+            max={schema.max}
+            description={schema.description}
+            onBlur={handleChange}
+          />
+        )
       ) : schema.type === "latlng" ? (
         <TwinInputField
           key={schema.id}
@@ -177,7 +192,7 @@ const PropertyField: FC<Props> = ({
           unit={schema.suffix}
           min={schema.min}
           max={schema.max}
-          content={["min", "max"]}
+          content={[t("min"), t("max")]}
           description={schema.description}
           onBlur={handleChange}
         />

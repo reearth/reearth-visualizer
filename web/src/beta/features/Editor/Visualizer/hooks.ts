@@ -28,7 +28,8 @@ import {
   useEffect,
   useCallback,
   useState,
-  MutableRefObject
+  MutableRefObject,
+  useRef
 } from "react";
 
 import { useCurrentCamera } from "../atoms";
@@ -93,25 +94,69 @@ export default ({
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
     undefined
   );
+  const isInitialized = useRef(false);
+
+  // Workaround: Temporarily disable terrain when terrain is enabled
+  // We don't know the root cause yet, but it seems that terrain is not loaded properly when terrain is enabled on Editor
+  const [tempDisableTerrain, setTempDisableTerrain] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTempDisableTerrain(false);
+    }, 0);
+  }, []);
+
+  const prevFOV = useRef<number | undefined>(undefined);
 
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
     const cesiumIonAccessToken = sceneProperty?.default?.ion;
-    if (sceneProperty?.camera?.camera) {
-      setInitialCamera(sceneProperty?.camera?.camera);
+
+    const initialCamera =
+      sceneProperty?.camera?.camera || sceneProperty?.camera?.fov
+        ? {
+            ...(sceneProperty?.camera?.camera ?? {}),
+            ...(sceneProperty?.camera?.fov
+              ? { fov: sceneProperty.camera.fov }
+              : {})
+          }
+        : undefined;
+    if (initialCamera) {
+      setInitialCamera(initialCamera);
     }
+
+    if (initialCamera?.fov && initialCamera.fov !== prevFOV.current) {
+      prevFOV.current = initialCamera.fov;
+      setCurrentCamera((c) =>
+        !c ? undefined : { ...c, fov: initialCamera.fov }
+      );
+    }
+
+    const viewerProperty = sceneProperty
+      ? (convertData(
+          sceneProperty,
+          sceneProperty2ViewerPropertyMapping
+        ) as ViewerProperty)
+      : undefined;
+
+    if (
+      viewerProperty &&
+      tempDisableTerrain &&
+      viewerProperty.terrain &&
+      viewerProperty.terrain.enabled
+    ) {
+      viewerProperty.terrain.enabled = false;
+    }
+
     return {
-      viewerProperty: sceneProperty
-        ? (convertData(
-            sceneProperty,
-            sceneProperty2ViewerPropertyMapping
-          ) as ViewerProperty)
-        : undefined,
+      viewerProperty,
       cesiumIonAccessToken
     };
-  }, [scene?.property]);
+  }, [scene?.property, tempDisableTerrain, setCurrentCamera]);
 
   useEffect(() => {
+    if (isInitialized.current) return;
+    isInitialized.current = true;
     setCurrentCamera(initialCamera);
   }, [initialCamera, setCurrentCamera]);
 

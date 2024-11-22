@@ -47,6 +47,7 @@ extensions:
               type: string
               title: Tile type
               defaultValue: default
+              placeholder: please enter tile type
               choices:
                 - key: default
                   label: Default
@@ -71,6 +72,7 @@ extensions:
                 field: tile_type
                 type: string
                 value: url
+              placeholder: please enter tile url
             - id: tile_zoomLevel
               type: array
               title: zoom level
@@ -79,6 +81,7 @@ extensions:
               ui: range
               min: 0
               max: 30
+              placeholder: please enter tile zoomLevel
             - id: tile_opacity
               type: number
               title: Opacity
@@ -87,6 +90,7 @@ extensions:
               ui: slider
               min: 0
               max: 1
+              placeholder: please enter tile opacity
         - id: terrain
           collection: terrain
           title: Terrain
@@ -256,20 +260,20 @@ extensions:
             - id: camera
               type: camera
               title: Initial camera position
-              description: The starting position of your project.
+              description: You can set an initial camera position to ensure that the same area is viewed each time the project is opened.
             - id: allowEnterGround
               type: bool
               title: Enter the ground
               defaultValue: false
-              description: Set to true to allow the camera to enter the surface of the earth.
+              description: When this property is set to true, the camera can move through the terrain, allowing it to enter underground areas.
             - id: fov
               type: number
               title: FOV
-              # description: Description needed
-              defaultValue: 3
+              description: The field of view (FOV) of the camera, in radians. It defines the vertical angular extent of the scene visible to the camera. And the range supported in our system is from 0.1 to 2.0
+              defaultValue: 1
               ui: slider
-              min: 0
-              max: 10
+              min: 0.1
+              max: 2
   - id: cesium
     name: Cesium
     description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.
@@ -329,6 +333,7 @@ extensions:
               type: string
               title: Tile type
               defaultValue: default
+              placeholder: please enter tile type
               choices:
                 - key: default
                   label: Default
@@ -353,6 +358,7 @@ extensions:
             - id: tile_url
               type: string
               title: Tile map URL
+              placeholder: please enter tile url
               availableIf:
                 field: tile_type
                 type: string
@@ -360,16 +366,19 @@ extensions:
             - id: tile_minLevel
               type: number
               title: Minimum zoom level
+              placeholder: please enter tile minLevel
               min: 0
               max: 30
             - id: tile_maxLevel
               type: number
               title: Maximum zoom level
+              placeholder: please enter tile maxLevel
               min: 0
               max: 30
             - id: tile_opacity
               type: number
               title: Opacity
+              placeholder: please enter tile opacity
               description: "Change the opacity of the selected tile map. Min: 0 Max: 1"
               defaultValue: 1
               ui: slider
@@ -2566,7 +2575,7 @@ extensions:
               type: array
               title: Show Layers
               ui: layer
-              choices:
+              choices: []
   - id: timelineStoryBlock
     name: Timeline
     type: storyBlock
@@ -2673,6 +2682,7 @@ extensions:
             - id: text
               type: string
               title: Content
+              placeholder: ${your property key}
               ui: multiline
   - id: imageInfoboxBetaBlock
     name: Image
@@ -2695,6 +2705,7 @@ extensions:
             - id: src
               type: string
               title: Image
+              placeholder: ${your property key}
   - id: propertyInfoboxBetaBlock
     type: infoboxBlock
     name: Property List Block
@@ -2753,6 +2764,7 @@ extensions:
             - id: src
               type: string
               title: Video
+              placeholder: ${your property key}
   - id: markdownInfoboxBetaBlock
     name: MD Text
     type: infoboxBlock
@@ -2774,3 +2786,4 @@ extensions:
             - id: src
               type: string
               title: Content
+              placeholder: ${your property key}

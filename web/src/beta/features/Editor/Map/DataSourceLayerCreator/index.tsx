@@ -5,8 +5,10 @@ import { FC, ReactNode } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
-import CommonAsset from "./Common";
 import CSV from "./CSV";
+import CZML from "./CZML";
+import GeoJSON from "./GeoJSON";
+import KML from "./KML";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
 import WmsTiles from "./WmsTiles";
@@ -17,12 +19,7 @@ export type DataProps = {
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
-export type SourceType =
-  | "url"
-  | "local"
-  | "value"
-  | "osm-buildings"
-  | "google-photorealistic";
+export type SourceType = "url" | "local" | "value";
 
 export type DataSourceOptType = {
   label: string;
@@ -39,20 +36,20 @@ const DataSourceLayerCreator: FC<DataProps> = ({
 
   const tabsItem: TabItem[] = [
     {
-      id: "asset",
-      name: t("Common"),
+      id: "geojson",
+      name: "GeoJSON",
       children: (
-        <CommonAsset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+        <GeoJSON sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
     },
     {
       id: "csv",
-      name: t("CSV"),
+      name: "CSV",
       children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     },
     {
       id: "wms",
-      name: t("WMS"),
+      name: "WMS",
       children: (
         <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
@@ -70,6 +67,16 @@ const DataSourceLayerCreator: FC<DataProps> = ({
       children: (
         <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
+    },
+    {
+      id: "czml",
+      name: "CZML",
+      children: <CZML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
+    },
+    {
+      id: "kml",
+      name: "KML",
+      children: <KML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
     }
   ];
 

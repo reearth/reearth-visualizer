@@ -7,7 +7,6 @@ import {
   TextInput,
   Icon
 } from "@reearth/beta/lib/reearth-ui";
-import { metricsSizes } from "@reearth/beta/utils/metrics";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import React, { useState, useCallback, useEffect } from "react";
@@ -200,9 +199,10 @@ const PasswordField = styled(Flex)(({ theme }) => ({
   }
 }));
 
-const PasswordMessage = styled(Typography)`
-  margin-top: ${metricsSizes["s"]}px;
-  display: flex;
-`;
+const PasswordMessage = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing.small,
+  display: "flex",
+  gap: theme.spacing.small
+}));
 
 export default PasswordModal;

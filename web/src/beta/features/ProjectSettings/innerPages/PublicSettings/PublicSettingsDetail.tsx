@@ -1,6 +1,6 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
-import defaultBetaProjectImage from "@reearth/beta/ui/assets/defaultBetaProjectImage.png";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
@@ -139,7 +139,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             <StyledImage
               src={
                 !localPublicInfo.publicImage
-                  ? defaultBetaProjectImage
+                  ? defaultProjectBackgroundImage
                   : localPublicInfo.publicImage
               }
             />
@@ -260,9 +260,10 @@ const ThumbnailField = styled.div`
   display: inline-grid;
 `;
 
-const StyledImage = styled.img`
-  width: 100%;
-  border-radius: 4px;
-`;
+const StyledImage = styled("img")(({ theme }) => ({
+  width: "100%",
+  borderRadius: theme.radius.normal,
+  backgroundColor: theme.relative.dark
+}));
 
 export default PublicSettingsDetail;

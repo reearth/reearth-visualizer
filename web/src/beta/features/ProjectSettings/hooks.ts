@@ -4,13 +4,12 @@ import {
   useSceneFetcher,
   useStorytellingFetcher
 } from "@reearth/services/api";
+import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { toPublishmentStatus } from "../Dashboard/ContentsContainer/Projects/hooks";
 
 import { GeneralSettingsType } from "./innerPages/GeneralSettings";
 import {
@@ -55,50 +54,41 @@ export default ({ projectId }: Props) => {
     [projectId, useUpdateProject]
   );
 
-  const projectPublished = useMemo(() => {
+  const unpublish = useCallback(async () => {
     const publishmentStatus = toPublishmentStatus(project?.publishmentStatus);
+    if (publishmentStatus === "published" || publishmentStatus === "limited") {
+      await usePublishProject("unpublished", projectId);
+    }
 
-    return publishmentStatus === "published" || publishmentStatus === "limited";
-  }, [project?.publishmentStatus]);
-
-  const storiesPublished = useMemo(() => {
-    return scene?.stories?.some((story) => {
+    const storiesPublished = scene?.stories?.some((story) => {
       const publishmentStatus = toPublishmentStatus(story.publishmentStatus);
       return (
         publishmentStatus === "published" || publishmentStatus === "limited"
       );
     });
-  }, [scene?.stories]);
 
-  const handleProjectPublish = useCallback(
-    async (projectId: string) => {
-      if (projectPublished) {
-        await usePublishProject("unpublished", projectId);
-      }
-      if (storiesPublished && scene?.stories) {
-        await Promise.all(
-          scene.stories.map(async (story) => {
-            const publishmentStatus = toPublishmentStatus(
-              story.publishmentStatus
-            );
-            if (
-              publishmentStatus === "published" ||
-              publishmentStatus === "limited"
-            ) {
-              await usePublishStory("unpublished", story.id);
-            }
-          })
-        );
-      }
-    },
-    [
-      projectPublished,
-      scene?.stories,
-      storiesPublished,
-      usePublishProject,
-      usePublishStory
-    ]
-  );
+    if (storiesPublished && scene?.stories) {
+      await Promise.all(
+        scene.stories.map(async (story) => {
+          const publishmentStatus = toPublishmentStatus(
+            story.publishmentStatus
+          );
+          if (
+            publishmentStatus === "published" ||
+            publishmentStatus === "limited"
+          ) {
+            await usePublishStory("unpublished", story.id);
+          }
+        })
+      );
+    }
+  }, [
+    projectId,
+    project?.publishmentStatus,
+    scene?.stories,
+    usePublishProject,
+    usePublishStory
+  ]);
 
   const handleProjectRemove = useCallback(async () => {
     const updatedProject = {
@@ -106,7 +96,9 @@ export default ({ projectId }: Props) => {
       deleted: true
     };
     setDisabled(!disabled);
-    handleProjectPublish(projectId);
+
+    await unpublish();
+
     const { status } = await useUpdateProjectRemove(updatedProject);
     client.cache.evict({
       id: client.cache.identify({
@@ -121,7 +113,7 @@ export default ({ projectId }: Props) => {
   }, [
     client.cache,
     disabled,
-    handleProjectPublish,
+    unpublish,
     navigate,
     projectId,
     useUpdateProjectRemove,

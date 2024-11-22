@@ -146,6 +146,7 @@ type ComplexityRoot struct {
 
 	Asset struct {
 		ContentType func(childComplexity int) int
+		CoreSupport func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
@@ -965,6 +966,7 @@ type ComplexityRoot struct {
 
 	PropertySchemaField struct {
 		AllTranslatedDescription func(childComplexity int) int
+		AllTranslatedPlaceholder func(childComplexity int) int
 		AllTranslatedTitle       func(childComplexity int) int
 		Choices                  func(childComplexity int) int
 		DefaultValue             func(childComplexity int) int
@@ -973,10 +975,12 @@ type ComplexityRoot struct {
 		IsAvailableIf            func(childComplexity int) int
 		Max                      func(childComplexity int) int
 		Min                      func(childComplexity int) int
+		Placeholder              func(childComplexity int) int
 		Prefix                   func(childComplexity int) int
 		Suffix                   func(childComplexity int) int
 		Title                    func(childComplexity int) int
 		TranslatedDescription    func(childComplexity int, lang *language.Tag) int
+		TranslatedPlaceholder    func(childComplexity int, lang *language.Tag) int
 		TranslatedTitle          func(childComplexity int, lang *language.Tag) int
 		Type                     func(childComplexity int) int
 		UI                       func(childComplexity int) int
@@ -1685,6 +1689,7 @@ type PropertyLinkableFieldsResolver interface {
 type PropertySchemaFieldResolver interface {
 	TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *language.Tag) (string, error)
 	TranslatedDescription(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *language.Tag) (string, error)
+	TranslatedPlaceholder(ctx context.Context, obj *gqlmodel.PropertySchemaField, lang *language.Tag) (string, error)
 }
 type PropertySchemaFieldChoiceResolver interface {
 	TranslatedTitle(ctx context.Context, obj *gqlmodel.PropertySchemaFieldChoice, lang *language.Tag) (string, error)
@@ -1927,6 +1932,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Asset.ContentType(childComplexity), true
+
+	case "Asset.coreSupport":
+		if e.complexity.Asset.CoreSupport == nil {
+			break
+		}
+
+		return e.complexity.Asset.CoreSupport(childComplexity), true
 
 	case "Asset.createdAt":
 		if e.complexity.Asset.CreatedAt == nil {
@@ -6291,6 +6303,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertySchemaField.AllTranslatedDescription(childComplexity), true
 
+	case "PropertySchemaField.allTranslatedPlaceholder":
+		if e.complexity.PropertySchemaField.AllTranslatedPlaceholder == nil {
+			break
+		}
+
+		return e.complexity.PropertySchemaField.AllTranslatedPlaceholder(childComplexity), true
+
 	case "PropertySchemaField.allTranslatedTitle":
 		if e.complexity.PropertySchemaField.AllTranslatedTitle == nil {
 			break
@@ -6347,6 +6366,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertySchemaField.Min(childComplexity), true
 
+	case "PropertySchemaField.placeholder":
+		if e.complexity.PropertySchemaField.Placeholder == nil {
+			break
+		}
+
+		return e.complexity.PropertySchemaField.Placeholder(childComplexity), true
+
 	case "PropertySchemaField.prefix":
 		if e.complexity.PropertySchemaField.Prefix == nil {
 			break
@@ -6379,6 +6405,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PropertySchemaField.TranslatedDescription(childComplexity, args["lang"].(*language.Tag)), true
+
+	case "PropertySchemaField.translatedPlaceholder":
+		if e.complexity.PropertySchemaField.TranslatedPlaceholder == nil {
+			break
+		}
+
+		args, err := ec.field_PropertySchemaField_translatedPlaceholder_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.PropertySchemaField.TranslatedPlaceholder(childComplexity, args["lang"].(*language.Tag)), true
 
 	case "PropertySchemaField.translatedTitle":
 		if e.complexity.PropertySchemaField.TranslatedTitle == nil {
@@ -8592,6 +8630,7 @@ schema {
   url: String!
   contentType: String!
   team: Team
+  coreSupport: Boolean!
 }
 
 enum AssetSortField {
@@ -8604,6 +8643,7 @@ enum AssetSortField {
 
 input CreateAssetInput {
   teamId: ID!
+  coreSupport: Boolean!
   file: Upload!
 }
 
@@ -8640,14 +8680,20 @@ type AssetEdge {
   node: Asset
 }
 
-extend type Query{
-  assets(teamId: ID!, pagination: Pagination, keyword: String, sort: AssetSort): AssetConnection!
+extend type Query {
+  assets(
+    teamId: ID!
+    pagination: Pagination
+    keyword: String
+    sort: AssetSort
+  ): AssetConnection!
 }
 
 extend type Mutation {
   createAsset(input: CreateAssetInput!): CreateAssetPayload
   removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/cluster.graphql", Input: `type Cluster {
   id: ID!
   name: String!
@@ -9719,12 +9765,15 @@ type PropertySchemaField {
   ui: PropertySchemaFieldUI
   min: Float
   max: Float
+  placeholder: String!
   choices: [PropertySchemaFieldChoice!]
   isAvailableIf: PropertyCondition
   allTranslatedTitle: TranslatedString
   allTranslatedDescription: TranslatedString
+  allTranslatedPlaceholder: TranslatedString
   translatedTitle(lang: Lang): String!
   translatedDescription(lang: Lang): String!
+  translatedPlaceholder(lang: Lang): String!
 }
 
 enum PropertySchemaFieldUI {
@@ -9968,7 +10017,7 @@ type PropertyItemPayload {
   propertyItem: PropertyItem
 }
 
-extend type Query{
+extend type Query {
   propertySchema(id: ID!): PropertySchema
   propertySchemas(id: [ID!]!): [PropertySchema!]!
 }
@@ -9977,13 +10026,16 @@ extend type Mutation {
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(input: LinkDatasetToPropertyValueInput!): PropertyFieldPayload
+  linkDatasetToPropertyValue(
+    input: LinkDatasetToPropertyValueInput!
+  ): PropertyFieldPayload
   unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
   addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
   movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
   removePropertyItem(input: RemovePropertyItemInput!): PropertyItemPayload
   updatePropertyItems(input: UpdatePropertyItemInput!): PropertyItemPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/scene.graphql", Input: `type Scene implements Node {
   id: ID!
   projectId: ID!
@@ -12436,6 +12488,21 @@ func (ec *executionContext) field_PropertySchemaField_translatedDescription_args
 	return args, nil
 }
 
+func (ec *executionContext) field_PropertySchemaField_translatedPlaceholder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *language.Tag
+	if tmp, ok := rawArgs["lang"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lang"))
+		arg0, err = ec.unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["lang"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_PropertySchemaField_translatedTitle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14610,6 +14677,50 @@ func (ec *executionContext) fieldContext_Asset_team(ctx context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Asset_coreSupport(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_coreSupport(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CoreSupport, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Asset_coreSupport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Asset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _AssetConnection_edges(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AssetConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AssetConnection_edges(ctx, field)
 	if err != nil {
@@ -14715,6 +14826,8 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(ctx context.Conte
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -14916,6 +15029,8 @@ func (ec *executionContext) fieldContext_AssetEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -15577,6 +15692,8 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(ctx context.Co
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -27085,6 +27202,8 @@ func (ec *executionContext) fieldContext_MergedPropertyField_field(ctx context.C
 				return ec.fieldContext_PropertySchemaField_min(ctx, field)
 			case "max":
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
+			case "placeholder":
+				return ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
 			case "isAvailableIf":
@@ -27093,10 +27212,14 @@ func (ec *executionContext) fieldContext_MergedPropertyField_field(ctx context.C
 				return ec.fieldContext_PropertySchemaField_allTranslatedTitle(ctx, field)
 			case "allTranslatedDescription":
 				return ec.fieldContext_PropertySchemaField_allTranslatedDescription(ctx, field)
+			case "allTranslatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
 			case "translatedTitle":
 				return ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 			case "translatedDescription":
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
+			case "translatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
 		},
@@ -41381,6 +41504,8 @@ func (ec *executionContext) fieldContext_PropertyField_field(ctx context.Context
 				return ec.fieldContext_PropertySchemaField_min(ctx, field)
 			case "max":
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
+			case "placeholder":
+				return ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
 			case "isAvailableIf":
@@ -41389,10 +41514,14 @@ func (ec *executionContext) fieldContext_PropertyField_field(ctx context.Context
 				return ec.fieldContext_PropertySchemaField_allTranslatedTitle(ctx, field)
 			case "allTranslatedDescription":
 				return ec.fieldContext_PropertySchemaField_allTranslatedDescription(ctx, field)
+			case "allTranslatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
 			case "translatedTitle":
 				return ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 			case "translatedDescription":
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
+			case "translatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
 		},
@@ -42834,6 +42963,8 @@ func (ec *executionContext) fieldContext_PropertyLinkableFields_latlngField(ctx 
 				return ec.fieldContext_PropertySchemaField_min(ctx, field)
 			case "max":
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
+			case "placeholder":
+				return ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
 			case "isAvailableIf":
@@ -42842,10 +42973,14 @@ func (ec *executionContext) fieldContext_PropertyLinkableFields_latlngField(ctx 
 				return ec.fieldContext_PropertySchemaField_allTranslatedTitle(ctx, field)
 			case "allTranslatedDescription":
 				return ec.fieldContext_PropertySchemaField_allTranslatedDescription(ctx, field)
+			case "allTranslatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
 			case "translatedTitle":
 				return ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 			case "translatedDescription":
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
+			case "translatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
 		},
@@ -42909,6 +43044,8 @@ func (ec *executionContext) fieldContext_PropertyLinkableFields_urlField(ctx con
 				return ec.fieldContext_PropertySchemaField_min(ctx, field)
 			case "max":
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
+			case "placeholder":
+				return ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
 			case "isAvailableIf":
@@ -42917,10 +43054,14 @@ func (ec *executionContext) fieldContext_PropertyLinkableFields_urlField(ctx con
 				return ec.fieldContext_PropertySchemaField_allTranslatedTitle(ctx, field)
 			case "allTranslatedDescription":
 				return ec.fieldContext_PropertySchemaField_allTranslatedDescription(ctx, field)
+			case "allTranslatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
 			case "translatedTitle":
 				return ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 			case "translatedDescription":
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
+			case "translatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
 		},
@@ -43571,6 +43712,50 @@ func (ec *executionContext) fieldContext_PropertySchemaField_max(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _PropertySchemaField_placeholder(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Placeholder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PropertySchemaField_placeholder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PropertySchemaField",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PropertySchemaField_choices(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PropertySchemaField_choices(ctx, field)
 	if err != nil {
@@ -43755,6 +43940,47 @@ func (ec *executionContext) fieldContext_PropertySchemaField_allTranslatedDescri
 	return fc, nil
 }
 
+func (ec *executionContext) _PropertySchemaField_allTranslatedPlaceholder(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AllTranslatedPlaceholder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]string)
+	fc.Result = res
+	return ec.marshalOTranslatedString2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PropertySchemaField",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type TranslatedString does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PropertySchemaField_translatedTitle(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 	if err != nil {
@@ -43859,6 +44085,61 @@ func (ec *executionContext) fieldContext_PropertySchemaField_translatedDescripti
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_PropertySchemaField_translatedDescription_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PropertySchemaField_translatedPlaceholder(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.PropertySchemaField().TranslatedPlaceholder(rctx, obj, fc.Args["lang"].(*language.Tag))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PropertySchemaField_translatedPlaceholder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PropertySchemaField",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_PropertySchemaField_translatedPlaceholder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -44237,6 +44518,8 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_fields(ctx context.
 				return ec.fieldContext_PropertySchemaField_min(ctx, field)
 			case "max":
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
+			case "placeholder":
+				return ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
 			case "isAvailableIf":
@@ -44245,10 +44528,14 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_fields(ctx context.
 				return ec.fieldContext_PropertySchemaField_allTranslatedTitle(ctx, field)
 			case "allTranslatedDescription":
 				return ec.fieldContext_PropertySchemaField_allTranslatedDescription(ctx, field)
+			case "allTranslatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
 			case "translatedTitle":
 				return ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 			case "translatedDescription":
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
+			case "translatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
 		},
@@ -44569,6 +44856,8 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_representativeField
 				return ec.fieldContext_PropertySchemaField_min(ctx, field)
 			case "max":
 				return ec.fieldContext_PropertySchemaField_max(ctx, field)
+			case "placeholder":
+				return ec.fieldContext_PropertySchemaField_placeholder(ctx, field)
 			case "choices":
 				return ec.fieldContext_PropertySchemaField_choices(ctx, field)
 			case "isAvailableIf":
@@ -44577,10 +44866,14 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_representativeField
 				return ec.fieldContext_PropertySchemaField_allTranslatedTitle(ctx, field)
 			case "allTranslatedDescription":
 				return ec.fieldContext_PropertySchemaField_allTranslatedDescription(ctx, field)
+			case "allTranslatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_allTranslatedPlaceholder(ctx, field)
 			case "translatedTitle":
 				return ec.fieldContext_PropertySchemaField_translatedTitle(ctx, field)
 			case "translatedDescription":
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
+			case "translatedPlaceholder":
+				return ec.fieldContext_PropertySchemaField_translatedPlaceholder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
 		},
@@ -59551,7 +59844,7 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "file"}
+	fieldsInOrder := [...]string{"teamId", "coreSupport", "file"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -59565,6 +59858,13 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 				return it, err
 			}
 			it.TeamID = data
+		case "coreSupport":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coreSupport"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CoreSupport = data
 		case "file":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
 			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
@@ -64033,6 +64333,11 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "coreSupport":
+			out.Values[i] = ec._Asset_coreSupport(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -72521,6 +72826,11 @@ func (ec *executionContext) _PropertySchemaField(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._PropertySchemaField_min(ctx, field, obj)
 		case "max":
 			out.Values[i] = ec._PropertySchemaField_max(ctx, field, obj)
+		case "placeholder":
+			out.Values[i] = ec._PropertySchemaField_placeholder(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "choices":
 			out.Values[i] = ec._PropertySchemaField_choices(ctx, field, obj)
 		case "isAvailableIf":
@@ -72529,6 +72839,8 @@ func (ec *executionContext) _PropertySchemaField(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._PropertySchemaField_allTranslatedTitle(ctx, field, obj)
 		case "allTranslatedDescription":
 			out.Values[i] = ec._PropertySchemaField_allTranslatedDescription(ctx, field, obj)
+		case "allTranslatedPlaceholder":
+			out.Values[i] = ec._PropertySchemaField_allTranslatedPlaceholder(ctx, field, obj)
 		case "translatedTitle":
 			field := field
 
@@ -72575,6 +72887,42 @@ func (ec *executionContext) _PropertySchemaField(ctx context.Context, sel ast.Se
 					}
 				}()
 				res = ec._PropertySchemaField_translatedDescription(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "translatedPlaceholder":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertySchemaField_translatedPlaceholder(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

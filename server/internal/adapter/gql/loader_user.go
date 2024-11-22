@@ -2,6 +2,7 @@ package gql
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -43,7 +44,13 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 		return nil, err
 	}
 
-	return gqlmodel.ToUserFromSimple(res), nil
+	for _, user := range res {
+		if user.Name == nameOrEmail || user.Email == nameOrEmail {
+			return gqlmodel.ToUserFromSimple(user), nil
+		}
+	}
+
+	return nil, errors.New("user not found.")
 }
 
 // data loader

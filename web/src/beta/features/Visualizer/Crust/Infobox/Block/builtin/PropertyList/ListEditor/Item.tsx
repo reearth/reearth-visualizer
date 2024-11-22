@@ -1,4 +1,5 @@
 import { Button, Icon, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
@@ -44,18 +45,22 @@ const EditorItem: FC<Props> = ({
     [onValueBlur]
   );
 
+  const t = useT();
+
   return (
     <Field>
       <HandleIcon icon="dotsSixVertical" className={handleClassName} />
       <TextInput
         size="small"
         value={currentKeyValue}
+        placeholder={t("Display title")}
         onChange={handleKeyChange}
         onBlur={handleKeyBlur}
       />
       <TextInput
         size="small"
         value={currentValue}
+        placeholder={t("${your property name}")}
         onChange={handleValueChange}
         onBlur={handleValueBlur}
       />

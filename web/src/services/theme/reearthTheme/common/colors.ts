@@ -10,5 +10,6 @@ export const brandRed = {
   light: "#FF753C",
   main: "#E95518",
   dark: "#D33E00",
-  darkest: "#A73100"
+  darkest: "#A73100",
+  dynamicRed: "#E8373D"
 };

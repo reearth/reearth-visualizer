@@ -1,3 +1,4 @@
+import { useT } from "@reearth/services/i18n";
 import { Meta, StoryObj } from "@storybook/react";
 import { FC, useCallback, useState } from "react";
 
@@ -17,6 +18,7 @@ const Modal: FC<ModalProps> = ({
   size,
   children
 }: Omit<ModalProps, "visible">) => {
+  const t = useT();
   const [visible, setVisible] = useState(false);
 
   const handleOpen = useCallback(() => {
@@ -62,7 +64,11 @@ const Modal: FC<ModalProps> = ({
               onCancel={handleClose}
               actions={
                 <>
-                  <Button onClick={handleClose} size="normal" title="Cancel" />
+                  <Button
+                    onClick={handleClose}
+                    size="normal"
+                    title={t("Cancel")}
+                  />
                   <Button size="normal" title="Apply" appearance="primary" />
                 </>
               }
