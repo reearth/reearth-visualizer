@@ -25,6 +25,7 @@ const (
 
 type CreateAssetParam struct {
 	WorkspaceID accountdomain.WorkspaceID
+	CoreSupport bool
 	File        *file.File
 }
 
