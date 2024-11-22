@@ -17,4 +17,5 @@ var migrations = migration.Migrations[DBClient]{
   220214180713: SplitSchemaOfProperties,
   220309174648: AddSceneFieldToPropertySchema,
   221028204300: MoveTerrainProperties,
+  241122131410: ChangeCoreSupport,
 }
