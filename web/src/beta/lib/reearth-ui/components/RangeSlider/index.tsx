@@ -16,11 +16,7 @@ export type RangeSliderProps = {
   onChangeComplete?: (value: number[]) => void;
 };
 
-const calculateStep = (
-  min?: number,
-  max?: number,
-  step?: number | null
-): number => {
+const calculateStep = (min?: number, max?: number, step?: number): number => {
   if (step != undefined) {
     return step;
   } else if (min !== undefined && max !== undefined) {
