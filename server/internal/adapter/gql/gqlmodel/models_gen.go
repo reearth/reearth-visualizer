@@ -223,6 +223,7 @@ type Asset struct {
 	URL         string    `json:"url"`
 	ContentType string    `json:"contentType"`
 	Team        *Team     `json:"team,omitempty"`
+	CoreSupport bool      `json:"coreSupport"`
 }
 
 func (Asset) IsNode()        {}
@@ -281,8 +282,9 @@ type Cluster struct {
 }
 
 type CreateAssetInput struct {
-	TeamID ID             `json:"teamId"`
-	File   graphql.Upload `json:"file"`
+	TeamID      ID             `json:"teamId"`
+	CoreSupport bool           `json:"coreSupport"`
+	File        graphql.Upload `json:"file"`
 }
 
 type CreateAssetPayload struct {

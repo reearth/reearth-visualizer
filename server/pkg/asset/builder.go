@@ -69,6 +69,11 @@ func (b *Builder) URL(url string) *Builder {
 	return b
 }
 
+func (b *Builder) CoreSupport(coreSupport bool) *Builder {
+	b.a.coreSupport = coreSupport
+	return b
+}
+
 func (b *Builder) ContentType(contentType string) *Builder {
 	b.a.contentType = contentType
 	return b
