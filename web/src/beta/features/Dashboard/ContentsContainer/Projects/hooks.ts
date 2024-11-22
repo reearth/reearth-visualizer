@@ -68,7 +68,6 @@ export default (workspaceId?: string) => {
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
-      .filter((project) => project?.coreSupport === true)
       .map<Project | undefined>((project) =>
         project
           ? {
