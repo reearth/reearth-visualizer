@@ -269,11 +269,11 @@ extensions:
             - id: fov
               type: number
               title: FOV
-              # description: Description needed
-              defaultValue: 3
+              description: The field of view (FOV) of the camera, in radians. It defines the vertical angular extent of the scene visible to the camera. And the range supported in our system is from 0.1 to 2.0
+              defaultValue: 1
               ui: slider
-              min: 0
-              max: 10
+              min: 0.1
+              max: 2
   - id: cesium
     name: Cesium
     description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.

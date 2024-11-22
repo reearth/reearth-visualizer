@@ -4,28 +4,35 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import "rc-slider/assets/index.css";
 
-const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
+const RangeSliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider.Range);
 
-export type SliderProps = {
-  value: number | undefined;
+export type RangeSliderProps = {
+  value: number[] | undefined;
   min?: number;
   max?: number;
   step?: number;
   disabled?: boolean;
-  onChange?: (value: number) => void;
-  onChangeComplete?: (value: number) => void;
+  onChange?: (value: number[]) => void;
+  onChangeComplete?: (value: number[]) => void;
 };
 
-const getCalculatedStep = (min?: number, max?: number, step?: number) => {
-  if (step !== undefined) return step;
-  const getPrecision = (num?: number) =>
-    num ? num.toString().split(".")[1]?.length || 0 : 0;
-
-  const precision = Math.max(getPrecision(min), getPrecision(max));
-  return precision > 0 ? Math.pow(10, -precision) : 0.1;
+const calculateStep = (min?: number, max?: number, step?: number): number => {
+  if (step != undefined) {
+    return step;
+  } else if (min !== undefined && max !== undefined) {
+    const range = max - min;
+    let calculatedStep = range / 10;
+    if (range % calculatedStep !== 0) {
+      const steps = Math.ceil(range / calculatedStep);
+      calculatedStep = range / steps;
+    }
+    return calculatedStep;
+  } else {
+    return 1;
+  }
 };
 
-export const Slider: FC<SliderProps> = ({
+export const RangeSlider: FC<RangeSliderProps> = ({
   value,
   min,
   max,
@@ -35,33 +42,34 @@ export const Slider: FC<SliderProps> = ({
   onChangeComplete
 }) => {
   const calculatedStep = useMemo(
-    () => getCalculatedStep(min, max, step as number),
+    () => calculateStep(min, max, step),
     [min, max, step]
   );
-  const [currentValue, setCurrentValue] = useState(value);
+  const [currentValue, setCurrentValue] = useState<number[] | undefined>(value);
 
   useEffect(() => {
-    setCurrentValue(value);
+    if (Array.isArray(value) && value.length === 2) setCurrentValue(value);
   }, [value]);
 
   const handleChange = useCallback(
-    (val: number) => {
-      setCurrentValue(val);
-      onChange?.(val);
+    (value: number[]) => {
+      setCurrentValue(value);
+      onChange?.(value);
     },
     [onChange]
   );
 
   return (
     <SliderStyled disabled={!!disabled}>
-      <SliderWithTooltip
+      <RangeSliderWithTooltip
         value={currentValue}
         min={min}
         max={max}
         disabled={disabled}
-        step={calculatedStep}
         onChange={handleChange}
         onAfterChange={onChangeComplete}
+        step={calculatedStep}
+        draggableTrack
       />
     </SliderStyled>
   );
@@ -102,9 +110,6 @@ const SliderStyled = styled("div")<{ disabled: boolean }>(
       backgroundColor: theme.bg[2],
       color: theme.content.main,
       boxShadow: theme.shadow.button
-    },
-    ".rc-slider-handle, .rc-slider-tooltip-inner": {
-      transition: "none !important"
     }
   })
 );
