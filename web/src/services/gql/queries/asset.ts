@@ -13,6 +13,7 @@ export const GET_ASSETS = gql(`
           url
           createdAt
           contentType
+          coreSupport
         }
       }
       nodes {
@@ -23,6 +24,7 @@ export const GET_ASSETS = gql(`
         url
         createdAt
         contentType
+        coreSupport
       }
       pageInfo {
         endCursor
@@ -36,8 +38,8 @@ export const GET_ASSETS = gql(`
 `);
 
 export const CREATE_ASSET = gql(`
-  mutation CreateAsset($teamId: ID!, $file: Upload!) {
-    createAsset(input: { teamId: $teamId, file: $file }) {
+  mutation CreateAsset($teamId: ID!, $file: Upload!, $coreSupport: Boolean!) {
+    createAsset(input: { teamId: $teamId, file: $file, coreSupport: $coreSupport }) {
       asset {
         id
         teamId

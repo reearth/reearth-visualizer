@@ -202,7 +202,8 @@ export default ({
       if (!files) return;
       await useCreateAssets({
         teamId: workspaceId ?? "",
-        file: files
+        file: files,
+        coreSupport: true
       });
     },
     [workspaceId, useCreateAssets]
