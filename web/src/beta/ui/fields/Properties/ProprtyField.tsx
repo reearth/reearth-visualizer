@@ -152,9 +152,8 @@ const PropertyField: FC<Props> = ({
             value={value as number}
             min={schema.min}
             max={schema.max}
-            debounced={true}
             description={schema.description}
-            onAfterChange={handleChange}
+            onChangeComplete={handleChange}
           />
         ) : (
           <NumberField

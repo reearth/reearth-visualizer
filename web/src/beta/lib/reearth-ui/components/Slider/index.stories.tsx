@@ -52,7 +52,7 @@ Disabled.args = {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10%;
+  padding: 20px 0;
+  gap: 40px;
   margin: 2rem;
-  height: 300px;
 `;

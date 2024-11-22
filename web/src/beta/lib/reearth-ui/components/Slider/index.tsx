@@ -1,25 +1,20 @@
 import { styled } from "@reearth/services/theme";
-import { debounce } from "lodash-es";
 import RCSlider from "rc-slider";
-import {
-  ComponentProps,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import "rc-slider/assets/index.css";
 
 const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
 
 export type SliderProps = {
+  value: number | undefined;
   min?: number;
   max?: number;
-  debounced?: boolean;
-  debounceDelay?: number;
-} & ComponentProps<typeof SliderWithTooltip>;
+  step?: number;
+  disabled?: boolean;
+  onChange?: (value: number) => void;
+  onChangeComplete?: (value: number) => void;
+};
 
 const getCalculatedStep = (min?: number, max?: number, step?: number) => {
   if (step !== undefined) return step;
@@ -32,15 +27,16 @@ const getCalculatedStep = (min?: number, max?: number, step?: number) => {
 
 export const Slider: FC<SliderProps> = ({
   value,
-  debounced = false,
-  debounceDelay,
+  min,
+  max,
+  step,
+  disabled,
   onChange,
-  onAfterChange,
-  ...props
+  onChangeComplete
 }) => {
   const calculatedStep = useMemo(
-    () => getCalculatedStep(props.min, props.max, props.step as number),
-    [props.min, props.max, props.step]
+    () => getCalculatedStep(min, max, step as number),
+    [min, max, step]
   );
   const [currentValue, setCurrentValue] = useState(value);
 
@@ -48,40 +44,24 @@ export const Slider: FC<SliderProps> = ({
     setCurrentValue(value);
   }, [value]);
 
-  const debouncedOnChange = useMemo(
-    () =>
-      debounce((val: number) => {
-        onChange?.(val);
-      }, debounceDelay || 500),
-    [onChange, debounceDelay]
-  );
-
   const handleChange = useCallback(
     (val: number) => {
       setCurrentValue(val);
-      if (debounced) {
-        debouncedOnChange(val);
-      } else {
-        onChange?.(val);
-      }
+      onChange?.(val);
     },
-    [debounced, debouncedOnChange, onChange]
+    [onChange]
   );
 
-  useEffect(() => {
-    return () => {
-      debouncedOnChange.cancel();
-    };
-  }, [debouncedOnChange]);
-
   return (
-    <SliderStyled disabled={props.disabled as boolean}>
+    <SliderStyled disabled={!!disabled}>
       <SliderWithTooltip
         value={currentValue}
+        min={min}
+        max={max}
+        disabled={disabled}
         step={calculatedStep}
         onChange={handleChange}
-        onAfterChange={onAfterChange}
-        {...props}
+        onAfterChange={onChangeComplete}
       />
     </SliderStyled>
   );
