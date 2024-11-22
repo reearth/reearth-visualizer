@@ -106,6 +106,8 @@ export default ({
     }, 0);
   }, []);
 
+  const prevFOV = useRef<number | undefined>(undefined);
+
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
     const cesiumIonAccessToken = sceneProperty?.default?.ion;
@@ -121,6 +123,13 @@ export default ({
         : undefined;
     if (initialCamera) {
       setInitialCamera(initialCamera);
+    }
+
+    if (initialCamera?.fov && initialCamera.fov !== prevFOV.current) {
+      prevFOV.current = initialCamera.fov;
+      setCurrentCamera((c) =>
+        !c ? undefined : { ...c, fov: initialCamera.fov }
+      );
     }
 
     const viewerProperty = sceneProperty
@@ -143,7 +152,7 @@ export default ({
       viewerProperty,
       cesiumIonAccessToken
     };
-  }, [scene?.property, tempDisableTerrain]);
+  }, [scene?.property, tempDisableTerrain, setCurrentCamera]);
 
   useEffect(() => {
     if (isInitialized.current) return;

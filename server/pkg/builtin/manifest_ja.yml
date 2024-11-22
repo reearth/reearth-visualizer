@@ -130,12 +130,14 @@ extensions:
         fields:
           camera:
             title: カメラの初期位置
-            description: プロジェクトを開いたときに表示される最初の位置
+            description: 初期カメラ位置を設定すると、プロジェクトを開くたびに同じ場所が表示されるようになります
           allowEnterGround:
             title: 地下に入る
-            description: 有効にすると、カメラが地表の中に入るようになります。
+            description: 有効にすると、カメラは地形の中を移動でき、地下エリアに入ることができます。
           fov:
             title: 視野（FOV）
+            description: カメラの視野 (FOV) (ラジアン単位)。カメラに見えるシーンの垂直方向の角度範囲を定義します。私たちのシステムでサポートされている範囲は 0.1 ～ 2.0 です。
+
   cesium:
     name: Cesium
     description: 右パネルでシーン全体の設定を変更することができます。タイル、大気、ライティングなどの設定が含まれています。
