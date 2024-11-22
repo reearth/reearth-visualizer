@@ -53,8 +53,6 @@ export const useDataAttribution = ({
       ...widgetProcessedCredits
     ];
 
-    console.log(combinedCredits);
-
     setProcessedCredits(combinedCredits);
   }, [processedCoreCredits, widgetCredits]);
 
