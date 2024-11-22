@@ -260,12 +260,12 @@ extensions:
             - id: camera
               type: camera
               title: Initial camera position
-              description: The starting position of your project.
+              description: You can set an initial camera position to ensure that the same area is viewed each time the project is opened.
             - id: allowEnterGround
               type: bool
               title: Enter the ground
               defaultValue: false
-              description: Set to true to allow the camera to enter the surface of the earth.
+              description: When this property is set to true, the camera can move through the terrain, allowing it to enter underground areas.
             - id: fov
               type: number
               title: FOV
