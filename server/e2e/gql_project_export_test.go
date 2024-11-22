@@ -68,8 +68,8 @@ func TestCallExportProject(t *testing.T) {
 func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $core: Boolean) {
-			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, core: $core} ) { 
+		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
+			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport} ) { 
 				project { 
 					id
 					__typename 
@@ -83,7 +83,7 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 			"imageUrl":    "https://test.com/project.jpg",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
-			"core":        true,
+			"coreSupport": true,
 		},
 	}
 	res := e.POST("/api/graphql").

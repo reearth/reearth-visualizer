@@ -146,7 +146,7 @@ type ComplexityRoot struct {
 
 	Asset struct {
 		ContentType func(childComplexity int) int
-		Core        func(childComplexity int) int
+		CoreSupport func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
@@ -836,7 +836,7 @@ type ComplexityRoot struct {
 		Alias             func(childComplexity int) int
 		BasicAuthPassword func(childComplexity int) int
 		BasicAuthUsername func(childComplexity int) int
-		Core              func(childComplexity int) int
+		CoreSupport       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Description       func(childComplexity int) int
 		EnableGa          func(childComplexity int) int
@@ -1933,12 +1933,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Asset.ContentType(childComplexity), true
 
-	case "Asset.core":
-		if e.complexity.Asset.Core == nil {
+	case "Asset.coreSupport":
+		if e.complexity.Asset.CoreSupport == nil {
 			break
 		}
 
-		return e.complexity.Asset.Core(childComplexity), true
+		return e.complexity.Asset.CoreSupport(childComplexity), true
 
 	case "Asset.createdAt":
 		if e.complexity.Asset.CreatedAt == nil {
@@ -5708,12 +5708,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.BasicAuthUsername(childComplexity), true
 
-	case "Project.core":
-		if e.complexity.Project.Core == nil {
+	case "Project.coreSupport":
+		if e.complexity.Project.CoreSupport == nil {
 			break
 		}
 
-		return e.complexity.Project.Core(childComplexity), true
+		return e.complexity.Project.CoreSupport(childComplexity), true
 
 	case "Project.createdAt":
 		if e.complexity.Project.CreatedAt == nil {
@@ -8630,7 +8630,7 @@ schema {
   url: String!
   contentType: String!
   team: Team
-  core: Boolean!
+  coreSupport: Boolean!
 }
 
 enum AssetSortField {
@@ -8643,7 +8643,7 @@ enum AssetSortField {
 
 input CreateAssetInput {
   teamId: ID!
-  core: Boolean!
+  coreSupport: Boolean!
   file: Upload!
 }
 
@@ -9583,7 +9583,7 @@ extend type Mutation {
   publishmentStatus: PublishmentStatus!
   team: Team
   scene: Scene
-  core: Boolean!
+  coreSupport: Boolean!
   enableGa: Boolean!
   trackingId: String!
   starred: Boolean!
@@ -9621,7 +9621,7 @@ input CreateProjectInput {
   imageUrl: URL
   alias: String
   archived: Boolean
-  core: Boolean
+  coreSupport: Boolean
 }
 
 input UpdateProjectInput {
@@ -14677,8 +14677,8 @@ func (ec *executionContext) fieldContext_Asset_team(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Asset_core(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_core(ctx, field)
+func (ec *executionContext) _Asset_coreSupport(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_coreSupport(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -14691,7 +14691,7 @@ func (ec *executionContext) _Asset_core(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Core, nil
+		return obj.CoreSupport, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14708,7 +14708,7 @@ func (ec *executionContext) _Asset_core(ctx context.Context, field graphql.Colle
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Asset_core(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Asset_coreSupport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Asset",
 		Field:      field,
@@ -14826,8 +14826,8 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(ctx context.Conte
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
-			case "core":
-				return ec.fieldContext_Asset_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -15029,8 +15029,8 @@ func (ec *executionContext) fieldContext_AssetEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
-			case "core":
-				return ec.fieldContext_Asset_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -15692,8 +15692,8 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(ctx context.Co
 				return ec.fieldContext_Asset_contentType(ctx, field)
 			case "team":
 				return ec.fieldContext_Asset_team(ctx, field)
-			case "core":
-				return ec.fieldContext_Asset_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Asset", field.Name)
 		},
@@ -39823,8 +39823,8 @@ func (ec *executionContext) fieldContext_Project_scene(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_core(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_core(ctx, field)
+func (ec *executionContext) _Project_coreSupport(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_coreSupport(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -39837,7 +39837,7 @@ func (ec *executionContext) _Project_core(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Core, nil
+		return obj.CoreSupport, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39854,7 +39854,7 @@ func (ec *executionContext) _Project_core(ctx context.Context, field graphql.Col
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_core(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_coreSupport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -40262,8 +40262,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(ctx context.Con
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
-			case "core":
-				return ec.fieldContext_Project_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
@@ -40499,8 +40499,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
-			case "core":
-				return ec.fieldContext_Project_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
@@ -40597,8 +40597,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(ctx context.Cont
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
-			case "core":
-				return ec.fieldContext_Project_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
@@ -48158,8 +48158,8 @@ func (ec *executionContext) fieldContext_Scene_project(ctx context.Context, fiel
 				return ec.fieldContext_Project_team(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
-			case "core":
-				return ec.fieldContext_Project_core(ctx, field)
+			case "coreSupport":
+				return ec.fieldContext_Project_coreSupport(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Project_enableGa(ctx, field)
 			case "trackingId":
@@ -59844,7 +59844,7 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "core", "file"}
+	fieldsInOrder := [...]string{"teamId", "coreSupport", "file"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -59858,13 +59858,13 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 				return it, err
 			}
 			it.TeamID = data
-		case "core":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("core"))
+		case "coreSupport":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coreSupport"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Core = data
+			it.CoreSupport = data
 		case "file":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
 			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
@@ -59939,7 +59939,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "imageUrl", "alias", "archived", "core"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "imageUrl", "alias", "archived", "coreSupport"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -59995,13 +59995,13 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Archived = data
-		case "core":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("core"))
+		case "coreSupport":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coreSupport"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Core = data
+			it.CoreSupport = data
 		}
 	}
 
@@ -64333,8 +64333,8 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "core":
-			out.Values[i] = ec._Asset_core(ctx, field, obj)
+		case "coreSupport":
+			out.Values[i] = ec._Asset_coreSupport(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -71477,8 +71477,8 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "core":
-			out.Values[i] = ec._Project_core(ctx, field, obj)
+		case "coreSupport":
+			out.Values[i] = ec._Project_coreSupport(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

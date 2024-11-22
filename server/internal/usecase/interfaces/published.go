@@ -14,7 +14,7 @@ type HasPublicMeta interface {
 	IsBasicAuthActive() bool
 	BasicAuthUsername() string
 	BasicAuthPassword() string
-	Core() bool
+	CoreSupport() bool
 }
 
 type ProjectPublishedMetadata struct {
@@ -25,7 +25,7 @@ type ProjectPublishedMetadata struct {
 	IsBasicAuthActive bool   `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername string `json:"basicAuthUsername,omitempty"`
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
-	Core              bool   `json:"core,omitempty"`
+	CoreSupport       bool   `json:"coreSupport,omitempty"`
 }
 
 func PublishedMetadataFrom(i HasPublicMeta) ProjectPublishedMetadata {
@@ -37,7 +37,7 @@ func PublishedMetadataFrom(i HasPublicMeta) ProjectPublishedMetadata {
 		IsBasicAuthActive: i.IsBasicAuthActive(),
 		BasicAuthUsername: i.BasicAuthUsername(),
 		BasicAuthPassword: i.BasicAuthPassword(),
-		Core:              i.Core(),
+		CoreSupport:       i.CoreSupport(),
 	}
 }
 

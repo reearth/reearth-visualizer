@@ -230,7 +230,7 @@ func fetchProjectForNewLayers(e *httpexpect.Expect, pID string) (GraphQLRequest,
 			publishmentStatus
 			updatedAt
 			createdAt
-			core
+			coreSupport
 			starred
 			__typename
 		}`,

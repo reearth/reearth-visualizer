@@ -69,7 +69,7 @@ func TestToProject(t *testing.T) {
 				Alias("aliasalias").
 				Visualizer(visualizer.VisualizerCesium).
 				UpdatedAt(now).
-				Core(false).
+				CoreSupport(false).
 				MustBuild(),
 			want: &Project{
 				ID:                IDFrom(pId),
@@ -93,7 +93,7 @@ func TestToProject(t *testing.T) {
 				PublishmentStatus: PublishmentStatusPrivate,
 				Team:              nil,
 				Scene:             nil,
-				Core:              false,
+				CoreSupport:       false,
 				EnableGa:          false,
 				TrackingID:        "",
 				Starred:           false,

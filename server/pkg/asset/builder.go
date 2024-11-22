@@ -69,8 +69,8 @@ func (b *Builder) URL(url string) *Builder {
 	return b
 }
 
-func (b *Builder) Core(core bool) *Builder {
-	b.a.core = core
+func (b *Builder) CoreSupport(coreSupport bool) *Builder {
+	b.a.coreSupport = coreSupport
 	return b
 }
 

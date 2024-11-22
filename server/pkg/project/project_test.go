@@ -323,14 +323,14 @@ func TestProject_Experimental(t *testing.T) {
 		{
 			name: "inactive",
 			p: &Project{
-				core: false,
+				coreSupport: false,
 			},
 			expected: false,
 		},
 		{
 			name: "active",
 			p: &Project{
-				core: true,
+				coreSupport: true,
 			},
 			expected: true,
 		},
@@ -340,7 +340,7 @@ func TestProject_Experimental(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			res := tt.p.Core()
+			res := tt.p.CoreSupport()
 			assert.Equal(t, tt.expected, res)
 		})
 	}

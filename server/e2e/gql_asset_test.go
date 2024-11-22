@@ -24,36 +24,36 @@ func TestGetAssets(t *testing.T) {
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
 		ValueEqual("teamId", teamId).
 		ValueEqual("name", "test.png").
-		ValueEqual("core", true)
+		ValueEqual("coreSupport", true)
 
 	res = createAsset(t, e, "test.png", false, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
 		ValueEqual("teamId", teamId).
 		ValueEqual("name", "test.png").
-		ValueEqual("core", false)
+		ValueEqual("coreSupport", false)
 
 	res = createAsset(t, e, "test.csv", true, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
 		ValueEqual("teamId", teamId).
 		ValueEqual("name", "test.csv").
-		ValueEqual("core", true)
+		ValueEqual("coreSupport", true)
 
 	res = createAsset(t, e, "test.csv", false, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
 		ValueEqual("teamId", teamId).
 		ValueEqual("name", "test.csv").
-		ValueEqual("core", false)
+		ValueEqual("coreSupport", false)
 
 	res = getAssets(e, teamId)
 	assets := res.Object().Value("data").Object().Value("assets").Object().Value("nodes").Array().Iter()
 	for _, a := range assets {
-		a.Object().ValueEqual("core", true) // core true only
+		a.Object().ValueEqual("coreSupport", true) // coreSupport true only
 	}
 
 }
 
-const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $file: Upload!, $core: Boolean!) {
-  createAsset(input: {teamId: $teamId, file: $file, core: $core}) {
+const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $file: Upload!, $coreSupport: Boolean!) {
+  createAsset(input: {teamId: $teamId, file: $file, coreSupport: $coreSupport}) {
     asset {
       id
       teamId
@@ -61,14 +61,14 @@ const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $file: Upload!, 
       size
       url
       contentType
-	  core
+	  coreSupport
       __typename
     }
     __typename
   }
 }`
 
-func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, core bool, teamId string) *httpexpect.Value {
+func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSupport bool, teamId string) *httpexpect.Value {
 	file, err := os.Open(filePath)
 	if err != nil {
 		t.Fatalf("failed to open file: %v", err)
@@ -81,9 +81,9 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, core bool,
 	requestBody := map[string]interface{}{
 		"operationName": "CreateAsset",
 		"variables": map[string]interface{}{
-			"teamId": teamId,
-			"core":   core,
-			"file":   nil,
+			"teamId":      teamId,
+			"coreSupport": coreSupport,
+			"file":        nil,
 		},
 		"query": CreateAssetMutation,
 	}
@@ -112,7 +112,7 @@ const GetAssetsQuery = `query GetAssets($teamId: ID!, $pagination: Pagination, $
 		  url
 		  createdAt
 		  contentType
-		  core
+		  coreSupport
 		  __typename
 		}
 		__typename
@@ -125,7 +125,7 @@ const GetAssetsQuery = `query GetAssets($teamId: ID!, $pagination: Pagination, $
 		url
 		createdAt
 		contentType
-		core
+		coreSupport
 		__typename
 	  }
 	  pageInfo {

@@ -33,7 +33,7 @@ type Project struct {
 	workspace         WorkspaceID
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
-	core              bool
+	coreSupport       bool
 	enableGa          bool
 	trackingId        string
 	sceneId           SceneID
@@ -106,8 +106,8 @@ func (p *Project) PublicNoIndex() bool {
 	return p.publicNoIndex
 }
 
-func (p *Project) Core() bool {
-	return p.core
+func (p *Project) CoreSupport() bool {
+	return p.coreSupport
 }
 
 func (p *Project) EnableGA() bool {

@@ -91,7 +91,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		Name(path.Base(inp.File.Path)).
 		Size(size).
 		URL(url.String()).
-		Core(inp.Core).
+		CoreSupport(inp.CoreSupport).
 		Build()
 	if err != nil {
 		return nil, err

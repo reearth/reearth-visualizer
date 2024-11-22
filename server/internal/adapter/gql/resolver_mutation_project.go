@@ -40,7 +40,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		ImageURL:    input.ImageURL,
 		Alias:       input.Alias,
 		Archived:    input.Archived,
-		Core:        input.Core,
+		CoreSupport: input.CoreSupport,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

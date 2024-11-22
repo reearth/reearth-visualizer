@@ -23,7 +23,7 @@ func TestAsset(t *testing.T) {
 			Size        int64
 			URL         string
 			ContentType string
-			Core        bool
+			CoreSupport bool
 		}
 		Actual *Asset
 	}{
@@ -36,7 +36,7 @@ func TestAsset(t *testing.T) {
 				Size        int64
 				URL         string
 				ContentType string
-				Core        bool
+				CoreSupport bool
 			}{
 				ID:          aid,
 				CreatedAt:   d,
@@ -45,7 +45,7 @@ func TestAsset(t *testing.T) {
 				URL:         "tt://xxx.xx",
 				Name:        "xxx",
 				ContentType: "test",
-				Core:        true,
+				CoreSupport: true,
 			},
 			Actual: New().
 				ID(aid).
@@ -55,7 +55,7 @@ func TestAsset(t *testing.T) {
 				Size(10).
 				Name("xxx").
 				URL("tt://xxx.xx").
-				Core(true).
+				CoreSupport(true).
 				MustBuild(),
 		},
 	}
@@ -72,7 +72,7 @@ func TestAsset(t *testing.T) {
 			assert.Equal(t, tc.Expected.Size, tc.Actual.Size())
 			assert.Equal(t, tc.Expected.Name, tc.Actual.Name())
 			assert.Equal(t, tc.Expected.ContentType, tc.Actual.ContentType())
-			assert.Equal(t, tc.Expected.Core, tc.Actual.Core())
+			assert.Equal(t, tc.Expected.CoreSupport, tc.Actual.CoreSupport())
 		})
 	}
 }
