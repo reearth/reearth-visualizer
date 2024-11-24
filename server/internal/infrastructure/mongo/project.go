@@ -85,9 +85,19 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 
 	filter := bson.M{
 		"team": id.String(),
-		"$or": []bson.M{
-			{"deleted": false},
-			{"deleted": bson.M{"$exists": false}},
+		"$and": []bson.M{
+			{
+				"$or": []bson.M{
+					{"deleted": false},
+					{"deleted": bson.M{"$exists": false}},
+				},
+			},
+			{
+				"$or": []bson.M{
+					{"coresupport": true},
+					{"coresupport": bson.M{"$exists": false}},
+				},
+			},
 		},
 	}
 
@@ -114,9 +124,19 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	filter := bson.M{
 		"team":    id.String(),
 		"starred": true,
-		"$or": []bson.M{
-			{"deleted": false},
-			{"deleted": bson.M{"$exists": false}},
+		"$and": []bson.M{
+			{
+				"$or": []bson.M{
+					{"deleted": false},
+					{"deleted": bson.M{"$exists": false}},
+				},
+			},
+			{
+				"$or": []bson.M{
+					{"coresupport": true},
+					{"coresupport": bson.M{"$exists": false}},
+				},
+			},
 		},
 	}
 
@@ -129,8 +149,9 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	}
 
 	filter := bson.M{
-		"team":    id.String(),
-		"deleted": true,
+		"team":        id.String(),
+		"deleted":     true,
+		"coresupport": true,
 	}
 
 	return r.find(ctx, filter)
