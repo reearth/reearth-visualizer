@@ -181,7 +181,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
       ) : (
         <ManagerEmptyContent>
           <Typography size="h5" color={theme.content.weak}>
-            {t("No Asset has been uploaded yet")}
+            {t("No asset has been uploaded yet")}
           </Typography>
         </ManagerEmptyContent>
       )}
