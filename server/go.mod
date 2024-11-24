@@ -23,10 +23,11 @@ require (
 	github.com/kennygrant/sanitize v1.2.4
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/oklog/ulid v1.3.1
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.15.0
-	github.com/reearth/reearthx v0.0.0-20241016122433-351e92319d1c
+	github.com/reearth/reearthx v0.0.0-20241120060035-e4cc7e5e2643
 	github.com/samber/lo v1.39.0
 	github.com/spf13/afero v1.11.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
@@ -116,7 +117,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.4.0 // indirect
-	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/cors v1.10.1 // indirect

@@ -260,20 +260,20 @@ extensions:
             - id: camera
               type: camera
               title: Initial camera position
-              description: The starting position of your project.
+              description: You can set an initial camera position to ensure that the same area is viewed each time the project is opened.
             - id: allowEnterGround
               type: bool
               title: Enter the ground
               defaultValue: false
-              description: Set to true to allow the camera to enter the surface of the earth.
+              description: When this property is set to true, the camera can move through the terrain, allowing it to enter underground areas.
             - id: fov
               type: number
               title: FOV
-              # description: Description needed
-              defaultValue: 3
+              description: The field of view (FOV) of the camera, in radians. It defines the vertical angular extent of the scene visible to the camera. And the range supported in our system is from 0.1 to 2.0
+              defaultValue: 1
               ui: slider
-              min: 0
-              max: 10
+              min: 0.1
+              max: 2
   - id: cesium
     name: Cesium
     description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.

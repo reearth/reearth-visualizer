@@ -1,7 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
-import { useCallback } from "react";
 
 import { Slider, SliderProps } from ".";
 
@@ -14,44 +12,47 @@ type Story = StoryObj<typeof Slider>;
 export default meta;
 
 export const Default: Story = (args: SliderProps) => {
-  const [_, updateArgs] = useArgs();
-
-  const handleChange = useCallback(
-    (value: number) => updateArgs({ value: value }),
-    [updateArgs]
-  );
-
   return (
     <Wrapper>
       <div>
-        <Slider {...args} onChange={handleChange} />
-      </div>
-      <div>
-        <Slider
-          {...args}
-          max={args.max ? 2 * args.max : undefined}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <Slider {...args} disabled={true} onChange={handleChange} />
+        <Slider {...args} />
       </div>
     </Wrapper>
   );
 };
 
+export const Disabled: Story = (args: SliderProps) => {
+  return (
+    <Wrapper>
+      {[10, 25].map((value, index) => (
+        <div key={index}>
+          <Slider {...args} value={value} disabled={true} />
+        </div>
+      ))}
+    </Wrapper>
+  );
+};
+
 Default.args = {
+  value: 0.5,
+  min: 0,
+  max: 1,
+  step: 0.1,
+  disabled: false
+};
+
+Disabled.args = {
   value: 50,
   min: 0,
   max: 100,
-  step: 1,
-  disabled: false
+  step: 10,
+  disabled: true
 };
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10%;
+  padding: 20px 0;
+  gap: 40px;
   margin: 2rem;
-  height: 300px;
 `;
