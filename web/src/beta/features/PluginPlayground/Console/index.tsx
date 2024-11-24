@@ -14,8 +14,8 @@ const Console: FC<Props> = ({ fileOutputs }) => {
   if (!fileOutputs) return null;
   return (
     <Wrapper>
-      {fileOutputs.map(({ title, output }) => (
-        <div>
+      {fileOutputs.map(({ title, output }, index) => (
+        <div key={index}>
           {`[${title}]`} {output}
         </div>
       ))}
