@@ -70,11 +70,8 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 	}
 
 	var filter any = bson.M{
-		"team": id.String(),
-		"$or": []bson.M{
-			{"coresupport": true},
-			{"coresupport": bson.M{"$exists": false}},
-		},
+		"team":        id.String(),
+		"coresupport": true,
 	}
 
 	if uFilter.Keyword != nil {
