@@ -1,5 +1,4 @@
 import { usePluginManualResize } from "@reearth/services/state";
-import { debounce } from "lodash-es";
 import {
   IframeHTMLAttributes,
   Ref,
@@ -63,15 +62,6 @@ export default function useHook({
   const pendingMesages = useRef<any[]>([]);
   const [pluginManualResize, _] = usePluginManualResize();
 
-  const debouncedSetIFrameSize = useMemo(
-    () =>
-      debounce((width: string, height: string) => {
-        setIFrameSize([width, height]);
-        onAutoResized?.();
-      }, 100),
-    [onAutoResized]
-  );
-
   useImperativeHandle(
     ref,
     (): RefType => ({
@@ -119,7 +109,6 @@ export default function useHook({
     autoResizeMessageKey,
     onMessage,
     onAutoResized,
-    debouncedSetIFrameSize,
     pluginManualResize?.width,
     pluginManualResize?.height
   ]);
