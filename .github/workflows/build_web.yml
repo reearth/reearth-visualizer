@@ -210,19 +210,6 @@ jobs:
           echo "::set-output name=platforms::$PLATFORMS"
           echo "::set-output name=version::$VERSION"
           echo "::set-output name=tags::$TAGS"
-
-      # TODO: Comment in after removing build-docker-image-old job.
-      # - name: Fetch reearth-web release
-      #   uses: dsaltares/fetch-gh-release-asset@master
-      #   with:
-      #     repo: reearth/reearth
-      #     version: tags/${{ github.event.inputs.name && github.event.inputs.name != 'blank' && github.event.inputs.name || github.event.inputs.new_tag }}
-      #     file: reearth-web_${{ github.event.inputs.name && github.event.inputs.name != 'blank' && github.event.inputs.name || github.event.inputs.new_tag }}.tar.gz
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     target: server/reearth-web.tar.gz
-      # - name: Extract reearth/web
-      #   run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
-
       - name: Build and push docker image
         uses: docker/build-push-action@v5
         with:
