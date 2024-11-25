@@ -151,12 +151,14 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	pid2 := id.NewProjectID()
 	pid3 := id.NewProjectID()
 	pid4 := id.NewProjectID()
+	pid5 := id.NewProjectID()
 
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid1.String(), "team": wid.String(), "name": "Project 1", "starred": true},
-		bson.M{"id": pid2.String(), "team": wid.String(), "name": "Project 2", "starred": true},
-		bson.M{"id": pid3.String(), "team": wid.String(), "name": "Project 3", "starred": false},
-		bson.M{"id": pid4.String(), "team": wid2.String(), "name": "Project 4", "starred": true},
+		bson.M{"id": pid1.String(), "team": wid.String(), "name": "Project 1", "starred": true, "coresupport": true},
+		bson.M{"id": pid2.String(), "team": wid.String(), "name": "Project 2", "starred": true, "coresupport": true},
+		bson.M{"id": pid3.String(), "team": wid.String(), "name": "Project 3", "starred": false, "coresupport": true},
+		bson.M{"id": pid4.String(), "team": wid2.String(), "name": "Project 4", "starred": true, "coresupport": true},
+		bson.M{"id": pid5.String(), "team": wid2.String(), "name": "Project 5", "starred": true, "coresupport": false},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -190,4 +192,33 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Empty(t, got)
 	})
+}
+
+func TestProject_FindDeletedByWorkspace(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	wid2 := accountdomain.NewWorkspaceID()
+
+	pid1 := id.NewProjectID()
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+	pid4 := id.NewProjectID()
+
+	_, _ = c.Collection("project").InsertMany(ctx, []any{
+		bson.M{"id": pid1.String(), "team": wid.String(), "name": "Project 1", "deleted": false, "coresupport": true},
+		bson.M{"id": pid2.String(), "team": wid.String(), "name": "Project 2", "deleted": true, "coresupport": true},
+		bson.M{"id": pid3.String(), "team": wid2.String(), "name": "Project 3", "deleted": false, "coresupport": true},
+		bson.M{"id": pid4.String(), "team": wid2.String(), "name": "Project 4", "deleted": true, "coresupport": true},
+	})
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("FindDeletedByWorkspace", func(t *testing.T) {
+		got, err := r.FindDeletedByWorkspace(ctx, wid)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(got))
+	})
+
 }
