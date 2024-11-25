@@ -156,19 +156,19 @@ font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
-Style: スタイル
-Empty: 空
-Default: デフォルト
-Professional: プロフェッショナル
-Basic Geometry: 基本ジオメトリ
-Points: ポイント
-Point with label: ラベル付きポイント
-Polyline: ポリライン
-Polygon: ポリゴン
-Extruded polygon: 押し出しポリゴン
-Simple Style: シンプルスタイル
-Plateau: 台地
-Color buildings by height: 高さで建物の色を設定
+Style: ''
+Empty: ''
+Default: ''
+Professional: ''
+Basic Geometry: ''
+Points: ''
+Point with label: ''
+Polyline: ''
+Polygon: ''
+Extruded polygon: ''
+Simple Style: ''
+Plateau: ''
+Color buildings by height: ''
 Main: メイン
 Tiles: タイル
 Terrain: 地形

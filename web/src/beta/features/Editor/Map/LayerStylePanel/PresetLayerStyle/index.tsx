@@ -113,14 +113,14 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
         },
         {
           id: "threedTiles",
-          title: t("3D Tiles"),
+          title: "3D Tiles", // TODO: We will add translation t("3D Tiles") later
           onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D_tiles")
         }
       ]
     },
     {
       id: "geometry",
-      title: t("Geometry"),
+      title: "Geometry", // TODO: We will add translation t("Geometry") later
       icon: "folderSimple",
       subItem: [
         {
