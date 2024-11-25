@@ -39,6 +39,70 @@ Visualizer is a powerful tool for visualizing GIS data, offering a range of feat
 
 ## Getting Started
 
+### Setup Server and Database
+
+Make sure Docker is properly installed and running on your machine.
+
+1. From your cloned directory, navigate to the server folder and set up the database:
+
+   ```bash
+   cd server
+   make run-db
+   ```
+
+2. Create and configure the `.env` file in the server directory to use mock authentication.
+
+   ```bash
+   touch .env
+   echo "REEARTH_MOCKAUTH=true" >> .env
+   ```
+
+3. Start the backend server.
+
+   ```bash
+   make run-app
+   ```
+
+4. Register a new mockuser.
+
+   ```bash
+   make mockuser
+   ```
+
+### Setup Web
+
+1. Navigate to the web directory of your visualizer project and set up local .env file.
+
+   ```bash
+   cd web
+   touch .env
+   ```
+
+2. Add the following environment variables to the `.env` file:
+
+   ```plaintext
+   // .env
+   REEARTH_WEB_API=http://localhost:8080/api
+   REEARTH_WEB_PLUGINS=http://localhost:8080/plugins
+   REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN=your_cesium_ion_access_token_here
+   REEARTH_WEB_AUTH_PROVIDER=mock
+   ```
+
+   > [!NOTE]  
+   > Please follow <a href="https://cesium.com/learn/ion/cesium-ion-access-tokens/" target="_blank">this document</a> to create your own Cesium Ion Access Token.
+
+3. Install dependencies and start the frontend server.
+
+   ```bash
+   yarn && yarn start
+   ```
+
+### Done!
+
+You should now be able to access the Re:Earth Visualizer locally at <a href="http://localhost:3000" target="_blank">`http://localhost:3000`</a>.
+
+For more information, refer to the [Documentation](https://visualizer-developer-reearth-io.netlify.app/).
+
 ## Environment
 
 ### OS
