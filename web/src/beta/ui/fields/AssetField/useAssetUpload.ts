@@ -46,7 +46,8 @@ export default ({
       try {
         const result = await useCreateAssets({
           teamId: workspaceId ?? "",
-          file: files
+          file: files,
+          coreSupport: true
         });
         const assetUrl = result?.data[0].data?.createAsset?.asset.url;
         const assetName = result?.data[0].data?.createAsset?.asset.name;

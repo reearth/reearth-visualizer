@@ -85,7 +85,9 @@ export default () => {
       try {
         const results = await Promise.all(
           Array.from(file).map((f) =>
-            createAssetMutation({ variables: { teamId, file: f } })
+            createAssetMutation({
+              variables: { teamId, file: f, coreSupport: true }
+            })
           )
         );
 
