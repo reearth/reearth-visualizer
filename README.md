@@ -88,7 +88,6 @@ Make sure Docker is properly installed and running on your machine.
    REEARTH_WEB_AUTH_PROVIDER=mock
    ```
 
-   > [!NOTE]  
    > Please follow <a href="https://cesium.com/learn/ion/cesium-ion-access-tokens/" target="_blank">this document</a> to create your own Cesium Ion Access Token.
 
 3. Install dependencies and start the frontend server.
@@ -116,10 +115,6 @@ For more information, refer to the [Documentation](https://visualizer-developer-
 | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_32x32.png) <br />Edge | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_32x32.png) <br /> Firefox | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br /> Chrome | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_32x32.png) <br /> Safari | ![iOS Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_32x32.png) <br />iOS Safari | ![Chrome for Android](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_32x32.png) <br/> Chrome for Android |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | 91+                                                                                                      | 57+                                                                                                                   | 58+                                                                                                               | 11+                                                                                                               | last 2 versions                                                                                                                  | last 2 versions                                                                                                                          |
-
-## Roadmap
-
-## Community
 
 ## Contributing
 
