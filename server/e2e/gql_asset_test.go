@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"testing"
@@ -52,18 +51,30 @@ func TestGetAssets(t *testing.T) {
 		ValueEqual("name", "test.csv").
 		ValueEqual("coreSupport", false)
 
+	// Write directly to the DB
 	ctx := context.Background()
-
-	a, err := asset.New().
-		NewID().
-		Workspace(wID).
-		Name("name").
-		Size(100).
-		URL("url").
-		CoreSupport(true).
+	a1, err := asset.New().
+		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
+		// CoreSupport(true). // not set CoreSupport
 		Build()
 	assert.Nil(t, err)
-	err = r.Asset.Save(ctx, a)
+	err = r.Asset.Save(ctx, a1)
+	assert.Nil(t, err)
+
+	a2, err := asset.New().
+		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
+		CoreSupport(true). // CoreSupport true
+		Build()
+	assert.Nil(t, err)
+	err = r.Asset.Save(ctx, a2)
+	assert.Nil(t, err)
+
+	a3, err := asset.New().
+		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
+		CoreSupport(false). // CoreSupport false
+		Build()
+	assert.Nil(t, err)
+	err = r.Asset.Save(ctx, a3)
 	assert.Nil(t, err)
 
 	f := int64(20)
@@ -73,9 +84,7 @@ func TestGetAssets(t *testing.T) {
 		}.Wrap(),
 	})
 	assert.Nil(t, err)
-	for _, a := range as {
-		fmt.Printf("===== %v\n", a)
-	}
+	assert.Equal(t, len(as), 3)
 
 	res = getAssets(e, teamId)
 	assets := res.Object().Value("data").Object().Value("assets").Object().Value("nodes").Array().Iter()
