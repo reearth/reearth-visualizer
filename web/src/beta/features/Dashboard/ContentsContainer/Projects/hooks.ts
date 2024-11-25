@@ -2,9 +2,9 @@ import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useProjectFetcher } from "@reearth/services/api";
+import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import {
   ProjectSortField,
-  PublishmentStatus,
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Project } from "../../type";
 
-const PROJECTS_VIEW_STATE_STORAGE_KEY = `reearth-visualizer-dashboard-project-view-state`;
+const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
 const PROJECTS_PER_PAGE = 16;
 
@@ -68,7 +68,6 @@ export default (workspaceId?: string) => {
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
-      .filter((project) => project?.coreSupport === true)
       .map<Project | undefined>((project) =>
         project
           ? {
@@ -83,7 +82,10 @@ export default (workspaceId?: string) => {
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
               starred: project.starred,
-              isDeleted: project.isDeleted
+              isDeleted: project.isDeleted,
+              isPublished:
+                project.publishmentStatus === "PUBLIC" ||
+                project.publishmentStatus === "LIMITED"
             }
           : undefined
       )
@@ -196,19 +198,24 @@ export default (workspaceId?: string) => {
   );
 
   // layout
+  const projectsViewStateStorageKey = `${PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX}_${workspaceId}`;
+
   const [layout, setLayout] = useState(
-    ["grid", "list"].includes(
-      localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) ?? ""
-    )
-      ? (localStorage.getItem(PROJECTS_VIEW_STATE_STORAGE_KEY) as ManagerLayout)
-      : "grid"
+    getLayoutFromStorage(projectsViewStateStorageKey)
   );
 
-  const handleLayoutChange = useCallback((newView?: ManagerLayout) => {
-    if (!newView) return;
-    localStorage.setItem(PROJECTS_VIEW_STATE_STORAGE_KEY, newView);
-    setLayout(newView);
-  }, []);
+  const handleLayoutChange = useCallback(
+    (newView?: ManagerLayout) => {
+      if (!newView) return;
+      localStorage.setItem(projectsViewStateStorageKey, newView);
+      setLayout(newView);
+    },
+    [projectsViewStateStorageKey]
+  );
+
+  useEffect(() => {
+    setLayout(getLayoutFromStorage(projectsViewStateStorageKey));
+  }, [projectsViewStateStorageKey, setLayout]);
 
   const [contentWidth, setContentWidth] = useState(0);
 
@@ -303,17 +310,6 @@ export default (workspaceId?: string) => {
   };
 };
 
-export const toPublishmentStatus = (s?: PublishmentStatus) => {
-  switch (s) {
-    case PublishmentStatus.Public:
-      return "published";
-    case PublishmentStatus.Limited:
-      return "limited";
-    default:
-      return "unpublished";
-  }
-};
-
 const pagination = (sort?: SortType) => {
   let first, last;
   let sortBy;
@@ -359,3 +355,9 @@ const pagination = (sort?: SortType) => {
 
   return { first, last, sortBy };
 };
+
+function getLayoutFromStorage(storageKey: string): ManagerLayout {
+  return ["grid", "list"].includes(localStorage.getItem(storageKey) ?? "")
+    ? (localStorage.getItem(storageKey) as ManagerLayout)
+    : "grid";
+}

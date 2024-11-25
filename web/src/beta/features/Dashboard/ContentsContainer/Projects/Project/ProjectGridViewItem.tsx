@@ -1,4 +1,5 @@
 import { Button, PopupMenu, TextInput } from "@reearth/beta/lib/reearth-ui";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -44,7 +45,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     <>
       <Card>
         <CardImage
-          backgroundImage={project.imageUrl}
+          backgroundImage={project.imageUrl ?? defaultProjectBackgroundImage}
           onDoubleClick={onProjectOpen}
           onClick={(e) => onProjectSelect?.(e, project.id)}
           isHovered={isHovered ?? false}
@@ -119,13 +120,12 @@ const CardImage = styled("div")<{
 }>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
   position: "relative",
-  background: backgroundImage
-    ? `url(${backgroundImage}) center/cover`
-    : theme.bg[1],
+  background: backgroundImage ? `url(${backgroundImage}) center/cover` : "",
+  backgroundColor: theme.bg[1],
   borderRadius: theme.radius.normal,
   boxSizing: "border-box",
   cursor: "pointer",
-  border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`
+  boxShadow: `inset 0 0 0 1px ${isHovered ? theme.outline.weak : "transparent"}`
 }));
 
 const StarButtonWrapper = styled("div")<{

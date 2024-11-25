@@ -1,16 +1,11 @@
-import PublishedGis from "@reearth/beta/features/Published";
-import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
+import Published from "@reearth/beta/features/Published";
 
 const PublishedPage: React.FC<{
   path?: string;
   default?: boolean;
   alias?: string;
 }> = ({ alias }) => {
-  return (
-    <DndProvider>
-      <PublishedGis alias={alias} />
-    </DndProvider>
-  );
+  return <Published alias={alias} />;
 };
 
 export default PublishedPage;

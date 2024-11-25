@@ -17,7 +17,18 @@ func ToAsset(a *asset.Asset) *Asset {
 		Size:        a.Size(),
 		URL:         a.URL(),
 		ContentType: a.ContentType(),
+		CoreSupport: a.CoreSupport(),
 	}
+}
+
+func ToAssets(assets []*asset.Asset) []*Asset {
+	result := make([]*Asset, 0, len(assets))
+
+	for _, a := range assets {
+		result = append(result, ToAsset(a))
+	}
+
+	return result
 }
 
 func AssetSortTypeFrom(ast *AssetSort) *asset.SortType {

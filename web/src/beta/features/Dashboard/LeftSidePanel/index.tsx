@@ -7,12 +7,12 @@ import {
   SidebarVersion,
   SidebarWrapper
 } from "@reearth/beta/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
 import { FC } from "react";
 
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
+import LogoWrapper from "./LogoWrapper";
 import { Profile } from "./profile";
 
 type Props = {
@@ -35,11 +35,11 @@ const LeftSidePanel: FC<Props> = ({
   onSignOut,
   onWorkspaceChange
 }) => {
-  const t = useT();
-
   return (
     <SidebarWrapper>
       <SidebarMainSection>
+        <LogoWrapper />
+        <SidebarDivider />
         <Profile
           currentUser={currentWorkspace?.name}
           isPersonal={isPersonal}
@@ -48,16 +48,16 @@ const LeftSidePanel: FC<Props> = ({
           onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
-        <SidebarDivider />
         <SidebarButtonsWrapper>
           {topTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
               path={tab.path}
-              text={t(tab.text || "")}
+              text={tab.text}
               icon={tab.icon}
               active={tab.id === currentTab}
               disabled={tab.disabled}
+              tileComponent={tab.tileComponent}
             />
           ))}
         </SidebarButtonsWrapper>
@@ -72,10 +72,11 @@ const LeftSidePanel: FC<Props> = ({
             <SidebarMenuItem
               key={tab.id}
               path={tab.path}
-              text={t(tab.text || "")}
+              text={tab.text}
               icon={tab.icon}
               active={tab.id === currentTab}
               disabled={tab.disabled}
+              tileComponent={tab.tileComponent}
             />
           ))}
         </SidebarButtonsWrapper>

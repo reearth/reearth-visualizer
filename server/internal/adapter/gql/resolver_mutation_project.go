@@ -14,11 +14,14 @@ import (
 	"github.com/oklog/ulid"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"golang.org/x/exp/rand"
 )
@@ -171,6 +174,23 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	data["plugins"] = gqlmodel.ToPlugins(plgs)
 	data["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 
+	page := usecasex.CursorPagination{
+		First: lo.ToPtr(int64(-1)),
+	}.Wrap()
+	sort := &asset.SortType{
+		Key:  "id",
+		Desc: true,
+	}
+	assets, _, err := usecases(ctx).Asset.FindByWorkspace(ctx, prj.Workspace(), nil, sort, page, getOperator(ctx))
+	if err != nil {
+		return nil, errors.New("Fail ExportAsset :" + err.Error())
+	}
+	assetNames := make(map[string]string)
+	for _, a := range gqlmodel.ToAssets(assets) {
+		assetNames[a.URL] = a.Name
+	}
+	data["assets"] = assetNames
+
 	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
@@ -202,6 +222,22 @@ func unmarshalProject(data []byte) (map[string]interface{}, error) {
 	return projectData, nil
 }
 
+func unmarshalAssets(data []byte) (map[string]string, error) {
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal(data, &jsonData); err != nil {
+		return nil, err
+	}
+
+	assets, _ := jsonData["assets"].(map[string]interface{})
+	assetNames := make(map[string]string)
+	for k, v := range assets {
+		strValue, _ := v.(string)
+		assetNames[k] = strValue
+	}
+
+	return assetNames, nil
+}
+
 func unmarshalPluginsScene(data []byte) ([]interface{}, map[string]interface{}, []interface{}, error) {
 	var jsonData map[string]interface{}
 	if err := json.Unmarshal(data, &jsonData); err != nil {
@@ -216,17 +252,28 @@ func unmarshalPluginsScene(data []byte) ([]interface{}, map[string]interface{}, 
 
 func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
 
+	workspace, _ := accountdomain.WorkspaceIDFrom(string(input.TeamID))
+
 	tempData, assets, plugins, err := file.UncompressExportZip(input.File.File)
 	if err != nil {
 		return nil, errors.New("Fail UncompressExportZip :" + err.Error())
 	}
 
 	// Assets file import
+	assetNames, _ := unmarshalAssets(tempData)
 	for fileName, file := range assets {
 		parts1 := strings.Split(fileName, "/")
 		beforeName := parts1[0]
 
-		url, _, err := usecases(ctx).Asset.UploadAssetFile(ctx, beforeName, file)
+		realName := beforeName
+		for urlPath, name := range assetNames {
+			if strings.HasSuffix(urlPath, beforeName) {
+				realName = name
+				break
+			}
+		}
+
+		url, _, err := usecases(ctx).Asset.UploadAssetFile(ctx, realName, file, workspace)
 		if err != nil {
 			return nil, errors.New("Fail UploadAssetFile :" + err.Error())
 		}
@@ -237,7 +284,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	projectData, _ := unmarshalProject(tempData)
-	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, string(input.TeamID), projectData)
+	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, workspace.String(), projectData)
 	if err != nil {
 		return nil, errors.New("Fail ImportProject :" + err.Error())
 	}

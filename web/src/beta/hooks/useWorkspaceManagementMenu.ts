@@ -1,5 +1,6 @@
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
+import { useAddWorkspaceModal } from "@reearth/services/state";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,7 @@ import { PopupMenuItem } from "../lib/reearth-ui";
 export default ({ workspaceId }: { workspaceId?: string }) => {
   const navigate = useNavigate();
   const t = useT();
+  const [_, setAddWorkspaceModal] = useAddWorkspaceModal();
 
   const workspaceManagementMenu: PopupMenuItem[] = useMemo(
     () =>
@@ -15,20 +17,28 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
         ? [
             {
               id: "workspaceSettings",
-              title: t("Workspace Settings"),
+              title: t("Workspace settings"),
               icon: "setting",
-              hasBorderBottom: true,
               onClick: () => navigate(`/settings/workspaces/${workspaceId}`)
             },
             {
+              id: "addWorkspace",
+              title: t("New workspace"),
+              icon: "newWorkspace",
+              hasBorderBottom: true,
+              onClick: () => {
+                setAddWorkspaceModal(true);
+              }
+            },
+            {
               id: "accountSettings",
-              title: t("Account Settings"),
+              title: t("Account settings"),
               icon: "user",
               onClick: () => navigate("/settings/account")
             }
           ]
         : [],
-    [workspaceId, navigate, t]
+    [workspaceId, t, navigate, setAddWorkspaceModal]
   );
 
   return {

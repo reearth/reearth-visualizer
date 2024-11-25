@@ -47,7 +47,7 @@ export const Profile: FC<ProfileProp> = ({
     () => [
       {
         id: "workspace",
-        title: t("Switch Workspace"),
+        title: t("Switch workspace"),
         icon: "arrowLeftRight",
         subItem: workspaces?.map((w) => {
           return {
@@ -67,7 +67,7 @@ export const Profile: FC<ProfileProp> = ({
       ...workspaceManagementMenu,
       {
         id: "signOut",
-        title: t("Log Out"),
+        title: t("Log out"),
         icon: "exit",
         onClick: onSignOut
       }
@@ -84,9 +84,6 @@ export const Profile: FC<ProfileProp> = ({
 
   return (
     <Wrapper>
-      <Typography size="body" weight="bold" color={theme.dangerous.strong}>
-        {t("Re:Earth Visualizer")}
-      </Typography>
       <ProfileWrapper>
         {isPersonal && (
           <Avatar>
@@ -114,7 +111,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.normal,
   alignContent: "center",
-  padding: theme.spacing.normal
+  paddingLeft: theme.spacing.small,
+  paddingRight: theme.spacing.normal,
+  paddingTop: theme.spacing.largest,
+  paddingBottom: theme.spacing.small,
+  justifyContent: "center"
 }));
 
 const ProfileWrapper = styled("div")(({ theme }) => ({

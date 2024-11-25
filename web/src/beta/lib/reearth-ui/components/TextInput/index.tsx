@@ -67,6 +67,17 @@ export const TextInput: FC<TextInputProps> = ({
     setIsFocused(true);
   }, []);
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" || e.key === "Return") {
+        e.preventDefault();
+        (e.target as HTMLInputElement).blur();
+      }
+      onKeyDown?.(e);
+    },
+    [onKeyDown]
+  );
+
   return (
     <Wrapper
       size={size}
@@ -91,7 +102,7 @@ export const TextInput: FC<TextInputProps> = ({
         onFocus={handleFocus}
         appearance={appearance}
         autoFocus={autoFocus}
-        onKeyDown={onKeyDown}
+        onKeyDown={handleKeyDown}
         type={type}
       />
       {actions && <ActionsWrapper>{actions}</ActionsWrapper>}

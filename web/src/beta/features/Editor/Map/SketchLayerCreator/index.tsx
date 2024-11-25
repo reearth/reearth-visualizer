@@ -118,10 +118,10 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
         onCancel={onClose}
         actions={
           <>
-            <Button onClick={onClose} size="normal" title="Cancel" />
+            <Button onClick={onClose} size="normal" title={t("Cancel")} />
             <Button
               size="normal"
-              title="Create"
+              title={t("Create")}
               appearance="primary"
               onClick={handleSubmit}
               disabled={!layerName || warning}

@@ -1,0 +1,20 @@
+{
+    "api": ${REEARTH_WEB_API},
+    "auth0Audience": ${REEARTH_WEB_AUTH0_AUDIENCE},
+    "auth0ClientId": ${REEARTH_WEB_AUTH0_CLIENT_ID},
+    "auth0Domain": ${REEARTH_WEB_AUTH0_DOMAIN},
+    "cesiumIonAccessToken": ${REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN},
+    "cloudApi": ${REEARTH_WEB_CLOUD_API},
+    "currentTos": ${REEARTH_WEB_CURRENT_TOS},
+    "developerMode": ${REEARTH_WEB_DEVELOPER_MODE},
+    "documentationUrl": ${REEARTH_WEB_DOCUMENTATION_URL},
+    "earlyAccessAdmins": ${REEARTH_WEB_EARLY_ACCESS_ADMINS},
+    "extensionUrls": ${REEARTH_WEB_EXTENSION_URLS},
+    "ip": ${REEARTH_WEB_IP},
+    "marketplaceUrl": ${REEARTH_WEB_MARKETPLACE_URL},
+    "multiTenant": ${REEARTH_WEB_MULTI_TENANT},
+    "passwordPolicy": ${REEARTH_WEB_PASSWORD_POLICY},
+    "plugins": ${REEARTH_WEB_PLUGINS},
+    "policy": ${REEARTH_WEB_POLICY},
+    "published": ${REEARTH_WEB_PUBLISHED}
+}

@@ -1,27 +1,23 @@
-import { Icon } from "@reearth/beta/lib/reearth-ui/components/";
-import { styled, useTheme } from "@reearth/services/theme";
+import { Loading } from "@reearth/beta/lib/reearth-ui";
+import { styled } from "@reearth/services/theme";
 import {
   brandBlue,
   brandRed
 } from "@reearth/services/theme/reearthTheme/common/colors";
 import React from "react";
-import { RingLoader } from "react-spinners";
 
 export type Props = {
   loading?: boolean;
 };
 
 const RootPage: React.FC<Props> = ({ loading }) => {
-  const theme = useTheme();
-
   return (
     <Wrapper bg={window.REEARTH_CONFIG?.brand?.background}>
       {window.REEARTH_CONFIG?.brand?.logoUrl ? (
         <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ width: 200 }} />
       ) : (
-        <Icon icon="reearthLogo" size={200} />
+        loading && <Loading includeLogo />
       )}
-      {loading && <RingLoader size={35} color={theme.primary.strong} />}
     </Wrapper>
   );
 };
@@ -31,7 +27,7 @@ const Wrapper = styled.div<{ bg?: string }>(({ bg }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  gap: 100,
+  gap: 49,
   height: "100%",
   background:
     bg ||

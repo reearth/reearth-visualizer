@@ -34,7 +34,6 @@ const DataAttribution = ({
         const credits = getCredits?.();
         if (credits) {
           setVisualizerCredits(credits);
-          console.log("update", credits);
         }
       }, 3000);
     }

@@ -18,7 +18,6 @@ import {
 import { Asset, sortOptionValue, SortType } from "./types";
 
 const ASSETS_PER_PAGE = 20;
-const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
 
 const typeToGQLField = {
   date: AssetSortField.Date,
@@ -30,12 +29,16 @@ export default ({
   workspaceId,
   allowMultipleSelection,
   assetsTypes,
-  onSelectChange
+  layout,
+  onSelectChange,
+  onLayoutChange
 }: {
   workspaceId?: string;
   allowMultipleSelection: boolean;
   assetsTypes?: AcceptedAssetsTypes;
+  layout?: ManagerLayout;
   onSelectChange?: (assets: Asset[]) => void;
+  onLayoutChange?: (layout: ManagerLayout) => void;
 }) => {
   // sort
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>({
@@ -199,7 +202,8 @@ export default ({
       if (!files) return;
       await useCreateAssets({
         teamId: workspaceId ?? "",
-        file: files
+        file: files,
+        coreSupport: true
       });
     },
     [workspaceId, useCreateAssets]
@@ -216,27 +220,25 @@ export default ({
   );
 
   // layout
-  const [layout, setLayout] = useState(
-    ["grid", "list"].includes(
-      localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) ?? ""
-    )
-      ? (localStorage.getItem(ASSETS_LAYOUT_STORAGE_KEY) as ManagerLayout)
-      : "grid"
-  );
+  const [localLayout, setLocalLayout] = useState(layout ?? "grid");
   const handleLayoutChange = useCallback(
     (newLayout?: ManagerLayout) => {
       if (!newLayout) return;
-      localStorage.setItem(ASSETS_LAYOUT_STORAGE_KEY, newLayout);
-      setLayout(newLayout);
+      setLocalLayout(newLayout);
+      onLayoutChange?.(newLayout);
       assetsWrapperRef.current?.scrollTo({ top: 0 });
     },
-    [assetsWrapperRef]
+    [assetsWrapperRef, onLayoutChange]
   );
+  useEffect(() => {
+    if (!layout) return;
+    setLocalLayout((prev) => (prev !== layout ? layout : prev));
+  }, [layout]);
 
   // path
   // TODO: support path with folder
   const [paths, _setPaths] = useState<BreadcrumbItem[]>([
-    { id: "assets", title: "Assets" }
+    { id: "assets", title: t("Assets") }
   ]);
   const handlePathClick = useCallback((_id?: string) => {}, []);
 
@@ -304,7 +306,7 @@ export default ({
     sortValue,
     sortOptions,
     handleSortChange,
-    layout,
+    localLayout,
     handleLayoutChange,
     selectedAssetIds,
     handleAssetSelect,

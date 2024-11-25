@@ -223,6 +223,7 @@ type Asset struct {
 	URL         string    `json:"url"`
 	ContentType string    `json:"contentType"`
 	Team        *Team     `json:"team,omitempty"`
+	CoreSupport bool      `json:"coreSupport"`
 }
 
 func (Asset) IsNode()        {}
@@ -281,8 +282,9 @@ type Cluster struct {
 }
 
 type CreateAssetInput struct {
-	TeamID ID             `json:"teamId"`
-	File   graphql.Upload `json:"file"`
+	TeamID      ID             `json:"teamId"`
+	CoreSupport bool           `json:"coreSupport"`
+	File        graphql.Upload `json:"file"`
 }
 
 type CreateAssetPayload struct {
@@ -1307,12 +1309,15 @@ type PropertySchemaField struct {
 	UI                       *PropertySchemaFieldUI       `json:"ui,omitempty"`
 	Min                      *float64                     `json:"min,omitempty"`
 	Max                      *float64                     `json:"max,omitempty"`
+	Placeholder              string                       `json:"placeholder"`
 	Choices                  []*PropertySchemaFieldChoice `json:"choices,omitempty"`
 	IsAvailableIf            *PropertyCondition           `json:"isAvailableIf,omitempty"`
 	AllTranslatedTitle       map[string]string            `json:"allTranslatedTitle,omitempty"`
 	AllTranslatedDescription map[string]string            `json:"allTranslatedDescription,omitempty"`
+	AllTranslatedPlaceholder map[string]string            `json:"allTranslatedPlaceholder,omitempty"`
 	TranslatedTitle          string                       `json:"translatedTitle"`
 	TranslatedDescription    string                       `json:"translatedDescription"`
+	TranslatedPlaceholder    string                       `json:"translatedPlaceholder"`
 }
 
 type PropertySchemaFieldChoice struct {

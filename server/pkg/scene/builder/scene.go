@@ -220,7 +220,7 @@ func buildWidgetArea(a *scene.WidgetArea) *widgetAreaJSON {
 }
 func buildWidgetAreaPadding(p *scene.WidgetAreaPadding) *widgetAreaPaddingJSON {
 	if p == nil {
-		return &widgetAreaPaddingJSON{}
+		return nil
 	}
 	return &widgetAreaPaddingJSON{
 		Top:    p.Top(),

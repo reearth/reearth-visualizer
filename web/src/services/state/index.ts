@@ -75,6 +75,9 @@ export const useCurrentTheme = () => useAtom(currentTheme);
 const workspace = atom<Workspace | undefined>(undefined);
 export const useWorkspace = () => useAtom(workspace);
 
+const addWorkspaceModal = atom<boolean>(false);
+export const useAddWorkspaceModal = () => useAtom(addWorkspaceModal);
+
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
 

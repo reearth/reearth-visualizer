@@ -128,6 +128,11 @@ func (b *SchemaFieldBuilder) MaxRef(max *float64) *SchemaFieldBuilder {
 	return b
 }
 
+func (b *SchemaFieldBuilder) Placeholder(placeholder i18n.String) *SchemaFieldBuilder {
+	b.p.placeholder = placeholder.Clone()
+	return b
+}
+
 func (b *SchemaFieldBuilder) Choices(choices []SchemaFieldChoice) *SchemaFieldBuilder {
 	if choices == nil {
 		b.p.choices = nil

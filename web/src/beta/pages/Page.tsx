@@ -55,7 +55,7 @@ const PageWrapper: FC<Props> = ({
   );
 
   const renderContent = useMemo(() => {
-    if (loading) return <Loading animationSize={80} />;
+    if (loading) return <Loading includeLogo />;
 
     if (project?.isDeleted) return <NotFound />;
 

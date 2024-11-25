@@ -1,6 +1,5 @@
-import React from "react";
-
 import RootPageFeature from "@reearth/beta/features/RootPage";
+import React from "react";
 
 export type Props = {
   path?: string;

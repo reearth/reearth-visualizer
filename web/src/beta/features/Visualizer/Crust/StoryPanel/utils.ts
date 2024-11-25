@@ -1,4 +1,5 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { getTimeZone } from "@reearth/beta/utils/time";
 import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
 import type { Spacing } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
@@ -129,40 +130,6 @@ export const formatDateToSting = (d: number) => {
   return date.toISOString();
 };
 
-const timeStringToSeconds = (timeString: string) => {
-  const parts = timeString.split("/");
-  const valueUnit = parts[0].trim();
-  const value = parseFloat(valueUnit);
-  const unit = valueUnit.substr(value.toString().length).trim().toLowerCase();
-
-  switch (unit) {
-    case "sec":
-    case "secs":
-      return value;
-    case "min":
-    case "mins":
-      return value * 60;
-    case "hr":
-    case "hrs":
-      return value * 3600;
-    default:
-      return NaN;
-  }
-};
-
-export const convertOptionToSeconds = (data: string[]) => {
-  const objectsArray = [];
-
-  for (const timeString of data) {
-    const seconds = timeStringToSeconds(timeString);
-    if (!isNaN(seconds)) {
-      objectsArray.push({ timeString, seconds });
-    }
-  }
-
-  return objectsArray;
-};
-
 export const formatRangeDateAndTime = (data: string) => {
   const lastIdx = data.lastIndexOf(" ");
   const date = data.slice(0, lastIdx);
@@ -190,18 +157,13 @@ export const convertPositionToTime = (
   return Math.min(Math.max(start, start + sec), end);
 };
 
-export const getTimeZone = (time: string) => {
-  const zone = time.match(/([-+]\d{1,2}:\d{2})$/);
-  const timezoneOffset = zone?.[1];
-  return timezoneOffset || "";
-};
-
 export const formatISO8601 = (time: string) => {
   // For backforad compatibility
   // from: 2021-08-31T00:00:00 +9:00
   // from: 2021-08-31T00:00:00+9:00
   // to: 2021-08-31T00:00:00+09:00
   const timezone = getTimeZone(time);
+  if (!timezone) return time;
   const splitZone = timezone.split(":");
   if (splitZone[0].length === 2) {
     return time

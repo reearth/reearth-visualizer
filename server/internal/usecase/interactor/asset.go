@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -90,6 +91,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		Name(path.Base(inp.File.Path)).
 		Size(size).
 		URL(url.String()).
+		CoreSupport(inp.CoreSupport).
 		Build()
 	if err != nil {
 		return nil, err
@@ -127,7 +129,7 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.File) (*url.URL, int64, error) {
+func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.File, workspace idx.ID[accountdomain.Workspace]) (*url.URL, int64, error) {
 
 	readCloser, err := zipFile.Open()
 	if err != nil {
@@ -140,13 +142,30 @@ func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.F
 	}()
 
 	contentType := http.DetectContentType([]byte(zipFile.Name))
-
 	file := &file.File{
 		Content:     readCloser,
 		Path:        name,
 		Size:        int64(zipFile.UncompressedSize64),
 		ContentType: contentType,
 	}
+	url, size, err := i.gateways.File.UploadAsset(ctx, file)
+	if err != nil {
+		return nil, 0, err
+	}
 
-	return i.gateways.File.UploadAsset(ctx, file)
+	a, err := asset.New().
+		NewID().
+		Workspace(workspace).
+		Name(path.Base(name)).
+		Size(size).
+		URL(url.String()).
+		Build()
+	if err != nil {
+		return nil, 0, err
+	}
+	if err := i.repos.Asset.Save(ctx, a); err != nil {
+		return nil, 0, err
+	}
+
+	return url, size, err
 }

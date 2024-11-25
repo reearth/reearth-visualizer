@@ -48,6 +48,9 @@ export default function useHooks({
   const [visualizerCamera, setVisualizerCamera] = useVisualizerCamera();
   useLayoutEffect(() => {
     setVisualizerCamera(currentCamera);
+    return () => {
+      setVisualizerCamera(undefined);
+    };
   }, [currentCamera, setVisualizerCamera]);
 
   return {
