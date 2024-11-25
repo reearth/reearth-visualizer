@@ -10,9 +10,9 @@
 [![release](https://img.shields.io/github/release/reearth/reearth.svg)](https://github.com/reearth/reearth-visualizer/releases/)
 
 <p align="center">
-  <a href="https://reearth.io">Website</a>
+  <a href="https://renewal2025.reearth.io/">Website</a>
   ·
-  <a href="https://docs.reearth.io">Documentation</a>
+  <a href="https://visualizer-developer-reearth-io.netlify.app/">Documentation</a>
   ·
   <a href="https://github.com/reearth/reearth-visualizer/issues">Issues</a>
 </p>
