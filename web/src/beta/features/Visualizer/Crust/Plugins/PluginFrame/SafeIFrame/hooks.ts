@@ -1,3 +1,5 @@
+import { usePluginManualResize } from "@reearth/services/state";
+import { debounce } from "lodash-es";
 import {
   IframeHTMLAttributes,
   Ref,
@@ -59,6 +61,16 @@ export default function useHook({
   const [iFrameSize, setIFrameSize] =
     useState<[string | undefined, string | undefined]>();
   const pendingMesages = useRef<any[]>([]);
+  const [pluginManualResize, _] = usePluginManualResize();
+
+  const debouncedSetIFrameSize = useMemo(
+    () =>
+      debounce((width: string, height: string) => {
+        setIFrameSize([width, height]);
+        onAutoResized?.();
+      }, 100),
+    [onAutoResized]
+  );
 
   useImperativeHandle(
     ref,
@@ -86,9 +98,13 @@ export default function useHook({
       if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow)
         return;
       if (ev.data?.[autoResizeMessageKey]) {
-        const { width, height } = ev.data[autoResizeMessageKey];
+        let { width, height } = ev.data[autoResizeMessageKey];
         if (typeof width !== "number" || typeof height !== "number") return;
-        setIFrameSize([width + "px", height + "px"]);
+        if (pluginManualResize?.width || pluginManualResize?.height) {
+          width = pluginManualResize?.width || width;
+          height = pluginManualResize?.height || height;
+        }
+        setIFrameSize([width, height]);
         onAutoResized?.();
       } else {
         onMessage?.(ev.data);
@@ -98,7 +114,15 @@ export default function useHook({
     return () => {
       window.removeEventListener("message", cb);
     };
-  }, [autoResize, autoResizeMessageKey, onMessage, onAutoResized]);
+  }, [
+    autoResize,
+    autoResizeMessageKey,
+    onMessage,
+    onAutoResized,
+    debouncedSetIFrameSize,
+    pluginManualResize?.width,
+    pluginManualResize?.height
+  ]);
 
   const onIframeLoad = useCallback(() => {
     loaded.current = true;
@@ -110,6 +134,7 @@ export default function useHook({
       ...iFrameProps,
       style: {
         display: visible ? "block" : "none",
+        transition: "width 0.2s ease, height 0.2s ease",
         width: visible
           ? !autoResize || autoResize == "height-only"
             ? "100%"

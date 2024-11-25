@@ -78,6 +78,12 @@ export const useWorkspace = () => useAtom(workspace);
 const addWorkspaceModal = atom<boolean>(false);
 export const useAddWorkspaceModal = () => useAtom(addWorkspaceModal);
 
+const pluginManualResize = atom<{
+  width: string | number | undefined;
+  height: string | number | undefined;
+}>({ width: 0, height: 0 });
+export const usePluginManualResize = () => useAtom(pluginManualResize);
+
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
 

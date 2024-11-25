@@ -1,3 +1,4 @@
+import { usePluginManualResize } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { Ref as IFrameRef } from "../IFrame";
@@ -51,6 +52,7 @@ export default function useIFrame({
   const postMessage = usePostMessage(ref, !ready || !iFrameLoaded);
   const handleLoad = useCallback(() => setIFrameLoaded(true), []);
   const reset = useCallback(() => setIFrameState(["", undefined]), []);
+  const [_, setIsPluginManualResize] = usePluginManualResize();
 
   const api = useMemo<IFrameAPI>(
     () => ({
@@ -62,11 +64,14 @@ export default function useIFrame({
         onRender?.();
       },
       resize: (width, height) => {
+        if (width || height) {
+          setIsPluginManualResize({ width, height });
+        }
         ref.current?.resize(width, height);
       },
       postMessage
     }),
-    [iframeCanBeVisible, onRender, postMessage]
+    [iframeCanBeVisible, onRender, postMessage, setIsPluginManualResize]
   );
 
   useEffect(() => {
