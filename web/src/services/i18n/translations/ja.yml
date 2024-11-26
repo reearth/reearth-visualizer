@@ -146,7 +146,6 @@ Code: コード
 Invalid style: 無効なスタイル
 Save: 保存
 No style selected: スタイルが選択されていません
-if: もし
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
 ${your property name}: ${プロパティ名}
