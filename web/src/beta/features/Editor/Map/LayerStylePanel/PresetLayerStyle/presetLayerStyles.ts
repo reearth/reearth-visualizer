@@ -19,7 +19,10 @@ export const defaultStyle: Partial<LayerAppearanceTypes> = {
     strokeColor: "#FFFFFF",
     strokeWidth: 2
   },
-  "3dtiles": {}
+  "3dtiles": {
+    color: "#FFFFFF",
+    colorBlendMode: "highlight"
+  }
 };
 
 export const professionalStyle = {
