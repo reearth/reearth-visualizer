@@ -1,13 +1,20 @@
 package e2e
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/asset"
+	"github.com/reearth/reearthx/usecasex"
+	"github.com/stretchr/testify/assert"
 )
+
+// go test -v -run TestGetAssets ./e2e/...
 
 func TestGetAssets(t *testing.T) {
 	c := &config.Config{
@@ -16,7 +23,7 @@ func TestGetAssets(t *testing.T) {
 			Disabled: true,
 		},
 	}
-	e := StartServer(t, c, true, baseSeeder)
+	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
 
 	teamId := wID.String()
 
@@ -43,6 +50,41 @@ func TestGetAssets(t *testing.T) {
 		ValueEqual("teamId", teamId).
 		ValueEqual("name", "test.csv").
 		ValueEqual("coreSupport", false)
+
+	// Write directly to the DB
+	ctx := context.Background()
+	a1, err := asset.New().
+		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
+		// CoreSupport(true). // not set CoreSupport
+		Build()
+	assert.Nil(t, err)
+	err = r.Asset.Save(ctx, a1)
+	assert.Nil(t, err)
+
+	a2, err := asset.New().
+		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
+		CoreSupport(true). // CoreSupport true
+		Build()
+	assert.Nil(t, err)
+	err = r.Asset.Save(ctx, a2)
+	assert.Nil(t, err)
+
+	a3, err := asset.New().
+		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
+		CoreSupport(false). // CoreSupport false
+		Build()
+	assert.Nil(t, err)
+	err = r.Asset.Save(ctx, a3)
+	assert.Nil(t, err)
+
+	f := int64(20)
+	as, _, err := r.Asset.FindByWorkspace(ctx, wID, repo.AssetFilter{
+		Pagination: usecasex.CursorPagination{
+			First: &f,
+		}.Wrap(),
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, len(as), 3)
 
 	res = getAssets(e, teamId)
 	assets := res.Object().Value("data").Object().Value("assets").Object().Value("nodes").Array().Iter()
