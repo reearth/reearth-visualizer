@@ -1,14 +1,10 @@
 import { OnMount } from "@monaco-editor/react";
 import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
 import HtmlEditModal from "./HtmlEditModal";
-import {
-  extractHtmlFromSourceCode,
-  getLanguageByFileExtension,
-  injectHtmlIntoSourceCode
-} from "./utils";
+import { getLanguageByFileExtension } from "./utils";
 
 type Props = {
   fileTitle: string;
@@ -17,60 +13,96 @@ type Props = {
   executeCode: () => void;
 };
 
+const MATCH_PATTERNS = [
+  /reearth\.ui\.show\((['"`])([\s\S]*?)\1\)/,
+  /reearth\.modal\.show\((['"`])([\s\S]*?)\1\)/,
+  /reearth\.popup\.show\((['"`])([\s\S]*?)\1\)/
+];
+
 const Code: FC<Props> = ({
   fileTitle,
   sourceCode,
   onChangeSourceCode,
   executeCode
 }) => {
-  const editableHtmlSourceCode = useMemo(
-    () => extractHtmlFromSourceCode(sourceCode),
-    [sourceCode]
-  );
-
-  const onSubmitHtmlEditor = useCallback(
-    (newHtml: string) => {
-      onChangeSourceCode(injectHtmlIntoSourceCode(newHtml, sourceCode));
-    },
-    [sourceCode, onChangeSourceCode]
-  );
-
+  const [isHtmlEditable, setIsHtmlEditable] = useState(false);
+  const [editableHtmlSourceCode, setEditableHtmlSourceCode] = useState<
+    string | null
+  >(null);
   const [isOpenedHtmlEditor, setIsOpenedHtmlEditor] = useState(false);
+  const [currentMatch, setCurrentMatch] = useState<RegExpExecArray | null>(
+    null
+  );
 
-  const onMount: OnMount = useCallback((editor) => {
-    editor.onDidChangeCursorPosition((e) => {
+  /**
+   * カーソル位置に対応するHTML文字列とマッチ情報を取得
+   */
+  const getMatchAtCursor = useCallback(
+    (value: string, offset: number): RegExpExecArray | null => {
+      for (const pattern of MATCH_PATTERNS) {
+        const match = pattern.exec(value);
+        if (match) {
+          const start = match.index;
+          const end = start + match[0].length;
+          if (offset > start && offset < end) {
+            return match;
+          }
+        }
+      }
+      return null;
+    },
+    []
+  );
+
+  const handleCursorPositionChange = useCallback(
+    (editor) => {
       const model = editor.getModel();
       if (!model) return;
 
       const value = model.getValue();
-      const offset = model.getOffsetAt(e.position);
+      const offset = model.getOffsetAt(editor.getPosition());
 
-      const patterns = [
-        /reearth\.ui\.show\((['"`])([\s\S]*?)\1\)/,
-        /reearth\.modal\.show\((['"`])([\s\S]*?)\1\)/,
-        /reearth\.popup\.show\((['"`])([\s\S]*?)\1\)/
-      ];
+      const match = getMatchAtCursor(value, offset);
+      if (match) {
+        setCurrentMatch(match);
+        setEditableHtmlSourceCode(match[2]); // 引数内の文字列
+        setIsHtmlEditable(true);
+      } else {
+        setCurrentMatch(null);
+        setEditableHtmlSourceCode(null);
+        setIsHtmlEditable(false);
+      }
+    },
+    [getMatchAtCursor]
+  );
 
-      const matchedString = patterns.reduce<string | null>(
-        (result, pattern) => {
-          if (result) return result;
+  const applyUpdatedHtml = useCallback(
+    (newHtml: string) => {
+      if (!currentMatch) return;
 
-          const match = pattern.exec(value);
+      const [fullMatch, delimiter] = currentMatch;
+      const start = currentMatch.index;
+      const end = start + fullMatch.length;
 
-          if (match) {
-            const start = match.index;
-            const end = start + match[0].length;
-            if (offset > start && offset < end) {
-              return match[2];
-            }
-          }
-          return null;
-        },
-        null
+      const updatedSourceCode =
+        sourceCode.slice(0, start) +
+        `reearth.${fullMatch.split(".")[1]}.show(${delimiter}${newHtml}${delimiter})` +
+        sourceCode.slice(end);
+
+      onChangeSourceCode(updatedSourceCode);
+      setIsOpenedHtmlEditor(false);
+    },
+    [currentMatch, sourceCode, onChangeSourceCode]
+  );
+
+  const onMount: OnMount = useCallback(
+    (editor) => {
+      editor.onDidChangeCursorPosition(() =>
+        handleCursorPositionChange(editor)
       );
-      return matchedString;
-    });
-  }, []);
+    },
+    [handleCursorPositionChange]
+  );
 
   return (
     <>
@@ -80,7 +112,7 @@ const Code: FC<Props> = ({
           <Button
             icon="pencilSimple"
             title="HTML Editor"
-            disabled={!editableHtmlSourceCode}
+            disabled={!isHtmlEditable}
             onClick={() => setIsOpenedHtmlEditor(true)}
           />
           <p>Widget</p>
@@ -92,12 +124,12 @@ const Code: FC<Props> = ({
           onMount={onMount}
         />
       </Wrapper>
-      {isOpenedHtmlEditor && (
+      {isOpenedHtmlEditor && editableHtmlSourceCode && (
         <HtmlEditModal
           isOpened={isOpenedHtmlEditor}
-          sourceCode={editableHtmlSourceCode ?? ""}
+          sourceCode={editableHtmlSourceCode}
           onClose={() => setIsOpenedHtmlEditor(false)}
-          onSubmit={onSubmitHtmlEditor}
+          onSubmit={applyUpdatedHtml}
         />
       )}
     </>
