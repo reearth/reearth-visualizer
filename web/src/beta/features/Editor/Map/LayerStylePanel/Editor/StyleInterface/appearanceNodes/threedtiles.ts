@@ -32,8 +32,8 @@ export const threedtilesNodes: AppearanceNode[] = [
     id: "colorBlendMode",
     title: "Color Blend Mode",
     field: "select",
-    defaultValue: "default",
-    valueOptions: ["highlight", "replace", "mix", "default"]
+    defaultValue: "highlight",
+    valueOptions: ["highlight", "replace", "mix"]
   },
   {
     id: "selectedFeatureColor",

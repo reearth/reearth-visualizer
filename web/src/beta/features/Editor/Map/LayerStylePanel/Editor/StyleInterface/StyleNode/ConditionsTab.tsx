@@ -151,7 +151,7 @@ const ConditionsTab: FC<Props> = ({
               />
               <ConditionWrapper>
                 <ConditionStatement>
-                  <Typography size="body">{t("if")}</Typography>
+                  <Typography size="body">if</Typography>
                   <InputWrapper>
                     <TextInput
                       value={condition.variable || ""}
@@ -200,7 +200,6 @@ const ConditionsTab: FC<Props> = ({
     [
       conditions,
       field,
-      t,
       valueOptions,
       deleteCondition,
       updateCondition,

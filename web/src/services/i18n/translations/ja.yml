@@ -32,7 +32,7 @@ Asset selected: アセットが選択されました
 Uploaded At: アップロード日時
 Size: サイズ
 Path: アセットURL
-No Asset has been uploaded yet: まだアセットがアップロードされていません
+No asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
 Create new workspace: ワークスペースを作る
 create: 作成する
@@ -82,10 +82,10 @@ Plugin Playground: プラグインプレイグラウンド
 Documentation: ドキュメント
 Community: コミュニティ
 Help & Support: ヘルプ＆サポート
-Switch Workspace: ワークスペース切り替え
+Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
-Log Out: ログアウト
+Log out: ログアウト
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
@@ -146,7 +146,6 @@ Code: コード
 Invalid style: 無効なスタイル
 Save: 保存
 No style selected: スタイルが選択されていません
-if: もし
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
 ${your property name}: ${プロパティ名}
@@ -156,19 +155,6 @@ font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
-Style: スタイル
-Empty: 空
-Default: デフォルト
-Professional: プロフェッショナル
-Basic Geometry: 基本ジオメトリ
-Points: ポイント
-Point with label: ラベル付きポイント
-Polyline: ポリライン
-Polygon: ポリゴン
-Extruded polygon: 押し出しポリゴン
-Simple Style: シンプルスタイル
-Plateau: 台地
-Color buildings by height: 高さで建物の色を設定
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -239,8 +225,6 @@ Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
 Unknown: 不明
-Switch workspace: ワークスペース切り替え
-Log out: ログアウト
 Asset management: アセット管理
 Map: マップ
 Widgets: ウィジェット
@@ -341,9 +325,9 @@ Please make sure you don't have any projects in the workspace before continuing.
 Workspace: ワークスペース
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
-Workspace Settings: ワークスペース設定
-New Workspace: ワークスペース作成
-Account Settings: アカウント設定
+Workspace settings: ワークスペース設定
+New workspace: ワークスペース作成
+Account settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
 Heading 1: 見出し1
@@ -451,6 +435,7 @@ Successfully upgraded plugin!: プラグインのアップグレードに成功�
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
+Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。
