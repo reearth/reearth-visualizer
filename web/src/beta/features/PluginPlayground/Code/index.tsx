@@ -50,27 +50,29 @@ const Code: FC<Props> = ({
     []
   );
 
-  const handleCursorPositionChange: OnMount = useCallback(
+  const onMount: OnMount = useCallback(
     (editor) => {
-      const model = editor.getModel();
-      if (!model) return;
+      editor.onDidChangeCursorPosition(() => {
+        const model = editor.getModel();
+        if (!model) return;
 
-      const value = model.getValue();
-      const offset = model.getOffsetAt(editor.getPosition());
+        const value = model.getValue();
+        const offset = model.getOffsetAt(editor.getPosition());
 
-      const match = getMatchAtCursor(value, offset);
-      if (match) {
-        setCurrentMatch(match);
-        setEditableHtmlSourceCode(match[2]);
-      } else {
-        setCurrentMatch(null);
-        setEditableHtmlSourceCode(null);
-      }
+        const match = getMatchAtCursor(value, offset);
+        if (match) {
+          setCurrentMatch(match);
+          setEditableHtmlSourceCode(match[2]);
+        } else {
+          setCurrentMatch(null);
+          setEditableHtmlSourceCode(null);
+        }
+      });
     },
     [getMatchAtCursor]
   );
 
-  const applyUpdatedHtml = useCallback(
+  const onSubmitHtmlEditor = useCallback(
     (newHtml: string) => {
       if (!currentMatch) return;
 
@@ -87,15 +89,6 @@ const Code: FC<Props> = ({
       setIsOpenedHtmlEditor(false);
     },
     [currentMatch, sourceCode, onChangeSourceCode]
-  );
-
-  const onMount: OnMount = useCallback(
-    (editor, ...rest) => {
-      editor.onDidChangeCursorPosition(() =>
-        handleCursorPositionChange(editor, ...rest)
-      );
-    },
-    [handleCursorPositionChange]
   );
 
   return (
@@ -123,7 +116,7 @@ const Code: FC<Props> = ({
           isOpened={isOpenedHtmlEditor}
           sourceCode={editableHtmlSourceCode}
           onClose={() => setIsOpenedHtmlEditor(false)}
-          onSubmit={applyUpdatedHtml}
+          onSubmit={onSubmitHtmlEditor}
         />
       )}
     </>
