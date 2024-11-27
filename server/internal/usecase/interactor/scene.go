@@ -106,7 +106,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	if err != nil {
 		return
 	}
-
 	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -123,61 +122,49 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	var viz = visualizer.VisualizerCesium
-
+	viz := visualizer.VisualizerCesium
 	if prj.CoreSupport() {
 		viz = visualizer.VisualizerCesiumBeta
 	}
-
 	schema := builtin.GetPropertySchemaByVisualizer(viz)
-	sceneID := id.NewSceneID()
 
+	sceneID := id.NewSceneID()
 	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
 	if err != nil {
 		return nil, err
 	}
-
 	ps := scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(id.OfficialPluginID, nil),
 	})
 
-	p, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	// add default tile
-	tiles := id.PropertySchemaGroupID("tiles")
-	g := p.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
-	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
+	addDefaultTiles(prop, schema)
 
 	res, err := scene.New().
 		ID(sceneID).
 		Project(pid).
-		Workspace(prj.Workspace()).
-		Property(p.ID()).
+		Workspace(ws).
+		Property(prop.ID()).
 		RootLayer(rootLayer.ID()).
 		Plugins(ps).
 		Build()
-
 	if err != nil {
 		return nil, err
 	}
 
-	if p != nil {
-		err = i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, p)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	err = i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer)
-	if err != nil {
+	if err = saveSceneComponents(ctx, i, sceneID, rootLayer, prop); err != nil {
 		return nil, err
 	}
 
-	err = i.sceneRepo.Save(ctx, res)
-	if err != nil {
+	if err = i.addDefaultExtensionWidget(ctx, sceneID, res); err != nil {
+		return nil, err
+	}
+
+	if err = i.sceneRepo.Save(ctx, res); err != nil {
 		return nil, err
 	}
 
@@ -187,7 +174,83 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 
 	operator.AddNewScene(ws, sceneID)
 	tx.Commit()
-	return res, err
+	return res, nil
+}
+
+func addDefaultTiles(prop *property.Property, schema *property.Schema) {
+	tiles := id.PropertySchemaGroupID("tiles")
+	g := prop.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
+	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
+}
+
+func saveSceneComponents(ctx context.Context, i *Scene, sceneID id.SceneID, rootLayer *layer.Group, prop *property.Property) error {
+	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
+		return err
+	}
+	return i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer)
+}
+
+func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
+	eid := id.PluginExtensionID("dataAttribution")
+	pluginID, err := id.PluginIDFrom("reearth")
+	if err != nil {
+		return err
+	}
+	extension, err := i.getWidgePlugin(ctx, pluginID, eid, nil)
+	if err != nil {
+		return err
+	}
+
+	prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sceneID).Build()
+	if err != nil {
+		return err
+	}
+
+	extended := false
+	floating := false
+	var location *plugin.WidgetLocation
+	if widgetLayout := extension.WidgetLayout(); widgetLayout != nil {
+		extended = widgetLayout.Extended()
+		floating = widgetLayout.Floating()
+		location = widgetLayout.DefaultLocation()
+	}
+
+	widget, err := scene.NewWidget(
+		id.NewWidgetID(),
+		pluginID,
+		eid,
+		prop.ID(),
+		true,
+		extended,
+	)
+	if err != nil {
+		return err
+	}
+
+	res.Widgets().Add(widget)
+	if !floating {
+		var loc scene.WidgetLocation
+		if location != nil {
+			loc = scene.WidgetLocation{
+				Zone:    scene.WidgetZoneType(location.Zone),
+				Section: scene.WidgetSectionType(location.Section),
+				Area:    scene.WidgetAreaType(location.Area),
+			}
+		} else {
+			loc = scene.WidgetLocation{
+				Zone:    scene.WidgetZoneOuter,
+				Section: scene.WidgetSectionLeft,
+				Area:    scene.WidgetAreaTop,
+			}
+		}
+		res.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
+	}
+
+	if err := i.propertyRepo.Save(ctx, prop); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {
