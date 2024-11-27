@@ -246,7 +246,7 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 		res.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
 	}
 
-	if err := i.propertyRepo.Save(ctx, prop); err != nil {
+	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
 		return err
 	}
 
