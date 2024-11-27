@@ -52,7 +52,7 @@ const Code: FC<Props> = ({
 
   const onMount: OnMount = useCallback(
     (editor) => {
-      editor.onDidChangeCursorPosition(() => {
+      const listener = editor.onDidChangeCursorPosition(() => {
         const model = editor.getModel();
         if (!model) return;
 
@@ -67,6 +67,10 @@ const Code: FC<Props> = ({
           setCurrentMatch(null);
           setEditableHtmlSourceCode(null);
         }
+      });
+
+      editor.onDidDispose(() => {
+        listener.dispose();
       });
     },
     [getMatchAtCursor]
