@@ -3,9 +3,12 @@ package e2e
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
@@ -1044,12 +1047,98 @@ func TestStoryPublishing(t *testing.T) {
 	rc, err := g.File.ReadStoryFile(context.Background(), "test-alias")
 	assert.NoError(t, err)
 
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(rc)
-	assert.NoError(t, err)
+	expected := fmt.Sprintf(`{
+    "clusters": [],
+    "coreSupport": true,
+    "enableGa": false,
+    "id": "%s",
+    "layerStyles": null,
+    "layers": null,
+    "nlsLayers": null,
+    "plugins": {},
+    "property": {
+        "tiles": [
+            {
+                "id": ".*"
+            }
+        ]
+    },
+    "publishedAt": ".*",
+    "schemaVersion": 1,
+    "story": {
+        "bgColor": "",
+        "id": "%s",
+        "pages": [
+            {
+                "blocks": [
+                    {
+                        "extensionId": "%s",
+                        "id": "%s",
+                        "pluginId": "reearth",
+                        "plugins": null,
+                        "property": {
+                            "default": {
+                                "text": "test value"
+                            },
+                            "panel": {
+                                "padding": {
+                                    "bottom": 3,
+                                    "left": 0,
+                                    "right": 1,
+                                    "top": 2
+                                }
+                            }
+                        }
+                    }
+                ],
+                "id": "%s",
+                "layers": [],
+                "property": {},
+                "swipeable": true,
+                "swipeableLayers": [],
+                "title": "test"
+            }
+        ],
+        "position": "left",
+        "property": {},
+        "title": ""
+    },
+    "tags": [],
+    "trackingId": "",
+    "widgetAlignSystem": {
+        "inner": null,
+        "outer": {
+            "center": null,
+            "left": {
+                "bottom": {
+                    "align": "start",
+                    "background": null,
+                    "centered": false,
+                    "gap": null,
+                    "padding": null,
+                    "widgetIds": [
+                        ".*"
+                    ]
+                },
+                "middle": null,
+                "top": null
+            },
+            "right": null
+        }
+    },
+    "widgets": [
+        {
+            "enabled": true,
+            "extended": false,
+            "extensionId": "dataAttribution",
+            "id": ".*",
+            "pluginId": "%s",
+            "property": {}
+        }
+    ]
+}`, sID, storyID, extensionId, blockID, pageID, pluginId)
 
-	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","title":"","property":{},"pages":\[{"id":"%s","property":{},"title":"test","blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}],"swipeable":true,"swipeableLayers":\[],"layers":\[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true,"enableGa":false,"trackingId":""}`, sID, storyID, pageID, blockID, extensionId, pluginId))
-	assert.Regexp(t, pub, buf.String())
+	RegexpJSONEq(t, rc, expected)
 
 	resString := e.GET("/p/test-alias/data.json").
 		WithHeader("Origin", "https://example.com").
@@ -1058,5 +1147,52 @@ func TestStoryPublishing(t *testing.T) {
 		Body().
 		Raw()
 
-	assert.Regexp(t, pub, resString)
+	RegexpJSONEqStr(t, resString, expected)
+
+}
+
+func RegexpJSONEq(t *testing.T, rc io.ReadCloser, expected string) {
+
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(rc)
+	assert.NoError(t, err)
+
+	var obj1 map[string]interface{}
+	err = json.Unmarshal(buf.Bytes(), &obj1)
+	assert.Nil(t, err)
+
+	obj2, err := json.Marshal(obj1)
+	assert.Nil(t, err)
+
+	var obj3 map[string]interface{}
+	err = json.Unmarshal([]byte(expected), &obj3)
+	assert.Nil(t, err)
+
+	obj4, err := json.Marshal(obj3)
+	assert.Nil(t, err)
+
+	pub := regexp.MustCompile(strings.ReplaceAll(string(obj4), "[", "\\["))
+
+	assert.Regexp(t, pub, string(obj2))
+}
+
+func RegexpJSONEqStr(t *testing.T, buf string, expected string) {
+
+	var obj1 map[string]interface{}
+	err := json.Unmarshal([]byte(buf), &obj1)
+	assert.Nil(t, err)
+
+	obj2, err := json.Marshal(obj1)
+	assert.Nil(t, err)
+
+	var obj3 map[string]interface{}
+	err = json.Unmarshal([]byte(expected), &obj3)
+	assert.Nil(t, err)
+
+	obj4, err := json.Marshal(obj3)
+	assert.Nil(t, err)
+
+	pub := regexp.MustCompile(strings.ReplaceAll(string(obj4), "[", "\\["))
+
+	assert.Regexp(t, pub, string(obj2))
 }
