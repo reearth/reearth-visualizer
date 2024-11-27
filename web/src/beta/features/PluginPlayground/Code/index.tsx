@@ -13,7 +13,7 @@ type Props = {
   executeCode: () => void;
 };
 
-const MATCH_PATTERNS = [
+const REEARTH_HTML_INJECTION_PATTERNS = [
   /reearth\.ui\.show\((['"`])([\s\S]*?)\1\)/,
   /reearth\.modal\.show\((['"`])([\s\S]*?)\1\)/,
   /reearth\.popup\.show\((['"`])([\s\S]*?)\1\)/
@@ -25,7 +25,6 @@ const Code: FC<Props> = ({
   onChangeSourceCode,
   executeCode
 }) => {
-  const [isHtmlEditable, setIsHtmlEditable] = useState(false);
   const [editableHtmlSourceCode, setEditableHtmlSourceCode] = useState<
     string | null
   >(null);
@@ -34,12 +33,9 @@ const Code: FC<Props> = ({
     null
   );
 
-  /**
-   * カーソル位置に対応するHTML文字列とマッチ情報を取得
-   */
   const getMatchAtCursor = useCallback(
     (value: string, offset: number): RegExpExecArray | null => {
-      for (const pattern of MATCH_PATTERNS) {
+      for (const pattern of REEARTH_HTML_INJECTION_PATTERNS) {
         const match = pattern.exec(value);
         if (match) {
           const start = match.index;
@@ -54,7 +50,7 @@ const Code: FC<Props> = ({
     []
   );
 
-  const handleCursorPositionChange = useCallback(
+  const handleCursorPositionChange: OnMount = useCallback(
     (editor) => {
       const model = editor.getModel();
       if (!model) return;
@@ -65,12 +61,10 @@ const Code: FC<Props> = ({
       const match = getMatchAtCursor(value, offset);
       if (match) {
         setCurrentMatch(match);
-        setEditableHtmlSourceCode(match[2]); // 引数内の文字列
-        setIsHtmlEditable(true);
+        setEditableHtmlSourceCode(match[2]);
       } else {
         setCurrentMatch(null);
         setEditableHtmlSourceCode(null);
-        setIsHtmlEditable(false);
       }
     },
     [getMatchAtCursor]
@@ -96,9 +90,9 @@ const Code: FC<Props> = ({
   );
 
   const onMount: OnMount = useCallback(
-    (editor) => {
+    (editor, ...rest) => {
       editor.onDidChangeCursorPosition(() =>
-        handleCursorPositionChange(editor)
+        handleCursorPositionChange(editor, ...rest)
       );
     },
     [handleCursorPositionChange]
@@ -112,7 +106,7 @@ const Code: FC<Props> = ({
           <Button
             icon="pencilSimple"
             title="HTML Editor"
-            disabled={!isHtmlEditable}
+            disabled={!editableHtmlSourceCode}
             onClick={() => setIsOpenedHtmlEditor(true)}
           />
           <p>Widget</p>
@@ -124,7 +118,7 @@ const Code: FC<Props> = ({
           onMount={onMount}
         />
       </Wrapper>
-      {isOpenedHtmlEditor && editableHtmlSourceCode && (
+      {editableHtmlSourceCode && isOpenedHtmlEditor && (
         <HtmlEditModal
           isOpened={isOpenedHtmlEditor}
           sourceCode={editableHtmlSourceCode}
