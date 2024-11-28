@@ -251,7 +251,7 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 	findOptions := options.Find().SetCollation(&collation)
 
 	c := mongodoc.NewProjectConsumer(r.f.Readable)
-	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c, findOptions)
+	pageInfo, err := r.client.PaginateProject(ctx, filter, usort, pagination, c, findOptions)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
