@@ -14,9 +14,9 @@ type Props = {
 };
 
 const REEARTH_HTML_INJECTION_PATTERNS = [
-  /reearth\.ui\.show\((['"`])([\s\S]*?)\1\)/,
-  /reearth\.modal\.show\((['"`])([\s\S]*?)\1\)/,
-  /reearth\.popup\.show\((['"`])([\s\S]*?)\1\)/
+  /reearth\.ui\.show\((['"`])([\s\S]*?)\1\)/g,
+  /reearth\.modal\.show\((['"`])([\s\S]*?)\1\)/g,
+  /reearth\.popup\.show\((['"`])([\s\S]*?)\1\)/g
 ];
 
 const Code: FC<Props> = ({
@@ -36,11 +36,12 @@ const Code: FC<Props> = ({
   const getMatchAtCursor = useCallback(
     (value: string, offset: number): RegExpExecArray | null => {
       for (const pattern of REEARTH_HTML_INJECTION_PATTERNS) {
-        const match = pattern.exec(value);
-        if (match) {
+        const re = new RegExp(pattern.source, pattern.flags);
+        const matches = Array.from(value.matchAll(re));
+        for (const match of matches) {
           const start = match.index;
           const end = start + match[0].length;
-          if (offset > start && offset < end) {
+          if (offset >= start && offset <= end) {
             return match;
           }
         }
