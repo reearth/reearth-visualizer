@@ -68,31 +68,32 @@ export default ({ files }: Props) => {
         `"use strict";
         const reearth = {
           ui: {
-        show: function () {}
+            show: function () {}
           },
           popup: {
-        show: function () {}
+            show: function () {}
           },
-        modal: {
-        show: function () {}
-          
+          modal: {
+            show: function () {}
+          }
         };
-
+      
         let capturedConsole = [];
-
+      
         console.log = (message) => {
           capturedConsole.push(message);
         };
-
+      
         console.error = (message) => {
           capturedConsole.push(message);
         };
-
+      
         ${file.sourceCode};
         
         return capturedConsole.join("\\n");
         `
       );
+
       try {
         return {
           title: file.title,
