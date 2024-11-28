@@ -425,7 +425,6 @@ Failed to update user password.: ユーザーパスワードの更新に失敗�
 Successfully updated user password!: ユーザーパスワードの更新に成功しました！
 Failed to delete user.: ユーザーの削除に失敗しました。
 Successfully delete user!: ユーザーの削除に成功しました！
-Failed to search user.: ユーザーの検索に失敗しました。
 Failed to change language.: 言語の変更に失敗しました。
 Successfully updated user language!: ユーザーの言語が更新されました！
 Failed to install plugin.: プラグインのインストールに失敗しました。
