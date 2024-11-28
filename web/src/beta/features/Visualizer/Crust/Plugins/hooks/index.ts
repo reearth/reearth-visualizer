@@ -5,7 +5,6 @@ import { Context, Props } from "../types";
 
 import useCamera from "./useCamera";
 import useData from "./useData";
-import useDeprecated from "./useDeprecated";
 import useExtension from "./useExtension";
 import useLayers from "./useLayers";
 import useSketch from "./useSketch";
@@ -155,11 +154,6 @@ export default function ({
 
   const { clientStorage } = useData();
 
-  const { deprecated, cameraDeprecated, layersDeprecated, sketchDeprecated } =
-    useDeprecated({
-      built
-    });
-
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -237,12 +231,7 @@ export default function ({
         sketchEventsOn,
         sketchEventsOff,
         // extension
-        getExtensionList,
-        // deprecated
-        deprecated,
-        cameraDeprecated,
-        layersDeprecated,
-        sketchDeprecated
+        getExtensionList
       }),
       overrideViewerProperty,
       pluginInstances,
@@ -320,10 +309,6 @@ export default function ({
       sketchEventsOn,
       sketchEventsOff,
       getExtensionList,
-      deprecated,
-      cameraDeprecated,
-      layersDeprecated,
-      sketchDeprecated,
       overrideViewerProperty,
       pluginInstances,
       clientStorage,
