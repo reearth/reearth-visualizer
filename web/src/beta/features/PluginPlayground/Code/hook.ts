@@ -64,37 +64,37 @@ export default ({ files }: Props) => {
     const jsFiles = files.filter((file) => file.title.endsWith(".js"));
 
     const outputs = jsFiles.map((file) => {
-      const fn = new Function(
-        `"use strict";
-        const reearth = {
-          ui: {
-            show: function () {}
-          },
-          popup: {
-            show: function () {}
-          },
-          modal: {
-            show: function () {}
-          }
-        };
-      
-        let capturedConsole = [];
-      
-        console.log = (message) => {
-          capturedConsole.push(message);
-        };
-      
-        console.error = (message) => {
-          capturedConsole.push(message);
-        };
-      
-        ${file.sourceCode};
-        
-        return capturedConsole.join("\\n");
-        `
-      );
-
       try {
+        const fn = new Function(
+          `"use strict";
+          const reearth = {
+            ui: {
+              show: function () {}
+            },
+            popup: {
+              show: function () {}
+            },
+            modal: {
+              show: function () {}
+            }
+          };
+        
+          let capturedConsole = [];
+        
+          console.log = (message) => {
+            capturedConsole.push(message);
+          };
+        
+          console.error = (message) => {
+            capturedConsole.push(message);
+          };
+        
+          ${file.sourceCode};
+          
+          return capturedConsole.join("\\n");
+          `
+        );
+
         return {
           title: file.title,
           output: fn()
