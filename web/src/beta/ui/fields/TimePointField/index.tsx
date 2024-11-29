@@ -1,4 +1,5 @@
 import { Button, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import { isValidDateTimeFormat } from "@reearth/beta/utils/time";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -44,7 +45,9 @@ const TimePointField: FC<TimePointFieldProps> = ({
     (timeString: string) => {
       if (timeString === value) return;
       // TODO: validate timeString
-      onChange?.(timeString);
+      if (timeString && isValidDateTimeFormat(timeString)) {
+        onChange?.(timeString);
+      }
     },
     [value, onChange]
   );
