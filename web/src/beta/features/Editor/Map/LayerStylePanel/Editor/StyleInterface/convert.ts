@@ -235,7 +235,6 @@ export const unwrapConditionAppliedValue = (
 };
 
 export const wrapExpression = (field: AppearanceField, expression: string) => {
-  // check if expression is in format of ${}
   if (/^\${.+}$/.test(expression)) {
     return expression;
   }
@@ -255,7 +254,6 @@ export const unwrapExpression = (
   field: AppearanceField | undefined,
   expression: string
 ) => {
-  // check if expression is wrapped with color()
   if (/^\${.+}$/.test(expression)) {
     return expression;
   }

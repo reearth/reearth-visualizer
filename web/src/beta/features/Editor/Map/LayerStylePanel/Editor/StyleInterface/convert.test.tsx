@@ -220,6 +220,21 @@ describe("parseConditions", () => {
   });
 });
 
+it("should parse conditions with URL values correctly", () => {
+  const conditions = parseConditions("model", [
+    ["${type}==='1'", "'https://example.com/model.glb'"]
+  ]);
+
+  expect(conditions).toEqual([
+    {
+      variable: "${type}",
+      operator: "===",
+      value: "'1'",
+      applyValue: "https://example.com/model.glb"
+    }
+  ]);
+});
+
 describe("generateStyleValue", () => {
   it("should generate style value'", () => {
     expect(generateStyleValue(mockStyleNodes?.model[0])).toEqual(
