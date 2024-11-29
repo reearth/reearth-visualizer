@@ -41,5 +41,5 @@ export default [
   ...config("@reearth"),
   ...e2eConfig,
   ...themeConfig,
-  { ignores: ["bin/*"] }
+  { ignores: ["bin/pluginDoc.ts"] }
 ];

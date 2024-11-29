@@ -13,5 +13,13 @@ export const initialize = () => {
 };
 
 export const reportError = (error: ReportError) => {
-  Sentry.captureException(error);
+  if (error instanceof Error) {
+    Sentry.captureException(error);
+  } else {
+    Sentry.captureException(
+      new Error(
+        `${error.type || "Unknown"}: ${error.message || "No message provided"}`
+      )
+    );
+  }
 };
