@@ -180,7 +180,7 @@ describe("convertToLayerStyleValue", () => {
 
 describe("parseStyleValue", () => {
   it("should  parse style value  and return value as value type", () => {
-    const value = parseStyleValue("clamp");
+    const value = parseStyleValue("select", "clamp");
 
     expect(value).toEqual({
       valueType: "value",
@@ -190,7 +190,9 @@ describe("parseStyleValue", () => {
     });
   });
   it("should  parse style value and return expression as value type", () => {
-    const value = parseStyleValue({ expression: "color('#ffffff', 0.8)" });
+    const value = parseStyleValue("color", {
+      expression: "color('#ffffff', 0.8)"
+    });
 
     expect(value).toEqual({
       valueType: "expression",
@@ -203,7 +205,9 @@ describe("parseStyleValue", () => {
 
 describe("parseConditions", () => {
   it("should parse conditions correctly", () => {
-    const conditions = parseConditions([["${marker-size}==='medium'", "12"]]);
+    const conditions = parseConditions("number", [
+      ["${marker-size}==='medium'", "12"]
+    ]);
 
     expect(conditions).toEqual([
       {
@@ -225,7 +229,10 @@ describe("generateStyleValue", () => {
 });
 
 describe("generateConditions", () => {
-  const conditions = generateConditions(mockStyleNodes?.marker[0].conditions);
+  const conditions = generateConditions(
+    "number",
+    mockStyleNodes?.marker[0].conditions
+  );
 
   it("should generate conditions'", () => {
     expect(conditions).toEqual([

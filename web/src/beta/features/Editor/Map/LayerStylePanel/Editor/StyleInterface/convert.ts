@@ -11,7 +11,8 @@ import {
   StyleValue,
   ExpressionCondition,
   Expression,
-  StyleValueType
+  StyleValueType,
+  AppearanceField
 } from "./types";
 
 export const convertToStyleNodes = (
@@ -24,6 +25,7 @@ export const convertToStyleNodes = (
         .map(([k, v]: [string, unknown]) => {
           const nodeRef = appearanceNodes[cur].find((n) => n.id === k);
           const { valueType, value, expression, conditions } = parseStyleValue(
+            nodeRef?.field,
             v as StyleValue
           );
           return {
@@ -100,16 +102,24 @@ export const checkExpressionAndConditions = (
   return "value";
 };
 
-export const parseStyleValue = (v: StyleValue) => {
+export const parseStyleValue = (
+  field: AppearanceField | undefined,
+  v: StyleValue
+) => {
   const valueType = checkExpressionAndConditions(v);
   return {
     valueType,
     value: valueType === "value" ? v : undefined,
     expression:
-      valueType === "expression" ? (v as Expression).expression : undefined,
+      valueType === "expression"
+        ? unwrapExpression(field, (v as Expression).expression)
+        : undefined,
     conditions:
       valueType === "conditions"
-        ? parseConditions((v as ExpressionCondition).expression.conditions)
+        ? parseConditions(
+            field,
+            (v as ExpressionCondition).expression.conditions
+          )
         : undefined
   };
 };
@@ -137,15 +147,20 @@ export const generateStyleValue = (node: StyleNode) => {
     return node.value ?? "";
   }
   if (node.valueType === "expression") {
-    return { expression: node.expression ?? "" };
+    return { expression: wrapExpression(node.field, node.expression ?? "") };
   }
   if (node.valueType === "conditions") {
-    return { expression: { conditions: generateConditions(node.conditions) } };
+    return {
+      expression: {
+        conditions: generateConditions(node.field, node.conditions)
+      }
+    };
   }
   return undefined;
 };
 
 export const parseConditions = (
+  field: AppearanceField | undefined,
   conditions: [string, string][]
 ): StyleCondition[] => {
   const operatorRegex = new RegExp(
@@ -166,7 +181,7 @@ export const parseConditions = (
           variable,
           operator,
           value,
-          applyValue: unwrapColor(applyValue)
+          applyValue: unwrapConditionAppliedValue(field, applyValue)
         };
       }
       return null;
@@ -175,29 +190,115 @@ export const parseConditions = (
 };
 
 export const generateConditions = (
+  field: AppearanceField,
   conditions?: StyleCondition[]
 ): [string, string][] => {
   if (!conditions) return [];
   return conditions.map((c) => {
     return [
       `${c.variable} ${c.operator} ${c.value}`,
-      wrapColor((c.applyValue ?? "").toString())
+      wrapConditionApplyValue((c.applyValue ?? "").toString(), field)
     ];
   });
 };
 
+export const wrapConditionApplyValue = (
+  value: string,
+  field: AppearanceField
+) => {
+  switch (field) {
+    case "color":
+      return wrapColor(value);
+    case "image":
+    case "text":
+    case "model":
+      return wrapString(value);
+    default:
+      return value;
+  }
+};
+
+export const unwrapConditionAppliedValue = (
+  field: AppearanceField | undefined,
+  value: string
+) => {
+  switch (field) {
+    case "color":
+      return unwrapColor(value);
+    case "image":
+    case "text":
+    case "model":
+      return unwrapString(value);
+    default:
+      return value;
+  }
+};
+
+export const wrapExpression = (field: AppearanceField, expression: string) => {
+  // check if expression is in format of ${}
+  if (/^\${.+}$/.test(expression)) {
+    return expression;
+  }
+  switch (field) {
+    case "color":
+      return wrapColor(expression);
+    case "image":
+    case "text":
+    case "model":
+      return wrapString(expression);
+    default:
+      return expression;
+  }
+};
+
+export const unwrapExpression = (
+  field: AppearanceField | undefined,
+  expression: string
+) => {
+  // check if expression is wrapped with color()
+  if (/^\${.+}$/.test(expression)) {
+    return expression;
+  }
+  switch (field) {
+    case "color":
+      return unwrapColor(expression);
+    case "image":
+    case "text":
+    case "model":
+      return unwrapString(expression);
+    default:
+      return expression;
+  }
+};
+
 export const wrapColor = (maybeColor: string) => {
-  // check if color is a valid hex string
-  if (/^#[0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8}$/i.test(maybeColor)) {
+  if (
+    /^#(?:[0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8})$/i.test(maybeColor)
+  ) {
     return `color('${maybeColor}')`;
   }
   return maybeColor;
 };
 
 export const unwrapColor = (maybeWrappedColor: string) => {
-  // check if color is wrapped with color()
   if (/^color\('.+'\)$/.test(maybeWrappedColor)) {
     return maybeWrappedColor.slice(7, -2);
   }
   return maybeWrappedColor;
+};
+
+export const wrapString = (url: string) => {
+  if (!url) return url;
+  if (/^'.+'$/.test(url)) {
+    return url;
+  }
+  return `'${url}'`;
+};
+
+export const unwrapString = (maybeWrappedString: string) => {
+  if (!maybeWrappedString) return maybeWrappedString;
+  if (/^'.+'$/.test(maybeWrappedString)) {
+    return maybeWrappedString.slice(1, -1);
+  }
+  return maybeWrappedString;
 };
