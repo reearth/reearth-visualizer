@@ -62,7 +62,7 @@ export default ({
     if (onRemove) {
       menuItems.push({
         id: "delete",
-        title: t("Remove"),
+        title: t("Delete"),
         icon: "trash",
         onClick: handleRemove
       });

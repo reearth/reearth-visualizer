@@ -18,7 +18,8 @@ import {
   TimePointField,
   NumberField,
   RangeField,
-  CheckboxField
+  CheckboxField,
+  SliderField
 } from "./index";
 
 const meta: Meta<typeof InputField> = {
@@ -148,6 +149,13 @@ export const Components: Story = {
         onChange={() => {}}
         value={true}
         title="CheckboxField"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
+      />
+      <SliderField
+        value={10}
+        min={0}
+        max={5}
+        title="SliderField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
     </div>

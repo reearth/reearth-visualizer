@@ -142,7 +142,8 @@ const ChildWrapper = styled("div")<{
   flexGrow: 1,
   display: "flex",
   flexDirection: "column",
-  overflowY: "auto"
+  overflowY: "auto",
+  overflowX: "hidden"
 }));
 
 const IconWrapper = styled("div")<{

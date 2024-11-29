@@ -151,7 +151,7 @@ const ConditionsTab: FC<Props> = ({
               />
               <ConditionWrapper>
                 <ConditionStatement>
-                  <Typography size="body">{t("if")}</Typography>
+                  <Typography size="body">if</Typography>
                   <InputWrapper>
                     <TextInput
                       value={condition.variable || ""}
@@ -172,7 +172,7 @@ const ConditionsTab: FC<Props> = ({
                   <InputWrapper>
                     <TextInput
                       value={condition.value || ""}
-                      placeholder={"value"}
+                      placeholder={"value or 'string'"}
                       onBlur={(val) => updateCondition(idx, "value", val)}
                     />
                   </InputWrapper>
@@ -200,7 +200,6 @@ const ConditionsTab: FC<Props> = ({
     [
       conditions,
       field,
-      t,
       valueOptions,
       deleteCondition,
       updateCondition,
@@ -269,7 +268,8 @@ const ConditionWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.smallest,
   alignItems: "flex-start",
-  flex: 1
+  flex: 1,
+  minWidth: 0
 }));
 
 const ConditionStatement = styled("div")(({ theme }) => ({

@@ -1,7 +1,6 @@
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
-import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
@@ -9,110 +8,87 @@ import { FC } from "react";
 import { usePublishPage } from "../context";
 
 import useHooks from "./hooks";
-import PublishModal from "./PublishModal";
+import PublishOrUpdateModal from "./PublishOrUpdateModal";
+import UnpublishModal from "./UnpublishModal";
 
 const PublishToolsPanel: FC = () => {
-  const {
-    storyId,
-    projectId,
-    sceneId,
-    selectedProjectType,
-    handleProjectTypeChange
-  } = usePublishPage();
+  const { projectId, sceneId, activeSubProject, handleActiveSubProjectChange } =
+    usePublishPage();
+
   const t = useT();
 
   const {
-    publishmentStatuses,
-    publishing,
-    publishStatus,
-    modalOpen,
-    alias,
-    validAlias,
-    validatingAlias,
-    publishProjectLoading,
-    handleModalOpen,
-    handleModalClose,
-    handleProjectPublish,
-    handleProjectAliasCheck,
-    handleNavigationToSettings
-  } = useHooks({ storyId, projectId, sceneId, selectedProjectType });
-
-  const sceneStatus = publishmentStatuses.find(
-    (status) => status?.type === "default"
-  )?.published
-    ? "published"
-    : "unpublished";
-  const storyStatus = publishmentStatuses.find(
-    (status) => status?.type === "story"
-  )?.published
-    ? "published"
-    : "unpublished";
+    publishItems,
+    publishItem,
+    handlePublishItemSelect,
+    unpublishModalVisible,
+    setUnpublishModalVisible,
+    publishModalVisible,
+    setPublishModalVisible
+  } = useHooks({
+    projectId,
+    sceneId,
+    activeSubProject,
+    handleActiveSubProjectChange
+  });
 
   return (
     <Panel extend>
       <StyledSecondaryNav>
         <LeftSection>
-          <TabButtonWrapper>
-            <StatusWrapper>
-              <PublishStatus status={sceneStatus} />
-            </StatusWrapper>
-            <TabButton
-              highlighted={selectedProjectType === "default"}
-              title={t("Scene")}
-              onClick={() => handleProjectTypeChange("default")}
-            />
-          </TabButtonWrapper>
-          <TabButtonWrapper>
-            <StatusWrapper>
-              <PublishStatus status={storyStatus} />
-            </StatusWrapper>
-            <TabButton
-              highlighted={selectedProjectType === "story"}
-              title={t("Story")}
-              onClick={() => handleProjectTypeChange("story")}
-            />
-          </TabButtonWrapper>
+          {publishItems.map((item) => (
+            <TabButtonWrapper key={item.id}>
+              <StatusWrapper>
+                <PublishStatus isPublished={item.isPublished} />
+              </StatusWrapper>
+              <TabButton
+                highlighted={item.id === publishItem?.id}
+                title={item.buttonTitle}
+                onClick={() => handlePublishItemSelect(item.id)}
+              />
+            </TabButtonWrapper>
+          ))}
         </LeftSection>
-        <ButtonWrapper>
-          {publishStatus === "unpublished" ? (
-            <Button
-              title={t("Publish")}
-              icon="paperPlaneTilt"
-              size="small"
-              onClick={() => handleModalOpen("publishing")}
-            />
-          ) : (
-            <>
+        {publishItem && (
+          <ButtonWrapper>
+            {!publishItem.isPublished ? (
               <Button
-                title={t("Unpublish")}
-                icon="lock"
+                title={t("Publish")}
+                icon="paperPlaneTilt"
                 size="small"
-                onClick={() => handleModalOpen("unpublishing")}
+                onClick={() => setPublishModalVisible(true)}
               />
-              <Button
-                title={t("Update")}
-                icon="caretDoubleUp"
-                size="small"
-                onClick={() => handleModalOpen("updating")}
-              />
-            </>
-          )}
-        </ButtonWrapper>
+            ) : (
+              <>
+                <Button
+                  title={t("Unpublish")}
+                  icon="lock"
+                  size="small"
+                  onClick={() => setUnpublishModalVisible(true)}
+                />
+                <Button
+                  title={t("Update")}
+                  icon="caretDoubleUp"
+                  size="small"
+                  onClick={() => setPublishModalVisible(true)}
+                />
+              </>
+            )}
+          </ButtonWrapper>
+        )}
       </StyledSecondaryNav>
-      <PublishModal
-        isVisible={modalOpen}
-        loading={publishProjectLoading}
-        publishing={publishing}
-        publishStatus={publishStatus}
-        url={config()?.published?.split("{}")}
-        projectAlias={alias}
-        validAlias={validAlias}
-        validatingAlias={validatingAlias}
-        onNavigateToSettings={handleNavigationToSettings}
-        onClose={handleModalClose}
-        onPublish={handleProjectPublish}
-        onAliasValidate={handleProjectAliasCheck}
-      />
+      {publishItem && unpublishModalVisible && (
+        <UnpublishModal
+          publishItem={publishItem}
+          onClose={() => setUnpublishModalVisible(false)}
+        />
+      )}
+      {publishItem && publishModalVisible && (
+        <PublishOrUpdateModal
+          publishItem={publishItem}
+          onClose={() => setPublishModalVisible(false)}
+        />
+      )}
     </Panel>
   );
 };
@@ -131,8 +107,7 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
 const LeftSection = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.normal,
-  height: "24px",
-  width: "244px"
+  height: "24px"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
@@ -154,15 +129,14 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   gap: theme.spacing.small,
-  width: "116px"
+  minWidth: "116px"
 }));
 
-const PublishStatus = styled("div")<{ status: string }>(
-  ({ theme, status }) => ({
+const PublishStatus = styled("div")<{ isPublished: boolean }>(
+  ({ theme, isPublished }) => ({
     width: "8px",
     height: "8px",
-    backgroundColor:
-      status !== "unpublished" ? "#24A148" : theme.content.weaker,
+    backgroundColor: isPublished ? "#24A148" : theme.content.weaker,
     borderRadius: "50%"
   })
 );

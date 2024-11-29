@@ -52,7 +52,7 @@ func (r *Asset) FindByWorkspace(_ context.Context, wid accountdomain.WorkspaceID
 	}
 
 	result := r.data.FindAll(func(k id.AssetID, v *asset.Asset) bool {
-		return v.Workspace() == wid && (filter.Keyword == nil || strings.Contains(v.Name(), *filter.Keyword))
+		return v.Workspace() == wid && v.CoreSupport() && (filter.Keyword == nil || strings.Contains(v.Name(), *filter.Keyword))
 	})
 
 	if filter.Sort != nil {

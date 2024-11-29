@@ -8,6 +8,7 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"golang.org/x/text/language"
 )
 
 // export REEARTH_DB=mongodb://localhost
@@ -36,7 +37,7 @@ func TestCallImportProject(t *testing.T) {
 
 	sid := r.Value("scene").Object().Value("id").Raw().(string)
 
-	r = getScene(e, sid)
+	r = getScene(e, sid, language.English.String())
 	// fmt.Println(toJSONString(r.Raw()))
 
 	r.Value("id").Equal(sid)
@@ -83,12 +84,13 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
 	return projectData.Object()
 }
 
-func getScene(e *httpexpect.Expect, s string) *httpexpect.Object {
+func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 	requestBody := GraphQLRequest{
 		OperationName: "GetScene",
 		Query:         GetSceneGuery,
 		Variables: map[string]any{
 			"sceneId": s,
+			"lang":    l,
 		},
 	}
 	r := e.POST("/api/graphql").
@@ -257,6 +259,8 @@ fragment PropertySchemaFieldFragment on PropertySchemaField {
   ui
   min
   max
+  placeholder
+  translatedPlaceholder(lang: $lang)
   choices {
     key
     icon

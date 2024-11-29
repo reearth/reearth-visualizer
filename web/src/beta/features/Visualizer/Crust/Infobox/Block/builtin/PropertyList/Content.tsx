@@ -73,6 +73,7 @@ const Content: FC<Props> = ({ block, isEditable, ...props }) => {
         displayTypeField?.value === "custom" ? (
           properties ? (
             <CustomFields
+              selectedFeature={selectedComputedFeature}
               properties={properties}
               extensionId={block?.extensionId}
             />

@@ -7,6 +7,7 @@ type Asset implements Node {
   url: String!
   contentType: String!
   team: Team
+  coreSupport: Boolean!
 }
 
 enum AssetSortField {
@@ -19,6 +20,7 @@ enum AssetSortField {
 
 input CreateAssetInput {
   teamId: ID!
+  coreSupport: Boolean!
   file: Upload!
 }
 
@@ -55,8 +57,13 @@ type AssetEdge {
   node: Asset
 }
 
-extend type Query{
-  assets(teamId: ID!, pagination: Pagination, keyword: String, sort: AssetSort): AssetConnection!
+extend type Query {
+  assets(
+    teamId: ID!
+    pagination: Pagination
+    keyword: String
+    sort: AssetSort
+  ): AssetConnection!
 }
 
 extend type Mutation {

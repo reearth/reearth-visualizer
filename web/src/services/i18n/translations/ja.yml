@@ -17,29 +17,37 @@ New password: 新しいパスワード
 New password (for confirmation): 新しいパスワード（確認用）
 '"repeatPassword" Passwords need to match': パスワードが一致している必要があります
 Select Asset: アセットを選択
+Cancel: キャンセル
 Last Uploaded: 最終アップロード日
 First Uploaded: 最初のアップロード日
 A To Z: AからZ順
 Z To A: ZからA順
 Size Small to Large: サイズ（小から大）
 Size Large to Small: サイズ（大から小）
+Assets: アセット
 Upload File: ファイルをアップロード
 Search in all assets library: 全アセットライブラリ内を検索
 Assets selected: 選択されたアセット
 Asset selected: アセットが選択されました
 Uploaded At: アップロード日時
 Size: サイズ
-Path: パス
-No Asset has been uploaded yet: まだアセットがアップロードされていません
+Path: アセットURL
+No asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
+Create new workspace: ワークスペースを作る
+create: 作成する
+Your workspace Name*: ワークスペース名*
+your workspace name: ワークスペース名
+The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Use Name or Email: 名前またはメールアドレスを使用
 Find Member: メンバーを検索
-No Member match your search.: 一致するメンバーが見つかりません。
+No Member match your search.: 一致するメンバーが見つかりません'
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
 New Project: 新規プロジェクト
-Import (Experimental): インポート（実験的）
+Import: インポート
+Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Project Name: プロジェクト名
@@ -48,16 +56,16 @@ Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
 Project Setting: プロジェクト設定
-Export (Experimental): エクスポート（実験的）
+Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
-Cancel: キャンセル
 Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
 Description: 説明
 Write down your content: 内容を書き込む
 Cover Image: カバー画像
+Remove: ゴミ箱へ移動
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Starred: スター付き
@@ -69,42 +77,43 @@ I am sure I want to delete this project: このプロジェクトを削除する
 This action cannot be undone. This will permanently delete the project totally. You will lose all your project data: この操作は元に戻せません。プロジェクトが完全に削除され、すべてのデータが失われます。
 Please type your project name to continue.: 続行するにはプロジェクト名を入力してください。
 Projects: プロジェクト
-Assets: アセット
 Members: メンバー
 Recycle bin: ゴミ箱
 Plugin Playground: プラグインプレイグラウンド
 Documentation: ドキュメント
 Community: コミュニティ
 Help & Support: ヘルプ＆サポート
-Switch Workspace: ワークスペースを切り替え
+Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
-Log Out: ログアウト
-Re:Earth Visualizer: Re:Earthビジュアライザー
+Log out: ログアウト
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
-From Value: 値から
-File Format: ファイル形式
-File format of the data source you want to add.: 追加したいデータソースのファイル形式
 Source Type: ソースタイプ
 Asset: アセット
 Resource URL: リソースURL
-Input Text: テキストを入力
-Value: 値
-Input data here: ここにデータを入力
-Prioritize Performance: パフォーマンスを優先
-Add to Layer: レイヤーに追加
 Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
 Latitude Column Name: 緯度の列名
 Column Name: 列名
 Longitude Column Name: 経度の列名
-Common: 共通
-CSV: CSV
-WMS: WMS
-Vector Tile: ベクタタイル
+Add to Layer: レイヤーに追加
+From Value: 値から
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Input Text: テキストを入力
+Value: 値
+Input data here: ここにデータを入力
+Invalid GeoJSON format: 不正なGeoJSON形式
+Please enter valid GeoJSON: 有効なGeoJSONを入力してください
+Prioritize Performance: パフォーマンスを優先
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
+  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
+Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
+  KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 'Google Maps API Key ': Google Maps APIキー
 'You can apply a key ': キーを申請できます
 here: ここ
@@ -125,39 +134,28 @@ Geometry: ジオメトリ
 Properties: プロパティ
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
+NO STYLE: スタイルなし
 Layer Style: レイヤースタイル
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
+Property Schema: プロパティスキーマ
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
 Save: 保存
 No style selected: スタイルが選択されていません
-if: もし
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
+${your property name}: ${プロパティ名}
 font family: フォントファミリー
 font size: フォントサイズ
 font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
-Style: スタイル
-Empty: 空
-Default: デフォルト
-Professional: プロフェッショナル
-Basic Geometry: 基本ジオメトリ
-Points: ポイント
-Point with label: ラベル付きポイント
-Polyline: ポリライン
-Polygon: ポリゴン
-Extruded polygon: 押し出しポリゴン
-Simple Style: シンプルスタイル
-Plateau: 台地
-Color buildings by height: 高さで建物の色を設定
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -175,6 +173,7 @@ New Property: 新しいプロパティ
 ' Text': ' テキスト'
 General: 一般
 New Sketch Layer: 新しいスケッチレイヤー
+Create: 作成
 Custom properties Schema Setting: カスタムプロパティスキーマ設定
 Story: ストーリー
 Publish: 公開
@@ -186,10 +185,6 @@ Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
-Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
 Your story has been published!: ストーリーが公開されました。
 Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
@@ -198,6 +193,11 @@ Public URL: 公開URL
 Copy: コピー
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
+'* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
+Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
+Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
+Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
 Publish domain: 公開ドメイン
 Need to change domain related settings?: ドメイン設定を変更しますか？
 Go to settings: 設定へ
@@ -209,6 +209,7 @@ This means that anybody with the URL will become unable to view this story. This
 This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: URLを知っている人でもこのシーンを見ることができなくなります。このシーンを埋め込んだWebサイトへ影響を及ぼす可能性があります。
 Page Settings: ページ設定
 All Layers: 全てのレイヤー
+Pages: ページ
 New Page: 新しいページ
 Untitled: タイトルなし
 Container Settings: コンテナ設定
@@ -224,14 +225,12 @@ Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
-Visualizer: ビジュアライザー
 Unknown: 不明
-Switch workspace: ワークスペースを切り替え
-Log out: ログアウト
 Asset management: アセット管理
 Map: マップ
 Widgets: ウィジェット
-Oops, This Page Not Found!: おっと、このページは見つかりません！
+Re:Earth Visualizer: Re:Earthビジュアライザー
+Oops, Page Not Found!: おっと、ページが見つかりません！
 Go to Dashboard: ダッシュボードへ移動
 Error: エラー
 Warning: 注意
@@ -262,12 +261,12 @@ Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
 Public Info: 公開情報
-Basic Authorization: 基本認証
-Enable Basic Authorization: 基本認証を有効にする
+Basic Authorization: ベーシック認証
+Enable Basic Authorization: ベーシック認証を有効にする
 Username: ユーザー名
 Site Setting: サイト設定
 Site name: サイト名
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更しようとしています。英数字とハイフンのみが許可されています。
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更します。英数字とハイフンのみ入力可能です。
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
@@ -280,12 +279,14 @@ Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
 New Field: 新しいフィールド
+Display title: 表示タイトル
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
 Buttons List: ボタンリスト
 New Layers Button: 新しいレイヤーボタン
 New Link Button: 新しいリンクボタン
 Add markdown text here: マークダウンテキストをここに追加
+Color: 色
 Data Attribution: データ帰属
 'Data Provided by:': データ提供元：
 aria-label-compass: コンパス
@@ -293,37 +294,41 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
-Spacing settings: スペーシング設定
-Remove: 削除
+Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
-Reader: 読者
-Writer: 作成者
-Maintainer: 管理者
-Owner: 所有者
+Add a team member: チームメンバーを追加
+Add: 追加
+Search by email address or user name: メールアドレスまたはユーザー名で検索
+Can't find the user: ユーザーが見つかりません
+User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
+MAINTAINER: 管理者
+OWNER: 所有者
+READER: 閲覧者
+WRITER: 作成者
 New member: 新しいメンバー
 User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 Change Role: 役割を変更
-Add a team member: チームメンバーを追加
-Add: 追加
-Email address or a user name: メールアドレスまたはユーザー名
-Didn’t find the user: ユーザーが見つかりませんでした
-Workspace: ワークスペース
-Workspace Name: ワークスペース名
-Remove this workspace: このワークスペースを削除
-This process will remove this workspace: この操作によりワークスペースが削除されます
-Remove workspace: ワークスペースを削除
+Reader: 閲覧者
+Writer: 作成者
+Maintainer: 管理者
+Owner: 所有者
+Update Member Role: メンバーの役割を更新
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
-'This action cannot be undone. ': この操作は元に戻せません。
-This will permanently delete the workspace and all related projects, assets and datasets for all team members.: これにより、ワークスペースと関連するすべてのプロジェクト、アセット、およびデータセットがチーム全員から完全に削除されます。
+This action is permanent and cannot be reversed.: この操作は元に戻すことができません。
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ワークスペースと、ワークスペースに関連するすべてのプロジェクト、アセット、データセットがチーム全員から完全に削除されます。
 Please type your workspace name to continue.: 続行するにはワークスペース名を入力してください。
 You are going to delete a workspace.: ワークスペースを削除しようとしています。
-Please to make sure you don’t have any projects in your workspace, then you can continue.: ワークスペース内にプロジェクトがないことを確認してください。それから続行できます。
-Workspace Settings: ワークスペース設定
-Account Settings: アカウント設定
+Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
+Workspace: ワークスペース
+Workspace Name: ワークスペース名
+This process will delete this workspace: この操作により、このワークスペースが削除されます
+Workspace settings: ワークスペース設定
+New workspace: ワークスペース作成
+Account settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
 Heading 1: 見出し1
@@ -339,8 +344,8 @@ Center Align: 中央揃え
 Justify Align: 両端揃え
 Left Align: 左揃え
 Right Align: 右揃え
-Outdent: インデント解除
-Indent: インデント
+Outdent: インデントを減らす
+Indent: インデントを増やす
 Bulleted List: 箇条書きリスト
 Insert Code Block: コードブロックを挿入
 Insert Link: リンクを挿入
@@ -349,8 +354,11 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Loading...: ロード中...
+Please select: 選択してください
 'Sort:': '並び替え:'
 Version: バージョン
+This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 Wrong file format: 誤ったファイル形式
 Not set: 設定されていません
 Choose: 選択
@@ -371,6 +379,10 @@ Rotation: 回転
 Position Set: 位置セット
 Edit: 編集
 Capture: キャプチャ
+New Item: 新規追加
+New Credit: 新しいクレジット
+min: 最小
+max: 最大
 Time Period Settings: 期間設定
 '* Start Time': '* 開始時間'
 Start time for the timeline: タイムラインの開始時間
@@ -414,7 +426,6 @@ Failed to update user password.: ユーザーパスワードの更新に失敗�
 Successfully updated user password!: ユーザーパスワードの更新に成功しました！
 Failed to delete user.: ユーザーの削除に失敗しました。
 Successfully delete user!: ユーザーの削除に成功しました！
-Failed to search user.: ユーザーの検索に失敗しました。
 Failed to change language.: 言語の変更に失敗しました。
 Successfully updated user language!: ユーザーの言語が更新されました！
 Failed to install plugin.: プラグインのインストールに失敗しました。
@@ -424,6 +435,7 @@ Successfully upgraded plugin!: プラグインのアップグレードに成功�
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
+Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。

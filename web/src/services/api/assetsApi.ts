@@ -1,8 +1,14 @@
-import { useApolloClient, useMutation, useQuery } from "@apollo/client";
+import {
+  FetchResult,
+  useApolloClient,
+  useMutation,
+  useQuery
+} from "@apollo/client";
 import {
   CreateAssetInput,
   GetAssetsQueryVariables,
-  GetAssetsQuery
+  GetAssetsQuery,
+  CreateAssetMutation
 } from "@reearth/services/gql";
 import {
   CREATE_ASSET,
@@ -64,30 +70,50 @@ export default () => {
   });
 
   const useCreateAssets = useCallback(
-    async ({ teamId, file }: CreateAssetInput) => {
+    async ({
+      teamId,
+      file
+    }: CreateAssetInput): Promise<
+      | {
+          data: FetchResult<CreateAssetMutation>[];
+          result: string;
+        }
+      | undefined
+    > => {
       if (!file || !teamId) return;
 
-      const results = await Promise.all(
-        Array.from(file).map((f) =>
-          createAssetMutation({ variables: { teamId, file: f } })
-        )
-      );
+      try {
+        const results = await Promise.all(
+          Array.from(file).map((f) =>
+            createAssetMutation({
+              variables: { teamId, file: f, coreSupport: true }
+            })
+          )
+        );
 
-      if (!results || results.some((r) => r.errors)) {
+        if (!results || results.some((r) => r.errors)) {
+          setNotification({
+            type: "error",
+            text: t("Failed to add one or more assets.")
+          });
+        } else {
+          setNotification({
+            type: "success",
+            text: t("Successfully added one or more assets.")
+          });
+        }
+
+        apolloCache.evict({ fieldName: "assets" });
+
+        return { data: results, result: "success" };
+      } catch (_error) {
         setNotification({
           type: "error",
           text: t("Failed to add one or more assets.")
         });
-      } else {
-        setNotification({
-          type: "success",
-          text: t("Successfully added one or more assets.")
-        });
+        return;
+        // TODO: add 'error' to error tracking
       }
-
-      apolloCache.evict({ fieldName: "assets" });
-
-      return { data: results, result: "success" };
     },
     [apolloCache, createAssetMutation, t, setNotification]
   );

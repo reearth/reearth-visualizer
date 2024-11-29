@@ -2,8 +2,11 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"net/http"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
@@ -21,6 +24,8 @@ import (
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/text/language"
 )
 
 type Seeder func(ctx context.Context, r *repo.Container) error
@@ -169,4 +174,94 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 		}
 	})
 	return httpexpect.New(t, "http://"+l.Addr().String())
+}
+
+func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
+	c := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	return StartServer(t, c, true, seeder)
+}
+
+func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
+	c := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	return StartServer(t, c, true,
+		func(ctx context.Context, r *repo.Container) error {
+			return baseSeederWithLang(ctx, r, lang)
+		},
+	)
+}
+
+func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
+	return e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", user).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+}
+
+func RequestQuery(t *testing.T, e *httpexpect.Expect, query string, user string) *httpexpect.Value {
+	request := GraphQLRequest{
+		Query: query,
+	}
+	jsonData, err := json.Marshal(request)
+	assert.Nil(t, err)
+	return e.POST("/api/graphql").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("Content-Type", "application/json").
+		WithHeader("X-Reearth-Debug-User", user).
+		WithBytes(jsonData).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+}
+
+func RequestWithMultipart(e *httpexpect.Expect, user string, requestBody map[string]interface{}, filePath string) *httpexpect.Value {
+	jsonData, _ := json.Marshal(requestBody)
+	return e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", user).
+		WithMultipart().
+		WithFormField("operations", string(jsonData)).
+		WithFormField("map", `{"0": ["variables.file"]}`).
+		WithFile("0", filePath).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+}
+
+func JSONEqRegexp(t *testing.T, rx string, str string) bool {
+
+	var rx1 map[string]interface{}
+	err := json.Unmarshal([]byte(rx), &rx1)
+	assert.Nil(t, err)
+
+	rx2, err := json.Marshal(rx1)
+	assert.Nil(t, err)
+
+	var str1 map[string]interface{}
+	err = json.Unmarshal([]byte(str), &str1)
+	assert.Nil(t, err)
+
+	str2, err := json.Marshal(str1)
+	assert.Nil(t, err)
+
+	return assert.Regexp(
+		t,
+		regexp.MustCompile(strings.ReplaceAll(string(rx2), "[", "\\[")),
+		string(str2),
+	)
 }

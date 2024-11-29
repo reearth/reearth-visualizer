@@ -26,7 +26,9 @@ export type AssetsManagerProps = {
   enableDelete?: boolean;
   allowMultipleSelection?: boolean;
   assetsTypes?: AcceptedAssetsTypes;
+  layout?: ManagerLayout;
   onSelectChange?: (assets: Asset[]) => void;
+  onLayoutChange?: (layout: ManagerLayout) => void;
 };
 
 const AssetsManager: FC<AssetsManagerProps> = ({
@@ -36,7 +38,9 @@ const AssetsManager: FC<AssetsManagerProps> = ({
   enableDelete = true,
   allowMultipleSelection = true,
   assetsTypes,
-  onSelectChange
+  layout,
+  onSelectChange,
+  onLayoutChange
 }) => {
   const {
     filteredAssets,
@@ -45,7 +49,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     sortValue,
     sortOptions,
     handleSortChange,
-    layout,
+    localLayout,
     handleLayoutChange,
     selectedAssetIds,
     handleAssetSelect,
@@ -61,7 +65,9 @@ const AssetsManager: FC<AssetsManagerProps> = ({
     allowMultipleSelection,
     workspaceId,
     assetsTypes,
-    onSelectChange
+    layout,
+    onSelectChange,
+    onLayoutChange
   });
   const t = useT();
   const theme = useTheme();
@@ -83,7 +89,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
         sortValue={sortValue}
         sortOptions={sortOptions}
         onSortChange={handleSortChange}
-        layout={layout}
+        layout={localLayout}
         onLayoutChange={handleLayoutChange}
         showSearch
         searchPlaceholder={t("Search in all assets library")}
@@ -109,7 +115,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               />
             </PathWrapper>
             <LayoutWrapper>
-              {layout === "list" && (
+              {localLayout === "list" && (
                 <ListHeader size={size} width={contentWidth}>
                   <ThumbnailSpacer />
                   <Col width={50}>
@@ -137,13 +143,13 @@ const AssetsManager: FC<AssetsManagerProps> = ({
               <AssetsWrapper ref={assetsWrapperRef}>
                 <AssetsContent size={size} ref={assetsContentRef}>
                   {/* TODO: Group of folders */}
-                  <AssetsGroup layout={layout} size={size}>
+                  <AssetsGroup layout={localLayout} size={size}>
                     {filteredAssets?.map((asset) =>
-                      layout === "grid" ? (
+                      localLayout === "grid" ? (
                         <AssetGridItem
                           key={asset.id}
                           asset={asset}
-                          layout={layout}
+                          layout={localLayout}
                           selectedAssetIds={selectedAssetIds}
                           onSelect={handleAssetSelect}
                         />
@@ -151,7 +157,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
                         <AssetListItem
                           key={asset.id}
                           asset={asset}
-                          layout={layout}
+                          layout={localLayout}
                           selectedAssetIds={selectedAssetIds}
                           onSelect={handleAssetSelect}
                         />
@@ -175,7 +181,7 @@ const AssetsManager: FC<AssetsManagerProps> = ({
       ) : (
         <ManagerEmptyContent>
           <Typography size="h5" color={theme.content.weak}>
-            {t("No Asset has been uploaded yet")}
+            {t("No asset has been uploaded yet")}
           </Typography>
         </ManagerEmptyContent>
       )}

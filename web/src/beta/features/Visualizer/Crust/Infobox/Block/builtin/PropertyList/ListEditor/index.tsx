@@ -119,12 +119,13 @@ const ListEditor: FC<Props> = ({
         currentPropertyList &&
         currentPropertyList.length > 0 && (
           <>
-            <Typography size="footnote">{propertyListField.title}</Typography>
+            <Typography size="body">{propertyListField.title}</Typography>
             <FieldWrapper>
               <DragAndDropList
                 items={DraggableCurrentPropertyList}
                 onMoveStart={handleMoveStart}
                 onMoveEnd={handleMoveEnd}
+                handleClassName={CURRENT_PROPERTY_LIST_DRAG_HANDLE_CLASS_NAME}
               />
             </FieldWrapper>
           </>

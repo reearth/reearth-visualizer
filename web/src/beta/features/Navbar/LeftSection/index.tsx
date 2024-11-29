@@ -1,11 +1,11 @@
 import {
+  Icon,
   IconButton,
   PopupMenu,
-  PopupMenuItem,
-  Typography
+  PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -33,7 +33,6 @@ const LeftSection: React.FC<Props> = ({
   onWorkspaceChange
 }) => {
   const t = useT();
-  const theme = useTheme();
 
   const menuItems: PopupMenuItem[] = useMemo(
     () => [
@@ -59,13 +58,7 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      {page !== "editor" && (
-        <StyledLink to={`/`}>
-          <Typography size="body" weight="bold" color={theme.dangerous.strong}>
-            {t("Visualizer")}
-          </Typography>
-        </StyledLink>
-      )}
+      <Icon icon="logo" size={30} />
       <StyledLink
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}

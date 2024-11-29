@@ -1,7 +1,4 @@
-import {
-  FILE_TYPES,
-  IMAGE_TYPES
-} from "@reearth/beta/features/AssetsManager/constants";
+import { ALL_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import {
   AssetField,
   InputField,
@@ -58,17 +55,15 @@ export const FieldComponent = ({ field, setFields }: Props) => {
     <AssetField
       key={field?.id}
       title={field?.title}
-      assetsTypes={IMAGE_TYPES}
+      assetsTypes={ALL_TYPES}
       inputMethod={"asset"}
       value={field.value as string}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
-    <AssetField
+    <InputField
       key={field?.id}
       title={field?.title}
-      assetsTypes={FILE_TYPES}
-      inputMethod={"URL"}
       value={field.value as string}
       onChange={handleChange}
     />
