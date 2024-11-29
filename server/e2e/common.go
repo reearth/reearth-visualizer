@@ -65,7 +65,13 @@ func initGateway() *gateway.Container {
 	}
 }
 
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+func StartServerAndRepos(t *testing.T, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	cfg := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
 	repos := initRepos(t, useMongo, seeder)
 	gateways := initGateway()
 	return StartServerWithRepos(t, cfg, repos, gateways), repos, gateways
@@ -120,12 +126,13 @@ type GraphQLRequest struct {
 	Variables     map[string]any `json:"variables"`
 }
 
-func StartGQLServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	e, r := StartGQLServerAndRepos(t, cfg, useMongo, seeder)
-	return e, r
-}
-
-func StartGQLServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+func StartGQLServerAndRepos(t *testing.T, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+	cfg := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
 	repos := initRepos(t, useMongo, seeder)
 	acRepos := repos.AccountRepos()
 	return StartGQLServerWithRepos(t, cfg, repos, acRepos), acRepos

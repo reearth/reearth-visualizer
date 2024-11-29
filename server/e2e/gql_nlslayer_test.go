@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/samber/lo"
 )
 
@@ -357,12 +356,7 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 }
 
 func TestNLSLayerCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pId := createProject(e, "test")
 
@@ -723,12 +717,7 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 
 func TestInfoboxBlocksCRUD(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pId := createProject(e, "test")
 
@@ -837,12 +826,7 @@ func addCustomProperties(
 }
 
 func TestCustomProperties(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pId := createProject(e, "test")
 

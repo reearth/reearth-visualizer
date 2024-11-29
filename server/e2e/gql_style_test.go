@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func addStyle(e *httpexpect.Expect, sId, name string) (GraphQLRequest, *httpexpect.Value, string) {
@@ -175,12 +174,7 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 }
 
 func TestStyleCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)

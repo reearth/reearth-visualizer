@@ -12,7 +12,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -752,12 +751,7 @@ func moveBlock(e *httpexpect.Expect, storyID, pageID, blockID string, index int)
 }
 
 func TestStoryCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -798,12 +792,7 @@ func TestStoryCRUD(t *testing.T) {
 }
 
 func TestStoryPageCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -892,12 +881,7 @@ func TestStoryPageCRUD(t *testing.T) {
 }
 
 func TestStoryPageLayersCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -929,12 +913,7 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 }
 
 func TestStoryPageBlocksCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -977,12 +956,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 }
 
 func TestStoryPageBlocksProperties(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -1014,12 +988,7 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 }
 
 func TestStoryPublishing(t *testing.T) {
-	e, _, g := StartServerAndRepos(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e, _, g := StartServerAndRepos(t, true, baseSeeder)
 
 	pID := createProject(e, "test")
 

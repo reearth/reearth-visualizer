@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/rerror"
@@ -15,12 +14,7 @@ import (
 )
 
 func TestCreateTeam(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, true, baseSeederUser)
 	query := `mutation { createTeam(input: {name: "test"}){ team{ id name } }}`
 	request := GraphQLRequest{
 		Query: query,
@@ -38,12 +32,7 @@ func TestCreateTeam(t *testing.T) {
 }
 
 func TestDeleteTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 	_, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	query := fmt.Sprintf(`mutation { deleteTeam(input: {teamId: "%s"}){ teamId }}`, wId1)
@@ -80,12 +69,7 @@ func TestDeleteTeam(t *testing.T) {
 }
 
 func TestUpdateTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -127,12 +111,7 @@ func TestUpdateTeam(t *testing.T) {
 }
 
 func TestAddMemberToTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -174,12 +153,7 @@ func TestAddMemberToTeam(t *testing.T) {
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
@@ -212,12 +186,7 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 }
 
 func TestUpdateMemberOfTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)

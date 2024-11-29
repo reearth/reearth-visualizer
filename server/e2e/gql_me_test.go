@@ -3,18 +3,10 @@ package e2e
 import (
 	"net/http"
 	"testing"
-
-	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func TestMe(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	},
-		true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	requestBody := GraphQLRequest{
 		OperationName: "GetMe",

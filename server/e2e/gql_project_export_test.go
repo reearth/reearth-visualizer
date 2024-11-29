@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,12 +15,7 @@ import (
 
 func TestCallExportProject(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProjectWithExternalImage(e, "test")
 

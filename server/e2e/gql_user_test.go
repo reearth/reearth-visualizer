@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
@@ -96,12 +95,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 }
 
 // func TestSignUp(t *testing.T) {
-// 	e, _ := StartGQLServer(t, &config.Config{
-// 		Origins: []string{"https://example.com"},
-// 		AuthSrv: config.AuthSrvConfig{
-// 			Disabled: true,
-// 		},
-// 	}, true, baseSeederUser)
+// 	e, _ := StartGQLServerAndRepos(t, true, baseSeederUser)
 // 	query := `mutation { signup(input: {lang: "ja",theme: DEFAULT,secret: "Ajsownndww1"}){ user{ id name email } }}`
 // 	request := GraphQLRequest{
 // 		Query: query,
@@ -120,12 +114,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 // }
 
 func TestUpdateMe(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, true, baseSeederUser)
 	query := `mutation { updateMe(input: {name: "updated",email:"hoge@test.com",lang: "ja",theme: DEFAULT,password: "Ajsownndww1",passwordConfirmation: "Ajsownndww1"}){ me{ id name email lang theme } }}`
 	request := GraphQLRequest{
 		Query: query,
@@ -146,12 +135,7 @@ func TestUpdateMe(t *testing.T) {
 }
 
 func TestRemoveMyAuth(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 	u, err := r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
 	assert.Equal(t, &user.Auth{Provider: "reearth", Sub: "reearth|" + uId1.String()}, u.Auths().GetByProvider("reearth"))
@@ -176,12 +160,7 @@ func TestRemoveMyAuth(t *testing.T) {
 }
 
 func TestDeleteMe(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, true, baseSeederUser)
 	u, err := r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
 	assert.NotNil(t, u)
@@ -205,12 +184,7 @@ func TestDeleteMe(t *testing.T) {
 }
 
 func TestSearchUser(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, true, baseSeederUser)
 	query := fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "e2e")
 	request := GraphQLRequest{
 		Query: query,
@@ -245,12 +219,7 @@ func TestSearchUser(t *testing.T) {
 }
 
 func TestNode(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, true, baseSeederUser)
 	query := fmt.Sprintf(` { node(id: "%s", type: USER){ id } }`, uId1.String())
 	request := GraphQLRequest{
 		Query: query,
@@ -268,12 +237,7 @@ func TestNode(t *testing.T) {
 }
 
 func TestNodes(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, true, baseSeederUser)
 	query := fmt.Sprintf(` { nodes(id: "%s", type: USER){ id } }`, uId1.String())
 	request := GraphQLRequest{
 		Query: query,

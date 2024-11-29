@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearthx/usecasex"
@@ -17,13 +16,7 @@ import (
 // go test -v -run TestGetAssets ./e2e/...
 
 func TestGetAssets(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, r, _ := StartServerAndRepos(t, true, baseSeeder)
 
 	teamId := wID.String()
 
