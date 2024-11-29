@@ -1,6 +1,6 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, it } from "vitest";
 
-import { formatRelativeTime } from "./time";
+import { formatRelativeTime, parseDateTime } from "./time";
 
 describe("formatRelativeTime", () => {
   const now = new Date();
@@ -71,5 +71,78 @@ describe("formatRelativeTime", () => {
   test("returns 2 years ago in Japanese", () => {
     const date = new Date(now.getTime() - 2 * 365 * 24 * 60 * 60 * 1000); // 2 years ago
     expect(formatRelativeTime(date, "ja")).toBe("2年前");
+  });
+});
+
+describe("parseDateTime", () => {
+  it.each([
+    [
+      "2024-01-01T12:00Z",
+      {
+        parsedDate: "2024-01-01",
+        timeWithOffset: "12:00Z",
+        parsedTime: "12:00",
+        timezoneOffset: "00:00"
+      }
+    ],
+    [
+      "2024-01-01T12:00:00Z",
+      {
+        parsedDate: "2024-01-01",
+        timeWithOffset: "12:00:00Z",
+        parsedTime: "12:00:00",
+        timezoneOffset: "00:00"
+      }
+    ],
+    [
+      "2024-01-01T12:00:00.123Z",
+      {
+        parsedDate: "2024-01-01",
+        timeWithOffset: "12:00:00.123Z",
+        parsedTime: "12:00:00.123",
+        timezoneOffset: "00:00"
+      }
+    ],
+    [
+      "2024-01-01T12:00+09:00",
+      {
+        parsedDate: "2024-01-01",
+        timeWithOffset: "12:00+09:00",
+        parsedTime: "12:00",
+        timezoneOffset: "09:00"
+      }
+    ],
+    [
+      "2024-01-01T12:00:00+09:00",
+      {
+        parsedDate: "2024-01-01",
+        timeWithOffset: "12:00:00+09:00",
+        parsedTime: "12:00:00",
+        timezoneOffset: "09:00"
+      }
+    ],
+    [
+      "2024-01-01T12:00:00.123+09:00",
+      {
+        parsedDate: "2024-01-01",
+        timeWithOffset: "12:00:00.123+09:00",
+        parsedTime: "12:00:00.123",
+        timezoneOffset: "09:00"
+      }
+    ]
+  ])("should correctly parse %s", (input, expected) => {
+    const result = parseDateTime(input);
+    expect(result).toEqual(expected);
+  });
+
+  it.each([
+    "invalid",
+    "2024-01-01",
+    "2024-01-01T12",
+    "2024-01-01T12:00+9:00",
+    ""
+  ])("should return null for invalid datetime format %s", (input) => {
+    const result = parseDateTime(input);
+    expect(result).toBeNull();
   });
 });
