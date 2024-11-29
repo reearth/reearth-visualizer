@@ -4,13 +4,18 @@ on:
     inputs:
       version:
         required: false
-        description: 'Next version (NOTE: Switch the branch to "release"!)'
+        description: 'Next version (Use "custom" for specific versions like beta)(NOTE: Switch the branch to "release"!)'
         type: choice
         default: minor
         options:
           - patch
           - minor
           - major
+          - custom
+      custom_version:
+        required: false
+        description: 'Custom version (e.g., 1.0.0-beta.1.0) - Only used when version is set to "custom"'
+        type: string
 jobs:
   release:
     name: Release
@@ -36,7 +41,7 @@ jobs:
         name: Generate CHANGELOG
         uses: reearth/changelog-action@main
         with:
-          version: ${{ github.event.inputs.version }}
+          version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
           repo: ${{ github.repository }}
           latest: CHANGELOG_latest.md
       - name: Upload latest CHANGELOG
@@ -46,7 +51,7 @@ jobs:
           path: CHANGELOG_latest.md
       - name: Commit & push to release
         env:
-          TAG: ${{ steps.changelog.outputs.version }}
+          TAG: v${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
           git add CHANGELOG.md
