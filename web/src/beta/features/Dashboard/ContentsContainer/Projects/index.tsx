@@ -94,7 +94,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         layout={layout}
         onLayoutChange={handleLayoutChange}
         showSearch
-        searchPlaceholder={t("Search in all assets library")}
+        searchPlaceholder={t("Search project")}
         onSearch={handleSearch}
       />
       {filtedProjects?.length ? (
