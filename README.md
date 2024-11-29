@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://renewal2025.reearth.io/">Website</a>
   ·
-  <a href="https://visualizer-developer-reearth-io.netlify.app/">Documentation</a>
+  <a href="https://visualizer.developer.reearth.io/">Documentation</a>
   ·
   <a href="https://github.com/reearth/reearth-visualizer/issues">Issues</a>
 </p>
