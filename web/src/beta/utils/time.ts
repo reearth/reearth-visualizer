@@ -111,5 +111,37 @@ export const getTimeZone = (time: string): TimeZoneOffset | undefined => {
 };
 
 export const isValidDateTimeFormat = (time: string): boolean => {
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([-+]\d{2}:\d{2})$/.test(time);
+  return /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?)(Z|([+-]\d{2}:\d{2}))?$/.test(
+    time
+  );
+};
+
+export type ParsedDateTime = {
+  parsedDate: string;
+  timeWithOffset: string;
+  parsedTime: string;
+  timezoneOffset: string;
+};
+
+export const parseDateTime = (value: string): ParsedDateTime | null => {
+  const match = value.match(
+    /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?)(Z|([+-]\d{2}:\d{2}))?$/
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const parsedDate = match[1];
+  const timeWithOffset = match[2] + (match[3] || "");
+  const parsedTime = match[2];
+  const timezoneOffset =
+    match[3] === "Z" ? "00:00" : match[3]?.replace("+", "") || "00:00";
+
+  return {
+    parsedDate,
+    timeWithOffset,
+    parsedTime,
+    timezoneOffset
+  };
 };
