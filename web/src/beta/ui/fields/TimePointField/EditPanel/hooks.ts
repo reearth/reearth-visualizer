@@ -44,6 +44,7 @@ export default ({ value, onChange, onClose }: Props) => {
 
   useEffect(() => {
     if (value && isValidDateTimeFormat(value)) {
+      //Since isValidDateTimeFormat already validates the input, it's safe to assert the type as ParsedDateTime.
       const { parsedDate, timeWithOffset, parsedTime, timezoneOffset } =
         parseDateTime(value) as ParsedDateTime;
 
