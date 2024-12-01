@@ -62,6 +62,7 @@ ENV REEARTH_WEB_PLUGINS=null
 ENV REEARTH_WEB_POLICY=null
 ENV REEARTH_WEB_PUBLISHED=null
 ENV REEARTH_WEB_TITLE=
+ENV REEARTH_WEB_UNSAFE_PLUGIN_URLS=[]
 
 COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html
 COPY --chown=nginx:nginx docker/nginx.conf.template /etc/nginx/templates/nginx.conf.template
