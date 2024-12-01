@@ -8,7 +8,6 @@ on:
 jobs:
   upload:
     uses: ./.github/workflows/_upload_cesium_token_txt.yml
-    with:
-      gcs_dst: gs://reearth-visualizer-oss-static-bucket
     secrets:
       credentials_json: ${{ secrets.GCP_SA_KEY }}
+      secret_name: ${{ secrets.CESIUM_ION_TOKEN_SECRET_NAME }}
