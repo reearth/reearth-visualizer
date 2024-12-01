@@ -16,5 +16,6 @@
     "passwordPolicy": ${REEARTH_WEB_PASSWORD_POLICY},
     "plugins": ${REEARTH_WEB_PLUGINS},
     "policy": ${REEARTH_WEB_POLICY},
-    "published": ${REEARTH_WEB_PUBLISHED}
+    "published": ${REEARTH_WEB_PUBLISHED},
+    "unsafePluginUrls": ${REEARTH_WEB_UNSAFE_PLUGIN_URLS}
 }
