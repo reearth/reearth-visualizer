@@ -91,8 +91,6 @@ export type EXPERIMENTAL_clipping = {
   roll?: number;
 };
 
-export type Array = any[];
-
 export type Timeline = {
   startTime?: string;
   endTime?: string;
@@ -115,7 +113,7 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
-  array: any[];
+  array: unknown[];
   timeline: Timeline;
 };
 
@@ -175,11 +173,11 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
 export function valueToGQL<T extends ValueType>(
   val: ValueTypes[T] | null | undefined,
   type: T
-): any {
+) {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
     return {
-      ...(val as any),
-      altitude: (val as any).height
+      ...(val as Camera),
+      altitude: (val as Camera).height
     };
   }
   return val ?? null;

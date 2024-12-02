@@ -1,9 +1,8 @@
 import { ThemeProvider } from "@emotion/react";
-import { ReactNode, useEffect } from "react";
-
 import { useAuth } from "@reearth/services/auth";
 import { Theme } from "@reearth/services/gql";
 import { useCurrentTheme } from "@reearth/services/state";
+import { ReactNode, useEffect } from "react";
 
 import { useMeFetcher } from "../api";
 

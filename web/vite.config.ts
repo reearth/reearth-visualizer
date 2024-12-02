@@ -174,7 +174,7 @@ function config(): Plugin {
   };
 }
 
-function loadJSON(path: string): any {
+function loadJSON(path: string): Record<string, unknown> {
   try {
     return JSON.parse(readFileSync(path, "utf8")) || {};
   } catch (_err) {

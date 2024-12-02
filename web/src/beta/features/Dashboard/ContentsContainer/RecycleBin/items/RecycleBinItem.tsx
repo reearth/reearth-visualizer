@@ -1,8 +1,8 @@
 import { Button, PopupMenu, PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
+import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
-import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 
 import { DeletedProject } from "../../../type";
 import ProjectDeleteModal from "../ProjectDeleteModal";

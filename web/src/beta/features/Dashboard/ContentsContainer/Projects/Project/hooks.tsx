@@ -1,6 +1,6 @@
+import useDoubleClick from "@reearth/beta/hooks/useDoubleClick";
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
 import Tooltip from "@reearth/beta/ui/components/Tooltip";
-import useDoubleClick from "@reearth/beta/hooks/useDoubleClick";
 import {
   useStorytellingFetcher,
   useProjectFetcher

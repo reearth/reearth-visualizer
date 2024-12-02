@@ -2,8 +2,11 @@ import { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
 import { isEqual } from "lodash-es";
 
 export function paginationMerge(
-  existing: any,
-  incoming: any,
+  existing: {
+    edges: { cursor: string }[];
+    pageInfo: { startCursor: string };
+  } | null,
+  incoming: { edges: { cursor: string }[]; pageInfo: { startCursor: string } },
   { readField }: { readField: ReadFieldFunction }
 ) {
   if (existing && incoming && isEqual(existing, incoming)) return incoming;
@@ -28,7 +31,7 @@ export function paginationMerge(
 }
 
 function offsetFromCursor(
-  items: any,
+  items: { cursor: string }[],
   cursor: string,
   readField: ReadFieldFunction
 ) {

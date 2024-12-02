@@ -1,9 +1,8 @@
+import { useAuth } from "@reearth/services/auth";
 import dayjs from "dayjs";
 import { ReactNode, useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import "dayjs/locale/ja";
-
-import { useAuth } from "@reearth/services/auth";
 
 import { useMeFetcher } from "../api";
 
