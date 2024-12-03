@@ -55,16 +55,10 @@ const Plugins: FC<Props> = ({
         <ButtonsWrapper>
           <Button
             icon="plus"
-            title="File"
             extendWidth
             onClick={() => setIsAddingNewFile(true)}
           />
-          <Button
-            icon="uploadSimple"
-            title="Upload"
-            extendWidth
-            onClick={handleFileUpload}
-          />
+          <Button icon="uploadSimple" extendWidth onClick={handleFileUpload} />
         </ButtonsWrapper>
         <FileList>
           {selectedPlugin.files.map((file) => (
