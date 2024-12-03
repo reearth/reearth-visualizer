@@ -4,47 +4,18 @@ import { useCallback, useMemo, useState } from "react";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
-import { PluginType, REEARTH_YML_FILE } from "./constants";
+import { PluginType } from "./constants";
+import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
 export default () => {
-  const [plugins, setPlugins] = useState<PluginType[]>([
-    {
-      id: uuidv4(),
-      title: "My Plugin",
-      files: [
-        REEARTH_YML_FILE,
-        {
-          id: uuidv4(),
-          title: "demo-widget.js",
-          sourceCode: `reearth.ui.show(\`
-  <style>
-    body {
-      margin: 0;
-    }
-    #wrapper {
-      background: #232226;
-      height: 100%;
-      color: white;
-      border: 3px dotted red;
-      border-radius: 5px;
-      padding: 20px 0;
-    }
-  </style>
-  <div id="wrapper">
-    <h2 style="text-align: center; margin: 0;">Hello World</h2>
-  </div>
-\`);
-          
-          `
-        }
-      ]
-    }
-  ]);
+  const [plugins, setPlugins] = useState<PluginType[]>(
+    presetPlugins.map((category) => category.plugins).flat()
+  );
 
   const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
   const [selectedFileId, setSelectedFileId] = useState<string>(
-    REEARTH_YML_FILE.id
+    plugins[0]?.files[0]?.id ?? ""
   );
   const [, setNotification] = useNotification();
 
@@ -229,7 +200,7 @@ export default () => {
   }, [selectedPlugin, setNotification]);
 
   return {
-    plugins,
+    presetPlugins,
     selectPlugin,
     selectedPlugin,
     selectFile,

@@ -6,12 +6,12 @@ import useCode from "./Code/hook";
 import Console from "./Console";
 import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
-import usePlugins from "./Plugins/hook";
+import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
 
 export default () => {
   const {
-    plugins,
+    presetPlugins,
     selectPlugin,
     selectedPlugin,
     selectedFile,
@@ -59,7 +59,7 @@ export default () => {
         name: "Plugins",
         children: (
           <Plugins
-            plugins={plugins}
+            presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
             selectPlugin={selectPlugin}
             selectedFile={selectedFile}
@@ -73,7 +73,7 @@ export default () => {
       }
     ],
     [
-      plugins,
+      presetPlugins,
       selectedPlugin,
       selectPlugin,
       selectedFile,
@@ -89,7 +89,7 @@ export default () => {
     () => [
       {
         id: "code",
-        name: "code",
+        name: "Code",
         children: (
           <Code
             fileTitle={selectedFile.title}

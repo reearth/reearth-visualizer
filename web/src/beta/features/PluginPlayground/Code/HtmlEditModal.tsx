@@ -22,7 +22,7 @@ const HtmlEditModal: FC<Props> = ({
 }) => {
   const [value, setValue] = useState(sourceCode);
   return (
-    <Modal size="medium" visible={isOpened}>
+    <Modal size="large" visible={isOpened}>
       <ModalPanel
         title="HTML Editor"
         onCancel={onClose}
@@ -52,9 +52,10 @@ const HtmlEditModal: FC<Props> = ({
   );
 };
 
-const CodeInputWrapper = styled("div")(() => ({
+const CodeInputWrapper = styled("div")(({ theme }) => ({
   height: "100%",
-  minHeight: "554px"
+  minHeight: "554px",
+  padding: theme.spacing.small
 }));
 
 export default HtmlEditModal;
