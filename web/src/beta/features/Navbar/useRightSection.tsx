@@ -98,6 +98,7 @@ const TabButton = styled("button")<{ selected?: boolean }>(
     alignItems: "flex-start",
     justifyContent: "center",
     padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    fontSize: `${theme.fonts.sizes.body}px`,
     gap: theme.spacing.small,
     borderRadius: theme.radius.small,
     color: selected ? theme.content.main : theme.content.weak,
