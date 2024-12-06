@@ -4,7 +4,7 @@ import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { FileType } from "./constants";
-import usePlugins from "./hook";
+import usePlugins from "./usePlugins";
 
 type UsePluginsReturn = ReturnType<typeof usePlugins>;
 
@@ -74,11 +74,6 @@ const FileListItem: FC<Props> = ({
               autoFocus
               value={file.title}
               onBlur={handleInputConfirm}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleInputConfirm(e.currentTarget.value);
-                }
-              }}
             />
           ) : (
             <TitleWrapper>{file.title}</TitleWrapper>
@@ -98,12 +93,8 @@ const Wrapper = styled("li")(({ theme }) => ({
   justifyContent: "space-between",
   alignItems: "center",
   gap: theme.spacing.small,
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
   borderRadius: theme.radius.small,
-  cursor: "pointer",
-  "&:not(:first-child)": {
-    marginTop: theme.spacing.smallest
-  }
+  cursor: "pointer"
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({

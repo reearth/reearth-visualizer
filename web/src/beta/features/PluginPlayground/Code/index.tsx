@@ -107,7 +107,6 @@ const Code: FC<Props> = ({
             disabled={!editableHtmlSourceCode}
             onClick={() => setIsOpenedHtmlEditor(true)}
           />
-          <p>Widget</p>
         </Header>
         <CodeInput
           language={getLanguageByFileExtension(fileTitle)}

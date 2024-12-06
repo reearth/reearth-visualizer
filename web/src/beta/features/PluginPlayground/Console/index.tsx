@@ -1,3 +1,4 @@
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -15,9 +16,9 @@ const Console: FC<Props> = ({ fileOutputs }) => {
   return (
     <Wrapper>
       {fileOutputs.map(({ title, output }, index) => (
-        <div key={index}>
-          {`[${title}]`} {output}
-        </div>
+        <Typography key={index} size="body">
+          {`[${title}]`} {output || "✔"}
+        </Typography>
       ))}
     </Wrapper>
   );
