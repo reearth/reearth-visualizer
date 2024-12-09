@@ -1,6 +1,8 @@
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
+import LZString from "lz-string";
 import { useCallback, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
@@ -9,8 +11,25 @@ import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
 export default () => {
+  const [searchParams] = useSearchParams();
+  const decodePlugin = useCallback((encoded: string) => {
+    const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
+
+    // Decompress and parse
+    const decompressed = LZString.decompressFromBase64(base64);
+
+    return JSON.parse(decompressed);
+  }, []);
+
+  const sharedPluginUrl = searchParams.get("plugin");
+
+  const sharedPlugin = sharedPluginUrl ? decodePlugin(sharedPluginUrl) : null;
+  const presetPluginsArray = presetPlugins
+    .map((category) => category.plugins)
+    .flat();
+
   const [plugins, setPlugins] = useState<PluginType[]>(
-    presetPlugins.map((category) => category.plugins).flat()
+    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
   );
 
   const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
@@ -199,7 +218,37 @@ export default () => {
     }
   }, [selectedPlugin, setNotification]);
 
+  const encodeAndSharePlugin = useCallback((): string | undefined => {
+    // First compress the code
+
+    try {
+      const compressed = LZString.compressToBase64(
+        JSON.stringify(selectedPlugin)
+      )
+        .replace(/\+/g, "-") // Convert + to -
+        .replace(/\//g, "_") // Convert / to _
+        .replace(/=/g, ""); // Remove padding =
+
+      const shareUrl =
+        "http://localhost:3000/plugin-playground?plugin=" + compressed;
+      navigator.clipboard.writeText(shareUrl);
+
+      setNotification({
+        type: "success",
+        text: "Plugin link copied to clipboard"
+      });
+      return compressed;
+    } catch (error) {
+      if (error instanceof Error) {
+        setNotification({ type: "error", text: error.message });
+      }
+      return;
+    }
+  }, [selectedPlugin, setNotification]);
+
   return {
+    encodeAndSharePlugin,
+    decodePlugin,
     presetPlugins,
     selectPlugin,
     selectedPlugin,

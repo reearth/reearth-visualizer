@@ -21,7 +21,8 @@ export default () => {
     updateFileSourceCode,
     deleteFile,
     handleFileUpload,
-    handlePluginDownload
+    handlePluginDownload,
+    encodeAndSharePlugin
   } = usePlugins();
 
   const { widgets, executeCode, fileOutputs } = useCode({
@@ -59,6 +60,7 @@ export default () => {
         name: "Plugins",
         children: (
           <Plugins
+            encodeAndSharePlugin={encodeAndSharePlugin}
             presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
             selectPlugin={selectPlugin}
@@ -73,6 +75,7 @@ export default () => {
       }
     ],
     [
+      encodeAndSharePlugin,
       presetPlugins,
       selectedPlugin,
       selectPlugin,
