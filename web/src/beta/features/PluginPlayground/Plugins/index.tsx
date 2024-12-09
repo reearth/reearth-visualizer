@@ -8,6 +8,7 @@ import usePlugins from "./usePlugins";
 
 type UsePluginsReturn = Pick<
   ReturnType<typeof usePlugins>,
+  | "encodeAndSharePlugin"
   | "presetPlugins"
   | "selectPlugin"
   | "selectedPlugin"
@@ -22,6 +23,7 @@ type UsePluginsReturn = Pick<
 type Props = UsePluginsReturn;
 
 const Plugins: FC<Props> = ({
+  encodeAndSharePlugin,
   presetPlugins,
   selectedPlugin,
   selectPlugin,
@@ -46,6 +48,15 @@ const Plugins: FC<Props> = ({
                 highlighted={selectedPlugin.id === plugin.id}
                 onClick={() => selectPlugin(plugin.id)}
                 title={plugin.title}
+                optionsMenu={[
+                  {
+                    id: "0",
+                    title: "share",
+                    icon: "paperPlaneTilt",
+                    onClick: () => encodeAndSharePlugin()
+                  }
+                ]}
+                optionsMenuWidth={100}
               />
             ))}
           </div>
