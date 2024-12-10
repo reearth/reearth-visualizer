@@ -12,7 +12,7 @@ import { validateFileTitle } from "./utils";
 
 export default () => {
   const [searchParams] = useSearchParams();
-  const decodePlugin = useCallback((encoded: string) => {
+  const decodePluginURL = useCallback((encoded: string) => {
     const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
 
     // Decompress and parse
@@ -23,7 +23,9 @@ export default () => {
 
   const sharedPluginUrl = searchParams.get("plugin");
 
-  const sharedPlugin = sharedPluginUrl ? decodePlugin(sharedPluginUrl) : null;
+  const sharedPlugin = sharedPluginUrl
+    ? decodePluginURL(sharedPluginUrl)
+    : null;
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
     .flat();
@@ -229,8 +231,7 @@ export default () => {
         .replace(/\//g, "_") // Convert / to _
         .replace(/=/g, ""); // Remove padding =
 
-      const shareUrl =
-        "http://localhost:3000/plugin-playground?plugin=" + compressed;
+      const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
       navigator.clipboard.writeText(shareUrl);
 
       setNotification({
@@ -248,7 +249,6 @@ export default () => {
 
   return {
     encodeAndSharePlugin,
-    decodePlugin,
     presetPlugins,
     selectPlugin,
     selectedPlugin,
