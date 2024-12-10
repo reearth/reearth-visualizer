@@ -1,25 +1,30 @@
 export const PRESET_PLUGIN_COMMON_STYLE = `<style>
-  :root {
-    --font-family: Arial, sans-serif;
-    --border-radius: 5px;
-    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  body, h2, h3 {
+  body,
+  h2,
+  h3 {
     margin: 0;
-    font-family: var(--font-family);
+    font-family: Arial, sans-serif;
   }
 
-  h2, h3 {
+  h2,
+  h3 {
     text-align: center;
-    margin-top: 40px;
+    margin: 20px;
   }
 
   #wrapper {
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+    background: #eee;
+    color: #222;
+    border-radius: 5px;
     padding: 10px;
-    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
   }
   </style>
 `;
