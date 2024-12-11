@@ -2320,7 +2320,7 @@ extensions:
               title: Credit Url
   - id: googleMapSearch
     type: widget
-    name: Google Map Search
+    name: Google Map Search (Experimental)
     description: A widget that allows you to search for a location on the map using Google Maps.
     singleOnly: true
     widgetLayout:
