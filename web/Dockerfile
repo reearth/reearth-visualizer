@@ -46,6 +46,7 @@ ENV REEARTH_WEB_API=null
 ENV REEARTH_WEB_AUTH0_AUDIENCE=null
 ENV REEARTH_WEB_AUTH0_CLIENT_ID=null
 ENV REEARTH_WEB_AUTH0_DOMAIN=null
+ENV REEARTH_WEB_BRAND=null
 ENV REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN=null
 ENV REEARTH_WEB_CLOUD_API=null
 ENV REEARTH_WEB_CURRENT_TOS=null
@@ -62,6 +63,7 @@ ENV REEARTH_WEB_PLUGINS=null
 ENV REEARTH_WEB_POLICY=null
 ENV REEARTH_WEB_PUBLISHED=null
 ENV REEARTH_WEB_TITLE=
+ENV REEARTH_WEB_UNSAFE_PLUGIN_URLS=[]
 
 COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html
 COPY --chown=nginx:nginx docker/nginx.conf.template /etc/nginx/templates/nginx.conf.template
