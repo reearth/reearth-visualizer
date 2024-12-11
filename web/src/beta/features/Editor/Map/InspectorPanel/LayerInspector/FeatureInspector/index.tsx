@@ -1,4 +1,3 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
@@ -11,6 +10,7 @@ import { Geometry } from "@reearth/core";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import JsonView from "react18-json-view";
 
 import { FieldComponent } from "./CustomPropertField";
@@ -19,7 +19,7 @@ type Props = {
   selectedFeature?: {
     id: string;
     geometry: Geometry | undefined;
-    properties: any;
+    properties: Record<string, ValueProp>;
   };
   layer?: NLSLayer;
   sketchFeature?: SketchFeature;

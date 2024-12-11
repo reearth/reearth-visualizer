@@ -21,7 +21,7 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     [t]
   );
 
-  const isValidGeoJSON = (json: any): boolean => {
+  const isValidGeoJSON = (json: Record<string, unknown>): boolean => {
     return (
       json &&
       typeof json === "object" &&

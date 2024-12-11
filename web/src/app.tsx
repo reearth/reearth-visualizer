@@ -8,6 +8,7 @@ import { AuthProvider } from "./services/auth";
 import { Provider as GqlProvider } from "./services/gql";
 import { AppRoutes } from "./services/routing";
 import { Provider as ThemeProvider } from "./services/theme";
+import "@reearth-widget-ui/styles/globals.css";
 
 export default function App() {
   return (
