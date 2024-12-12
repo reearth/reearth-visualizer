@@ -20,6 +20,7 @@ jobs:
         with:
           files: |
             web
+            .github/workflows/ci.yml
             .github/workflows/ci_web.yml
             .github/workflows/build_web.yml
             .github/workflows/deploy_web_nightly.yml
@@ -96,7 +97,7 @@ jobs:
   # TODO: build_release workflow is broken
   # build-release:
   #   needs: [ci-server, build-prepare, build-web-post]
-  #   if: ${{ !cancelled() && needs.build-prepare.outputs.release == 'true' }}
+  #   if: ${{ !cancelled() && needs.build-prepare.outputs.name != 'nightly' }}
   #   uses: ./.github/workflows/build_release.yml
   #   with:
   #     sha_short: ${{ needs.build-prepare.outputs.sha_short }}
