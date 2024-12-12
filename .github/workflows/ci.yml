@@ -52,7 +52,7 @@ jobs:
     needs:
       - ci-web
       - ci-server
-    if: !failure()
+    if: ${{ !failure() }}
     steps:
       - run: echo OK
 
