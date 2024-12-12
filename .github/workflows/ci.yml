@@ -8,8 +8,8 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      web: ${{ steps.web.outputs.any_changed }}
-      server: ${{ steps.server.outputs.any_changed }}
+      web: ${{ steps.web.outputs.any_modified }}
+      server: ${{ steps.server.outputs.any_modified }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -20,6 +20,7 @@ jobs:
         with:
           files: |
             web
+            # .github/workflows/ci.yml # TODO
             .github/workflows/ci_web.yml
             .github/workflows/build_web.yml
             .github/workflows/deploy_web_nightly.yml
@@ -31,6 +32,7 @@ jobs:
         with:
           files: |
             server
+            .github/workflows/ci.yml
             .github/workflows/ci_server.yml
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml
