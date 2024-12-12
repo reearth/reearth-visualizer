@@ -83,6 +83,17 @@ jobs:
       sha: ${{ github.sha }}
     secrets: inherit
 
+  build-release:
+    needs: [ci-server, build-prepare]
+    uses: ./.github/workflows/build_release.yml
+    with:
+      sha_short: ${{ needs.build-prepare.outputs.sha_short }}
+      new_tag: ${{ needs.build-prepare.outputs.new_tag }}
+      new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
+      name: ${{ needs.build-prepare.outputs.name }}
+      sha: ${{ github.sha }}
+    secrets: inherit
+
   deploy-web:
     needs: build-web
     uses: ./.github/workflows/deploy_web_nightly.yml

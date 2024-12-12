@@ -1,0 +1,77 @@
+name: build-release
+on:
+  workflow_call:
+    inputs:
+      sha_short:
+        type: string
+        required: true
+      new_tag:
+        type: string
+        required: true
+      new_tag_short:
+        type: string
+        required: true
+      name:
+        type: string
+        required: true
+      sha:
+        type: string
+        required: true
+
+jobs:
+  server:
+    name: Build and release server
+    runs-on: ubuntu-latest
+    if: inputs.name || inputs.new_tag
+    env:
+      ARTIFACTS: server/dist/reearth_*.*
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          distribution: goreleaser
+          version: ~> v2
+          args: release --clean ${{ inputs.new_tag == '' && '--snapshot' || '' }}
+          workdir: server
+        env:
+          GORELEASER_CURRENT_TAG: ${{ inputs.new_tag == '' && '0.0.0' || inputs.new_tag }}
+      - name: Rename artifacts
+        if: ${{ inputs.name != '' }}
+        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ inputs.name }}/'); done
+      - name: List artifacts
+        run: ls -l server/dist
+      - name: Release nightly/rc
+        if: ${{ inputs.name != '' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: ${{ env.ARTIFACTS }}
+          commit: ${{ inputs.sha }}
+          name: ${{ inputs.name }}
+          tag: ${{ inputs.name }}
+          body: ${{ inputs.sha_short }}
+          prerelease: true
+      - name: Download latest changelog
+        if: ${{ inputs.new_tag != '' }}
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: release.yml
+          name: changelog-${{ inputs.new_tag }}
+      - name: Create GitHub release
+        if: ${{ inputs.new_tag != '' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: ${{ env.ARTIFACTS }}
+          commit: ${{ inputs.sha }}
+          name: ${{ inputs.new_tag }}
+          tag: ${{ inputs.new_tag}}
+          bodyFile: CHANGELOG_latest.md
