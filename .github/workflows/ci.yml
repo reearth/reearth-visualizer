@@ -43,7 +43,9 @@ jobs:
 
   ci-server:
     needs: prepare
-    if: needs.prepare.outputs.server == 'true'
+    # server depends on web, so this should be triggered if web is modified
+    # TODO: Simplify "if" when we discontinue embedding front-end in the server
+    if: needs.prepare.outputs.server == 'true' || needs.prepare.outputs.web == 'true'
     uses: ./.github/workflows/ci_server.yml
 
   ci:
@@ -81,6 +83,7 @@ jobs:
 
   build-server:
     # required to trigger this job after build-web, but even if build-web is skipped
+    # TODO: Remove build-web-post from needs when we discontinue embedding front-end in the server
     needs: [ci-server, build-prepare, build-web-post]
     if: ${{ !cancelled() }}
     #
@@ -94,6 +97,7 @@ jobs:
     secrets: inherit
 
   # TODO: build_release workflow is broken
+  # TODO: Remove build-web-post from needs when we discontinue embedding front-end in the server
   # build-release:
   #   needs: [ci-server, build-prepare, build-web-post]
   #   if: ${{ !cancelled() && needs.build-prepare.outputs.name != 'nightly' }}
@@ -114,6 +118,7 @@ jobs:
   deploy-server:
     needs: build-server
     # due to the build_server "if" hack, this "if" is also required to trigger this job
+    # TODO: Remove "if" when we discontinue embedding front-end in the server
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit

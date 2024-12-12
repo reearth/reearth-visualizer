@@ -48,7 +48,7 @@ jobs:
       - name: Get options
         id: options
         env:
-          TAG: ${{ inputs.new_tag_short && inputs.new_tag_short != '' && inputs.new_tag_short || '' }}
+          TAG: ${{ inputs.new_tag_short }}
           NAME: ${{ inputs.name }}
           SHA: ${{ inputs.sha_short }}
         run: |
@@ -66,9 +66,10 @@ jobs:
             VERSION=$SHA
             TAGS=$IMAGE_NAME:$NAME
           fi
-          echo "::set-output name=platforms::$PLATFORMS"
-          echo "::set-output name=version::$VERSION"
-          echo "::set-output name=tags::$TAGS"
+          echo "platforms=$PLATFORMS" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+      # TODO: Remove this step when we discontinue embedding front-end in the server
       - name: Fetch reearth-web release
         uses: dsaltares/fetch-gh-release-asset@master
         with:
@@ -76,6 +77,7 @@ jobs:
           file: reearth-web_${{ inputs.name || inputs.new_tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
+      # TODO: Remove this step when we discontinue embedding front-end in the server
       - name: Extract reearth/web
         run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
       - name: Build and push docker image
