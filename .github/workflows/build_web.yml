@@ -106,7 +106,7 @@ jobs:
       IMAGE_NAME: reearth/reearth-visualizer
     defaults:
       run:
-        working-directory: web
+        working-directory: server
     steps:
       - name: Checkout
         uses: actions/checkout@v3
