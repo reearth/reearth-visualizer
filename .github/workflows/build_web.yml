@@ -60,7 +60,7 @@ jobs:
   release-nightly:
     runs-on: ubuntu-latest
     needs: [build-web]
-    if: ${{ inputs.name != 'blank' }}
+    if: ${{ inputs.name != '' }}
     env:
       ARTIFACT: reearth-web_${{ inputs.name }}.tar.gz
     steps:
@@ -90,7 +90,7 @@ jobs:
   build-docker-image-old:
     runs-on: ubuntu-latest
     needs: [release-nightly]
-    if: ${{ inputs.name != 'blank' || inputs.new_tag != 'blank' }}
+    if: ${{ inputs.name != '' || inputs.new_tag != '' }}
     env:
       IMAGE_NAME: reearth/reearth-visualizer
     defaults:
@@ -111,7 +111,7 @@ jobs:
       - name: Get options
         id: options
         env:
-          TAG: ${{ inputs.new_tag_short && inputs.new_tag_short != 'blank' && inputs.new_tag_short || '' }}
+          TAG: ${{ inputs.new_tag_short && inputs.new_tag_short != '' && inputs.new_tag_short || '' }}
           NAME: ${{ inputs.name }}
           SHA: ${{ inputs.sha_short }}
         run: |
@@ -136,8 +136,8 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: reearth/reearth
-          version: tags/${{ inputs.name && inputs.name != 'blank' && inputs.name || inputs.new_tag }}
-          file: reearth-web_${{ inputs.name && inputs.name != 'blank' && inputs.name || inputs.new_tag }}.tar.gz
+          version: tags/${{ inputs.name && inputs.name != '' && inputs.name || inputs.new_tag }}
+          file: reearth-web_${{ inputs.name && inputs.name != '' && inputs.name || inputs.new_tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
       - name: Extract reearth/web
@@ -157,7 +157,7 @@ jobs:
     name: Build and push Docker image
     runs-on: ubuntu-latest
     needs: [release-nightly]
-    if: ${{ inputs.name != 'blank' || inputs.new_tag != 'blank' }}
+    if: ${{ inputs.name != '' || inputs.new_tag != '' }}
     env:
       IMAGE_NAME: reearth/reearth-visualizer-web
     defaults:
@@ -178,7 +178,7 @@ jobs:
       - name: Get options
         id: options
         env:
-          TAG: ${{ inputs.new_tag_short && inputs.new_tag_short != 'blank' && inputs.new_tag_short || '' }}
+          TAG: ${{ inputs.new_tag_short && inputs.new_tag_short != '' && inputs.new_tag_short || '' }}
           NAME: ${{ inputs.name }}
           SHA: ${{ inputs.sha_short }}
         run: |
@@ -213,7 +213,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ inputs.new_tag != 'blank' }}
+    if: ${{ inputs.new_tag != '' }}
     env:
       ARTIFACT: reearth-web_${{ inputs.new_tag }}.tar.gz
     steps:

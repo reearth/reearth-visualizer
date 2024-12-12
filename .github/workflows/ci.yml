@@ -73,9 +73,7 @@ jobs:
     secrets: inherit
 
   build-server:
-    needs:
-      - build-prepare
-      - ci-server
+    needs: [ci-server, build-prepare]
     uses: ./.github/workflows/build_server.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}

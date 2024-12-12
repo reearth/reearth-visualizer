@@ -4,30 +4,25 @@ on:
     inputs:
       sha_short:
         type: string
-        description: "sha_short"
         required: true
       new_tag:
         type: string
-        description: "new_tag"
         required: true
       new_tag_short:
         type: string
-        description: "new_tag_short"
         required: true
       name:
         type: string
-        description: "name"
         required: true
       sha:
         type: string
-        description: "sha"
         required: true
 
 jobs:
   build-server:
     name: Build and release server
     runs-on: ubuntu-latest
-    if: github.event.inputs.name || github.event.inputs.new_tag
+    if: inputs.name || inputs.new_tag
     env:
       ARTIFACTS: server/dist/reearth_*.*
     steps:
@@ -44,47 +39,47 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist ${{ github.event.inputs.new_tag == 'blank' && '--snapshot' || '' }}
+          args: release --rm-dist ${{ inputs.new_tag == 'blank' && '--snapshot' || '' }}
           workdir: server
         env:
-          GORELEASER_CURRENT_TAG: ${{ github.event.inputs.new_tag == 'blank' && '0.0.0' || github.event.inputs.new_tag }}
+          GORELEASER_CURRENT_TAG: ${{ inputs.new_tag == 'blank' && '0.0.0' || inputs.new_tag }}
       - name: Rename artifacts
-        if: ${{ github.event.inputs.name != 'blank' }}
-        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ github.event.inputs.name }}/'); done
+        if: ${{ inputs.name != 'blank' }}
+        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ inputs.name }}/'); done
       - name: List artifacts
         run: ls -l server/dist
       - name: Release nightly/rc
-        if: ${{ github.event.inputs.name != 'blank' }}
+        if: ${{ inputs.name != 'blank' }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }}
-          commit: ${{ github.event.inputs.sha }}
-          name: ${{ github.event.inputs.name }}
-          tag: ${{ github.event.inputs.name }}
-          body: ${{ github.event.inputs.sha_short }}
+          commit: ${{ inputs.sha }}
+          name: ${{ inputs.name }}
+          tag: ${{ inputs.name }}
+          body: ${{ inputs.sha_short }}
           prerelease: true
       - name: Download latest changelog
-        if: ${{ github.event.inputs.new_tag != 'blank' }}
+        if: ${{ inputs.new_tag != 'blank' }}
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
-          name: changelog-${{ github.event.inputs.new_tag }}
+          name: changelog-${{ inputs.new_tag }}
       - name: Create GitHub release
-        if: ${{ github.event.inputs.new_tag != 'blank' }}
+        if: ${{ inputs.new_tag != 'blank' }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }}
-          commit: ${{ github.event.inputs.sha }}
-          name: ${{ github.event.inputs.new_tag }}
-          tag: ${{ github.event.inputs.new_tag}}
+          commit: ${{ inputs.sha }}
+          name: ${{ inputs.new_tag }}
+          tag: ${{ inputs.new_tag}}
           bodyFile: CHANGELOG_latest.md
 
   build-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.name != 'blank' || github.event.inputs.new_tag != 'blank' }}
+    if: ${{ inputs.name != 'blank' || inputs.new_tag != 'blank' }}
     env:
       IMAGE_NAME: reearth/reearth-visualizer-api
     defaults:
@@ -110,9 +105,9 @@ jobs:
       - name: Get options
         id: options
         env:
-          TAG: ${{ github.event.inputs.new_tag_short && github.event.inputs.new_tag_short != 'blank' && github.event.inputs.new_tag_short || '' }}
-          NAME: ${{ github.event.inputs.name }}
-          SHA: ${{ github.event.inputs.sha_short }}
+          TAG: ${{ inputs.new_tag_short && inputs.new_tag_short != 'blank' && inputs.new_tag_short || '' }}
+          NAME: ${{ inputs.name }}
+          SHA: ${{ inputs.sha_short }}
         run: |
           if [[ -n $TAG ]]; then
             PLATFORMS=linux/amd64,linux/arm64
@@ -135,8 +130,8 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: reearth/reearth
-          version: tags/${{ github.event.inputs.name && github.event.inputs.name != 'blank' && github.event.inputs.name || github.event.inputs.new_tag }}
-          file: reearth-web_${{ github.event.inputs.name && github.event.inputs.name != 'blank' && github.event.inputs.name || github.event.inputs.new_tag }}.tar.gz
+          version: tags/${{ inputs.name && inputs.name != 'blank' && inputs.name || inputs.new_tag }}
+          file: reearth-web_${{ inputs.name && inputs.name != 'blank' && inputs.name || inputs.new_tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
       - name: Extract reearth/web
