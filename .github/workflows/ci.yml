@@ -20,7 +20,6 @@ jobs:
         with:
           files: |
             web
-            # .github/workflows/ci.yml # TODO
             .github/workflows/ci_web.yml
             .github/workflows/build_web.yml
             .github/workflows/deploy_web_nightly.yml
@@ -76,13 +75,16 @@ jobs:
   build-web-post:
     # needs build-web, but also this job should be triggered even if it was skipped
     needs: [build-prepare, build-web]
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "OK"
 
   build-server:
-    needs: [ci-server, build-prepare, build-web-post] # build_server still requires web artifacts
+    # required to trigger even if build-web is skipped
+    needs: [ci-server, build-prepare, build-web-post]
+    if: ${{ !cancelled() && !failure() }}
+    #
     uses: ./.github/workflows/build_server.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}
