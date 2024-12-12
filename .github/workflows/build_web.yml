@@ -85,12 +85,6 @@ jobs:
           tag: ${{ inputs.name }}
           body: ${{ inputs.sha }}
           prerelease: true
-      - name: Invoke ci-deploy-web-nightly workflow
-        uses: benc-uk/workflow-dispatch@v1
-        if: inputs.name == 'nightly'
-        with:
-          workflow: deploy-web-nightly
-          token: ${{ steps.app-token.outputs.token }}
 
   # TODO: Remove later after migrating to Cloud Run
   build-docker-image-old:
