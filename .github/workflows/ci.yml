@@ -84,7 +84,7 @@ jobs:
     secrets: inherit
 
   build-release:
-    needs: [build-prepare, build-server]
+    needs: [ci-server, build-prepare]
     uses: ./.github/workflows/build_release.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}
