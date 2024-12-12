@@ -1,7 +1,7 @@
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
@@ -12,26 +12,52 @@ import { validateFileTitle } from "./utils";
 
 export default () => {
   const [searchParams] = useSearchParams();
+  const sharedPluginUrl = searchParams.get("plugin");
+
   const decodePluginURL = useCallback((encoded: string) => {
     const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
-
     // Decompress and parse
     const decompressed = LZString.decompressFromBase64(base64);
 
     return JSON.parse(decompressed);
   }, []);
 
-  const sharedPluginUrl = searchParams.get("plugin");
-
   const sharedPlugin = sharedPluginUrl
     ? decodePluginURL(sharedPluginUrl)
     : null;
+
+  const locallyStoredSharedPlugins = localStorage.getItem("SHARED_PLUGINS");
+  const [sharedPlugins, setSharedPlugins] = useState<PluginType[]>(
+    JSON.parse(locallyStoredSharedPlugins ?? "[]")
+  );
+
+  useEffect(() => {
+    if (sharedPlugin) {
+      setSharedPlugins((prevSharedPlugins) => {
+        const doesSharedPluginExist = prevSharedPlugins.some(
+          (element) => element.id === sharedPlugin.id
+        );
+        const tempSharedPlugins = doesSharedPluginExist
+          ? prevSharedPlugins
+          : [...prevSharedPlugins, sharedPlugin];
+        localStorage.setItem(
+          "SHARED_PLUGINS",
+          JSON.stringify(tempSharedPlugins)
+        );
+        return tempSharedPlugins;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
     .flat();
 
   const [plugins, setPlugins] = useState<PluginType[]>(
-    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
+    locallyStoredSharedPlugins
+      ? [...JSON.parse(locallyStoredSharedPlugins), ...presetPluginsArray]
+      : presetPluginsArray
   );
 
   const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
@@ -220,32 +246,41 @@ export default () => {
     }
   }, [selectedPlugin, setNotification]);
 
-  const encodeAndSharePlugin = useCallback((): string | undefined => {
-    // First compress the code
+  const encodeAndSharePlugin = useCallback(
+    (pluginId: string): string | undefined => {
+      selectPlugin(pluginId);
+      // Need to do a find here as the selectedPlugin does not get updated immediately
+      const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
 
-    try {
-      const compressed = LZString.compressToBase64(
-        JSON.stringify(selectedPlugin)
-      )
-        .replace(/\+/g, "-") // Convert + to -
-        .replace(/\//g, "_") // Convert / to _
-        .replace(/=/g, ""); // Remove padding =
+      // Note: We can't use the same id for a shared plugin
+      const selectedPluginCopy = { ...sharedPlugin, id: uuidv4() };
 
-      const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
-      navigator.clipboard.writeText(shareUrl);
+      // First compress the code
+      try {
+        const compressed = LZString.compressToBase64(
+          JSON.stringify(selectedPluginCopy)
+        )
+          .replace(/\+/g, "-") // Convert + to -
+          .replace(/\//g, "_") // Convert / to _
+          .replace(/=/g, ""); // Remove padding =
 
-      setNotification({
-        type: "success",
-        text: "Plugin link copied to clipboard"
-      });
-      return compressed;
-    } catch (error) {
-      if (error instanceof Error) {
-        setNotification({ type: "error", text: error.message });
+        const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
+        navigator.clipboard.writeText(shareUrl);
+
+        setNotification({
+          type: "success",
+          text: "Plugin link copied to clipboard"
+        });
+        return compressed;
+      } catch (error) {
+        if (error instanceof Error) {
+          setNotification({ type: "error", text: error.message });
+        }
+        return;
       }
-      return;
-    }
-  }, [selectedPlugin, setNotification]);
+    },
+    [plugins, selectPlugin, setNotification]
+  );
 
   return {
     encodeAndSharePlugin,
@@ -259,6 +294,7 @@ export default () => {
     updateFileSourceCode,
     deleteFile,
     handleFileUpload,
-    handlePluginDownload
+    handlePluginDownload,
+    sharedPlugins
   };
 };
