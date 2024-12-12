@@ -7,6 +7,7 @@
     "cesiumIonAccessToken": ${REEARTH_CESIUM_ION_ACCESS_TOKEN},
     "cloudApi": ${REEARTH_CLOUD_API},
     "currentTos": ${REEARTH_CURRENT_TOS},
+    "disableWorkspaceManagement": ${REEARTH_DISABLE_WORKSPACE_MANAGEMENT},
     "developerMode": ${REEARTH_DEVELOPER_MODE},
     "documentationUrl": ${REEARTH_DOCUMENTATION_URL},
     "earlyAccessAdmins": ${REEARTH_EARLY_ACCESS_ADMINS},
