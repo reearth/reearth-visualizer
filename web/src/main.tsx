@@ -8,6 +8,7 @@ import App from "./app";
 import { initialize as initializeSentry } from "./sentry";
 import loadConfig from "./services/config";
 import wdyr from "./wdyr";
+import "@reearth-widget-ui/styles/globals.css";
 
 window.React = React;
 window.ReactDOM = ReactDOM;

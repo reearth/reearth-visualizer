@@ -2,7 +2,6 @@ import PublishedPage from "@reearth/beta/pages/PublishedPage";
 
 import { PublishedProvider as I18nProvider } from "./services/i18n";
 import { PublishedAppProvider as ThemeProvider } from "./services/theme";
-import "@reearth-widget-ui/styles/globals.css";
 
 export default function App() {
   return (
