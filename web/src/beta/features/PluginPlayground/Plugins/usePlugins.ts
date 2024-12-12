@@ -12,6 +12,8 @@ import { validateFileTitle } from "./utils";
 
 export default () => {
   const [searchParams] = useSearchParams();
+  const [, setNotification] = useNotification();
+
   const sharedPluginUrl = searchParams.get("plugin");
 
   const decodePluginURL = useCallback((encoded: string) => {
@@ -23,7 +25,14 @@ export default () => {
   }, []);
 
   const sharedPlugin = sharedPluginUrl
-    ? decodePluginURL(sharedPluginUrl)
+    ? (() => {
+        try {
+          return decodePluginURL(sharedPluginUrl);
+        } catch (_error) {
+          setNotification({ type: "error", text: "Invalid shared plugin URL" });
+          return null;
+        }
+      })()
     : null;
 
   const locallyStoredSharedPlugins = localStorage.getItem("SHARED_PLUGINS");
@@ -47,8 +56,7 @@ export default () => {
         return tempSharedPlugins;
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sharedPlugin]);
 
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
@@ -64,7 +72,6 @@ export default () => {
   const [selectedFileId, setSelectedFileId] = useState<string>(
     plugins[0]?.files[0]?.id ?? ""
   );
-  const [, setNotification] = useNotification();
 
   const selectedPlugin = useMemo(
     () =>
