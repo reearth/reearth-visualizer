@@ -51,9 +51,69 @@ const getYmlJson = (file: FileType) => {
 export default ({ files }: Props) => {
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
+  const [fileOutputs, setFileOutputs] = useState<
+    {
+      title: string;
+      output: string;
+    }[]
+  >();
 
   const executeCode = useCallback(() => {
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
+
+    const jsFiles = files.filter((file) => file.title.endsWith(".js"));
+
+    const outputs = jsFiles.map((file) => {
+      try {
+        const fn = new Function(
+          `"use strict";
+          const reearth = {
+            ui: {
+              show: function () {}
+            },
+            popup: {
+              show: function () {}
+            },
+            modal: {
+              show: function () {}
+            }
+          };
+        
+          let capturedConsole = [];
+        
+          console.log = (message) => {
+            capturedConsole.push(message);
+          };
+        
+          console.error = (message) => {
+            capturedConsole.push(message);
+          };
+        
+          ${file.sourceCode};
+          
+          return capturedConsole.join("\\n");
+          `
+        );
+
+        return {
+          title: file.title,
+          output: fn()
+        };
+      } catch (error) {
+        if (error instanceof Error) {
+          return {
+            title: file.title,
+            output: error.message
+          };
+        }
+        return {
+          title: file.title,
+          output: "Failed to execute"
+        };
+      }
+    });
+
+    setFileOutputs(outputs);
 
     if (!ymlFile) return;
 
@@ -66,16 +126,12 @@ export default ({ files }: Props) => {
 
     const ymlJson = getYmlResult.data;
 
-    if (!Array.isArray(ymlJson.extensions) || ymlJson.extensions.length === 0) {
-      setNotification({
-        type: "error",
-        text: "No extensions found in YAML file."
-      });
-      return;
-    }
+    if (!ymlJson.extensions) return;
 
     const widgets = ymlJson.extensions.reduce<NonNullable<Widgets>>(
       (prv, cur) => {
+        if (cur.type !== "widget") return prv;
+
         const file = files.find((file) => file.title === `${cur.id}.js`);
 
         if (!file) {
@@ -126,6 +182,7 @@ export default ({ files }: Props) => {
 
   return {
     executeCode,
-    widgets
+    widgets,
+    fileOutputs
   };
 };

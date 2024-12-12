@@ -1,4 +1,3 @@
-import { merge } from "@reearth/beta/utils/object";
 import { LazyLayer, MapRef } from "@reearth/core";
 
 import { REEATH_PLUGIN_API_VERSION } from "./constaint";
@@ -10,6 +9,12 @@ export type CommonReearth = Omit<
 > & {
   extension: Pick<Reearth["extension"], "list">;
 };
+
+declare global {
+  interface Window {
+    reearth?: CommonReearth;
+  }
+}
 
 export function commonReearth({
   engineName,
@@ -86,12 +91,7 @@ export function commonReearth({
   sketchEventsOn,
   sketchEventsOff,
   // extension
-  getExtensionList,
-  // deprecated
-  deprecated,
-  cameraDeprecated,
-  layersDeprecated,
-  sketchDeprecated
+  getExtensionList
 }: {
   engineName: GlobalThis["reearth"]["engine"]["name"];
   // viewer
@@ -168,13 +168,8 @@ export function commonReearth({
   sketchEventsOff: GlobalThis["reearth"]["sketch"]["off"];
   // extension
   getExtensionList: () => GlobalThis["reearth"]["extension"]["list"];
-  // deprecated
-  deprecated: object;
-  cameraDeprecated: object;
-  layersDeprecated: object;
-  sketchDeprecated: object;
 }): CommonReearth {
-  return merge(deprecated, {
+  return {
     version: __APP_VERSION__ || "",
     apiVersion: REEATH_PLUGIN_API_VERSION,
     engine: {
@@ -216,7 +211,7 @@ export function commonReearth({
       on: viewerEventsOn,
       off: viewerEventsOff
     },
-    camera: merge(cameraDeprecated, {
+    camera: {
       get position() {
         return getCameraPosition();
       },
@@ -245,13 +240,12 @@ export function commonReearth({
       moveOverTerrain,
       enableForceHorizontalRoll,
       on: cameraEventsOn,
-      off: cameraEventsOff,
-      cameraDeprecated
-    }),
+      off: cameraEventsOff
+    },
     get timeline() {
       return getTimeline();
     },
-    layers: merge(layersDeprecated, {
+    layers: {
       get layers() {
         return getLayers()?.layers() ?? [];
       },
@@ -324,8 +318,8 @@ export function commonReearth({
       },
       on: layersEventsOn,
       off: layersEventsOff
-    }),
-    sketch: merge(sketchDeprecated, {
+    },
+    sketch: {
       get tool() {
         return getSketchTool();
       },
@@ -340,11 +334,11 @@ export function commonReearth({
       },
       on: sketchEventsOn,
       off: sketchEventsOff
-    }),
+    },
     extension: {
       get list() {
         return getExtensionList();
       }
     }
-  });
+  };
 }

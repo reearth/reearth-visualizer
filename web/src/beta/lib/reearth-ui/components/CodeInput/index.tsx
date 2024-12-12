@@ -11,6 +11,7 @@ export type CodeInputProps = {
   height?: number;
   onChange?: (val: string | undefined) => void;
   onBlur?: (val: string | undefined) => void;
+  onMount?: OnMount;
 };
 
 export const CodeInput: FC<CodeInputProps> = ({
@@ -20,7 +21,8 @@ export const CodeInput: FC<CodeInputProps> = ({
   disabled,
   height,
   onChange,
-  onBlur
+  onBlur,
+  onMount
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -62,6 +64,7 @@ export const CodeInput: FC<CodeInputProps> = ({
         "editor.background": theme.bg[1]
       }
     });
+
     monaco.editor.setTheme("myCustomTheme");
     editor.getAction("editor.action.formatDocument").run();
 
@@ -73,6 +76,8 @@ export const CodeInput: FC<CodeInputProps> = ({
     editor.onDidFocusEditorWidget(() => {
       setIsActive(true);
     });
+
+    onMount?.(editor, monaco);
   };
 
   const handleChange = useCallback(

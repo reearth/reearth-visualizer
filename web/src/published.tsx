@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import App from "./publishedapp";
 import loadConfig from "./services/config";
 import "./wdyr";
+import "@reearth-widget-ui/styles/globals.css";
 
 window.React = React;
 window.ReactDOM = ReactDOM;

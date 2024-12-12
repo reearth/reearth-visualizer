@@ -1,7 +1,9 @@
 import {
+  type ParsedDateTime,
   getLocalTimezoneOffset,
   isValidDateTimeFormat,
   isValidTimezone,
+  parseDateTime,
   TimeZoneOffset
 } from "@reearth/beta/utils/time";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -42,8 +44,9 @@ export default ({ value, onChange, onClose }: Props) => {
 
   useEffect(() => {
     if (value && isValidDateTimeFormat(value)) {
-      const [parsedDate, timeWithOffset] = value.split("T");
-      const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
+      //Since isValidDateTimeFormat already validates the input, it's safe to assert the type as ParsedDateTime.
+      const { parsedDate, timeWithOffset, parsedTime, timezoneOffset } =
+        parseDateTime(value) as ParsedDateTime;
 
       setDate(parsedDate);
       setTime(parsedTime);

@@ -6,12 +6,12 @@ import useCode from "./Code/hook";
 import Console from "./Console";
 import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
-import usePlugins from "./Plugins/hook";
+import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
 
 export default () => {
   const {
-    plugins,
+    presetPlugins,
     selectPlugin,
     selectedPlugin,
     selectedFile,
@@ -21,10 +21,12 @@ export default () => {
     updateFileSourceCode,
     deleteFile,
     handleFileUpload,
-    handlePluginDownload
+    handlePluginDownload,
+    encodeAndSharePlugin,
+    sharedPlugins
   } = usePlugins();
 
-  const { widgets, executeCode } = useCode({
+  const { widgets, executeCode, fileOutputs } = useCode({
     files: selectedPlugin.files
   });
 
@@ -46,10 +48,10 @@ export default () => {
       {
         id: "console",
         name: "Console",
-        children: <Console />
+        children: <Console fileOutputs={fileOutputs} />
       }
     ],
-    []
+    [fileOutputs]
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -59,7 +61,8 @@ export default () => {
         name: "Plugins",
         children: (
           <Plugins
-            plugins={plugins}
+            encodeAndSharePlugin={encodeAndSharePlugin}
+            presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
             selectPlugin={selectPlugin}
             selectedFile={selectedFile}
@@ -68,12 +71,14 @@ export default () => {
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
             handleFileUpload={handleFileUpload}
+            sharedPlugins={sharedPlugins}
           />
         )
       }
     ],
     [
-      plugins,
+      encodeAndSharePlugin,
+      presetPlugins,
       selectedPlugin,
       selectPlugin,
       selectedFile,
@@ -81,7 +86,8 @@ export default () => {
       addFile,
       updateFileTitle,
       deleteFile,
-      handleFileUpload
+      handleFileUpload,
+      sharedPlugins
     ]
   );
 
@@ -89,7 +95,7 @@ export default () => {
     () => [
       {
         id: "code",
-        name: "code",
+        name: "Code",
         children: (
           <Code
             fileTitle={selectedFile.title}

@@ -1,86 +1,28 @@
 name: build-server
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       sha_short:
-        description: 'sha_short'
+        type: string
         required: true
       new_tag:
-        description: 'new_tag'
+        type: string
         required: true
       new_tag_short:
-        description: 'new_tag_short'
+        type: string
         required: true
       name:
-        description: 'name'
+        type: string
         required: true
       sha:
-        description: "sha"
+        type: string
         required: true
-  repository_dispatch:
-      types: [build-server]
-jobs:
-  build-server:
-    name: Build and release server
-    runs-on: ubuntu-latest
-    if: github.event.inputs.name || github.event.inputs.new_tag
-    env:
-      ARTIFACTS: server/dist/reearth_*.*
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v4
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --rm-dist ${{ github.event.inputs.new_tag == 'blank' && '--snapshot' || '' }}
-          workdir: server
-        env:
-          GORELEASER_CURRENT_TAG: ${{ github.event.inputs.new_tag == 'blank' && '0.0.0' || github.event.inputs.new_tag }}
-      - name: Rename artifacts
-        if: ${{ github.event.inputs.name != 'blank' }}
-        run: for f in $ARTIFACTS; do mv $f $(echo $f | sed -E 's/_0\.0\.0-SNAPSHOT-[^_]*/_${{ github.event.inputs.name }}/'); done
-      - name: List artifacts
-        run: ls -l server/dist
-      - name: Release nightly/rc
-        if: ${{ github.event.inputs.name != 'blank' }}
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: ${{ env.ARTIFACTS }}
-          commit: ${{ github.event.inputs.sha }}
-          name: ${{ github.event.inputs.name }}
-          tag: ${{ github.event.inputs.name }}
-          body: ${{ github.event.inputs.sha_short }}
-          prerelease: true
-      - name: Download latest changelog
-        if: ${{ github.event.inputs.new_tag != 'blank' }}
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: release.yml
-          name: changelog-${{ github.event.inputs.new_tag }}
-      - name: Create GitHub release
-        if: ${{ github.event.inputs.new_tag != 'blank' }}
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: ${{ env.ARTIFACTS }}
-          commit: ${{ github.event.inputs.sha }}
-          name: ${{ github.event.inputs.new_tag }}
-          tag: ${{ github.event.inputs.new_tag}}
-          bodyFile: CHANGELOG_latest.md
 
+jobs:
   build-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.name != 'blank' || github.event.inputs.new_tag != 'blank' }}
+    if: ${{ inputs.name != '' || inputs.new_tag != '' }}
     env:
       IMAGE_NAME: reearth/reearth-visualizer-api
     defaults:
@@ -106,9 +48,9 @@ jobs:
       - name: Get options
         id: options
         env:
-          TAG: ${{ github.event.inputs.new_tag_short && github.event.inputs.new_tag_short != 'blank' && github.event.inputs.new_tag_short || '' }}
-          NAME: ${{ github.event.inputs.name }}
-          SHA: ${{ github.event.inputs.sha_short }}
+          TAG: ${{ inputs.new_tag_short }}
+          NAME: ${{ inputs.name }}
+          SHA: ${{ inputs.sha_short }}
         run: |
           if [[ -n $TAG ]]; then
             PLATFORMS=linux/amd64,linux/arm64
@@ -124,17 +66,18 @@ jobs:
             VERSION=$SHA
             TAGS=$IMAGE_NAME:$NAME
           fi
-          echo "::set-output name=platforms::$PLATFORMS"
-          echo "::set-output name=version::$VERSION"
-          echo "::set-output name=tags::$TAGS"
+          echo "platforms=$PLATFORMS" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+      # TODO: Remove this step when we discontinue embedding front-end in the server
       - name: Fetch reearth-web release
         uses: dsaltares/fetch-gh-release-asset@master
         with:
-          repo: reearth/reearth
-          version: tags/${{ github.event.inputs.name && github.event.inputs.name != 'blank' && github.event.inputs.name || github.event.inputs.new_tag }}
-          file: reearth-web_${{ github.event.inputs.name && github.event.inputs.name != 'blank' && github.event.inputs.name || github.event.inputs.new_tag }}.tar.gz
+          version: tags/${{ inputs.name || inputs.new_tag }}
+          file: reearth-web_${{ inputs.name || inputs.new_tag }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
+      # TODO: Remove this step when we discontinue embedding front-end in the server
       - name: Extract reearth/web
         run: tar -xvf reearth-web.tar.gz; mv reearth-web web; ls
       - name: Build and push docker image
@@ -147,9 +90,3 @@ jobs:
           tags: ${{ steps.options.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Invoke ci-deploy-server-nightly workflow
-        uses: benc-uk/workflow-dispatch@v1
-        if: github.event.inputs.name == 'nightly'
-        with:
-          workflow: deploy-server-nightly
-          token: ${{ steps.app-token.outputs.token }}

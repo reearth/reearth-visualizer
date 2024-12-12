@@ -85,20 +85,11 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 
 	filter := bson.M{
 		"team": id.String(),
-		"$and": []bson.M{
-			{
-				"$or": []bson.M{
-					{"deleted": false},
-					{"deleted": bson.M{"$exists": false}},
-				},
-			},
-			{
-				"$or": []bson.M{
-					{"coresupport": true},
-					{"coresupport": bson.M{"$exists": false}},
-				},
-			},
+		"$or": []bson.M{
+			{"deleted": false},
+			{"deleted": bson.M{"$exists": false}},
 		},
+		"coresupport": true,
 	}
 
 	if uFilter.Keyword != nil {
@@ -124,20 +115,11 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	filter := bson.M{
 		"team":    id.String(),
 		"starred": true,
-		"$and": []bson.M{
-			{
-				"$or": []bson.M{
-					{"deleted": false},
-					{"deleted": bson.M{"$exists": false}},
-				},
-			},
-			{
-				"$or": []bson.M{
-					{"coresupport": true},
-					{"coresupport": bson.M{"$exists": false}},
-				},
-			},
+		"$or": []bson.M{
+			{"deleted": false},
+			{"deleted": bson.M{"$exists": false}},
 		},
+		"coresupport": true,
 	}
 
 	return r.find(ctx, filter)
@@ -251,7 +233,7 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 	findOptions := options.Find().SetCollation(&collation)
 
 	c := mongodoc.NewProjectConsumer(r.f.Readable)
-	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c, findOptions)
+	pageInfo, err := r.client.PaginateProject(ctx, filter, usort, pagination, c, findOptions)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
