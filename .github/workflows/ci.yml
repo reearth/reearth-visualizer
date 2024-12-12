@@ -31,7 +31,6 @@ jobs:
         with:
           files: |
             server
-            .github/workflows/ci.yml
             .github/workflows/ci_server.yml
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml
@@ -83,7 +82,7 @@ jobs:
   build-server:
     # required to trigger this job after build-web, but even if build-web is skipped
     needs: [ci-server, build-prepare, build-web-post]
-    if: ${{ !cancelled() && !failure() }}
+    if: ${{ !cancelled() }}
     #
     uses: ./.github/workflows/build_server.yml
     with:
@@ -97,7 +96,7 @@ jobs:
   # TODO: build_release workflow is broken
   # build-release:
   #   needs: [ci-server, build-prepare, build-web-post]
-  #   if: ${{ !cancelled() && !failure() }}
+  #   if: ${{ !cancelled() && needs.build-prepare.outputs.release == 'true' }}
   #   uses: ./.github/workflows/build_release.yml
   #   with:
   #     sha_short: ${{ needs.build-prepare.outputs.sha_short }}
@@ -114,7 +113,7 @@ jobs:
 
   deploy-server:
     needs: build-server
-    # due to the build_server if hack, this if is also required to trigger this job
-    if: ${{ !cancelled() && !failure() }}
+    # due to the build_server "if" hack, this "if" is also required to trigger this job
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
