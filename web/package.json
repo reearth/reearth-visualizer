@@ -156,6 +156,7 @@
     "localforage": "1.10.0",
     "lodash-es": "4.17.21",
     "lucide-react": "0.462.0",
+    "lz-string": "^1.5.0",
     "quickjs-emscripten": "0.24.0",
     "quickjs-emscripten-sync": "1.5.2",
     "rc-slider": "9.7.5",
