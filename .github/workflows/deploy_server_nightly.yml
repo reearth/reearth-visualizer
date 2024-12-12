@@ -1,6 +1,7 @@
 name: deploy-server-nightly
 on:
   workflow_dispatch:
+  workflow_call:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true

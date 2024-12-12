@@ -3,20 +3,16 @@ on:
   workflow_dispatch:
     inputs:
       sha_short:
-        description: 'sha_short'
         required: true
       new_tag:
-        description: 'new_tag'
         required: true
       new_tag_short:
-        description: 'new_tag_short'
         required: true
       name:
-        description: 'name'
         required: true
       sha:
-        description: "sha"
         required: true
+
 jobs:
   server:
     name: Build and push server Docker image
@@ -68,8 +64,8 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: reearth/reearth
-          version: tags/${{ github.event.inputs.name || needs.info.outputs.tag }}
-          file: reearth-web_${{ github.event.inputs.name || needs.info.outputs.tag }}.tar.gz
+          version: tags/${{ inputs.name }}
+          file: reearth-web_${{ inputs.name }}.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           target: server/reearth-web.tar.gz
       - name: Extract reearth/web
@@ -89,7 +85,7 @@ jobs:
   web:
     name: Build and push web Docker image
     runs-on: ubuntu-latest
-    if: github.event.inputs.name || github.event.inputs.new_tag
+    if: inputs.name || inputs.new_tag
     env:
       IMAGE_NAME: reearth/reearth-visualizer-web
     defaults:
@@ -107,7 +103,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Get options
         id: options
         env:

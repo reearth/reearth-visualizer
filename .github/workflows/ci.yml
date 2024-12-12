@@ -36,98 +36,61 @@ jobs:
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml
             CHANGELOG.md
+
   ci-web:
     needs: prepare
     if: needs.prepare.outputs.web == 'true'
     uses: ./.github/workflows/ci_web.yml
+
   ci-server:
     needs: prepare
     if: needs.prepare.outputs.server == 'true'
     uses: ./.github/workflows/ci_server.yml
+
   ci:
     runs-on: ubuntu-latest
     needs:
       - ci-web
       - ci-server
-    if: '!failure()'
+    if: !failure()
     steps:
       - run: echo OK
-  ci-collect-info:
-    name: Collect information
-    needs: ci
-    if: '!failure()'
-    runs-on: ubuntu-latest
-    outputs:
-      sha_short: ${{ steps.info.outputs.sha_short || 'blank' }}
-      new_tag: ${{ steps.info.outputs.new_tag || 'blank' }}
-      new_tag_short: ${{ steps.info.outputs.new_tag_short || 'blank' }}
-      name: ${{ steps.info.outputs.name || 'blank' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: Fetch tags
-        run: git fetch --prune --unshallow --tags
-      - name: Get info
-        id: info
-        # The tag name should be retrieved lazily, as tagging may be delayed.
-        env:
-          BRANCH: ${{github.ref_name}}
-        run: |
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          echo "BRANCH=$BRANCH"
-          if [[ "$BRANCH" = "release" || "$BRANCH" = "release/"* ]]; then
-            TAG=$(git tag --points-at HEAD)
-            if [[ ! -z "$TAG" ]]; then
-              echo "::set-output name=new_tag::$TAG"
-              echo "::set-output name=new_tag_short::${TAG#v}"
-            else
-              echo "::set-output name=name::rc"
-            fi
-          else
-            echo "::set-output name=name::nightly"
-          fi
-      - name: Show info
-        env:
-          SHA_SHORT: ${{ steps.info.outputs.sha_short }}
-          NEW_TAG: ${{ steps.info.outputs.new_tag }}
-          NEW_TAG_SHORT: ${{ steps.info.outputs.new_tag_short }}
-          NAME: ${{ steps.info.outputs.name }}
-        run: echo "sha_short=$SHA_SHORT, new_tag=$NEW_TAG, new_tag_short=$NEW_TAG_SHORT, name=$NAME"
+
+  build-prepare:
+    needs: prepare
+    if: ${{ github.repository == 'reearth/reearth-visualizer' && github.event_name == 'push' && (github.ref_name == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
+    uses: ./.github/workflows/build_prepare.yml
+
   build-web:
-    needs: 
-      - ci
-      - ci-web
-      - ci-collect-info
-    runs-on: ubuntu-latest
-    if: ${{!failure() && needs.ci-web.result == 'success' && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
-    steps:
-      - name: Dispatch Web Build
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: build_web.yml
-          inputs: '{
-            "sha_short": "${{ needs.ci-collect-info.outputs.sha_short }}", 
-            "new_tag": "${{ needs.ci-collect-info.outputs.new_tag }}", 
-            "new_tag_short": "${{ needs.ci-collect-info.outputs.new_tag_short }}", 
-            "name": "${{ needs.ci-collect-info.outputs.name }}",
-            "sha": "${{ github.sha }}"
-            }'
+    needs: [ci-web, build-prepare]
+    uses: ./.github/workflows/build_web.yml
+    with:
+      sha_short: ${{ needs.build-prepare.outputs.sha_short }}
+      new_tag: ${{ needs.build-prepare.outputs.new_tag }}
+      new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
+      name: ${{ needs.build-prepare.outputs.name }}
+      sha: ${{ github.sha }}
+    secrets: inherit
+
   build-server:
-    needs: 
-      - ci
+    needs:
+      - build-prepare
       - ci-server
-      - ci-collect-info
-    runs-on: ubuntu-latest
-    if: ${{!failure() && needs.ci-server.result == 'success' && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
-    steps:
-      - name: Dispatch Server Build
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: build_server.yml
-          inputs: '{
-            "sha_short": "${{ needs.ci-collect-info.outputs.sha_short }}", 
-            "new_tag": "${{ needs.ci-collect-info.outputs.new_tag }}", 
-            "new_tag_short": "${{ needs.ci-collect-info.outputs.new_tag_short }}", 
-            "name": "${{ needs.ci-collect-info.outputs.name }}",
-            "sha": "${{ github.sha }}"
-            }'
+    uses: ./.github/workflows/build_server.yml
+    with:
+      sha_short: ${{ needs.build-prepare.outputs.sha_short }}
+      new_tag: ${{ needs.build-prepare.outputs.new_tag }}
+      new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
+      name: ${{ needs.build-prepare.outputs.name }}
+      sha: ${{ github.sha }}
+    secrets: inherit
+
+  deploy-web:
+    needs: build-web
+    uses: ./.github/workflows/deploy_web_nightly.yml
+    secrets: inherit
+
+  deploy-server:
+    needs: build-server
+    uses: ./.github/workflows/deploy_server_nightly.yml
+    secrets: inherit

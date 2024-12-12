@@ -1,24 +1,28 @@
 name: build-server
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       sha_short:
-        description: 'sha_short'
+        type: string
+        description: "sha_short"
         required: true
       new_tag:
-        description: 'new_tag'
+        type: string
+        description: "new_tag"
         required: true
       new_tag_short:
-        description: 'new_tag_short'
+        type: string
+        description: "new_tag_short"
         required: true
       name:
-        description: 'name'
+        type: string
+        description: "name"
         required: true
       sha:
+        type: string
         description: "sha"
         required: true
-  repository_dispatch:
-      types: [build-server]
+
 jobs:
   build-server:
     name: Build and release server
@@ -34,7 +38,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21'
+          go-version: "1.21"
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v4
         with:
