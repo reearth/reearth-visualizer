@@ -71,8 +71,16 @@ jobs:
       sha: ${{ github.sha }}
     secrets: inherit
 
+  build-web-post:
+    # needs build-web, but also this job should be triggered even if it was skipped
+    needs: [build-prepare, build-web]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "OK"
+
   build-server:
-    needs: [ci-server, build-prepare, build-web] # build_server still requires web artifacts
+    needs: [ci-server, build-prepare, build-web-post] # build_server still requires web artifacts
     uses: ./.github/workflows/build_server.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}
@@ -84,7 +92,7 @@ jobs:
 
   # TODO: build_release workflow is broken
   # build-release:
-  #   needs: [ci-server, build-prepare]
+  #   needs: [ci-server, build-prepare, build-web-post]
   #   uses: ./.github/workflows/build_release.yml
   #   with:
   #     sha_short: ${{ needs.build-prepare.outputs.sha_short }}
