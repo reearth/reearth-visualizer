@@ -3,6 +3,7 @@ on:
   push:
     branches: [main, release/*, release]
   pull_request:
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -19,7 +20,6 @@ jobs:
         with:
           files: |
             web
-            .github/workflows/ci.yml
             .github/workflows/ci_web.yml
             .github/workflows/build_web.yml
             .github/workflows/deploy_web_nightly.yml
@@ -31,7 +31,6 @@ jobs:
         with:
           files: |
             server
-            .github/workflows/ci.yml
             .github/workflows/ci_server.yml
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml
@@ -73,7 +72,7 @@ jobs:
     secrets: inherit
 
   build-server:
-    needs: [ci-server, build-prepare]
+    needs: [ci-server, build-prepare, build-web] # build_server still requires web artifacts
     uses: ./.github/workflows/build_server.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}
@@ -83,16 +82,17 @@ jobs:
       sha: ${{ github.sha }}
     secrets: inherit
 
-  build-release:
-    needs: [ci-server, build-prepare]
-    uses: ./.github/workflows/build_release.yml
-    with:
-      sha_short: ${{ needs.build-prepare.outputs.sha_short }}
-      new_tag: ${{ needs.build-prepare.outputs.new_tag }}
-      new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
-      name: ${{ needs.build-prepare.outputs.name }}
-      sha: ${{ github.sha }}
-    secrets: inherit
+  # TODO: build_release workflow is broken
+  # build-release:
+  #   needs: [ci-server, build-prepare]
+  #   uses: ./.github/workflows/build_release.yml
+  #   with:
+  #     sha_short: ${{ needs.build-prepare.outputs.sha_short }}
+  #     new_tag: ${{ needs.build-prepare.outputs.new_tag }}
+  #     new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
+  #     name: ${{ needs.build-prepare.outputs.name }}
+  #     sha: ${{ github.sha }}
+  #   secrets: inherit
 
   deploy-web:
     needs: build-web
