@@ -2,6 +2,7 @@ import { PluginType } from "../constants";
 
 import { myPlugin } from "./custom/myPlugin";
 import { responsivePanel } from "./ui/responsivePanel";
+import { sidebar } from "./ui/sidebar";
 
 type PresetPluginCategory = {
   id: string;
@@ -20,6 +21,6 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "UI",
-    plugins: [responsivePanel]
+    plugins: [responsivePanel, sidebar]
   }
 ];
