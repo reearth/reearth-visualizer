@@ -75,15 +75,21 @@ export const NumberInput: FC<NumberInputProps> = ({
 
   const handleBlur = useCallback(() => {
     let value = currentValue;
+    console.log(value);
     if (typeof value === "string") {
       value = value.replace(/^(-?)0+(?=\d)/, "$1");
       if (/^-?\d+(\.\d+)?$/.test(value)) {
         value = Number(value).toString();
       }
     }
-    setCurrentValue(value);
+    if (value === "") {
+      setCurrentValue("");
+      onBlur?.(undefined);
+    } else {
+      setCurrentValue(value);
+      onBlur?.(parseFloat(value));
+    }
     setIsFocused(false);
-    onBlur?.(parseFloat(value));
   }, [onBlur, currentValue]);
 
   const handleFocus = useCallback(() => {
