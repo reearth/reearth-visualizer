@@ -13,6 +13,7 @@ jobs:
       run:
         working-directory: web
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -20,7 +21,6 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@4.3.1 --activate
-      - uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
