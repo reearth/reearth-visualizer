@@ -47,22 +47,26 @@ export const NumberInput: FC<NumberInputProps> = ({
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
-      if (/^-?\d*\.?\d*%?$/.test(currentValue)) {
-        const numericValue = Number(currentValue);
+
+      if (/^-?\d*\.?\d*(e-?\d*)?$/.test(currentValue.toLowerCase())) {
         let validatedValue = currentValue;
 
-        if (currentValue !== "") {
+        if (currentValue !== "" && !isNaN(Number(currentValue))) {
+          const numericValue = Number(currentValue);
+
           if (min !== undefined && numericValue < min) {
             validatedValue = String(min);
           } else if (max !== undefined && numericValue > max) {
             validatedValue = String(max);
-          } else {
-            validatedValue = currentValue;
           }
         }
+
         setCurrentValue(validatedValue);
+
         onChange?.(
-          currentValue === "" ? undefined : parseFloat(validatedValue)
+          currentValue === "" || isNaN(Number(currentValue))
+            ? undefined
+            : parseFloat(validatedValue)
         );
       }
     },
