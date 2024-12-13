@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
 project_name: reearth
 before:
   hooks:
@@ -26,8 +28,8 @@ archives:
       - goos: windows
         format: zip
 changelog:
-  skip: true
+  disable: true
 release:
   disable: true
 snapshot:
-  name_template: "{{ .Tag }}-SNAPSHOT-{{ .ShortCommit }}"
+  version_template: "{{ .Tag }}-SNAPSHOT-{{ .ShortCommit }}"

@@ -6,16 +6,16 @@ set -e
 _REEARTH_HTML_FILE="/usr/share/nginx/html/index.html"
 _REEARTH_PUBLISHED_HTML_FILE="/usr/share/nginx/html/published.html"
 
-# Rewrite title tag in index.html only if REEARTH_WEB_TITLE is set
-if [ -n "$REEARTH_WEB_TITLE" ]; then
-  sed -i -e "s|<title>.*</title>|<title>${REEARTH_WEB_TITLE}</title>|g" "$_REEARTH_HTML_FILE"
-  sed -i -e "s|<title>.*</title>|<title>${REEARTH_WEB_TITLE}</title>|g" "$_REEARTH_PUBLISHED_HTML_FILE"
+# Rewrite title tag in index.html only if REEARTH_TITLE is set
+if [ -n "$REEARTH_TITLE" ]; then
+  sed -i -e "s|<title>.*</title>|<title>${REEARTH_TITLE}</title>|g" "$_REEARTH_HTML_FILE"
+  sed -i -e "s|<title>.*</title>|<title>${REEARTH_TITLE}</title>|g" "$_REEARTH_PUBLISHED_HTML_FILE"
 fi
 
-# Rewrite favicon in index.html and published.html only if REEARTH_WEB_FAVICON_URL is set
-if [ -n "$REEARTH_WEB_FAVICON_URL" ]; then
-  sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_WEB_FAVICON_URL}\" />|g" "$_REEARTH_HTML_FILE"
-  sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_WEB_FAVICON_URL}\" />|g" "$_REEARTH_PUBLISHED_HTML_FILE"
+# Rewrite favicon in index.html and published.html only if REEARTH_FAVICON_URL is set
+if [ -n "$REEARTH_FAVICON_URL" ]; then
+  sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_FAVICON_URL}\" />|g" "$_REEARTH_HTML_FILE"
+  sed -i -e "s|<link rel=\"icon\" href=\"[^\"]*\" />|<link rel=\"icon\" href=\"${REEARTH_FAVICON_URL}\" />|g" "$_REEARTH_PUBLISHED_HTML_FILE"
 fi
 
 # generate reearth_config.json
@@ -24,7 +24,7 @@ _REEARTH_CONFIG_OUTPUT_FILE="/usr/share/nginx/html/reearth_config.json"
 
 # Wrap with "" if the value doesn't start with '{[' and end with ']}' (JSON) or "null".
 wrap_reearth_variables() {
-    for var in $(env | grep '^REEARTH_WEB' | cut -d= -f1); do
+    for var in $(env | grep '^REEARTH_' | cut -d= -f1); do
         value=$(printenv "$var")
         if [ -z "$value" ]; then
             eval "export $var='\"\"'"
