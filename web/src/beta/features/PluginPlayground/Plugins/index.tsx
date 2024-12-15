@@ -18,7 +18,7 @@ type UsePluginsReturn = Pick<
   | "updateFileTitle"
   | "deleteFile"
   | "handleFileUpload"
-  | "sharedPlugins"
+  | "sharedPlugin"
 >;
 
 type Props = UsePluginsReturn;
@@ -34,7 +34,7 @@ const Plugins: FC<Props> = ({
   updateFileTitle,
   deleteFile,
   handleFileUpload,
-  sharedPlugins
+  sharedPlugin
 }) => {
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
@@ -69,23 +69,23 @@ const Plugins: FC<Props> = ({
         ))}
         <div>
           <CategoryTitle>Shared</CategoryTitle>
-          {sharedPlugins.map((plugin) => (
+          {sharedPlugin && (
             <EntryItem
-              key={plugin.id}
-              highlighted={selectedPlugin.id === plugin.id}
-              onClick={() => selectPlugin(plugin.id)}
-              title={plugin.title}
+              key={sharedPlugin.id}
+              highlighted={selectedPlugin.id === sharedPlugin.id}
+              onClick={() => selectPlugin(sharedPlugin.id)}
+              title={sharedPlugin.title}
               optionsMenu={[
                 {
                   id: "0",
                   title: "share",
                   icon: "paperPlaneTilt",
-                  onClick: () => handleShareIconClicked(plugin.id)
+                  onClick: () => handleShareIconClicked(sharedPlugin.id)
                 }
               ]}
               optionsMenuWidth={100}
             />
-          ))}
+          )}
         </div>
       </PluginList>
       <FileListWrapper>

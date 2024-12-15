@@ -23,7 +23,7 @@ export default () => {
     handleFileUpload,
     handlePluginDownload,
     encodeAndSharePlugin,
-    sharedPlugins
+    sharedPlugin
   } = usePlugins();
 
   const { widgets, executeCode, fileOutputs } = useCode({
@@ -71,7 +71,7 @@ export default () => {
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
             handleFileUpload={handleFileUpload}
-            sharedPlugins={sharedPlugins}
+            sharedPlugin={sharedPlugin}
           />
         )
       }
@@ -87,7 +87,7 @@ export default () => {
       updateFileTitle,
       deleteFile,
       handleFileUpload,
-      sharedPlugins
+      sharedPlugin
     ]
   );
 

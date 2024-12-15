@@ -1,7 +1,7 @@
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
@@ -35,37 +35,12 @@ export default () => {
       })()
     : null;
 
-  const locallyStoredSharedPlugins = localStorage.getItem("SHARED_PLUGINS");
-  const [sharedPlugins, setSharedPlugins] = useState<PluginType[]>(
-    JSON.parse(locallyStoredSharedPlugins ?? "[]")
-  );
-
-  useEffect(() => {
-    if (sharedPlugin) {
-      setSharedPlugins((prevSharedPlugins) => {
-        const doesSharedPluginExist = prevSharedPlugins.some(
-          (element) => element.id === sharedPlugin.id
-        );
-        const tempSharedPlugins = doesSharedPluginExist
-          ? prevSharedPlugins
-          : [...prevSharedPlugins, sharedPlugin];
-        localStorage.setItem(
-          "SHARED_PLUGINS",
-          JSON.stringify(tempSharedPlugins)
-        );
-        return tempSharedPlugins;
-      });
-    }
-  }, [sharedPlugin]);
-
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
     .flat();
 
   const [plugins, setPlugins] = useState<PluginType[]>(
-    locallyStoredSharedPlugins
-      ? [...JSON.parse(locallyStoredSharedPlugins), ...presetPluginsArray]
-      : presetPluginsArray
+    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
   );
 
   const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
@@ -302,6 +277,6 @@ export default () => {
     deleteFile,
     handleFileUpload,
     handlePluginDownload,
-    sharedPlugins
+    sharedPlugin
   };
 };
