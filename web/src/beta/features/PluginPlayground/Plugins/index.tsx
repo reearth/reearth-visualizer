@@ -86,6 +86,7 @@ const Plugins: FC<Props> = ({
               {customPlugin.plugins.map((plugin) => (
                 <PluginEntryItem
                   plugin={plugin}
+                  key={plugin.id}
                   selectedPluginId={selectedPlugin.id}
                   onSelect={selectPlugin}
                   onShare={handleShareIconClicked}
@@ -104,6 +105,7 @@ const Plugins: FC<Props> = ({
                 {category.plugins.map((plugin) => (
                   <PluginEntryItem
                     plugin={plugin}
+                    key={plugin.id}
                     selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
                     onShare={handleShareIconClicked}
@@ -117,6 +119,7 @@ const Plugins: FC<Props> = ({
             {sharedPlugin && (
               <PluginEntryItem
                 plugin={sharedPlugin}
+                key={sharedPlugin.id}
                 selectedPluginId={selectedPlugin.id}
                 onSelect={selectPlugin}
                 onShare={handleShareIconClicked}
