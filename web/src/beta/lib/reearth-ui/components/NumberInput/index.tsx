@@ -48,12 +48,11 @@ export const NumberInput: FC<NumberInputProps> = ({
     (e: ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
 
-      if (/^-?\d*\.?\d*(e-?\d*)?$/.test(currentValue.toLowerCase())) {
+      if (/^-?\d*\.?\d*(e[+-]?\d*)?$/.test(currentValue.toLowerCase())) {
         let validatedValue = currentValue;
 
-        if (currentValue !== "" && !isNaN(Number(currentValue))) {
-          const numericValue = Number(currentValue);
-
+        const numericValue = Number(currentValue);
+        if (currentValue !== "" && !Number.isNaN(numericValue)) {
           if (min !== undefined && numericValue < min) {
             validatedValue = String(min);
           } else if (max !== undefined && numericValue > max) {
@@ -75,7 +74,6 @@ export const NumberInput: FC<NumberInputProps> = ({
 
   const handleBlur = useCallback(() => {
     let value = currentValue;
-    console.log(value);
     if (typeof value === "string") {
       value = value.replace(/^(-?)0+(?=\d)/, "$1");
       if (/^-?\d+(\.\d+)?$/.test(value)) {
