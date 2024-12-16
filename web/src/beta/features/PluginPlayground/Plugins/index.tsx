@@ -46,7 +46,7 @@ const Plugins: FC<Props> = ({
     <Wrapper>
       <PluginList>
         {presetPlugins.map((category) => (
-          <div>
+          <div key={category.id}>
             <CategoryTitle key={category.id}>{category.title}</CategoryTitle>
             {category.plugins.map((plugin) => (
               <EntryItem
