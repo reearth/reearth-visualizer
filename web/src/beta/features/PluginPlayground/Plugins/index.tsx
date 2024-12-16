@@ -1,4 +1,4 @@
-import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
+import { Button, Icon, Collapse } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
@@ -42,6 +42,10 @@ const Plugins: FC<Props> = ({
     encodeAndSharePlugin(pluginId);
   };
 
+  const customPlugin = presetPlugins.find((plugin) => plugin.id === "custom");
+  const pluginsWithoutCustom = presetPlugins.filter(
+    (plugin) => plugin.id !== "custom"
+  );
   return (
     <Wrapper>
       <IconList>
@@ -53,14 +57,9 @@ const Plugins: FC<Props> = ({
       </IconList>
       <PluginListWrapper>
         <PluginList>
-          {presetPlugins.map((category) => (
+          {customPlugin && (
             <div>
-              {category.title !== "Custom" && (
-                <CategoryTitle key={category.id}>
-                  {category.title}
-                </CategoryTitle>
-              )}
-              {category.plugins.map((plugin) => (
+              {customPlugin.plugins.map((plugin) => (
                 <EntryItem
                   key={plugin.id}
                   highlighted={selectedPlugin.id === plugin.id}
@@ -78,6 +77,34 @@ const Plugins: FC<Props> = ({
                 />
               ))}
             </div>
+          )}
+          {pluginsWithoutCustom.map((category) => (
+            <PresetPluginWrapper key={category.id}>
+              <Collapse
+                collapsed
+                iconPosition="left"
+                size="small"
+                title={category.title}
+              >
+                {category.plugins.map((plugin) => (
+                  <EntryItem
+                    key={plugin.id}
+                    highlighted={selectedPlugin.id === plugin.id}
+                    onClick={() => selectPlugin(plugin.id)}
+                    title={plugin.title}
+                    optionsMenu={[
+                      {
+                        id: "0",
+                        title: "share",
+                        icon: "paperPlaneTilt",
+                        onClick: () => handleShareIconClicked(plugin.id)
+                      }
+                    ]}
+                    optionsMenuWidth={100}
+                  />
+                ))}
+              </Collapse>
+            </PresetPluginWrapper>
           ))}
           <div>
             <CategoryTitle>Shared</CategoryTitle>
@@ -193,6 +220,10 @@ const IconList = styled("div")(({ theme }) => ({
 
 const HorizontalSpacing = styled("div")(({ theme }) => ({
   width: theme.spacing.micro
+}));
+
+const PresetPluginWrapper = styled("div")(({ theme }) => ({
+  marginLeft: -theme.spacing.normal
 }));
 
 export default Plugins;
