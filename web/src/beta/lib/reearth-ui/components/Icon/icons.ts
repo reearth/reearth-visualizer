@@ -1,5 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 
+import AddFile from "./Icons/AddFile.svg?react";
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import ArrowCounterClockWise from "./Icons/ArrowCounterClockWise.svg?react";
@@ -53,6 +54,7 @@ import Editor from "./Icons/Editor.svg?react";
 import Ellipse from "./Icons/Ellipse.svg?react";
 import Exit from "./Icons/Exit.svg?react";
 import ExitFilled from "./Icons/ExitFilled.svg?react";
+import Export from "./Icons/Export.svg?react";
 import Extrude from "./Icons/Extrude.svg?react";
 import Eye from "./Icons/Eye.svg?react";
 import EyeSlash from "./Icons/EyeSlash.svg?react";
@@ -74,6 +76,7 @@ import If from "./Icons/If.svg?react";
 import Image from "./Icons/Image.svg?react";
 import ImageFilled from "./Icons/ImageFilled.svg?react";
 import ImageSquare from "./Icons/ImageSquare.svg?react";
+import Import from "./Icons/Import.svg?react";
 import Install from "./Icons/Install.svg?react";
 import LayerFilled from "./Icons/LayerFilled.svg?react";
 import Layers from "./Icons/Layers.svg?react";
@@ -161,6 +164,7 @@ import Warning from "./Icons/Warning.svg?react";
 import ZToA from "./Icons/ZToA.svg?react";
 
 export default {
+  addFile: AddFile,
   addStyle: AddStyle,
   appearance: Appearance,
   arrowCounterClockWise: ArrowCounterClockWise,
@@ -214,6 +218,7 @@ export default {
   ellipse: Ellipse,
   exit: Exit,
   exitFilled: ExitFilled,
+  export: Export,
   extrude: Extrude,
   eye: Eye,
   eyeSlash: EyeSlash,
@@ -235,6 +240,7 @@ export default {
   image: Image,
   imageFilled: ImageFilled,
   imageSquare: ImageSquare,
+  import: Import,
   install: Install,
   layers: Layers,
   layerFilled: LayerFilled,

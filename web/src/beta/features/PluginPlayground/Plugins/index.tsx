@@ -1,4 +1,4 @@
-import { Button } from "@reearth/beta/lib/reearth-ui";
+import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
@@ -44,89 +44,105 @@ const Plugins: FC<Props> = ({
 
   return (
     <Wrapper>
-      <PluginList>
-        {presetPlugins.map((category) => (
-          <div key={category.id}>
-            <CategoryTitle key={category.id}>{category.title}</CategoryTitle>
-            {category.plugins.map((plugin) => (
+      <IconList>
+        <Icon icon="addFile" size={32} />
+        <Icon icon="import" size={32} />
+        <Icon icon="export" size={32} />
+        <HorizontalSpacing />
+        <Icon icon="paperPlaneTilt" size={"normal"} />
+      </IconList>
+      <PluginListWrapper>
+        <PluginList>
+          {presetPlugins.map((category) => (
+            <div>
+              {category.title !== "Custom" && (
+                <CategoryTitle key={category.id}>
+                  {category.title}
+                </CategoryTitle>
+              )}
+              {category.plugins.map((plugin) => (
+                <EntryItem
+                  key={plugin.id}
+                  highlighted={selectedPlugin.id === plugin.id}
+                  onClick={() => selectPlugin(plugin.id)}
+                  title={plugin.title}
+                  optionsMenu={[
+                    {
+                      id: "0",
+                      title: "share",
+                      icon: "paperPlaneTilt",
+                      onClick: () => handleShareIconClicked(plugin.id)
+                    }
+                  ]}
+                  optionsMenuWidth={100}
+                />
+              ))}
+            </div>
+          ))}
+          <div>
+            <CategoryTitle>Shared</CategoryTitle>
+            {sharedPlugin && (
               <EntryItem
-                key={plugin.id}
-                highlighted={selectedPlugin.id === plugin.id}
-                onClick={() => selectPlugin(plugin.id)}
-                title={plugin.title}
+                key={sharedPlugin.id}
+                highlighted={selectedPlugin.id === sharedPlugin.id}
+                onClick={() => selectPlugin(sharedPlugin.id)}
+                title={sharedPlugin.title}
                 optionsMenu={[
                   {
                     id: "0",
                     title: "share",
                     icon: "paperPlaneTilt",
-                    onClick: () => handleShareIconClicked(plugin.id)
+                    onClick: () => handleShareIconClicked(sharedPlugin.id)
                   }
                 ]}
                 optionsMenuWidth={100}
               />
-            ))}
+            )}
           </div>
-        ))}
-        <div>
-          <CategoryTitle>Shared</CategoryTitle>
-          {sharedPlugin && (
-            <EntryItem
-              key={sharedPlugin.id}
-              highlighted={selectedPlugin.id === sharedPlugin.id}
-              onClick={() => selectPlugin(sharedPlugin.id)}
-              title={sharedPlugin.title}
-              optionsMenu={[
-                {
-                  id: "0",
-                  title: "share",
-                  icon: "paperPlaneTilt",
-                  onClick: () => handleShareIconClicked(sharedPlugin.id)
-                }
-              ]}
-              optionsMenuWidth={100}
+        </PluginList>
+        <FileListWrapper>
+          <ButtonsWrapper>
+            <Button
+              icon="plus"
+              extendWidth
+              onClick={() => setIsAddingNewFile(true)}
             />
-          )}
-        </div>
-      </PluginList>
-      <FileListWrapper>
-        <ButtonsWrapper>
-          <Button
-            icon="plus"
-            extendWidth
-            onClick={() => setIsAddingNewFile(true)}
-          />
-          <Button icon="uploadSimple" extendWidth onClick={handleFileUpload} />
-        </ButtonsWrapper>
-        <FileList>
-          {selectedPlugin.files.map((file) => (
-            <FileListItem
-              key={file.id}
-              file={file}
-              selected={selectedFile.id === file.id}
-              confirmFileTitle={updateFileTitle}
-              deleteFile={deleteFile}
-              onClick={() => selectFile(file.id)}
+            <Button
+              icon="uploadSimple"
+              extendWidth
+              onClick={handleFileUpload}
             />
-          ))}
-          {isAddingNewFile && (
-            <FileListItem
-              file={{ id: "", title: "", sourceCode: "" }}
-              selected={false}
-              confirmFileTitle={(value) => {
-                addFile(value);
-                setIsAddingNewFile(false);
-              }}
-              isEditing
-            />
-          )}
-        </FileList>
-      </FileListWrapper>
+          </ButtonsWrapper>
+          <FileList>
+            {selectedPlugin.files.map((file) => (
+              <FileListItem
+                key={file.id}
+                file={file}
+                selected={selectedFile.id === file.id}
+                confirmFileTitle={updateFileTitle}
+                deleteFile={deleteFile}
+                onClick={() => selectFile(file.id)}
+              />
+            ))}
+            {isAddingNewFile && (
+              <FileListItem
+                file={{ id: "", title: "", sourceCode: "" }}
+                selected={false}
+                confirmFileTitle={(value) => {
+                  addFile(value);
+                  setIsAddingNewFile(false);
+                }}
+                isEditing
+              />
+            )}
+          </FileList>
+        </FileListWrapper>
+      </PluginListWrapper>
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")(() => ({
-  display: "flex",
   height: "100%"
 }));
 
@@ -136,6 +152,11 @@ const PluginList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small
+}));
+
+const PluginListWrapper = styled("div")(() => ({
+  display: "flex",
+  height: "100%"
 }));
 
 const CategoryTitle = styled("div")(({ theme }) => ({
@@ -162,6 +183,16 @@ const ButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
   gap: theme.spacing.smallest
+}));
+
+const IconList = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small
+}));
+
+const HorizontalSpacing = styled("div")(({ theme }) => ({
+  width: theme.spacing.micro
 }));
 
 export default Plugins;
