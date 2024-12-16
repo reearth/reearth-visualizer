@@ -46,34 +46,49 @@ const Plugins: FC<Props> = ({
   const pluginsWithoutCustom = presetPlugins.filter(
     (plugin) => plugin.id !== "custom"
   );
+
+  const PluginEntryItem: FC<{
+    plugin: { id: string; title: string };
+    selectedPluginId: string;
+    onSelect: (id: string) => void;
+    onShare: (id: string) => void;
+  }> = ({ plugin, selectedPluginId, onSelect, onShare }) => (
+    <EntryItem
+      key={plugin.id}
+      highlighted={selectedPluginId === plugin.id}
+      onClick={() => onSelect(plugin.id)}
+      title={plugin.title}
+      optionsMenu={[
+        {
+          id: "0",
+          title: "share",
+          icon: "paperPlaneTilt",
+          onClick: () => onShare(plugin.id)
+        }
+      ]}
+      optionsMenuWidth={100}
+    />
+  );
+
   return (
     <Wrapper>
       <IconList>
-        <Icon icon="addFile" size={32} />
-        <Icon icon="import" size={32} />
-        <Icon icon="export" size={32} />
+        <Icon icon="addFile" size={32} ariaLabel="Add new file" />
+        <Icon icon="import" size={32} ariaLabel="Import plugin" />
+        <Icon icon="export" size={32} ariaLabel="Export plugin" />
         <HorizontalSpacing />
-        <Icon icon="paperPlaneTilt" size={"normal"} />
+        <Icon icon="paperPlaneTilt" size={"normal"} ariaLabel="Share plugin" />
       </IconList>
       <PluginListWrapper>
         <PluginList>
           {customPlugin && (
             <div>
               {customPlugin.plugins.map((plugin) => (
-                <EntryItem
-                  key={plugin.id}
-                  highlighted={selectedPlugin.id === plugin.id}
-                  onClick={() => selectPlugin(plugin.id)}
-                  title={plugin.title}
-                  optionsMenu={[
-                    {
-                      id: "0",
-                      title: "share",
-                      icon: "paperPlaneTilt",
-                      onClick: () => handleShareIconClicked(plugin.id)
-                    }
-                  ]}
-                  optionsMenuWidth={100}
+                <PluginEntryItem
+                  plugin={plugin}
+                  selectedPluginId={selectedPlugin.id}
+                  onSelect={selectPlugin}
+                  onShare={handleShareIconClicked}
                 />
               ))}
             </div>
@@ -87,20 +102,11 @@ const Plugins: FC<Props> = ({
                 title={category.title}
               >
                 {category.plugins.map((plugin) => (
-                  <EntryItem
-                    key={plugin.id}
-                    highlighted={selectedPlugin.id === plugin.id}
-                    onClick={() => selectPlugin(plugin.id)}
-                    title={plugin.title}
-                    optionsMenu={[
-                      {
-                        id: "0",
-                        title: "share",
-                        icon: "paperPlaneTilt",
-                        onClick: () => handleShareIconClicked(plugin.id)
-                      }
-                    ]}
-                    optionsMenuWidth={100}
+                  <PluginEntryItem
+                    plugin={plugin}
+                    selectedPluginId={selectedPlugin.id}
+                    onSelect={selectPlugin}
+                    onShare={handleShareIconClicked}
                   />
                 ))}
               </Collapse>
@@ -109,20 +115,11 @@ const Plugins: FC<Props> = ({
           <div>
             <CategoryTitle>Shared</CategoryTitle>
             {sharedPlugin && (
-              <EntryItem
-                key={sharedPlugin.id}
-                highlighted={selectedPlugin.id === sharedPlugin.id}
-                onClick={() => selectPlugin(sharedPlugin.id)}
-                title={sharedPlugin.title}
-                optionsMenu={[
-                  {
-                    id: "0",
-                    title: "share",
-                    icon: "paperPlaneTilt",
-                    onClick: () => handleShareIconClicked(sharedPlugin.id)
-                  }
-                ]}
-                optionsMenuWidth={100}
+              <PluginEntryItem
+                plugin={sharedPlugin}
+                selectedPluginId={selectedPlugin.id}
+                onSelect={selectPlugin}
+                onShare={handleShareIconClicked}
               />
             )}
           </div>
