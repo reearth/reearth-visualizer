@@ -4647,6 +4647,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@googlemaps/js-api-loader@npm:^1.16.8":
+  version: 1.16.8
+  resolution: "@googlemaps/js-api-loader@npm:1.16.8"
+  checksum: 10c0/c4159411f784253ef36c8a674756716637fcf50f7bf0600e7a5298c20229f3962f5fb73d8011dc478b60baea369c0d730db6ad13baa4e43cfc5444379a1ee75d
+  languageName: node
+  linkType: hard
+
 "@graphiql/react@npm:^0.23.0":
   version: 0.23.1
   resolution: "@graphiql/react@npm:0.23.1"
@@ -8228,6 +8235,7 @@ __metadata:
     "@emotion/styled": "npm:11.11.0"
     "@floating-ui/dom": "npm:1.6.10"
     "@floating-ui/react": "npm:0.24.7"
+    "@googlemaps/js-api-loader": "npm:^1.16.8"
     "@graphiql/toolkit": "npm:0.11.0"
     "@graphql-codegen/cli": "npm:3.3.1"
     "@graphql-codegen/client-preset": "npm:4.0.1"
@@ -8272,6 +8280,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/carbon__colors": "npm:10.31.3"
     "@types/crypto-js": "npm:4.2.2"
+    "@types/google.maps": "npm:^3.58.1"
     "@types/js-yaml": "npm:4"
     "@types/lodash-es": "npm:4.17.12"
     "@types/node": "npm:22.5.2"
@@ -11579,6 +11588,13 @@ __metadata:
     "@types/minimatch": "npm:*"
     "@types/node": "npm:*"
   checksum: 10c0/a8eb5d5cb5c48fc58c7ca3ff1e1ddf771ee07ca5043da6e4871e6757b4472e2e73b4cfef2644c38983174a4bc728c73f8da02845c28a1212f98cabd293ecae98
+  languageName: node
+  linkType: hard
+
+"@types/google.maps@npm:^3.58.1":
+  version: 3.58.1
+  resolution: "@types/google.maps@npm:3.58.1"
+  checksum: 10c0/0247c61d2aeb216d04ab9392602ef41d58328c6336ed4e9a4e9e69834002e82c116a34def2bf4ceb31c4292f14899815058da4bb8d803147295c6b47c1162621
   languageName: node
   linkType: hard
 
