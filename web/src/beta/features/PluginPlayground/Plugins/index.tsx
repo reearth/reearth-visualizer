@@ -77,7 +77,7 @@ const Plugins: FC<Props> = ({
         <Icon icon="import" size={32} ariaLabel="Import plugin" />
         <Icon icon="export" size={32} ariaLabel="Export plugin" />
         <HorizontalSpacing />
-        <Icon icon="paperPlaneTilt" size={"normal"} ariaLabel="Share plugin" />
+        <Icon icon="paperPlaneTilt" ariaLabel="Share plugin" />
       </IconList>
       <PluginListWrapper>
         <PluginList>
