@@ -8,6 +8,7 @@ import usePlugins from "./usePlugins";
 
 type UsePluginsReturn = Pick<
   ReturnType<typeof usePlugins>,
+  | "encodeAndSharePlugin"
   | "presetPlugins"
   | "selectPlugin"
   | "selectedPlugin"
@@ -17,11 +18,13 @@ type UsePluginsReturn = Pick<
   | "updateFileTitle"
   | "deleteFile"
   | "handleFileUpload"
+  | "sharedPlugins"
 >;
 
 type Props = UsePluginsReturn;
 
 const Plugins: FC<Props> = ({
+  encodeAndSharePlugin,
   presetPlugins,
   selectedPlugin,
   selectPlugin,
@@ -30,15 +33,20 @@ const Plugins: FC<Props> = ({
   addFile,
   updateFileTitle,
   deleteFile,
-  handleFileUpload
+  handleFileUpload,
+  sharedPlugins
 }) => {
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
+
+  const handleShareIconClicked = (pluginId: string): void => {
+    encodeAndSharePlugin(pluginId);
+  };
 
   return (
     <Wrapper>
       <PluginList>
         {presetPlugins.map((category) => (
-          <div>
+          <div key={category.id}>
             <CategoryTitle key={category.id}>{category.title}</CategoryTitle>
             {category.plugins.map((plugin) => (
               <EntryItem
@@ -46,10 +54,39 @@ const Plugins: FC<Props> = ({
                 highlighted={selectedPlugin.id === plugin.id}
                 onClick={() => selectPlugin(plugin.id)}
                 title={plugin.title}
+                optionsMenu={[
+                  {
+                    id: "0",
+                    title: "share",
+                    icon: "paperPlaneTilt",
+                    onClick: () => handleShareIconClicked(plugin.id)
+                  }
+                ]}
+                optionsMenuWidth={100}
               />
             ))}
           </div>
         ))}
+        <div>
+          <CategoryTitle>Shared</CategoryTitle>
+          {sharedPlugins.map((plugin) => (
+            <EntryItem
+              key={plugin.id}
+              highlighted={selectedPlugin.id === plugin.id}
+              onClick={() => selectPlugin(plugin.id)}
+              title={plugin.title}
+              optionsMenu={[
+                {
+                  id: "0",
+                  title: "share",
+                  icon: "paperPlaneTilt",
+                  onClick: () => handleShareIconClicked(plugin.id)
+                }
+              ]}
+              optionsMenuWidth={100}
+            />
+          ))}
+        </div>
       </PluginList>
       <FileListWrapper>
         <ButtonsWrapper>
