@@ -70,13 +70,17 @@ const ListEditor: FC<Props> = ({
   const {
     displayOptions,
     currentPropertyList,
+    editValueIndex,
+    editKeyIndex,
     handleKeyBlur,
     handleValueBlur,
     handleDisplayTypeUpdate,
     handleItemAdd,
     handleMoveStart,
     handleMoveEnd,
-    handlePropertyValueRemove
+    handlePropertyValueRemove,
+    handleDoubleClick,
+    handlePropertyListUpdate
   } = useHooks({
     propertyId,
     propertyListField,
@@ -92,19 +96,17 @@ const ListEditor: FC<Props> = ({
           <EditorItem
             key={item.id}
             item={item}
+            isEditKey={editKeyIndex === idx}
+            isEditValue={editValueIndex === idx}
             onKeyBlur={handleKeyBlur(idx)}
             handleClassName={CURRENT_PROPERTY_LIST_DRAG_HANDLE_CLASS_NAME}
             onValueBlur={handleValueBlur(idx)}
+            onDoubleClick={(field: string) => handleDoubleClick(idx, field)}
             onItemRemove={() => handlePropertyValueRemove(idx)}
           />
         )
       })),
-    [
-      currentPropertyList,
-      handleKeyBlur,
-      handleValueBlur,
-      handlePropertyValueRemove
-    ]
+    [currentPropertyList, editKeyIndex, editValueIndex, handleKeyBlur, handleValueBlur, handleDoubleClick, handlePropertyValueRemove]
   );
 
   return (
@@ -131,13 +133,22 @@ const ListEditor: FC<Props> = ({
           </>
         )}
       {displayTypeField?.value === "custom" && (
-        <Button
-          title={t("New Field")}
-          icon="plus"
-          size="small"
-          onClick={handleItemAdd}
-          extendWidth
-        />
+        <ActionsWrapper>
+          <Button
+            title={t("New Field")}
+            icon="plus"
+            size="small"
+            onClick={handleItemAdd}
+            extendWidth
+          />
+          <Button
+            title={t("Save")}
+            icon="floppyDisk"
+            size="small"
+            onClick={() => handlePropertyListUpdate(currentPropertyList)}
+            extendWidth
+          />
+        </ActionsWrapper>
       )}
     </Wrapper>
   );
@@ -158,6 +169,12 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "space-between",
   gap: theme.spacing.smallest,
+  boxSizing: "border-box"
+}));
+
+const ActionsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.smallest,
   alignItems: "center",
-  boxsizing: "border-box"
+  boxSizing: "border-box"
 }));
