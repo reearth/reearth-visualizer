@@ -128,6 +128,7 @@ function config(): Plugin {
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
         : {};
+      remoteReearthConfig.cloudApi = "http://localhost:8090";
       const remoteCesiumIonTokenResponseText =
         envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
           ? await (await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)).text()

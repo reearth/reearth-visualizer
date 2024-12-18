@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/pprof"
 	"os"
+	"strings"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
@@ -48,13 +49,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		}))
 	}
 	origins := allowedOrigins(cfg)
-	if len(origins) > 0 {
-		e.Use(
-			middleware.CORSWithConfig(middleware.CORSConfig{
-				AllowOrigins: origins,
-			}),
-		)
-	}
+	e.Use(CORS(cfg, origins, []string{"GET", "POST", "DELETE", "OPTIONS"}))
 
 	// auth
 	authConfig := cfg.Config.JWTProviders()
@@ -185,6 +180,25 @@ func allowedOrigins(cfg *ServerConfig) []string {
 		origins = append(origins, "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8080")
 	}
 	return origins
+}
+
+func CORS(cfg *ServerConfig, allowOrigins []string, allowMethods []string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if cfg.Debug {
+				c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+			} else {
+				c.Response().Header().Set("Access-Control-Allow-Origin", strings.Join(allowOrigins, ","))
+			}
+			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+			c.Response().Header().Set("Access-Control-Allow-Methods", strings.Join(allowMethods, ","))
+			c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
+			if c.Request().Method == http.MethodOptions {
+				return c.NoContent(http.StatusOK)
+			}
+			return next(c)
+		}
+	}
 }
 
 func errorMessage(err error, log func(string, ...interface{})) (int, string) {

@@ -20,3 +20,4 @@ services:
       - 27017:27017
     volumes:
       - ./mongo:/data/db
+    command: mongod --replSet rs0
