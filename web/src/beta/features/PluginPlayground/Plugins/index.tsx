@@ -164,7 +164,10 @@ const Plugins: FC<Props> = ({
 };
 
 const Wrapper = styled("div")(() => ({
-  height: "100%"
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 1
 }));
 
 const PluginList = styled("div")(({ theme }) => ({
