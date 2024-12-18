@@ -41,6 +41,7 @@ const Plugins: FC<Props> = ({
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
   const handleShareIconClicked = (): void => {
+    if (!selectedPlugin) return;
     encodeAndSharePlugin(selectedPlugin.id);
   };
 
