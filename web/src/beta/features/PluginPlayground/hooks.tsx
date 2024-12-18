@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import Code from "./Code";
 import useCode from "./Code/hook";
 import Console from "./Console";
-import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
@@ -72,6 +71,7 @@ export default () => {
             deleteFile={deleteFile}
             handleFileUpload={handleFileUpload}
             sharedPlugin={sharedPlugin}
+            handlePluginDownload={handlePluginDownload}
           />
         )
       }
@@ -87,7 +87,8 @@ export default () => {
       updateFileTitle,
       deleteFile,
       handleFileUpload,
-      sharedPlugin
+      sharedPlugin,
+      handlePluginDownload
     ]
   );
 
@@ -109,16 +110,9 @@ export default () => {
             }}
           />
         )
-      },
-      {
-        id: "plugin-inspector",
-        name: "Plugin Inspector",
-        children: (
-          <PluginInspector handlePluginDownload={handlePluginDownload} />
-        )
       }
     ],
-    [selectedFile, handlePluginDownload, executeCode, updateFileSourceCode]
+    [selectedFile, executeCode, updateFileSourceCode]
   );
 
   return {

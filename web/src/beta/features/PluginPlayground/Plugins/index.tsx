@@ -1,4 +1,4 @@
-import { Button, Icon, Collapse } from "@reearth/beta/lib/reearth-ui";
+import { Collapse, IconButton } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
@@ -19,6 +19,7 @@ type UsePluginsReturn = Pick<
   | "deleteFile"
   | "handleFileUpload"
   | "sharedPlugin"
+  | "handlePluginDownload"
 >;
 
 type Props = UsePluginsReturn;
@@ -34,12 +35,13 @@ const Plugins: FC<Props> = ({
   updateFileTitle,
   deleteFile,
   handleFileUpload,
-  sharedPlugin
+  sharedPlugin,
+  handlePluginDownload
 }) => {
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
-  const handleShareIconClicked = (pluginId: string): void => {
-    encodeAndSharePlugin(pluginId);
+  const handleShareIconClicked = (): void => {
+    encodeAndSharePlugin(selectedPlugin.id);
   };
 
   const customPlugin = presetPlugins.find((plugin) => plugin.id === "custom");
@@ -51,21 +53,12 @@ const Plugins: FC<Props> = ({
     plugin: { id: string; title: string };
     selectedPluginId: string;
     onSelect: (id: string) => void;
-    onShare: (id: string) => void;
-  }> = ({ plugin, selectedPluginId, onSelect, onShare }) => (
+  }> = ({ plugin, selectedPluginId, onSelect }) => (
     <EntryItem
       key={plugin.id}
       highlighted={selectedPluginId === plugin.id}
       onClick={() => onSelect(plugin.id)}
       title={plugin.title}
-      optionsMenu={[
-        {
-          id: "0",
-          title: "share",
-          icon: "paperPlaneTilt",
-          onClick: () => onShare(plugin.id)
-        }
-      ]}
       optionsMenuWidth={100}
     />
   );
@@ -73,11 +66,26 @@ const Plugins: FC<Props> = ({
   return (
     <Wrapper>
       <IconList>
-        <Icon icon="addFile" size={32} ariaLabel="Add new file" />
-        <Icon icon="import" size={32} ariaLabel="Import plugin" />
-        <Icon icon="export" size={32} ariaLabel="Export plugin" />
-        <HorizontalSpacing />
-        <Icon icon="paperPlaneTilt" ariaLabel="Share plugin" />
+        <IconButton
+          appearance="simple"
+          icon="addFile"
+          onClick={() => setIsAddingNewFile(true)}
+        />
+        <IconButton
+          appearance="simple"
+          icon="import"
+          onClick={handleFileUpload}
+        />
+        <IconButton
+          appearance="simple"
+          icon="export"
+          onClick={handlePluginDownload}
+        />
+        <IconButton
+          appearance="simple"
+          icon="paperPlaneTilt"
+          onClick={handleShareIconClicked}
+        />
       </IconList>
       <PluginListWrapper>
         <PluginList>
@@ -89,7 +97,6 @@ const Plugins: FC<Props> = ({
                   key={plugin.id}
                   selectedPluginId={selectedPlugin.id}
                   onSelect={selectPlugin}
-                  onShare={handleShareIconClicked}
                 />
               ))}
             </div>
@@ -108,7 +115,6 @@ const Plugins: FC<Props> = ({
                     key={plugin.id}
                     selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
-                    onShare={handleShareIconClicked}
                   />
                 ))}
               </Collapse>
@@ -122,24 +128,11 @@ const Plugins: FC<Props> = ({
                 key={sharedPlugin.id}
                 selectedPluginId={selectedPlugin.id}
                 onSelect={selectPlugin}
-                onShare={handleShareIconClicked}
               />
             )}
           </div>
         </PluginList>
         <FileListWrapper>
-          <ButtonsWrapper>
-            <Button
-              icon="plus"
-              extendWidth
-              onClick={() => setIsAddingNewFile(true)}
-            />
-            <Button
-              icon="uploadSimple"
-              extendWidth
-              onClick={handleFileUpload}
-            />
-          </ButtonsWrapper>
           <FileList>
             {selectedPlugin.files.map((file) => (
               <FileListItem
@@ -206,20 +199,11 @@ const FileList = styled("div")(({ theme }) => ({
   gap: theme.spacing.smallest
 }));
 
-const ButtonsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  width: "100%",
-  gap: theme.spacing.smallest
-}));
-
 const IconList = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small
-}));
-
-const HorizontalSpacing = styled("div")(({ theme }) => ({
-  width: theme.spacing.micro
+  gap: theme.spacing.small,
+  marginBottom: theme.spacing.small
 }));
 
 const PresetPluginWrapper = styled("div")(({ theme }) => ({
