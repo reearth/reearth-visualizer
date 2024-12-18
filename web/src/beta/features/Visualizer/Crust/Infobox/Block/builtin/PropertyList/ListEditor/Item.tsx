@@ -1,30 +1,39 @@
 import { Button, Icon, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
 import { PropertyListItem } from ".";
 
 type Props = {
   item: PropertyListItem;
+  isEditKey: boolean;
+  isEditValue: boolean;
   handleClassName?: string;
   onKeyBlur: (newValue?: string) => void;
   onValueBlur: (newValue?: string) => void;
   onItemRemove: () => void;
+  onDoubleClick?: (field: string) => void;
 };
 
 const EditorItem: FC<Props> = ({
   item,
   handleClassName,
+  isEditKey,
+  isEditValue,
   onKeyBlur,
   onValueBlur,
-  onItemRemove
+  onItemRemove,
+  onDoubleClick
 }) => {
-  const [currentKeyValue, setCurrentKeyValue] = useState<string>(item.key);
-  const [currentValue, setCurrentValue] = useState<string>(item.value);
+  const t = useT();
+  const theme = useTheme();
+
+  const [currentKeyItem, setCurrentKeyItem] = useState<string>(item.key);
+  const [currentValueItem, setCurrentValueItem] = useState<string>(item.value);
 
   const handleKeyChange = useCallback((newValue: string) => {
-    setCurrentKeyValue(newValue);
+    setCurrentKeyItem(newValue);
   }, []);
 
   const handleKeyBlur = useCallback(
@@ -35,7 +44,7 @@ const EditorItem: FC<Props> = ({
   );
 
   const handleValueChange = useCallback((newValue: string) => {
-    setCurrentValue(newValue);
+    setCurrentValueItem(newValue);
   }, []);
 
   const handleValueBlur = useCallback(
@@ -45,25 +54,45 @@ const EditorItem: FC<Props> = ({
     [onValueBlur]
   );
 
-  const t = useT();
-
   return (
     <Field>
-      <HandleIcon icon="dotsSixVertical" className={handleClassName} />
-      <TextInput
+      <Icon
+        className={handleClassName}
+        icon="dotsSixVertical"
+        color={theme.content.weak}
         size="small"
-        value={currentKeyValue}
-        placeholder={t("Display title")}
-        onChange={handleKeyChange}
-        onBlur={handleKeyBlur}
       />
-      <TextInput
-        size="small"
-        value={currentValue}
-        placeholder={t("${your property name}")}
-        onChange={handleValueChange}
-        onBlur={handleValueBlur}
-      />
+      <ItemCol>
+        {item.key === "" || isEditKey ? (
+          <TextInput
+            size="small"
+            value={currentKeyItem}
+            placeholder={t("Display title")}
+            onChange={handleKeyChange}
+            onBlur={handleKeyBlur}
+          />
+        ) : (
+          <TextWrapper onDoubleClick={() => onDoubleClick?.("key")}>
+            {currentKeyItem}
+          </TextWrapper>
+        )}
+      </ItemCol>
+      <ItemCol>
+        {item.value === "" || isEditValue ? (
+          <TextInput
+            size="small"
+            value={currentValueItem}
+            placeholder={t("${your property name}")}
+            onChange={handleValueChange}
+            onBlur={handleValueBlur}
+          />
+        ) : (
+          <TextWrapper onDoubleClick={() => onDoubleClick?.("value")}>
+            {currentValueItem}
+          </TextWrapper>
+        )}
+      </ItemCol>
+
       <Button
         icon="trash"
         iconButton
@@ -89,10 +118,16 @@ const Field = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.smallest
 }));
 
-const HandleIcon = styled(Icon)(({ theme }) => ({
-  color: theme.content.weak,
-  cursor: "move",
-  "&:hover": {
-    color: theme.content.main
-  }
+const ItemCol = styled("div")(() => ({
+  flex: 1
+}));
+
+const TextWrapper = styled("div")(({ theme }) => ({
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.body,
+  fontWeight: theme.fonts.weight.regular,
+  padding: theme.spacing.micro,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
 }));
