@@ -1,0 +1,8 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g id="AddFile">
+        <path id="Vector" d="M12.5005 14H3.5C3.36739 14 3.24021 13.9473 3.14645 13.8536C3.05268 13.7598 3 13.6326 3 13.5V2.5C3 2.36739 3.05268 2.24021 3.14645 2.14645C3.24021 2.05268 3.36739 2 3.5 2H9.50049L13.0005 5.5V13.5C13.0005 13.5657 12.9876 13.6307 12.9624 13.6913C12.9373 13.752 12.9005 13.8071 12.854 13.8536C12.8076 13.9 12.7525 13.9368 12.6918 13.9619C12.6312 13.9871 12.5661 14 12.5005 14Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="Vector_2" d="M9.5 2V5.5H13.0005" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="Vector_3" d="M6.5 9.5H9.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="Vector_4" d="M8 8V11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+</svg>

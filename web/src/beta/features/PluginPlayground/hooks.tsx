@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import Code from "./Code";
 import useCode from "./Code/hook";
 import Console from "./Console";
-import PluginInspector from "./PluginInspector";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
@@ -23,7 +22,7 @@ export default () => {
     handleFileUpload,
     handlePluginDownload,
     encodeAndSharePlugin,
-    sharedPlugins
+    sharedPlugin
   } = usePlugins();
 
   const { widgets, executeCode, fileOutputs } = useCode({
@@ -71,7 +70,8 @@ export default () => {
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
             handleFileUpload={handleFileUpload}
-            sharedPlugins={sharedPlugins}
+            sharedPlugin={sharedPlugin}
+            handlePluginDownload={handlePluginDownload}
           />
         )
       }
@@ -87,7 +87,8 @@ export default () => {
       updateFileTitle,
       deleteFile,
       handleFileUpload,
-      sharedPlugins
+      sharedPlugin,
+      handlePluginDownload
     ]
   );
 
@@ -109,16 +110,9 @@ export default () => {
             }}
           />
         )
-      },
-      {
-        id: "plugin-inspector",
-        name: "Plugin Inspector",
-        children: (
-          <PluginInspector handlePluginDownload={handlePluginDownload} />
-        )
       }
     ],
-    [selectedFile, handlePluginDownload, executeCode, updateFileSourceCode]
+    [selectedFile, executeCode, updateFileSourceCode]
   );
 
   return {
