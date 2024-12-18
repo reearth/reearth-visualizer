@@ -21,6 +21,11 @@ func (b *Builder) ID(id ID) *Builder {
 	return b
 }
 
+func (b *Builder) Index(index *int) *Builder {
+	b.base.index = index
+	return b
+}
+
 func (b *Builder) NewID() *Builder {
 	b.base.id = NewID()
 	return b

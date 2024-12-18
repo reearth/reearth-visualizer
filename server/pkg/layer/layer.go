@@ -14,6 +14,7 @@ var (
 
 type Layer interface {
 	ID() ID
+	Index() *int
 	Name() string
 	IsVisible() bool
 	Plugin() *PluginID
@@ -25,6 +26,7 @@ type Layer interface {
 	Scene() SceneID
 	Tags() *TagList
 	Rename(string)
+	SetIndex(*int)
 	SetVisible(bool)
 	SetInfobox(*Infobox)
 	SetPlugin(*PluginID)
@@ -70,6 +72,7 @@ func ToLayerItemRef(l *Layer) *Item {
 
 type layerBase struct {
 	id        ID
+	index     *int
 	name      string
 	visible   bool
 	plugin    *PluginID
@@ -82,6 +85,10 @@ type layerBase struct {
 
 func (l *layerBase) ID() ID {
 	return l.id
+}
+
+func (l *layerBase) Index() *int {
+	return l.index
 }
 
 func (l *layerBase) IDRef() *ID {
@@ -156,6 +163,13 @@ func (l *layerBase) Rename(name string) {
 		return
 	}
 	l.name = name
+}
+
+func (l *layerBase) SetIndex(index *int) {
+	if l == nil {
+		return
+	}
+	l.index = index
 }
 
 func (l *layerBase) SetVisible(visible bool) {
