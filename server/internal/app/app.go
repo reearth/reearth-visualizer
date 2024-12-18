@@ -190,7 +190,6 @@ func CORS(cfg *ServerConfig, allowOrigins []string, allowMethods []string) echo.
 			} else {
 				c.Response().Header().Set("Access-Control-Allow-Origin", strings.Join(allowOrigins, ","))
 			}
-			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
 			c.Response().Header().Set("Access-Control-Allow-Methods", strings.Join(allowMethods, ","))
 			c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
 			if c.Request().Method == http.MethodOptions {
