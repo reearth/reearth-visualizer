@@ -56,7 +56,11 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 
   // Load Google Maps API using the provided API key from widget properties
   useEffect(() => {
-    if (!widget?.property?.default?.apiToken) return;
+    if (!widget?.property?.default?.apiToken) {
+      setError("Please setup apikey");
+      return;
+    }
+    setError(null);
     const loader = getLoaderInstance(widget?.property?.default?.apiToken);
     loader
       .load()
@@ -93,23 +97,29 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
       setError(null);
       setFilteredSuggestions([]);
 
-      // Use a new PlacesService instance pointing to a virtual div since we're not displaying the map
-      const service = new google.maps.places.PlacesService(
-        document.createElement("div")
-      );
-      const request = {
-        query: searchText
-      };
+      try {
+        // Use a new PlacesService instance pointing to a virtual div since we're not displaying the map
+        const service = new google.maps.places.PlacesService(
+          document.createElement("div")
+        );
+        const request = {
+          query: searchText
+        };
 
-      service.textSearch(request, (results, status) => {
+        service.textSearch(request, (results, status) => {
+          setLoading(false);
+          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+            setFilteredSuggestions(results);
+          } else {
+            setError("Failed to fetch suggestions.");
+            setFilteredSuggestions([]);
+          }
+        });
+      } catch (err) {
+        // If an unexpected error occurs during PlacesService creation or textSearch call
         setLoading(false);
-        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          setFilteredSuggestions(results);
-        } else {
-          setError("Failed to fetch suggestions.");
-          setFilteredSuggestions([]);
-        }
-      });
+        setError(`PlacesService initialization or request failed: ${err}`);
+      }
     },
     [googleLoaded]
   );
@@ -282,7 +292,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             <Search className="tw-w-5 tw-h-5" />
           </span>
           <Input
-            className="tw-border-0"
+            className="tw-border-0 tw-shadow-none focus:outline-none focus:ring-0"
             placeholder="Type a keyword to search..."
             value={query}
             onChange={handleInputChange}
@@ -292,11 +302,11 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         {loading && <p className="tw-text-gray-500 tw-mt-2">Loading...</p>}
         {error && <p className="tw-text-red-500 tw-mt-2">{error}</p>}
         {filteredSuggestions.length > 0 && (
-          <ul className="tw-mt-2 tw-bg-white tw-rounded-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
+          <ul className="tw-mr-3 tw-mt-2  tw-rounded-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
-                className="tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-gray-200 tw-bg-white"
+                className="tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-gray-200 "
                 onClick={() => handleSelectItem(suggestion)}
               >
                 {`${suggestion.formatted_address}, ${suggestion.name}`}
@@ -306,7 +316,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         )}
 
         {selectedItems.length > 0 && (
-          <div className="tw-mt-2 tw-mb-2 tw-space-y-2">
+          <div className="tw-mt-2 tw-mb-2 tw-space-y-2 tw-mr-3">
             {selectedItems.map((item, index) => {
               const isSelected = index === selectedItemIndex;
               return (
@@ -314,8 +324,12 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
                   key={index}
                   className={`tw-flex tw-items-center tw-justify-between tw-px-4 tw-py-2 tw-rounded-md tw-cursor-pointer ${
                     isSelected
-                      ? "tw-bg-gray-200"
-                      : "tw-bg-white hover:tw-bg-gray-200"
+                      ? theme === "dark"
+                        ? " tw-bg-gray-700"
+                        : "tw-bg-gray-300"
+                      : theme === "dark"
+                        ? " hover:tw-bg-gray-700"
+                        : "hover:tw-bg-gray-300"
                   }`}
                   onClick={() => handleSelectFromSelectedItems(item, index)}
                 >
