@@ -36,7 +36,6 @@ const widgetFile: FileType = {
         padding: 10px 16px;
         position: sticky;
         top: 0;
-        z-index: 1000;
       }
 
       .header-logo img {
