@@ -306,7 +306,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
-                className="tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-gray-200 "
+                className={`tw-px-4 tw-py-2 tw-cursor-pointer ${theme === "dark" ? "hover:tw-bg-gray-700" : "hover:tw-bg-gray-200"} `}
                 onClick={() => handleSelectItem(suggestion)}
               >
                 {`${suggestion.formatted_address}, ${suggestion.name}`}
