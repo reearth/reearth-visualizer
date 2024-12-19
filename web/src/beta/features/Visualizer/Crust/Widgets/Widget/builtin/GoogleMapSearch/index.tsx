@@ -302,11 +302,11 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         {loading && <p className="tw-text-gray-500 tw-mt-2">Loading...</p>}
         {error && <p className="tw-text-red-500 tw-mt-2">{error}</p>}
         {filteredSuggestions.length > 0 && (
-          <ul className="tw-mr-3 tw-mt-2  tw-rounded-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
+          <ul className="tw-mr-3 tw-mt-2 tw-rounded-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
-                className={`tw-px-4 tw-py-2 tw-cursor-pointer ${theme === "dark" ? "hover:tw-bg-gray-700" : "hover:tw-bg-gray-200"} `}
+                className={`tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-hoverbackground`}
                 onClick={() => handleSelectItem(suggestion)}
               >
                 {`${suggestion.formatted_address}, ${suggestion.name}`}
@@ -322,14 +322,8 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
               return (
                 <div
                   key={index}
-                  className={`tw-flex tw-items-center tw-justify-between tw-px-4 tw-py-2 tw-rounded-md tw-cursor-pointer ${
-                    isSelected
-                      ? theme === "dark"
-                        ? " tw-bg-gray-700"
-                        : "tw-bg-gray-300"
-                      : theme === "dark"
-                        ? " hover:tw-bg-gray-700"
-                        : "hover:tw-bg-gray-300"
+                  className={`tw-flex tw-items-center tw-justify-between tw-px-4 tw-py-2 hover:tw-bg-hoverbackground tw-rounded-md tw-cursor-pointer ${
+                    isSelected && "tw-bg-hoverbackground"
                   }`}
                   onClick={() => handleSelectFromSelectedItems(item, index)}
                 >
