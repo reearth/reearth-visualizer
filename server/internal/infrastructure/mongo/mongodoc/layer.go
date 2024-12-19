@@ -11,6 +11,7 @@ import (
 
 type LayerDocument struct {
 	ID        string
+	Index     *int
 	Name      string
 	Visible   bool
 	Scene     string
@@ -100,6 +101,7 @@ func NewLayer(l layer.Layer) (*LayerDocument, string) {
 	id := l.ID().String()
 	return &LayerDocument{
 		ID:        id,
+		Index:     l.Index(),
 		Name:      l.Name(),
 		Visible:   l.IsVisible(),
 		Scene:     l.Scene().String(),

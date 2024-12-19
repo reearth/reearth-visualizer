@@ -1,8 +1,6 @@
 package e2e
 
 import (
-	"net/http"
-
 	"github.com/gavv/httpexpect/v2"
 )
 
@@ -31,14 +29,7 @@ func addLayerItemFromPrimitive(e *httpexpect.Expect, rootLayerId string) (GraphQ
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res, res.Path("$.data.addLayerItem.layer.id").Raw().(string)
 }

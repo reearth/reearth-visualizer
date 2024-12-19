@@ -12,6 +12,10 @@ func (l *NLSLayerSimple) ID() ID {
 	return l.layerBase.ID()
 }
 
+func (l *NLSLayerSimple) Index() *int {
+	return l.layerBase.index
+}
+
 func (l *NLSLayerSimple) IDRef() *ID {
 	if l == nil {
 		return nil

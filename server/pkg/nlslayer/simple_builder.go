@@ -57,6 +57,11 @@ func (b *NLSLayerSimpleBuilder) NewID() *NLSLayerSimpleBuilder {
 	return b
 }
 
+func (b *NLSLayerSimpleBuilder) Index(i *int) *NLSLayerSimpleBuilder {
+	b.l.index = i
+	return b
+}
+
 func (b *NLSLayerSimpleBuilder) LayerType(t LayerType) *NLSLayerSimpleBuilder {
 	b.l.layerType = t
 	return b

@@ -9,6 +9,7 @@ import (
 
 type nlsLayerJSON struct {
 	ID         string          `json:"id"`
+	Index      *int            `json:"index,omitempty"`
 	Title      string          `json:"title,omitempty"`
 	LayerType  string          `json:"layerType,omitempty"`
 	Config     *configJSON     `json:"config,omitempty"`
@@ -113,6 +114,7 @@ func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) 
 
 	return &nlsLayerJSON{
 		ID:         layer.ID().String(),
+		Index:      layer.Index(),
 		Title:      layer.Title(),
 		LayerType:  string(layer.LayerType()),
 		Config:     (*configJSON)(layer.Config()),

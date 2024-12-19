@@ -214,7 +214,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("newLayers").Array().
 		Length().Equal(0)
 
-	_, _, layerId := addNLSLayerSimple(e, sId)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
 
 	_, res2 := fetchSceneForNewLayers(e, sId)
 	res2.Object().

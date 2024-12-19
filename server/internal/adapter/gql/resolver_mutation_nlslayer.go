@@ -59,6 +59,7 @@ func (r *mutationResolver) UpdateNLSLayer(ctx context.Context, input gqlmodel.Up
 
 	layer, err := usecases(ctx).NLSLayer.Update(ctx, interfaces.UpdateNLSLayerInput{
 		LayerID: lid,
+		Index:   input.Index,
 		Name:    input.Name,
 		Visible: input.Visible,
 		Config:  gqlmodel.ToNLSConfig(input.Config),
@@ -69,6 +70,34 @@ func (r *mutationResolver) UpdateNLSLayer(ctx context.Context, input gqlmodel.Up
 
 	return &gqlmodel.UpdateNLSLayerPayload{
 		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) UpdateNLSLayers(ctx context.Context, input gqlmodel.UpdateNLSLayersInput) (*gqlmodel.UpdateNLSLayersPayload, error) {
+	var updatedLayers []gqlmodel.NLSLayer
+
+	for _, layerInput := range input.Layers {
+		lid, err := gqlmodel.ToID[id.NLSLayer](layerInput.LayerID)
+		if err != nil {
+			return nil, err
+		}
+
+		layer, err := usecases(ctx).NLSLayer.Update(ctx, interfaces.UpdateNLSLayerInput{
+			LayerID: lid,
+			Index:   layerInput.Index,
+			Name:    layerInput.Name,
+			Visible: layerInput.Visible,
+			Config:  gqlmodel.ToNLSConfig(layerInput.Config),
+		}, getOperator(ctx))
+		if err != nil {
+			return nil, err
+		}
+
+		updatedLayers = append(updatedLayers, gqlmodel.ToNLSLayer(layer, nil))
+	}
+
+	return &gqlmodel.UpdateNLSLayersPayload{
+		Layers: updatedLayers,
 	}, nil
 }
 

@@ -268,6 +268,9 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 		layer.UpdateConfig(inp.Config)
 	}
 
+	if inp.Index != nil {
+		layer.SetIndex(inp.Index)
+	}
 	err = i.nlslayerRepo.Save(ctx, layer)
 	if err != nil {
 		return nil, err

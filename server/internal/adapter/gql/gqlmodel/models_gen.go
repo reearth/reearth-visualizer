@@ -46,6 +46,7 @@ type LayerTag interface {
 type NLSLayer interface {
 	IsNLSLayer()
 	GetID() ID
+	GetIndex() *int
 	GetLayerType() string
 	GetSceneID() ID
 	GetConfig() JSON
@@ -1013,6 +1014,7 @@ type NLSInfobox struct {
 
 type NLSLayerGroup struct {
 	ID          ID          `json:"id"`
+	Index       *int        `json:"index,omitempty"`
 	LayerType   string      `json:"layerType"`
 	SceneID     ID          `json:"sceneId"`
 	Children    []NLSLayer  `json:"children"`
@@ -1028,6 +1030,7 @@ type NLSLayerGroup struct {
 
 func (NLSLayerGroup) IsNLSLayer()                  {}
 func (this NLSLayerGroup) GetID() ID               { return this.ID }
+func (this NLSLayerGroup) GetIndex() *int          { return this.Index }
 func (this NLSLayerGroup) GetLayerType() string    { return this.LayerType }
 func (this NLSLayerGroup) GetSceneID() ID          { return this.SceneID }
 func (this NLSLayerGroup) GetConfig() JSON         { return this.Config }
@@ -1039,6 +1042,7 @@ func (this NLSLayerGroup) GetSketch() *SketchInfo  { return this.Sketch }
 
 type NLSLayerSimple struct {
 	ID        ID          `json:"id"`
+	Index     *int        `json:"index,omitempty"`
 	LayerType string      `json:"layerType"`
 	SceneID   ID          `json:"sceneId"`
 	Config    JSON        `json:"config,omitempty"`
@@ -1052,6 +1056,7 @@ type NLSLayerSimple struct {
 
 func (NLSLayerSimple) IsNLSLayer()                  {}
 func (this NLSLayerSimple) GetID() ID               { return this.ID }
+func (this NLSLayerSimple) GetIndex() *int          { return this.Index }
 func (this NLSLayerSimple) GetLayerType() string    { return this.LayerType }
 func (this NLSLayerSimple) GetSceneID() ID          { return this.SceneID }
 func (this NLSLayerSimple) GetConfig() JSON         { return this.Config }
@@ -1846,6 +1851,7 @@ type UpdateMemberOfTeamPayload struct {
 }
 
 type UpdateNLSLayerInput struct {
+	Index   *int    `json:"index,omitempty"`
 	LayerID ID      `json:"layerId"`
 	Name    *string `json:"name,omitempty"`
 	Visible *bool   `json:"visible,omitempty"`
@@ -1854,6 +1860,14 @@ type UpdateNLSLayerInput struct {
 
 type UpdateNLSLayerPayload struct {
 	Layer NLSLayer `json:"layer"`
+}
+
+type UpdateNLSLayersInput struct {
+	Layers []*UpdateNLSLayerInput `json:"layers"`
+}
+
+type UpdateNLSLayersPayload struct {
+	Layers []NLSLayer `json:"layers"`
 }
 
 type UpdateProjectInput struct {

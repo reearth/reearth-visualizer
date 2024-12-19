@@ -57,6 +57,11 @@ func (b *NLSLayerGroupBuilder) NewID() *NLSLayerGroupBuilder {
 	return b
 }
 
+func (b *NLSLayerGroupBuilder) Index(i *int) *NLSLayerGroupBuilder {
+	b.l.index = i
+	return b
+}
+
 func (b *NLSLayerGroupBuilder) LayerType(t LayerType) *NLSLayerGroupBuilder {
 	b.l.layerType = t
 	return b

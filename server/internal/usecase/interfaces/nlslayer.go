@@ -22,6 +22,7 @@ type AddNLSLayerSimpleInput struct {
 
 type UpdateNLSLayerInput struct {
 	LayerID id.NLSLayerID
+	Index   *int
 	Name    *string
 	Visible *bool
 	Config  *nlslayer.Config
