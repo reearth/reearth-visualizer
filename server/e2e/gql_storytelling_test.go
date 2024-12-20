@@ -700,8 +700,11 @@ func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string) (GraphQL
 		Status(http.StatusOK).
 		JSON()
 
-	res.Object().
-		Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContainsAll(blockID)
+	// An error will occur if the list is empty.
+	if res.Object().Path("$.data.removeStoryBlock.page.blocks").Array().Length().Raw() > 0 {
+		res.Object().
+			Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContainsAll(blockID)
+	}
 
 	return requestBody, res, res.Path("$.data.removeStoryBlock.blockId").Raw().(string)
 }

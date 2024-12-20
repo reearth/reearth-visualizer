@@ -610,8 +610,11 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (G
 
 	res := Request(e, uID.String(), requestBody)
 
-	res.Object().
-		Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContainsAll(infoboxBlockId)
+	// An error will occur if the list is empty.
+	if res.Object().Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks").Array().Length().Raw() > 0 {
+		res.Object().
+			Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContainsAll(infoboxBlockId)
+	}
 
 	return requestBody, res, res.Path("$.data.removeNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
