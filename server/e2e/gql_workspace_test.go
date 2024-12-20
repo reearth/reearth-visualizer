@@ -34,7 +34,7 @@ func TestCreateTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("data").Object().Value("createTeam").Object().Value("team").Object().Value("name").String().Equal("test")
+	o.Value("data").Object().Value("createTeam").Object().Value("team").Object().Value("name").String().IsEqual("test")
 }
 
 func TestDeleteTeam(t *testing.T) {
@@ -58,7 +58,7 @@ func TestDeleteTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().Equal(wId1.String())
+	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().IsEqual(wId1.String())
 
 	_, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Equal(t, rerror.ErrNotFound, err)
@@ -76,7 +76,7 @@ func TestDeleteTeam(t *testing.T) {
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
 
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: deleteTeam operation denied")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("input: deleteTeam operation denied")
 }
 
 func TestUpdateTeam(t *testing.T) {
@@ -104,7 +104,7 @@ func TestUpdateTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("data").Object().Value("updateTeam").Object().Value("team").Object().Value("name").String().Equal("updated")
+	o.Value("data").Object().Value("updateTeam").Object().Value("team").Object().Value("name").String().IsEqual("updated")
 
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -123,7 +123,7 @@ func TestUpdateTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: updateTeam not found")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("input: updateTeam not found")
 }
 
 func TestAddMemberToTeam(t *testing.T) {
@@ -170,7 +170,7 @@ func TestAddMemberToTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().
-		Value("errors").Array().First().Object().Value("message").Equal("input: addMemberToTeam user already joined")
+		Value("errors").Array().Value(0).Object().Value("message").IsEqual("input: addMemberToTeam user already joined")
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
@@ -208,7 +208,7 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: removeMemberFromTeam target user does not exist in the workspace")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("input: removeMemberFromTeam target user does not exist in the workspace")
 }
 
 func TestUpdateMemberOfTeam(t *testing.T) {
@@ -253,5 +253,5 @@ func TestUpdateMemberOfTeam(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: updateMemberOfTeam operation denied")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("input: updateMemberOfTeam operation denied")
 }

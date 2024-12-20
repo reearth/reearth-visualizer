@@ -34,7 +34,7 @@ func TestMe(t *testing.T) {
 		Object().
 		Value("data").Object().
 		Value("me").Object().
-		ValueEqual("email", uEmail).
-		ValueEqual("id", uID.String()).
-		ValueEqual("name", uName)
+		HasValue("email", uEmail).
+		HasValue("id", uID.String()).
+		HasValue("name", uName)
 }

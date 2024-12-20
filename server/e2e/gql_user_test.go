@@ -115,8 +115,8 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 // 		WithHeader("Content-Type", "application/json").
 // 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 // 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("signup").Object().Value("user").Object()
-// 	o.Value("name").String().Equal("updated")
-// 	o.Value("email").String().Equal("hoge@test.com")
+// 	o.Value("name").String().IsEqual("updated")
+// 	o.Value("email").String().IsEqual("hoge@test.com")
 // }
 
 func TestUpdateMe(t *testing.T) {
@@ -139,10 +139,10 @@ func TestUpdateMe(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("updateMe").Object().Value("me").Object()
-	o.Value("name").String().Equal("updated")
-	o.Value("email").String().Equal("hoge@test.com")
-	o.Value("lang").String().Equal("ja")
-	o.Value("theme").String().Equal("default")
+	o.Value("name").String().IsEqual("updated")
+	o.Value("email").String().IsEqual("hoge@test.com")
+	o.Value("lang").String().IsEqual("ja")
+	o.Value("theme").String().IsEqual("default")
 }
 
 func TestRemoveMyAuth(t *testing.T) {
@@ -224,9 +224,9 @@ func TestSearchUser(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("searchUser").Object()
-	o.Value("id").String().Equal(uId1.String())
-	o.Value("name").String().Equal("e2e")
-	o.Value("email").String().Equal("e2e@e2e.com")
+	o.Value("id").String().IsEqual(uId1.String())
+	o.Value("name").String().IsEqual("e2e")
+	o.Value("email").String().IsEqual("e2e@e2e.com")
 
 	query = fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "notfound")
 	request = GraphQLRequest{
@@ -241,7 +241,7 @@ func TestSearchUser(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().
-		Value("data").Object().Value("searchUser").Null()
+		Value("data").Object().Value("searchUser").IsNull()
 }
 
 func TestNode(t *testing.T) {
@@ -264,7 +264,7 @@ func TestNode(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("node").Object()
-	o.Value("id").String().Equal(uId1.String())
+	o.Value("id").String().IsEqual(uId1.String())
 }
 
 func TestNodes(t *testing.T) {
@@ -287,5 +287,5 @@ func TestNodes(t *testing.T) {
 		WithHeader("Content-Type", "application/json").
 		WithHeader("X-Reearth-Debug-User", uId1.String()).
 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("nodes")
-	o.Array().Contains(map[string]string{"id": uId1.String()})
+	o.Array().ContainsAll(map[string]string{"id": uId1.String()})
 }
