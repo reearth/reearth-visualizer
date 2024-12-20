@@ -4,7 +4,7 @@ require (
 	cloud.google.com/go/profiler v0.4.2
 	cloud.google.com/go/storage v1.48.0
 	github.com/99designs/gqlgen v0.17.49
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.25.0
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.21.0
 	github.com/avast/retry-go/v4 v4.6.0
 	github.com/aws/aws-sdk-go-v2 v1.32.7
 	github.com/aws/aws-sdk-go-v2/config v1.28.7
