@@ -15,9 +15,11 @@ const BooleanSelectorInput: FC<Props> = ({ value, onChange }) => {
   return (
     <Selector
       value={
-        value === true || value === "true"
+        value === true ||
+        (typeof value === "string" && value.toLowerCase() === "true")
           ? "true"
-          : value === false || value === "false"
+          : value === false ||
+              (typeof value === "string" && value.toLowerCase() === "false")
             ? "false"
             : ""
       }
