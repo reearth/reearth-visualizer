@@ -274,10 +274,10 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             disabled={!widget?.property?.default?.apiToken}
           />
         </div>
-        {loading && <p className="tw-text-gray-500 tw-mt-2">Loading...</p>}
-        {error && <p className="tw-text-red-300 tw-mt-2">{error}</p>}
+        {loading && <p className="tw-text-gray-500 tw-p-1">Loading...</p>}
+        {error && <p className="tw-text-gray-500 tw-p-1">{error}</p>}
         {filteredSuggestions.length > 0 && (
-          <ul className="tw-ml-[-0.75rem] tw-mt-2 tw-rounded-b-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
+          <ul className="tw-ml-[-0.75rem] tw-rounded-b-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
@@ -291,7 +291,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         )}
 
         {selectedItems.length > 0 && filteredSuggestions.length === 0 && (
-          <div className="tw-mt-2 tw-space-y-2 tw-ml-[-0.75rem] ">
+          <div className="tw-space-y-1 tw-ml-[-0.75rem] ">
             {selectedItems.map((item, index) => {
               const isSelected = index === selectedItemIndex;
               return (
