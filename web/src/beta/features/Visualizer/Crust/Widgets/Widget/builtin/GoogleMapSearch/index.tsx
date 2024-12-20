@@ -19,8 +19,6 @@ let loaderInstance: Loader | null = null;
 
 /**
  * Get a singleton instance of the Google Maps JS API Loader.
- * If it doesn't exist, create a new one with the given apiKey.
- * This ensures that the Loader is initialized only once and not repeatedly.
  */
 function getLoaderInstance(apiKey: string): Loader {
   if (!loaderInstance) {
@@ -54,10 +52,8 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 
   const VisualizerRef = useVisualizer();
 
-  // Load Google Maps API using the provided API key from widget properties
   useEffect(() => {
     if (!widget?.property?.default?.apiToken) {
-      setError("Please setup apikey");
       return;
     }
     setError(null);
@@ -72,7 +68,9 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
       });
   }, [widget?.property?.default?.apiToken]);
 
-  // Debounce mechanism: Wait for 3 seconds after user stops typing to trigger search
+  /**
+   * Debounce: Trigger search 3 seconds after the user stops typing
+   */
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
@@ -81,8 +79,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   }, [query]);
 
   /**
-   * Fetch suggestions from Google Places API using textSearch.
-   * Only triggers when Google Maps API is loaded and there is a non-empty search query.
+   * Fetch suggestions from Google Places API
    */
   const fetchSuggestions = useCallback(
     (searchText: string) => {
@@ -98,7 +95,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
       setFilteredSuggestions([]);
 
       try {
-        // Use a new PlacesService instance pointing to a virtual div since we're not displaying the map
         const service = new google.maps.places.PlacesService(
           document.createElement("div")
         );
@@ -116,7 +112,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
           }
         });
       } catch (err) {
-        // If an unexpected error occurs during PlacesService creation or textSearch call
         setLoading(false);
         setError(`PlacesService initialization or request failed: ${err}`);
       }
@@ -124,7 +119,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     [googleLoaded]
   );
 
-  // When debounced query updates, fetch suggestions
   useEffect(() => {
     fetchSuggestions(debouncedQuery);
   }, [debouncedQuery, fetchSuggestions]);
@@ -137,10 +131,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     []
   );
 
-  /**
-   * Fly to a given lat/lng position with specified camera parameters.
-   * This function is triggered after selecting a place or re-selecting from selected items.
-   */
   const handleFlytoAndAddLayer = useCallback(
     (lat: number, lng: number) => {
       onFlyTo?.(
@@ -161,7 +151,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      // If user presses Enter, trigger immediate search
       if (e.key === "Enter") {
         setDebouncedQuery(query);
       }
@@ -169,12 +158,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     [query]
   );
 
-  /**
-   * Handle selecting an item from the suggestions list.
-   * 1. Get the location, add a layer marker at that location.
-   * 2. Add the item to selectedItems and immediately select it.
-   * 3. Fly to the selected location.
-   */
   const handleSelectItem = useCallback(
     (item: any) => {
       const lat = item.geometry?.location?.lat();
@@ -192,7 +175,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             }
           }
         },
-        // Using a Base64 encoded marker image here
         marker: {
           style: "image",
           image:
@@ -200,7 +182,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         }
       });
 
-      // Add the new item to the list, select it, and reset the search states
       setSelectedItems((prev) => {
         const newItems = [...prev, { ...item, layerId: layer?.id }];
         setSelectedItemIndex(newItems.length - 1);
@@ -214,11 +195,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     [VisualizerRef, handleFlytoAndAddLayer]
   );
 
-  /**
-   * Handle selecting from already selected items.
-   * 1. Update selectedItemIndex to the clicked item's index.
-   * 2. Fly to that item's location.
-   */
   const handleSelectFromSelectedItems = useCallback(
     (item: any, index: number) => {
       setSelectedItemIndex(index);
@@ -231,13 +207,14 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   );
 
   /**
-   * Handle deleting an item from the selectedItems list.
-   * 1. Remove the item from the array.
-   * 2. Adjust the selectedItemIndex if necessary:
-   *    - If deleting the currently selected item, choose a new item to select if possible.
-   *    - If there are no items left, set selectedItemIndex to null.
-   * 3. Delete the corresponding layer from the visualizer.
-   * 4. 在找到新的选中项后，调用 handleSelectFromSelectedItems。
+   * When deleting an item:
+   * 1. Remove it from the selectedItems array.
+   * 2. Adjust selectedItemIndex based on which item is removed.
+   *    - If the removed item is currently selected, attempt to select another item if available.
+   *    - If no items remain, selectedItemIndex becomes null.
+   *    - If the removed item was before the currently selected one, adjust the index accordingly.
+   * 3. After adjusting selection, if there's a new selected item, fly to it.
+   * 4. Remove the corresponding layer from the scene.
    */
   const handleDeleteItem = useCallback(
     (index: number, layerId: string) => {
@@ -246,23 +223,17 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 
         let newSelectedIndex: number | null = selectedItemIndex;
 
-        // If the deleted item is the currently selected one
         if (selectedItemIndex === index) {
-          // If there are still items left after deletion
           if (newItems.length > 0) {
-            // Try to select the item now at the same index (if it exists)
             if (index < newItems.length) {
               newSelectedIndex = index;
             } else {
-              // If we deleted the last item, select the new last item
               newSelectedIndex = newItems.length - 1;
             }
           } else {
-            // No items left, no selection
             newSelectedIndex = null;
           }
         } else if (selectedItemIndex !== null && selectedItemIndex > index) {
-          // If the deleted item was before the currently selected item, shift the index by -1
           newSelectedIndex = selectedItemIndex - 1;
         }
 
@@ -278,11 +249,14 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         return newItems;
       });
 
-      // Delete the corresponding layer from the scene
       VisualizerRef?.current?.layers?.deleteLayer(layerId);
     },
     [VisualizerRef, selectedItemIndex, handleSelectFromSelectedItems]
   );
+
+  const inputPlaceholder = widget?.property?.default?.apiToken
+    ? "Type a keyword to search..."
+    : "Please setup apikey";
 
   return (
     <div className={theme}>
@@ -293,20 +267,21 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
           </span>
           <Input
             className="tw-border-0 tw-shadow-none focus:outline-none focus:ring-0"
-            placeholder="Type a keyword to search..."
+            placeholder={inputPlaceholder}
             value={query}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            disabled={!widget?.property?.default?.apiToken}
           />
         </div>
         {loading && <p className="tw-text-gray-500 tw-mt-2">Loading...</p>}
-        {error && <p className="tw-text-red-500 tw-mt-2">{error}</p>}
+        {error && <p className="tw-text-red-300 tw-mt-2">{error}</p>}
         {filteredSuggestions.length > 0 && (
-          <ul className="tw-mr-3 tw-mt-2 tw-rounded-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
+          <ul className="tw-ml-[-0.75rem] tw-mt-2 tw-rounded-b-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
-                className={`tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-hoverbackground`}
+                className="tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-hoverbackground"
                 onClick={() => handleSelectItem(suggestion)}
               >
                 {`${suggestion.formatted_address}, ${suggestion.name}`}
@@ -315,8 +290,8 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
           </ul>
         )}
 
-        {selectedItems.length > 0 && (
-          <div className="tw-mt-2 tw-mb-2 tw-space-y-2 tw-mr-3">
+        {selectedItems.length > 0 && filteredSuggestions.length === 0 && (
+          <div className="tw-mt-2 tw-space-y-2 tw-ml-[-0.75rem] ">
             {selectedItems.map((item, index) => {
               const isSelected = index === selectedItemIndex;
               return (
@@ -334,7 +309,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
                   <Trash2
                     className="tw-w-5 tw-h-5 tw-cursor-pointer hover:tw-text-red-500 tw-flex-shrink-0"
                     onClick={(e) => {
-                      // Prevent triggering the parent onClick event when clicking the Trash icon
                       e.stopPropagation();
                       handleDeleteItem(index, item.layerId);
                     }}
