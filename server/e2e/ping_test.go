@@ -20,20 +20,20 @@ func TestPingAPI(t *testing.T) {
 		Expect().
 		Status(http.StatusNoContent).
 		Header("Access-Control-Allow-Origin").
-		Equal("https://example.com")
+		IsEqual("https://example.com")
 
 	r := e.GET("/api/ping").
 		WithHeader("Origin", "https://example.com").
 		Expect()
 
 	r.Header("Cache-Control").
-		Equal("private, no-store, no-cache, must-revalidate")
+		IsEqual("private, no-store, no-cache, must-revalidate")
 
 	r.Header("Access-Control-Allow-Origin").
-		Equal("https://example.com")
+		IsEqual("https://example.com")
 
 	r.Status(http.StatusOK).
 		JSON().
 		String().
-		Equal("pong")
+		IsEqual("pong")
 }

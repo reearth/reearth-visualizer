@@ -40,7 +40,7 @@ func TestCallImportProject(t *testing.T) {
 	r = getScene(e, sid, language.English.String())
 	// fmt.Println(toJSONString(r.Raw()))
 
-	r.Value("id").Equal(sid)
+	r.Value("id").IsEqual(sid)
 
 }
 

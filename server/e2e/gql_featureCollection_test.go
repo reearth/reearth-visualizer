@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func addGeoJSONFeature(
@@ -197,12 +196,7 @@ func deleteGeoJSONFeature(
 }
 
 func TestFeatureCollectionCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)
@@ -212,7 +206,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
 
@@ -221,7 +215,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	geometry1 := map[string]any{
 		"type":        "Point",
@@ -239,46 +233,30 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("isSketch").Boolean().True()
+		Value("newLayers").Array().Value(0).Object().
+		Value("isSketch").Boolean().IsTrue()
 
-	res3.Object().
+	features3 := res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(1)
+		Value("features").Array()
 
-	res3.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
-		Value("type").Equal("Feature")
+	features3.
+		Length().IsEqual(1)
 
-	res3.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+	features3.Value(0).Object().
+		Value("type").IsEqual("Feature")
+
+	features3.Value(0).Object().
 		Value("geometry").Object().
-		Value("type").Equal("Point")
+		Value("type").IsEqual("Point")
 
-	res3.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+	features3.Value(0).Object().
 		Value("properties").Object().
-		Value("type").Equal("marker")
+		Value("type").IsEqual("marker")
 
 	geometry2 := map[string]any{
 		"type":        "LineString",
@@ -293,24 +271,20 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	_, _, fid2 := addGeoJSONFeature(e, layerId, geometry2, properties2)
 
 	_, res4 := fetchSceneForNewLayers(e, sId)
-	res4.Object().
+	features4 := res4.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(2)
+		Value("features").Array()
 
-	res4.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+	features4.
+		Length().IsEqual(2)
+
+	features4.Value(int(features4.Length().Raw()) - 1).Object().
 		Value("geometry").Object().
-		Value("type").Equal("LineString")
+		Value("type").IsEqual("LineString")
 
 	geometry3 := map[string]any{
 		"type":        "Polygon",
@@ -325,24 +299,20 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	_, _, fid3 := addGeoJSONFeature(e, layerId, geometry3, properties3)
 
 	_, res5 := fetchSceneForNewLayers(e, sId)
-	res5.Object().
+	features5 := res5.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(3)
+		Value("features").Array()
 
-	res5.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+	features5.
+		Length().IsEqual(3)
+
+	features5.Value(int(features5.Length().Raw()) - 1).Object().
 		Value("geometry").Object().
-		Value("type").Equal("Polygon")
+		Value("type").IsEqual("Polygon")
 
 	geometry4 := map[string]any{
 		"type":        "MultiPolygon",
@@ -357,24 +327,20 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	_, _, fid4 := addGeoJSONFeature(e, layerId, geometry4, properties4)
 
 	_, res6 := fetchSceneForNewLayers(e, sId)
-	res6.Object().
+	features6 := res6.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(4)
+		Value("features").Array()
 
-	res6.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+	features6.
+		Length().IsEqual(4)
+
+	features6.Value(int(features6.Length().Raw()) - 1).Object().
 		Value("geometry").Object().
-		Value("type").Equal("MultiPolygon")
+		Value("type").IsEqual("MultiPolygon")
 
 	geometry5 := map[string]any{
 		"type":       "GeometryCollection",
@@ -389,35 +355,25 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	_, _, fid5 := addGeoJSONFeature(e, layerId, geometry5, properties5)
 
 	_, res7 := fetchSceneForNewLayers(e, sId)
-	res7.Object().
+	features7 := res7.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(5)
+		Value("features").Array()
 
-	res7.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+	features7.
+		Length().IsEqual(5)
+
+	features7.Value(int(features7.Length().Raw()) - 1).Object().
 		Value("geometry").Object().
-		Value("type").Equal("GeometryCollection")
+		Value("type").IsEqual("GeometryCollection")
 
-	res7.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+	features7.Value(int(features7.Length().Raw()) - 1).Object().
 		Value("geometry").Object().
 		Value("geometries").Array().
-		Length().Equal(4)
+		Length().IsEqual(4)
 
 	geometry6 := map[string]any{
 		"type":        "LineString",
@@ -432,64 +388,44 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	_, _, fid6 := updateGeoJSONFeature(e, layerId, fid1, geometry6, properties6)
 
 	_, res8 := fetchSceneForNewLayers(e, sId)
-	res8.Object().
+	features8 := res8.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(5)
+		Value("features").Array()
 
-	res8.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
-		Value("id").Equal(fid6)
+	features8.
+		Length().IsEqual(5)
 
-	res8.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+	features8.Value(0).Object().
+		Value("id").IsEqual(fid6)
+
+	features8.Value(0).Object().
 		Value("geometry").Object().
-		Value("type").Equal("LineString")
+		Value("type").IsEqual("LineString")
 
-	res8.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+	features8.Value(0).Object().
 		Value("properties").Object().
-		Value("extrudedHeight").Equal(10)
+		Value("extrudedHeight").IsEqual(10)
 
 	deleteGeoJSONFeature(e, layerId, fid6)
 
 	_, res9 := fetchSceneForNewLayers(e, sId)
-	res9.Object().
+	features9 := res9.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().
-		Length().Equal(4)
+		Value("features").Array()
 
-	res9.Object().
-		Value("data").Object().
-		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("sketch").Object().
-		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
-		Value("id").Equal(fid2)
+	features9.
+		Length().IsEqual(4)
+
+	features9.Value(0).Object().
+		Value("id").IsEqual(fid2)
 
 	deleteGeoJSONFeature(e, layerId, fid2)
 	deleteGeoJSONFeature(e, layerId, fid3)
@@ -500,9 +436,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res10.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 }

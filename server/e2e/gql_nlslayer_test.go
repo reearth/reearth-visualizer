@@ -73,8 +73,8 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string, title string, index int
 	res := Request(e, uID.String(), requestBody)
 
 	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
-	res.Path("$.data.addNLSLayerSimple.layers").Object().ValueEqual("title", title)
-	res.Path("$.data.addNLSLayerSimple.layers").Object().ValueEqual("index", index)
+	res.Path("$.data.addNLSLayerSimple.layers").Object().HasValue("title", title)
+	res.Path("$.data.addNLSLayerSimple.layers").Object().HasValue("index", index)
 
 	return requestBody, res, layerId
 }
@@ -338,7 +338,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	// Add NLSLayer
 	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle1", 1)
@@ -374,15 +374,15 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(3)
+		Length().IsEqual(3)
 
 	res2.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(1)
+		Value("extrudedHeight").IsEqual(1)
 
 	// Update NLSLayer
 	_, _ = updateNLSLayer(e, layerId)
@@ -392,16 +392,16 @@ func TestNLSLayerCRUD(t *testing.T) {
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("config").Object().
 		Value("data").Object().
-		Value("value").Equal("secondSampleValue")
+		Value("value").IsEqual("secondSampleValue")
 
 	// Additional check to ensure 'properties' and 'events' are present
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("config").Object().
 		ContainsKey("properties").
 		ContainsKey("events").
@@ -411,7 +411,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 	savedConfig := res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("config").Raw()
 
 	// Perform update with nil config
@@ -424,8 +424,8 @@ func TestNLSLayerCRUD(t *testing.T) {
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("config").Equal(savedConfig)
+		Value("newLayers").Array().Value(0).Object().
+		Value("config").IsEqual(savedConfig)
 
 	// Duplicate NLSLayer
 	_, duplicateRes := duplicateNLSLayer(e, layerId)
@@ -436,7 +436,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(4)
+		Length().IsEqual(4)
 
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)
@@ -446,7 +446,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(3)
+		Length().IsEqual(3)
 
 	_, _ = removeNLSLayer(e, duplicatedLayerId)
 
@@ -455,7 +455,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(2)
+		Length().IsEqual(2)
 
 	_, updatedProject := fetchProjectForNewLayers(e, pId)
 	updatedProject.Object().
@@ -490,7 +490,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 		Value("createNLSInfobox").Object().
 		Value("layer").Object().
 		Value("infobox").Object().
-		ValueEqual("layerId", layerId)
+		HasValue("layerId", layerId)
 
 	return requestBody, res, res.Path("$.data.createNLSInfobox.layer.infobox.id").Raw().(string)
 }
@@ -611,7 +611,7 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (G
 	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
-		Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContains(infoboxBlockId)
+		Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContainsAll(infoboxBlockId)
 
 	return requestBody, res, res.Path("$.data.removeNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
@@ -657,7 +657,7 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
-		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().Contains(infoboxBlockId)
+		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().ContainsAll(infoboxBlockId)
 
 	return requestBody, res, res.Path("$.data.moveNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
@@ -682,7 +682,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	// Add NLSLayer
 	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
@@ -692,32 +692,32 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	_, _, _ = createInfobox(e, layerId)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+		Path("$.data.node.newLayers[0].infobox.blocks").IsEqual([]any{})
 
 	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textInfoboxBetaBlock", nil)
 	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyInfoboxBetaBlock", nil)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID1, blockID2})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID1, blockID2})
 
 	_, _, _ = moveInfoboxBlock(e, layerId, blockID1, 1)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID2, blockID1})
 
 	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageInfoboxBetaBlock", lo.ToPtr(1))
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID2, blockID3, blockID1})
 
 	removeInfoboxBlock(e, layerId, blockID1)
 	removeInfoboxBlock(e, layerId, blockID2)
@@ -725,7 +725,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+		Path("$.data.node.newLayers[0].infobox.blocks").IsEqual([]any{})
 
 	_, updatedProject := fetchProjectForNewLayers(e, pId)
 	updatedProject.Object().
@@ -782,7 +782,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
 
@@ -791,15 +791,15 @@ func TestCustomProperties(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	res2.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(1)
+		Value("extrudedHeight").IsEqual(1)
 
 	schema1 := map[string]any{
 		"id":             "schemaId1",
@@ -813,16 +813,16 @@ func TestCustomProperties(t *testing.T) {
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("isSketch").Boolean().True()
+		Value("newLayers").Array().Value(0).Object().
+		Value("isSketch").Boolean().IsTrue()
 
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(0)
+		Value("extrudedHeight").IsEqual(0)
 
 	schema2 := map[string]any{
 		"id":             "schemaId1",
@@ -836,10 +836,10 @@ func TestCustomProperties(t *testing.T) {
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(10)
+		Value("extrudedHeight").IsEqual(10)
 
 	_, updatedProject := fetchProjectForNewLayers(e, pId)
 	updatedProject.Object().
@@ -882,7 +882,7 @@ func orderCheck1(res2 *httpexpect.Value) {
 	}
 	for i, newLayer := range newLayers.Iter() {
 		expected := expectedLayers[i]
-		newLayer.Object().ValueEqual("title", expected.title).ValueEqual("index", expected.index)
+		newLayer.Object().HasValue("title", expected.title).HasValue("index", expected.index)
 	}
 }
 
@@ -898,6 +898,6 @@ func orderCheck2(res2 *httpexpect.Value) {
 	}
 	for i, newLayer := range newLayers.Iter() {
 		expected := expectedLayers[i]
-		newLayer.Object().ValueEqual("title", expected.title).ValueEqual("index", expected.index)
+		newLayer.Object().HasValue("title", expected.title).HasValue("index", expected.index)
 	}
 }
