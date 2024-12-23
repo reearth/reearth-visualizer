@@ -1,7 +1,5 @@
 package app
 
-// if use redis https://gqlgen.com/reference/apq/
-
 import (
 	"context"
 	"time"
