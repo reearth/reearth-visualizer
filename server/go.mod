@@ -2,6 +2,8 @@ module github.com/reearth/reearth/server
 
 go 1.22.10
 
+toolchain go1.22.10
+
 require (
 	github.com/99designs/gqlgen v0.17.61
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
