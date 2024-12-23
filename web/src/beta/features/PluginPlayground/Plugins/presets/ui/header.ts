@@ -16,7 +16,7 @@ extensions:
       extended: true
       defaultLocation:
         zone: outer
-        section: left
+        section: center
         area: top
   `,
   disableEdit: true,
@@ -66,7 +66,7 @@ const widgetFile: FileType = {
     <div id="wrapper">
       <div class="header">
         <div class="header-logo">
-          <img src="https://ml.globenewswire.com/Resource/Download/65935bec-afe1-4bf6-84d6-1a7e9d4ae611?size=2" alt="Re:Earth Logo">
+          <img src="" alt="Re:Earth Logo"/>
         </div>
         <ul class="header-menu">
           <li>Home</li>
