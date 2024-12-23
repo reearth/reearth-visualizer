@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +22,7 @@ func TestPlugin(t *testing.T) {
 
 	cl := res.Clone()
 	assert.Equal(t, res, cl)
-	assert.NotSame(t, res, cl)
+	customassert.NotSame(t, res, cl)
 
 	assert.Nil(t, (*Plugin)(nil).PluginRef())
 }

@@ -3,6 +3,7 @@ package dataset
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/stretchr/testify/assert"
 )
@@ -162,7 +163,7 @@ func TestOptionalValue_Value(t *testing.T) {
 			res := tt.value.Value()
 			assert.Equal(t, tt.want, res)
 			if res != nil {
-				assert.NotSame(t, tt.want, res)
+				customassert.NotSame(t, tt.want, res)
 			}
 		})
 	}
@@ -203,7 +204,7 @@ func TestOptionalValue_TypeAndValue(t *testing.T) {
 			assert.Equal(t, tt.wantt, ty)
 			assert.Equal(t, tt.wantv, tv)
 			if tv != nil {
-				assert.NotSame(t, tt.wantv, tv)
+				customassert.NotSame(t, tt.wantv, tv)
 			}
 		})
 	}
@@ -302,7 +303,7 @@ func TestOptionalValue_Clone(t *testing.T) {
 			res := tt.target.Clone()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}

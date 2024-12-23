@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -137,6 +138,6 @@ func TestWidget_Clone(t *testing.T) {
 	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
 	res2 := res.Clone()
 	assert.Equal(t, res, res2)
-	assert.NotSame(t, res, res2)
+	customassert.NotSame(t, res, res2)
 	assert.Nil(t, (*Widget)(nil).Clone())
 }

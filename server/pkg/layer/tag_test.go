@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -141,7 +142,7 @@ func TestTagItem_Clone(t *testing.T) {
 			res := tt.target.Clone()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}
@@ -171,7 +172,7 @@ func TestTagItem_CloneItem(t *testing.T) {
 			res := tt.target.CloneItem()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}
@@ -329,7 +330,7 @@ func TestTagGroup_Children(t *testing.T) {
 			res := tt.target.Children()
 			assert.Equal(t, tt.want, res)
 			if tt.want != nil {
-				assert.NotSame(t, tt.target.children, res)
+				customassert.NotSame(t, tt.target.children, res)
 			}
 		})
 	}
@@ -507,7 +508,7 @@ func TestTagGroup_Clone(t *testing.T) {
 			res := tt.target.Clone()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}
@@ -538,9 +539,9 @@ func TestTagGroup_CloneGroup(t *testing.T) {
 			res := tt.target.CloneGroup()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 				if tt.target.children != nil {
-					assert.NotSame(t, tt.target.children, res.children)
+					customassert.NotSame(t, tt.target.children, res.children)
 				}
 			}
 		})
@@ -577,7 +578,7 @@ func TestNewTagList(t *testing.T) {
 			t.Parallel()
 			res := NewTagList(tt.args.tags)
 			assert.Equal(t, tt.want, res)
-			assert.NotSame(t, res.tags, tt.args.tags)
+			customassert.NotSame(t, res.tags, tt.args.tags)
 		})
 	}
 }
@@ -613,7 +614,7 @@ func TestTagList_Tags(t *testing.T) {
 			res := tt.target.Tags()
 			assert.Equal(t, tt.want, res)
 			if tt.want != nil {
-				assert.NotSame(t, tt.target.tags, res)
+				customassert.NotSame(t, tt.target.tags, res)
 			}
 		})
 	}
@@ -1096,7 +1097,7 @@ func TestTagList_Clone(t *testing.T) {
 			res := tt.target.Clone()
 			assert.Equal(t, tt.target, res)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}

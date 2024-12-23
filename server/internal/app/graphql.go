@@ -1,5 +1,7 @@
 package app
 
+// if use redis https://gqlgen.com/reference/apq/
+
 import (
 	"context"
 	"time"
@@ -7,7 +9,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
-	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/labstack/echo/v4"
 	"github.com/ravilushqa/otelgqlgen"
@@ -41,11 +42,11 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 		MaxMemory:     maxMemorySize,
 	})
 
-	srv.SetQueryCache(lru.New(1000))
+	srv.SetQueryCache(NewCache(1000))
 
 	srv.Use(extension.Introspection{})
 	srv.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New(100),
+		Cache: NewPersistedCache(100),
 	})
 
 	srv.Use(otelgqlgen.Middleware())
@@ -59,7 +60,7 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	}
 
 	srv.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New(30),
+		Cache: NewPersistedCache(30),
 	})
 
 	srv.SetErrorPresenter(

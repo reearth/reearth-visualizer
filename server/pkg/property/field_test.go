@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/stretchr/testify/assert"
 )
@@ -138,7 +139,7 @@ func TestField_Clone(t *testing.T) {
 			r := b.Clone()
 			assert.Equal(t, b, r)
 			if tt.want != nil {
-				assert.NotSame(t, b, r)
+				customassert.NotSame(t, b, r)
 			}
 		})
 	}

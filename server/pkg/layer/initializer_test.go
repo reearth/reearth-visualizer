@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,18 +28,18 @@ func TestInitializer_Clone(t *testing.T) {
 
 	actual := i.Clone()
 
-	assert.NotSame(t, i, actual)
-	assert.NotSame(t, i.ID, actual.ID)
-	assert.NotSame(t, i.Plugin, actual.Plugin)
-	assert.NotSame(t, i.Extension, actual.Extension)
-	assert.NotSame(t, i.Infobox, actual.Infobox)
-	assert.NotSame(t, i.PropertyID, actual.PropertyID)
-	assert.NotSame(t, i.Property, actual.Property)
-	assert.NotSame(t, i.Layers, actual.Layers)
-	assert.NotSame(t, i.Layers[0], actual.Layers[0])
-	assert.NotSame(t, i.IsVisible, actual.IsVisible)
-	assert.NotSame(t, i.LinkedDatasetSchema, actual.LinkedDatasetSchema)
-	assert.NotSame(t, i.LinkedDataset, actual.LinkedDataset)
+	customassert.NotSame(t, i, actual)
+	customassert.NotSame(t, i.ID, actual.ID)
+	customassert.NotSame(t, i.Plugin, actual.Plugin)
+	customassert.NotSame(t, i.Extension, actual.Extension)
+	customassert.NotSame(t, i.Infobox, actual.Infobox)
+	customassert.NotSame(t, i.PropertyID, actual.PropertyID)
+	customassert.NotSame(t, i.Property, actual.Property)
+	customassert.NotSame(t, i.Layers, actual.Layers)
+	customassert.NotSame(t, i.Layers[0], actual.Layers[0])
+	customassert.NotSame(t, i.IsVisible, actual.IsVisible)
+	customassert.NotSame(t, i.LinkedDatasetSchema, actual.LinkedDatasetSchema)
+	customassert.NotSame(t, i.LinkedDataset, actual.LinkedDataset)
 	assert.Equal(t, i, actual)
 }
 
@@ -112,10 +113,10 @@ func TestInitializerInfobox_Clone(t *testing.T) {
 
 	actual := i.Clone()
 
-	assert.NotSame(t, i, actual)
-	assert.NotSame(t, i.Property, actual.Property)
-	assert.NotSame(t, i.Fields, actual.Fields)
-	assert.NotSame(t, i.Fields[0], actual.Fields[0])
+	customassert.NotSame(t, i, actual)
+	customassert.NotSame(t, i.Property, actual.Property)
+	customassert.NotSame(t, i.Fields, actual.Fields)
+	customassert.NotSame(t, i.Fields[0], actual.Fields[0])
 	assert.Equal(t, i, actual)
 }
 
@@ -158,9 +159,9 @@ func TestInitializerInfoboxField_Clone(t *testing.T) {
 
 	actual := i.Clone()
 
-	assert.NotSame(t, i, actual)
-	assert.NotSame(t, i.Property, actual.Property)
-	assert.NotSame(t, i.ID, actual.ID)
+	customassert.NotSame(t, i, actual)
+	customassert.NotSame(t, i.Property, actual.Property)
+	customassert.NotSame(t, i.ID, actual.ID)
 	assert.Equal(t, i, actual)
 }
 

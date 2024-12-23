@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
@@ -20,7 +21,7 @@ func TestPolicy_FindByID(t *testing.T) {
 	ctx := context.Background()
 	got, err := r.FindByID(ctx, policy.ID("a"))
 	assert.Equal(t, p, got)
-	assert.NotSame(t, p, got)
+	customassert.NotSame(t, p, got)
 	assert.NoError(t, err)
 
 	got, err = r.FindByID(ctx, policy.ID("x"))

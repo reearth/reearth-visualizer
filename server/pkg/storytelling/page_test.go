@@ -3,6 +3,7 @@ package storytelling
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +30,7 @@ func TestPage_SettersGetters(t *testing.T) {
 	assert.Nil(t, p.SwipeableLayers())
 	assert.Nil(t, p.Blocks())
 	assert.Equal(t, &propertyID, p.PropertyRef())
-	assert.NotSame(t, &propertyID, p.PropertyRef())
+	customassert.NotSame(t, &propertyID, p.PropertyRef())
 
 	p.SetTitle("test2")
 	assert.Equal(t, "test2", p.Title())
@@ -94,7 +95,7 @@ func TestPage_BlockManipulation(t *testing.T) {
 
 	clone := p.Clone()
 	assert.Equal(t, p, clone)
-	assert.NotSame(t, p, clone)
+	customassert.NotSame(t, p, clone)
 
 	duplicate := p.Duplicate()
 	assert.NotEqual(t, p.Id(), duplicate.Id())

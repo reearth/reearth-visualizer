@@ -24,7 +24,7 @@ help:
 	@echo "  dataloaden        Generate dataloader for PropertySchemaLoader"
 
 lint:
-	golangci-lint run --fix
+	golangci-lint run --fix --config ./golangci.yml
 
 test:
 	go test -race -short -v ./...

@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,7 +45,7 @@ func TestCamera_Clone(t *testing.T) {
 			res := tc.Camera.Clone()
 			assert.Equal(t, tc.Expected, res)
 			if tc.Expected != nil {
-				assert.NotSame(t, tc.Expected, res)
+				customassert.NotSame(t, tc.Expected, res)
 			}
 		})
 	}

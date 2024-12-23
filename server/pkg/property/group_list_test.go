@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -798,7 +799,7 @@ func TestGroupList_Clone(t *testing.T) {
 				assert.Nil(t, res)
 			} else {
 				assert.Equal(t, tt.target, res)
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}
@@ -827,7 +828,7 @@ func TestGroupList_CloneItem(t *testing.T) {
 				assert.Nil(t, res)
 			} else {
 				assert.Equal(t, tt.target, res)
-				assert.NotSame(t, tt.target, res)
+				customassert.NotSame(t, tt.target, res)
 			}
 		})
 	}
