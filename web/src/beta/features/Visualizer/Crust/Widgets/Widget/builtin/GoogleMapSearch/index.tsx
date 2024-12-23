@@ -8,12 +8,55 @@ import { FC, useMemo, useState, useEffect, useCallback } from "react";
 import type { ComponentProps as WidgetProps } from "../..";
 import { CommonBuiltInWidgetProperty } from "../types";
 
+type Places = {
+  id: string;
+  formattedAddress: string;
+  displayName: string;
+  location: {
+    lat: () => number;
+    lng: () => number;
+  };
+};
+
+declare global {
+  interface Window {
+    google: {
+      maps: {
+        places: {
+          Place: {
+            searchByText: (request: {
+              textQuery: string;
+              fields: string[];
+              maxResultCount: number;
+            }) => Promise<{
+              places: Places[];
+            }>;
+          };
+        };
+      };
+    };
+  }
+}
+
 type Property = CommonBuiltInWidgetProperty & {
   default?: {
     apiToken?: string;
   };
 };
 type GoogleMapSearchProps = WidgetProps<Property>;
+
+type GooglePlace = {
+  place_id: string;
+  formatted_address: string;
+  name: string;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+  layerId?: string;
+};
 
 let loaderInstance: Loader | null = null;
 
@@ -38,8 +81,10 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<GooglePlace[]>(
+    []
+  );
+  const [selectedItems, setSelectedItems] = useState<GooglePlace[]>([]);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(
     null
   );
@@ -68,7 +113,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 3000);
+    }, 500);
     return () => clearTimeout(handler);
   }, [query]);
 
@@ -80,22 +125,20 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
       setFilteredSuggestions([]);
 
       try {
-        const { places } = await (
-          window as any
-        ).google.maps.places.Place.searchByText({
+        const { places } = await window.google.maps.places.Place.searchByText({
           textQuery: searchText,
           fields: ["displayName", "location", "formattedAddress"],
           maxResultCount: 20
         });
         if (places && places.length > 0) {
-          const suggestions = places.map((p: any) => ({
+          const suggestions = places.map((p: Places) => ({
             place_id: p.id,
             formatted_address: p.formattedAddress || "",
             name: p.displayName || "",
             geometry: {
               location: {
-                lat: p.location?.lat,
-                lng: p.location?.lng
+                lat: p.location?.lat(),
+                lng: p.location?.lng()
               }
             }
           }));
@@ -152,9 +195,9 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   );
 
   const handleSelectItem = useCallback(
-    (item: any) => {
-      const lat = item.geometry?.location?.lat();
-      const lng = item.geometry?.location?.lng();
+    (item: GooglePlace) => {
+      const lat = item.geometry?.location?.lat;
+      const lng = item.geometry?.location?.lng;
 
       const layer = VisualizerRef?.current?.layers?.add({
         type: "simple",
@@ -189,11 +232,11 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   );
 
   const handleSelectFromSelectedItems = useCallback(
-    (item: any, index: number) => {
+    (item: GooglePlace, index: number) => {
       setSelectedItemIndex(index);
       handleFlytoAndAddLayer(
-        item.geometry?.location?.lat(),
-        item.geometry?.location?.lng()
+        item.geometry?.location?.lat,
+        item.geometry?.location?.lng
       );
     },
     [handleFlytoAndAddLayer]
@@ -300,7 +343,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
                     className="tw-w-5 tw-h-5 tw-cursor-pointer hover:tw-text-red-500 tw-flex-shrink-0"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteItem(index, item.layerId);
+                      handleDeleteItem(index, item?.layerId ?? "");
                     }}
                   />
                 </div>
