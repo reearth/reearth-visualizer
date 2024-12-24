@@ -498,6 +498,7 @@ fragment StoryFragment on Story {
 }
 fragment NLSLayerCommon on NLSLayer {
   id
+  index
   layerType
   sceneId
   config

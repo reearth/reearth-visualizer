@@ -12,6 +12,7 @@ import (
 
 type NLSLayerDocument struct {
 	ID        string
+	Index     *int
 	Title     string
 	Visible   bool
 	Scene     string
@@ -118,6 +119,7 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 	id := l.ID().String()
 	return &NLSLayerDocument{
 		ID:        id,
+		Index:     l.Index(),
 		Title:     l.Title(),
 		Visible:   l.IsVisible(),
 		Scene:     l.Scene().String(),
@@ -186,6 +188,7 @@ func (d *NLSLayerDocument) ModelSimple() (*nlslayer.NLSLayerSimple, error) {
 
 	return nlslayer.NewNLSLayerSimple().
 		ID(lid).
+		Index(d.Index).
 		Title(d.Title).
 		LayerType(NewNLSLayerType(d.LayerType)).
 		IsVisible(d.Visible).
@@ -227,6 +230,7 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 
 	return nlslayer.NewNLSLayerGroup().
 		ID(lid).
+		Index(d.Index).
 		Title(d.Title).
 		LayerType(NewNLSLayerType(d.LayerType)).
 		IsVisible(d.Visible).
