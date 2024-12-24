@@ -2349,6 +2349,23 @@ extensions:
                   label: Light
                 - key: dark
                   label: Dark
+        - id: languageSetting
+          title: Language Setting
+          fields:
+            - id: language
+              type: string
+              title: Language
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: en
+                  label: English
+                - key: ja
+                  label: Japanese
+                - key: cn
+                  label: Chinese
+
   - id: story
     name: Story
     type: story
