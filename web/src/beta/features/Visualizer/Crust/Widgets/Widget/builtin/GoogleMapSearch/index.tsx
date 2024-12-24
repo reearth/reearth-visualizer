@@ -3,7 +3,7 @@ import { Card } from "@reearth/beta/lib/reearth-widget-ui/components/ui/card";
 import { Input } from "@reearth/beta/lib/reearth-widget-ui/components/ui/input";
 import { useVisualizer } from "@reearth/core";
 import { Search, Trash2, MapPin } from "lucide-react";
-import { FC, useMemo, useState, useEffect, useCallback } from "react";
+import { FC, useMemo, useEffect, useCallback, useState } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 import { CommonBuiltInWidgetProperty } from "../types";
@@ -42,6 +42,9 @@ type Property = CommonBuiltInWidgetProperty & {
   default?: {
     apiToken?: string;
   };
+  languageSetting?: {
+    language?: string;
+  };
 };
 type GoogleMapSearchProps = WidgetProps<Property>;
 
@@ -60,13 +63,31 @@ type GooglePlace = {
 
 let loaderInstance: Loader | null = null;
 
-function getLoaderInstance(apiKey: string): Loader {
-  if (!loaderInstance) {
-    loaderInstance = new Loader({
-      apiKey,
-      libraries: ["places"]
-    });
+const removeGoogleMapsScript = () => {
+  const scripts = document.querySelectorAll<HTMLScriptElement>(
+    'script[src*="maps.googleapis.com/maps/api/js"]'
+  );
+  scripts.forEach((script) => {
+    script.remove();
+  });
+  if (window.google) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    delete window.google;
   }
+  (Loader as any).instance = null;
+  (Loader as any).DONE = false;
+  (Loader as any).FAILED = false;
+};
+
+function getLoaderInstance(apiKey: string, language: string): Loader {
+  removeGoogleMapsScript();
+  loaderInstance = new Loader({
+    apiKey,
+    libraries: ["places"],
+    language
+  });
+
   return loaderInstance;
 }
 
@@ -78,6 +99,14 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     () => widget.property?.appearance?.theme ?? "light",
     [widget.property?.appearance?.theme]
   );
+  const apiToken = useMemo(
+    () => widget?.property?.default?.apiToken,
+    [widget?.property?.default?.apiToken]
+  );
+  const language = useMemo(() => {
+    const userLang = widget?.property?.languageSetting?.language;
+    return userLang && userLang !== "auto" ? userLang : navigator.language;
+  }, [widget?.property?.languageSetting?.language]);
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -95,11 +124,11 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   const VisualizerRef = useVisualizer();
 
   useEffect(() => {
-    if (!widget?.property?.default?.apiToken) {
+    if (!apiToken || !language) {
       return;
     }
     setError(null);
-    const loader = getLoaderInstance(widget?.property?.default?.apiToken);
+    const loader = getLoaderInstance(apiToken, language);
     loader
       .load()
       .then(() => {
@@ -108,7 +137,15 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
       .catch((err) => {
         setError("Failed to load Google Maps JS API: " + err);
       });
-  }, [widget?.property?.default?.apiToken]);
+  }, [apiToken, language]);
+
+  useEffect(() => {
+    if (filteredSuggestions) {
+      setQuery("");
+      setFilteredSuggestions([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -198,7 +235,6 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     (item: GooglePlace) => {
       const lat = item.geometry?.location?.lat;
       const lng = item.geometry?.location?.lng;
-
       const layer = VisualizerRef?.current?.layers?.add({
         type: "simple",
         data: {
@@ -213,6 +249,8 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         },
         marker: {
           style: "image",
+          heightReference: "clamp",
+          imageVerticalOrigin: "bottom",
           image:
             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAANTSURBVHgB7ZndThNBFMfP7PKRIoQiAdvGxOXCG7iQG7F+oMsb6BOoTyA8AfIG+ATWR/AJaCwgBZOWC7jxgsVgl2DUEk0Rmp3jnEUSEoE9szslMfZ31Sb/3f2fnTMzZ84CtGnzfyPAMFuum+5qBK4tpYOWSIcPkVhHENVfvR3VkWKxDgYxEgCZ7mnIFyjQVX/di9WiihJfgd0sZldWPEhIogBOjAPgNApIa17uCRSFa6vv5iABsQPw864jMFhQPx1IhoeiORV3NCyIwd7te+OWDCqQ3DzhWNhZ2VH3hBhojwCZR2EvxEiZKCP1pgymrq8tVzWv42Mwbc5DO520UsjCYBZaZ55QL6jztc4F7BHw8w9ctWoswCWAAU5lPywWOdoOYKLMz3K1zSCAeuMAvvz8Ef5Pp3ogl+7nXg7CDp9VZGk5oj+5v8XRftzbg81dPwziND1dXTCWycKNwUHObaDbDpyB5eXtKB1rDghsPuboNn0f1j/v/GWeaBwdwdqn7VDD4TAQTzg65iQWj6IUZJDefBSkOUmti5BgucCAFwBGrzwbfg24eF+/RWqUsVvAgBeAEJG7ZG1/H7jU9lkFqcMRxSolzuKsvDehjcJYAJ223RJtFNwAvChBrp9fGjG1HkdkLABn8CpwGctmGSr0GCJuALgepRjq7YNRhjHS0KYWhQSIfCbBKiVQiqpghDqqdtorytyG2qxoXzgN5T2Zvzk0DBxsFEWOjlVKbI276VR38B00oKWS6iFiqK83rId0Ju9Byh7gNADY1ejunUmqRF24BFT6vM2VS6zyhb2Mqo5DosO3DjZCgavVOpGpUaCK1IHW4mXKpRGuWGsjU+fglo+C7jO0D/W7Ew8rqr6O1UFgoPX2Ce1SAi05Ay1CzbPnoIl2ANkVOquq1qBhVCoUju+tR6xi7uCw4yUwaxUmXiNlxxrZ2K1FanBJy66AAVQvaORSW4vEsOqgSSPzQc4k6VInOg/k3i/NJ9ngEHEuU16ahwQY+T7gT0wWhICnOtcgwpvsaukZJMTYFxqdIEyZJ4x+YuIEYdI8YexMTBwbO3+PMG2eMBoAkSkvTp81sWnCmjZPGP9KeULt7v1pO7DChrC0QC2VpQL8a1BT2M/nHWjTpk3L+A15aUf5fJUbQAAAAABJRU5ErkJggg=="
         }
@@ -287,7 +325,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     [VisualizerRef, selectedItemIndex, handleSelectFromSelectedItems]
   );
 
-  const inputPlaceholder = widget?.property?.default?.apiToken
+  const inputPlaceholder = apiToken
     ? "Type a keyword to search..."
     : "Please setup apikey";
 
@@ -304,7 +342,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             value={query}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            disabled={!widget?.property?.default?.apiToken}
+            disabled={!apiToken}
           />
         </div>
         {loading && <p className="tw-text-gray-500 tw-p-1">Loading...</p>}
@@ -315,7 +353,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
               <li
                 key={suggestion.place_id}
                 className="tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-hoverbackground"
-                onClick={() => handleSelectItem(suggestion)}
+                onClick={async () => await handleSelectItem(suggestion)}
               >
                 {`${suggestion.formatted_address}, ${suggestion.name}`}
               </li>
