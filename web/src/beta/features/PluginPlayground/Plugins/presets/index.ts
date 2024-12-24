@@ -1,6 +1,7 @@
 import { PluginType } from "../constants";
 
 import { myPlugin } from "./custom/myPlugin";
+import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
 
@@ -21,6 +22,6 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "UI",
-    plugins: [responsivePanel, sidebar]
+    plugins: [responsivePanel, sidebar, header]
   }
 ];
