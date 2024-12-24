@@ -18,6 +18,7 @@ type ReearthYML = {
     name: string;
     description: string;
     widgetLayout?: {
+      extended: boolean;
       defaultLocation: {
         zone: WidgetLocation["zone"];
         section: WidgetLocation["section"];
@@ -144,6 +145,8 @@ export default ({ files }: Props) => {
           area: "top"
         };
 
+        const extended = cur.widgetLayout?.extended ?? false;
+
         const zoneAlignSystem = prv?.alignSystem?.[zone] ?? {};
         const sectionAlignSystem = zoneAlignSystem[section] ?? {};
         const areaAlignSystem = sectionAlignSystem[area] ?? { widgets: [] };
@@ -162,7 +165,8 @@ export default ({ files }: Props) => {
                     ...(areaAlignSystem.widgets ?? []),
                     {
                       id: cur.id,
-                      __REEARTH_SOURCECODE: file.sourceCode
+                      __REEARTH_SOURCECODE: file.sourceCode,
+                      extended
                     }
                   ]
                 }
