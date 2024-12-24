@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -237,7 +238,7 @@ func TestPropertySchemaID_Clone(t *testing.T) {
 	c := p.Clone()
 
 	assert.Equal(t, p, c)
-	assert.NotSame(t, p, c)
+	customassert.NotSame(t, p, c)
 }
 
 func TestPropertySchemaID_WithPlugin(t *testing.T) {
@@ -284,7 +285,7 @@ func TestPropertySchemaID_Ref(t *testing.T) {
 func TestPropertySchemaID_CopyRef(t *testing.T) {
 	propertySchemaID, _ := PropertySchemaIDFrom("test~2.0.0/test")
 	assert.Equal(t, propertySchemaID, *propertySchemaID.CopyRef())
-	assert.NotSame(t, propertySchemaID.Ref(), propertySchemaID.CopyRef())
+	customassert.NotSame(t, propertySchemaID.Ref(), propertySchemaID.CopyRef())
 }
 
 func TestPropertySchemaID_IsNil(t *testing.T) {

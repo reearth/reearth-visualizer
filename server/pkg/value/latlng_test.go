@@ -3,6 +3,7 @@ package value
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +35,7 @@ func TestLatLng_Clone(t *testing.T) {
 			res := tc.LL.Clone()
 			assert.Equal(t, tc.Expected, res)
 			if tc.Expected != nil {
-				assert.NotSame(t, tc.Expected, res)
+				customassert.NotSame(t, tc.Expected, res)
 			}
 		})
 	}

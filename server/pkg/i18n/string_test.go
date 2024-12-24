@@ -3,6 +3,7 @@ package i18n
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -207,7 +208,7 @@ func TestString_Clone(t *testing.T) {
 			t.Parallel()
 			res := tc.Target.Clone()
 			assert.Equal(t, tc.Expected, res)
-			assert.NotSame(t, tc.Target, res)
+			customassert.NotSame(t, tc.Target, res)
 		})
 	}
 }

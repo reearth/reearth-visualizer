@@ -3,6 +3,7 @@ package id
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +33,7 @@ func TestPropertySchemaIDList_Clone(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.l.Clone()
 			assert.Equal(t, tt.want, got)
-			assert.NotSame(t, tt.want, got)
+			customassert.NotSame(t, tt.want, got)
 		})
 	}
 }

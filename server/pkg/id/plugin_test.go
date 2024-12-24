@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -355,7 +356,7 @@ func TestPluginID_Clone(t *testing.T) {
 	c := p.Clone()
 
 	assert.Equal(t, p, c)
-	assert.NotSame(t, p, c)
+	customassert.NotSame(t, p, c)
 }
 
 func TestPluginID_Name(t *testing.T) {
@@ -376,7 +377,7 @@ func TestPluginID_Scene(t *testing.T) {
 		scene: &scene,
 	}.Scene()
 	assert.Equal(t, scene, *sid)
-	assert.NotSame(t, scene, *sid)
+	customassert.NotSame(t, scene, *sid)
 }
 
 func TestPluginID_System(t *testing.T) {

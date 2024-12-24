@@ -3,6 +3,7 @@ package plugin
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/stretchr/testify/assert"
 )
@@ -130,7 +131,7 @@ func TestPlugin_Clone(t *testing.T) {
 			got := tt.target.Clone()
 			assert.Equal(t, tt.target, got)
 			if tt.target != nil {
-				assert.NotSame(t, tt.target, got)
+				customassert.NotSame(t, tt.target, got)
 			}
 		})
 	}

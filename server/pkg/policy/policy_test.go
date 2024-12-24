@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/reearth/reearth/server/customassert"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,8 +19,8 @@ func TestNewPolicy(t *testing.T) {
 	}
 	p := New(opts)
 	assert.Equal(t, &Policy{opts: opts}, p)
-	assert.NotSame(t, p.opts.MemberCount, opts.MemberCount)
-	assert.NotSame(t, p.opts.PublishedProjectCount, opts.PublishedProjectCount)
+	customassert.NotSame(t, p.opts.MemberCount, opts.MemberCount)
+	customassert.NotSame(t, p.opts.PublishedProjectCount, opts.PublishedProjectCount)
 	assert.Equal(t, ID("policy"), p.ID())
 }
 
@@ -250,5 +251,5 @@ func TestPolicy_Clone(t *testing.T) {
 	}
 	got := p.Clone()
 	assert.Equal(t, p, got)
-	assert.NotSame(t, p, got)
+	customassert.NotSame(t, p, got)
 }
