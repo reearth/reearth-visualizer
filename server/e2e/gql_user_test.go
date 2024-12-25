@@ -164,8 +164,10 @@ func TestSearchUser(t *testing.T) {
 	request = GraphQLRequest{
 		Query: query,
 	}
-	Request(e, uId1.String(), request).Object().
-		Value("data").Object().Value("searchUser").Null()
+	resp := Request(e, uId1.String(), request).Object()
+	resp.Value("data").Object().Value("searchUser").Null()
+
+	resp.NotContainsKey("errors") // not exist
 }
 
 func TestNode(t *testing.T) {
