@@ -11,12 +11,12 @@ jobs:
       web: ${{ steps.web.outputs.any_modified }}
       server: ${{ steps.server.outputs.any_modified }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: changed files for web
         id: web
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v45
         with:
           files: |
             web
@@ -27,7 +27,7 @@ jobs:
 
       - name: changed files for server
         id: server
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v45
         with:
           files: |
             server

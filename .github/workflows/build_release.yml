@@ -27,15 +27,15 @@ jobs:
       ARTIFACTS: server/dist/reearth_*.*
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v6
         # TODO: fix error=archive named dist/reearth_0.0.0-SNAPSHOT-xxxxxxxx.tar.gz already exists. Check your archive name template
         with:
           distribution: goreleaser
@@ -62,7 +62,7 @@ jobs:
           prerelease: true
       - name: Download latest changelog
         if: ${{ inputs.new_tag != '' }}
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v7
         with:
           workflow: release.yml
           name: changelog-${{ inputs.new_tag }}
