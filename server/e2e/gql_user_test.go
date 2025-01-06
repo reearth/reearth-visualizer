@@ -2,12 +2,9 @@ package e2e
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
@@ -95,50 +92,13 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 	return nil
 }
 
-// func TestSignUp(t *testing.T) {
-// 	e, _ := StartGQLServer(t, &config.Config{
-// 		Origins: []string{"https://example.com"},
-// 		AuthSrv: config.AuthSrvConfig{
-// 			Disabled: true,
-// 		},
-// 	}, true, baseSeederUser)
-// 	query := `mutation { signup(input: {lang: "ja",theme: DEFAULT,secret: "Ajsownndww1"}){ user{ id name email } }}`
-// 	request := GraphQLRequest{
-// 		Query: query,
-// 	}
-// 	jsonData, err := json.Marshal(request)
-// 	if err != nil {
-// 		assert.NoError(t, err)
-// 	}
-// 	o := e.POST("/api/graphql").
-// 		WithHeader("authorization", "Bearer test").
-// 		WithHeader("Content-Type", "application/json").
-// 		WithHeader("X-Reearth-Debug-User", uId1.String()).
-// 		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("signup").Object().Value("user").Object()
-// 	o.Value("name").String().Equal("updated")
-// 	o.Value("email").String().Equal("hoge@test.com")
-// }
-
 func TestUpdateMe(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := `mutation { updateMe(input: {name: "updated",email:"hoge@test.com",lang: "ja",theme: DEFAULT,password: "Ajsownndww1",passwordConfirmation: "Ajsownndww1"}){ me{ id name email lang theme } }}`
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("updateMe").Object().Value("me").Object()
+	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("updateMe").Object().Value("me").Object()
 	o.Value("name").String().Equal("updated")
 	o.Value("email").String().Equal("hoge@test.com")
 	o.Value("lang").String().Equal("ja")
@@ -146,12 +106,7 @@ func TestUpdateMe(t *testing.T) {
 }
 
 func TestRemoveMyAuth(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 	u, err := r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
 	assert.Equal(t, &user.Auth{Provider: "reearth", Sub: "reearth|" + uId1.String()}, u.Auths().GetByProvider("reearth"))
@@ -160,15 +115,7 @@ func TestRemoveMyAuth(t *testing.T) {
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
+	Request(e, uId1.String(), request).Object()
 
 	u, err = r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
@@ -176,12 +123,7 @@ func TestRemoveMyAuth(t *testing.T) {
 }
 
 func TestDeleteMe(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 	u, err := r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
 	assert.NotNil(t, u)
@@ -190,40 +132,19 @@ func TestDeleteMe(t *testing.T) {
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
+	Request(e, uId1.String(), request).Object()
 
 	_, err = r.User.FindByID(context.Background(), uId1)
 	assert.Equal(t, rerror.ErrNotFound, err)
 }
 
 func TestSearchUser(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "e2e")
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("searchUser").Object()
+	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("searchUser").Object()
 	o.Value("id").String().Equal(uId1.String())
 	o.Value("name").String().Equal("e2e")
 	o.Value("email").String().Equal("e2e@e2e.com")
@@ -232,60 +153,28 @@ func TestSearchUser(t *testing.T) {
 	request = GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err = json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().
-		Value("data").Object().Value("searchUser").Null()
+	resp := Request(e, uId1.String(), request).Object()
+	resp.Value("data").Object().Value("searchUser").Null()
+
+	resp.NotContainsKey("errors") // not exist
 }
 
 func TestNode(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := fmt.Sprintf(` { node(id: "%s", type: USER){ id } }`, uId1.String())
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("node").Object()
+	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("node").Object()
 	o.Value("id").String().Equal(uId1.String())
 }
 
 func TestNodes(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := fmt.Sprintf(` { nodes(id: "%s", type: USER){ id } }`, uId1.String())
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().Value("data").Object().Value("nodes")
+	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("nodes")
 	o.Array().Contains(map[string]string{"id": uId1.String()})
 }
