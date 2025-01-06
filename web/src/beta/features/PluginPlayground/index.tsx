@@ -21,7 +21,6 @@ const PluginPlayground: FC = () => {
             storageId="plugin-playground-bottom-area"
           >
             <Tabs position="top" tabs={LayersTab} />
-            {/* <Tabs position="top" tabs={BottomAreaTabs} /> */}
           </Area>
         </Area>
         <Area

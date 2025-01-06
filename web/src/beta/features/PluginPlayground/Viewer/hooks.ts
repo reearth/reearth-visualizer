@@ -17,14 +17,15 @@ export default () => {
     [setReady]
   );
 
-  const handleFlyTo = useMemo(() => {
+  const handleFlyTo = (
+    layerId: string,
+    options?: Record<string, string | number>
+  ) => {
     console.log("handleFlyTo visualizerRef", visualizerRef.current);
-    return (layerId: string, options?: Record<string, string | number>) => {
-      if (visualizerRef.current) {
-        visualizerRef.current.engine.flyTo(layerId, options);
-      }
-    };
-  }, [visualizerRef]);
+    if (visualizerRef.current) {
+      visualizerRef.current.engine.flyTo(layerId, options);
+    }
+  };
 
   const engineMeta = useMemo(
     () => ({
