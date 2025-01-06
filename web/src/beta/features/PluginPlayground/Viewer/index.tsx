@@ -1,6 +1,8 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { ComponentProps, FC } from "react";
 
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
+
 import useHooks from "./hooks";
 
 type Props = {
@@ -23,6 +25,7 @@ const Viewer: FC<Props> = ({ widgets }) => {
       visualizerRef={visualizerRef}
       viewerProperty={viewerProperty}
       ready={ready}
+      layers={DEFAULT_LAYERS_PLUGIN_PLAYGROUND}
       engineMeta={engineMeta}
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}

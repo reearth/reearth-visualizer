@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
-import Console from "./Console";
+import LayerList from "./LayerList";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
@@ -25,7 +25,7 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { widgets, executeCode, fileOutputs } = useCode({
+  const { widgets, executeCode } = useCode({
     files: selectedPlugin.files
   });
 
@@ -42,15 +42,20 @@ export default () => {
     [widgets]
   );
 
-  const BottomAreaTabs: TabItem[] = useMemo(
+  const LayersTab: TabItem[] = useMemo(
     () => [
       {
         id: "console",
-        name: "Console",
-        children: <Console fileOutputs={fileOutputs} />
+        name: "Layers",
+        children: <LayerList />
+      },
+      {
+        id: "Settings",
+        name: "Settings",
+        children: <div>Settings</div>
       }
     ],
-    [fileOutputs]
+    []
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -117,7 +122,7 @@ export default () => {
 
   return {
     MainAreaTabs,
-    BottomAreaTabs,
+    LayersTab,
     SubRightAreaTabs,
     RightAreaTabs
   };

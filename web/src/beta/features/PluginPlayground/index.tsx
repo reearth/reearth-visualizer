@@ -5,7 +5,7 @@ import { FC } from "react";
 import useHooks from "./hooks";
 
 const PluginPlayground: FC = () => {
-  const { MainAreaTabs, BottomAreaTabs, SubRightAreaTabs, RightAreaTabs } =
+  const { MainAreaTabs, LayersTab, SubRightAreaTabs, RightAreaTabs } =
     useHooks();
 
   return (
@@ -20,7 +20,8 @@ const PluginPlayground: FC = () => {
             initialHeight={100}
             storageId="plugin-playground-bottom-area"
           >
-            <Tabs position="top" tabs={BottomAreaTabs} />
+            <Tabs position="top" tabs={LayersTab} />
+            {/* <Tabs position="top" tabs={BottomAreaTabs} /> */}
           </Area>
         </Area>
         <Area
