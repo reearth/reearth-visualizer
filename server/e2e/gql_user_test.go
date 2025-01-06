@@ -92,17 +92,6 @@ func baseSeederUser(ctx context.Context, r *repo.Container) error {
 	return nil
 }
 
-// func TestSignUp(t *testing.T) {
-// 	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
-// 	query := `mutation { signup(input: {lang: "ja",theme: DEFAULT,secret: "Ajsownndww1"}){ user{ id name email } }}`
-// 	request := GraphQLRequest{
-// 		Query: query,
-// 	}
-// 	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("signup").Object().Value("user").Object()
-// 	o.Value("name").String().Equal("updated")
-// 	o.Value("email").String().Equal("hoge@test.com")
-// }
-
 func TestUpdateMe(t *testing.T) {
 	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := `mutation { updateMe(input: {name: "updated",email:"hoge@test.com",lang: "ja",theme: DEFAULT,password: "Ajsownndww1",passwordConfirmation: "Ajsownndww1"}){ me{ id name email lang theme } }}`
