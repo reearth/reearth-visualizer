@@ -1,10 +1,11 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { MapRef } from "@reearth/core";
-import { useMemo, useRef } from "react";
+import { Layer, MapRef } from "@reearth/core";
+import { useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
 import LayerList from "./LayerList";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
@@ -32,6 +33,18 @@ export default () => {
     files: selectedPlugin.files
   });
 
+  const [layers, setLayers] = useState<Layer[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND
+  );
+
+  const handleLayerVisibilityUpdate = (layerId: string, visible: boolean) => {
+    setLayers((prev) =>
+      prev.map((layer) =>
+        layer.id === layerId ? { ...layer, visible } : layer
+      )
+    );
+  };
+
   // Note: currently we put visualizer in tab content, so better not have more tabs in this area,
   // otherwise visualizer will got unmount and mount when switching tabs.
   const MainAreaTabs: TabItem[] = useMemo(
@@ -39,10 +52,16 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer widgets={widgets} visualizerRef={visualizerRef} />
+        children: (
+          <Viewer
+            layers={layers}
+            widgets={widgets}
+            visualizerRef={visualizerRef}
+          />
+        )
       }
     ],
-    [widgets]
+    [layers, widgets]
   );
 
   const LayersTab: TabItem[] = useMemo(
@@ -50,7 +69,13 @@ export default () => {
       {
         id: "console",
         name: "Layers",
-        children: <LayerList visualizerRef={visualizerRef} />
+        children: (
+          <LayerList
+            handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
+            layers={layers}
+            visualizerRef={visualizerRef}
+          />
+        )
       },
       {
         id: "Settings",
@@ -58,7 +83,7 @@ export default () => {
         children: <div>Settings</div>
       }
     ],
-    []
+    [layers]
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(

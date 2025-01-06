@@ -4,26 +4,31 @@ import { Layer } from "@reearth/core";
 import { FC, useCallback, useMemo } from "react";
 
 interface LayerItemProps {
+  handleLayerVisibilityUpdate: (layerId: string, visible: boolean) => void;
   layer: Layer;
   onFlyTo: (layerId: string, options: { duration: number }) => void;
+  selectedLayerId: string;
+  setSelectedLayerId: (layerId: string) => void;
 }
 
-const LayerItem: FC<LayerItemProps> = ({ layer, onFlyTo }) => {
+const LayerItem: FC<LayerItemProps> = ({
+  handleLayerVisibilityUpdate,
+  layer,
+  onFlyTo,
+  selectedLayerId,
+  setSelectedLayerId
+}) => {
   const handleZoomToLayer = useCallback(() => {
     onFlyTo?.(layer.id, { duration: 0 });
-    // issue: https://github.com/CesiumGS/cesium/issues/4327
-    // delay 800ms to trigger a second flyTo,
-    // time could be related with internet speed, not a stable solution
-    // if (["geojson", "kml"].includes(layer.config?.data?.type)) {
-    //   setTimeout(() => {
-    //     handleFlyTo?.(layer.id, { duration: 0 });
-    //   }, 800);
-    // }
   }, [onFlyTo, layer]);
 
-  // const handleToggleLayerVisibility = useCallback(() => {
-  //   handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });
-  // }, [layer.id, layer.visible, handleLayerVisibilityUpdate]);
+  const handleToggleLayerVisibility = useCallback(() => {
+    handleLayerVisibilityUpdate(layer.id, !layer.visible);
+  }, [layer.id, layer.visible, handleLayerVisibilityUpdate]);
+
+  const handleLayerItemClick = () => {
+    setSelectedLayerId(layer.id);
+  };
 
   const hoverActions: EntryItemAction[] | undefined = useMemo(
     () => [
@@ -45,21 +50,21 @@ const LayerItem: FC<LayerItemProps> = ({ layer, onFlyTo }) => {
             icon={layer.visible ? "eye" : "eyeSlash"}
             size="small"
             appearance="simple"
-            onClick={() => {}}
+            onClick={handleToggleLayerVisibility}
           />
         ),
         keepVisible: !layer.visible
       }
     ],
-    [layer.visible, handleZoomToLayer]
+    [layer.visible, handleZoomToLayer, handleToggleLayerVisibility]
   );
 
   return (
     <EntryItem
       title={layer.title}
       icon="file"
-      //   onClick={handleLayerItemClick}
-      // highlighted={layer.id === selectedLayerId}
+      onClick={handleLayerItemClick}
+      highlighted={layer.id === selectedLayerId}
       actions={hoverActions}
     />
   );

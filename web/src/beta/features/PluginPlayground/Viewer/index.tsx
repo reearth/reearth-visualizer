@@ -1,18 +1,17 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
-import { MapRef } from "@reearth/core";
+import { Layer, MapRef } from "@reearth/core";
 import { ComponentProps, FC, MutableRefObject } from "react";
-
-import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 
 import useHooks from "./hooks";
 
 type Props = {
+  layers: Layer[];
   widgets: ComponentProps<typeof Visualizer>["widgets"];
   visualizerRef: MutableRefObject<MapRef | null>;
 };
 
-const Viewer: FC<Props> = ({ widgets, visualizerRef }) => {
-  const { viewerProperty, ready, engineMeta, currentCamera, setCurrentCamera } =
+const Viewer: FC<Props> = ({ layers, widgets, visualizerRef }) => {
+  const { currentCamera, engineMeta, ready, setCurrentCamera, viewerProperty } =
     useHooks({ visualizerRef });
 
   return (
@@ -21,7 +20,7 @@ const Viewer: FC<Props> = ({ widgets, visualizerRef }) => {
       visualizerRef={visualizerRef}
       viewerProperty={viewerProperty}
       ready={ready}
-      layers={DEFAULT_LAYERS_PLUGIN_PLAYGROUND}
+      layers={layers}
       engineMeta={engineMeta}
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}
