@@ -1,5 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { useMemo } from "react";
+import { MapRef } from "@reearth/core";
+import { useMemo, useRef } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
@@ -9,6 +10,8 @@ import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
 
 export default () => {
+  const visualizerRef = useRef<MapRef | null>(null);
+
   const {
     presetPlugins,
     selectPlugin,
@@ -36,7 +39,7 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer widgets={widgets} />
+        children: <Viewer widgets={widgets} visualizerRef={visualizerRef} />
       }
     ],
     [widgets]
@@ -47,7 +50,7 @@ export default () => {
       {
         id: "console",
         name: "Layers",
-        children: <LayerList />
+        children: <LayerList visualizerRef={visualizerRef} />
       },
       {
         id: "Settings",

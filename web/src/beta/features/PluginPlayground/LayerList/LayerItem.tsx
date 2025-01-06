@@ -3,17 +3,14 @@ import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
 import { Layer } from "@reearth/core";
 import { FC, useCallback, useMemo } from "react";
 
-import useHooks from "../Viewer/hooks";
-
 interface LayerItemProps {
   layer: Layer;
+  onFlyTo: (layerId: string, options: { duration: number }) => void;
 }
 
-const LayerItem: FC<LayerItemProps> = ({ layer }) => {
-  const { handleFlyTo } = useHooks();
-
+const LayerItem: FC<LayerItemProps> = ({ layer, onFlyTo }) => {
   const handleZoomToLayer = useCallback(() => {
-    handleFlyTo?.(layer.id, { duration: 0 });
+    onFlyTo?.(layer.id, { duration: 0 });
     // issue: https://github.com/CesiumGS/cesium/issues/4327
     // delay 800ms to trigger a second flyTo,
     // time could be related with internet speed, not a stable solution
@@ -22,7 +19,7 @@ const LayerItem: FC<LayerItemProps> = ({ layer }) => {
     //     handleFlyTo?.(layer.id, { duration: 0 });
     //   }, 800);
     // }
-  }, [layer, handleFlyTo]);
+  }, [onFlyTo, layer]);
 
   // const handleToggleLayerVisibility = useCallback(() => {
   //   handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });

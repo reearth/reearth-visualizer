@@ -7,34 +7,10 @@ export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
     title: "chiyoda 3D tiles",
     visible: true,
     data: {
-      geojson: {
-        useAsResource: false
-      },
-      type: "geojson",
-      url: "https://assets.cms.plateau.reearth.io/assets/11/6d05db-ed47-4f88-b565-9eb385b1ebb0/13100_tokyo23-ku_2022_3dtiles%20_1_1_op_bldg_13101_chiyoda-ku_lod1/tileset.json",
-      value: null
+      type: "3dtiles",
+      url: "https://assets.cms.plateau.reearth.io/assets/11/6d05db-ed47-4f88-b565-9eb385b1ebb0/13100_tokyo23-ku_2022_3dtiles%20_1_1_op_bldg_13101_chiyoda-ku_lod1/tileset.json"
     },
-    marker: {
-      heightReference: "clamp"
-    },
-    polygon: {
-      extrudedHeight: {
-        expression: "${extrudedHeight}"
-      },
-      fillColor: {
-        expression: "color('#ffffff',0.8)"
-      },
-      heightReference: "clamp"
-    },
-    polyline: {
-      clampToGround: true,
-      strokeColor: "#FFFFFF",
-      strokeWidth: 2
-    },
-    "3dtiles": {
-      color: "#FFFFFF",
-      colorBlendMode: "highlight"
-    }
+    "3dtiles": {}
   },
   {
     type: "simple",
