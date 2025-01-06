@@ -1,11 +1,11 @@
 import { Tabs } from "@reearth/beta/lib/reearth-ui";
-import { Area, Window } from "@reearth/beta/ui/layout";
+import { Area, Panel, Window } from "@reearth/beta/ui/layout";
 import { FC } from "react";
 
 import useHooks from "./hooks";
 
 const PluginPlayground: FC = () => {
-  const { MainAreaTabs, LayersTab, SubRightAreaTabs, RightAreaTabs } =
+  const { MainAreaTabs, LayersPanel, SubRightAreaTabs, RightAreaTabs } =
     useHooks();
 
   return (
@@ -20,7 +20,9 @@ const PluginPlayground: FC = () => {
             initialHeight={100}
             storageId="plugin-playground-bottom-area"
           >
-            <Tabs position="top" tabs={LayersTab} />
+            <Panel alwaysOpen extend title="Layers">
+              <LayersPanel />
+            </Panel>
           </Area>
         </Area>
         <Area

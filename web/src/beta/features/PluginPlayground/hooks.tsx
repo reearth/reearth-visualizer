@@ -1,6 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { Layer, MapRef } from "@reearth/core";
-import { useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
@@ -64,26 +64,12 @@ export default () => {
     [layers, widgets]
   );
 
-  const LayersTab: TabItem[] = useMemo(
-    () => [
-      {
-        id: "console",
-        name: "Layers",
-        children: (
-          <LayerList
-            handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
-            layers={layers}
-            visualizerRef={visualizerRef}
-          />
-        )
-      },
-      {
-        id: "Settings",
-        name: "Settings",
-        children: <div>Settings</div>
-      }
-    ],
-    [layers]
+  const LayersPanel: FC = () => (
+    <LayerList
+      handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
+      layers={layers}
+      visualizerRef={visualizerRef}
+    />
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -150,7 +136,7 @@ export default () => {
 
   return {
     MainAreaTabs,
-    LayersTab,
+    LayersPanel,
     SubRightAreaTabs,
     RightAreaTabs
   };
