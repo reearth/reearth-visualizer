@@ -1,8 +1,6 @@
 package e2e
 
 import (
-	"net/http"
-
 	"github.com/gavv/httpexpect/v2"
 )
 
@@ -10,35 +8,35 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
 	requestBody := GraphQLRequest{
 		OperationName: "UpdatePropertyValue",
 		Query: `mutation UpdatePropertyValue($propertyId: ID!, $schemaGroupId: ID, $itemId: ID, $fieldId: ID!, $value: Any, $type: ValueType!) {
-					updatePropertyValue( input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId, value: $value, type: $type } ) {
-					  property {
-						id
-						schema{
-							id
-							groups{
-								fields{
-									fieldId
-									type
-									title
-									description
-									prefix
-									suffix
-									defaultValue
-									ui
-									min
-									max
-									placeholder
-								}
-							}
+			updatePropertyValue( input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId, value: $value, type: $type } ) {
+				property {
+				id
+				schema{
+					id
+					groups{
+						fields{
+							fieldId
+							type
+							title
+							description
+							prefix
+							suffix
+							defaultValue
+							ui
+							min
+							max
+							placeholder
 						}
-					  }
-					  propertyField {	
-						id
-						type
-						value
-					  }
 					}
-			  	}`,
+				}
+				}
+				propertyField {	
+				id
+				type
+				value
+				}
+			}
+		}`,
 		Variables: map[string]any{
 			"propertyId":    propertyID,
 			"schemaGroupId": schemaGroupID,
@@ -49,14 +47,7 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }

@@ -1,6 +1,7 @@
 # TODO: Make LayerGroup Real
 interface NLSLayer {
   id: ID!
+  index: Int
   layerType: String!
   sceneId: ID!
   config: JSON
@@ -13,6 +14,7 @@ interface NLSLayer {
 
 type NLSLayerSimple implements NLSLayer {
   id: ID!
+  index: Int
   layerType: String!
   sceneId: ID!
   config: JSON
@@ -26,6 +28,7 @@ type NLSLayerSimple implements NLSLayer {
 
 type NLSLayerGroup implements NLSLayer {
   id: ID!
+  index: Int
   layerType: String!
   sceneId: ID!
   children: [NLSLayer]!
@@ -46,7 +49,7 @@ type NLSInfobox {
   propertyId: ID!
   blocks: [InfoboxBlock!]!
   property: Property
-  scene: Scene  
+  scene: Scene
 }
 
 type InfoboxBlock {
@@ -63,8 +66,8 @@ type InfoboxBlock {
 }
 
 type SketchInfo {
-	customPropertySchema: JSON
-	featureCollection: FeatureCollection
+  customPropertySchema: JSON
+  featureCollection: FeatureCollection
 }
 
 # InputType
@@ -84,10 +87,15 @@ input RemoveNLSLayerInput {
 }
 
 input UpdateNLSLayerInput {
+  index: Int
   layerId: ID!
   name: String
   visible: Boolean
   config: JSON
+}
+
+input UpdateNLSLayersInput {
+  layers: [UpdateNLSLayerInput!]!
 }
 
 input CreateNLSInfoboxInput {
@@ -144,6 +152,10 @@ type UpdateNLSLayerPayload {
   layer: NLSLayer!
 }
 
+type UpdateNLSLayersPayload {
+  layers: [NLSLayer!]!
+}
+
 type CreateNLSInfoboxPayload {
   layer: NLSLayer!
 }
@@ -176,6 +188,7 @@ extend type Mutation {
   addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
   removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
   updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
+  updateNLSLayers(input: UpdateNLSLayersInput!): UpdateNLSLayersPayload!
   createNLSInfobox(input: CreateNLSInfoboxInput!): CreateNLSInfoboxPayload
   removeNLSInfobox(input: RemoveNLSInfoboxInput!): RemoveNLSInfoboxPayload
   addNLSInfoboxBlock(input: AddNLSInfoboxBlockInput!): AddNLSInfoboxBlockPayload
@@ -186,6 +199,10 @@ extend type Mutation {
     input: RemoveNLSInfoboxBlockInput!
   ): RemoveNLSInfoboxBlockPayload
   duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
-  addCustomProperties(input: AddCustomPropertySchemaInput!): UpdateNLSLayerPayload!
-  updateCustomProperties(input: UpdateCustomPropertySchemaInput!): UpdateNLSLayerPayload!
+  addCustomProperties(
+    input: AddCustomPropertySchemaInput!
+  ): UpdateNLSLayerPayload!
+  updateCustomProperties(
+    input: UpdateCustomPropertySchemaInput!
+  ): UpdateNLSLayerPayload!
 }
