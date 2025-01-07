@@ -120,13 +120,14 @@ type GraphQLRequest struct {
 	Variables     map[string]any `json:"variables"`
 }
 
-func StartGQLServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	e, r := StartGQLServerAndRepos(t, cfg, useMongo, seeder)
-	return e, r
-}
-
-func StartGQLServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	repos := initRepos(t, useMongo, seeder)
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+	cfg := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	repos := initRepos(t, true, seeder)
 	acRepos := repos.AccountRepos()
 	return StartGQLServerWithRepos(t, cfg, repos, acRepos), acRepos
 }
