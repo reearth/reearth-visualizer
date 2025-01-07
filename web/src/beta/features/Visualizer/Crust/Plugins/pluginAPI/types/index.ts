@@ -12,3 +12,4 @@ export * from "./modal";
 export * from "./popup";
 export * from "./extension";
 export * from "./data";
+export * from "./spatialId";

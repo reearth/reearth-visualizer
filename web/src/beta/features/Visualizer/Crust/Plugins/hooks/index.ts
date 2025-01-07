@@ -8,12 +8,14 @@ import useData from "./useData";
 import useExtension from "./useExtension";
 import useLayers from "./useLayers";
 import useSketch from "./useSketch";
+import useSpatialId from "./useSpatialId";
 import useTimeline from "./useTimeline";
 import useViewer from "./useViewer";
 
 export default function ({
   engineName,
   mapRef,
+  mapAPIReady,
   viewerProperty,
   inEditor,
   built,
@@ -145,6 +147,17 @@ export default function ({
     onSketchTypeChange
   });
 
+  const {
+    spatialIdPickSpace,
+    spatialIdExitPickSpace,
+    spatialIdEventsOn,
+    spatialIdEventsOff,
+    spatialIdEvents
+  } = useSpatialId({
+    mapRef,
+    mapAPIReady
+  });
+
   const { pluginInstances, getExtensionList } = useExtension({
     alignSystem,
     floatingWidgets,
@@ -230,6 +243,12 @@ export default function ({
         // sketch events
         sketchEventsOn,
         sketchEventsOff,
+        // spatialId
+        spatialIdPickSpace,
+        spatialIdExitPickSpace,
+        // spatialId events
+        spatialIdEventsOn,
+        spatialIdEventsOff,
         // extension
         getExtensionList
       }),
@@ -242,7 +261,8 @@ export default function ({
       cameraEvents,
       timelineEvents,
       layersEvents,
-      sketchEvents
+      sketchEvents,
+      spatialIdEvents
     }),
     [
       engineName,
@@ -308,6 +328,10 @@ export default function ({
       overrideSketchOptions,
       sketchEventsOn,
       sketchEventsOff,
+      spatialIdPickSpace,
+      spatialIdExitPickSpace,
+      spatialIdEventsOn,
+      spatialIdEventsOff,
       getExtensionList,
       overrideViewerProperty,
       pluginInstances,
@@ -318,7 +342,8 @@ export default function ({
       cameraEvents,
       timelineEvents,
       layersEvents,
-      sketchEvents
+      sketchEvents,
+      spatialIdEvents
     ]
   );
 
