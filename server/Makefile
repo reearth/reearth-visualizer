@@ -4,7 +4,7 @@ SCHEMATYPER := github.com/idubinskiy/schematyper
 MANIFEST_DIR := pkg/plugin/manifest
 
 DATALOADEN := github.com/vektah/dataloaden
-GQL_PACKAGE := github.com/reearth/reearth-visualizer/server/internal/adapter/gql
+GQL_PACKAGE := github.com/reearth/reearth/server/internal/adapter/gql
 
 help:
 	@echo "Usage:"
@@ -21,6 +21,7 @@ help:
 	@echo "  gql               Generate GraphQL code"
 	@echo "  mockuser          Create a mock user by executing a curl request"
 	@echo "  schematyper       Generate schema using schematyper"
+	@echo "  dataloaden        Generate dataloader code using dataloaden"
 
 lint:
 	golangci-lint run --fix
@@ -52,5 +53,19 @@ mockuser:
 schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
+
+# List of loader names and model names
+# Normally, the "Loader name" and "Model name" are the same, but for exceptions, use the format "Loader name:Model name".
+LOADERS=Asset Dataset DatasetSchema Layer LayerGroup LayerItem Plugin Project Property PropertySchema Scene Workspace:Team User Tag TagItem TagGroup Policy
+dataloaden:
+	cd internal/adapter/gql/gqldataloader && \
+	for LOADER in $(LOADERS); do \
+	  LOADER_NAME=$$(echo $$LOADER | cut -d':' -f1); \
+	  MODEL_NAME=$$(echo $$LOADER | cut -d':' -f2); \
+	  if [ "$$MODEL_NAME" = "" ]; then \
+	    MODEL_NAME=$$LOADER_NAME; \
+	  fi; \
+	  go run $(DATALOADEN) $${LOADER_NAME}Loader $(GQL_PACKAGE)/gqlmodel.ID *$(GQL_PACKAGE)/gqlmodel.$${MODEL_NAME}; \
+	done
 
 .PHONY: lint test failcheck e2e build run-app run-db gql mockuser schematyper
