@@ -8280,7 +8280,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/carbon__colors": "npm:10.31.3"
     "@types/crypto-js": "npm:4.2.2"
-    "@types/google.maps": "npm:^3.58.1"
+    "@types/google.maps": "npm:3.58.1"
     "@types/js-yaml": "npm:4"
     "@types/lodash-es": "npm:4.17.12"
     "@types/node": "npm:22.5.2"
@@ -11592,7 +11592,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/google.maps@npm:^3.58.1":
+"@types/google.maps@npm:3.58.1":
   version: 3.58.1
   resolution: "@types/google.maps@npm:3.58.1"
   checksum: 10c0/0247c61d2aeb216d04ab9392602ef41d58328c6336ed4e9a4e9e69834002e82c116a34def2bf4ceb31c4292f14899815058da4bb8d803147295c6b47c1162621
