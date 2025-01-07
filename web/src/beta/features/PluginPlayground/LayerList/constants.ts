@@ -18,9 +18,6 @@ export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
     title: "japan-heritage",
     visible: true,
     data: {
-      geojson: {
-        useAsResource: false
-      },
       type: "geojson",
       value: {
         features: [
@@ -520,24 +517,6 @@ export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
     },
     marker: {
       heightReference: "clamp"
-    },
-    polygon: {
-      extrudedHeight: {
-        expression: "${extrudedHeight}"
-      },
-      fillColor: {
-        expression: "color('#ffffff',0.8)"
-      },
-      heightReference: "clamp"
-    },
-    polyline: {
-      clampToGround: true,
-      strokeColor: "#FFFFFF",
-      strokeWidth: 2
-    },
-    "3dtiles": {
-      color: "#FFFFFF",
-      colorBlendMode: "highlight"
     }
   }
 ];
