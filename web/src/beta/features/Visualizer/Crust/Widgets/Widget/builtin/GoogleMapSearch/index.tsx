@@ -3,7 +3,7 @@ import { Card } from "@reearth/beta/lib/reearth-widget-ui/components/ui/card";
 import { Input } from "@reearth/beta/lib/reearth-widget-ui/components/ui/input";
 import { useVisualizer } from "@reearth/core";
 import { Search, Trash2, MapPin } from "lucide-react";
-import { FC, useMemo, useEffect, useCallback, useState } from "react";
+import { FC, useMemo, useEffect, useCallback, useState, useRef } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 import { CommonBuiltInWidgetProperty } from "../types";
@@ -63,25 +63,7 @@ type GooglePlace = {
 
 let loaderInstance: Loader | null = null;
 
-const removeGoogleMapsScript = () => {
-  const scripts = document.querySelectorAll<HTMLScriptElement>(
-    'script[src*="maps.googleapis.com/maps/api/js"]'
-  );
-  scripts.forEach((script) => {
-    script.remove();
-  });
-  if (window.google) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    delete window.google;
-  }
-  (Loader as any).instance = null;
-  (Loader as any).DONE = false;
-  (Loader as any).FAILED = false;
-};
-
 function getLoaderInstance(apiKey: string, language: string): Loader {
-  removeGoogleMapsScript();
   loaderInstance = new Loader({
     apiKey,
     libraries: ["places"],
@@ -123,11 +105,18 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 
   const VisualizerRef = useVisualizer();
 
+  const didLoadRef = useRef(false);
+
+  const filteredSuggestionsRef = useRef(filteredSuggestions);
+
   useEffect(() => {
-    if (!apiToken || !language) {
+    if (didLoadRef.current || !apiToken || !language) {
       return;
     }
+
+    didLoadRef.current = true;
     setError(null);
+
     const loader = getLoaderInstance(apiToken, language);
     loader
       .load()
@@ -140,11 +129,14 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   }, [apiToken, language]);
 
   useEffect(() => {
-    if (filteredSuggestions) {
+    filteredSuggestionsRef.current = filteredSuggestions;
+  }, [filteredSuggestions]);
+
+  useEffect(() => {
+    if (filteredSuggestionsRef.current) {
       setQuery("");
       setFilteredSuggestions([]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
 
   useEffect(() => {
@@ -326,8 +318,16 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   );
 
   const inputPlaceholder = apiToken
-    ? "Type a keyword to search..."
-    : "Please setup apikey";
+    ? language === "ja"
+      ? "検索キーワードを入力してください..."
+      : language === "cn"
+        ? "请输入搜索关键字..."
+        : "Type a keyword to search..."
+    : language === "ja"
+      ? "APIキーを設定してください"
+      : language === "cn"
+        ? "请先设置ApiKey"
+        : "Please setup apikey";
 
   return (
     <div className={theme}>
@@ -337,7 +337,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             <Search className="tw-w-5 tw-h-5" />
           </span>
           <Input
-            className="tw-border-0 tw-shadow-none focus:outline-none focus:ring-0"
+            className="tw-border-0 tw-shadow-none focus:outline-none focus:ring-0 "
             placeholder={inputPlaceholder}
             value={query}
             onChange={handleInputChange}
@@ -345,10 +345,12 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
             disabled={!apiToken}
           />
         </div>
-        {loading && <p className="tw-text-gray-500 tw-p-1">Loading...</p>}
-        {error && <p className="tw-text-gray-500 tw-p-1">{error}</p>}
+        {loading && (
+          <p className="tw-text-gray-500 tw-p-1 tw-text-sm">Loading...</p>
+        )}
+        {error && <p className="tw-text-gray-500 tw-p-1 tw-text-sm">{error}</p>}
         {filteredSuggestions.length > 0 && (
-          <ul className="tw-ml-[-0.75rem] tw-rounded-b-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto">
+          <ul className="tw-ml-[-0.75rem] tw-rounded-b-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto tw-text-sm">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
@@ -362,7 +364,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         )}
 
         {selectedItems.length > 0 && filteredSuggestions.length === 0 && (
-          <div className="tw-space-y-1 tw-ml-[-0.75rem]">
+          <div className="tw-space-y-1 tw-ml-[-0.75rem] tw-text-sm">
             {selectedItems.map((item, index) => {
               const isSelected = index === selectedItemIndex;
               return (
