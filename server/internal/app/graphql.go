@@ -41,26 +41,19 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 		MaxMemory:     maxMemorySize,
 	})
 
+	// cache settings
 	srv.SetQueryCache(lru.New(1000))
-
-	srv.Use(extension.Introspection{})
 	srv.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New(100),
+		Cache: lru.New(30),
 	})
 
-	srv.Use(otelgqlgen.Middleware())
-
+	// complexity limit
 	if conf.ComplexityLimit > 0 {
 		srv.Use(extension.FixedComplexityLimit(conf.ComplexityLimit))
 	}
 
-	if dev {
-		srv.Use(extension.Introspection{})
-	}
-
-	srv.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New(30),
-	})
+	// tracing
+	srv.Use(otelgqlgen.Middleware())
 
 	srv.SetErrorPresenter(
 		// show more detailed error messgage in debug mode
@@ -71,6 +64,11 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 			return graphql.DefaultErrorPresenter(ctx, e)
 		},
 	)
+
+	// only enable middlewares in dev mode
+	if dev {
+		srv.Use(extension.Introspection{})
+	}
 
 	return func(c echo.Context) error {
 		req := c.Request()
