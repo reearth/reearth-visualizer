@@ -60,3 +60,5 @@ dataloaden:
 	go run $(DATALOADEN) PropertyLoader ID '$(GQL_PACKAGE)/gqlmodel.Property'
 
 .PHONY: lint test failcheck e2e build run-app run-db gql mockuser schematyper dataloaden
+
+-include Makefile.local

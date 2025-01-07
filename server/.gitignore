@@ -28,3 +28,6 @@ __debug_bin
 !/.env.example
 /coverage.txt
 /web
+
+# ignore local Makefile.local
+Makefile.local
