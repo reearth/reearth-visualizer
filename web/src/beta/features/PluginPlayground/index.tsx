@@ -20,7 +20,7 @@ const PluginPlayground: FC = () => {
             initialHeight={100}
             storageId="plugin-playground-bottom-area"
           >
-            <Panel alwaysOpen extend title="Layers">
+            <Panel noPadding alwaysOpen extend title="Layers">
               <LayersPanel />
             </Panel>
           </Area>

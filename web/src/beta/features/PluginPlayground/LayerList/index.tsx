@@ -41,10 +41,11 @@ const LayerList: FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div(() => ({
+const Wrapper = styled.div(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  overflow: "auto"
+  overflow: "auto",
+  padding: theme.spacing.smallest
 }));
 
 export default LayerList;
