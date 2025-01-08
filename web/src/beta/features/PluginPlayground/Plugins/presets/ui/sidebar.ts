@@ -13,6 +13,7 @@ extensions:
     name: Sidebar Widget
     description: Sidebar Widget
     widgetLayout:
+      extended: true
       defaultLocation:
         zone: outer
         section: left
@@ -28,6 +29,24 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
     <style>
+      .content-wrapper {
+        background: #eee;
+        border-radius: 5px;
+        overflow: hidden;
+        height: calc(100vh - 20px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .upside {
+        position: sticky;
+        top: 0;
+        left: 0;
+        background: #eee;
+        z-index: 10;
+        padding: 10px;
+      }
+
       #toggleBtn {
         position: relative;
         top: 16px;
@@ -51,15 +70,14 @@ const widgetFile: FileType = {
 
       .menu-container {
         flex-grow: 1;
-        padding: 0;
-        margin: 20px 0;
         overflow-y: auto;
+        margin-top: 10px;
       }
 
       .menu {
         list-style: none;
         padding: 0;
-        margin: 20px 0;
+        margin: 0;
       }
 
       .menu li {
@@ -101,85 +119,89 @@ const widgetFile: FileType = {
     </style>
 
     <div id="wrapper">
-      <button id="toggleBtn">☰</button>
-      <h2 id="sidebarTitle">Sidebar</h2>
-      <input type="text" id="searchBar" placeholder="Search..." />
-      <div class="menu-container">
-        <ul class="menu">
-          <li>
-            <span class="menu-icon">🏠</span>
-            <span class="menu-title">Home</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">ℹ️</span>
-            <span class="menu-title">About</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">📞</span>
-            <span class="menu-title">Contact</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">❓</span>
-            <span class="menu-title">FAQ</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">💡</span>
-            <span class="menu-title">Help</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">⚙️</span>
-            <span class="menu-title">Settings</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">👤</span>
-            <span class="menu-title">Profile</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">📊</span>
-            <span class="menu-title">Dashboard</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">🔔</span>
-            <span class="menu-title">Notifications</span>
-            <span class="menu-dots">⋮</span>
-          </li>
-          <li>
-            <span class="menu-icon">📄</span>
-            <span class="menu-title">Reports</span>
-            <span class="menu-dots">⋮</span>
-          </li>
+      <div class="content-wrapper">
+        <div class="upside">
+          <button id="toggleBtn">☰</button>
+          <h2 id="sidebarTitle">Sidebar</h2>
+          <input type="text" id="searchBar" placeholder="Search..." />
+        </div>
+        <div class="menu-container">
+          <ul class="menu">
+            <li>
+              <span class="menu-icon">🏠</span>
+              <span class="menu-title">Home</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">ℹ️</span>
+              <span class="menu-title">About</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">📞</span>
+              <span class="menu-title">Contact</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">❓</span>
+              <span class="menu-title">FAQ</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">💡</span>
+              <span class="menu-title">Help</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">⚙️</span>
+              <span class="menu-title">Settings</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">👤</span>
+              <span class="menu-title">Profile</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">📊</span>
+              <span class="menu-title">Dashboard</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">🔔</span>
+              <span class="menu-title">Notifications</span>
+              <span class="menu-dots">⋮</span>
+            </li>
+            <li>
+              <span class="menu-icon">📄</span>
+              <span class="menu-title">Reports</span>
+              <span class="menu-dots">⋮</span>
+            </li>
 
-        </ul>
+          </ul>
+        </div>
       </div>
     </div>
     <script>
       const toggleBtn = document.getElementById("toggleBtn");
-      const sidebarTitle = document.getElementById("sidebarTitle");
+        const sidebarTitle = document.getElementById("sidebarTitle");
 
-      toggleBtn.addEventListener("click", () => {
-      const sidebar = document.querySelector("#wrapper");
-      const isCollapsed = sidebar.style.width === "60px";
+        toggleBtn.addEventListener("click", () => {
+        const sidebar = document.querySelector("#wrapper");
+        const isCollapsed = sidebar.style.width === "60px";
 
-      // Collapse or expand the sidebar
-      sidebar.style.width = isCollapsed ? "250px" : "60px";
+        // Collapse or expand the sidebar
+        sidebar.style.width = isCollapsed ? "250px" : "60px";
 
-      // Toggle visibility instead of display for title
-      sidebarTitle.classList.toggle("hidden", !isCollapsed);
+        // Toggle visibility instead of display for title
+        sidebarTitle.classList.toggle("hidden", !isCollapsed);
 
-      // Hide or show menu titles
-      const titles = document.querySelectorAll(".menu-title");
-      titles.forEach((title) => {
-          title.style.display = isCollapsed ? "inline" : "none";
+        // Hide or show menu titles
+        const titles = document.querySelectorAll(".menu-title");
+        titles.forEach((title) => {
+            title.style.display = isCollapsed ? "inline" : "none";
+          });
         });
-      });
     </script>
   \`); `
 };

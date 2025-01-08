@@ -62,7 +62,6 @@ const widgetFile: FileType = {
         color: #000;
       }
     </style>
-
     <div id="wrapper">
       <div class="header">
         <div class="header-logo">
@@ -72,6 +71,8 @@ const widgetFile: FileType = {
           <li>Home</li>
           <li>About</li>
           <li>Services</li>
+          <li>Contact</li>
+          <li>FAQ</li>
         </ul>
       </div>
     </div>
