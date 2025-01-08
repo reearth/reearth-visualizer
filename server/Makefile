@@ -38,9 +38,9 @@ e2e:
 build:
 	go build ./cmd/reearth
 
-REFLEX_BIN := $(shell which air)
+AIR_BIN := $(shell which air)
 dev-install:
-ifndef REFLEX_BIN
+ifndef AIR_BIN
 	@echo "reflex is not installed. Installing..."
 	@go install github.com/air-verse/air@v1.61.5
 else
