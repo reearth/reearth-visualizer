@@ -48,7 +48,7 @@ else
 endif
 
 dev: dev-install
-	air -d
+	air
 
 run-app:
 	go run ./cmd/reearth
