@@ -98,6 +98,7 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
   return scene?.newLayers?.map((l): NLSLayer => {
     return {
       id: l.id,
+      index: l.index,
       title: l.title,
       visible: l.visible,
       layerType: l.layerType,

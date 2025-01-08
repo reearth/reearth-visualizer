@@ -78,20 +78,25 @@ export default function ({
     useAddNLSLayerSimple,
     useRemoveNLSLayer,
     useUpdateNLSLayer,
+    useUpdateNLSLayers,
     useUpdateCustomProperties
   } = useLayersFetcher();
 
   const { nlsLayers: originNlsLayers } = useGetLayersQuery({ sceneId });
 
-  // TODO: support by gql mutation
   const [sortedLayerIds, setSortedLayerIds] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (!originNlsLayers) return;
-    setSortedLayerIds((prev) =>
-      prev.length > 0 ? prev : originNlsLayers.map((l) => l.id)
-    );
-  }, [originNlsLayers]);
+ useEffect(() => {
+   if (!originNlsLayers) return;
+   setSortedLayerIds(
+     (prev) =>
+       prev.length > 0
+         ? prev
+         : [...originNlsLayers]
+             .sort((a, b) => (a.index ?? 0) - (b.index ?? 0)) 
+             .map((l) => l.id)
+   );
+ }, [originNlsLayers]);
 
   const nlsLayers: NLSLayer[] = useMemo(
     () =>
@@ -105,6 +110,7 @@ export default function ({
         : [],
     [originNlsLayers, sortedLayerIds]
   );
+
 
   const [selectedLayer, setSelectedLayer] = useState<
     SelectedLayer | undefined
@@ -250,25 +256,34 @@ export default function ({
     });
   }, [nlsLayers]);
 
-  const handleLayerMove = useCallback(
-    async (inp: LayerMoveProps) => {
-      setSortedLayerIds((prev) => {
-        const newSortedLayerIds = [...prev];
-        const currentIndex = newSortedLayerIds.indexOf(inp.layerId);
-        if (currentIndex !== -1) {
-          const [movedItem] = newSortedLayerIds.splice(currentIndex, 1);
-          newSortedLayerIds.splice(inp.index, 0, movedItem);
-        }
-        return newSortedLayerIds;
-      });
-      await useUpdateNLSLayer({
-        layerId: inp.layerId,
-        index: inp.index
-      });
-    },
-    [useUpdateNLSLayer]
-  );
+ const handleLayerMove = useCallback(
+   async (inp: LayerMoveProps) => {
+     if (!originNlsLayers) return;
 
+     let updatedLayerIds: string[] = [];
+     setSortedLayerIds((prev) => {
+       const newSortedLayerIds = [...prev];
+       const currentIndex = newSortedLayerIds.indexOf(inp.layerId);
+       if (currentIndex !== -1) {
+         const [movedItem] = newSortedLayerIds.splice(currentIndex, 1);
+         newSortedLayerIds.splice(inp.index, 0, movedItem);
+       }
+       updatedLayerIds = newSortedLayerIds; 
+       return newSortedLayerIds;
+     });
+
+     const layersInput = {
+       layers: updatedLayerIds.map((layerId, i) => ({
+         layerId,
+         index: i
+       }))
+     };
+
+     await useUpdateNLSLayers(layersInput);
+   },
+   [originNlsLayers, useUpdateNLSLayers]
+ );
+  
   const handleCustomPropertySchemaClick = useCallback((id?: string) => {
     if (!id) return;
     setLayerId(id);
