@@ -1087,6 +1087,7 @@ export type Mutation = {
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
   updateNLSLayer: UpdateNlsLayerPayload;
+  updateNLSLayers: UpdateNlsLayersPayload;
   updateProject?: Maybe<ProjectPayload>;
   updatePropertyItems?: Maybe<PropertyItemPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
@@ -1523,6 +1524,11 @@ export type MutationUpdateNlsLayerArgs = {
 };
 
 
+export type MutationUpdateNlsLayersArgs = {
+  input: UpdateNlsLayersInput;
+};
+
+
 export type MutationUpdateProjectArgs = {
   input: UpdateProjectInput;
 };
@@ -1601,6 +1607,7 @@ export type NlsInfobox = {
 export type NlsLayer = {
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
+  index?: Maybe<Scalars['Int']['output']>;
   infobox?: Maybe<NlsInfobox>;
   isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
@@ -1616,6 +1623,7 @@ export type NlsLayerGroup = NlsLayer & {
   childrenIds: Array<Scalars['ID']['output']>;
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
+  index?: Maybe<Scalars['Int']['output']>;
   infobox?: Maybe<NlsInfobox>;
   isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
@@ -1630,6 +1638,7 @@ export type NlsLayerSimple = NlsLayer & {
   __typename?: 'NLSLayerSimple';
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
+  index?: Maybe<Scalars['Int']['output']>;
   infobox?: Maybe<NlsInfobox>;
   isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
@@ -2725,6 +2734,7 @@ export type UpdateMemberOfTeamPayload = {
 
 export type UpdateNlsLayerInput = {
   config?: InputMaybe<Scalars['JSON']['input']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
   layerId: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   visible?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2733,6 +2743,15 @@ export type UpdateNlsLayerInput = {
 export type UpdateNlsLayerPayload = {
   __typename?: 'UpdateNLSLayerPayload';
   layer: NlsLayer;
+};
+
+export type UpdateNlsLayersInput = {
+  layers: Array<UpdateNlsLayerInput>;
+};
+
+export type UpdateNlsLayersPayload = {
+  __typename?: 'UpdateNLSLayersPayload';
+  layers: Array<NlsLayer>;
 };
 
 export type UpdateProjectInput = {

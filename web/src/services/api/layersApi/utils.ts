@@ -35,6 +35,7 @@ export type Sketch = {
 
 export type NLSLayer = {
   id: string;
+  index?: number | null;
   title: string;
   visible: boolean;
   layerType: string;

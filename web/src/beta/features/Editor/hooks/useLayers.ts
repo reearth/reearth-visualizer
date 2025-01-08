@@ -185,17 +185,25 @@ export default function ({
 
   const handleLayerAdd = useCallback(
     async (inp: LayerAddProps) => {
+      const maxIndex: number = nlsLayers.reduce(
+        (max: number, layer: NLSLayer) =>
+          layer.index != null ? Math.max(max, layer.index) : max,
+        -1
+      );
+
+      const nextIndex = maxIndex + 1;
+
       await useAddNLSLayerSimple({
         sceneId: inp.sceneId,
         config: inp.config,
         visible: inp.visible,
         layerType: inp.layerType,
         title: t(inp.title),
-        index: inp.index,
+        index: nextIndex,
         schema: inp.schema
       });
     },
-    [t, useAddNLSLayerSimple]
+    [nlsLayers, t, useAddNLSLayerSimple]
   );
 
   const handleLayerNameUpdate = useCallback(
@@ -242,18 +250,24 @@ export default function ({
     });
   }, [nlsLayers]);
 
-  // TODO: support by gql mutation
-  const handleLayerMove = useCallback((inp: LayerMoveProps) => {
-    setSortedLayerIds((prev) => {
-      const newSortedLayerIds = [...prev];
-      const index = newSortedLayerIds.indexOf(inp.layerId);
-      if (index !== -1) {
-        newSortedLayerIds.splice(index, 1);
-        newSortedLayerIds.splice(inp.index, 0, inp.layerId);
-      }
-      return newSortedLayerIds;
-    });
-  }, []);
+  const handleLayerMove = useCallback(
+    async (inp: LayerMoveProps) => {
+      setSortedLayerIds((prev) => {
+        const newSortedLayerIds = [...prev];
+        const currentIndex = newSortedLayerIds.indexOf(inp.layerId);
+        if (currentIndex !== -1) {
+          const [movedItem] = newSortedLayerIds.splice(currentIndex, 1);
+          newSortedLayerIds.splice(inp.index, 0, movedItem);
+        }
+        return newSortedLayerIds;
+      });
+      await useUpdateNLSLayer({
+        layerId: inp.layerId,
+        index: inp.index
+      });
+    },
+    [useUpdateNLSLayer]
+  );
 
   const handleCustomPropertySchemaClick = useCallback((id?: string) => {
     if (!id) return;
