@@ -3,6 +3,8 @@ TEST_DIR ?= ./...
 SCHEMATYPER := github.com/idubinskiy/schematyper
 MANIFEST_DIR := pkg/plugin/manifest
 
+default: help
+
 help:
 	@echo "Usage:"
 	@echo "  make <target>"
@@ -13,6 +15,8 @@ help:
 	@echo "  failcheck         Run unit tests with fail-fast and no parallel execution"
 	@echo "  e2e               Run end-to-end tests"
 	@echo "  build             Build the project"
+	@echo "  dev-install       Install tools for make dev - behavior not confirmed in windows."
+	@echo "  dev               Run the application with hot reloading"
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Run the MongoDB database using Docker Compose"
 	@echo "  gql               Generate GraphQL code include dataloader"
@@ -34,6 +38,18 @@ e2e:
 build:
 	go build ./cmd/reearth
 
+AIR_BIN := $(shell which air)
+dev-install:
+ifndef AIR_BIN
+	@echo "reflex is not installed. Installing..."
+	@go install github.com/air-verse/air@v1.61.5
+else
+	@echo "air is already installed."
+endif
+
+dev: dev-install
+	air
+
 run-app:
 	go run ./cmd/reearth
 
@@ -51,4 +67,4 @@ schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
 
-.PHONY: lint test failcheck e2e build run-app run-db gql mockuser schematyper
+.PHONY: lint test failcheck e2e build dev-install dev run-app run-db gql mockuser schematyper

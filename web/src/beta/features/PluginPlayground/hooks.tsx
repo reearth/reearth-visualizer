@@ -1,14 +1,18 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { useMemo } from "react";
+import { Layer, MapRef } from "@reearth/core";
+import { FC, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
-import Console from "./Console";
+import LayerList from "./LayerList";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
 
 export default () => {
+  const visualizerRef = useRef<MapRef | null>(null);
+
   const {
     presetPlugins,
     selectPlugin,
@@ -25,9 +29,21 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { widgets, executeCode, fileOutputs } = useCode({
+  const { widgets, executeCode } = useCode({
     files: selectedPlugin.files
   });
+
+  const [layers, setLayers] = useState<Layer[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND
+  );
+
+  const handleLayerVisibilityUpdate = (layerId: string, visible: boolean) => {
+    setLayers((prev) =>
+      prev.map((layer) =>
+        layer.id === layerId ? { ...layer, visible } : layer
+      )
+    );
+  };
 
   // Note: currently we put visualizer in tab content, so better not have more tabs in this area,
   // otherwise visualizer will got unmount and mount when switching tabs.
@@ -36,21 +52,24 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer widgets={widgets} />
+        children: (
+          <Viewer
+            layers={layers}
+            widgets={widgets}
+            visualizerRef={visualizerRef}
+          />
+        )
       }
     ],
-    [widgets]
+    [layers, widgets]
   );
 
-  const BottomAreaTabs: TabItem[] = useMemo(
-    () => [
-      {
-        id: "console",
-        name: "Console",
-        children: <Console fileOutputs={fileOutputs} />
-      }
-    ],
-    [fileOutputs]
+  const LayersPanel: FC = () => (
+    <LayerList
+      handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
+      layers={layers}
+      visualizerRef={visualizerRef}
+    />
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -117,7 +136,7 @@ export default () => {
 
   return {
     MainAreaTabs,
-    BottomAreaTabs,
+    LayersPanel,
     SubRightAreaTabs,
     RightAreaTabs
   };
