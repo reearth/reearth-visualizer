@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS build
+FROM golang:1.23.4-alpine AS build
 ARG TAG=release
 ARG VERSION
 
