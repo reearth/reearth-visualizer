@@ -2,7 +2,7 @@ name: ci-server
 on:
   workflow_call:
 env:
-  GO_VERSION: "1.21"
+  GO_VERSION: "1.23.4"
 
 jobs:
   ci-server-lint:
@@ -12,14 +12,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: set up
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.55
+          version: v1.63.4
           args: --timeout=10m
           working-directory: server
 
@@ -34,7 +34,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: set up
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
           cache-dependency-path: server/go.sum
