@@ -1,7 +1,6 @@
-* @rot1024
+*                           @reearth/visualizer-codeowners
 
 /server/                    @pyshx
-
 
 /web/                       @airslice @mkumbobeaty
 /web/e2e/                   @keiya01
