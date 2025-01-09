@@ -65,7 +65,7 @@ const widgetFile: FileType = {
     <div id="wrapper">
       <div class="header">
         <div class="header-logo">
-          <img src="" alt="Re:Earth Logo"/>
+        <p>Re:Earth</p>
         </div>
         <ul class="header-menu">
           <li>Home</li>
