@@ -36,7 +36,7 @@ func getUser(ctx context.Context) *user.User {
 }
 
 func getLang(ctx context.Context, lang *language.Tag) string {
-	return adapter.Lang(ctx, lang)
+	return adapter.LangByTag(ctx, lang)
 }
 
 func getOperator(ctx context.Context) *usecase.Operator {

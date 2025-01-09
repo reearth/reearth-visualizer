@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -14,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
+	apperror "github.com/reearth/reearth/server/pkg/error"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -24,6 +26,7 @@ const (
 )
 
 func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
+
 	schema := gql.NewExecutableSchema(gql.Config{
 		Resolvers: gql.NewResolver(),
 	})
@@ -58,10 +61,36 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	srv.SetErrorPresenter(
 		// show more detailed error messgage in debug mode
 		func(ctx context.Context, e error) *gqlerror.Error {
-			if dev {
-				return gqlerror.ErrorPathf(graphql.GetFieldContext(ctx).Path(), "%s", e.Error())
+			var graphqlErr *gqlerror.Error
+			var appErr *apperror.AppError
+			lang := adapter.Lang(ctx)
+			if ok := errors.As(e, &appErr); ok {
+				localesErr := appErr.LocalesError[lang]
+				graphqlErr = &gqlerror.Error{
+					Message: localesErr.Message,
+					Extensions: map[string]interface{}{
+						"code":        localesErr.Code,
+						"description": localesErr.Description,
+					},
+				}
+			} else {
+				graphqlErr = graphql.DefaultErrorPresenter(ctx, e)
 			}
-			return graphql.DefaultErrorPresenter(ctx, e)
+
+			if dev {
+				graphqlErr.Path = graphql.GetFieldContext(ctx).Path()
+			}
+
+			// FixMe: system error should not be shown to user
+			systemError := ""
+			if graphqlErr.Err != nil {
+				systemError = graphqlErr.Err.Error()
+			} else {
+				systemError = e.Error()
+			}
+			graphqlErr.Extensions["system_error"] = systemError
+
+			return graphqlErr
 		},
 	)
 

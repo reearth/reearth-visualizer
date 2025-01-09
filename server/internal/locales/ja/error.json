@@ -1,0 +1,20 @@
+{
+    "unknown": {
+        "message": "不明なエラーが発生しました。",
+        "description": "不明なエラーが発生しました。"
+    },
+    "repo": {
+        "not_found": {
+            "message": "リソースが見つかりません。",
+            "description": "リソースが見つかりません。"
+        }
+    },
+    "pkg": {
+        "project": {
+            "invalid_alias": {
+                "message": "無効なエイリアス名です。",
+                "description": "エイリアスは5-32文字で、英数字、アンダースコア、ハイフンのみ使用できます。"
+            }
+        }
+    }
+}

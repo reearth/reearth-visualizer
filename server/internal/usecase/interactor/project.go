@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -203,7 +204,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	if p.Alias != nil {
 		if err := prj.UpdateAlias(*p.Alias); err != nil {
-			return nil, err
+			graphql.AddError(ctx, err)
 		}
 	}
 
@@ -278,6 +279,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 				return nil, err
 			}
 		}
+	}
+
+	if len(graphql.GetErrors(ctx)) > 0 {
+		return prj, nil
 	}
 
 	currentTime := time.Now().UTC()

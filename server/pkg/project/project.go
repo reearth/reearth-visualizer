@@ -1,17 +1,17 @@
 package project
 
 import (
-	"errors"
 	"net/url"
 	"regexp"
 	"time"
 
+	apperror "github.com/reearth/reearth/server/pkg/error"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 var (
-	ErrInvalidAlias error = errors.New("invalid alias")
-	aliasRegexp           = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
+	ErrInvalidAlias = apperror.NewAppError("pkg.project.invalid_alias", nil)
+	aliasRegexp     = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
 type Project struct {

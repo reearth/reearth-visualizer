@@ -20,6 +20,7 @@ const (
 	contextUsecases    ContextKey = "usecases"
 	contextMockAuth    ContextKey = "mockauth"
 	contextCurrentHost ContextKey = "currenthost"
+	contextLang        ContextKey = "lang"
 )
 
 var defaultLang = language.English
@@ -31,6 +32,10 @@ type AuthInfo struct {
 	Name          string
 	Email         string
 	EmailVerified *bool
+}
+
+func AttachLang(ctx context.Context, lang string) context.Context {
+	return context.WithValue(ctx, contextLang, lang)
 }
 
 func AttachUser(ctx context.Context, u *user.User) context.Context {
@@ -63,22 +68,21 @@ func User(ctx context.Context) *user.User {
 	return nil
 }
 
-func Lang(ctx context.Context, lang *language.Tag) string {
+func LangByTag(ctx context.Context, lang *language.Tag) string {
 	if lang != nil && !lang.IsRoot() {
 		return lang.String()
 	}
+	return Lang(ctx)
+}
 
-	u := User(ctx)
-	if u == nil {
-		return defaultLang.String()
+func Lang(ctx context.Context) string {
+	if v := ctx.Value(contextLang); v != nil {
+		if lang, ok := v.(string); ok {
+			return lang
+		}
 	}
 
-	l := u.Lang()
-	if l.IsRoot() {
-		return defaultLang.String()
-	}
-
-	return l.String()
+	return defaultLang.String()
 }
 
 func Operator(ctx context.Context) *usecase.Operator {
