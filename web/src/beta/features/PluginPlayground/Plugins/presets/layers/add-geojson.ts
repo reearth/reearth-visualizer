@@ -61,15 +61,15 @@ const layerGeojsonFromUrl = {
   type: "simple",
   data: {
     type: "geojson", 
-    url: "https://shogohirasawa.github.io/for_delivery/sample01.geojson", // URL to the GeoJSON file
+    url: "https://shogohirasawa.github.io/for_delivery/sample01.geojson", // URL of GeoJSON file
   },
-  polygon: {}, // Settings for the feature style.  
+  polygon: {},
 };
 
-// Adding the inline GeoJSON layer to Re:Earth
+// Add the inline GeoJSON layer to Re:Earth
 reearth.layers.add(layerGeojsonInline);
 
-// Adding the GeoJSON layer from the URL to Re:Earth
+// Add the GeoJSON layer from the URL to Re:Earth
 reearth.layers.add(layerGeojsonFromUrl);
 `
 };
