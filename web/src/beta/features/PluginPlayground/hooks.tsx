@@ -8,6 +8,7 @@ import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
+import SettingsList from "./SettingsList";
 import Viewer from "./Viewer";
 
 export default () => {
@@ -36,6 +37,36 @@ export default () => {
   const [layers, setLayers] = useState<Layer[]>(
     DEFAULT_LAYERS_PLUGIN_PLAYGROUND
   );
+
+  const [selectedLayerId, setSelectedLayerId] = useState("");
+  const selectedLayer = layers.find((layer) => layer.id === selectedLayerId);
+
+  const updateInfoboxEnabled = () => {
+    const selectedLayerInfoboxEnabled =
+      selectedLayer?.infobox?.property?.default?.enabled?.value;
+    setLayers((prev) =>
+      prev.map((layer) =>
+        layer.id === selectedLayerId
+          ? {
+              ...layer,
+              infobox: {
+                ...layer.infobox,
+                property: {
+                  ...layer.infobox?.property,
+                  default: {
+                    ...layer.infobox?.property?.default,
+                    enabled: {
+                      ...layer.infobox?.property?.default?.enabled,
+                      value: !selectedLayerInfoboxEnabled
+                    }
+                  }
+                }
+              }
+            }
+          : layer
+      )
+    );
+  };
 
   const handleLayerVisibilityUpdate = (layerId: string, visible: boolean) => {
     setLayers((prev) =>
@@ -68,6 +99,8 @@ export default () => {
     <LayerList
       handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
       layers={layers}
+      selectedLayerId={selectedLayerId}
+      setSelectedLayerId={setSelectedLayerId}
       visualizerRef={visualizerRef}
     />
   );
@@ -134,10 +167,18 @@ export default () => {
     [selectedFile, executeCode, updateFileSourceCode]
   );
 
+  const SettingsPanel: FC = () => (
+    <SettingsList
+      selectedLayer={selectedLayer}
+      updateInfoboxEnabled={updateInfoboxEnabled}
+    />
+  );
+
   return {
-    MainAreaTabs,
     LayersPanel,
-    SubRightAreaTabs,
-    RightAreaTabs
+    MainAreaTabs,
+    RightAreaTabs,
+    SettingsPanel,
+    SubRightAreaTabs
   };
 };
