@@ -1,9 +1,6 @@
 import { useT, useLang } from "@reearth/services/i18n";
-import {
-  useError,
-  useNotification,
-  Notification
-} from "@reearth/services/state";
+import { useNotification, Notification } from "@reearth/services/state";
+import { useErrors } from "@reearth/services/state/gqlErrorHandling";
 import { useState, useEffect, useCallback, useMemo } from "react";
 
 export type PolicyItems =
@@ -26,7 +23,7 @@ const policyItems: PolicyItems[] = [
 export default () => {
   const t = useT();
   const currentLanguage = useLang();
-  const [error, setError] = useError();
+  const [errors, setErrors] = useErrors();
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
 
@@ -54,42 +51,44 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    if (!error) return;
-    if (error.message?.includes("policy violation") && error.message) {
-      const limitedItem = policyItems.find((i) => error.message?.includes(i));
-      const policyItem =
-        limitedItem && policyLimitNotifications
-          ? policyLimitNotifications[limitedItem]
-          : undefined;
-      const message = policyItem
-        ? typeof policyItem === "string"
-          ? policyItem
-          : policyItem[currentLanguage]
-        : t(
-            "You have reached a policy limit. Please contact an administrator of your Re:Earth system."
-          );
+    if (errors.length === 0) return;
+    errors.forEach((error) => {
+      if (error.message?.includes("policy violation") && error.message) {
+        const limitedItem = policyItems.find((i) => error.message?.includes(i));
+        const policyItem =
+          limitedItem && policyLimitNotifications
+            ? policyLimitNotifications[limitedItem]
+            : undefined;
+        const message = policyItem
+          ? typeof policyItem === "string"
+            ? policyItem
+            : policyItem[currentLanguage]
+          : t(
+              "You have reached a policy limit. Please contact an administrator of your Re:Earth system."
+            );
 
-      setNotification({
-        type: "info",
-        heading: noticeHeading,
-        text: message,
-        duration: "persistent"
-      });
-    } else {
-      setNotification({
-        type: "error",
-        heading: errorHeading,
-        text: t("Something went wrong. Please try again later.")
-      });
-    }
-    setError(undefined);
+        setNotification({
+          type: "info",
+          heading: noticeHeading,
+          text: message,
+          duration: "persistent"
+        });
+      } else {
+        setNotification({
+          type: "error",
+          heading: errorHeading,
+          text: error.description || error.message || ""
+        });
+      }
+    });
+    setErrors([]);
   }, [
-    error,
+    errors,
     currentLanguage,
     policyLimitNotifications,
     errorHeading,
     noticeHeading,
-    setError,
+    setErrors,
     setNotification,
     t
   ]);
