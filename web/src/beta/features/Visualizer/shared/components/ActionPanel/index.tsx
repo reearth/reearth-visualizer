@@ -118,11 +118,9 @@ const ActionPanel: FC<Props> = ({
                     <PopupMenu
                       label={
                         <OptionWrapper showPointer={!isSelected || !!a.onClick}>
-                          <OptionIcon
-                            icon={a.icon}
-                            size="normal"
-                            border={idx !== 0}
-                          />
+                          <OptionIconWrapper border={idx !== 0}>
+                            <OptionIcon icon={a.icon} size="normal" />
+                          </OptionIconWrapper>
                           {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
                         </OptionWrapper>
                       }
@@ -187,7 +185,9 @@ const ActionPanel: FC<Props> = ({
                   showPointer={!isSelected || !!a.onClick}
                   onClick={a.onClick}
                 >
-                  <OptionIcon icon={a.icon} size="normal" border={idx !== 0} />
+                  <OptionIconWrapper border={idx !== 0}>
+                    <OptionIcon icon={a.icon} size="normal" />
+                  </OptionIconWrapper>
                   {a.name && <TitleWrapper>{a.name}</TitleWrapper>}
                 </OptionWrapper>
               )}
@@ -270,11 +270,16 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   maxWidth: "150px"
 }));
 
-const OptionIcon = styled(Icon)<{ border?: boolean }>(({ border, theme }) => ({
-  borderLeft: `1px solid ${border ? "#f1f1f1" : "transparent"}`,
-  padding: theme.spacing.smallest,
+const OptionIcon = styled(Icon)(() => ({
   transition: "none"
 }));
+
+const OptionIconWrapper = styled("div")<{ border?: boolean }>(
+  ({ border, theme }) => ({
+    borderLeft: `1px solid ${border ? "#f1f1f1" : "transparent"}`,
+    padding: theme.spacing.smallest
+  })
+);
 
 const SettingsContent = styled("div")(() => ({
   minHeight: "120px",
