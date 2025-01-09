@@ -3,6 +3,7 @@ import { PluginType } from "../constants";
 import { myPlugin } from "./custom/myPlugin";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { addGeojson } from "./layers/add-geojson";
 
 type PresetPluginCategory = {
   id: string;
@@ -22,5 +23,10 @@ export const presetPlugins: PresetPlugins = [
     id: "ui",
     title: "UI",
     plugins: [responsivePanel, sidebar]
+  },
+  {
+    id: "layers",
+    title: "layers",
+    plugins: [addGeojson]
   }
 ];
