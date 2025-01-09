@@ -70,7 +70,7 @@ export const TextInput: FC<TextInputProps> = ({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if ((e.key === "Enter" && !isComposing) || e.key === "Return") {
+      if (e.key === "Enter" && !isComposing) {
         e.preventDefault();
         (e.target as HTMLInputElement).blur();
       }
