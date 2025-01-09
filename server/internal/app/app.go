@@ -129,7 +129,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
 	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
-
+	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {
 		apiPrivate.POST("/signup/verify", StartSignupVerify())
 		apiPrivate.POST("/signup/verify/:code", SignupVerify())

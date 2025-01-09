@@ -28,3 +28,4 @@ __debug_bin
 !/.env.example
 /coverage.txt
 /web
+tmp

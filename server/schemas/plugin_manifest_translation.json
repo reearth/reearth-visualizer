@@ -40,7 +40,9 @@
         },
         "choices": {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": {
+            "type": "string"
+          },
           "patternProperties": {
             "^[A-Za-z]{1}[\\w-:.]{0,}$": {
               "type": "string"
@@ -68,7 +70,9 @@
         },
         "fields": {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": {
+            "$ref": "#/definitions/propertySchemaField"
+          },
           "patternProperties": {
             "^[A-Za-z]{1}[\\w-:.]{0,}$": {
               "$ref": "#/definitions/propertySchemaField"
@@ -80,7 +84,9 @@
     "propertySchema": {
       "$id": "#propertySchema",
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": {
+        "$ref": "#/definitions/propertySchemaGroup"
+      },
       "patternProperties": {
         "^[A-Za-z]{1}[\\w-:.]{0,}$": {
           "$ref": "#/definitions/propertySchemaGroup"
@@ -128,6 +134,9 @@
         },
         "extensions": {
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/extension"
+          },
           "patternProperties": {
             "^[A-Za-z]{1}[\\w-:.]{0,}$": {
               "$ref": "#/definitions/extension"
