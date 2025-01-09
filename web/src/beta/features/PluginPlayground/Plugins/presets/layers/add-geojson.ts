@@ -28,7 +28,8 @@ const widgetFile: FileType = {
 
 // Difine the Polygon with inline
 const layerGeojsonInline = {
-  type: "simple", // Must be written on first
+  id:"feature001", // A unique identifier for the layer
+  type: "simple", // Must be written
   data: {
     type: "geojson", // Write the data format
     value: { // Ensure that "value" contains GeoJSON.
@@ -58,6 +59,7 @@ const layerGeojsonInline = {
 
 // Difine the Polygon with URL
 const layerGeojsonFromUrl = {
+  id:"feature002",
   type: "simple",
   data: {
     type: "geojson", 
