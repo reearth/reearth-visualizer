@@ -9078,7 +9078,7 @@ __metadata:
 "@spatial-id/javascript-sdk@git+https://github.com/spatial-id/javascript-sdk.git":
   version: 0.0.0
   resolution: "@spatial-id/javascript-sdk@https://github.com/spatial-id/javascript-sdk.git#commit=454405264a698f496247dd2e956f47e680dbfede"
-  checksum: 10c0/1742e3bf4f7f596d167ac88c0cca995ff0c7e299356284c0608d416d283d03f42ff69fa68bc58e5788ca94322a279673c664cd3bac39c131d6664879d2a2f049
+  checksum: 10c0/893cc48ade8322c9830f92b9842853bed1cec098d72bfa43410286029dad29f580f31ad18335518b6a2d7e9cafe45078d445c48dbf42aee40a00c9e629e4d1b9
   languageName: node
   linkType: hard
 
