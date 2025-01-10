@@ -63,7 +63,7 @@ const layerGeojsonFromUrl = {
   type: "simple",
   data: {
     type: "geojson", 
-    url: "https://shogohirasawa.github.io/for_delivery/sample01.geojson", // URL of GeoJSON file
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/square.geojson", // URL of GeoJSON file
   },
   polygon: {},
 };
