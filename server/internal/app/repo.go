@@ -25,7 +25,8 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
-const defaultDatabase = "reearth"
+const defaultVisDatabase = "reearth"
+const defaultAccountDatabase = "reearth_account"
 
 func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container) {
 	gateways := &gateway.Container{}
@@ -46,7 +47,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	accountDatabase := conf.DB_Account
 	accountRepoCompat := false
 	if accountDatabase == "" {
-		accountDatabase = defaultDatabase
+		accountDatabase = defaultAccountDatabase
 		accountRepoCompat = true
 	}
 
@@ -66,13 +67,13 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}
 
-	// for reearth database
-	visualizerDatabase := conf.DB_Vis
-	if visualizerDatabase == "" {
-		visualizerDatabase = defaultDatabase
+	// for reearth visualizer database
+	visDatabase := conf.DB_Vis
+	if visDatabase == "" {
+		visDatabase = defaultVisDatabase
 	}
 
-	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(visualizerDatabase), accountRepos, txAvailable, conf.Ext_Plugin)
+	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(visDatabase), accountRepos, txAvailable, conf.Ext_Plugin)
 	if err != nil {
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}
