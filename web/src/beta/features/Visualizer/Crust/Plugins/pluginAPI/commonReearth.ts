@@ -90,6 +90,12 @@ export function commonReearth({
   // sketch events
   sketchEventsOn,
   sketchEventsOff,
+  // spatialId
+  spatialIdPickSpace,
+  spatialIdExitPickSpace,
+  // spatialId events
+  spatialIdEventsOn,
+  spatialIdEventsOff,
   // extension
   getExtensionList
 }: {
@@ -166,6 +172,12 @@ export function commonReearth({
   // sketch events
   sketchEventsOn: GlobalThis["reearth"]["sketch"]["on"];
   sketchEventsOff: GlobalThis["reearth"]["sketch"]["off"];
+  // spatialId
+  spatialIdPickSpace: GlobalThis["reearth"]["spatialId"]["pickSpace"];
+  spatialIdExitPickSpace: GlobalThis["reearth"]["spatialId"]["exitPickSpace"];
+  // spatialId events
+  spatialIdEventsOn: GlobalThis["reearth"]["spatialId"]["on"];
+  spatialIdEventsOff: GlobalThis["reearth"]["spatialId"]["off"];
   // extension
   getExtensionList: () => GlobalThis["reearth"]["extension"]["list"];
 }): CommonReearth {
@@ -334,6 +346,16 @@ export function commonReearth({
       },
       on: sketchEventsOn,
       off: sketchEventsOff
+    },
+    spatialId: {
+      get pickSpace() {
+        return spatialIdPickSpace;
+      },
+      get exitPickSpace() {
+        return spatialIdExitPickSpace;
+      },
+      on: spatialIdEventsOn,
+      off: spatialIdEventsOff
     },
     extension: {
       get list() {
