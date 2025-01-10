@@ -851,7 +851,7 @@ func TestStoryPageCRUD(t *testing.T) {
 	res.Object().
 		Value("errors").Array().
 		Element(0).Object().
-		ValueEqual("message", "input: updateStoryPage page not found")
+		ValueEqual("message", "page not found")
 
 	_, _, pageID2 := createPage(e, sID, storyID, "test 2", true)
 	_, _, pageID3 := createPage(e, sID, storyID, "test 3", false)
