@@ -32,7 +32,8 @@ const layerGeojsonInline = {
   type: "simple", // Must be written
   data: {
     type: "geojson", // Write the data format
-    value: { // Ensure that "value" contains GeoJSON.
+    value: {
+      // Ensure that "value" contains GeoJSON
       type: "FeatureCollection", 
       features: [
         {
