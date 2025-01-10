@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 )
 
 //go:embed en/* ja/*
@@ -18,6 +19,7 @@ var localesFileType = []string{"error"}
 
 // cache for locales
 var cache *LocalesCache
+var loadOnce sync.Once
 
 type Error struct {
 	Code        string `json:"code"`
@@ -25,6 +27,8 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+// loadLocales
+// loads locales data from the cache or file
 func loadLocales() {
 	cache = NewLocalesCache()
 	for _, lang := range langs {
@@ -47,9 +51,7 @@ func loadLocales() {
 // example: "pkg.project.invalid_alias"
 // basically, key is directory path error is defined
 func LoadError(key string) (map[string]*Error, error) {
-	if cache == nil {
-		loadLocales()
-	}
+	loadOnce.Do(loadLocales)
 
 	localesError := make(map[string]*Error)
 	for _, lang := range langs {
