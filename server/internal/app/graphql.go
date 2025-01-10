@@ -88,6 +88,11 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 			} else {
 				systemError = e.Error()
 			}
+
+			if graphqlErr.Extensions == nil {
+				graphqlErr.Extensions = make(map[string]interface{})
+			}
+
 			graphqlErr.Extensions["system_error"] = systemError
 
 			return graphqlErr

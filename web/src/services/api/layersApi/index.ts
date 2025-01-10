@@ -9,13 +9,16 @@ import {
   RemoveNlsLayerMutation,
   RemoveNlsLayerInput,
   UpdateCustomPropertySchemaInput,
-  UpdateCustomPropertiesMutation
+  UpdateCustomPropertiesMutation,
+  UpdateNlsLayersInput,
+  UpdateNlsLayersMutation
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ADD_NLSLAYERSIMPLE,
   UPDATE_NLSLAYER,
   REMOVE_NLSLAYER,
-  UPDATE_CUSTOM_PROPERTY_SCHEMA
+  UPDATE_CUSTOM_PROPERTY_SCHEMA,
+  UPDATE_NLSLAYERS
 } from "@reearth/services/gql/queries/layer";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useLang, useT } from "@reearth/services/i18n";
@@ -104,6 +107,35 @@ export default () => {
     [updateNLSLayerMutation, t, setNotification]
   );
 
+  const [updateNLSLayersMutation] = useMutation(UPDATE_NLSLAYERS, {
+    refetchQueries: ["GetScene"]
+  });
+  const useUpdateNLSLayers = useCallback(
+    async (
+      input: UpdateNlsLayersInput
+    ): Promise<MutationReturn<UpdateNlsLayersMutation>> => {
+      if (!input) return { status: "error" };
+      const { data, errors } = await updateNLSLayersMutation({
+        variables: { input }
+      });
+      if (errors || !data?.updateNLSLayers) {
+        setNotification({
+          type: "error",
+          text: t("Failed to update the layer.")
+        });
+
+        return { status: "error", errors };
+      }
+      setNotification({
+        type: "success",
+        text: t("Successfully updated the layer!")
+      });
+
+      return { data, status: "success" };
+    },
+    [updateNLSLayersMutation, setNotification, t]
+  );
+
   const [removeNLSLayerMutation] = useMutation(REMOVE_NLSLAYER, {
     refetchQueries: ["GetScene"]
   });
@@ -169,6 +201,7 @@ export default () => {
     useGetLayersQuery,
     useAddNLSLayerSimple,
     useUpdateNLSLayer,
+    useUpdateNLSLayers,
     useRemoveNLSLayer,
     useUpdateCustomProperties
   };

@@ -1,6 +1,6 @@
 import { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, ComputedFeature, ComputedLayer } from "@reearth/core";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
@@ -11,7 +11,8 @@ export default function useHooks({
   ownBuiltinWidgets,
   viewerProperty,
   onCoreLayerSelect,
-  currentCamera
+  currentCamera,
+  handleCoreAPIReady
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
@@ -21,6 +22,7 @@ export default function useHooks({
     feature: ComputedFeature | undefined
   ) => void;
   currentCamera?: Camera;
+  handleCoreAPIReady?: () => void;
 }) {
   const shouldRender = useMemo(() => {
     const shouldWidgetAnimate = ownBuiltinWidgets?.some(
@@ -53,12 +55,20 @@ export default function useHooks({
     };
   }, [currentCamera, setVisualizerCamera]);
 
+  const [mapAPIReady, setMapAPIReady] = useState(false);
+  const onCoreAPIReady = useCallback(() => {
+    setMapAPIReady(true);
+    handleCoreAPIReady?.();
+  }, [handleCoreAPIReady]);
+
   return {
     shouldRender,
     overriddenViewerProperty,
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
-    handleCoreLayerSelect
+    handleCoreLayerSelect,
+    mapAPIReady,
+    onCoreAPIReady
   };
 }

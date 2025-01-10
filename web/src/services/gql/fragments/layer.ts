@@ -380,6 +380,7 @@ export const layerFragment = gql`
 export const nlsLayerSimpleFragment = gql`
   fragment NLSLayerCommon on NLSLayer {
     id
+    index
     layerType
     sceneId
     config
