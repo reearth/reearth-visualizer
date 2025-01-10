@@ -67,7 +67,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	}
 
 	// for reearth database
-	visualizerDatabase := conf.DB_Visualizer
+	visualizerDatabase := conf.DB_Vis
 	if visualizerDatabase == "" {
 		visualizerDatabase = defaultDatabase
 	}
