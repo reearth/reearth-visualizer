@@ -30,6 +30,7 @@ type Config struct {
 	Dev              bool              `pp:",omitempty"`
 	DB               string            `default:"mongodb://localhost"`
 	DB_Account       string            `pp:",omitempty"`
+	DB_Visualizer    string            `pp:",omitempty"`
 	DB_Users         []appx.NamedURI   `pp:",omitempty"`
 	GraphQL          GraphQLConfig     `pp:",omitempty"`
 	Published        PublishedConfig   `pp:",omitempty"`
