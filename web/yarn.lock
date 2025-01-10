@@ -8426,9 +8426,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/cesium-mvt-imagery-provider@npm:1.5.4":
-  version: 1.5.4
-  resolution: "@reearth/cesium-mvt-imagery-provider@npm:1.5.4"
+"@reearth/cesium-mvt-imagery-provider@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@reearth/cesium-mvt-imagery-provider@npm:1.6.0"
   dependencies:
     "@mapbox/vector-tile": "npm:1.3.1"
     "@turf/turf": "npm:6.5.0"
@@ -8442,13 +8442,13 @@ __metadata:
     threads: "npm:1.7.0"
   peerDependencies:
     cesium: 1.x
-  checksum: 10c0/9da0fee7c16e85b2a8fedb10a99161f67ddab06433148ed0419137c73a6382a500e766ab7b99f47c36917bf67fa5ccf2b41fa1a132471796f663bb89d818f16f
+  checksum: 10c0/f047cea29ec39f4151d816d231670256ae75b29b802c7bf1db11935dd697e62f363ab0f967ae1896042d857d643ae1a7c19b42408a363af8ffecb103d9c99e42
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.24":
-  version: 0.0.7-alpha.24
-  resolution: "@reearth/core@npm:0.0.7-alpha.24"
+"@reearth/core@npm:0.0.7-alpha.26":
+  version: 0.0.7-alpha.26
+  resolution: "@reearth/core@npm:0.0.7-alpha.26"
   dependencies:
     "@radix-ui/react-checkbox": "npm:1.1.1"
     "@radix-ui/react-dialog": "npm:1.1.1"
@@ -8459,10 +8459,10 @@ __metadata:
     "@radix-ui/react-slot": "npm:1.1.0"
     "@radix-ui/react-switch": "npm:1.1.0"
     "@radix-ui/react-toggle": "npm:1.1.0"
-    "@reearth/cesium-mvt-imagery-provider": "npm:1.5.4"
+    "@reearth/cesium-mvt-imagery-provider": "npm:1.6.0"
+    "@reearth/spatial-id-sdk": "npm:0.0.0"
     "@rot1024/use-transition": "npm:1.0.0"
     "@seznam/compose-react-refs": "npm:1.0.6"
-    "@spatial-id/javascript-sdk": "git+https://github.com/spatial-id/javascript-sdk.git"
     "@turf/invariant": "npm:6.5.0"
     "@turf/turf": "npm:6.5.0"
     "@types/proj4": "npm:2.5.5"
@@ -8503,7 +8503,14 @@ __metadata:
     cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/7e303f0ab1cff9ac6e77b5332c61d8a2a8ebd39712c146c30b3a837532480a76bcd40b3b357a2c4d2d94407e0a17870a11fe9d58d5403dd550169d5e0afa4bde
+  checksum: 10c0/d5afc93053ce0800f91b084304955a76ec87cea86483d0000859c9c760e90c734f20670c3ca640d834dcf7baab90bd9bfd4b5a45af784e583306b817d0473403
+  languageName: node
+  linkType: hard
+
+"@reearth/spatial-id-sdk@npm:0.0.0":
+  version: 0.0.0
+  resolution: "@reearth/spatial-id-sdk@npm:0.0.0"
+  checksum: 10c0/a1eda0caaaead9c44eb73f397947f2819941543d81414c655c61f28a292511152fc4bbbb2af3e0f1eecfe94a64bdfe5f7f1b4942f1d26a1808c4cc79b910b5ed
   languageName: node
   linkType: hard
 
@@ -8544,7 +8551,7 @@ __metadata:
     "@playwright/test": "npm:1.46.1"
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-slot": "npm:1.1.0"
-    "@reearth/core": "npm:0.0.7-alpha.24"
+    "@reearth/core": "npm:0.0.7-alpha.26"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -9072,13 +9079,6 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/c145925aca10519fa735ad92ad8de5dc9e6f44f28fad4ceac7bbde9511ab25f108c2ff2887ef7b859c689f8d625f3ef7e3f694d8708a4aaa006f64941e260296
-  languageName: node
-  linkType: hard
-
-"@spatial-id/javascript-sdk@git+https://github.com/spatial-id/javascript-sdk.git":
-  version: 0.0.0
-  resolution: "@spatial-id/javascript-sdk@https://github.com/spatial-id/javascript-sdk.git#commit=454405264a698f496247dd2e956f47e680dbfede"
-  checksum: 10c0/893cc48ade8322c9830f92b9842853bed1cec098d72bfa43410286029dad29f580f31ad18335518b6a2d7e9cafe45078d445c48dbf42aee40a00c9e629e4d1b9
   languageName: node
   linkType: hard
 
