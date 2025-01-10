@@ -20,6 +20,16 @@ export const UPDATE_NLSLAYER = gql(`
   }
 `);
 
+export const UPDATE_NLSLAYERS = gql(`
+  mutation UpdateNLSLayers($input: UpdateNLSLayersInput!) {
+    updateNLSLayers(input: $input) {
+      layers {
+        id
+      }
+    }
+  }
+`);
+
 export const REMOVE_NLSLAYER = gql(`
   mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {
     removeNLSLayer(input: $input) {

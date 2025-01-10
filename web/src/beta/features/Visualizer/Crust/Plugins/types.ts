@@ -37,6 +37,7 @@ import { Events } from "./utils/events";
 export type Props = PropsWithChildren<{
   engineName?: string;
   mapRef?: RefObject<MapRef>;
+  mapAPIReady?: boolean;
   viewerProperty?: ViewerProperty;
   inEditor?: boolean;
   built?: boolean;
