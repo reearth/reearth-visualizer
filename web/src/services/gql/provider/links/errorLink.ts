@@ -9,7 +9,7 @@ export default () => {
   return onError(({ graphQLErrors, networkError }) => {
     if (!networkError && !graphQLErrors) return;
     let errors: GQLError[] = [];
-    console.log(graphQLErrors);
+
     if (networkError?.message) {
       errors = [
         { message: networkError?.message, description: networkError.message }
