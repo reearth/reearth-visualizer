@@ -26,7 +26,7 @@ const widgetFile: FileType = {
   title: "layers-add-geojson.js",
   sourceCode: `// Example of adding a layer with GeoJSON data
 
-// Difine the Polygon with inline
+// Difine the polygon with inline
 const layerGeojsonInline = {
   id:"feature001", // A unique identifier for the layer
   type: "simple", // Must be written
@@ -58,7 +58,7 @@ const layerGeojsonInline = {
   polygon: {}, // Settings for the feature style. This statement is required even if no style is set.
 };
 
-// Difine the Polygon with URL
+// Difine the polygon with URL
 const layerGeojsonFromUrl = {
   id:"feature002",
   type: "simple",
