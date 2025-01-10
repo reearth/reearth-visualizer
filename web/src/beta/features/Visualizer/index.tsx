@@ -209,12 +209,15 @@ const Visualizer: FC<VisualizerProps> = ({
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
-    handleCoreLayerSelect
+    handleCoreLayerSelect,
+    mapAPIReady,
+    onCoreAPIReady
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
     onCoreLayerSelect,
-    currentCamera
+    currentCamera,
+    handleCoreAPIReady
   });
 
   return (
@@ -242,7 +245,7 @@ const Visualizer: FC<VisualizerProps> = ({
         onSketchFeatureCreate={handleSketchFeatureCreate}
         onSketchFeatureUpdate={handleSketchFeatureUpdate}
         onMount={handleMount}
-        onAPIReady={handleCoreAPIReady}
+        onAPIReady={onCoreAPIReady}
       >
         <Crust
           engineName={engine}
@@ -250,6 +253,7 @@ const Visualizer: FC<VisualizerProps> = ({
           isEditable={!isBuilt}
           inEditor={inEditor}
           mapRef={visualizerRef}
+          mapAPIReady={mapAPIReady}
           layers={layers}
           // Viewer
           viewerProperty={overriddenViewerProperty}
