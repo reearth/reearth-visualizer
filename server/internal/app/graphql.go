@@ -16,7 +16,6 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/apperror"
-	"github.com/reearth/reearthx/log"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -88,7 +87,6 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 	var appErr *apperror.AppError
 	lang := adapter.Lang(ctx)
 
-	log.Infof("lang: %s", lang)
 	// Handle application-specific errors
 	systemError := ""
 	if errors.As(e, &appErr) {
