@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 )
 
 //go:embed en/* ja/*
@@ -18,6 +19,7 @@ var localesFileType = []string{"error"}
 
 // cache for locales
 var cache *LocalesCache
+var loadOnce sync.Once
 
 type Error struct {
 	Code        string `json:"code"`
@@ -25,6 +27,8 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+// loadLocales
+// loads locales data from the cache or file
 func loadLocales() {
 	cache = NewLocalesCache()
 	for _, lang := range langs {
@@ -42,14 +46,15 @@ func loadLocales() {
 	}
 }
 
-// LoadError loads error data from the cache or file
+// LoadError
+// loads error data from the cache or file
 // Search data by dot-delimited key
 // example: "pkg.project.invalid_alias"
 // basically, key is directory path error is defined
+// also if key is not found, it will panic
+// because we want to know if the key is not found when server starts
 func LoadError(key string) (map[string]*Error, error) {
-	if cache == nil {
-		loadLocales()
-	}
+	loadOnce.Do(loadLocales)
 
 	localesError := make(map[string]*Error)
 	for _, lang := range langs {
@@ -59,7 +64,8 @@ func LoadError(key string) (map[string]*Error, error) {
 			data, _ = cache.GetFromFileCache(lang)
 		}
 
-		value := getNestedValue(data, strings.Split(key, "."))
+		keys := strings.Split(key, ".")
+		value := getNestedValue(data, keys)
 
 		// I dare you to make a panic.
 		// Because we want to know if the key is not found.
@@ -70,13 +76,23 @@ func LoadError(key string) (map[string]*Error, error) {
 		// Convert interface{} to []byte using json.Marshal
 		valueBytes, err := json.Marshal(value)
 		if err != nil {
-			return nil, err
+			panic(err)
 		}
 
 		var result Error
 		if err := json.Unmarshal(valueBytes, &result); err != nil {
-			return nil, err
+			panic(err)
 		}
+
+		// check if message and description are not empty
+		if result.Message == "" {
+			panic(fmt.Sprintf("message not found: %s", key))
+		}
+		if result.Description == "" {
+			panic(fmt.Sprintf("description not found: %s", key))
+		}
+
+		result.Code = keys[len(keys)-1]
 
 		localesError[lang] = &result
 	}
@@ -87,13 +103,12 @@ func LoadError(key string) (map[string]*Error, error) {
 func getNestedValue(data map[string]interface{}, keys []string) interface{} {
 	current := data
 	for _, key := range keys {
-		// map[string]interface{} 型であることを確認しつつ検索を進める
 		if nested, ok := current[key].(map[string]interface{}); ok {
 			current = nested
-		} else if len(keys) == 1 { // 最終キーの場合
+		} else if len(keys) == 1 { // last key case
 			return current[key]
 		} else {
-			return nil // 存在しないキーの場合
+			return nil // not found key case
 		}
 	}
 	return current

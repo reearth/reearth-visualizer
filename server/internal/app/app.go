@@ -116,21 +116,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		AuthSrvUIDomain:    cfg.Config.Host_Web,
 	}))
 
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			// browser language
-			lang := c.Request().Header.Get("lang")
-			// user language
-			// if user language is not "und", use user language
-			// if user language is "und", use browser language
-			u := adapter.User(c.Request().Context())
-			if u != nil && u.Lang().String() != "und" {
-				lang = u.Lang().String()
-			}
-			c.SetRequest(c.Request().WithContext(adapter.AttachLang(c.Request().Context(), lang)))
-			return next(c)
-		}
-	})
+	e.Use(AttachLanguageMiddleware)
 
 	// auth srv
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)

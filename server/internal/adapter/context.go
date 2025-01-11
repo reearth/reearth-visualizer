@@ -78,6 +78,9 @@ func LangByTag(ctx context.Context, lang *language.Tag) string {
 func Lang(ctx context.Context) string {
 	if v := ctx.Value(contextLang); v != nil {
 		if lang, ok := v.(string); ok {
+			if lang == "" {
+				return defaultLang.String()
+			}
 			return lang
 		}
 	}

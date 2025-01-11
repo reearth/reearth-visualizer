@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
-	apperror "github.com/reearth/reearth/server/pkg/error"
+	"github.com/reearth/reearth/server/pkg/apperror"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
