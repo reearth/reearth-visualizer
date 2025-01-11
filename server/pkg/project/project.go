@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"time"
 
-	apperror "github.com/reearth/reearth/server/pkg/error"
+	"github.com/reearth/reearth/server/pkg/apperror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 

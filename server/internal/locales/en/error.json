@@ -1,12 +1,10 @@
 {
     "unknown": {
-        "code": "unknown",
         "message": "An unknown error occurred.",
         "description": "An unknown error occurred."
     },
     "repo": {
         "not_found": {
-            "code": "not_found",
             "message": "Resource not found.",
             "description": "Resource not found."
         }
@@ -14,8 +12,7 @@
     "pkg": {
         "project": {
             "invalid_alias": {
-                "code": "invalid_alias",
-                "message": "invalid alias name",
+                "message": "Invalid alias name",
                 "description": "The alias must be 5-32 characters long and can only contain alphanumeric characters, underscores, and hyphens."
             }
         }

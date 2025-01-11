@@ -33,21 +33,13 @@ func buildLocalesError(localesErrors map[string]*locales.Error) map[string]*Loca
 func NewAppError(key string, err error) *AppError {
 	localesErrors, loadErr := locales.LoadError(key)
 	if loadErr != nil {
-		localesErrors, loadErr = locales.LoadError("unknown")
-		if loadErr != nil {
-			panic(loadErr)
-		}
+		panic(loadErr)
 	}
 
 	return &AppError{
 		LocalesError: buildLocalesError(localesErrors),
 		SystemError:  err,
 	}
-}
-
-func (e *AppError) AddSystemError(err error) *AppError {
-	e.SystemError = err
-	return e
 }
 
 func (e *AppError) Error() string {

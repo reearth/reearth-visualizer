@@ -15,7 +15,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
-	apperror "github.com/reearth/reearth/server/pkg/error"
+	"github.com/reearth/reearth/server/pkg/apperror"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
