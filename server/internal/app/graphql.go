@@ -16,6 +16,8 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/apperror"
+	"github.com/reearth/reearthx/log"
+	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -58,46 +60,9 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	// tracing
 	srv.Use(otelgqlgen.Middleware())
 
-	srv.SetErrorPresenter(
-		// show more detailed error messgage in debug mode
-		func(ctx context.Context, e error) *gqlerror.Error {
-			var graphqlErr *gqlerror.Error
-			var appErr *apperror.AppError
-			lang := adapter.Lang(ctx)
-			if ok := errors.As(e, &appErr); ok {
-				localesErr := appErr.LocalesError[lang]
-				graphqlErr = &gqlerror.Error{
-					Message: localesErr.Message,
-					Extensions: map[string]interface{}{
-						"code":        localesErr.Code,
-						"description": localesErr.Description,
-					},
-				}
-			} else {
-				graphqlErr = graphql.DefaultErrorPresenter(ctx, e)
-			}
-
-			if dev {
-				graphqlErr.Path = graphql.GetFieldContext(ctx).Path()
-			}
-
-			// FixMe: system error should not be shown to user
-			systemError := ""
-			if graphqlErr.Err != nil {
-				systemError = graphqlErr.Err.Error()
-			} else {
-				systemError = e.Error()
-			}
-
-			if graphqlErr.Extensions == nil {
-				graphqlErr.Extensions = make(map[string]interface{})
-			}
-
-			graphqlErr.Extensions["system_error"] = systemError
-
-			return graphqlErr
-		},
-	)
+	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
+		return customErrorPresenter(ctx, e, dev)
+	})
 
 	// only enable middlewares in dev mode
 	if dev {
@@ -115,4 +80,50 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 		srv.ServeHTTP(c.Response(), c.Request())
 		return nil
 	}
+}
+
+// customErrorPresenter handles custom GraphQL error presentation.
+func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
+	var graphqlErr *gqlerror.Error
+	var appErr *apperror.AppError
+	lang := adapter.Lang(ctx)
+
+	log.Infof("lang: %s", lang)
+	// Handle application-specific errors
+	systemError := ""
+	if errors.As(e, &appErr) {
+		localesErr := appErr.LocalesError[lang]
+		graphqlErr = &gqlerror.Error{
+			Err:     appErr.SystemError,
+			Message: localesErr.Message,
+			Extensions: map[string]interface{}{
+				"code":        localesErr.Code,
+				"description": localesErr.Description,
+			},
+		}
+		if graphqlErr.Err != nil {
+			systemError = graphqlErr.Err.Error()
+		}
+	} else {
+		// Fallback to default GraphQL error presenter
+		graphqlErr = graphql.DefaultErrorPresenter(ctx, e)
+		systemError = e.Error()
+	}
+
+	// Add debugging information in development mode
+	if devMode {
+		if fieldCtx := graphql.GetFieldContext(ctx); fieldCtx != nil {
+			graphqlErr.Path = fieldCtx.Path()
+		} else {
+			graphqlErr.Path = ast.Path{}
+		}
+	}
+
+	// Ensure Extensions map exists
+	if graphqlErr.Extensions == nil {
+		graphqlErr.Extensions = make(map[string]interface{})
+	}
+	graphqlErr.Extensions["system_error"] = systemError
+
+	return graphqlErr
 }
