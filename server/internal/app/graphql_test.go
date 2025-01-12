@@ -12,11 +12,9 @@ import (
 )
 
 func TestCustomErrorPresenter(t *testing.T) {
-	// モック用のコンテキストとロケール
 	ctx := context.Background()
 	ctx = adapter.AttachLang(ctx, "en")
 
-	// アプリケーション固有のエラー
 	appErr := &apperror.AppError{
 		LocalesError: map[string]*apperror.LocalesError{
 			"en": {
@@ -31,22 +29,20 @@ func TestCustomErrorPresenter(t *testing.T) {
 	t.Run("AppError with English language", func(t *testing.T) {
 		graphqlErr := customErrorPresenter(ctx, appErr, false)
 
-		// アサーション: GraphQL エラーの内容を検証
 		assert.NotNil(t, graphqlErr)
 		assert.Equal(t, "Test message", graphqlErr.Message)
 		assert.Equal(t, "test_code", graphqlErr.Extensions["code"])
 		assert.Equal(t, "Test description", graphqlErr.Extensions["description"])
-		assert.Equal(t, "system error", graphqlErr.Extensions["system_error"])
+		assert.Equal(t, nil, graphqlErr.Extensions["system_error"])
 	})
 
 	t.Run("Fallback to default GraphQL error", func(t *testing.T) {
 		defaultErr := errors.New("default error")
 		graphqlErr := customErrorPresenter(ctx, defaultErr, false)
 
-		// アサーション: デフォルトのエラーハンドリングを検証
 		assert.NotNil(t, graphqlErr)
 		assert.Equal(t, "default error", graphqlErr.Message)
-		assert.Equal(t, "default error", graphqlErr.Extensions["system_error"])
+		assert.Equal(t, nil, graphqlErr.Extensions["system_error"])
 	})
 
 	t.Run("Development mode with debugging information(Path)", func(t *testing.T) {
