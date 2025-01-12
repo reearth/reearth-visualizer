@@ -54,6 +54,10 @@ func loadLocales(langs []string, localesFileType []string) {
 // also if key is not found, it will panic
 // because we want to know if the key is not found when server starts
 func LoadError(key ErrorKey) (map[string]*Error, error) {
+	if key == "" {
+		return nil, fmt.Errorf("invalid key: empty string")
+	}
+
 	loadOnce.Do(func() {
 		loadLocales(langs, localesFileType)
 	})

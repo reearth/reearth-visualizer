@@ -16,9 +16,14 @@ func TestLoadLocales_FileNotFound(t *testing.T) {
 	cache = nil
 	loadOnce = sync.Once{}
 
+	t.Cleanup(func() {
+		cache = nil
+		loadOnce = sync.Once{}
+	})
+
 	defer func() {
 		if r := recover(); r != nil {
-			assert.Contains(t, fmt.Sprintf("%v", r), "open aaa/error.json: file does not exist")
+			assert.Equal(t, "open aaa/error.json: file does not exist", fmt.Sprintf("%v", r))
 		} else {
 			t.Fatal("Expected panic but it did not occur")
 		}
@@ -28,7 +33,6 @@ func TestLoadLocales_FileNotFound(t *testing.T) {
 }
 
 func TestLoadError(t *testing.T) {
-	// モック用の localesJson を置き換える
 	localesJson = testLocales
 
 	tests := []struct {
@@ -65,6 +69,12 @@ func TestLoadError(t *testing.T) {
 			key:      "pkg.project",
 			expected: nil,
 			err:      fmt.Errorf("message not found: pkg.project"),
+		},
+		{
+			name:     "Empty key",
+			key:      "",
+			expected: nil,
+			err:      fmt.Errorf("invalid key: empty string"),
 		},
 	}
 
