@@ -9,11 +9,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/apperror"
 	"github.com/stretchr/testify/assert"
 	"github.com/vektah/gqlparser/v2/ast"
+	"golang.org/x/text/language"
 )
 
 func TestCustomErrorPresenter(t *testing.T) {
 	ctx := context.Background()
-	ctx = adapter.AttachLang(ctx, "en")
+	ctx = adapter.AttachLang(ctx, language.English)
 
 	appErr := &apperror.AppError{
 		LocalesError: map[string]*apperror.LocalesError{

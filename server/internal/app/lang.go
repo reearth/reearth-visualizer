@@ -5,10 +5,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"golang.org/x/text/language"
 )
 
 // LanguageExtractor extracts the appropriate language from the request.
-func LanguageExtractor(req *http.Request) string {
+func LanguageExtractor(req *http.Request) language.Tag {
 	// Extract browser language from header
 	lang := req.Header.Get("lang")
 
@@ -20,7 +21,12 @@ func LanguageExtractor(req *http.Request) string {
 		lang = u.Lang().String()
 	}
 
-	return lang
+	tag, err := language.Parse(lang)
+	if err != nil {
+		return language.English
+	}
+
+	return tag
 }
 
 // AttachLanguageMiddleware attaches the detected language to the request context.
