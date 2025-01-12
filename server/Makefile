@@ -26,8 +26,9 @@ help:
 lint:
 	golangci-lint run --fix
 
+TARGET_TEST :=./...
 test:
-	go test -race -short -v ./...
+	REEARTH_DB=mongodb://localhost go test -race -short -v ./... -run ${TARGET_TEST}
 
 failcheck:
 	go test -race -short -failfast -p 1 $(TEST_DIR)
@@ -62,9 +63,6 @@ run-app:
 
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
-
-test:
-	REEARTH_DB=reearth go test -v ./...
 
 generate:
 	go generate ./...

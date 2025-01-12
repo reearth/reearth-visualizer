@@ -35,7 +35,15 @@ func NewAppError(key locales.ErrorKey, err error) *AppError {
 
 	// If the key is not found, use the unknown key
 	if loadErr != nil {
-		localesErrors, _ = locales.LoadError(locales.ErrKeyUnknown)
+		var unknownErr error
+		localesErrors, unknownErr = locales.LoadError(locales.ErrKeyUnknown)
+		if unknownErr != nil {
+			// Unable to load even the unknown error key, return a default AppError
+			return &AppError{
+				LocalesError: map[string]*LocalesError{},
+				SystemError:  err,
+			}
+		}
 	}
 
 	return &AppError{
