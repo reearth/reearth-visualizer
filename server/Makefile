@@ -63,6 +63,9 @@ run-app:
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 
+test:
+	REEARTH_DB=reearth go test -v ./...
+
 generate:
 	go generate ./...
 

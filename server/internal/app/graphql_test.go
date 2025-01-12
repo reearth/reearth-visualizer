@@ -46,7 +46,7 @@ func TestCustomErrorPresenter(t *testing.T) {
 		assert.Equal(t, nil, graphqlErr.Extensions["system_error"])
 	})
 
-	t.Run("Development mode with debugging information(Path)", func(t *testing.T) {
+	t.Run("Development mode with AppError", func(t *testing.T) {
 		graphqlErr := customErrorPresenter(ctx, appErr, true)
 
 		assert.NotNil(t, graphqlErr)
@@ -55,4 +55,14 @@ func TestCustomErrorPresenter(t *testing.T) {
 		assert.Equal(t, "test_code", graphqlErr.Extensions["code"])
 		assert.Equal(t, "Test description", graphqlErr.Extensions["description"])
 	})
+
+	t.Run("Development mode with default error", func(t *testing.T) {
+		defaultErr := errors.New("default error")
+		graphqlErr := customErrorPresenter(ctx, defaultErr, true)
+
+		assert.NotNil(t, graphqlErr)
+		assert.Equal(t, "default error", graphqlErr.Message)
+		assert.Equal(t, defaultErr.Error(), graphqlErr.Extensions["system_error"])
+	})
+
 }

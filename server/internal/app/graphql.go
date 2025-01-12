@@ -112,6 +112,11 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 		systemError = e.Error()
 	}
 
+	// Ensure Extensions map exists
+	if graphqlErr.Extensions == nil {
+		graphqlErr.Extensions = make(map[string]interface{})
+	}
+
 	// Add debugging information in development mode
 	if devMode {
 		if fieldCtx := graphql.GetFieldContext(ctx); fieldCtx != nil {
@@ -119,12 +124,8 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 		} else {
 			graphqlErr.Path = ast.Path{}
 		}
-		graphqlErr.Extensions["system_error"] = systemError
-	}
 
-	// Ensure Extensions map exists
-	if graphqlErr.Extensions == nil {
-		graphqlErr.Extensions = make(map[string]interface{})
+		graphqlErr.Extensions["system_error"] = systemError
 	}
 
 	return graphqlErr
