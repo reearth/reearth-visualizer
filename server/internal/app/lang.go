@@ -16,7 +16,7 @@ func LanguageExtractor(req *http.Request) string {
 	// if user language is not "und", use user language
 	// if user language is "und", use browser language
 	u := adapter.User(req.Context())
-	if u != nil && u.Lang().String() != "und" {
+	if u != nil && !u.Lang().IsRoot() {
 		lang = u.Lang().String()
 	}
 
