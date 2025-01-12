@@ -68,7 +68,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	var data map[string]interface{}
 	if err := json.NewDecoder(file).Decode(&data); err != nil {
