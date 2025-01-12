@@ -85,7 +85,7 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
 	var graphqlErr *gqlerror.Error
 	var appErr *apperror.AppError
-	lang := adapter.Lang(ctx)
+	lang := adapter.Lang(ctx, nil)
 
 	// Handle application-specific errors
 	systemError := ""

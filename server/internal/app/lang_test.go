@@ -66,7 +66,7 @@ func TestAttachLanguageMiddleware(t *testing.T) {
 
 	e.GET("/", func(c echo.Context) error {
 		// get lang from context
-		lang := adapter.Lang(c.Request().Context())
+		lang := adapter.Lang(c.Request().Context(), nil)
 		// include lang in response
 		return c.String(http.StatusOK, lang)
 	})

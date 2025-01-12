@@ -68,14 +68,11 @@ func User(ctx context.Context) *user.User {
 	return nil
 }
 
-func LangByTag(ctx context.Context, lang *language.Tag) string {
+func Lang(ctx context.Context, lang *language.Tag) string {
 	if lang != nil && !lang.IsRoot() {
 		return lang.String()
 	}
-	return Lang(ctx)
-}
 
-func Lang(ctx context.Context) string {
 	if v := ctx.Value(contextLang); v != nil {
 		if lang, ok := v.(string); ok {
 			if lang == "" {
