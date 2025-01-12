@@ -3,6 +3,7 @@ package repo
 import (
 	"errors"
 
+	"github.com/reearth/reearth/server/internal/locales"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/apperror"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -15,7 +16,7 @@ import (
 
 var (
 	ErrOperationDenied = errors.New("operation denied")
-	ResourceNotFound   = apperror.NewAppError("repo.not_found", nil)
+	ResourceNotFound   = apperror.NewAppError(locales.ErrKeyRepoNotFound, nil)
 )
 
 type Container struct {

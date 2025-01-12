@@ -53,7 +53,7 @@ func loadLocales() {
 // basically, key is directory path error is defined
 // also if key is not found, it will panic
 // because we want to know if the key is not found when server starts
-func LoadError(key string) (map[string]*Error, error) {
+func LoadError(key ErrorKey) (map[string]*Error, error) {
 	loadOnce.Do(loadLocales)
 
 	localesError := make(map[string]*Error)
@@ -64,32 +64,33 @@ func LoadError(key string) (map[string]*Error, error) {
 			data, _ = cache.GetFromFileCache(lang)
 		}
 
-		keys := strings.Split(key, ".")
+		keys := strings.Split(string(key), ".")
 		value := getNestedValue(data, keys)
 
 		// I dare you to make a panic.
 		// Because we want to know if the key is not found.
 		if value == nil {
-			panic(fmt.Sprintf("key not found: %s", key))
+			return nil, fmt.Errorf("key not found: %s", key)
 		}
 
 		// Convert interface{} to []byte using json.Marshal
 		valueBytes, err := json.Marshal(value)
 		if err != nil {
-			panic(err)
+			return nil, fmt.Errorf("failed to marshal value: %w", err)
 		}
 
 		var result Error
 		if err := json.Unmarshal(valueBytes, &result); err != nil {
-			panic(err)
+			return nil, fmt.Errorf("failed to unmarshal value: %w", err)
 		}
 
 		// check if message and description are not empty
 		if result.Message == "" {
-			panic(fmt.Sprintf("message not found: %s", key))
+			return nil, fmt.Errorf("message not found: %s", key)
 		}
+
 		if result.Description == "" {
-			panic(fmt.Sprintf("description not found: %s", key))
+			return nil, fmt.Errorf("description not found: %s", key)
 		}
 
 		result.Code = keys[len(keys)-1]
