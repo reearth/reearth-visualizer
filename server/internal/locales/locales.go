@@ -29,7 +29,7 @@ type Error struct {
 
 // loadLocales
 // loads locales data from the cache or file
-func loadLocales() {
+func loadLocales(langs []string, localesFileType []string) {
 	cache = NewLocalesCache()
 	for _, lang := range langs {
 		for _, fileType := range localesFileType {
@@ -54,13 +54,15 @@ func loadLocales() {
 // also if key is not found, it will panic
 // because we want to know if the key is not found when server starts
 func LoadError(key ErrorKey) (map[string]*Error, error) {
-	loadOnce.Do(loadLocales)
+	loadOnce.Do(func() {
+		loadLocales(langs, localesFileType)
+	})
 
 	localesError := make(map[string]*Error)
 	for _, lang := range langs {
 		data, ok := cache.GetFromFileCache(lang)
 		if !ok {
-			loadLocales()
+			loadLocales(langs, localesFileType)
 			data, _ = cache.GetFromFileCache(lang)
 		}
 

@@ -3,6 +3,7 @@ package locales
 import (
 	"embed"
 	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,6 +11,21 @@ import (
 
 //go:embed en/* ja/*
 var testLocales embed.FS
+
+func TestLoadLocales_FileNotFound(t *testing.T) {
+	cache = nil
+	loadOnce = sync.Once{}
+
+	defer func() {
+		if r := recover(); r != nil {
+			assert.Contains(t, fmt.Sprintf("%v", r), "open aaa/error.json: file does not exist")
+		} else {
+			t.Fatal("Expected panic but it did not occur")
+		}
+	}()
+
+	loadLocales([]string{"aaa"}, []string{"error"})
+}
 
 func TestLoadError(t *testing.T) {
 	// モック用の localesJson を置き換える
