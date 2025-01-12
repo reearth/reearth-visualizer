@@ -1,8 +1,10 @@
 package e2e
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net"
 	"net/http"
 	"regexp"
@@ -244,25 +246,38 @@ func RequestWithMultipart(e *httpexpect.Expect, user string, requestBody map[str
 		JSON()
 }
 
-func JSONEqRegexp(t *testing.T, rx string, str string) bool {
-
-	var rx1 map[string]interface{}
-	err := json.Unmarshal([]byte(rx), &rx1)
-	assert.Nil(t, err)
-
-	rx2, err := json.Marshal(rx1)
-	assert.Nil(t, err)
-
-	var str1 map[string]interface{}
-	err = json.Unmarshal([]byte(str), &str1)
-	assert.Nil(t, err)
-
-	str2, err := json.Marshal(str1)
-	assert.Nil(t, err)
-
+func JSONEqRegexp(t *testing.T, actual string, expected string) bool {
 	return assert.Regexp(
 		t,
-		regexp.MustCompile(strings.ReplaceAll(string(rx2), "[", "\\[")),
-		string(str2),
+		regexp.MustCompile(strings.ReplaceAll(aligningJSON(t, expected), "[", "\\[")),
+		aligningJSON(t, actual),
 	)
+}
+
+func RegexpJSONEReadCloser(t *testing.T, actual io.ReadCloser, expected string) bool {
+	actualBuf := new(bytes.Buffer)
+	_, err := actualBuf.ReadFrom(actual)
+	assert.NoError(t, err)
+	return JSONEqRegexp(t, actualBuf.String(), expected)
+}
+
+func JSONEqRegexpInterface(t *testing.T, actual interface{}, expected string) bool {
+	actualBytes, err := json.Marshal(actual)
+	assert.Nil(t, err)
+	return JSONEqRegexp(t, string(actualBytes), expected)
+}
+
+func aligningJSON(t *testing.T, str string) string {
+	// Unmarshal and Marshal to make the JSON format consistent
+	var obj map[string]interface{}
+	err := json.Unmarshal([]byte(str), &obj)
+	assert.Nil(t, err)
+	strBytes, err := json.Marshal(obj)
+	assert.Nil(t, err)
+	return string(strBytes)
+}
+
+func toJSONString(v interface{}) string {
+	jsonData, _ := json.Marshal(v)
+	return string(jsonData)
 }

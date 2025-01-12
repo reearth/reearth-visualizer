@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"encoding/json"
 	"net/http"
 	"os"
 	"testing"
@@ -106,11 +105,6 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 	v := r.Value("data").Object().Value("node")
 	v.NotNull()
 	return v.Object()
-}
-
-func toJSONString(v interface{}) string {
-	jsonData, _ := json.Marshal(v)
-	return string(jsonData)
 }
 
 const GetSceneGuery = `

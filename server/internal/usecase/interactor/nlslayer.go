@@ -258,6 +258,12 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 
 	if inp.Name != nil {
 		layer.Rename(*inp.Name)
+		if config := layer.Config(); config != nil {
+			c := *config
+			if properties, ok := c["properties"].(map[string]interface{}); ok {
+				properties["name"] = *inp.Name
+			}
+		}
 	}
 
 	if inp.Visible != nil {
@@ -662,6 +668,96 @@ func (i *NLSLayer) AddOrUpdateCustomProperties(ctx context.Context, inp interfac
 	} else {
 		layer.Sketch().SetCustomPropertySchema(&inp.Schema)
 	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces.AddOrUpdateCustomPropertiesInput, oldTitle string, newTitle string, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, feature := range layer.Sketch().FeatureCollection().Features() {
+		if props := feature.Properties(); props != nil {
+			for k, v := range *props {
+				if k == oldTitle {
+					value := v
+					delete(*props, k)
+					(*props)[newTitle] = value
+				}
+			}
+		}
+	}
+
+	layer.Sketch().SetCustomPropertySchema(&inp.Schema)
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddOrUpdateCustomPropertiesInput, removedTitle string, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, feature := range layer.Sketch().FeatureCollection().Features() {
+		if props := feature.Properties(); props != nil {
+			for k, _ := range *props {
+				if k == removedTitle {
+					delete(*props, k)
+				}
+			}
+		}
+	}
+
+	layer.Sketch().SetCustomPropertySchema(&inp.Schema)
 
 	err = i.nlslayerRepo.Save(ctx, layer)
 	if err != nil {
