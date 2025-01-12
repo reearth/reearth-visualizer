@@ -2,6 +2,7 @@ package locales
 
 import (
 	"embed"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,9 +17,9 @@ func TestLoadError(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		key      string
+		key      ErrorKey
 		expected map[string]*Error
-		isPanic  bool
+		err      error
 	}{
 		{
 			name: "Valid key",
@@ -35,31 +36,31 @@ func TestLoadError(t *testing.T) {
 					Description: "エイリアスは5-32文字で、英数字、アンダースコア、ハイフンのみ使用できます。",
 				},
 			},
-			isPanic: false,
+			err: nil,
 		},
 		{
-			name:    "Invalid key",
-			key:     "pkg.project.non_existent",
-			isPanic: true,
+			name:     "Invalid key",
+			key:      "pkg.project.non_existent",
+			expected: nil,
+			err:      fmt.Errorf("key not found: pkg.project.non_existent"),
 		},
 		{
-			name:    "Partial valid key",
-			key:     "pkg.project",
-			isPanic: true,
+			name:     "Partial valid key",
+			key:      "pkg.project",
+			expected: nil,
+			err:      fmt.Errorf("message not found: pkg.project"),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.isPanic {
-				assert.Panics(t, func() {
-					_, _ = LoadError(tt.key)
-				})
+			result, err := LoadError(tt.key)
+			if tt.err != nil {
+				assert.Equal(t, err.Error(), tt.err.Error())
 			} else {
-				result, err := LoadError(tt.key)
 				assert.NoError(t, err)
-				assert.Equal(t, tt.expected, result)
 			}
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

@@ -9,14 +9,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/apperror"
 	"github.com/stretchr/testify/assert"
 	"github.com/vektah/gqlparser/v2/ast"
+	"golang.org/x/text/language"
 )
 
 func TestCustomErrorPresenter(t *testing.T) {
-	// モック用のコンテキストとロケール
 	ctx := context.Background()
-	ctx = adapter.AttachLang(ctx, "en")
+	ctx = adapter.AttachLang(ctx, language.English)
 
-	// アプリケーション固有のエラー
 	appErr := &apperror.AppError{
 		LocalesError: map[string]*apperror.LocalesError{
 			"en": {
@@ -31,25 +30,23 @@ func TestCustomErrorPresenter(t *testing.T) {
 	t.Run("AppError with English language", func(t *testing.T) {
 		graphqlErr := customErrorPresenter(ctx, appErr, false)
 
-		// アサーション: GraphQL エラーの内容を検証
 		assert.NotNil(t, graphqlErr)
 		assert.Equal(t, "Test message", graphqlErr.Message)
 		assert.Equal(t, "test_code", graphqlErr.Extensions["code"])
 		assert.Equal(t, "Test description", graphqlErr.Extensions["description"])
-		assert.Equal(t, "system error", graphqlErr.Extensions["system_error"])
+		assert.Equal(t, nil, graphqlErr.Extensions["system_error"])
 	})
 
 	t.Run("Fallback to default GraphQL error", func(t *testing.T) {
 		defaultErr := errors.New("default error")
 		graphqlErr := customErrorPresenter(ctx, defaultErr, false)
 
-		// アサーション: デフォルトのエラーハンドリングを検証
 		assert.NotNil(t, graphqlErr)
 		assert.Equal(t, "default error", graphqlErr.Message)
-		assert.Equal(t, "default error", graphqlErr.Extensions["system_error"])
+		assert.Equal(t, nil, graphqlErr.Extensions["system_error"])
 	})
 
-	t.Run("Development mode with debugging information(Path)", func(t *testing.T) {
+	t.Run("Development mode with AppError", func(t *testing.T) {
 		graphqlErr := customErrorPresenter(ctx, appErr, true)
 
 		assert.NotNil(t, graphqlErr)
@@ -58,4 +55,14 @@ func TestCustomErrorPresenter(t *testing.T) {
 		assert.Equal(t, "test_code", graphqlErr.Extensions["code"])
 		assert.Equal(t, "Test description", graphqlErr.Extensions["description"])
 	})
+
+	t.Run("Development mode with default error", func(t *testing.T) {
+		defaultErr := errors.New("default error")
+		graphqlErr := customErrorPresenter(ctx, defaultErr, true)
+
+		assert.NotNil(t, graphqlErr)
+		assert.Equal(t, "default error", graphqlErr.Message)
+		assert.Equal(t, defaultErr.Error(), graphqlErr.Extensions["system_error"])
+	})
+
 }

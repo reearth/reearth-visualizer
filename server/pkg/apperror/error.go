@@ -30,10 +30,12 @@ func buildLocalesError(localesErrors map[string]*locales.Error) map[string]*Loca
 	return localesError
 }
 
-func NewAppError(key string, err error) *AppError {
+func NewAppError(key locales.ErrorKey, err error) *AppError {
 	localesErrors, loadErr := locales.LoadError(key)
+
+	// If the key is not found, use the unknown key
 	if loadErr != nil {
-		panic(loadErr)
+		localesErrors, _ = locales.LoadError(locales.ErrKeyUnknown)
 	}
 
 	return &AppError{

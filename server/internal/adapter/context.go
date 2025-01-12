@@ -34,7 +34,7 @@ type AuthInfo struct {
 	EmailVerified *bool
 }
 
-func AttachLang(ctx context.Context, lang string) context.Context {
+func AttachLang(ctx context.Context, lang language.Tag) context.Context {
 	return context.WithValue(ctx, contextLang, lang)
 }
 
@@ -68,20 +68,17 @@ func User(ctx context.Context) *user.User {
 	return nil
 }
 
-func LangByTag(ctx context.Context, lang *language.Tag) string {
+func Lang(ctx context.Context, lang *language.Tag) string {
 	if lang != nil && !lang.IsRoot() {
 		return lang.String()
 	}
-	return Lang(ctx)
-}
 
-func Lang(ctx context.Context) string {
 	if v := ctx.Value(contextLang); v != nil {
-		if lang, ok := v.(string); ok {
-			if lang == "" {
+		if lang, ok := v.(language.Tag); ok {
+			if lang.IsRoot() {
 				return defaultLang.String()
 			}
-			return lang
+			return lang.String()
 		}
 	}
 

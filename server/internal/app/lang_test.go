@@ -21,25 +21,25 @@ func TestLanguageExtractor(t *testing.T) {
 		name       string
 		headerLang string
 		userLang   language.Tag
-		expected   string
+		expected   language.Tag
 	}{
 		{
 			name:       "User language overrides browser language",
 			headerLang: "fr",
 			userLang:   language.English,
-			expected:   "en",
+			expected:   language.English,
 		},
 		{
 			name:       "No user language, use browser language",
 			headerLang: "fr",
 			userLang:   language.Und,
-			expected:   "fr",
+			expected:   language.French,
 		},
 		{
 			name:       "No browser language or user language is und, fallback to default",
 			headerLang: "",
 			userLang:   language.Und,
-			expected:   "",
+			expected:   language.English,
 		},
 	}
 
@@ -66,7 +66,7 @@ func TestAttachLanguageMiddleware(t *testing.T) {
 
 	e.GET("/", func(c echo.Context) error {
 		// get lang from context
-		lang := adapter.Lang(c.Request().Context())
+		lang := adapter.Lang(c.Request().Context(), nil)
 		// include lang in response
 		return c.String(http.StatusOK, lang)
 	})

@@ -85,27 +85,36 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
 	var graphqlErr *gqlerror.Error
 	var appErr *apperror.AppError
-	lang := adapter.Lang(ctx)
+	lang := adapter.Lang(ctx, nil)
 
 	// Handle application-specific errors
 	systemError := ""
 	if errors.As(e, &appErr) {
-		localesErr := appErr.LocalesError[lang]
-		graphqlErr = &gqlerror.Error{
-			Err:     appErr.SystemError,
-			Message: localesErr.Message,
-			Extensions: map[string]interface{}{
-				"code":        localesErr.Code,
-				"description": localesErr.Description,
-			},
+		localesErr, ok := appErr.LocalesError[lang]
+		if ok {
+			graphqlErr = &gqlerror.Error{
+				Err:     appErr.SystemError,
+				Message: localesErr.Message,
+				Extensions: map[string]interface{}{
+					"code":        localesErr.Code,
+					"description": localesErr.Description,
+				},
+			}
+			if graphqlErr.Err != nil {
+				systemError = graphqlErr.Err.Error()
+			}
 		}
-		if graphqlErr.Err != nil {
-			systemError = graphqlErr.Err.Error()
-		}
-	} else {
+	}
+
+	if graphqlErr == nil {
 		// Fallback to default GraphQL error presenter
 		graphqlErr = graphql.DefaultErrorPresenter(ctx, e)
 		systemError = e.Error()
+	}
+
+	// Ensure Extensions map exists
+	if graphqlErr.Extensions == nil {
+		graphqlErr.Extensions = make(map[string]interface{})
 	}
 
 	// Add debugging information in development mode
@@ -115,13 +124,9 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 		} else {
 			graphqlErr.Path = ast.Path{}
 		}
-	}
 
-	// Ensure Extensions map exists
-	if graphqlErr.Extensions == nil {
-		graphqlErr.Extensions = make(map[string]interface{})
+		graphqlErr.Extensions["system_error"] = systemError
 	}
-	graphqlErr.Extensions["system_error"] = systemError
 
 	return graphqlErr
 }
