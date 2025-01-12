@@ -9,6 +9,48 @@ import (
 	"golang.org/x/text/language"
 )
 
+func TestAttachLang(t *testing.T) {
+	t.Run("Valid language tag", func(t *testing.T) {
+		ctx := context.Background()
+
+		lang := language.Japanese
+		newCtx := AttachLang(ctx, lang)
+
+		storedLang := newCtx.Value(contextLang)
+
+		assert.NotNil(t, storedLang, "Language should be stored in context")
+		assert.Equal(t, lang, storedLang, "Stored language should match the input")
+	})
+
+	t.Run("Default language (Und)", func(t *testing.T) {
+		ctx := context.Background()
+
+		lang := language.Und
+		newCtx := AttachLang(ctx, lang)
+
+		storedLang := newCtx.Value(contextLang)
+
+		assert.NotNil(t, storedLang, "Language should be stored in context")
+		assert.Equal(t, lang, storedLang, "Stored language should match the input")
+	})
+
+	t.Run("Context chaining", func(t *testing.T) {
+		ctx := context.Background()
+
+		lang1 := language.English
+		ctx1 := AttachLang(ctx, lang1)
+
+		lang2 := language.French
+		ctx2 := AttachLang(ctx1, lang2)
+
+		// confirm that the latest language is stored in the context
+		assert.Equal(t, lang2, ctx2.Value(contextLang), "Latest language should be stored in context")
+
+		// old context is not affected
+		assert.Equal(t, lang1, ctx1.Value(contextLang), "Old context should retain its value")
+	})
+}
+
 func TestLang(t *testing.T) {
 
 	// Default language for testing

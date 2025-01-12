@@ -34,9 +34,6 @@ func AttachLanguageMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		lang := LanguageExtractor(c.Request())
 		ctx := adapter.AttachLang(c.Request().Context(), lang)
-		if ctx == nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to attach language to context")
-		}
 		c.SetRequest(c.Request().WithContext(ctx))
 		return next(c)
 	}
