@@ -136,6 +136,10 @@ export default (
       onStoryPageChange?.(newPage.id);
       setCurrentPageId(newPage.id);
       setLayerOverride(undefined);
+      if (disableSelection) {
+        setDisableSelection(false);
+        setSelectedBlockId(undefined);
+      }
 
       const container = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
       if (!pageId) {
@@ -163,6 +167,7 @@ export default (
       currentPageId,
       selectedStory?.pages,
       onStoryPageChange,
+      disableSelection,
       handlePageTime,
       visualizer
     ]
