@@ -1,13 +1,13 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-geojson",
+  id: "layer-add-geojson-reearth-yml", 
   title: "reearth.yml",
   sourceCode: `id: layers-add-geojson
 name: Add GeoJSON
 version: 1.0.0
 extensions:
-  - id: add geojson
+  - id: layers-add-geojson
     type: widget
     name: Add Geojson
     description: Add Geojson
@@ -28,19 +28,19 @@ const widgetFile: FileType = {
 
 // Difine the polygon with inline
 const layerPolygonInline = {
-  id:"feature001", // A unique identifier for the layer
+  id: "feature001", // A unique identifier for the layer
   type: "simple", // Must be written
   data: {
     type: "geojson", // Write the data format
     value: {
       // Ensure that "value" contains GeoJSON
-      type: "FeatureCollection", 
+      type: "FeatureCollection",
       features: [
         {
-          type: "Feature", 
-          properties: {}, 
+          type: "Feature",
+          properties: {},
           geometry: {
-            type: "Polygon", 
+            type: "Polygon",
             coordinates: [
               [
                 [-97.52842673316115, 28.604966534790364],
@@ -60,10 +60,10 @@ const layerPolygonInline = {
 
 // Difine the polygon with URL
 const layerPolygonFromUrl = {
-  id:"feature002",
+  id: "feature002",
   type: "simple",
   data: {
-    type: "geojson", 
+    type: "geojson",
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/square.geojson", // URL of GeoJSON file
   },
   polygon: {},
@@ -71,73 +71,74 @@ const layerPolygonFromUrl = {
 
 // Difine the polyline with inline
 const layerPolylineInline = {
-  id:"feature003", 
-  type: "simple", 
+  id: "feature003",
+  type: "simple",
   data: {
     type: "geojson",
     value: {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            -96.37001899616324,
-            41.04652707558762
-          ],
-          [
-            -79.17331346249145,
-            40.45826161216959
-          ]
-        ],
-        "type": "LineString"
-      }
-    }
-  ]
-}
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [
+              [-96.37001899616324, 41.04652707558762],
+              [-79.17331346249145, 40.45826161216959],
+            ],
+            type: "LineString",
+          },
+        },
+      ],
+    },
   },
   polyline: {},
 };
 
 // Difine the polygon with URL
-const layerPolygonFromUrl = {
-  id:"feature004",
+const layerPolylineFromUrl = {
+  id: "feature004",
   type: "simple",
   data: {
-    type: "geojson", 
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/square.geojson", 
+    type: "geojson",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/polyline.geojson",
   },
   polyline: {},
 };
 
-// Difine the polyline with inline
+// Difine the marker with inline
 const layerMarkerInline = {
-  id:"feature005", 
-  type: "simple", 
+  id: "feature005",
+  type: "simple",
   data: {
     type: "geojson",
     value: {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          -111.99963039093615,
-          19.881084591317787
-        ],
-        "type": "Point"
-      }
-    }
-  ]
-}
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [-111.99963039093615, 19.881084591317787],
+            type: "Point",
+          },
+        },
+      ],
+    },
   },
   marker: {},
 };
 
+// Difine the marker with URL
+const layerMarkerFromUrl = {
+  id: "feature004",
+  type: "simple",
+  data: {
+    type: "geojson",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/marker.geojson",
+  },
+  marker: {},
+};
 
 // Add the inline polygon layer to Re:Earth
 reearth.layers.add(layerPolygonInline);
@@ -153,6 +154,9 @@ reearth.layers.add(layerPolylineFromUrl);
 
 // Add the inline marker layer to Re:Earth
 reearth.layers.add(layerMarkerInline);
+
+// Add the inline marker layer to Re:Earth
+reearth.layers.add(layerMarkerFromUrl);
 `
 };
 
