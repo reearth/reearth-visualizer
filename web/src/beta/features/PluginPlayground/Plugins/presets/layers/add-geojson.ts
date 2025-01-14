@@ -1,9 +1,9 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-geojson-reearth-yml",
+  id: "layers-add-geojson",
   title: "reearth.yml",
-  sourceCode: `id: add-geojson-plugin
+  sourceCode: `id: layers-add-geojson
 name: Add GeoJSON
 version: 1.0.0
 extensions:
