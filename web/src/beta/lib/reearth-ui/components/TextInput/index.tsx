@@ -44,6 +44,7 @@ export const TextInput: FC<TextInputProps> = ({
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
@@ -69,14 +70,22 @@ export const TextInput: FC<TextInputProps> = ({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" || e.key === "Return") {
+      if (e.key === "Enter" && !isComposing) {
         e.preventDefault();
         (e.target as HTMLInputElement).blur();
       }
       onKeyDown?.(e);
     },
-    [onKeyDown]
+    [isComposing, onKeyDown]
   );
+
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true);
+  }, []);
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false);
+  }, []);
 
   return (
     <Wrapper
@@ -104,6 +113,8 @@ export const TextInput: FC<TextInputProps> = ({
         autoFocus={autoFocus}
         onKeyDown={handleKeyDown}
         type={type}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       />
       {actions && <ActionsWrapper>{actions}</ActionsWrapper>}
     </Wrapper>
