@@ -258,7 +258,7 @@ func JSONEqRegexp(t *testing.T, actual string, expected string) bool {
 func RegexpJSONEReadCloser(t *testing.T, actual io.ReadCloser, expected string) bool {
 	defer func() {
 		if err := actual.Close(); err != nil {
-			fmt.Printf("failed to close: %v", err)
+			t.Errorf("failed to close reader: %v", err)
 		}
 	}()
 	actualBuf := new(bytes.Buffer)
