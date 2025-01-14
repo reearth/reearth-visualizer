@@ -101,6 +101,28 @@ const layerPolylineInline = {
   polyline: {},
 };
 
+// Difine the polygon with URL
+const layerPolygonFromUrl = {
+  id:"feature004",
+  type: "simple",
+  data: {
+    type: "geojson", 
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/square.geojson", // URL of GeoJSON file
+  },
+  polyline: {},
+};
+
+// Difine the polyline with URL
+const layerPolylineFromUrl = {
+  id:"feature004",
+  type: "simple",
+  data: {
+    type: "geojson", 
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/polyline.geojson", // URL of GeoJSON file
+  },
+  polygon: {},
+};
+
 
 // Add the inline polygon layer to Re:Earth
 reearth.layers.add(layerPolygonInline);
@@ -110,6 +132,9 @@ reearth.layers.add(layerPolygonFromUrl);
 
 // Add the polyline layer from the URL to Re:Earth
 reearth.layers.add(layerPolylineInline);
+
+// Add the inline polyline layer to Re:Earth
+reearth.layers.add(layerPolylineFromUrl);
 `
 };
 
