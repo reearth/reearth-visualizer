@@ -69,6 +69,7 @@ const layerPolygonFromUrl = {
   polygon: {},
 };
 
+// Difine the polyline with inline
 const layerPolylineInline = {
   id:"feature003", 
   type: "simple", 
