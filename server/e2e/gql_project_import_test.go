@@ -68,7 +68,7 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
         }`,
 	}
 	operations, err := toJSONString(requestBody)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 	r := e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").

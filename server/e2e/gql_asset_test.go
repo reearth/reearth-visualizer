@@ -130,7 +130,7 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 		"query": CreateAssetMutation,
 	}
 	operations, err := toJSONString(requestBody)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 	return e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
