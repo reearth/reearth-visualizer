@@ -749,7 +749,7 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 
 	for _, feature := range layer.Sketch().FeatureCollection().Features() {
 		if props := feature.Properties(); props != nil {
-			for k, _ := range *props {
+			for k := range *props {
 				if k == removedTitle {
 					delete(*props, k)
 				}
