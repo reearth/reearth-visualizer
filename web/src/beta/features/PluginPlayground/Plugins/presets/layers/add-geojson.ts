@@ -27,7 +27,7 @@ const widgetFile: FileType = {
   sourceCode: `// Example of adding a layer with GeoJSON data
 
 // Difine the polygon with inline
-const layerGeojsonInline = {
+const layerPolygonInline = {
   id:"feature001", // A unique identifier for the layer
   type: "simple", // Must be written
   data: {
@@ -59,7 +59,7 @@ const layerGeojsonInline = {
 };
 
 // Difine the polygon with URL
-const layerGeojsonFromUrl = {
+const layerPolygonFromUrl = {
   id:"feature002",
   type: "simple",
   data: {
@@ -69,11 +69,46 @@ const layerGeojsonFromUrl = {
   polygon: {},
 };
 
-// Add the inline GeoJSON layer to Re:Earth
-reearth.layers.add(layerGeojsonInline);
+const layerPolylineInline = {
+  id:"feature003", 
+  type: "simple", 
+  data: {
+    type: "geojson",
+    value: {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            -96.37001899616324,
+            41.04652707558762
+          ],
+          [
+            -79.17331346249145,
+            40.45826161216959
+          ]
+        ],
+        "type": "LineString"
+      }
+    }
+  ]
+}
+  },
+  polyline: {},
+};
 
-// Add the GeoJSON layer from the URL to Re:Earth
-reearth.layers.add(layerGeojsonFromUrl);
+
+// Add the inline polygon layer to Re:Earth
+reearth.layers.add(layerPolygonInline);
+
+// Add the polygon layer from the URL to Re:Earth
+reearth.layers.add(layerPolygonFromUrl);
+
+// Add the polyline layer from the URL to Re:Earth
+reearth.layers.add(layerPolylineInline);
 `
 };
 
