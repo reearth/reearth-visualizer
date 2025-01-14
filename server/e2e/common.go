@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -255,6 +256,7 @@ func JSONEqRegexp(t *testing.T, actual string, expected string) bool {
 }
 
 func RegexpJSONEReadCloser(t *testing.T, actual io.ReadCloser, expected string) bool {
+	defer actual.Close()
 	actualBuf := new(bytes.Buffer)
 	_, err := actualBuf.ReadFrom(actual)
 	assert.NoError(t, err)
@@ -269,7 +271,7 @@ func JSONEqRegexpInterface(t *testing.T, actual interface{}, expected string) bo
 
 func aligningJSON(t *testing.T, str string) string {
 	// Unmarshal and Marshal to make the JSON format consistent
-	var obj map[string]interface{}
+	var obj interface{}
 	err := json.Unmarshal([]byte(str), &obj)
 	assert.Nil(t, err)
 	strBytes, err := json.Marshal(obj)
@@ -277,7 +279,10 @@ func aligningJSON(t *testing.T, str string) string {
 	return string(strBytes)
 }
 
-func toJSONString(v interface{}) string {
-	jsonData, _ := json.Marshal(v)
-	return string(jsonData)
+func toJSONString(v interface{}) (string, error) {
+	jsonData, err := json.Marshal(v)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal JSON: %w", err)
+	}
+	return string(jsonData), nil
 }

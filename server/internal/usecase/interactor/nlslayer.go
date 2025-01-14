@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -700,6 +701,26 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 	if err != nil {
 		return nil, err
 	}
+	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
+		return nil, interfaces.ErrSketchNotFound
+	}
+
+	// Check if oldTitle exists and newTitle doesn't conflict
+	titleExists := false
+	for _, feature := range layer.Sketch().FeatureCollection().Features() {
+		if props := feature.Properties(); props != nil {
+			if _, ok := (*props)[oldTitle]; ok {
+				titleExists = true
+			}
+			if _, ok := (*props)[newTitle]; ok {
+				return nil, fmt.Errorf("property with title %s already exists", newTitle)
+			}
+		}
+	}
+
+	if !titleExists {
+		return nil, fmt.Errorf("property with title %s not found", oldTitle)
+	}
 
 	for _, feature := range layer.Sketch().FeatureCollection().Features() {
 		if props := feature.Properties(); props != nil {
@@ -745,6 +766,24 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
 		return nil, err
+	}
+	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
+		return nil, interfaces.ErrSketchNotFound
+	}
+
+	// Check if removedTitle exists
+	titleExists := false
+	for _, feature := range layer.Sketch().FeatureCollection().Features() {
+		if props := feature.Properties(); props != nil {
+			if _, ok := (*props)[removedTitle]; ok {
+				titleExists = true
+				break
+			}
+		}
+	}
+
+	if !titleExists {
+		return nil, fmt.Errorf("property with title %s not found", removedTitle)
 	}
 
 	for _, feature := range layer.Sketch().FeatureCollection().Features() {

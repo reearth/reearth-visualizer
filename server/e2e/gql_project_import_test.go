@@ -7,6 +7,7 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
@@ -66,12 +67,14 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
             } 
         }`,
 	}
+	operations, err := toJSONString(requestBody)
+	assert.NotNil(t, err)
 	r := e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		WithMultipart().
-		WithFormField("operations", toJSONString(requestBody)).
+		WithFormField("operations", operations).
 		WithFormField("map", `{"0": ["variables.file"]}`).
 		WithFile("0", filePath).
 		Expect().
