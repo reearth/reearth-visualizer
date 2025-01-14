@@ -4,6 +4,7 @@ import { myPlugin } from "./custom/myPlugin";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { uiExtensionMessenger } from "./ui/uiExtensionMessenger";
 
 type PresetPluginCategory = {
   id: string;
@@ -22,6 +23,6 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "UI",
-    plugins: [responsivePanel, sidebar, header]
+    plugins: [responsivePanel, sidebar, header, uiExtensionMessenger]
   }
 ];
