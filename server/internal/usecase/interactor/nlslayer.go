@@ -704,9 +704,6 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
-	}
 
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
 		return nil, interfaces.ErrSketchNotFound
