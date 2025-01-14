@@ -26,9 +26,9 @@ const widgetFile: FileType = {
   title: "layers-add-geojson.js",
   sourceCode: `// Example of adding a layer with GeoJSON data
 
-// Difine the polygon with inline
-const layerPolygonInline = {
-  id: "feature001", // A unique identifier for the layer
+// Difine the GeoJSON  with inline
+const layerGeojsonInline = { 
+  id: "features001", // A unique identifier for the layer
   type: "simple", // Must be written
   data: {
     type: "geojson", // Write the data format
@@ -52,32 +52,6 @@ const layerPolygonInline = {
             ],
           },
         },
-      ],
-    },
-  },
-  polygon: {}, // Settings for the feature style. This statement is required even if no style is set.
-};
-
-// Difine the polygon with URL
-const layerPolygonFromUrl = {
-  id: "feature002",
-  type: "simple",
-  data: {
-    type: "geojson",
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/square.geojson", // URL of GeoJSON file
-  },
-  polygon: {},
-};
-
-// Difine the polyline with inline
-const layerPolylineInline = {
-  id: "feature003",
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
         {
           type: "Feature",
           properties: {},
@@ -89,32 +63,6 @@ const layerPolylineInline = {
             type: "LineString",
           },
         },
-      ],
-    },
-  },
-  polyline: {},
-};
-
-// Difine the polygon with URL
-const layerPolylineFromUrl = {
-  id: "feature004",
-  type: "simple",
-  data: {
-    type: "geojson",
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/polyline.geojson",
-  },
-  polyline: {},
-};
-
-// Difine the marker with inline
-const layerMarkerInline = {
-  id: "feature005",
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
         {
           type: "Feature",
           properties: {},
@@ -126,37 +74,31 @@ const layerMarkerInline = {
       ],
     },
   },
+  // Settings for the feature style. This statement is required even if no style is set.
+  polygon: {},
+  polyline: {},
   marker: {},
 };
 
-// Difine the marker with URL
-const layerMarkerFromUrl = {
-  id: "feature004",
+// Difine the GeoJSON with URL
+const layerGeojsonFromUrl = {
+  id: "features002",
   type: "simple",
   data: {
     type: "geojson",
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/marker.geojson",
+    // URL of GeoJSON file
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_polygon_polyline_marker.geojson",
   },
+  polygon: {},
+  polyline: {},
   marker: {},
 };
 
-// Add the inline polygon layer to Re:Earth
-reearth.layers.add(layerPolygonInline);
+// Add the inline GeoJSON layer to Re:Earth
+reearth.layers.add(layerGeojsonInline);
 
-// Add the polygon layer from the URL to Re:Earth
-reearth.layers.add(layerPolygonFromUrl);
-
-// Add the polyline layer from the URL to Re:Earth
-reearth.layers.add(layerPolylineInline);
-
-// Add the inline polyline layer to Re:Earth
-reearth.layers.add(layerPolylineFromUrl);
-
-// Add the inline marker layer to Re:Earth
-reearth.layers.add(layerMarkerInline);
-
-// Add the inline marker layer to Re:Earth
-reearth.layers.add(layerMarkerFromUrl);
+// Add the GeoJSON layer from the URL to Re:Earth
+reearth.layers.add(layerGeojsonFromUrl);
 `
 };
 
