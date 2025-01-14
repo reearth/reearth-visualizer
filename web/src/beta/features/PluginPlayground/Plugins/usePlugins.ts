@@ -1,7 +1,7 @@
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
@@ -12,6 +12,8 @@ import { validateFileTitle } from "./utils";
 
 export default () => {
   const [searchParams] = useSearchParams();
+  const [, setNotification] = useNotification();
+
   const sharedPluginUrl = searchParams.get("plugin");
 
   const decodePluginURL = useCallback((encoded: string) => {
@@ -23,48 +25,28 @@ export default () => {
   }, []);
 
   const sharedPlugin = sharedPluginUrl
-    ? decodePluginURL(sharedPluginUrl)
+    ? (() => {
+        try {
+          return decodePluginURL(sharedPluginUrl);
+        } catch (_error) {
+          setNotification({ type: "error", text: "Invalid shared plugin URL" });
+          return null;
+        }
+      })()
     : null;
-
-  const locallyStoredSharedPlugins = localStorage.getItem("SHARED_PLUGINS");
-  const [sharedPlugins, setSharedPlugins] = useState<PluginType[]>(
-    JSON.parse(locallyStoredSharedPlugins ?? "[]")
-  );
-
-  useEffect(() => {
-    if (sharedPlugin) {
-      setSharedPlugins((prevSharedPlugins) => {
-        const doesSharedPluginExist = prevSharedPlugins.some(
-          (element) => element.id === sharedPlugin.id
-        );
-        const tempSharedPlugins = doesSharedPluginExist
-          ? prevSharedPlugins
-          : [...prevSharedPlugins, sharedPlugin];
-        localStorage.setItem(
-          "SHARED_PLUGINS",
-          JSON.stringify(tempSharedPlugins)
-        );
-        return tempSharedPlugins;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
     .flat();
 
   const [plugins, setPlugins] = useState<PluginType[]>(
-    locallyStoredSharedPlugins
-      ? [...JSON.parse(locallyStoredSharedPlugins), ...presetPluginsArray]
-      : presetPluginsArray
+    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
   );
 
   const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
   const [selectedFileId, setSelectedFileId] = useState<string>(
     plugins[0]?.files[0]?.id ?? ""
   );
-  const [, setNotification] = useNotification();
 
   const selectedPlugin = useMemo(
     () =>
@@ -295,6 +277,6 @@ export default () => {
     deleteFile,
     handleFileUpload,
     handlePluginDownload,
-    sharedPlugins
+    sharedPlugin
   };
 };

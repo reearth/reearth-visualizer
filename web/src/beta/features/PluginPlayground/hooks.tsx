@@ -1,15 +1,18 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { useMemo } from "react";
+import { Layer, MapRef } from "@reearth/core";
+import { FC, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
-import Console from "./Console";
-import PluginInspector from "./PluginInspector";
+import LayerList from "./LayerList";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import Viewer from "./Viewer";
 
 export default () => {
+  const visualizerRef = useRef<MapRef | null>(null);
+
   const {
     presetPlugins,
     selectPlugin,
@@ -23,12 +26,24 @@ export default () => {
     handleFileUpload,
     handlePluginDownload,
     encodeAndSharePlugin,
-    sharedPlugins
+    sharedPlugin
   } = usePlugins();
 
-  const { widgets, executeCode, fileOutputs } = useCode({
+  const { widgets, executeCode } = useCode({
     files: selectedPlugin.files
   });
+
+  const [layers, setLayers] = useState<Layer[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND
+  );
+
+  const handleLayerVisibilityUpdate = (layerId: string, visible: boolean) => {
+    setLayers((prev) =>
+      prev.map((layer) =>
+        layer.id === layerId ? { ...layer, visible } : layer
+      )
+    );
+  };
 
   // Note: currently we put visualizer in tab content, so better not have more tabs in this area,
   // otherwise visualizer will got unmount and mount when switching tabs.
@@ -37,21 +52,24 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer widgets={widgets} />
+        children: (
+          <Viewer
+            layers={layers}
+            widgets={widgets}
+            visualizerRef={visualizerRef}
+          />
+        )
       }
     ],
-    [widgets]
+    [layers, widgets]
   );
 
-  const BottomAreaTabs: TabItem[] = useMemo(
-    () => [
-      {
-        id: "console",
-        name: "Console",
-        children: <Console fileOutputs={fileOutputs} />
-      }
-    ],
-    [fileOutputs]
+  const LayersPanel: FC = () => (
+    <LayerList
+      handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
+      layers={layers}
+      visualizerRef={visualizerRef}
+    />
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -71,7 +89,8 @@ export default () => {
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
             handleFileUpload={handleFileUpload}
-            sharedPlugins={sharedPlugins}
+            sharedPlugin={sharedPlugin}
+            handlePluginDownload={handlePluginDownload}
           />
         )
       }
@@ -87,7 +106,8 @@ export default () => {
       updateFileTitle,
       deleteFile,
       handleFileUpload,
-      sharedPlugins
+      sharedPlugin,
+      handlePluginDownload
     ]
   );
 
@@ -109,21 +129,14 @@ export default () => {
             }}
           />
         )
-      },
-      {
-        id: "plugin-inspector",
-        name: "Plugin Inspector",
-        children: (
-          <PluginInspector handlePluginDownload={handlePluginDownload} />
-        )
       }
     ],
-    [selectedFile, handlePluginDownload, executeCode, updateFileSourceCode]
+    [selectedFile, executeCode, updateFileSourceCode]
   );
 
   return {
     MainAreaTabs,
-    BottomAreaTabs,
+    LayersPanel,
     SubRightAreaTabs,
     RightAreaTabs
   };

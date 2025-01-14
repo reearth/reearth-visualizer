@@ -116,8 +116,8 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       ]
     },
     {
-      id: "geometry",
-      title: "Geometry",
+      id: "geojson",
+      title: "GeoJSON",
       icon: "folderSimple",
       subItem: [
         {

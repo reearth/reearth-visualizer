@@ -708,6 +708,7 @@ type ComplexityRoot struct {
 		UpdateMe                     func(childComplexity int, input gqlmodel.UpdateMeInput) int
 		UpdateMemberOfTeam           func(childComplexity int, input gqlmodel.UpdateMemberOfTeamInput) int
 		UpdateNLSLayer               func(childComplexity int, input gqlmodel.UpdateNLSLayerInput) int
+		UpdateNLSLayers              func(childComplexity int, input gqlmodel.UpdateNLSLayersInput) int
 		UpdateProject                func(childComplexity int, input gqlmodel.UpdateProjectInput) int
 		UpdatePropertyItems          func(childComplexity int, input gqlmodel.UpdatePropertyItemInput) int
 		UpdatePropertyValue          func(childComplexity int, input gqlmodel.UpdatePropertyValueInput) int
@@ -738,6 +739,7 @@ type ComplexityRoot struct {
 		ChildrenIds func(childComplexity int) int
 		Config      func(childComplexity int) int
 		ID          func(childComplexity int) int
+		Index       func(childComplexity int) int
 		Infobox     func(childComplexity int) int
 		IsSketch    func(childComplexity int) int
 		LayerType   func(childComplexity int) int
@@ -751,6 +753,7 @@ type ComplexityRoot struct {
 	NLSLayerSimple struct {
 		Config    func(childComplexity int) int
 		ID        func(childComplexity int) int
+		Index     func(childComplexity int) int
 		Infobox   func(childComplexity int) int
 		IsSketch  func(childComplexity int) int
 		LayerType func(childComplexity int) int
@@ -1324,6 +1327,10 @@ type ComplexityRoot struct {
 		Layer func(childComplexity int) int
 	}
 
+	UpdateNLSLayersPayload struct {
+		Layers func(childComplexity int) int
+	}
+
 	UpdateStylePayload struct {
 		Style func(childComplexity int) int
 	}
@@ -1561,6 +1568,7 @@ type MutationResolver interface {
 	AddNLSLayerSimple(ctx context.Context, input gqlmodel.AddNLSLayerSimpleInput) (*gqlmodel.AddNLSLayerSimplePayload, error)
 	RemoveNLSLayer(ctx context.Context, input gqlmodel.RemoveNLSLayerInput) (*gqlmodel.RemoveNLSLayerPayload, error)
 	UpdateNLSLayer(ctx context.Context, input gqlmodel.UpdateNLSLayerInput) (*gqlmodel.UpdateNLSLayerPayload, error)
+	UpdateNLSLayers(ctx context.Context, input gqlmodel.UpdateNLSLayersInput) (*gqlmodel.UpdateNLSLayersPayload, error)
 	CreateNLSInfobox(ctx context.Context, input gqlmodel.CreateNLSInfoboxInput) (*gqlmodel.CreateNLSInfoboxPayload, error)
 	RemoveNLSInfobox(ctx context.Context, input gqlmodel.RemoveNLSInfoboxInput) (*gqlmodel.RemoveNLSInfoboxPayload, error)
 	AddNLSInfoboxBlock(ctx context.Context, input gqlmodel.AddNLSInfoboxBlockInput) (*gqlmodel.AddNLSInfoboxBlockPayload, error)
@@ -4927,6 +4935,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateNLSLayer(childComplexity, args["input"].(gqlmodel.UpdateNLSLayerInput)), true
 
+	case "Mutation.updateNLSLayers":
+		if e.complexity.Mutation.UpdateNLSLayers == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateNLSLayers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateNLSLayers(childComplexity, args["input"].(gqlmodel.UpdateNLSLayersInput)), true
+
 	case "Mutation.updateProject":
 		if e.complexity.Mutation.UpdateProject == nil {
 			break
@@ -5160,6 +5180,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerGroup.ID(childComplexity), true
 
+	case "NLSLayerGroup.index":
+		if e.complexity.NLSLayerGroup.Index == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerGroup.Index(childComplexity), true
+
 	case "NLSLayerGroup.infobox":
 		if e.complexity.NLSLayerGroup.Infobox == nil {
 			break
@@ -5229,6 +5256,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.ID(childComplexity), true
+
+	case "NLSLayerSimple.index":
+		if e.complexity.NLSLayerSimple.Index == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerSimple.Index(childComplexity), true
 
 	case "NLSLayerSimple.infobox":
 		if e.complexity.NLSLayerSimple.Infobox == nil {
@@ -7991,6 +8025,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UpdateNLSLayerPayload.Layer(childComplexity), true
 
+	case "UpdateNLSLayersPayload.layers":
+		if e.complexity.UpdateNLSLayersPayload.Layers == nil {
+			break
+		}
+
+		return e.complexity.UpdateNLSLayersPayload.Layers(childComplexity), true
+
 	case "UpdateStylePayload.style":
 		if e.complexity.UpdateStylePayload.Style == nil {
 			break
@@ -8379,6 +8420,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateMeInput,
 		ec.unmarshalInputUpdateMemberOfTeamInput,
 		ec.unmarshalInputUpdateNLSLayerInput,
+		ec.unmarshalInputUpdateNLSLayersInput,
 		ec.unmarshalInputUpdateProjectInput,
 		ec.unmarshalInputUpdatePropertyItemInput,
 		ec.unmarshalInputUpdatePropertyItemOperationInput,
@@ -9263,6 +9305,7 @@ extend type Mutation {
 	{Name: "../../../gql/newlayer.graphql", Input: `# TODO: Make LayerGroup Real
 interface NLSLayer {
   id: ID!
+  index: Int
   layerType: String!
   sceneId: ID!
   config: JSON
@@ -9275,6 +9318,7 @@ interface NLSLayer {
 
 type NLSLayerSimple implements NLSLayer {
   id: ID!
+  index: Int
   layerType: String!
   sceneId: ID!
   config: JSON
@@ -9288,6 +9332,7 @@ type NLSLayerSimple implements NLSLayer {
 
 type NLSLayerGroup implements NLSLayer {
   id: ID!
+  index: Int
   layerType: String!
   sceneId: ID!
   children: [NLSLayer]!
@@ -9308,7 +9353,7 @@ type NLSInfobox {
   propertyId: ID!
   blocks: [InfoboxBlock!]!
   property: Property
-  scene: Scene  
+  scene: Scene
 }
 
 type InfoboxBlock {
@@ -9325,8 +9370,8 @@ type InfoboxBlock {
 }
 
 type SketchInfo {
-	customPropertySchema: JSON
-	featureCollection: FeatureCollection
+  customPropertySchema: JSON
+  featureCollection: FeatureCollection
 }
 
 # InputType
@@ -9346,10 +9391,15 @@ input RemoveNLSLayerInput {
 }
 
 input UpdateNLSLayerInput {
+  index: Int
   layerId: ID!
   name: String
   visible: Boolean
   config: JSON
+}
+
+input UpdateNLSLayersInput {
+  layers: [UpdateNLSLayerInput!]!
 }
 
 input CreateNLSInfoboxInput {
@@ -9406,6 +9456,10 @@ type UpdateNLSLayerPayload {
   layer: NLSLayer!
 }
 
+type UpdateNLSLayersPayload {
+  layers: [NLSLayer!]!
+}
+
 type CreateNLSInfoboxPayload {
   layer: NLSLayer!
 }
@@ -9438,6 +9492,7 @@ extend type Mutation {
   addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
   removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
   updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
+  updateNLSLayers(input: UpdateNLSLayersInput!): UpdateNLSLayersPayload!
   createNLSInfobox(input: CreateNLSInfoboxInput!): CreateNLSInfoboxPayload
   removeNLSInfobox(input: RemoveNLSInfoboxInput!): RemoveNLSInfoboxPayload
   addNLSInfoboxBlock(input: AddNLSInfoboxBlockInput!): AddNLSInfoboxBlockPayload
@@ -9448,9 +9503,14 @@ extend type Mutation {
     input: RemoveNLSInfoboxBlockInput!
   ): RemoveNLSInfoboxBlockPayload
   duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
-  addCustomProperties(input: AddCustomPropertySchemaInput!): UpdateNLSLayerPayload!
-  updateCustomProperties(input: UpdateCustomPropertySchemaInput!): UpdateNLSLayerPayload!
-}`, BuiltIn: false},
+  addCustomProperties(
+    input: AddCustomPropertySchemaInput!
+  ): UpdateNLSLayerPayload!
+  updateCustomProperties(
+    input: UpdateCustomPropertySchemaInput!
+  ): UpdateNLSLayerPayload!
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/plugin.graphql", Input: `type Plugin {
   id: ID!
   sceneId: ID
@@ -12173,6 +12233,21 @@ func (ec *executionContext) field_Mutation_updateNLSLayer_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateNLSLayers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.UpdateNLSLayersInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateNLSLayersInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayersInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14077,6 +14152,8 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(ctx con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_NLSLayerSimple_id(ctx, field)
+			case "index":
+				return ec.fieldContext_NLSLayerSimple_index(ctx, field)
 			case "layerType":
 				return ec.fieldContext_NLSLayerSimple_layerType(ctx, field)
 			case "sceneId":
@@ -31014,6 +31091,65 @@ func (ec *executionContext) fieldContext_Mutation_updateNLSLayer(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateNLSLayers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateNLSLayers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateNLSLayers(rctx, fc.Args["input"].(gqlmodel.UpdateNLSLayersInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateNLSLayersPayload)
+	fc.Result = res
+	return ec.marshalNUpdateNLSLayersPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayersPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateNLSLayers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "layers":
+				return ec.fieldContext_UpdateNLSLayersPayload_layers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateNLSLayersPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateNLSLayers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createNLSInfobox(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createNLSInfobox(ctx, field)
 	if err != nil {
@@ -35330,6 +35466,47 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_id(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _NLSLayerGroup_index(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerGroup_index(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Index, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerGroup_index(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NLSLayerGroup_layerType(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NLSLayerGroup_layerType(ctx, field)
 	if err != nil {
@@ -35907,6 +36084,47 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_id(ctx context.Context, 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSLayerSimple_index(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerSimple_index(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Index, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerSimple_index(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerSimple",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -55129,6 +55347,50 @@ func (ec *executionContext) fieldContext_UpdateNLSLayerPayload_layer(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _UpdateNLSLayersPayload_layers(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateNLSLayersPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateNLSLayersPayload_layers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Layers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]gqlmodel.NLSLayer)
+	fc.Result = res
+	return ec.marshalNNLSLayer2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSLayerᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateNLSLayersPayload_layers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateNLSLayersPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UpdateStylePayload_style(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateStylePayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UpdateStylePayload_style(ctx, field)
 	if err != nil {
@@ -62540,13 +62802,20 @@ func (ec *executionContext) unmarshalInputUpdateNLSLayerInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"layerId", "name", "visible", "config"}
+	fieldsInOrder := [...]string{"index", "layerId", "name", "visible", "config"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "index":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Index = data
 		case "layerId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -62575,6 +62844,33 @@ func (ec *executionContext) unmarshalInputUpdateNLSLayerInput(ctx context.Contex
 				return it, err
 			}
 			it.Config = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateNLSLayersInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateNLSLayersInput, error) {
+	var it gqlmodel.UpdateNLSLayersInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"layers"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "layers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layers"))
+			data, err := ec.unmarshalNUpdateNLSLayerInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Layers = data
 		}
 	}
 
@@ -69958,6 +70254,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "updateNLSLayers":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateNLSLayers(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createNLSInfobox":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createNLSInfobox(ctx, field)
@@ -70444,6 +70747,8 @@ func (ec *executionContext) _NLSLayerGroup(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "index":
+			out.Values[i] = ec._NLSLayerGroup_index(ctx, field, obj)
 		case "layerType":
 			out.Values[i] = ec._NLSLayerGroup_layerType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -70557,6 +70862,8 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "index":
+			out.Values[i] = ec._NLSLayerSimple_index(ctx, field, obj)
 		case "layerType":
 			out.Values[i] = ec._NLSLayerSimple_layerType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -76780,6 +77087,45 @@ func (ec *executionContext) _UpdateNLSLayerPayload(ctx context.Context, sel ast.
 	return out
 }
 
+var updateNLSLayersPayloadImplementors = []string{"UpdateNLSLayersPayload"}
+
+func (ec *executionContext) _UpdateNLSLayersPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateNLSLayersPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateNLSLayersPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateNLSLayersPayload")
+		case "layers":
+			out.Values[i] = ec._UpdateNLSLayersPayload_layers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var updateStylePayloadImplementors = []string{"UpdateStylePayload"}
 
 func (ec *executionContext) _UpdateStylePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateStylePayload) graphql.Marshaler {
@@ -81413,6 +81759,28 @@ func (ec *executionContext) unmarshalNUpdateNLSLayerInput2githubᚗcomᚋreearth
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateNLSLayerInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerInputᚄ(ctx context.Context, v interface{}) ([]*gqlmodel.UpdateNLSLayerInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*gqlmodel.UpdateNLSLayerInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUpdateNLSLayerInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNUpdateNLSLayerInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerInput(ctx context.Context, v interface{}) (*gqlmodel.UpdateNLSLayerInput, error) {
+	res, err := ec.unmarshalInputUpdateNLSLayerInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNUpdateNLSLayerPayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateNLSLayerPayload) graphql.Marshaler {
 	return ec._UpdateNLSLayerPayload(ctx, sel, &v)
 }
@@ -81425,6 +81793,25 @@ func (ec *executionContext) marshalNUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreea
 		return graphql.Null
 	}
 	return ec._UpdateNLSLayerPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUpdateNLSLayersInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayersInput(ctx context.Context, v interface{}) (gqlmodel.UpdateNLSLayersInput, error) {
+	res, err := ec.unmarshalInputUpdateNLSLayersInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpdateNLSLayersPayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayersPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateNLSLayersPayload) graphql.Marshaler {
+	return ec._UpdateNLSLayersPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateNLSLayersPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayersPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateNLSLayersPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateNLSLayersPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUpdateProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateProjectInput(ctx context.Context, v interface{}) (gqlmodel.UpdateProjectInput, error) {

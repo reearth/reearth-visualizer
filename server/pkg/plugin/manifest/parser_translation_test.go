@@ -21,7 +21,7 @@ var expected = TranslationRoot{
 					Description: lo.ToPtr("test ps desc"),
 					Fields: map[string]TranslationPropertySchemaField{
 						"test_field": {
-							Choices: map[string]string{
+							Choices: map[string]TranslationChoice{
 								"test_key": "test choice value"},
 							Description: lo.ToPtr("test field desc"),
 							Title:       lo.ToPtr("test field name"),

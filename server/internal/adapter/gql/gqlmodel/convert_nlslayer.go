@@ -14,6 +14,7 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 
 	return &NLSLayerSimple{
 		ID:        IDFrom(l.ID()),
+		Index:     l.Index(),
 		SceneID:   IDFrom(l.Scene()),
 		Title:     l.Title(),
 		Visible:   l.IsVisible(),
@@ -52,6 +53,7 @@ func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayer
 
 	return &NLSLayerGroup{
 		ID:          IDFrom(l.ID()),
+		Index:       l.Index(),
 		SceneID:     IDFrom(l.Scene()),
 		Title:       l.Title(),
 		Visible:     l.IsVisible(),

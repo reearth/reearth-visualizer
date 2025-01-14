@@ -1,33 +1,13 @@
 package e2e
 
 import (
-	"context"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"golang.org/x/text/language"
 )
 
-// export REEARTH_DB=mongodb://localhost
-
-// go test -v -run TestGetScenePlaceholderEnglish ./e2e/...
 func TestGetScenePlaceholderEnglish(t *testing.T) {
-
-	e := StartServer(
-		t,
-		&config.Config{
-			Origins: []string{"https://example.com"},
-			AuthSrv: config.AuthSrvConfig{
-				Disabled: true,
-			},
-		},
-		true,
-		// English user Seeder
-		func(ctx context.Context, r *repo.Container) error {
-			return baseSeederWithLang(ctx, r, language.English)
-		},
-	)
+	e := ServerLanguage(t, language.English)
 	pID := createProjectWithExternalImage(e, "test")
 	_, _, sID := createScene(e, pID)
 	r := getScene(e, sID, language.English.String())
@@ -50,27 +30,10 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 			}
 		}
 	}
-
 }
 
-// go test -v -run TestGetScenePlaceholderJapanese ./e2e/...
-
 func TestGetScenePlaceholderJapanese(t *testing.T) {
-
-	e := StartServer(
-		t,
-		&config.Config{
-			Origins: []string{"https://example.com"},
-			AuthSrv: config.AuthSrvConfig{
-				Disabled: true,
-			},
-		},
-		true,
-		// Japanese user Seeder
-		func(ctx context.Context, r *repo.Container) error {
-			return baseSeederWithLang(ctx, r, language.Japanese)
-		},
-	)
+	e := ServerLanguage(t, language.Japanese)
 	pID := createProjectWithExternalImage(e, "test")
 	_, _, sID := createScene(e, pID)
 	r := getScene(e, sID, language.Japanese.String())
@@ -93,5 +56,19 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 			}
 		}
 	}
+}
+
+// go test -v -run TestGetScene ./e2e/...
+
+func TestGetSceneNLSLayer(t *testing.T) {
+	e := Server(t, baseSeeder)
+	pId := createProject(e, "test")
+	_, _, sId := createScene(e, pId)
+	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
+
+	r := getScene(e, sId, language.Und.String())
+	r.Value("newLayers").Array().First().Object().ValueEqual("id", lId)
+	r.Value("newLayers").Array().First().Object().ValueEqual("title", "someTitle99")
+	r.Value("newLayers").Array().First().Object().ValueEqual("index", 99)
 
 }
