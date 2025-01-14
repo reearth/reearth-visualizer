@@ -17,9 +17,12 @@ extensions:
         zone: outer
         section: left
         area: top
-  - id: demo-infobox
+  - id: demo-first-infobox
     type: infoboxBlock
-    name: Demo Infobox
+    name: Demo First Infobox
+  - id: demo-second-infobox
+    type: infoboxBlock
+    name: Demo Second Infobox
   `,
   disableEdit: true,
   disableDelete: true
@@ -36,13 +39,24 @@ const widgetFile: FileType = {
 \`); `
 };
 
-const infoboxFile: FileType = {
-  id: "custom-my-plugin-demo-infobox",
-  title: "demo-infobox.js",
+const demoFirstInfoboxFile: FileType = {
+  id: "custom-my-plugin-demo-first-infobox",
+  title: "demo-first-infobox.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div id="wrapper">
-    <h2 style="text-align: center;">Hello Infobox</h2>
+    <h2 style="text-align: center;">First Infobox</h2>
+  </div>  
+\`); `
+};
+
+const demoSecondInfoboxFile: FileType = {
+  id: "custom-my-plugin-demo-second-infobox",
+  title: "demo-second-infobox.js",
+  sourceCode: `reearth.ui.show(\`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div id="wrapper">
+    <h2 style="text-align: center;">Second Infobox</h2>
   </div>  
 \`); `
 };
@@ -50,5 +64,5 @@ const infoboxFile: FileType = {
 export const myPlugin: PluginType = {
   id: "my-plugin",
   title: "My Plugin",
-  files: [widgetFile, yamlFile, infoboxFile]
+  files: [widgetFile, yamlFile, demoFirstInfoboxFile, demoSecondInfoboxFile]
 };
