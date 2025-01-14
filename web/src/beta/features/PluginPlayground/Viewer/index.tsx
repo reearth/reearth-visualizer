@@ -5,12 +5,18 @@ import { ComponentProps, FC, MutableRefObject } from "react";
 import useHooks from "./hooks";
 
 type Props = {
+  infoboxBlocks: ComponentProps<typeof Visualizer>["installableInfoboxBlocks"];
   layers: Layer[];
   widgets: ComponentProps<typeof Visualizer>["widgets"];
   visualizerRef: MutableRefObject<MapRef | null>;
 };
 
-const Viewer: FC<Props> = ({ layers, widgets, visualizerRef }) => {
+const Viewer: FC<Props> = ({
+  infoboxBlocks,
+  layers,
+  widgets,
+  visualizerRef
+}) => {
   const { currentCamera, engineMeta, ready, setCurrentCamera, viewerProperty } =
     useHooks({ visualizerRef });
 
@@ -20,11 +26,12 @@ const Viewer: FC<Props> = ({ layers, widgets, visualizerRef }) => {
       visualizerRef={visualizerRef}
       viewerProperty={viewerProperty}
       ready={ready}
-      layers={layers}
+      layers={layers} // should add infobox in layers
       engineMeta={engineMeta}
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}
       widgets={widgets}
+      installableInfoboxBlocks={infoboxBlocks} // remove this
     />
   );
 };

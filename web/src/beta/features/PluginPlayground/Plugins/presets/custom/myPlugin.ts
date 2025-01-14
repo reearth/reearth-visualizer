@@ -17,6 +17,9 @@ extensions:
         zone: outer
         section: left
         area: top
+  - id: demo-infobox
+    type: infoboxBlock
+    name: Demo Infobox
   `,
   disableEdit: true,
   disableDelete: true
@@ -33,8 +36,19 @@ const widgetFile: FileType = {
 \`); `
 };
 
+const infoboxFile: FileType = {
+  id: "custom-my-plugin-demo-infobox",
+  title: "demo-infobox.js",
+  sourceCode: `reearth.ui.show(\`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div id="wrapper">
+    <h2 style="text-align: center;">Hello Infobox</h2>
+  </div>  
+\`); `
+};
+
 export const myPlugin: PluginType = {
   id: "my-plugin",
   title: "My Plugin",
-  files: [widgetFile, yamlFile]
+  files: [widgetFile, yamlFile, infoboxFile]
 };

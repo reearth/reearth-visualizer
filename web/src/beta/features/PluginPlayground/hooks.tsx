@@ -1,5 +1,5 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { Layer, MapRef } from "@reearth/core";
+import { MapRef } from "@reearth/core";
 import { FC, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
@@ -30,49 +30,45 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { widgets, executeCode } = useCode({
+  const { infoboxBlocks, widgets, executeCode } = useCode({
     files: selectedPlugin.files
   });
 
-  const [layers, setLayers] = useState<Layer[]>(
-    DEFAULT_LAYERS_PLUGIN_PLAYGROUND
-  );
-
   const [selectedLayerId, setSelectedLayerId] = useState("");
-  const selectedLayer = layers.find((layer) => layer.id === selectedLayerId);
+  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(["1", "2"]);
+  const [infoboxEnabled, setInfoboxEnabled] = useState(true);
 
-  const updateInfoboxEnabled = () => {
-    const selectedLayerInfoboxEnabled =
-      selectedLayer?.infobox?.property?.default?.enabled?.value;
-    setLayers((prev) =>
-      prev.map((layer) =>
-        layer.id === selectedLayerId
+  const layers = useMemo(() => {
+    return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {
+      return {
+        ...layer,
+        ...(infoboxEnabled
           ? {
-              ...layer,
               infobox: {
-                ...layer.infobox,
+                id: "111",
+                blocks: infoboxBlocks,
                 property: {
-                  ...layer.infobox?.property,
                   default: {
-                    ...layer.infobox?.property?.default,
                     enabled: {
-                      ...layer.infobox?.property?.default?.enabled,
-                      value: !selectedLayerInfoboxEnabled
+                      value: true
                     }
                   }
                 }
               }
             }
-          : layer
-      )
-    );
-  };
+          : {}),
+        visible: visibleLayerIds.includes(layer.id)
+      };
+    });
+  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks]);
 
-  const handleLayerVisibilityUpdate = (layerId: string, visible: boolean) => {
-    setLayers((prev) =>
-      prev.map((layer) =>
-        layer.id === layerId ? { ...layer, visible } : layer
-      )
+  console.log("layers", layers);
+
+  const handleLayerVisibilityUpdate = (layerId: string) => {
+    setVisibleLayerIds((prev) =>
+      prev.includes(layerId)
+        ? prev.filter((id) => id !== layerId)
+        : [...prev, layerId]
     );
   };
 
@@ -86,13 +82,14 @@ export default () => {
         children: (
           <Viewer
             layers={layers}
+            infoboxBlocks={infoboxBlocks}
             widgets={widgets}
             visualizerRef={visualizerRef}
           />
         )
       }
     ],
-    [layers, widgets]
+    [infoboxBlocks, layers, widgets]
   );
 
   const LayersPanel: FC = () => (
@@ -169,8 +166,8 @@ export default () => {
 
   const SettingsPanel: FC = () => (
     <SettingsList
-      selectedLayer={selectedLayer}
-      updateInfoboxEnabled={updateInfoboxEnabled}
+      infoboxEnabled={infoboxEnabled}
+      setInfoboxEnabled={setInfoboxEnabled}
     />
   );
 

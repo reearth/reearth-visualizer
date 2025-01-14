@@ -3,37 +3,17 @@ import { Layer } from "@reearth/core";
 export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
   {
     type: "simple",
-    id: "01jff2ww37r9msq4an8mvxh409",
+    id: "1",
     title: "chiyoda 3D tiles",
     visible: true,
     data: {
       type: "3dtiles",
       url: "https://assets.cms.plateau.reearth.io/assets/11/6d05db-ed47-4f88-b565-9eb385b1ebb0/13100_tokyo23-ku_2022_3dtiles%20_1_1_op_bldg_13101_chiyoda-ku_lod1/tileset.json"
-    },
-    "3dtiles": {},
-    infobox: {
-      featureId: "01jff2ww37r9msq4an8mvxh409",
-      property: {
-        default: {
-          enabled: { value: true },
-          position: { value: "left" },
-          padding: {
-            value: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0
-            }
-          }
-        },
-        defaultContent: "description"
-      },
-      blocks: []
     }
   },
   {
     type: "simple",
-    id: "01jff3fxh13h2trxstqfx363nx",
+    id: "2",
     title: "japan-heritage",
     visible: true,
     data: {
@@ -536,25 +516,6 @@ export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
     },
     marker: {
       heightReference: "clamp"
-    },
-    infobox: {
-      featureId: "01jff3fxh13h2trxstqfx363nx",
-      property: {
-        default: {
-          enabled: { value: false },
-          position: { value: "right" },
-          padding: {
-            value: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0
-            }
-          }
-        },
-        defaultContent: "description"
-      },
-      blocks: []
     }
   }
 ];

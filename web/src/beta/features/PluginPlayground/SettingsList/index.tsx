@@ -1,22 +1,18 @@
 import { CheckBox, Typography } from "@reearth/beta/lib/reearth-ui";
-import { Layer } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 type Props = {
-  selectedLayer: Layer | undefined;
-  updateInfoboxEnabled: () => void;
+  infoboxEnabled: boolean;
+  setInfoboxEnabled: (infoBoxEnabled: boolean) => void;
 };
-const SettingsList: FC<Props> = ({ selectedLayer, updateInfoboxEnabled }) => {
-  const selectedLayerInfoboxEnabled =
-    selectedLayer?.infobox?.property?.default?.enabled?.value;
-
+const SettingsList: FC<Props> = ({ infoboxEnabled, setInfoboxEnabled }) => {
   return (
     <Wrapper>
       <Row>
         <CheckBox
-          value={selectedLayerInfoboxEnabled}
-          onChange={updateInfoboxEnabled}
+          value={infoboxEnabled}
+          onChange={() => setInfoboxEnabled(!infoboxEnabled)}
         />
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
           Enable Infobox
