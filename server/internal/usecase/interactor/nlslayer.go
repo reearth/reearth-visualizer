@@ -711,6 +711,9 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
 		return nil, interfaces.ErrSketchNotFound
 	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nil, interfaces.ErrOperationDenied
+	}
 
 	// Check if oldTitle exists and newTitle doesn't conflict
 	titleExists := false
