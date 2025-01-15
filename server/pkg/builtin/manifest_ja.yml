@@ -1427,7 +1427,7 @@ extensions:
             title: リンクURL
 
   googleMapSearch:
-    nname: Googleマップ検索(実験版)
+    name: Googleマップ検索(実験版)
     description: Googleマップを利用して地図上の場所を検索できるウィジェット
     propertySchema:
       default:
