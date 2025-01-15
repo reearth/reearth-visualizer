@@ -62,12 +62,6 @@ export default ({ files }: Props) => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>(); // need to change this type definition. Can also define a new type if none is found
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
-  const [fileOutputs, _setFileOutputs] = useState<
-    {
-      title: string;
-      output: string;
-    }[]
-  >();
 
   const executeCode = useCallback(() => {
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
@@ -169,7 +163,6 @@ export default ({ files }: Props) => {
   return {
     executeCode,
     infoboxBlocks,
-    widgets,
-    fileOutputs
+    widgets
   };
 };

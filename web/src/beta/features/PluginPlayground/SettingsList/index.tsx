@@ -18,12 +18,12 @@ const SettingsList: FC<Props> = ({ infoboxEnabled, setInfoboxEnabled }) => {
           Enable Infobox
         </Typography>
       </Row>
-      <Row>
+      {/* <Row>
         <CheckBox />
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
           Enable Story Panel
         </Typography>
-      </Row>
+      </Row> */}
     </Wrapper>
   );
 };
