@@ -59,7 +59,6 @@ const widgetFile: FileType = {
       <div class="coordinates">
         <p>Latitude: <span id="lat" class="coordinate-value">-</span>°</p>
         <p>Longitude: <span id="lng" class="coordinate-value">-</span>°</p>
-        <p>Height: <span id="height" class="coordinate-value">-</span> m</p>
       </div>
       <div class="flex-center">
         <button id="flyToButton">Fly to Position</button>
@@ -67,55 +66,54 @@ const widgetFile: FileType = {
     </div>
 
     <script>
-      let currentLat, currentLng, currentHeight;
+      let currentLat, currentLng;
 
+      // Handle messages from extension
       window.addEventListener("message", e => {
         const msg = e.data;
         if (msg.type === "position") {
           currentLat = msg.lat;
           currentLng = msg.lng;
-          currentHeight = msg.height;
 
           document.getElementById("lat").textContent = msg.lat?.toFixed(6) || "-";
           document.getElementById("lng").textContent = msg.lng?.toFixed(6) || "-";
-          document.getElementById("height").textContent = Math.abs(msg.height)?.toFixed(2) || "-";
-
         }
       });
 
+      // Send message to extension when button is clicked
       document.getElementById("flyToButton").addEventListener("click", () => {
         parent.postMessage({
           type: "fly",
           lat: currentLat,
           lng: currentLng,
-          alt: Math.max(currentHeight, 1000)
+          alt: 1000 // Fixed camera height for better viewing
         }, "*");
       });
     </script>
 \`);
 
-    // Setup the event listeners
-    reearth.viewer.on("click", (event) => {
-      reearth.ui.postMessage({
-        type: "position",
-        lat: event.lat,
-        lng: event.lng,
-        height: event.height
-      });
-    });
+// Send message to UI when globe is clicked
+reearth.viewer.on("click", (event) => {
+  reearth.ui.postMessage({
+    type: "position",
+    lat: event.lat,
+    lng: event.lng
+  });
+});
 
-    reearth.extension.on("message", msg => {
-      if (msg.type === "fly") {
-        reearth.camera.flyTo(
-          {
-            lat: msg.lat,
-            lng: msg.lng,
-            height: msg.alt
-          },
-          { duration: 2 }
-        );
-      }
-    });`
+// Handle messages from UI to move camera
+reearth.extension.on("message", msg => {
+  if (msg.type === "fly") {
+    reearth.camera.flyTo(
+      {
+        lat: msg.lat,
+        lng: msg.lng,
+        height: msg.alt
+      },
+      { duration: 2 }
+    );
+  }
+});`
 };
 
 export const uiExtensionMessenger: PluginType = {
