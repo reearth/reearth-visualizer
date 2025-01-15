@@ -2318,6 +2318,54 @@ extensions:
             - id: creditUrl
               type: url
               title: Credit Url
+  - id: googleMapSearch
+    type: widget
+    name: Google Map Search (Experimental)
+    description: A widget that allows you to search for a location on the map using Google Maps.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: outer
+        section: left
+        area: top
+    schema:
+      groups:
+        - id: default
+          title: Google Map Search Widget
+          fields:
+            - id: apiToken
+              type: string
+              title: API Token
+              description: Google Maps API Key
+        - id: appearance
+          title: Appearance
+          fields:
+            - id: theme
+              type: string
+              title: Theme
+              defaultValue: light
+              choices:
+                - key: light
+                  label: Light
+                - key: dark
+                  label: Dark
+        - id: languageSetting
+          title: Language Setting
+          fields:
+            - id: language
+              type: string
+              title: Language
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: en
+                  label: English
+                - key: ja
+                  label: Japanese
+                - key: cn
+                  label: Chinese
+
   - id: story
     name: Story
     type: story

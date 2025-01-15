@@ -38,7 +38,8 @@ export declare type InteractionModeType =
   | "default"
   | "move"
   | "selection"
-  | "sketch";
+  | "sketch"
+  | "spatialId";
 
 export declare type Viewer = {
   readonly property: ViewerProperty | undefined;

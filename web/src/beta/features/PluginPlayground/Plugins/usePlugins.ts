@@ -1,52 +1,52 @@
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
+import LZString from "lz-string";
 import { useCallback, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
-import { PluginType, REEARTH_YML_FILE } from "./constants";
+import { PluginType } from "./constants";
+import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
 export default () => {
-  const [plugins, setPlugins] = useState<PluginType[]>([
-    {
-      id: uuidv4(),
-      title: "My Plugin",
-      files: [
-        REEARTH_YML_FILE,
-        {
-          id: uuidv4(),
-          title: "demo-widget.js",
-          sourceCode: `reearth.ui.show(\`
-  <style>
-    body {
-      margin: 0;
-    }
-    #wrapper {
-      background: #232226;
-      height: 100%;
-      color: white;
-      border: 3px dotted red;
-      border-radius: 5px;
-      padding: 20px 0;
-    }
-  </style>
-  <div id="wrapper">
-    <h2 style="text-align: center; margin: 0;">Hello World</h2>
-  </div>
-\`);
-          
-          `
+  const [searchParams] = useSearchParams();
+  const [, setNotification] = useNotification();
+
+  const sharedPluginUrl = searchParams.get("plugin");
+
+  const decodePluginURL = useCallback((encoded: string) => {
+    const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
+    // Decompress and parse
+    const decompressed = LZString.decompressFromBase64(base64);
+
+    return JSON.parse(decompressed);
+  }, []);
+
+  const sharedPlugin = sharedPluginUrl
+    ? (() => {
+        try {
+          return decodePluginURL(sharedPluginUrl);
+        } catch (_error) {
+          setNotification({ type: "error", text: "Invalid shared plugin URL" });
+          return null;
         }
-      ]
-    }
-  ]);
+      })()
+    : null;
+
+  const presetPluginsArray = presetPlugins
+    .map((category) => category.plugins)
+    .flat();
+
+  const [plugins, setPlugins] = useState<PluginType[]>(
+    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
+  );
 
   const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
   const [selectedFileId, setSelectedFileId] = useState<string>(
-    REEARTH_YML_FILE.id
+    plugins[0]?.files[0]?.id ?? ""
   );
-  const [, setNotification] = useNotification();
 
   const selectedPlugin = useMemo(
     () =>
@@ -228,8 +228,45 @@ export default () => {
     }
   }, [selectedPlugin, setNotification]);
 
+  const encodeAndSharePlugin = useCallback(
+    (pluginId: string): string | undefined => {
+      selectPlugin(pluginId);
+      // Need to do a find here as the selectedPlugin does not get updated immediately
+      const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
+
+      // Note: We can't use the same id for a shared plugin
+      const selectedPluginCopy = { ...sharedPlugin, id: uuidv4() };
+
+      // First compress the code
+      try {
+        const compressed = LZString.compressToBase64(
+          JSON.stringify(selectedPluginCopy)
+        )
+          .replace(/\+/g, "-") // Convert + to -
+          .replace(/\//g, "_") // Convert / to _
+          .replace(/=/g, ""); // Remove padding =
+
+        const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
+        navigator.clipboard.writeText(shareUrl);
+
+        setNotification({
+          type: "success",
+          text: "Plugin link copied to clipboard"
+        });
+        return compressed;
+      } catch (error) {
+        if (error instanceof Error) {
+          setNotification({ type: "error", text: error.message });
+        }
+        return;
+      }
+    },
+    [plugins, selectPlugin, setNotification]
+  );
+
   return {
-    plugins,
+    encodeAndSharePlugin,
+    presetPlugins,
     selectPlugin,
     selectedPlugin,
     selectFile,
@@ -239,6 +276,7 @@ export default () => {
     updateFileSourceCode,
     deleteFile,
     handleFileUpload,
-    handlePluginDownload
+    handlePluginDownload,
+    sharedPlugin
   };
 };

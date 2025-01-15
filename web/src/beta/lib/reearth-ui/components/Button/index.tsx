@@ -91,6 +91,7 @@ const StyledButton = styled("button")<{
                 ? `${theme.primary.main}`
                 : `${theme.dangerous.main}`
           }`,
+    fontSize: `${theme.fonts.sizes.body}px`,
     padding:
       size === "small"
         ? iconButton

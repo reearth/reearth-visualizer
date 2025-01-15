@@ -19,7 +19,8 @@
     "skipLibCheck": true,
     "paths": {
       "@reearth/e2e/*": ["e2e/*"],
-      "@reearth/*": ["src/*"]
+      "@reearth/*": ["src/*"],
+      "@reearth-widget-ui/*": ["src/beta/lib/reearth-widget-ui/*"]
     },
     "plugins": [
       {

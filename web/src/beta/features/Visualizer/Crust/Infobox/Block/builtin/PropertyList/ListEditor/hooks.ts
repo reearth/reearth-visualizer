@@ -1,4 +1,3 @@
-import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useState } from "react";
 
 import type { DisplayTypeField, PropertyListField } from ".";
@@ -31,6 +30,8 @@ export default ({
     propertyListField?.value ?? []
   );
   const [isDragging, setIsDragging] = useState(false);
+  const [editKeyIndex, setEditKeyIndex] = useState<number | null>(null);
+  const [editValueIndex, setEditValueIndex] = useState<number | null>(null);
 
   const displayOptions = displayTypeField?.choices?.map(
     ({ key, title }: { key: string; title: string }) => ({
@@ -38,15 +39,6 @@ export default ({
       label: title
     })
   );
-
-  useEffect(() => {
-    if (
-      propertyListField?.value &&
-      !isEqual(propertyListField.value, currentPropertyList)
-    ) {
-      setCurrentPropertyList(propertyListField?.value);
-    }
-  }, [propertyListField?.value, currentPropertyList]);
 
   const handlePropertyValueUpdate = useCallback(
     (fieldId?: string, vt?: any, itemId?: string) => {
@@ -58,22 +50,24 @@ export default ({
     [propertyId, onPropertyUpdate]
   );
 
+  useEffect(() => {
+    setCurrentPropertyList(propertyListField?.value ?? []);
+  }, [propertyListField?.value]);
+
   const handlePropertyValueRemove = useCallback(
-    async (idx: number) => {
-      if (propertyListField) {
-        const newValue = propertyListField.value?.filter((_, i) => i !== idx);
-        await handlePropertyValueUpdate(
-          "propertyList",
-          propertyListField.type
-        )(newValue);
-      }
+    (idx: number) => {
+      if (!currentPropertyList) return;
+      const updatedPropertiesList = [...currentPropertyList];
+      updatedPropertiesList.splice(idx, 1);
+      setCurrentPropertyList?.(updatedPropertiesList);
     },
-    [propertyListField, handlePropertyValueUpdate]
+    [currentPropertyList]
   );
 
   const handlePropertyListUpdate = useCallback(
     (newList: ListItem[]) =>
       handlePropertyValueUpdate("propertyList", "array")(newList),
+
     [handlePropertyValueUpdate]
   );
 
@@ -82,9 +76,9 @@ export default ({
       const newList = currentPropertyList.map((i) => ({ ...i }) as ListItem);
       newList[idx].key = newKeyValue ?? "";
       setCurrentPropertyList(newList);
-      handlePropertyListUpdate(newList);
+      if (editKeyIndex === idx) setEditKeyIndex(null);
     },
-    [currentPropertyList, handlePropertyListUpdate]
+    [currentPropertyList, editKeyIndex]
   );
 
   const handleValueBlur = useCallback(
@@ -92,9 +86,9 @@ export default ({
       const newList = currentPropertyList.map((i) => ({ ...i }) as ListItem);
       newList[idx].value = newValue ?? "";
       setCurrentPropertyList(newList);
-      handlePropertyListUpdate(newList);
+      if (editValueIndex === idx) setEditValueIndex(null);
     },
-    [currentPropertyList, handlePropertyListUpdate]
+    [currentPropertyList, editValueIndex]
   );
 
   const handleDisplayTypeUpdate = useCallback(
@@ -113,15 +107,15 @@ export default ({
         value: ""
       }
     ];
-    handlePropertyValueUpdate("propertyList", propertyListField.type)(newList);
-  }, [currentPropertyList, propertyListField, handlePropertyValueUpdate]);
+    setCurrentPropertyList(newList);
+  }, [currentPropertyList, propertyListField]);
 
   const handleMoveStart = useCallback(() => {
     setIsDragging(true);
   }, []);
 
   const handleItemDrop = useCallback(
-    async (
+    (
       item: {
         id: string;
         key: string;
@@ -138,16 +132,8 @@ export default ({
       newList.splice(itemIndex, 1);
       newList.splice(targetIndex, 0, item);
       setCurrentPropertyList(newList);
-      await onPropertyUpdate?.(
-        propertyId,
-        "default",
-        "propertyList",
-        undefined,
-        "array",
-        newList
-      );
     },
-    [currentPropertyList, onPropertyUpdate, propertyId]
+    [currentPropertyList]
   );
 
   const handleMoveEnd = useCallback(
@@ -165,17 +151,31 @@ export default ({
     [currentPropertyList, handleItemDrop]
   );
 
+  const handleDoubleClick = useCallback((idx: number, field: string) => {
+    if (field === "key") {
+      setEditKeyIndex(idx);
+      setEditValueIndex(null);
+    } else if (field === "value") {
+      setEditValueIndex(idx);
+      setEditKeyIndex(null);
+    }
+  }, []);
+
   return {
     displayOptions,
     currentPropertyList,
     isDragging,
+    editValueIndex,
+    editKeyIndex,
     handleKeyBlur,
     handleValueBlur,
     handleDisplayTypeUpdate,
     handleItemAdd,
     handlePropertyValueRemove,
     handleMoveStart,
-    handleMoveEnd
+    handleMoveEnd,
+    handleDoubleClick,
+    handlePropertyListUpdate
   };
 };
 

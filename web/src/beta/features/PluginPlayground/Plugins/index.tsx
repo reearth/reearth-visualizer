@@ -1,13 +1,15 @@
-import { Button } from "@reearth/beta/lib/reearth-ui";
+import { Collapse, IconButton } from "@reearth/beta/lib/reearth-ui";
+import { EntryItem } from "@reearth/beta/ui/components";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
 
 import FileListItem from "./FileListItem";
-import usePlugins from "./hook";
+import usePlugins from "./usePlugins";
 
 type UsePluginsReturn = Pick<
   ReturnType<typeof usePlugins>,
-  | "plugins"
+  | "encodeAndSharePlugin"
+  | "presetPlugins"
   | "selectPlugin"
   | "selectedPlugin"
   | "selectFile"
@@ -16,12 +18,15 @@ type UsePluginsReturn = Pick<
   | "updateFileTitle"
   | "deleteFile"
   | "handleFileUpload"
+  | "sharedPlugin"
+  | "handlePluginDownload"
 >;
 
 type Props = UsePluginsReturn;
 
 const Plugins: FC<Props> = ({
-  plugins,
+  encodeAndSharePlugin,
+  presetPlugins,
   selectedPlugin,
   selectPlugin,
   selectFile,
@@ -29,115 +34,184 @@ const Plugins: FC<Props> = ({
   addFile,
   updateFileTitle,
   deleteFile,
-  handleFileUpload
+  handleFileUpload,
+  sharedPlugin,
+  handlePluginDownload
 }) => {
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
+  const handleShareIconClicked = (): void => {
+    if (!selectedPlugin) return;
+    encodeAndSharePlugin(selectedPlugin.id);
+  };
+
+  const customPlugin = presetPlugins.find((plugin) => plugin.id === "custom");
+  const pluginsWithoutCustom = presetPlugins.filter(
+    (plugin) => plugin.id !== "custom"
+  );
+
+  const PluginEntryItem: FC<{
+    plugin: { id: string; title: string };
+    selectedPluginId: string;
+    onSelect: (id: string) => void;
+  }> = ({ plugin, selectedPluginId, onSelect }) => (
+    <EntryItem
+      key={plugin.id}
+      highlighted={selectedPluginId === plugin.id}
+      onClick={() => onSelect(plugin.id)}
+      title={plugin.title}
+      optionsMenuWidth={100}
+    />
+  );
+
   return (
     <Wrapper>
+      <IconList>
+        <IconButton
+          appearance="simple"
+          icon="addFile"
+          onClick={() => setIsAddingNewFile(true)}
+        />
+        <IconButton
+          appearance="simple"
+          icon="import"
+          onClick={handleFileUpload}
+        />
+        <IconButton
+          appearance="simple"
+          icon="export"
+          onClick={handlePluginDownload}
+        />
+        <IconButton
+          appearance="simple"
+          icon="paperPlaneTilt"
+          onClick={handleShareIconClicked}
+        />
+      </IconList>
       <PluginListWrapper>
         <PluginList>
-          {plugins.map((plugin) => (
-            <PluginListItem
-              key={plugin.id}
-              selected={selectedPlugin.id === plugin.id}
-              onClick={() => selectPlugin(plugin.id)}
-            >
-              {plugin.title}
-            </PluginListItem>
-          ))}
-        </PluginList>
-      </PluginListWrapper>
-      <FileListWrapper>
-        <ButtonsWrapper>
-          <Button
-            icon="plus"
-            title="File"
-            onClick={() => setIsAddingNewFile(true)}
-          />
-          <Button title="Upload" onClick={handleFileUpload} />
-        </ButtonsWrapper>
-        <FileList>
-          {selectedPlugin.files.map((file) => (
-            <FileListItem
-              key={file.id}
-              file={file}
-              selected={selectedFile.id === file.id}
-              confirmFileTitle={updateFileTitle}
-              deleteFile={deleteFile}
-              onClick={() => selectFile(file.id)}
-            />
-          ))}
-          {isAddingNewFile && (
-            <FileListItem
-              file={{ id: "", title: "", sourceCode: "" }}
-              selected={false}
-              confirmFileTitle={(value) => {
-                addFile(value);
-                setIsAddingNewFile(false);
-              }}
-              isEditing
-            />
+          {customPlugin && (
+            <div>
+              {customPlugin.plugins.map((plugin) => (
+                <PluginEntryItem
+                  plugin={plugin}
+                  key={plugin.id}
+                  selectedPluginId={selectedPlugin.id}
+                  onSelect={selectPlugin}
+                />
+              ))}
+            </div>
           )}
-        </FileList>
-      </FileListWrapper>
+          {pluginsWithoutCustom.map((category) => (
+            <PresetPluginWrapper key={category.id}>
+              <Collapse
+                collapsed
+                iconPosition="left"
+                size="small"
+                title={category.title}
+              >
+                {category.plugins.map((plugin) => (
+                  <PluginEntryItem
+                    plugin={plugin}
+                    key={plugin.id}
+                    selectedPluginId={selectedPlugin.id}
+                    onSelect={selectPlugin}
+                  />
+                ))}
+              </Collapse>
+            </PresetPluginWrapper>
+          ))}
+          <div>
+            <CategoryTitle>Shared</CategoryTitle>
+            {sharedPlugin && (
+              <PluginEntryItem
+                plugin={sharedPlugin}
+                key={sharedPlugin.id}
+                selectedPluginId={selectedPlugin.id}
+                onSelect={selectPlugin}
+              />
+            )}
+          </div>
+        </PluginList>
+        <FileListWrapper>
+          <FileList>
+            {selectedPlugin.files.map((file) => (
+              <FileListItem
+                key={file.id}
+                file={file}
+                selected={selectedFile.id === file.id}
+                confirmFileTitle={updateFileTitle}
+                deleteFile={deleteFile}
+                onClick={() => selectFile(file.id)}
+              />
+            ))}
+            {isAddingNewFile && (
+              <FileListItem
+                file={{ id: "", title: "", sourceCode: "" }}
+                selected={false}
+                confirmFileTitle={(value) => {
+                  addFile(value);
+                  setIsAddingNewFile(false);
+                }}
+                isEditing
+              />
+            )}
+          </FileList>
+        </FileListWrapper>
+      </PluginListWrapper>
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")(() => ({
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 1
+}));
+
+const PluginList = styled("div")(({ theme }) => ({
+  width: "50%",
+  paddingRight: theme.spacing.small,
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small
+}));
+
+const PluginListWrapper = styled("div")(() => ({
   display: "flex",
   height: "100%"
 }));
 
-const PluginListWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  width: "50%",
-  padding: theme.spacing.smallest
-}));
-
-const PluginList = styled("ul")(() => ({
-  width: "100%",
-  padding: "0",
-  margin: "0",
-  listStyle: "none"
-}));
-
-const PluginListItem = styled("li")<{
-  selected?: boolean;
-}>(({ theme, selected }) => ({
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  ${theme.spacing.smallest}px ${theme.spacing.normal}px`,
-  borderRadius: theme.radius.small,
-  backgroundColor: selected ? theme.select.main : "transparent",
-  cursor: "pointer",
-  "&:not(:first-child)": {
-    marginTop: theme.spacing.smallest
-  }
+const CategoryTitle = styled("div")(({ theme }) => ({
+  padding: `${theme.spacing.smallest}px 0`,
+  fontSize: theme.fonts.sizes.body
 }));
 
 const FileListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  padding: theme.spacing.small,
+  paddingLeft: theme.spacing.small,
   width: "50%",
   borderLeft: `1px solid ${theme.outline.weaker}`,
   gap: theme.spacing.small
 }));
 
-const FileList = styled("ul")(() => ({
-  width: "100%",
-  padding: "0",
-  margin: "0",
-  listStyle: "none"
+const FileList = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest
 }));
 
-const ButtonsWrapper = styled("div")(({ theme }) => ({
+const IconList = styled("div")(({ theme }) => ({
   display: "flex",
-  width: "100%",
-  gap: theme.spacing.smallest,
-  "& > button": {
-    flexGrow: 1
-  }
+  alignItems: "center",
+  gap: theme.spacing.small,
+  marginBottom: theme.spacing.small
+}));
+
+const PresetPluginWrapper = styled("div")(({ theme }) => ({
+  marginLeft: -theme.spacing.normal
 }));
 
 export default Plugins;

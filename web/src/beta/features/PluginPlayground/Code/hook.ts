@@ -18,6 +18,7 @@ type ReearthYML = {
     name: string;
     description: string;
     widgetLayout?: {
+      extended: boolean;
       defaultLocation: {
         zone: WidgetLocation["zone"];
         section: WidgetLocation["section"];
@@ -130,6 +131,8 @@ export default ({ files }: Props) => {
 
     const widgets = ymlJson.extensions.reduce<NonNullable<Widgets>>(
       (prv, cur) => {
+        if (cur.type !== "widget") return prv;
+
         const file = files.find((file) => file.title === `${cur.id}.js`);
 
         if (!file) {
@@ -141,6 +144,8 @@ export default ({ files }: Props) => {
           section: "left",
           area: "top"
         };
+
+        const extended = cur.widgetLayout?.extended ?? false;
 
         const zoneAlignSystem = prv?.alignSystem?.[zone] ?? {};
         const sectionAlignSystem = zoneAlignSystem[section] ?? {};
@@ -160,7 +165,8 @@ export default ({ files }: Props) => {
                     ...(areaAlignSystem.widgets ?? []),
                     {
                       id: cur.id,
-                      __REEARTH_SOURCECODE: file.sourceCode
+                      __REEARTH_SOURCECODE: file.sourceCode,
+                      extended
                     }
                   ]
                 }

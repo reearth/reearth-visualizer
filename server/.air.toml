@@ -1,0 +1,26 @@
+# project root directory
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# execute command
+cmd = "go build -o ./tmp/api ./cmd/reearth"
+bin = "tmp/api"
+full_bin = "tmp/api"
+delay = 1000 # ms
+stop_on_error = true
+send_interrupt = false
+kill_delay = 1000 # ms
+
+# include file extensions
+include_ext = ["go"]
+
+# exclude directories
+exclude_dir = ["e2e", "tmp"]
+
+# exclude files
+exclude_file = ["*_test.go"]
+
+[log]
+# Air log settings
+level = "debug"

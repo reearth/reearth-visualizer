@@ -97,7 +97,7 @@ func (g *GroupList) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 }
 
 func (g *GroupList) IsEmpty() bool {
-	return g != nil && (g.groups == nil || len(g.groups) == 0)
+	return g != nil && (len(g.groups) == 0)
 }
 
 func (g *GroupList) Prune() (res bool) {
