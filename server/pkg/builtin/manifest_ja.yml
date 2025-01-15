@@ -1437,10 +1437,13 @@ extensions:
             title: APIトークン
             description: Google Maps APIキー
       appearance:
-        title: テーマ
-        choices:
-          light: 明るい
-          dark: 暗い
+        title: 外観
+        fields:
+          theme:
+            title: テーマ
+            choices:
+              light: 明るい
+              dark: 暗い
       languageSetting:
         title: 言語設定
         fields:
