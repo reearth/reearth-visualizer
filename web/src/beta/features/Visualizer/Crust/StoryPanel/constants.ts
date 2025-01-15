@@ -3,7 +3,7 @@ import { Spacing } from "@reearth/core";
 // Story Panel
 export const STORY_PANEL_WIDTH = 442;
 export const STORY_PANEL_CONTENT_ELEMENT_ID = "story-page-content";
-export const DEFULT_STORY_PAGE_GAP = 320
+
 // Story Page
 export const DEFAULT_STORY_PAGE_DURATION = 2;
 export const DEFAULT_STORY_PAGE_GAP = 20;
