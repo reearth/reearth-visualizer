@@ -1439,23 +1439,17 @@ extensions:
       appearance:
         title: テーマ
         choices:
-          - key: light
-            label: 明るい
-          - key: dark
-            label: 暗い
+          light: 明るい
+          dark: 暗い
       languageSetting:
         title: 言語設定
         fields:
           language:
             title: 言語
             choices:
-              - key: 自動
-                label: Auto
-              - key: en
-                label: 英語
-              - key: ja
-                label: 日本語
-              - key: cn
-                label: 中国語
+              auto: 自動
+              en: 英語
+              ja: 日本語
+              cn: 中国語
 
   
