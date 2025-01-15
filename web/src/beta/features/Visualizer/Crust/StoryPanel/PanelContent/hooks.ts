@@ -58,7 +58,7 @@ export default ({
     const pageWrapperElement = document.getElementById(
       STORY_PANEL_CONTENT_ELEMENT_ID
     );
-    if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 90); // 90px is the height of the page title block
+    if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
   }, [setPageGap]);
 
   useEffect(() => {

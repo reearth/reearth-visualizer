@@ -17,6 +17,7 @@ import { MapRef } from "../../Crust/types";
 
 import {
   DEFAULT_STORY_PAGE_DURATION,
+  DEFULT_STORY_PAGE_GAP,
   STORY_PANEL_CONTENT_ELEMENT_ID
 } from "./constants";
 import { formatISO8601 } from "./utils";
@@ -148,7 +149,10 @@ export default (
         const element = document.getElementById(`story-page-${newPage.id}`);
         if (container && element) {
           isAutoScrolling.current = true;
-          container.scrollTo({ top: element?.offsetTop, behavior: "smooth" });
+            const adjustedOffset = disableSelection
+              ? element.offsetTop - DEFULT_STORY_PAGE_GAP
+              : element.offsetTop;
+          container.scrollTo({ top: adjustedOffset, behavior: "smooth" });
         }
       }
 
