@@ -1,14 +1,10 @@
 import { useEditModeContext } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import {
   useCallback,
-  useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
-  useState
 } from "react";
 
-import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export type { StoryPage } from "../hooks";
 export { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
@@ -31,8 +27,6 @@ export default ({
   const editModeContext = useEditModeContext();
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const [pageGap, setPageGap] = useState<number>();
-
   const disableSelection = useMemo(
     () => editModeContext?.disableSelection,
     [editModeContext?.disableSelection]
@@ -54,26 +48,7 @@ export default ({
     [onBlockDelete]
   );
 
-  useLayoutEffect(() => {
-    const pageWrapperElement = document.getElementById(
-      STORY_PANEL_CONTENT_ELEMENT_ID
-    );
-    if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 90); // 90px is the height of the page title block
-  }, [setPageGap]);
-
-  useEffect(() => {
-    const resizeCallback = () => {
-      const pageWrapperElement = document.getElementById(
-        STORY_PANEL_CONTENT_ELEMENT_ID
-      );
-      if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
-    };
-    window.addEventListener("resize", resizeCallback);
-    return () => window.removeEventListener("resize", resizeCallback);
-  }, []);
-
   return {
-    pageGap,
     scrollTimeoutRef,
     disableSelection,
     handleBlockCreate,
