@@ -1448,14 +1448,14 @@ extensions:
         fields:
           language:
             title: 言語
-              choices:
-                - key: 自動
-                  label: Auto
-                - key: en
-                  label: 英語
-                - key: ja
-                  label: 日本語
-                - key: cn
-                  label: 中国語
+            choices:
+              - key: 自動
+                label: Auto
+              - key: en
+                label: 英語
+              - key: ja
+                label: 日本語
+              - key: cn
+                label: 中国語
 
   
