@@ -84,14 +84,13 @@ export default () => {
         children: (
           <Viewer
             layers={layers}
-            infoboxBlocks={infoboxBlocks}
             widgets={widgets}
             visualizerRef={visualizerRef}
           />
         )
       }
     ],
-    [infoboxBlocks, layers, widgets]
+    [layers, widgets]
   );
 
   const LayersPanel: FC = () => (
