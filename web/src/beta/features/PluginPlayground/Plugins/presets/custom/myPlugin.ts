@@ -23,6 +23,9 @@ extensions:
   - id: demo-infobox-block-2
     type: infoboxBlock
     name: Demo Infobox Block 2
+  - id: demo-story-block
+    type: storyBlock
+    name: Demo Story Block
   `,
   disableEdit: true,
   disableDelete: true
@@ -61,8 +64,25 @@ const demoInfoboxBlock2File: FileType = {
 \`); `
 };
 
+const demoStoryFile: FileType = {
+  id: "custom-my-plugin-demo-story",
+  title: "demo-story.js",
+  sourceCode: `reearth.ui.show(\`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div id="wrapper">
+    <h2 style="text-align: center;">Demo Story</h2>
+  </div>  
+\`); `
+};
+
 export const myPlugin: PluginType = {
   id: "my-plugin",
   title: "My Plugin",
-  files: [widgetFile, demoInfoboxBlock1File, demoInfoboxBlock2File, yamlFile]
+  files: [
+    widgetFile,
+    demoInfoboxBlock1File,
+    demoInfoboxBlock2File,
+    demoStoryFile,
+    yamlFile
+  ]
 };

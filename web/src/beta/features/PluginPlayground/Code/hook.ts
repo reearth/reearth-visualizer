@@ -3,7 +3,9 @@ import { useNotification } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { ComponentProps, useCallback, useState } from "react";
 
+import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 import { FileType } from "../Plugins/constants";
 
 type Widgets = ComponentProps<typeof Visualizer>["widgets"];
@@ -37,6 +39,8 @@ type CustomInfoboxBlock = {
   pluginId: string;
 };
 
+type CustomStoryBlock = CustomInfoboxBlock;
+
 type Props = {
   files: FileType[];
 };
@@ -60,6 +64,7 @@ const getYmlJson = (file: FileType) => {
 
 export default ({ files }: Props) => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
+  const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
 
@@ -158,11 +163,48 @@ export default ({ files }: Props) => {
     }, []);
 
     setInfoboxBlocks(infoboBlockFromExtension);
+
+    const storyBlocksFromExtension = ymlJson.extensions.reduce<
+      CustomStoryBlock[]
+    >((prv, cur) => {
+      if (cur.type !== "storyBlock") return prv;
+
+      const file = files.find((file) => file.title === `${cur.id}.js`);
+
+      if (!file) {
+        return prv;
+      }
+
+      prv.push({
+        id: cur.id,
+        name: cur.name,
+        description: cur.description,
+        __REEARTH_SOURCECODE: file.sourceCode,
+        extensionId: cur.id,
+        pluginId: cur.id
+      });
+      return prv;
+    }, []);
+
+    setStory({
+      id: "story",
+      title: "First Story",
+      position: "left",
+      bgColor: "#f0f0f0",
+      pages: [
+        {
+          id: "page",
+          blocks: storyBlocksFromExtension,
+          layerIds: DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
+        }
+      ]
+    });
   }, [files, setNotification]);
 
   return {
     executeCode,
     infoboxBlocks,
+    story,
     widgets
   };
 };
