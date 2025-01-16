@@ -66,7 +66,7 @@ const demoInfoboxBlock2File: FileType = {
 
 const demoStoryFile: FileType = {
   id: "custom-my-plugin-demo-story",
-  title: "demo-story.js",
+  title: "demo-story-block.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div id="wrapper">
