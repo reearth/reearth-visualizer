@@ -1,5 +1,5 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { Layer, MapRef } from "@reearth/core";
+import { MapRef } from "@reearth/core";
 import { FC, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
@@ -8,6 +8,7 @@ import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
+import SettingsList from "./SettingsList";
 import Viewer from "./Viewer";
 
 export default () => {
@@ -29,19 +30,45 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { widgets, executeCode } = useCode({
+  const { infoboxBlocks, widgets, executeCode } = useCode({
     files: selectedPlugin.files
   });
 
-  const [layers, setLayers] = useState<Layer[]>(
-    DEFAULT_LAYERS_PLUGIN_PLAYGROUND
+  const [selectedLayerId, setSelectedLayerId] = useState("");
+  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
   );
+  const [infoboxEnabled, setInfoboxEnabled] = useState(true);
 
-  const handleLayerVisibilityUpdate = (layerId: string, visible: boolean) => {
-    setLayers((prev) =>
-      prev.map((layer) =>
-        layer.id === layerId ? { ...layer, visible } : layer
-      )
+  const layers = useMemo(() => {
+    return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {
+      return {
+        ...layer,
+        ...(infoboxEnabled
+          ? {
+              infobox: {
+                id: layer.id,
+                blocks: infoboxBlocks,
+                property: {
+                  default: {
+                    enabled: {
+                      value: true
+                    }
+                  }
+                }
+              }
+            }
+          : {}),
+        visible: visibleLayerIds.includes(layer.id)
+      };
+    });
+  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks]);
+
+  const handleLayerVisibilityUpdate = (layerId: string) => {
+    setVisibleLayerIds((prev) =>
+      prev.includes(layerId)
+        ? prev.filter((id) => id !== layerId)
+        : [...prev, layerId]
     );
   };
 
@@ -68,6 +95,8 @@ export default () => {
     <LayerList
       handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
       layers={layers}
+      selectedLayerId={selectedLayerId}
+      setSelectedLayerId={setSelectedLayerId}
       visualizerRef={visualizerRef}
     />
   );
@@ -134,10 +163,18 @@ export default () => {
     [selectedFile, executeCode, updateFileSourceCode]
   );
 
+  const SettingsPanel: FC = () => (
+    <SettingsList
+      infoboxEnabled={infoboxEnabled}
+      setInfoboxEnabled={setInfoboxEnabled}
+    />
+  );
+
   return {
-    MainAreaTabs,
     LayersPanel,
-    SubRightAreaTabs,
-    RightAreaTabs
+    MainAreaTabs,
+    RightAreaTabs,
+    SettingsPanel,
+    SubRightAreaTabs
   };
 };
