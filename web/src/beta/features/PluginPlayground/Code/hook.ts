@@ -3,6 +3,7 @@ import { useNotification } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { ComponentProps, useCallback, useState } from "react";
 
+import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
 import { FileType } from "../Plugins/constants";
 
@@ -37,6 +38,8 @@ type CustomInfoboxBlock = {
   pluginId: string;
 };
 
+type CustomStoryBlock = CustomInfoboxBlock;
+
 type Props = {
   files: FileType[];
 };
@@ -60,6 +63,7 @@ const getYmlJson = (file: FileType) => {
 
 export default ({ files }: Props) => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
+  const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
 
@@ -158,11 +162,50 @@ export default ({ files }: Props) => {
     }, []);
 
     setInfoboxBlocks(infoboBlockFromExtension);
+
+    const storyBlocksFromExtension = ymlJson.extensions.reduce<
+      CustomStoryBlock[]
+    >((prv, cur) => {
+      if (cur.type !== "storyBlock") return prv;
+
+      const file = files.find((file) => file.title === `${cur.id}.js`);
+
+      if (!file) {
+        return prv;
+      }
+
+      return [
+        ...prv,
+        {
+          id: cur.id,
+          name: cur.name,
+          description: cur.description,
+          __REEARTH_SOURCECODE: file.sourceCode,
+          extensionId: cur.id,
+          pluginId: cur.id,
+          extensionType: "storyBlock"
+        }
+      ];
+    }, []);
+
+    setStory({
+      id: "story",
+      title: "First Story",
+      position: "left",
+      bgColor: "#f0f0f0",
+      pages: [
+        {
+          id: "page",
+          blocks: storyBlocksFromExtension
+        }
+      ]
+    });
   }, [files, setNotification]);
 
   return {
     executeCode,
     infoboxBlocks,
+    story,
     widgets
   };
 };
