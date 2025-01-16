@@ -23,9 +23,9 @@ extensions:
   - id: demo-infobox-block-2
     type: infoboxBlock
     name: Demo Infobox Block 2
-  - id: demo-story
+  - id: demo-story-block
     type: storyBlock
-    name: Demo Story
+    name: Demo Story Block
   `,
   disableEdit: true,
   disableDelete: true

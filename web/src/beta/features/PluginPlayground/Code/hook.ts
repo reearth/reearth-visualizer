@@ -5,6 +5,7 @@ import { ComponentProps, useCallback, useState } from "react";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 import { FileType } from "../Plugins/constants";
 
 type Widgets = ComponentProps<typeof Visualizer>["widgets"];
@@ -193,7 +194,8 @@ export default ({ files }: Props) => {
       pages: [
         {
           id: "page",
-          blocks: storyBlocksFromExtension
+          blocks: storyBlocksFromExtension,
+          layerIds: DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
         }
       ]
     });
