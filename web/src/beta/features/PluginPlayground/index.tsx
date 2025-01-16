@@ -5,8 +5,13 @@ import { FC } from "react";
 import useHooks from "./hooks";
 
 const PluginPlayground: FC = () => {
-  const { MainAreaTabs, LayersPanel, SubRightAreaTabs, RightAreaTabs } =
-    useHooks();
+  const {
+    LayersPanel,
+    MainAreaTabs,
+    RightAreaTabs,
+    SettingsPanel,
+    SubRightAreaTabs
+  } = useHooks();
 
   return (
     <Window>
@@ -22,6 +27,9 @@ const PluginPlayground: FC = () => {
           >
             <Panel noPadding alwaysOpen extend title="Layers">
               <LayersPanel />
+            </Panel>
+            <Panel noPadding alwaysOpen extend title="Settings">
+              <SettingsPanel />
             </Panel>
           </Area>
         </Area>
