@@ -233,7 +233,6 @@ func TestGeoJSONDecoder_Decode(t *testing.T) {
 	assert.Equal(t, plist3, f3.Value().Value())
 	assert.Equal(t, 2.0, strokeWidth3.Value().Value())
 }
-
 func TestValidateGeoJSONFeatureCollection(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -306,6 +305,82 @@ func TestValidateGeoJSONFeatureCollection(t *testing.T) {
 					"features": [
 						{
 							"type": "Feature",
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: true,
+		},
+		{
+			name: "Invalid MultiPoint coordinates",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "MultiPoint",
+								"coordinates": [[100.0, 0.0], [200.0]]
+							},
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: true,
+		},
+		{
+			name: "Invalid LineString coordinates",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "LineString",
+								"coordinates": [[100.0, 0.0]]
+							},
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: true,
+		},
+		{
+			name: "Polygon with invalid ring",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "Polygon",
+								"coordinates": [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+							},
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: false,
+		},
+		{
+			name: "Unsupported Geometry type",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "UnsupportedType",
+								"coordinates": [100.0, 0.0]
+							},
 							"properties": {}
 						}
 					]
