@@ -27,6 +27,16 @@ export const handleCameraDegreeToRadian = (camera: Camera) => ({
   fov: camera?.fov
 });
 
+const defaultCamera: Camera = {
+  lat: 0,
+  lng: 0,
+  height: 0,
+  heading: 0,
+  pitch: 0,
+  roll: 0,
+  fov: 1
+};
+
 export default ({
   camera,
   onFlyTo,
@@ -38,8 +48,8 @@ export default ({
   onSave: (value?: Camera) => void;
   onClose?: () => void;
 }) => {
-  const [newCamera, setNewCamera] = useState<Camera | undefined>(
-    camera ? handleCameraeRadianToDegree(camera) : undefined
+  const [newCamera, setNewCamera] = useState<Camera>(
+    camera ? handleCameraeRadianToDegree(camera) : defaultCamera
   );
 
   useEffect(() => {
@@ -61,7 +71,7 @@ export default ({
   );
 
   const handleFieldChange = useCallback((key: keyof Camera, value?: number) => {
-    setNewCamera((prev) => (prev ? { ...prev, [key]: value } : undefined));
+    setNewCamera((prev) => (prev ? { ...prev, [key]: value } : defaultCamera));
   }, []);
 
   const handleSave = useCallback(() => {
