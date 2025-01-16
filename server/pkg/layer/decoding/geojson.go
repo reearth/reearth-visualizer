@@ -250,23 +250,46 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 }
 
 func ValidateGeoJSONFeatureCollection(data []byte) error {
-	fc, err := geojson.UnmarshalFeatureCollection(data)
-	if err != nil {
-		return err
-	}
 
 	var validationErrors []error
 
-	if fc.BoundingBox != nil {
-		if err := validateBBox(fc.BoundingBox); err != nil {
-			validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
-		}
+	f, err := geojson.UnmarshalFeature(data)
+	if err != nil {
+		return err
 	}
+	if f.Type == "Feature" {
 
-	for _, feature := range fc.Features {
-		if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
+		if f.BoundingBox != nil {
+			if err := validateBBox(f.BoundingBox); err != nil {
+				validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
+			}
+		}
+
+		if errs := validateGeoJSONFeature(f); len(errs) > 0 {
 			validationErrors = append(validationErrors, errs...)
 		}
+
+	} else if f.Type == "FeatureCollection" {
+
+		fc, err := geojson.UnmarshalFeatureCollection(data)
+		if err != nil {
+			return err
+		}
+
+		if fc.BoundingBox != nil {
+			if err := validateBBox(fc.BoundingBox); err != nil {
+				validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
+			}
+		}
+
+		for _, feature := range fc.Features {
+			if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
+				validationErrors = append(validationErrors, errs...)
+			}
+		}
+
+	} else {
+		return errors.New("Invalid Geojson")
 	}
 
 	if len(validationErrors) > 0 {

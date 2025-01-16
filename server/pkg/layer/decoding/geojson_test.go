@@ -240,6 +240,20 @@ func TestValidateGeoJSONFeatureCollection(t *testing.T) {
 		hasError bool
 	}{
 		{
+			name: "Valid Feature",
+			data: []byte(`
+				{
+					"type": "Feature",
+					"geometry": {
+						"type": "Point",
+						"coordinates": [100.0, 0.0]
+					},
+					"properties": {}
+				}
+			`),
+			hasError: false,
+		},
+		{
 			name: "Valid FeatureCollection",
 			data: []byte(`
 				{
