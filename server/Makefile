@@ -41,6 +41,8 @@ build:
 
 AIR_BIN := $(shell which air)
 STRINGER_BIN := $(shell which stringer)
+SCHEMATYPER_BIN := $(shell which schematyper)
+DEEP_COPY_BIN := $(shell which deep-copy)
 dev-install:
 ifndef AIR_BIN
 	@echo "reflex is not installed. Installing..."
@@ -54,6 +56,18 @@ ifndef STRINGER_BIN
 else
 	@echo "Stringer is already installed."
 endif
+ifndef SCHEMATYPER_BIN
+	@echo "Schematyper is not installed. Installing..."
+	@go install github.com/idubinskiy/schematyper@v0.0.1
+else
+	@echo "Schematyper is already installed."
+endif
+ifndef DEEP_COPY_BIN
+	@echo "Deep copy is not installed. Installing..."
+	@go install github.com/globusdigital/deep-copy@v1.0.0
+else
+	@echo "Deep copy is already installed."
+endif
 
 dev: dev-install
 	air
@@ -64,7 +78,7 @@ run-app:
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 
-generate:
+generate: dev-install
 	go generate ./...
 
 mockuser:

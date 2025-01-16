@@ -15,7 +15,9 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/pkg/apperror"
+	"github.com/reearth/reearth/server/pkg/verror"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/log"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -26,7 +28,7 @@ const (
 	maxMemorySize     = 100 * 1024 * 1024       // 100MB
 )
 
-func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
+func GraphqlAPI(conf config.GraphQLConfig, i18nBundle *i18n.Bundle, dev bool) echo.HandlerFunc {
 
 	schema := gql.NewExecutableSchema(gql.Config{
 		Resolvers: gql.NewResolver(),
@@ -60,7 +62,7 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	srv.Use(otelgqlgen.Middleware())
 
 	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
-		return customErrorPresenter(ctx, e, dev)
+		return customErrorPresenter(ctx, e, i18nBundle, dev)
 	})
 
 	// only enable middlewares in dev mode
@@ -82,26 +84,26 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 }
 
 // customErrorPresenter handles custom GraphQL error presentation.
-func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
+func customErrorPresenter(ctx context.Context, e error, i18nBundle *i18n.Bundle, devMode bool) *gqlerror.Error {
 	var graphqlErr *gqlerror.Error
-	var appErr *apperror.AppError
+	var vError *verror.VError
 	lang := adapter.Lang(ctx, nil)
 
 	// Handle application-specific errors
 	systemError := ""
-	if errors.As(e, &appErr) {
-		localesErr, ok := appErr.LocalesError[lang]
-		if ok {
+	if errors.As(e, &vError) {
+		if vError.VErr != nil {
+			localizedErr := vError.VErr.LocalizeError(i18n.NewLocalizer(i18nBundle, lang))
 			graphqlErr = &gqlerror.Error{
-				Err:     appErr.SystemError,
-				Message: localesErr.Message,
+				Err:     vError,
+				Message: localizedErr.Error(),
 				Extensions: map[string]interface{}{
-					"code":        localesErr.Code,
-					"description": localesErr.Description,
+					"code":    vError.Code,
+					"message": localizedErr.Error(),
 				},
 			}
-			if graphqlErr.Err != nil {
-				systemError = graphqlErr.Err.Error()
+			if vError.VErr.Unwrap() != nil {
+				systemError = vError.VErr.Unwrap().Error()
 			}
 		}
 	}
@@ -127,6 +129,12 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 
 		graphqlErr.Extensions["system_error"] = systemError
 	}
+
+	if systemError != "" {
+		log.Errorfc(ctx, "system error: %+v", e)
+	}
+
+	log.Warnfc(ctx, "graphqlErr: %+v", graphqlErr)
 
 	return graphqlErr
 }

@@ -54,7 +54,7 @@ func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Proje
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, repo.ResourceNotFound
+			return nil, repo.ErrResourceNotFound
 		}
 		return nil, err
 	}

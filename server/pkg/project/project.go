@@ -5,13 +5,13 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/locales"
-	"github.com/reearth/reearth/server/pkg/apperror"
+	"github.com/reearth/reearth/server/pkg/locales"
+	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 var (
-	ErrInvalidAlias = apperror.NewAppError(locales.ErrKeyPkgProjectInvalidAlias, nil)
+	ErrInvalidAlias = verror.NewVError(string(locales.ErrKeyPkgProjectInvalidAlias), nil)
 	aliasRegexp     = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
