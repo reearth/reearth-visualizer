@@ -28,6 +28,15 @@ type ReearthYML = {
   }[];
 };
 
+type CustomInfoboxBlock = {
+  id: string;
+  name: string;
+  description: string;
+  __REEARTH_SOURCECODE: string;
+  extensionId: string;
+  pluginId: string;
+};
+
 type Props = {
   files: FileType[];
 };
@@ -50,71 +59,12 @@ const getYmlJson = (file: FileType) => {
 };
 
 export default ({ files }: Props) => {
+  const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
-  const [fileOutputs, setFileOutputs] = useState<
-    {
-      title: string;
-      output: string;
-    }[]
-  >();
 
   const executeCode = useCallback(() => {
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
-
-    const jsFiles = files.filter((file) => file.title.endsWith(".js"));
-
-    const outputs = jsFiles.map((file) => {
-      try {
-        const fn = new Function(
-          `"use strict";
-          const reearth = {
-            ui: {
-              show: function () {}
-            },
-            popup: {
-              show: function () {}
-            },
-            modal: {
-              show: function () {}
-            }
-          };
-        
-          let capturedConsole = [];
-        
-          console.log = (message) => {
-            capturedConsole.push(message);
-          };
-        
-          console.error = (message) => {
-            capturedConsole.push(message);
-          };
-        
-          ${file.sourceCode};
-          
-          return capturedConsole.join("\\n");
-          `
-        );
-
-        return {
-          title: file.title,
-          output: fn()
-        };
-      } catch (error) {
-        if (error instanceof Error) {
-          return {
-            title: file.title,
-            output: error.message
-          };
-        }
-        return {
-          title: file.title,
-          output: "Failed to execute"
-        };
-      }
-    });
-
-    setFileOutputs(outputs);
 
     if (!ymlFile) return;
 
@@ -182,11 +132,37 @@ export default ({ files }: Props) => {
       }
     );
     setWidgets(widgets);
+
+    const infoboBlockFromExtension = ymlJson.extensions.reduce<
+      CustomInfoboxBlock[]
+    >((prv, cur) => {
+      if (cur.type !== "infoboxBlock") return prv;
+
+      const file = files.find((file) => file.title === `${cur.id}.js`);
+
+      if (!file) {
+        return prv;
+      }
+
+      return [
+        ...prv,
+        {
+          id: cur.id,
+          name: cur.name,
+          description: cur.description,
+          __REEARTH_SOURCECODE: file.sourceCode,
+          extensionId: cur.id,
+          pluginId: cur.id
+        }
+      ];
+    }, []);
+
+    setInfoboxBlocks(infoboBlockFromExtension);
   }, [files, setNotification]);
 
   return {
     executeCode,
-    widgets,
-    fileOutputs
+    infoboxBlocks,
+    widgets
   };
 };

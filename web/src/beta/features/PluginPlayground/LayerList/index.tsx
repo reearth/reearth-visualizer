@@ -1,18 +1,22 @@
 import { Layer, MapRef } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
-import { FC, MutableRefObject, useCallback, useState } from "react";
+import { FC, MutableRefObject, useCallback } from "react";
 
 import LayerItem from "./LayerItem";
 
 type Props = {
   handleLayerVisibilityUpdate: (layerId: string, visible: boolean) => void;
   layers: Layer[];
+  selectedLayerId: string;
+  setSelectedLayerId: (layerId: string) => void;
   visualizerRef: MutableRefObject<MapRef | null>;
 };
 
 const LayerList: FC<Props> = ({
   handleLayerVisibilityUpdate,
   layers,
+  selectedLayerId,
+  setSelectedLayerId,
   visualizerRef
 }) => {
   const handleFlyTo = useCallback(
@@ -21,8 +25,6 @@ const LayerList: FC<Props> = ({
     },
     [visualizerRef]
   );
-
-  const [selectedLayerId, setSelectedLayerId] = useState("");
 
   return (
     <Wrapper>
