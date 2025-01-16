@@ -1,6 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { MapRef } from "@reearth/core";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
@@ -35,7 +35,9 @@ export default () => {
   });
 
   const [selectedLayerId, setSelectedLayerId] = useState("");
-  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(["1", "2"]); // Note: the layerIds in web/src/beta/features/PluginPlayground/LayerList/constants.ts
+  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
+  );
   const [infoboxEnabled, setInfoboxEnabled] = useState(true);
 
   const layers = useMemo(() => {
@@ -61,10 +63,6 @@ export default () => {
       };
     });
   }, [infoboxEnabled, visibleLayerIds, infoboxBlocks]);
-
-  useEffect(() => {
-    executeCode();
-  }, [infoboxEnabled, executeCode]);
 
   const handleLayerVisibilityUpdate = (layerId: string) => {
     setVisibleLayerIds((prev) =>

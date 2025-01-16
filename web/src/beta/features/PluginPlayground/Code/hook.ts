@@ -59,7 +59,7 @@ const getYmlJson = (file: FileType) => {
 };
 
 export default ({ files }: Props) => {
-  const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>(); // need to change this type definition. Can also define a new type if none is found
+  const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
 

@@ -20,7 +20,7 @@ const Viewer: FC<Props> = ({ layers, widgets, visualizerRef }) => {
       visualizerRef={visualizerRef}
       viewerProperty={viewerProperty}
       ready={ready}
-      layers={layers} // should add infobox in layers
+      layers={layers}
       engineMeta={engineMeta}
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}
