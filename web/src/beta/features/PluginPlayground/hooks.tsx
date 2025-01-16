@@ -30,15 +30,16 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { infoboxBlocks, widgets, executeCode } = useCode({
+  const { executeCode, infoboxBlocks, story, widgets } = useCode({
     files: selectedPlugin.files
   });
 
+  const [infoboxEnabled, setInfoboxEnabled] = useState(true);
   const [selectedLayerId, setSelectedLayerId] = useState("");
+  const [showStoryPanel, setShowStoryPanel] = useState(false);
   const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
     DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
   );
-  const [infoboxEnabled, setInfoboxEnabled] = useState(true);
 
   const layers = useMemo(() => {
     return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {
@@ -82,13 +83,15 @@ export default () => {
         children: (
           <Viewer
             layers={layers}
-            widgets={widgets}
+            story={story}
+            showStoryPanel={showStoryPanel}
             visualizerRef={visualizerRef}
+            widgets={widgets}
           />
         )
       }
     ],
-    [layers, widgets]
+    [layers, showStoryPanel, story, widgets]
   );
 
   const LayersPanel: FC = () => (
@@ -167,6 +170,8 @@ export default () => {
     <SettingsList
       infoboxEnabled={infoboxEnabled}
       setInfoboxEnabled={setInfoboxEnabled}
+      setShowStoryPanel={setShowStoryPanel}
+      showStoryPanel={showStoryPanel}
     />
   );
 

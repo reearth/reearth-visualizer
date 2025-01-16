@@ -5,8 +5,15 @@ import { FC } from "react";
 type Props = {
   infoboxEnabled: boolean;
   setInfoboxEnabled: (infoBoxEnabled: boolean) => void;
+  setShowStoryPanel: (showStoryPanel: boolean) => void;
+  showStoryPanel: boolean;
 };
-const SettingsList: FC<Props> = ({ infoboxEnabled, setInfoboxEnabled }) => {
+const SettingsList: FC<Props> = ({
+  infoboxEnabled,
+  setInfoboxEnabled,
+  setShowStoryPanel,
+  showStoryPanel
+}) => {
   return (
     <Wrapper>
       <Row>
@@ -18,12 +25,15 @@ const SettingsList: FC<Props> = ({ infoboxEnabled, setInfoboxEnabled }) => {
           Enable Infobox
         </Typography>
       </Row>
-      {/* <Row>
-        <CheckBox />
+      <Row>
+        <CheckBox
+          value={showStoryPanel}
+          onChange={() => setShowStoryPanel(!showStoryPanel)}
+        />
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
           Enable Story Panel
         </Typography>
-      </Row> */}
+      </Row>
     </Wrapper>
   );
 };
