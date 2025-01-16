@@ -37,7 +37,9 @@ export default () => {
   const [infoboxEnabled, setInfoboxEnabled] = useState(true);
   const [selectedLayerId, setSelectedLayerId] = useState("");
   const [showStoryPanel, setShowStoryPanel] = useState(false);
-  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(["1", "2"]); // Note: the layerIds in web/src/beta/features/PluginPlayground/LayerList/constants.ts
+  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
+  );
 
   const layers = useMemo(() => {
     return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {

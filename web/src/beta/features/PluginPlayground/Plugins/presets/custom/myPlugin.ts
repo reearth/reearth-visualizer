@@ -22,7 +22,7 @@ extensions:
     name: Demo Infobox Block 1
   - id: demo-infobox-block-2
     type: infoboxBlock
-    name: Demo Second Infobox
+    name: Demo Infobox Block 2
   - id: demo-story
     type: storyBlock
     name: Demo Story
