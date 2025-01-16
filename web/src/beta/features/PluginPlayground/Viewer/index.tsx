@@ -2,15 +2,25 @@ import Visualizer from "@reearth/beta/features/Visualizer";
 import { Layer, MapRef } from "@reearth/core";
 import { ComponentProps, FC, MutableRefObject } from "react";
 
+import { Story } from "../../Visualizer/Crust/StoryPanel";
+
 import useHooks from "./hooks";
 
 type Props = {
   layers: Layer[];
-  widgets: ComponentProps<typeof Visualizer>["widgets"];
+  showStoryPanel: boolean;
+  story: Story | undefined;
   visualizerRef: MutableRefObject<MapRef | null>;
+  widgets: ComponentProps<typeof Visualizer>["widgets"];
 };
 
-const Viewer: FC<Props> = ({ layers, widgets, visualizerRef }) => {
+const Viewer: FC<Props> = ({
+  layers,
+  showStoryPanel,
+  story,
+  visualizerRef,
+  widgets
+}) => {
   const { currentCamera, engineMeta, ready, setCurrentCamera, viewerProperty } =
     useHooks({ visualizerRef });
 
@@ -25,6 +35,8 @@ const Viewer: FC<Props> = ({ layers, widgets, visualizerRef }) => {
       currentCamera={currentCamera}
       onCameraChange={setCurrentCamera}
       widgets={widgets}
+      story={story}
+      showStoryPanel={showStoryPanel}
     />
   );
 };
