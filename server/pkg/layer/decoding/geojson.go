@@ -389,7 +389,7 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 			}
 		}
 	default:
-		validationErrors = append(validationErrors, errors.New(fmt.Sprintf("Unsupported Geometry type: %s", feature.Geometry.Type)))
+		validationErrors = append(validationErrors, fmt.Errorf("Unsupported Geometry type: %s", feature.Geometry.Type))
 	}
 
 	return validationErrors
