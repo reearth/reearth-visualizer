@@ -29,9 +29,9 @@ type Config struct {
 	Host_Web         string            `pp:",omitempty"`
 	Dev              bool              `pp:",omitempty"`
 	DB               string            `default:"mongodb://localhost"`
-	DB_Account       string            `pp:",omitempty"`
+	DB_Account       string            `default:"reearth_account" pp:",omitempty"`
 	DB_Users         []appx.NamedURI   `pp:",omitempty"`
-	DB_Vis           string            `pp:",omitempty"`
+	DB_Vis           string            `default:"reearth" pp:",omitempty"`
 	GraphQL          GraphQLConfig     `pp:",omitempty"`
 	Published        PublishedConfig   `pp:",omitempty"`
 	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
