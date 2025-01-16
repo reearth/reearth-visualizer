@@ -1,9 +1,9 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-geojson-reearth-yml", 
+  id: "layers-add-geojson-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layers-add-geojson
+  sourceCode: `id: layers-add-geojson-plugin
 name: Add GeoJSON
 version: 1.0.0
 extensions:
@@ -26,10 +26,9 @@ const widgetFile: FileType = {
   title: "layers-add-geojson.js",
   sourceCode: `// Example of adding a layer with GeoJSON data
 
-// Difine the GeoJSON  with inline
+// Define the GeoJSON inline
 const layerGeojsonInline = { 
-  id: "features001", // A unique identifier for the layer
-  type: "simple", // Must be written
+  type: "simple", // Required
   data: {
     type: "geojson", // Write the data format
     value: {
@@ -82,16 +81,21 @@ const layerGeojsonInline = {
 
 // Difine the GeoJSON with URL
 const layerGeojsonFromUrl = {
-  id: "features002",
   type: "simple",
   data: {
     type: "geojson",
     // URL of GeoJSON file
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_polygon_polyline_marker.geojson",
   },
-  polygon: {},
-  polyline: {},
-  marker: {},
+  polygon: {
+    fillColor: 'red'
+  },
+  polyline: {
+    strokeColor: 'red'
+  },
+  marker: {
+    imageColor: 'red'
+  },
 };
 
 // Add the inline GeoJSON layer to Re:Earth
