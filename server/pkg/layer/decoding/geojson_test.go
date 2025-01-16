@@ -233,3 +233,96 @@ func TestGeoJSONDecoder_Decode(t *testing.T) {
 	assert.Equal(t, plist3, f3.Value().Value())
 	assert.Equal(t, 2.0, strokeWidth3.Value().Value())
 }
+
+func TestValidateGeoJSONFeatureCollection(t *testing.T) {
+	tests := []struct {
+		name     string
+		data     []byte
+		hasError bool
+	}{
+		{
+			name: "Valid FeatureCollection",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "Point",
+								"coordinates": [100.0, 0.0]
+							},
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: false,
+		},
+		{
+			name: "Invalid Point coordinates",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "Point",
+								"coordinates": [100.0]
+							},
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: true,
+		},
+		{
+			name: "Invalid BBox",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"bbox": [100.0, 0.0, 101.0, 1.0],
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {
+								"type": "Point",
+								"coordinates": [100.0, 0.0]
+							},
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: false,
+		},
+		{
+			name: "Missing Geometry",
+			data: []byte(`
+				{
+					"type": "FeatureCollection",
+					"features": [
+						{
+							"type": "Feature",
+							"properties": {}
+						}
+					]
+				}
+			`),
+			hasError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateGeoJSONFeatureCollection(tt.data)
+			if tt.hasError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}

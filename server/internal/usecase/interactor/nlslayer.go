@@ -1,18 +1,24 @@
 package interactor
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"io"
+
 	"net/url"
+	"path"
 	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/layer/decoding"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -36,11 +42,12 @@ type NLSLayer struct {
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	policyRepo    repo.Policy
+	file          gateway.File
 	workspaceRepo accountrepo.Workspace
 	transaction   usecasex.Transaction
 }
 
-func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
+func NewNLSLayer(r *repo.Container, gr *gateway.Container) interfaces.NLSLayer {
 	return &NLSLayer{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		nlslayerRepo:    r.NLSLayer,
@@ -50,6 +57,7 @@ func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
 		propertyRepo:    r.Property,
 		pluginRepo:      r.Plugin,
 		policyRepo:      r.Policy,
+		file:            gr.File,
 		workspaceRepo:   r.Workspace,
 		transaction:     r.Transaction,
 	}
@@ -121,6 +129,29 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		}
 		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
 			return nil, err
+		}
+	}
+
+	if data, ok := (*inp.Config)["data"].(map[string]interface{}); ok {
+		if type_, ok := data["type"].(string); ok && type_ == "geojson" {
+			if url, ok := data["url"].(string); ok {
+				fileData, err := i.file.ReadAsset(ctx, path.Base(url))
+				if err != nil {
+					return nil, err
+				}
+				defer func() {
+					if err2 := fileData.Close(); err2 != nil && err == nil {
+						err = err2
+					}
+				}()
+				var buf bytes.Buffer
+				if _, err := io.Copy(&buf, fileData); err != nil {
+					return nil, err
+				}
+				if err := decoding.ValidateGeoJSONFeatureCollection(buf.Bytes()); err != nil {
+					return nil, err
+				}
+			}
 		}
 	}
 
