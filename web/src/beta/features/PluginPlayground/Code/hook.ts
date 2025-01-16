@@ -174,18 +174,15 @@ export default ({ files }: Props) => {
         return prv;
       }
 
-      return [
-        ...prv,
-        {
-          id: cur.id,
-          name: cur.name,
-          description: cur.description,
-          __REEARTH_SOURCECODE: file.sourceCode,
-          extensionId: cur.id,
-          pluginId: cur.id,
-          extensionType: "storyBlock"
-        }
-      ];
+      prv.push({
+        id: cur.id,
+        name: cur.name,
+        description: cur.description,
+        __REEARTH_SOURCECODE: file.sourceCode,
+        extensionId: cur.id,
+        pluginId: cur.id
+      });
+      return prv;
     }, []);
 
     setStory({
