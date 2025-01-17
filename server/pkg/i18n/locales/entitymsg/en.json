@@ -1,0 +1,9 @@
+{
+  "pkg": {
+    "project": {
+      "alias": {
+        "allowed_chars": "alphanumeric, underscore, hyphen"
+      }      
+    }
+  }
+}

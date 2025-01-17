@@ -1,50 +1,108 @@
 package verror_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/locales"
+	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"github.com/reearth/reearth/server/pkg/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/pkg/verror"
-	"github.com/reearth/reearthx/i18n"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
 func TestNewVError(t *testing.T) {
-	tests := []struct {
-		name     string
-		lang     language.Tag
-		expected string
-	}{
-		{
-			name: "English localization",
-			lang: language.English,
-			// Use a constant from locales package instead of hardcoding
-			expected: "The alias must be 5-32 characters long and can only contain alphanumeric characters, underscores, and hyphens.",
-		},
-		{
-			name:     "Japanese localization",
-			lang:     language.Japanese,
-			expected: "エイリアスは5-32文字で、英数字、アンダースコア、ハイフンのみ使用できます。",
+	errmsg.ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
+		errmsg.ErrKeyPkgProjectInvalidAlias: {
+			language.English: {
+				Message:     "Invalid alias name: {{.aliasName}}",
+				Description: "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long.",
+			},
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i18nBundle := i18n.NewBundle(tt.lang)
-			locales.AddErrorMessages(i18nBundle)
-
-			key := "pkg.project.invalid_alias"
-			baseErr := errors.New("base error message")
-
-			ve := verror.NewVError(key, baseErr)
-			localizedErr := ve.VErr.LocalizeError(i18n.NewLocalizer(i18nBundle, tt.lang.String()))
-
-			assert.Equal(t, key, ve.Code, "Code should match the provided key")
-			assert.Equal(t, key, ve.Error(), "Error method should return the error code")
-			assert.Equal(t, tt.expected, localizedErr.Error(), "Localized error message should match the expected translation")
-			assert.Equal(t, baseErr, ve.VErr.Unwrap(), "Unwrapped error should match the base error")
-		})
+	templateData := map[language.Tag]map[string]interface{}{
+		language.English: {
+			"aliasName": "test_alias",
+			"minLength": 5,
+			"maxLength": 32,
+		},
 	}
+
+	err := errors.New("underlying error")
+	ve := verror.NewVError(errmsg.ErrKeyPkgProjectInvalidAlias, errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias], templateData, err)
+
+	assert.Equal(t, "invalid_alias", ve.GetErrCode())
+	assert.Equal(t, errmsg.ErrorMessages["pkg.project.invalid_alias"], ve.ErrMsg)
+	assert.Equal(t, templateData, ve.TemplateData)
+	assert.Equal(t, err, ve.Err)
+}
+
+func TestAddTemplateData(t *testing.T) {
+	ve := verror.NewVError(errmsg.ErrKeyPkgProjectInvalidAlias, errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias], nil, nil)
+
+	ve.AddTemplateData("key1", "value1")
+	ve.AddTemplateData("key2", 123)
+
+	expectedData := map[language.Tag]map[string]interface{}{
+		language.English: {
+			"key1": "value1",
+			"key2": 123,
+		},
+		language.Japanese: {
+			"key1": "value1",
+			"key2": 123,
+		},
+	}
+	assert.Equal(t, expectedData, ve.TemplateData)
+}
+
+func TestApplyTemplate(t *testing.T) {
+	templateString := "Invalid alias name: {{.aliasName}}, must be between {{.minLength}} and {{.maxLength}} characters."
+	data := map[language.Tag]map[string]interface{}{
+		language.English: {
+			"aliasName": "test_alias",
+			"minLength": 5,
+			"maxLength": 32,
+		},
+	}
+
+	ctx := context.Background()
+	result := message.ApplyTemplate(ctx, templateString, data, language.English)
+	expected := "Invalid alias name: test_alias, must be between 5 and 32 characters."
+	assert.Equal(t, expected, result)
+}
+
+func TestError(t *testing.T) {
+	en := language.English
+	errmsg.ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
+		errmsg.ErrKeyPkgProjectInvalidAlias: {
+			en: {
+				Message:     "Invalid alias name: {{.aliasName}}",
+				Description: "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long.",
+			},
+		},
+	}
+
+	templateData := map[language.Tag]map[string]interface{}{
+		en: {
+			"aliasName": "test_alias",
+			"minLength": 5,
+			"maxLength": 32,
+		},
+	}
+
+	ve := verror.NewVError(errmsg.ErrKeyPkgProjectInvalidAlias, errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias], templateData, nil)
+
+	ctx := context.Background()
+	msg := message.ApplyTemplate(ctx, ve.ErrMsg[en].Message, templateData, en)
+	assert.Equal(t, "Invalid alias name: test_alias", msg)
+}
+
+func TestUnwrap(t *testing.T) {
+	underlyingErr := errors.New("underlying error")
+	ve := verror.NewVError(errmsg.ErrKeyPkgProjectInvalidAlias, errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias], nil, underlyingErr)
+
+	assert.Equal(t, underlyingErr, ve.Unwrap())
 }

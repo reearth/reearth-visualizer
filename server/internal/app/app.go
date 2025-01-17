@@ -13,17 +13,13 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http2 "github.com/reearth/reearth/server/internal/adapter/http"
-	"github.com/reearth/reearth/server/internal/app/locales"
-	pkglocales "github.com/reearth/reearth/server/pkg/locales"
 
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
-	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
-	"golang.org/x/text/language"
 )
 
 func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
@@ -126,11 +122,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// auth srv
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
-	// load i18n messages
-	i18Bundle := i18n.NewBundle(language.English)
-	locales.AddErrorMessages(i18Bundle)
-	pkglocales.AddErrorMessages(i18Bundle)
-
 	// apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping(), privateCache)
@@ -138,7 +129,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api.GET("/published_data/:name", PublishedData("", true))
 
 	apiPrivate := api.Group("", privateCache)
-	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, i18Bundle, gqldev))
+	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
 	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
