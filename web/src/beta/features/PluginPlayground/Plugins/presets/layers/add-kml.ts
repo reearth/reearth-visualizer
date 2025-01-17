@@ -11,7 +11,6 @@ extensions:
     type: widget
     name: Add KML
     description: Add KML
-
   `,
   disableEdit: true,
   disableDelete: true
@@ -65,6 +64,7 @@ const layerKmlUrl = {
     type: "kml", 
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/kml/square.kml", // URL of KML file
   },
+  polygon: {}
 };
 
 // Add the encoded KML layer to Re:Earth
