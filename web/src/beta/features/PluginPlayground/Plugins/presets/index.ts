@@ -4,6 +4,7 @@ import { myPlugin } from "./custom/myPlugin";
 import { addGeojson } from "./layers/add-geojson";
 import { addCzml } from "./layers/add-czml";
 import { addKml } from "./layers/add-kml";
+import { addCsv } from "./layers/add-csv";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
@@ -32,7 +33,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layers",
     title: "Layers",
-    plugins: [addGeojson,addCzml,addKml,add3dTiles]
+    plugins: [addGeojson,addCzml,addKml,addCsv,add3dTiles]
     
   }
 ];
