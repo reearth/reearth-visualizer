@@ -11,11 +11,6 @@ extensions:
     type: widget
     name: Add CZML
     description: Add CZML
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: left
-        area: top
   `,
   disableEdit: true,
   disableDelete: true

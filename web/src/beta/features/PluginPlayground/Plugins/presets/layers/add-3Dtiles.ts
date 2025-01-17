@@ -11,11 +11,6 @@ extensions:
     type: widget
     name: Add 3D Tiles
     description: Add 3D Tiles
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: left
-        area: top
   `,
   disableEdit: true,
   disableDelete: true

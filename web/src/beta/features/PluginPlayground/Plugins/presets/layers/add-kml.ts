@@ -11,11 +11,6 @@ extensions:
     type: widget
     name: Add KML
     description: Add KML
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: left
-        area: top
   `,
   disableEdit: true,
   disableDelete: true

@@ -11,11 +11,6 @@ extensions:
     type: widget
     name: Add CSV
     description: Add CSV
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: left
-        area: top
   `,
   disableEdit: true,
   disableDelete: true
@@ -32,7 +27,7 @@ const layerCsv = {
   data: {
     type: "csv",
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/csv/marker.csv", // URL of CSV
-    csv: { // Define by column number or column name
+    csv: { // Define by column name
       lngColumn: "longitude",
       latColumn: "latitude",
     },
