@@ -26,13 +26,13 @@ const widgetFile: FileType = {
   title: "layers-add-csv.js",
   sourceCode: `// Example of adding a layer with CSV data
 
-// Difine CSV data
+// Define CSV data
 const layerCsv = {
   type: "simple", // Required
   data: {
     type: "csv",
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/csv/marker.csv", // URL of CSV
-    csv: { // Difine by column number or column name
+    csv: { // Define by column number or column name
       idColumn: "id", 
       lngColumn: "longitude",
       latColumn: "latitude",
