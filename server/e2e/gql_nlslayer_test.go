@@ -734,15 +734,15 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
-func addCustomProperties(
+func updateCustomProperties(
 	e *httpexpect.Expect,
 	layerId string,
 	schema map[string]any,
 ) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
-		OperationName: "AddCustomProperties",
-		Query: `mutation AddCustomProperties($input: AddCustomPropertySchemaInput!) {
-			addCustomProperties(input: $input) {
+		OperationName: "UpdateCustomProperties",
+		Query: `mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {
+			updateCustomProperties(input: $input) {
 				layer {
 					id
 					sketch {
@@ -807,7 +807,7 @@ func TestCustomProperties(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{1, 2, 3},
 	}
-	addCustomProperties(e, layerId, schema1)
+	updateCustomProperties(e, layerId, schema1)
 
 	_, res3 := fetchSceneForNewLayers(e, sId)
 	res3.Object().
@@ -830,7 +830,7 @@ func TestCustomProperties(t *testing.T) {
 		"extrudedHeight": 10,
 		"positions":      []float64{4, 5, 6},
 	}
-	addCustomProperties(e, layerId, schema2)
+	updateCustomProperties(e, layerId, schema2)
 
 	_, res4 := fetchSceneForNewLayers(e, sId)
 	res4.Object().

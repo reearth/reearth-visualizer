@@ -84,11 +84,6 @@ type AddClusterPayload struct {
 	Cluster *Cluster `json:"cluster"`
 }
 
-type AddCustomPropertySchemaInput struct {
-	LayerID ID   `json:"layerId"`
-	Schema  JSON `json:"schema,omitempty"`
-}
-
 type AddDatasetSchemaInput struct {
 	SceneID             ID     `json:"sceneId"`
 	Name                string `json:"name"`
@@ -273,6 +268,13 @@ type Camera struct {
 	Pitch    float64 `json:"pitch"`
 	Roll     float64 `json:"roll"`
 	Fov      float64 `json:"fov"`
+}
+
+type ChangeCustomPropertyTitleInput struct {
+	LayerID  ID     `json:"layerId"`
+	Schema   JSON   `json:"schema,omitempty"`
+	OldTitle string `json:"oldTitle"`
+	NewTitle string `json:"newTitle"`
 }
 
 type Cluster struct {
@@ -1386,6 +1388,12 @@ type RemoveClusterInput struct {
 type RemoveClusterPayload struct {
 	Scene     *Scene `json:"scene"`
 	ClusterID ID     `json:"clusterId"`
+}
+
+type RemoveCustomPropertyInput struct {
+	LayerID      ID     `json:"layerId"`
+	Schema       JSON   `json:"schema,omitempty"`
+	RemovedTitle string `json:"removedTitle"`
 }
 
 type RemoveDatasetSchemaInput struct {
