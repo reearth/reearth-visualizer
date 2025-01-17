@@ -1,7 +1,7 @@
 package manifest
 
 // Generating types with schema typer for translation schema is disabled because some fields are wrongly typed.
-// DISABLED go:generate schematyper -o schema_translation_gen.go --package manifest --prefix Translation ../../../schemas/plugin_manifest_translation.json
+// DISABLED go:generate go run github.com/idubinskiy/schematyper -o schema_translation_gen.go --package manifest --prefix Translation ../../../schemas/plugin_manifest_translation.json
 
 import (
 	"errors"
