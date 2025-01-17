@@ -26,7 +26,7 @@ const widgetFile: FileType = {
   title: "layers-add-3dTiles.js",
   sourceCode: `// Example of adding a layer with 3D Tiles data
 
-// Difine 3D Tiles
+// Define 3D Tiles
 const layer3dTiles = {
   type: "simple", // Required
   data: {
