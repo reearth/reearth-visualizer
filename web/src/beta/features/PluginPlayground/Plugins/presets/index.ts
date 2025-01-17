@@ -24,11 +24,47 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "User Interface",
-    plugins: [responsivePanel, sidebar, header, uiExtensionMessenger]
+    plugins: [responsivePanel, sidebar, header]
+  },
+  {
+    id: "communication",
+    title: "Communication",
+    plugins: [uiExtensionMessenger]
+  },
+  {
+    id: "viewerScene",
+    title: "Viewer & Scene Settings",
+    plugins: []
   },
   {
     id: "layers",
-    title: "Layers",
+    title: "Manage Layer",
     plugins: [addGeojson]
+  },
+  {
+    id: "layerStyles",
+    title: "Manage Layer Style",
+    plugins: []
+  },
+
+  {
+    id: "camera",
+    title: "Camera",
+    plugins: []
+  },
+  {
+    id: "timeline",
+    title: "Timeline",
+    plugins: []
+  },
+  {
+    id: "dataStorage",
+    title: "Data Storage",
+    plugins: []
+  },
+  {
+    id: "sketch",
+    title: "Sketch",
+    plugins: []
   }
 ];
