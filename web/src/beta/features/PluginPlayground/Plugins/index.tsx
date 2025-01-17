@@ -177,7 +177,6 @@ const Wrapper = styled("div")(() => ({
 const PluginList = styled("div")(({ theme }) => ({
   width: "50%",
   paddingRight: theme.spacing.small,
-
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest
@@ -193,7 +192,8 @@ const PluginSubList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest,
-  paddingLeft: 24
+  paddingLeft: 24,
+  paddingTop: theme.spacing.smallest
 }));
 
 const EmptyTip = styled("div")(({ theme }) => ({
