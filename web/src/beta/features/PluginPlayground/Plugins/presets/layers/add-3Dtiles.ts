@@ -28,7 +28,7 @@ const widgetFile: FileType = {
 
 // Difine 3D Tiles
 const layer3dTiles = {
-  type: "simple",
+  type: "simple", // Required
   data: {
     type: "3dtiles",
     url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json", // URL of 3D Tiles
