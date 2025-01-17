@@ -49,6 +49,7 @@ func ApplyTemplate(ctx context.Context, tmpl string, data map[language.Tag]map[s
 	return result.String()
 }
 
+// MultiLocaleTemplateData creates a map of template data for multiple locales.
 func MultiLocaleTemplateData(data map[string]interface{}) map[language.Tag]map[string]interface{} {
 	return lo.SliceToMap(i18n.LocaleTypes(), func(locale language.Tag) (language.Tag, map[string]interface{}) {
 		return locale, data

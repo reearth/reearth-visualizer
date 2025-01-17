@@ -1,13 +1,13 @@
 {
-    "unknown": {
-      "message": "不明なエラーが発生しました。",
-      "description": "エラーが発生した原因を特定できません。"
-    },
-    "repo": {
-      "resource_not_found": {
-        "message": "リソースが見つかりません。",
-        "description": "リソースが存在しないか、アクセス権限がありません。"
-      }
+  "unknown": {
+    "message": "不明なエラーが発生しました。",
+    "description": "エラーが発生した原因を特定できません。"
+  },
+  "repo": {
+    "resource_not_found": {
+      "message": "リソースが見つかりません。",
+      "description": "リソースが存在しないか、アクセス権限がありません。"
     }
   }
+}
 

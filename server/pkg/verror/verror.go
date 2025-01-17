@@ -20,7 +20,11 @@ type VError struct {
 // seperate by "." and return the last element
 // sample: "pkg.project.invalid_alias" -> "invalid_alias"
 func (e *VError) GetErrCode() string {
-	return strings.Split(string(e.Key), ".")[len(strings.Split(string(e.Key), "."))-1]
+	parts := strings.Split(string(e.Key), ".")
+	if len(parts) == 0 {
+		return string(e.Key)
+	}
+	return parts[len(parts)-1]
 }
 
 // NewVError creates a new VError with the given key and error.
@@ -38,7 +42,7 @@ func NewVError(
 	}
 }
 
-// Error returns the error message.
+// AddTemplateData adds template data to the cloned VError.
 func (e *VError) AddTemplateData(key string, value interface{}) *VError {
 	clone := &VError{
 		Key:          e.Key,

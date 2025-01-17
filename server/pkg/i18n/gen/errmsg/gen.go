@@ -21,27 +21,21 @@ import (
 type Translations map[string]map[language.Tag]message.ErrorMessage
 
 func main() {
-	// JSONファイルが存在するディレクトリ
 	inputDir := "../locales/errmsg"
-	// 生成するGoコードの出力ファイル
 	outputFile := "./errmsg/errmsg_generated.go"
 
-	// JSONファイルを収集
 	files, err := collectJSONFiles(inputDir)
 	if err != nil {
 		panic(fmt.Errorf("failed to collect JSON files: %w", err))
 	}
 
-	// メッセージをロード
 	translations, keys, err := loadMessages(files)
 	if err != nil {
 		panic(fmt.Errorf("failed to load messages: %w", err))
 	}
 
-	// Goコードを生成
 	code := generateCode(translations, keys)
 
-	// ファイルに書き出し
 	if err := os.WriteFile(outputFile, []byte(code), 0644); err != nil {
 		panic(fmt.Errorf("failed to write output file: %w", err))
 	}
@@ -161,7 +155,6 @@ func isMessage(data map[string]interface{}) bool {
 func generateCode(messages Translations, keys []string) string {
 	var buf bytes.Buffer
 
-	// テンプレートを定義
 	funcMap := template.FuncMap{
 		"toCamelCase": toCamelCase,
 		"tagToString": func(tag language.Tag) string {
@@ -197,7 +190,6 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 }
 `))
 
-	// テンプレートにデータを適用
 	data := map[string]interface{}{
 		"Messages": messages,
 		"Keys":     keys,

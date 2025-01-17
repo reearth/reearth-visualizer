@@ -42,8 +42,8 @@ func TestNewVError(t *testing.T) {
 func TestAddTemplateData(t *testing.T) {
 	ve := verror.NewVError(errmsg.ErrKeyPkgProjectInvalidAlias, errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias], nil, nil)
 
-	ve.AddTemplateData("key1", "value1")
-	ve.AddTemplateData("key2", 123)
+	ve = ve.AddTemplateData("key1", "value1")
+	ve = ve.AddTemplateData("key2", 123)
 
 	expectedData := map[language.Tag]map[string]interface{}{
 		language.English: {

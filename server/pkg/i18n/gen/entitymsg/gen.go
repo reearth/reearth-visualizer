@@ -18,27 +18,21 @@ import (
 )
 
 func main() {
-	// JSONファイルが存在するディレクトリ
 	inputDir := "../locales/entitymsg"
-	// 生成するGoコードの出力ファイル
 	outputFile := "./entitymsg/entitymsg_generated.go"
 
-	// JSONファイルを収集
 	files, err := collectJSONFiles(inputDir)
 	if err != nil {
 		panic(fmt.Errorf("failed to collect JSON files: %w", err))
 	}
 
-	// メッセージをロード
 	translations, err := loadEntityMessages(files)
 	if err != nil {
 		panic(fmt.Errorf("failed to load entity messages: %w", err))
 	}
 
-	// Goコードを生成
 	code := generateEntityCode(translations)
 
-	// ファイルに書き出し
 	if err := os.WriteFile(outputFile, []byte(code), 0644); err != nil {
 		panic(fmt.Errorf("failed to write output file: %w", err))
 	}
@@ -109,7 +103,6 @@ func flattenJSON(data map[string]interface{}, parentKey string) map[string]strin
 		case string:
 			flat[fullKey] = v
 		case map[string]interface{}:
-			// 再帰的にフラット化
 			nestedFlat := flattenJSON(v, fullKey)
 			for k, val := range nestedFlat {
 				flat[k] = val
@@ -124,7 +117,6 @@ func flattenJSON(data map[string]interface{}, parentKey string) map[string]strin
 func generateEntityCode(messages map[string]map[language.Tag]string) string {
 	var buf bytes.Buffer
 
-	// テンプレートを定義
 	funcMap := template.FuncMap{
 		"toCamelCase": toCamelCase,
 		"tagToString": func(tag language.Tag) string {
@@ -164,7 +156,6 @@ func GetLocalizedEntityMessage(key message.EntityKey, locale language.Tag) strin
 }
 `))
 
-	// データをテンプレートに適用
 	keys := extractSortedKeys(messages)
 	data := map[string]interface{}{
 		"Messages": messages,
@@ -183,7 +174,6 @@ func extractSortedKeys(messages map[string]map[language.Tag]string) []string {
 	for key := range messages {
 		keys = append(keys, key)
 	}
-	// 固定の順序でソート（アルファベット順）
 	sort.Strings(keys)
 	return keys
 }
