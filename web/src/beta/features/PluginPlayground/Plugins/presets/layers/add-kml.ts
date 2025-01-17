@@ -11,6 +11,7 @@ extensions:
     type: widget
     name: Add KML
     description: Add KML
+
   `,
   disableEdit: true,
   disableDelete: true
@@ -21,18 +22,38 @@ const widgetFile: FileType = {
   title: "layers-add-kml.js",
   sourceCode: `// Example of adding a layer with KML data
 
-// Define encoded KML in a variable
-const encodedKml =
-  "data:text/plain;charset=UTF-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Ckml%20xmlns%3D%22http%3A%2F%2Fwww.opengis.net%2Fkml%2F2.2%22%3E%0A%20%20%3CPlacemark%3E%0A%20%20%20%20%3Cname%3EPolygon%3C%2Fname%3E%0A%20%20%20%20%3CPolygon%3E%0A%20%20%20%20%20%20%3CouterBoundaryIs%3E%0A%20%20%20%20%20%20%20%20%3CLinearRing%3E%0A%20%20%20%20%20%20%20%20%20%20%3Ccoordinates%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20-84.69104794134181%2C55.71976583858575%2C0%0A%20%20%20%20%20%20%20%20%20%20%20%20-50.21926684954955%2C54.914116182535565%2C0%0A%20%20%20%20%20%20%20%20%20%20%20%20-59.0296334789341%2C10.029277658732568%2C0%0A%20%20%20%20%20%20%20%20%20%20%20%20-79.10835968601603%2C10.498477077010023%2C0%0A%20%20%20%20%20%20%20%20%20%20%20%20-84.69104794134181%2C55.71976583858575%2C0%0A%20%20%20%20%20%20%20%20%20%20%3C%2Fcoordinates%3E%0A%20%20%20%20%20%20%20%20%3C%2FLinearRing%3E%0A%20%20%20%20%20%20%3C%2FouterBoundaryIs%3E%0A%20%20%20%20%3C%2FPolygon%3E%0A%20%20%3C%2FPlacemark%3E%0A%3C%2Fkml%3E";
+// Define the KML as a normal string
+const kmlData = \`<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Placemark>
+    <name>Polygon</name>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <coordinates>
+            -84.69104794134181,55.71976583858575,0
+            -50.21926684954955,54.914116182535565,0
+            -59.0296334789341,10.029277658732568,0
+            -79.10835968601603,10.498477077010023,0
+            -84.69104794134181,55.71976583858575,0
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</kml>\`;
 
-// Define layers using encoded CZML
+// Encode the KML string and set the data URI scheme
+const encodedKml = "data:text/plain;charset=UTF-8," + encodeURIComponent(kmlData);
+
+// Define layers using encoded KML
 const layerKmlEncoded = {
   type: "simple", // Required
   data: {
-    type: "kml", // Write the data format
-    url: encodedKml,
+    type: "kml", // Data format
+    url: encodedKml, // Use the encoded KML string as a data URI
   },
-  polygon: { // Write the feattures style
+  polygon: { // Write the features style
     fillColor: "red",
   },
 };
@@ -50,7 +71,8 @@ const layerKmlUrl = {
 reearth.layers.add(layerKmlEncoded);
 
 // Add the KML layer from the URL to Re:Earth
-reearth.layers.add(layerKmlUrl);`
+reearth.layers.add(layerKmlUrl);`,
+
 };
 
 export const addKml: PluginType = {
