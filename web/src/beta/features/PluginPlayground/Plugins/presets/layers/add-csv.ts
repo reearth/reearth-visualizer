@@ -31,7 +31,7 @@ const layerCsv = {
   type: "simple", // Required
   data: {
     type: "csv",
-    url: "https://api.visualizer.test.reearth.dev/assets/01jhs7xzs5ny1e7sy5zzpm9ghr.csv", // URL of CSV
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/csv/marker.csv", // URL of CSV
     csv: { // Difine by column number or column name
       idColumn: "id", 
       lngColumn: "longitude",
