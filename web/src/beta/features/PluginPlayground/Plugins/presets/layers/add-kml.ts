@@ -47,7 +47,7 @@ const layerKmlUrl = {
   type: "simple", 
   data: {
     type: "kml", 
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/czml/square.kml", // URL of KML file
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/kml/square.kml", // URL of KML file
   },
 };
 
