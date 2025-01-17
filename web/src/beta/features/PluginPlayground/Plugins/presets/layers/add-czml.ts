@@ -43,7 +43,7 @@ const layerCzmlEncoded = {
   },
 };
 
-// Difine the CZML with URL
+// Define the CZML with URL
 const layerCzmlUrl = {
   type: "simple", 
   data: {
