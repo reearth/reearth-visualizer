@@ -32,21 +32,22 @@ const encodedCzml =
 
 // Define layers using encoded CZML
 const layerCzmlEncoded = {
-  type: "simple",
+  type: "simple", // Required
   data: {
-    type: "czml",
+    type: "czml", // Write the data format
     url: encodedCzml,
   },
-  polygon: {
+  // Write the feattures style
+  polygon: { 
     fillColor: "red",
   },
 };
 
 // Difine the CZML with URL
 const layerCzmlUrl = {
-  type: "simple", // Required
+  type: "simple", 
   data: {
-    type: "czml", // Write the data format
+    type: "czml", 
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/czml/square_3d_polygon.czml", // URL of CZML file
   },
 };
