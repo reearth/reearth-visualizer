@@ -1,4 +1,4 @@
-//go:generate go run github.com/globusdigital/deep-copy --type Initializer --pointer-receiver -o initializer_gen.go
+//go:generate go run github.com/globusdigital/deep-copy --type Initializer --pointer-receiver -o initializer_gen.go .
 
 package property
 
