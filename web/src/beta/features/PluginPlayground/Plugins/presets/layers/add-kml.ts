@@ -32,29 +32,29 @@ const encodedKml =
 
 // Define layers using encoded CZML
 const layerKmlEncoded = {
-  type: "simple",
+  type: "simple", // Required
   data: {
-    type: "kml",
+    type: "kml", // Write the data format
     url: encodedKml,
   },
-  polygon: {
+  polygon: { // Write the feattures style
     fillColor: "red",
   },
 };
 
 // Difine the KML with URL
 const layerKmlUrl = {
-  type: "simple", // Required
+  type: "simple", 
   data: {
-    type: "kml", // Write the data format
+    type: "kml", 
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/czml/square.kml", // URL of KML file
   },
 };
 
-// Add the encoded CZML layer to Re:Earth
+// Add the encoded KML layer to Re:Earth
 reearth.layers.add(layerKmlEncoded);
 
-// Add the CZML layer from the URL to Re:Earth
+// Add the KML layer from the URL to Re:Earth
 reearth.layers.add(layerKmlUrl);`
 };
 
