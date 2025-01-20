@@ -37,6 +37,6 @@ reearth.layers.add(layerMvtUrl);
 
 export const addMvt: PluginType = {
   id: "add-mvt",
-  title: "Add MVT(Mapbox Vector Tile)",
+  title: "Add MVT (Mapbox Vector Tile)",
   files: [widgetFile, yamlFile]
 };
