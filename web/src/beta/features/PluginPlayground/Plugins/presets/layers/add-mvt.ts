@@ -19,7 +19,19 @@ extensions:
 const widgetFile: FileType = {
   id: "layers-add-mvt",
   title: "layers-add-mvt.js",
-  sourceCode: `tbd
+  sourceCode: `// Define the MVT(Mapbox Vector Tile) as a normal string
+const layerMvtUrl = {
+  type: "simple",
+  data: {
+    type: "mvt",
+    // URL of MVT
+    url: "https://assets.cms.plateau.reearth.io/assets/e9/2c8fcc-1226-4d52-8c0b-251aeac3d380/13113_shibuya-ku_pref_2023_citygml_1_op_tran_mvt_lod2/{z}/{x}/{y}.mvt",
+    layers: ["TrafficArea", "AuxiliaryTrafficArea"],
+  },
+  polyline:{}
+};
+
+reearth.layers.add(layerMvtUrl);
 `
 };
 
