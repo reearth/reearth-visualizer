@@ -254,32 +254,24 @@ const PublicSettingsDetail: React.FC<Props> = ({
         settingsItem.__typename &&
         accessToken && (
           <Collapse title={t("Custom Domain")} size="large">
-            {settingsItem.__typename === "Project" && (
-              <ExtensionComponent
-                typename={settingsItem.__typename}
-                key={settingsItem.id}
-                projectId={settingsItem.id}
-                projectAlias={settingsItem.alias}
-                lang={currentLang}
-                theme={currentTheme}
-                accessToken={accessToken}
-                onNotificationChange={() => onNotificationChange}
-                version={"visualizer"}
-              />
-            )}
-            {settingsItem.__typename === "Story" && (
-              <ExtensionComponent
-                typename={settingsItem.__typename}
-                key={settingsItem.id}
-                storyId={settingsItem.id}
-                storyAlias={settingsItem.alias}
-                lang={currentLang}
-                theme={currentTheme}
-                accessToken={accessToken}
-                onNotificationChange={() => onNotificationChange}
-                version={"visualizer"}
-              />
-            )}
+            <ExtensionComponent
+              typename={settingsItem.__typename}
+              key={settingsItem.id}
+              {...(settingsItem.__typename === "Project"
+                ? {
+                    projectId: settingsItem.id,
+                    projectAlias: settingsItem.alias
+                  }
+                : {
+                    storyId: settingsItem.id,
+                    storyAlias: settingsItem.alias
+                  })}
+              lang={currentLang}
+              theme={currentTheme}
+              accessToken={accessToken}
+              onNotificationChange={onNotificationChange}
+              version="visualizer"
+            />
           </Collapse>
         )}
     </>
