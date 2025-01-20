@@ -19,12 +19,26 @@ extensions:
 const widgetFile: FileType = {
   id: "layers-add-wms",
   title: "layers-add-wms.js",
-  sourceCode: `tbd
-`
+  sourceCode: `// Define the WMS（Web Map Service）
+const layerWmsUrl = {
+  type: "simple",
+  data: {
+    type: "wms",
+    // URL of MWS（This data shows Human_Footprint 1995-2004 provided by NASA）
+    url: "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi",
+    // Define layer name of WMS
+    layers: ["Human_Footprint_1995-2004"],
+  },
+};
+
+// Add the WMS layer from the URL to Re:Earth
+reearth.layers.add(layerWmsUrl);
+
+//WMS data is provided by NASA GIBS（https://www.earthdata.nasa.gov/engage/open-data-services-software/earthdata-developer-portal/gibs-api)`
 };
 
 export const addWms: PluginType = {
   id: "add-wms",
-  title: "Add WMS (Web Map Service)",
+  title: "Add WMS(Web Map Service)",
   files: [widgetFile, yamlFile]
 };
