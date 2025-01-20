@@ -43,7 +43,7 @@ export type Story = {
   pages?: Page[];
   trackingId?: string; // Not supported yet
   enableGa?: boolean; // Not supported yet
-  __typename: string;
+  typename?: "Story";
 };
 
 export const getStories = (rawScene?: GetSceneQuery) => {

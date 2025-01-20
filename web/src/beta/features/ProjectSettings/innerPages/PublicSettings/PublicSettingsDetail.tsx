@@ -251,13 +251,13 @@ const PublicSettingsDetail: React.FC<Props> = ({
       </Collapse>
       {extensions &&
         extensions.length > 0 &&
-        settingsItem.__typename &&
+        settingsItem.typename &&
         accessToken && (
           <Collapse title={t("Custom Domain")} size="large">
             <ExtensionComponent
-              typename={settingsItem.__typename}
+              typename={settingsItem.typename}
               key={settingsItem.id}
-              {...(settingsItem.__typename === "Project"
+              {...(settingsItem.typename === "Project"
                 ? {
                     projectId: settingsItem.id,
                     projectAlias: settingsItem.alias
