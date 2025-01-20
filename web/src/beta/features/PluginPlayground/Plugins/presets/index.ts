@@ -41,9 +41,14 @@ export const presetPlugins: PresetPlugins = [
     plugins: []
   },
   {
+    id: "layers",
+    title: "Manage Layer",
+    plugins: [addGeojson,addCzml,addKml,addCsv,add3dTiles]
+  },
+  {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: [addGeojson,addCzml,addKml,addCsv,add3dTiles]
+    plugins: []
   },
 
   {
