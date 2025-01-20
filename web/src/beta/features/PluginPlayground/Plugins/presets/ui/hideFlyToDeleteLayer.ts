@@ -30,6 +30,7 @@ const widgetFile: FileType = {
 const layerGeojson = {
   type: "simple",
   title: "Points",
+  visible: true,
   data: {
     type: "geojson",
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_polygon_polyline_marker.geojson"
@@ -47,6 +48,7 @@ const layerGeojson = {
 const layer3dTiles = {
   type: "simple", // Required
   title: "3dtiles",
+  visible: true,
   data: {
     type: "3dtiles",
     url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json" // URL of 3D Tiles
@@ -60,7 +62,26 @@ const layer3dTiles = {
 
 reearth.layers.add(layerGeojson);
 reearth.layers.add(layer3dTiles);
-console.log("Total number of layers:", reearth.layers.layers);
+
+const layers = reearth.layers.layers
+
+const layerItems = layers.map(layer => {
+  return \`
+    <li>
+      <span id="layer-name">\${layer.title}</span>
+      <div class="actions">
+        <span class="fly-to-layer" data-layer-id="\${layer.id}">𖦏</span>
+        <input 
+          type="checkbox" 
+          id="show-hide-layer" 
+          data-layer-id="\${layer.id}"
+          $\{layer.visible ? "checked" : ""} 
+        />
+        <button class="delete-layer"  data-layer-id="\${layer.id}">Delete</button>
+      </div>
+    </li>
+  \`;
+}).join('');
 
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
@@ -86,7 +107,7 @@ reearth.ui.show(\`
         text-overflow: ellipsis;
         margin: 0
       }
-        .actions{
+      .actions{
         display: flex;
         gap: 8px;
         align-items: center;
@@ -104,41 +125,94 @@ reearth.ui.show(\`
       button:hover {
         background: #45a049;
       }
+
+      .fly-to-layer, #show-hide-layer{
+        cursor: pointer;
+
+      }
     </style>
+
 
     <div id="wrapper">
       <h2>Layers</h2>
       <ul class="layers-list">
-      <li>
-         <span id="layer-name" >one</span>
-         <div class="actions">
-          <span id="show-hide-layer">💡</span>
-          <span id="flyTo">🏠</span>
-         <button id="show-hide-layer">Delete</button>
-        </div> 
-      </li>
-      <li>
-         <span id="layer-name" >one</span>
-         <div class="actions">
-          <span id="show-hide-layer">💡</span>
-          <span id="flyTo">🏠</span>
-         <button id="show-hide-layer">Delete</button>
-        </div> 
-      </li>
-      <li>
-         <span id="layer-name" >one</span>
-         <div class="actions">
-          <span id="show-hide-layer">💡</span>
-          <span id="flyTo">🏠</span>
-         <button id="show-hide-layer">Delete</button>
-        </div> 
-      </li>
+     <ul class="layers-list">
+      \${layerItems}
+    </ul>
       </ul>
     </div>
 
     <script>
+
+      // Add event listener for 'Delete' button
+      document.querySelectorAll(".delete-layer").forEach(button => {
+        button.addEventListener("click", event => {
+          const layerId = event.target.getAttribute("data-layer-id");
+          if (layerId) {
+            // Send a message to the parent window when 'Delete' is clicked
+            parent.postMessage({
+              type: "delete",
+              layerId: layerId
+            }, "*");
+            // Remove the layer from the UI
+            event.target.closest("li").remove();
+          }
+        });
+      });
+
+    // Add event listener for 'Show/Hide' 
+    document.querySelectorAll("#show-hide-layer").forEach(checkbox => {
+        checkbox.addEventListener("change", event => {
+          const layerId = event.target.getAttribute("data-layer-id");
+          const isVisible = event.target.checked;
+
+          if (layerId) {
+            // Send a message to the parent window for show/hide action
+            parent.postMessage({
+              type: isVisible ? "show" : "hide",
+              layerId: layerId
+            }, "*");
+          }
+        });
+      });
+
+       // Add event listener for 'FlyTo' button
+      document.querySelectorAll(".fly-to-layer").forEach(button => {
+        button.addEventListener("click", event => {
+          const layerId = event.target.getAttribute("data-layer-id");
+          if (layerId) {
+            // Send a message to the parent window for 'FlyTo' action
+            parent.postMessage({
+              type: "flyTo",
+              layerId: layerId
+            }, "*");
+          }
+        });
+      });
     </script>
+
 \`);
+
+reearth.extension.on("message", (msg) => {
+  const layerId = [msg.layerId];
+  switch (msg.type) {
+    case "delete":
+      reearth.layers.delete(...layerId);
+      break;
+    case "flyTo":
+      reearth.camera.flyTo(msg.layerId, { duration: 2 });
+      break;
+    case "hide":
+      reearth.layers.hide(...layerId);
+      break;
+    case "show":
+      reearth.layers.show(...layerId);
+      break;
+    default:
+  }
+});
+
+
 
 `
 };
