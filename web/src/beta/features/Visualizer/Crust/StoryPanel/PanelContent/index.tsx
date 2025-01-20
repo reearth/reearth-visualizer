@@ -153,6 +153,6 @@ const PagesWrapper = styled("div")<{
 }));
 
 const StoryPageWrapper = styled("div")(() => ({
-  height: "100vh"
+  minHeight: "92vh"
 }));
 

@@ -146,7 +146,7 @@ const StoryPanel: FC<Props> = ({
             }, 100);
           });
         } else {
-          onCurrentPageChange?.(id, true);
+          onCurrentPageChange?.(id, false);
         }
       }
     }
