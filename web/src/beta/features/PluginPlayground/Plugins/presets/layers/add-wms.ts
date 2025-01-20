@@ -21,7 +21,7 @@ const widgetFile: FileType = {
   title: "layers-add-wms.js",
   sourceCode: `// Define the WMS（Web Map Service）
 const layerWmsUrl = {
-  type: "simple",
+  type: "simple", // Required
   data: {
     type: "wms",
     // URL of MWS（This data shows Human_Footprint 1995-2004 provided by NASA）
