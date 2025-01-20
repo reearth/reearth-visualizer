@@ -3,6 +3,7 @@ import { PluginType } from "../constants";
 import { myPlugin } from "./custom/myPlugin";
 import { addGeojson } from "./layers/add-geojson";
 import { header } from "./ui/header";
+import { hideFlyToDeleteLayer } from "./ui/hideFlyToDeleteLayer";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
 import { uiExtensionMessenger } from "./ui/uiExtensionMessenger";
@@ -39,7 +40,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layers",
     title: "Manage Layer",
-    plugins: [addGeojson]
+    plugins: [addGeojson, hideFlyToDeleteLayer]
   },
   {
     id: "layerStyles",
