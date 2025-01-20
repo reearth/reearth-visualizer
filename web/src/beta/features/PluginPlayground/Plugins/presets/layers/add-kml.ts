@@ -4,7 +4,7 @@ const yamlFile: FileType = {
   id: "layers-add-kml-reearth-yml",
   title: "reearth.yml",
   sourceCode: `id: layers-add-kml-plugin
-name: Add CZML
+name: Add KML
 version: 1.0.0
 extensions:
   - id: layers-add-kml
