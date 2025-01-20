@@ -2,6 +2,78 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.2.0 - 2025-01-20
+
+### Web
+
+#### 🚀 Features
+
+- Add google map search function and ui ([#1318](https://github.com/reearth/reearth-visualizer/pull/1318)) [`215b0a`](https://github.com/reearth/reearth-visualizer/commit/215b0a)
+- Support for spatial id  ([#1331](https://github.com/reearth/reearth-visualizer/pull/1331)) [`9441b7`](https://github.com/reearth/reearth-visualizer/commit/9441b7)
+- Plugin playground presets header ([#1319](https://github.com/reearth/reearth-visualizer/pull/1319)) [`9e409d`](https://github.com/reearth/reearth-visualizer/commit/9e409d)
+- Support layer reorder ([#1338](https://github.com/reearth/reearth-visualizer/pull/1338)) [`76ac96`](https://github.com/reearth/reearth-visualizer/commit/76ac96)
+- Add sample layers to plugin playground ([#1330](https://github.com/reearth/reearth-visualizer/pull/1330)) [`ee4c98`](https://github.com/reearth/reearth-visualizer/commit/ee4c98)
+- Plugin playground presets sidebar ([#1315](https://github.com/reearth/reearth-visualizer/pull/1315)) [`bf23f0`](https://github.com/reearth/reearth-visualizer/commit/bf23f0)
+- Missing &#x60;disableWorkspaceManagement&#x60; envvar ([#1312](https://github.com/reearth/reearth-visualizer/pull/1312)) [`a10633`](https://github.com/reearth/reearth-visualizer/commit/a10633)
+- Add ability to share plugin in plugin-playground ([#1305](https://github.com/reearth/reearth-visualizer/pull/1305)) [`99c8f1`](https://github.com/reearth/reearth-visualizer/commit/99c8f1)
+- Setup basic widget ui ([#1302](https://github.com/reearth/reearth-visualizer/pull/1302)) [`daa169`](https://github.com/reearth/reearth-visualizer/commit/daa169)
+- Support preset plugins on plugin playground ([#1299](https://github.com/reearth/reearth-visualizer/pull/1299)) [`05953e`](https://github.com/reearth/reearth-visualizer/commit/05953e)
+
+#### 🔧 Bug Fixes
+
+- Ensure new layer reorders correctly. ([#1346](https://github.com/reearth/reearth-visualizer/pull/1346)) [`c8910c`](https://github.com/reearth/reearth-visualizer/commit/c8910c)
+- Improve enter functionality in text input  ([#1341](https://github.com/reearth/reearth-visualizer/pull/1341)) [`887173`](https://github.com/reearth/reearth-visualizer/commit/887173)
+- Naming typo on preset layer style category ([#1340](https://github.com/reearth/reearth-visualizer/pull/1340)) [`b3a6c4`](https://github.com/reearth/reearth-visualizer/commit/b3a6c4)
+- Fix icon button size on block add bar ([#1333](https://github.com/reearth/reearth-visualizer/pull/1333)) [`0c94bb`](https://github.com/reearth/reearth-visualizer/commit/0c94bb)
+- Layer style boolean selector field doesn&[#39](https://github.com/reearth/reearth-visualizer/pull/39);t work properly with string value ([#1322](https://github.com/reearth/reearth-visualizer/pull/1322)) [`6edee2`](https://github.com/reearth/reearth-visualizer/commit/6edee2)
+- Add missing &quot;extended&quot; prop to plugin ([#1325](https://github.com/reearth/reearth-visualizer/pull/1325)) [`b42214`](https://github.com/reearth/reearth-visualizer/commit/b42214)
+- Refactor UI to plugin list in plugin playground page ([#1307](https://github.com/reearth/reearth-visualizer/pull/1307)) [`554c53`](https://github.com/reearth/reearth-visualizer/commit/554c53)
+- Number input logics ([#1316](https://github.com/reearth/reearth-visualizer/pull/1316)) [`e36143`](https://github.com/reearth/reearth-visualizer/commit/e36143)
+- Tailwind class not included on build ([#1313](https://github.com/reearth/reearth-visualizer/pull/1313)) [`3cc7f1`](https://github.com/reearth/reearth-visualizer/commit/3cc7f1)
+- Remove&#x60;VISUALIZER&#x60; for runtime environment variables ([#1280](https://github.com/reearth/reearth-visualizer/pull/1280)) [`2f1054`](https://github.com/reearth/reearth-visualizer/commit/2f1054)
+- Widget ui style missing on built ([#1304](https://github.com/reearth/reearth-visualizer/pull/1304)) [`c1589d`](https://github.com/reearth/reearth-visualizer/commit/c1589d)
+- Add missing &#x60;UNSAFE_PLUGIN_URLS&#x60; and &#x60;BRAND&#x60; environment variable ([#1297](https://github.com/reearth/reearth-visualizer/pull/1297)) [`8b1dad`](https://github.com/reearth/reearth-visualizer/commit/8b1dad)
+
+#### ✨ Refactor
+
+- Infobox&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s customized property list. ([#1317](https://github.com/reearth/reearth-visualizer/pull/1317)) [`ec01d9`](https://github.com/reearth/reearth-visualizer/commit/ec01d9)
+
+#### Miscellaneous Tasks
+
+- Update version to 1.0.0-beta.2.0 ([#1353](https://github.com/reearth/reearth-visualizer/pull/1353)) [`4ab77e`](https://github.com/reearth/reearth-visualizer/commit/4ab77e)
+- Update core version ([#1334](https://github.com/reearth/reearth-visualizer/pull/1334)) [`aa882c`](https://github.com/reearth/reearth-visualizer/commit/aa882c)
+- Update core version to &[#39](https://github.com/reearth/reearth-visualizer/pull/39);0.0.7-alpha.22&[#39](https://github.com/reearth/reearth-visualizer/pull/39); ([#1303](https://github.com/reearth/reearth-visualizer/pull/1303)) [`ead9f8`](https://github.com/reearth/reearth-visualizer/commit/ead9f8)
+- Clean up usage of &quot;any&quot; type in code-base ([#1294](https://github.com/reearth/reearth-visualizer/pull/1294)) [`18be4e`](https://github.com/reearth/reearth-visualizer/commit/18be4e)
+
+### Server
+
+#### 🚀 Features
+
+- Modify query response ([#1327](https://github.com/reearth/reearth-visualizer/pull/1327)) [`0f72fb`](https://github.com/reearth/reearth-visualizer/commit/0f72fb)
+- Support reorder layer ([#1321](https://github.com/reearth/reearth-visualizer/pull/1321)) [`769a27`](https://github.com/reearth/reearth-visualizer/commit/769a27)
+
+#### Miscellaneous Tasks
+
+- Enable to set visualizer db name by .env ([#1345](https://github.com/reearth/reearth-visualizer/pull/1345)) [`52f66e`](https://github.com/reearth/reearth-visualizer/commit/52f66e)
+- Install air and add dev command for hotreload ([#1337](https://github.com/reearth/reearth-visualizer/pull/1337)) [`42e2b7`](https://github.com/reearth/reearth-visualizer/commit/42e2b7)
+- Upgrade go version to 1.23.4 ([#1339](https://github.com/reearth/reearth-visualizer/pull/1339)) [`189fda`](https://github.com/reearth/reearth-visualizer/commit/189fda)
+- Handler for gql has extension loaded twice ([#1335](https://github.com/reearth/reearth-visualizer/pull/1335)) [`255d3c`](https://github.com/reearth/reearth-visualizer/commit/255d3c)
+- Fix makefile command that did not work ([#1332](https://github.com/reearth/reearth-visualizer/pull/1332)) [`d6d6f0`](https://github.com/reearth/reearth-visualizer/commit/d6d6f0)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update CODEOWNERS [`f9f67a`](https://github.com/reearth/reearth-visualizer/commit/f9f67a)
+- Add bind mounts tailwind and postcss config on docker build for web ([#1314](https://github.com/reearth/reearth-visualizer/pull/1314)) [`3432cd`](https://github.com/reearth/reearth-visualizer/commit/3432cd)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update CODEOWNERS [`f9f67a`](https://github.com/reearth/reearth-visualizer/commit/f9f67a)
+- Add bind mounts tailwind and postcss config on docker build for web ([#1314](https://github.com/reearth/reearth-visualizer/pull/1314)) [`3432cd`](https://github.com/reearth/reearth-visualizer/commit/3432cd)
+
 ## 1.0.0-beta.1.0 - 2024-11-29
 
 ### Web

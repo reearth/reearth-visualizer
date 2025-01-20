@@ -85,6 +85,8 @@ type NLSLayer interface {
 	RemoveNLSInfoboxBlock(context.Context, RemoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, error)
 	Duplicate(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
 	AddOrUpdateCustomProperties(context.Context, AddOrUpdateCustomPropertiesInput, *usecase.Operator) (nlslayer.NLSLayer, error)
+	ChangeCustomPropertyTitle(context.Context, AddOrUpdateCustomPropertiesInput, string, string, *usecase.Operator) (nlslayer.NLSLayer, error)
+	RemoveCustomProperty(context.Context, AddOrUpdateCustomPropertiesInput, string, *usecase.Operator) (nlslayer.NLSLayer, error)
 	AddGeoJSONFeature(context.Context, AddNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	UpdateGeoJSONFeature(context.Context, UpdateNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	DeleteGeoJSONFeature(context.Context, DeleteNLSLayerGeoJSONFeatureParams, *usecase.Operator) (id.FeatureID, error)
