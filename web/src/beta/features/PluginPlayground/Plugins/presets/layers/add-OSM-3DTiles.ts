@@ -19,7 +19,43 @@ extensions:
 const widgetFile: FileType = {
   id: "layers-add-osm3dTiles",
   title: "layers-add-osm3dTiles.js",
-  sourceCode: `tbd...`
+  sourceCode: `// Example of adding a layer with OSM 3D Tiles data
+
+// Define OSM 3D Tiles
+const layerOsm3dTiles = {
+  type: "simple", // Required
+  data: {
+    type: "osm-buildings",
+  },
+};
+
+// Add the OSM 3D Tiles layer from the URL to Re:Earth
+reearth.layers.add(layerOsm3dTiles);
+
+// Enable Terrain
+reearth.viewer.overrideProperty({
+  terrain: {
+    enabled: true,
+  },
+});
+
+// Move the camera to the position where the CZML data is displayed.
+reearth.camera.flyTo(
+  // Define the camera position to be moved to
+  {
+    heading: 0.20219047310022553,
+    height: 261.79910347824375,
+    lat: 44.13880442335244,
+    lng: 4.8038131598778,
+    pitch: -0.5139201681525183,
+    roll: 0.000011404713798235377,
+  },
+  // Define camera movement time
+  {
+    duration: 2.0,
+  }
+);
+`
 };
 
 export const addOsm3dTiles: PluginType = {
