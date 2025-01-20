@@ -6,6 +6,7 @@ import { addCzml } from "./layers/add-czml";
 import { addKml } from "./layers/add-kml";
 import { addCsv } from "./layers/add-csv";
 import { add3dTiles } from "./layers/add-3Dtiles";
+import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -43,7 +44,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layers",
     title: "Manage Layer",
-    plugins: [addGeojson,addCzml,addKml,addCsv,add3dTiles]
+    plugins: [addGeojson,addCzml,addKml,addCsv,add3dTiles,addOsm3dTiles]
   },
   {
     id: "layerStyles",
