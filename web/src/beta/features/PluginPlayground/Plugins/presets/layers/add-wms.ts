@@ -23,7 +23,7 @@ const widgetFile: FileType = {
 const layerWmsUrl = {
   type: "simple", // Required
   data: {
-    type: "wms",
+    type: "wms", // Data type
     // URL of MWS（This data shows Human_Footprint 1995-2004 provided by NASA）
     url: "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi",
     // Define layer name of WMS

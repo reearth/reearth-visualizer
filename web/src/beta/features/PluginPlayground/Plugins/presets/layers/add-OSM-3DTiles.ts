@@ -25,7 +25,7 @@ const widgetFile: FileType = {
 const layerOsm3dTiles = {
   type: "simple", // Required
   data: {
-    type: "osm-buildings",
+    type: "osm-buildings", // Data type
   },
 };
 
