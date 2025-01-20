@@ -43,7 +43,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: []
+    plugins: [addGeojson,addCzml,addKml,addCsv,add3dTiles]
   },
 
   {
