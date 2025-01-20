@@ -5,6 +5,10 @@ import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useAuth } from "@reearth/services/auth";
+import {
+  ProjectPublicationExtensionProps,
+  StoryPublicationExtensionProps
+} from "@reearth/services/config/extensions";
 import { useLang, useT } from "@reearth/services/i18n";
 import {
   NotificationType,
@@ -103,6 +107,18 @@ const PublicSettingsDetail: React.FC<Props> = ({
     },
     [setNotification]
   );
+
+  const ExtensionComponent = (
+    props: ProjectPublicationExtensionProps | StoryPublicationExtensionProps
+  ) => {
+    const type = props.typename.toLocaleLowerCase();
+    const extensionId = `custom-${type}-domain`;
+    const Component = extensions?.find((e) => e.id === extensionId)?.component;
+    if (!Component) {
+      return null;
+    }
+    return <Component {...props} />;
+  };
 
   return (
     <>
@@ -233,22 +249,39 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      {extensions && extensions.length > 0 && accessToken && (
-        <Collapse title={t("Custom Domain")} size="large">
-          {extensions.map((ext) => (
-            <ext.component
-              key={ext.id}
-              projectId={settingsItem.id}
-              projectAlias={settingsItem.alias}
-              lang={currentLang}
-              theme={currentTheme}
-              accessToken={accessToken}
-              onNotificationChange={onNotificationChange}
-              version={"visualizer"}
-            />
-          ))}
-        </Collapse>
-      )}
+      {extensions &&
+        extensions.length > 0 &&
+        settingsItem.__typename &&
+        accessToken && (
+          <Collapse title={t("Custom Domain")} size="large">
+            {settingsItem.__typename === "Project" && (
+              <ExtensionComponent
+                typename={settingsItem.__typename}
+                key={settingsItem.id}
+                projectId={settingsItem.id}
+                projectAlias={settingsItem.alias}
+                lang={currentLang}
+                theme={currentTheme}
+                accessToken={accessToken}
+                onNotificationChange={() => onNotificationChange}
+                version={"visualizer"}
+              />
+            )}
+            {settingsItem.__typename === "Story" && (
+              <ExtensionComponent
+                typename={settingsItem.__typename}
+                key={settingsItem.id}
+                storyId={settingsItem.id}
+                storyAlias={settingsItem.alias}
+                lang={currentLang}
+                theme={currentTheme}
+                accessToken={accessToken}
+                onNotificationChange={() => onNotificationChange}
+                version={"visualizer"}
+              />
+            )}
+          </Collapse>
+        )}
     </>
   );
 };
