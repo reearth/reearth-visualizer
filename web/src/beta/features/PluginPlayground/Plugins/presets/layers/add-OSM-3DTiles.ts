@@ -39,7 +39,7 @@ reearth.viewer.overrideProperty({
   },
 });
 
-// Move the camera to the position where the CZML data is displayed.
+// Move the camera to the position where the OSM 3D Tiles data is displayed.
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
