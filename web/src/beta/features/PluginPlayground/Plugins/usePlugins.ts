@@ -27,7 +27,11 @@ export default () => {
   const sharedPlugin = sharedPluginUrl
     ? (() => {
         try {
-          return decodePluginURL(sharedPluginUrl);
+          const decoded = decodePluginURL(sharedPluginUrl);
+          return {
+            ...decoded,
+            id: `shared-${decoded.id}`
+          };
         } catch (_error) {
           setNotification({ type: "error", text: "Invalid shared plugin URL" });
           return null;
@@ -63,6 +67,7 @@ export default () => {
 
   const selectPlugin = useCallback((pluginId: string) => {
     setSelectedPluginId(pluginId);
+    setSelectedFileId("");
   }, []);
 
   const selectFile = useCallback((fileId: string) => {

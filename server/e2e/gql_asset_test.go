@@ -129,12 +129,14 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 		},
 		"query": CreateAssetMutation,
 	}
+	operations, err := toJSONString(requestBody)
+	assert.Nil(t, err)
 	return e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		WithMultipart().
-		WithFormField("operations", toJSONString(requestBody)).
+		WithFormField("operations", operations).
 		WithFormField("map", `{"0": ["variables.file"]}`).
 		WithFile("0", filePath).
 		Expect().
