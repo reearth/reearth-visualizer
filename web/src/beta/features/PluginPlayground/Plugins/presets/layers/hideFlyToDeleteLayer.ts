@@ -29,7 +29,7 @@ const widgetFile: FileType = {
   
 const layerGeojson = {
   type: "simple",
-  title: "Points",
+  title: "sample",
   visible: true,
   data: {
     type: "geojson",
@@ -65,23 +65,34 @@ reearth.layers.add(layer3dTiles);
 
 const layers = reearth.layers.layers
 
-const layerItems = layers.map(layer => {
+// filter layers
+const presetLayerIds = ["1", "2"];
+const presetLayers = layers.filter(layer => presetLayerIds.includes(layer.id));
+const pluginLayers = layers.filter(layer => !presetLayerIds.includes(layer.id));
+
+const generateLayerItem = (layer, isPreset) => {
   return \`
     <li>
       <span id="layer-name">\${layer.title}</span>
       <div class="actions">
-        <span class="fly-to-layer" data-layer-id="\${layer.id}">𖦏</span>
         <input 
           type="checkbox" 
           id="show-hide-layer" 
           data-layer-id="\${layer.id}"
           $\{layer.visible ? "checked" : ""} 
         />
-        <button class="delete-layer"  data-layer-id="\${layer.id}">Delete</button>
+        <button class="fly-to-layer" data-layer-id="\${layer.id}">Flyto</button>
+        $\{!isPreset
+            ? \`<button class="delete-layer"  data-layer-id="\${layer.id}">Delete</button>\`
+            : "" }
       </div>
     </li>
   \`;
-}).join('');
+};
+
+const presetLayerItems = presetLayers.map(layer => generateLayerItem(layer, true)).join('');
+const pluginLayerItems = pluginLayers.map(layer => generateLayerItem(layer, false)).join('');
+
 
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
@@ -114,7 +125,7 @@ reearth.ui.show(\`
         }
 
       button {
-        padding: 4px 8px;
+        padding: 2px 4px;
         background: #4CAF50;
         color: white;
         border: none;
@@ -135,11 +146,16 @@ reearth.ui.show(\`
 
     <div id="wrapper">
       <h2>Layers</h2>
-      <ul class="layers-list">
-     <ul class="layers-list">
-      \${layerItems}
+          <h3>Preset Layers</h3>
+    <ul class="layers-list">
+      
+    \${presetLayerItems}
     </ul>
-      </ul>
+    <h3>Plugin Layers</h3>
+    <ul class="layers-list">
+      \${pluginLayerItems}
+    </ul>
+
     </div>
 
     <script>
