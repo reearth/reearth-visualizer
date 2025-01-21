@@ -43,6 +43,7 @@ type CustomStoryBlock = CustomInfoboxBlock;
 
 type Props = {
   files: FileType[];
+  resetVisualizer: () => void;
 };
 
 const getYmlJson = (file: FileType) => {
@@ -62,13 +63,14 @@ const getYmlJson = (file: FileType) => {
   }
 };
 
-export default ({ files }: Props) => {
+export default ({ files, resetVisualizer }: Props) => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
 
   const executeCode = useCallback(() => {
+    resetVisualizer();
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
 
     if (!ymlFile) return;
@@ -199,7 +201,7 @@ export default ({ files }: Props) => {
         }
       ]
     });
-  }, [files, setNotification]);
+  }, [files, resetVisualizer, setNotification]);
 
   return {
     executeCode,

@@ -1,6 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { MapRef } from "@reearth/core";
-import { FC, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
@@ -13,6 +13,16 @@ import Viewer from "./Viewer";
 
 export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
+
+  const [enabledVisualizer, setEnabledVisualizer] = useState(true);
+
+  // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
+  const resetVisualizer = useCallback(() => {
+    setTimeout(() => {
+      setEnabledVisualizer(true);
+    }, 300);
+    setEnabledVisualizer(false);
+  }, []);
 
   const {
     presetPlugins,
@@ -31,7 +41,8 @@ export default () => {
   } = usePlugins();
 
   const { executeCode, infoboxBlocks, story, widgets } = useCode({
-    files: selectedPlugin.files
+    files: selectedPlugin.files,
+    resetVisualizer
   });
 
   const [infoboxEnabled, setInfoboxEnabled] = useState(true);
@@ -82,6 +93,7 @@ export default () => {
         name: "Viewer",
         children: (
           <Viewer
+            enabledVisualizer={enabledVisualizer}
             layers={layers}
             story={story}
             showStoryPanel={showStoryPanel}
@@ -91,7 +103,7 @@ export default () => {
         )
       }
     ],
-    [layers, showStoryPanel, story, widgets]
+    [enabledVisualizer, layers, showStoryPanel, story, widgets]
   );
 
   const LayersPanel: FC = () => (

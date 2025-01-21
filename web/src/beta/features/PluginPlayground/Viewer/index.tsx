@@ -7,6 +7,7 @@ import { Story } from "../../Visualizer/Crust/StoryPanel";
 import useHooks from "./hooks";
 
 type Props = {
+  enabledVisualizer: boolean;
   layers: Layer[];
   showStoryPanel: boolean;
   story: Story | undefined;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 const Viewer: FC<Props> = ({
+  enabledVisualizer,
   layers,
   showStoryPanel,
   story,
@@ -25,19 +27,21 @@ const Viewer: FC<Props> = ({
     useHooks({ visualizerRef });
 
   return (
-    <Visualizer
-      engine="cesium"
-      visualizerRef={visualizerRef}
-      viewerProperty={viewerProperty}
-      ready={ready}
-      layers={layers}
-      engineMeta={engineMeta}
-      currentCamera={currentCamera}
-      onCameraChange={setCurrentCamera}
-      widgets={widgets}
-      story={story}
-      showStoryPanel={showStoryPanel}
-    />
+    enabledVisualizer && (
+      <Visualizer
+        engine="cesium"
+        visualizerRef={visualizerRef}
+        viewerProperty={viewerProperty}
+        ready={ready}
+        layers={layers}
+        engineMeta={engineMeta}
+        currentCamera={currentCamera}
+        onCameraChange={setCurrentCamera}
+        widgets={widgets}
+        story={story}
+        showStoryPanel={showStoryPanel}
+      />
+    )
   );
 };
 
