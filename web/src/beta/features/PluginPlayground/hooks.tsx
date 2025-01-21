@@ -18,10 +18,11 @@ export default () => {
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
   const resetVisualizer = useCallback(() => {
-    setTimeout(() => {
-      setEnabledVisualizer(true);
-    }, 300);
     setEnabledVisualizer(false);
+    const timeoutId = setTimeout(() => {
+      setEnabledVisualizer(true);
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const {
