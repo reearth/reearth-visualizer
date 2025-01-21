@@ -24,7 +24,7 @@ const Viewer: FC<Props> = ({
   widgets
 }) => {
   const { currentCamera, engineMeta, ready, setCurrentCamera, viewerProperty } =
-    useHooks({ visualizerRef });
+    useHooks({ visualizerRef, enabledVisualizer });
 
   return (
     enabledVisualizer && (
