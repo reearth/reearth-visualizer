@@ -60,15 +60,14 @@ const layer3dTiles = {
   }
 };
 
-reearth.layers.add(layerGeojson);
-reearth.layers.add(layer3dTiles);
-
+const pluginGeojsonLayerId = reearth.layers.add(layerGeojson);
+const plugin3dTilesLayerId = reearth.layers.add(layer3dTiles);
 const layers = reearth.layers.layers
 
 // filter layers
-const presetLayerIds = ["1", "2"];
-const presetLayers = layers.filter(layer => presetLayerIds.includes(layer.id));
-const pluginLayers = layers.filter(layer => !presetLayerIds.includes(layer.id));
+const presetLayerIds = [plugin3dTilesLayerId, pluginGeojsonLayerId];
+const presetLayers = layers.filter(layer => !presetLayerIds.includes(layer.id));
+const pluginLayers = layers.filter(layer => presetLayerIds.includes(layer.id));
 
 const generateLayerItem = (layer, isPreset) => {
   return \`
