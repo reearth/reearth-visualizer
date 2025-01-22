@@ -8,14 +8,9 @@ import (
 	"golang.org/x/text/language"
 )
 
-// LanguageExtractor extracts the appropriate language from the request.
 func LanguageExtractor(req *http.Request) language.Tag {
-	// Extract browser language from header
 	lang := req.Header.Get("lang")
 
-	// Extract user language from the adapter
-	// if user language is not "und", use user language
-	// if user language is "und", use browser language
 	u := adapter.User(req.Context())
 	if u != nil && !u.Lang().IsRoot() {
 		lang = u.Lang().String()
@@ -29,7 +24,6 @@ func LanguageExtractor(req *http.Request) language.Tag {
 	return tag
 }
 
-// AttachLanguageMiddleware attaches the detected language to the request context.
 func AttachLanguageMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		lang := LanguageExtractor(c.Request())

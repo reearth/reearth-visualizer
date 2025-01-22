@@ -8,7 +8,6 @@ import (
 	"golang.org/x/text/language"
 )
 
-// VError represents an error with a code identifier.
 type VError struct {
 	Key          message.ErrKey
 	ErrMsg       map[language.Tag]message.ErrorMessage
@@ -16,7 +15,6 @@ type VError struct {
 	Err          error
 }
 
-// GetErrCode returns the error code.
 func (e *VError) GetErrCode() string {
 	parts := strings.Split(string(e.Key), ".")
 	if len(parts) == 0 {
@@ -40,7 +38,6 @@ func NewVError(
 	}
 }
 
-// AddTemplateData adds template data to the cloned VError.
 func (e *VError) AddTemplateData(key string, value interface{}) *VError {
 	clone := &VError{
 		Key:          e.Key,
@@ -61,7 +58,6 @@ func (e *VError) AddTemplateData(key string, value interface{}) *VError {
 	return clone
 }
 
-// Error returns the error message.
 func (e *VError) Error() string {
 	if e.Err != nil {
 		return e.Err.Error()
@@ -69,7 +65,6 @@ func (e *VError) Error() string {
 	return ""
 }
 
-// Unwrap returns the underlying error.
 func (e *VError) Unwrap() error {
 	return e.Err
 }

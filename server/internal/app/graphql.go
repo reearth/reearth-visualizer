@@ -97,7 +97,6 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 	var vError *verror.VError
 	lang := adapter.Lang(ctx, nil)
 
-	// Handle application-specific errors
 	systemError := ""
 	if errors.As(e, &vError) {
 		if errMsg, ok := vError.ErrMsg[language.Make(lang)]; ok {
@@ -118,17 +117,14 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 	}
 
 	if graphqlErr == nil {
-		// Fallback to default GraphQL error presenter
 		graphqlErr = graphql.DefaultErrorPresenter(ctx, e)
 		systemError = e.Error()
 	}
 
-	// Ensure Extensions map exists
 	if graphqlErr.Extensions == nil {
 		graphqlErr.Extensions = make(map[string]interface{})
 	}
 
-	// Add debugging information in development mode
 	if devMode {
 		if fieldCtx := graphql.GetFieldContext(ctx); fieldCtx != nil {
 			graphqlErr.Path = fieldCtx.Path()
