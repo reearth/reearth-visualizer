@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	geojson "github.com/paulmach/go.geojson"
+	"github.com/hexaforce/orb"
+	"github.com/hexaforce/orb/geojson"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -36,15 +37,16 @@ func validateFeatures(fc []*geojson.Feature) []*geojson.Feature {
 		if f.Geometry == nil {
 			continue
 		}
-		if f.Geometry.Type == geojson.GeometryMultiPolygon {
-			for _, p := range f.Geometry.MultiPolygon {
-				nf := geojson.NewPolygonFeature(p)
+		switch g := f.Geometry.(type) {
+		case orb.MultiPolygon:
+			for _, p := range g {
+				nf := geojson.NewFeature(p)
 				for k, v := range f.Properties {
-					nf.SetProperty(k, v)
+					nf.Properties[k] = v
 				}
 				res = append(res, nf)
 			}
-		} else {
+		default:
 			res = append(res, f)
 		}
 	}
@@ -121,16 +123,16 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 		return nil, nil, io.EOF
 	}
 
-	switch feat.Geometry.Type {
-	case "Point":
+	switch g := feat.Geometry.(type) {
+	case orb.Point:
 		var latlng property.LatLng
 		var height float64
-		if len(feat.Geometry.Point) > 2 {
-			height = feat.Geometry.Point[2]
+		if len(g.Point()) > 2 {
+			height = g.Point()[2]
 		}
 		latlng = property.LatLng{
-			Lat: feat.Geometry.Point[1],
-			Lng: feat.Geometry.Point[0],
+			Lat: g.Lat(),
+			Lng: g.Lon(),
 		}
 
 		p, err = createProperty("Point", property.LatLngHeight{
@@ -144,18 +146,18 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 		ex = extensions["Point"]
 
 		layerName = "Point"
-	case "LineString":
+	case orb.LineString:
 		var coords []property.LatLngHeight
-		for _, c := range feat.Geometry.LineString {
+		for _, c := range g {
 			var height float64
 			if len(c) == 2 {
 				height = 0
 			} else if len(c) == 3 {
-				height = c[3]
+				height = c[2]
 			} else {
 				return nil, nil, errors.New("unable to parse coordinates")
 			}
-			coords = append(coords, property.LatLngHeight{Lat: c[1], Lng: c[0], Height: height})
+			coords = append(coords, property.LatLngHeight{Lat: c.Lat(), Lng: c.Lon(), Height: height})
 		}
 
 		if feat.Properties["stroke"] != nil {
@@ -178,9 +180,9 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 		}
 
 		layerName = "Polyline"
-	case "Polygon":
+	case orb.Polygon:
 		var poly [][]property.LatLngHeight
-		for _, r := range feat.Geometry.Polygon {
+		for _, r := range g {
 			var coords []property.LatLngHeight
 			for _, c := range r {
 				var height float64
@@ -226,7 +228,7 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 
 		layerName = "Polygon"
 	default:
-		return nil, nil, fmt.Errorf("unsupported type %s", feat.Geometry.Type)
+		return nil, nil, fmt.Errorf("unsupported type %T", g)
 	}
 
 	if feat.Properties["name"] != nil {

@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	geojson "github.com/paulmach/go.geojson"
+	"github.com/hexaforce/orb"
+	"github.com/hexaforce/orb/geojson"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -68,9 +69,10 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 				},
 			},
 			want: func() *geojson.Feature {
-				f := geojson.NewFeature(geojson.NewPointGeometry([]float64{53.4, 4.4, 34}))
-				f.SetProperty("marker-color", "#7fff00ff")
-				f.SetProperty("name", "test")
+				// f := geojson.NewFeature(geojson.NewPointGeometry([]float64{53.4, 4.4, 34}))
+				f := geojson.NewFeature(orb.Point{53.4, 4.4, 34})
+				f.Properties["marker-color"] = "#7fff00ff"
+				f.Properties["name"] = "test"
 				return f
 			},
 		},
@@ -143,11 +145,20 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 				},
 			},
 			want: func() *geojson.Feature {
-				expected := geojson.NewFeature(geojson.NewPolygonGeometry([][][]float64{{{5.34, 3.4, 100}, {2.34, 45.4, 100}, {654.34, 34.66, 100}}}))
-				expected.SetProperty("name", "test")
-				expected.SetProperty("fill", "#7c3b3b")
-				expected.SetProperty("stroke", "#ff3343")
-				expected.SetProperty("stroke-width", 3)
+				// expected := geojson.NewFeature(geojson.NewPolygonGeometry([][][]float64{{{5.34, 3.4, 100}, {2.34, 45.4, 100}, {654.34, 34.66, 100}}}))
+				expected := geojson.NewFeature(orb.Polygon{
+					{
+						// {53.4, 4.4, 100},     // First point of the first ring
+						// {2.34, 45.4, 100},    // Second point
+						// {654.34, 34.66, 100}, // Third point
+						// // {53.4, 4.4, 100},     // Closing the ring
+						{5.34, 3.4, 100}, {2.34, 45.4, 100}, {654.34, 34.66, 100},
+					},
+				})
+				expected.Properties["name"] = "test"
+				expected.Properties["fill"] = "#7c3b3b"
+				expected.Properties["stroke"] = "#ff3343"
+				expected.Properties["stroke-width"] = 3
 				return expected
 			},
 		},
@@ -204,10 +215,16 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 				},
 			},
 			want: func() *geojson.Feature {
-				expected := geojson.NewFeature(geojson.NewLineStringGeometry([][]float64{{5.34, 3.4, 100}, {2.34, 45.4, 100}, {654.34, 34.66, 100}}))
-				expected.SetProperty("name", "test")
-				expected.SetProperty("stroke", "#ff3343")
-				expected.SetProperty("stroke-width", 3)
+				// expected := geojson.NewFeature(geojson.NewLineStringGeometry([][]float64{{5.34, 3.4, 100}, {2.34, 45.4, 100}, {654.34, 34.66, 100}}))
+				expected := geojson.NewFeature(orb.LineString{
+					// {5.34, 3.4, 100},     // First point
+					// {2.34, 45.4, 100},    // Second point
+					// {654.34, 34.66, 100}, // Third point
+					{5.34, 3.4, 100}, {2.34, 45.4, 100}, {654.34, 34.66, 100},
+				})
+				expected.Properties["name"] = "test"
+				expected.Properties["stroke"] = "#ff3343"
+				expected.Properties["stroke-width"] = 3
 				return expected
 			},
 		},
