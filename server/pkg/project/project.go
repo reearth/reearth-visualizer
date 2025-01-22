@@ -5,14 +5,26 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/locales"
-	"github.com/reearth/reearth/server/pkg/apperror"
+	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"github.com/reearth/reearth/server/pkg/i18n/message/entitymsg"
+	"github.com/reearth/reearth/server/pkg/i18n/message/errmsg"
+	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"golang.org/x/text/language"
 )
 
 var (
-	ErrInvalidAlias = apperror.NewAppError(locales.ErrKeyPkgProjectInvalidAlias, nil)
-	aliasRegexp     = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
+	ErrInvalidAlias = verror.NewVError(
+		errmsg.ErrKeyPkgProjectInvalidAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias],
+		message.MultiLocaleTemplateData(map[string]interface{}{
+			"minLength": 5,
+			"maxLength": 32,
+			"allowedChars": func(locale language.Tag) string {
+				return entitymsg.GetLocalizedEntityMessage(entitymsg.EntityKeyPkgProjectAliasAllowedChars, locale)
+			},
+		}), nil)
+	aliasRegexp = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
 type Project struct {
@@ -201,7 +213,7 @@ func (p *Project) UpdateAlias(alias string) error {
 	if CheckAliasPattern(alias) {
 		p.alias = alias
 	} else {
-		return ErrInvalidAlias
+		return ErrInvalidAlias.AddTemplateData("aliasName", alias)
 	}
 	return nil
 }

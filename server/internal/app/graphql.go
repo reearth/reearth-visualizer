@@ -15,9 +15,12 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/pkg/apperror"
+	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"github.com/reearth/reearth/server/pkg/verror"
+	"github.com/reearth/reearthx/log"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -60,6 +63,12 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	srv.Use(otelgqlgen.Middleware())
 
 	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorfc(ctx, "panic recovered in error presenter: %v", r)
+				return
+			}
+		}()
 		return customErrorPresenter(ctx, e, dev)
 	})
 
@@ -81,43 +90,41 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	}
 }
 
-// customErrorPresenter handles custom GraphQL error presentation.
+// customErrorPresenter handles custom GraphQL error presentation by converting various error types
+// into localized GraphQL errors.
 func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
 	var graphqlErr *gqlerror.Error
-	var appErr *apperror.AppError
+	var vError *verror.VError
 	lang := adapter.Lang(ctx, nil)
 
-	// Handle application-specific errors
 	systemError := ""
-	if errors.As(e, &appErr) {
-		localesErr, ok := appErr.LocalesError[lang]
-		if ok {
+	if errors.As(e, &vError) {
+		if errMsg, ok := vError.ErrMsg[language.Make(lang)]; ok {
+			messageText := message.ApplyTemplate(ctx, errMsg.Message, vError.TemplateData, language.Make(lang))
 			graphqlErr = &gqlerror.Error{
-				Err:     appErr.SystemError,
-				Message: localesErr.Message,
+				Err:     vError,
+				Message: messageText,
 				Extensions: map[string]interface{}{
-					"code":        localesErr.Code,
-					"description": localesErr.Description,
+					"code":        vError.GetErrCode(),
+					"message":     messageText,
+					"description": message.ApplyTemplate(ctx, errMsg.Description, vError.TemplateData, language.Make(lang)),
 				},
 			}
-			if graphqlErr.Err != nil {
-				systemError = graphqlErr.Err.Error()
-			}
+		}
+		if vError.Err != nil {
+			systemError = vError.Err.Error()
 		}
 	}
 
 	if graphqlErr == nil {
-		// Fallback to default GraphQL error presenter
 		graphqlErr = graphql.DefaultErrorPresenter(ctx, e)
 		systemError = e.Error()
 	}
 
-	// Ensure Extensions map exists
 	if graphqlErr.Extensions == nil {
 		graphqlErr.Extensions = make(map[string]interface{})
 	}
 
-	// Add debugging information in development mode
 	if devMode {
 		if fieldCtx := graphql.GetFieldContext(ctx); fieldCtx != nil {
 			graphqlErr.Path = fieldCtx.Path()
@@ -127,6 +134,12 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 
 		graphqlErr.Extensions["system_error"] = systemError
 	}
+
+	if systemError != "" {
+		log.Errorfc(ctx, "system error: %+v", e)
+	}
+
+	log.Warnfc(ctx, "graphqlErr: %+v", graphqlErr)
 
 	return graphqlErr
 }

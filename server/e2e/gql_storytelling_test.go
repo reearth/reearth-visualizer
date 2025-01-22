@@ -1,14 +1,9 @@
 package e2e
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
@@ -40,14 +35,7 @@ func createProject(e *httpexpect.Expect, name string) string {
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return res.Path("$.data.createProject.project.id").Raw().(string)
 }
@@ -69,14 +57,7 @@ func createScene(e *httpexpect.Expect, pID string) (GraphQLRequest, *httpexpect.
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	sID := res.Path("$.data.createScene.scene.id").Raw().(string)
 	return requestBody, res, sID
@@ -131,14 +112,7 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(fetchSceneRequestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), fetchSceneRequestBody)
 
 	return fetchSceneRequestBody, res
 }
@@ -163,14 +137,7 @@ func createStory(e *httpexpect.Expect, sID, name string, index int) (GraphQLRequ
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -204,14 +171,7 @@ func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -236,14 +196,7 @@ func deleteStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -271,14 +224,7 @@ func publishStory(e *httpexpect.Expect, storyID, alias string) (GraphQLRequest, 
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -315,14 +261,7 @@ func createPage(e *httpexpect.Expect, sID, storyID, name string, swipeable bool)
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -358,14 +297,7 @@ func updatePage(e *httpexpect.Expect, sID, storyID, pageID, name string, swipeab
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -399,14 +331,7 @@ func movePage(e *httpexpect.Expect, storyID, pageID string, idx int) (GraphQLReq
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -437,14 +362,7 @@ func deletePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLReque
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -480,14 +398,7 @@ func duplicatePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLRe
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	pID := res.Object().
 		Value("data").Object().
@@ -529,14 +440,7 @@ func addLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, 
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	pageRes := res.Object().
 		Value("data").Object().
@@ -585,14 +489,7 @@ func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId strin
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	pageRes := res.Object().
 		Value("data").Object().
@@ -644,14 +541,7 @@ func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extension
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -691,14 +581,7 @@ func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string) (GraphQL
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContains(blockID)
@@ -736,14 +619,7 @@ func moveBlock(e *httpexpect.Expect, storyID, pageID, blockID string, index int)
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Path("$.data.moveStoryBlock.page.blocks[:].id").Array().Contains(blockID)
@@ -752,12 +628,7 @@ func moveBlock(e *httpexpect.Expect, storyID, pageID, blockID string, index int)
 }
 
 func TestStoryCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -798,12 +669,7 @@ func TestStoryCRUD(t *testing.T) {
 }
 
 func TestStoryPageCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -839,14 +705,7 @@ func TestStoryPageCRUD(t *testing.T) {
 
 	// update page with invalid page id
 	requestBody.Variables["pageId"] = id.NewPageID().String()
-	res = e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res = Request(e, uID.String(), requestBody)
 
 	res.Object().
 		Value("errors").Array().
@@ -892,12 +751,7 @@ func TestStoryPageCRUD(t *testing.T) {
 }
 
 func TestStoryPageLayersCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -929,12 +783,7 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 }
 
 func TestStoryPageBlocksCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -977,12 +826,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 }
 
 func TestStoryPageBlocksProperties(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -1138,7 +982,7 @@ func TestStoryPublishing(t *testing.T) {
     ]
 }`, sID, storyID, extensionId, blockID, pageID, pluginId)
 
-	RegexpJSONEq(t, rc, expected)
+	RegexpJSONEReadCloser(t, rc, expected)
 
 	resString := e.GET("/p/test-alias/data.json").
 		WithHeader("Origin", "https://example.com").
@@ -1147,52 +991,6 @@ func TestStoryPublishing(t *testing.T) {
 		Body().
 		Raw()
 
-	RegexpJSONEqStr(t, resString, expected)
+	JSONEqRegexp(t, resString, expected)
 
-}
-
-func RegexpJSONEq(t *testing.T, rc io.ReadCloser, expected string) {
-
-	buf := new(bytes.Buffer)
-	_, err := buf.ReadFrom(rc)
-	assert.NoError(t, err)
-
-	var obj1 map[string]interface{}
-	err = json.Unmarshal(buf.Bytes(), &obj1)
-	assert.Nil(t, err)
-
-	obj2, err := json.Marshal(obj1)
-	assert.Nil(t, err)
-
-	var obj3 map[string]interface{}
-	err = json.Unmarshal([]byte(expected), &obj3)
-	assert.Nil(t, err)
-
-	obj4, err := json.Marshal(obj3)
-	assert.Nil(t, err)
-
-	pub := regexp.MustCompile(strings.ReplaceAll(string(obj4), "[", "\\["))
-
-	assert.Regexp(t, pub, string(obj2))
-}
-
-func RegexpJSONEqStr(t *testing.T, buf string, expected string) {
-
-	var obj1 map[string]interface{}
-	err := json.Unmarshal([]byte(buf), &obj1)
-	assert.Nil(t, err)
-
-	obj2, err := json.Marshal(obj1)
-	assert.Nil(t, err)
-
-	var obj3 map[string]interface{}
-	err = json.Unmarshal([]byte(expected), &obj3)
-	assert.Nil(t, err)
-
-	obj4, err := json.Marshal(obj3)
-	assert.Nil(t, err)
-
-	pub := regexp.MustCompile(strings.ReplaceAll(string(obj4), "[", "\\["))
-
-	assert.Regexp(t, pub, string(obj2))
 }

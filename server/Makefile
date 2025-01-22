@@ -26,9 +26,8 @@ help:
 lint:
 	golangci-lint run --fix
 
-TARGET_TEST :=./...
 test:
-	REEARTH_DB=mongodb://localhost go test -race -short -v ./... -run ${TARGET_TEST}
+	go test -race -short -v ./...
 
 failcheck:
 	go test -race -short -failfast -p 1 $(TEST_DIR)
@@ -40,19 +39,12 @@ build:
 	go build ./cmd/reearth
 
 AIR_BIN := $(shell which air)
-STRINGER_BIN := $(shell which stringer)
 dev-install:
 ifndef AIR_BIN
 	@echo "reflex is not installed. Installing..."
 	@go install github.com/air-verse/air@v1.61.5
 else
 	@echo "air is already installed."
-endif
-ifndef STRINGER_BIN
-	@echo "Stringer is not installed. Installing..."
-	@go install golang.org/x/tools/cmd/stringer@v0.29.0
-else
-	@echo "Stringer is already installed."
 endif
 
 dev: dev-install
@@ -64,8 +56,9 @@ run-app:
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 
-generate:
-	go generate ./...
+gql:
+	go generate ./internal/adapter/gql/gqldataloader
+	go generate ./internal/adapter/gql
 
 mockuser:
 	curl -H 'Content-Type: application/json' -d '{"email": "mock@example.com", "username": "Mock User"}' http://localhost:8080/api/signup
