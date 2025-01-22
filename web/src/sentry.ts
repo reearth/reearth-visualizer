@@ -12,14 +12,16 @@ export const initialize = () => {
   }
 };
 
-export const reportError = (error: ReportError) => {
-  if (error instanceof Error) {
-    Sentry.captureException(error);
-  } else {
-    Sentry.captureException(
-      new Error(
-        `${error.type || "Unknown"}: ${error.message || "No message provided"}`
-      )
-    );
-  }
+export const reportError = (errors: ReportError[]) => {
+  errors.forEach((error) => {
+    if (error instanceof Error) {
+      Sentry.captureException(error);
+    } else {
+      Sentry.captureException(
+        new Error(
+          `${error.type || "Unknown"}: ${error.message || "No message provided"}`
+        )
+      );
+    }
+  });
 };
