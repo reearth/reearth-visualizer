@@ -52,6 +52,9 @@ export default () => {
 
   useEffect(() => {
     if (errors.length === 0) return;
+    const defaultErrorMessage = t(
+      "You have reached a policy limit. Please contact an administrator of your Re:Earth system."
+    );
     errors.forEach((error) => {
       const isPolicyViolation = error.message
         ?.toLowerCase()
@@ -66,9 +69,7 @@ export default () => {
           ? typeof policyItem === "string"
             ? policyItem
             : policyItem[currentLanguage]
-          : t(
-              "You have reached a policy limit. Please contact an administrator of your Re:Earth system."
-            );
+          : defaultErrorMessage;
 
         setNotification({
           type: "info",
