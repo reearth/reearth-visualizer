@@ -13,20 +13,10 @@ extensions:
     type: widget
     name: Messenger 1
     description: Messenger 1 Widget
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: center
-        area: top
   - id: messenger2
     type: widget
     name: Messenger 2
     description: Messenger 2 Widget
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: center
-        area: top
 `,
   disableEdit: true,
   disableDelete: true
@@ -119,7 +109,7 @@ reearth.ui.show(\`
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
     const extensions = reearth.extension.list;
-    const target = extensions.find(ext => ext.id === "messenger2");
+    const target = extensions.find(ext => ext.extensionId === "messenger2");
     if (target) {
       reearth.extension.postMessage(target.id, msg.message);
     }
@@ -130,7 +120,7 @@ reearth.extension.on("message", msg => {
 reearth.extension.on("extensionMessage", msg => {
   reearth.ui.postMessage({
     type: "received",
-    message: msg.message
+    message: msg.data
   });
 });`;
 
@@ -218,7 +208,7 @@ reearth.ui.show(\`
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
     const extensions = reearth.extension.list;
-    const target = extensions.find(ext => ext.id === "messenger1");
+    const target = extensions.find(ext => ext.extensionId === "messenger1");
     if (target) {
       reearth.extension.postMessage(target.id, msg.message);
     }
@@ -229,7 +219,7 @@ reearth.extension.on("message", msg => {
 reearth.extension.on("extensionMessage", msg => {
   reearth.ui.postMessage({
     type: "received",
-    message: msg.message
+    message: msg.data
   });
 });`;
 
