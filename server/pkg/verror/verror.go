@@ -17,8 +17,6 @@ type VError struct {
 }
 
 // GetErrCode returns the error code.
-// seperate by "." and return the last element
-// sample: "pkg.project.invalid_alias" -> "invalid_alias"
 func (e *VError) GetErrCode() string {
 	parts := strings.Split(string(e.Key), ".")
 	if len(parts) == 0 {

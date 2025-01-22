@@ -92,13 +92,6 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 
 // customErrorPresenter handles custom GraphQL error presentation by converting various error types
 // into localized GraphQL errors.
-//
-// Parameters:
-//   - ctx: The context containing language preferences
-//   - e: The error to be presented
-//   - devMode: If true, includes additional debugging information
-//
-// Returns a GraphQL error with localized messages and optional debug information.
 func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
 	var graphqlErr *gqlerror.Error
 	var vError *verror.VError
