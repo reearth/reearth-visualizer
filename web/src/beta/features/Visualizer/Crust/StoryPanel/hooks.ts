@@ -136,6 +136,7 @@ export default (
       onStoryPageChange?.(newPage.id);
       setCurrentPageId(newPage.id);
       setLayerOverride(undefined);
+
       if (disableSelection) {
         setDisableSelection(false);
         setSelectedBlockId(undefined);
@@ -143,12 +144,15 @@ export default (
 
       const container = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
       if (!pageId) {
-        if (container) container.scrollTo(0, 0); // If no pageId, newPage will be the first page and we scroll all the way to the top here
+        if (container) container.scrollTo(0, 0);
       } else if (!disableScrollIntoView) {
         const element = document.getElementById(`story-page-${newPage.id}`);
         if (container && element) {
           isAutoScrolling.current = true;
-          container.scrollTo({ top: element?.offsetTop, behavior: "smooth" });
+          container.scrollTo({
+            top: element.offsetTop,
+            behavior: "smooth"
+          });
         }
       }
 

@@ -90,6 +90,7 @@ const StoryContent: FC<Props> = ({
   renderBlock
 }) => {
   const {
+    pageGap,
     scrollTimeoutRef,
     disableSelection,
     handleBlockCreate,
@@ -106,31 +107,32 @@ const StoryContent: FC<Props> = ({
       isEditable={isEditable && !disableSelection}
     >
       {pages?.map((p) => (
-        <StoryPageWrapper key={p.id}>
-          <StoryPage
-            page={p}
-            selectedPageId={selectedPageId}
-            installableStoryBlocks={installableStoryBlocks}
-            selectedStoryBlockId={selectedStoryBlockId}
-            showPageSettings={showPageSettings}
-            isEditable={isEditable}
-            scrollTimeoutRef={scrollTimeoutRef}
-            isAutoScrolling={isAutoScrolling}
-            onCurrentPageChange={onCurrentPageChange}
-            onPageSettingsToggle={onPageSettingsToggle}
-            onPageSelect={onPageSelect}
-            onBlockCreate={handleBlockCreate(p.id)}
-            onBlockDelete={handleBlockDelete(p.id)}
-            onBlockSelect={onBlockSelect}
-            onBlockDoubleClick={onBlockDoubleClick}
-            onBlockMove={onBlockMove}
-            onPropertyUpdate={onPropertyUpdate}
-            onPropertyItemAdd={onPropertyItemAdd}
-            onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-            renderBlock={renderBlock}
-          />
-        </StoryPageWrapper>
+        <StoryPage
+          key={p.id}
+          page={p}
+          selectedPageId={selectedPageId}
+          installableStoryBlocks={installableStoryBlocks}
+          selectedStoryBlockId={selectedStoryBlockId}
+          showPageSettings={showPageSettings}
+          isEditable={isEditable}
+          scrollTimeoutRef={scrollTimeoutRef}
+          isAutoScrolling={isAutoScrolling}
+          onCurrentPageChange={onCurrentPageChange}
+          onPageSettingsToggle={onPageSettingsToggle}
+          onPageSelect={onPageSelect}
+          onBlockCreate={handleBlockCreate(p.id)}
+          onBlockDelete={handleBlockDelete(p.id)}
+          onBlockSelect={onBlockSelect}
+          onBlockDoubleClick={onBlockDoubleClick}
+          onBlockMove={onBlockMove}
+          onPropertyUpdate={onPropertyUpdate}
+          onPropertyItemAdd={onPropertyItemAdd}
+          onPropertyItemMove={onPropertyItemMove}
+          onPropertyItemDelete={onPropertyItemDelete}
+          renderBlock={renderBlock}
+        >
+          <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
+        </StoryPage>
       ))}
     </PagesWrapper>
   );
@@ -152,7 +154,6 @@ const PagesWrapper = styled("div")<{
   msOverflowStyle: "none"
 }));
 
-const StoryPageWrapper = styled("div")(() => ({
-  minHeight: "92vh"
+const PageGap = styled("div")<{ height?: number }>(({ height }) => ({
+  height: height ? `${height}px` : "70vh",
 }));
-
