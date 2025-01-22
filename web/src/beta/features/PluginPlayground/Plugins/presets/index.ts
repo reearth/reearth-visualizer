@@ -7,6 +7,7 @@ import { addCzml } from "./layers/add-czml";
 import { addGeojson } from "./layers/add-geojson";
 import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
+import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addWms } from "./layers/add-wms";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
@@ -52,7 +53,8 @@ export const presetPlugins: PresetPlugins = [
       addCsv,
       add3dTiles,
       addOsm3dTiles,
-      addWms
+      addWms,
+      addGooglePhotorealistic3dTiles
     ]
   },
   {
