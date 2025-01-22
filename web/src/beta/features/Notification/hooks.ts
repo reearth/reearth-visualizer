@@ -53,7 +53,10 @@ export default () => {
   useEffect(() => {
     if (errors.length === 0) return;
     errors.forEach((error) => {
-      if (error.message?.includes("policy violation") && error.message) {
+      const isPolicyViolation = error.message
+        ?.toLowerCase()
+        .includes("policy violation");
+      if (isPolicyViolation && error.message) {
         const limitedItem = policyItems.find((i) => error.message?.includes(i));
         const policyItem =
           limitedItem && policyLimitNotifications
