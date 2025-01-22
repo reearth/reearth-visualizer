@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.2.1 - 2025-01-20
+
+### Web
+
+#### 🚀 Features
+
+- Add manage layer example ([#1362](https://github.com/reearth/reearth-visualizer/pull/1362)) [`8fcdbf`](https://github.com/reearth/reearth-visualizer/commit/8fcdbf)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.2.1 ([#1363](https://github.com/reearth/reearth-visualizer/pull/1363)) [`6b53ac`](https://github.com/reearth/reearth-visualizer/commit/6b53ac)
+
 ## 1.0.0-beta.2.0 - 2025-01-20
 
 ### Web
