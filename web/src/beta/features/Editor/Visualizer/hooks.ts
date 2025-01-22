@@ -125,12 +125,14 @@ export default ({
       setInitialCamera(initialCamera);
     }
 
-    if (initialCamera?.fov && initialCamera.fov !== prevFOV.current) {
-      prevFOV.current = initialCamera.fov;
-      setCurrentCamera((c) =>
-        !c ? undefined : { ...c, fov: initialCamera.fov }
-      );
-    }
+    setTimeout(() => {
+      if (initialCamera?.fov && initialCamera.fov !== prevFOV.current) {
+        prevFOV.current = initialCamera.fov;
+        setCurrentCamera((c) =>
+          !c ? undefined : { ...c, fov: initialCamera.fov }
+        );
+      }
+    }, 0);
 
     const viewerProperty = sceneProperty
       ? (convertData(

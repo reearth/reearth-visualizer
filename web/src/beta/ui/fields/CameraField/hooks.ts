@@ -74,12 +74,16 @@ export default ({
     setNewCamera((prev) => (prev ? { ...prev, [key]: value } : defaultCamera));
   }, []);
 
+
   const handleSave = useCallback(() => {
     if (!newCamera) return;
     const data = handleCameraDegreeToRadian(newCamera);
+     if (JSON.stringify(newCamera) === JSON.stringify(defaultCamera)) {
+       onFlyTo?.(data);
+     }
     onSave?.(data);
     onClose?.();
-  }, [newCamera, onClose, onSave]);
+  }, [newCamera, onClose, onFlyTo, onSave]);
 
   const handleTwinFieldChange = (values: [number, number]) => {
     handleFieldChange("lat", values[0]);
