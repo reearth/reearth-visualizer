@@ -26,7 +26,6 @@ require (
 	github.com/oklog/ulid v1.3.1
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.15.0
-	github.com/reearth/orb v0.11.1
 	github.com/reearth/reearthx v0.0.0-20241128091912-9b8bc8adfdd7
 	github.com/samber/lo v1.39.0
 	github.com/spf13/afero v1.11.0
@@ -53,8 +52,6 @@ require (
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
-
-replace github.com/reearth/orb => /Users/tantaka/orb2
 
 require (
 	cloud.google.com/go v0.112.0 // indirect
@@ -121,6 +118,7 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.4.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/reearth/orb v0.0.0-20250122045045-e95d2bd61e1e // indirect
 	github.com/rs/cors v1.10.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
