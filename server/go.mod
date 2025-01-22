@@ -24,9 +24,9 @@ require (
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/oklog/ulid v1.3.1
-	github.com/hexaforce/orb v0.11.1
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.15.0
+	github.com/reearth/orb v0.11.1
 	github.com/reearth/reearthx v0.0.0-20241128091912-9b8bc8adfdd7
 	github.com/samber/lo v1.39.0
 	github.com/spf13/afero v1.11.0
@@ -54,7 +54,7 @@ require (
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
-replace github.com/hexaforce/orb => /Users/tantaka/orb
+replace github.com/reearth/orb => /Users/tantaka/orb2
 
 require (
 	cloud.google.com/go v0.112.0 // indirect
@@ -110,7 +110,6 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.3 // indirect
-	github.com/hexaforce/orb v0.0.0-20250122012146-6d70955f67e5 // indirect
 	github.com/imkira/go-interpol v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect

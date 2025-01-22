@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/hexaforce/orb"
-	"github.com/hexaforce/orb/geojson"
+	"github.com/reearth/orb"
+	"github.com/reearth/orb/geojson"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
