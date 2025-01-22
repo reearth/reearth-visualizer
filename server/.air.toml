@@ -13,7 +13,7 @@ send_interrupt = false
 kill_delay = 1000 # ms
 
 # include file extensions
-include_ext = ["go"]
+include_ext = ["go", "json"]
 
 # exclude directories
 exclude_dir = ["e2e", "tmp"]

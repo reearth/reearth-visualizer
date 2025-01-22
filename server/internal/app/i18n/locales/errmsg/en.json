@@ -1,0 +1,13 @@
+{
+  "unknown": {
+    "message": "An unknown error occurred.",
+    "description": "The cause of the error cannot be determined."
+  },
+  "repo": {
+    "resource_not_found": {
+      "message": "Resource not found.",
+      "description": "The resource does not exist or you do not have access."
+    }
+  }
+}
+
