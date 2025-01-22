@@ -1,11 +1,11 @@
 import { PluginType } from "../constants";
 
 import { myPlugin } from "./custom/myPlugin";
-import { addGeojson } from "./layers/add-geojson";
-import { addCzml } from "./layers/add-czml";
-import { addKml } from "./layers/add-kml";
-import { addCsv } from "./layers/add-csv";
 import { add3dTiles } from "./layers/add-3Dtiles";
+import { addCsv } from "./layers/add-csv";
+import { addCzml } from "./layers/add-czml";
+import { addGeojson } from "./layers/add-geojson";
+import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
 import { header } from "./ui/header";

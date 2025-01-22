@@ -29,6 +29,14 @@ export type ProjectPublicationExtensionProps = {
   projectId: string;
   projectAlias?: string;
   publishDisabled?: boolean;
+  typename: string;
+} & SharedExtensionProps;
+
+export type StoryPublicationExtensionProps = {
+  storyId: string;
+  storyAlias?: string;
+  publishDisabled?: boolean;
+  typename: string;
 } & SharedExtensionProps;
 
 export type PluginExtensionProps = {
@@ -50,7 +58,9 @@ export type GlobalModalProps = {
 
 export type ExtensionProps = {
   "dataset-import": DatasetImportExtensionProps;
-  publication: ProjectPublicationExtensionProps;
+  publication:
+    | ProjectPublicationExtensionProps
+    | StoryPublicationExtensionProps;
   "plugin-library": PluginExtensionProps;
   "plugin-installed": PluginExtensionProps;
   "global-modal": GlobalModalProps;

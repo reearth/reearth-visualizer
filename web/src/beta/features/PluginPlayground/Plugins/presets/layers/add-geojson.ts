@@ -74,7 +74,7 @@ const layerGeojsonInline = {
   marker: {},
 };
 
-// Difine the GeoJSON with URL
+// Define the GeoJSON with URL
 const layerGeojsonFromUrl = {
   type: "simple",
   data: {
