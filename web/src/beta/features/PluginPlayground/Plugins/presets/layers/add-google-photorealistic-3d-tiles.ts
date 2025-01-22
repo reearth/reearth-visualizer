@@ -27,7 +27,11 @@ const layerPhotorealistic3dTiles = {
   data: {
     type: "google-photorealistic", // Data type
     serviceTokens: {
-      googleMapApiKey: "put_your_api_key",
+      googleMapApiKey: "put_your_api_key", 
+      // This document explains how to create Photorealistic 3D Tiles API key. 
+      // For more information on obtaining an API key, visit:
+      // https://developers.google.com/maps/documentation/tile/get-api-key
+
     },
   },
 };
