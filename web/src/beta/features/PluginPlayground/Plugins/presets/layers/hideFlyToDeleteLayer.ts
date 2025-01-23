@@ -25,9 +25,7 @@ extensions:
 const widgetFile: FileType = {
   id: "hide-flyto-delete-layer-widget",
   title: "hide-flyto-delete-layer.js",
-  sourceCode: `
-  
-const layerGeojson = {
+  sourceCode: `const layerGeojson = {
   type: "simple",
   title: "sample",
   visible: true,
@@ -35,28 +33,22 @@ const layerGeojson = {
     type: "geojson",
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_polygon_polyline_marker.geojson"
   },
-  polygon: {
-    fillColor: "red"
-  },
-  polyline: {
-    strokeColor: "red"
-  },
-  marker: {
-  }
+  polygon: {},
+  polyline: {},
+  marker: {}
 };
 
 const layer3dTiles = {
-  type: "simple", // Required
+  type: "simple",
   title: "3dtiles",
   visible: true,
   data: {
     type: "3dtiles",
-    url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json" // URL of 3D Tiles
+    url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json"
   },
   "3dtiles": {
-    // Settings for the 3D Tiles style.
     pbr: false, 
-    selectedFeatureColor: "red" // If you select a feature, it will change color
+    selectedFeatureColor: "red"
   }
 };
 
@@ -92,120 +84,115 @@ const generateLayerItem = (layer, isPreset) => {
 const presetLayerItems = presetLayers.map(layer => generateLayerItem(layer, true)).join('');
 const pluginLayerItems = pluginLayers.map(layer => generateLayerItem(layer, false)).join('');
 
-
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-    <style>
-    .layers-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      .layers-list li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 8px 0;
-        padding: 8px 12px;
-        background: #f8f9fa;
-        border-radius: 4px;
-      }
+<style>
+  .layers-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .layers-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 4px;
+  }
 
-      #layer-name{
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin: 0
-      }
-      .actions{
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        }
+  #layer-name{
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0
+  }
+  .actions{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    }
 
-      button {
-        padding: 2px 4px;
-        background: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+  button {
+    padding: 2px 4px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-      button:hover {
-        background: #45a049;
-      }
+  button:hover {
+    background: #45a049;
+  }
 
-      .fly-to-layer, #show-hide-layer{
-        cursor: pointer;
+  .fly-to-layer, #show-hide-layer{
+    cursor: pointer;
+  }
+</style>
 
-      }
-    </style>
+<div id="wrapper">
+  <h2>Layers</h2>
 
-
-    <div id="wrapper">
-      <h2>Layers</h2>
-          <h3>Preset Layers</h3>
-    <ul class="layers-list">
-      
+  <h3>Preset Layers</h3>
+  <ul class="layers-list">
     \${presetLayerItems}
-    </ul>
-    <h3>Plugin Layers</h3>
-    <ul class="layers-list">
-      \${pluginLayerItems}
-    </ul>
+  </ul>
 
-    </div>
+  <h3>Plugin Layers</h3>
+  <ul class="layers-list">
+    \${pluginLayerItems}
+  </ul>
+</div>
 
-    <script>
+<script>
+  // Add event listener for 'Delete' button
+  document.querySelectorAll(".delete-layer").forEach(button => {
+    button.addEventListener("click", event => {
+      const layerId = event.target.getAttribute("data-layer-id");
+      if (layerId) {
+        // Send a message to the parent window when 'Delete' is clicked
+        parent.postMessage({
+          type: "delete",
+          layerId: layerId
+        }, "*");
+        // Remove the layer from the UI
+        event.target.closest("li").remove();
+      }
+    });
+  });
 
-      // Add event listener for 'Delete' button
-      document.querySelectorAll(".delete-layer").forEach(button => {
-        button.addEventListener("click", event => {
-          const layerId = event.target.getAttribute("data-layer-id");
-          if (layerId) {
-            // Send a message to the parent window when 'Delete' is clicked
-            parent.postMessage({
-              type: "delete",
-              layerId: layerId
-            }, "*");
-            // Remove the layer from the UI
-            event.target.closest("li").remove();
-          }
-        });
-      });
+  // Add event listener for 'Show/Hide' 
+  document.querySelectorAll("#show-hide-layer").forEach(checkbox => {
+    checkbox.addEventListener("change", event => {
+      const layerId = event.target.getAttribute("data-layer-id");
+      const isVisible = event.target.checked;
 
-    // Add event listener for 'Show/Hide' 
-    document.querySelectorAll("#show-hide-layer").forEach(checkbox => {
-        checkbox.addEventListener("change", event => {
-          const layerId = event.target.getAttribute("data-layer-id");
-          const isVisible = event.target.checked;
+      if (layerId) {
+        // Send a message to the parent window for show/hide action
+        parent.postMessage({
+          type: isVisible ? "show" : "hide",
+          layerId: layerId
+        }, "*");
+      }
+    });
+  });
 
-          if (layerId) {
-            // Send a message to the parent window for show/hide action
-            parent.postMessage({
-              type: isVisible ? "show" : "hide",
-              layerId: layerId
-            }, "*");
-          }
-        });
-      });
-
-       // Add event listener for 'FlyTo' button
-      document.querySelectorAll(".fly-to-layer").forEach(button => {
-        button.addEventListener("click", event => {
-          const layerId = event.target.getAttribute("data-layer-id");
-          if (layerId) {
-            // Send a message to the parent window for 'FlyTo' action
-            parent.postMessage({
-              type: "flyTo",
-              layerId: layerId
-            }, "*");
-          }
-        });
-      });
-    </script>
-
+    // Add event listener for 'FlyTo' button
+  document.querySelectorAll(".fly-to-layer").forEach(button => {
+    button.addEventListener("click", event => {
+      const layerId = event.target.getAttribute("data-layer-id");
+      if (layerId) {
+        // Send a message to the parent window for 'FlyTo' action
+        parent.postMessage({
+          type: "flyTo",
+          layerId: layerId
+        }, "*");
+      }
+    });
+  });
+</script>
 \`);
 
 reearth.extension.on("message", (msg) => {
@@ -225,9 +212,6 @@ reearth.extension.on("message", (msg) => {
     default:
   }
 });
-
-
-
 `
 };
 
