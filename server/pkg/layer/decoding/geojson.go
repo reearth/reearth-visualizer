@@ -189,11 +189,11 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 				if len(c) == 2 {
 					height = 0
 				} else if len(c) == 3 {
-					height = c[3]
+					height = c[2]
 				} else {
 					return nil, nil, errors.New("unable to parse coordinates")
 				}
-				coords = append(coords, property.LatLngHeight{Lat: c[1], Lng: c[0], Height: height})
+				coords = append(coords, property.LatLngHeight{Lat: c.Lat(), Lng: c.Lon(), Height: height})
 			}
 			poly = append(poly, coords)
 		}

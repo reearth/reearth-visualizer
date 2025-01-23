@@ -78,7 +78,7 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 		}
 
 		if height := li.Property.Field("height").Value().ValueNumber(); height != nil {
-			coords = append(coords, *height)
+			coords = orb.Point{coords[0], coords[1], *height}
 		}
 
 		res = geojson.NewFeature(coords)
