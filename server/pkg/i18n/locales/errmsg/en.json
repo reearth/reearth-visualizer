@@ -1,0 +1,10 @@
+{
+    "pkg": {
+      "project": {
+        "invalid_alias": {
+          "message": "Invalid alias name: {{.aliasName}}",
+          "description": "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}."
+        }
+      }
+    }
+}

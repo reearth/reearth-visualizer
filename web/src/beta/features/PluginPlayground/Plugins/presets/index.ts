@@ -9,6 +9,7 @@ import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addWms } from "./layers/add-wms";
+import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -55,6 +56,7 @@ export const presetPlugins: PresetPlugins = [
       addOsm3dTiles,
       addWms,
       addGooglePhotorealistic3dTiles
+      hideFlyToDeleteLayer
     ]
   },
   {

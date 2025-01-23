@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -47,9 +48,18 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 }
 
 func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
-	return r.findOne(ctx, bson.M{
+	prj, err := r.findOne(ctx, bson.M{
 		"id": id.String(),
 	}, true)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
 }
 
 func (r *Project) FindByScene(ctx context.Context, id id.SceneID) (*project.Project, error) {

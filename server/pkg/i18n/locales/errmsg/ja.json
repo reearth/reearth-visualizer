@@ -1,0 +1,10 @@
+{
+    "pkg": {
+      "project": {
+        "invalid_alias": {
+          "message": "不正なエイリアス名です: {{.aliasName}}",
+          "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
+        }
+      }
+    }
+  }
