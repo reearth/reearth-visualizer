@@ -25,29 +25,10 @@ func (*GeoJSONEncoder) MimeType() string {
 	return "application/json"
 }
 
-func (e *GeoJSONEncoder) polygonToFloat(p property.Polygon) [][][]float64 {
-	var res [][][]float64
-	for _, c := range p {
-		t := e.coordsToFloat(c)
-		res = append(res, t)
-	}
-	return res
-}
-
 func (e *GeoJSONEncoder) polygonToRings(p property.Polygon) []orb.Ring {
 	var res []orb.Ring
 	for _, c := range p {
 		t := e.coordsToPoint(c)
-		res = append(res, t)
-	}
-	return res
-}
-
-func (e *GeoJSONEncoder) coordsToFloat(c property.Coordinates) [][]float64 {
-	var res [][]float64
-	for _, l := range c {
-		t := []float64{}
-		t = append(t, []float64{l.Lng, l.Lat, l.Height}...)
 		res = append(res, t)
 	}
 	return res
