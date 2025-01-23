@@ -42,12 +42,12 @@ reearth.layers.add(layerPhotorealistic3dTiles);
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
-    heading: 0.20219047310022553,
-    height: 261.79910347824375,
-    lat: 44.13880442335244,
-    lng: 4.8038131598778,
-    pitch: -0.5139201681525183,
-    roll: 0.000011404713798235377,
+    heading: 6.0671039802577384,
+    height: 1128.5794476956557,
+    lat: 40.730278427281455,
+    lng: -73.97291848442529,
+    pitch: -0.31010069674839325,
+    roll: 0.00004250447889830866,
   },
   // Define camera movement time
   {
