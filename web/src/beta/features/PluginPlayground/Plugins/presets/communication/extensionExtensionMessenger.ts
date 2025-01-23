@@ -3,17 +3,17 @@ import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 // YAML File Definition
 const yamlFile: FileType = {
-  id: "extension-extension-messenger-reearth-yml",
+  id: "extension-to-extension-messenger-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: extension-extension-messenger-plugin
-name: Extension Extension Messenger
+  sourceCode: `id: extension-to-extension-messenger-plugin
+name: Extension To Extension Messenger
 version: 1.0.0
 extensions:
-  - id: extension1
+  - id: extension-1
     type: widget
     name: Extension 1
     description: Extension 1 Widget
-  - id: extension2
+  - id: extension-2
     type: widget
     name: Extension 2
     description: Extension 2 Widget
@@ -109,7 +109,7 @@ reearth.ui.show(\`
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
     const extensions = reearth.extension.list;
-    const target = extensions.find(ext => ext.extensionId === "extension2");
+    const target = extensions.find(ext => ext.extensionId === "extension-2");
     if (target) {
       reearth.extension.postMessage(target.id, msg.message);
     }
@@ -211,7 +211,7 @@ reearth.ui.show(\`
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
     const extensions = reearth.extension.list;
-    const target = extensions.find(ext => ext.extensionId === "extension1");
+    const target = extensions.find(ext => ext.extensionId === "extension-1");
     if (target) {
       reearth.extension.postMessage(target.id, msg.message);
     }
@@ -228,20 +228,20 @@ reearth.extension.on("extensionMessage", msg => {
 
 // Widget File Definitions
 const extension1File: FileType = {
-  id: "extension-extension-messenger-extension1",
-  title: "extension1.js",
+  id: "extension-to-extension-messenger-extension1",
+  title: "extension-1.js",
   sourceCode: extension1SourceCode
 };
 
 const extension2File: FileType = {
-  id: "extension-extension-messenger-extension2",
-  title: "extension2.js",
+  id: "extension-to-extension-messenger-extension2",
+  title: "extension-2.js",
   sourceCode: extension2SourceCode
 };
 
 // Plugin Definition
 export const extensionExtensionMessenger: PluginType = {
-  id: "extension-extension-messenger",
-  title: "Extension Extension Messenger",
+  id: "extension-to-extension-messenger",
+  title: "Extension To Extension Messenger",
   files: [yamlFile, extension1File, extension2File]
 };
