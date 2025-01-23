@@ -8,6 +8,7 @@ import { addGeojson } from "./layers/add-geojson";
 import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
+import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -52,7 +53,8 @@ export const presetPlugins: PresetPlugins = [
       addCsv,
       add3dTiles,
       addOsm3dTiles,
-      addWms
+      addWms,
+      hideFlyToDeleteLayer
     ]
   },
   {
