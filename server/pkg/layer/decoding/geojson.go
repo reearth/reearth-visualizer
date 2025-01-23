@@ -41,6 +41,9 @@ func validateFeatures(fc []*geojson.Feature) []*geojson.Feature {
 		case orb.MultiPolygon:
 			for _, p := range g {
 				nf := geojson.NewFeature(p)
+				if nf.Properties == nil {
+					nf.Properties = make(map[string]interface{})
+				}
 				for k, v := range f.Properties {
 					nf.Properties[k] = v
 				}
