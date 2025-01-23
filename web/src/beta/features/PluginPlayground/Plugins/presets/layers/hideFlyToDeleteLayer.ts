@@ -209,19 +209,18 @@ reearth.ui.show(\`
 \`);
 
 reearth.extension.on("message", (msg) => {
-  const layerId = [msg.layerId];
   switch (msg.type) {
     case "delete":
-      reearth.layers.delete(...layerId);
+      reearth.layers.delete(msg.layerId);
       break;
     case "flyTo":
       reearth.camera.flyTo(msg.layerId, { duration: 2 });
       break;
     case "hide":
-      reearth.layers.hide(...layerId);
+      reearth.layers.hide(msg.layerId);
       break;
     case "show":
-      reearth.layers.show(...layerId);
+      reearth.layers.show(msg.layerId);
       break;
     default:
   }
@@ -234,6 +233,6 @@ reearth.extension.on("message", (msg) => {
 
 export const hideFlyToDeleteLayer: PluginType = {
   id: "hide-flyto-delete-layer",
-  title: "Hide Flyto Delete Layer",
+  title: "Hide/Flyto/Delete Layer",
   files: [widgetFile, yamlFile]
 };
