@@ -52,10 +52,43 @@ const widgetFile: FileType = {
       button:hover {
         background: #45a049;
       }
+
+      #info-section {
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      #info-toggle {
+        padding: 6px 12px;  /* Smaller button */
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;    /* Smaller text */
+      }
+
+      #info-content {
+        background: #f9f9f9;  /* Light gray background */
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 15px;    /* Space between button and content */
+        font-size: 14px;
+        line-height: 1.4;
+      }
     </style>
 
     <div id="wrapper">
       <h2>Coordinate Viewer</h2>
+      <div id="info-section">
+        <button id="info-toggle">Show Info</button>
+        <div id="info-content" style="display: none;">
+          <strong>How to use this plugin:</strong><br>
+          1. Click anywhere on the map to see its coordinates<br>
+          2. Click the "Fly to Position" button to move the camera to that location<br>
+          3. Coordinates update dynamically when you click anywhere on the map<br><br>
+        </div>
+      </div>
       <div class="coordinates">
         <p>Latitude: <span id="lat" class="coordinate-value">-</span>°</p>
         <p>Longitude: <span id="lng" class="coordinate-value">-</span>°</p>
@@ -88,6 +121,14 @@ const widgetFile: FileType = {
           lng: currentLng,
           alt: 1000 // Fixed camera height for better viewing
         }, "*");
+      });
+
+      // Toggle info section
+      document.getElementById("info-toggle").addEventListener("click", () => {
+        const infoContent = document.getElementById("info-content");
+        const isHidden = infoContent.style.display === "none";
+        infoContent.style.display = isHidden ? "block" : "none";
+        document.getElementById("info-toggle").textContent = isHidden ? "Hide Info" : "Show Info";
       });
     </script>
 \`);

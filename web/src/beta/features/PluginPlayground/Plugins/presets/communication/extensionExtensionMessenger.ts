@@ -9,21 +9,21 @@ const yamlFile: FileType = {
 name: Extension Extension Messenger
 version: 1.0.0
 extensions:
-  - id: messenger1
+  - id: extension1
     type: widget
-    name: Messenger 1
-    description: Messenger 1 Widget
-  - id: messenger2
+    name: Extension 1
+    description: Extension 1 Widget
+  - id: extension2
     type: widget
-    name: Messenger 2
-    description: Messenger 2 Widget
+    name: Extension 2
+    description: Extension 2 Widget
 `,
   disableEdit: true,
   disableDelete: true
 };
 
-// Messenger 1 Widget Source Code
-const messenger1SourceCode = `
+// Extension 1 Widget Source Code
+const extension1SourceCode = `
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
@@ -68,7 +68,7 @@ reearth.ui.show(\`
   </style>
 
    <div id="wrapper">
-    <h2>Messenger 1</h2>
+    <h2>Extension 1</h2>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
       <button id="sendButton">Send</button>
@@ -109,7 +109,7 @@ reearth.ui.show(\`
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
     const extensions = reearth.extension.list;
-    const target = extensions.find(ext => ext.extensionId === "messenger2");
+    const target = extensions.find(ext => ext.extensionId === "extension2");
     if (target) {
       reearth.extension.postMessage(target.id, msg.message);
     }
@@ -124,8 +124,8 @@ reearth.extension.on("extensionMessage", msg => {
   });
 });`;
 
-// Messenger 2 Widget Source Code
-const messenger2SourceCode = `
+// Extension 2 Widget Source Code
+const extension2SourceCode = `
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
@@ -170,7 +170,7 @@ reearth.ui.show(\`
   </style>
 
     <div id="wrapper">
-    <h2>Messenger 2</h2>
+    <h2>Extension 2</h2>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
       <button id="sendButton">Send</button>
@@ -204,11 +204,14 @@ reearth.ui.show(\`
   </script>
 \`);
 
+// Note: Re:Earth visualizer requires using msg.data for message content
+// and extensionId for finding extensions
+
 // Handle messages from UI to send to other extension
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
     const extensions = reearth.extension.list;
-    const target = extensions.find(ext => ext.extensionId === "messenger1");
+    const target = extensions.find(ext => ext.extensionId === "extension1");
     if (target) {
       reearth.extension.postMessage(target.id, msg.message);
     }
@@ -224,21 +227,21 @@ reearth.extension.on("extensionMessage", msg => {
 });`;
 
 // Widget File Definitions
-const messenger1File: FileType = {
-  id: "extension-extension-messenger-messenger1",
-  title: "messenger1.js",
-  sourceCode: messenger1SourceCode
+const extension1File: FileType = {
+  id: "extension-extension-messenger-extension1",
+  title: "extension1.js",
+  sourceCode: extension1SourceCode
 };
 
-const messenger2File: FileType = {
-  id: "extension-extension-messenger-messenger2",
-  title: "messenger2.js",
-  sourceCode: messenger2SourceCode
+const extension2File: FileType = {
+  id: "extension-extension-messenger-extension2",
+  title: "extension2.js",
+  sourceCode: extension2SourceCode
 };
 
 // Plugin Definition
 export const extensionExtensionMessenger: PluginType = {
   id: "extension-extension-messenger",
   title: "Extension Extension Messenger",
-  files: [yamlFile, messenger1File, messenger2File]
+  files: [yamlFile, extension1File, extension2File]
 };
