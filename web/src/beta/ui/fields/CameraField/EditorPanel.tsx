@@ -58,7 +58,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
     >
       <GroupWrapper>
         <TwinInputField
-          values={[newCamera?.lat ?? 0, newCamera?.lng ?? 0]}
+          values={[newCamera?.lat, newCamera?.lng]}
           content={[t("Latitude"), t("Longitude")]}
           title={t("Location")}
           placeholders={[t("value"), t("value")]}
@@ -69,18 +69,14 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
           <Typography size="body">{t("Height")}</Typography>
           <NumberInput
             unit={"km"}
-            value={newCamera?.height ?? 0}
+            value={newCamera?.height}
             onChange={(value) => handleFieldChange("height", value)}
             onBlur={(value) => handleFieldBlur("height", value)}
           />
         </InputWrapper>
         <TripletInputField
           title={t("Rotation")}
-          values={[
-            newCamera?.heading ?? 0,
-            newCamera?.pitch ?? 0,
-            newCamera?.roll ?? 0
-          ]}
+          values={[newCamera?.heading, newCamera?.pitch, newCamera?.roll]}
           content={[t("Heading"), t("Pitch"), t("Roll")]}
           placeholders={[t("value"), t("value"), t("value")]}
           onChange={handleTrippleFieldChange}
