@@ -1,13 +1,13 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-googlePhotorealistic3dTiles-reearth-yml",
+  id: "layers-add-google-photorealistic-3d-tiles-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layers-add-googlePhotorealistic3dTiles-plugin
+  sourceCode: `id: layers-add-google-photorealistic-3d-tiles-plugin
 name: Add Google Photorealistic 3D Tiles
 version: 1.0.0
 extensions:
-  - id: layers-add-googlePhotorealistic3dTiles
+  - id: layers-add-google-photorealistic-3d-tiles
     type: widget
     name: Add Google Photorealistic 3D Tiles
     description: Add Google Photorealistic 3D Tiles
@@ -17,8 +17,8 @@ extensions:
 };
 
 const widgetFile: FileType = {
-  id: "layers-add-googlePhotorealistic3dTiles",
-  title: "layers-add-googlePhotorealistic3dTiles.js",
+  id: "layers-add-google-photorealistic-3d-tiles",
+  title: "layers-add-google-photorealistic-3d-tiles.js",
   sourceCode: `// Example of adding a layer with Google Photorealistic 3D Tiles
 
 // Define Google Photorealistic 3D Tiles
