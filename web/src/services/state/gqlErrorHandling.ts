@@ -1,12 +1,16 @@
 import { atom, useAtom, useSetAtom } from "jotai";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
-type GQLError = { type?: string; message?: string };
-const error = atom<GQLError | undefined>(undefined);
-
-export const useError = () => useAtom(error);
+export type GQLError = {
+  type?: string;
+  message?: string;
+  code?: string;
+  description?: string;
+};
+const errors = atom<GQLError[]>([]);
+export const useErrors = () => useAtom(errors);
 
 export default () => {
-  const setError = useSetAtom(error);
-  return { setError };
+  const setErrors = useSetAtom(errors);
+  return { setErrors };
 };

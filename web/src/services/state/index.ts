@@ -5,7 +5,7 @@ import { TeamMember } from "../gql";
 
 export * from "./devPlugins";
 
-export { default as useSetError, useError } from "./gqlErrorHandling";
+export { default as useSetError } from "./gqlErrorHandling";
 
 export type WidgetAreaState = {
   zone: "inner" | "outer";
