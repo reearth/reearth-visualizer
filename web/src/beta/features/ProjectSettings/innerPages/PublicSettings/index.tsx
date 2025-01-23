@@ -52,7 +52,6 @@ export type SettingsProject = {
   isArchived: boolean;
   enableGa: boolean;
   trackingId: string;
-  typename?: "Project";
 };
 
 type Props = {

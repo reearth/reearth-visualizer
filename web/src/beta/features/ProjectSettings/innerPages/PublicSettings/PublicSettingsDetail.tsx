@@ -28,12 +28,26 @@ import {
   SettingsProject
 } from ".";
 
+interface WithTypename {
+  __typename?: string;
+}
+
+type SettingsProjectWithTypename = SettingsProject & WithTypename;
+type StoryWithTypename = Story & WithTypename;
+
 type Props = {
-  settingsItem: SettingsProject | Story;
+  settingsItem: SettingsProjectWithTypename | StoryWithTypename;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
   onUpdateGA?: (settings: PublicGASettingsType) => void;
+};
+
+type ExtensionComponentProps = (
+  | ProjectPublicationExtensionProps
+  | StoryPublicationExtensionProps
+) & {
+  typename: string;
 };
 
 const PublicSettingsDetail: React.FC<Props> = ({
@@ -108,9 +122,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
     [setNotification]
   );
 
-  const ExtensionComponent = (
-    props: ProjectPublicationExtensionProps | StoryPublicationExtensionProps
-  ) => {
+  const ExtensionComponent = (props: ExtensionComponentProps) => {
     const type = props.typename.toLocaleLowerCase();
     const extensionId = `custom-${type}-domain`;
     const Component = extensions?.find((e) => e.id === extensionId)?.component;
@@ -249,31 +261,27 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      {extensions &&
-        extensions.length > 0 &&
-        settingsItem.typename &&
-        accessToken && (
-          <Collapse title={t("Custom Domain")} size="large">
-            <ExtensionComponent
-              typename={settingsItem.typename}
-              key={settingsItem.id}
-              {...(settingsItem.typename === "Project"
-                ? {
-                    projectId: settingsItem.id,
-                    projectAlias: settingsItem.alias
-                  }
-                : {
-                    storyId: settingsItem.id,
-                    storyAlias: settingsItem.alias
-                  })}
-              lang={currentLang}
-              theme={currentTheme}
-              accessToken={accessToken}
-              onNotificationChange={onNotificationChange}
-              version="visualizer"
-            />
-          </Collapse>
-        )}
+      {extensions && extensions.length > 0 && accessToken && (
+        <Collapse title={t("Custom Domain")} size="large">
+          <ExtensionComponent
+            typename={settingsItem.__typename || ""}
+            {...(settingsItem.__typename === "Project"
+              ? {
+                  projectId: settingsItem.id,
+                  projectAlias: settingsItem.alias
+                }
+              : {
+                  storyId: settingsItem.id,
+                  storyAlias: settingsItem.alias
+                })}
+            lang={currentLang}
+            theme={currentTheme}
+            accessToken={accessToken}
+            onNotificationChange={onNotificationChange}
+            version="visualizer"
+          />
+        </Collapse>
+      )}
     </>
   );
 };
