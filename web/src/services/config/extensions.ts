@@ -29,14 +29,12 @@ export type ProjectPublicationExtensionProps = {
   projectId: string;
   projectAlias?: string;
   publishDisabled?: boolean;
-  typename: string;
 } & SharedExtensionProps;
 
 export type StoryPublicationExtensionProps = {
   storyId: string;
   storyAlias?: string;
   publishDisabled?: boolean;
-  typename: string;
 } & SharedExtensionProps;
 
 export type PluginExtensionProps = {
