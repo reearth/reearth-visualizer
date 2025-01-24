@@ -1,5 +1,7 @@
 import { PluginType } from "../constants";
 
+import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
+import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
@@ -13,7 +15,6 @@ import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
-import { uiExtensionMessenger } from "./ui/uiExtensionMessenger";
 
 type PresetPluginCategory = {
   id: string;
@@ -37,7 +38,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "communication",
     title: "Communication",
-    plugins: [uiExtensionMessenger]
+    plugins: [uiExtensionMessenger, extensionExtensionMessenger]
   },
   {
     id: "viewerScene",
