@@ -283,14 +283,6 @@ func aligningJSON(t *testing.T, str string) string {
 	return string(strBytes)
 }
 
-// func toJSONString(v interface{}) (string, error) {
-// 	jsonData, err := json.Marshal(v)
-// 	if err != nil {
-// 		return "", fmt.Errorf("failed to marshal JSON: %w", err)
-// 	}
-// 	return string(jsonData), nil
-// }
-
 func ValueDump(val *httpexpect.Value) {
 	if data, ok := val.Raw().(map[string]interface{}); ok {
 		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
