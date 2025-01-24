@@ -11,7 +11,8 @@ import (
 	"path"
 	"strings"
 
-	geojson "github.com/paulmach/go.geojson"
+	"github.com/reearth/orb"
+	"github.com/reearth/orb/geojson"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -1174,52 +1175,26 @@ func (i *NLSLayer) validateGeoJsonOfAssets(ctx context.Context, assetFileName st
 }
 
 func validateGeoJSONFeatureCollection(data []byte) error {
-
 	var validationErrors []error
 
-	f, err := geojson.UnmarshalFeature(data)
+	fc, err := geojson.UnmarshalFeatureCollection(data)
 	if err != nil {
 		return err
 	}
-	if f.Type == "Feature" {
 
-		if f.BoundingBox != nil {
-			if err := validateBBox(f.BoundingBox); err != nil {
-				validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
-			}
-		}
+	if err := validateBBox(fc.BBox.Bound()); err != nil {
+		validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
+	}
 
-		if errs := validateGeoJSONFeature(f); len(errs) > 0 {
+	for _, feature := range fc.Features {
+		if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
 			validationErrors = append(validationErrors, errs...)
 		}
-
-	} else if f.Type == "FeatureCollection" {
-
-		fc, err := geojson.UnmarshalFeatureCollection(data)
-		if err != nil {
-			return err
-		}
-
-		if fc.BoundingBox != nil {
-			if err := validateBBox(fc.BoundingBox); err != nil {
-				validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
-			}
-		}
-
-		for _, feature := range fc.Features {
-			if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
-				validationErrors = append(validationErrors, errs...)
-			}
-		}
-
-	} else {
-		return errors.New("Invalid Geojson")
 	}
 
 	if len(validationErrors) > 0 {
 		return fmt.Errorf("Validation failed: %v", validationErrors)
 	}
-
 	return nil
 }
 
@@ -1231,53 +1206,34 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 		return validationErrors
 	}
 
-	if feature.BoundingBox != nil {
-		if err := validateBBox(feature.BoundingBox); err != nil {
-			validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
-		}
-	}
-	switch feature.Geometry.Type {
-	case "Point":
-		if !isValidLatLon(feature.Geometry.Point) {
+	switch g := feature.Geometry.(type) {
+	case orb.Point:
+		if !isValidLatLon(g) {
 			validationErrors = append(validationErrors, errors.New("Point latitude or longitude is invalid"))
 		}
-	case "MultiPoint":
-		if len(feature.Geometry.MultiPoint) == 0 {
+	case orb.MultiPoint:
+		if len(g) == 0 {
 			validationErrors = append(validationErrors, errors.New("MultiPoint must contain at least one coordinate"))
 		}
-		for _, point := range feature.Geometry.MultiPoint {
+		for _, point := range g {
 			if !isValidLatLon(point) {
 				validationErrors = append(validationErrors, errors.New("MultiPoint contains invalid latitude or longitude"))
 			}
 		}
-	case "LineString":
-		if len(feature.Geometry.LineString) < 2 {
+	case orb.LineString:
+		if len(g) < 2 {
 			validationErrors = append(validationErrors, errors.New("LineString must contain at least two coordinates"))
 		}
-		for _, coords := range feature.Geometry.LineString {
+		for _, coords := range g {
 			if !isValidLatLon(coords) {
 				validationErrors = append(validationErrors, errors.New("LineString contains invalid latitude or longitude"))
 			}
 		}
-	case "MultiLineString":
-		if len(feature.Geometry.MultiLineString) == 0 {
-			validationErrors = append(validationErrors, errors.New("MultiLineString must contain at least one line"))
-		}
-		for _, line := range feature.Geometry.MultiLineString {
-			if len(line) < 2 {
-				validationErrors = append(validationErrors, errors.New("Each line in MultiLineString must contain at least two coordinates"))
-			}
-			for _, coords := range line {
-				if !isValidLatLon(coords) {
-					validationErrors = append(validationErrors, errors.New("MultiLineString contains invalid latitude or longitude"))
-				}
-			}
-		}
-	case "Polygon":
-		if len(feature.Geometry.Polygon) == 0 {
+	case orb.Polygon:
+		if len(g) == 0 {
 			validationErrors = append(validationErrors, errors.New("Polygon must contain coordinates"))
 		}
-		for _, ring := range feature.Geometry.Polygon {
+		for _, ring := range g {
 			if len(ring) < 4 || !pointsEqual(ring[0], ring[len(ring)-1]) {
 				validationErrors = append(validationErrors, errors.New("Polygon ring is not closed"))
 			}
@@ -1287,11 +1243,11 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 				}
 			}
 		}
-	case "MultiPolygon":
-		if len(feature.Geometry.MultiPolygon) == 0 {
+	case orb.MultiPolygon:
+		if len(g) == 0 {
 			validationErrors = append(validationErrors, errors.New("MultiPolygon must contain at least one Polygon"))
 		}
-		for _, polygon := range feature.Geometry.MultiPolygon {
+		for _, polygon := range g {
 			for _, ring := range polygon {
 				if len(ring) < 4 || !pointsEqual(ring[0], ring[len(ring)-1]) {
 					validationErrors = append(validationErrors, errors.New("MultiPolygon ring is not closed"))
@@ -1303,23 +1259,14 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 				}
 			}
 		}
-	case "GeometryCollection":
-		if len(feature.Geometry.Geometries) == 0 {
-			validationErrors = append(validationErrors, errors.New("GeometryCollection must contain at least one Geometry"))
-		}
-		for _, geometry := range feature.Geometry.Geometries {
-			if errs := validateGeoJSONFeature(&geojson.Feature{Geometry: geometry}); len(errs) > 0 {
-				validationErrors = append(validationErrors, errs...)
-			}
-		}
 	default:
-		validationErrors = append(validationErrors, fmt.Errorf("Unsupported Geometry type: %s", feature.Geometry.Type))
+		validationErrors = append(validationErrors, fmt.Errorf("Unsupported Geometry type: %T", g))
 	}
 
 	return validationErrors
 }
 
-func pointsEqual(a, b []float64) bool {
+func pointsEqual(a, b orb.Point) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -1331,7 +1278,7 @@ func pointsEqual(a, b []float64) bool {
 	return true
 }
 
-func isValidLatLon(coords []float64) bool {
+func isValidLatLon(coords orb.Point) bool {
 	if len(coords) != 2 && len(coords) != 3 {
 		return false
 	}
@@ -1339,14 +1286,11 @@ func isValidLatLon(coords []float64) bool {
 	return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
 }
 
-func validateBBox(bbox []float64) error {
-	if len(bbox) != 4 && len(bbox) != 6 {
-		return errors.New("bbox must have 4 or 6 elements")
-	}
-	minLon, minLat := bbox[0], bbox[1]
-	maxLon, maxLat := bbox[2], bbox[3]
+func validateBBox(bbox orb.Bound) error {
+	minLon, minLat := bbox.Min[0], bbox.Min[1]
+	maxLon, maxLat := bbox.Max[0], bbox.Max[1]
 
-	if !isValidLatLon([]float64{minLon, minLat}) || !isValidLatLon([]float64{maxLon, maxLat}) {
+	if !isValidLatLon(orb.Point{minLon, minLat}) || !isValidLatLon(orb.Point{maxLon, maxLat}) {
 		return errors.New("bbox values are out of range")
 	}
 	if minLon > maxLon || minLat > maxLat {
