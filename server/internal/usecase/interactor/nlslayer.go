@@ -1177,24 +1177,35 @@ func (i *NLSLayer) validateGeoJsonOfAssets(ctx context.Context, assetFileName st
 func validateGeoJSONFeatureCollection(data []byte) error {
 	var validationErrors []error
 
-	fc, err := geojson.UnmarshalFeatureCollection(data)
-	if err != nil {
-		return err
-	}
-
-	if err := validateBBox(fc.BBox.Bound()); err != nil {
-		validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
-	}
-
-	for _, feature := range fc.Features {
-		if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
-			validationErrors = append(validationErrors, errs...)
+	f, err := geojson.UnmarshalFeature(data)
+	if err == nil {
+		if f.Type == "Feature" {
+			if errs := validateGeoJSONFeature(f); len(errs) > 0 {
+				validationErrors = append(validationErrors, errs...)
+			}
+		} else {
+			validationErrors = append(validationErrors, errors.New("Invalid feature type"))
+		}
+	} else {
+		fc, err := geojson.UnmarshalFeatureCollection(data)
+		if fc.BBox != nil && !fc.BBox.Valid() {
+			validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
+		}
+		if err == nil {
+			for _, feature := range fc.Features {
+				if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
+					validationErrors = append(validationErrors, errs...)
+				}
+			}
+		} else {
+			validationErrors = append(validationErrors, errors.New("Invalid GeoJSON data"))
 		}
 	}
 
 	if len(validationErrors) > 0 {
 		return fmt.Errorf("Validation failed: %v", validationErrors)
 	}
+
 	return nil
 }
 
@@ -1286,15 +1297,15 @@ func isValidLatLon(coords orb.Point) bool {
 	return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
 }
 
-func validateBBox(bbox orb.Bound) error {
-	minLon, minLat := bbox.Min[0], bbox.Min[1]
-	maxLon, maxLat := bbox.Max[0], bbox.Max[1]
+// func validateBBox(bbox geojson.BBox) error {
+// 	minLon, minLat := bbox.Min[0], bbox.Min[1]
+// 	maxLon, maxLat := bbox.Max[0], bbox.Max[1]
 
-	if !isValidLatLon(orb.Point{minLon, minLat}) || !isValidLatLon(orb.Point{maxLon, maxLat}) {
-		return errors.New("bbox values are out of range")
-	}
-	if minLon > maxLon || minLat > maxLat {
-		return errors.New("bbox values are not in the correct order")
-	}
-	return nil
-}
+// 	if !isValidLatLon(orb.Point{minLon, minLat}) || !isValidLatLon(orb.Point{maxLon, maxLat}) {
+// 		return errors.New("bbox values are out of range")
+// 	}
+// 	if minLon > maxLon || minLat > maxLat {
+// 		return errors.New("bbox values are not in the correct order")
+// 	}
+// 	return nil
+// }

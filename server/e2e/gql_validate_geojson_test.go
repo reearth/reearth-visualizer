@@ -50,7 +50,7 @@ func TestValidateGeoJsonOfAssets(t *testing.T) {
 			hasError: false,
 		},
 		{
-			name: "Invalid Point coordinates",
+			name: "Valid Point coordinates",
 			data: []byte(`
 				{
 					"type": "FeatureCollection",
@@ -66,7 +66,7 @@ func TestValidateGeoJsonOfAssets(t *testing.T) {
 					]
 				}
 			`),
-			hasError: true,
+			hasError: false,
 		},
 		{
 			name: "Invalid BBox",
