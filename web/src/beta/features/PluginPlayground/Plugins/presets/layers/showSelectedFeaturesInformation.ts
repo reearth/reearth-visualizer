@@ -25,7 +25,31 @@ extensions:
 const widgetFile: FileType = {
   id: "show-features-info",
   title: "show-features-info.js",
-  sourceCode: `TBD
+  sourceCode: `const infoboxLayer = {
+  type: "simple",
+  data: {
+    type: "csv",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/csv/marker.csv",
+    csv: {
+      latColumn: "latitude",
+      lngColumn: "longitude",
+    },
+  },
+  marker: {},
+  infobox: {
+    default: {
+      id: "block-text-1",
+      pluginId:"show-features-info",
+      extensionId: "show-features-info-plugin",
+      extensionType: "infoboxBlock",
+      property: {
+        default: "test",
+      },
+    },
+  },
+};
+
+reearth.layers.add(infoboxLayer);
 `
 };
 
