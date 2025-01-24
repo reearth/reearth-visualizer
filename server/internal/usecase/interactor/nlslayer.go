@@ -135,7 +135,9 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	if data, ok := (*inp.Config)["data"].(map[string]interface{}); ok {
 		if type_, ok := data["type"].(string); ok && type_ == "geojson" {
 			if url, ok := data["url"].(string); ok {
-				i.validateGeoJsonOfAssets(ctx, path.Base(url))
+				if err := i.validateGeoJsonOfAssets(ctx, path.Base(url)); err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
