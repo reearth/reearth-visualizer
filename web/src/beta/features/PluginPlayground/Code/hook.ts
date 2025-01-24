@@ -2,6 +2,7 @@ import Visualizer from "@reearth/beta/features/Visualizer";
 import { useNotification } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { ComponentProps, useCallback, useState } from "react";
+import { v4 } from "uuid";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
@@ -43,6 +44,7 @@ type CustomStoryBlock = CustomInfoboxBlock;
 
 type Props = {
   files: FileType[];
+  resetVisualizer: () => void;
 };
 
 const getYmlJson = (file: FileType) => {
@@ -62,13 +64,14 @@ const getYmlJson = (file: FileType) => {
   }
 };
 
-export default ({ files }: Props) => {
+export default ({ files, resetVisualizer }: Props) => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
 
   const executeCode = useCallback(() => {
+    resetVisualizer();
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
 
     if (!ymlFile) return;
@@ -119,7 +122,10 @@ export default ({ files }: Props) => {
                   widgets: [
                     ...(areaAlignSystem.widgets ?? []),
                     {
-                      id: cur.id,
+                      id: v4(),
+                      name: cur.name,
+                      extensionId: cur.id,
+                      pluginId: ymlJson.id,
                       __REEARTH_SOURCECODE: file.sourceCode,
                       extended
                     }
@@ -199,7 +205,7 @@ export default ({ files }: Props) => {
         }
       ]
     });
-  }, [files, setNotification]);
+  }, [files, resetVisualizer, setNotification]);
 
   return {
     executeCode,

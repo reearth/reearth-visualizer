@@ -1,0 +1,9 @@
+{
+  "pkg": {
+    "project": {
+      "alias": {
+        "allowed_chars": "英数字、アンダースコア、ハイフン"
+      }
+    }
+  }
+}
