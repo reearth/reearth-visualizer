@@ -4,9 +4,6 @@ import (
 	"testing"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestValidateGeoJsonOfAssets ./e2e/...
-
 func TestValidateGeoJsonOfAssets(t *testing.T) {
 	e := Server(t, baseSeeder)
 
