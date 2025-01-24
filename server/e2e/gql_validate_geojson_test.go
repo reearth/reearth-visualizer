@@ -187,15 +187,14 @@ func TestValidateGeoJsonOfAssets(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			res := createAssetFromFileData(t, e, []byte(tt.data), true, teamId)
-			// ValueDump(res)
 			title := res.Path("$.data.createAsset.asset.name").Raw().(string)
 			url := res.Path("$.data.createAsset.asset.url").Raw().(string)
 			res = addNLSLayerSimpleByGeojson(e, sId, url, title, 0)
-			ValueDump(res)
+			// ValueDump(res)
 			if tt.hasError {
 				res.Object().Value("errors").Array().NotEmpty()
 			} else {
-				res.Object().Value("errors").Array().Empty()
+				res.Object().NotContainsKey("errors")
 			}
 		})
 	}
