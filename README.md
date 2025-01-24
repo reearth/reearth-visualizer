@@ -15,6 +15,8 @@
   <a href="https://visualizer.developer.reearth.io/">Documentation</a>
   ·
   <a href="https://github.com/reearth/reearth-visualizer/issues">Issues</a>
+   ·
+  <a href="https://discord.gg/8hE7avwQ">Discord</a>
 </p>
 
 ---
