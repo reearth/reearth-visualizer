@@ -1426,4 +1426,33 @@ extensions:
           url:
             title: リンクURL
 
+  googleMapSearch:
+    name: Googleマップ検索(実験版)
+    description: Googleマップを利用して地図上の場所を検索できるウィジェット
+    propertySchema:
+      default:
+        title: Googleマップ検索ウィジェット
+        fields:
+          apiToken:
+            title: APIトークン
+            description: Google Maps APIキー
+      appearance:
+        title: 外観
+        fields:
+          theme:
+            title: テーマ
+            choices:
+              light: 明るい
+              dark: 暗い
+      languageSetting:
+        title: 言語設定
+        fields:
+          language:
+            title: 言語
+            choices:
+              auto: 自動
+              en: 英語
+              ja: 日本語
+              cn: 中国語
+
   

@@ -1,13 +1,13 @@
 package e2e
 
 import (
-	"encoding/json"
 	"net/http"
 	"os"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
@@ -67,12 +67,14 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
             } 
         }`,
 	}
+	operations, err := toJSONString(requestBody)
+	assert.Nil(t, err)
 	r := e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		WithMultipart().
-		WithFormField("operations", toJSONString(requestBody)).
+		WithFormField("operations", operations).
 		WithFormField("map", `{"0": ["variables.file"]}`).
 		WithFile("0", filePath).
 		Expect().
@@ -106,11 +108,6 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 	v := r.Value("data").Object().Value("node")
 	v.NotNull()
 	return v.Object()
-}
-
-func toJSONString(v interface{}) string {
-	jsonData, _ := json.Marshal(v)
-	return string(jsonData)
 }
 
 const GetSceneGuery = `

@@ -2,12 +2,9 @@ package e2e
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/rerror"
@@ -15,49 +12,24 @@ import (
 )
 
 func TestCreateTeam(t *testing.T) {
-	e, _ := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := `mutation { createTeam(input: {name: "test"}){ team{ id name } }}`
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
+	o := Request(e, uId1.String(), request).Object()
 	o.Value("data").Object().Value("createTeam").Object().Value("team").Object().Value("name").String().Equal("test")
 }
 
 func TestDeleteTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 	_, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	query := fmt.Sprintf(`mutation { deleteTeam(input: {teamId: "%s"}){ teamId }}`, wId1)
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	assert.Nil(t, err)
-
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
+	o := Request(e, uId1.String(), request).Object()
 	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().Equal(wId1.String())
 
 	_, err = r.Workspace.FindByID(context.Background(), wId1)
@@ -67,25 +39,13 @@ func TestDeleteTeam(t *testing.T) {
 	request = GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err = json.Marshal(request)
-	assert.Nil(t, err)
+	o = Request(e, uId1.String(), request).Object()
 
-	o = e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: deleteTeam operation denied")
+	o.Value("errors").Array().First().Object().Value("message").Equal("operation denied")
 }
 
 func TestUpdateTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -95,15 +55,7 @@ func TestUpdateTeam(t *testing.T) {
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
+	o := Request(e, uId1.String(), request).Object()
 	o.Value("data").Object().Value("updateTeam").Object().Value("team").Object().Value("name").String().Equal("updated")
 
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
@@ -114,25 +66,12 @@ func TestUpdateTeam(t *testing.T) {
 	request = GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err = json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	o = e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: updateTeam not found")
+	o = Request(e, uId1.String(), request).Object()
+	o.Value("errors").Array().First().Object().Value("message").Equal("not found")
 }
 
 func TestAddMemberToTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -142,15 +81,7 @@ func TestAddMemberToTeam(t *testing.T) {
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK)
+	Request(e, uId1.String(), request)
 
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -161,25 +92,12 @@ func TestAddMemberToTeam(t *testing.T) {
 	request = GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err = json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object().
-		Value("errors").Array().First().Object().Value("message").Equal("input: addMemberToTeam user already joined")
+	Request(e, uId1.String(), request).Object().
+		Value("errors").Array().First().Object().Value("message").Equal("user already joined")
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
@@ -189,35 +107,18 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK)
+	Request(e, uId1.String(), request)
 
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.False(t, w.Members().HasUser(uId3))
 
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: removeMemberFromTeam target user does not exist in the workspace")
+	o := Request(e, uId1.String(), request).Object()
+	o.Value("errors").Array().First().Object().Value("message").Equal("target user does not exist in the workspace")
 }
 
 func TestUpdateMemberOfTeam(t *testing.T) {
-	e, r := StartGQLServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeederUser)
+	e, r := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
@@ -226,16 +127,7 @@ func TestUpdateMemberOfTeam(t *testing.T) {
 	request := GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK)
-
+	Request(e, uId1.String(), request)
 	w, err = r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
 	assert.Equal(t, w.Members().User(uId3).Role, workspace.RoleWriter)
@@ -244,14 +136,6 @@ func TestUpdateMemberOfTeam(t *testing.T) {
 	request = GraphQLRequest{
 		Query: query,
 	}
-	jsonData, err = json.Marshal(request)
-	if err != nil {
-		assert.Nil(t, err)
-	}
-	o := e.POST("/api/graphql").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("Content-Type", "application/json").
-		WithHeader("X-Reearth-Debug-User", uId1.String()).
-		WithBytes(jsonData).Expect().Status(http.StatusOK).JSON().Object()
-	o.Value("errors").Array().First().Object().Value("message").Equal("input: updateMemberOfTeam operation denied")
+	o := Request(e, uId1.String(), request).Object()
+	o.Value("errors").Array().First().Object().Value("message").Equal("operation denied")
 }

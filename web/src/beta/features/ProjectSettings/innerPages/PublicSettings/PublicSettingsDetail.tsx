@@ -5,6 +5,10 @@ import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useAuth } from "@reearth/services/auth";
+import {
+  ProjectPublicationExtensionProps,
+  StoryPublicationExtensionProps
+} from "@reearth/services/config/extensions";
 import { useLang, useT } from "@reearth/services/i18n";
 import {
   NotificationType,
@@ -24,12 +28,26 @@ import {
   SettingsProject
 } from ".";
 
+interface WithTypename {
+  __typename?: string;
+}
+
+type SettingsProjectWithTypename = SettingsProject & WithTypename;
+type StoryWithTypename = Story & WithTypename;
+
 type Props = {
-  settingsItem: SettingsProject | Story;
+  settingsItem: SettingsProjectWithTypename | StoryWithTypename;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
   onUpdateGA?: (settings: PublicGASettingsType) => void;
+};
+
+type ExtensionComponentProps = (
+  | ProjectPublicationExtensionProps
+  | StoryPublicationExtensionProps
+) & {
+  typename: string;
 };
 
 const PublicSettingsDetail: React.FC<Props> = ({
@@ -103,6 +121,16 @@ const PublicSettingsDetail: React.FC<Props> = ({
     },
     [setNotification]
   );
+
+  const ExtensionComponent = (props: ExtensionComponentProps) => {
+    const type = props.typename.toLocaleLowerCase();
+    const extensionId = `custom-${type}-domain`;
+    const Component = extensions?.find((e) => e.id === extensionId)?.component;
+    if (!Component) {
+      return null;
+    }
+    return <Component {...props} />;
+  };
 
   return (
     <>
@@ -235,18 +263,23 @@ const PublicSettingsDetail: React.FC<Props> = ({
       </Collapse>
       {extensions && extensions.length > 0 && accessToken && (
         <Collapse title={t("Custom Domain")} size="large">
-          {extensions.map((ext) => (
-            <ext.component
-              key={ext.id}
-              projectId={settingsItem.id}
-              projectAlias={settingsItem.alias}
-              lang={currentLang}
-              theme={currentTheme}
-              accessToken={accessToken}
-              onNotificationChange={onNotificationChange}
-              version={"visualizer"}
-            />
-          ))}
+          <ExtensionComponent
+            typename={settingsItem.__typename || ""}
+            {...(settingsItem.__typename === "Project"
+              ? {
+                  projectId: settingsItem.id,
+                  projectAlias: settingsItem.alias
+                }
+              : {
+                  storyId: settingsItem.id,
+                  storyAlias: settingsItem.alias
+                })}
+            lang={currentLang}
+            theme={currentTheme}
+            accessToken={accessToken}
+            onNotificationChange={onNotificationChange}
+            version="visualizer"
+          />
         </Collapse>
       )}
     </>

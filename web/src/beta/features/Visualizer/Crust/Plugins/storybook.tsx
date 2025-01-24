@@ -178,6 +178,12 @@ export const context: Context = {
       on: act("on"),
       off: act("off")
     },
+    spatialId: {
+      pickSpace: act("pickSpace"),
+      exitPickSpace: act("exitPickSpace"),
+      on: act("on"),
+      off: act("off")
+    },
     layers: {
       layers,
       hide: act("layers.hide"),

@@ -1,14 +1,30 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
-import { useMemo } from "react";
+import { MapRef } from "@reearth/core";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
-import Console from "./Console";
+import LayerList from "./LayerList";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
+import SettingsList from "./SettingsList";
 import Viewer from "./Viewer";
 
 export default () => {
+  const visualizerRef = useRef<MapRef | null>(null);
+
+  const [enabledVisualizer, setEnabledVisualizer] = useState(true);
+
+  // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
+  const resetVisualizer = useCallback(() => {
+    setEnabledVisualizer(false);
+    const timeoutId = setTimeout(() => {
+      setEnabledVisualizer(true);
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   const {
     presetPlugins,
     selectPlugin,
@@ -25,9 +41,49 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { widgets, executeCode, fileOutputs } = useCode({
-    files: selectedPlugin.files
+  const { executeCode, infoboxBlocks, story, widgets } = useCode({
+    files: selectedPlugin.files,
+    resetVisualizer
   });
+
+  const [infoboxEnabled, setInfoboxEnabled] = useState(true);
+  const [selectedLayerId, setSelectedLayerId] = useState("");
+  const [showStoryPanel, setShowStoryPanel] = useState(false);
+  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
+  );
+
+  const layers = useMemo(() => {
+    return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {
+      return {
+        ...layer,
+        ...(infoboxEnabled
+          ? {
+              infobox: {
+                id: layer.id,
+                blocks: infoboxBlocks,
+                property: {
+                  default: {
+                    enabled: {
+                      value: true
+                    }
+                  }
+                }
+              }
+            }
+          : {}),
+        visible: visibleLayerIds.includes(layer.id)
+      };
+    });
+  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks]);
+
+  const handleLayerVisibilityUpdate = (layerId: string) => {
+    setVisibleLayerIds((prev) =>
+      prev.includes(layerId)
+        ? prev.filter((id) => id !== layerId)
+        : [...prev, layerId]
+    );
+  };
 
   // Note: currently we put visualizer in tab content, so better not have more tabs in this area,
   // otherwise visualizer will got unmount and mount when switching tabs.
@@ -36,21 +92,29 @@ export default () => {
       {
         id: "viewer",
         name: "Viewer",
-        children: <Viewer widgets={widgets} />
+        children: (
+          <Viewer
+            enabledVisualizer={enabledVisualizer}
+            layers={layers}
+            story={story}
+            showStoryPanel={showStoryPanel}
+            visualizerRef={visualizerRef}
+            widgets={widgets}
+          />
+        )
       }
     ],
-    [widgets]
+    [enabledVisualizer, layers, showStoryPanel, story, widgets]
   );
 
-  const BottomAreaTabs: TabItem[] = useMemo(
-    () => [
-      {
-        id: "console",
-        name: "Console",
-        children: <Console fileOutputs={fileOutputs} />
-      }
-    ],
-    [fileOutputs]
+  const LayersPanel: FC = () => (
+    <LayerList
+      handleLayerVisibilityUpdate={handleLayerVisibilityUpdate}
+      layers={layers}
+      selectedLayerId={selectedLayerId}
+      setSelectedLayerId={setSelectedLayerId}
+      visualizerRef={visualizerRef}
+    />
   );
 
   const SubRightAreaTabs: TabItem[] = useMemo(
@@ -115,10 +179,20 @@ export default () => {
     [selectedFile, executeCode, updateFileSourceCode]
   );
 
+  const SettingsPanel: FC = () => (
+    <SettingsList
+      infoboxEnabled={infoboxEnabled}
+      setInfoboxEnabled={setInfoboxEnabled}
+      setShowStoryPanel={setShowStoryPanel}
+      showStoryPanel={showStoryPanel}
+    />
+  );
+
   return {
+    LayersPanel,
     MainAreaTabs,
-    BottomAreaTabs,
-    SubRightAreaTabs,
-    RightAreaTabs
+    RightAreaTabs,
+    SettingsPanel,
+    SubRightAreaTabs
   };
 };

@@ -218,7 +218,7 @@ func (r *mutationResolver) RemoveNLSInfoboxBlock(ctx context.Context, input gqlm
 	}, nil
 }
 
-func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmodel.AddCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
+func (r *mutationResolver) UpdateCustomProperties(ctx context.Context, input gqlmodel.UpdateCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
 	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
 	if err != nil {
 		return nil, err
@@ -237,16 +237,35 @@ func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmod
 	}, nil
 }
 
-func (r *mutationResolver) UpdateCustomProperties(ctx context.Context, input gqlmodel.UpdateCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
+func (r *mutationResolver) ChangeCustomPropertyTitle(ctx context.Context, input gqlmodel.ChangeCustomPropertyTitleInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
 	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
 	if err != nil {
 		return nil, err
 	}
 
-	layer, err := usecases(ctx).NLSLayer.AddOrUpdateCustomProperties(ctx, interfaces.AddOrUpdateCustomPropertiesInput{
+	layer, err := usecases(ctx).NLSLayer.ChangeCustomPropertyTitle(ctx, interfaces.AddOrUpdateCustomPropertiesInput{
 		LayerID: lid,
 		Schema:  input.Schema,
-	}, getOperator(ctx))
+	}, input.OldTitle, input.NewTitle, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateNLSLayerPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) RemoveCustomProperty(ctx context.Context, input gqlmodel.RemoveCustomPropertyInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.RemoveCustomProperty(ctx, interfaces.AddOrUpdateCustomPropertiesInput{
+		LayerID: lid,
+		Schema:  input.Schema,
+	}, input.RemovedTitle, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

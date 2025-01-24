@@ -248,7 +248,7 @@ func (t *TranslatedPropertySchema) setPropertySchema(schemas map[string]Translat
 						if tf.Choices[cid] == nil {
 							tf.Choices[cid] = i18n.String{}
 						}
-						tf.Choices[cid][l] = c
+						tf.Choices[cid][l] = string(c)
 					}
 				}
 			}

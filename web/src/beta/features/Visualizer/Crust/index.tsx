@@ -59,6 +59,7 @@ export type Props = {
   inEditor?: boolean;
   isBuilt?: boolean;
   mapRef?: RefObject<MapRef>;
+  mapAPIReady?: boolean;
   layers?: Layer[];
   camera?: Camera;
   selectedFeatureInfo?: SelectedFeatureInfo;
@@ -159,6 +160,7 @@ export default function Crust({
   isEditable,
   inEditor,
   mapRef,
+  mapAPIReady,
   selectedFeatureInfo,
   externalPlugin,
   layers,
@@ -274,6 +276,7 @@ export default function Crust({
     <Plugins
       engineName={engineName}
       mapRef={mapRef}
+      mapAPIReady={mapAPIReady}
       viewerProperty={viewerProperty}
       built={isBuilt}
       inEditor={inEditor}

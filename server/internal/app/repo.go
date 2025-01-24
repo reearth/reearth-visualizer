@@ -25,7 +25,39 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
-const databaseName = "reearth"
+func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountrepo.Container {
+	accountDatabase := conf.DB_Account
+	log.Infof("accountDatabase: %s", accountDatabase)
+
+	accountUsers := make([]accountrepo.User, 0, len(conf.DB_Users))
+	for _, u := range conf.DB_Users {
+		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
+		if err != nil {
+			log.Fatalf("mongo error: %+v\n", err)
+		}
+		accountUsers = append(accountUsers, accountmongo.NewUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
+	}
+
+	// this flag is for old database structure compatibility
+	// on this service, it is always false
+	useLegacyStructure := false
+	accountRepos, err := accountmongo.New(ctx, client, accountDatabase, txAvailable, useLegacyStructure, accountUsers)
+	if err != nil {
+		log.Fatalf("Failed to init mongo database account: %+v\n", err)
+	}
+	return accountRepos
+}
+
+func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accountrepo.Container, ctx context.Context, conf *config.Config) *repo.Container {
+	visDatabase := conf.DB_Vis
+	log.Infof("visDatabase: %s", visDatabase)
+
+	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(visDatabase), accountRepos, txAvailable, conf.Ext_Plugin)
+	if err != nil {
+		log.Fatalf("Failed to init mongo database visualizer: %+v\n", err)
+	}
+	return repos
+}
 
 func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container) {
 	gateways := &gateway.Container{}
@@ -41,35 +73,9 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	if err != nil {
 		log.Fatalf("mongo error: %+v\n", err)
 	}
-
-	// repos
-	accountDatabase := conf.DB_Account
-	accountRepoCompat := false
-	if accountDatabase == "" {
-		accountDatabase = databaseName
-		accountRepoCompat = true
-	}
-
-	accountUsers := make([]accountrepo.User, 0, len(conf.DB_Users))
-	for _, u := range conf.DB_Users {
-		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
-		if err != nil {
-			log.Fatalf("mongo error: %+v\n", err)
-		}
-		accountUsers = append(accountUsers, accountmongo.NewUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
-	}
-
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
-
-	accountRepos, err := accountmongo.New(ctx, client, accountDatabase, txAvailable, accountRepoCompat, accountUsers)
-	if err != nil {
-		log.Fatalf("Failed to init mongo: %+v\n", err)
-	}
-
-	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(databaseName), accountRepos, txAvailable, conf.Ext_Plugin)
-	if err != nil {
-		log.Fatalf("Failed to init mongo: %+v\n", err)
-	}
+	accountRepos := initAccountDatabase(client, txAvailable, ctx, conf)
+	visRepos := initVisDatabase(client, txAvailable, accountRepos, ctx, conf)
 
 	// File
 	gateways.File = initFile(ctx, conf)
@@ -92,11 +98,11 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	}
 
 	// release lock of all scenes
-	if err := repos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
+	if err := visRepos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return repos, gateways, accountRepos, acGateways
+	return visRepos, gateways, accountRepos, acGateways
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {

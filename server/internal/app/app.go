@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http2 "github.com/reearth/reearth/server/internal/adapter/http"
+
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -65,6 +66,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		log.Infof("Using mock auth for local development")
 		wrapHandler = func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 				ctx := r.Context()
 				ctx = adapter.AttachMockAuth(ctx, true)
 				next.ServeHTTP(w, r.WithContext(ctx))
@@ -115,6 +117,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		AuthSrvUIDomain:    cfg.Config.Host_Web,
 	}))
 
+	e.Use(AttachLanguageMiddleware)
+
 	// auth srv
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
@@ -129,7 +133,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
 	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
-
+	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {
 		apiPrivate.POST("/signup/verify", StartSignupVerify())
 		apiPrivate.POST("/signup/verify/:code", SignupVerify())

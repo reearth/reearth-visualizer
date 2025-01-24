@@ -2,8 +2,11 @@ import Visualizer from "@reearth/beta/features/Visualizer";
 import { useNotification } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { ComponentProps, useCallback, useState } from "react";
+import { v4 } from "uuid";
 
+import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
+import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 import { FileType } from "../Plugins/constants";
 
 type Widgets = ComponentProps<typeof Visualizer>["widgets"];
@@ -18,6 +21,7 @@ type ReearthYML = {
     name: string;
     description: string;
     widgetLayout?: {
+      extended: boolean;
       defaultLocation: {
         zone: WidgetLocation["zone"];
         section: WidgetLocation["section"];
@@ -27,8 +31,20 @@ type ReearthYML = {
   }[];
 };
 
+type CustomInfoboxBlock = {
+  id: string;
+  name: string;
+  description: string;
+  __REEARTH_SOURCECODE: string;
+  extensionId: string;
+  pluginId: string;
+};
+
+type CustomStoryBlock = CustomInfoboxBlock;
+
 type Props = {
   files: FileType[];
+  resetVisualizer: () => void;
 };
 
 const getYmlJson = (file: FileType) => {
@@ -48,72 +64,15 @@ const getYmlJson = (file: FileType) => {
   }
 };
 
-export default ({ files }: Props) => {
+export default ({ files, resetVisualizer }: Props) => {
+  const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
+  const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
   const [, setNotification] = useNotification();
-  const [fileOutputs, setFileOutputs] = useState<
-    {
-      title: string;
-      output: string;
-    }[]
-  >();
 
   const executeCode = useCallback(() => {
+    resetVisualizer();
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
-
-    const jsFiles = files.filter((file) => file.title.endsWith(".js"));
-
-    const outputs = jsFiles.map((file) => {
-      try {
-        const fn = new Function(
-          `"use strict";
-          const reearth = {
-            ui: {
-              show: function () {}
-            },
-            popup: {
-              show: function () {}
-            },
-            modal: {
-              show: function () {}
-            }
-          };
-        
-          let capturedConsole = [];
-        
-          console.log = (message) => {
-            capturedConsole.push(message);
-          };
-        
-          console.error = (message) => {
-            capturedConsole.push(message);
-          };
-        
-          ${file.sourceCode};
-          
-          return capturedConsole.join("\\n");
-          `
-        );
-
-        return {
-          title: file.title,
-          output: fn()
-        };
-      } catch (error) {
-        if (error instanceof Error) {
-          return {
-            title: file.title,
-            output: error.message
-          };
-        }
-        return {
-          title: file.title,
-          output: "Failed to execute"
-        };
-      }
-    });
-
-    setFileOutputs(outputs);
 
     if (!ymlFile) return;
 
@@ -144,6 +103,8 @@ export default ({ files }: Props) => {
           area: "top"
         };
 
+        const extended = cur.widgetLayout?.extended ?? false;
+
         const zoneAlignSystem = prv?.alignSystem?.[zone] ?? {};
         const sectionAlignSystem = zoneAlignSystem[section] ?? {};
         const areaAlignSystem = sectionAlignSystem[area] ?? { widgets: [] };
@@ -161,8 +122,12 @@ export default ({ files }: Props) => {
                   widgets: [
                     ...(areaAlignSystem.widgets ?? []),
                     {
-                      id: cur.id,
-                      __REEARTH_SOURCECODE: file.sourceCode
+                      id: v4(),
+                      name: cur.name,
+                      extensionId: cur.id,
+                      pluginId: ymlJson.id,
+                      __REEARTH_SOURCECODE: file.sourceCode,
+                      extended
                     }
                   ]
                 }
@@ -178,11 +143,74 @@ export default ({ files }: Props) => {
       }
     );
     setWidgets(widgets);
-  }, [files, setNotification]);
+
+    const infoboBlockFromExtension = ymlJson.extensions.reduce<
+      CustomInfoboxBlock[]
+    >((prv, cur) => {
+      if (cur.type !== "infoboxBlock") return prv;
+
+      const file = files.find((file) => file.title === `${cur.id}.js`);
+
+      if (!file) {
+        return prv;
+      }
+
+      return [
+        ...prv,
+        {
+          id: cur.id,
+          name: cur.name,
+          description: cur.description,
+          __REEARTH_SOURCECODE: file.sourceCode,
+          extensionId: cur.id,
+          pluginId: cur.id
+        }
+      ];
+    }, []);
+
+    setInfoboxBlocks(infoboBlockFromExtension);
+
+    const storyBlocksFromExtension = ymlJson.extensions.reduce<
+      CustomStoryBlock[]
+    >((prv, cur) => {
+      if (cur.type !== "storyBlock") return prv;
+
+      const file = files.find((file) => file.title === `${cur.id}.js`);
+
+      if (!file) {
+        return prv;
+      }
+
+      prv.push({
+        id: cur.id,
+        name: cur.name,
+        description: cur.description,
+        __REEARTH_SOURCECODE: file.sourceCode,
+        extensionId: cur.id,
+        pluginId: cur.id
+      });
+      return prv;
+    }, []);
+
+    setStory({
+      id: "story",
+      title: "First Story",
+      position: "left",
+      bgColor: "#f0f0f0",
+      pages: [
+        {
+          id: "page",
+          blocks: storyBlocksFromExtension,
+          layerIds: DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
+        }
+      ]
+    });
+  }, [files, resetVisualizer, setNotification]);
 
   return {
     executeCode,
-    widgets,
-    fileOutputs
+    infoboxBlocks,
+    story,
+    widgets
   };
 };
