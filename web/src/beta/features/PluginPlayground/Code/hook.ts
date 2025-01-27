@@ -2,6 +2,7 @@ import Visualizer from "@reearth/beta/features/Visualizer";
 import { useNotification } from "@reearth/services/state";
 import * as yaml from "js-yaml";
 import { ComponentProps, useCallback, useState } from "react";
+import { v4 } from "uuid";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
@@ -121,7 +122,10 @@ export default ({ files, resetVisualizer }: Props) => {
                   widgets: [
                     ...(areaAlignSystem.widgets ?? []),
                     {
-                      id: cur.id,
+                      id: v4(),
+                      name: cur.name,
+                      extensionId: cur.id,
+                      pluginId: ymlJson.id,
                       __REEARTH_SOURCECODE: file.sourceCode,
                       extended
                     }
