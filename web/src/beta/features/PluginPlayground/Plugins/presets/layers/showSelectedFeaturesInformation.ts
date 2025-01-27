@@ -59,7 +59,7 @@ const widgetFile: FileType = {
   \`);
 // Plug-in UI side setting description completed
 
-// Describe settings on Re:Earth (Web Assembly) side
+// Describe settings on Re:Earth (Web Assembly) side below
 
 // Define 3D Tiles Layer
 const layer3dTiles = {
@@ -101,6 +101,7 @@ reearth.camera.flyTo(
   }
 );
 
+// the function to send information about the selected feature to the plug-in
 function handleLayerSelect(layerId, featureId) {
   // If nothing is selected, send an empty string
   if (!layerId || !featureId) {
