@@ -103,6 +103,11 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 	return u, s, nil
 }
 
+func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL, int64, error) {
+	// Note: not implemented
+	return nil, 0, errors.New("not implemented")
+}
+
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	log.Infofc(ctx, "s3: asset deleted: %s", u)
 

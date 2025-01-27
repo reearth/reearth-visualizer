@@ -51,6 +51,11 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 	return getAssetFileURL(f.urlBase, filename), size, nil
 }
 
+func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL, int64, error) {
+	// TODO: implement
+	panic("not implemented")
+}
+
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 	if u == nil {
 		return nil
