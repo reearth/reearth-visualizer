@@ -28,30 +28,35 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-  .border {
-  border: 1px solid #ccc; 
-  border-radius: 4px;      
-  padding: 8px;            
-  margin-bottom: 12px;
-}
+  .displayId {
+      display: block;             
+      width: 100%;               
+      min-height: 52px;          
+      background-color: #FAFAFA;
+      border-radius: 4px;
+      padding: 8px;
+      word-wrap: break-word;      
+      box-sizing: border-box;     
+      margin-top: 10px; 
+    }
+
   </style>
     <div id="wrapper">
-      <h3>Click to show features property ID</h3>
-      <div class="coordinates">
-        <p>Building ID:</p>
-        <p><span id="message" class="border">"Click buildings"</span></p>
-      </div>
+      <h3>Click to show Building ID</h3>
+      <span id="message" class="displayId"></span></p>
     </div>
   <script>
     // プラグイン側からのメッセージを受け取って、建物IDを表示する
     window.addEventListener('message', function(e) {
       if (e.data?.action === "buildingClick") {
         const gmlId = e.data.payload?.gmlId || "";
-        document.getElementById("message").textContent = gmlId;
+        const messageEl = document.getElementById("message");
+        messageEl.textContent = gmlId;
+        
       }
     });
   </script>
-  \`,{ width: 450, height: 200 });
+  \`);
   
   // Add 3D Tiles Layer
   const layer3dTiles = {
