@@ -25,32 +25,17 @@ extensions:
 const widgetFile: FileType = {
   id: "show-features-info",
   title: "show-features-info.js",
-  sourceCode: `const infoboxLayer = {
-  type: "simple",
-  data: {
-    type: "csv",
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/csv/marker.csv",
-    csv: {
-      latColumn: "latitude",
-      lngColumn: "longitude",
-    },
-  },
-  marker: {},
-  infobox: {
-    default: {
-      id: "block-text-1",
-      pluginId:"show-features-info",
-      extensionId: "show-features-info-plugin",
-      extensionType: "infoboxBlock",
-      property: {
-        default: "test",
-      },
-    },
-  },
-};
-
-reearth.layers.add(infoboxLayer);
-`
+  sourceCode: `reearth.ui.show(\`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  </style>
+    <div id="wrapper">
+      <h3>Click to show Building ID</h3>
+      <div class="coordinates">
+        <p>Building ID: <span id="lat" class="coordinate-value">-</span></p>
+      </div>
+    </div>
+  \`); `
 };
 
 export const showFeaturesInfo: PluginType = {
