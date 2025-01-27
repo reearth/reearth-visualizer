@@ -1,14 +1,21 @@
 package interactor
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"io"
+
 	"net/url"
+	"path"
 	"strings"
 
+	"github.com/reearth/orb"
+	"github.com/reearth/orb/geojson"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
@@ -36,11 +43,12 @@ type NLSLayer struct {
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	policyRepo    repo.Policy
+	file          gateway.File
 	workspaceRepo accountrepo.Workspace
 	transaction   usecasex.Transaction
 }
 
-func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
+func NewNLSLayer(r *repo.Container, gr *gateway.Container) interfaces.NLSLayer {
 	return &NLSLayer{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		nlslayerRepo:    r.NLSLayer,
@@ -50,6 +58,7 @@ func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
 		propertyRepo:    r.Property,
 		pluginRepo:      r.Plugin,
 		policyRepo:      r.Policy,
+		file:            gr.File,
 		workspaceRepo:   r.Workspace,
 		transaction:     r.Transaction,
 	}
@@ -121,6 +130,16 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		}
 		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
 			return nil, err
+		}
+	}
+
+	if data, ok := (*inp.Config)["data"].(map[string]interface{}); ok {
+		if type_, ok := data["type"].(string); ok && type_ == "geojson" {
+			if url, ok := data["url"].(string); ok {
+				if err := i.validateGeoJsonOfAssets(ctx, path.Base(url)); err != nil {
+					return nil, err
+				}
+			}
 		}
 	}
 
@@ -1134,3 +1153,159 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 	}
 	return nlayer, replaceNLSLayerIDs, nil
 }
+
+func (i *NLSLayer) validateGeoJsonOfAssets(ctx context.Context, assetFileName string) error {
+	fileData, err := i.file.ReadAsset(ctx, assetFileName)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err2 := fileData.Close(); err2 != nil && err == nil {
+			err = err2
+		}
+	}()
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, fileData); err != nil {
+		return err
+	}
+	if err := validateGeoJSONFeatureCollection(buf.Bytes()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateGeoJSONFeatureCollection(data []byte) error {
+	var validationErrors []error
+
+	f, err := geojson.UnmarshalFeature(data)
+	if err == nil {
+		if f.Type == "Feature" {
+			if errs := validateGeoJSONFeature(f); len(errs) > 0 {
+				validationErrors = append(validationErrors, errs...)
+			}
+		} else {
+			validationErrors = append(validationErrors, errors.New("Invalid feature type"))
+		}
+	} else {
+		fc, err := geojson.UnmarshalFeatureCollection(data)
+		if fc.BBox != nil && !fc.BBox.Valid() {
+			validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
+		}
+		if err == nil {
+			for _, feature := range fc.Features {
+				if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
+					validationErrors = append(validationErrors, errs...)
+				}
+			}
+		} else {
+			validationErrors = append(validationErrors, errors.New("Invalid GeoJSON data"))
+		}
+	}
+
+	if len(validationErrors) > 0 {
+		return fmt.Errorf("Validation failed: %v", validationErrors)
+	}
+
+	return nil
+}
+
+func validateGeoJSONFeature(feature *geojson.Feature) []error {
+	var validationErrors []error
+
+	if feature.Geometry == nil {
+		validationErrors = append(validationErrors, errors.New("Geometry is missing"))
+		return validationErrors
+	}
+
+	switch g := feature.Geometry.(type) {
+	case orb.Point:
+		if !isValidLatLon(g) {
+			validationErrors = append(validationErrors, errors.New("Point latitude or longitude is invalid"))
+		}
+	case orb.MultiPoint:
+		if len(g) == 0 {
+			validationErrors = append(validationErrors, errors.New("MultiPoint must contain at least one coordinate"))
+		}
+		for _, point := range g {
+			if !isValidLatLon(point) {
+				validationErrors = append(validationErrors, errors.New("MultiPoint contains invalid latitude or longitude"))
+			}
+		}
+	case orb.LineString:
+		if len(g) < 2 {
+			validationErrors = append(validationErrors, errors.New("LineString must contain at least two coordinates"))
+		}
+		for _, coords := range g {
+			if !isValidLatLon(coords) {
+				validationErrors = append(validationErrors, errors.New("LineString contains invalid latitude or longitude"))
+			}
+		}
+	case orb.Polygon:
+		if len(g) == 0 {
+			validationErrors = append(validationErrors, errors.New("Polygon must contain coordinates"))
+		}
+		for _, ring := range g {
+			if len(ring) < 4 || !pointsEqual(ring[0], ring[len(ring)-1]) {
+				validationErrors = append(validationErrors, errors.New("Polygon ring is not closed"))
+			}
+			for _, coords := range ring {
+				if !isValidLatLon(coords) {
+					validationErrors = append(validationErrors, errors.New("Polygon contains invalid latitude or longitude"))
+				}
+			}
+		}
+	case orb.MultiPolygon:
+		if len(g) == 0 {
+			validationErrors = append(validationErrors, errors.New("MultiPolygon must contain at least one Polygon"))
+		}
+		for _, polygon := range g {
+			for _, ring := range polygon {
+				if len(ring) < 4 || !pointsEqual(ring[0], ring[len(ring)-1]) {
+					validationErrors = append(validationErrors, errors.New("MultiPolygon ring is not closed"))
+				}
+				for _, coords := range ring {
+					if !isValidLatLon(coords) {
+						validationErrors = append(validationErrors, errors.New("MultiPolygon contains invalid latitude or longitude"))
+					}
+				}
+			}
+		}
+	default:
+		validationErrors = append(validationErrors, fmt.Errorf("Unsupported Geometry type: %T", g))
+	}
+
+	return validationErrors
+}
+
+func pointsEqual(a, b orb.Point) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func isValidLatLon(coords orb.Point) bool {
+	if len(coords) != 2 && len(coords) != 3 {
+		return false
+	}
+	lat, lon := coords[1], coords[0]
+	return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
+}
+
+// func validateBBox(bbox geojson.BBox) error {
+// 	minLon, minLat := bbox.Min[0], bbox.Min[1]
+// 	maxLon, maxLat := bbox.Max[0], bbox.Max[1]
+
+// 	if !isValidLatLon(orb.Point{minLon, minLat}) || !isValidLatLon(orb.Point{maxLon, maxLat}) {
+// 		return errors.New("bbox values are out of range")
+// 	}
+// 	if minLon > maxLon || minLat > maxLat {
+// 		return errors.New("bbox values are not in the correct order")
+// 	}
+// 	return nil
+// }
