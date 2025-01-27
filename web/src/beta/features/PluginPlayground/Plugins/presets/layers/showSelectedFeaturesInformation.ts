@@ -12,11 +12,6 @@ extensions:
     type: widget
     name: Show Selected Features Information Widget
     description: Selected Feature Information Widget
-    widgetLayout:
-      defaultLocation:
-        zone: outer
-        section: center
-        area: top
   `,
   disableEdit: true,
   disableDelete: true
