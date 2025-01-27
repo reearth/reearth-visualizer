@@ -64,8 +64,11 @@ const widgetFile: FileType = {
         const buildingHeight = e.data.payload?.buildingHeight || "";
         const gml_id = document.getElementById("gml_id");
         gml_id.textContent = gmlId;
-        building_height.textContent = buildingHeight + " " + "m";
-        
+        if (buildingHeight) {
+        building_height.textContent = buildingHeight + " m";
+        }else {
+        building_height.textContent = ""; 
+        }       
       }
     });
   </script>
