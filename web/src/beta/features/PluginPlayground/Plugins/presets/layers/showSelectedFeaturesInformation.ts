@@ -57,20 +57,20 @@ const widgetFile: FileType = {
       <span id="building_height" class="displayHeight"</span>
     </div>
   <script>
-    // Receive messages and display the building id and height
-    window.addEventListener('message', function(e) {
-      if (e.data?.action === "buildingClick") {
-        const gmlId = e.data.payload?.gmlId || "";
-        const buildingHeight = e.data.payload?.buildingHeight || "";
-        const gml_id = document.getElementById("gml_id");
-        gml_id.textContent = gmlId;
-        if (buildingHeight) {
+  // Receive messages and display the building id and height
+  window.addEventListener("message", function (e) {
+    if (e.data?.action === "buildingClick") {
+      const gmlId = e.data.payload?.gmlId || "";
+      const buildingHeight = e.data.payload?.buildingHeight || "";
+      const gml_id = document.getElementById("gml_id");
+      gml_id.textContent = gmlId;
+      if (buildingHeight) {
         building_height.textContent = buildingHeight + " m";
-        }else {
-        building_height.textContent = ""; 
-        }       
+      } else {
+        building_height.textContent = "";
       }
-    });
+    }
+  });
   </script>
   \`);
 // Plug-in UI side setting description completed
