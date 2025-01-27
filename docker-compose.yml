@@ -20,3 +20,10 @@ services:
       - 27017:27017
     volumes:
       - ./mongo:/data/db
+  gcs:
+    image: fsouza/fake-gcs-server
+    ports:
+      - 4443:4443
+    volumes:
+      - ${PWD}/tmp/gcs:/storage
+    command: -scheme http

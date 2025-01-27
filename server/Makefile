@@ -19,6 +19,8 @@ help:
 	@echo "  dev               Run the application with hot reloading"
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Run the MongoDB database using Docker Compose"
+	@echo "  up-gcs            Run the fake-gcs-server using Docker Compose"
+	@echo "  down-gcs          Stop the fake-gcs-server using Docker Compose"
 	@echo "  gql               Generate GraphQL code include dataloader"
 	@echo "  mockuser          Create a mock user by executing a curl request"
 	@echo "  schematyper       Generate schema using schematyper"
@@ -60,6 +62,12 @@ gql:
 	go generate ./internal/adapter/gql/gqldataloader
 	go generate ./internal/adapter/gql
 
+up-gcs:
+	docker compose -f ../docker-compose.yml up -d gcs
+
+down-gcs:
+	docker compose -f ../docker-compose.yml down gcs
+
 mockuser:
 	curl -H 'Content-Type: application/json' -d '{"email": "mock@example.com", "username": "Mock User"}' http://localhost:8080/api/signup
 
@@ -67,4 +75,4 @@ schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
 
-.PHONY: lint test failcheck e2e build dev-install dev run-app run-db gql mockuser schematyper
+.PHONY: lint test failcheck e2e build dev-install dev run-app run-db gql up-gcs down-gcs mockuser schematyper
