@@ -45,8 +45,8 @@ const widgetFile: FileType = {
   word-wrap: break-word;
   box-sizing: border-box; 
 }
-  .title{
-      margin-bottom: 8px;     
+.title{
+    margin-bottom: 8px;     
   }
   </style>
     <div id="wrapper">
@@ -57,7 +57,7 @@ const widgetFile: FileType = {
       <span id="building_height" class="displayHeight"</span>
     </div>
   <script>
-    // Receive messages and display the building ID
+    // Receive messages and display the building id and height
     window.addEventListener('message', function(e) {
       if (e.data?.action === "buildingClick") {
         const gmlId = e.data.payload?.gmlId || "";
@@ -133,7 +133,7 @@ function handleLayerSelect(layerId, featureId) {
   const gml_id = feature?.properties?.gml_id || "";
   const building_height = feature?.properties?.["bldg:measuredHeight"] || "";
 
-  // Send selected ID to plugin UI
+  // Send selected feature id and height to plugin UI
   reearth.ui.postMessage({
     action: "buildingClick",
     payload: { gmlId: gml_id ,buildingHeight : building_height},
