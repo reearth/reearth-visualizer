@@ -116,6 +116,7 @@ export function usePluginAPI({
     uiEvents.current = events<UIEventType>();
     modalEvents.current = events<ModalEventType>();
     popupEvents.current = events<PopupEventType>();
+    extensionEvents.current = events<ExtensionEventType>();
 
     initAndMergeEvents(ctx.viewerEvents, viewerEventsRef, [
       "click",
