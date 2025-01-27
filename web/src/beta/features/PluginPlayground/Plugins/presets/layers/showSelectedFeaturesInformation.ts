@@ -28,14 +28,93 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+  .border {
+  border: 1px solid #ccc; 
+  border-radius: 4px;      
+  padding: 8px;            
+  margin-bottom: 12px;
+}
   </style>
     <div id="wrapper">
-      <h3>Click to show Building ID</h3>
+      <h3>Click to show features property ID</h3>
       <div class="coordinates">
-        <p>Building ID: <span id="lat" class="coordinate-value">-</span></p>
+        <p>Building ID:</p>
+        <p><span id="message" class="border">"Click buildings"</span></p>
       </div>
     </div>
-  \`); `
+  <script>
+    // プラグイン側からのメッセージを受け取って、建物IDを表示する
+    window.addEventListener('message', function(e) {
+      if (e.data?.action === "buildingClick") {
+        const gmlId = e.data.payload?.gmlId || "";
+        document.getElementById("message").textContent = gmlId;
+      }
+    });
+  </script>
+  \`,{ width: 450, height: 200 });
+  
+  // Add 3D Tiles Layer
+  const layer3dTiles = {
+  type: "simple", // Required
+  data: {
+    type: "3dtiles",
+    url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json", // URL of 3D Tiles
+  },
+  "3dtiles": { // Settings for the 3D Tiles style.
+    pbr: false, //invalid Physically Based Rendering
+    selectedFeatureColor: "red", // If you select a feature, it will change color
+  },
+};
+
+// Add the 3D Tiles layer from the URL to Re:Earth
+reearth.layers.add(layer3dTiles);
+
+// Enable Terrain
+reearth.viewer.overrideProperty({
+  terrain: {
+    enabled: true,
+  },
+});
+
+reearth.camera.flyTo(
+  // Define the camera position to be moved to
+  {
+    heading: 4.022965234428543,
+    height: 1616.524859060678,
+    lat: 35.67170282368589,
+    lng: 139.7707144962995,
+    pitch: -0.464517599879275,
+    roll: 6.283168638897022,
+  },
+  // Define camera movement time
+  {
+    duration: 2.0,
+  }
+);
+
+  function handleLayerSelect(layerId, featureId) {
+    if (!layerId || !featureId) {
+      // 何も選択されていない場合は空文字を送る
+      reearth.ui.postMessage({
+        action: "buildingClick",
+        payload: { gmlId: "" },
+      });
+      return;
+    }
+
+    // 選択された建物(feature)の情報を取得
+    const feature = reearth.layers.findFeatureById(layerId, featureId);
+    const gml_id = feature?.properties?.gml_id || "";
+
+    // プラグインUIに選択されたIDを送信する
+    reearth.ui.postMessage({
+      action: "buildingClick",
+      payload: { gmlId: gml_id },
+    });
+  }
+
+  reearth.layers.on("select", handleLayerSelect);
+  `
 };
 
 export const showFeaturesInfo: PluginType = {
