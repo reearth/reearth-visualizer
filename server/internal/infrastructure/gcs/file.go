@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/kennygrant/sanitize"
@@ -117,7 +118,15 @@ func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL
 		return nil, 0, errors.New("invalid URL")
 	}
 
-	resp, err := http.Get(u.String())
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctxWithTimeout, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Errorfc(ctx, "gcs: failed to fetch URL: %v", err)
 		return nil, 0, errors.New("failed to fetch URL")
@@ -128,7 +137,7 @@ func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL
 		return nil, 0, errors.New("failed to fetch URL")
 	}
 
-	if resp.ContentLength >= fileSizeLimit {
+	if resp.ContentLength > 0 && resp.ContentLength >= fileSizeLimit {
 		return nil, 0, gateway.ErrFileTooLarge
 	}
 

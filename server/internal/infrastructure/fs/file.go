@@ -52,8 +52,8 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 }
 
 func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL, int64, error) {
-	// TODO: implement
-	panic("not implemented")
+	// Note: not implemented
+	return nil, 0, errors.New("UploadAssetFromURL: not implemented for local file storage")
 }
 
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
