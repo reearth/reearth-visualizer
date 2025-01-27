@@ -33,7 +33,7 @@ const (
 )
 
 type fileRepo struct {
-	isDev        bool
+	isTest       bool
 	bucketName   string
 	base         *url.URL
 	cacheControl string
@@ -43,7 +43,7 @@ const (
 	devBaseURL = "http://localhost:4443/storage/v1/b"
 )
 
-func NewFile(isDev bool, bucketName, base string, cacheControl string) (gateway.File, error) {
+func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway.File, error) {
 	if bucketName == "" {
 		return nil, errors.New("bucket name is empty")
 	}
@@ -60,7 +60,7 @@ func NewFile(isDev bool, bucketName, base string, cacheControl string) (gateway.
 	}
 
 	return &fileRepo{
-		isDev:        isDev,
+		isTest:       isTest,
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
@@ -296,7 +296,7 @@ func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) 
 
 func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 	opts := []option.ClientOption{}
-	if f.isDev {
+	if f.isTest {
 		opts = append(opts, option.WithoutAuthentication(), option.WithEndpoint(devBaseURL))
 	}
 	client, err := storage.NewClient(ctx, opts...)
