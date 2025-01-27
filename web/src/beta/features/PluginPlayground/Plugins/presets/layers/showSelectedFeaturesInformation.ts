@@ -34,20 +34,20 @@ const widgetFile: FileType = {
       word-wrap: break-word;      
       box-sizing: border-box;  
     }
-.displayHeight {
-  display: flex;              
-  align-items: center;         
-  width: 100%;
-  min-height: 40px;
-  background-color: #FAFAFA;
-  border-radius: 4px;
-  padding: 8px;
-  word-wrap: break-word;
-  box-sizing: border-box; 
-}
-.title{
-    margin-bottom: 8px;     
+  .displayHeight {
+    display: flex;              
+    align-items: center;         
+    width: 100%;
+    min-height: 40px;
+    background-color: #FAFAFA;
+    border-radius: 4px;
+    padding: 8px;
+    word-wrap: break-word;
+    box-sizing: border-box; 
   }
+  .title{
+      margin-bottom: 8px;     
+    }
   </style>
     <div id="wrapper">
       <h3>Click to show building property</h3>
