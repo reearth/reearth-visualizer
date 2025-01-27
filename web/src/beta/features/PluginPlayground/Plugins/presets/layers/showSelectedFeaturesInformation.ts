@@ -32,14 +32,29 @@ const widgetFile: FileType = {
       border-radius: 4px;
       padding: 8px;
       word-wrap: break-word;      
-      box-sizing: border-box;     
-      margin-top: 10px; 
+      box-sizing: border-box;  
     }
+.displayHeight {
+  display: flex;              
+  align-items: center;         
+  width: 100%;
+  min-height: 40px;
+  background-color: #FAFAFA;
+  border-radius: 4px;
+  padding: 8px;
+  word-wrap: break-word;
+  box-sizing: border-box; 
+}
+  .title{
+      margin-bottom: 8px;     
+  }
   </style>
     <div id="wrapper">
       <h3>Click to show building property</h3>
+      <p class = "title"> Building ID </p>
       <span id="gml_id" class="displayId"></span>
-      <span id="building_height" class="displayId"</span>
+      <p class = "title"> Building Height </p>
+      <span id="building_height" class="displayHeight"</span>
     </div>
   <script>
     // Receive messages and display the building ID
@@ -49,7 +64,7 @@ const widgetFile: FileType = {
         const buildingHeight = e.data.payload?.buildingHeight || "";
         const gml_id = document.getElementById("gml_id");
         gml_id.textContent = gmlId;
-        building_height.textContent = buildingHeight;
+        building_height.textContent = buildingHeight + " " + "m";
         
       }
     });
