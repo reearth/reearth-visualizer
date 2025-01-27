@@ -4,7 +4,8 @@ import (
 	"errors"
 	"io"
 
-	geojson "github.com/paulmach/go.geojson"
+	"github.com/reearth/orb"
+	"github.com/reearth/orb/geojson"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -24,21 +25,19 @@ func (*GeoJSONEncoder) MimeType() string {
 	return "application/json"
 }
 
-func (e *GeoJSONEncoder) polygonToFloat(p property.Polygon) [][][]float64 {
-	var res [][][]float64
+func (e *GeoJSONEncoder) polygonToRings(p property.Polygon) []orb.Ring {
+	var res []orb.Ring
 	for _, c := range p {
-		t := e.coordsToFloat(c)
+		t := e.coordsToPoint(c)
 		res = append(res, t)
 	}
 	return res
 }
 
-func (e *GeoJSONEncoder) coordsToFloat(c property.Coordinates) [][]float64 {
-	var res [][]float64
+func (e *GeoJSONEncoder) coordsToPoint(c property.Coordinates) []orb.Point {
+	res := []orb.Point{}
 	for _, l := range c {
-		t := []float64{}
-		t = append(t, []float64{l.Lng, l.Lat, l.Height}...)
-		res = append(res, t)
+		res = append(res, orb.Point{l.Lng, l.Lat, l.Height})
 	}
 	return res
 }
@@ -52,59 +51,58 @@ func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojso
 
 	switch li.ExtensionID.String() {
 	case "marker":
-		var coords []float64
-
+		var coords orb.Point
 		if f := li.Property.Field("location").Value().ValueLatLng(); f != nil {
-			coords = []float64{(*f).Lng, (*f).Lat}
+			coords = orb.Point{(*f).Lng, (*f).Lat}
 		} else {
 			return nil, errors.New("invalid value type")
 		}
 
 		if height := li.Property.Field("height").Value().ValueNumber(); height != nil {
-			coords = append(coords, *height)
+			coords = orb.Point{coords[0], coords[1], *height}
 		}
 
-		res = geojson.NewFeature(geojson.NewPointGeometry(coords))
+		res = geojson.NewFeature(coords)
 
 		if f := li.Property.Field("pointColor").Value().ValueString(); f != nil {
-			res.SetProperty("marker-color", *f)
+			res.Properties["marker-color"] = *f
 		}
 	case "polygon":
 		if f := li.Property.Field("polygon").Value().ValuePolygon(); f != nil {
-			res = geojson.NewFeature(geojson.NewPolygonGeometry(e.polygonToFloat(*f)))
+			res = geojson.NewFeature(orb.Polygon(e.polygonToRings(*f)))
 		} else {
 			return nil, errors.New("invalid value type")
 		}
 
 		if f := li.Property.Field("fillColor").Value().ValueString(); f != nil {
-			res.SetProperty("fill", *f)
+			res.Properties["fill"] = *f
 		}
 
 		if f := li.Property.Field("strokeColor").Value().ValueString(); f != nil {
-			res.SetProperty("stroke", *f)
+			res.Properties["stroke"] = *f
 		}
 
 		if f := li.Property.Field("strokeWidth").Value().ValueNumber(); f != nil {
-			res.SetProperty("stroke-width", *f)
+			res.Properties["stroke-width"] = *f
 		}
 	case "polyline":
 		if f := li.Property.Field("coordinates").Value().ValueCoordinates(); f != nil {
-			res = geojson.NewFeature(geojson.NewLineStringGeometry(e.coordsToFloat(*f)))
+			res = geojson.NewFeature(orb.LineString(e.coordsToPoint(*f)))
 		} else {
 			return nil, errors.New("invalid value type")
 		}
 
 		if f := li.Property.Field("strokeColor").Value().ValueString(); f != nil {
-			res.SetProperty("stroke", *f)
+			res.Properties["stroke"] = *f
 		}
 
 		if f := li.Property.Field("strokeWidth").Value().ValueNumber(); f != nil {
-			res.SetProperty("stroke-width", *f)
+			res.Properties["stroke-width"] = *f
 		}
 	}
 
 	if res != nil {
-		res.SetProperty("name", li.Name)
+		res.Properties["name"] = li.Name
 	}
 	return res, nil
 }
@@ -124,7 +122,7 @@ func (e *GeoJSONEncoder) encodeLayerGroup(li *merging.SealedLayerGroup) (*geojso
 			return nil, err
 		}
 		if l != nil {
-			layers.AddFeature(l)
+			layers.Append(l)
 		}
 	}
 	return layers, nil
