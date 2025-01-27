@@ -37,16 +37,19 @@ const widgetFile: FileType = {
     }
   </style>
     <div id="wrapper">
-      <h3>Click to show Building ID</h3>
-      <span id="message" class="displayId"></span></p>
+      <h3>Click to show building property</h3>
+      <span id="gml_id" class="displayId"></span>
+      <span id="building_height" class="displayId"</span>
     </div>
   <script>
     // Receive messages and display the building ID
     window.addEventListener('message', function(e) {
       if (e.data?.action === "buildingClick") {
         const gmlId = e.data.payload?.gmlId || "";
-        const messageEl = document.getElementById("message");
-        messageEl.textContent = gmlId;
+        const buildingHeight = e.data.payload?.buildingHeight || "";
+        const gml_id = document.getElementById("gml_id");
+        gml_id.textContent = gmlId;
+        building_height.textContent = buildingHeight;
         
       }
     });
@@ -102,7 +105,7 @@ function handleLayerSelect(layerId, featureId) {
   if (!layerId || !featureId) {
     reearth.ui.postMessage({
       action: "buildingClick",
-      payload: { gmlId: "" },
+      payload: { gmlId: "",buildingHeight : ""},
     });
     return;
   }
@@ -110,11 +113,12 @@ function handleLayerSelect(layerId, featureId) {
   // Get information about the selected building (feature)
   const feature = reearth.layers.findFeatureById(layerId, featureId);
   const gml_id = feature?.properties?.gml_id || "";
+  const building_height = feature?.properties?.["bldg:measuredHeight"] || "";
 
   // Send selected ID to plugin UI
   reearth.ui.postMessage({
     action: "buildingClick",
-    payload: { gmlId: gml_id },
+    payload: { gmlId: gml_id ,buildingHeight : building_height},
   });
 }
 // Set "handleLayerSelect" to work when a feature is selected
