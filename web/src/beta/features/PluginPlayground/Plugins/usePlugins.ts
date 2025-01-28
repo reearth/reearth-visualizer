@@ -10,7 +10,6 @@ import { PluginType } from "./constants";
 import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
-// TODO: try add return type for this hook
 export default () => {
   const [searchParams] = useSearchParams();
   const [, setNotification] = useNotification();

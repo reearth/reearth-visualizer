@@ -60,7 +60,6 @@ const PropertyField: FC<Props> = ({
   );
 
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
-
   return (
     <>
       {schema.type === "string" ? (
