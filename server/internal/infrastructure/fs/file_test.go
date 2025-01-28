@@ -76,25 +76,60 @@ func TestFSFile_UploadAssetFromURL(t *testing.T) {
 		t.Fatalf("failed to create GCSForTesting: %v", err)
 	}
 
+	srcBucket := testGCS.CreateBucket(srcBucketName)
+
 	defer func() {
-		testGCS.DeleteBucketWithObjectsOnGCS(srcBucketName)
+		testGCS.DeleteBucketWithObjects(srcBucketName)
 		err := testGCS.Close()
 		if err != nil {
 			t.Fatalf("failed to close client: %v", err)
 		}
 	}()
-	testFileName := uuid.New().String()
-	testGCS.UploadTestDataOnGCS(srcBucketName, testFileName)
 
-	fsBaseURL := "/assets"
-	newFileRepo, err := NewFile(mockFs(), fsBaseURL)
-	assert.NoError(t, err)
+	validFilePath := fmt.Sprintf("%s/%s/o", gcsBaseURL.String(), srcBucketName)
+	tests := []struct {
+		name     string
+		fileName string
+		filePath string
+		wantErr  bool
+		errType  error
+	}{
+		{
+			name:     "valid url",
+			fileName: uuid.New().String(),
+			filePath: validFilePath,
+			wantErr:  false,
+		},
+		{
+			name:     "invalid url",
+			fileName: uuid.New().String(),
+			filePath: "invalid-url",
+			wantErr:  true,
+		},
+	}
 
-	srcURL, _ := url.Parse(fmt.Sprintf("%s/%s/o/%s", gcsBaseURL.String(), srcBucketName, testFileName))
-	uploadedURL, _, err := newFileRepo.UploadAssetFromURL(ctx, srcURL)
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			testGCS.UploadTestData(srcBucket, tc.fileName)
 
-	assert.NoError(t, err)
-	assert.Equal(t, fmt.Sprintf("/assets/%s", path.Base(uploadedURL.Path)), uploadedURL.String())
+			fsBaseURL := "/assets"
+			newFileRepo, err := NewFile(mockFs(), fsBaseURL)
+			assert.NoError(t, err)
+
+			srcURL, _ := url.Parse(fmt.Sprintf("%s/%s", tc.filePath, tc.fileName))
+			uploadedURL, _, err := newFileRepo.UploadAssetFromURL(ctx, srcURL)
+
+			if tc.wantErr {
+				assert.Error(t, err)
+				assert.Nil(t, uploadedURL)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, fmt.Sprintf("/assets/%s", path.Base(uploadedURL.Path)), uploadedURL.String())
+			}
+		})
+	}
+
 }
 
 func TestFile_RemoveAsset(t *testing.T) {

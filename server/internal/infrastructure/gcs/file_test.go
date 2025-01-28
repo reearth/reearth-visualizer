@@ -42,19 +42,19 @@ func TestGCSFile_UploadAssetFromURL(t *testing.T) {
 		t.Fatalf("failed to create GCSForTesting: %v", err)
 	}
 
+	srcBucket := testGCS.CreateBucket(srcBucketName)
+	testGCS.CreateBucket(distBucketName)
+	testFileName := uuid.New().String()
+	testGCS.UploadTestData(srcBucket, testFileName)
+
 	defer func() {
-		testGCS.DeleteBucketWithObjectsOnGCS(distBucketName)
-		testGCS.DeleteBucketWithObjectsOnGCS(srcBucketName)
+		testGCS.DeleteBucketWithObjects(distBucketName)
+		testGCS.DeleteBucketWithObjects(srcBucketName)
 		err := testGCS.Close()
 		if err != nil {
 			t.Fatalf("failed to close client: %v", err)
 		}
 	}()
-
-	testGCS.CreateBucketOnGCS(distBucketName)
-
-	testFileName := uuid.New().String()
-	testGCS.UploadTestDataOnGCS(srcBucketName, testFileName)
 
 	newFileRepo, err := NewFile(true, distBucketName, baseURL.String(), "")
 	assert.NoError(t, err)

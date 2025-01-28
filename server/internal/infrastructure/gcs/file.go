@@ -301,11 +301,17 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 		client = testGCS.Client()
 	} else {
 		client, err = storage.NewClient(ctx)
+		if err != nil {
+			return nil, err
+		}
+		go func() {
+			<-ctx.Done()
+			if err := client.Close(); err != nil {
+				log.Errorfc(ctx, "gcs: failed to close client: %v", err)
+			}
+		}()
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	bucket := client.Bucket(f.bucketName)
 	return bucket, nil
 }

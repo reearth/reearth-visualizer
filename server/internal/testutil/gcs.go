@@ -38,14 +38,8 @@ func (g *GCSForTesting) Close() error {
 	return g.client.Close()
 }
 
-func (g *GCSForTesting) UploadTestDataOnGCS(bucketName string, testFileName string) {
+func (g *GCSForTesting) UploadTestData(bucket *storage.BucketHandle, testFileName string) {
 	ctx := context.Background()
-
-	bucket := g.client.Bucket(bucketName)
-	err := bucket.Create(ctx, "", nil)
-	if err != nil {
-		panic(err)
-	}
 
 	object := bucket.Object(testFileName)
 	if err := object.Delete(ctx); err != nil && !errors.Is(err, storage.ErrObjectNotExist) {
@@ -68,7 +62,7 @@ func (g *GCSForTesting) UploadTestDataOnGCS(bucketName string, testFileName stri
 	}
 }
 
-func (g *GCSForTesting) CreateBucketOnGCS(bucketName string) {
+func (g *GCSForTesting) CreateBucket(bucketName string) *storage.BucketHandle {
 	ctx := context.Background()
 	bucket := g.client.Bucket(bucketName)
 	err := bucket.Create(ctx, "", nil)
@@ -76,9 +70,10 @@ func (g *GCSForTesting) CreateBucketOnGCS(bucketName string) {
 	if err != nil {
 		panic(err)
 	}
+	return bucket
 }
 
-func (g *GCSForTesting) DeleteBucketWithObjectsOnGCS(bucketName string) {
+func (g *GCSForTesting) DeleteBucketWithObjects(bucketName string) {
 	ctx := context.Background()
 	bucket := g.client.Bucket(bucketName)
 
