@@ -11,10 +11,6 @@
       "LayerGroup",
       "LayerItem"
     ],
-    "LayerTag": [
-      "LayerTagGroup",
-      "LayerTagItem"
-    ],
     "NLSLayer": [
       "NLSLayerGroup",
       "NLSLayerSimple"
@@ -36,10 +32,6 @@
     "PropertyItem": [
       "PropertyGroup",
       "PropertyGroupList"
-    ],
-    "Tag": [
-      "TagGroup",
-      "TagItem"
     ]
   }
 }

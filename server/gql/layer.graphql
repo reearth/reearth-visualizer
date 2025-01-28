@@ -14,7 +14,7 @@ interface Layer {
   plugin: Plugin
   extension: PluginExtension
   scenePlugin: ScenePlugin
-  tags: [LayerTag!]!
+  # tags: [LayerTag!]!
 }
 
 enum LayerEncodingFormat {
@@ -37,7 +37,7 @@ type LayerItem implements Layer {
   # parentId will not be always set
   parentId: ID
   linkedDatasetId: ID
-  tags: [LayerTag!]!
+  # tags: [LayerTag!]!
   parent: LayerGroup
   property: Property
   plugin: Plugin
@@ -62,7 +62,7 @@ type LayerGroup implements Layer {
   linkedDatasetSchemaId: ID
   root: Boolean!
   layerIds: [ID!]!
-  tags: [LayerTag!]!
+  # tags: [LayerTag!]!
   parent: LayerGroup
   property: Property
   plugin: Plugin
@@ -105,21 +105,21 @@ type InfoboxField {
   scenePlugin: ScenePlugin
 }
 
-interface LayerTag {
-  tagId: ID!
-  tag: Tag
-}
+# interface LayerTag {
+#   tagId: ID!
+#   tag: Tag
+# }
 
-type LayerTagItem implements LayerTag {
-  tagId: ID!
-  tag: Tag
-}
+# type LayerTagItem implements LayerTag {
+#   tagId: ID!
+#   tag: Tag
+# }
 
-type LayerTagGroup implements LayerTag {
-  tagId: ID!
-  children: [LayerTagItem!]!
-  tag: Tag
-}
+# type LayerTagGroup implements LayerTag {
+#   tagId: ID!
+#   children: [LayerTagItem!]!
+#   tag: Tag
+# }
 
 type MergedLayer {
   originalId: ID!
@@ -280,7 +280,7 @@ type ImportLayerPayload {
   parentLayer: LayerGroup!
 }
 
-extend type Query{
+extend type Query {
   layer(id: ID!): Layer
 }
 
@@ -296,6 +296,6 @@ extend type Mutation {
   moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
   removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
   importLayer(input: ImportLayerInput!): ImportLayerPayload
-  attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
-  detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
+  # attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
+  # detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
 }

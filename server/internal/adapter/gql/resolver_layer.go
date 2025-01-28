@@ -34,13 +34,13 @@ func (r *Resolver) MergedInfoboxField() MergedInfoboxFieldResolver {
 	return &mergedInfoboxFieldResolver{r}
 }
 
-func (r *Resolver) LayerTagItem() LayerTagItemResolver {
-	return &layerTagItemResolver{r}
-}
+// func (r *Resolver) LayerTagItem() LayerTagItemResolver {
+// 	return &layerTagItemResolver{r}
+// }
 
-func (r *Resolver) LayerTagGroup() LayerTagGroupResolver {
-	return &layerTagGroupResolver{r}
-}
+// func (r *Resolver) LayerTagGroup() LayerTagGroupResolver {
+// 	return &layerTagGroupResolver{r}
+// }
 
 type infoboxResolver struct{ *Resolver }
 
@@ -346,22 +346,22 @@ func (r *mergedInfoboxFieldResolver) ScenePlugin(ctx context.Context, obj *gqlmo
 	return s.Plugin(obj.PluginID), nil
 }
 
-type layerTagItemResolver struct{ *Resolver }
+// type layerTagItemResolver struct{ *Resolver }
 
-func (r *layerTagItemResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagItem) (gqlmodel.Tag, error) {
-	t, err := dataloaders(ctx).Tag.Load(obj.TagID)
-	if err != nil {
-		return nil, err
-	}
-	return *t, nil
-}
+// func (r *layerTagItemResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagItem) (gqlmodel.Tag, error) {
+// 	t, err := dataloaders(ctx).Tag.Load(obj.TagID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return *t, nil
+// }
 
-type layerTagGroupResolver struct{ *Resolver }
+// type layerTagGroupResolver struct{ *Resolver }
 
-func (r *layerTagGroupResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagGroup) (gqlmodel.Tag, error) {
-	t, err := dataloaders(ctx).Tag.Load(obj.TagID)
-	if err != nil {
-		return nil, err
-	}
-	return *t, nil
-}
+// func (r *layerTagGroupResolver) Tag(ctx context.Context, obj *gqlmodel.LayerTagGroup) (gqlmodel.Tag, error) {
+// 	t, err := dataloaders(ctx).Tag.Load(obj.TagID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return *t, nil
+// }

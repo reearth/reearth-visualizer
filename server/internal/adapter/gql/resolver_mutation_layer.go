@@ -251,34 +251,34 @@ func (r *mutationResolver) ImportLayer(ctx context.Context, input gqlmodel.Impor
 	}, err
 }
 
-func (r *mutationResolver) AttachTagToLayer(ctx context.Context, input gqlmodel.AttachTagToLayerInput) (*gqlmodel.AttachTagToLayerPayload, error) {
-	lid, tid, err := gqlmodel.ToID2[id.Layer, id.Tag](input.LayerID, input.TagID)
-	if err != nil {
-		return nil, err
-	}
+// func (r *mutationResolver) AttachTagToLayer(ctx context.Context, input gqlmodel.AttachTagToLayerInput) (*gqlmodel.AttachTagToLayerPayload, error) {
+// 	lid, tid, err := gqlmodel.ToID2[id.Layer, id.Tag](input.LayerID, input.TagID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	layer, err := usecases(ctx).Layer.AttachTag(ctx, lid, tid, getOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
+// 	layer, err := usecases(ctx).Layer.AttachTag(ctx, lid, tid, getOperator(ctx))
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &gqlmodel.AttachTagToLayerPayload{
-		Layer: gqlmodel.ToLayer(layer, nil),
-	}, nil
-}
+// 	return &gqlmodel.AttachTagToLayerPayload{
+// 		Layer: gqlmodel.ToLayer(layer, nil),
+// 	}, nil
+// }
 
-func (r *mutationResolver) DetachTagFromLayer(ctx context.Context, input gqlmodel.DetachTagFromLayerInput) (*gqlmodel.DetachTagFromLayerPayload, error) {
-	lid, tid, err := gqlmodel.ToID2[id.Layer, id.Tag](input.LayerID, input.TagID)
-	if err != nil {
-		return nil, err
-	}
+// func (r *mutationResolver) DetachTagFromLayer(ctx context.Context, input gqlmodel.DetachTagFromLayerInput) (*gqlmodel.DetachTagFromLayerPayload, error) {
+// 	lid, tid, err := gqlmodel.ToID2[id.Layer, id.Tag](input.LayerID, input.TagID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	layer, err := usecases(ctx).Layer.DetachTag(ctx, lid, tid, getOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
+// 	layer, err := usecases(ctx).Layer.DetachTag(ctx, lid, tid, getOperator(ctx))
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &gqlmodel.DetachTagFromLayerPayload{
-		Layer: gqlmodel.ToLayer(layer, nil),
-	}, nil
-}
+// 	return &gqlmodel.DetachTagFromLayerPayload{
+// 		Layer: gqlmodel.ToLayer(layer, nil),
+// 	}, nil
+// }

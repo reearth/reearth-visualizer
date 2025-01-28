@@ -34,13 +34,6 @@ type Layer interface {
 	GetPlugin() *Plugin
 	GetExtension() *PluginExtension
 	GetScenePlugin() *ScenePlugin
-	GetTags() []LayerTag
-}
-
-type LayerTag interface {
-	IsLayerTag()
-	GetTagID() ID
-	GetTag() Tag
 }
 
 type NLSLayer interface {
@@ -64,24 +57,6 @@ type Node interface {
 
 type PropertyItem interface {
 	IsPropertyItem()
-}
-
-type Tag interface {
-	IsTag()
-	GetID() ID
-	GetSceneID() ID
-	GetLabel() string
-	GetLayers() []Layer
-}
-
-type AddClusterInput struct {
-	SceneID ID     `json:"sceneId"`
-	Name    string `json:"name"`
-}
-
-type AddClusterPayload struct {
-	Scene   *Scene   `json:"scene"`
-	Cluster *Cluster `json:"cluster"`
 }
 
 type AddDatasetSchemaInput struct {
@@ -242,24 +217,6 @@ type AssetSort struct {
 	Direction SortDirection  `json:"direction"`
 }
 
-type AttachTagItemToGroupInput struct {
-	ItemID  ID `json:"itemID"`
-	GroupID ID `json:"groupID"`
-}
-
-type AttachTagItemToGroupPayload struct {
-	Tag *TagGroup `json:"tag"`
-}
-
-type AttachTagToLayerInput struct {
-	TagID   ID `json:"tagID"`
-	LayerID ID `json:"layerID"`
-}
-
-type AttachTagToLayerPayload struct {
-	Layer Layer `json:"layer"`
-}
-
 type Camera struct {
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`
@@ -275,13 +232,6 @@ type ChangeCustomPropertyTitleInput struct {
 	Schema   JSON   `json:"schema,omitempty"`
 	OldTitle string `json:"oldTitle"`
 	NewTitle string `json:"newTitle"`
-}
-
-type Cluster struct {
-	ID         ID        `json:"id"`
-	Name       string    `json:"name"`
-	PropertyID ID        `json:"propertyId"`
-	Property   *Property `json:"property,omitempty"`
 }
 
 type CreateAssetInput struct {
@@ -358,30 +308,6 @@ type CreateStoryPageInput struct {
 	Layers          []ID    `json:"layers,omitempty"`
 	SwipeableLayers []ID    `json:"swipeableLayers,omitempty"`
 	Index           *int    `json:"index,omitempty"`
-}
-
-type CreateTagGroupInput struct {
-	SceneID ID     `json:"sceneId"`
-	Label   string `json:"label"`
-	Tags    []ID   `json:"tags,omitempty"`
-}
-
-type CreateTagGroupPayload struct {
-	Tag *TagGroup `json:"tag"`
-}
-
-type CreateTagItemInput struct {
-	SceneID               ID     `json:"sceneId"`
-	Label                 string `json:"label"`
-	Parent                *ID    `json:"parent,omitempty"`
-	LinkedDatasetSchemaID *ID    `json:"linkedDatasetSchemaID,omitempty"`
-	LinkedDatasetID       *ID    `json:"linkedDatasetID,omitempty"`
-	LinkedDatasetField    *ID    `json:"linkedDatasetField,omitempty"`
-}
-
-type CreateTagItemPayload struct {
-	Tag    *TagItem  `json:"tag"`
-	Parent *TagGroup `json:"parent,omitempty"`
 }
 
 type CreateTeamInput struct {
@@ -521,24 +447,6 @@ type DeleteTeamInput struct {
 
 type DeleteTeamPayload struct {
 	TeamID ID `json:"teamId"`
-}
-
-type DetachTagFromLayerInput struct {
-	TagID   ID `json:"tagID"`
-	LayerID ID `json:"layerID"`
-}
-
-type DetachTagFromLayerPayload struct {
-	Layer Layer `json:"layer"`
-}
-
-type DetachTagItemFromGroupInput struct {
-	ItemID  ID `json:"itemID"`
-	GroupID ID `json:"groupID"`
-}
-
-type DetachTagItemFromGroupPayload struct {
-	Tag *TagGroup `json:"tag"`
 }
 
 type DuplicateNLSLayerInput struct {
@@ -707,7 +615,6 @@ type LayerGroup struct {
 	LinkedDatasetSchemaID *ID              `json:"linkedDatasetSchemaId,omitempty"`
 	Root                  bool             `json:"root"`
 	LayerIds              []ID             `json:"layerIds"`
-	Tags                  []LayerTag       `json:"tags"`
 	Parent                *LayerGroup      `json:"parent,omitempty"`
 	Property              *Property        `json:"property,omitempty"`
 	Plugin                *Plugin          `json:"plugin,omitempty"`
@@ -733,16 +640,6 @@ func (this LayerGroup) GetProperty() *Property         { return this.Property }
 func (this LayerGroup) GetPlugin() *Plugin             { return this.Plugin }
 func (this LayerGroup) GetExtension() *PluginExtension { return this.Extension }
 func (this LayerGroup) GetScenePlugin() *ScenePlugin   { return this.ScenePlugin }
-func (this LayerGroup) GetTags() []LayerTag {
-	if this.Tags == nil {
-		return nil
-	}
-	interfaceSlice := make([]LayerTag, 0, len(this.Tags))
-	for _, concrete := range this.Tags {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
 
 type LayerItem struct {
 	ID              ID               `json:"id"`
@@ -755,7 +652,6 @@ type LayerItem struct {
 	Infobox         *Infobox         `json:"infobox,omitempty"`
 	ParentID        *ID              `json:"parentId,omitempty"`
 	LinkedDatasetID *ID              `json:"linkedDatasetId,omitempty"`
-	Tags            []LayerTag       `json:"tags"`
 	Parent          *LayerGroup      `json:"parent,omitempty"`
 	Property        *Property        `json:"property,omitempty"`
 	Plugin          *Plugin          `json:"plugin,omitempty"`
@@ -781,35 +677,6 @@ func (this LayerItem) GetProperty() *Property         { return this.Property }
 func (this LayerItem) GetPlugin() *Plugin             { return this.Plugin }
 func (this LayerItem) GetExtension() *PluginExtension { return this.Extension }
 func (this LayerItem) GetScenePlugin() *ScenePlugin   { return this.ScenePlugin }
-func (this LayerItem) GetTags() []LayerTag {
-	if this.Tags == nil {
-		return nil
-	}
-	interfaceSlice := make([]LayerTag, 0, len(this.Tags))
-	for _, concrete := range this.Tags {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
-
-type LayerTagGroup struct {
-	TagID    ID              `json:"tagId"`
-	Children []*LayerTagItem `json:"children"`
-	Tag      Tag             `json:"tag,omitempty"`
-}
-
-func (LayerTagGroup) IsLayerTag()       {}
-func (this LayerTagGroup) GetTagID() ID { return this.TagID }
-func (this LayerTagGroup) GetTag() Tag  { return this.Tag }
-
-type LayerTagItem struct {
-	TagID ID  `json:"tagId"`
-	Tag   Tag `json:"tag,omitempty"`
-}
-
-func (LayerTagItem) IsLayerTag()       {}
-func (this LayerTagItem) GetTagID() ID { return this.TagID }
-func (this LayerTagItem) GetTag() Tag  { return this.Tag }
 
 type LineString struct {
 	Type                  string      `json:"type"`
@@ -1380,16 +1247,6 @@ type RemoveAssetPayload struct {
 	AssetID ID `json:"assetId"`
 }
 
-type RemoveClusterInput struct {
-	ClusterID ID `json:"clusterId"`
-	SceneID   ID `json:"sceneId"`
-}
-
-type RemoveClusterPayload struct {
-	Scene     *Scene `json:"scene"`
-	ClusterID ID     `json:"clusterId"`
-}
-
 type RemoveCustomPropertyInput struct {
 	LayerID      ID     `json:"layerId"`
 	Schema       JSON   `json:"schema,omitempty"`
@@ -1504,15 +1361,6 @@ type RemoveStylePayload struct {
 	StyleID ID `json:"styleId"`
 }
 
-type RemoveTagInput struct {
-	TagID ID `json:"tagID"`
-}
-
-type RemoveTagPayload struct {
-	TagID         ID      `json:"tagId"`
-	UpdatedLayers []Layer `json:"updatedLayers"`
-}
-
 type RemoveWidgetInput struct {
 	SceneID  ID `json:"sceneId"`
 	WidgetID ID `json:"widgetId"`
@@ -1542,9 +1390,6 @@ type Scene struct {
 	Stories           []*Story                 `json:"stories"`
 	Styles            []*Style                 `json:"styles"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
-	TagIds            []ID                     `json:"tagIds"`
-	Tags              []Tag                    `json:"tags"`
-	Clusters          []*Cluster               `json:"clusters"`
 }
 
 func (Scene) IsNode()        {}
@@ -1683,61 +1528,6 @@ type SyncDatasetPayload struct {
 	Dataset       []*Dataset       `json:"dataset"`
 }
 
-type TagGroup struct {
-	ID      ID         `json:"id"`
-	SceneID ID         `json:"sceneId"`
-	Label   string     `json:"label"`
-	TagIds  []ID       `json:"tagIds,omitempty"`
-	Tags    []*TagItem `json:"tags"`
-	Scene   *Scene     `json:"scene,omitempty"`
-	Layers  []Layer    `json:"layers"`
-}
-
-func (TagGroup) IsTag()                {}
-func (this TagGroup) GetID() ID        { return this.ID }
-func (this TagGroup) GetSceneID() ID   { return this.SceneID }
-func (this TagGroup) GetLabel() string { return this.Label }
-func (this TagGroup) GetLayers() []Layer {
-	if this.Layers == nil {
-		return nil
-	}
-	interfaceSlice := make([]Layer, 0, len(this.Layers))
-	for _, concrete := range this.Layers {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
-
-type TagItem struct {
-	ID                    ID             `json:"id"`
-	SceneID               ID             `json:"sceneId"`
-	Label                 string         `json:"label"`
-	ParentID              *ID            `json:"parentId,omitempty"`
-	LinkedDatasetID       *ID            `json:"linkedDatasetID,omitempty"`
-	LinkedDatasetSchemaID *ID            `json:"linkedDatasetSchemaID,omitempty"`
-	LinkedDatasetFieldID  *ID            `json:"linkedDatasetFieldID,omitempty"`
-	LinkedDatasetSchema   *DatasetSchema `json:"linkedDatasetSchema,omitempty"`
-	LinkedDataset         *Dataset       `json:"linkedDataset,omitempty"`
-	LinkedDatasetField    *DatasetField  `json:"linkedDatasetField,omitempty"`
-	Parent                *TagGroup      `json:"parent,omitempty"`
-	Layers                []Layer        `json:"layers"`
-}
-
-func (TagItem) IsTag()                {}
-func (this TagItem) GetID() ID        { return this.ID }
-func (this TagItem) GetSceneID() ID   { return this.SceneID }
-func (this TagItem) GetLabel() string { return this.Label }
-func (this TagItem) GetLayers() []Layer {
-	if this.Layers == nil {
-		return nil
-	}
-	interfaceSlice := make([]Layer, 0, len(this.Layers))
-	for _, concrete := range this.Layers {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
-
 type Team struct {
 	ID       ID                 `json:"id"`
 	Name     string             `json:"name"`
@@ -1790,18 +1580,6 @@ type UnlinkPropertyValueInput struct {
 	SchemaGroupID *ID `json:"schemaGroupId,omitempty"`
 	ItemID        *ID `json:"itemId,omitempty"`
 	FieldID       ID  `json:"fieldId"`
-}
-
-type UpdateClusterInput struct {
-	ClusterID  ID      `json:"clusterId"`
-	SceneID    ID      `json:"sceneId"`
-	Name       *string `json:"name,omitempty"`
-	PropertyID *ID     `json:"propertyId,omitempty"`
-}
-
-type UpdateClusterPayload struct {
-	Scene   *Scene   `json:"scene"`
-	Cluster *Cluster `json:"cluster"`
 }
 
 type UpdateCustomPropertySchemaInput struct {
@@ -1961,16 +1739,6 @@ type UpdateStyleInput struct {
 
 type UpdateStylePayload struct {
 	Style *Style `json:"style"`
-}
-
-type UpdateTagInput struct {
-	TagID   ID      `json:"tagId"`
-	SceneID ID      `json:"sceneId"`
-	Label   *string `json:"label,omitempty"`
-}
-
-type UpdateTagPayload struct {
-	Tag Tag `json:"tag"`
 }
 
 type UpdateTeamInput struct {
@@ -2317,7 +2085,6 @@ const (
 	PluginExtensionTypeBlock        PluginExtensionType = "BLOCK"
 	PluginExtensionTypeVisualizer   PluginExtensionType = "VISUALIZER"
 	PluginExtensionTypeInfobox      PluginExtensionType = "INFOBOX"
-	PluginExtensionTypeCluster      PluginExtensionType = "Cluster"
 	PluginExtensionTypeStory        PluginExtensionType = "Story"
 	PluginExtensionTypeStoryPage    PluginExtensionType = "StoryPage"
 	PluginExtensionTypeStoryBlock   PluginExtensionType = "StoryBlock"
@@ -2330,7 +2097,6 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeBlock,
 	PluginExtensionTypeVisualizer,
 	PluginExtensionTypeInfobox,
-	PluginExtensionTypeCluster,
 	PluginExtensionTypeStory,
 	PluginExtensionTypeStoryPage,
 	PluginExtensionTypeStoryBlock,
@@ -2339,7 +2105,7 @@ var AllPluginExtensionType = []PluginExtensionType{
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock, PluginExtensionTypeInfoboxBlock:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock, PluginExtensionTypeInfoboxBlock:
 		return true
 	}
 	return false
