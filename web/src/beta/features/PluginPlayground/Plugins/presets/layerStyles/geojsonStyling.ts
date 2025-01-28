@@ -126,9 +126,8 @@ const polygonLayer = reearth.layers.add({
 reearth.camera.flyTo({
   lat: 35.7,
   lng: 139.75,
-  height: 50000,
+  height: 60000,
   heading: 0,
-  pitch: -45,
   roll: 0
 });`
 };
