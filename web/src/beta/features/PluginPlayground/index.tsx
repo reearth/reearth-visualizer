@@ -10,7 +10,8 @@ const PluginPlayground: FC = () => {
     MainAreaTabs,
     RightAreaTabs,
     SettingsPanel,
-    SubRightAreaTabs
+    SubRightAreaTabs,
+    WidgetsPanel
   } = useHooks();
 
   return (
@@ -30,6 +31,9 @@ const PluginPlayground: FC = () => {
             </Panel>
             <Panel noPadding alwaysOpen extend title="Settings">
               <SettingsPanel />
+            </Panel>
+            <Panel noPadding alwaysOpen extend title="Widgets">
+              <WidgetsPanel />
             </Panel>
           </Area>
         </Area>

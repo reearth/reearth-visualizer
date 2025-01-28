@@ -30,6 +30,7 @@ type Props = {
   schema: SchemaField;
   field?: Field;
   onFlyTo?: FlyTo;
+  shouldUpdatePropertyItem?: boolean;
 };
 
 const PropertyField: FC<Props> = ({
@@ -38,7 +39,8 @@ const PropertyField: FC<Props> = ({
   field,
   schemaGroup,
   schema,
-  onFlyTo
+  onFlyTo,
+  shouldUpdatePropertyItem = true
 }) => {
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
   const t = useT();
@@ -59,7 +61,10 @@ const PropertyField: FC<Props> = ({
     [schema.type, schema.ui]
   );
 
-  const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
+  const handleChange = shouldUpdatePropertyItem
+    ? handlePropertyItemUpdate(schema.id, schema.type, itemId)
+    : () => {};
+
   return (
     <>
       {schema.type === "string" ? (

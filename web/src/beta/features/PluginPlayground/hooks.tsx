@@ -10,6 +10,7 @@ import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import SettingsList from "./SettingsList";
 import Viewer from "./Viewer";
+import WidgetsList from "./WidgetsList";
 
 export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
@@ -188,11 +189,16 @@ export default () => {
     />
   );
 
+  const WidgetsPanel: FC = () => (
+    <WidgetsList selectedPlugin={selectedPlugin} />
+  );
+
   return {
     LayersPanel,
     MainAreaTabs,
     RightAreaTabs,
     SettingsPanel,
-    SubRightAreaTabs
+    SubRightAreaTabs,
+    WidgetsPanel
   };
 };

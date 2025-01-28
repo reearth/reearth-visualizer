@@ -18,9 +18,15 @@ type Props = {
   propertyId: string;
   item?: Item;
   onFlyTo?: FlyTo;
+  shouldUpdatePropertyItem?: boolean;
 };
 
-const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
+const PropertyItem: FC<Props> = ({
+  propertyId,
+  item,
+  onFlyTo,
+  shouldUpdatePropertyItem = true
+}) => {
   const t = useT();
   const [selected, select] = useState<string>();
   const {
@@ -132,6 +138,7 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
               itemId={selected}
               schema={f.schemaField}
               onFlyTo={onFlyTo}
+              shouldUpdatePropertyItem={shouldUpdatePropertyItem}
             />
           );
         })}
