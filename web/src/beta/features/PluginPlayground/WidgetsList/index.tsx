@@ -1,10 +1,10 @@
-import PropertyItem from "@reearth/beta/ui/fields/Properties";
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-import { CustomField, Group } from "../types";
 import { getYmlJson } from "../utils";
+
+import PropertyItem from "./PropertyItem";
 
 type Props = {
   selectedPlugin: {
@@ -18,6 +18,7 @@ type Props = {
   };
 };
 const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
+  const [, setNotification] = useNotification();
   const ymlFile =
     selectedPlugin.files &&
     selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
@@ -27,8 +28,8 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
   const getYmlResult = getYmlJson(ymlFile);
 
   if (!getYmlResult.success) {
-    // setNotification({ type: "error", text: getYmlResult.message });
-    // return;
+    setNotification({ type: "error", text: getYmlResult.message });
+    return <div />;
   }
 
   const ymlJSON = getYmlResult.data;
@@ -48,103 +49,12 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
 
   if (!widgetSchema || widgetSchema.length == 0) return <div />;
 
-  function transformData(inputData: Group): {
-    propertyId: string;
-    item: {
-      id: string;
-      title: string;
-      schemaGroup: string;
-      schemaFields: {
-        id: string;
-        type: string;
-        ui: string;
-        name: string;
-        only: null;
-        defaultValue: unknown;
-        choices?: { key: string; label: string }[];
-      }[];
-      fields: {
-        id: string;
-        value: unknown;
-        type: string;
-      }[];
-      representativeField: string | null;
-    };
-    onFlyTo: () => void;
-  } {
-    if (!Array.isArray(inputData) || inputData.length === 0) {
-      throw new Error("Input data must be a non-empty array");
-    }
-
-    const firstItem = inputData[0];
-
-    const transformedFields = firstItem.fields.map((field: CustomField) => ({
-      id: field.id || "",
-      type: field.type || "",
-      ui: field.ui || "",
-      title: field.title || "",
-      only: null,
-      defaultValue: getDefaultValueForType(field.type as string)
-    }));
-
-    const schemaFields = transformedFields.map((field: CustomField) => ({
-      id: field.id || "",
-      type: field.type || "",
-      ui: field.ui || "",
-      name: field.title || "",
-      only: null,
-      defaultValue: getDefaultValueForType(field.type as string),
-      choices: field.type === "url" ? [] : undefined
-    }));
-
-    const fields = transformedFields.map((field: CustomField) => ({
-      id: field.id || "",
-      value: field.defaultValue,
-      type: field.type || ""
-    }));
-
-    return {
-      propertyId: `${firstItem.id}Property`,
-      item: {
-        id: firstItem.id,
-        title: firstItem.title,
-        schemaGroup: `${firstItem.id}Group`,
-        schemaFields,
-        fields,
-        representativeField: fields[0]?.id || null
-      },
-      onFlyTo: () => {
-        console.log("Fly to action triggered");
-      }
-    };
-  }
-
-  function getDefaultValueForType(type: string) {
-    switch (type) {
-      case "string":
-        return "";
-      case "number":
-        return 0;
-      case "boolean":
-        return false;
-      case "url":
-        return "";
-      case "date":
-        return new Date().toISOString();
-      default:
-        return null;
-    }
-  }
-
-  const transformed = transformData(widgetSchema);
-
+  const { fields } = widgetSchema[0];
   return (
     <Wrapper>
-      <PropertyItem
-        item={transformed.item as unknown as Item}
-        propertyId={transformed.propertyId}
-        shouldUpdatePropertyItem={false}
-      />
+      {fields.map((field) => (
+        <PropertyItem field={field} />
+      ))}
     </Wrapper>
   );
 };
