@@ -1,54 +1,54 @@
 module github.com/reearth/reearth/server
 
 require (
-	cloud.google.com/go/profiler v0.3.0
-	cloud.google.com/go/storage v1.36.0
-	github.com/99designs/gqlgen v0.17.43
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.21.0
-	github.com/avast/retry-go/v4 v4.0.4
-	github.com/aws/aws-sdk-go-v2 v1.25.3
-	github.com/aws/aws-sdk-go-v2/config v1.27.7
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.52.0
+	cloud.google.com/go/profiler v0.4.2
+	cloud.google.com/go/storage v1.50.0
+	github.com/99designs/gqlgen v0.17.64
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.26.0
+	github.com/avast/retry-go/v4 v4.6.0
+	github.com/aws/aws-sdk-go-v2 v1.34.0
+	github.com/aws/aws-sdk-go-v2/config v1.29.2
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.74.1
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/gavv/httpexpect/v2 v2.3.1
-	github.com/goccy/go-yaml v1.11.3
+	github.com/gavv/httpexpect/v2 v2.16.0
+	github.com/goccy/go-yaml v1.15.15
 	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/joho/godotenv v1.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/jonas-p/go-shp v0.1.1
-	github.com/k0kubun/pp/v3 v3.2.0
+	github.com/k0kubun/pp/v3 v3.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kennygrant/sanitize v1.2.4
-	github.com/labstack/echo/v4 v4.11.4
+	github.com/labstack/echo/v4 v4.13.3
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/oklog/ulid v1.3.1
+	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pkg/errors v0.9.1
-	github.com/ravilushqa/otelgqlgen v0.15.0
+	github.com/ravilushqa/otelgqlgen v0.17.0
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 	github.com/reearth/reearthx v0.0.0-20241128091912-9b8bc8adfdd7
-	github.com/samber/lo v1.39.0
-	github.com/spf13/afero v1.11.0
+	github.com/samber/lo v1.49.1
+	github.com/spf13/afero v1.12.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
-	github.com/stretchr/testify v1.8.4
-	github.com/twpayne/go-kml v1.5.2
+	github.com/stretchr/testify v1.10.0
+	github.com/twpayne/go-kml/v3 v3.2.1
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.3.0
-	github.com/vektah/gqlparser/v2 v2.5.11
-	github.com/zitadel/oidc v1.13.5
-	go.mongodb.org/mongo-driver v1.13.1
-	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.32.0
-	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.32.0
-	go.opentelemetry.io/otel v1.22.0
-	go.opentelemetry.io/otel/sdk v1.22.0
+	github.com/vektah/gqlparser/v2 v2.5.22
+	github.com/zitadel/oidc/v3 v3.34.1
+	go.mongodb.org/mongo-driver/v2 v2.0.0
+	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.59.0
+	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.59.0
+	go.opentelemetry.io/otel v1.34.0
+	go.opentelemetry.io/otel/sdk v1.34.0
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a
-	golang.org/x/net v0.20.0
-	golang.org/x/oauth2 v0.16.0
-	golang.org/x/text v0.14.0
-	golang.org/x/tools v0.17.0
-	google.golang.org/api v0.161.0
+	golang.org/x/net v0.34.0
+	golang.org/x/oauth2 v0.25.0
+	golang.org/x/text v0.21.0
+	golang.org/x/tools v0.29.0
+	google.golang.org/api v0.219.0
 	gopkg.in/go-playground/colors.v1 v1.2.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0
@@ -171,4 +171,4 @@ require (
 	moul.io/http2curl v1.0.1-0.20190925090545-5cd742060b0e // indirect
 )
 
-go 1.23.4
+go 1.23.5
