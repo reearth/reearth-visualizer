@@ -8,8 +8,10 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
@@ -18,6 +20,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/samber/lo"
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +33,9 @@ func TestAddOrUpdateCustomProperties(t *testing.T) {
 	_ = db.Project.Save(ctx, prj)
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -78,7 +84,9 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	_ = db.Project.Save(ctx, prj)
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -133,7 +141,9 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	_ = db.Project.Save(ctx, prj)
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -210,7 +220,9 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	_ = db.Project.Save(ctx, prj)
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -268,8 +280,9 @@ func TestImportNLSLayers(t *testing.T) {
 	ctx = adapter.AttachCurrentHost(ctx, "https://xxxx.reearth.dev")
 
 	db := memory.New()
-	ifl := NewNLSLayer(db)
-
+	ifl := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
 	_ = db.Project.Save(ctx, prj)

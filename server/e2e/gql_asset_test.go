@@ -129,19 +129,36 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 		},
 		"query": CreateAssetMutation,
 	}
-	operations, err := toJSONString(requestBody)
 	assert.Nil(t, err)
-	return e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithMultipart().
-		WithFormField("operations", operations).
-		WithFormField("map", `{"0": ["variables.file"]}`).
-		WithFile("0", filePath).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	return RequestWithMultipart(e, uID.String(), requestBody, filePath)
+}
+
+func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte, coreSupport bool, teamId string) *httpexpect.Value {
+	tempFile, err := os.CreateTemp("", "requestBody-*.json")
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+	if _, err := tempFile.Write(fileData); err != nil {
+		t.Fatalf("failed to write to temp file: %v", err)
+	}
+	defer func() {
+		if cerr := tempFile.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+		if err := os.Remove(tempFile.Name()); err != nil {
+			t.Logf("failed to remove temp file: %v", err)
+		}
+	}()
+	requestBody := map[string]interface{}{
+		"operationName": "CreateAsset",
+		"variables": map[string]interface{}{
+			"teamId":      teamId,
+			"coreSupport": coreSupport,
+			"file":        nil,
+		},
+		"query": CreateAssetMutation,
+	}
+	return RequestWithMultipart(e, uID.String(), requestBody, tempFile.Name())
 }
 
 const GetAssetsQuery = `query GetAssets($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: AssetSort) {

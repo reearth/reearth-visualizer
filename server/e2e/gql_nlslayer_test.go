@@ -79,6 +79,42 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string, title string, index int
 	return requestBody, res, layerId
 }
 
+func addNLSLayerSimpleByGeojson(e *httpexpect.Expect, sId string, url string, title string, index int) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "AddNLSLayerSimple",
+		Query: `mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {
+			addNLSLayerSimple(input: $input) {
+				layers {
+					id
+					__typename
+				}
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"input": map[string]any{
+				"sceneId": sId,
+				"config": map[string]any{
+					"data": map[string]any{
+						"url":   url,
+						"type":  "geojson",
+						"value": nil,
+						"geojson": map[string]any{
+							"useAsResource": false,
+						},
+					},
+				},
+				"visible":   true,
+				"layerType": "simple",
+				"title":     title,
+				"index":     index,
+			},
+		},
+	}
+
+	return Request(e, uID.String(), requestBody)
+}
+
 func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveNLSLayer",
