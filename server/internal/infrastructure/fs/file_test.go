@@ -2,13 +2,17 @@ package fs
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
+	"github.com/reearth/reearth/server/internal/testutil"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -60,6 +64,37 @@ func TestFile_UploadAsset(t *testing.T) {
 	uf, _ := fs.Open(filepath.Join("assets", filepath.Base(u.Path)))
 	c, _ := io.ReadAll(uf)
 	assert.Equal(t, "aaa", string(c))
+}
+
+func TestFSFile_UploadAssetFromURL(t *testing.T) {
+	ctx := context.Background()
+
+	gcsBaseURL, _ := url.Parse(testutil.GCSBaseURLForTesting)
+	srcBucketName := uuid.New().String()
+	testGCS, err := testutil.NewGCSForTesting()
+	if err != nil {
+		t.Fatalf("failed to create GCSForTesting: %v", err)
+	}
+
+	defer func() {
+		testGCS.DeleteBucketWithObjectsOnGCS(srcBucketName)
+		err := testGCS.Close()
+		if err != nil {
+			t.Fatalf("failed to close client: %v", err)
+		}
+	}()
+	testFileName := uuid.New().String()
+	testGCS.UploadTestDataOnGCS(srcBucketName, testFileName)
+
+	fsBaseURL := "/assets"
+	newFileRepo, err := NewFile(mockFs(), fsBaseURL)
+	assert.NoError(t, err)
+
+	srcURL, _ := url.Parse(fmt.Sprintf("%s/%s/o/%s", gcsBaseURL.String(), srcBucketName, testFileName))
+	uploadedURL, _, err := newFileRepo.UploadAssetFromURL(ctx, srcURL)
+
+	assert.NoError(t, err)
+	assert.Equal(t, fmt.Sprintf("/assets/%s", path.Base(uploadedURL.Path)), uploadedURL.String())
 }
 
 func TestFile_RemoveAsset(t *testing.T) {

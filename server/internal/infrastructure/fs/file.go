@@ -3,16 +3,20 @@ package fs
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/kennygrant/sanitize"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
 )
@@ -52,8 +56,47 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 }
 
 func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL, int64, error) {
-	// Note: not implemented
-	return nil, 0, errors.New("UploadAssetFromURL: not implemented for local file storage")
+	if u == nil {
+		return nil, 0, gateway.ErrInvalidFile
+	}
+
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctxWithTimeout, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Errorfc(ctx, "fs: failed to fetch URL: %v", err)
+		return nil, 0, errors.New("failed to fetch URL")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		log.Errorfc(ctx, "fs: failed to fetch URL, status: %d", resp.StatusCode)
+		return nil, 0, errors.New("failed to fetch URL")
+	}
+
+	if resp.ContentLength > 0 && resp.ContentLength >= gateway.UploadFileSizeLimit {
+		return nil, 0, gateway.ErrFileTooLarge
+	}
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Errorfc(ctx, "fs: failed to close response body: %v", err)
+		}
+	}()
+
+	filename := sanitize.Path(newAssetID() + path.Ext(u.Path))
+	size, err := f.upload(ctx, filepath.Join(assetDir, filename), resp.Body)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	uploadedURL := getAssetFileURL(f.urlBase, filename)
+	return uploadedURL, size, nil
 }
 
 func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
