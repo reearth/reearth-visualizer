@@ -34,36 +34,36 @@ models:
     fields:
       team:
         resolver: true
-  Dataset:
-    fields:
-      schema:
-        resolver: true
-      name:
-        resolver: true
-  DatasetSchema:
-    fields:
-      datasets:
-        resolver: true
-      scene:
-        resolver: true
-      representativeField:
-        resolver: true
-      totalCount:
-        resolver: true
-  DatasetField:
-    fields:
-      schema:
-        resolver: true
-      field:
-        resolver: true
-      valueRef:
-        resolver: true
-  DatasetSchemaField:
-    fields:
-      schema:
-        resolver: true
-      ref:
-        resolver: true
+  # Dataset:
+  #   fields:
+  #     schema:
+  #       resolver: true
+  #     name:
+  #       resolver: true
+  # DatasetSchema:
+  #   fields:
+  #     datasets:
+  #       resolver: true
+  #     scene:
+  #       resolver: true
+  #     representativeField:
+  #       resolver: true
+  #     totalCount:
+  #       resolver: true
+  # DatasetField:
+  #   fields:
+  #     schema:
+  #       resolver: true
+  #     field:
+  #       resolver: true
+  #     valueRef:
+  #       resolver: true
+  # DatasetSchemaField:
+  #   fields:
+  #     schema:
+  #       resolver: true
+  #     ref:
+  #       resolver: true
   LayerItem:
     fields:
       parent:
