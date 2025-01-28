@@ -17,9 +17,6 @@
     ],
     "Node": [
       "Asset",
-      "Dataset",
-      "DatasetSchema",
-      "DatasetSchemaField",
       "Project",
       "Property",
       "Scene",

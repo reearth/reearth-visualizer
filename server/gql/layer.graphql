@@ -42,7 +42,7 @@ type LayerItem implements Layer {
   property: Property
   plugin: Plugin
   extension: PluginExtension
-  linkedDataset: Dataset
+  # linkedDataset: Dataset
   merged: MergedLayer
   scene: Scene
   scenePlugin: ScenePlugin
@@ -67,7 +67,7 @@ type LayerGroup implements Layer {
   property: Property
   plugin: Plugin
   extension: PluginExtension
-  linkedDatasetSchema: DatasetSchema
+  # linkedDatasetSchema: DatasetSchema
   layers: [Layer]!
   scene: Scene
   scenePlugin: ScenePlugin
@@ -81,7 +81,7 @@ type Infobox {
   linkedDatasetId: ID
   layer: Layer!
   property: Property
-  linkedDataset: Dataset
+  # linkedDataset: Dataset
   merged: MergedInfobox
   scene: Scene
 }
@@ -99,7 +99,7 @@ type InfoboxField {
   property: Property
   plugin: Plugin
   extension: PluginExtension
-  linkedDataset: Dataset
+  # linkedDataset: Dataset
   merged: MergedInfoboxField
   scene: Scene
   scenePlugin: ScenePlugin

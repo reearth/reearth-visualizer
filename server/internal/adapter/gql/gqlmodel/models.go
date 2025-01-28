@@ -26,29 +26,29 @@ func (l *PropertyFieldLink) Copy() *PropertyFieldLink {
 	}
 }
 
-func (d *Dataset) Field(id ID) *DatasetField {
-	if d == nil || id == "" {
-		return nil
-	}
-	for _, f := range d.Fields {
-		if f.FieldID == id {
-			return f
-		}
-	}
-	return nil
-}
+// func (d *Dataset) Field(id ID) *DatasetField {
+// 	if d == nil || id == "" {
+// 		return nil
+// 	}
+// 	for _, f := range d.Fields {
+// 		if f.FieldID == id {
+// 			return f
+// 		}
+// 	}
+// 	return nil
+// }
 
-func (d *DatasetSchema) Field(id ID) *DatasetSchemaField {
-	if d == nil || id == "" {
-		return nil
-	}
-	for _, f := range d.Fields {
-		if f.ID == id {
-			return f
-		}
-	}
-	return nil
-}
+// func (d *DatasetSchema) Field(id ID) *DatasetSchemaField {
+// 	if d == nil || id == "" {
+// 		return nil
+// 	}
+// 	for _, f := range d.Fields {
+// 		if f.ID == id {
+// 			return f
+// 		}
+// 	}
+// 	return nil
+// }
 
 func (d *Property) Field(id id.PropertyFieldID) *PropertyField {
 	if d == nil || id == "" {

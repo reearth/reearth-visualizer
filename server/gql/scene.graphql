@@ -16,12 +16,12 @@ type Scene implements Node {
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
-  datasetSchemas(
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): DatasetSchemaConnection!
+  # datasetSchemas(
+  #   first: Int
+  #   last: Int
+  #   after: Cursor
+  #   before: Cursor
+  # ): DatasetSchemaConnection!
 }
 
 type SceneWidget {

@@ -16,9 +16,9 @@ func (r *Resolver) PropertyField() PropertyFieldResolver {
 	return &propertyFieldResolver{r}
 }
 
-func (r *Resolver) PropertyFieldLink() PropertyFieldLinkResolver {
-	return &propertyFieldLinkResolver{r}
-}
+// func (r *Resolver) PropertyFieldLink() PropertyFieldLinkResolver {
+// 	return &propertyFieldLinkResolver{r}
+// }
 
 func (r *Resolver) MergedProperty() MergedPropertyResolver {
 	return &mergedPropertyResolver{r}
@@ -99,39 +99,39 @@ func (r *propertyFieldResolver) Field(ctx context.Context, obj *gqlmodel.Propert
 	return schema.Field(obj.FieldID), nil
 }
 
-func (r *propertyFieldResolver) ActualValue(ctx context.Context, obj *gqlmodel.PropertyField) (interface{}, error) {
-	datasetLoader := dataloaders(ctx).Dataset
-	return actualValue(datasetLoader, obj.Value, obj.Links, false)
-}
+// func (r *propertyFieldResolver) ActualValue(ctx context.Context, obj *gqlmodel.PropertyField) (interface{}, error) {
+// 	datasetLoader := dataloaders(ctx).Dataset
+// 	return actualValue(datasetLoader, obj.Value, obj.Links, false)
+// }
 
-type propertyFieldLinkResolver struct{ *Resolver }
+// type propertyFieldLinkResolver struct{ *Resolver }
 
-func (r *propertyFieldLinkResolver) Dataset(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.Dataset, error) {
-	if obj.DatasetID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).Dataset.Load(*obj.DatasetID)
-}
+// func (r *propertyFieldLinkResolver) Dataset(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.Dataset, error) {
+// 	if obj.DatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).Dataset.Load(*obj.DatasetID)
+// }
 
-func (r *propertyFieldLinkResolver) DatasetField(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.DatasetField, error) {
-	if obj.DatasetID == nil {
-		return nil, nil
-	}
-	d, err := dataloaders(ctx).Dataset.Load(*obj.DatasetID)
-	if err != nil {
-		return nil, err
-	}
-	return d.Field(obj.DatasetSchemaFieldID), nil
-}
+// func (r *propertyFieldLinkResolver) DatasetField(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.DatasetField, error) {
+// 	if obj.DatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	d, err := dataloaders(ctx).Dataset.Load(*obj.DatasetID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return d.Field(obj.DatasetSchemaFieldID), nil
+// }
 
-func (r *propertyFieldLinkResolver) DatasetSchema(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.DatasetSchema, error) {
-	return dataloaders(ctx).DatasetSchema.Load(obj.DatasetSchemaID)
-}
+// func (r *propertyFieldLinkResolver) DatasetSchema(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.DatasetSchema, error) {
+// 	return dataloaders(ctx).DatasetSchema.Load(obj.DatasetSchemaID)
+// }
 
-func (r *propertyFieldLinkResolver) DatasetSchemaField(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.DatasetSchemaField, error) {
-	ds, err := dataloaders(ctx).DatasetSchema.Load(obj.DatasetSchemaID)
-	return ds.Field(obj.DatasetSchemaFieldID), err
-}
+// func (r *propertyFieldLinkResolver) DatasetSchemaField(ctx context.Context, obj *gqlmodel.PropertyFieldLink) (*gqlmodel.DatasetSchemaField, error) {
+// 	ds, err := dataloaders(ctx).DatasetSchema.Load(obj.DatasetSchemaID)
+// 	return ds.Field(obj.DatasetSchemaFieldID), err
+// }
 
 type mergedPropertyResolver struct{ *Resolver }
 
@@ -166,12 +166,12 @@ func (r *mergedPropertyResolver) Schema(ctx context.Context, obj *gqlmodel.Merge
 	return dataloaders(ctx).PropertySchema.Load(*obj.SchemaID)
 }
 
-func (r *mergedPropertyResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.MergedProperty) (*gqlmodel.Dataset, error) {
-	if obj.LinkedDatasetID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
-}
+// func (r *mergedPropertyResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.MergedProperty) (*gqlmodel.Dataset, error) {
+// 	if obj.LinkedDatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
+// }
 
 func (r *mergedPropertyResolver) Groups(ctx context.Context, obj *gqlmodel.MergedProperty) ([]*gqlmodel.MergedPropertyGroup, error) {
 	if obj.Groups != nil {
@@ -245,12 +245,12 @@ func (r *mergedPropertyGroupResolver) Schema(ctx context.Context, obj *gqlmodel.
 	return dataloaders(ctx).PropertySchema.Load(*obj.SchemaID)
 }
 
-func (r *mergedPropertyGroupResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.MergedPropertyGroup) (*gqlmodel.Dataset, error) {
-	if obj.LinkedDatasetID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
-}
+// func (r *mergedPropertyGroupResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.MergedPropertyGroup) (*gqlmodel.Dataset, error) {
+// 	if obj.LinkedDatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
+// }
 
 type mergedPropertyFieldResolver struct{ *Resolver }
 
@@ -263,10 +263,10 @@ func (r *mergedPropertyFieldResolver) Field(ctx context.Context, obj *gqlmodel.M
 	return s.Field(obj.FieldID), err
 }
 
-func (r *mergedPropertyFieldResolver) ActualValue(ctx context.Context, obj *gqlmodel.MergedPropertyField) (interface{}, error) {
-	datasetLoader := dataloaders(ctx).Dataset
-	return actualValue(datasetLoader, obj.Value, obj.Links, obj.Overridden)
-}
+// func (r *mergedPropertyFieldResolver) ActualValue(ctx context.Context, obj *gqlmodel.MergedPropertyField) (interface{}, error) {
+// 	datasetLoader := dataloaders(ctx).Dataset
+// 	return actualValue(datasetLoader, obj.Value, obj.Links, obj.Overridden)
+// }
 
 type propertyGroupListResolver struct{ *Resolver }
 
@@ -296,46 +296,46 @@ func (*propertyGroupResolver) SchemaGroup(ctx context.Context, obj *gqlmodel.Pro
 	return s.Group(obj.SchemaGroupID), nil
 }
 
-func actualValue(datasetLoader DatasetDataLoader, value interface{}, links []*gqlmodel.PropertyFieldLink, overridden bool) (interface{}, error) {
-	if len(links) == 0 || overridden {
-		return &value, nil
-	}
-	// 先頭のリンクにしかDatasetが割り当てられていない→先頭から順々に辿っていく
-	if len(links) > 1 && links[0].DatasetID != nil && links[len(links)-1].DatasetID == nil {
-		dsid := *links[0].DatasetID
-		for i, link := range links {
-			ds, err := datasetLoader.Load(dsid)
-			if err != nil {
-				return nil, err
-			}
-			field := ds.Field(link.DatasetSchemaFieldID)
-			if field != nil {
-				if i == len(links)-1 {
-					return &value, nil
-				} else if field.Type != gqlmodel.ValueTypeRef {
-					return nil, nil
-				}
-				if field.Value != nil {
-					val, ok := (field.Value).(string)
-					if ok {
-						dsid = gqlmodel.ID(val)
-					} else {
-						return nil, nil
-					}
-				} else {
-					return nil, nil
-				}
-			}
-		}
-	} else if lastLink := links[len(links)-1]; lastLink.DatasetID != nil {
-		// 一番最後のリンクを取得
-		ds, err := datasetLoader.Load(*lastLink.DatasetID)
-		if err != nil {
-			return nil, err
-		}
-		if f := ds.Field(lastLink.DatasetSchemaFieldID); f != nil {
-			return &f.Value, nil
-		}
-	}
-	return nil, nil
-}
+// func actualValue(datasetLoader DatasetDataLoader, value interface{}, links []*gqlmodel.PropertyFieldLink, overridden bool) (interface{}, error) {
+// 	if len(links) == 0 || overridden {
+// 		return &value, nil
+// 	}
+// 	// 先頭のリンクにしかDatasetが割り当てられていない→先頭から順々に辿っていく
+// 	if len(links) > 1 && links[0].DatasetID != nil && links[len(links)-1].DatasetID == nil {
+// 		dsid := *links[0].DatasetID
+// 		for i, link := range links {
+// 			ds, err := datasetLoader.Load(dsid)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			field := ds.Field(link.DatasetSchemaFieldID)
+// 			if field != nil {
+// 				if i == len(links)-1 {
+// 					return &value, nil
+// 				} else if field.Type != gqlmodel.ValueTypeRef {
+// 					return nil, nil
+// 				}
+// 				if field.Value != nil {
+// 					val, ok := (field.Value).(string)
+// 					if ok {
+// 						dsid = gqlmodel.ID(val)
+// 					} else {
+// 						return nil, nil
+// 					}
+// 				} else {
+// 					return nil, nil
+// 				}
+// 			}
+// 		}
+// 	} else if lastLink := links[len(links)-1]; lastLink.DatasetID != nil {
+// 		// 一番最後のリンクを取得
+// 		ds, err := datasetLoader.Load(*lastLink.DatasetID)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		if f := ds.Field(lastLink.DatasetSchemaFieldID); f != nil {
+// 			return &f.Value, nil
+// 		}
+// 	}
+// 	return nil, nil
+// }

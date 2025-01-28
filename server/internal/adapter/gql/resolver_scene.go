@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Scene() SceneResolver {
@@ -64,9 +63,9 @@ func (r *sceneResolver) NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]g
 	return res, nil
 }
 
-func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
-}
+// func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
+// 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
+// }
 
 func (r *sceneResolver) Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error) {
 	sid, err := gqlmodel.ToID[id.Scene](obj.ID)

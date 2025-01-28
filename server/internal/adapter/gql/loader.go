@@ -13,9 +13,9 @@ const (
 )
 
 type Loaders struct {
-	usecases  interfaces.Container
-	Asset     *AssetLoader
-	Dataset   *DatasetLoader
+	usecases interfaces.Container
+	Asset    *AssetLoader
+	// Dataset   *DatasetLoader
 	Layer     *LayerLoader
 	Plugin    *PluginLoader
 	Policy    *PolicyLoader
@@ -28,9 +28,9 @@ type Loaders struct {
 }
 
 type DataLoaders struct {
-	Asset          AssetDataLoader
-	Dataset        DatasetDataLoader
-	DatasetSchema  DatasetSchemaDataLoader
+	Asset AssetDataLoader
+	// Dataset        DatasetDataLoader
+	// DatasetSchema  DatasetSchemaDataLoader
 	LayerItem      LayerItemDataLoader
 	LayerGroup     LayerGroupDataLoader
 	Layer          LayerDataLoader
@@ -52,9 +52,9 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		return nil
 	}
 	return &Loaders{
-		usecases:  *usecases,
-		Asset:     NewAssetLoader(usecases.Asset),
-		Dataset:   NewDatasetLoader(usecases.Dataset),
+		usecases: *usecases,
+		Asset:    NewAssetLoader(usecases.Asset),
+		// Dataset:   NewDatasetLoader(usecases.Dataset),
 		Layer:     NewLayerLoader(usecases.Layer),
 		Plugin:    NewPluginLoader(usecases.Plugin),
 		Policy:    NewPolicyLoader(usecases.Policy),
@@ -76,9 +76,9 @@ func (l Loaders) DataLoadersWith(ctx context.Context, enabled bool) *DataLoaders
 
 func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 	return &DataLoaders{
-		Asset:          l.Asset.DataLoader(ctx),
-		Dataset:        l.Dataset.DataLoader(ctx),
-		DatasetSchema:  l.Dataset.SchemaDataLoader(ctx),
+		Asset: l.Asset.DataLoader(ctx),
+		// Dataset:        l.Dataset.DataLoader(ctx),
+		// DatasetSchema:  l.Dataset.SchemaDataLoader(ctx),
 		LayerItem:      l.Layer.ItemDataLoader(ctx),
 		LayerGroup:     l.Layer.GroupDataLoader(ctx),
 		Layer:          l.Layer.DataLoader(ctx),
@@ -97,9 +97,9 @@ func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 
 func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 	return &DataLoaders{
-		Asset:          l.Asset.OrdinaryDataLoader(ctx),
-		Dataset:        l.Dataset.OrdinaryDataLoader(ctx),
-		DatasetSchema:  l.Dataset.SchemaOrdinaryDataLoader(ctx),
+		Asset: l.Asset.OrdinaryDataLoader(ctx),
+		// Dataset:        l.Dataset.OrdinaryDataLoader(ctx),
+		// DatasetSchema:  l.Dataset.SchemaOrdinaryDataLoader(ctx),
 		LayerItem:      l.Layer.ItemOrdinaryDataLoader(ctx),
 		LayerGroup:     l.Layer.GroupOrdinaryDataLoader(ctx),
 		Layer:          l.Layer.OrdinaryDataLoader(ctx),

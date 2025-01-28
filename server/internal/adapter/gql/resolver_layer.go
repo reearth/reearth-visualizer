@@ -56,12 +56,12 @@ func (r *infoboxResolver) Layer(ctx context.Context, obj *gqlmodel.Infobox) (gql
 	return *layer, nil
 }
 
-func (r *infoboxResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.Dataset, error) {
-	if obj.LinkedDatasetID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
-}
+// func (r *infoboxResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.Dataset, error) {
+// 	if obj.LinkedDatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
+// }
 
 func (r *infoboxResolver) Merged(ctx context.Context, obj *gqlmodel.Infobox) (*gqlmodel.MergedInfobox, error) {
 	ml, err := loaders(ctx).Layer.FetchParentAndMerged(ctx, obj.LayerID)
@@ -136,12 +136,12 @@ func (r *infoboxFieldResolver) Extension(ctx context.Context, obj *gqlmodel.Info
 	return plugin.Extension(obj.ExtensionID), nil
 }
 
-func (r *infoboxFieldResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.Dataset, error) {
-	if obj.LinkedDatasetID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
-}
+// func (r *infoboxFieldResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.Dataset, error) {
+// 	if obj.LinkedDatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
+// }
 
 func (r *infoboxFieldResolver) Merged(ctx context.Context, obj *gqlmodel.InfoboxField) (*gqlmodel.MergedInfoboxField, error) {
 	ml, err := loaders(ctx).Layer.FetchParentAndMerged(ctx, obj.LayerID)
@@ -201,12 +201,12 @@ func (r *layerGroupResolver) ParentLayer(ctx context.Context, obj *gqlmodel.Laye
 	return loaders(ctx).Layer.FetchParent(ctx, obj.ID)
 }
 
-func (r *layerGroupResolver) LinkedDatasetSchema(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.DatasetSchema, error) {
-	if obj.LinkedDatasetSchemaID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).DatasetSchema.Load(*obj.LinkedDatasetSchemaID)
-}
+// func (r *layerGroupResolver) LinkedDatasetSchema(ctx context.Context, obj *gqlmodel.LayerGroup) (*gqlmodel.DatasetSchema, error) {
+// 	if obj.LinkedDatasetSchemaID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).DatasetSchema.Load(*obj.LinkedDatasetSchemaID)
+// }
 
 func (r *layerGroupResolver) Layers(ctx context.Context, obj *gqlmodel.LayerGroup) ([]gqlmodel.Layer, error) {
 	layers, err := dataloaders(ctx).Layer.LoadAll(obj.LayerIds)
@@ -265,12 +265,12 @@ func (r *layerItemResolver) Extension(ctx context.Context, obj *gqlmodel.LayerIt
 	return plugin.Extension(*obj.ExtensionID), nil
 }
 
-func (r *layerItemResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.Dataset, error) {
-	if obj.LinkedDatasetID == nil {
-		return nil, nil
-	}
-	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
-}
+// func (r *layerItemResolver) LinkedDataset(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.Dataset, error) {
+// 	if obj.LinkedDatasetID == nil {
+// 		return nil, nil
+// 	}
+// 	return dataloaders(ctx).Dataset.Load(*obj.LinkedDatasetID)
+// }
 
 func (r *layerItemResolver) Merged(ctx context.Context, obj *gqlmodel.LayerItem) (*gqlmodel.MergedLayer, error) {
 	if obj.ParentID == nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -34,18 +33,18 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 			return nil, nil
 		}
 		return result, err
-	case gqlmodel.NodeTypeDataset:
-		result, err := dataloaders.Dataset.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeDatasetSchema:
-		result, err := dataloaders.DatasetSchema.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
+	// case gqlmodel.NodeTypeDataset:
+	// 	result, err := dataloaders.Dataset.Load(i)
+	// 	if result == nil {
+	// 		return nil, nil
+	// 	}
+	// 	return result, err
+	// case gqlmodel.NodeTypeDatasetSchema:
+	// 	result, err := dataloaders.DatasetSchema.Load(i)
+	// 	if result == nil {
+	// 		return nil, nil
+	// 	}
+	// 	return result, err
 	case gqlmodel.NodeTypeLayerItem:
 		result, err := dataloaders.LayerItem.Load(i)
 		if result == nil {
@@ -105,26 +104,26 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 			nodes[i] = data[i]
 		}
 		return nodes, nil
-	case gqlmodel.NodeTypeDataset:
-		data, err := dataloaders.Dataset.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeDatasetSchema:
-		data, err := dataloaders.DatasetSchema.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
+	// case gqlmodel.NodeTypeDataset:
+	// 	data, err := dataloaders.Dataset.LoadAll(ids)
+	// 	if len(err) > 0 && err[0] != nil {
+	// 		return nil, err[0]
+	// 	}
+	// 	nodes := make([]gqlmodel.Node, len(data))
+	// 	for i := range data {
+	// 		nodes[i] = data[i]
+	// 	}
+	// 	return nodes, nil
+	// case gqlmodel.NodeTypeDatasetSchema:
+	// 	data, err := dataloaders.DatasetSchema.LoadAll(ids)
+	// 	if len(err) > 0 && err[0] != nil {
+	// 		return nil, err[0]
+	// 	}
+	// 	nodes := make([]gqlmodel.Node, len(data))
+	// 	for i := range data {
+	// 		nodes[i] = data[i]
+	// 	}
+	// 	return nodes, nil
 	case gqlmodel.NodeTypeLayerItem:
 		data, err := dataloaders.LayerItem.LoadAll(ids)
 		if len(err) > 0 && err[0] != nil {
@@ -240,13 +239,13 @@ func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, pagina
 	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
 }
 
-func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
-}
+// func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
+// 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
+// }
 
-func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
-	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
-}
+// func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
+// 	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
+// }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
 	return loaders(ctx).User.SearchUser(ctx, nameOrEmail)

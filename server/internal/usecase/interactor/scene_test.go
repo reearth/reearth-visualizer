@@ -194,7 +194,6 @@ func TestImportScene(t *testing.T) {
 
 	// expected
 	exp := fmt.Sprintf(`{
-    "datasetSchemas": null,
     "id": "%s",
     "newLayers": null,
     "plugins": [],
