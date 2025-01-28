@@ -12,7 +12,7 @@ import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
-import { layerStylingManager } from "./layerStyles/layerStyling";
+import { geojsonStyling } from "./layerStyles/geojsonStyling";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -64,7 +64,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: [layerStylingManager]
+    plugins: [geojsonStyling]
   },
 
   {
