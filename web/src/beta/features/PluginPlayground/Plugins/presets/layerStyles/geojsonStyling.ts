@@ -20,25 +20,54 @@ const widgetFile: FileType = {
   id: "geojson-styling",
   title: "geojson-styling.js",
   sourceCode: `
-// Add point marker with styling
-const pointLayer = reearth.layers.add({
+// Define GeoJSON layer with all feature types and their styles
+const geoJSONLayer = {
   type: "simple",
   data: {
     type: "geojson",
     value: {
       type: "FeatureCollection",
       features: [
+        // Polygon feature
         {
           type: "Feature",
           properties: {},
           geometry: {
-            coordinates: [139.97422779688281, 35.74642872517698],
-            type: "Point",
-          },
+            type: "Polygon",
+            coordinates: [[
+              [139.56560369329821, 35.859787461762906],
+              [139.56560369329821, 35.586320662892106],
+              [139.73648312259508, 35.586320662892106],
+              [139.73648312259508, 35.859787461762906],
+              [139.56560369329821, 35.859787461762906]
+            ]]
+          }
         },
-      ],
-    },
+        // Polyline feature
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [139.93007825346956, 35.81332779614391],
+              [139.8105822019014, 35.730789521095986]
+            ]
+          }
+        },
+        // Point feature
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "Point",
+            coordinates: [139.97422779688281, 35.74642872517698]
+          }
+        }
+      ]
+    }
   },
+  // Styles for each geometry type
   marker: {
     style: "point",
     pointColor: "red",
@@ -47,30 +76,6 @@ const pointLayer = reearth.layers.add({
     pointOutlineWidth: 1,
     height: 100,
     heightReference: "relative"
-  }
-});
-
-// Add polyline with styling
-const polylineLayer = reearth.layers.add({
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            coordinates: [
-              [139.93007825346956, 35.81332779614391],
-              [139.8105822019014, 35.730789521095986],
-            ],
-            type: "LineString",
-          },
-        },
-      ],
-    },
   },
   polyline: {
     clampToGround: true,
@@ -78,35 +83,6 @@ const polylineLayer = reearth.layers.add({
     show: true,
     strokeColor: "red",
     strokeWidth: 3
-  }
-});
-
-// Add polygon with styling
-const polygonLayer = reearth.layers.add({
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            coordinates: [
-              [
-                [139.56560369329821, 35.859787461762906],
-                [139.56560369329821, 35.586320662892106],
-                [139.73648312259508, 35.586320662892106],
-                [139.73648312259508, 35.859787461762906],
-                [139.56560369329821, 35.859787461762906],
-              ],
-            ],
-            type: "Polygon",
-          },
-        },
-      ],
-    },
   },
   polygon: {
     clampToGround: true,
@@ -120,9 +96,11 @@ const polygonLayer = reearth.layers.add({
     strokeColor: "blue",
     strokeWidth: 3
   }
-});
+};
 
-// Move camera to a position that shows all layers
+// Add layer and fly to view
+const layerId = reearth.layers.add(geoJSONLayer);
+
 reearth.camera.flyTo({
   lat: 35.7,
   lng: 139.75,
