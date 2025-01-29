@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -15,12 +16,14 @@ func TestPingAPI(t *testing.T) {
 	}
 	defer mr.Close()
 
+	redisURL := fmt.Sprintf("redis://:@%s/0", mr.Addr())
+
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: mr.Addr(),
+		RedisURL: redisURL,
 	}, false, nil)
 
 	e.OPTIONS("/api/ping").
