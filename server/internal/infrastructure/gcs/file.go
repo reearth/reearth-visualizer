@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/kennygrant/sanitize"
@@ -18,6 +20,7 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
 	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
 
 const (
@@ -30,12 +33,17 @@ const (
 )
 
 type fileRepo struct {
+	isTest       bool
 	bucketName   string
 	base         *url.URL
 	cacheControl string
 }
 
-func NewFile(bucketName, base string, cacheControl string) (gateway.File, error) {
+const (
+	devBaseURL = "http://localhost:4443/storage/v1/b"
+)
+
+func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway.File, error) {
 	if bucketName == "" {
 		return nil, errors.New("bucket name is empty")
 	}
@@ -52,6 +60,7 @@ func NewFile(bucketName, base string, cacheControl string) (gateway.File, error)
 	}
 
 	return &fileRepo{
+		isTest:       isTest,
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
@@ -102,6 +111,61 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 		return gateway.ErrInvalidFile
 	}
 	return f.delete(ctx, sn)
+}
+
+func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL, int64, error) {
+	if u == nil {
+		return nil, 0, errors.New("invalid URL")
+	}
+
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctxWithTimeout, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Errorfc(ctx, "gcs: failed to fetch URL: %v", err)
+		return nil, 0, errors.New("failed to fetch URL")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		log.Errorfc(ctx, "gcs: failed to fetch URL, status: %d", resp.StatusCode)
+		return nil, 0, errors.New("failed to fetch URL")
+	}
+
+	if resp.ContentLength > 0 && resp.ContentLength >= fileSizeLimit {
+		return nil, 0, gateway.ErrFileTooLarge
+	}
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Errorfc(ctx, "gcs: failed to close response body: %v", err)
+		}
+	}()
+
+	fileName := path.Base(u.Path)
+	if fileName == "" {
+		return nil, 0, gateway.ErrInvalidFile
+	}
+	fileName = sanitize.Path(newAssetID() + path.Ext(fileName))
+	filename := path.Join(gcsAssetBasePath, fileName)
+
+	size, err := f.upload(ctx, filename, resp.Body)
+	if err != nil {
+		log.Errorfc(ctx, "gcs: upload from URL failed: %v", err)
+		return nil, 0, err
+	}
+
+	gcsURL := getGCSObjectURL(f.base, filename)
+	if gcsURL == nil {
+		return nil, 0, gateway.ErrInvalidFile
+	}
+
+	return gcsURL, size, nil
 }
 
 // plugin
@@ -231,7 +295,11 @@ func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) 
 // helpers
 
 func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
-	client, err := storage.NewClient(ctx)
+	opts := []option.ClientOption{}
+	if f.isTest {
+		opts = append(opts, option.WithoutAuthentication(), option.WithEndpoint(devBaseURL))
+	}
+	client, err := storage.NewClient(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
