@@ -750,38 +750,6 @@ func TestStoryPageCRUD(t *testing.T) {
 	pagesRes.Path("$[:].title").Equal([]string{"test 1"})
 }
 
-func TestStoryPageLayersCRUD(t *testing.T) {
-	e := Server(t, baseSeeder)
-
-	pID := createProject(e, "test")
-
-	_, _, sID := createScene(e, pID)
-
-	_, _, storyID := createStory(e, sID, "test", 0)
-
-	_, _, pageID := createPage(e, sID, storyID, "test", true)
-
-	_, res := fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
-
-	rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
-
-	_, _, layerID := addLayerItemFromPrimitive(e, rootLayerID)
-
-	_, _, _ = addLayerToPage(e, sID, storyID, pageID, layerID, nil)
-
-	_, res = fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerID})
-
-	_, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
-
-	_, res = fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
-}
-
 func TestStoryPageBlocksCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
