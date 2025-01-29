@@ -11,14 +11,20 @@ import {
   UpdateCustomPropertySchemaInput,
   UpdateCustomPropertiesMutation,
   UpdateNlsLayersInput,
-  UpdateNlsLayersMutation
+  UpdateNlsLayersMutation,
+  ChangeCustomPropertyTitleInput,
+  ChangeCustomPropertyTitleMutation,
+  RemoveCustomPropertyInput,
+  RemoveCustomPropertyMutation
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ADD_NLSLAYERSIMPLE,
   UPDATE_NLSLAYER,
   REMOVE_NLSLAYER,
   UPDATE_CUSTOM_PROPERTY_SCHEMA,
-  UPDATE_NLSLAYERS
+  UPDATE_NLSLAYERS,
+  CHANGE_CUSTOM_PROPERTY_TITLE,
+  REMOVE_CUSTOM_PROPERTY
 } from "@reearth/services/gql/queries/layer";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useLang, useT } from "@reearth/services/i18n";
@@ -197,12 +203,77 @@ export default () => {
     [updateCustomPropertiesMutation, setNotification, t]
   );
 
+
+  const [changeCustomPropertyTitleMutation] = useMutation(
+      CHANGE_CUSTOM_PROPERTY_TITLE,
+    {
+      refetchQueries: ["GetScene"]
+    }
+  );
+  
+  const useChangeCustomPropertyTitle = useCallback(
+    async (
+      input: ChangeCustomPropertyTitleInput
+    ): Promise<MutationReturn<ChangeCustomPropertyTitleMutation>> => {
+      if (!input.layerId) return { status: "error" };
+      const { data, errors } = await changeCustomPropertyTitleMutation({
+        variables: { input }
+      });
+      if (errors || !data?.changeCustomPropertyTitle) {
+        setNotification({
+          type: "error",
+          text: t("Failed to update the custom property title.")
+        });
+
+        return { status: "error", errors };
+      }
+      setNotification({
+        type: "success",
+        text: t("Successfully updated the custom property title!")
+      });
+
+      return { data, status: "success" };
+    },
+    [changeCustomPropertyTitleMutation, setNotification, t]
+  );
+
+  const [removeCustomPropertyMutation] = useMutation(REMOVE_CUSTOM_PROPERTY, {
+    refetchQueries: ["GetScene"]
+  });
+  const useRemoveCustomProperty = useCallback(
+    async (
+      input: RemoveCustomPropertyInput
+    ): Promise<MutationReturn<RemoveCustomPropertyMutation>> => {
+      if (!input.layerId) return { status: "error" };
+      const { data, errors } = await removeCustomPropertyMutation({
+        variables: { input }
+      });
+      if (errors || !data?.removeCustomProperty) {
+        setNotification({
+          type: "error",
+          text: t("Failed to remove the custom property.")
+        });
+
+        return { status: "error", errors };
+      }
+      setNotification({
+        type: "success",
+        text: t("Successfully removed the custom property!")
+      });
+
+      return { data, status: "success" };
+    },
+    [removeCustomPropertyMutation, setNotification, t]
+  );
+
   return {
     useGetLayersQuery,
     useAddNLSLayerSimple,
     useUpdateNLSLayer,
     useUpdateNLSLayers,
     useRemoveNLSLayer,
-    useUpdateCustomProperties
+    useUpdateCustomProperties,
+    useChangeCustomPropertyTitle,
+    useRemoveCustomProperty
   };
 };

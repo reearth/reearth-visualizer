@@ -18,11 +18,12 @@ export default function useHooks({
   propertiesList,
   setPropertiesList,
   setCustomProperties,
-  setWarning
+  setWarning,
+  setNewTitle,
+  setPreviousTitle
 }: CustomPropertyProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [editTitleIndex, setEditTitleIndex] = useState<number | null>(null);
-  const [editTypeIndex, setEditTypeIndex] = useState<number | null>(null);
 
   const handleTitleBlur = useCallback(
     (idx: number) => (newKeyValue?: string) => {
@@ -30,6 +31,7 @@ export default function useHooks({
       const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
       newList[idx].key = newKeyValue?.trim() ?? "";
       setPropertiesList?.(newList);
+      setNewTitle?.(newList[idx].key);
       const hasForbiddenKey = newList.some((item) =>
         forbiddenKeywords.has(item.key)
       );
@@ -40,7 +42,7 @@ export default function useHooks({
       }
       if (editTitleIndex === idx) setEditTitleIndex(null);
     },
-    [editTitleIndex, propertiesList, setPropertiesList, setWarning]
+    [editTitleIndex, propertiesList, setNewTitle, setPropertiesList, setWarning]
   );
 
   const handleTypeChange = useCallback(
@@ -51,20 +53,23 @@ export default function useHooks({
       );
       newList[idx].value = (value as string) ?? "";
       setPropertiesList?.(newList);
-      if (editTypeIndex === idx) setEditTypeIndex(null);
     },
-    [editTypeIndex, propertiesList, setPropertiesList]
+    [propertiesList, setPropertiesList]
   );
 
-  const handleDoubleClick = useCallback((idx: number, field: string) => {
-    if (field === "name") {
-      setEditTitleIndex(idx);
-      setEditTypeIndex(null);
-    } else if (field === "type") {
-      setEditTypeIndex(idx);
-      setEditTitleIndex(null);
-    }
-  }, []);
+  const handleDoubleClick = useCallback(
+    (idx: number, field: string) => {
+      if (!customProperties || idx < 0 || idx >= customProperties.length)
+        return;
+
+      if (field === "name") {
+        setEditTitleIndex(idx);
+        const customPropertyKey = Object.keys(customProperties[idx])[0];
+        setPreviousTitle?.(customPropertyKey);
+      }
+    },
+    [customProperties, setPreviousTitle]
+  );
 
   const handleCustomPropertyAdd = useCallback(() => {
     if (!propertiesList) return;
@@ -85,8 +90,10 @@ export default function useHooks({
       const updatedPropertiesList = [...propertiesList];
       updatedPropertiesList.splice(idx, 1);
       setPropertiesList?.(updatedPropertiesList);
+      const customPropertyKey = Object.keys(customProperties[idx])[0];
+      setPreviousTitle?.(customPropertyKey);
     },
-    [customProperties, propertiesList, setPropertiesList]
+    [customProperties, propertiesList, setPreviousTitle, setPropertiesList]
   );
 
   const handlePropertyDrop = useCallback(
@@ -146,7 +153,6 @@ export default function useHooks({
   return {
     isDragging,
     editTitleIndex,
-    editTypeIndex,
     handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,

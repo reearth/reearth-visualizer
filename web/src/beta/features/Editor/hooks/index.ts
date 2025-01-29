@@ -49,7 +49,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleLayerConfigUpdate,
     handleLayerMove,
     handleCustomPropertySchemaClick,
-    handleCustomPropertySchemaUpdate
+    handleCustomPropertySchemaUpdate,
+    handleChangeCustomPropertyTitle,
+    handleRemoveCustomProperty
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -191,7 +193,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleSelect,
       layerId,
       handleCustomPropertySchemaClick,
-      handleCustomPropertySchemaUpdate
+      handleCustomPropertySchemaUpdate,
+      handleChangeCustomPropertyTitle,
+      handleRemoveCustomProperty
     }),
     [
       handleVisualizerResize,
@@ -230,7 +234,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerStyleSelect,
       layerId,
       handleCustomPropertySchemaClick,
-      handleCustomPropertySchemaUpdate
+      handleCustomPropertySchemaUpdate,
+      handleChangeCustomPropertyTitle,
+      handleRemoveCustomProperty
     ]
   );
 
@@ -351,6 +357,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
     layers: nlsLayers,
     layerId,
     handleCustomPropertySchemaUpdate,
+    handleChangeCustomPropertyTitle,
+    handleRemoveCustomProperty,
     handleCoreAPIReady
   };
 };
