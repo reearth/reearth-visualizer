@@ -85,7 +85,7 @@ reearth.ui.show(\`
     }, "*");
   });
 
-  // Function to calculate the center of gravity of a polygon 
+  // the function to calculate the center of gravity of a polygon 
   function getCenter(coords) {
     let sumLng = 0;
     let sumLat = 0;
