@@ -244,7 +244,8 @@ const toField = (
   },
   merged?: Pick<
     MergedPropertyField,
-    "fieldId" | "actualValue" | "overridden"
+    // "fieldId" | "actualValue" | "overridden"
+    "fieldId" | "overridden"
   > & {
     links?: Links;
   }
@@ -259,14 +260,14 @@ const toField = (
 
   const { value, type } = valueFromGQL(field?.value, schemaField.type) ?? {};
   if (!type) return;
-  const mergedValue = valueFromGQL(merged?.actualValue, schemaField.type);
+  // const mergedValue = valueFromGQL(merged?.actualValue, schemaField.type);
   const links = merged?.links ?? field?.links ?? undefined;
 
   return {
     id: schemaField.fieldId,
     type,
     value: value,
-    mergedValue: mergedValue?.value,
+    // mergedValue: mergedValue?.value,
     overridden: !!merged?.overridden,
     link:
       links?.length && links[0].datasetSchemaId && links[0].datasetSchemaFieldId
