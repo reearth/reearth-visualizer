@@ -22,7 +22,6 @@ jobs:
           version: v1.63.4
           args: --timeout=10m
           working-directory: server
-
   ci-server-test:
     runs-on: ubuntu-latest
     services:
@@ -31,6 +30,13 @@ jobs:
         ports:
           - 27017:27017
     steps:
+      - name: Start Fake GCS Server
+        run: |
+          docker run -d --name fake-gcs-server \
+            -p 4443:4443 \
+            -v /tmp/gcs:/storage \
+            fsouza/fake-gcs-server:1.52.1 \
+            -scheme http
       - name: checkout
         uses: actions/checkout@v3
       - name: set up
