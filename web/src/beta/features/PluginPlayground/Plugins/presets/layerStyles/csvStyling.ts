@@ -47,7 +47,7 @@ const widgetFile: FileType = {
 
   // Add layer
   const layerId = reearth.layers.add(csvLayer);
-  });`
+`
 };
 
 export const csvStyling: PluginType = {
