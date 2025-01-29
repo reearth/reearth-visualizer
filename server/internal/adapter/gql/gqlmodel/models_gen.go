@@ -66,50 +66,6 @@ type AddGeoJSONFeatureInput struct {
 	LayerID    ID     `json:"layerId"`
 }
 
-type AddInfoboxFieldInput struct {
-	LayerID     ID   `json:"layerId"`
-	PluginID    ID   `json:"pluginId"`
-	ExtensionID ID   `json:"extensionId"`
-	Index       *int `json:"index,omitempty"`
-}
-
-type AddInfoboxFieldPayload struct {
-	InfoboxField *InfoboxField `json:"infoboxField"`
-	Layer        Layer         `json:"layer"`
-}
-
-type AddLayerGroupInput struct {
-	ParentLayerID         ID      `json:"parentLayerId"`
-	PluginID              *ID     `json:"pluginId,omitempty"`
-	ExtensionID           *ID     `json:"extensionId,omitempty"`
-	Index                 *int    `json:"index,omitempty"`
-	LinkedDatasetSchemaID *ID     `json:"linkedDatasetSchemaID,omitempty"`
-	Name                  *string `json:"name,omitempty"`
-	RepresentativeFieldID *ID     `json:"representativeFieldId,omitempty"`
-}
-
-type AddLayerGroupPayload struct {
-	Layer       *LayerGroup `json:"layer"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-	Index       *int        `json:"index,omitempty"`
-}
-
-type AddLayerItemInput struct {
-	ParentLayerID ID       `json:"parentLayerId"`
-	PluginID      ID       `json:"pluginId"`
-	ExtensionID   ID       `json:"extensionId"`
-	Index         *int     `json:"index,omitempty"`
-	Name          *string  `json:"name,omitempty"`
-	Lat           *float64 `json:"lat,omitempty"`
-	Lng           *float64 `json:"lng,omitempty"`
-}
-
-type AddLayerItemPayload struct {
-	Layer       *LayerItem  `json:"layer"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-	Index       *int        `json:"index,omitempty"`
-}
-
 type AddMemberToTeamInput struct {
 	TeamID ID   `json:"teamId"`
 	UserID ID   `json:"userId"`
@@ -232,14 +188,6 @@ type CreateAssetInput struct {
 
 type CreateAssetPayload struct {
 	Asset *Asset `json:"asset"`
-}
-
-type CreateInfoboxInput struct {
-	LayerID ID `json:"layerId"`
-}
-
-type CreateInfoboxPayload struct {
-	Layer Layer `json:"layer"`
 }
 
 type CreateNLSInfoboxInput struct {
@@ -409,17 +357,6 @@ type GeometryCollection struct {
 }
 
 func (GeometryCollection) IsGeometry() {}
-
-type ImportLayerInput struct {
-	LayerID ID                  `json:"layerId"`
-	File    graphql.Upload      `json:"file"`
-	Format  LayerEncodingFormat `json:"format"`
-}
-
-type ImportLayerPayload struct {
-	Layers      []Layer     `json:"layers"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-}
 
 type ImportProjectInput struct {
 	TeamID ID             `json:"teamId"`
@@ -664,31 +601,6 @@ type MergedPropertyGroup struct {
 	Original           *PropertyGroup         `json:"original,omitempty"`
 	Parent             *PropertyGroup         `json:"parent,omitempty"`
 	Schema             *PropertySchema        `json:"schema,omitempty"`
-}
-
-type MoveInfoboxFieldInput struct {
-	LayerID        ID  `json:"layerId"`
-	InfoboxFieldID ID  `json:"infoboxFieldId"`
-	Index          int `json:"index"`
-}
-
-type MoveInfoboxFieldPayload struct {
-	InfoboxFieldID ID    `json:"infoboxFieldId"`
-	Layer          Layer `json:"layer"`
-	Index          int   `json:"index"`
-}
-
-type MoveLayerInput struct {
-	LayerID     ID   `json:"layerId"`
-	DestLayerID *ID  `json:"destLayerId,omitempty"`
-	Index       *int `json:"index,omitempty"`
-}
-
-type MoveLayerPayload struct {
-	LayerID         ID          `json:"layerId"`
-	FromParentLayer *LayerGroup `json:"fromParentLayer"`
-	ToParentLayer   *LayerGroup `json:"toParentLayer"`
-	Index           int         `json:"index"`
 }
 
 type MoveNLSInfoboxBlockInput struct {
@@ -1135,33 +1047,6 @@ type RemoveCustomPropertyInput struct {
 	RemovedTitle string `json:"removedTitle"`
 }
 
-type RemoveInfoboxFieldInput struct {
-	LayerID        ID `json:"layerId"`
-	InfoboxFieldID ID `json:"infoboxFieldId"`
-}
-
-type RemoveInfoboxFieldPayload struct {
-	InfoboxFieldID ID    `json:"infoboxFieldId"`
-	Layer          Layer `json:"layer"`
-}
-
-type RemoveInfoboxInput struct {
-	LayerID ID `json:"layerId"`
-}
-
-type RemoveInfoboxPayload struct {
-	Layer Layer `json:"layer"`
-}
-
-type RemoveLayerInput struct {
-	LayerID ID `json:"layerId"`
-}
-
-type RemoveLayerPayload struct {
-	LayerID     ID          `json:"layerId"`
-	ParentLayer *LayerGroup `json:"parentLayer"`
-}
-
 type RemoveMemberFromTeamInput struct {
 	TeamID ID `json:"teamId"`
 	UserID ID `json:"userId"`
@@ -1452,16 +1337,6 @@ type UpdateGeoJSONFeatureInput struct {
 	Geometry   JSON `json:"geometry,omitempty"`
 	Properties JSON `json:"properties,omitempty"`
 	LayerID    ID   `json:"layerId"`
-}
-
-type UpdateLayerInput struct {
-	LayerID ID      `json:"layerId"`
-	Name    *string `json:"name,omitempty"`
-	Visible *bool   `json:"visible,omitempty"`
-}
-
-type UpdateLayerPayload struct {
-	Layer Layer `json:"layer"`
 }
 
 type UpdateMeInput struct {

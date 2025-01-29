@@ -33,53 +33,6 @@ export type AddGeoJsonFeatureInput = {
   type: Scalars['String']['input'];
 };
 
-export type AddInfoboxFieldInput = {
-  extensionId: Scalars['ID']['input'];
-  index?: InputMaybe<Scalars['Int']['input']>;
-  layerId: Scalars['ID']['input'];
-  pluginId: Scalars['ID']['input'];
-};
-
-export type AddInfoboxFieldPayload = {
-  __typename?: 'AddInfoboxFieldPayload';
-  infoboxField: InfoboxField;
-  layer: Layer;
-};
-
-export type AddLayerGroupInput = {
-  extensionId?: InputMaybe<Scalars['ID']['input']>;
-  index?: InputMaybe<Scalars['Int']['input']>;
-  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  parentLayerId: Scalars['ID']['input'];
-  pluginId?: InputMaybe<Scalars['ID']['input']>;
-  representativeFieldId?: InputMaybe<Scalars['ID']['input']>;
-};
-
-export type AddLayerGroupPayload = {
-  __typename?: 'AddLayerGroupPayload';
-  index?: Maybe<Scalars['Int']['output']>;
-  layer: LayerGroup;
-  parentLayer: LayerGroup;
-};
-
-export type AddLayerItemInput = {
-  extensionId: Scalars['ID']['input'];
-  index?: InputMaybe<Scalars['Int']['input']>;
-  lat?: InputMaybe<Scalars['Float']['input']>;
-  lng?: InputMaybe<Scalars['Float']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  parentLayerId: Scalars['ID']['input'];
-  pluginId: Scalars['ID']['input'];
-};
-
-export type AddLayerItemPayload = {
-  __typename?: 'AddLayerItemPayload';
-  index?: Maybe<Scalars['Int']['output']>;
-  layer: LayerItem;
-  parentLayer: LayerGroup;
-};
-
 export type AddMemberToTeamInput = {
   role: Role;
   teamId: Scalars['ID']['input'];
@@ -215,15 +168,6 @@ export type CreateAssetInput = {
 export type CreateAssetPayload = {
   __typename?: 'CreateAssetPayload';
   asset: Asset;
-};
-
-export type CreateInfoboxInput = {
-  layerId: Scalars['ID']['input'];
-};
-
-export type CreateInfoboxPayload = {
-  __typename?: 'CreateInfoboxPayload';
-  layer: Layer;
 };
 
 export type CreateNlsInfoboxInput = {
@@ -408,18 +352,6 @@ export type GeometryCollection = {
   __typename?: 'GeometryCollection';
   geometries: Array<Geometry>;
   type: Scalars['String']['output'];
-};
-
-export type ImportLayerInput = {
-  file: Scalars['Upload']['input'];
-  format: LayerEncodingFormat;
-  layerId: Scalars['ID']['input'];
-};
-
-export type ImportLayerPayload = {
-  __typename?: 'ImportLayerPayload';
-  layers: Array<Layer>;
-  parentLayer: LayerGroup;
 };
 
 export type ImportProjectInput = {
@@ -681,33 +613,6 @@ export type MergedPropertyGroup = {
   schemaId?: Maybe<Scalars['ID']['output']>;
 };
 
-export type MoveInfoboxFieldInput = {
-  index: Scalars['Int']['input'];
-  infoboxFieldId: Scalars['ID']['input'];
-  layerId: Scalars['ID']['input'];
-};
-
-export type MoveInfoboxFieldPayload = {
-  __typename?: 'MoveInfoboxFieldPayload';
-  index: Scalars['Int']['output'];
-  infoboxFieldId: Scalars['ID']['output'];
-  layer: Layer;
-};
-
-export type MoveLayerInput = {
-  destLayerId?: InputMaybe<Scalars['ID']['input']>;
-  index?: InputMaybe<Scalars['Int']['input']>;
-  layerId: Scalars['ID']['input'];
-};
-
-export type MoveLayerPayload = {
-  __typename?: 'MoveLayerPayload';
-  fromParentLayer: LayerGroup;
-  index: Scalars['Int']['output'];
-  layerId: Scalars['ID']['output'];
-  toParentLayer: LayerGroup;
-};
-
 export type MoveNlsInfoboxBlockInput = {
   index: Scalars['Int']['input'];
   infoboxBlockId: Scalars['ID']['input'];
@@ -778,9 +683,6 @@ export type MultiPolygon = {
 export type Mutation = {
   __typename?: 'Mutation';
   addGeoJSONFeature: Feature;
-  addInfoboxField?: Maybe<AddInfoboxFieldPayload>;
-  addLayerGroup?: Maybe<AddLayerGroupPayload>;
-  addLayerItem?: Maybe<AddLayerItemPayload>;
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
   addNLSInfoboxBlock?: Maybe<AddNlsInfoboxBlockPayload>;
   addNLSLayerSimple: AddNlsLayerSimplePayload;
@@ -790,7 +692,6 @@ export type Mutation = {
   addWidget?: Maybe<AddWidgetPayload>;
   changeCustomPropertyTitle: UpdateNlsLayerPayload;
   createAsset?: Maybe<CreateAssetPayload>;
-  createInfobox?: Maybe<CreateInfoboxPayload>;
   createNLSInfobox?: Maybe<CreateNlsInfoboxPayload>;
   createProject?: Maybe<ProjectPayload>;
   createScene?: Maybe<CreateScenePayload>;
@@ -807,12 +708,9 @@ export type Mutation = {
   duplicateStoryPage: StoryPagePayload;
   duplicateStyle?: Maybe<DuplicateStylePayload>;
   exportProject?: Maybe<ExportProjectPayload>;
-  importLayer?: Maybe<ImportLayerPayload>;
   importProject?: Maybe<ImportProjectPayload>;
   installPlugin?: Maybe<InstallPluginPayload>;
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
-  moveInfoboxField?: Maybe<MoveInfoboxFieldPayload>;
-  moveLayer?: Maybe<MoveLayerPayload>;
   moveNLSInfoboxBlock?: Maybe<MoveNlsInfoboxBlockPayload>;
   movePropertyItem?: Maybe<PropertyItemPayload>;
   moveStory: MoveStoryPayload;
@@ -822,9 +720,6 @@ export type Mutation = {
   publishStory: StoryPayload;
   removeAsset?: Maybe<RemoveAssetPayload>;
   removeCustomProperty: UpdateNlsLayerPayload;
-  removeInfobox?: Maybe<RemoveInfoboxPayload>;
-  removeInfoboxField?: Maybe<RemoveInfoboxFieldPayload>;
-  removeLayer?: Maybe<RemoveLayerPayload>;
   removeMemberFromTeam?: Maybe<RemoveMemberFromTeamPayload>;
   removeMyAuth?: Maybe<UpdateMePayload>;
   removeNLSInfobox?: Maybe<RemoveNlsInfoboxPayload>;
@@ -842,7 +737,6 @@ export type Mutation = {
   unlinkPropertyValue?: Maybe<PropertyFieldPayload>;
   updateCustomProperties: UpdateNlsLayerPayload;
   updateGeoJSONFeature: Feature;
-  updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
   updateNLSLayer: UpdateNlsLayerPayload;
@@ -864,21 +758,6 @@ export type Mutation = {
 
 export type MutationAddGeoJsonFeatureArgs = {
   input: AddGeoJsonFeatureInput;
-};
-
-
-export type MutationAddInfoboxFieldArgs = {
-  input: AddInfoboxFieldInput;
-};
-
-
-export type MutationAddLayerGroupArgs = {
-  input: AddLayerGroupInput;
-};
-
-
-export type MutationAddLayerItemArgs = {
-  input: AddLayerItemInput;
 };
 
 
@@ -924,11 +803,6 @@ export type MutationChangeCustomPropertyTitleArgs = {
 
 export type MutationCreateAssetArgs = {
   input: CreateAssetInput;
-};
-
-
-export type MutationCreateInfoboxArgs = {
-  input: CreateInfoboxInput;
 };
 
 
@@ -1012,11 +886,6 @@ export type MutationExportProjectArgs = {
 };
 
 
-export type MutationImportLayerArgs = {
-  input: ImportLayerInput;
-};
-
-
 export type MutationImportProjectArgs = {
   input: ImportProjectInput;
 };
@@ -1029,16 +898,6 @@ export type MutationInstallPluginArgs = {
 
 export type MutationLinkDatasetToPropertyValueArgs = {
   input: LinkDatasetToPropertyValueInput;
-};
-
-
-export type MutationMoveInfoboxFieldArgs = {
-  input: MoveInfoboxFieldInput;
-};
-
-
-export type MutationMoveLayerArgs = {
-  input: MoveLayerInput;
 };
 
 
@@ -1084,21 +943,6 @@ export type MutationRemoveAssetArgs = {
 
 export type MutationRemoveCustomPropertyArgs = {
   input: RemoveCustomPropertyInput;
-};
-
-
-export type MutationRemoveInfoboxArgs = {
-  input: RemoveInfoboxInput;
-};
-
-
-export type MutationRemoveInfoboxFieldArgs = {
-  input: RemoveInfoboxFieldInput;
-};
-
-
-export type MutationRemoveLayerArgs = {
-  input: RemoveLayerInput;
 };
 
 
@@ -1184,11 +1028,6 @@ export type MutationUpdateCustomPropertiesArgs = {
 
 export type MutationUpdateGeoJsonFeatureArgs = {
   input: UpdateGeoJsonFeatureInput;
-};
-
-
-export type MutationUpdateLayerArgs = {
-  input: UpdateLayerInput;
 };
 
 
@@ -1752,7 +1591,6 @@ export type Query = {
   assets: AssetConnection;
   checkProjectAlias: ProjectAliasAvailability;
   deletedProjects: ProjectConnection;
-  layer?: Maybe<Layer>;
   me?: Maybe<Me>;
   node?: Maybe<Node>;
   nodes: Array<Maybe<Node>>;
@@ -1782,11 +1620,6 @@ export type QueryCheckProjectAliasArgs = {
 
 export type QueryDeletedProjectsArgs = {
   teamId: Scalars['ID']['input'];
-};
-
-
-export type QueryLayerArgs = {
-  id: Scalars['ID']['input'];
 };
 
 
@@ -1865,36 +1698,6 @@ export type RemoveCustomPropertyInput = {
   layerId: Scalars['ID']['input'];
   removedTitle: Scalars['String']['input'];
   schema?: InputMaybe<Scalars['JSON']['input']>;
-};
-
-export type RemoveInfoboxFieldInput = {
-  infoboxFieldId: Scalars['ID']['input'];
-  layerId: Scalars['ID']['input'];
-};
-
-export type RemoveInfoboxFieldPayload = {
-  __typename?: 'RemoveInfoboxFieldPayload';
-  infoboxFieldId: Scalars['ID']['output'];
-  layer: Layer;
-};
-
-export type RemoveInfoboxInput = {
-  layerId: Scalars['ID']['input'];
-};
-
-export type RemoveInfoboxPayload = {
-  __typename?: 'RemoveInfoboxPayload';
-  layer: Layer;
-};
-
-export type RemoveLayerInput = {
-  layerId: Scalars['ID']['input'];
-};
-
-export type RemoveLayerPayload = {
-  __typename?: 'RemoveLayerPayload';
-  layerId: Scalars['ID']['output'];
-  parentLayer: LayerGroup;
 };
 
 export type RemoveMemberFromTeamInput = {
@@ -2239,17 +2042,6 @@ export type UpdateGeoJsonFeatureInput = {
   geometry?: InputMaybe<Scalars['JSON']['input']>;
   layerId: Scalars['ID']['input'];
   properties?: InputMaybe<Scalars['JSON']['input']>;
-};
-
-export type UpdateLayerInput = {
-  layerId: Scalars['ID']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
-  visible?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type UpdateLayerPayload = {
-  __typename?: 'UpdateLayerPayload';
-  layer: Layer;
 };
 
 export type UpdateMeInput = {

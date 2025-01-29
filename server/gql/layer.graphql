@@ -151,151 +151,151 @@ type MergedInfoboxField {
   scenePlugin: ScenePlugin
 }
 
-# InputType
+# # InputType
 
-input AddLayerItemInput {
-  parentLayerId: ID!
-  pluginId: ID!
-  extensionId: ID!
-  index: Int
-  name: String
-  lat: Float
-  lng: Float
-}
+# input AddLayerItemInput {
+#   parentLayerId: ID!
+#   pluginId: ID!
+#   extensionId: ID!
+#   index: Int
+#   name: String
+#   lat: Float
+#   lng: Float
+# }
 
-input AddLayerGroupInput {
-  parentLayerId: ID!
-  pluginId: ID
-  extensionId: ID
-  index: Int
-  linkedDatasetSchemaID: ID
-  name: String
-  representativeFieldId: ID
-}
+# input AddLayerGroupInput {
+#   parentLayerId: ID!
+#   pluginId: ID
+#   extensionId: ID
+#   index: Int
+#   linkedDatasetSchemaID: ID
+#   name: String
+#   representativeFieldId: ID
+# }
 
-input RemoveLayerInput {
-  layerId: ID!
-}
+# input RemoveLayerInput {
+#   layerId: ID!
+# }
 
-input UpdateLayerInput {
-  layerId: ID!
-  name: String
-  visible: Boolean
-}
+# input UpdateLayerInput {
+#   layerId: ID!
+#   name: String
+#   visible: Boolean
+# }
 
-input MoveLayerInput {
-  layerId: ID!
-  destLayerId: ID
-  index: Int
-}
+# input MoveLayerInput {
+#   layerId: ID!
+#   destLayerId: ID
+#   index: Int
+# }
 
-input CreateInfoboxInput {
-  layerId: ID!
-}
+# input CreateInfoboxInput {
+#   layerId: ID!
+# }
 
-input RemoveInfoboxInput {
-  layerId: ID!
-}
+# input RemoveInfoboxInput {
+#   layerId: ID!
+# }
 
-input AddInfoboxFieldInput {
-  layerId: ID!
-  pluginId: ID!
-  extensionId: ID!
-  index: Int
-}
+# input AddInfoboxFieldInput {
+#   layerId: ID!
+#   pluginId: ID!
+#   extensionId: ID!
+#   index: Int
+# }
 
-input MoveInfoboxFieldInput {
-  layerId: ID!
-  infoboxFieldId: ID!
-  index: Int!
-}
+# input MoveInfoboxFieldInput {
+#   layerId: ID!
+#   infoboxFieldId: ID!
+#   index: Int!
+# }
 
-input RemoveInfoboxFieldInput {
-  layerId: ID!
-  infoboxFieldId: ID!
-}
+# input RemoveInfoboxFieldInput {
+#   layerId: ID!
+#   infoboxFieldId: ID!
+# }
 
-input ImportLayerInput {
-  layerId: ID!
-  file: Upload!
-  format: LayerEncodingFormat!
-}
+# input ImportLayerInput {
+#   layerId: ID!
+#   file: Upload!
+#   format: LayerEncodingFormat!
+# }
 
-# Payload
+# # Payload
 
-type AddLayerItemPayload {
-  layer: LayerItem!
-  parentLayer: LayerGroup!
-  index: Int
-}
+# type AddLayerItemPayload {
+#   layer: LayerItem!
+#   parentLayer: LayerGroup!
+#   index: Int
+# }
 
-type AddLayerGroupPayload {
-  layer: LayerGroup!
-  parentLayer: LayerGroup!
-  index: Int
-}
+# type AddLayerGroupPayload {
+#   layer: LayerGroup!
+#   parentLayer: LayerGroup!
+#   index: Int
+# }
 
-type RemoveLayerPayload {
-  layerId: ID!
-  parentLayer: LayerGroup!
-}
+# type RemoveLayerPayload {
+#   layerId: ID!
+#   parentLayer: LayerGroup!
+# }
 
-type UpdateLayerPayload {
-  layer: Layer!
-}
+# type UpdateLayerPayload {
+#   layer: Layer!
+# }
 
-type MoveLayerPayload {
-  layerId: ID!
-  fromParentLayer: LayerGroup!
-  toParentLayer: LayerGroup!
-  index: Int!
-}
+# type MoveLayerPayload {
+#   layerId: ID!
+#   fromParentLayer: LayerGroup!
+#   toParentLayer: LayerGroup!
+#   index: Int!
+# }
 
-type CreateInfoboxPayload {
-  layer: Layer!
-}
+# type CreateInfoboxPayload {
+#   layer: Layer!
+# }
 
-type RemoveInfoboxPayload {
-  layer: Layer!
-}
+# type RemoveInfoboxPayload {
+#   layer: Layer!
+# }
 
-type AddInfoboxFieldPayload {
-  infoboxField: InfoboxField!
-  layer: Layer!
-}
+# type AddInfoboxFieldPayload {
+#   infoboxField: InfoboxField!
+#   layer: Layer!
+# }
 
-type MoveInfoboxFieldPayload {
-  infoboxFieldId: ID!
-  layer: Layer!
-  index: Int!
-}
+# type MoveInfoboxFieldPayload {
+#   infoboxFieldId: ID!
+#   layer: Layer!
+#   index: Int!
+# }
 
-type RemoveInfoboxFieldPayload {
-  infoboxFieldId: ID!
-  layer: Layer!
-}
+# type RemoveInfoboxFieldPayload {
+#   infoboxFieldId: ID!
+#   layer: Layer!
+# }
 
-type ImportLayerPayload {
-  layers: [Layer!]!
-  parentLayer: LayerGroup!
-}
+# type ImportLayerPayload {
+#   layers: [Layer!]!
+#   parentLayer: LayerGroup!
+# }
 
-extend type Query {
-  layer(id: ID!): Layer
-}
+# extend type Query {
+#   layer(id: ID!): Layer
+# }
 
-extend type Mutation {
-  addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
-  addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
-  removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
-  updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
-  moveLayer(input: MoveLayerInput!): MoveLayerPayload
-  createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
-  removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
-  addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
-  moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
-  removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
-  importLayer(input: ImportLayerInput!): ImportLayerPayload
-  # attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
-  # detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
-}
+# extend type Mutation {
+#   addLayerItem(input: AddLayerItemInput!): AddLayerItemPayload
+#   addLayerGroup(input: AddLayerGroupInput!): AddLayerGroupPayload
+#   removeLayer(input: RemoveLayerInput!): RemoveLayerPayload
+#   updateLayer(input: UpdateLayerInput!): UpdateLayerPayload
+#   moveLayer(input: MoveLayerInput!): MoveLayerPayload
+#   createInfobox(input: CreateInfoboxInput!): CreateInfoboxPayload
+#   removeInfobox(input: RemoveInfoboxInput!): RemoveInfoboxPayload
+#   addInfoboxField(input: AddInfoboxFieldInput!): AddInfoboxFieldPayload
+#   moveInfoboxField(input: MoveInfoboxFieldInput!): MoveInfoboxFieldPayload
+#   removeInfoboxField(input: RemoveInfoboxFieldInput!): RemoveInfoboxFieldPayload
+#   importLayer(input: ImportLayerInput!): ImportLayerPayload
+#   # attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
+#   # detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
+# }
