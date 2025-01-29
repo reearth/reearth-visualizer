@@ -19,102 +19,169 @@ extensions:
 const widgetFile: FileType = {
   id: "override-layer-data",
   title: "override-layer-data.js",
-  sourceCode: `// This example shows how to override layer data
-// Click on the marker to change the style
+  sourceCode: `//
+// ========== 1) UI 側: ボタン操作で四隅を拡大して送信 ==========
+//
+reearth.ui.show(\`
+<style>
+  html, body { margin: 0; padding: 0; }
+  #scaleBtn {
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+  }
+</style>
+<button id="scaleBtn">Scale Polygon</button>
 
-// Define marker layer
-const sampleMarker01 = {
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-114.323082461786, 45.65050642694848],
-          },
-          properties: {},
-        },
-      ],
+<script>
+  // 初期ポリゴン (南北アメリカ方面を想定? そのまま使用)
+  let corners = [
+    [-104.18583328622142, 45.40439609826688],
+    [-65.64945367690679,  45.99933007244422],
+    [-69.5510586832507,   26.483465303049478],
+    [-99.39529141009926,  26.00853862085437],
+    // 最後の頂点は、最初の頂点と同じにすることでポリゴンを閉じる
+    [-104.18583328622142, 45.40439609826688],
+  ];
+
+  // 1回目の投稿: 初期形状をPluginへ送信して描画してもらう
+  parent.postMessage({
+    action: "updatePolygon",
+    payload: { corners },
+  }, "*");
+
+  // ボタンを押すと、ポリゴンの四隅を拡大
+  const btn = document.getElementById("scaleBtn");
+  btn.addEventListener("click", () => {
+    // 1) ポリゴンの中心(重心)を計算
+    const { centerLng, centerLat } = getCenter(corners);
+
+    // 2) 各頂点を中心から少し引き離す (スケールアップ)
+    //    例: スケール係数 1.05 (5%拡大)
+    const scaleFactor = 1.05;
+    corners = corners.map(([lng, lat]) => {
+      const diffLng = lng - centerLng;
+      const diffLat = lat - centerLat;
+      return [
+        centerLng + diffLng * scaleFactor,
+        centerLat + diffLat * scaleFactor,
+      ];
+    });
+
+    // 再度末尾を先頭と同じ座標に合わせてポリゴンを閉じる
+    corners[corners.length - 1] = corners[0];
+
+    // 3) 新しい頂点情報を Plugin 側へ送る
+    parent.postMessage({
+      action: "updatePolygon",
+      payload: { corners },
+    }, "*");
+  });
+
+  // ポリゴンの重心を計算する関数 (単純に平均をとる方法)
+  function getCenter(coords) {
+    let sumLng = 0;
+    let sumLat = 0;
+    coords.forEach(([lng, lat]) => {
+      sumLng += lng;
+      sumLat += lat;
+    });
+    const n = coords.length;
+    return {
+      centerLng: sumLng / n,
+      centerLat: sumLat / n,
+    };
+  }
+</script>
+\`);
+
+//
+// ========== 2) Plugin 側: 初期レイヤーを作り、ポリゴン座標を受け取り更新 ==========
+//
+
+// 初期表示時にポリゴンをセット
+let polygonLayerId;
+
+// 1) 初期レイヤーを作成 (空の GeoJSON)
+function createInitialPolygonLayer() {
+  if (polygonLayerId) return;
+
+  polygonLayerId = reearth.layers.add({
+    type: "simple",
+    name: "Growing Polygon",
+    data: {
+      type: "geojson",
+      value: {
+        type: "FeatureCollection",
+        features: [],
+      },
     },
-  },
-  marker: {
-    style: "point",
-    pointColor: "white",
-    pointSize: 30,
-  },
-};
-
-const sampleMarker02 = {
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-67.897037781222, 46.383155696276575],
-          },
-          properties: {},
-        },
-      ],
-    },
-  },
-  marker: {
-    style: "point",
-    pointColor: "white",
-    pointSize: 30,
-  },
-};
-
-const sampleMarker03 = {
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-89.91300008413543, 18.53602119230712],
-          },
-          properties: {},
-        },
-      ],
-    },
-  },
-  marker: {
-    style: "point",
-    pointColor: "white",
-    pointSize: 30,
-  },
-};
-
-// Add the marker defined above to the layer
-reearth.layers.add(sampleMarker01);
-reearth.layers.add(sampleMarker02);
-reearth.layers.add(sampleMarker03);
-
-// Get the layer ID of the marker user clicked on and override the style
-reearth.layers.on("select", () => {
-  const selectedLayerId = reearth.layers.selected.id;
-  // Define the layer ID and the property to be changed as arguments
-  reearth.layers.override(selectedLayerId, {
-    marker: {
-      image:
-        "https://reearth.github.io/visualizer-plugin-sample-data/public/image/visualizer_logo.png",
-      style: "image",
+    polygon: {
+      fillColor: "#f8f8ff80",
+      stroke:true,
+      strokeColor:"white",
+      strokeWidth: 3,
     },
   });
-});`
+}
+
+// 2) UI 側からポリゴンの新しい頂点を受け取り、override で更新
+reearth.extension.on("message", msg => {
+  if (msg.action === "updatePolygon") {
+    const corners = msg.payload?.corners;
+    if (!corners || corners.length < 4) return;
+
+    // レイヤーがまだ無ければ作成
+    createInitialPolygonLayer();
+
+    // GeoJSON Feature
+    const feature = {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [corners], // Polygonは [ [ [lng, lat], ... ] ]
+      },
+      properties: {},
+    };
+
+    // override でジオメトリ更新
+    reearth.layers.override(polygonLayerId, {
+      data: {
+        type: "geojson",
+        value: {
+          type: "FeatureCollection",
+          features: [feature],
+        },
+      },
+      // 見た目(色・透明度など)を再指定可能 (任意)
+      polygon: {
+      fillColor: "#f8f8ff80",
+      stroke:true,
+      strokeColor:"white",
+      strokeWidth: 3,
+      },
+    });
+  }
+});
+
+// カメラ適当：この辺りを俯瞰する（緯度経度が大きいのでかなり引きで見る）
+reearth.camera.flyTo(
+  {
+    lng: -85,
+    lat: 35,
+    height: 6000000,
+  },
+  {
+    duration: 2.0,
+  }
+);
+
+// 初期レイヤー作成
+createInitialPolygonLayer();
+`
 };
 
 export const overrideLayerData: PluginType = {
