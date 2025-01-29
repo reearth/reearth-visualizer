@@ -140,9 +140,9 @@ func TestChangeCustomPropertyTitle(t *testing.T) {
 }`)
 
 	features := res.Path("$.sketch.featureCollection.features").Array()
-	features.Length().Equal(2)
-	feature0 := features.Element(0).Object()
-	feature1 := features.Element(1).Object()
+	features.Length().IsEqual(2)
+	feature0 := features.Value(0).Object()
+	feature1 := features.Value(1).Object()
 
 	JSONEqRegexpInterface(t, feature0.Raw(), `
 {
@@ -220,9 +220,9 @@ func TestRemoveCustomProperty(t *testing.T) {
 }`)
 
 	features := res.Path("$.sketch.featureCollection.features").Array()
-	features.Length().Equal(2)
-	feature0 := features.Element(0).Object()
-	feature1 := features.Element(1).Object()
+	features.Length().IsEqual(2)
+	feature0 := features.Value(0).Object()
+	feature1 := features.Value(1).Object()
 
 	JSONEqRegexpInterface(t, feature0.Raw(), `
 	
@@ -289,7 +289,7 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
 	}
 	res := Request(e, uID.String(), requestBody)
 	newLayers := res.Path("$.data.node.newLayers").Array()
-	newLayers.Length().Equal(1)
+	newLayers.Length().IsEqual(1)
 	return newLayers.Element(0).Object()
 }
 

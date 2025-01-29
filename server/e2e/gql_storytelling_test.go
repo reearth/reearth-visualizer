@@ -143,7 +143,7 @@ func createStory(e *httpexpect.Expect, sID, name string, index int) (GraphQLRequ
 		Value("data").Object().
 		Value("createStory").Object().
 		Value("story").Object().
-		ValueEqual("title", name)
+		HasValue("title", name)
 
 	return requestBody, res, res.Path("$.data.createStory.story.id").Raw().(string)
 }
@@ -177,7 +177,7 @@ func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 		Value("data").Object().
 		Value("updateStory").Object().
 		Value("story").Object().
-		ValueEqual("title", "test2")
+		HasValue("title", "test2")
 
 	return requestBody, res
 }
@@ -201,7 +201,7 @@ func deleteStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 	res.Object().
 		Value("data").Object().
 		Value("deleteStory").Object().
-		ValueEqual("storyId", storyID)
+		HasValue("storyId", storyID)
 
 	return requestBody, res
 }
@@ -230,7 +230,7 @@ func publishStory(e *httpexpect.Expect, storyID, alias string) (GraphQLRequest, 
 		Value("data").Object().
 		Value("publishStory").Object().
 		Value("story").Object().
-		ValueEqual("id", storyID)
+		HasValue("id", storyID)
 
 	return requestBody, res
 }
@@ -267,8 +267,8 @@ func createPage(e *httpexpect.Expect, sID, storyID, name string, swipeable bool)
 		Value("data").Object().
 		Value("createStoryPage").Object().
 		Value("page").Object().
-		ValueEqual("title", name).
-		ValueEqual("swipeable", swipeable)
+		HasValue("title", name).
+		HasValue("swipeable", swipeable)
 
 	return requestBody, res, res.Path("$.data.createStoryPage.page.id").Raw().(string)
 }
@@ -303,8 +303,8 @@ func updatePage(e *httpexpect.Expect, sID, storyID, pageID, name string, swipeab
 		Value("data").Object().
 		Value("updateStoryPage").Object().
 		Value("page").Object().
-		ValueEqual("title", name).
-		ValueEqual("swipeable", swipeable)
+		HasValue("title", name).
+		HasValue("swipeable", swipeable)
 
 	return requestBody, res
 }
@@ -367,7 +367,7 @@ func deletePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLReque
 	res.Object().
 		Value("data").Object().
 		Value("removeStoryPage").Object().
-		ValueEqual("pageId", pageID).
+		HasValue("pageId", pageID).
 		Value("story").Object().
 		Value("pages").Array().
 		Path("$..id").Array().NotContains(pageID)
@@ -640,7 +640,7 @@ func TestStoryCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	_, _, storyID := createStory(e, sID, "test", 0)
 
@@ -651,8 +651,8 @@ func TestStoryCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array()
-	storiesRes.Length().Equal(1)
-	storiesRes.First().Object().ValueEqual("id", storyID)
+	storiesRes.Length().IsEqual(1)
+	storiesRes.First().Object().HasValue("id", storyID)
 
 	// update story
 	_, _ = updateStory(e, storyID, sID)
@@ -663,7 +663,7 @@ func TestStoryCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array()
-	storiesRes.First().Object().ValueEqual("bgColor", "newBG")
+	storiesRes.First().Object().HasValue("bgColor", "newBG")
 
 	_, _ = deleteStory(e, storyID, sID)
 }
@@ -684,8 +684,8 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array()
-	storiesRes.Length().Equal(1)
-	storiesRes.First().Object().ValueEqual("id", storyID)
+	storiesRes.Length().IsEqual(1)
+	storiesRes.First().Object().HasValue("id", storyID)
 
 	_, _, dupPageID := duplicatePage(e, sID, storyID, pageID1)
 
@@ -695,7 +695,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("stories").Array().
 		First().Object().Value("pages").Array()
-	pagesRes.Length().Equal(2)
+	pagesRes.Length().IsEqual(2)
 	pagesRes.Path("$[:].id").Equal([]string{pageID1, dupPageID})
 	pagesRes.Path("$[:].title").Equal([]string{"test", "test (copy)"})
 
@@ -710,7 +710,7 @@ func TestStoryPageCRUD(t *testing.T) {
 	res.Object().
 		Value("errors").Array().
 		Element(0).Object().
-		ValueEqual("message", "page not found")
+		HasValue("message", "page not found")
 
 	_, _, pageID2 := createPage(e, sID, storyID, "test 2", true)
 	_, _, pageID3 := createPage(e, sID, storyID, "test 3", false)
@@ -722,7 +722,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("stories").Array().
 		First().Object().Value("pages").Array()
-	pagesRes.Length().Equal(4)
+	pagesRes.Length().IsEqual(4)
 	pagesRes.Path("$[:].id").Equal([]string{pageID1, pageID2, pageID3, pageID4})
 
 	movePage(e, storyID, pageID1, 2)
@@ -733,7 +733,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("stories").Array().
 		First().Object().Value("pages").Array()
-	pagesRes.Length().Equal(4)
+	pagesRes.Length().IsEqual(4)
 	pagesRes.Path("$[:].title").Equal([]string{"test 2", "test 3", "test 1", "test 4"})
 
 	deletePage(e, sID, storyID, pageID2)
@@ -746,7 +746,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("stories").Array().
 		First().Object().Value("pages").Array()
-	pagesRes.Length().Equal(1)
+	pagesRes.Length().IsEqual(1)
 	pagesRes.Path("$[:].title").Equal([]string{"test 1"})
 }
 

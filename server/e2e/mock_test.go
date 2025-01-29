@@ -31,8 +31,8 @@ func TestMockAuth(t *testing.T) {
 		JSON()
 
 	response.Object().ContainsKey("id")
-	response.Object().ValueEqual("email", "mock@example.com")
-	response.Object().ValueEqual("name", "Mock User")
+	response.Object().HasValue("email", "mock@example.com")
+	response.Object().HasValue("name", "Mock User")
 	userId := response.Object().Value("id").String().Raw()
 
 	// checkj query GetMe

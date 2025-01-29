@@ -212,7 +212,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
 
@@ -221,7 +221,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	geometry1 := map[string]any{
 		"type":        "Point",
@@ -239,44 +239,44 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
-		Value("isSketch").Boolean().True()
+		Value("newLayers").Array().Value(0).Object().
+		Value("isSketch").Boolean().IsTrue()
 
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("type").Equal("Feature")
 
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("geometry").Object().
 		Value("type").Equal("Point")
 
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("properties").Object().
 		Value("type").Equal("marker")
 
@@ -296,16 +296,16 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(2)
+		Length().IsEqual(2)
 
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Last().Object().
@@ -328,16 +328,16 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res5.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(3)
+		Length().IsEqual(3)
 
 	res5.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Last().Object().
@@ -360,16 +360,16 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res6.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(4)
+		Length().IsEqual(4)
 
 	res6.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Last().Object().
@@ -392,16 +392,16 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res7.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(5)
+		Length().IsEqual(5)
 
 	res7.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Last().Object().
@@ -411,13 +411,13 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res7.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Last().Object().
 		Value("geometry").Object().
 		Value("geometries").Array().
-		Length().Equal(4)
+		Length().IsEqual(4)
 
 	geometry6 := map[string]any{
 		"type":        "LineString",
@@ -435,38 +435,38 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res8.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(5)
+		Length().IsEqual(5)
 
 	res8.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("id").Equal(fid6)
 
 	res8.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("geometry").Object().
 		Value("type").Equal("LineString")
 
 	res8.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("properties").Object().
 		Value("extrudedHeight").Equal(10)
 
@@ -476,19 +476,19 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res9.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(4)
+		Length().IsEqual(4)
 
 	res9.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().First().Object().
+		Value("features").Array().Value(0).Object().
 		Value("id").Equal(fid2)
 
 	deleteGeoJSONFeature(e, layerId, fid2)
@@ -500,9 +500,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 	res10.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("newLayers").Array().First().Object().
+		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 }

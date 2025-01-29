@@ -39,8 +39,8 @@ func TestCallExportProject(t *testing.T) {
 
 	blocks := res.Object().Value("data").Object().
 		Value("node").Object().
-		Value("stories").Array().First().Object().
-		Value("pages").Array().First().Object().
+		Value("stories").Array().Value(0).Object().
+		Value("pages").Array().Value(0).Object().
 		Value("blocks").Array().Iter()
 
 	propID1 := blocks[0].Object().Value("propertyId").Raw().(string)

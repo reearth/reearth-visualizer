@@ -67,8 +67,8 @@ func TestGetSceneNLSLayer(t *testing.T) {
 	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
 
 	r := getScene(e, sId, language.Und.String())
-	r.Value("newLayers").Array().First().Object().ValueEqual("id", lId)
-	r.Value("newLayers").Array().First().Object().ValueEqual("title", "someTitle99")
-	r.Value("newLayers").Array().First().Object().ValueEqual("index", 99)
+	r.Value("newLayers").Array().Value(0).Object().HasValue("id", lId)
+	r.Value("newLayers").Array().Value(0).Object().HasValue("title", "someTitle99")
+	r.Value("newLayers").Array().Value(0).Object().HasValue("index", 99)
 
 }

@@ -33,24 +33,24 @@ func TestDatasetExport(t *testing.T) {
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
-		ContentType("text/csv")
-	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
+		HasContentType("text/csv")
+	res.Header("Content-Disposition").IsEqual("attachment;filename=test.csv")
+	res.Body().IsEqual(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
 
 	res = e.GET("/api/datasets/{}.csv", dssID).
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
-		ContentType("text/csv")
-	res.Header("Content-Disposition").Equal("attachment;filename=test.csv")
-	res.Body().Equal(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
+		HasContentType("text/csv")
+	res.Header("Content-Disposition").IsEqual("attachment;filename=test.csv")
+	res.Body().IsEqual(",f1,f2,f3,location_lng,location_lat\n" + dsID.String() + ",test,123,true,12.000000,11.000000\n")
 
 	res = e.GET("/api/datasets/{}.json", dssID).
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(http.StatusOK).
-		ContentType("application/json")
-	res.Header("Content-Disposition").Equal("attachment;filename=test.csv.json")
+		HasContentType("application/json")
+	res.Header("Content-Disposition").IsEqual("attachment;filename=test.csv.json")
 
 	res.JSON().Equal(map[string]any{
 		"schema": map[string]any{
