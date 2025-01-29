@@ -100,7 +100,7 @@ const propertyFragment = gql`
     fields {
       fieldId
       type
-      actualValue
+      # actualValue
       overridden
       links {
         ...PropertyFieldLink

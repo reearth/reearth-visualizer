@@ -12,25 +12,25 @@ export const GET_SCENE = gql(`
           id
           ...PropertyFragment
         }
-        clusters {
-          id
-          name
-          propertyId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        tags {
-          id
-          label
-          ... on TagGroup {
-            tags {
-              id
-              label
-            }
-          }
-        }
+        # clusters {
+        #   id
+        #   name
+        #   propertyId
+        #   property {
+        #     id
+        #     ...PropertyFragment
+        #   }
+        # }
+        # tags {
+        #   id
+        #   label
+        #   ... on TagGroup {
+        #     tags {
+        #       id
+        #       label
+        #     }
+        #   }
+        # }
         plugins {
           property {
             id
