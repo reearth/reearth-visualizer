@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateResponseBodySize(t *testing.T) {
+func TestBaseFileStorage_ValidateResponseBodySize(t *testing.T) {
 	tests := []struct {
 		name          string
 		contentLength int64
