@@ -1178,7 +1178,7 @@ func validateGeoJSONFeatureCollection(data []byte) error {
 	var validationErrors []error
 
 	f, err := geojson.UnmarshalFeature(data)
-	if err == nil {
+	if f != nil && err == nil {
 		if f.Type == "Feature" {
 			if errs := validateGeoJSONFeature(f); len(errs) > 0 {
 				validationErrors = append(validationErrors, errs...)
@@ -1240,6 +1240,20 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 				validationErrors = append(validationErrors, errors.New("LineString contains invalid latitude or longitude"))
 			}
 		}
+	case orb.MultiLineString:
+		if len(g) == 0 {
+			validationErrors = append(validationErrors, errors.New("MultiLineString must contain at least one LineString"))
+		}
+		for _, lineString := range g {
+			if len(lineString) < 2 {
+				validationErrors = append(validationErrors, errors.New("MultiLineString contains a LineString with fewer than two coordinates"))
+			}
+			for _, coords := range lineString {
+				if !isValidLatLon(coords) {
+					validationErrors = append(validationErrors, errors.New("MultiLineString contains invalid latitude or longitude"))
+				}
+			}
+		}
 	case orb.Polygon:
 		if len(g) == 0 {
 			validationErrors = append(validationErrors, errors.New("Polygon must contain coordinates"))
@@ -1296,16 +1310,3 @@ func isValidLatLon(coords orb.Point) bool {
 	lat, lon := coords[1], coords[0]
 	return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
 }
-
-// func validateBBox(bbox geojson.BBox) error {
-// 	minLon, minLat := bbox.Min[0], bbox.Min[1]
-// 	maxLon, maxLat := bbox.Max[0], bbox.Max[1]
-
-// 	if !isValidLatLon(orb.Point{minLon, minLat}) || !isValidLatLon(orb.Point{maxLon, maxLat}) {
-// 		return errors.New("bbox values are out of range")
-// 	}
-// 	if minLon > maxLon || minLat > maxLat {
-// 		return errors.New("bbox values are not in the correct order")
-// 	}
-// 	return nil
-// }
