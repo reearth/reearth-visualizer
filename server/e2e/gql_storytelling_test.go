@@ -498,10 +498,10 @@ func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId strin
 
 	if swipeable != nil && *swipeable {
 		pageRes.Value("swipeableLayers").Array().
-			Path("$..id").Array().NotContains(layerId)
+			Path("$..id").Array().NotContainsAny(layerId)
 	} else {
 		pageRes.Value("layers").Array().
-			Path("$..id").Array().NotContains(layerId)
+			Path("$..id").Array().NotContainsAny(layerId)
 	}
 
 	return requestBody, res, layerId
@@ -552,7 +552,7 @@ func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extension
 	return requestBody, res, res.Path("$.data.createStoryBlock.block.id").Raw().(string)
 }
 
-func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string) (GraphQLRequest, *httpexpect.Value, string) {
+func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string, last bool) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveStoryBlock",
 		Query: `mutation RemoveStoryBlock($storyId: ID!, $pageId: ID!, $blockId: ID!) {
@@ -583,8 +583,13 @@ func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string) (GraphQL
 
 	res := Request(e, uID.String(), requestBody)
 
-	res.Object().
-		Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContains(blockID)
+	if last {
+		res.Object().
+			Path("$.data.removeStoryBlock.page.blocks[:].id").IsNull()
+	} else {
+		res.Object().
+			Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotConsistsOf(blockID)
+	}
 
 	return requestBody, res, res.Path("$.data.removeStoryBlock.blockId").Raw().(string)
 }
@@ -795,34 +800,34 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 
 	_, res := fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
+		Path("$.data.node.stories[0].pages[0].blocks").IsEqual([]any{})
 
 	_, _, blockID1 := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
 	_, _, blockID2 := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID1, blockID2})
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").IsEqual([]string{blockID1, blockID2})
 
 	_, _, _ = moveBlock(e, storyID, pageID, blockID1, 1)
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID2, blockID1})
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").IsEqual([]string{blockID2, blockID1})
 
 	_, _, blockID3 := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", lo.ToPtr(1))
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").IsEqual([]string{blockID2, blockID3, blockID1})
 
-	removeBlock(e, storyID, pageID, blockID1)
-	removeBlock(e, storyID, pageID, blockID2)
-	removeBlock(e, storyID, pageID, blockID3)
+	removeBlock(e, storyID, pageID, blockID1, false)
+	removeBlock(e, storyID, pageID, blockID2, false)
+	removeBlock(e, storyID, pageID, blockID3, true)
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
+		Path("$.data.node.stories[0].pages[0].blocks").IsEqual([]any{})
 }
 
 func TestStoryPageBlocksProperties(t *testing.T) {
@@ -842,7 +847,7 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 	propID := res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].propertyId").Raw().(string)
 
 	_, res = updatePropertyValue(e, propID, "default", "", "text", "test value", "STRING")
-	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("test value")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("test value")
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].type").Equal("STRING")

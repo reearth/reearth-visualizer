@@ -418,7 +418,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(1)
+		Value("extrudedHeight").IsEqual(1)
 
 	// Update NLSLayer
 	_, _ = updateNLSLayer(e, layerId)
@@ -431,7 +431,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("config").Object().
 		Value("data").Object().
-		Value("value").Equal("secondSampleValue")
+		Value("value").IsEqual("secondSampleValue")
 
 	// Additional check to ensure 'properties' and 'events' are present
 	res3.Object().
@@ -461,7 +461,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().Value(0).Object().
-		Value("config").Equal(savedConfig)
+		Value("config").IsEqual(savedConfig)
 
 	// Duplicate NLSLayer
 	_, duplicateRes := duplicateNLSLayer(e, layerId)
@@ -607,7 +607,7 @@ func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string
 	return requestBody, res, res.Path("$.data.addNLSInfoboxBlock.infoboxBlock.id").Raw().(string)
 }
 
-func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (GraphQLRequest, *httpexpect.Value, string) {
+func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, last bool) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveNLSInfoboxBlock",
 		Query: `mutation RemoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!) {
@@ -646,8 +646,13 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (G
 
 	res := Request(e, uID.String(), requestBody)
 
-	res.Object().
-		Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContains(infoboxBlockId)
+	if last {
+		res.Object().
+			Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").IsNull()
+	} else {
+		res.Object().
+			Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotConsistsOf(infoboxBlockId)
+	}
 
 	return requestBody, res, res.Path("$.data.removeNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
@@ -734,34 +739,34 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+		Path("$.data.node.newLayers[0].infobox.blocks").IsEqual([]any{})
 
 	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textInfoboxBetaBlock", nil)
 	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyInfoboxBetaBlock", nil)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID1, blockID2})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID1, blockID2})
 
 	_, _, _ = moveInfoboxBlock(e, layerId, blockID1, 1)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID2, blockID1})
 
 	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageInfoboxBetaBlock", lo.ToPtr(1))
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID2, blockID3, blockID1})
 
-	removeInfoboxBlock(e, layerId, blockID1)
-	removeInfoboxBlock(e, layerId, blockID2)
-	removeInfoboxBlock(e, layerId, blockID3)
+	removeInfoboxBlock(e, layerId, blockID1, false)
+	removeInfoboxBlock(e, layerId, blockID2, false)
+	removeInfoboxBlock(e, layerId, blockID3, true)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+		Path("$.data.node.newLayers[0].infobox.blocks").IsEqual([]any{})
 
 	_, updatedProject := fetchProjectForNewLayers(e, pId)
 	updatedProject.Object().
@@ -835,7 +840,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(1)
+		Value("extrudedHeight").IsEqual(1)
 
 	schema1 := map[string]any{
 		"id":             "schemaId1",
@@ -858,7 +863,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(0)
+		Value("extrudedHeight").IsEqual(0)
 
 	schema2 := map[string]any{
 		"id":             "schemaId1",
@@ -875,7 +880,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(10)
+		Value("extrudedHeight").IsEqual(10)
 
 	_, updatedProject := fetchProjectForNewLayers(e, pId)
 	updatedProject.Object().
