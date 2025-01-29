@@ -34,40 +34,6 @@ models:
     fields:
       team:
         resolver: true
-  Cluster:
-    fields:
-      property:
-        resolver: true
-  Dataset:
-    fields:
-      schema:
-        resolver: true
-      name:
-        resolver: true
-  DatasetSchema:
-    fields:
-      datasets:
-        resolver: true
-      scene:
-        resolver: true
-      representativeField:
-        resolver: true
-      totalCount:
-        resolver: true
-  DatasetField:
-    fields:
-      schema:
-        resolver: true
-      field:
-        resolver: true
-      valueRef:
-        resolver: true
-  DatasetSchemaField:
-    fields:
-      schema:
-        resolver: true
-      ref:
-        resolver: true
   LayerItem:
     fields:
       parent:
@@ -135,14 +101,6 @@ models:
       scene:
         resolver: true
       scenePlugin:
-        resolver: true
-  LayerTagItem:
-    fields:
-      tag:
-        resolver: true
-  LayerTagGroup:
-    fields:
-      tag:
         resolver: true
   MergedLayer:
     fields:
@@ -329,30 +287,6 @@ models:
       plugin:
         resolver: true
       property:
-        resolver: true
-  Tag:
-    fields:
-      layers:
-        resolver: true
-  TagItem:
-    fields:
-      linkedDatasetSchema:
-        resolver: true
-      linkedDataset:
-        resolver: true
-      linkedDatasetField:
-        resolver: true
-      parent:
-        resolver: true
-      layers:
-        resolver: true
-  TagGroup:
-    fields:
-      tags:
-        resolver: true
-      scene:
-        resolver: true
-      layers:
         resolver: true
   Team:
     fields:
