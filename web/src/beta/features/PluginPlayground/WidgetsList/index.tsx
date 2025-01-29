@@ -1,4 +1,3 @@
-import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -18,34 +17,40 @@ type Props = {
   };
 };
 const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
-  const [, setNotification] = useNotification();
   const ymlFile =
     selectedPlugin.files &&
     selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
 
   if (!ymlFile) {
-    setNotification({
-      type: "error",
-      text: "No YAML configuration file found"
-    });
-    return <div />;
+    return (
+      <Wrapper>
+        <ErrorMessage>
+          This plugin does not have a reearth.yml file.
+        </ErrorMessage>
+      </Wrapper>
+    );
   }
 
   const getYmlResult = getYmlJson(ymlFile);
 
   if (!getYmlResult.success) {
-    setNotification({ type: "error", text: getYmlResult.message });
-    return <div />;
+    return (
+      <Wrapper>
+        <ErrorMessage>{getYmlResult.message}</ErrorMessage>
+      </Wrapper>
+    );
   }
 
   const ymlJSON = getYmlResult.data;
 
   if (!ymlJSON || !ymlJSON.extensions) {
-    setNotification({
-      type: "error",
-      text: "No extensions found in YAML file"
-    });
-    return <div />;
+    return (
+      <Wrapper>
+        <ErrorMessage>
+          This plugin does not have a valid reearth.yml file.
+        </ErrorMessage>
+      </Wrapper>
+    );
   }
   const widgetExtension = ymlJSON.extensions.find((e) => e.type === "widget");
 
@@ -54,21 +59,23 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
     !widgetExtension.schema ||
     !widgetExtension.schema.groups
   ) {
-    setNotification({
-      type: "error",
-      text: "No schema found in widget extension"
-    });
-    return <div />;
+    return (
+      <Wrapper>
+        <ErrorMessage>
+          This plugin does not have a valid widget extension.
+        </ErrorMessage>
+      </Wrapper>
+    );
   }
 
   const widgetSchema = widgetExtension.schema.groups;
 
   if (!widgetSchema || widgetSchema.length == 0) {
-    setNotification({
-      type: "error",
-      text: "No schema found in widget extension"
-    });
-    return <div />;
+    return (
+      <Wrapper>
+        <ErrorMessage>This plugin does not have any widgets.</ErrorMessage>
+      </Wrapper>
+    );
   }
 
   const { fields } = widgetSchema[0];
@@ -83,6 +90,11 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
 
 const Wrapper = styled.div`
   padding: 10px;
+`;
+
+const ErrorMessage = styled.p`
+  color: ${({ theme }) => theme.content.main};
+  font-size: ${({ theme }) => theme.fonts.sizes.body}px;
 `;
 
 export default WidgetsList;
