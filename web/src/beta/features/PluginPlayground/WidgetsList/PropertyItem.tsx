@@ -12,20 +12,32 @@ type Props = {
 };
 
 const PropertyItem: FC<Props> = ({ field }) => {
-  const [textValue, setTextValue] = useState("");
-  const [numberValue, setNumberValue] = useState(0);
-  const [booleanValue, setBooleanValue] = useState(false);
+  const [value, setValue] = useState<string | number | boolean>(() => {
+    switch (field.type) {
+      case "number":
+        return 0;
+      case "bool":
+        return false;
+      default:
+        return "";
+    }
+  });
 
   const handleChange = (newValue?: string | number | boolean) => {
     switch (typeof newValue) {
       case "string":
-        setTextValue(newValue);
+        setValue(newValue);
         break;
       case "number":
-        setNumberValue(newValue);
+        if (!isNaN(newValue)) {
+          setValue(newValue);
+        }
         break;
       case "boolean":
-        setBooleanValue(newValue);
+        setValue(newValue);
+        break;
+      default:
+        console.warn(`Unsupported value type: ${typeof newValue}`);
     }
   };
 
@@ -35,21 +47,21 @@ const PropertyItem: FC<Props> = ({ field }) => {
         <NumberField
           key={field.id}
           title={field.name}
-          value={numberValue}
+          value={value as number}
           onChange={handleChange}
         />
       ) : field.type === "bool" ? (
         <SwitchField
           key={field.id}
           title={field.name}
-          value={booleanValue}
+          value={value as boolean}
           onChange={handleChange}
         />
       ) : (
         <InputField
           key={field.id}
           title={field.name}
-          value={textValue}
+          value={value as string}
           onChange={handleChange}
         />
       )}

@@ -43,7 +43,7 @@ export type CustomStoryBlock = CustomInfoboxBlock;
 export interface CustomField extends Field {
   id?: string;
   ui?: string;
-  defaultValue?: unknown;
+  defaultValue?: string | number | boolean | null;
 }
 
 export type Group = {

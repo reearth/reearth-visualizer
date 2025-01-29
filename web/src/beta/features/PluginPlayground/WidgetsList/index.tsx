@@ -23,7 +23,13 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
     selectedPlugin.files &&
     selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
 
-  if (!ymlFile) return <div />;
+  if (!ymlFile) {
+    setNotification({
+      type: "error",
+      text: "No YAML configuration file found"
+    });
+    return <div />;
+  }
 
   const getYmlResult = getYmlJson(ymlFile);
 
@@ -34,26 +40,42 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
 
   const ymlJSON = getYmlResult.data;
 
-  if (!ymlJSON || !ymlJSON.extensions) return <div />;
-
+  if (!ymlJSON || !ymlJSON.extensions) {
+    setNotification({
+      type: "error",
+      text: "No extensions found in YAML file"
+    });
+    return <div />;
+  }
   const widgetExtension = ymlJSON.extensions.find((e) => e.type === "widget");
 
   if (
     !widgetExtension ||
     !widgetExtension.schema ||
     !widgetExtension.schema.groups
-  )
+  ) {
+    setNotification({
+      type: "error",
+      text: "No schema found in widget extension"
+    });
     return <div />;
+  }
 
   const widgetSchema = widgetExtension.schema.groups;
 
-  if (!widgetSchema || widgetSchema.length == 0) return <div />;
+  if (!widgetSchema || widgetSchema.length == 0) {
+    setNotification({
+      type: "error",
+      text: "No schema found in widget extension"
+    });
+    return <div />;
+  }
 
   const { fields } = widgetSchema[0];
   return (
     <Wrapper>
       {fields.map((field) => (
-        <PropertyItem field={field} />
+        <PropertyItem key={field.id} field={field} />
       ))}
     </Wrapper>
   );
