@@ -2,7 +2,7 @@ module github.com/reearth/reearth/server
 
 require (
 	cloud.google.com/go/profiler v0.4.2
-	cloud.google.com/go/storage v1.50.0
+	cloud.google.com/go/storage v1.49.0
 	github.com/99designs/gqlgen v0.17.64
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.26.0
 	github.com/avast/retry-go/v4 v4.6.0
