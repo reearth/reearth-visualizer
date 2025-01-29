@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/kennygrant/sanitize"
+	"github.com/reearth/reearth/server/internal/infrastructure"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -22,8 +23,9 @@ import (
 )
 
 type fileRepo struct {
-	fs      afero.Fs
-	urlBase *url.URL
+	fs              afero.Fs
+	urlBase         *url.URL
+	baseFileStorage *infrastructure.BaseFileStorage
 }
 
 func NewFile(fs afero.Fs, urlBase string) (gateway.File, error) {
@@ -37,6 +39,9 @@ func NewFile(fs afero.Fs, urlBase string) (gateway.File, error) {
 	return &fileRepo{
 		fs:      fs,
 		urlBase: b,
+		baseFileStorage: &infrastructure.BaseFileStorage{
+			MaxFileSize: gateway.UploadFileSizeLimit,
+		},
 	}, nil
 }
 
@@ -79,8 +84,9 @@ func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL
 		return nil, 0, errors.New("failed to fetch URL")
 	}
 
-	if resp.ContentLength > 0 && resp.ContentLength >= gateway.UploadFileSizeLimit {
-		return nil, 0, gateway.ErrFileTooLarge
+	err = f.baseFileStorage.ValidateResponseBodySize(resp)
+	if err != nil {
+		return nil, 0, err
 	}
 
 	defer func() {

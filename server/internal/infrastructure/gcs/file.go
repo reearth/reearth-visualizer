@@ -13,6 +13,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/kennygrant/sanitize"
+	"github.com/reearth/reearth/server/internal/infrastructure"
 	"github.com/reearth/reearth/server/internal/testutil"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
@@ -32,10 +33,11 @@ const (
 )
 
 type fileRepo struct {
-	isTest       bool
-	bucketName   string
-	base         *url.URL
-	cacheControl string
+	isTest          bool
+	bucketName      string
+	base            *url.URL
+	cacheControl    string
+	baseFileStorage *infrastructure.BaseFileStorage
 }
 
 func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway.File, error) {
@@ -59,6 +61,9 @@ func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
+		baseFileStorage: &infrastructure.BaseFileStorage{
+			MaxFileSize: gateway.UploadFileSizeLimit,
+		},
 	}, nil
 }
 
@@ -132,8 +137,9 @@ func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL
 		return nil, 0, errors.New("failed to fetch URL")
 	}
 
-	if resp.ContentLength > 0 && resp.ContentLength >= gateway.UploadFileSizeLimit {
-		return nil, 0, gateway.ErrFileTooLarge
+	err = f.baseFileStorage.ValidateResponseBodySize(resp)
+	if err != nil {
+		return nil, 0, err
 	}
 
 	defer func() {
