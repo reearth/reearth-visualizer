@@ -21,7 +21,7 @@ services:
     volumes:
       - ./mongo:/data/db
   gcs:
-    image: fsouza/fake-gcs-server
+    image: fsouza/fake-gcs-server:1.52.1
     ports:
       - 4443:4443
     volumes:
