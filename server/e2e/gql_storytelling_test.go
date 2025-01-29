@@ -70,7 +70,6 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 		  node(id: $sceneId, type: SCENE) {
 			id
 			... on Scene {
-			  rootLayerId
 			  propertyId
 		      stories {
 				id
@@ -409,104 +408,6 @@ func duplicatePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLRe
 	return requestBody, res, pID.(string)
 }
 
-func addLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
-	requestBody := GraphQLRequest{
-		OperationName: "AddPageLayer",
-		Query: `mutation AddPageLayer($sceneId: ID!, $storyId: ID!, $pageId: ID!, $layerId: ID!, $swipeable: Boolean) { 
-			addPageLayer( input: {sceneId: $sceneId, storyId: $storyId, pageId: $pageId, swipeable: $swipeable, layerId: $layerId} ) { 
-				story {
-				 	id
-					pages{
-						id
-					}
-				}
-				page{
-					id
-					layers{
-						id
-					}
-					swipeableLayers{
-						id
-					}
-				}
-			}
-		}`,
-		Variables: map[string]any{
-			"sceneId":   sId,
-			"storyId":   storyId,
-			"pageId":    pageId,
-			"layerId":   layerId,
-			"swipeable": swipeable,
-		},
-	}
-
-	res := Request(e, uID.String(), requestBody)
-
-	pageRes := res.Object().
-		Value("data").Object().
-		Value("addPageLayer").Object().
-		Value("page").Object()
-
-	if swipeable != nil && *swipeable {
-		pageRes.Value("swipeableLayers").Array().
-			Path("$..id").Array().ContainsAll(layerId)
-	} else {
-		pageRes.Value("layers").Array().
-			Path("$..id").Array().ContainsAll(layerId)
-	}
-
-	return requestBody, res, layerId
-}
-
-func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
-	requestBody := GraphQLRequest{
-		OperationName: "RemovePageLayer",
-		Query: `mutation RemovePageLayer($sceneId: ID!, $storyId: ID!, $pageId: ID!, $layerId: ID!, $swipeable: Boolean) { 
-			removePageLayer( input: {sceneId: $sceneId, storyId: $storyId, pageId: $pageId, swipeable: $swipeable, layerId: $layerId} ) { 
-				story {
-				 	id
-					pages{
-						id
-					}
-				}
-				page{
-					id
-					layers{
-						id
-					}
-					swipeableLayers{
-						id
-					}
-				}
-			}
-		}`,
-		Variables: map[string]any{
-			"sceneId":   sId,
-			"storyId":   storyId,
-			"pageId":    pageId,
-			"layerId":   layerId,
-			"swipeable": swipeable,
-		},
-	}
-
-	res := Request(e, uID.String(), requestBody)
-
-	pageRes := res.Object().
-		Value("data").Object().
-		Value("removePageLayer").Object().
-		Value("page").Object()
-
-	if swipeable != nil && *swipeable {
-		pageRes.Value("swipeableLayers").Array().
-			Path("$..id").Array().NotContainsAny(layerId)
-	} else {
-		pageRes.Value("layers").Array().
-			Path("$..id").Array().NotContainsAny(layerId)
-	}
-
-	return requestBody, res, layerId
-}
-
 func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateStoryBlock",
@@ -755,38 +656,6 @@ func TestStoryPageCRUD(t *testing.T) {
 	pagesRes.Path("$[:].title").IsEqual([]string{"test 1"})
 }
 
-func TestStoryPageLayersCRUD(t *testing.T) {
-	e := Server(t, baseSeeder)
-
-	pID := createProject(e, "test")
-
-	_, _, sID := createScene(e, pID)
-
-	_, _, storyID := createStory(e, sID, "test", 0)
-
-	_, _, pageID := createPage(e, sID, storyID, "test", true)
-
-	_, res := fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").IsEqual([]any{})
-
-	rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
-
-	_, _, layerID := addLayerItemFromPrimitive(e, rootLayerID)
-
-	_, _, _ = addLayerToPage(e, sID, storyID, pageID, layerID, nil)
-
-	_, res = fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers[:].id").IsEqual([]string{layerID})
-
-	_, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
-
-	_, res = fetchSceneForStories(e, sID)
-	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").IsEqual([]any{})
-}
-
 func TestStoryPageBlocksCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
@@ -863,12 +732,13 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 }
 
 func TestStoryPublishing(t *testing.T) {
-	e, _, g := StartServerAndRepos(t, &config.Config{
+	c := &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-	}, true, baseSeeder)
+	}
+	e, _, g := StartServerAndRepos(t, c, true, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -897,95 +767,77 @@ func TestStoryPublishing(t *testing.T) {
 	assert.NoError(t, err)
 
 	expected := fmt.Sprintf(`{
-    "clusters": [],
-    "coreSupport": true,
-    "enableGa": false,
-    "id": "%s",
-    "layerStyles": null,
-    "layers": null,
-    "nlsLayers": null,
-    "plugins": {},
-    "property": {
-        "tiles": [
-            {
-                "id": ".*"
+  "coreSupport": true,
+  "enableGa": false,
+  "id": ".*",
+  "layerStyles": null,
+  "nlsLayers": null,
+  "plugins": {},
+  "property": { "tiles": [{ "id": ".*" }] },
+  "publishedAt": ".*",
+  "schemaVersion": 1,
+  "story": {
+    "bgColor": "",
+    "id": ".*",
+    "pages": [
+      {
+        "blocks": [
+          {
+            "extensionId": "textStoryBlock",
+            "id": "%s",
+            "pluginId": "reearth",
+            "plugins": null,
+            "property": {
+              "default": { "text": "test value" },
+              "panel": {
+                "padding": { "bottom": 3, "left": 0, "right": 1, "top": 2 }
+              }
             }
-        ]
-    },
-    "publishedAt": ".*",
-    "schemaVersion": 1,
-    "story": {
-        "bgColor": "",
-        "id": "%s",
-        "pages": [
-            {
-                "blocks": [
-                    {
-                        "extensionId": "%s",
-                        "id": "%s",
-                        "pluginId": "reearth",
-                        "plugins": null,
-                        "property": {
-                            "default": {
-                                "text": "test value"
-                            },
-                            "panel": {
-                                "padding": {
-                                    "bottom": 3,
-                                    "left": 0,
-                                    "right": 1,
-                                    "top": 2
-                                }
-                            }
-                        }
-                    }
-                ],
-                "id": "%s",
-                "layers": [],
-                "property": {},
-                "swipeable": true,
-                "swipeableLayers": [],
-                "title": "test"
-            }
+          }
         ],
-        "position": "left",
+        "id": ".*",
+        "layers": [],
         "property": {},
-        "title": ""
-    },
-    "tags": [],
-    "trackingId": "",
-    "widgetAlignSystem": {
-        "inner": null,
-        "outer": {
-            "center": null,
-            "left": {
-                "bottom": {
-                    "align": "start",
-                    "background": null,
-                    "centered": false,
-                    "gap": null,
-                    "padding": null,
-                    "widgetIds": [
-                        ".*"
-                    ]
-                },
-                "middle": null,
-                "top": null
-            },
-            "right": null
-        }
-    },
-    "widgets": [
-        {
-            "enabled": true,
-            "extended": false,
-            "extensionId": "dataAttribution",
-            "id": ".*",
-            "pluginId": "%s",
-            "property": {}
-        }
-    ]
-}`, sID, storyID, extensionId, blockID, pageID, pluginId)
+        "swipeable": true,
+        "swipeableLayers": [],
+        "title": "test"
+      }
+    ],
+    "position": "left",
+    "property": {},
+    "title": ""
+  },
+  "trackingId": "",
+  "widgetAlignSystem": {
+    "inner": null,
+    "outer": {
+      "center": null,
+      "left": {
+        "bottom": {
+          "align": "start",
+          "background": null,
+          "centered": false,
+          "gap": null,
+          "padding": null,
+          "widgetIds": [".*"]
+        },
+        "middle": null,
+        "top": null
+      },
+      "right": null
+    }
+  },
+  "widgets": [
+    {
+      "enabled": true,
+      "extended": false,
+      "extensionId": "dataAttribution",
+      "id": ".*",
+      "pluginId": "reearth",
+      "property": {}
+    }
+  ]
+}`, blockID)
 
 	RegexpJSONEReadCloser(t, rc, expected)
 

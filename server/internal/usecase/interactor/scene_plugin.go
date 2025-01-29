@@ -132,7 +132,6 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 	// remove blocks
 	res, err := layerops.Processor{
 		LayerLoader: repo.LayerLoaderFrom(i.layerRepo),
-		RootLayerID: scene.RootLayer(),
 	}.UninstallPlugin(ctx, pid)
 	if err != nil {
 		return nil, err

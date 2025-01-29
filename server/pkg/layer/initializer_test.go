@@ -90,11 +90,6 @@ func TestInitializer_Layer(t *testing.T) {
 		expected3.ID(): expected3.LayerRef(),
 	}, actual.Layers)
 
-	// check if a new id is generated
-	i.ID = nil
-	actual, err = i.Layer(sid)
-	assert.NoError(t, err)
-	assert.False(t, actual.RootLayer().ID().IsEmpty())
 }
 
 func TestInitializerInfobox_Clone(t *testing.T) {
