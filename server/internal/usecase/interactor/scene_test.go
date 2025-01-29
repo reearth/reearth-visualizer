@@ -138,7 +138,6 @@ func TestImportScene(t *testing.T) {
       }
     },
     "tags": [],
-    "clusters": [],
     "layerStyles": null,
     "coreSupport": true,
     "enableGa": false,
@@ -195,16 +194,12 @@ func TestImportScene(t *testing.T) {
 
 	// expected
 	exp := fmt.Sprintf(`{
-    "clusters": [],
-    "datasetSchemas": null,
     "id": "%s",
     "newLayers": null,
     "plugins": [],
     "projectId": "%s",
     "stories": null,
     "styles": null,
-    "tagIds": null,
-    "tags": null,
     "teamId": "%s",
     "widgetAlignSystem": {
         "inner": {

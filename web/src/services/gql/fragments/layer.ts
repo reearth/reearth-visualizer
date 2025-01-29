@@ -96,22 +96,22 @@ export const EarthLayerFragments = gql`
       id
       ...PropertyFragment
     }
-    tags {
-      tagId
-      tag {
-        id
-        label
-      }
-      ... on LayerTagGroup {
-        children {
-          tagId
-          tag {
-            id
-            label
-          }
-        }
-      }
-    }
+    # tags {
+    #   tagId
+    #   tag {
+    #     id
+    #     label
+    #   }
+    #   ... on LayerTagGroup {
+    #     children {
+    #       tagId
+    #       tag {
+    #         id
+    #         label
+    #       }
+    #     }
+    #   }
+    # }
     infobox {
       propertyId
       property {
