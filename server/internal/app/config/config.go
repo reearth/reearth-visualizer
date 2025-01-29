@@ -71,9 +71,7 @@ type Config struct {
 	Ext_Plugin []string `pp:",omitempty"`
 
 	// redis
-	RedisHost     string `envconfig:"REDIS_HOST" default:"localhost:6379"`
-	RedisPassword string `envconfig:"REDIS_PASSWORD" default:""`
-	RedisDB       int    `envconfig:"REDIS_DB" default:"0"`
+	RedisURL string `envconfig:"REDIS_URL" default:"redis://:@localhost:6379/0"`
 
 	// uptrace
 	UptraceDSN string `envconfig:"UPTRACE_DSN" pp:",omitempty"`

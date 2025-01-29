@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -176,14 +177,14 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 }
 
 func styleCRUD(t *testing.T, isUseRedis bool) {
-	redisAddress := ""
+	redisURL := ""
 	if isUseRedis {
 		mr, err := miniredis.Run()
 		if err != nil {
 			t.Fatal(err)
 		}
 		defer mr.Close()
-		redisAddress = mr.Addr()
+		redisURL = fmt.Sprintf("redis://:@%s/0", mr.Addr())
 	}
 
 	e := StartServer(t, &config.Config{
@@ -191,7 +192,7 @@ func styleCRUD(t *testing.T, isUseRedis bool) {
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: redisAddress,
+		RedisURL: redisURL,
 	}, true, baseSeeder)
 
 	pId := createProject(e)

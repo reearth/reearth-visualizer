@@ -49,12 +49,12 @@ func Start(debug bool, version string) {
 	repos, gateways, acRepos, acGateways := initReposAndGateways(ctx, conf, debug)
 
 	// Redis
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     conf.RedisHost,
-		Password: conf.RedisPassword,
-		DB:       conf.RedisDB,
-	})
-	_, err := redisClient.Ping(ctx).Result()
+	opt, err := redis.ParseURL(conf.RedisURL)
+	if err != nil {
+		log.Fatalf("Failed to parse Redis URL: %+v\n", err)
+	}
+	redisClient := redis.NewClient(opt)
+	_, err = redisClient.Ping(ctx).Result()
 	if err != nil {
 		log.Fatalf("Failed to connect to Redis: %+v\n", err)
 	}

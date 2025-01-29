@@ -83,12 +83,13 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 	}
 
 	var redisAdapter *infraRedis.RedisAdapter
-	if cfg.RedisHost != "" {
-		redisClient := redis.NewClient(&redis.Options{
-			Addr:     cfg.RedisHost,
-			Password: "",
-			DB:       0,
-		})
+	if cfg.RedisURL != "" {
+		opt, err := redis.ParseURL(cfg.RedisURL)
+		if err != nil {
+			t.Fatalf("Failed to parse Redis URL: %+v\n", err)
+		}
+
+		redisClient := redis.NewClient(opt)
 		_, err = redisClient.Ping(ctx).Result()
 		if err != nil {
 			t.Fatalf("Failed to connect to Redis: %+v\n", err)
