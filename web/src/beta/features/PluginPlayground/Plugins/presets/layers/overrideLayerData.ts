@@ -24,15 +24,21 @@ const widgetFile: FileType = {
 //
 reearth.ui.show(\`
 <style>
-  html, body { margin: 0; padding: 0; }
   #scaleBtn {
     padding: 8px;
     border-radius: 4px;
     border: none;
-    background: #333;
-    color: #fff;
+    background: #fffafa;
+    color: #000000;
     cursor: pointer;
+    width: 200px;
+    height: 60px;
+    font-size: 16px 
   }
+  #scaleBtn:active {
+  background: #dcdcdc;
+  }
+  
 </style>
 <button id="scaleBtn">Scale Polygon</button>
 
@@ -156,28 +162,9 @@ reearth.extension.on("message", msg => {
           features: [feature],
         },
       },
-      // 見た目(色・透明度など)を再指定可能 (任意)
-      polygon: {
-      fillColor: "#f8f8ff80",
-      stroke:true,
-      strokeColor:"white",
-      strokeWidth: 3,
-      },
     });
   }
 });
-
-// カメラ適当：この辺りを俯瞰する（緯度経度が大きいのでかなり引きで見る）
-reearth.camera.flyTo(
-  {
-    lng: -85,
-    lat: 35,
-    height: 6000000,
-  },
-  {
-    duration: 2.0,
-  }
-);
 
 // 初期レイヤー作成
 createInitialPolygonLayer();
