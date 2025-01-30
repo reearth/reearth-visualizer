@@ -59,6 +59,11 @@ func Start(debug bool, version string) {
 		log.Fatalf("Failed to connect to Redis: %+v\n", err)
 	}
 	redisAdapter := infraRedis.NewRedisAdapter(redisClient)
+	defer func() {
+		if err := redisClient.Close(); err != nil {
+			log.Errorf("Failed to close Redis client: %v", err)
+		}
+	}()
 
 	// Init uptrace
 	uptrace.ConfigureOpentelemetry(
