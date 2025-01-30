@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	ErrKeyUnknown message.ErrKey = "unknown"
 	ErrKeyRepoResourceNotFound message.ErrKey = "repo.resource_not_found"
+	ErrKeyUnknown message.ErrKey = "unknown"
 )
 
 var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
