@@ -698,7 +698,7 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
-		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().Contains(infoboxBlockId)
+		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().ContainsAll(infoboxBlockId)
 
 	return requestBody, res, res.Path("$.data.moveNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
@@ -855,7 +855,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().Value(0).Object().
-		Value("isSketch").Boolean().True()
+		Value("isSketch").Boolean().IsTrue()
 
 	res3.Object().
 		Value("data").Object().

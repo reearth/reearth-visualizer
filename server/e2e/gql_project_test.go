@@ -47,14 +47,14 @@ func TestCreateAndGetProject(t *testing.T) {
 		Value("edges").Array()
 
 	edges.Length().IsEqual(1)
-	edges.First().Object().Value("node").Object().Value("name").Equal("test2-1")
+	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("test2-1")
 
 	// check
 	for _, edge := range edges.Iter() {
 		// coreSupport true only
-		edge.Object().Value("node").Object().Value("coreSupport").Equal(true)
+		edge.Object().Value("node").Object().Value("coreSupport").IsEqual(true)
 		// isDeleted false only
-		edge.Object().Value("node").Object().Value("isDeleted").Equal(false)
+		edge.Object().Value("node").Object().Value("isDeleted").IsEqual(false)
 	}
 
 }
@@ -154,10 +154,10 @@ func TestSortByName(t *testing.T) {
 		Value("edges").Array()
 
 	edges.Length().IsEqual(4)
-	edges.Element(0).Object().Value("node").Object().Value("name").Equal("a-project")
-	edges.Element(1).Object().Value("node").Object().Value("name").Equal("A-project")
-	edges.Element(2).Object().Value("node").Object().Value("name").Equal("b-project")
-	edges.Element(3).Object().Value("node").Object().Value("name").Equal("B-project")
+	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
+	edges.Value(1).Object().Value("node").Object().Value("name").IsEqual("A-project")
+	edges.Value(2).Object().Value("node").Object().Value("name").IsEqual("b-project")
+	edges.Value(3).Object().Value("node").Object().Value("name").IsEqual("B-project")
 
 }
 
@@ -380,7 +380,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 		Value("edges").Array()
 
 	edges.Length().IsEqual(3)
-	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
+	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("project2-test") // 'project2' is first
 }
 
 func TestDeleteProjects(t *testing.T) {
@@ -418,14 +418,14 @@ func TestDeleteProjects(t *testing.T) {
 		Value("nodes").Array()
 
 	nodes.Length().IsEqual(1)
-	nodes.First().Object().Value("name").Equal("test2-2")
+	nodes.Value(0).Object().Value("name").IsEqual("test2-2")
 
 	// check
 	for _, node := range nodes.Iter() {
 		// coreSupport true only
-		node.Object().Value("coreSupport").Equal(true)
+		node.Object().Value("coreSupport").IsEqual(true)
 		// isDeleted true only
-		node.Object().Value("isDeleted").Equal(true)
+		node.Object().Value("isDeleted").IsEqual(true)
 	}
 }
 

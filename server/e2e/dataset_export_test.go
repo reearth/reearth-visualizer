@@ -52,7 +52,7 @@ func TestDatasetExport(t *testing.T) {
 		HasContentType("application/json")
 	res.Header("Content-Disposition").IsEqual("attachment;filename=test.csv.json")
 
-	res.JSON().Equal(map[string]any{
+	res.JSON().IsEqual(map[string]any{
 		"schema": map[string]any{
 			"$schema": "http://json-schema.org/draft-07/schema#",
 			"$id":     "#/schemas/" + dssID.String(),

@@ -17,16 +17,16 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 			fieldId := field.Object().Value("fieldId").Raw().(string)
 
 			if fieldId == "tile_type" {
-				field.Object().Value("translatedPlaceholder").Equal("please enter tile type")
+				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile type")
 			}
 			if fieldId == "tile_url" {
-				field.Object().Value("translatedPlaceholder").Equal("please enter tile url")
+				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile url")
 			}
 			if fieldId == "tile_zoomLevel" {
-				field.Object().Value("translatedPlaceholder").Equal("please enter tile zoomLevel")
+				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile zoomLevel")
 			}
 			if fieldId == "tile_opacity" {
-				field.Object().Value("translatedPlaceholder").Equal("please enter tile opacity")
+				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile opacity")
 			}
 		}
 	}
@@ -43,16 +43,16 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 			fieldId := field.Object().Value("fieldId").Raw().(string)
 
 			if fieldId == "tile_type" {
-				field.Object().Value("translatedPlaceholder").Equal("タイルのタイプを選択")
+				field.Object().Value("translatedPlaceholder").IsEqual("タイルのタイプを選択")
 			}
 			if fieldId == "tile_url" {
-				field.Object().Value("translatedPlaceholder").Equal("タイルのURLを入力")
+				field.Object().Value("translatedPlaceholder").IsEqual("タイルのURLを入力")
 			}
 			if fieldId == "tile_zoomLevel" {
-				field.Object().Value("translatedPlaceholder").Equal("ズームレベルを入力")
+				field.Object().Value("translatedPlaceholder").IsEqual("ズームレベルを入力")
 			}
 			if fieldId == "tile_opacity" {
-				field.Object().Value("translatedPlaceholder").Equal("不透明度を入力")
+				field.Object().Value("translatedPlaceholder").IsEqual("不透明度を入力")
 			}
 		}
 	}

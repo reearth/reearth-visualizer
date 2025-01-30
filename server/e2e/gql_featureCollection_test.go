@@ -258,7 +258,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
-		Value("type").Equal("Feature")
+		Value("type").IsEqual("Feature")
 
 	res3.Object().
 		Value("data").Object().
@@ -268,7 +268,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
 		Value("geometry").Object().
-		Value("type").Equal("Point")
+		Value("type").IsEqual("Point")
 
 	res3.Object().
 		Value("data").Object().
@@ -278,7 +278,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
 		Value("properties").Object().
-		Value("type").Equal("marker")
+		Value("type").IsEqual("marker")
 
 	geometry2 := map[string]any{
 		"type":        "LineString",
@@ -308,9 +308,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+		Value("features").Array().Value(1).Object().
 		Value("geometry").Object().
-		Value("type").Equal("LineString")
+		Value("type").IsEqual("LineString")
 
 	geometry3 := map[string]any{
 		"type":        "Polygon",
@@ -340,9 +340,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+		Value("features").Array().Value(2).Object().
 		Value("geometry").Object().
-		Value("type").Equal("Polygon")
+		Value("type").IsEqual("Polygon")
 
 	geometry4 := map[string]any{
 		"type":        "MultiPolygon",
@@ -372,9 +372,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+		Value("features").Array().Value(3).Object().
 		Value("geometry").Object().
-		Value("type").Equal("MultiPolygon")
+		Value("type").IsEqual("MultiPolygon")
 
 	geometry5 := map[string]any{
 		"type":       "GeometryCollection",
@@ -404,9 +404,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+		Value("features").Array().Value(4).Object().
 		Value("geometry").Object().
-		Value("type").Equal("GeometryCollection")
+		Value("type").IsEqual("GeometryCollection")
 
 	res7.Object().
 		Value("data").Object().
@@ -414,7 +414,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("newLayers").Array().Value(0).Object().
 		Value("sketch").Object().
 		Value("featureCollection").Object().
-		Value("features").Array().Last().Object().
+		Value("features").Array().Value(4).Object().
 		Value("geometry").Object().
 		Value("geometries").Array().
 		Length().IsEqual(4)
@@ -448,7 +448,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
-		Value("id").Equal(fid6)
+		Value("id").IsEqual(fid6)
 
 	res8.Object().
 		Value("data").Object().
@@ -458,7 +458,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
 		Value("geometry").Object().
-		Value("type").Equal("LineString")
+		Value("type").IsEqual("LineString")
 
 	res8.Object().
 		Value("data").Object().
@@ -468,7 +468,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
 		Value("properties").Object().
-		Value("extrudedHeight").Equal(10)
+		Value("extrudedHeight").IsEqual(10)
 
 	deleteGeoJSONFeature(e, layerId, fid6)
 
@@ -489,7 +489,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("sketch").Object().
 		Value("featureCollection").Object().
 		Value("features").Array().Value(0).Object().
-		Value("id").Equal(fid2)
+		Value("id").IsEqual(fid2)
 
 	deleteGeoJSONFeature(e, layerId, fid2)
 	deleteGeoJSONFeature(e, layerId, fid3)

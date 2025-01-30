@@ -18,7 +18,7 @@ func TestCreateTeam(t *testing.T) {
 		Query: query,
 	}
 	o := Request(e, uId1.String(), request).Object()
-	o.Value("data").Object().Value("createTeam").Object().Value("team").Object().Value("name").String().Equal("test")
+	o.Value("data").Object().Value("createTeam").Object().Value("team").Object().Value("name").String().IsEqual("test")
 }
 
 func TestDeleteTeam(t *testing.T) {
@@ -30,7 +30,7 @@ func TestDeleteTeam(t *testing.T) {
 		Query: query,
 	}
 	o := Request(e, uId1.String(), request).Object()
-	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().Equal(wId1.String())
+	o.Value("data").Object().Value("deleteTeam").Object().Value("teamId").String().IsEqual(wId1.String())
 
 	_, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Equal(t, rerror.ErrNotFound, err)
@@ -41,7 +41,7 @@ func TestDeleteTeam(t *testing.T) {
 	}
 	o = Request(e, uId1.String(), request).Object()
 
-	o.Value("errors").Array().Value(0).Object().Value("message").Equal("operation denied")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("operation denied")
 }
 
 func TestUpdateTeam(t *testing.T) {
@@ -56,7 +56,7 @@ func TestUpdateTeam(t *testing.T) {
 		Query: query,
 	}
 	o := Request(e, uId1.String(), request).Object()
-	o.Value("data").Object().Value("updateTeam").Object().Value("team").Object().Value("name").String().Equal("updated")
+	o.Value("data").Object().Value("updateTeam").Object().Value("team").Object().Value("name").String().IsEqual("updated")
 
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -67,7 +67,7 @@ func TestUpdateTeam(t *testing.T) {
 		Query: query,
 	}
 	o = Request(e, uId1.String(), request).Object()
-	o.Value("errors").Array().Value(0).Object().Value("message").Equal("not found")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("not found")
 }
 
 func TestAddMemberToTeam(t *testing.T) {
@@ -93,7 +93,7 @@ func TestAddMemberToTeam(t *testing.T) {
 		Query: query,
 	}
 	Request(e, uId1.String(), request).Object().
-		Value("errors").Array().Value(0).Object().Value("message").Equal("user already joined")
+		Value("errors").Array().Value(0).Object().Value("message").IsEqual("user already joined")
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
@@ -114,7 +114,7 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 	assert.False(t, w.Members().HasUser(uId3))
 
 	o := Request(e, uId1.String(), request).Object()
-	o.Value("errors").Array().Value(0).Object().Value("message").Equal("target user does not exist in the workspace")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("target user does not exist in the workspace")
 }
 
 func TestUpdateMemberOfTeam(t *testing.T) {
@@ -137,5 +137,5 @@ func TestUpdateMemberOfTeam(t *testing.T) {
 		Query: query,
 	}
 	o := Request(e, uId1.String(), request).Object()
-	o.Value("errors").Array().Value(0).Object().Value("message").Equal("operation denied")
+	o.Value("errors").Array().Value(0).Object().Value("message").IsEqual("operation denied")
 }

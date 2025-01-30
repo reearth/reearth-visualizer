@@ -370,7 +370,7 @@ func deletePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLReque
 		HasValue("pageId", pageID).
 		Value("story").Object().
 		Value("pages").Array().
-		Path("$..id").Array().NotContains(pageID)
+		Path("$..id").Array().NotContainsAll(pageID)
 
 	return requestBody, res
 }
@@ -449,10 +449,10 @@ func addLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, 
 
 	if swipeable != nil && *swipeable {
 		pageRes.Value("swipeableLayers").Array().
-			Path("$..id").Array().Contains(layerId)
+			Path("$..id").Array().ContainsAll(layerId)
 	} else {
 		pageRes.Value("layers").Array().
-			Path("$..id").Array().Contains(layerId)
+			Path("$..id").Array().ContainsAll(layerId)
 	}
 
 	return requestBody, res, layerId
@@ -627,7 +627,7 @@ func moveBlock(e *httpexpect.Expect, storyID, pageID, blockID string, index int)
 	res := Request(e, uID.String(), requestBody)
 
 	res.Object().
-		Path("$.data.moveStoryBlock.page.blocks[:].id").Array().Contains(blockID)
+		Path("$.data.moveStoryBlock.page.blocks[:].id").Array().ContainsAll(blockID)
 
 	return requestBody, res, res.Path("$.data.moveStoryBlock.blockId").Raw().(string)
 }
@@ -657,7 +657,7 @@ func TestStoryCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("stories").Array()
 	storiesRes.Length().IsEqual(1)
-	storiesRes.First().Object().HasValue("id", storyID)
+	storiesRes.Value(0).Object().HasValue("id", storyID)
 
 	// update story
 	_, _ = updateStory(e, storyID, sID)
@@ -668,7 +668,7 @@ func TestStoryCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array()
-	storiesRes.First().Object().HasValue("bgColor", "newBG")
+	storiesRes.Value(0).Object().HasValue("bgColor", "newBG")
 
 	_, _ = deleteStory(e, storyID, sID)
 }
@@ -690,7 +690,7 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("stories").Array()
 	storiesRes.Length().IsEqual(1)
-	storiesRes.First().Object().HasValue("id", storyID)
+	storiesRes.Value(0).Object().HasValue("id", storyID)
 
 	_, _, dupPageID := duplicatePage(e, sID, storyID, pageID1)
 
@@ -699,10 +699,10 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
-		First().Object().Value("pages").Array()
+		Value(0).Object().Value("pages").Array()
 	pagesRes.Length().IsEqual(2)
-	pagesRes.Path("$[:].id").Equal([]string{pageID1, dupPageID})
-	pagesRes.Path("$[:].title").Equal([]string{"test", "test (copy)"})
+	pagesRes.Path("$[:].id").IsEqual([]string{pageID1, dupPageID})
+	pagesRes.Path("$[:].title").IsEqual([]string{"test", "test (copy)"})
 
 	_, _ = deletePage(e, sID, storyID, dupPageID)
 
@@ -714,7 +714,7 @@ func TestStoryPageCRUD(t *testing.T) {
 
 	res.Object().
 		Value("errors").Array().
-		Element(0).Object().
+		Value(0).Object().
 		HasValue("message", "page not found")
 
 	_, _, pageID2 := createPage(e, sID, storyID, "test 2", true)
@@ -726,9 +726,9 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
-		First().Object().Value("pages").Array()
+		Value(0).Object().Value("pages").Array()
 	pagesRes.Length().IsEqual(4)
-	pagesRes.Path("$[:].id").Equal([]string{pageID1, pageID2, pageID3, pageID4})
+	pagesRes.Path("$[:].id").IsEqual([]string{pageID1, pageID2, pageID3, pageID4})
 
 	movePage(e, storyID, pageID1, 2)
 
@@ -737,9 +737,9 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
-		First().Object().Value("pages").Array()
+		Value(0).Object().Value("pages").Array()
 	pagesRes.Length().IsEqual(4)
-	pagesRes.Path("$[:].title").Equal([]string{"test 2", "test 3", "test 1", "test 4"})
+	pagesRes.Path("$[:].title").IsEqual([]string{"test 2", "test 3", "test 1", "test 4"})
 
 	deletePage(e, sID, storyID, pageID2)
 	deletePage(e, sID, storyID, pageID3)
@@ -750,9 +750,9 @@ func TestStoryPageCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
-		First().Object().Value("pages").Array()
+		Value(0).Object().Value("pages").Array()
 	pagesRes.Length().IsEqual(1)
-	pagesRes.Path("$[:].title").Equal([]string{"test 1"})
+	pagesRes.Path("$[:].title").IsEqual([]string{"test 1"})
 }
 
 func TestStoryPageLayersCRUD(t *testing.T) {
@@ -768,7 +768,7 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 
 	_, res := fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
+		Path("$.data.node.stories[0].pages[0].layers").IsEqual([]any{})
 
 	rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
 
@@ -778,13 +778,13 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerID})
+		Path("$.data.node.stories[0].pages[0].layers[:].id").IsEqual([]string{layerID})
 
 	_, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
+		Path("$.data.node.stories[0].pages[0].layers").IsEqual([]any{})
 }
 
 func TestStoryPageBlocksCRUD(t *testing.T) {
@@ -850,16 +850,16 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("test value")
 
 	_, res = fetchSceneForStories(e, sID)
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].type").Equal("STRING")
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].value").Equal("test value")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].type").IsEqual("STRING")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].value").IsEqual("test value")
 
 	p := map[string]any{"left": 0, "right": 1, "top": 2, "bottom": 3}
 	_, res = updatePropertyValue(e, propID, "panel", "", "padding", p, "SPACING")
-	res.Path("$.data.updatePropertyValue.propertyField.value").Equal(p)
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(p)
 
 	_, res = fetchSceneForStories(e, sID)
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].type").Equal("SPACING")
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].value").Equal(p)
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].type").IsEqual("SPACING")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].value").IsEqual(p)
 }
 
 func TestStoryPublishing(t *testing.T) {

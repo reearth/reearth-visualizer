@@ -290,7 +290,7 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
 	res := Request(e, uID.String(), requestBody)
 	newLayers := res.Path("$.data.node.newLayers").Array()
 	newLayers.Length().IsEqual(1)
-	return newLayers.Element(0).Object()
+	return newLayers.Value(0).Object()
 }
 
 func addTestNLSLayerSimple(e *httpexpect.Expect, sId string) string {
