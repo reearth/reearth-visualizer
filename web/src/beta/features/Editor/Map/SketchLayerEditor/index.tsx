@@ -1,6 +1,10 @@
 import { Button, Modal, ModalPanel } from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
+import {
+  ChangeCustomPropertyTitleInput,
+  RemoveCustomPropertyInput,
+  UpdateCustomPropertySchemaInput
+} from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
@@ -11,6 +15,7 @@ import {
   PropertyListProp
 } from "../SketchLayerCreator/type";
 
+import ConfirmModal from "./ConfirmModal";
 import useHooks from "./hooks";
 
 export type SourceType = "url" | "local" | "value";
@@ -18,15 +23,21 @@ export type SourceType = "url" | "local" | "value";
 export type SketchLayerEditorProp = {
   layers: NLSLayer[];
   layerId?: string;
+  isSketchLayerEditor?: boolean,
   onClose?: () => void;
   onCustomPropertySchemaUpdate?: (inp: UpdateCustomPropertySchemaInput) => void;
+  onChangeCustomPropertyTitle?: (inp: ChangeCustomPropertyTitleInput) => void;
+  onRemoveCustomProperty?: (inp: RemoveCustomPropertyInput) => void;
 };
 
 const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
   layers,
   layerId,
+  isSketchLayerEditor,
   onClose,
-  onCustomPropertySchemaUpdate
+  onCustomPropertySchemaUpdate,
+  onChangeCustomPropertyTitle,
+  onRemoveCustomProperty
 }) => {
   const t = useT();
   const [customProperties, setCustomProperties] = useState<
@@ -35,13 +46,22 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const [warning, setWarning] = useState(false);
 
-  const { handleClose, handleSubmit } = useHooks({
+  const {
+    confirmationModal,
+    handleClose,
+    handleSubmit,
+    handleApply,
+    setNewTitle,
+    setPreviousTitle,
+  } = useHooks({
     layers,
     layerId,
     customProperties,
     setPropertiesList,
     onClose,
-    onCustomPropertySchemaUpdate
+    onCustomPropertySchemaUpdate,
+    onChangeCustomPropertyTitle,
+    onRemoveCustomProperty
   });
 
   return (
@@ -56,7 +76,7 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
               size="normal"
               title={t("Apply")}
               appearance="primary"
-              onClick={handleSubmit}
+              onClick={handleApply}
               disabled={warning}
             />
           </>
@@ -70,8 +90,16 @@ const SketchLayerEditor: FC<SketchLayerEditorProp> = ({
             setPropertiesList={setPropertiesList}
             warning={warning}
             setWarning={setWarning}
+            setNewTitle={setNewTitle}
+            setPreviousTitle={setPreviousTitle}
+            isSketchLayerEditor={isSketchLayerEditor}
           />
         </Wrapper>
+        <ConfirmModal
+          visible={confirmationModal}
+          onClose={handleApply}
+          onSubmit={handleSubmit}
+        />
       </ModalPanel>
     </Modal>
   );

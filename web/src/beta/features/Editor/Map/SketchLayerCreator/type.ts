@@ -19,12 +19,15 @@ export type PropertyListProp = {
 };
 
 export type CustomPropertyProps = {
+  isSketchLayerEditor?: boolean;
   customProperties?: CustomPropertyProp[];
   propertiesList?: PropertyListProp[];
   setCustomProperties?: (prev: CustomPropertyProp[]) => void;
   setPropertiesList?: (prev: PropertyListProp[]) => void;
   warning?: boolean;
   setWarning?: (val: boolean) => void;
+  setPreviousTitle?: (val: string) => void;
+  setNewTitle?: (val: string) => void;
 };
 
 export type SketchLayerProps = {
@@ -36,8 +39,8 @@ export type SketchLayerProps = {
 
 export type CustomPropertyItemProps = {
   customPropertyItem: PropertyListProp;
+  isSketchLayerEditor?: boolean;
   isEditTitle?: boolean;
-  isEditType?: boolean;
   handleClassName?: string;
   onTypeChange?: (v?: string | string[]) => void;
   onBlur?: (v?: string) => void;

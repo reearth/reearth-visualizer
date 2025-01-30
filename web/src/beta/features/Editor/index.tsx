@@ -60,7 +60,9 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     layers,
     layerId,
     handleCustomPropertySchemaUpdate,
-    handleCoreAPIReady
+    handleCoreAPIReady,
+    handleChangeCustomPropertyTitle,
+    handleRemoveCustomProperty
   } = useHooks({ sceneId, tab, projectId });
 
   return (
@@ -139,7 +141,10 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           layers={layers}
           layerId={layerId}
           onClose={closeCustomPropertySchema}
+          isSketchLayerEditor={customPropertySchemaShown}
           onCustomPropertySchemaUpdate={handleCustomPropertySchemaUpdate}
+          onChangeCustomPropertyTitle={handleChangeCustomPropertyTitle}
+          onRemoveCustomProperty={handleRemoveCustomProperty}
         />
       )}
       <CursorStatus />

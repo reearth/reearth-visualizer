@@ -1,21 +1,61 @@
 import {
   Button,
-  Selector,
   TextInput,
-  Icon
+  Icon,
+  PopupMenu,
+  Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import { dataTypes } from "../../SketchLayerCreator";
 import { CustomPropertyItemProps } from "../../SketchLayerCreator/type";
+
+const dataTypes = [
+  {
+    id: "text",
+    title: "Text"
+  },
+  {
+    id: "textArea",
+    title: "TextArea"
+  },
+  {
+    id: "url",
+    title: "URL"
+  },
+  {
+    id: "asset",
+    title: "Asset"
+  },
+  {
+    id: "color",
+    title: "Color"
+  },
+  {
+    id: "float",
+    title: "Float"
+  },
+  {
+    id: "int",
+    title: "Int"
+  },
+  {
+    id: "bool",
+    title: "Boolean"
+  }
+];
+const dataTypeGroups = {
+  string: ["Text", "TextArea", "URL", "Asset", "Color"],
+  number: ["Float", "Int"],
+  boolean: ["Boolean"]
+};
 
 const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
   customPropertyItem,
   isEditTitle,
-  isEditType,
   handleClassName,
+  isSketchLayerEditor,
   onTypeChange,
   onBlur,
   onDoubleClick,
@@ -34,9 +74,9 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
   }, []);
 
   const handleTypeChange = useCallback(
-    (value: string | string[]) => {
-      setDataType(value as string);
-      onTypeChange?.(value as string);
+    (value: string) => {
+      setDataType(value);
+      onTypeChange?.(value);
     },
     [onTypeChange]
   );
@@ -49,6 +89,29 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
     },
     [onBlur]
   );
+
+  const menuItems = useMemo(() => {
+    const currentGroup = Object.keys(dataTypeGroups).find((group) =>
+      dataTypeGroups[group as keyof typeof dataTypeGroups].includes(dataType)
+    );
+
+    return dataTypes.map((dataType) => {
+      const isDisabled =
+        currentGroup &&
+        !dataTypeGroups[currentGroup as keyof typeof dataTypeGroups].includes(
+          dataType.title
+        );
+
+      return {
+        id: dataType.id,
+        title: dataType.title,
+        disabled: isSketchLayerEditor && !!isDisabled,
+        onClick: !isDisabled
+          ? () => handleTypeChange(dataType.title)
+          : undefined
+      };
+    });
+  }, [dataType, handleTypeChange, isSketchLayerEditor]);
 
   return (
     <PropertyFieldWrapper>
@@ -79,19 +142,20 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
           justifyContent: "space-between"
         }}
       >
-        {customPropertyItem.value.trim() === "" || isEditType ? (
-          <Selector
-            size="small"
-            value={dataType}
-            placeholder={t("Please select one type")}
-            options={dataTypes.map((v) => ({ value: v, label: v }))}
-            onChange={handleTypeChange}
-          />
-        ) : (
-          <TitleWrapper onDoubleClick={() => onDoubleClick?.("type")}>
-            {dataType}
-          </TitleWrapper>
-        )}
+        <PopupMenu
+          extendTriggerWidth
+          extendContentWidth
+          menu={menuItems}
+          label={
+            dataType ? (
+              <TitleWrapper>{dataType}</TitleWrapper>
+            ) : (
+              <Typography size="body" color={theme.content.weak}>
+                {t("Please select one type")}
+              </Typography>
+            )
+          }
+        />
       </ProjectItemCol>
       <Button
         icon="trash"

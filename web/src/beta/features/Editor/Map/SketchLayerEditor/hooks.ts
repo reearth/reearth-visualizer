@@ -1,6 +1,10 @@
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
-import { useCallback, useEffect, useMemo } from "react";
+import {
+  ChangeCustomPropertyTitleInput,
+  RemoveCustomPropertyInput,
+  UpdateCustomPropertySchemaInput
+} from "@reearth/services/gql";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { CustomPropertyProps } from "../SketchLayerCreator/type";
@@ -13,7 +17,9 @@ export default function useHooks({
   customProperties,
   setPropertiesList,
   onClose,
-  onCustomPropertySchemaUpdate
+  onCustomPropertySchemaUpdate,
+  onChangeCustomPropertyTitle,
+  onRemoveCustomProperty
 }: Pick<CustomPropertyProps, "customProperties" | "setPropertiesList"> &
   SketchLayerEditorProp) {
   const sketchLayers = useMemo(
@@ -21,27 +27,59 @@ export default function useHooks({
     [layers]
   );
 
+  const [previousTitle, setPreviousTitle] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [confirmationModal, setConfirmationModal] = useState(false);
+  
   const handleClose = useCallback(() => {
     if (onClose) setPropertiesList?.([]);
     onClose?.();
   }, [onClose, setPropertiesList]);
 
-  const handleSubmit = useCallback(() => {
-    const schemaJSON = customProperties?.reduce((acc, property, index) => {
+  const schemaJSON = useMemo(() => {
+    return customProperties?.reduce((acc, property, index) => {
       const [key] = Object.keys(property);
       // Appending index + 1 to the value for sorting later
       const value = `${property[key]}_${index + 1}`;
       acc[key] = value;
       return acc;
     }, {});
+  }, [customProperties]);
+
+  const handleApply = useCallback(() => {
+    setConfirmationModal(!confirmationModal);
+  }, [confirmationModal]);
+
+    const handleRemoveCustomProperty = useCallback(() => {
+      const inp: RemoveCustomPropertyInput = {
+        layerId: layerId || "",
+        schema: schemaJSON,
+        removedTitle: previousTitle
+      };
+      onRemoveCustomProperty?.(inp);
+    }, [layerId, onRemoveCustomProperty, previousTitle, schemaJSON]);
+
+  const handleSubmit = useCallback(() => {
     const inp: UpdateCustomPropertySchemaInput = {
       layerId: layerId || "",
       schema: schemaJSON
     };
 
-    onCustomPropertySchemaUpdate?.(inp);
-    handleClose();
-  }, [customProperties, handleClose, onCustomPropertySchemaUpdate, layerId]);
+    const titleInput: ChangeCustomPropertyTitleInput = {
+      layerId: layerId || "",
+      oldTitle: previousTitle,
+      newTitle,
+      schema: schemaJSON
+    };
+
+    if (previousTitle !== newTitle) {
+      onChangeCustomPropertyTitle?.(titleInput);
+    }
+    if (previousTitle === newTitle) {
+      onCustomPropertySchemaUpdate?.(inp);
+    }
+    handleApply()
+  }, [layerId, schemaJSON, previousTitle, newTitle, handleApply, onChangeCustomPropertyTitle, onCustomPropertySchemaUpdate]);
 
   const processCustomProperties = (layer: NLSLayer) => {
     const { customPropertySchema } = layer.sketch || {};
@@ -72,8 +110,15 @@ export default function useHooks({
     }
   }, [setPropertiesList, sketchLayers, layerId]);
 
+
+
   return {
+    confirmationModal,
+    setPreviousTitle,
+    setNewTitle,
+    handleApply,
     handleSubmit,
-    handleClose
+    handleClose,
+    handleRemoveCustomProperty
   };
 }

@@ -16,15 +16,17 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   customProperties,
   propertiesList,
   warning,
+  isSketchLayerEditor,
   setPropertiesList,
   setCustomProperties,
-  setWarning
+  setWarning,
+  setNewTitle,
+  setPreviousTitle,
 }) => {
   const t = useT();
 
   const {
     editTitleIndex,
-    editTypeIndex,
     handleCustomPropertyAdd,
     handleTitleBlur,
     handleTypeChange,
@@ -37,7 +39,9 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
     propertiesList,
     setPropertiesList,
     setCustomProperties,
-    setWarning
+    setWarning,
+    setNewTitle,
+    setPreviousTitle,
   });
 
   const DraggableCustomPropertyItems = useMemo(
@@ -48,7 +52,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
           <CustomPropertyItem
             key={item.id}
             isEditTitle={editTitleIndex === idx}
-            isEditType={editTypeIndex === idx}
+            isSketchLayerEditor={isSketchLayerEditor}
             customPropertyItem={item}
             handleClassName={CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME}
             onBlur={handleTitleBlur(idx)}
@@ -58,15 +62,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
           />
         )
       })),
-    [
-      propertiesList,
-      editTitleIndex,
-      editTypeIndex,
-      handleTitleBlur,
-      handleDoubleClick,
-      handleTypeChange,
-      handleCustomPropertyDelete
-    ]
+    [propertiesList, editTitleIndex, isSketchLayerEditor, handleTitleBlur, handleTypeChange, handleDoubleClick, handleCustomPropertyDelete]
   );
 
   return (
