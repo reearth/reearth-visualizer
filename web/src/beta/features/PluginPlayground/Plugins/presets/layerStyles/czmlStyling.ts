@@ -20,100 +20,108 @@ const widgetFile: FileType = {
   id: "czml-styling",
   title: "czml-styling.js",
   sourceCode: `
-  //Define CZML data with all three types
-    const czmlData = [
-      {
-        id: "document",
-        name: "CZML Styling Examples",
-        version: "1.0"
+  // Define the CZML array
+const czmlData = [
+  {
+    id: "document",
+    name: "CZML Layer with Marker, Polygon, and Polyline",
+    version: "1.0",
+  },
+  // Polygon Feature
+  {
+    id: "polygon",
+    name: "Polygon Feature",
+    polygon: {
+      positions: {
+        cartographicDegrees: [
+          -110.0, 40.0, 0,
+          -110.5, 35.0, 0,
+          -100.5, 35.0, 0,
+          -100.0, 40.0, 0,
+          -110.0, 40.0, 0
+        ],
       },
-      {
-        // Point/Marker with height
-        id: "point1",
-        position: {
-          cartographicDegrees: [30, 0, 100000]  // Added height
-        },
-        point: {
-          color: {
-            rgba: [255, 0, 0, 255]
-          },
-          pixelSize: 15,
-          outlineColor: {
-            rgba: [255, 255, 255, 255]
-          },
-          outlineWidth: 2
-        }
+      extrudedHeight: 300000,
+    },
+  },
+  // Polyline Feature
+  {
+    id: "polyline",
+    name: "Polyline Feature",
+    polyline: {
+      positions: {
+        cartographicDegrees: [
+          -95.0, 33.0, 0,
+          -85.0, 30.0, 0,
+        ],
       },
-      {
-        // Polyline with varying height
-        id: "polyline1",
-        polyline: {
-          positions: {
-            cartographicDegrees: [
-              31, 0, 50000,
-              32, 0, 150000,
-              33, 0, 50000
-            ]
-          },
-          width: 3,
-          material: {
-            solidColor: {
-              color: {
-                rgba: [0, 0, 255, 255]
-              }
-            }
-          }
-        }
-      },
-      {
-        // Polygon with extrusion
-        id: "polygon1",
-        polygon: {
-          positions: {
-            cartographicDegrees: [
-              34, 0, 0,
-              35, 0, 0,
-              35, 1, 0,
-              34, 1, 0,
-              34, 0, 0
-            ]
-          },
-          material: {
-            solidColor: {
-              color: {
-                rgba: [0, 255, 0, 200]  // Added some transparency
-              }
-            }
-          },
-          extrudedHeight: 200000  // Added extrusion
-        }
-      }
-    ];
+      width: 5,
+    },
+  },
+  // Marker Feature
+  {
+    id: "marker",
+    name: "Marker Feature",
+    position: {
+      cartographicDegrees: [-80.0, 28.0, 100], // Adjusted longitude and latitude
+    },
+    point: {}
+  },
+];
 
-    // Convert to encoded URL
-    const czmlString = JSON.stringify(czmlData);
-    const encodedCzml = "data:text/plain;charset=UTF-8," + encodeURIComponent(czmlString);
+// Convert the CZML array to a JSON string, then encode it, and make a data URI
+const czmlString = JSON.stringify(czmlData);
+const encodedCzml = "data:text/plain;charset=UTF-8," + encodeURIComponent(czmlString);
 
-    // Define layer
-    const czmlLayer = {
-      type: "simple",
-      data: {
-        type: "czml",
-        url: encodedCzml
-      }
-    };
+// Define the CZML layer with styling applied via layer properties
+const layerCzmlEncoded = {
+  type: "simple",
+  data: {
+    type: "czml",
+    url: encodedCzml,
+  },
+  // Apply styling through layer properties
+  marker: {
+    style: "point",
+    show: true,
+    pointColor: "red",
+    pointSize: 12,
+    pointOutlineColor: "white",
+    pointOutlineWidth: 1,
+    height: 100,
+    heightReference: "relative",
+  },
+  polyline: {
+    strokeColor: "blue",
+    strokeWidth: 5,
+    clampToGround: true,
+  },
+  polygon: {
+    fillColor: {
+      expression: "color('#ed0297',0.5)",
+    },
+    show: true,
+    stroke: true,
+    strokeColor: "blue",
+    strokeWidth: 3,
+  },
+};
 
-    // Add layer and fly to view
-    const layerId = reearth.layers.add(czmlLayer);
+// Add the CZML layer to Re:Earth
+reearth.layers.add(layerCzmlEncoded);
 
-    reearth.camera.flyTo({
-      lng: 32.5,
-      lat: 0.5,
-      height: 850000,
-      heading: 0,
-      roll: 0
-    }, {
-      duration: 2.0
+// Adjust camera dynamically to ensure all features are visible
+reearth.camera.flyTo(
+  {
+    lng: -95.0,
+    lat: 34.0,
+    height: 3000000,
+    heading: 5.949278757227463,
+    pitch: -1.45,
+    roll: 0,
+  },
+  {
+    duration: 1.5,
   });`
 };
 
