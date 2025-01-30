@@ -263,7 +263,7 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 
 	tx.Commit()
 
-	err = setToCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(styleID), duplicatedStyle)
+	err = setToCache(ctx, i.redis, scene.StyleCacheKey(duplicatedStyle.ID()), duplicatedStyle)
 	if err != nil {
 		return nil, err
 	}
