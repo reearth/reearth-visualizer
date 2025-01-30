@@ -3,7 +3,6 @@ package interactor
 import (
 	"context"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -14,7 +13,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
-	"github.com/vmihailenco/msgpack/v5"
 	"go.opentelemetry.io/otel"
 )
 
@@ -207,7 +205,7 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		return
 	}
 
-	err = updateProjectUpdatedAtByScene(ctx, s.Scene(), i.projectRepo, i.sceneRepo)
+	err = updateProjectUpdatedAtByScene(ctx, style.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return styleID, err
 	}
@@ -316,38 +314,4 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 		return nil, err
 	}
 	return *styles2, nil
-}
-
-func (i *Style) getStyleFromCache(ctx context.Context, styleID scene.StyleID) (*scene.Style, error) {
-	cacheKey := scene.StyleCacheKey(styleID)
-	val, err := i.redis.GetValue(ctx, cacheKey)
-	if err != nil {
-		if err == redis.Nil {
-			return nil, nil
-		}
-
-		return nil, err
-	}
-
-	var style *scene.Style
-	if err := msgpack.Unmarshal([]byte(val), &style); err != nil {
-		return nil, err
-	}
-
-	return style, nil
-}
-
-func (i *Style) setStyleToCache(ctx context.Context, styleID scene.StyleID, style *scene.Style) error {
-	cacheKey := scene.StyleCacheKey(styleID)
-	data, err := msgpack.Marshal(style)
-	if err != nil {
-		return err
-	}
-
-	return i.redis.SetValue(ctx, cacheKey, data)
-}
-
-func (i *Style) removeStyleFromCache(ctx context.Context, styleID scene.StyleID) error {
-	cacheKey := scene.StyleCacheKey(styleID)
-	return i.redis.RemoveValue(ctx, cacheKey)
 }
