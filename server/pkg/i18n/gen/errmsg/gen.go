@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -83,6 +84,7 @@ func loadMessages(files []string) (Translations, []string, error) {
 			}
 		}
 	}
+	sort.Strings(keys)
 	return messages, keys, nil
 }
 
@@ -94,7 +96,15 @@ func extractLanguageCode(fileName string) string {
 
 // flattenAndGroupMessages flattens nested JSON and groups them by key and language.
 func flattenAndGroupMessages(messages Translations, data map[string]interface{}, tag language.Tag, parentKey string) {
-	for key, value := range data {
+	keys := make([]string, 0, len(data))
+	for key := range data {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		value := data[key]
+
 		fullKey := key
 		if parentKey != "" {
 			fullKey = parentKey + "." + key
