@@ -731,10 +731,9 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	// Check if oldTitle exists and newTitle doesn't conflict
 	titleExists := false
 	for _, feature := range layer.Sketch().FeatureCollection().Features() {
-		if props := feature.Properties(); props != nil {
+		if props := feature.Properties(); props != nil && *props != nil {
 			if _, ok := (*props)[oldTitle]; ok {
 				titleExists = true
 			}
@@ -744,17 +743,15 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 		}
 	}
 
-	if !titleExists {
-		return nil, fmt.Errorf("property with title %s not found", oldTitle)
-	}
-
-	for _, feature := range layer.Sketch().FeatureCollection().Features() {
-		if props := feature.Properties(); props != nil {
-			for k, v := range *props {
-				if k == oldTitle {
-					value := v
-					delete(*props, k)
-					(*props)[newTitle] = value
+	if titleExists {
+		for _, feature := range layer.Sketch().FeatureCollection().Features() {
+			if props := feature.Properties(); props != nil {
+				for k, v := range *props {
+					if k == oldTitle {
+						value := v
+						delete(*props, k)
+						(*props)[newTitle] = value
+					}
 				}
 			}
 		}
@@ -808,15 +805,13 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 		}
 	}
 
-	if !titleExists {
-		return nil, fmt.Errorf("property with title %s not found", removedTitle)
-	}
-
-	for _, feature := range layer.Sketch().FeatureCollection().Features() {
-		if props := feature.Properties(); props != nil {
-			for k := range *props {
-				if k == removedTitle {
-					delete(*props, k)
+	if titleExists {
+		for _, feature := range layer.Sketch().FeatureCollection().Features() {
+			if props := feature.Properties(); props != nil && *props != nil {
+				for k := range *props {
+					if k == removedTitle {
+						delete(*props, k)
+					}
 				}
 			}
 		}
@@ -1178,7 +1173,7 @@ func validateGeoJSONFeatureCollection(data []byte) error {
 	var validationErrors []error
 
 	f, err := geojson.UnmarshalFeature(data)
-	if err == nil {
+	if f != nil && err == nil {
 		if f.Type == "Feature" {
 			if errs := validateGeoJSONFeature(f); len(errs) > 0 {
 				validationErrors = append(validationErrors, errs...)
@@ -1240,6 +1235,20 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 				validationErrors = append(validationErrors, errors.New("LineString contains invalid latitude or longitude"))
 			}
 		}
+	case orb.MultiLineString:
+		if len(g) == 0 {
+			validationErrors = append(validationErrors, errors.New("MultiLineString must contain at least one LineString"))
+		}
+		for _, lineString := range g {
+			if len(lineString) < 2 {
+				validationErrors = append(validationErrors, errors.New("MultiLineString contains a LineString with fewer than two coordinates"))
+			}
+			for _, coords := range lineString {
+				if !isValidLatLon(coords) {
+					validationErrors = append(validationErrors, errors.New("MultiLineString contains invalid latitude or longitude"))
+				}
+			}
+		}
 	case orb.Polygon:
 		if len(g) == 0 {
 			validationErrors = append(validationErrors, errors.New("Polygon must contain coordinates"))
@@ -1296,16 +1305,3 @@ func isValidLatLon(coords orb.Point) bool {
 	lat, lon := coords[1], coords[0]
 	return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
 }
-
-// func validateBBox(bbox geojson.BBox) error {
-// 	minLon, minLat := bbox.Min[0], bbox.Min[1]
-// 	maxLon, maxLat := bbox.Max[0], bbox.Max[1]
-
-// 	if !isValidLatLon(orb.Point{minLon, minLat}) || !isValidLatLon(orb.Point{maxLon, maxLat}) {
-// 		return errors.New("bbox values are out of range")
-// 	}
-// 	if minLon > maxLon || minLat > maxLat {
-// 		return errors.New("bbox values are not in the correct order")
-// 	}
-// 	return nil
-// }

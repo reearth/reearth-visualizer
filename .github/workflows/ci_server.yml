@@ -2,7 +2,7 @@ name: ci-server
 on:
   workflow_call:
 env:
-  GO_VERSION: "1.23.4"
+  GO_VERSION: "1.23.5"
 
 jobs:
   ci-server-lint:
@@ -22,6 +22,13 @@ jobs:
           version: v1.63.4
           args: --timeout=10m
           working-directory: server
+      - name: Run go generate
+        run: |
+          make generate
+        working-directory: server
+      - name: Check for changes in generated files
+        run: |
+          git diff --exit-code
 
   ci-server-test:
     runs-on: ubuntu-latest
@@ -31,6 +38,13 @@ jobs:
         ports:
           - 27017:27017
     steps:
+      - name: Start Fake GCS Server
+        run: |
+          docker run -d --name fake-gcs-server \
+            -p 4443:4443 \
+            -v /tmp/gcs:/storage \
+            fsouza/fake-gcs-server:1.52.1 \
+            -scheme http
       - name: checkout
         uses: actions/checkout@v3
       - name: set up

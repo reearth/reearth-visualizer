@@ -41,12 +41,33 @@ build:
 	go build ./cmd/reearth
 
 AIR_BIN := $(shell which air)
+STRINGER_BIN := $(shell which stringer)
+SCHEMATYPER_BIN := $(shell which schematyper)
+DEEP_COPY_BIN := $(shell which deep-copy)
 dev-install:
 ifndef AIR_BIN
 	@echo "reflex is not installed. Installing..."
 	@go install github.com/air-verse/air@v1.61.5
 else
 	@echo "air is already installed."
+endif
+ifndef STRINGER_BIN
+	@echo "Stringer is not installed. Installing..."
+	@go install golang.org/x/tools/cmd/stringer@v0.29.0
+else
+	@echo "Stringer is already installed."
+endif
+ifndef SCHEMATYPER_BIN
+	@echo "Schematyper is not installed. Installing..."
+	@go install github.com/idubinskiy/schematyper
+else
+	@echo "Schematyper is already installed."
+endif
+ifndef DEEP_COPY_BIN
+	@echo "Deep copy is not installed. Installing..."
+	@go install github.com/globusdigital/deep-copy@dc4a8d91ed65656858cd53e6e83bbf7b83d5b7cb
+else
+	@echo "Deep copy is already installed."
 endif
 
 dev: dev-install
@@ -57,6 +78,9 @@ run-app:
 
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
+
+generate: dev-install
+	go generate ./...
 
 gql:
 	go generate ./internal/adapter/gql/gqldataloader
