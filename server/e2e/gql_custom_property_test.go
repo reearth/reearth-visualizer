@@ -341,21 +341,6 @@ func TestRemoveCustomProperty(t *testing.T) {
 
 // below Common functions -----------------------------------------------------
 
-// func setupTestData(e *httpexpect.Expect) (sId string, lId string, fId1 string, fId2 string) {
-// 	pId := createProject(e, "test")
-// 	_, _, sId = createScene(e, pId)
-// 	lId = addTestNLSLayerSimple(e, sId)
-
-// 	proId1 := RandomString(10)
-// 	fId1 = addTestGeoJSONFeature(e, lId, proId1)
-// 	updateTestGeoJSONFeature(e, lId, fId1, proId1)
-
-// 	proId2 := RandomString(10)
-// 	fId2 = addTestGeoJSONFeature(e, lId, proId2)
-// 	updateTestGeoJSONFeature(e, lId, fId2, proId2)
-// 	return
-// }
-
 func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
 	requestBody := GraphQLRequest{
 		OperationName: "GetScene",
