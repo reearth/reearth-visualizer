@@ -23,7 +23,11 @@ func TestImportStyles(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
-	ifs := NewStyle(db)
+
+	redis, cleanup := setupTestRedis(t)
+	defer cleanup()
+
+	ifs := NewStyle(db, redis)
 
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
