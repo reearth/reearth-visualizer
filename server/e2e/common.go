@@ -103,6 +103,11 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 			t.Fatalf("Failed to connect to Redis: %+v\n", err)
 		}
 		redisAdapter = infraRedis.NewRedisAdapter(redisClient)
+		t.Cleanup(func() {
+			if err := redisClient.Close(); err != nil {
+				t.Errorf("Failed to close Redis client: %v", err)
+			}
+		})
 	}
 
 	srv := app.NewServer(ctx, &app.ServerConfig{
