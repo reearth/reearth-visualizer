@@ -59,6 +59,9 @@ reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
   },
+  globe:{
+    depthTestAgainstTerrain:true,
+  },
   scene: {
     shadow: {
       enabled: true,
