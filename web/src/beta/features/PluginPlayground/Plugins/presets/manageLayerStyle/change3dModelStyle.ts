@@ -39,7 +39,7 @@ const model3D01 = {
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/gltf/animatedFox.gltf",
     heightReference: "clamp",
     minimumPixelSize: 100, // Sets the minimum visible size of the model
-    maximumPixelSize: 10, // Sets the maximum visible size of the model
+    maximumPixelSize: 1000, // Sets the maximum visible size of the model
     animation: true, // Enables animation of the 3D model if timeline is played
     shadows: "enabled", // There are four options: "disabled", "enabled", "cast_only", "receive_only"
     color: "#fffafa", // Defines a color for the model
@@ -64,7 +64,7 @@ const model3D02 = {
     heightReference: "clamp", // Options: "none" | "clamp" | "relative"
     // scale: 10000, // Sets a fixed size. Zooming doesn't affect the model's size if used.
     minimumPixelSize: 100, // Sets the minimum visible size of the model
-    maximumPixelSize: 10, // Sets the maximum visible size of the model
+    maximumPixelSize: 1000, // Sets the maximum visible size of the model
     shadows: "enabled", // There are four options: "disabled", "enabled", "cast_only", "receive_only"
     pbr: false, // Enables or disables Physically Based Rendering
   },
