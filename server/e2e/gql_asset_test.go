@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"testing"
 
@@ -216,12 +215,5 @@ func getAssets(e *httpexpect.Expect, teamId string) *httpexpect.Value {
 			},
 		},
 	}
-	return e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	return Request(e, uID.String(), requestBody)
 }

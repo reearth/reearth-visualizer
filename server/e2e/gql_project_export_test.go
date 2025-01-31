@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,12 +15,7 @@ import (
 
 func TestCallExportProject(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pID := createProjectWithExternalImage(e, "test")
 
@@ -86,14 +80,7 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 			"coreSupport": true,
 		},
 	}
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 	return res.Path("$.data.createProject.project.id").Raw().(string)
 }
 
@@ -105,15 +92,7 @@ func exporProject(t *testing.T, e *httpexpect.Expect, p string) string {
 			"projectId": p,
 		},
 	}
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	r := Request(e, uID.String(), requestBody).
 		Object()
 	downloadPath := r.
 		Value("data").Object().
