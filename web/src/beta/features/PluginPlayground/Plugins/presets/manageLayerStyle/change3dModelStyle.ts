@@ -115,7 +115,10 @@ reearth.camera.flyTo(
     // Duration of the camera movement in seconds
     duration: 2.0,
   }
-);`
+);
+
+// 3D Model Data: @AsoboStudio and @scurest (Licensed under CC BY 4.0)
+`
 };
 
 export const layerStyle3dModel: PluginType = {
