@@ -19,7 +19,9 @@ extensions:
 const widgetFile: FileType = {
   id: "layer-style-3d-tiles",
   title: "layer-style-3d-tiles.js",
-  sourceCode: `// Define a 3D Tiles layer
+  sourceCode: `// This example shows how to style 3D Tiles //
+
+// Define a 3D Tiles layer
 const sample3dTiles01 = {
   type: "simple", // Required
   data: {
