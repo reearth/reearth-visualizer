@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -12,6 +13,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
+	"go.opentelemetry.io/otel"
 )
 
 type Style struct {
@@ -22,9 +24,10 @@ type Style struct {
 	sceneRepo     repo.Scene
 	sceneLockRepo repo.SceneLock
 	transaction   usecasex.Transaction
+	redis         gateway.RedisGateway
 }
 
-func NewStyle(r *repo.Container) interfaces.Style {
+func NewStyle(r *repo.Container, redis gateway.RedisGateway) interfaces.Style {
 	return &Style{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		styleRepo:       r.Style,
@@ -32,6 +35,7 @@ func NewStyle(r *repo.Container) interfaces.Style {
 		sceneRepo:       r.Scene,
 		sceneLockRepo:   r.SceneLock,
 		transaction:     r.Transaction,
+		redis:           redis,
 	}
 }
 
@@ -79,28 +83,57 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 	}
 
 	tx.Commit()
-	return style, nil
-}
 
-func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInput, operator *usecase.Operator) (*scene.Style, error) {
-
-	tx, err := i.transaction.Begin(ctx)
-
+	err = setToCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(style.ID()), style)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx = tx.Context()
+	return style, nil
+}
 
+func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInput, operator *usecase.Operator) (*scene.Style, error) {
+	tr := otel.Tracer("interactor")
+	_, span := tr.Start(ctx, "Style.UpdateStyle")
+	defer span.End()
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		span.RecordError(err)
+		return nil, err
+	}
+
+	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			span.RecordError(err2)
 			err = err2
 		}
 	}()
 
-	style, err := i.styleRepo.FindByID(ctx, param.StyleID)
+	var style *scene.Style
+	_, redisSpan := tr.Start(ctx, "Style.UpdateStyle.RedisGetValue")
+	style, err = getFromCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(param.StyleID))
 	if err != nil {
+		redisSpan.RecordError(err)
+		redisSpan.End()
 		return nil, err
+	}
+	redisSpan.End()
+
+	if style == nil {
+		_, dbSpan := tr.Start(ctx, "Style.UpdateStyle.DBFindById")
+		style, err = i.styleRepo.FindByID(ctx, param.StyleID)
+		if err != nil {
+			dbSpan.RecordError(err)
+			dbSpan.End()
+			return nil, err
+		}
+		dbSpan.End()
+
+		if style == nil {
+			return nil, nil
+		}
 	}
 
 	if param.Name != nil {
@@ -121,6 +154,15 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 	}
 
 	tx.Commit()
+
+	_, dbSpan := tr.Start(ctx, "Style.UpdateStyle.RedisSetValue")
+	err = setToCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(style.ID()), style)
+	if err != nil {
+		dbSpan.RecordError(err)
+		dbSpan.End()
+		return nil, err
+	}
+
 	return style, nil
 }
 
@@ -137,16 +179,24 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		}
 	}()
 
-	s, err := i.styleRepo.FindByID(ctx, styleID)
+	var style *scene.Style
+	style, err = getFromCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(styleID))
 	if err != nil {
 		return styleID, err
+	}
+
+	if style == nil {
+		style, err = i.styleRepo.FindByID(ctx, styleID)
+		if err != nil {
+			return styleID, err
+		}
 	}
 
 	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
 	// 	return styleID, err
 	// }
 
-	if err := i.CheckSceneLock(ctx, s.Scene()); err != nil {
+	if err := i.CheckSceneLock(ctx, style.Scene()); err != nil {
 		return styleID, err
 	}
 
@@ -155,12 +205,18 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		return
 	}
 
-	err = updateProjectUpdatedAtByScene(ctx, s.Scene(), i.projectRepo, i.sceneRepo)
+	err = updateProjectUpdatedAtByScene(ctx, style.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
 		return styleID, err
 	}
 
 	tx.Commit()
+
+	err = deleteFromCache(ctx, i.redis, scene.StyleCacheKey(styleID))
+	if err != nil {
+		return styleID, err
+	}
+
 	return styleID, nil
 }
 
@@ -177,9 +233,17 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 		}
 	}()
 
-	style, err := i.styleRepo.FindByID(ctx, styleID)
+	var style *scene.Style
+	style, err = getFromCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(styleID))
 	if err != nil {
 		return nil, err
+	}
+
+	if style == nil {
+		style, err = i.styleRepo.FindByID(ctx, styleID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
@@ -198,6 +262,12 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	}
 
 	tx.Commit()
+
+	err = setToCache(ctx, i.redis, scene.StyleCacheKey(duplicatedStyle.ID()), duplicatedStyle)
+	if err != nil {
+		return nil, err
+	}
+
 	return duplicatedStyle, nil
 }
 

@@ -20,6 +20,12 @@ services:
       - 27017:27017
     volumes:
       - ./mongo:/data/db
+  reearth-redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis:/data
   gcs:
     image: fsouza/fake-gcs-server:1.52.1
     ports:

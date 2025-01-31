@@ -79,6 +79,9 @@ run-app:
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 
+run-redis:
+	docker compose -f ../docker-compose.yml up -d reearth-redis
+
 generate: dev-install
 	go generate ./...
 
@@ -99,4 +102,4 @@ schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
 
-.PHONY: lint test failcheck e2e build dev-install dev run-app run-db gql up-gcs down-gcs mockuser schematyper
+.PHONY: lint test failcheck e2e build dev-install dev run-app run-db run-redis gql up-gcs down-gcs mockuser schematyper
