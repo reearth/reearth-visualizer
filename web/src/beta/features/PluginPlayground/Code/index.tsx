@@ -3,8 +3,9 @@ import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
+import { getLanguageByFileExtension } from "../utils";
+
 import HtmlEditModal from "./HtmlEditModal";
-import { getLanguageByFileExtension } from "./utils";
 
 type Props = {
   fileTitle: string;

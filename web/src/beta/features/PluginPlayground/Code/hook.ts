@@ -1,67 +1,16 @@
-import Visualizer from "@reearth/beta/features/Visualizer";
 import { useNotification } from "@reearth/services/state";
-import * as yaml from "js-yaml";
-import { ComponentProps, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { v4 } from "uuid";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
-import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 import { FileType } from "../Plugins/constants";
-
-type Widgets = ComponentProps<typeof Visualizer>["widgets"];
-
-type ReearthYML = {
-  id: string;
-  name: string;
-  version: string;
-  extensions?: {
-    id: string;
-    type: string;
-    name: string;
-    description: string;
-    widgetLayout?: {
-      extended: boolean;
-      defaultLocation: {
-        zone: WidgetLocation["zone"];
-        section: WidgetLocation["section"];
-        area: WidgetLocation["area"];
-      };
-    };
-  }[];
-};
-
-type CustomInfoboxBlock = {
-  id: string;
-  name: string;
-  description: string;
-  __REEARTH_SOURCECODE: string;
-  extensionId: string;
-  pluginId: string;
-};
-
-type CustomStoryBlock = CustomInfoboxBlock;
+import { CustomInfoboxBlock, CustomStoryBlock, Widgets } from "../types";
+import { getYmlJson } from "../utils";
 
 type Props = {
   files: FileType[];
   resetVisualizer: () => void;
-};
-
-const getYmlJson = (file: FileType) => {
-  if (file.sourceCode === "") {
-    return { success: false, message: "YAML file is empty" } as const;
-  }
-
-  try {
-    const data = yaml.load(file.sourceCode) as ReearthYML;
-    return { success: true, data } as const;
-  } catch (error) {
-    const message =
-      error instanceof yaml.YAMLException
-        ? error.message
-        : "Failed to parse YAML";
-    return { success: false, message } as const;
-  }
 };
 
 export default ({ files, resetVisualizer }: Props) => {

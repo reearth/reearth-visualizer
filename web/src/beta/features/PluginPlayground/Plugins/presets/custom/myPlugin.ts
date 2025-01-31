@@ -17,6 +17,23 @@ extensions:
         zone: outer
         section: left
         area: top
+    schema:
+      groups:
+      - id: default
+        title: Data
+        fields:
+          - id: 1
+            type: string
+            title: Text
+            name: Title
+          - id: 2
+            type: number
+            title: Number
+            name: Number
+          - id: 3
+            type: bool
+            title: Boolean
+            name: Boolean
   - id: demo-infobox-block-1
     type: infoboxBlock
     name: Demo Infobox Block 1
