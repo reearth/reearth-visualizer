@@ -64,7 +64,7 @@ jobs:
           echo "::set-output name=version::$VERSION"
           echo "::set-output name=tags::$TAGS"
       - name: Build and push docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: web
           platforms: ${{ steps.options.outputs.platforms }}
@@ -156,7 +156,7 @@ jobs:
       - name: Rename artifact
         run: mv reearth-web_rc.tar.gz $ARTIFACT
       - name: Download latest changelog
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v8
         with:
           workflow: release.yml
           name: changelog-${{ inputs.new_tag }}
