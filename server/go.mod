@@ -11,6 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.52.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gavv/httpexpect/v2 v2.3.1
+	github.com/globusdigital/deep-copy v0.5.4
 	github.com/goccy/go-yaml v1.11.3
 	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.3.0
@@ -171,4 +172,4 @@ require (
 	moul.io/http2curl v1.0.1-0.20190925090545-5cd742060b0e // indirect
 )
 
-go 1.23.4
+go 1.23.5
