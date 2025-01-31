@@ -6,7 +6,7 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 env:
-  GCP_REGION: asia-northeast1
+  GCP_REGION: us-central1
   IMAGE: reearth/reearth-visualizer-api:nightly
   IMAGE_GCP: us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer-api:nightly
 jobs:
