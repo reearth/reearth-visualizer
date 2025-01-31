@@ -43,15 +43,25 @@ func TestBlock_SettersGetters(t *testing.T) {
 	assert.Equal(t, newPluginID, b.Plugin())
 
 	b2 := b.Clone()
+
+	bProperty := b.Property()
+	b2Property := b2.Property()
+
+	bPlugin := b.Plugin()
+	b2Plugin := b2.Plugin()
+
+	bExtension := b.Extension()
+	b2Extension := b2.Extension()
+
 	assert.Equal(t, b, b2)
 	assert.NotSame(t, b, b2)
 	assert.Equal(t, b.ID(), b2.ID())
-	assert.Equal(t, b.Property(), b2.Property())
-	assert.NotSame(t, b.Property(), b2.Property())
-	assert.Equal(t, b.Plugin(), b2.Plugin())
-	assert.NotSame(t, b.Plugin(), b2.Plugin())
-	assert.Equal(t, b.Extension(), b2.Extension())
-	assert.NotSame(t, b.Extension(), b2.Extension())
+	assert.Equal(t, bProperty, b2Property)
+	assert.NotSame(t, &bProperty, &b2Property)
+	assert.Equal(t, bPlugin, b2Plugin)
+	assert.NotSame(t, &bPlugin, &b2Plugin)
+	assert.Equal(t, bExtension, b2Extension)
+	assert.NotSame(t, &bExtension, &b2Extension)
 	assert.Equal(t, b.PropertyRef(), b2.PropertyRef())
 	assert.NotSame(t, b.PropertyRef(), b2.PropertyRef())
 

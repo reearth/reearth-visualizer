@@ -31,8 +31,8 @@ func TestMockAuth(t *testing.T) {
 		JSON()
 
 	response.Object().ContainsKey("id")
-	response.Object().ValueEqual("email", "mock@example.com")
-	response.Object().ValueEqual("name", "Mock User")
+	response.Object().HasValue("email", "mock@example.com")
+	response.Object().HasValue("name", "Mock User")
 	userId := response.Object().Value("id").String().Raw()
 
 	// checkj query GetMe
@@ -52,6 +52,6 @@ func TestMockAuth(t *testing.T) {
 		Object()
 
 	response2.Value("data").Object().Value("me").Object().ContainsKey("id")
-	response2.Value("data").Object().Value("me").Object().Value("name").String().Equal("Mock User")
-	response2.Value("data").Object().Value("me").Object().Value("email").String().Equal("mock@example.com")
+	response2.Value("data").Object().Value("me").Object().Value("name").String().IsEqual("Mock User")
+	response2.Value("data").Object().Value("me").Object().Value("email").String().IsEqual("mock@example.com")
 }

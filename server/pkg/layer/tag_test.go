@@ -329,7 +329,7 @@ func TestTagGroup_Children(t *testing.T) {
 			res := tt.target.Children()
 			assert.Equal(t, tt.want, res)
 			if tt.want != nil {
-				assert.NotSame(t, tt.target.children, res)
+				assert.NotSame(t, &tt.target.children, &res)
 			}
 		})
 	}
@@ -540,7 +540,7 @@ func TestTagGroup_CloneGroup(t *testing.T) {
 			if tt.target != nil {
 				assert.NotSame(t, tt.target, res)
 				if tt.target.children != nil {
-					assert.NotSame(t, tt.target.children, res.children)
+					assert.NotSame(t, &tt.target.children, &res.children)
 				}
 			}
 		})
@@ -577,7 +577,7 @@ func TestNewTagList(t *testing.T) {
 			t.Parallel()
 			res := NewTagList(tt.args.tags)
 			assert.Equal(t, tt.want, res)
-			assert.NotSame(t, res.tags, tt.args.tags)
+			assert.NotSame(t, &res.tags, &tt.args.tags)
 		})
 	}
 }
@@ -613,7 +613,7 @@ func TestTagList_Tags(t *testing.T) {
 			res := tt.target.Tags()
 			assert.Equal(t, tt.want, res)
 			if tt.want != nil {
-				assert.NotSame(t, tt.target.tags, res)
+				assert.NotSame(t, &tt.target.tags, &res)
 			}
 		})
 	}

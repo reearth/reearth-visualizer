@@ -39,8 +39,8 @@ func TestCallExportProject(t *testing.T) {
 
 	blocks := res.Object().Value("data").Object().
 		Value("node").Object().
-		Value("stories").Array().First().Object().
-		Value("pages").Array().First().Object().
+		Value("stories").Array().Value(0).Object().
+		Value("pages").Array().Value(0).Object().
 		Value("blocks").Array().Iter()
 
 	propID1 := blocks[0].Object().Value("propertyId").Raw().(string)
@@ -48,13 +48,13 @@ func TestCallExportProject(t *testing.T) {
 	propID3 := blocks[2].Object().Value("propertyId").Raw().(string)
 
 	_, res = updatePropertyValue(e, propID1, "default", "", "src", "http://localhost:8080/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png", "URL")
-	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("http://localhost:8080/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("http://localhost:8080/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png")
 
 	_, res = updatePropertyValue(e, propID2, "default", wID.String(), "src", "https://test.com/project.jpg", "URL")
-	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("https://test.com/project.jpg")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("https://test.com/project.jpg")
 
 	_, res = updatePropertyValue(e, propID3, "default", wID.String(), "src", "https://api.visualizer.test.reearth.dev/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png", "URL")
-	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("https://api.visualizer.test.reearth.dev/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("https://api.visualizer.test.reearth.dev/assets/01jbbhhtq2jq7mx39dhyq1cfr2.png")
 
 	fileName := exporProject(t, e, pID)
 

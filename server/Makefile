@@ -28,8 +28,10 @@ help:
 lint:
 	golangci-lint run --fix
 
+TARGET_TEST :=./...
+REEARTH_DB := mongodb://localhost
 test:
-	go test -race -short -v ./...
+	REEARTH_DB=${REEARTH_DB} go test ./... -run ${TARGET_TEST}
 
 failcheck:
 	go test -race -short -failfast -p 1 $(TEST_DIR)

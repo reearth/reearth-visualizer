@@ -237,7 +237,7 @@ func TestPropertySchemaID_Clone(t *testing.T) {
 	c := p.Clone()
 
 	assert.Equal(t, p, c)
-	assert.NotSame(t, p, c)
+	assert.NotSame(t, &p, &c)
 }
 
 func TestPropertySchemaID_WithPlugin(t *testing.T) {

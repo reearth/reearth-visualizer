@@ -182,11 +182,11 @@ type AddNLSLayerSimplePayload struct {
 }
 
 type AddPropertyItemInput struct {
-	PropertyID     ID          `json:"propertyId"`
-	SchemaGroupID  ID          `json:"schemaGroupId"`
-	Index          *int        `json:"index,omitempty"`
-	NameFieldValue interface{} `json:"nameFieldValue,omitempty"`
-	NameFieldType  *ValueType  `json:"nameFieldType,omitempty"`
+	PropertyID     ID         `json:"propertyId"`
+	SchemaGroupID  ID         `json:"schemaGroupId"`
+	Index          *int       `json:"index,omitempty"`
+	NameFieldValue any        `json:"nameFieldValue,omitempty"`
+	NameFieldType  *ValueType `json:"nameFieldType,omitempty"`
 }
 
 type AddStyleInput struct {
@@ -421,7 +421,7 @@ type DatasetField struct {
 	SchemaID ID                  `json:"schemaId"`
 	Source   string              `json:"source"`
 	Type     ValueType           `json:"type"`
-	Value    interface{}         `json:"value,omitempty"`
+	Value    any                 `json:"value,omitempty"`
 	Schema   *DatasetSchema      `json:"schema,omitempty"`
 	Field    *DatasetSchemaField `json:"field,omitempty"`
 	ValueRef *Dataset            `json:"valueRef,omitempty"`
@@ -885,13 +885,13 @@ type MergedProperty struct {
 type MergedPropertyField struct {
 	SchemaID    ID                   `json:"schemaId"`
 	FieldID     ID                   `json:"fieldId"`
-	Value       interface{}          `json:"value,omitempty"`
+	Value       any                  `json:"value,omitempty"`
 	Type        ValueType            `json:"type"`
 	Links       []*PropertyFieldLink `json:"links,omitempty"`
 	Overridden  bool                 `json:"overridden"`
 	Schema      *PropertySchema      `json:"schema,omitempty"`
 	Field       *PropertySchemaField `json:"field,omitempty"`
-	ActualValue interface{}          `json:"actualValue,omitempty"`
+	ActualValue any                  `json:"actualValue,omitempty"`
 }
 
 type MergedPropertyGroup struct {
@@ -1229,9 +1229,9 @@ func (Property) IsNode()        {}
 func (this Property) GetID() ID { return this.ID }
 
 type PropertyCondition struct {
-	FieldID ID          `json:"fieldId"`
-	Type    ValueType   `json:"type"`
-	Value   interface{} `json:"value,omitempty"`
+	FieldID ID        `json:"fieldId"`
+	Type    ValueType `json:"type"`
+	Value   any       `json:"value,omitempty"`
 }
 
 type PropertyField struct {
@@ -1241,11 +1241,11 @@ type PropertyField struct {
 	FieldID     ID                   `json:"fieldId"`
 	Links       []*PropertyFieldLink `json:"links,omitempty"`
 	Type        ValueType            `json:"type"`
-	Value       interface{}          `json:"value,omitempty"`
+	Value       any                  `json:"value,omitempty"`
 	Parent      *Property            `json:"parent,omitempty"`
 	Schema      *PropertySchema      `json:"schema,omitempty"`
 	Field       *PropertySchemaField `json:"field,omitempty"`
-	ActualValue interface{}          `json:"actualValue,omitempty"`
+	ActualValue any                  `json:"actualValue,omitempty"`
 }
 
 type PropertyFieldLink struct {
@@ -1312,7 +1312,7 @@ type PropertySchemaField struct {
 	Description              string                       `json:"description"`
 	Prefix                   *string                      `json:"prefix,omitempty"`
 	Suffix                   *string                      `json:"suffix,omitempty"`
-	DefaultValue             interface{}                  `json:"defaultValue,omitempty"`
+	DefaultValue             any                          `json:"defaultValue,omitempty"`
 	UI                       *PropertySchemaFieldUI       `json:"ui,omitempty"`
 	Min                      *float64                     `json:"min,omitempty"`
 	Max                      *float64                     `json:"max,omitempty"`
@@ -1911,17 +1911,17 @@ type UpdatePropertyItemOperationInput struct {
 	Operation      ListOperation `json:"operation"`
 	ItemID         *ID           `json:"itemId,omitempty"`
 	Index          *int          `json:"index,omitempty"`
-	NameFieldValue interface{}   `json:"nameFieldValue,omitempty"`
+	NameFieldValue any           `json:"nameFieldValue,omitempty"`
 	NameFieldType  *ValueType    `json:"nameFieldType,omitempty"`
 }
 
 type UpdatePropertyValueInput struct {
-	PropertyID    ID          `json:"propertyId"`
-	SchemaGroupID *ID         `json:"schemaGroupId,omitempty"`
-	ItemID        *ID         `json:"itemId,omitempty"`
-	FieldID       ID          `json:"fieldId"`
-	Value         interface{} `json:"value,omitempty"`
-	Type          ValueType   `json:"type"`
+	PropertyID    ID        `json:"propertyId"`
+	SchemaGroupID *ID       `json:"schemaGroupId,omitempty"`
+	ItemID        *ID       `json:"itemId,omitempty"`
+	FieldID       ID        `json:"fieldId"`
+	Value         any       `json:"value,omitempty"`
+	Type          ValueType `json:"type"`
 }
 
 type UpdateStoryInput struct {
@@ -2141,7 +2141,7 @@ func (e AssetSortField) String() string {
 	return string(e)
 }
 
-func (e *AssetSortField) UnmarshalGQL(v interface{}) error {
+func (e *AssetSortField) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2188,7 +2188,7 @@ func (e LayerEncodingFormat) String() string {
 	return string(e)
 }
 
-func (e *LayerEncodingFormat) UnmarshalGQL(v interface{}) error {
+func (e *LayerEncodingFormat) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2231,7 +2231,7 @@ func (e ListOperation) String() string {
 	return string(e)
 }
 
-func (e *ListOperation) UnmarshalGQL(v interface{}) error {
+func (e *ListOperation) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2292,7 +2292,7 @@ func (e NodeType) String() string {
 	return string(e)
 }
 
-func (e *NodeType) UnmarshalGQL(v interface{}) error {
+func (e *NodeType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2349,7 +2349,7 @@ func (e PluginExtensionType) String() string {
 	return string(e)
 }
 
-func (e *PluginExtensionType) UnmarshalGQL(v interface{}) error {
+func (e *PluginExtensionType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2390,7 +2390,7 @@ func (e Position) String() string {
 	return string(e)
 }
 
-func (e *Position) UnmarshalGQL(v interface{}) error {
+func (e *Position) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2433,7 +2433,7 @@ func (e ProjectSortField) String() string {
 	return string(e)
 }
 
-func (e *ProjectSortField) UnmarshalGQL(v interface{}) error {
+func (e *ProjectSortField) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2496,7 +2496,7 @@ func (e PropertySchemaFieldUI) String() string {
 	return string(e)
 }
 
-func (e *PropertySchemaFieldUI) UnmarshalGQL(v interface{}) error {
+func (e *PropertySchemaFieldUI) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2539,7 +2539,7 @@ func (e PublishmentStatus) String() string {
 	return string(e)
 }
 
-func (e *PublishmentStatus) UnmarshalGQL(v interface{}) error {
+func (e *PublishmentStatus) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2584,7 +2584,7 @@ func (e Role) String() string {
 	return string(e)
 }
 
-func (e *Role) UnmarshalGQL(v interface{}) error {
+func (e *Role) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2625,7 +2625,7 @@ func (e SortDirection) String() string {
 	return string(e)
 }
 
-func (e *SortDirection) UnmarshalGQL(v interface{}) error {
+func (e *SortDirection) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2672,7 +2672,7 @@ func (e TextAlign) String() string {
 	return string(e)
 }
 
-func (e *TextAlign) UnmarshalGQL(v interface{}) error {
+func (e *TextAlign) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2715,7 +2715,7 @@ func (e Theme) String() string {
 	return string(e)
 }
 
-func (e *Theme) UnmarshalGQL(v interface{}) error {
+func (e *Theme) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2782,7 +2782,7 @@ func (e ValueType) String() string {
 	return string(e)
 }
 
-func (e *ValueType) UnmarshalGQL(v interface{}) error {
+func (e *ValueType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2821,7 +2821,7 @@ func (e Visualizer) String() string {
 	return string(e)
 }
 
-func (e *Visualizer) UnmarshalGQL(v interface{}) error {
+func (e *Visualizer) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2864,7 +2864,7 @@ func (e WidgetAreaAlign) String() string {
 	return string(e)
 }
 
-func (e *WidgetAreaAlign) UnmarshalGQL(v interface{}) error {
+func (e *WidgetAreaAlign) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2907,7 +2907,7 @@ func (e WidgetAreaType) String() string {
 	return string(e)
 }
 
-func (e *WidgetAreaType) UnmarshalGQL(v interface{}) error {
+func (e *WidgetAreaType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2950,7 +2950,7 @@ func (e WidgetSectionType) String() string {
 	return string(e)
 }
 
-func (e *WidgetSectionType) UnmarshalGQL(v interface{}) error {
+func (e *WidgetSectionType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -2991,7 +2991,7 @@ func (e WidgetZoneType) String() string {
 	return string(e)
 }
 
-func (e *WidgetZoneType) UnmarshalGQL(v interface{}) error {
+func (e *WidgetZoneType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
