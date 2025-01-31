@@ -19,7 +19,9 @@ extensions:
 const widgetFile: FileType = {
   id: "layer-style-3d-model",
   title: "layer-style-3d-model.js",
-  sourceCode: `// Define 3D model data
+  sourceCode: `// This example shows how to style 3D model（gltf) //
+
+// Define 3D model data
 const model3D01 = {
   type: "simple",
   data: {
@@ -36,8 +38,8 @@ const model3D01 = {
     show: true,
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/gltf/animatedFox.gltf",
     heightReference: "clamp",
-    minimumPixelSize: 50, // Sets the minimum visible size of the model
-    maximumPixelSize: 10000, // Sets the maximum visible size of the model
+    minimumPixelSize: 100, // Sets the minimum visible size of the model
+    maximumPixelSize: 10, // Sets the maximum visible size of the model
     animation: true, // Enables animation of the 3D model if timeline is played
     shadows: "enabled", // There are four options: "disabled", "enabled", "cast_only", "receive_only"
     color: "#fffafa", // Defines a color for the model
@@ -61,8 +63,8 @@ const model3D02 = {
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/gltf/animatedFox.gltf",
     heightReference: "clamp", // Options: "none" | "clamp" | "relative"
     // scale: 10000, // Sets a fixed size. Zooming doesn't affect the model's size if used.
-    minimumPixelSize: 50, // Sets the minimum visible size of the model
-    maximumPixelSize: 10000, // Sets the maximum visible size of the model
+    minimumPixelSize: 100, // Sets the minimum visible size of the model
+    maximumPixelSize: 10, // Sets the maximum visible size of the model
     shadows: "enabled", // There are four options: "disabled", "enabled", "cast_only", "receive_only"
     pbr: false, // Enables or disables Physically Based Rendering
   },
@@ -72,6 +74,7 @@ const model3D02 = {
 reearth.layers.add(model3D01);
 reearth.layers.add(model3D02);
 
+// In this example, the time width is set to set the time for the shadow to appear
 // Set the time range on the timeline
 reearth.timeline.setTime({
   // Start time
