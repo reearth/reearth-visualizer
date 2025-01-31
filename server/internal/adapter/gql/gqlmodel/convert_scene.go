@@ -31,14 +31,6 @@ func ToScenePlugin(sp *scene.Plugin) *ScenePlugin {
 	}
 }
 
-func ToCluster(c *scene.Cluster) *Cluster {
-	return &Cluster{
-		ID:         IDFrom(c.ID()),
-		Name:       c.Name(),
-		PropertyID: IDFrom(c.Property()),
-	}
-}
-
 func ToScene(scene *scene.Scene) *Scene {
 	if scene == nil {
 		return nil
@@ -53,7 +45,6 @@ func ToScene(scene *scene.Scene) *Scene {
 		CreatedAt:         scene.CreatedAt(),
 		UpdatedAt:         scene.UpdatedAt(),
 		Plugins:           util.Map(scene.Plugins().Plugins(), ToScenePlugin),
-		Clusters:          util.Map(scene.Clusters().Clusters(), ToCluster),
 		Widgets:           util.Map(scene.Widgets().Widgets(), ToSceneWidget),
 		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
 	}

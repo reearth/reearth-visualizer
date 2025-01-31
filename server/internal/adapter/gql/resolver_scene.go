@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Scene() SceneResolver {
@@ -18,10 +17,6 @@ func (r *Resolver) ScenePlugin() ScenePluginResolver {
 
 func (r *Resolver) SceneWidget() SceneWidgetResolver {
 	return &sceneWidgetResolver{r}
-}
-
-func (r *Resolver) Cluster() ClusterResolver {
-	return &clusterResolver{r}
 }
 
 type sceneResolver struct{ *Resolver }
@@ -65,28 +60,6 @@ func (r *sceneResolver) NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]g
 	}
 
 	res := gqlmodel.ToNLSLayers(nlslayer, nil)
-	return res, nil
-}
-
-func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
-}
-
-func (r *sceneResolver) Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.Tag, error) {
-	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	tags, err := usecases(ctx).Tag.FetchByScene(ctx, sid, getOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	res := make([]gqlmodel.Tag, 0, len(tags))
-	for _, t := range tags {
-		res = append(res, gqlmodel.ToTag(*t))
-	}
 	return res, nil
 }
 
@@ -152,11 +125,5 @@ func (r *sceneWidgetResolver) Extension(ctx context.Context, obj *gqlmodel.Scene
 }
 
 func (r *sceneWidgetResolver) Property(ctx context.Context, obj *gqlmodel.SceneWidget) (*gqlmodel.Property, error) {
-	return dataloaders(ctx).Property.Load(obj.PropertyID)
-}
-
-type clusterResolver struct{ *Resolver }
-
-func (r *clusterResolver) Property(ctx context.Context, obj *gqlmodel.Cluster) (*gqlmodel.Property, error) {
 	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }

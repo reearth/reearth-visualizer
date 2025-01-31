@@ -16,10 +16,6 @@ type Scene implements Node {
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
-  datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
-  tagIds: [ID!]!
-  tags: [Tag!]!
-  clusters: [Cluster!]!
 }
 
 type SceneWidget {
@@ -53,7 +49,7 @@ type CreateScenePayload {
   scene: Scene!
 }
 
-extend type Query{
+extend type Query {
   scene(projectId: ID!): Scene
 }
 

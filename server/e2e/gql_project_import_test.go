@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"net/http"
 	"os"
 	"testing"
 
@@ -84,16 +83,8 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 			"lang":    l,
 		},
 	}
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
+
+	r := Request(e, uID.String(), requestBody).Object()
 	v := r.Value("data").Object().Value("node")
 	v.NotNull()
 	return v.Object()
@@ -110,30 +101,6 @@ query GetScene($sceneId: ID!, $lang: Lang) {
       property {
         id
         ...PropertyFragment
-        __typename
-      }
-      clusters {
-        id
-        name
-        propertyId
-        property {
-          id
-          ...PropertyFragment
-          __typename
-        }
-        __typename
-      }
-      tags {
-        id
-        label
-        ... on TagGroup {
-          tags {
-            id
-            label
-            __typename
-          }
-          __typename
-        }
         __typename
       }
       plugins {
