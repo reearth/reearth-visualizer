@@ -45,6 +45,10 @@ func (f *Feature) Geometry() Geometry {
 }
 
 func (f *Feature) Properties() *map[string]any {
+	if f.properties == nil {
+		emptyMap := make(map[string]any)
+		return &emptyMap
+	}
 	return f.properties
 }
 

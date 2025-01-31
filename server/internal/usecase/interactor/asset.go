@@ -159,6 +159,7 @@ func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.F
 		Name(path.Base(name)).
 		Size(size).
 		URL(url.String()).
+		CoreSupport(true).
 		Build()
 	if err != nil {
 		return nil, 0, err
