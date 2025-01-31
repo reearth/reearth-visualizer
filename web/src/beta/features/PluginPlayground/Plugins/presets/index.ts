@@ -14,6 +14,7 @@ import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { layerStyle3dTiles } from "./manageLayerStyle/change3dTilesStyle.ts";
 import { layerStyle3dModel } from "./manageLayerStyle/change3dModelStyle.ts";
+import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -59,7 +60,8 @@ export const presetPlugins: PresetPlugins = [
       addOsm3dTiles,
       addWms,
       addGooglePhotorealistic3dTiles,
-      hideFlyToDeleteLayer
+      hideFlyToDeleteLayer,
+      showFeaturesInfo
     ]
   },
   {
