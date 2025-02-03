@@ -22,15 +22,31 @@ const widgetFile: FileType = {
   title: "override-style.js",
   sourceCode: `// This example demonstrates how to override feature style
 
-// Define Plug-in UI //
+// Click the buttons to switch between different 3D Tiles color gradients
+
+// Define the plug-in UI //
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    .scaleBtn {
+    .coolBtn {
       padding: 8px;
       border-radius: 4px;
       border: none;
-      background: #fffafa;
+      background: #f0ffff;
+      color: #000000;
+      cursor: pointer;
+      width: 200px;
+      height: 40px;
+      font-size: 16px 
+    }
+    .scaleBtn:active {
+      background: #dcdcdc;
+    }
+    .warmBtn {
+      padding: 8px;
+      border-radius: 4px;
+      border: none;
+      background:#ffe4e1;
       color: #000000;
       cursor: pointer;
       width: 200px;
@@ -55,8 +71,8 @@ ${PRESET_PLUGIN_COMMON_STYLE}
     <h2>Color by Height</h2>
     <p>Choose your preferred color scheme<p>
     <div class="button-container">
-      <button class = "scaleBtn"id="cool">Cool Style</button>
-      <button class = "scaleBtn" id="warm">Warm Style</button>
+      <button class = "coolBtn" id="cool">Cool Style</button>
+      <button class = "warmBtn" id="warm">Warm Style</button>
     </div>
   </div>
   
@@ -64,7 +80,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   const coolStyle = document.getElementById("cool");
   const warmStyle  = document.getElementById("warm");
 
-  
+  // Click a button to send a postMessage to Re:Earth(Web Assembly) side.
   coolStyle.addEventListener("click",() =>{
     parent.postMessage({
       action: "updateStylyCool",
@@ -78,6 +94,8 @@ ${PRESET_PLUGIN_COMMON_STYLE}
     })
   </script>
   \`);
+
+// Define Re:Earth(Web Assembly) side //
 
 // Define a 3D Tiles layer
 const sample3dTiles = {
@@ -124,6 +142,7 @@ reearth.camera.flyTo(
   }
 );
 
+// Listen for messages from the UI and override the style for "Cool Style"
 reearth.extension.on("message", (msg) => {
   if (msg.action === "updateStylyCool") {
     reearth.layers.override(layerId, {
@@ -147,6 +166,7 @@ reearth.extension.on("message", (msg) => {
   }
 });
 
+// Listen for messages from the UI and override the style for "Warm Style"
 reearth.extension.on("message", (msg) => {
   if (msg.action === "updateStylyWarm") {
     reearth.layers.override(layerId, {
@@ -169,11 +189,18 @@ reearth.extension.on("message", (msg) => {
     });
   }
 });
+
+// Set the timeline to a morning hour so that building colors are easy to see
+reearth.timeline.setTime({
+    start: new Date("2023-01-01T09:00:00Z"),
+    stop: new Date("22023-01-01T09:00:00Z"),
+    current: new Date("22023-01-01T012:00:00Z"),
+  })
 `
 };
 
 export const overrideStyle: PluginType = {
   id: "override-style",
-  title: "Override Style",
+  title: "Override Feature Style",
   files: [widgetFile, yamlFile]
 };
