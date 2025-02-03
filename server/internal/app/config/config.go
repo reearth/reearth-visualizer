@@ -72,6 +72,12 @@ type Config struct {
 	Ext_Plugin []string `pp:",omitempty"`
 
 	MockAuth bool `pp:",omitempty"`
+
+	// redis
+	RedisURL string `envconfig:"REDIS_URL" default:"redis://:@localhost:6379/0"`
+
+	// uptrace
+	UptraceDSN string `envconfig:"UPTRACE_DSN" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {

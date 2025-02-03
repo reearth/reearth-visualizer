@@ -13,11 +13,13 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
+	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
@@ -88,12 +90,33 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 		t.Fatalf("server failed to listen: %v", err)
 	}
 
+	var redisAdapter *infraRedis.RedisAdapter
+	if cfg.RedisURL != "" {
+		opt, err := redis.ParseURL(cfg.RedisURL)
+		if err != nil {
+			t.Fatalf("Failed to parse Redis URL: %+v\n", err)
+		}
+
+		redisClient := redis.NewClient(opt)
+		_, err = redisClient.Ping(ctx).Result()
+		if err != nil {
+			t.Fatalf("Failed to connect to Redis: %+v\n", err)
+		}
+		redisAdapter = infraRedis.NewRedisAdapter(redisClient)
+		t.Cleanup(func() {
+			if err := redisClient.Close(); err != nil {
+				t.Errorf("Failed to close Redis client: %v", err)
+			}
+		})
+	}
+
 	srv := app.NewServer(ctx, &app.ServerConfig{
 		Config:       cfg,
 		Repos:        repos,
 		Gateways:     gateways,
 		Debug:        true,
 		AccountRepos: repos.AccountRepos(),
+		RedisAdapter: redisAdapter,
 	})
 
 	ch := make(chan error)

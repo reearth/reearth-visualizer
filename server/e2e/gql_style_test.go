@@ -1,9 +1,11 @@
 package e2e
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
+	"github.com/alicebob/miniredis/v2"
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
 )
@@ -174,12 +176,23 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 	return fetchSceneRequestBody, res
 }
 
-func TestStyleCRUD(t *testing.T) {
+func styleCRUD(t *testing.T, isUseRedis bool) {
+	redisURL := ""
+	if isUseRedis {
+		mr, err := miniredis.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer mr.Close()
+		redisURL = fmt.Sprintf("redis://:@%s/0", mr.Addr())
+	}
+
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
+		RedisURL: redisURL,
 	}, true, baseSeeder)
 
 	pId := createProject(e, "test")
@@ -248,4 +261,12 @@ func TestStyleCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("styles").Array().
 		Length().Equal(0)
+}
+
+func TestStyleCRUD(t *testing.T) {
+	styleCRUD(t, false)
+}
+
+func TestStyleCRUDWithRedis(t *testing.T) {
+	styleCRUD(t, true)
 }
