@@ -115,7 +115,7 @@ reearth.camera.flyTo(
   {
     lng: -95.0,
     lat: 34.0,
-    height: 3000000,
+    height: 5500000,
     heading: 5.949278757227463,
     pitch: -1.45,
     roll: 0,
