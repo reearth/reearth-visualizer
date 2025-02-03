@@ -19,106 +19,70 @@ extensions:
 const widgetFile: FileType = {
   id: "style-with-condition",
   title: "style-with-condition.js",
-  sourceCode: `// This example shows how to style 3D model（gltf) //
+  sourceCode: `// This example demonstrates how to apply conditional styling.
+// The color is determined based on building height.
 
-// Define 3D model data
-const model3D01 = {
-  type: "simple",
+// Define a 3D Tiles layer
+const sample3dTiles = {
+  type: "simple", // Required
   data: {
-    type: "geojson",
-    value: {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-85.38657958835984, 33.696966258616634],
+    type: "3dtiles", // Data type
+    url: "https://assets.cms.plateau.reearth.io/assets/4a/c9fb39-9c97-4da6-af8f-e08751a2f269/14100_yokohama-shi_city_2023_citygml_1_op_bldg_3dtiles_14103_nishi-ku_lod2_no_texture/tileset.json", // URL of the 3D Tiles
+  },
+  "3dtiles": {
+    // Styling settings for the 3D Tiles
+    color: {
+      expression: {
+        // Define conditions for coloring
+        conditions: [
+          ["\${_zmax} > 200", "color('#1d558d')"],
+          ["\${_zmax} > 150", "color('#236ab1')"],
+          ["\${_zmax} > 100", "color('#4e95dc')"],
+          ["\${_zmax} > 50", "color('#95bfea')"],
+          ["\${_zmax} > 0", "color('#edf4fc')"],
+          ["true", "color('#0e2b47')"],
+
+          // You can also use comparison operators, for example:
+          // ["(\${_zmax} >= 50) && (\${feature['bldg:usage']} === '共同住宅')", "color('#923b2d')"]
+        ],
       },
     },
-  },
-  model: {
-    show: true,
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/gltf/animatedFox.gltf",
-    heightReference: "clamp",
-    minimumPixelSize: 100, // Sets the minimum visible size of the model
-    maximumPixelSize: 1000, // Sets the maximum visible size of the model
-    animation: true, // Enables animation of the 3D model if timeline is played
-    shadows: "enabled", // There are four options: "disabled", "enabled", "cast_only", "receive_only"
-    color: "#fffafa", // Defines a color for the model
+
+    pbr: false, // Enable or disable Physically Based Rendering
+    selectedFeatureColor: "red", // Color of selected features
   },
 };
 
-const model3D02 = {
-  type: "simple",
-  data: {
-    type: "geojson",
-    value: {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-85.38657958835984, 33.696266258616634],
-      },
-    },
-  },
-  model: {
-    show: true, // Determines whether the 3D model is visible (default: true)
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/gltf/animatedFox.gltf",
-    heightReference: "clamp", // Options: "none" | "clamp" | "relative"
-    // scale: 10000, // Sets a fixed size. Zooming doesn't affect the model's size if used.
-    minimumPixelSize: 100, // Sets the minimum visible size of the model
-    maximumPixelSize: 1000, // Sets the maximum visible size of the model
-    shadows: "enabled", // There are four options: "disabled", "enabled", "cast_only", "receive_only"
-    pbr: false, // Enables or disables Physically Based Rendering
-  },
-};
+// Add the 3D Tiles layer to Re:Earth
+reearth.layers.add(sample3dTiles);
 
-// Add 3D models to the layer
-reearth.layers.add(model3D01);
-reearth.layers.add(model3D02);
-
-// In this example, the time width is set to set the time for the shadow to appear
-// Set the time range on the timeline
-reearth.timeline.setTime({
-  // Start time
-  start: new Date("2023-12-01T09:00:00-06:00"),
-  // End time
-  stop: new Date("2023-12-01T15:00:00-06:00"),
-  // Time to be set as the current timeline position
-  current: new Date("2023-12-01T10:00:00-06:00"),
-});
-
-// To animate the 3D model, you need to play the timeline
-reearth.timeline.play();
-
-// Set the playback speed of the timeline (1 = normal speed)
-reearth.timeline.setSpeed(1);
-
-// Enable shadow settings in the Re:Earth viewer
 reearth.viewer.overrideProperty({
-  scene: {
-    shadow: {
-      enabled: true,
-    },
+  // Enable Cesium World Terrain
+  terrain: {
+    enabled: true,
+  },
+  // Prevent buildings from floating above the terrain
+  globe: {
+    depthTestAgainstTerrain: true,
   },
 });
 
-// Move the camera to a specified position
+// Move the camera to the specified position
 reearth.camera.flyTo(
   {
-    // Defines the target camera position
-    heading: 5.358457498291187,
-    height: 274.0013699012735,
-    lat: 33.69505063085045,
-    lng: -85.38408270921741,
-    pitch: -0.7236883292676297,
-    roll: 0.00000479625186056154,
+    // Define the camera's target position
+    heading: 0.10193671933979864,
+    height: 563.1469223768704,
+    lat: 35.44726736967154,
+    lng: 139.62880155152584,
+    pitch: -0.4516366842962034,
+    roll: 0.0000432060048165539,
   },
   {
-    // Duration of the camera movement in seconds
+    // Define the duration of the camera movement (in seconds)
     duration: 2.0,
   }
-);
-
-// 3D Model Data: @AsoboStudio and @scurest (Licensed under CC BY 4.0)
-`
+);`
 };
 
 export const styleWithCondition: PluginType = {
