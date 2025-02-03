@@ -13,6 +13,8 @@ import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealist
 import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
+import { overrideStyle } from "./manageLayerStyle/overrideStyle";
+import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -65,7 +67,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: []
+    plugins: [overrideStyle,styleWithCondition]
   },
 
   {
