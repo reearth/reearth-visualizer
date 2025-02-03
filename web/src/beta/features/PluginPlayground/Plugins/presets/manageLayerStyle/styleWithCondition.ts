@@ -87,8 +87,8 @@ reearth.camera.flyTo(
 // Set the timeline to a morning hour so that building colors are easy to see
 reearth.timeline.setTime({
     start: new Date("2023-01-01T09:00:00Z"),
-    stop: new Date("22023-01-01T09:00:00Z"),
-    current: new Date("22023-01-01T012:00:00Z"),
+    stop: new Date("2023-01-01T09:00:00Z"),
+    current: new Date("2023-01-01T012:00:00Z"),
   })
 `
 };
