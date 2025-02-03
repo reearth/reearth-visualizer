@@ -15,6 +15,7 @@ import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { csvStyling } from "./layerStyles/csvStyling";
 import { czmlStyling } from "./layerStyles/czmlStyling";
 import { geojsonStyling } from "./layerStyles/geojsonStyling";
+import { kmlStyling } from "./layerStyles/kmlStyling";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -66,7 +67,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: [geojsonStyling, csvStyling, czmlStyling]
+    plugins: [geojsonStyling, csvStyling, czmlStyling, kmlStyling]
   },
 
   {
