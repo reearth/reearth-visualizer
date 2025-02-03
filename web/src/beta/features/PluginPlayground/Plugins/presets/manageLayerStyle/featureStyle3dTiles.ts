@@ -1,24 +1,24 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layer-style-3d-tiles-reearth-yml",
+  id: "feature-style-3d-tiles-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layer-style-3d-tiles-plugin
-name: Change 3D Tiles Style
+  sourceCode: `id: feature-style-3d-tiles-plugin
+name: Feature Style 3D Tiles
 version: 1.0.0
 extensions:
-  - id: layer-style-3d-tiles
+  - id: feature-style-3d-tiles
     type: widget
-    name: Change 3D Tiles Style
-    description: Change 3D Tiles Style
+    name: Feature Style 3D Tiles
+    description: Feature Style 3D Tiles
   `,
   disableEdit: true,
   disableDelete: true
 };
 
 const widgetFile: FileType = {
-  id: "layer-style-3d-tiles",
-  title: "layer-style-3d-tiles.js",
+  id: "feature-style-3d-tiles",
+  title: "feature-style-3d-tiles.js",
   sourceCode: `// This example shows how to style 3D Tiles //
 
 // Define a 3D Tiles layer
@@ -89,8 +89,8 @@ reearth.camera.flyTo(
 );`
 };
 
-export const layerStyle3dTiles: PluginType = {
-  id: "layer-style-3d-tiles",
-  title: "Change 3D Tiles Style",
+export const featureStyle3dTiles: PluginType = {
+  id: "feature-style-3d-tiles",
+  title: "Feature Style 3D Tiles",
   files: [widgetFile, yamlFile]
 };

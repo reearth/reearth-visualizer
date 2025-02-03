@@ -1,24 +1,24 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layer-style-3d-model-reearth-yml",
+  id: "feature-style-3d-model-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layer-style-3d-model-plugin
-name: Change 3D Model Style
+  sourceCode: `id: feature-style-3d-model-plugin
+name: Feature Style 3D Model
 version: 1.0.0
 extensions:
-  - id: layer-style-3d-model
+  - id: feature-style-3d-model
     type: widget
-    name: Change 3D Model Style
-    description: Change 3D Model Style
+    name: Feature Style 3D Model
+    description: Feature Style 3D Model
   `,
   disableEdit: true,
   disableDelete: true
 };
 
 const widgetFile: FileType = {
-  id: "layer-style-3d-model",
-  title: "layer-style-3d-model.js",
+  id: "feature-style-3d-model",
+  title: "feature-style-3d-model.js",
   sourceCode: `// This example shows how to style 3D model（gltf) //
 
 // Define 3D model data
@@ -121,8 +121,8 @@ reearth.camera.flyTo(
 `
 };
 
-export const layerStyle3dModel: PluginType = {
-  id: "layer-style-3d-model",
-  title: "Change 3D Model Style",
+export const featureStyle3dModel: PluginType = {
+  id: "feature-style-3d-model",
+  title: "Feature style 3D Model",
   files: [widgetFile, yamlFile]
 };
