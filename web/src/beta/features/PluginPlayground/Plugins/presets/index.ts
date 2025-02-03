@@ -12,6 +12,8 @@ import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
+import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
+import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { overrideStyle } from "./manageLayerStyle/overrideStyle";
 import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
@@ -67,7 +69,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: [overrideStyle,styleWithCondition]
+    plugins: [featureStyle3dTiles, featureStyle3dModel,overrideStyle,styleWithCondition]
   },
 
   {
