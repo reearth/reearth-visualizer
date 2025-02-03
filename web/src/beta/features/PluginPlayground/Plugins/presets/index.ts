@@ -16,6 +16,7 @@ import { csvStyling } from "./layerStyles/csvStyling";
 import { czmlStyling } from "./layerStyles/czmlStyling";
 import { geojsonStyling } from "./layerStyles/geojsonStyling";
 import { kmlStyling } from "./layerStyles/kmlStyling";
+import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -61,7 +62,8 @@ export const presetPlugins: PresetPlugins = [
       addOsm3dTiles,
       addWms,
       addGooglePhotorealistic3dTiles,
-      hideFlyToDeleteLayer
+      hideFlyToDeleteLayer,
+      showFeaturesInfo
     ]
   },
   {

@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
     steps:
-      - uses: google-github-actions/auth@v0
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Configure docker
