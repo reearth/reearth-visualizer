@@ -1,70 +1,96 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
-import { InputField, NumberField, SwitchField } from "../../../ui/fields";
+import {
+  ColorField,
+  InputField,
+  SelectField,
+  TimePointField,
+  TextareaField,
+  AssetField
+} from "../../../ui/fields";
+import { GroupField } from "../types";
 
 type Props = {
-  field: {
-    id: string;
-    type: string;
-    title: string;
-    name?: string;
-  };
+  field: GroupField;
 };
 
 const PropertyItem: FC<Props> = ({ field }) => {
-  const [value, setValue] = useState<string | number | boolean>(() => {
-    switch (field.type) {
-      case "number":
-        return 0;
-      case "bool":
-        return false;
-      default:
-        return "";
-    }
-  });
+  const [value, setValue] = useState<string | string[]>("");
 
-  const handleChange = (newValue?: string | number | boolean) => {
-    switch (typeof newValue) {
-      case "string":
-        setValue(newValue);
-        break;
-      case "number":
-        if (!isNaN(newValue)) {
-          setValue(newValue);
-        }
-        break;
-      case "boolean":
-        setValue(newValue);
-        break;
-      default:
-        console.warn(`Unsupported value type: ${typeof newValue}`);
-    }
-  };
+  const assetTypes: "image"[] | "file"[] | undefined = useMemo(
+    () =>
+      field.type === "url"
+        ? field.ui === "image"
+          ? ["image" as const]
+          : field.ui === "file"
+            ? ["file" as const]
+            : undefined
+        : undefined,
+    [field.type, field.ui]
+  );
 
   return (
     <>
-      {field.type === "number" ? (
-        <NumberField
+      {field.type === "string" ? (
+        field.ui === "datetime" ? (
+          <TimePointField
+            key={field.id}
+            title={field.name}
+            value={value as string}
+            onChange={(newValue?: string) => setValue(newValue || "")}
+          />
+        ) : field.ui === "selection" ? (
+          <SelectField
+            key={field.id}
+            title={field.name}
+            value={(value as string) ?? ""}
+            options={
+              field?.choices?.map(
+                ({ key, label }: { key: string; label: string }) => ({
+                  value: key,
+                  label: label
+                })
+              ) || []
+            }
+            onChange={(newValue?: string | string[]) =>
+              setValue(newValue || "")
+            }
+          />
+        ) : field.ui === "color" ? (
+          <ColorField
+            key={field.id}
+            title={field.name}
+            value={(value as string) ?? ""}
+            onChange={setValue}
+          />
+        ) : field.ui === "multiline" ? (
+          <TextareaField
+            key={field.id}
+            title={field.name}
+            resizable="height"
+            value={(value as string) ?? ""}
+            onChange={setValue}
+          />
+        ) : (
+          <InputField
+            key={field.id}
+            title={field.name}
+            value={value as string}
+            onChange={setValue}
+          />
+        )
+      ) : field.type === "url" ? (
+        <AssetField
           key={field.id}
           title={field.name}
-          value={value as number}
-          onChange={handleChange}
+          assetsTypes={assetTypes}
+          inputMethod={
+            field.ui === "video" || field.ui === undefined ? "URL" : "asset"
+          }
+          value={(value as string) ?? ""}
+          onChange={(newValue?: string) => setValue(newValue || "")}
         />
-      ) : field.type === "bool" ? (
-        <SwitchField
-          key={field.id}
-          title={field.name}
-          value={value as boolean}
-          onChange={handleChange}
-        />
-      ) : (
-        <InputField
-          key={field.id}
-          title={field.name}
-          value={value as string}
-          onChange={handleChange}
-        />
-      )}
+      ) : null}
     </>
   );
 };

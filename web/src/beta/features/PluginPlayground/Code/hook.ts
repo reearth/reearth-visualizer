@@ -75,6 +75,9 @@ export default ({ files, resetVisualizer }: Props) => {
                       name: cur.name,
                       extensionId: cur.id,
                       pluginId: ymlJson.id,
+                      property: {
+                        default: {}
+                      },
                       __REEARTH_SOURCECODE: file.sourceCode,
                       extended
                     }

@@ -46,13 +46,25 @@ export interface CustomField extends Field {
   defaultValue?: string | number | boolean | null;
 }
 
+export type GroupField = {
+  id: string;
+  type: string;
+  title: string;
+  name?: string;
+  choices?: { key: string; label: string }[];
+  ui:
+    | "datetime"
+    | "color"
+    | "selection"
+    | "multiline"
+    | "image"
+    | "file"
+    | "video"
+    | undefined;
+};
+
 export type Group = {
   id: string;
   title: string;
-  fields: {
-    id: string;
-    type: string;
-    title: string;
-    name?: string;
-  }[];
+  fields: GroupField[];
 }[];

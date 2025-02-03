@@ -22,18 +22,39 @@ extensions:
       - id: default
         title: Data
         fields:
-          - id: 1
+          - id: bgColor
             type: string
-            title: Text
+            title: Background Color
+            name: Background Color
+            ui: color
+          - id: title 
+            type: string
+            title: Title
             name: Title
-          - id: 2
-            type: number
-            title: Number
-            name: Number
-          - id: 3
-            type: bool
-            title: Boolean
-            name: Boolean
+          - id: datetime
+            type: string
+            title: Date and Time
+            name: Date and Time
+            ui: datetime
+          - id: selection
+            type: string
+            title: Selection
+            name: Selection
+            ui: selection
+            choices:
+              - key: value1
+                label: Value 1
+              - key: value2
+                label: Value 2
+          - id: multiline
+            type: string
+            title: Multiline
+            name: Multiline
+            ui: multiline
+          - id: asset
+            type: url
+            title: Asset
+            ui: asset
   - id: demo-infobox-block-1
     type: infoboxBlock
     name: Demo Infobox Block 1

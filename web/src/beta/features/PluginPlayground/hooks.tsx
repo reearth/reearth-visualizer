@@ -14,7 +14,6 @@ import WidgetsList from "./WidgetsList";
 
 export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
-
   const [enabledVisualizer, setEnabledVisualizer] = useState(true);
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
