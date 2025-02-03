@@ -278,7 +278,7 @@ reearth.camera.flyTo({
   heading: 0,
   pitch: -1.55,
   roll: 0
-});;`
+});`
 };
 
 export const layerStylingExamples: PluginType = {
