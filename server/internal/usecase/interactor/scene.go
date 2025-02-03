@@ -851,23 +851,6 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		widgets = append(widgets, widget)
 	}
 
-	clusters := []*scene.Cluster{}
-	for _, clusterJson := range sceneJSON.Clusters {
-		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sce.ID()).Build()
-		if err != nil {
-			return nil, err
-		}
-		// Save property
-		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, property); err != nil {
-			return nil, err
-		}
-		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
-		if err != nil {
-			return nil, err
-		}
-		clusters = append(clusters, cluster)
-	}
-	clusterList := scene.NewClusterListFrom(clusters)
 	var viz = visualizer.VisualizerCesium
 	if prj.CoreSupport() {
 		viz = visualizer.VisualizerCesiumBeta
@@ -902,7 +885,6 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		Widgets(scene.NewWidgets(widgets, alignSystem)).
 		UpdatedAt(time.Now()).
 		Property(prop.ID()).
-		Clusters(clusterList).
 		Plugins(plugins).
 		Build()
 	if err != nil {
