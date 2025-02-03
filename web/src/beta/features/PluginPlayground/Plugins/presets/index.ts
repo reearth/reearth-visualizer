@@ -16,6 +16,8 @@ import { csvStyling } from "./layerStyles/csvStyling";
 import { czmlStyling } from "./layerStyles/czmlStyling";
 import { geojsonStyling } from "./layerStyles/geojsonStyling";
 import { kmlStyling } from "./layerStyles/kmlStyling";
+import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
+import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
@@ -69,7 +71,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-    plugins: [geojsonStyling, csvStyling, czmlStyling, kmlStyling]
+    plugins: [geojsonStyling, csvStyling, czmlStyling, kmlStyling, featureStyle3dTiles, featureStyle3dModel]
   },
 
   {
