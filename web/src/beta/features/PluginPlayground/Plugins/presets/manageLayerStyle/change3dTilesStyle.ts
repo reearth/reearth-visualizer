@@ -54,14 +54,16 @@ const sample3dTiles02 = {
 reearth.layers.add(sample3dTiles01);
 reearth.layers.add(sample3dTiles02);
 
-// Enable terrain and shadows
 reearth.viewer.overrideProperty({
+  // Enable Cesium World Terrain
   terrain: {
     enabled: true,
   },
+  // Enable the function for buildings not to lift off the ground
   globe:{
     depthTestAgainstTerrain:true,
   },
+  // Enable shadows
   scene: {
     shadow: {
       enabled: true,
