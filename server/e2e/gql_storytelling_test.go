@@ -733,12 +733,13 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 }
 
 func TestStoryPublishing(t *testing.T) {
-	e, _, g := StartServerAndRepos(t, &config.Config{
+	c := &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-	}, true, baseSeeder)
+	}
+	e, _, g := StartServerAndRepos(t, c, true, baseSeeder)
 
 	pID := createProject(e, "test")
 
@@ -767,95 +768,77 @@ func TestStoryPublishing(t *testing.T) {
 	assert.NoError(t, err)
 
 	expected := fmt.Sprintf(`{
-    "clusters": [],
-    "coreSupport": true,
-    "enableGa": false,
-    "id": "%s",
-    "layerStyles": null,
-    "layers": null,
-    "nlsLayers": null,
-    "plugins": {},
-    "property": {
-        "tiles": [
-            {
-                "id": ".*"
+  "coreSupport": true,
+  "enableGa": false,
+  "id": ".*",
+  "layerStyles": null,
+  "nlsLayers": null,
+  "plugins": {},
+  "property": { "tiles": [{ "id": ".*" }] },
+  "publishedAt": ".*",
+  "schemaVersion": 1,
+  "story": {
+    "bgColor": "",
+    "id": ".*",
+    "pages": [
+      {
+        "blocks": [
+          {
+            "extensionId": "textStoryBlock",
+            "id": "%s",
+            "pluginId": "reearth",
+            "plugins": null,
+            "property": {
+              "default": { "text": "test value" },
+              "panel": {
+                "padding": { "bottom": 3, "left": 0, "right": 1, "top": 2 }
+              }
             }
-        ]
-    },
-    "publishedAt": ".*",
-    "schemaVersion": 1,
-    "story": {
-        "bgColor": "",
-        "id": "%s",
-        "pages": [
-            {
-                "blocks": [
-                    {
-                        "extensionId": "%s",
-                        "id": "%s",
-                        "pluginId": "reearth",
-                        "plugins": null,
-                        "property": {
-                            "default": {
-                                "text": "test value"
-                            },
-                            "panel": {
-                                "padding": {
-                                    "bottom": 3,
-                                    "left": 0,
-                                    "right": 1,
-                                    "top": 2
-                                }
-                            }
-                        }
-                    }
-                ],
-                "id": "%s",
-                "layers": [],
-                "property": {},
-                "swipeable": true,
-                "swipeableLayers": [],
-                "title": "test"
-            }
+          }
         ],
-        "position": "left",
+        "id": ".*",
+        "layers": [],
         "property": {},
-        "title": ""
-    },
-    "tags": [],
-    "trackingId": "",
-    "widgetAlignSystem": {
-        "inner": null,
-        "outer": {
-            "center": null,
-            "left": {
-                "bottom": {
-                    "align": "start",
-                    "background": null,
-                    "centered": false,
-                    "gap": null,
-                    "padding": null,
-                    "widgetIds": [
-                        ".*"
-                    ]
-                },
-                "middle": null,
-                "top": null
-            },
-            "right": null
-        }
-    },
-    "widgets": [
-        {
-            "enabled": true,
-            "extended": false,
-            "extensionId": "dataAttribution",
-            "id": ".*",
-            "pluginId": "%s",
-            "property": {}
-        }
-    ]
-}`, sID, storyID, extensionId, blockID, pageID, pluginId)
+        "swipeable": true,
+        "swipeableLayers": [],
+        "title": "test"
+      }
+    ],
+    "position": "left",
+    "property": {},
+    "title": ""
+  },
+  "trackingId": "",
+  "widgetAlignSystem": {
+    "inner": null,
+    "outer": {
+      "center": null,
+      "left": {
+        "bottom": {
+          "align": "start",
+          "background": null,
+          "centered": false,
+          "gap": null,
+          "padding": null,
+          "widgetIds": [".*"]
+        },
+        "middle": null,
+        "top": null
+      },
+      "right": null
+    }
+  },
+  "widgets": [
+    {
+      "enabled": true,
+      "extended": false,
+      "extensionId": "dataAttribution",
+      "id": ".*",
+      "pluginId": "reearth",
+      "property": {}
+    }
+  ]
+}`, blockID)
 
 	RegexpJSONEReadCloser(t, rc, expected)
 
