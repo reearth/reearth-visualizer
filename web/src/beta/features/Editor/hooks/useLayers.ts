@@ -86,23 +86,22 @@ export default function ({
 
   const [sortedLayerIds, setSortedLayerIds] = useState<string[]>([]);
 
-useEffect(() => {
-  if (!originNlsLayers) return;
+  useEffect(() => {
+    if (!originNlsLayers) return;
 
-  setSortedLayerIds((prev) => {
-    const originIds = originNlsLayers.map((l) => l.id);
-    if (
-      prev.length === originIds.length &&
-      prev.every((id, idx) => id === originIds[idx])
-    ) {
-      return prev;
-    }
-    return [...originNlsLayers]
-      .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
-      .map((l) => l.id);
-  });
-}, [originNlsLayers]);
-
+    setSortedLayerIds((prev) => {
+      const originIds = originNlsLayers.map((l) => l.id);
+      if (
+        prev.length === originIds.length &&
+        prev.every((id, idx) => id === originIds[idx])
+      ) {
+        return prev;
+      }
+      return [...originNlsLayers]
+        .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+        .map((l) => l.id);
+    });
+  }, [originNlsLayers]);
 
   const nlsLayers: NLSLayer[] = useMemo(
     () =>
