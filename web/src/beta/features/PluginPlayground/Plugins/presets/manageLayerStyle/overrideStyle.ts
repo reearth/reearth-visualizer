@@ -142,13 +142,12 @@ reearth.camera.flyTo(
   }
 );
 
-// Listen for messages from the UI and override the style for "Cool Style"
+// Listen for messages from the UI and override the style for "Cool Style or "Warm Style"
 reearth.extension.on("message", (msg) => {
-  if (msg.action === "updateStyleCool") {
+  const { action } = msg;
+  if (action === "updateStyleCool") {
     reearth.layers.override(layerId, {
       "3dtiles": {
-        show: true,
-        pbr: false,
         color: {
           expression: {
             conditions: [
@@ -163,24 +162,17 @@ reearth.extension.on("message", (msg) => {
         },
       },
     });
-  }
-});
-
-// Listen for messages from the UI and override the style for "Warm Style"
-reearth.extension.on("message", (msg) => {
-  if (msg.action === "updateStyleWarm") {
+  } else if (action === "updateStyleWarm") {
     reearth.layers.override(layerId, {
       "3dtiles": {
-        show: true,
-        pbr: false,
         color: {
           expression: {
             conditions: [
-              ["\${_zmax} > 200", "color('#f5220f')"], 
-              ["\${_zmax} > 150", "color('#ff5e47')"], 
+              ["\${_zmax} > 200", "color('#f5220f')"],
+              ["\${_zmax} > 150", "color('#ff5e47')"],
               ["\${_zmax} > 100", "color('#ff9586')"],
               ["\${_zmax} > 50", "color('#ffc1b8')"],
-              ["\${_zmax} > 0", "color('#ffe5e0')"], 
+              ["\${_zmax} > 0", "color('#ffe5e0')"],
               ["true", "color('#a1140a')"],
             ],
           },
@@ -195,8 +187,7 @@ reearth.timeline.setTime({
     start: new Date("2023-01-01T00:00:00Z"),
     stop: new Date("2023-01-01T10:00:00Z"),
     current: new Date("2023-01-01T02:00:00Z"),
-  })
-`
+  })`
 };
 
 export const overrideStyle: PluginType = {
