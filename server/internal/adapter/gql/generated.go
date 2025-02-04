@@ -866,8 +866,6 @@ type ComplexityRoot struct {
 		ProjectID         func(childComplexity int) int
 		Property          func(childComplexity int) int
 		PropertyID        func(childComplexity int) int
-		RootLayer         func(childComplexity int) int
-		RootLayerID       func(childComplexity int) int
 		Stories           func(childComplexity int) int
 		Styles            func(childComplexity int) int
 		Team              func(childComplexity int) int
@@ -1357,7 +1355,6 @@ type SceneResolver interface {
 	Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error)
 	Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error)
 	Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error)
-	RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error)
 	NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error)
 	Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error)
 	Styles(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Style, error)
@@ -5543,20 +5540,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.PropertyID(childComplexity), true
 
-	case "Scene.rootLayer":
-		if e.complexity.Scene.RootLayer == nil {
-			break
-		}
-
-		return e.complexity.Scene.RootLayer(childComplexity), true
-
-	case "Scene.rootLayerId":
-		if e.complexity.Scene.RootLayerID == nil {
-			break
-		}
-
-		return e.complexity.Scene.RootLayerID(childComplexity), true
-
 	case "Scene.stories":
 		if e.complexity.Scene.Stories == nil {
 			break
@@ -7791,7 +7774,6 @@ type PropertyField {
   parent: Property
   schema: PropertySchema
   field: PropertySchemaField
-  # actualValue: Any
 }
 
 type PropertyFieldLink {
@@ -7839,7 +7821,6 @@ type MergedPropertyField {
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
-  # actualValue: Any
 }
 
 enum ListOperation {
@@ -7982,14 +7963,12 @@ extend type Mutation {
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  rootLayerId: ID!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
   project: Project
   team: Team
   property: Property
-  rootLayer: LayerGroup
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
@@ -12237,8 +12216,6 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -12251,8 +12228,6 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -13525,8 +13500,6 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -13539,8 +13512,6 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -15228,8 +15199,6 @@ func (ec *executionContext) fieldContext_Infobox_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -15242,8 +15211,6 @@ func (ec *executionContext) fieldContext_Infobox_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -15776,8 +15743,6 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -15790,8 +15755,6 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -16534,8 +16497,6 @@ func (ec *executionContext) fieldContext_InfoboxField_scene(_ context.Context, f
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -16548,8 +16509,6 @@ func (ec *executionContext) fieldContext_InfoboxField_scene(_ context.Context, f
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -16665,8 +16624,6 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -16679,8 +16636,6 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -17878,8 +17833,6 @@ func (ec *executionContext) fieldContext_LayerGroup_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -17892,8 +17845,6 @@ func (ec *executionContext) fieldContext_LayerGroup_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -18795,8 +18746,6 @@ func (ec *executionContext) fieldContext_LayerItem_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -18809,8 +18758,6 @@ func (ec *executionContext) fieldContext_LayerItem_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -19607,8 +19554,6 @@ func (ec *executionContext) fieldContext_MergedInfobox_scene(_ context.Context, 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -19621,8 +19566,6 @@ func (ec *executionContext) fieldContext_MergedInfobox_scene(_ context.Context, 
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -20071,8 +20014,6 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_scene(_ context.Cont
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -20085,8 +20026,6 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_scene(_ context.Cont
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -20596,8 +20535,6 @@ func (ec *executionContext) fieldContext_MergedLayer_scene(_ context.Context, fi
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -20610,8 +20547,6 @@ func (ec *executionContext) fieldContext_MergedLayer_scene(_ context.Context, fi
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -27452,8 +27387,6 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -27466,8 +27399,6 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -27976,8 +27907,6 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -27990,8 +27919,6 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -28503,8 +28430,6 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -28517,8 +28442,6 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -29411,8 +29334,6 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -29425,8 +29346,6 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -32039,8 +31958,6 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -32053,8 +31970,6 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -37711,8 +37626,6 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -37725,8 +37638,6 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -38762,8 +38673,6 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -38776,8 +38685,6 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -39094,50 +39001,6 @@ func (ec *executionContext) fieldContext_Scene_updatedAt(_ context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_rootLayerId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_rootLayerId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RootLayerID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_rootLayerId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -39512,87 +39375,6 @@ func (ec *executionContext) fieldContext_Scene_property(_ context.Context, field
 				return ec.fieldContext_Property_merged(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Property", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_rootLayer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_rootLayer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().RootLayer(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.LayerGroup)
-	fc.Result = res
-	return ec.marshalOLayerGroup2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐLayerGroup(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_rootLayer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_LayerGroup_id(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_LayerGroup_sceneId(ctx, field)
-			case "name":
-				return ec.fieldContext_LayerGroup_name(ctx, field)
-			case "isVisible":
-				return ec.fieldContext_LayerGroup_isVisible(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_LayerGroup_propertyId(ctx, field)
-			case "pluginId":
-				return ec.fieldContext_LayerGroup_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_LayerGroup_extensionId(ctx, field)
-			case "infobox":
-				return ec.fieldContext_LayerGroup_infobox(ctx, field)
-			case "parentId":
-				return ec.fieldContext_LayerGroup_parentId(ctx, field)
-			case "linkedDatasetSchemaId":
-				return ec.fieldContext_LayerGroup_linkedDatasetSchemaId(ctx, field)
-			case "root":
-				return ec.fieldContext_LayerGroup_root(ctx, field)
-			case "layerIds":
-				return ec.fieldContext_LayerGroup_layerIds(ctx, field)
-			case "parent":
-				return ec.fieldContext_LayerGroup_parent(ctx, field)
-			case "property":
-				return ec.fieldContext_LayerGroup_property(ctx, field)
-			case "plugin":
-				return ec.fieldContext_LayerGroup_plugin(ctx, field)
-			case "extension":
-				return ec.fieldContext_LayerGroup_extension(ctx, field)
-			case "layers":
-				return ec.fieldContext_LayerGroup_layers(ctx, field)
-			case "scene":
-				return ec.fieldContext_LayerGroup_scene(ctx, field)
-			case "scenePlugin":
-				return ec.fieldContext_LayerGroup_scenePlugin(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type LayerGroup", field.Name)
 		},
 	}
 	return fc, nil
@@ -41420,8 +41202,6 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -41434,8 +41214,6 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -42865,8 +42643,6 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -42879,8 +42655,6 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -43366,8 +43140,6 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -43380,8 +43152,6 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -44502,8 +44272,6 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -44516,8 +44284,6 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -44914,8 +44680,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -44928,8 +44692,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -44994,8 +44756,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -45008,8 +44768,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -45138,8 +44896,6 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -45152,8 +44908,6 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -45350,8 +45104,6 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
 			case "widgets":
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
@@ -45364,8 +45116,6 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_team(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
 			case "stories":
@@ -60370,11 +60120,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "rootLayerId":
-			out.Values[i] = ec._Scene_rootLayerId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "widgets":
 			out.Values[i] = ec._Scene_widgets(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -60463,39 +60208,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 					}
 				}()
 				res = ec._Scene_property(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "rootLayer":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Scene_rootLayer(ctx, field, obj)
 				return res
 			}
 

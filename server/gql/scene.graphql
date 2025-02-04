@@ -5,14 +5,12 @@ type Scene implements Node {
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  rootLayerId: ID!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
   project: Project
   team: Team
   property: Property
-  rootLayer: LayerGroup
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!

@@ -70,7 +70,6 @@ export default () => {
               plugins: data.node.plugins,
               projectId: data.node.projectId,
               property: data.node.property,
-              rootLayerId: data.node.rootLayerId,
               newLayers: data.node.newLayers,
               stories: data.node.stories,
               styles: data.node.styles,

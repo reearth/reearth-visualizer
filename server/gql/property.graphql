@@ -120,7 +120,6 @@ type PropertyField {
   parent: Property
   schema: PropertySchema
   field: PropertySchemaField
-  # actualValue: Any
 }
 
 type PropertyFieldLink {
@@ -168,7 +167,6 @@ type MergedPropertyField {
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
-  # actualValue: Any
 }
 
 enum ListOperation {
