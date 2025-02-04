@@ -36,12 +36,12 @@ func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecas
 	return i.repos.Asset.FindByIDs(ctx, assets)
 }
 
-func (i *Asset) FindByWorkspace(ctx context.Context, tid accountdomain.WorkspaceID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (i *Asset) FindByWorkspace(ctx context.Context, tid accountdomain.WorkspaceID, pid *id.ProjectID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	return Run2(
 		ctx, operator, i.repos,
 		Usecase().WithReadableWorkspaces(tid),
 		func(ctx context.Context) ([]*asset.Asset, *usecasex.PageInfo, error) {
-			return i.repos.Asset.FindByWorkspace(ctx, tid, repo.AssetFilter{
+			return i.repos.Asset.FindByWorkspace(ctx, tid, pid, repo.AssetFilter{
 				Sort:       sort,
 				Keyword:    keyword,
 				Pagination: p,
@@ -88,6 +88,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	a, err := asset.New().
 		NewID().
 		Workspace(inp.WorkspaceID).
+		Project(inp.ProjectID).
 		Name(path.Base(inp.File.Path)).
 		Size(size).
 		URL(url.String()).
@@ -102,6 +103,27 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	}
 
 	return a, nil
+}
+
+func (i *Asset) Update(ctx context.Context, aid id.AssetID, pid *id.ProjectID, operator *usecase.Operator) (id.AssetID, *id.ProjectID, error) {
+	return Run2(
+		ctx, operator, i.repos,
+		Usecase().Transaction(),
+		func(ctx context.Context) (id.AssetID, *id.ProjectID, error) {
+			asset, err := i.repos.Asset.FindByID(ctx, aid)
+			if err != nil {
+				return aid, pid, err
+			}
+
+			if ok := operator.IsWritableWorkspace(asset.Workspace()); !ok {
+				return aid, pid, interfaces.ErrOperationDenied
+			}
+
+			asset.SetProject(pid)
+
+			return aid, pid, i.repos.Asset.Save(ctx, asset)
+		},
+	)
 }
 
 func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Operator) (result id.AssetID, err error) {
@@ -129,7 +151,7 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.File, workspace idx.ID[accountdomain.Workspace]) (*url.URL, int64, error) {
+func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.File, workspace idx.ID[accountdomain.Workspace], project *id.ProjectID) (*url.URL, int64, error) {
 
 	readCloser, err := zipFile.Open()
 	if err != nil {
@@ -156,6 +178,7 @@ func (i *Asset) UploadAssetFile(ctx context.Context, name string, zipFile *zip.F
 	a, err := asset.New().
 		NewID().
 		Workspace(workspace).
+		Project(project).
 		Name(path.Base(name)).
 		Size(size).
 		URL(url.String()).
