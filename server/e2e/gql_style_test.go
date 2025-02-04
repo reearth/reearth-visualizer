@@ -192,7 +192,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	// Add Style
 	_, _, styleId := addStyle(e, sId, "MyStyle")
@@ -203,7 +203,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	// Update Style
 	_, _ = updateStyleName(e, styleId, "NewName")
@@ -213,8 +213,8 @@ func TestStyleCRUD(t *testing.T) {
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("styles").Array().First().Object().
-		Value("name").Equal("NewName")
+		Value("styles").Array().Value(0).Object().
+		Value("name").IsEqual("NewName")
 
 	// Duplicate Style
 	_, duplicateRes := duplicateStyle(e, styleId)
@@ -226,7 +226,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(2)
+		Length().IsEqual(2)
 
 	// Remove Style
 	_, _ = removeStyle(e, styleId)
@@ -237,7 +237,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	_, _ = removeStyle(e, duplicatedStyleId)
 
@@ -247,5 +247,5 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 }
