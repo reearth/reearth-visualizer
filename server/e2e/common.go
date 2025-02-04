@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -59,7 +60,7 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 
 func initGateway() *gateway.Container {
 	return &gateway.Container{
-		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
 	}
 }
 
@@ -284,6 +285,13 @@ func JSONEqRegexpInterface(t *testing.T, actual interface{}, expected string) bo
 	return JSONEqRegexp(t, string(actualBytes), expected)
 }
 
+func JSONEqRegexpValue(t *testing.T, actual *httpexpect.Value, expected string) bool {
+	if actualData, ok := actual.Raw().(map[string]interface{}); ok {
+		return JSONEqRegexpInterface(t, actualData, expected)
+	}
+	return false
+}
+
 func aligningJSON(t *testing.T, str string) string {
 	// Unmarshal and Marshal to make the JSON format consistent
 	var obj interface{}
@@ -295,9 +303,17 @@ func aligningJSON(t *testing.T, str string) string {
 }
 
 func ValueDump(val *httpexpect.Value) {
-	if data, ok := val.Raw().(map[string]interface{}); ok {
+	raw := val.Raw()
+	switch data := raw.(type) {
+	case map[string]interface{}:
 		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
 			fmt.Println(string(text))
 		}
+	case []interface{}:
+		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
+			fmt.Println(string(text))
+		}
+	default:
+		fmt.Println("Unsupported type:", reflect.TypeOf(raw))
 	}
 }

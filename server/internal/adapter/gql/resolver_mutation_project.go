@@ -181,7 +181,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		Key:  "id",
 		Desc: true,
 	}
-	assets, _, err := usecases(ctx).Asset.FindByWorkspace(ctx, prj.Workspace(), nil, sort, page, getOperator(ctx))
+	assets, _, err := usecases(ctx).Asset.FindByWorkspace(ctx, prj.Workspace(), nil, nil, sort, page, getOperator(ctx))
 	if err != nil {
 		return nil, errors.New("Fail ExportAsset :" + err.Error())
 	}
@@ -259,6 +259,17 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		return nil, errors.New("Fail UncompressExportZip :" + err.Error())
 	}
 
+	projectData, _ := unmarshalProject(tempData)
+	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, workspace.String(), projectData)
+	if err != nil {
+		return nil, errors.New("Fail ImportProject :" + err.Error())
+	}
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
 	// Assets file import
 	assetNames, _ := unmarshalAssets(tempData)
 	for fileName, file := range assets {
@@ -273,7 +284,11 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 			}
 		}
 
-		url, _, err := usecases(ctx).Asset.UploadAssetFile(ctx, realName, file, workspace)
+		pid, err := id.ProjectIDFrom(prj.ID().String())
+		if err != nil {
+			return nil, errors.New("Fail UploadAssetFile :" + err.Error())
+		}
+		url, _, err := usecases(ctx).Asset.UploadAssetFile(ctx, realName, file, workspace, &pid)
 		if err != nil {
 			return nil, errors.New("Fail UploadAssetFile :" + err.Error())
 		}
@@ -282,17 +297,6 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 
 		tempData = bytes.Replace(tempData, []byte(beforeName), []byte(afterName), -1)
 	}
-
-	projectData, _ := unmarshalProject(tempData)
-	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, workspace.String(), projectData)
-	if err != nil {
-		return nil, errors.New("Fail ImportProject :" + err.Error())
-	}
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
 
 	// need to create a Scene firstｓ
 	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), getOperator(ctx))

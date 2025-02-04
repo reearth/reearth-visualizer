@@ -9,10 +9,17 @@ func ToAsset(a *asset.Asset) *Asset {
 		return nil
 	}
 
+	var pid *ID
+	if project := a.Project(); project != nil {
+		pidValue := IDFrom(*a.Project())
+		pid = &pidValue
+	}
+
 	return &Asset{
 		ID:          IDFrom(a.ID()),
 		CreatedAt:   a.CreatedAt(),
 		TeamID:      IDFrom(a.Workspace()),
+		ProjectID:   pid,
 		Name:        a.Name(),
 		Size:        a.Size(),
 		URL:         a.URL(),
