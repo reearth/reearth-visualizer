@@ -1136,14 +1136,12 @@ type Scene struct {
 	PropertyID        ID                 `json:"propertyId"`
 	CreatedAt         time.Time          `json:"createdAt"`
 	UpdatedAt         time.Time          `json:"updatedAt"`
-	RootLayerID       ID                 `json:"rootLayerId"`
 	Widgets           []*SceneWidget     `json:"widgets"`
 	Plugins           []*ScenePlugin     `json:"plugins"`
 	WidgetAlignSystem *WidgetAlignSystem `json:"widgetAlignSystem,omitempty"`
 	Project           *Project           `json:"project,omitempty"`
 	Team              *Team              `json:"team,omitempty"`
 	Property          *Property          `json:"property,omitempty"`
-	RootLayer         *LayerGroup        `json:"rootLayer,omitempty"`
 	NewLayers         []NLSLayer         `json:"newLayers"`
 	Stories           []*Story           `json:"stories"`
 	Styles            []*Style           `json:"styles"`
