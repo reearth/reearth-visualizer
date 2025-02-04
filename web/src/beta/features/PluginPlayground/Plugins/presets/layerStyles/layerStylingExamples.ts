@@ -20,6 +20,17 @@ const widgetFile: FileType = {
   id: "layer-styling-examples",
   title: "layer-styling-examples.js",
   sourceCode: `
+  // This example demonstrates styling different layer formats in Re:Earth.
+  // It shows how to apply various styles (marker, polyline, polygon) to:
+  // - GeoJSON (West): Point marker, polyline, and polygon features
+  // - CZML (Center): Point marker, polyline, and polygon features
+  // - KML (East): Point marker, polyline, and polygon features
+  // - CSV (Far East): Point marker feature
+  // The styling format remains consistent across all layer types, showing that the same styling properties can be applied regardless of the data format.
+  // All features are positioned to be visible simultaneously on the map
+  // without overlap, aligned from west to east.
+
+
   // ==================================
   // GeoJSON Layer (West Area)
   // ==================================
