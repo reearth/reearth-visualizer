@@ -13,11 +13,11 @@ import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
-import { overrideStyle } from "./manageLayerStyle/overrideStyle";
-import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { layerStylingExamples } from "./layerStyles/layerStylingExamples";
 import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
+import { overrideStyle } from "./manageLayerStyle/overrideStyle";
+import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -70,11 +70,14 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-
-    plugins: [featureStyle3dTiles, featureStyle3dModel,featureStyle3dModel,overrideStyle,styleWithCondition]
-
+    plugins: [
+      layerStylingExamples,
+      featureStyle3dTiles,
+      featureStyle3dModel,
+      overrideStyle,
+      styleWithCondition
+    ]
   },
-
   {
     id: "camera",
     title: "Camera",
