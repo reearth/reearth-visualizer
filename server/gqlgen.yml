@@ -8,9 +8,12 @@ exec:
   filename: internal/adapter/gql/generated.go
 model:
   filename: internal/adapter/gql/gqlmodel/models_gen.go
-resolver:
-  filename: internal/adapter/gql/resolver.go
-  type: Resolver
+# we don't want to generate resolver.go
+# manually add resolver file and functions
+# when it is mutation, file name is resolver_mutation_{name}.go
+# when it is query, file name is resolver_{name}.go
+# resolver:
+#   filename: internal/adapter/gql/resolver.go
 models:
   DateTime:
     model: github.com/99designs/gqlgen/graphql.Time

@@ -731,10 +731,9 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	// Check if oldTitle exists and newTitle doesn't conflict
 	titleExists := false
 	for _, feature := range layer.Sketch().FeatureCollection().Features() {
-		if props := feature.Properties(); props != nil {
+		if props := feature.Properties(); props != nil && *props != nil {
 			if _, ok := (*props)[oldTitle]; ok {
 				titleExists = true
 			}
@@ -744,17 +743,15 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 		}
 	}
 
-	if !titleExists {
-		return nil, fmt.Errorf("property with title %s not found", oldTitle)
-	}
-
-	for _, feature := range layer.Sketch().FeatureCollection().Features() {
-		if props := feature.Properties(); props != nil {
-			for k, v := range *props {
-				if k == oldTitle {
-					value := v
-					delete(*props, k)
-					(*props)[newTitle] = value
+	if titleExists {
+		for _, feature := range layer.Sketch().FeatureCollection().Features() {
+			if props := feature.Properties(); props != nil {
+				for k, v := range *props {
+					if k == oldTitle {
+						value := v
+						delete(*props, k)
+						(*props)[newTitle] = value
+					}
 				}
 			}
 		}
@@ -808,15 +805,13 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 		}
 	}
 
-	if !titleExists {
-		return nil, fmt.Errorf("property with title %s not found", removedTitle)
-	}
-
-	for _, feature := range layer.Sketch().FeatureCollection().Features() {
-		if props := feature.Properties(); props != nil {
-			for k := range *props {
-				if k == removedTitle {
-					delete(*props, k)
+	if titleExists {
+		for _, feature := range layer.Sketch().FeatureCollection().Features() {
+			if props := feature.Properties(); props != nil && *props != nil {
+				for k := range *props {
+					if k == removedTitle {
+						delete(*props, k)
+					}
 				}
 			}
 		}
