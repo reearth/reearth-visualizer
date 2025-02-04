@@ -62,7 +62,7 @@ jobs:
           prerelease: true
       - name: Download latest changelog
         if: ${{ inputs.new_tag != '' }}
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v8
         with:
           workflow: release.yml
           name: changelog-${{ inputs.new_tag }}
