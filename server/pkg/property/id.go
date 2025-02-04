@@ -9,7 +9,6 @@ type ItemID = id.PropertyItemID
 type FieldID = id.PropertyFieldID
 type SchemaID = id.PropertySchemaID
 type SchemaGroupID = id.PropertySchemaGroupID
-type SceneID = id.SceneID
 
 var NewID = id.NewPropertyID
 var NewItemID = id.NewPropertyItemID
