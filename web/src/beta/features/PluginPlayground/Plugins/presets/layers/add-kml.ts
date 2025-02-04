@@ -71,8 +71,7 @@ const layerKmlUrl = {
 reearth.layers.add(layerKmlEncoded);
 
 // Add the KML layer from the URL to Re:Earth
-reearth.layers.add(layerKmlUrl);`,
-
+reearth.layers.add(layerKmlUrl);`
 };
 
 export const addKml: PluginType = {
