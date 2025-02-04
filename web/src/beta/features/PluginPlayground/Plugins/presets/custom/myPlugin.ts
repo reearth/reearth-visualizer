@@ -55,6 +55,42 @@ extensions:
             type: url
             title: Asset
             ui: asset
+          - id: spacing
+            type: spacing
+            title: Spacing
+            name: Spacing
+            ui: spacing
+            min: 0
+            max: 100
+          - id: boolean
+            type: bool
+            title: Boolean
+            name: Boolean
+          - id: slider
+            type: number
+            title: Slider
+            name: Slider
+            ui: slider
+            min: 0
+            max: 100
+          - id: number
+            type: number
+            title: Number
+            name: Number
+          - id: location
+            type: latlng
+            title: Location
+            name: Location
+          - id: camera
+            type: camera
+            title: Camera
+            name: Camera
+          - id: array
+            type: array
+            title: Array
+            ui: range
+            min: 0
+            max: 30
   - id: demo-infobox-block-1
     type: infoboxBlock
     name: Demo Infobox Block 1

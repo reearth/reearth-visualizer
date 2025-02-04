@@ -1,4 +1,5 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
+import { SchemaField } from "@reearth/services/api/propertyApi/utils";
 import { ComponentProps } from "react";
 
 import { Field } from "../Visualizer/Crust/StoryPanel/types";
@@ -46,25 +47,8 @@ export interface CustomField extends Field {
   defaultValue?: string | number | boolean | null;
 }
 
-export type GroupField = {
-  id: string;
-  type: string;
-  title: string;
-  name?: string;
-  choices?: { key: string; label: string }[];
-  ui:
-    | "datetime"
-    | "color"
-    | "selection"
-    | "multiline"
-    | "image"
-    | "file"
-    | "video"
-    | undefined;
-};
-
 export type Group = {
   id: string;
   title: string;
-  fields: GroupField[];
+  fields: SchemaField[];
 }[];
