@@ -49,9 +49,9 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	})
 
 	// cache settings
-	srv.SetQueryCache(lru.New(1000))
+	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 	srv.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New(30),
+		Cache: lru.New[string](30),
 	})
 
 	// complexity limit

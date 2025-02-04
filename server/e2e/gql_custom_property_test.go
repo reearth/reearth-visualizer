@@ -100,9 +100,49 @@ func TestUpdateCustomProperties(t *testing.T) {
 
 func TestChangeCustomPropertyTitle(t *testing.T) {
 	e := Server(t, baseSeeder)
-	sId, lId, _, _ := setupTestData(e)
+
+	pId := createProject(e, "test")
+	_, _, sId := createScene(e, pId)
+	lId := addTestNLSLayerSimple(e, sId)
+
 	// change XXX -> ZZZ
 	requestBody := GraphQLRequest{
+		OperationName: "ChangeCustomPropertyTitle",
+		Query: `
+			mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {
+				changeCustomPropertyTitle(input: $input) {
+					layer {
+						id
+					}
+				}
+			}
+		`,
+		Variables: map[string]any{
+			"input": map[string]interface{}{
+				"layerId": lId,
+				"schema": map[string]any{
+					"AAA": "Text_1",
+					"BBB": "Int_2",
+					"CCC": "URL_3", // XXX -> CCC
+					"YYY": "Boolean_4",
+				},
+				"oldTitle": "CCC", // XXX -> CCC
+				"newTitle": "ZZZ", // XXX -> ZZZ
+			},
+		},
+	}
+	Request(e, uID.String(), requestBody)
+
+	proId1 := RandomString(10)
+	fId1 := addTestGeoJSONFeature(e, lId, proId1)
+	updateTestGeoJSONFeature(e, lId, fId1, proId1)
+
+	proId2 := RandomString(10)
+	fId2 := addTestGeoJSONFeature(e, lId, proId2)
+	updateTestGeoJSONFeature(e, lId, fId2, proId2)
+
+	// change XXX -> ZZZ
+	requestBody = GraphQLRequest{
 		OperationName: "ChangeCustomPropertyTitle",
 		Query: `
 			mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {
@@ -140,9 +180,9 @@ func TestChangeCustomPropertyTitle(t *testing.T) {
 }`)
 
 	features := res.Path("$.sketch.featureCollection.features").Array()
-	features.Length().Equal(2)
-	feature0 := features.Element(0).Object()
-	feature1 := features.Element(1).Object()
+	features.Length().IsEqual(2)
+	feature0 := features.Value(0).Object()
+	feature1 := features.Value(1).Object()
 
 	JSONEqRegexpInterface(t, feature0.Raw(), `
 {
@@ -182,9 +222,47 @@ func TestChangeCustomPropertyTitle(t *testing.T) {
 
 func TestRemoveCustomProperty(t *testing.T) {
 	e := Server(t, baseSeeder)
-	sId, lId, _, _ := setupTestData(e)
+	pId := createProject(e, "test")
+	_, _, sId := createScene(e, pId)
+	lId := addTestNLSLayerSimple(e, sId)
+
 	// remove XXX
 	requestBody := GraphQLRequest{
+		OperationName: "RemoveCustomProperty",
+		Query: `
+			mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {
+				removeCustomProperty(input: $input) {
+					layer {
+						id
+					}
+				}
+			}
+		`,
+		Variables: map[string]any{
+			"input": map[string]interface{}{
+				"layerId": lId,
+				"schema": map[string]any{
+					"AAA": "Text_1",
+					"BBB": "Int_2",
+					// "XXX": "URL_3", remove
+					"YYY": "Boolean_3",
+				},
+				"removedTitle": "CCC",
+			},
+		},
+	}
+	Request(e, uID.String(), requestBody)
+
+	proId1 := RandomString(10)
+	fId1 := addTestGeoJSONFeature(e, lId, proId1)
+	updateTestGeoJSONFeature(e, lId, fId1, proId1)
+
+	proId2 := RandomString(10)
+	fId2 := addTestGeoJSONFeature(e, lId, proId2)
+	updateTestGeoJSONFeature(e, lId, fId2, proId2)
+
+	// remove XXX
+	requestBody = GraphQLRequest{
 		OperationName: "RemoveCustomProperty",
 		Query: `
 			mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {
@@ -220,9 +298,9 @@ func TestRemoveCustomProperty(t *testing.T) {
 }`)
 
 	features := res.Path("$.sketch.featureCollection.features").Array()
-	features.Length().Equal(2)
-	feature0 := features.Element(0).Object()
-	feature1 := features.Element(1).Object()
+	features.Length().IsEqual(2)
+	feature0 := features.Value(0).Object()
+	feature1 := features.Value(1).Object()
 
 	JSONEqRegexpInterface(t, feature0.Raw(), `
 	
@@ -263,21 +341,6 @@ func TestRemoveCustomProperty(t *testing.T) {
 
 // below Common functions -----------------------------------------------------
 
-func setupTestData(e *httpexpect.Expect) (sId string, lId string, fId1 string, fId2 string) {
-	pId := createProject(e, "test")
-	_, _, sId = createScene(e, pId)
-	lId = addTestNLSLayerSimple(e, sId)
-
-	proId1 := RandomString(10)
-	fId1 = addTestGeoJSONFeature(e, lId, proId1)
-	updateTestGeoJSONFeature(e, lId, fId1, proId1)
-
-	proId2 := RandomString(10)
-	fId2 = addTestGeoJSONFeature(e, lId, proId2)
-	updateTestGeoJSONFeature(e, lId, fId2, proId2)
-	return
-}
-
 func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
 	requestBody := GraphQLRequest{
 		OperationName: "GetScene",
@@ -289,8 +352,8 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
 	}
 	res := Request(e, uID.String(), requestBody)
 	newLayers := res.Path("$.data.node.newLayers").Array()
-	newLayers.Length().Equal(1)
-	return newLayers.Element(0).Object()
+	newLayers.Length().IsEqual(1)
+	return newLayers.Value(0).Object()
 }
 
 func addTestNLSLayerSimple(e *httpexpect.Expect, sId string) string {

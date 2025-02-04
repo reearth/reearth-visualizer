@@ -34,8 +34,8 @@ func TestInitializer_Clone(t *testing.T) {
 	assert.NotSame(t, i.Infobox, actual.Infobox)
 	assert.NotSame(t, i.PropertyID, actual.PropertyID)
 	assert.NotSame(t, i.Property, actual.Property)
-	assert.NotSame(t, i.Layers, actual.Layers)
-	assert.NotSame(t, i.Layers[0], actual.Layers[0])
+	assert.NotSame(t, &i.Layers, &actual.Layers)
+	assert.NotSame(t, &i.Layers[0], &actual.Layers[0])
 	assert.NotSame(t, i.IsVisible, actual.IsVisible)
 	assert.NotSame(t, i.LinkedDatasetSchema, actual.LinkedDatasetSchema)
 	assert.NotSame(t, i.LinkedDataset, actual.LinkedDataset)
@@ -112,10 +112,10 @@ func TestInitializerInfobox_Clone(t *testing.T) {
 
 	actual := i.Clone()
 
-	assert.NotSame(t, i, actual)
-	assert.NotSame(t, i.Property, actual.Property)
-	assert.NotSame(t, i.Fields, actual.Fields)
-	assert.NotSame(t, i.Fields[0], actual.Fields[0])
+	assert.NotSame(t, &i, &actual)
+	assert.NotSame(t, &i.Property, &actual.Property)
+	assert.NotSame(t, &i.Fields, &actual.Fields)
+	assert.NotSame(t, &i.Fields[0], &actual.Fields[0])
 	assert.Equal(t, i, actual)
 }
 

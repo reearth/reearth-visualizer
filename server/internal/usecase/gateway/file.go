@@ -18,9 +18,14 @@ var (
 	ErrFailedToRemoveFile error = errors.New("failed to remove file")
 )
 
+const (
+	UploadFileSizeLimit int64 = 1024 * 1024 * 100 // about 100MB
+)
+
 type File interface {
 	ReadAsset(context.Context, string) (io.ReadCloser, error)
 	UploadAsset(context.Context, *file.File) (*url.URL, int64, error)
+	UploadAssetFromURL(context.Context, *url.URL) (*url.URL, int64, error)
 	RemoveAsset(context.Context, *url.URL) error
 
 	ReadPluginFile(context.Context, id.PluginID, string) (io.ReadCloser, error)

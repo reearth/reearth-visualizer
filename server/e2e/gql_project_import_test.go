@@ -40,7 +40,7 @@ func TestCallImportProject(t *testing.T) {
 	r = getScene(e, sid, language.English.String())
 	// fmt.Println(toJSONString(r.Raw()))
 
-	r.Value("id").Equal(sid)
+	r.Value("id").IsEqual(sid)
 
 }
 
@@ -67,20 +67,9 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
             } 
         }`,
 	}
-	operations, err := toJSONString(requestBody)
+
 	assert.Nil(t, err)
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithMultipart().
-		WithFormField("operations", operations).
-		WithFormField("map", `{"0": ["variables.file"]}`).
-		WithFile("0", filePath).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
-		Object()
+	r := RequestWithMultipart(e, uID.String(), requestBody, filePath).Object()
 	projectData := r.Value("data").Object().Value("importProject").Object().Value("projectData")
 	projectData.NotNull()
 	return projectData.Object()

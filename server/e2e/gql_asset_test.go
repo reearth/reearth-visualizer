@@ -29,27 +29,27 @@ func TestGetAssets(t *testing.T) {
 
 	res := createAsset(t, e, "test.png", true, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.png").
-		ValueEqual("coreSupport", true)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.png").
+		HasValue("coreSupport", true)
 
 	res = createAsset(t, e, "test.png", false, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.png").
-		ValueEqual("coreSupport", false)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.png").
+		HasValue("coreSupport", false)
 
 	res = createAsset(t, e, "test.csv", true, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.csv").
-		ValueEqual("coreSupport", true)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.csv").
+		HasValue("coreSupport", true)
 
 	res = createAsset(t, e, "test.csv", false, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.csv").
-		ValueEqual("coreSupport", false)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.csv").
+		HasValue("coreSupport", false)
 
 	// Write directly to the DB
 	ctx := context.Background()
@@ -89,7 +89,7 @@ func TestGetAssets(t *testing.T) {
 	res = getAssets(e, teamId)
 	assets := res.Object().Value("data").Object().Value("assets").Object().Value("nodes").Array().Iter()
 	for _, a := range assets {
-		a.Object().ValueEqual("coreSupport", true) // coreSupport true only
+		a.Object().HasValue("coreSupport", true) // coreSupport true only
 	}
 
 }
@@ -129,19 +129,36 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 		},
 		"query": CreateAssetMutation,
 	}
-	operations, err := toJSONString(requestBody)
 	assert.Nil(t, err)
-	return e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithMultipart().
-		WithFormField("operations", operations).
-		WithFormField("map", `{"0": ["variables.file"]}`).
-		WithFile("0", filePath).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	return RequestWithMultipart(e, uID.String(), requestBody, filePath)
+}
+
+func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte, coreSupport bool, teamId string) *httpexpect.Value {
+	tempFile, err := os.CreateTemp("", "requestBody-*.json")
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+	if _, err := tempFile.Write(fileData); err != nil {
+		t.Fatalf("failed to write to temp file: %v", err)
+	}
+	defer func() {
+		if cerr := tempFile.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+		if err := os.Remove(tempFile.Name()); err != nil {
+			t.Logf("failed to remove temp file: %v", err)
+		}
+	}()
+	requestBody := map[string]interface{}{
+		"operationName": "CreateAsset",
+		"variables": map[string]interface{}{
+			"teamId":      teamId,
+			"coreSupport": coreSupport,
+			"file":        nil,
+		},
+		"query": CreateAssetMutation,
+	}
+	return RequestWithMultipart(e, uID.String(), requestBody, tempFile.Name())
 }
 
 const GetAssetsQuery = `query GetAssets($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
