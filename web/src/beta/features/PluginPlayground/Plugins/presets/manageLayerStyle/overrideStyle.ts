@@ -83,13 +83,13 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   // Click a button to send a postMessage to Re:Earth(Web Assembly) side.
   coolStyle.addEventListener("click",() =>{
     parent.postMessage({
-      action: "updateStylyCool",
+      action: "updateStyleCool",
     }, "*");
     })
   
   warmStyle.addEventListener("click",() =>{
     parent.postMessage({
-      action: "updateStylyWarm",
+      action: "updateStyleWarm",
     }, "*");
     })
   </script>
@@ -144,7 +144,7 @@ reearth.camera.flyTo(
 
 // Listen for messages from the UI and override the style for "Cool Style"
 reearth.extension.on("message", (msg) => {
-  if (msg.action === "updateStylyCool") {
+  if (msg.action === "updateStyleCool") {
     reearth.layers.override(layerId, {
       "3dtiles": {
         show: true,
@@ -168,7 +168,7 @@ reearth.extension.on("message", (msg) => {
 
 // Listen for messages from the UI and override the style for "Warm Style"
 reearth.extension.on("message", (msg) => {
-  if (msg.action === "updateStylyWarm") {
+  if (msg.action === "updateStyleWarm") {
     reearth.layers.override(layerId, {
       "3dtiles": {
         show: true,
