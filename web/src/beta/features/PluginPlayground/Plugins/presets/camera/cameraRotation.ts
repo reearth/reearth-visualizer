@@ -48,7 +48,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
 </style>
 
 <div id="wrapper">
-  <h3>Rotate Camera Angle</h2>
+  <h3>Rotate Camera Angle</h3>
     <div id= "button-container">
       <button id="rotateBtn">Click here</button>
     </div>
