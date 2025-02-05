@@ -16,6 +16,7 @@ import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
 import { filterFeatureWithStyle } from "./manageLayerStyle/filterFeaturebyStyle";
+import { layerStylingExamples } from "./layerStyles/layerStylingExamples";
 import { overrideStyle } from "./manageLayerStyle/overrideStyle";
 import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { header } from "./ui/header";
@@ -70,17 +71,15 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "layerStyles",
     title: "Manage Layer Style",
-
     plugins: [
+      layerStylingExamples,
       featureStyle3dTiles,
-      featureStyle3dModel,
       featureStyle3dModel,
       overrideStyle,
       styleWithCondition,
       filterFeatureWithStyle
     ]
   },
-
   {
     id: "camera",
     title: "Camera",

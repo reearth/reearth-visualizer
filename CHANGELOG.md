@@ -2,6 +2,80 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.3.0 - 2025-02-04
+
+### Web
+
+#### 🚀 Features
+
+- Add 3d tiles and 3d model style example ([#1394](https://github.com/reearth/reearth-visualizer/pull/1394)) [`4e1fdf`](https://github.com/reearth/reearth-visualizer/commit/4e1fdf)
+- Add example of show selected features information in plugin playground ([#1376](https://github.com/reearth/reearth-visualizer/pull/1376)) [`67be6f`](https://github.com/reearth/reearth-visualizer/commit/67be6f)
+- Plugin playground presets extension to extension messenger ([#1367](https://github.com/reearth/reearth-visualizer/pull/1367)) [`11d841`](https://github.com/reearth/reearth-visualizer/commit/11d841)
+- Add playground example google 3d tiles ([#1368](https://github.com/reearth/reearth-visualizer/pull/1368)) [`778cfd`](https://github.com/reearth/reearth-visualizer/commit/778cfd)
+- Add hide flyto and delete layer plugin example  ([#1365](https://github.com/reearth/reearth-visualizer/pull/1365)) [`3290d0`](https://github.com/reearth/reearth-visualizer/commit/3290d0)
+- Reset visualizer when plugin is executed ([#1364](https://github.com/reearth/reearth-visualizer/pull/1364)) [`b282bb`](https://github.com/reearth/reearth-visualizer/commit/b282bb)
+- Update story custom domain extension ([#1361](https://github.com/reearth/reearth-visualizer/pull/1361)) [`2d1d0a`](https://github.com/reearth/reearth-visualizer/commit/2d1d0a)
+
+#### 🔧 Bug Fixes
+
+- Custom domain form ([#1369](https://github.com/reearth/reearth-visualizer/pull/1369)) [`206654`](https://github.com/reearth/reearth-visualizer/commit/206654)
+
+#### ✨ Refactor
+
+- Improve exit story block edit mode ([#1347](https://github.com/reearth/reearth-visualizer/pull/1347)) [`a340b7`](https://github.com/reearth/reearth-visualizer/commit/a340b7)
+- Display errors msg got from be ([#1343](https://github.com/reearth/reearth-visualizer/pull/1343)) [`1d93e8`](https://github.com/reearth/reearth-visualizer/commit/1d93e8)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.3.0 ([#1400](https://github.com/reearth/reearth-visualizer/pull/1400)) [`dad5dc`](https://github.com/reearth/reearth-visualizer/commit/dad5dc)
+- Validate Re:Earth configuration on container startup ([#1390](https://github.com/reearth/reearth-visualizer/pull/1390)) [`d004b6`](https://github.com/reearth/reearth-visualizer/commit/d004b6)
+- Update reearth core versionto 0.0.7-alpha.28 ([#1391](https://github.com/reearth/reearth-visualizer/pull/1391)) [`751818`](https://github.com/reearth/reearth-visualizer/commit/751818)
+- Update package version to 1.0.0-beta.2.2 ([#1374](https://github.com/reearth/reearth-visualizer/pull/1374)) [`e2b952`](https://github.com/reearth/reearth-visualizer/commit/e2b952)
+- Upgrade reearth core to 0.0.7-alpha.27 ([#1373](https://github.com/reearth/reearth-visualizer/pull/1373)) [`07ae4a`](https://github.com/reearth/reearth-visualizer/commit/07ae4a)
+- Support create initial camera with Edit panel ([#1356](https://github.com/reearth/reearth-visualizer/pull/1356)) [`1141a0`](https://github.com/reearth/reearth-visualizer/commit/1141a0)
+
+### Server
+
+#### 🚀 Features
+
+- Update geojson custom library ([#1366](https://github.com/reearth/reearth-visualizer/pull/1366)) [`37c75f`](https://github.com/reearth/reearth-visualizer/commit/37c75f)
+
+#### 🔧 Bug Fixes
+
+- Enable CoreSupport ([#1392](https://github.com/reearth/reearth-visualizer/pull/1392)) [`49cd2f`](https://github.com/reearth/reearth-visualizer/commit/49cd2f)
+- Fix CustomProperty nil error ([#1388](https://github.com/reearth/reearth-visualizer/pull/1388)) [`a52c0a`](https://github.com/reearth/reearth-visualizer/commit/a52c0a)
+
+#### ✨ Refactor
+
+- Return detailed error by lang ([#1342](https://github.com/reearth/reearth-visualizer/pull/1342)) [`70d3dc`](https://github.com/reearth/reearth-visualizer/commit/70d3dc)
+
+#### Miscellaneous Tasks
+
+- Fix docker&#x2F;build-push-action version ([#1396](https://github.com/reearth/reearth-visualizer/pull/1396)) [`5fd91a`](https://github.com/reearth/reearth-visualizer/commit/5fd91a)
+- Fix diff of generated files from go generate ([#1382](https://github.com/reearth/reearth-visualizer/pull/1382)) [`41c428`](https://github.com/reearth/reearth-visualizer/commit/41c428)
+- Add UploadAssetFromURL on fs file implementation ([#1380](https://github.com/reearth/reearth-visualizer/pull/1380)) [`b59def`](https://github.com/reearth/reearth-visualizer/commit/b59def)
+- Upgrade go version to 1.23.5 ([#1384](https://github.com/reearth/reearth-visualizer/pull/1384)) [`34c240`](https://github.com/reearth/reearth-visualizer/commit/34c240)
+- Add UploadAssetFromURL on gcs file implementation ([#1379](https://github.com/reearth/reearth-visualizer/pull/1379)) [`75dbc0`](https://github.com/reearth/reearth-visualizer/commit/75dbc0)
+- Fake gcs server for local development ([#1372](https://github.com/reearth/reearth-visualizer/pull/1372)) [`267cfb`](https://github.com/reearth/reearth-visualizer/commit/267cfb)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update go dependencies ([#1329](https://github.com/reearth/reearth-visualizer/pull/1329)) [`1cfa20`](https://github.com/reearth/reearth-visualizer/commit/1cfa20)
+
+### servr
+
+#### 🚀 Features
+
+- Add MultiLineString Valid ([#1377](https://github.com/reearth/reearth-visualizer/pull/1377)) [`b6111f`](https://github.com/reearth/reearth-visualizer/commit/b6111f)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update go dependencies ([#1329](https://github.com/reearth/reearth-visualizer/pull/1329)) [`1cfa20`](https://github.com/reearth/reearth-visualizer/commit/1cfa20)
+
 ## 1.0.0-beta.2.1 - 2025-01-20
 
 ### Web
