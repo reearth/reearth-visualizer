@@ -20,18 +20,22 @@ extensions:
 const widgetFile: FileType = {
   id: "camera-rotation",
   title: "camera-rotation.js",
-  sourceCode: `reearth.ui.show(\`
+  sourceCode: `// ================================
+// Define Plug-in UI side (iframe)
+// ================================
+
+reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
 <style>
 #rotateBtn {
+  border: 1.5px solid #dcdcdc;
   padding: 0;           
-  border-radius: 4px;
-  border: none;
+  border-radius: 5px;
   background: #ffffff;
   color: #000000;
   cursor: pointer;
   width: 200px;
-  height: 30px;           
+  height: 40px;           
   font-size: 16px;      
 }
 #rotateBtn:active {
@@ -55,20 +59,28 @@ let rotating = false;
 let intervalId;
 const rotateBtn = document.getElementById("rotateBtn");
 
+// Set up an event listener
 rotateBtn.addEventListener("click", () => {
+  // Toggle the rotation state
   rotating = !rotating;
   if (rotating) {
     rotateBtn.textContent = "Stop Rotation";
+    // Send 60 postMessages per second (60fps)
     intervalId = setInterval(() => {
       parent.postMessage({ action: "rotateCamera" }, "*");
     }, 1000 / 60);
   } else {
+    // Stop sending messages
     rotateBtn.textContent = "Start Rotation";
     clearInterval(intervalId);
   }
 });
 </script>
 \`);
+
+// ================================
+// Define Re:Earth(Web Assembly) side
+// ================================
 
 // Define a 3D Tiles layer
 const sample3dTiles = {
@@ -115,10 +127,11 @@ reearth.camera.flyTo(
   }
 );
 
-// Set the timeline to a morning hour so that building colors are easy to see
+// Listen for messages from the UI to trigger camera rotation
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "rotateCamera"){
+    // Rotate the camera by a specified angle in radians
     reearth.camera.rotateAround(0.001);
   }
 })`
