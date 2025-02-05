@@ -113,7 +113,7 @@ reearth.camera.flyTo(
   }
 );
 
-// Listen for messages from the UI and override the style for "Cool Style or "Warm Style"
+// Listen for messages from the UI and override the style 
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "showAllFeatures") {
