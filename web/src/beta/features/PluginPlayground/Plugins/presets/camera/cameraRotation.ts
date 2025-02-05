@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "camera-rotation-reearth-yml",
@@ -19,8 +20,55 @@ extensions:
 const widgetFile: FileType = {
   id: "camera-rotation",
   title: "camera-rotation.js",
-  sourceCode: `// This example demonstrates how to apply conditional styling.
-// The color is determined based on building height.
+  sourceCode: `reearth.ui.show(\`
+${PRESET_PLUGIN_COMMON_STYLE}
+<style>
+#rotateBtn {
+  padding: 0;           
+  border-radius: 4px;
+  border: none;
+  background: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  width: 200px;
+  height: 30px;           
+  font-size: 16px;      
+}
+#rotateBtn:active {
+  background: #dcdcdc;
+}
+#button-container {
+  display: flex;  
+  justify-content: center;                
+}
+</style>
+
+<div id="wrapper">
+  <h3>Rotate Camera Angle</h2>
+    <div id= "button-container">
+      <button id="rotateBtn">Click here</button>
+    </div>
+</div>
+
+<script>
+let rotating = false;
+let intervalId;
+const rotateBtn = document.getElementById("rotateBtn");
+
+rotateBtn.addEventListener("click", () => {
+  rotating = !rotating;
+  if (rotating) {
+    rotateBtn.textContent = "Stop Rotation";
+    intervalId = setInterval(() => {
+      parent.postMessage({ action: "rotateCamera" }, "*");
+    }, 1000 / 60);
+  } else {
+    rotateBtn.textContent = "Start Rotation";
+    clearInterval(intervalId);
+  }
+});
+</script>
+\`);
 
 // Define a 3D Tiles layer
 const sample3dTiles = {
@@ -31,25 +79,8 @@ const sample3dTiles = {
   },
   "3dtiles": {
     // Styling settings for the 3D Tiles
-    color: {
-      expression: {
-        // Define conditions for coloring
-        conditions: [
-          ["\${_zmax} > 200", "color('#1d558d')"],
-          ["\${_zmax} > 150", "color('#236ab1')"],
-          ["\${_zmax} > 100", "color('#4e95dc')"],
-          ["\${_zmax} > 50", "color('#95bfea')"],
-          ["\${_zmax} > 0", "color('#edf4fc')"],
-          ["true", "color('#0e2b47')"],
-
-          // You can also use comparison operators, for example:
-          // ["(\${_zmax} >= 50) && (\${feature['bldg:usage']} === '共同住宅')", "color('#923b2d')"]
-        ],
-      },
-    },
-
+    color:"#fffafa",
     pbr: false, // Enable or disable Physically Based Rendering
-    selectedFeatureColor: "red", // Color of selected features
   },
 };
 
@@ -85,12 +116,12 @@ reearth.camera.flyTo(
 );
 
 // Set the timeline to a morning hour so that building colors are easy to see
-reearth.timeline.setTime({
-    start: new Date("2023-01-01T00:00:00Z"),
-    stop: new Date("2023-01-01T10:00:00Z"),
-    current: new Date("2023-01-01T02:00:00Z"),
-  })
-`
+reearth.extension.on("message", (msg) => {
+  const { action } = msg;
+  if (action === "rotateCamera"){
+    reearth.camera.rotateAround(0.001);
+  }
+})`
 };
 
 export const cameraRotation: PluginType = {
