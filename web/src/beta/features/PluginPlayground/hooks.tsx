@@ -41,7 +41,14 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const { executeCode, infoboxBlocks, story, widgets } = useCode({
+  const {
+    executeCode,
+    infoboxBlocks,
+    story,
+    widgets,
+    setSchemaFields,
+    setUpdatedField
+  } = useCode({
     files: selectedPlugin.files,
     resetVisualizer
   });
@@ -189,7 +196,11 @@ export default () => {
   );
 
   const WidgetsPanel: FC = () => (
-    <WidgetsList selectedPlugin={selectedPlugin} />
+    <WidgetsList
+      selectedPlugin={selectedPlugin}
+      setSchemaFields={setSchemaFields}
+      setUpdatedField={setUpdatedField}
+    />
   );
 
   return {

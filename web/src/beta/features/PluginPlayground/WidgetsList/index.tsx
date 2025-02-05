@@ -1,11 +1,15 @@
+import { SpacingValues } from "@reearth/beta/ui/fields/SpacingField";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
+import { LatLng } from "../../Visualizer/Crust/types";
+import { CustomSchemaField } from "../types";
 import { getYmlJson } from "../utils";
 
 import PropertyItem from "./PropertyItem";
 
 type Props = {
+  setSchemaFields: (fields: CustomSchemaField[]) => void;
   selectedPlugin: {
     id: string;
     title: string;
@@ -15,8 +19,25 @@ type Props = {
       sourceCode: string;
     }[];
   };
+  setUpdatedField: ({
+    fieldId,
+    value
+  }: {
+    fieldId: string;
+    value:
+      | boolean
+      | LatLng
+      | number
+      | number[]
+      | string
+      | string[]
+      | SpacingValues;
+  }) => void;
 };
-const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
+const WidgetsList: FC<Props> = ({
+  selectedPlugin,
+  setUpdatedField
+}): JSX.Element => {
   const ymlFile =
     selectedPlugin.files &&
     selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
@@ -79,10 +100,15 @@ const WidgetsList: FC<Props> = ({ selectedPlugin }): JSX.Element => {
   }
 
   const { fields } = widgetSchema[0];
+
   return (
     <Wrapper>
       {fields.map((field) => (
-        <PropertyItem key={field.id} field={field} />
+        <PropertyItem
+          key={field.id}
+          field={field}
+          setUpdatedField={setUpdatedField}
+        />
       ))}
     </Wrapper>
   );

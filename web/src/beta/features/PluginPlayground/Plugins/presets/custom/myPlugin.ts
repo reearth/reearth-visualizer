@@ -31,66 +31,7 @@ extensions:
             type: string
             title: Title
             name: Title
-          - id: datetime
-            type: string
-            title: Date and Time
-            name: Date and Time
-            ui: datetime
-          - id: selection
-            type: string
-            title: Selection
-            name: Selection
-            ui: selection
-            choices:
-              - key: value1
-                label: Value 1
-              - key: value2
-                label: Value 2
-          - id: multiline
-            type: string
-            title: Multiline
-            name: Multiline
-            ui: multiline
-          - id: asset
-            type: url
-            title: Asset
-            ui: asset
-          - id: spacing
-            type: spacing
-            title: Spacing
-            name: Spacing
-            ui: spacing
-            min: 0
-            max: 100
-          - id: boolean
-            type: bool
-            title: Boolean
-            name: Boolean
-          - id: slider
-            type: number
-            title: Slider
-            name: Slider
-            ui: slider
-            min: 0
-            max: 100
-          - id: number
-            type: number
-            title: Number
-            name: Number
-          - id: location
-            type: latlng
-            title: Location
-            name: Location
-          - id: camera
-            type: camera
-            title: Camera
-            name: Camera
-          - id: array
-            type: array
-            title: Array
-            ui: range
-            min: 0
-            max: 30
+     
   - id: demo-infobox-block-1
     type: infoboxBlock
     name: Demo Infobox Block 1

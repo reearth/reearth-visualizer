@@ -21,9 +21,23 @@ import {
 
 type Props = {
   field: SchemaField;
+  setUpdatedField: ({
+    fieldId,
+    value
+  }: {
+    fieldId: string;
+    value:
+      | boolean
+      | LatLng
+      | number
+      | number[]
+      | string
+      | string[]
+      | SpacingValues;
+  }) => void;
 };
 
-const PropertyItem: FC<Props> = ({ field }) => {
+const PropertyItem: FC<Props> = ({ field, setUpdatedField }) => {
   const [value, setValue] = useState<
     boolean | LatLng | number | number[] | string | string[] | SpacingValues
   >("");
@@ -40,7 +54,10 @@ const PropertyItem: FC<Props> = ({ field }) => {
     [field.type, field.ui]
   );
 
-  const handleChange = (
+  const handleChange = ({
+    newValue,
+    fieldId
+  }: {
     newValue:
       | boolean
       | LatLng
@@ -48,28 +65,11 @@ const PropertyItem: FC<Props> = ({ field }) => {
       | number[]
       | string
       | string[]
-      | SpacingValues,
-    fieldType: "bool" | "camera" | "number" | "spacing" | "string" | "url"
-  ): void => {
-    switch (fieldType) {
-      case "bool":
-        setValue(newValue);
-        break;
-      case "camera":
-        setValue(newValue);
-        break;
-      case "spacing":
-        setValue(newValue);
-        break;
-      case "string":
-        setValue(newValue);
-        break;
-      case "url":
-        setValue(newValue);
-        break;
-      default:
-        break;
-    }
+      | SpacingValues;
+    fieldId: string;
+  }): void => {
+    setValue(newValue);
+    setUpdatedField({ fieldId, value: newValue });
   };
 
   return (
@@ -82,7 +82,10 @@ const PropertyItem: FC<Props> = ({ field }) => {
             value={value as string}
             description={field.description}
             onChange={(newValue?: string) =>
-              handleChange(newValue || "", "string")
+              handleChange({
+                newValue: newValue || "",
+                fieldId: field.id
+              })
             }
           />
         ) : field.ui === "selection" ? (
@@ -100,7 +103,7 @@ const PropertyItem: FC<Props> = ({ field }) => {
               ) || []
             }
             onChange={(newValue: string | string[]) =>
-              handleChange(newValue, "string")
+              handleChange({ newValue, fieldId: field.id })
             }
           />
         ) : field.ui === "color" ? (
@@ -109,7 +112,9 @@ const PropertyItem: FC<Props> = ({ field }) => {
             title={field.name}
             value={value as string}
             description={field.description}
-            onChange={(newValue: string) => handleChange(newValue, "string")}
+            onChange={(newValue: string) =>
+              handleChange({ newValue, fieldId: field.id })
+            }
           />
         ) : field.ui === "multiline" ? (
           <TextareaField
@@ -118,7 +123,9 @@ const PropertyItem: FC<Props> = ({ field }) => {
             resizable="height"
             description={field.description}
             value={(value as string) ?? ""}
-            onChange={(newValue: string) => handleChange(newValue, "string")}
+            onChange={(newValue: string) =>
+              handleChange({ newValue, fieldId: field.id })
+            }
           />
         ) : (
           <InputField
@@ -126,7 +133,9 @@ const PropertyItem: FC<Props> = ({ field }) => {
             title={field.name}
             value={value as string}
             description={field.description}
-            onChange={(newValue: string) => handleChange(newValue, "string")}
+            onChange={(newValue: string) =>
+              handleChange({ newValue, fieldId: field.id })
+            }
           />
         )
       ) : field.type === "url" ? (
@@ -140,7 +149,10 @@ const PropertyItem: FC<Props> = ({ field }) => {
           }
           value={value as string}
           onChange={(newValue?: string) =>
-            handleChange(newValue || "", "string")
+            handleChange({
+              newValue: newValue || "",
+              fieldId: field.id
+            })
           }
         />
       ) : field.type === "spacing" ? (
@@ -152,7 +164,7 @@ const PropertyItem: FC<Props> = ({ field }) => {
           min={field.min}
           max={field.max}
           onChange={(newValue: SpacingValues) =>
-            handleChange(newValue, "spacing")
+            handleChange({ newValue, fieldId: field.id })
           }
         />
       ) : field.type === "bool" ? (
@@ -161,7 +173,12 @@ const PropertyItem: FC<Props> = ({ field }) => {
           title={field.name}
           description={field.description}
           value={!!value}
-          onChange={(newValue: boolean) => handleChange(newValue, "bool")}
+          onChange={(newValue: boolean) =>
+            handleChange({
+              newValue,
+              fieldId: field.id
+            })
+          }
         />
       ) : field.type === "number" ? (
         field.ui === "slider" ? (
@@ -172,7 +189,9 @@ const PropertyItem: FC<Props> = ({ field }) => {
             description={field.description}
             min={field.min}
             max={field.max}
-            onChange={(newValue: number) => handleChange(newValue, "number")}
+            onChange={(newValue: number) =>
+              handleChange({ newValue, fieldId: field.id })
+            }
           />
         ) : (
           <NumberField
@@ -184,7 +203,10 @@ const PropertyItem: FC<Props> = ({ field }) => {
             min={field.min}
             max={field.max}
             onChange={(newValue?: number) =>
-              handleChange(newValue ?? 0, "number")
+              handleChange({
+                newValue: newValue ?? 0,
+                fieldId: field.id
+              })
             }
           />
         )
@@ -195,7 +217,10 @@ const PropertyItem: FC<Props> = ({ field }) => {
           values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
           description={field.description}
           onBlur={(newValue?: number[]) =>
-            handleChange(newValue ?? 0, "number")
+            handleChange({
+              newValue: newValue ?? 0,
+              fieldId: field.id
+            })
           }
         />
       ) : field.type === "camera" ? (
@@ -205,7 +230,10 @@ const PropertyItem: FC<Props> = ({ field }) => {
           value={value as Camera}
           description={field.description}
           onSave={(newValue?: Camera) =>
-            handleChange(newValue as Camera, "camera")
+            handleChange({
+              newValue: newValue as Camera,
+              fieldId: field.id
+            })
           }
         />
       ) : field.type === "array" && field.ui === "range" ? (
@@ -219,10 +247,11 @@ const PropertyItem: FC<Props> = ({ field }) => {
           content={["min", "max"]}
           description={field.description}
           onBlur={(newValue?: (number | undefined)[]) =>
-            handleChange(
-              newValue?.filter((v): v is number => v !== undefined) ?? [],
-              "number"
-            )
+            handleChange({
+              newValue:
+                newValue?.filter((v): v is number => v !== undefined) ?? [],
+              fieldId: field.id
+            })
           }
         />
       ) : (

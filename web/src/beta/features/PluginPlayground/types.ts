@@ -47,6 +47,10 @@ export interface CustomField extends Field {
   defaultValue?: string | number | boolean | null;
 }
 
+export interface CustomSchemaField extends SchemaField {
+  value?: string | number | boolean | null;
+}
+
 export type Group = {
   id: string;
   title: string;

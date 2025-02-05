@@ -1,7 +1,7 @@
 import * as yaml from "js-yaml";
 
 import { FileType } from "./Plugins/constants";
-import { ReearthYML } from "./types";
+import { CustomSchemaField, ReearthYML } from "./types";
 
 export const getLanguageByFileExtension = (fileTitle: string) => {
   const ext = fileTitle.split(".").pop();
@@ -31,4 +31,18 @@ export const getYmlJson = (file: FileType) => {
         : "Failed to parse YAML";
     return { success: false, message } as const;
   }
+};
+
+export const customSchemaFieldsToObject = (array: CustomSchemaField[]) => {
+  if (Array.isArray(array)) {
+    return array.reduce(
+      (acc, item) => {
+        const { id, ...rest } = item;
+        acc[id as string] = rest;
+        return acc;
+      },
+      {} as Record<string, unknown>
+    );
+  }
+  return {};
 };
