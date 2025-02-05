@@ -75,6 +75,13 @@ rotateBtn.addEventListener("click", () => {
     clearInterval(intervalId);
   }
 });
+
+// To prevent memory leaks, stop "setInterval" when the page is closed or navigated away from
+window.addEventListener("unload", () => {
+  if (intervalId) {
+    clearInterval(intervalId); 
+  }
+});
 </script>
 \`);
 
