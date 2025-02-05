@@ -348,7 +348,6 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
-      rootLayerId
       teamId
       projectId
       property {

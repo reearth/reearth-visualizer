@@ -24,7 +24,6 @@ func TestProcessor_UninstallPlugin(t *testing.T) {
 
 	res, err := Processor{
 		LayerLoader: layer.LoaderFrom([]layer.Layer{l1, l2, l3, l4, l5}),
-		RootLayerID: l5.ID(),
 	}.UninstallPlugin(context.TODO(), pid)
 
 	assert.NoError(t, err)

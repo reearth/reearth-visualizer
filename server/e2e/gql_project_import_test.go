@@ -89,7 +89,6 @@ query GetScene($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
-      rootLayerId
       teamId
       projectId
       property {

@@ -159,7 +159,6 @@ func TestImportScene(t *testing.T) {
 	var resultMap map[string]interface{}
 	err = json.Unmarshal(resultJSON, &resultMap)
 	assert.NoError(t, err)
-	delete(resultMap, "rootLayerId")
 	delete(resultMap, "propertyId")
 	delete(resultMap, "updatedAt")
 	delete(resultMap, "createdAt")
