@@ -179,7 +179,10 @@ const PluginList = styled("div")(({ theme }) => ({
   paddingRight: theme.spacing.small,
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest
+  gap: theme.spacing.smallest,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
 }));
 
 const PluginListWrapper = styled("div")(({ theme }) => ({
