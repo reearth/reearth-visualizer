@@ -4,7 +4,7 @@ import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
 import { CustomPropertyProps } from "../../SketchLayerCreator/type";
-import { ContentWrapper } from "../SharedComponent";
+import { ContentWrapper, Label } from "../SharedComponent";
 
 import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
@@ -72,6 +72,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   return (
     <ContentWrapper>
       <PropertyTable>
+        <Label>{t("Custom property schema")}</Label>
         <PropertyTableRow>
           <ActionCol />
           <PropertyHeaderCol>

@@ -1,4 +1,3 @@
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
@@ -29,7 +28,6 @@ export type CustomPropertyProps = {
 
 export type SketchLayerProps = {
   sceneId: string;
-  layerStyles?: LayerStyle[];
   onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
 };

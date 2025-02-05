@@ -56,7 +56,6 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     closeSketchLayerCreator,
     customPropertySchemaShown,
     closeCustomPropertySchema,
-    layerStyles,
     layers,
     layerId,
     handleCustomPropertySchemaUpdate,
@@ -131,7 +130,6 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           onSubmit={handleLayerAdd}
           sceneId={sceneId}
           onClose={closeSketchLayerCreator}
-          layerStyles={layerStyles}
         />
       )}
       {customPropertySchemaShown && (
