@@ -37,11 +37,6 @@ func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
-	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
-	return e
-}
-
 func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container) {
 	ctx := context.Background()
 
@@ -68,13 +63,83 @@ func initGateway() *gateway.Container {
 	}
 }
 
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	repos := initRepos(t, useMongo, seeder)
-	gateways := initGateway()
-	return StartServerWithRepos(t, cfg, repos, gateways), repos, gateways
+func initAccountGateway(ctx context.Context) *accountgateway.Container {
+	return &accountgateway.Container{
+		Mailer: mailer.New(ctx, &mailer.Config{}),
+	}
 }
 
-func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container, gateways *gateway.Container) *httpexpect.Expect {
+func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container, *accountgateway.Container) {
+	gateways := initGateway()
+	accountGateway := initAccountGateway(ctx)
+	return app.NewServer(ctx, &app.ServerConfig{
+		Config:          cfg,
+		Repos:           repos,
+		AccountRepos:    repos.AccountRepos(),
+		Gateways:        gateways,
+		AccountGateways: accountGateway,
+		Debug:           true,
+	}), gateways, accountGateway
+}
+
+func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountgateway.Container) {
+	t.Helper()
+
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	ctx := context.Background()
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		t.Fatalf("server failed to listen: %v", err)
+	}
+
+	srv, gateways, accountGateway := initServerWithAccountGateway(cfg, repos, ctx)
+
+	ch := make(chan error)
+	go func() {
+		if err := srv.Serve(l); err != http.ErrServerClosed {
+			ch <- err
+		}
+		close(ch)
+	}()
+	t.Cleanup(func() {
+		if err := srv.Shutdown(context.Background()); err != nil {
+			t.Fatalf("server shutdown: %v", err)
+		}
+
+		if err := <-ch; err != nil {
+			t.Fatalf("server serve: %v", err)
+		}
+	})
+	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
+}
+
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+	cfg := &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+	repos := initRepos(t, true, seeder)
+	e, _, _ := StartGQLServerWithRepos(t, cfg, repos)
+	return e, repos.AccountRepos()
+}
+
+func initServer(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container) {
+	gateways := initGateway()
+	return app.NewServer(ctx, &app.ServerConfig{
+		Config:       cfg,
+		Repos:        repos,
+		AccountRepos: repos.AccountRepos(),
+		Gateways:     gateways,
+		Debug:        true,
+	}), gateways
+}
+
+func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container) {
 	t.Helper()
 
 	if testing.Short() {
@@ -88,78 +153,7 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 		t.Fatalf("server failed to listen: %v", err)
 	}
 
-	srv := app.NewServer(ctx, &app.ServerConfig{
-		Config:       cfg,
-		Repos:        repos,
-		Gateways:     gateways,
-		Debug:        true,
-		AccountRepos: repos.AccountRepos(),
-	})
-
-	ch := make(chan error)
-	go func() {
-		if err := srv.Serve(l); err != http.ErrServerClosed {
-			ch <- err
-		}
-		close(ch)
-	}()
-
-	t.Cleanup(func() {
-		if err := srv.Shutdown(context.Background()); err != nil {
-			t.Fatalf("server shutdown: %v", err)
-		}
-
-		if err := <-ch; err != nil {
-			t.Fatalf("server serve: %v", err)
-		}
-	})
-
-	return httpexpect.Default(t, "http://"+l.Addr().String())
-}
-
-type GraphQLRequest struct {
-	OperationName string         `json:"operationName"`
-	Query         string         `json:"query"`
-	Variables     map[string]any `json:"variables"`
-}
-
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	cfg := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	repos := initRepos(t, true, seeder)
-	acRepos := repos.AccountRepos()
-	return StartGQLServerWithRepos(t, cfg, repos, acRepos), acRepos
-}
-
-func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container, accountrepos *accountrepo.Container) *httpexpect.Expect {
-	t.Helper()
-
-	if testing.Short() {
-		t.SkipNow()
-	}
-
-	ctx := context.Background()
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("server failed to listen: %v", err)
-	}
-
-	srv := app.NewServer(ctx, &app.ServerConfig{
-		Config:       cfg,
-		Repos:        repos,
-		AccountRepos: accountrepos,
-		Gateways: &gateway.Container{
-			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-		},
-		AccountGateways: &accountgateway.Container{
-			Mailer: mailer.New(ctx, &mailer.Config{}),
-		},
-		Debug: true,
-	})
+	srv, gateways := initServer(cfg, repos, ctx)
 
 	ch := make(chan error)
 	go func() {
@@ -177,7 +171,18 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 			t.Fatalf("server serve: %v", err)
 		}
 	})
-	return httpexpect.Default(t, "http://"+l.Addr().String())
+	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways
+}
+
+func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	repos := initRepos(t, useMongo, seeder)
+	e, gateways := StartServerWithRepos(t, cfg, repos)
+	return e, repos, gateways
+}
+
+func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
+	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
+	return e
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
@@ -202,6 +207,12 @@ func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
 			return baseSeederWithLang(ctx, r, lang)
 		},
 	)
+}
+
+type GraphQLRequest struct {
+	OperationName string         `json:"operationName"`
+	Query         string         `json:"query"`
+	Variables     map[string]any `json:"variables"`
 }
 
 func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {

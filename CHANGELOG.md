@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.3.2 - 2025-02-05
+
+### Web
+
+#### 🚀 Features
+
+- Update @reearth&#x2F;core ([#1407](https://github.com/reearth/reearth-visualizer/pull/1407)) [`7c3f1a`](https://github.com/reearth/reearth-visualizer/commit/7c3f1a)
+
+#### 🔧 Bug Fixes
+
+- Missing one example on plugin playground ([#1402](https://github.com/reearth/reearth-visualizer/pull/1402)) [`304d32`](https://github.com/reearth/reearth-visualizer/commit/304d32)
+
+#### ✨ Refactor
+
+- Format code ([#1405](https://github.com/reearth/reearth-visualizer/pull/1405)) [`5aed76`](https://github.com/reearth/reearth-visualizer/commit/5aed76)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.3.2 ([#1408](https://github.com/reearth/reearth-visualizer/pull/1408)) [`d6f07c`](https://github.com/reearth/reearth-visualizer/commit/d6f07c)
+- Update package version to 1.0.0-beta.3.1 ([#1403](https://github.com/reearth/reearth-visualizer/pull/1403)) [`2dd7b7`](https://github.com/reearth/reearth-visualizer/commit/2dd7b7)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Fix changed-files ([#1404](https://github.com/reearth/reearth-visualizer/pull/1404)) [`1b368e`](https://github.com/reearth/reearth-visualizer/commit/1b368e)
+
 ## 1.0.0-beta.3.0 - 2025-02-04
 
 ### Web

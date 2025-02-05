@@ -170,7 +170,9 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         )}
         {!showDelete && sortOptions && (
           <Sort>
-            <Typography size="body">{t("Sort:")}</Typography>
+            <Typography size="body" otherProperties={{ flexShrink: 0 }}>
+              {t("Sort:")}
+            </Typography>
             <Selector
               value={sortValue}
               options={sortOptions}

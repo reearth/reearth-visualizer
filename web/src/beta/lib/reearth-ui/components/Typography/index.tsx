@@ -60,8 +60,7 @@ export const Typography: FC<TypographyProps> = ({
           ? color
           : theme.content.main,
       textOverflow: "ellipsis",
-      overflow: "hidden",
-      flexShrink: 0
+      overflow: "hidden"
     }),
     [otherProperties, color, theme]
   );
