@@ -121,39 +121,17 @@ reearth.camera.flyTo(
 // Listen for messages from the UI and override the style for "Cool Style or "Warm Style"
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
-  if (action === "updateStyleCool") {
-    reearth.layers.override(layerId, {
-      "3dtiles": {
-        color: {
-          expression: {
-            conditions: [
-              ["\${_zmax} > 200", "color('#005f8d')"],
-              ["\${_zmax} > 150", "color('#008cdd')"],
-              ["\${_zmax} > 100", "color('#33baff')"],
-              ["\${_zmax} > 50", "color('#7cd8ff')"],
-              ["\${_zmax} > 0", "color('#d5f2ff')"],
-              ["true", "color('#003f66')"],
-            ],
-          },
-        },
-      },
-    });
-  } else if (action === "updateStyleWarm") {
-    reearth.layers.override(layerId, {
-      "3dtiles": {
-        color: {
-          expression: {
-            conditions: [
-              ["\${_zmax} > 200", "color('#f5220f')"],
-              ["\${_zmax} > 150", "color('#ff5e47')"],
-              ["\${_zmax} > 100", "color('#ff9586')"],
-              ["\${_zmax} > 50", "color('#ffc1b8')"],
-              ["\${_zmax} > 0", "color('#ffe5e0')"],
-              ["true", "color('#a1140a')"],
-            ],
-          },
-        },
-      },
+  if (action === "zoomIn") {
+    reearth.camera.zoomIn(1, {
+      duration: 1, 
+      withoutAnimation: false, // Enable animation
+      easing: (t) => t * t, // Custom easing function for slower start
+    });   
+  } else if (action === "zoomOut") {
+    reearth.camera.zoomOut(1, {
+      duration: 1, 
+      withoutAnimation: false, // Enable animation
+      easing: (t) => t * t, // Custom easing function for slower start
     });
   }
 });
