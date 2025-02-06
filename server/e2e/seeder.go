@@ -25,8 +25,6 @@ var (
 	pName  = "p1"
 	pAlias = "PROJECT_ALIAS"
 
-	sID = id.NewSceneID()
-
 	now = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 )
 
