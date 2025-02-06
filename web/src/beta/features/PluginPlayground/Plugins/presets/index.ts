@@ -1,5 +1,6 @@
 import { PluginType } from "../constants";
 
+import { cameraPosition } from "./camera/cameraPosition";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
@@ -81,7 +82,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "camera",
     title: "Camera",
-    plugins: []
+    plugins: [cameraPosition]
   },
   {
     id: "timeline",
