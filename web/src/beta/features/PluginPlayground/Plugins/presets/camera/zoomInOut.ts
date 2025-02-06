@@ -21,14 +21,18 @@ const widgetFile: FileType = {
   id: "zoom-in-out",
   title: "zoom-in-out.js",
   sourceCode: `// This example demonstrates how to Zoom In / Out
+// Click the buttons to change zoom level
 
-// Click the buttons to switch between different 3D Tiles color gradients
-
-// Define the plug-in UI //
+// ================================
+// Define Plug-in UI side (iframe)
+// ================================
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
     .zoomBtn {
+      display: flex;  
+      align-items: center;    
+      justify-content: center;
       padding: 8px;
       border-radius: 4px;
       border: none;
@@ -37,18 +41,27 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       cursor: pointer;
       width: 100px;
       height: 40px;
-      font-size: 24px 
+      font-size: 29px 
     }
     .zoomBtn:active {
       background: #dcdcdc;
+    }
+    .zoomBtn img {
+    display: block;
+    width: 20px;
+    height: 20px;
     }
 
   </style>
   <div id="wrapper">
     <h2>Zoom Level</h2>
     <div class="flex-center">
-      <button class = "zoomBtn" id="zoomIn">+</button>
-      <button class = "zoomBtn" id="zoomOut">−</button>
+      <button class="zoomBtn" id="zoomIn">
+        <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/plus.svg" alt="Zoom In" />
+      </button>
+      <button class="zoomBtn" id="zoomOut">
+        <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/minus.svg" alt="Zoom Out" />
+      </button>
     </div>
   </div>
   
@@ -71,19 +84,18 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   </script>
   \`);
 
-// Listen for messages from the UI and override the style for "zoomIn" or "zoomOut"
+// ================================
+// Define Re:Earth(Web Assembly) side
+// ================================
+
+// Listen for messages from the UI and update zoom level
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "zoomIn") {
-    reearth.camera.zoomIn(2, {
-      duration: 0.5, 
-      withoutAnimation: false, // Enable animation
-    });   
+    // Increasing the value increases the change to zoom
+    reearth.camera.zoomIn(2);   
   } else if (action === "zoomOut") {
-    reearth.camera.zoomOut(2, {
-      duration: 0.5, 
-      withoutAnimation: false, // Enable animation
-    });
+    reearth.camera.zoomOut(2);
   }
 });`
 };
