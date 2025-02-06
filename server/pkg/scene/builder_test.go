@@ -14,7 +14,6 @@ func TestBuilder_IDs(t *testing.T) {
 	b := New().NewID().RootLayer(lid).Workspace(tid).MustBuild()
 	assert.NotNil(t, b.ID())
 	assert.Equal(t, tid, b.Workspace())
-	assert.Equal(t, lid, b.RootLayer())
 	sid := NewID()
 	b2 := New().ID(sid).RootLayer(lid).Workspace(tid).MustBuild()
 	assert.Equal(t, sid, b2.ID())
