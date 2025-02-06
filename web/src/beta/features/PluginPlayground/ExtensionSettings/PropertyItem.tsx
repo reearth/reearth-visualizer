@@ -49,9 +49,7 @@ const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
   const handleChange = (newValue?: FieldValue): void => {
     if (newValue) {
       setValue(newValue);
-      setTimeout(() => {
-        setUpdatedField({ fieldId: field.id, value: newValue });
-      }, 300);
+      setUpdatedField({ fieldId: field.id, value: newValue });
     }
   };
 
