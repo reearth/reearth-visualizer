@@ -32,7 +32,7 @@ const PluginPlayground: FC = () => {
             <Panel noPadding alwaysOpen extend title="Settings">
               <SettingsPanel />
             </Panel>
-            <Panel noPadding alwaysOpen extend title="Widgets">
+            <Panel noPadding alwaysOpen extend title="Extension Settings">
               <ExtensionSettingsPanel />
             </Panel>
           </Area>
