@@ -18,6 +18,7 @@ import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
 import { overrideStyle } from "./manageLayerStyle/overrideStyle";
 import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
+import { zoomInOut } from "./camera/zoomInOut";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -81,7 +82,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "camera",
     title: "Camera",
-    plugins: []
+    plugins: [zoomInOut]
   },
   {
     id: "timeline",
