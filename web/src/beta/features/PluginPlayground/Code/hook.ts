@@ -1,22 +1,23 @@
-import { SpacingValues } from "@reearth/beta/ui/fields/SpacingField";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useState } from "react";
 import { v4 } from "uuid";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
-import { LatLng } from "../../Visualizer/Crust/types";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 import { FileType } from "../Plugins/constants";
 import {
   CustomInfoboxBlock,
   CustomSchemaField,
   CustomStoryBlock,
+  FieldValue,
+  Group,
   Widgets
 } from "../types";
-import { customSchemaFieldsToObject, getYmlJson } from "../utils";
+import { getYmlJson } from "../utils";
 
 type Props = {
   files: FileType[];
+  fieldValues: Record<string, FieldValue>;
   resetVisualizer: () => void;
 };
 
@@ -24,41 +25,18 @@ type HookReturnType = {
   executeCode: () => void;
   infoboxBlocks?: CustomInfoboxBlock[];
   schemaFields?: CustomSchemaField[];
-  setSchemaFields: (fields: CustomSchemaField[]) => void;
   story?: Story;
-  setUpdatedField: ({
-    fieldId,
-    value
-  }: {
-    fieldId: string;
-    value:
-      | boolean
-      | LatLng
-      | number
-      | number[]
-      | string
-      | string[]
-      | SpacingValues;
-  }) => void;
   widgets?: Widgets;
 };
 
-export default ({ files, resetVisualizer }: Props): HookReturnType => {
+export default ({
+  files,
+  fieldValues,
+  resetVisualizer
+}: Props): HookReturnType => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
-  const [schemaFields, setSchemaFields] = useState<CustomSchemaField[]>();
-  const [updatedField, setUpdatedField] = useState<{
-    fieldId: string;
-    value:
-      | boolean
-      | LatLng
-      | number
-      | number[]
-      | string
-      | string[]
-      | SpacingValues;
-  }>();
 
   const [, setNotification] = useNotification();
 
@@ -118,8 +96,11 @@ export default ({ files, resetVisualizer }: Props): HookReturnType => {
                       name: cur.name,
                       extensionId: cur.id,
                       pluginId: ymlJson.id,
-                      property: customSchemaFieldsToObject(
-                        schemaFields as CustomSchemaField[]
+                      property: generateProperty(
+                        cur.schema,
+                        fieldValues,
+                        ymlJson.id,
+                        cur.id
                       ),
                       __REEARTH_SOURCECODE: file.sourceCode,
                       extended
@@ -200,42 +181,37 @@ export default ({ files, resetVisualizer }: Props): HookReturnType => {
         }
       ]
     });
-
-    let schemaFieldsFromExtension = ymlJson.extensions.reduce<
-      CustomSchemaField[]
-    >((prv, cur) => {
-      if (!cur.schema || !cur.schema.groups) return prv;
-
-      return [...prv, ...cur.schema.groups.flatMap((g) => g.fields)];
-    }, []);
-
-    if (updatedField) {
-      const updatedFieldIndex = schemaFieldsFromExtension.findIndex(
-        (field) => field.id === updatedField.fieldId
-      );
-
-      if (updatedFieldIndex !== -1) {
-        schemaFieldsFromExtension = [
-          ...schemaFieldsFromExtension.slice(0, updatedFieldIndex),
-          {
-            ...schemaFieldsFromExtension[updatedFieldIndex],
-            value: (updatedField.value as string) ?? ""
-          },
-          ...schemaFieldsFromExtension.slice(updatedFieldIndex + 1)
-        ];
-      }
-    }
-
-    setSchemaFields(schemaFieldsFromExtension);
-  }, [updatedField, schemaFields, files, resetVisualizer, setNotification]);
+  }, [files, fieldValues, resetVisualizer, setNotification]);
 
   return {
     executeCode,
     infoboxBlocks,
-    schemaFields,
-    setSchemaFields,
-    setUpdatedField,
     story,
     widgets
   };
 };
+
+function generateProperty(
+  schema:
+    | {
+        groups: Group;
+      }
+    | undefined,
+  fieldValues: Record<string, FieldValue>,
+  pluginId: string,
+  extensionId: string
+) {
+  const property: any = {};
+  if (!schema || !schema.groups) return property;
+
+  schema.groups.forEach((group) => {
+    const groupProperty: Record<string, FieldValue> = {};
+    group.fields.forEach((field) => {
+      const id = `${pluginId}-${extensionId}-${group.id}-${field.id}`;
+      groupProperty[field.id] = fieldValues[id] ?? field.defaultValue;
+    });
+    property[group.id] = groupProperty;
+  });
+
+  return property;
+}

@@ -10,7 +10,7 @@ import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import SettingsList from "./SettingsList";
-import { CustomSchemaField } from "./types";
+import { FieldValue } from "./types";
 import Viewer from "./Viewer";
 
 export default () => {
@@ -25,6 +25,10 @@ export default () => {
     }, 0);
     return () => clearTimeout(timeoutId);
   }, []);
+
+  const [fieldValues, setFieldValues] = useState<Record<string, FieldValue>>(
+    {}
+  );
 
   const {
     presetPlugins,
@@ -42,16 +46,9 @@ export default () => {
     sharedPlugin
   } = usePlugins();
 
-  const {
-    executeCode,
-    infoboxBlocks,
-    story,
-    widgets,
-    schemaFields,
-    setSchemaFields,
-    setUpdatedField
-  } = useCode({
+  const { executeCode, infoboxBlocks, story, widgets } = useCode({
     files: selectedPlugin.files,
+    fieldValues,
     resetVisualizer
   });
 
@@ -199,10 +196,10 @@ export default () => {
 
   const ExtensionSettingsPanel: FC = () => (
     <ExtensionSettings
-      schemaFields={schemaFields as CustomSchemaField[]}
       selectedPlugin={selectedPlugin}
-      setSchemaFields={setSchemaFields}
-      setUpdatedField={setUpdatedField}
+      selectedFile={selectedFile}
+      fieldValues={fieldValues}
+      setFieldValues={setFieldValues}
     />
   );
 

@@ -1,7 +1,7 @@
 import { SpacingValues } from "@reearth/beta/ui/fields/SpacingField";
 import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { SchemaField } from "@reearth/services/api/propertyApi/utils";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import {
   ColorField,
@@ -21,19 +21,13 @@ import {
 import { FieldValue } from "../types";
 
 type Props = {
-  initialValue: FieldValue;
+  id: string;
+  value: FieldValue;
   field: SchemaField;
-  setUpdatedField: ({
-    fieldId,
-    value
-  }: {
-    fieldId: string;
-    value: FieldValue;
-  }) => void;
+  onUpdate: (id: string, value: FieldValue) => void;
 };
 
-const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
-  const [value, setValue] = useState<FieldValue>(initialValue);
+const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
   const assetTypes: "image"[] | "file"[] | undefined = useMemo(
     () =>
       field.type === "url"
@@ -46,12 +40,14 @@ const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
     [field.type, field.ui]
   );
 
-  const handleChange = (newValue?: FieldValue): void => {
-    if (newValue) {
-      setValue(newValue);
-      setUpdatedField({ fieldId: field.id, value: newValue });
-    }
-  };
+  const handleChange = useCallback(
+    (newValue?: FieldValue): void => {
+      if (newValue) {
+        onUpdate(id, newValue);
+      }
+    },
+    [id, onUpdate]
+  );
 
   return (
     <>
@@ -62,7 +58,7 @@ const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
             title={field.name}
             value={value as string}
             description={field.description}
-            onChange={(newValue?: string) => handleChange(newValue ?? "")}
+            onChange={handleChange}
           />
         ) : field.ui === "selection" ? (
           <SelectField
@@ -95,7 +91,7 @@ const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
             resizable="height"
             description={field.description}
             value={(value as string) ?? ""}
-            onChange={handleChange}
+            onBlur={handleChange}
           />
         ) : (
           <InputField
@@ -103,7 +99,6 @@ const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
             title={field.name}
             value={value as string}
             description={field.description}
-            onChange={handleChange}
             onBlur={handleChange}
           />
         )
@@ -157,7 +152,7 @@ const PropertyItem: FC<Props> = ({ initialValue, field, setUpdatedField }) => {
             description={field.description}
             min={field.min}
             max={field.max}
-            onChange={handleChange}
+            onBlur={handleChange}
           />
         )
       ) : field.type === "latlng" ? (

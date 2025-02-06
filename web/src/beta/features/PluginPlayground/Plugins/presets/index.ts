@@ -3,6 +3,7 @@ import { PluginType } from "../constants";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
+import { extensionProperty } from "./extension/extensionProperty";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
 import { addCzml } from "./layers/add-czml";
@@ -92,6 +93,11 @@ export const presetPlugins: PresetPlugins = [
     id: "dataStorage",
     title: "Data Storage",
     plugins: []
+  },
+  {
+    id: "extension",
+    title: "Extension",
+    plugins: [extensionProperty]
   },
   {
     id: "sketch",

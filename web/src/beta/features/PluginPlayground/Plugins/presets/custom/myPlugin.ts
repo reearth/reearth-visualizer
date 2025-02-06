@@ -17,20 +17,6 @@ extensions:
         zone: outer
         section: left
         area: top
-    schema:
-      groups:
-      - id: default
-        title: Data
-        fields:
-          - id: title 
-            type: string
-            title: Title
-            name: Title
-          - id: datetime
-            type: string
-            title: Date and Time
-            name: Date and Time
-            ui: datetime
   - id: demo-infobox-block-1
     type: infoboxBlock
     name: Demo Infobox Block 1

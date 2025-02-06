@@ -1,16 +1,14 @@
-import { SpacingValues } from "@reearth/beta/ui/fields/SpacingField";
+import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
-import { LatLng } from "../../Visualizer/Crust/types";
-import { CustomSchemaField, FieldValue } from "../types";
+import { FileType } from "../Plugins/constants";
+import { FieldValue } from "../types";
 import { getYmlJson } from "../utils";
 
 import PropertyItem from "./PropertyItem";
 
 type Props = {
-  schemaFields: CustomSchemaField[];
-  setSchemaFields: (fields: CustomSchemaField[]) => void;
   selectedPlugin: {
     id: string;
     title: string;
@@ -20,26 +18,16 @@ type Props = {
       sourceCode: string;
     }[];
   };
-  setUpdatedField: ({
-    fieldId,
-    value
-  }: {
-    fieldId: string;
-    value:
-      | boolean
-      | LatLng
-      | number
-      | number[]
-      | string
-      | string[]
-      | SpacingValues;
-  }) => void;
+  selectedFile: FileType;
+  fieldValues: Record<string, FieldValue>;
+  setFieldValues: (fieldValues: Record<string, FieldValue>) => void;
 };
 const ExtensionSettings: FC<Props> = ({
-  schemaFields,
   selectedPlugin,
-  setUpdatedField
-}): JSX.Element => {
+  selectedFile,
+  fieldValues,
+  setFieldValues
+}): ReactNode => {
   const ymlFile =
     selectedPlugin.files &&
     selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
@@ -75,63 +63,57 @@ const ExtensionSettings: FC<Props> = ({
       </Wrapper>
     );
   }
-  const widgetExtension = ymlJSON.extensions.find((e) => e.type === "widget");
 
-  if (
-    !widgetExtension ||
-    !widgetExtension.schema ||
-    !widgetExtension.schema.groups
-  ) {
-    return (
-      <Wrapper>
-        <ErrorMessage>
-          This plugin does not have a valid widget extension.
-        </ErrorMessage>
-      </Wrapper>
-    );
-  }
+  const extension = ymlJSON.extensions.find(
+    (e) => e.id === selectedFile.title.split(".")[0]
+  );
 
-  const widgetSchema = widgetExtension.schema.groups;
+  const handleFieldValueChange = (fieldId: string, value: FieldValue) => {
+    setFieldValues({ ...fieldValues, [fieldId]: value });
+  };
 
-  if (!widgetSchema || widgetSchema.length == 0) {
-    return (
-      <Wrapper>
-        <ErrorMessage>This plugin does not have any widgets.</ErrorMessage>
-      </Wrapper>
-    );
-  }
-
-  const { fields } = widgetSchema[0];
-
-  console.log("schemaFields", schemaFields);
-
-  return (
+  return extension?.schema?.groups && extension.schema.groups.length > 0 ? (
     <Wrapper>
-      {fields.map((field) => {
-        const initialValue =
-          schemaFields &&
-          schemaFields.length > 0 &&
-          schemaFields.find((f) => f.id === field.id)?.value;
-        return (
-          <PropertyItem
-            field={field}
-            initialValue={initialValue as FieldValue}
-            key={field.id}
-            setUpdatedField={setUpdatedField}
-          />
-        );
-      })}
+      {extension.schema.groups.map((group) => (
+        <Collapse title={group.title} key={group.id}>
+          <FieldsWrapper>
+            {group.fields.map((field) => {
+              const id = `${ymlJSON.id}-${extension.id}-${group.id}-${field.id}`;
+              const value = fieldValues[id];
+              return (
+                <PropertyItem
+                  id={id}
+                  field={field}
+                  value={value}
+                  key={field.id}
+                  onUpdate={handleFieldValueChange}
+                />
+              );
+            })}
+          </FieldsWrapper>
+        </Collapse>
+      ))}
+    </Wrapper>
+  ) : (
+    <Wrapper>
+      <ErrorMessage>No valid schema defined.</ErrorMessage>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
-  padding: 10px;
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing.small
+}));
 
-const ErrorMessage = styled.p`
-  color: ${({ theme }) => theme.content.main};
-  font-size: ${({ theme }) => theme.fonts.sizes.body}px;
-`;
+const FieldsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.normal
+}));
+
+const ErrorMessage = styled.p(({ theme }) => ({
+  color: theme.content.weak,
+  fontSize: theme.fonts.sizes.body
+}));
 
 export default ExtensionSettings;
