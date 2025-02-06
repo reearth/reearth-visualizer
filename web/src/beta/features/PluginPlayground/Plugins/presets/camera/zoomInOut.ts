@@ -71,77 +71,21 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   </script>
   \`);
 
-// Define Re:Earth(Web Assembly) side //
-
-// Define a 3D Tiles layer
-const sample3dTiles = {
-  type: "simple", // Required
-  data: {
-    type: "3dtiles", // Data type
-    url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json", // URL of the 3D Tiles
-  },
-  "3dtiles": {
-    // Styling settings for the 3D Tiles
-    color: "#f8f8ff", // Initial 3D Tiles color
-    pbr: false, // Enable or disable Physically Based Rendering
-  },
-};
-
-// Add the 3D Tiles layer to Re:Earth
-const layerId = reearth.layers.add(sample3dTiles);
-
-reearth.viewer.overrideProperty({
-  // Enable Cesium World Terrain
-  terrain: {
-    enabled: true,
-  },
-  // Prevent buildings from floating above the terrain
-  globe: {
-    depthTestAgainstTerrain: true,
-  },
-});
-
-// Move the camera to the specified position
-reearth.camera.flyTo(
-  {
-    // Define the camera's target position
-    heading: 4.427049010960799,
-    height: 1182.6187185313975,
-    lat: 35.66552094432892,
-    lng: 139.77065176741144,
-    pitch: -0.4754550303679297,
-    roll: 0.00009119480271468916,
-  },
-  {
-    // Define the duration of the camera movement (in seconds)
-    duration: 2.0,
-  }
-);
-
-// Listen for messages from the UI and override the style for "Cool Style or "Warm Style"
+// Listen for messages from the UI and override the style for "zoomIn" or "zoomOut"
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "zoomIn") {
-    reearth.camera.zoomIn(1, {
-      duration: 1, 
+    reearth.camera.zoomIn(2, {
+      duration: 0.5, 
       withoutAnimation: false, // Enable animation
-      easing: (t) => t * t, // Custom easing function for slower start
     });   
   } else if (action === "zoomOut") {
-    reearth.camera.zoomOut(1, {
-      duration: 1, 
+    reearth.camera.zoomOut(2, {
+      duration: 0.5, 
       withoutAnimation: false, // Enable animation
-      easing: (t) => t * t, // Custom easing function for slower start
     });
   }
-});
-
-// Set the timeline to a morning hour so that building colors are easy to see
-reearth.timeline.setTime({
-    start: new Date("2023-01-01T00:00:00Z"),
-    stop: new Date("2023-01-01T10:00:00Z"),
-    current: new Date("2023-01-01T02:00:00Z"),
-  })`
+});`
 };
 
 export const zoomInOut: PluginType = {
