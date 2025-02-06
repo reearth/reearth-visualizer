@@ -28,68 +28,44 @@ const widgetFile: FileType = {
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    .coolBtn {
+    .zoomBtn {
       padding: 8px;
       border-radius: 4px;
       border: none;
-      background: #f0ffff;
+      background: #ffffff;
       color: #000000;
       cursor: pointer;
-      width: 200px;
+      width: 100px;
       height: 40px;
-      font-size: 16px 
+      font-size: 24px 
     }
     .scaleBtn:active {
       background: #dcdcdc;
-    }
-    .warmBtn {
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background:#ffe4e1;
-      color: #000000;
-      cursor: pointer;
-      width: 200px;
-      height: 40px;
-      font-size: 16px 
-    }
-    .scaleBtn:active {
-      background: #dcdcdc;
-    }
-
-    .button-container {
-    display: flex;        
-    gap: 8px;           
-    }
-
-    p {
-      text-align: center; 
     }
 
   </style>
   <div id="wrapper">
-    <h2>Color by Height</h2>
-    <p>Choose your preferred color scheme<p>
-    <div class="button-container">
-      <button class = "coolBtn" id="cool">Cool Style</button>
-      <button class = "warmBtn" id="warm">Warm Style</button>
+    <h2>Zoom Level</h2>
+    <div class="flex-center">
+      <button class = "zoomBtn" id="zoomIn">+</button>
+      <button class = "zoomBtn" id="zoomOut">-</button>
     </div>
   </div>
   
   <script>
-  const coolStyle = document.getElementById("cool");
-  const warmStyle  = document.getElementById("warm");
+  const zoomIn = document.getElementById("zoomIn");
+  const zoomOut  = document.getElementById("zoomOut");
 
   // Click a button to send a postMessage to Re:Earth(Web Assembly) side.
-  coolStyle.addEventListener("click",() =>{
+  zoomIn.addEventListener("click",() =>{
     parent.postMessage({
-      action: "updateStyleCool",
+      action: "zoomIn",
     }, "*");
     })
   
-  warmStyle.addEventListener("click",() =>{
+  zoomOut.addEventListener("click",() =>{
     parent.postMessage({
-      action: "updateStyleWarm",
+      action: "zoomOut",
     }, "*");
     })
   </script>
