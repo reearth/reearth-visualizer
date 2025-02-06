@@ -118,11 +118,9 @@ export default ({ files, resetVisualizer }: Props): HookReturnType => {
                       name: cur.name,
                       extensionId: cur.id,
                       pluginId: ymlJson.id,
-                      property: {
-                        default: customSchemaFieldsToObject(
-                          schemaFields as CustomSchemaField[]
-                        )
-                      },
+                      property: customSchemaFieldsToObject(
+                        schemaFields as CustomSchemaField[]
+                      ),
                       __REEARTH_SOURCECODE: file.sourceCode,
                       extended
                     }

@@ -3,12 +3,13 @@ import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 import { LatLng } from "../../Visualizer/Crust/types";
-import { CustomSchemaField } from "../types";
+import { CustomSchemaField, FieldValue } from "../types";
 import { getYmlJson } from "../utils";
 
 import PropertyItem from "./PropertyItem";
 
 type Props = {
+  schemaFields: CustomSchemaField[];
   setSchemaFields: (fields: CustomSchemaField[]) => void;
   selectedPlugin: {
     id: string;
@@ -34,7 +35,8 @@ type Props = {
       | SpacingValues;
   }) => void;
 };
-const WidgetsList: FC<Props> = ({
+const ExtensionSettings: FC<Props> = ({
+  schemaFields,
   selectedPlugin,
   setUpdatedField
 }): JSX.Element => {
@@ -101,15 +103,24 @@ const WidgetsList: FC<Props> = ({
 
   const { fields } = widgetSchema[0];
 
+  console.log("schemaFields", schemaFields);
+
   return (
     <Wrapper>
-      {fields.map((field) => (
-        <PropertyItem
-          key={field.id}
-          field={field}
-          setUpdatedField={setUpdatedField}
-        />
-      ))}
+      {fields.map((field) => {
+        const initialValue =
+          schemaFields &&
+          schemaFields.length > 0 &&
+          schemaFields.find((f) => f.id === field.id)?.value;
+        return (
+          <PropertyItem
+            field={field}
+            initialValue={initialValue as FieldValue}
+            key={field.id}
+            setUpdatedField={setUpdatedField}
+          />
+        );
+      })}
     </Wrapper>
   );
 };
@@ -123,4 +134,4 @@ const ErrorMessage = styled.p`
   font-size: ${({ theme }) => theme.fonts.sizes.body}px;
 `;
 
-export default WidgetsList;
+export default ExtensionSettings;

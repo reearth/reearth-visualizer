@@ -4,13 +4,14 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
+import ExtensionSettings from "./ExtensionSettings";
 import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import SettingsList from "./SettingsList";
+import { CustomSchemaField } from "./types";
 import Viewer from "./Viewer";
-import WidgetsList from "./WidgetsList";
 
 export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
@@ -46,6 +47,7 @@ export default () => {
     infoboxBlocks,
     story,
     widgets,
+    schemaFields,
     setSchemaFields,
     setUpdatedField
   } = useCode({
@@ -195,8 +197,9 @@ export default () => {
     />
   );
 
-  const WidgetsPanel: FC = () => (
-    <WidgetsList
+  const ExtensionSettingsPanel: FC = () => (
+    <ExtensionSettings
+      schemaFields={schemaFields as CustomSchemaField[]}
       selectedPlugin={selectedPlugin}
       setSchemaFields={setSchemaFields}
       setUpdatedField={setUpdatedField}
@@ -209,6 +212,6 @@ export default () => {
     RightAreaTabs,
     SettingsPanel,
     SubRightAreaTabs,
-    WidgetsPanel
+    ExtensionSettingsPanel
   };
 };

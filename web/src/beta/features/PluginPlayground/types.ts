@@ -1,8 +1,10 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
+import { SpacingValues } from "@reearth/beta/ui/fields/SpacingField";
 import { SchemaField } from "@reearth/services/api/propertyApi/utils";
 import { ComponentProps } from "react";
 
 import { Field } from "../Visualizer/Crust/StoryPanel/types";
+import { LatLng } from "../Visualizer/Crust/types";
 import { WidgetLocation } from "../Visualizer/Crust/Widgets/types";
 
 export type ReearthYML = {
@@ -41,14 +43,22 @@ export type CustomInfoboxBlock = {
 
 export type CustomStoryBlock = CustomInfoboxBlock;
 
+export type FieldValue =
+  | string
+  | number
+  | boolean
+  | LatLng
+  | number[]
+  | string[]
+  | SpacingValues;
 export interface CustomField extends Field {
   id?: string;
   ui?: string;
-  defaultValue?: string | number | boolean | null;
+  defaultValue?: FieldValue;
 }
 
 export interface CustomSchemaField extends SchemaField {
-  value?: string | number | boolean | null;
+  value?: FieldValue;
 }
 
 export type Group = {
