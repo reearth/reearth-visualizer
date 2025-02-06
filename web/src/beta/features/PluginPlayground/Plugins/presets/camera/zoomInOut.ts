@@ -39,7 +39,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       height: 40px;
       font-size: 24px 
     }
-    .scaleBtn:active {
+    .zoomBtn:active {
       background: #dcdcdc;
     }
 
@@ -48,7 +48,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
     <h2>Zoom Level</h2>
     <div class="flex-center">
       <button class = "zoomBtn" id="zoomIn">+</button>
-      <button class = "zoomBtn" id="zoomOut">-</button>
+      <button class = "zoomBtn" id="zoomOut">−</button>
     </div>
   </div>
   
