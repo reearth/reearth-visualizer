@@ -132,7 +132,6 @@ const widgetFile: FileType = {
       </div>
 
       <div class="button-group">
-        <button id="refresh-btn">Refresh Position</button>
         <button id="apply-btn">Apply Position</button>
       </div>
       <div id="status-message" class="status-message"></div>
@@ -140,6 +139,8 @@ const widgetFile: FileType = {
   </div>
 
   <script>
+    let preserveManualInput = null;
+
     const inputs = {
       lat: document.getElementById('lat'),
       lng: document.getElementById('lng'),
@@ -151,16 +152,12 @@ const widgetFile: FileType = {
 
     const statusMessage = document.getElementById('status-message');
 
-    // Refresh current camera position
-    document.getElementById('refresh-btn').addEventListener('click', () => {
-      parent.postMessage({ type: 'getCurrentPosition' }, '*');
-    });
-
     // Apply camera position
     document.getElementById('apply-btn').addEventListener('click', () => {
+      preserveManualInput = true;
       const cameraParams = {};
 
-      // Collect non-empty inputs
+      // Collect ALL input values
       Object.keys(inputs).forEach(key => {
         const value = inputs[key].value.trim();
         if (value !== '') {
@@ -178,19 +175,22 @@ const widgetFile: FileType = {
     // Handle messages from extension
     window.addEventListener('message', (e) => {
       if (e.data.type === 'currentPosition') {
-        const position = e.data.position;
+        // Only update if not preserving manual input
+        if (!preserveManualInput) {
+          const position = e.data.position;
 
-        // Update input fields
-        Object.keys(inputs).forEach(key => {
-          if (position[key] !== undefined) {
-            inputs[key].value = Number(position[key]).toFixed(4);
-          } else {
-            inputs[key].value = '';
-          }
-        });
-
-        // Show status message
-        statusMessage.textContent = 'Camera position refreshed!';
+          // Update input fields
+          Object.keys(inputs).forEach(key => {
+            if (position[key] !== undefined) {
+              inputs[key].value = Number(position[key]).toFixed(4);
+            } else {
+              inputs[key].value = '';
+            }
+          });
+        } else {
+          // Reset the flag after one update
+          preserveManualInput = false;
+        }
       } else if (e.data.type === 'positionApplied') {
         // Show status message for successful application
         statusMessage.textContent = 'Camera position applied!';
@@ -199,25 +199,21 @@ const widgetFile: FileType = {
   </script>
 \`);
 
-// Extension logic
+reearth.camera.on("move", (camera) => {
+  reearth.ui.postMessage({
+    type: 'currentPosition',
+    position: {
+      lat: camera.lat,
+      lng: camera.lng,
+      height: camera.height,
+      heading: camera.heading,
+      pitch: camera.pitch,
+      roll: camera.roll
+    }
+  });
+});
+
 reearth.extension.on('message', (msg) => {
-  // Get current camera position
-  if (msg.type === 'getCurrentPosition') {
-    const currentPosition = reearth.camera.position || {};
-
-    reearth.ui.postMessage({
-      type: 'currentPosition',
-      position: {
-        lat: currentPosition.lat,
-        lng: currentPosition.lng,
-        height: currentPosition.height,
-        heading: currentPosition.heading,
-        pitch: currentPosition.pitch,
-        roll: currentPosition.roll
-      }
-    });
-  }
-
   // Apply camera position
   if (msg.type === 'applyCameraPosition') {
     const params = msg.position;
@@ -225,8 +221,8 @@ reearth.extension.on('message', (msg) => {
     reearth.camera.flyTo(
       params,
       {
-        duration: 2,  // 2-second smooth transition
-        easing: (t) => t * t  // Quadratic easing for smooth movement
+        duration: 0,
+        easing: (t) => t * t
       }
     );
 
