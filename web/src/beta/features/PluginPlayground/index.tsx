@@ -10,8 +10,7 @@ const PluginPlayground: FC = () => {
     MainAreaTabs,
     RightAreaTabs,
     SettingsPanel,
-    SubRightAreaTabs,
-    ExtensionSettingsPanel
+    SubRightAreaTabs
   } = useHooks();
 
   return (
@@ -32,9 +31,10 @@ const PluginPlayground: FC = () => {
             <Panel noPadding alwaysOpen extend title="Settings">
               <SettingsPanel />
             </Panel>
-            <Panel noPadding alwaysOpen extend title="Widgets">
+            {/* TODO: Need to fix state management of each individual input field in Extension Settings */}
+            {/* <Panel noPadding alwaysOpen extend title="Widgets">
               <ExtensionSettingsPanel />
-            </Panel>
+            </Panel> */}
           </Area>
         </Area>
         <Area
