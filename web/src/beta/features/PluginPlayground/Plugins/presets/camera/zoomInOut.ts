@@ -39,22 +39,20 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       background: #ffffff;
       color: #000000;
       cursor: pointer;
-      width: 100px;
+      width: 90px;
       height: 40px;
-      font-size: 29px 
     }
     .zoomBtn:active {
       background: #dcdcdc;
     }
     .zoomBtn img {
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     }
-
   </style>
   <div id="wrapper">
-    <h2>Zoom Level</h2>
+    <h3>Zoom Level</h3>
     <div class="flex-center">
       <button class="zoomBtn" id="zoomIn">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/plus.svg" alt="Zoom In" />
