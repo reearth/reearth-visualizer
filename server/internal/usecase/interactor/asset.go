@@ -142,7 +142,6 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 
 			if url, _ := url.Parse(asset.URL()); url != nil {
 				if err := i.gateways.File.RemoveAsset(ctx, url); err != nil {
-					fmt.Println("==================")
 					return aid, err
 				}
 			}
