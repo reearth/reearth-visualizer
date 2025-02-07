@@ -86,26 +86,6 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
   );
   const [dataType, setDataType] = useState(selectedField?.value || "");
 
-  const handleSubmit = useCallback(() => {
-    if (!customPropertyTitle) return;
-    onSchemaJSONUpdate?.((prevSchema = {}) => {
-      const updatedSchema = { ...prevSchema };
-      updatedSchema[customPropertyTitle] =
-        `${dataType}_${Object.keys(updatedSchema).length + 1}`;
-      onCustomPropertySchemaUpdate?.(updatedSchema);
-
-      return updatedSchema;
-    });
-
-    onClose?.();
-  }, [
-    onSchemaJSONUpdate,
-    onCustomPropertySchemaUpdate,
-    onClose,
-    customPropertyTitle,
-    dataType
-  ]);
-
   const menuItems: PopupMenuItem[] = useMemo(() => {
     const currentGroup = Object.keys(dataTypeGroups).find((group) =>
       dataTypeGroups[group as keyof typeof dataTypeGroups].includes(dataType)
@@ -126,6 +106,26 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
       };
     });
   }, [dataType, isEditField]);
+
+  const handleSubmit = useCallback(() => {
+    if (!customPropertyTitle) return;
+    onSchemaJSONUpdate?.((prevSchema = {}) => {
+      const updatedSchema = { ...prevSchema };
+      updatedSchema[customPropertyTitle] =
+        `${dataType}_${Object.keys(updatedSchema).length + 1}`;
+      onCustomPropertySchemaUpdate?.(updatedSchema);
+
+      return updatedSchema;
+    });
+
+    onClose?.();
+  }, [
+    onSchemaJSONUpdate,
+    onCustomPropertySchemaUpdate,
+    onClose,
+    customPropertyTitle,
+    dataType
+  ]);
 
   return (
     <Modal size="small" visible={true}>

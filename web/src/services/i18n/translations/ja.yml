@@ -130,17 +130,17 @@ Format: 形式
 Custom property schema: ''
 Edit Field: ''
 Delete Field: ''
+Edit Custom Property: ''
+New Custom Property: ''
+Submit: 反映
+Property Title: ''
+Property Type: ''
 No field has been created yet: ''
 New Field: 新しいフィールド
 Apply Current Edits?: ''
 Delete schema property filed?: ''
 This save will apply to all features in the current layer. Do you want to proceed?: ''
 This action will apply to all features in the current layer. Do you want to proceed?: ''
-Edit Custom Property: ''
-New Custom Property: ''
-Submit: 反映
-Property Title: ''
-Property Type: ''
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
 Save & Apply: 保存して適用
