@@ -1,7 +1,5 @@
 import { PluginType } from "../constants";
 
-import { cameraPosition } from "./camera/cameraPosition";
-import { cameraRotation } from "./camera/cameraRotation";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
@@ -22,6 +20,7 @@ import { overrideStyle } from "./manageLayerStyle/overrideStyle";
 import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { zoomInOut } from "./camera/zoomInOut";
 import { cameraRotation } from "./camera/cameraRotation";
+import { cameraPosition } from "./camera/cameraPosition";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
