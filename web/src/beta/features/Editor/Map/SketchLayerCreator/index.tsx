@@ -10,13 +10,13 @@ import { FC, useCallback, useState } from "react";
 
 import { InputGroup, InputsWrapper } from "../shared/SharedComponent";
 
+import SketchCustomProperties from "./SketchCustomProperties";
 import {
   CustomPropertyProp,
   PropertyListProp,
   SketchLayerProps,
   SketchLayerDataType
 } from "./type";
-import SketchCustomProperties from "./SketchCustomProperties";
 
 export const dataTypes: SketchLayerDataType[] = [
   "Text",
@@ -26,7 +26,6 @@ export const dataTypes: SketchLayerDataType[] = [
   "Float",
   "Int",
   "Boolean",
-  "Camera"
 ];
 
 const SketchLayerCreator: FC<SketchLayerProps> = ({
