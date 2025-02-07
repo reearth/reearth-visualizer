@@ -9,7 +9,6 @@ export type ModalPanelProps = {
   layout?: "common";
   onCancel?: () => void;
   appearance?: "simple" | "normal";
-  showBorder?: boolean
 };
 
 export const ModalPanel: FC<ModalPanelProps> = ({
@@ -19,7 +18,6 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   layout,
   onCancel,
   appearance = "normal",
-  showBorder = true
 }) => {
   return (
     <Wrapper>
@@ -41,7 +39,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
         <Content>{children}</Content>
       )}
       {actions && (
-        <ActionWrapper showBorder={showBorder}>
+        <ActionWrapper showBorder={appearance !== "simple"}>
           {actions}
         </ActionWrapper>
       )}

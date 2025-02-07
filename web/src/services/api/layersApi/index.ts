@@ -185,6 +185,7 @@ export default () => {
       const { data, errors } = await updateCustomPropertiesMutation({
         variables: { input }
       });
+
       if (errors || !data?.updateCustomProperties) {
         setNotification({
           type: "error",

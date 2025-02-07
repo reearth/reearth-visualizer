@@ -9,7 +9,8 @@ export type SketchLayerDataType =
   | "Asset"
   | "Float"
   | "Int"
-  | "Boolean";
+  | "Boolean"
+  | "Camera";
 
 export type PropertyListProp = {
   id: string;
@@ -42,3 +43,4 @@ export type CustomPropertyItemProps = {
   onDoubleClick?: (field: string) => void;
   onCustomPropertyDelete?: () => void;
 };
+

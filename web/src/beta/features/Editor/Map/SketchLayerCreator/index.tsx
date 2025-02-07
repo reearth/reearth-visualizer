@@ -9,7 +9,6 @@ import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
 import { InputGroup, InputsWrapper } from "../shared/SharedComponent";
-import SketchCustomProperties from "../shared/SketchCustomProperties";
 
 import {
   CustomPropertyProp,
@@ -17,6 +16,7 @@ import {
   SketchLayerProps,
   SketchLayerDataType
 } from "./type";
+import SketchCustomProperties from "./SketchCustomProperties";
 
 export const dataTypes: SketchLayerDataType[] = [
   "Text",
@@ -25,7 +25,8 @@ export const dataTypes: SketchLayerDataType[] = [
   "Asset",
   "Float",
   "Int",
-  "Boolean"
+  "Boolean",
+  "Camera"
 ];
 
 const SketchLayerCreator: FC<SketchLayerProps> = ({
@@ -76,7 +77,6 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
   return (
     <Modal size="medium" visible={true}>
       <ModalPanel
-        showBorder={false}
         title={t("New Sketch Layer")}
         onCancel={onClose}
         actions={
