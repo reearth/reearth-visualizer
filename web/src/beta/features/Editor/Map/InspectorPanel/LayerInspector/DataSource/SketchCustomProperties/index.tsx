@@ -49,9 +49,9 @@ const CustomPropertiesSchema: FC<Props> = ({
         <EmptyMessage>{t("No field has been created yet")}</EmptyMessage>
       ) : (
         <CustomPropertyFieldItemWrapper>
-          {sortedValues?.map(({ key, value }, idx) => (
+          {sortedValues?.map(({ key, value }) => (
             <CustomPropertyFieldItem
-              key={idx}
+              key={key}
               title={key}
               icon={getIcon(value)}
               openCustomPropertySchema={() => handleEditField(key, value)}
