@@ -67,7 +67,7 @@ export const presetPlugins: PresetPlugins = [
       addWms,
       addGooglePhotorealistic3dTiles,
       hideFlyToDeleteLayer,
-      overrideLayerData
+      overrideLayerData,
       showFeaturesInfo
     ]
   },
