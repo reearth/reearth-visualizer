@@ -1,6 +1,6 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
 import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMapPage } from "../../../../context";
 import { CustomPropertyProp } from "../../../../SketchLayerCreator/type";
@@ -44,6 +44,13 @@ export default function useHooks(
   const [schemaJSON, setSchemaJSON] = useState<Record<string, string>>(
     customPropertySchema || {}
   );
+
+  useEffect(() => {
+    if (customPropertySchema) {
+      setSchemaJSON(customPropertySchema);
+    }
+  }, [customPropertySchema]);
+  
   const sortedValues = useMemo(() => {
     if (!customPropertySchema) return;
     return Object.entries(customPropertySchema)
@@ -63,10 +70,10 @@ export default function useHooks(
   const [customPropertySchemaShown, setCustomPropertySchemaShown] =
     useState(false);
 
-  const openCustomPropertySchema = useCallback(
-    () => setCustomPropertySchemaShown(true),
-    []
-  );
+  const openCustomPropertySchema = useCallback(() => {
+    setCustomPropertySchemaShown(true);
+    setNewTitle(undefined);
+  }, []);
 
   const closeCustomPropertySchema = useCallback(() => {
     setCustomPropertySchemaShown(false);
@@ -116,8 +123,7 @@ export default function useHooks(
       if (!key) return;
       const value = customPropertySchema?.[key] || ""; // Get value from schema
       setSelectedField({ key, value: value.replace(/_\d+$/, "") });
-      setTimeout(openDeleteFieldConfirmModal, 0);
-    },
+      Promise.resolve().then(openDeleteFieldConfirmModal);    },
     [customPropertySchema, openDeleteFieldConfirmModal]
   );
 
@@ -155,29 +161,50 @@ export default function useHooks(
     [layerId, handleCustomPropertySchemaUpdate]
   );
 
+  const handleUpdateCustomPropertyTitle = useCallback(
+    (updatedSchema: CustomPropertyProp) => {
+      if (!customPropertySchema || !selectedField?.key || !newTitle) return;
+
+      handleChangeCustomPropertyTitle({
+        layerId: layerId || "",
+        oldTitle: selectedField.key,
+        newTitle: newTitle,
+        schema: updatedSchema
+      });
+    },
+    [
+      customPropertySchema,
+      handleChangeCustomPropertyTitle,
+      layerId,
+      newTitle,
+      selectedField?.key
+    ]
+  );
+
   const handleSubmit = useCallback(() => {
-    if (!customPropertySchema || !selectedField?.key || !newTitle) return;
+    if (!customPropertySchema || !selectedField?.key) return;
 
     const { [selectedField.key]: _, ...updatedSchema } = schemaJSON;
-    updatedSchema[newTitle] = schemaJSON[selectedField.key];
-    setSchemaJSON(updatedSchema);
 
-    handleChangeCustomPropertyTitle({
-      layerId: layerId || "",
-      oldTitle: selectedField.key,
-      newTitle: newTitle,
-      schema: updatedSchema
-    });
+    if (newTitle) {
+      updatedSchema[newTitle] = schemaJSON[selectedField.key];
+      setSchemaJSON(updatedSchema);
+      handleUpdateCustomPropertyTitle(updatedSchema);
+    }
+
+    if (!newTitle) {
+      handleUpdateCustomPropertySchema(schemaJSON);
+    }
 
     closeEditFieldConfirmModal();
   }, [
-    closeEditFieldConfirmModal,
     customPropertySchema,
-    handleChangeCustomPropertyTitle,
-    layerId,
+    selectedField?.key,
     newTitle,
     schemaJSON,
-    selectedField?.key
+    closeEditFieldConfirmModal,
+    handleUpdateCustomPropertyTitle,
+    handleUpdateCustomPropertySchema
   ]);
 
   return {
@@ -185,6 +212,7 @@ export default function useHooks(
     selectedField,
     isEmpty,
     isEditField,
+    schemaJSON,
     customPropertySchemaShown,
     openCustomPropertySchema,
     closeCustomPropertySchema,

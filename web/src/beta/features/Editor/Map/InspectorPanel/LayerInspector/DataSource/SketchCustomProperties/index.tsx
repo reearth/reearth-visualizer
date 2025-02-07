@@ -26,6 +26,7 @@ const CustomPropertiesSchema: FC<Props> = ({
     isEmpty,
     isEditField,
     customPropertySchemaShown,
+    schemaJSON,
     openCustomPropertySchema,
     closeCustomPropertySchema,
     showDeleteFieldConfirmModal,
@@ -70,6 +71,7 @@ const CustomPropertiesSchema: FC<Props> = ({
       {customPropertySchemaShown && (
         <CustomPropertyFieldModal
           selectedField={selectedField}
+          schemaJSON={schemaJSON}
           isEditField={isEditField}
           onBlur={handleTitleBlur}
           onClose={closeCustomPropertySchema}

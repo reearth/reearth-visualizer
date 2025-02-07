@@ -15,7 +15,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
-import { Dispatch, FC, useCallback, useMemo, useState } from "react";
+import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { CustomPropertyProp } from "../../../../SketchLayerCreator/type";
 
@@ -25,6 +25,7 @@ type CustomPropertyFieldProps = {
     key: string;
     value: string;
   } | null;
+  schemaJSON: Record<string, string>;
   onBlur?: (title: string) => void;
   onClose: () => void;
   onCustomPropertySchemaUpdate?: (schema: CustomPropertyProp) => void;
@@ -72,6 +73,7 @@ const dataTypeGroups = {
 const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
   selectedField,
   isEditField,
+  schemaJSON,
   onBlur,
   onClose,
   onCustomPropertySchemaUpdate,
@@ -106,6 +108,31 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
       };
     });
   }, [dataType, isEditField]);
+
+useEffect(() => {
+  if (!selectedField?.value || !schemaJSON) return;
+
+  setTimeout(() => {
+    onSchemaJSONUpdate((prevSchema) => {
+      const existingValue = prevSchema[selectedField.key] || "";
+      const match = existingValue.match(/_(\w+)$/);
+      const suffix = match ? match[0] : "";
+
+      const newValue = `${dataType}${suffix}`;
+
+      if (existingValue === newValue) {
+        return prevSchema;
+      }
+      return { ...prevSchema, [selectedField.key]: `${dataType}${suffix}` };
+    });
+  }, 0); // Delay update to avoid immediate loop
+}, [
+  selectedField?.value,
+  selectedField?.key,
+  dataType,
+  schemaJSON,
+  onSchemaJSONUpdate
+]);
 
   const handleSubmit = useCallback(() => {
     if (!customPropertyTitle) return;
