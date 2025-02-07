@@ -106,7 +106,15 @@ const ListEditor: FC<Props> = ({
           />
         )
       })),
-    [currentPropertyList, editKeyIndex, editValueIndex, handleKeyBlur, handleValueBlur, handleDoubleClick, handlePropertyValueRemove]
+    [
+      currentPropertyList,
+      editKeyIndex,
+      editValueIndex,
+      handleKeyBlur,
+      handleValueBlur,
+      handleDoubleClick,
+      handlePropertyValueRemove
+    ]
   );
 
   return (

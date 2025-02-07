@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"testing"
 
@@ -29,27 +28,27 @@ func TestGetAssets(t *testing.T) {
 
 	res := createAsset(t, e, "test.png", true, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.png").
-		ValueEqual("coreSupport", true)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.png").
+		HasValue("coreSupport", true)
 
 	res = createAsset(t, e, "test.png", false, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.png").
-		ValueEqual("coreSupport", false)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.png").
+		HasValue("coreSupport", false)
 
 	res = createAsset(t, e, "test.csv", true, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.csv").
-		ValueEqual("coreSupport", true)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.csv").
+		HasValue("coreSupport", true)
 
 	res = createAsset(t, e, "test.csv", false, teamId)
 	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		ValueEqual("teamId", teamId).
-		ValueEqual("name", "test.csv").
-		ValueEqual("coreSupport", false)
+		HasValue("teamId", teamId).
+		HasValue("name", "test.csv").
+		HasValue("coreSupport", false)
 
 	// Write directly to the DB
 	ctx := context.Background()
@@ -89,7 +88,7 @@ func TestGetAssets(t *testing.T) {
 	res = getAssets(e, teamId)
 	assets := res.Object().Value("data").Object().Value("assets").Object().Value("nodes").Array().Iter()
 	for _, a := range assets {
-		a.Object().ValueEqual("coreSupport", true) // coreSupport true only
+		a.Object().HasValue("coreSupport", true) // coreSupport true only
 	}
 
 }
@@ -216,12 +215,5 @@ func getAssets(e *httpexpect.Expect, teamId string) *httpexpect.Value {
 			},
 		},
 	}
-	return e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	return Request(e, uID.String(), requestBody)
 }

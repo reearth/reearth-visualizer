@@ -3,7 +3,6 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"net/url"
 	"testing"
 
@@ -18,12 +17,7 @@ import (
 )
 
 func TestCreateAndGetProject(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	testData(e)
 
@@ -46,26 +40,21 @@ func TestCreateAndGetProject(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().Equal(1)
-	edges.First().Object().Value("node").Object().Value("name").Equal("test2-1")
+	edges.Length().IsEqual(1)
+	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("test2-1")
 
 	// check
 	for _, edge := range edges.Iter() {
 		// coreSupport true only
-		edge.Object().Value("node").Object().Value("coreSupport").Equal(true)
+		edge.Object().Value("node").Object().Value("coreSupport").IsEqual(true)
 		// isDeleted false only
-		edge.Object().Value("node").Object().Value("isDeleted").Equal(false)
+		edge.Object().Value("node").Object().Value("isDeleted").IsEqual(false)
 	}
 
 }
 
 func TestSortByName(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	createProject(e, "a-project")
 	createProject(e, "b-project")
@@ -153,22 +142,17 @@ func TestSortByName(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().Equal(4)
-	edges.Element(0).Object().Value("node").Object().Value("name").Equal("a-project")
-	edges.Element(1).Object().Value("node").Object().Value("name").Equal("A-project")
-	edges.Element(2).Object().Value("node").Object().Value("name").Equal("b-project")
-	edges.Element(3).Object().Value("node").Object().Value("name").Equal("B-project")
+	edges.Length().IsEqual(4)
+	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
+	edges.Value(1).Object().Value("node").Object().Value("name").IsEqual("A-project")
+	edges.Value(2).Object().Value("node").Object().Value("name").IsEqual("b-project")
+	edges.Value(3).Object().Value("node").Object().Value("name").IsEqual("B-project")
 
 }
 
 func TestFindStarredByWorkspace(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 	project1ID := createProject(e, "Project 1")
 	project2ID := createProject(e, "Project 2")
 	project3ID := createProject(e, "Project 3")
@@ -210,7 +194,7 @@ func TestFindStarredByWorkspace(t *testing.T) {
 	nodeCount := int(nodes.Length().Raw())
 	assert.Equal(t, 2, nodeCount, "Expected 2 nodes in the response")
 
-	nodes.Length().Equal(2) // 'Project 1' and 'Project 3'
+	nodes.Length().IsEqual(2) // 'Project 1' and 'Project 3'
 
 	starredProjectsMap := make(map[string]bool)
 	for _, node := range nodes.Iter() {
@@ -260,8 +244,8 @@ func starProject(e *httpexpect.Expect, projectID string) {
 		Value("updateProject").Object().
 		Value("project").Object()
 
-	response.ValueEqual("id", projectID).
-		ValueEqual("starred", true)
+	response.HasValue("id", projectID).
+		HasValue("starred", true)
 }
 
 const GetProjectsQuery = `
@@ -322,12 +306,7 @@ fragment ProjectFragment on Project {
 
 func TestSortByUpdatedAt(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	createProject(e, "project1-test")
 	project2ID := createProject(e, "project2-test")
@@ -379,18 +358,13 @@ func TestSortByUpdatedAt(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().Equal(3)
-	edges.Element(0).Object().Value("node").Object().Value("name").Equal("project2-test") // 'project2' is first
+	edges.Length().IsEqual(3)
+	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("project2-test") // 'project2' is first
 }
 
 func TestDeleteProjects(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	testData(e)
 
@@ -417,15 +391,15 @@ func TestDeleteProjects(t *testing.T) {
 		Value("deletedProjects").Object().
 		Value("nodes").Array()
 
-	nodes.Length().Equal(1)
-	nodes.First().Object().Value("name").Equal("test2-2")
+	nodes.Length().IsEqual(1)
+	nodes.Value(0).Object().Value("name").IsEqual("test2-2")
 
 	// check
 	for _, node := range nodes.Iter() {
 		// coreSupport true only
-		node.Object().Value("coreSupport").Equal(true)
+		node.Object().Value("coreSupport").IsEqual(true)
 		// isDeleted true only
-		node.Object().Value("isDeleted").Equal(true)
+		node.Object().Value("isDeleted").IsEqual(true)
 	}
 }
 
@@ -457,8 +431,8 @@ func deleteProject(e *httpexpect.Expect, projectID string) {
 		Value("updateProject").Object().
 		Value("project").Object()
 
-	response.ValueEqual("id", projectID).
-		ValueEqual("isDeleted", true)
+	response.HasValue("id", projectID).
+		HasValue("isDeleted", true)
 }
 
 func createGraphQLRequest(name string, coreSupport bool) GraphQLRequest {
@@ -477,15 +451,7 @@ func createGraphQLRequest(name string, coreSupport bool) GraphQLRequest {
 }
 
 func callRequest(e *httpexpect.Expect, requestBody GraphQLRequest) *httpexpect.Object {
-	return e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	return Request(e, uID.String(), requestBody).
 		Object().
 		Value("data").Object()
 }
@@ -505,8 +471,8 @@ func testData(e *httpexpect.Expect) {
 		},
 	}
 	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
-		ValueEqual("name", "test1-1").
-		ValueEqual("coreSupport", false)
+		HasValue("name", "test1-1").
+		HasValue("coreSupport", false)
 
 	// create coreSupport default(=false) `delete` project
 	requestBody = GraphQLRequest{
@@ -521,36 +487,36 @@ func testData(e *httpexpect.Expect) {
 		},
 	}
 	id := callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
-		ValueEqual("name", "test1-2").
-		ValueEqual("coreSupport", false).
+		HasValue("name", "test1-2").
+		HasValue("coreSupport", false).
 		Value("id").Raw().(string)
 	deleteProject(e, id) // delete
 
 	// create coreSupport:true project
 	requestBody = createGraphQLRequest("test2-1", true)
 	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
-		ValueEqual("name", "test2-1").
-		ValueEqual("coreSupport", true)
+		HasValue("name", "test2-1").
+		HasValue("coreSupport", true)
 
 	// create coreSupport:true `delete` project
 	requestBody = createGraphQLRequest("test2-2", true)
 	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
-		ValueEqual("name", "test2-2").
-		ValueEqual("coreSupport", true).
+		HasValue("name", "test2-2").
+		HasValue("coreSupport", true).
 		Value("id").Raw().(string)
 	deleteProject(e, id) // delete
 
 	// create coreSupport:false project
 	requestBody = createGraphQLRequest("test3-1", false)
 	callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
-		ValueEqual("name", "test3-1").
-		ValueEqual("coreSupport", false)
+		HasValue("name", "test3-1").
+		HasValue("coreSupport", false)
 
 	// create coreSupport:false `delete` project
 	requestBody = createGraphQLRequest("test3-2", false)
 	id = callRequest(e, requestBody).Value("createProject").Object().Value("project").Object().
-		ValueEqual("name", "test3-2").
-		ValueEqual("coreSupport", false).
+		HasValue("name", "test3-2").
+		HasValue("coreSupport", false).
 		Value("id").Raw().(string)
 	deleteProject(e, id) // delete
 }
@@ -623,17 +589,17 @@ func TestGetProjectPagination(t *testing.T) {
 
 	projects := Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
 
-	projects.ValueEqual("totalCount", 20)
+	projects.HasValue("totalCount", 20)
 
 	edges := projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 16)
 	for _, v := range edges {
 		//Only the same teamId
-		v.Object().Value("node").Object().ValueEqual("teamId", wID.String())
+		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
 
 	pageInfo := projects.Value("pageInfo").Object()
-	pageInfo.ValueEqual("hasNextPage", true)
+	pageInfo.HasValue("hasNextPage", true)
 
 	// ===== Second request
 	endCursor := pageInfo.Value("endCursor").Raw().(string)
@@ -655,17 +621,17 @@ func TestGetProjectPagination(t *testing.T) {
 		},
 	}
 	projects = Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
-	projects.ValueEqual("totalCount", 4)
+	projects.HasValue("totalCount", 4)
 
 	edges = projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 4)
 	for _, v := range edges {
 		//Only the same teamId
-		v.Object().Value("node").Object().ValueEqual("teamId", wID.String())
+		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
 
 	pageInfo = projects.Value("pageInfo").Object()
-	pageInfo.ValueEqual("hasNextPage", false)
+	pageInfo.HasValue("hasNextPage", false)
 
 }
 
@@ -710,17 +676,17 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 
 	projects := Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
 
-	projects.ValueEqual("totalCount", 20)
+	projects.HasValue("totalCount", 20)
 
 	edges := projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 16)
 	for _, v := range edges {
 		//Only the same teamId
-		v.Object().Value("node").Object().ValueEqual("teamId", wID.String())
+		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
 
 	pageInfo := projects.Value("pageInfo").Object()
-	pageInfo.ValueEqual("hasNextPage", true)
+	pageInfo.HasValue("hasNextPage", true)
 
 	// ===== Second request
 	endCursor := pageInfo.Value("endCursor").Raw().(string)
@@ -742,16 +708,16 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 		},
 	}
 	projects = Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
-	projects.ValueEqual("totalCount", 4)
+	projects.HasValue("totalCount", 4)
 
 	edges = projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 4)
 	for _, v := range edges {
 		//Only the same teamId
-		v.Object().Value("node").Object().ValueEqual("teamId", wID.String())
+		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
 
 	pageInfo = projects.Value("pageInfo").Object()
-	pageInfo.ValueEqual("hasNextPage", false)
+	pageInfo.HasValue("hasNextPage", false)
 
 }

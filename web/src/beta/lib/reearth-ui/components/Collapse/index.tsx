@@ -56,7 +56,11 @@ export const Collapse: FC<CollapseProps> = ({
         iconPosition={iconPosition}
         disabled={disabled}
       >
-        <Typography size="body" weight={weight}>
+        <Typography
+          size="body"
+          weight={weight}
+          otherProperties={{ whiteSpace: "nowrap" }}
+        >
           {title}
         </Typography>
         <ActionsWrapper>

@@ -11,15 +11,15 @@ jobs:
       web: ${{ steps.web.outputs.any_modified }}
       server: ${{ steps.server.outputs.any_modified }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: changed files for web
         id: web
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v45
         with:
           files: |
-            web
+            web/
             .github/workflows/ci_web.yml
             .github/workflows/build_web.yml
             .github/workflows/deploy_web_nightly.yml
@@ -27,10 +27,10 @@ jobs:
 
       - name: changed files for server
         id: server
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v45
         with:
           files: |
-            server
+            server/
             .github/workflows/ci_server.yml
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml

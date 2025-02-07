@@ -13,6 +13,8 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/kennygrant/sanitize"
+	"github.com/reearth/reearth/server/internal/infrastructure"
+	"github.com/reearth/reearth/server/internal/testutil"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -20,7 +22,6 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
 	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
 )
 
 const (
@@ -29,19 +30,15 @@ const (
 	gcsMapBasePath    string = "maps"
 	gcsStoryBasePath  string = "stories"
 	gcsExportBasePath string = "export"
-	fileSizeLimit     int64  = 1024 * 1024 * 100 // about 100MB
 )
 
 type fileRepo struct {
-	isTest       bool
-	bucketName   string
-	base         *url.URL
-	cacheControl string
+	isTest          bool
+	bucketName      string
+	base            *url.URL
+	cacheControl    string
+	baseFileStorage *infrastructure.BaseFileStorage
 }
-
-const (
-	devBaseURL = "http://localhost:4443/storage/v1/b"
-)
 
 func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway.File, error) {
 	if bucketName == "" {
@@ -64,6 +61,9 @@ func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
+		baseFileStorage: &infrastructure.BaseFileStorage{
+			MaxFileSize: gateway.UploadFileSizeLimit,
+		},
 	}, nil
 }
 
@@ -81,7 +81,7 @@ func (f *fileRepo) UploadAsset(ctx context.Context, file *file.File) (*url.URL, 
 	if file == nil {
 		return nil, 0, gateway.ErrInvalidFile
 	}
-	if file.Size >= fileSizeLimit {
+	if file.Size >= gateway.UploadFileSizeLimit {
 		return nil, 0, gateway.ErrFileTooLarge
 	}
 
@@ -137,8 +137,9 @@ func (f *fileRepo) UploadAssetFromURL(ctx context.Context, u *url.URL) (*url.URL
 		return nil, 0, errors.New("failed to fetch URL")
 	}
 
-	if resp.ContentLength > 0 && resp.ContentLength >= fileSizeLimit {
-		return nil, 0, gateway.ErrFileTooLarge
+	err = f.baseFileStorage.ValidateResponseBodySize(resp)
+	if err != nil {
+		return nil, 0, err
 	}
 
 	defer func() {
@@ -295,14 +296,28 @@ func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) 
 // helpers
 
 func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
-	opts := []option.ClientOption{}
+	var client *storage.Client
+	var err error
+
 	if f.isTest {
-		opts = append(opts, option.WithoutAuthentication(), option.WithEndpoint(devBaseURL))
+		testGCS, err := testutil.NewGCSForTesting()
+		if err != nil {
+			return nil, err
+		}
+		client = testGCS.Client()
+	} else {
+		client, err = storage.NewClient(ctx)
+		if err != nil {
+			return nil, err
+		}
+		go func() {
+			<-ctx.Done()
+			if err := client.Close(); err != nil {
+				log.Errorfc(ctx, "gcs: failed to close client: %v", err)
+			}
+		}()
 	}
-	client, err := storage.NewClient(ctx, opts...)
-	if err != nil {
-		return nil, err
-	}
+
 	bucket := client.Bucket(f.bucketName)
 	return bucket, nil
 }

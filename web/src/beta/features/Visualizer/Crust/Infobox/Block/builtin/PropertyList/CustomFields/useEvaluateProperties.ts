@@ -18,7 +18,6 @@ export default ({ properties, selectedFeature }: Props) => {
     PropertyListItem[] | undefined
   >(undefined);
 
-
   // We want the useEffect to be called on each render to make sure evaluatedProperties is up to date
   useEffect(() => {
     if (!isReady) {

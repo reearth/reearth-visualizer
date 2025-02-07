@@ -31,8 +31,8 @@ func TestMockAuth(t *testing.T) {
 		JSON()
 
 	response.Object().ContainsKey("id")
-	response.Object().ValueEqual("email", "mock@example.com")
-	response.Object().ValueEqual("name", "Mock User")
+	response.Object().HasValue("email", "mock@example.com")
+	response.Object().HasValue("name", "Mock User")
 	userId := response.Object().Value("id").String().Raw()
 
 	// checkj query GetMe
@@ -41,17 +41,10 @@ func TestMockAuth(t *testing.T) {
 		Query:         "query GetMe { \n me { \n id \n name \n email\n } \n}",
 		Variables:     map[string]any{},
 	}
-	response2 := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", userId).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody2).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	response2 := Request(e, userId, requestBody2).
 		Object()
 
 	response2.Value("data").Object().Value("me").Object().ContainsKey("id")
-	response2.Value("data").Object().Value("me").Object().Value("name").String().Equal("Mock User")
-	response2.Value("data").Object().Value("me").Object().Value("email").String().Equal("mock@example.com")
+	response2.Value("data").Object().Value("me").Object().Value("name").String().IsEqual("Mock User")
+	response2.Value("data").Object().Value("me").Object().Value("email").String().IsEqual("mock@example.com")
 }

@@ -68,6 +68,9 @@ ENV REEARTH_PUBLISHED=null
 ENV REEARTH_TITLE=
 ENV REEARTH_UNSAFE_PLUGIN_URLS=[]
 
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache jq
+
 COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html
 COPY --chown=nginx:nginx docker/nginx.conf.template /etc/nginx/templates/nginx.conf.template
 COPY --chown=nginx:nginx docker/40-envsubst-on-reearth-config.sh /docker-entrypoint.d

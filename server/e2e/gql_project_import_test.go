@@ -1,12 +1,10 @@
 package e2e
 
 import (
-	"net/http"
 	"os"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
@@ -16,12 +14,7 @@ import (
 
 func TestCallImportProject(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	filePath := "test.zip"
 
@@ -40,7 +33,7 @@ func TestCallImportProject(t *testing.T) {
 	r = getScene(e, sid, language.English.String())
 	// fmt.Println(toJSONString(r.Raw()))
 
-	r.Value("id").Equal(sid)
+	r.Value("id").IsEqual(sid)
 
 }
 
@@ -84,15 +77,7 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 			"lang":    l,
 		},
 	}
-	r := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	r := Request(e, uID.String(), requestBody).
 		Object()
 	v := r.Value("data").Object().Value("node")
 	v.NotNull()

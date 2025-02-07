@@ -1,11 +1,9 @@
 package e2e
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func addStyle(e *httpexpect.Expect, sId, name string) (GraphQLRequest, *httpexpect.Value, string) {
@@ -51,12 +49,7 @@ func addStyle(e *httpexpect.Expect, sId, name string) (GraphQLRequest, *httpexpe
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	styleId := res.Path("$.data.addStyle.style.id").String().Raw()
 	return requestBody, res, styleId
@@ -80,12 +73,7 @@ func updateStyleName(e *httpexpect.Expect, styleId, newName string) (GraphQLRequ
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
@@ -103,12 +91,7 @@ func removeStyle(e *httpexpect.Expect, styleId string) (GraphQLRequest, *httpexp
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
@@ -130,12 +113,7 @@ func duplicateStyle(e *httpexpect.Expect, styleId string) (GraphQLRequest, *http
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+	res := Request(e, uID.String(), requestBody)
 
 	return requestBody, res
 }
@@ -162,25 +140,12 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 		},
 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(fetchSceneRequestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
-
+	res := Request(e, uID.String(), fetchSceneRequestBody)
 	return fetchSceneRequestBody, res
 }
 
 func TestStyleCRUD(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	pId := createProject(e, "test")
 	_, _, sId := createScene(e, pId)
@@ -192,7 +157,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 
 	// Add Style
 	_, _, styleId := addStyle(e, sId, "MyStyle")
@@ -203,7 +168,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	// Update Style
 	_, _ = updateStyleName(e, styleId, "NewName")
@@ -213,8 +178,8 @@ func TestStyleCRUD(t *testing.T) {
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
-		Value("styles").Array().First().Object().
-		Value("name").Equal("NewName")
+		Value("styles").Array().Value(0).Object().
+		Value("name").IsEqual("NewName")
 
 	// Duplicate Style
 	_, duplicateRes := duplicateStyle(e, styleId)
@@ -226,7 +191,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(2)
+		Length().IsEqual(2)
 
 	// Remove Style
 	_, _ = removeStyle(e, styleId)
@@ -237,7 +202,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(1)
+		Length().IsEqual(1)
 
 	_, _ = removeStyle(e, duplicatedStyleId)
 
@@ -247,5 +212,5 @@ func TestStyleCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
-		Length().Equal(0)
+		Length().IsEqual(0)
 }
