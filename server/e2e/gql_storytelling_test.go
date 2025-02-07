@@ -788,9 +788,16 @@ func TestStoryPublishing(t *testing.T) {
             "pluginId": "reearth",
             "plugins": null,
             "property": {
-              "default": { "text": "test value" },
+              "default": {
+                "text": "test value"
+              },
               "panel": {
-                "padding": { "bottom": 3, "left": 0, "right": 1, "top": 2 }
+                "padding": {
+                  "bottom": 3,
+                  "left": 0,
+                  "right": 1,
+                  "top": 2
+                }
               }
             }
           }
@@ -805,7 +812,7 @@ func TestStoryPublishing(t *testing.T) {
     ],
     "position": "left",
     "property": {},
-    "title": ""
+    "title": "test"
   },
   "trackingId": "",
   "widgetAlignSystem": {
