@@ -22,6 +22,9 @@ import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { zoomInOut } from "./camera/zoomInOut";
 import { cameraRotation } from "./camera/cameraRotation";
 import { cameraPosition } from "./camera/cameraPosition";
+import { playbackControl } from "./timeline/playbackControl";
+import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
+import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -91,7 +94,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "timeline",
     title: "Timeline",
-    plugins: []
+    plugins: [playbackControl,timeDrivenFeatures,timeDrivenPath]
   },
   {
     id: "dataStorage",
