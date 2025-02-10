@@ -24,6 +24,36 @@ extensions:
             type: string
             name: Color
             ui: color
+  - id: infobox-block
+    type: infoboxBlock
+    name: Infobox Block
+    schema:
+      groups:
+      - id: default
+        title: Default
+        fields:
+          - id: text 
+            type: string
+            name: Text
+          - id: color
+            type: string
+            name: Color
+            ui: color
+  - id: story-block
+    type: storyBlock
+    name: Story Block
+    schema:
+      groups:
+      - id: default
+        title: Default
+        fields:
+          - id: text 
+            type: string
+            name: Text
+          - id: color
+            type: string
+            name: Color
+            ui: color
   `,
   disableEdit: true,
   disableDelete: true
@@ -59,8 +89,66 @@ reearth.ui.postMessage({
 });`
 };
 
+const infoboxBlockFile: FileType = {
+  id: "infobox-block",
+  title: "infobox-block.js",
+  sourceCode: `reearth.ui.show(\`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div id="wrapper">
+    <h2 id="text" style="text-align: center;"></h2>
+  </div> 
+  
+  <script>
+    window.addEventListener("message", e => {
+      const msg = e.data;
+      if (msg.type === "getBlockProperty") {
+        document.getElementById("text").textContent = msg.property?.default?.text ?? "";
+        document.getElementById("text").style.color = msg.property?.default?.color ?? "";
+      }
+    });
+  </script>
+\`);
+
+// Get block property values and send to UI.
+// Property schema is defined in reearth.yml.
+reearth.ui.postMessage({
+  type: "getBlockProperty",
+  property: reearth.extension.block?.property
+});
+\`); `
+};
+
+const storyBlockFile: FileType = {
+  id: "story-block",
+  title: "story-block.js",
+  sourceCode: `reearth.ui.show(\`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div id="wrapper">
+    <h2 id="text" style="text-align: center;"></h2>
+  </div> 
+  
+  <script>
+    window.addEventListener("message", e => {
+      const msg = e.data;
+      if (msg.type === "getBlockProperty") {
+        document.getElementById("text").textContent = msg.property?.default?.text ?? "";
+        document.getElementById("text").style.color = msg.property?.default?.color ?? "";
+      }
+    });
+  </script>
+\`);
+
+// Get block property values and send to UI.
+// Property schema is defined in reearth.yml.
+reearth.ui.postMessage({
+  type: "getBlockProperty",
+  property: reearth.extension.block?.property
+});
+\`); `
+};
+
 export const extensionProperty: PluginType = {
   id: "extension-property",
   title: "Extension Property",
-  files: [widgetFile, yamlFile]
+  files: [infoboxBlockFile, storyBlockFile, widgetFile, yamlFile]
 };

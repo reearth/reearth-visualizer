@@ -39,6 +39,8 @@ export type CustomInfoboxBlock = {
   __REEARTH_SOURCECODE: string;
   extensionId: string;
   pluginId: string;
+  property: Record<string, unknown>;
+  extensionType: "storyBlock";
 };
 
 export type CustomStoryBlock = CustomInfoboxBlock;

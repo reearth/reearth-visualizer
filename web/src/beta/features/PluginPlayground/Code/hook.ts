@@ -29,6 +29,31 @@ type HookReturnType = {
   widgets?: Widgets;
 };
 
+function generateProperty(
+  schema:
+    | {
+        groups: Group;
+      }
+    | undefined,
+  fieldValues: Record<string, FieldValue>,
+  pluginId: string,
+  extensionId: string
+) {
+  const property: Record<string, unknown> = {};
+  if (!schema || !schema.groups) return property;
+
+  schema.groups.forEach((group) => {
+    const groupProperty: Record<string, FieldValue> = {};
+    group.fields.forEach((field) => {
+      const id = `${pluginId}-${extensionId}-${group.id}-${field.id}`;
+      groupProperty[field.id] = fieldValues[id] ?? field.defaultValue;
+    });
+    property[group.id] = groupProperty;
+  });
+
+  return property;
+}
+
 export default ({
   files,
   fieldValues,
@@ -120,7 +145,7 @@ export default ({
     );
     setWidgets(widgets);
 
-    const infoboBlockFromExtension = ymlJson.extensions.reduce<
+    const infoboxBlockFromExtension = ymlJson.extensions.reduce<
       CustomInfoboxBlock[]
     >((prv, cur) => {
       if (cur.type !== "infoboxBlock") return prv;
@@ -139,12 +164,20 @@ export default ({
           description: cur.description,
           __REEARTH_SOURCECODE: file.sourceCode,
           extensionId: cur.id,
-          pluginId: cur.id
+          pluginId: cur.id,
+          extensionType: "storyBlock", // TODO: This should be 'infoboxBlock' but passed in 'storyBlock' due to type definition error
+          // TODO: need to refactor the function to get the property values
+          property: generateProperty(
+            cur.schema,
+            fieldValues,
+            ymlJson.id,
+            cur.id
+          )
         }
       ];
     }, []);
 
-    setInfoboxBlocks(infoboBlockFromExtension);
+    setInfoboxBlocks(infoboxBlockFromExtension);
 
     const storyBlocksFromExtension = ymlJson.extensions.reduce<
       CustomStoryBlock[]
@@ -163,7 +196,10 @@ export default ({
         description: cur.description,
         __REEARTH_SOURCECODE: file.sourceCode,
         extensionId: cur.id,
-        pluginId: cur.id
+        pluginId: cur.id,
+        extensionType: "storyBlock",
+        // TODO: need to refactor the function to get the property values
+        property: generateProperty(cur.schema, fieldValues, ymlJson.id, cur.id)
       });
       return prv;
     }, []);
@@ -190,28 +226,3 @@ export default ({
     widgets
   };
 };
-
-function generateProperty(
-  schema:
-    | {
-        groups: Group;
-      }
-    | undefined,
-  fieldValues: Record<string, FieldValue>,
-  pluginId: string,
-  extensionId: string
-) {
-  const property: any = {};
-  if (!schema || !schema.groups) return property;
-
-  schema.groups.forEach((group) => {
-    const groupProperty: Record<string, FieldValue> = {};
-    group.fields.forEach((field) => {
-      const id = `${pluginId}-${extensionId}-${group.id}-${field.id}`;
-      groupProperty[field.id] = fieldValues[id] ?? field.defaultValue;
-    });
-    property[group.id] = groupProperty;
-  });
-
-  return property;
-}
