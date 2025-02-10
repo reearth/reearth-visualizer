@@ -295,7 +295,8 @@ reearth.extension.on('message', (msg) => {
 
     // Check if the new position is actually different
     const isPositionChanged = Object.keys(params).some(key =>
-      currentPosition[key] !== params[key]
+    //Use a tolerance threshold to compare floating-point values
+      Math.abs((currentPosition[key] || 0) - (params[key] || 0)) > 0.0001
     );
 
     if (isPositionChanged) {
