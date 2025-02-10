@@ -1,7 +1,5 @@
 import { PluginType } from "../constants";
 
-import { cameraPosition } from "./camera/cameraPosition";
-import { cameraRotation } from "./camera/cameraRotation";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
@@ -14,12 +12,16 @@ import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
+import { overrideLayerData } from "./layers/overrideLayerData";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { layerStylingExamples } from "./layerStyles/layerStylingExamples";
 import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
 import { overrideStyle } from "./manageLayerStyle/overrideStyle";
 import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
+import { zoomInOut } from "./camera/zoomInOut";
+import { cameraRotation } from "./camera/cameraRotation";
+import { cameraPosition } from "./camera/cameraPosition";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -66,6 +68,7 @@ export const presetPlugins: PresetPlugins = [
       addWms,
       addGooglePhotorealistic3dTiles,
       hideFlyToDeleteLayer,
+      overrideLayerData,
       showFeaturesInfo
     ]
   },
@@ -83,7 +86,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "camera",
     title: "Camera",
-    plugins: [cameraRotation, cameraPosition]
+    plugins: [zoomInOut, cameraRotation, cameraPosition]
   },
   {
     id: "timeline",
