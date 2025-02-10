@@ -22,12 +22,18 @@ const widgetFile: FileType = {
   title: "filter-features-with-style.js",
   sourceCode: `// This example demonstrates how to filter features with style
 
-// Click the buttons to filter points based on the years 
+// Click the buttons to filter cities based on the population 
 
 // Define the plug-in UI //
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+    html {
+    width: 500px;
+  }
+    #wrapper{
+     width: 350px;
+    }
     button {
       padding: 4px 8px;
       border: 1px solid black;
@@ -48,11 +54,11 @@ ${PRESET_PLUGIN_COMMON_STYLE}
     }
   </style>
   <div id="wrapper">
-    <h2>Filter Point by year</h2>
+    <h2>Filter Cities based on Population:</h2>
     <div class="button-container">
       <button id="allBtn">Show all</button>
-      <button id="beforeBtn">Before year 2000</button>
-      <button id="afterBtn">After year 2000</button>
+      <button id="belowBtn">Population below 20000</button>
+      <button id="aboveBtn">Population above 20000</button>
     </div>
   </div>
 
@@ -73,7 +79,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       button.addEventListener("click", () => {
         setActiveButton(button.id);
         parent.postMessage({ action: button.id === "allBtn" ? "showAllFeatures" :
-        button.id === "beforeBtn" ? "showFeaturesBefore2000" : "showFeaturesAfter2000" }, "*");
+        button.id === "belowBtn" ? "showFeaturesBelow20000" : "showFeaturesAbove20000" }, "*");
       });
     });
   </script>
@@ -87,7 +93,7 @@ const samplePointData = {
   data: {
     type: "geojson",
     // URL of GeoJSON file
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_japan_heritage_marker.geojson"
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_population_marker.geojson"
     
   },
   marker: {},
@@ -100,12 +106,12 @@ const layerId = reearth.layers.add(samplePointData);
 reearth.camera.flyTo(
   {
     // Define the camera's target position
-    heading: 6.283185307179586,
-    height: 1727266.2174338317,
-    lat: 23.557153805931208,
-    lng: 135.51326178467858,
-    pitch: -0.9940806763270689,
-    roll: 6.283185307179582
+  heading: 6.283185307179586,
+  height: 2308186.843368756,
+  lat: -32.389771622286766,
+  lng: 46.5725045061546,
+  pitch: -1.0274739891405908,
+  roll: 6.283185307179586
   },
   {
     // Define the duration of the camera movement (in seconds)
@@ -122,28 +128,28 @@ reearth.extension.on("message", (msg) => {
         show: true,
       },
     });
-  } else if (action === "showFeaturesBefore2000") {
+  } else if (action === "showFeaturesBelow20000") {
     reearth.layers.override(layerId, {
       marker: {
         show: {
           expression: {
             conditions: [
-              ["\${year} > 2000", "false"],
-              ["\${year} <= 2000", "true"],
+              ["\${pop_max} > 20000", "false"],
+              ["\${pop_max} <= 20000", "true"],
             ],
           },
         },
       },
     });
   }
-     else if (action === "showFeaturesAfter2000") {
+     else if (action === "showFeaturesAbove20000") {
     reearth.layers.override(layerId, {
       marker: {
         show: {
           expression: {
             conditions: [
-              ["\${year} <= 2000", "false"],
-              ["\${year} > 2000", "true"],
+              ["\${pop_max} <= 20000", "false"],
+              ["\${pop_max} > 20000", "true"],
             ],
           },
         },
