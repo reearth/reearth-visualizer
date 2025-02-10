@@ -32,18 +32,23 @@ export type ReearthYML = {
 
 export type Widgets = ComponentProps<typeof Visualizer>["widgets"];
 
-export type CustomInfoboxBlock = {
+type CommonBlock = {
   id: string;
   name: string;
   description: string;
   __REEARTH_SOURCECODE: string;
   extensionId: string;
   pluginId: string;
-  property: Record<string, unknown>;
-  extensionType: "storyBlock";
+  propertyForPluginAPI: Record<string, unknown>;
 };
 
-export type CustomStoryBlock = CustomInfoboxBlock;
+export type CustomInfoboxBlock = CommonBlock & {
+  extensionType: "infoboxBlock";
+};
+
+export type CustomStoryBlock = CommonBlock & {
+  extensionType: "storyBlock";
+};
 
 export type FieldValue =
   | string

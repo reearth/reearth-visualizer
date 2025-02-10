@@ -165,9 +165,8 @@ export default ({
           __REEARTH_SOURCECODE: file.sourceCode,
           extensionId: cur.id,
           pluginId: cur.id,
-          extensionType: "storyBlock", // TODO: This should be 'infoboxBlock' but passed in 'storyBlock' due to type definition error
-          // TODO: need to refactor the function to get the property values
-          property: generateProperty(
+          extensionType: "infoboxBlock",
+          propertyForPluginAPI: generateProperty(
             cur.schema,
             fieldValues,
             ymlJson.id,
@@ -198,8 +197,12 @@ export default ({
         extensionId: cur.id,
         pluginId: cur.id,
         extensionType: "storyBlock",
-        // TODO: need to refactor the function to get the property values
-        property: generateProperty(cur.schema, fieldValues, ymlJson.id, cur.id)
+        propertyForPluginAPI: generateProperty(
+          cur.schema,
+          fieldValues,
+          ymlJson.id,
+          cur.id
+        )
       });
       return prv;
     }, []);

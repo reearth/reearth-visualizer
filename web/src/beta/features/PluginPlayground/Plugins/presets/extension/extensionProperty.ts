@@ -114,8 +114,7 @@ const infoboxBlockFile: FileType = {
 reearth.ui.postMessage({
   type: "getBlockProperty",
   property: reearth.extension.block?.property
-});
-\`); `
+});`
 };
 
 const storyBlockFile: FileType = {
@@ -143,8 +142,7 @@ const storyBlockFile: FileType = {
 reearth.ui.postMessage({
   type: "getBlockProperty",
   property: reearth.extension.block?.property
-});
-\`); `
+});`
 };
 
 export const extensionProperty: PluginType = {
