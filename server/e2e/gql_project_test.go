@@ -3,7 +3,6 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"net/url"
 	"testing"
 
@@ -18,12 +17,7 @@ import (
 )
 
 func TestCreateAndGetProject(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	testData(e)
 
@@ -60,12 +54,7 @@ func TestCreateAndGetProject(t *testing.T) {
 }
 
 func TestSortByName(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	createProject(e, "a-project")
 	createProject(e, "b-project")
@@ -163,12 +152,7 @@ func TestSortByName(t *testing.T) {
 
 func TestFindStarredByWorkspace(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 	project1ID := createProject(e, "Project 1")
 	project2ID := createProject(e, "Project 2")
 	project3ID := createProject(e, "Project 3")
@@ -322,12 +306,7 @@ fragment ProjectFragment on Project {
 
 func TestSortByUpdatedAt(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	createProject(e, "project1-test")
 	project2ID := createProject(e, "project2-test")
@@ -385,12 +364,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 
 func TestDeleteProjects(t *testing.T) {
 
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, baseSeeder)
+	e := Server(t, baseSeeder)
 
 	testData(e)
 
@@ -477,15 +451,7 @@ func createGraphQLRequest(name string, coreSupport bool) GraphQLRequest {
 }
 
 func callRequest(e *httpexpect.Expect, requestBody GraphQLRequest) *httpexpect.Object {
-	return e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON().
+	return Request(e, uID.String(), requestBody).
 		Object().
 		Value("data").Object()
 }
