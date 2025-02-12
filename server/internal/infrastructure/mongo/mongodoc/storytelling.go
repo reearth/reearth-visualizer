@@ -217,12 +217,12 @@ func (d *PageDocument) Model() (*storytelling.Page, error) {
 	}
 
 	blocks := lo.Map(d.Blocks, func(b BlockDocument, _ int) *storytelling.Block {
-		page, err2 := b.Model()
+		block, err2 := b.Model()
 		if err2 != nil {
 			err = err2
 			return nil
 		}
-		return page
+		return block
 	})
 	if err != nil {
 		return nil, err

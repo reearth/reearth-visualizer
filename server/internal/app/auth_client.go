@@ -102,7 +102,9 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				if u.Name() != "e2e" {
+					log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				}
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
@@ -110,7 +112,9 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 
 				ctx = adapter.AttachOperator(ctx, op)
-				log.Debugfc(ctx, "auth: op: %#v", op)
+				if u.Name() != "e2e" {
+					log.Debugfc(ctx, "auth: op: %#v", op)
+				}
 			}
 
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
