@@ -37,7 +37,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
     [field.id, setFields]
   );
 
-  const apperance = useMemo(() => {
+  const appearance = useMemo(() => {
     return editMode ? "readonly" : undefined;
   }, [editMode]);
 
@@ -48,7 +48,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       value={field.value as string}
       onBlur={handleChange}
       disabled={editMode}
-      appearance={apperance}
+      appearance={appearance}
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
@@ -58,7 +58,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       resizable="height"
       onBlur={handleChange}
       disabled={editMode}
-      appearance={apperance}
+      appearance={appearance}
     />
   ) : field?.type === "Asset" ? (
     <AssetField
@@ -68,7 +68,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       inputMethod={"asset"}
       value={field.value as string}
       disabled={editMode}
-      appearance={apperance}
+      appearance={appearance}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
@@ -78,7 +78,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       value={field.value as string}
       onChange={handleChange}
       disabled={editMode}
-      appearance={apperance}
+      appearance={appearance}
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
@@ -87,7 +87,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       value={field.value as number}
       onBlur={handleChange}
       disabled={editMode}
-      appearance={apperance}
+      appearance={appearance}
     />
   ) : field?.type === "Boolean" ? (
     <SwitchField

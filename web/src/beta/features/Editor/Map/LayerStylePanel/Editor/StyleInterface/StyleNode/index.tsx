@@ -17,6 +17,7 @@ import ValueTab from "./ValueTab";
 
 type Props = {
   node: StyleNode;
+  editMode?: boolean;
   onUpdate: (node: StyleNode) => void;
   onDelete: (nodeId: string) => void;
 };
@@ -35,7 +36,7 @@ const actions: {
   { id: "conditions", icon: "if", match: ["conditions", "deepConditions"] }
 ];
 
-const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
+const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
   const [activeTab, setActiveTab] = useState<StyleValueType>(node.valueType);
 
   const valueOptions = useMemo(
@@ -100,6 +101,7 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
                   ? theme.content.main
                   : theme.content.weaker
               }
+              disabled={!editMode}
               appearance="simple"
               onClick={() => setActiveTab(action.id)}
             />
@@ -112,9 +114,11 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
                     icon="dotsThreeVertical"
                     size="small"
                     appearance="simple"
+                    disabled={!editMode}
                   />
                 }
                 placement="bottom-start"
+                
                 menu={optionsMenu}
               />
             </OptionsWrapper>
@@ -127,6 +131,7 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
             field={node.field}
             value={node.value as StyleSimpleValue}
             valueOptions={valueOptions}
+            editMode={editMode}
             onUpdate={handleValueUpdate}
           />
         )}
@@ -135,6 +140,7 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
             expression={node.expression ?? ""}
             onUpdate={handleExpressionUpdate}
             disabled={node.disableExpression}
+            editMode={editMode}
           />
         )}
         {activeTab === "deepExpression" && <ExpressionTab disabled />}
@@ -143,6 +149,7 @@ const StyleNodeComp: FC<Props> = ({ node, onUpdate, onDelete }) => {
             conditions={node.conditions}
             field={node.field}
             valueOptions={valueOptions}
+            editMode={editMode}
             onUpdate={handleConditionsUpdate}
             disabled={node.disableConditions}
           />

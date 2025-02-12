@@ -17,13 +17,14 @@ import { AppearanceType, StyleNode, StyleNodes } from "./types";
 
 export type LayerStyleProps = {
   layerStyle: LayerStyle | undefined;
+  editMode?: boolean;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
 };
 export type LayerStyleWithActiveTab = { id: string; tab: AppearanceType };
 
 const LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY = `reearth-visualizer-layer-style-active-tab`;
 
-const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
+const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, editMode, setLayerStyle }) => {
   const theme = useTheme();
 
   const [styleNodes, setStyleNodes] = useState<StyleNodes>(
@@ -108,13 +109,14 @@ const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, setLayerStyle }) => {
           <StylePanel
             key={type}
             type={type}
+            editMode={editMode}
             appearanceNodes={appearanceNodes[type]}
             styleNodes={styleNodes[type]}
             onStyleNodesUpdate={handleStyleNodesUpdate}
           />
         )
       })),
-    [handleStyleNodesUpdate, styleNodes]
+    [editMode, handleStyleNodesUpdate, styleNodes]
   );
 
   return layerStyle ? (

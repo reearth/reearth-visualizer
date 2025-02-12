@@ -8,10 +8,17 @@ const booleanOptions = [
 
 type Props = {
   value: boolean | string | undefined;
+  disabled?: boolean;
+  appearance?: "readonly"
   onChange: (value: boolean | undefined) => void;
 };
 
-const BooleanSelectorInput: FC<Props> = ({ value, onChange }) => {
+const BooleanSelectorInput: FC<Props> = ({
+  value,
+  disabled,
+  appearance,
+  onChange
+}) => {
   return (
     <Selector
       value={
@@ -24,6 +31,8 @@ const BooleanSelectorInput: FC<Props> = ({ value, onChange }) => {
             : ""
       }
       options={booleanOptions}
+      disabled={disabled}
+      appearance={appearance}
       onChange={(v) =>
         onChange(v === "true" ? true : v === "false" ? false : undefined)
       }
