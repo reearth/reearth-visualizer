@@ -130,7 +130,7 @@ export default function useHooks(
   );
 
   const handleAppyDelete = useCallback(() => {
-    if (!customPropertySchema) return;
+    if (!customPropertySchema || !layerId) return;
 
     const updatedSchema = Object.fromEntries(
       Object.entries(customPropertySchema).filter(
@@ -138,7 +138,7 @@ export default function useHooks(
       )
     );
     handleRemoveCustomProperty({
-      layerId: layerId || "",
+      layerId: layerId,
       removedTitle: selectedField?.key || "",
       schema: updatedSchema
     });

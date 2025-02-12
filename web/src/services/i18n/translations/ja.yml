@@ -124,23 +124,23 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
-Data source: ''
+Data source: 'データソース'
 Layer Name: レイヤー名
 Format: 形式
-Custom property schema: ''
-Edit Field: ''
-Delete Field: ''
-Edit Custom Property: ''
-New Custom Property: ''
+Custom property schema: 'カスタムプロパティスキーマ'
+Edit Field: 'フィールド編集'
+Delete Field: 'フィールド削除'
+Edit Custom Property: 'カスタムプロパティ編集'
+New Custom Property: '新しいカスタムプロパティ'
 Submit: 反映
-Property Title: ''
-Property Type: ''
-No field has been created yet: ''
+Property Title: 'プロパティタイトル'
+Property Type: 'プロパティタイプ'
+No field has been created yet: 'フィールドが作成されていません'
 New Field: 新しいフィールド
-Apply Current Edits?: ''
-This save will apply to all features in the current layer. Do you want to proceed?: ''
-Delete schema property field?: ''
-This action will apply to all features in the current layer. Do you want to proceed?: ''
+Apply Current Edits?: '現在の編集を適用しますか?'
+This save will apply to all features in the current layer. Do you want to proceed?: 'この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？'
+Delete schema property field?: 'プロパティのフィールドを削除しますか?'
+This action will apply to all features in the current layer. Do you want to proceed?: 'この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？'
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
 Save & Apply: 保存して適用
