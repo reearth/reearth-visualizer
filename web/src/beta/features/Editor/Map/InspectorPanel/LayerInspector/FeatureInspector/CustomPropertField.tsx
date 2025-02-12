@@ -7,18 +7,19 @@ import {
 } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
 import { useT } from "@reearth/services/i18n";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { FieldProp, ValueProp } from ".";
 
 type Props = {
   field: FieldProp;
+  editMode: boolean;
   setFields?: (
     v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])
   ) => void;
 };
 
-export const FieldComponent = ({ field, setFields }: Props) => {
+export const FieldComponent = ({ field, editMode, setFields }: Props) => {
   const t = useT();
 
   const handleChange = useCallback(
@@ -36,12 +37,18 @@ export const FieldComponent = ({ field, setFields }: Props) => {
     [field.id, setFields]
   );
 
+  const apperance = useMemo(() => {
+    return editMode ? "readonly" : undefined;
+  }, [editMode]);
+
   return field?.type === "Text" ? (
     <InputField
       key={field?.id}
       title={field?.title}
       value={field.value as string}
       onBlur={handleChange}
+      disabled={editMode}
+      appearance={apperance}
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
@@ -50,6 +57,8 @@ export const FieldComponent = ({ field, setFields }: Props) => {
       value={field.value as string}
       resizable="height"
       onBlur={handleChange}
+      disabled={editMode}
+      appearance={apperance}
     />
   ) : field?.type === "Asset" ? (
     <AssetField
@@ -58,6 +67,8 @@ export const FieldComponent = ({ field, setFields }: Props) => {
       assetsTypes={ALL_TYPES}
       inputMethod={"asset"}
       value={field.value as string}
+      disabled={editMode}
+      appearance={apperance}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
@@ -66,6 +77,8 @@ export const FieldComponent = ({ field, setFields }: Props) => {
       title={field?.title}
       value={field.value as string}
       onChange={handleChange}
+      disabled={editMode}
+      appearance={apperance}
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
@@ -73,6 +86,8 @@ export const FieldComponent = ({ field, setFields }: Props) => {
       title={field?.title}
       value={field.value as number}
       onBlur={handleChange}
+      disabled={editMode}
+      appearance={apperance}
     />
   ) : field?.type === "Boolean" ? (
     <SwitchField
@@ -80,6 +95,7 @@ export const FieldComponent = ({ field, setFields }: Props) => {
       title={field?.title}
       value={field.value as boolean}
       onChange={handleChange}
+      disabled={editMode}
     />
   ) : (
     <div>{t("Unsupported custom field")}</div>
