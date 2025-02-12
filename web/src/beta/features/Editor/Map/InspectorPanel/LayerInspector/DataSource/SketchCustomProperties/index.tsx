@@ -80,41 +80,49 @@ const CustomPropertiesSchema: FC<Props> = ({
           onSchemaJSONUpdate={setSchemaJSON}
         />
       )}
-      {(showDeleteFieldConfirmModal || showEditFieldConfirmModal) && (
+      {showEditFieldConfirmModal && (
         <ConfirmModal
           visible={true}
-          title={
-            showEditFieldConfirmModal
-              ? t("Apply Current Edits?")
-              : t("Delete schema property filed?")
-          }
-          description={
-            showEditFieldConfirmModal
-              ? t(
-                  "This save will apply to all features in the current layer. Do you want to proceed?"
-                )
-              : t(
-                  "This action will apply to all features in the current layer. Do you want to proceed?"
-                )
-          }
+          title={t("Apply Current Edits?")}
+          description={t(
+            "This save will apply to all features in the current layer. Do you want to proceed?"
+          )}
           actions={
             <>
               <Button
                 size="normal"
                 title={t("Cancel")}
-                onClick={
-                  showEditFieldConfirmModal
-                    ? closeEditFieldConfirmModal
-                    : closeDeleteFieldConfirmModal
-                }
+                onClick={closeEditFieldConfirmModal}
               />
               <Button
                 size="normal"
                 title={t("Apply")}
                 appearance="primary"
-                onClick={
-                  showEditFieldConfirmModal ? handleSubmit : handleAppyDelete
-                }
+                onClick={handleSubmit}
+              />
+            </>
+          }
+        />
+      )}
+      {showDeleteFieldConfirmModal && (
+        <ConfirmModal
+          visible={true}
+          title={t("Delete schema property field?")}
+          description={t(
+            "This action will apply to all features in the current layer. Do you want to proceed?"
+          )}
+          actions={
+            <>
+              <Button
+                size="normal"
+                title={t("Cancel")}
+                onClick={closeDeleteFieldConfirmModal}
+              />
+              <Button
+                size="normal"
+                title={t("Apply")}
+                appearance="primary"
+                onClick={handleAppyDelete}
               />
             </>
           }
@@ -143,7 +151,7 @@ const EmptyMessage = styled("div")(({ theme }) => ({
   justifyContent: "center",
   color: theme.content.weak,
   fontSize: theme.fonts.sizes.body,
-  fontWeight: theme.fonts.weight.bold,
+  fontWeight: theme.fonts.weight.regular,
   minHeight: "80px"
 }));
 

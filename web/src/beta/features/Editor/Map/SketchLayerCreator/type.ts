@@ -10,7 +10,6 @@ export type SketchLayerDataType =
   | "Float"
   | "Int"
   | "Boolean"
-  | "Camera";
 
 export type PropertyListProp = {
   id: string;

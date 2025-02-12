@@ -47,7 +47,8 @@ const LayerItem: FC<LayerItemProps> = ({
     handleFlyTo
   } = useMapPage();
 
-  const [isVisible, setIsVisible] = useState(false);
+  const [showDeleteLayerConfirmModal, setShowDeleteLayerConfirmModal] =
+    useState(false);
 
   const handleZoomToLayer = useCallback(() => {
     handleFlyTo?.(layer.id, { duration: 0 });
@@ -76,7 +77,7 @@ const LayerItem: FC<LayerItemProps> = ({
       id: "delete",
       title: t("Delete"),
       icon: "trash" as const,
-      onClick: () => setIsVisible(true)
+      onClick: () => setShowDeleteLayerConfirmModal(true)
     }
   ];
 
@@ -179,28 +180,30 @@ const LayerItem: FC<LayerItemProps> = ({
         optionsMenuWidth={150}
         actions={hoverActions}
       />
-      <ConfirmModal
-        visible={isVisible}
-        title={t("Delete this Layer?")}
-        description={t(
-          "Are you sure you want to remove this Sketch Layer? If deleted, all data of this layer will be lost and you can not recover it again."
-        )}
-        actions={
-          <>
-            <Button
-              size="normal"
-              title={t("Cancel")}
-              onClick={() => setIsVisible(false)}
-            />
-            <Button
-              size="normal"
-              title={t("Delete")}
-              appearance="dangerous"
-              onClick={() => handleLayerDelete(layer.id)}
-            />
-          </>
-        }
-      />
+      {showDeleteLayerConfirmModal && (
+        <ConfirmModal
+          visible={true}
+          title={t("Delete this Layer?")}
+          description={t(
+            "Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again."
+          )}
+          actions={
+            <>
+              <Button
+                size="normal"
+                title={t("Cancel")}
+                onClick={() => setShowDeleteLayerConfirmModal(false)}
+              />
+              <Button
+                size="normal"
+                title={t("Delete")}
+                appearance="dangerous"
+                onClick={() => handleLayerDelete(layer.id)}
+              />
+            </>
+          }
+        />
+      )}
     </>
   );
 };

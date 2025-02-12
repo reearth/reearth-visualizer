@@ -93,46 +93,59 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
       dataTypeGroups[group as keyof typeof dataTypeGroups].includes(dataType)
     );
 
-    return dataTypes.map((dataType) => {
-      const isDisabled =
+    return dataTypes.map((dataTypeItem) => {
+      const isDisabled = !!(
+        isEditField &&
         currentGroup &&
         !dataTypeGroups[currentGroup as keyof typeof dataTypeGroups].includes(
-          dataType.title
-        );
+          dataTypeItem.title
+        )
+      );
 
       return {
-        id: dataType.id,
-        title: dataType.title,
-        disabled: isEditField && !!isDisabled,
-        onClick: !isDisabled ? () => setDataType(dataType.title) : undefined
+        id: dataTypeItem.id,
+        title: dataTypeItem.title,
+        disabled: isDisabled,
+        onClick: isDisabled ? undefined : () => setDataType(dataTypeItem.title)
       };
     });
   }, [dataType, isEditField]);
 
-useEffect(() => {
-  if (!selectedField?.value || !schemaJSON) return;
+  useEffect(() => {
+    if (!selectedField?.value || !schemaJSON) return;
 
-  setTimeout(() => {
-    onSchemaJSONUpdate((prevSchema) => {
-      const existingValue = prevSchema[selectedField.key] || "";
-      const match = existingValue.match(/_(\w+)$/);
-      const suffix = match ? match[0] : "";
+    setTimeout(() => {
+      onSchemaJSONUpdate((prevSchema) => {
+        const existingValue = prevSchema[selectedField.key] || "";
+        const match = existingValue.match(/_(\w+)$/);
+        const suffix = match ? match[0] : "";
 
-      const newValue = `${dataType}${suffix}`;
+        const newValue = `${dataType}${suffix}`;
 
-      if (existingValue === newValue) {
-        return prevSchema;
-      }
-      return { ...prevSchema, [selectedField.key]: `${dataType}${suffix}` };
-    });
-  }, 0); // Delay update to avoid immediate loop
-}, [
-  selectedField?.value,
-  selectedField?.key,
-  dataType,
-  schemaJSON,
-  onSchemaJSONUpdate
-]);
+        if (existingValue === newValue) {
+          return prevSchema;
+        }
+        return { ...prevSchema, [selectedField.key]: `${dataType}${suffix}` };
+      });
+    }, 0); // Delay update to avoid immediate loop
+  }, [
+    selectedField?.value,
+    selectedField?.key,
+    dataType,
+    schemaJSON,
+    onSchemaJSONUpdate
+  ]);
+
+  const disabled = useMemo(() => {
+    const checkExistValue = dataType !== selectedField?.value;
+  
+    return (
+      !customPropertyTitle ||
+      !dataType ||
+      (!checkExistValue &&
+        Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle))
+    );
+  }, [customPropertyTitle, dataType, schemaJSON, selectedField?.value]);
 
   const handleSubmit = useCallback(() => {
     if (!customPropertyTitle) return;
@@ -169,6 +182,7 @@ useEffect(() => {
               size="normal"
               title={isEditField ? t("Submit") : t("Apply")}
               appearance="primary"
+              disabled={disabled}
             />
           </>
         }

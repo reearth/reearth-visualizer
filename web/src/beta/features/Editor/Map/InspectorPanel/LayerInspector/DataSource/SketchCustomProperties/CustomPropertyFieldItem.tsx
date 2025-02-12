@@ -46,7 +46,7 @@ const CustomPropertyFieldItem: FC<CustomPropertyFieldItemProps> = ({
     <Wrapper>
       {icon && (
         <IconWrapper>
-          <Icon icon={icon} size="small" />
+          <Icon icon={icon} />
         </IconWrapper>
       )}
       <Title>{title}</Title>

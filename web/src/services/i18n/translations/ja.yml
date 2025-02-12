@@ -138,8 +138,8 @@ Property Type: ''
 No field has been created yet: ''
 New Field: 新しいフィールド
 Apply Current Edits?: ''
-Delete schema property filed?: ''
 This save will apply to all features in the current layer. Do you want to proceed?: ''
+Delete schema property field?: ''
 This action will apply to all features in the current layer. Do you want to proceed?: ''
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
@@ -157,7 +157,7 @@ Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Delete this Layer?: ''
-Are you sure you want to remove this Sketch Layer? If deleted, all data of this layer will be lost and you can not recover it again.: ''
+Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: ''
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル

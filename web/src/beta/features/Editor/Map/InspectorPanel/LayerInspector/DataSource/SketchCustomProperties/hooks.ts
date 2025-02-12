@@ -10,12 +10,11 @@ export const getIcon = (value: string): IconName => {
   const iconMap: Record<string, IconName> = {
     TextArea: "textarea",
     Text: "textT",
-    URL: "paperclip",
-    Asset: "image",
-    Float: "file",
-    Int: "file",
-    Boolean: "file",
-    Camera: "camera"
+    URL: "linkSimpleHorizontal",
+    Asset: "file",
+    Float: "float",
+    Int: "numberNine",
+    Boolean: "toggleLeft"
   };
 
   return iconMap[cleanedValue] || "file";
@@ -50,7 +49,7 @@ export default function useHooks(
       setSchemaJSON(customPropertySchema);
     }
   }, [customPropertySchema]);
-  
+
   const sortedValues = useMemo(() => {
     if (!customPropertySchema) return;
     return Object.entries(customPropertySchema)
@@ -76,10 +75,12 @@ export default function useHooks(
   }, []);
 
   const closeCustomPropertySchema = useCallback(() => {
+    if (!customPropertySchema) return
     setCustomPropertySchemaShown(false);
     setSelectedField(null);
     setIsEditField(false);
-  }, []);
+    setSchemaJSON(customPropertySchema);
+  }, [customPropertySchema]);
 
   const [showEditFieldConfirmModal, setShowEditFieldConfirmModal] =
     useState(false);
@@ -123,7 +124,8 @@ export default function useHooks(
       if (!key) return;
       const value = customPropertySchema?.[key] || ""; // Get value from schema
       setSelectedField({ key, value: value.replace(/_\d+$/, "") });
-      Promise.resolve().then(openDeleteFieldConfirmModal);    },
+      Promise.resolve().then(openDeleteFieldConfirmModal);
+    },
     [customPropertySchema, openDeleteFieldConfirmModal]
   );
 
