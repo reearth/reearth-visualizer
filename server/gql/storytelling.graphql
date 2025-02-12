@@ -21,6 +21,9 @@ type Story implements Node {
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
+
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type StoryPage implements Node {
@@ -71,7 +74,7 @@ input UpdateStoryInput {
   panelPosition: Position
   bgColor: String
 
-#  publishment
+  #  publishment
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
@@ -235,7 +238,6 @@ extend type Mutation {
 
   addPageLayer(input: PageLayerInput!): StoryPagePayload!
   removePageLayer(input: PageLayerInput!): StoryPagePayload!
-
 
   createStoryBlock(input: CreateStoryBlockInput!): CreateStoryBlockPayload!
   moveStoryBlock(input: MoveStoryBlockInput!): MoveStoryBlockPayload!
