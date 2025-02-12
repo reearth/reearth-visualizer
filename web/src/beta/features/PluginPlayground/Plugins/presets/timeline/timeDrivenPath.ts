@@ -116,7 +116,11 @@ reearth.camera.flyTo(
   {
     duration: 2.0,
   }
-);`
+);
+
+// * Data License * //
+// Line data: uedayou(https://uedayou.net/jrslod/)
+`
 };
 
 export const timeDrivenPath: PluginType = {
