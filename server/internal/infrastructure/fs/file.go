@@ -110,7 +110,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 		return nil
 	}
 	p := sanitize.Path(u.Path)
-	if p == "" || f.urlBase == nil || u.Scheme != f.urlBase.Scheme || u.Host != f.urlBase.Host || path.Dir(p) != f.urlBase.Path {
+	if p == "" || f.urlBase == nil || u.Scheme != f.urlBase.Scheme || u.Host != f.urlBase.Host || path.Dir(p) != filepath.Join(f.urlBase.Path, assetDir) {
 		return gateway.ErrInvalidFile
 	}
 	return f.delete(ctx, filepath.Join(assetDir, filepath.Base(p)))
