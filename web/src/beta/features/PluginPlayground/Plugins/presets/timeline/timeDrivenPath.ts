@@ -19,7 +19,7 @@ extensions:
 const widgetFile: FileType = {
   id: "timeDrivenPath",
   title: "timeDrivenPath.js",
-  sourceCode: ` // This example shows how to move a feature over time using CZML
+  sourceCode: ` // This example shows how to move a 3D model linearly along time
 
 // Define the CZML data that includes time series information  
 const czmlData = [
