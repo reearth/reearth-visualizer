@@ -47,6 +47,10 @@ var (
 	pAlias = "PROJECT_ALIAS"
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	storyID = storytelling.NewStoryID()
+	pageID  = storytelling.NewPageID()
+	blockID = storytelling.NewBlockID()
 )
 
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
@@ -287,7 +291,7 @@ func addStory(ctx context.Context, r *repo.Container) error {
 	}
 	pages = append(pages, page)
 	story, err := storytelling.NewStory().
-		NewID().
+		ID(storyID).
 		Title("test page").
 		Pages(storytelling.NewPageList(pages)).
 		Scene(sID).
@@ -323,7 +327,7 @@ func _createPage(ctx context.Context, r *repo.Container) (*storytelling.Page, er
 	blocks = append(blocks, block)
 
 	return storytelling.NewPage().
-		NewID().
+		ID(pageID).
 		Title("Untitled").
 		Blocks(blocks).
 		Swipeable(false).
@@ -352,8 +356,9 @@ func _createBlock(ctx context.Context, r *repo.Container) (*storytelling.Block, 
 	if err = r.Property.Save(ctx, prop); err != err {
 		return nil, err
 	}
+
 	return storytelling.NewBlock().
-		NewID().
+		ID(blockID).
 		Plugin(plgID).
 		Extension(eId).
 		Property(prop.ID()).
