@@ -170,42 +170,56 @@ export default () => {
     [selectedPlugin, selectedFileId]
   );
 
-  const handleFileUpload = useFileInput((fileList) => {
-    const file = fileList?.[0];
-    if (!file) {
-      return;
-    }
-    const result = validateFileTitle(
-      file.name,
-      selectedPlugin.files.map((f) => f.title)
-    );
-    if (!result.success) {
-      setNotification({ type: "error", text: result.message });
-      return;
-    }
+  const handleFileUpload = useFileInput(
+    (fileList) => {
+      const file = fileList?.[0];
+      if (!file) {
+        return;
+      }
 
-    const reader = new FileReader();
+      if (file.type !== "application/zip") {
+        setNotification({ type: "error", text: "Invalid file type" });
+        return;
+      }
 
-    reader.onload = async (event) => {
-      const body = event?.target?.result;
-      if (typeof body != "string") return;
-      const fileItem = {
-        id: uuidv4(),
-        title: file.name,
-        sourceCode: body
-      };
-      // Note: When a new file is uploaded, select that file
-      setSelectedFileId(fileItem.id);
-      setPlugins((plugins) =>
-        plugins.map((plugin) =>
-          plugin.id === selectedPlugin.id
-            ? { ...plugin, files: [...plugin.files, fileItem] }
-            : plugin
-        )
-      );
-    };
-    reader.readAsText(file);
-  });
+      const zip = new JSZip();
+      zip.loadAsync(file).then((zip) => {
+        const files = Object.values(zip.files).filter((file) => !file.dir);
+        const filePromises = files.map((file) => file.async("text"));
+
+        Promise.all(filePromises).then((fileContents) => {
+          const pluginFiles = fileContents.map((content, index) => ({
+            id: uuidv4(),
+            title: files[index].name.split("/")[1],
+            sourceCode: content
+          }));
+
+          const hasValidFiles = pluginFiles.every(
+            (file) => file.title.endsWith(".yml") || file.title.endsWith(".js")
+          );
+
+          if (!hasValidFiles) {
+            setNotification({
+              type: "error",
+              text: "Zip file must only contain .yml and .js files"
+            });
+            return;
+          }
+
+          const newPlugin = {
+            id: uuidv4(),
+            title: file.name,
+            files: pluginFiles
+          };
+
+          setPlugins((plugins) => [...plugins, newPlugin]);
+          setSelectedPluginId(newPlugin.id);
+          setSelectedFileId(newPlugin.files[0].id);
+        });
+      });
+    },
+    { accept: "application/zip", multiple: false }
+  );
 
   const handlePluginDownload = useCallback(async () => {
     try {
