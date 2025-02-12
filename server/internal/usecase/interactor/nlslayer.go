@@ -856,7 +856,8 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	feature, err := nlslayer.NewFeatureWithNewId(
+	feature, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		inp.Type,
 		geometry,
 	)
@@ -1047,6 +1048,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 			ID(newNLSLayerID).
 			Simple().
 			Scene(sceneID).
+			Index(nlsLayerJSON.Index).
 			Title(nlsLayerJSON.Title).
 			LayerType(nlslayer.LayerType(nlsLayerJSON.LayerType)).
 			Config((*nlslayer.Config)(nlsLayerJSON.Config)).
@@ -1104,11 +1106,10 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 
 		// SketchInfo --------
 		if nlsLayerJSON.SketchInfo != nil {
-			i := nlsLayerJSON.SketchInfo
-			feature := make([]nlslayer.Feature, 0)
-			for _, v := range i.FeatureCollection.Features {
+			features := make([]nlslayer.Feature, 0)
+			for _, featureJSON := range nlsLayerJSON.SketchInfo.FeatureCollection.Features {
 				var geometry nlslayer.Geometry
-				for _, g := range v.Geometry {
+				for _, g := range featureJSON.Geometry {
 					if geometryMap, ok := g.(map[string]any); ok {
 						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
 						if err != nil {
@@ -1116,18 +1117,23 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 						}
 					}
 				}
-				f, err := nlslayer.NewFeatureWithNewId(v.Type, geometry)
+				feature, err := nlslayer.NewFeature(
+					nlslayer.NewFeatureID(),
+					featureJSON.Type,
+					geometry,
+				)
 				if err != nil {
 					return nil, nil, err
 				}
-				feature = append(feature, *f)
+				feature.UpdateProperties(featureJSON.Properties)
+				features = append(features, *feature)
 			}
 			featureCollection := nlslayer.NewFeatureCollection(
-				i.FeatureCollection.Type,
-				feature,
+				nlsLayerJSON.SketchInfo.FeatureCollection.Type,
+				features,
 			)
 			sketchInfo := nlslayer.NewSketchInfo(
-				i.PropertySchema,
+				nlsLayerJSON.SketchInfo.PropertySchema,
 				featureCollection,
 			)
 			nlBuilder = nlBuilder.Sketch(sketchInfo)

@@ -51,7 +51,7 @@ func (c *AssetLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, pro
 		pid = &pidValue
 	}
 
-	assets, pi, err := c.usecase.FindByWorkspace(ctx, tid, pid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
+	assets, pi, err := c.usecase.FindByWorkspaceProject(ctx, tid, pid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

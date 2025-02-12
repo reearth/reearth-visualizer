@@ -110,7 +110,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 	assert.Nil(t, err)
 
 	f := int64(20)
-	as, _, err := r.Asset.FindByWorkspace(ctx, wID, nil, repo.AssetFilter{
+	as, _, err := r.Asset.FindByWorkspaceProject(ctx, wID, nil, repo.AssetFilter{
 		Pagination: usecasex.CursorPagination{
 			First: &f,
 		}.Wrap(),
