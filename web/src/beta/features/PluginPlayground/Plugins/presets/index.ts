@@ -16,6 +16,7 @@ import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
+import { overrideLayerData } from "./layers/overrideLayerData";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { layerStylingExamples } from "./layerStyles/layerStylingExamples";
 import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
@@ -68,6 +69,7 @@ export const presetPlugins: PresetPlugins = [
       addWms,
       addGooglePhotorealistic3dTiles,
       hideFlyToDeleteLayer,
+      overrideLayerData,
       showFeaturesInfo
     ]
   },
