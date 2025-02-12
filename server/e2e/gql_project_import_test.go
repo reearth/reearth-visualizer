@@ -77,8 +77,8 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 			"lang":    l,
 		},
 	}
-	r := Request(e, uID.String(), requestBody).
-		Object()
+
+	r := Request(e, uID.String(), requestBody).Object()
 	v := r.Value("data").Object().Value("node")
 	v.NotNull()
 	return v.Object()
@@ -89,36 +89,11 @@ query GetScene($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
-      rootLayerId
       teamId
       projectId
       property {
         id
         ...PropertyFragment
-        __typename
-      }
-      clusters {
-        id
-        name
-        propertyId
-        property {
-          id
-          ...PropertyFragment
-          __typename
-        }
-        __typename
-      }
-      tags {
-        id
-        label
-        ... on TagGroup {
-          tags {
-            id
-            label
-            __typename
-          }
-          __typename
-        }
         __typename
       }
       plugins {

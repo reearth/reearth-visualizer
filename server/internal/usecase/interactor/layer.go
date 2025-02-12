@@ -149,7 +149,6 @@ func (l *Layer) Export(ctx context.Context, lid id.LayerID, ext string) (io.Read
 		Sealer: &merging.Sealer{
 			DatasetGraphLoader: repo.DatasetGraphLoaderFrom(l.datasetRepo),
 		},
-		Encoder: e,
 	}
 
 	go func() {
