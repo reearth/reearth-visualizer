@@ -1,9 +1,11 @@
 import {
+  Button,
   IconButton,
   PopupMenuItem,
   TextInput
 } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
+import ConfirmModal from "@reearth/beta/ui/components/ConfirmModal";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -42,10 +44,11 @@ const LayerItem: FC<LayerItemProps> = ({
     handleLayerDelete,
     handleLayerNameUpdate,
     handleLayerVisibilityUpdate,
-    handleFlyTo,
-    openCustomPropertySchema,
-    handleCustomPropertySchemaClick
+    handleFlyTo
   } = useMapPage();
+
+  const [showDeleteLayerConfirmModal, setShowDeleteLayerConfirmModal] =
+    useState(false);
 
   const handleZoomToLayer = useCallback(() => {
     handleFlyTo?.(layer.id, { duration: 0 });
@@ -63,46 +66,20 @@ const LayerItem: FC<LayerItemProps> = ({
     handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });
   }, [layer.id, layer.visible, handleLayerVisibilityUpdate]);
 
-  const optionsMenu: PopupMenuItem[] = useMemo(() => {
-    const menu = [
-      {
-        id: "rename",
-        title: t("Rename"),
-        icon: "pencilSimple" as const,
-        onClick: () => setEditingLayerNameId(layer.id)
-      },
-      {
-        id: "delete",
-        title: t("Delete"),
-        icon: "trash" as const,
-        onClick: () => handleLayerDelete(layer.id)
-      }
-    ];
-
-    const sketchMenu = layer.isSketch
-      ? [
-          {
-            id: "customProperty",
-            title: t("Property Schema"),
-            icon: "listDashes" as const,
-            onClick: () => {
-              openCustomPropertySchema();
-              handleCustomPropertySchemaClick?.(layer.id);
-            }
-          }
-        ]
-      : [];
-
-    return [...sketchMenu, ...menu];
-  }, [
-    layer.isSketch,
-    layer.id,
-    setEditingLayerNameId,
-    handleLayerDelete,
-    openCustomPropertySchema,
-    handleCustomPropertySchemaClick,
-    t
-  ]);
+  const optionsMenu: PopupMenuItem[] = [
+    {
+      id: "rename",
+      title: t("Rename"),
+      icon: "pencilSimple" as const,
+      onClick: () => setEditingLayerNameId(layer.id)
+    },
+    {
+      id: "delete",
+      title: t("Delete"),
+      icon: "trash" as const,
+      onClick: () => setShowDeleteLayerConfirmModal(true)
+    }
+  ];
 
   const hoverActions: EntryItemAction[] | undefined = useMemo(
     () =>
@@ -176,32 +153,58 @@ const LayerItem: FC<LayerItemProps> = ({
   }, [selectedLayerId, layer.id, handleTitleUpdateRef]);
 
   return (
-    <EntryItem
-      title={
-        editingLayerNameId === layer.id ? (
-          <TextInput
-            size="small"
-            extendWidth
-            autoFocus
-            value={localTitle}
-            onChange={setLocalTitle}
-            onBlur={handleTitleUpdate}
-          />
-        ) : (
-          <TitleWrapper onDoubleClick={() => setEditingLayerNameId(layer.id)}>
-            {localTitle}
-          </TitleWrapper>
-        )
-      }
-      icon={layer?.isSketch ? "pencilSimple" : "file"}
-      dragHandleClassName={dragHandleClassName}
-      onClick={handleLayerItemClick}
-      highlighted={layer.id === selectedLayerId}
-      disableHover={isDragging}
-      optionsMenu={optionsMenu}
-      optionsMenuWidth={150}
-      actions={hoverActions}
-    />
+    <>
+      <EntryItem
+        title={
+          editingLayerNameId === layer.id ? (
+            <TextInput
+              size="small"
+              extendWidth
+              autoFocus
+              value={localTitle}
+              onChange={setLocalTitle}
+              onBlur={handleTitleUpdate}
+            />
+          ) : (
+            <TitleWrapper onDoubleClick={() => setEditingLayerNameId(layer.id)}>
+              {localTitle}
+            </TitleWrapper>
+          )
+        }
+        icon={layer?.isSketch ? "pencilSimple" : "file"}
+        dragHandleClassName={dragHandleClassName}
+        onClick={handleLayerItemClick}
+        highlighted={layer.id === selectedLayerId}
+        disableHover={isDragging}
+        optionsMenu={optionsMenu}
+        optionsMenuWidth={150}
+        actions={hoverActions}
+      />
+      {showDeleteLayerConfirmModal && (
+        <ConfirmModal
+          visible={true}
+          title={t("Delete this Layer?")}
+          description={t(
+            "Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again."
+          )}
+          actions={
+            <>
+              <Button
+                size="normal"
+                title={t("Cancel")}
+                onClick={() => setShowDeleteLayerConfirmModal(false)}
+              />
+              <Button
+                size="normal"
+                title={t("Delete")}
+                appearance="dangerous"
+                onClick={() => handleLayerDelete(layer.id)}
+              />
+            </>
+          }
+        />
+      )}
+    </>
   );
 };
 

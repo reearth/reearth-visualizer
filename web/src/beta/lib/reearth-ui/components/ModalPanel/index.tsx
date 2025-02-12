@@ -17,7 +17,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   actions,
   layout,
   onCancel,
-  appearance = "normal"
+  appearance = "normal",
 }) => {
   return (
     <Wrapper>

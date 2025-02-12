@@ -2,16 +2,15 @@ import {
   Button,
   Modal,
   ModalPanel,
-  TabItem,
-  Tabs
+  TextInput
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
-import SketchCustomProperties from "../shared/SketchCustomProperties";
+import { InputGroup, InputsWrapper } from "../shared/SharedComponent";
 
-import General from "./General";
+import SketchCustomProperties from "./SketchCustomProperties";
 import {
   CustomPropertyProp,
   PropertyListProp,
@@ -26,12 +25,11 @@ export const dataTypes: SketchLayerDataType[] = [
   "Asset",
   "Float",
   "Int",
-  "Boolean"
+  "Boolean",
 ];
 
 const SketchLayerCreator: FC<SketchLayerProps> = ({
   sceneId,
-  layerStyles,
   onClose,
   onSubmit
 }) => {
@@ -41,12 +39,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
   >([]);
   const [propertiesList, setPropertiesList] = useState<PropertyListProp[]>([]);
   const [layerName, setLayerName] = useState("");
-  const [layerStyle, setLayerStyle] = useState("");
   const [warning, setWarning] = useState(false);
-
-  const handleLayerStyleChange = useCallback((value?: string | string[]) => {
-    setLayerStyle(value as string);
-  }, []);
 
   const handleLayerNameChange = useCallback((value?: string) => {
     setLayerName(value || "");
@@ -72,7 +65,6 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
         properties: {
           name: layerName
         },
-        layerStyleId: layerStyle,
         data: {
           type: "geojson"
         }
@@ -80,36 +72,6 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
     });
     onClose?.();
   };
-
-  const tabsItem: TabItem[] = [
-    {
-      id: "general",
-      name: t("General"),
-      children: (
-        <General
-          layerStyles={layerStyles}
-          layerName={layerName}
-          layerStyle={layerStyle}
-          onLayerStyleChange={handleLayerStyleChange}
-          onLayerNameChange={handleLayerNameChange}
-        />
-      )
-    },
-    {
-      id: "customProperties",
-      name: t("Custom Properties"),
-      children: (
-        <SketchCustomProperties
-          customProperties={customProperties}
-          propertiesList={propertiesList}
-          warning={warning}
-          setWarning={setWarning}
-          setCustomProperties={setCustomProperties}
-          setPropertiesList={setPropertiesList}
-        />
-      )
-    }
-  ];
 
   return (
     <Modal size="medium" visible={true}>
@@ -130,7 +92,23 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
         }
       >
         <Wrapper>
-          <Tabs tabs={tabsItem} />
+          <InputGroup label={t("Layer Name")}>
+            <InputsWrapper>
+              <TextInput
+                placeholder={t(" Text")}
+                value={layerName}
+                onChange={handleLayerNameChange}
+              />
+            </InputsWrapper>
+          </InputGroup>
+          <SketchCustomProperties
+            customProperties={customProperties}
+            propertiesList={propertiesList}
+            warning={warning}
+            setWarning={setWarning}
+            setCustomProperties={setCustomProperties}
+            setPropertiesList={setPropertiesList}
+          />
         </Wrapper>
       </ModalPanel>
     </Modal>
@@ -140,7 +118,10 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
 const Wrapper = styled("div")(({ theme }) => ({
   height: "440px",
   padding: theme.spacing.normal,
-  background: theme.bg[0]
+  background: theme.bg[1],
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.normal
 }));
 
 export default SketchLayerCreator;

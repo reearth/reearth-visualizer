@@ -4,7 +4,7 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
-import { UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
+import { ChangeCustomPropertyTitleInput, RemoveCustomPropertyInput, UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
 import { createContext, useContext, ReactNode } from "react";
 
 import {
@@ -37,7 +37,6 @@ export interface MapPageContextType {
   handleLayerSelect: (id?: string) => void;
   openDataSourceLayerCreator: () => void;
   openSketchLayerCreator: () => void;
-  openCustomPropertySchema: () => void;
   layerId?: string;
   handleCustomPropertySchemaClick?: (id?: string) => void;
   handleCustomPropertySchemaUpdate?: (
@@ -65,6 +64,10 @@ export interface MapPageContextType {
   handleLayerStyleDelete: (id: string) => void;
   handleLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
   handleLayerStyleSelect: (id: string | undefined) => void;
+  handleChangeCustomPropertyTitle: (
+    inp: ChangeCustomPropertyTitleInput
+  ) => void;
+  handleRemoveCustomProperty: (inp: RemoveCustomPropertyInput) => void;
 }
 
 const MapPageContext = createContext<MapPageContextType | undefined>(undefined);
