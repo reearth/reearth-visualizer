@@ -28,7 +28,7 @@ const SettingsList: FC<Props> = ({
       <Row>
         <CheckBox
           value={showStoryPanel}
-          onChange={() => setShowStoryPanel(!showStoryPanel)}
+          onChange={(value) => setShowStoryPanel(value)}
         />
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
           Enable Story Panel

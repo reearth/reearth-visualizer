@@ -4,26 +4,43 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
 import useCode from "./Code/hook";
+import ExtensionSettings from "./ExtensionSettings";
 import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
 import SettingsList from "./SettingsList";
+import { FieldValue } from "./types";
 import Viewer from "./Viewer";
 
 export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
-
   const [enabledVisualizer, setEnabledVisualizer] = useState(true);
+  const [showStoryPanel, setShowStoryPanel] = useState(false);
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
   const resetVisualizer = useCallback(() => {
     setEnabledVisualizer(false);
+    setShowStoryPanel(false);
     const timeoutId = setTimeout(() => {
       setEnabledVisualizer(true);
     }, 0);
-    return () => clearTimeout(timeoutId);
-  }, []);
+    let showStoryPanelTimeout: NodeJS.Timeout | undefined;
+    if (showStoryPanel) {
+      showStoryPanelTimeout = setTimeout(() => {
+        setShowStoryPanel(showStoryPanel);
+      }, 100);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearTimeout(showStoryPanelTimeout);
+    };
+  }, [showStoryPanel]);
+
+  const [fieldValues, setFieldValues] = useState<Record<string, FieldValue>>(
+    {}
+  );
 
   const {
     presetPlugins,
@@ -43,12 +60,12 @@ export default () => {
 
   const { executeCode, infoboxBlocks, story, widgets } = useCode({
     files: selectedPlugin.files,
+    fieldValues,
     resetVisualizer
   });
 
   const [infoboxEnabled, setInfoboxEnabled] = useState(true);
   const [selectedLayerId, setSelectedLayerId] = useState("");
-  const [showStoryPanel, setShowStoryPanel] = useState(false);
   const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
     DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
   );
@@ -188,11 +205,21 @@ export default () => {
     />
   );
 
+  const ExtensionSettingsPanel: FC = () => (
+    <ExtensionSettings
+      selectedPlugin={selectedPlugin}
+      selectedFile={selectedFile}
+      fieldValues={fieldValues}
+      setFieldValues={setFieldValues}
+    />
+  );
+
   return {
     LayersPanel,
     MainAreaTabs,
     RightAreaTabs,
     SettingsPanel,
-    SubRightAreaTabs
+    SubRightAreaTabs,
+    ExtensionSettingsPanel
   };
 };
