@@ -17,11 +17,16 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   selectedLayerStyle,
   onLayerStyleValueUpdate
 }) => {
-  const { tabItems, handleSave } = useHooks({
+  const {
+    tabItems,
+    editMode,
+    handleSave,
+    handleEditLayerStyle,
+    handleCancelLayerStyle
+  } = useHooks({
     selectedLayerStyle,
     onLayerStyleValueUpdate
   });
-
   const t = useT();
 
   return (
@@ -35,17 +40,35 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         flexHeight
         menuEdgeGap="small"
       />
-      {selectedLayerStyle?.id && (
-        <ButtonWrapper>
+      <ButtonWrapper>
+        {editMode ? (
+          selectedLayerStyle?.id && (
+            <>
+              <Button
+                onClick={handleCancelLayerStyle}
+                size="small"
+                icon="close"
+                extendWidth
+              />
+              <Button
+                extendWidth
+                icon="check"
+                size="small"
+                appearance="primary"
+                onClick={handleSave}
+              />
+            </>
+          )
+        ) : (
           <Button
-            title={t("Save")}
-            extendWidth
+            onClick={handleEditLayerStyle}
             size="small"
-            icon="floppyDisk"
-            onClick={handleSave}
+            icon="pencilSimple"
+            title={t("Edit")}
+            extendWidth
           />
-        </ButtonWrapper>
-      )}
+        )}
+      </ButtonWrapper>
     </EditorContainer>
   );
 };
@@ -66,7 +89,10 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   borderTop: `1px solid ${theme.outline.weaker}`,
   padding: theme.spacing.small,
   width: "100%",
-  background: theme.bg[1]
+  background: theme.bg[1],
+  display: "flex",
+  flexDirection: "row",
+  gap: theme.spacing.small
 }));
 
 export default LayerStyleEditor;

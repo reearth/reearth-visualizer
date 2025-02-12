@@ -8,16 +8,24 @@ import Field from "./Field";
 type Props = {
   field: AppearanceField;
   value: StyleSimpleValue;
+  editMode?: boolean;
   valueOptions?: { value: string; label: string }[];
   onUpdate: (value: StyleSimpleValue) => void;
 };
 
-const ValueTab: FC<Props> = ({ field, value, valueOptions, onUpdate }) => {
+const ValueTab: FC<Props> = ({
+  field,
+  value,
+  editMode,
+  valueOptions,
+  onUpdate
+}) => {
   return (
     <Wrapper>
       <Field
         field={field}
         value={value}
+        editMode={editMode}
         options={valueOptions}
         onUpdate={onUpdate}
       />

@@ -8,10 +8,11 @@ import NoStyleMessage from "../NoStyleMessage";
 
 type CodeProps = {
   layerStyle: LayerStyle | undefined;
+  editMode?: boolean;
   setLayerStyle: Dispatch<SetStateAction<LayerStyle | undefined>>;
 };
 
-const StyleCode: FC<CodeProps> = ({ layerStyle, setLayerStyle }) => {
+const StyleCode: FC<CodeProps> = ({ layerStyle, editMode, setLayerStyle }) => {
   const [styleCode, setStyleCode] = useState<string | undefined>("");
   const styleCodeRef = useRef<string | undefined>(styleCode);
   styleCodeRef.current = styleCode;
@@ -43,6 +44,7 @@ const StyleCode: FC<CodeProps> = ({ layerStyle, setLayerStyle }) => {
         onBlur={updateStyle}
         language="json"
         showLines={false}
+        disabled={!editMode}
       />
     </CodeWrapper>
   ) : (

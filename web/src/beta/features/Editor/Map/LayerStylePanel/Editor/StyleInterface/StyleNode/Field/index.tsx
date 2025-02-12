@@ -16,6 +16,7 @@ import TypographyInput from "./TypographyInput";
 type FieldProps = {
   field?: AppearanceField;
   value: StyleSimpleValue;
+  editMode?: boolean;
   options?: { value: string; label: string }[];
   onUpdate: (value: StyleSimpleValue) => void;
 };
@@ -24,17 +25,34 @@ const fieldComponents = {
   switch: (props: FieldProps) => (
     <BooleanSelectorInput
       value={props.value as boolean}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
       onChange={props.onUpdate}
     />
   ),
   number: (props: FieldProps) => (
-    <NumberInput value={props.value as number} onBlur={props.onUpdate} />
+    <NumberInput
+      value={props.value as number}
+      onBlur={props.onUpdate}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
+    />
   ),
   text: (props: FieldProps) => (
-    <TextInput value={props.value as string} onBlur={props.onUpdate} />
+    <TextInput
+      value={props.value as string}
+      onBlur={props.onUpdate}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
+    />
   ),
   color: (props: FieldProps) => (
-    <ColorInput value={props.value as string} onChange={props.onUpdate} />
+    <ColorInput
+      value={props.value as string}
+      onChange={props.onUpdate}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
+    />
   ),
   select: (props: FieldProps) =>
     props.options ? (
@@ -42,12 +60,16 @@ const fieldComponents = {
         value={props.value as string}
         options={props.options}
         onChange={(v) => props.onUpdate(v as string)}
+        disabled={!props.editMode}
+        appearance={!props.editMode ? "readonly" : undefined}
       />
     ) : null,
   typography: (props: FieldProps) => (
     <TypographyInput
       value={props.value as Typography}
       onChange={props.onUpdate}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
     />
   ),
   image: (props: FieldProps) => (
@@ -56,6 +78,8 @@ const fieldComponents = {
       value={props.value as string}
       assetsTypes={IMAGE_TYPES}
       onChange={props.onUpdate}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
     />
   ),
   model: (props: FieldProps) => (
@@ -64,6 +88,8 @@ const fieldComponents = {
       value={props.value as string}
       assetsTypes={["model"]}
       onChange={props.onUpdate}
+      disabled={!props.editMode}
+      appearance={!props.editMode ? "readonly" : undefined}
     />
   )
 };

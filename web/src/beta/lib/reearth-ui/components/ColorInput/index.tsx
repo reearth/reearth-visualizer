@@ -17,6 +17,7 @@ export type ColorInputProps = {
   size?: "normal" | "small";
   disabled?: boolean;
   alphaDisabled?: boolean;
+  appearance?: "readonly" | undefined;
   onChange?: (text: string) => void;
 };
 
@@ -27,6 +28,7 @@ export const ColorInput: FC<ColorInputProps> = ({
   disabled,
   size = "normal",
   alphaDisabled,
+  appearance,
   onChange
 }) => {
   const {
@@ -116,6 +118,7 @@ export const ColorInput: FC<ColorInputProps> = ({
         onChange={handleHexInputChange}
         onBlur={(value) => handleHexInputBlur(value)}
         disabled={disabled}
+        appearance={appearance}
         size={size}
         maxLength={alphaDisabled ? 7 : 9}
         extendWidth

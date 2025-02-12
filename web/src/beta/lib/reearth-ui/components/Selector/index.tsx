@@ -23,6 +23,7 @@ export type SelectorProps = {
   placeholder?: string;
   maxHeight?: number;
   size?: "normal" | "small";
+  appearance?: "readonly";
   onChange?: (value: string | string[]) => void;
 };
 
@@ -31,6 +32,7 @@ export const Selector: FC<SelectorProps> = ({
   value,
   options,
   size = "normal",
+  appearance,
   placeholder,
   disabled,
   maxHeight,
@@ -155,7 +157,14 @@ export const Selector: FC<SelectorProps> = ({
             ))}
           </SelectedItems>
         ) : (
-          <Typography size="body" color={disabled ? theme.content.weaker : ""}>
+          <Typography
+            size="body"
+            color={
+              disabled && appearance !== "readonly"
+                ? theme.content.weaker
+                : theme.content.main
+            }
+          >
             {selectedLabels[0]}
           </Typography>
         )}
@@ -232,6 +241,7 @@ const SelectInput = styled("div")<{
           isMultiple ? theme.spacing.smallest : theme.spacing.small
         }px`,
   cursor: disabled ? "not-allowed" : "pointer",
+
   minWidth: width ? `${width}px` : "fit-content",
   height: size == "small" ? "21px" : "28px"
 }));

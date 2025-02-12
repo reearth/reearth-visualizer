@@ -22,6 +22,7 @@ type Props = {
   field?: AppearanceField;
   valueOptions?: { value: string; label: string }[];
   disabled?: boolean;
+  editMode?: boolean;
   onUpdate?: (value: StyleCondition[]) => void;
 };
 
@@ -56,6 +57,7 @@ const ConditionsTab: FC<Props> = ({
   field,
   valueOptions,
   disabled,
+  editMode,
   onUpdate
 }) => {
   const handleItemDrop = useCallback(
@@ -147,6 +149,7 @@ const ConditionsTab: FC<Props> = ({
                 icon="dotsSixVertical"
                 size="small"
                 appearance="simple"
+                disabled={!editMode}
                 className={STYLE_CONDITIONS_DRAG_HANDLE_CLASS_NAME}
               />
               <ConditionWrapper>
@@ -156,6 +159,8 @@ const ConditionsTab: FC<Props> = ({
                     <TextInput
                       value={condition.variable || ""}
                       placeholder={"${property}"}
+                      disabled={!editMode}
+                      appearance={!editMode ? "readonly" : undefined}
                       onBlur={(val) => updateCondition(idx, "variable", val)}
                     />
                   </InputWrapper>
@@ -164,6 +169,8 @@ const ConditionsTab: FC<Props> = ({
                       value={condition.operator}
                       placeholder=""
                       options={OPERATION_OPTIONS}
+                      disabled={!editMode}
+                      appearance={!editMode ? "readonly" : undefined}
                       onChange={(val) =>
                         updateCondition(idx, "operator", val as string)
                       }
@@ -173,6 +180,8 @@ const ConditionsTab: FC<Props> = ({
                     <TextInput
                       value={condition.value || ""}
                       placeholder={"value or 'string'"}
+                      disabled={!editMode}
+                      appearance={!editMode ? "readonly" : undefined}
                       onBlur={(val) => updateCondition(idx, "value", val)}
                     />
                   </InputWrapper>
@@ -182,6 +191,7 @@ const ConditionsTab: FC<Props> = ({
                     field={field}
                     value={condition.applyValue}
                     options={valueOptions}
+                    editMode={editMode}
                     onUpdate={(value) => updateApplyValue(idx, value)}
                   />
                 </ConditionValue>
@@ -191,6 +201,7 @@ const ConditionsTab: FC<Props> = ({
                 icon="minus"
                 size="small"
                 appearance="simple"
+                disabled={!editMode}
                 onClick={() => deleteCondition(idx)}
               />
             </ContentWrapper>
@@ -199,11 +210,12 @@ const ConditionsTab: FC<Props> = ({
       }),
     [
       conditions,
+      editMode,
       field,
       valueOptions,
-      deleteCondition,
       updateCondition,
-      updateApplyValue
+      updateApplyValue,
+      deleteCondition
     ]
   );
 
@@ -223,6 +235,7 @@ const ConditionsTab: FC<Props> = ({
           icon="plus"
           size="small"
           appearance="simple"
+          disabled={!editMode}
           onClick={createCondition}
         />
       </IconButtonWrapper>
