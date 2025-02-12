@@ -118,7 +118,6 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
                   />
                 }
                 placement="bottom-start"
-                
                 menu={optionsMenu}
               />
             </OptionsWrapper>

@@ -24,7 +24,11 @@ export type LayerStyleWithActiveTab = { id: string; tab: AppearanceType };
 
 const LAYER_STYLE_ACTIVE_TAB_STORAGE_KEY = `reearth-visualizer-layer-style-active-tab`;
 
-const StyleInterface: FC<LayerStyleProps> = ({ layerStyle, editMode, setLayerStyle }) => {
+const StyleInterface: FC<LayerStyleProps> = ({
+  layerStyle,
+  editMode,
+  setLayerStyle
+}) => {
   const theme = useTheme();
 
   const [styleNodes, setStyleNodes] = useState<StyleNodes>(

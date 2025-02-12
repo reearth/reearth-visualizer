@@ -9,7 +9,7 @@ const booleanOptions = [
 type Props = {
   value: boolean | string | undefined;
   disabled?: boolean;
-  appearance?: "readonly"
+  appearance?: "readonly";
   onChange: (value: boolean | undefined) => void;
 };
 

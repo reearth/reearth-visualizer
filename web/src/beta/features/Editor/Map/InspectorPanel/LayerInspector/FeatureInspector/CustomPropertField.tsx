@@ -38,7 +38,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
   );
 
   const appearance = useMemo(() => {
-    return editMode ? "readonly" : undefined;
+    return !editMode ? "readonly" : undefined;
   }, [editMode]);
 
   return field?.type === "Text" ? (
@@ -47,7 +47,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       title={field?.title}
       value={field.value as string}
       onBlur={handleChange}
-      disabled={editMode}
+      disabled={!editMode}
       appearance={appearance}
     />
   ) : field?.type === "TextArea" ? (
@@ -57,7 +57,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       value={field.value as string}
       resizable="height"
       onBlur={handleChange}
-      disabled={editMode}
+      disabled={!editMode}
       appearance={appearance}
     />
   ) : field?.type === "Asset" ? (
@@ -67,7 +67,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       assetsTypes={ALL_TYPES}
       inputMethod={"asset"}
       value={field.value as string}
-      disabled={editMode}
+      disabled={!editMode}
       appearance={appearance}
       onChange={handleChange}
     />
@@ -77,7 +77,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       title={field?.title}
       value={field.value as string}
       onChange={handleChange}
-      disabled={editMode}
+      disabled={!editMode}
       appearance={appearance}
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
@@ -86,7 +86,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       title={field?.title}
       value={field.value as number}
       onBlur={handleChange}
-      disabled={editMode}
+      disabled={!editMode}
       appearance={appearance}
     />
   ) : field?.type === "Boolean" ? (
@@ -95,7 +95,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       title={field?.title}
       value={field.value as boolean}
       onChange={handleChange}
-      disabled={editMode}
+      disabled={!editMode}
     />
   ) : (
     <div>{t("Unsupported custom field")}</div>

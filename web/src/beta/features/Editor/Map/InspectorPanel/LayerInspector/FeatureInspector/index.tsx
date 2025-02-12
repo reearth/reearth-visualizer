@@ -216,7 +216,7 @@ const FeatureData: FC<Props> = ({
                 field={f}
                 key={f.id}
                 setFields={setFields}
-                editMode={!editMode}
+                editMode={editMode}
               />
             ))}
             <SketchFeatureButtons>
