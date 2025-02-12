@@ -46,7 +46,7 @@ func (r *Asset) FindByIDs(_ context.Context, ids id.AssetIDList) ([]*asset.Asset
 	}), nil
 }
 
-func (r *Asset) FindByWorkspace(_ context.Context, wid accountdomain.WorkspaceID, pid *id.ProjectID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (r *Asset) FindByWorkspaceProject(_ context.Context, wid accountdomain.WorkspaceID, pid *id.ProjectID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(wid) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}

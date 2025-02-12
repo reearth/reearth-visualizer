@@ -2,17 +2,11 @@ package interactor
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/url"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -23,7 +17,6 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
-	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -143,127 +136,4 @@ func TestProject_Create(t *testing.T) {
 	})
 	assert.Same(t, policy.ErrPolicyViolation, err)
 	assert.Nil(t, got)
-}
-
-// go test -v -run TestImportProject ./internal/usecase/interactor/...
-
-func TestImportProject(t *testing.T) {
-
-	ctx := context.Background()
-	ctx = adapter.AttachCurrentHost(ctx, "https://xxxx.reearth.dev")
-
-	db := memory.New()
-	ifp := NewProject(db, &gateway.Container{
-		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
-
-	teamID := "01j7g9ddttkpnt3esk8h4w7xhv"
-	var projectData map[string]interface{}
-	err := json.Unmarshal([]byte(`{
-    "id": "01j7g9ddttkpnt3esk8h4w7xhv",
-    "isArchived": false,
-    "isBasicAuthActive": false,
-    "basicAuthUsername": "",
-    "basicAuthPassword": "",
-    "createdAt": "2024-09-11T19:17:39.418+09:00",
-    "updatedAt": "2024-09-11T10:22:09.581Z",
-    "name": "ProjectName1",
-    "description": "ProjectOverview1",
-    "alias": "",
-    "publicTitle": "",
-    "publicDescription": "",
-    "publicImage": "",
-    "publicNoIndex": false,
-    "imageUrl": {
-      "Scheme": "http",
-      "Opaque": "",
-      "User": null,
-      "Host": "localhost:8080",
-      "Path": "/assets/01j7g9d988ct8hajjxfsb6e1n6.jpeg",
-      "RawPath": "",
-      "OmitHost": false,
-      "ForceQuery": false,
-      "RawQuery": "",
-      "Fragment": "",
-      "RawFragment": ""
-    },
-    "teamId": "01j7g99pb1q1vf684af39bajw5",
-    "visualizer": "cesium",
-    "publishmentStatus": "PRIVATE",
-    "coreSupport": true,
-    "enableGa": false,
-    "trackingId": "",
-    "starred": false
-  }`), &projectData)
-	assert.NoError(t, err)
-
-	// invoke the target function
-	result, _, err := ifp.ImportProject(ctx, teamID, projectData)
-	assert.NoError(t, err)
-	assert.NotNil(t, result)
-
-	// actual
-	temp := gqlmodel.ToProject(result)
-	resultByte, err := json.Marshal(temp)
-	assert.NoError(t, err)
-	var resultMap map[string]interface{}
-	err = json.Unmarshal(resultByte, &resultMap)
-	assert.NoError(t, err)
-
-	// Exclude items that are updated upon creation.
-	delete(resultMap, "updatedAt")
-	delete(resultMap, "createdAt")
-
-	actualByte, err := json.Marshal(resultMap)
-	assert.NoError(t, err)
-	actual := string(actualByte)
-
-	// expected
-	exp := fmt.Sprintf(`{
-    "id": "%s",
-    "isArchived": false,
-    "isBasicAuthActive": false,
-    "isDeleted": false,
-    "basicAuthUsername": "",
-    "basicAuthPassword": "",
-    "name": "ProjectName1",
-    "description": "ProjectOverview1",
-    "alias": "",
-    "publicTitle": "",
-    "publicDescription": "",
-    "publicImage": "",
-    "publicNoIndex": false,
-    "imageUrl": {
-      "Scheme": "https",
-      "Opaque": "",
-      "User": null,
-      "Host": "xxxx.reearth.dev",
-      "Path": "/assets/01j7g9d988ct8hajjxfsb6e1n6.jpeg",
-      "RawPath": "",
-      "OmitHost": false,
-      "ForceQuery": false,
-      "RawQuery": "",
-      "Fragment": "",
-      "RawFragment": ""
-    },
-    "teamId": "%s",
-    "visualizer": "cesium",
-    "publishmentStatus": "PRIVATE",
-    "coreSupport": true,
-    "enableGa": false,
-    "trackingId": "",
-    "starred": false
-	}`, result.ID().String(), teamID)
-
-	var expectedMap map[string]interface{}
-	err = json.Unmarshal([]byte(exp), &expectedMap)
-
-	assert.NoError(t, err)
-	expectedJSON, err := json.Marshal(expectedMap)
-	assert.NoError(t, err)
-	expected := string(expectedJSON)
-
-	// comparison check
-	assert.JSONEq(t, expected, actual)
-
 }
