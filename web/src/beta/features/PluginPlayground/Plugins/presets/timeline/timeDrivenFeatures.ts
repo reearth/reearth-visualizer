@@ -1,7 +1,7 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "timeDrivenFeatures-reearth-yml",
+  id: "time-driven-features-reearth-yml",
   title: "reearth.yml",
   sourceCode: `id: timeDrivenFeatures-plugin
 name: Time Driven Features
