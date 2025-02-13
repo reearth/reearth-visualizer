@@ -179,7 +179,10 @@ export default () => {
       }
 
       if (file.type !== "application/zip") {
-        setNotification({ type: "error", text: "Invalid file type" });
+        setNotification({
+          type: "error",
+          text: "Only zip files are supported"
+        });
         return;
       }
 
@@ -189,12 +192,6 @@ export default () => {
 
         if (files.length === 0) {
           setNotification({ type: "error", text: "Zip file is empty" });
-          return;
-        }
-
-        // Prevent path traversal
-        if (files.some((file) => file.name.includes(".."))) {
-          setNotification({ type: "error", text: "Invalid file paths in zip" });
           return;
         }
 
