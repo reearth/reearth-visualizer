@@ -31,7 +31,7 @@ const czmlData = [
     clock: {
       interval: "2024-12-24T01:00:00Z/2024-12-24T01:00:20Z", // Define time range
       currentTime: "2024-12-24T01:00:00Z", // Define current (start) time
-      multiplier: 5, // Playback speed (5 means 20 secounds of real time = 4 secounds in the animation)
+      multiplier: 5, // Playback speed (5 means 20 seconds of real time = 4 seconds in the animation)
     },
   },
   {
