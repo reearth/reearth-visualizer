@@ -220,8 +220,8 @@ const FeatureData: FC<Props> = ({
               />
             ))}
             <SketchFeatureButtons>
-              {editMode ? (
-                fields.length > 0 && (
+              {fields.length > 0 &&
+                (editMode ? (
                   <>
                     <Button
                       onClick={handleCancelEditCustomProperties}
@@ -237,16 +237,15 @@ const FeatureData: FC<Props> = ({
                       onClick={handleSubmit}
                     />
                   </>
-                )
-              ) : (
-                <Button
-                  onClick={handleEditCustomProperties}
-                  size="small"
-                  icon="pencilSimple"
-                  title={t("Edit")}
-                  extendWidth
-                />
-              )}
+                ) : (
+                  <Button
+                    onClick={handleEditCustomProperties}
+                    size="small"
+                    icon="pencilSimple"
+                    title={t("Edit")}
+                    extendWidth
+                  />
+                ))}
             </SketchFeatureButtons>
           </FieldsWrapper>
           {fields.length === 0 && (

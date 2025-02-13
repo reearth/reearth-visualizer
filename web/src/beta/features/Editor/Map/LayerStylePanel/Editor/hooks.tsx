@@ -25,6 +25,10 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
     setLayerStyle(selectedLayerStyle);
   }, [selectedLayerStyle]);
 
+  useEffect(() => {
+    if (!selectedLayerStyle) setEditMode(false);
+  }, [selectedLayerStyle]);
+
   const tabItems: TabItem[] = useMemo(
     () => [
       {

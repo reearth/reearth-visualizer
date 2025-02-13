@@ -41,8 +41,8 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         menuEdgeGap="small"
       />
       <ButtonWrapper>
-        {editMode ? (
-          selectedLayerStyle?.id && (
+        {selectedLayerStyle?.id &&
+          (editMode ? (
             <>
               <Button
                 onClick={handleCancelLayerStyle}
@@ -58,16 +58,15 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
                 onClick={handleSave}
               />
             </>
-          )
-        ) : (
-          <Button
-            onClick={handleEditLayerStyle}
-            size="small"
-            icon="pencilSimple"
-            title={t("Edit")}
-            extendWidth
-          />
-        )}
+          ) : (
+            <Button
+              onClick={handleEditLayerStyle}
+              size="small"
+              icon="pencilSimple"
+              title={t("Edit")}
+              extendWidth
+            />
+          ))}
       </ButtonWrapper>
     </EditorContainer>
   );
