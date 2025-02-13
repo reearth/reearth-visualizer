@@ -205,19 +205,6 @@ export default () => {
               sourceCode: content
             }));
 
-            const hasValidFiles = pluginFiles.every(
-              (file) =>
-                file.title.endsWith(".yml") || file.title.endsWith(".js")
-            );
-
-            if (!hasValidFiles) {
-              setNotification({
-                type: "error",
-                text: "Zip file must only contain .yml and .js files"
-              });
-              return;
-            }
-
             const newPlugin = {
               id: "my-plugin", // NOTE: id of the custom plugin
               title: file.name,
