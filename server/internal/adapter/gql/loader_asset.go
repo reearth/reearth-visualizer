@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
 )
@@ -42,16 +41,7 @@ func (c *AssetLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, pro
 		return nil, err
 	}
 
-	var pid *idx.ID[id.Project]
-	if proId != nil {
-		pidValue, err := gqlmodel.ToID[id.Project](*proId)
-		if err != nil {
-			return nil, err
-		}
-		pid = &pidValue
-	}
-
-	assets, pi, err := c.usecase.FindByWorkspaceProject(ctx, tid, pid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
+	assets, pi, err := c.usecase.FindByWorkspaceProject(ctx, tid, gqlmodel.ToIDRef[id.Project](proId), keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

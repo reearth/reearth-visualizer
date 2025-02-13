@@ -19,8 +19,8 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	ctx := context.Background()
 
 	sid := id.NewSceneID()
-	pid1 := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
+	pid1 := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
 
 	pl1ps := property.NewSchema().ID(id.NewPropertySchemaID(pid1, "@")).MustBuild()
 	pl2ps := property.NewSchema().ID(id.NewPropertySchemaID(pid2, "@")).MustBuild()
@@ -35,11 +35,11 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	pl1p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 	pl2p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 
-	ibf1 := layer.NewInfoboxField().NewID().Plugin(plugin.OfficialPluginID).Extension("textblock").Property(id.NewPropertyID()).MustBuild()
+	ibf1 := layer.NewInfoboxField().NewID().Plugin(id.OfficialPluginID).Extension("textblock").Property(id.NewPropertyID()).MustBuild()
 	ibf2 := layer.NewInfoboxField().NewID().Plugin(pid1).Extension("a").Property(pl2p.ID()).MustBuild()
 	ib := layer.NewInfobox([]*layer.InfoboxField{ibf1, ibf2}, id.NewPropertyID())
-	l1 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
-	l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
+	l1 := layer.New().NewID().Plugin(id.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
+	l2 := layer.New().NewID().Plugin(id.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
 
 	tid := accountdomain.NewWorkspaceID()
 	sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()

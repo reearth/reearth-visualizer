@@ -1,10 +1,14 @@
 package plugin
 
-import "sort"
+import (
+	"sort"
 
-type List []*Plugin
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
-func (l List) Find(p ID) *Plugin {
+type PluginList []*Plugin
+
+func (l PluginList) Find(p id.PluginID) *Plugin {
 	for _, q := range l {
 		if q.ID().Equal(p) {
 			return q
@@ -13,19 +17,19 @@ func (l List) Find(p ID) *Plugin {
 	return nil
 }
 
-func (l List) Concat(m List) List {
+func (l PluginList) Concat(m PluginList) PluginList {
 	return append(l, m...)
 }
 
-func (l List) MapToIDs(ids []ID) List {
-	res := make(List, 0, len(ids))
+func (l PluginList) MapToIDs(ids []id.PluginID) PluginList {
+	res := make(PluginList, 0, len(ids))
 	for _, id := range ids {
 		res = append(res, l.Find(id))
 	}
 	return res
 }
 
-func (l List) Map() Map {
+func (l PluginList) Map() Map {
 	m := make(Map, len(l))
 	for _, p := range l {
 		m[p.ID()] = p
@@ -33,13 +37,13 @@ func (l List) Map() Map {
 	return m
 }
 
-type Map map[ID]*Plugin
+type Map map[id.PluginID]*Plugin
 
-func (m Map) List() List {
+func (m Map) List() PluginList {
 	if m == nil {
 		return nil
 	}
-	res := make(List, 0, len(m))
+	res := make(PluginList, 0, len(m))
 	for _, p := range m {
 		res = append(res, p)
 	}

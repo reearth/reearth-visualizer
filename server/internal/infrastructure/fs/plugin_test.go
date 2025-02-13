@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -13,9 +14,9 @@ import (
 func TestPlugin(t *testing.T) {
 	ctx := context.Background()
 	fs := NewPlugin(mockPluginFS())
-	p, err := fs.FindByID(ctx, plugin.MustID("testplugin~1.0.0"))
+	p, err := fs.FindByID(ctx, id.MustPluginID("testplugin~1.0.0"))
 	assert.NoError(t, err)
-	assert.Equal(t, plugin.New().ID(plugin.MustID("testplugin~1.0.0")).Name(i18n.String{
+	assert.Equal(t, plugin.New().ID(id.MustPluginID("testplugin~1.0.0")).Name(i18n.String{
 		"en":    "testplugin",
 		"ja":    "テストプラグイン",
 		"zh-CN": "测试插件",

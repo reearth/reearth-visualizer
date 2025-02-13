@@ -3,14 +3,15 @@ package manifest
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDiffFrom(t *testing.T) {
-	oldp := plugin.MustID("aaaaaa~1.0.0")
-	newp := plugin.MustID("aaaaaa~1.1.0")
+	oldp := id.MustPluginID("aaaaaa~1.0.0")
+	newp := id.MustPluginID("aaaaaa~1.1.0")
 	oldps := property.MustSchemaID("aaaaaa~1.0.0/@")
 	olde1ps := property.MustSchemaID("aaaaaa~1.0.0/a")
 	olde2ps := property.MustSchemaID("aaaaaa~1.0.0/b")
@@ -147,7 +148,7 @@ func TestDiff_IsEmpty(t *testing.T) {
 		{
 			name: "empty2",
 			target: &Diff{
-				From: plugin.MustID("a~1.0.0"),
+				From: id.MustPluginID("a~1.0.0"),
 			},
 			want: true,
 		},

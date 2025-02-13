@@ -7,7 +7,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/idx"
 )
 
 func (r *mutationResolver) CreateAsset(ctx context.Context, input gqlmodel.CreateAssetInput) (*gqlmodel.CreateAssetPayload, error) {
@@ -16,18 +15,9 @@ func (r *mutationResolver) CreateAsset(ctx context.Context, input gqlmodel.Creat
 		return nil, err
 	}
 
-	var pid *idx.ID[id.Project]
-	if input.ProjectID != nil {
-		pidValue, err := gqlmodel.ToID[id.Project](*input.ProjectID)
-		if err != nil {
-			return nil, err
-		}
-		pid = &pidValue
-	}
-
 	res, err := usecases(ctx).Asset.Create(ctx, interfaces.CreateAssetParam{
 		WorkspaceID: tid,
-		ProjectID:   pid,
+		ProjectID:   gqlmodel.ToIDRef[id.Project](input.ProjectID),
 		CoreSupport: input.CoreSupport,
 		File:        gqlmodel.FromFile(&input.File),
 	}, getOperator(ctx))
@@ -44,16 +34,7 @@ func (r *mutationResolver) UpdateAsset(ctx context.Context, input gqlmodel.Updat
 		return nil, err
 	}
 
-	var pid *id.ProjectID
-	if project := input.ProjectID; project != nil {
-		pidValue, err := gqlmodel.ToID[id.Project](*input.ProjectID)
-		if err != nil {
-			return nil, err
-		}
-		pid = &pidValue
-	}
-
-	a, p, err2 := usecases(ctx).Asset.Update(ctx, aid, pid, getOperator(ctx))
+	a, p, err2 := usecases(ctx).Asset.Update(ctx, aid, gqlmodel.ToIDRef[id.Project](input.ProjectID), getOperator(ctx))
 	if err2 != nil {
 		return nil, err2
 	}

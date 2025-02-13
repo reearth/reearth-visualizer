@@ -72,7 +72,7 @@ func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Pl
 		}
 	}
 
-	res := make(plugin.List, 0, len(ids2))
+	res := make(plugin.PluginList, 0, len(ids2))
 	var err error
 
 	if len(ids2) > 0 {

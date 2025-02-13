@@ -4,18 +4,19 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExtension(t *testing.T) {
 	expected := struct {
-		ID           ExtensionID
+		ID           id.PluginExtensionID
 		Type         ExtensionType
 		Name         i18n.String
 		Description  i18n.String
 		Icon         string
-		Schema       PropertySchemaID
+		Schema       id.PropertySchemaID
 		Visualizer   visualizer.Visualizer
 		SingleOnly   bool
 		WidgetLayout *WidgetLayout
@@ -25,7 +26,7 @@ func TestExtension(t *testing.T) {
 		Name:         i18n.StringFrom("aaa"),
 		Description:  i18n.StringFrom("ddd"),
 		Icon:         "test",
-		Schema:       MustPropertySchemaID("hoge~0.1.0/fff"),
+		Schema:       id.MustPropertySchemaID("hoge~0.1.0/fff"),
 		Visualizer:   "vvv",
 		SingleOnly:   true,
 		WidgetLayout: NewWidgetLayout(false, false, true, false, nil).Ref(),
@@ -35,7 +36,7 @@ func TestExtension(t *testing.T) {
 		ID("xxx").
 		Name(i18n.StringFrom("aaa")).
 		Description(i18n.StringFrom("ddd")).
-		Schema(MustPropertySchemaID("hoge~0.1.0/fff")).
+		Schema(id.MustPropertySchemaID("hoge~0.1.0/fff")).
 		Icon("test").
 		WidgetLayout(NewWidgetLayout(false, false, true, false, nil).Ref()).
 		Visualizer("vvv").

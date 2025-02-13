@@ -25,7 +25,7 @@ import (
 
 func TestScene_InstallPlugin(t *testing.T) {
 	type args struct {
-		pluginID plugin.ID
+		pluginID id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -37,10 +37,10 @@ func TestScene_InstallPlugin(t *testing.T) {
 	}
 
 	sid := id.NewSceneID()
-	pid := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
-	pid3 := plugin.MustID("plugin~1.0.1").WithScene(&sid)
-	pid4 := plugin.MustID("plugin~1.0.1").WithScene(id.NewSceneID().Ref())
+	pid := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
+	pid3 := id.MustPluginID("plugin~1.0.1").WithScene(&sid)
+	pid4 := id.MustPluginID("plugin~1.0.1").WithScene(id.NewSceneID().Ref())
 
 	tests := []test{
 		{
@@ -150,7 +150,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 
 func TestScene_UninstallPlugin(t *testing.T) {
 	type args struct {
-		pluginID plugin.ID
+		pluginID id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -161,10 +161,10 @@ func TestScene_UninstallPlugin(t *testing.T) {
 	}
 
 	sid := id.NewSceneID()
-	pid := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
-	pid3 := plugin.MustID("plugin~1.0.2")
-	pid4 := plugin.MustID("plugin2~1.0.3").WithScene(&sid)
+	pid := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
+	pid3 := id.MustPluginID("plugin~1.0.2")
+	pid4 := id.MustPluginID("plugin2~1.0.3").WithScene(&sid)
 
 	tests := []test{
 		{
@@ -294,8 +294,8 @@ func TestScene_UninstallPlugin(t *testing.T) {
 
 func TestScene_UpgradePlugin(t *testing.T) {
 	type args struct {
-		old      plugin.ID
-		new      plugin.ID
+		old      id.PluginID
+		new      id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -306,10 +306,10 @@ func TestScene_UpgradePlugin(t *testing.T) {
 	}
 
 	sid := id.NewSceneID()
-	pid1 := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
-	pid3 := plugin.MustID("plugin~1.0.2")
-	pid4 := plugin.MustID("pluginx~1.0.2")
+	pid1 := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
+	pid3 := id.MustPluginID("plugin~1.0.2")
+	pid4 := id.MustPluginID("pluginx~1.0.2")
 
 	tests := []test{
 		{
@@ -368,11 +368,11 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			pl2p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 			prr := memory.NewPropertyWith(pl1p, pl2p)
 
-			ibf1 := layer.NewInfoboxField().NewID().Plugin(plugin.OfficialPluginID).Extension("textblock").Property(id.NewPropertyID()).MustBuild()
+			ibf1 := layer.NewInfoboxField().NewID().Plugin(id.OfficialPluginID).Extension("textblock").Property(id.NewPropertyID()).MustBuild()
 			ibf2 := layer.NewInfoboxField().NewID().Plugin(pid1).Extension("a").Property(pl2p.ID()).MustBuild()
 			ib := layer.NewInfobox([]*layer.InfoboxField{ibf1, ibf2}, id.NewPropertyID())
-			l1 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
-			l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
+			l1 := layer.New().NewID().Plugin(id.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
+			l2 := layer.New().NewID().Plugin(id.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
 			lr := memory.NewLayerWith(l1, l2)
 
 			dsr := memory.NewDataset()
@@ -420,7 +420,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			ls, err := lr.FindByScene(ctx, sid)
 			assert.NoError(err)
 			for _, l := range ls {
-				assert.Equal(plugin.OfficialPluginID.Ref(), (*l).Plugin())
+				assert.Equal(id.OfficialPluginID.Ref(), (*l).Plugin())
 			}
 
 			// layer > infobox > field

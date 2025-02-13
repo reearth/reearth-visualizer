@@ -3,7 +3,7 @@ package builtin
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
@@ -48,17 +48,17 @@ func TestPlugin(t *testing.T) {
 func TestGetPlugin(t *testing.T) {
 	tests := []struct {
 		name        string
-		pluginID    plugin.ID
+		pluginID    id.PluginID
 		expectedNil bool
 	}{
 		{
 			name:        "Official Plugin",
-			pluginID:    plugin.OfficialPluginID,
+			pluginID:    id.OfficialPluginID,
 			expectedNil: false,
 		},
 		{
 			name:        "foo plugin",
-			pluginID:    plugin.MustID("foo~1.1.1"),
+			pluginID:    id.MustPluginID("foo~1.1.1"),
 			expectedNil: true,
 		},
 	}

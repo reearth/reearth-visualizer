@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/idx"
 	"golang.org/x/exp/slices"
 )
 
@@ -62,20 +61,11 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 		return nil, err
 	}
 
-	var pid *idx.ID[id.Project]
-	if d.Project != nil {
-		pidValue, err := id.ProjectIDFrom(*d.Project)
-		if err != nil {
-			return nil, err
-		}
-		pid = &pidValue
-	}
-
 	return asset.New().
 		ID(aid).
 		CreatedAt(d.CreatedAt).
 		Workspace(tid).
-		Project(pid).
+		Project(id.ProjectIDFromRef(d.Project)).
 		Name(d.Name).
 		Size(d.Size).
 		URL(d.URL).
