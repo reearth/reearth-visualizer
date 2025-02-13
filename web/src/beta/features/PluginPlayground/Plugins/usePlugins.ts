@@ -187,35 +187,43 @@ export default () => {
         const files = Object.values(zip.files).filter((file) => !file.dir);
         const filePromises = files.map((file) => file.async("text"));
 
-        Promise.all(filePromises).then((fileContents) => {
-          const pluginFiles = fileContents.map((content, index) => ({
-            id: uuidv4(),
-            title: files[index].name.split("/")[1],
-            sourceCode: content
-          }));
+        Promise.all(filePromises)
+          .then((fileContents) => {
+            const pluginFiles = fileContents.map((content, index) => ({
+              id: uuidv4(),
+              title: files[index].name.split("/")[1],
+              sourceCode: content
+            }));
 
-          const hasValidFiles = pluginFiles.every(
-            (file) => file.title.endsWith(".yml") || file.title.endsWith(".js")
-          );
+            const hasValidFiles = pluginFiles.every(
+              (file) =>
+                file.title.endsWith(".yml") || file.title.endsWith(".js")
+            );
 
-          if (!hasValidFiles) {
+            if (!hasValidFiles) {
+              setNotification({
+                type: "error",
+                text: "Zip file must only contain .yml and .js files"
+              });
+              return;
+            }
+
+            const newPlugin = {
+              id: uuidv4(),
+              title: file.name,
+              files: pluginFiles
+            };
+
+            setPlugins((plugins) => [...plugins, newPlugin]);
+            setSelectedPluginId(newPlugin.id);
+            setSelectedFileId(newPlugin.files[0].id);
+          })
+          .catch((err) => {
             setNotification({
               type: "error",
-              text: "Zip file must only contain .yml and .js files"
+              text: `Failed to load ZIP: ${err.message}`
             });
-            return;
-          }
-
-          const newPlugin = {
-            id: uuidv4(),
-            title: file.name,
-            files: pluginFiles
-          };
-
-          setPlugins((plugins) => [...plugins, newPlugin]);
-          setSelectedPluginId(newPlugin.id);
-          setSelectedFileId(newPlugin.files[0].id);
-        });
+          });
       });
     },
     { accept: "application/zip", multiple: false }
