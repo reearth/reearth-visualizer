@@ -185,6 +185,14 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetBgColor(*inp.BgColor)
 	}
 
+	if inp.EnableGa != nil {
+		story.SetEnableGa(*inp.EnableGa)
+	}
+
+	if inp.TrackingID != nil {
+		story.SetTrackingID(*inp.TrackingID)
+	}
+
 	oldAlias := story.Alias()
 	if inp.Alias != nil && *inp.Alias != oldAlias {
 		if err := story.UpdateAlias(*inp.Alias); err != nil {

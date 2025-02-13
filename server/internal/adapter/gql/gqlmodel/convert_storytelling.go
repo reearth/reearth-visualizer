@@ -31,6 +31,9 @@ func ToStory(s *storytelling.Story) *Story {
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
+
+		EnableGa:   s.EnableGa(),
+		TrackingID: s.TrackingID(),
 	}
 }
 
