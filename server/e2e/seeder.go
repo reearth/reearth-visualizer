@@ -48,6 +48,8 @@ var (
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
+	rootLayerID = layer.NewID()
+
 	storyID = storytelling.NewStoryID()
 	pageID  = storytelling.NewPageID()
 	blockID = storytelling.NewBlockID()
@@ -181,7 +183,7 @@ func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 }
 
 func fullSetup(ctx context.Context, r *repo.Container) error {
-	rootLayer, err := layer.NewGroup().NewID().Scene(sID).Root(true).Build()
+	rootLayer, err := layer.NewGroup().ID(rootLayerID).Scene(sID).Root(true).Build()
 	if err != err {
 		return err
 	}

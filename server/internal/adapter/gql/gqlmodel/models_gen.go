@@ -1218,6 +1218,8 @@ type Story struct {
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
+	EnableGa          bool              `json:"enableGa"`
+	TrackingID        string            `json:"trackingId"`
 }
 
 func (Story) IsNode()        {}
@@ -1454,6 +1456,8 @@ type UpdateStoryInput struct {
 	PublicImage       *string   `json:"publicImage,omitempty"`
 	PublicNoIndex     *bool     `json:"publicNoIndex,omitempty"`
 	DeletePublicImage *bool     `json:"deletePublicImage,omitempty"`
+	EnableGa          *bool     `json:"enableGa,omitempty"`
+	TrackingID        *string   `json:"trackingId,omitempty"`
 }
 
 type UpdateStoryPageInput struct {
