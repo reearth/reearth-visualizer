@@ -222,12 +222,15 @@ export default () => {
             }
 
             const newPlugin = {
-              id: uuidv4(),
+              id: "my-plugin", // NOTE: id of the custom plugin
               title: file.name,
               files: pluginFiles
             };
 
-            setPlugins((plugins) => [...plugins, newPlugin]);
+            setPlugins((plugins) => [
+              newPlugin,
+              ...plugins.filter((plugin) => plugin.id !== "my-plugin")
+            ]);
             setSelectedPluginId(newPlugin.id);
             setSelectedFileId(newPlugin.files[0].id);
           })

@@ -67,13 +67,11 @@ const Plugins: FC<Props> = ({
           icon="addFile"
           onClick={() => setIsAddingNewFile(true)}
         />
-        {selectedPlugin.id === "my-plugin" && (
-          <IconButton
-            appearance="simple"
-            icon="import"
-            onClick={handleFileUpload}
-          />
-        )}
+        <IconButton
+          appearance="simple"
+          icon="import"
+          onClick={handleFileUpload}
+        />
         <IconButton
           appearance="simple"
           icon="export"
