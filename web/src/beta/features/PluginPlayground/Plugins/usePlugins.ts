@@ -170,7 +170,7 @@ export default () => {
     [selectedPlugin, selectedFileId]
   );
 
-  const handleFileUpload = useFileInput(
+  const handlePluginImport = useFileInput(
     (fileList) => {
       const file = fileList?.[0];
       if (!file) {
@@ -318,7 +318,7 @@ export default () => {
     updateFileTitle,
     updateFileSourceCode,
     deleteFile,
-    handleFileUpload,
+    handlePluginImport,
     handlePluginDownload,
     sharedPlugin
   };
