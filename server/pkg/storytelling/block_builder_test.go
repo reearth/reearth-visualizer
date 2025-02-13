@@ -12,14 +12,14 @@ func TestBlockBuilder(t *testing.T) {
 	b := NewBlock()
 	assert.Equal(t, &BlockBuilder{block: &Block{}}, b)
 
-	assert.PanicsWithError(t, ErrInvalidID.Error(), func() {
+	assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
 		b.MustBuild()
 	})
 
 	b = b.NewID()
 	assert.False(t, b.block.id.IsEmpty())
 
-	blockID := NewBlockID()
+	blockID := id.NewBlockID()
 	b = b.ID(blockID)
 	assert.Equal(t, blockID, b.block.id)
 
@@ -31,7 +31,7 @@ func TestBlockBuilder(t *testing.T) {
 	b = b.Extension(extensionId)
 	assert.Equal(t, extensionId, b.block.extension)
 
-	propertyID := NewPropertyID()
+	propertyID := id.NewPropertyID()
 	b = b.Property(propertyID)
 	assert.Equal(t, propertyID, b.block.property)
 

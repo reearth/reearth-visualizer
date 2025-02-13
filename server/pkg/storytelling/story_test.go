@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -11,9 +12,9 @@ import (
 
 func TestStory_SettersGetters(t *testing.T) {
 
-	sId := NewStoryID()
-	pId := NewPropertyID()
-	sceneID := NewSceneID()
+	sId := id.NewStoryID()
+	pId := id.NewPropertyID()
+	sceneID := id.NewSceneID()
 	now := time.Now()
 
 	s := &Story{

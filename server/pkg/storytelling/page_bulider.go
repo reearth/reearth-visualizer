@@ -1,5 +1,7 @@
 package storytelling
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type PageBuilder struct {
 	page *Page
 }
@@ -10,7 +12,7 @@ func NewPage() *PageBuilder {
 
 func (b *PageBuilder) Build() (*Page, error) {
 	if b.page.id.IsEmpty() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.page, nil
 }
@@ -23,17 +25,17 @@ func (b *PageBuilder) MustBuild() *Page {
 	return s
 }
 
-func (b *PageBuilder) ID(id PageID) *PageBuilder {
+func (b *PageBuilder) ID(id id.PageID) *PageBuilder {
 	b.page.id = id
 	return b
 }
 
 func (b *PageBuilder) NewID() *PageBuilder {
-	b.page.id = NewPageID()
+	b.page.id = id.NewPageID()
 	return b
 }
 
-func (b *PageBuilder) Property(property PropertyID) *PageBuilder {
+func (b *PageBuilder) Property(property id.PropertyID) *PageBuilder {
 	b.page.property = property
 	return b
 }
@@ -48,12 +50,12 @@ func (b *PageBuilder) Swipeable(swipeable bool) *PageBuilder {
 	return b
 }
 
-func (b *PageBuilder) Layers(layers LayerIDList) *PageBuilder {
+func (b *PageBuilder) Layers(layers id.NLSLayerIDList) *PageBuilder {
 	b.page.layers = layers.Clone()
 	return b
 }
 
-func (b *PageBuilder) SwipeableLayers(swipeableLayers LayerIDList) *PageBuilder {
+func (b *PageBuilder) SwipeableLayers(swipeableLayers id.NLSLayerIDList) *PageBuilder {
 	b.page.swipeableLayers = swipeableLayers.Clone()
 	return b
 }

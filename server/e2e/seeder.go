@@ -50,9 +50,9 @@ var (
 
 	rootLayerID = layer.NewID()
 
-	storyID = storytelling.NewStoryID()
-	pageID  = storytelling.NewPageID()
-	blockID = storytelling.NewBlockID()
+	storyID = id.NewStoryID()
+	pageID  = id.NewPageID()
+	blockID = id.NewBlockID()
 )
 
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {

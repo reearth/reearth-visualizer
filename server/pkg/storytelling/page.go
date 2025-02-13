@@ -10,16 +10,16 @@ import (
 )
 
 type Page struct {
-	id              PageID
-	property        PropertyID
+	id              id.PageID
+	property        id.PropertyID
 	title           string
 	swipeable       bool
-	layers          LayerIDList
-	swipeableLayers LayerIDList
+	layers          id.NLSLayerIDList
+	swipeableLayers id.NLSLayerIDList
 	blocks          BlockList
 }
 
-// func NewPage(blocks BlockList, p PropertyID) *Page {
+// func NewPage(blocks BlockList, p id.PropertyID) *Page {
 // 	Page := Page{
 // 		property: p,
 // 		blocks:   make(BlockList, len(blocks)),
@@ -33,7 +33,7 @@ type Page struct {
 // 	return &Page
 // }
 
-func (p *Page) Id() PageID {
+func (p *Page) Id() id.PageID {
 	return p.id
 }
 
@@ -45,52 +45,52 @@ func (p *Page) Swipeable() bool {
 	return p.swipeable
 }
 
-func (p *Page) Layers() LayerIDList {
+func (p *Page) Layers() id.NLSLayerIDList {
 	return p.layers
 }
 
-func (p *Page) HasLayer(layer LayerID) bool {
+func (p *Page) HasLayer(layer id.NLSLayerID) bool {
 	if p == nil || p.layers == nil {
 		return false
 	}
 	return p.layers.Has(layer)
 }
 
-func (p *Page) AddLayer(layer LayerID) {
+func (p *Page) AddLayer(layer id.NLSLayerID) {
 	p.layers = p.layers.AddUniq(layer)
 }
 
-func (p *Page) RemoveLayer(layer LayerID) {
+func (p *Page) RemoveLayer(layer id.NLSLayerID) {
 	p.layers = p.layers.Delete(layer)
 }
 
-func (p *Page) SwipeableLayers() LayerIDList {
+func (p *Page) SwipeableLayers() id.NLSLayerIDList {
 	if !p.swipeable {
 		return nil
 	}
 	return p.swipeableLayers
 }
 
-func (p *Page) HasSwipeableLayer(layer LayerID) bool {
+func (p *Page) HasSwipeableLayer(layer id.NLSLayerID) bool {
 	if p == nil || p.swipeableLayers == nil {
 		return false
 	}
 	return p.swipeableLayers.Has(layer)
 }
 
-func (p *Page) AddSwipeableLayer(layer LayerID) {
+func (p *Page) AddSwipeableLayer(layer id.NLSLayerID) {
 	p.swipeableLayers = p.swipeableLayers.AddUniq(layer)
 }
 
-func (p *Page) RemoveSwipeableLayer(layer LayerID) {
+func (p *Page) RemoveSwipeableLayer(layer id.NLSLayerID) {
 	p.swipeableLayers = p.swipeableLayers.Delete(layer)
 }
 
-func (p *Page) Property() PropertyID {
+func (p *Page) Property() id.PropertyID {
 	return p.property
 }
 
-func (p *Page) PropertyRef() *PropertyID {
+func (p *Page) PropertyRef() *id.PropertyID {
 	if p == nil {
 		return nil
 	}
@@ -105,7 +105,7 @@ func (p *Page) Blocks() BlockList {
 	return append(BlockList{}, p.blocks...)
 }
 
-func (p *Page) Block(block BlockID) *Block {
+func (p *Page) Block(block id.BlockID) *Block {
 	if p == nil {
 		return nil
 	}
@@ -124,7 +124,7 @@ func (p *Page) BlockAt(index int) *Block {
 	return p.blocks[index]
 }
 
-func (p *Page) BlocksByPlugin(pid PluginID, eid *PluginExtensionID) BlockList {
+func (p *Page) BlocksByPlugin(pid id.PluginID, eid *id.PluginExtensionID) BlockList {
 	if p == nil {
 		return nil
 	}
@@ -137,7 +137,7 @@ func (p *Page) BlocksByPlugin(pid PluginID, eid *PluginExtensionID) BlockList {
 	return blocks
 }
 
-func (p *Page) HasBlock(id BlockID) bool {
+func (p *Page) HasBlock(id id.BlockID) bool {
 	if p == nil {
 		return false
 	}
@@ -168,7 +168,7 @@ func (p *Page) AddBlock(block *Block, index int) {
 	p.blocks = append(p.blocks[:index], append(BlockList{block}, p.blocks[index:]...)...)
 }
 
-func (p *Page) MoveBlock(block BlockID, toIndex int) {
+func (p *Page) MoveBlock(block id.BlockID, toIndex int) {
 	for fromIndex, b := range p.blocks {
 		if b.ID() == block {
 			p.MoveBlockAt(fromIndex, toIndex)
@@ -194,7 +194,7 @@ func (p *Page) MoveBlockAt(fromIndex int, toIndex int) {
 	p.blocks = append(newSlice, p.blocks[toIndex:]...)
 }
 
-func (p *Page) RemoveBlock(block BlockID) {
+func (p *Page) RemoveBlock(block id.BlockID) {
 	for index, b := range p.blocks {
 		if b.ID() == block {
 			p.RemoveBlockAt(index)
@@ -203,12 +203,12 @@ func (p *Page) RemoveBlock(block BlockID) {
 	}
 }
 
-func (p *Page) RemoveBlocksByPlugin(pid PluginID, eid *PluginExtensionID) []PropertyID {
+func (p *Page) RemoveBlocksByPlugin(pid id.PluginID, eid *id.PluginExtensionID) []id.PropertyID {
 	if p == nil {
 		return nil
 	}
 
-	var properties []PropertyID
+	var properties []id.PropertyID
 	for j := 0; j < len(p.blocks); j++ {
 		if p.blocks[j].plugin.Equal(pid) && (eid == nil || p.blocks[j].Extension() == *eid) {
 			properties = append(properties, p.blocks[j].Property())
@@ -261,11 +261,11 @@ func (p *Page) SetTitle(s string) {
 	p.title = s
 }
 
-func (p *Page) SetLayers(ids []LayerID) {
+func (p *Page) SetLayers(ids []id.NLSLayerID) {
 	if p == nil {
 		return
 	}
-	p.layers = append(LayerIDList{}, ids...)
+	p.layers = append(id.NLSLayerIDList{}, ids...)
 }
 
 func (p *Page) SetSwipeable(b bool) {
@@ -275,11 +275,11 @@ func (p *Page) SetSwipeable(b bool) {
 	p.swipeable = b
 }
 
-func (p *Page) SetSwipeableLayers(ids []LayerID) {
+func (p *Page) SetSwipeableLayers(ids []id.NLSLayerID) {
 	if p == nil {
 		return
 	}
-	p.swipeableLayers = append(LayerIDList{}, ids...)
+	p.swipeableLayers = append(id.NLSLayerIDList{}, ids...)
 }
 
 func (p *Page) Clone() *Page {
@@ -302,7 +302,7 @@ func (p *Page) Duplicate() *Page {
 		return nil
 	}
 	page := p.Clone()
-	page.id = NewPageID()
+	page.id = id.NewPageID()
 	page.title = fmt.Sprintf("%s (copy)", page.title)
 	return page
 }
