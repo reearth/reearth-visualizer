@@ -174,6 +174,7 @@ export default () => {
     (fileList) => {
       const file = fileList?.[0];
       if (!file) {
+        setNotification({ type: "error", text: "File not found" });
         return;
       }
 
@@ -185,6 +186,12 @@ export default () => {
       const zip = new JSZip();
       zip.loadAsync(file).then((zip) => {
         const files = Object.values(zip.files).filter((file) => !file.dir);
+
+        if (files.length === 0) {
+          setNotification({ type: "error", text: "Zip file is empty" });
+          return;
+        }
+
         const filePromises = files.map((file) => file.async("text"));
 
         Promise.all(filePromises)
