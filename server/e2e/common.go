@@ -140,55 +140,9 @@ func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *a
 	return e, repos.AccountRepos()
 }
 
-func initServer(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container) {
-	gateways := initGateway()
-	return app.NewServer(ctx, &app.ServerConfig{
-		Config:       cfg,
-		Repos:        repos,
-		AccountRepos: repos.AccountRepos(),
-		Gateways:     gateways,
-		Debug:        true,
-	}), gateways
-}
-
-func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container) {
-	t.Helper()
-
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
-	ctx := context.Background()
-
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("server failed to listen: %v", err)
-	}
-
-	srv, gateways := initServer(cfg, repos, ctx)
-
-	ch := make(chan error)
-	go func() {
-		if err := srv.Serve(l); err != http.ErrServerClosed {
-			ch <- err
-		}
-		close(ch)
-	}()
-	t.Cleanup(func() {
-		if err := srv.Shutdown(context.Background()); err != nil {
-			t.Fatalf("server shutdown: %v", err)
-		}
-
-		if err := <-ch; err != nil {
-			t.Fatalf("server serve: %v", err)
-		}
-	})
-	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways
-}
-
 func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	repos, _ := initRepos(t, useMongo, seeder)
-	e, gateways := StartServerWithRepos(t, cfg, repos)
+	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
 }
 
