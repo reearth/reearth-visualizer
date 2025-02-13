@@ -4,10 +4,10 @@ import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
 import { CustomPropertyProps } from "../../SketchLayerCreator/type";
-import { ContentWrapper } from "../SharedComponent";
 
 import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
+import { ContentWrapper, Label } from "../../shared/SharedComponent";
 
 const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
   "reearth-visualizer-editor-custom-properties-drag-handle";
@@ -72,6 +72,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   return (
     <ContentWrapper>
       <PropertyTable>
+        <Label>{t("Custom property schema")}</Label>
         <PropertyTableRow>
           <ActionCol />
           <PropertyHeaderCol>
@@ -129,7 +130,7 @@ const PropertyTableBody = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  maxHeight: "320px",
+  maxHeight: "260px",
   overflowY: "auto"
 }));
 
