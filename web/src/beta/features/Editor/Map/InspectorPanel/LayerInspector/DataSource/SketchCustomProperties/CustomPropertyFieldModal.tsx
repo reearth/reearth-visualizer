@@ -136,16 +136,24 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
     onSchemaJSONUpdate
   ]);
 
-  const disabled = useMemo(() => {
-    const checkExistValue = dataType !== selectedField?.value;
-  
-    return (
-      !customPropertyTitle ||
-      !dataType ||
-      (!checkExistValue &&
-        Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle))
-    );
-  }, [customPropertyTitle, dataType, schemaJSON, selectedField?.value]);
+const disabled = useMemo(() => {
+  const checkExistValue = dataType !== selectedField?.value;
+
+  return (
+    !customPropertyTitle ||
+    !dataType ||
+    (!isEditField &&
+      Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle)) ||
+    (!checkExistValue &&
+      Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle))
+  );
+}, [
+  customPropertyTitle,
+  dataType,
+  schemaJSON,
+  selectedField?.value,
+  isEditField
+]);
 
   const handleSubmit = useCallback(() => {
     if (!customPropertyTitle) return;

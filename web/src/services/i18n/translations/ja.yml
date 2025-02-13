@@ -124,23 +124,23 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
-Data source: 'データソース'
+Data source: データソース
 Layer Name: レイヤー名
 Format: 形式
-Custom property schema: 'カスタムプロパティスキーマ'
-Edit Field: 'フィールド編集'
-Delete Field: 'フィールド削除'
-Edit Custom Property: 'カスタムプロパティ編集'
-New Custom Property: '新しいカスタムプロパティ'
+Custom property schema: カスタムプロパティスキーマ
+Edit Field: フィールド編集
+Delete Field: フィールド削除
+Edit Custom Property: カスタムプロパティ編集
+New Custom Property: 新しいカスタムプロパティ
 Submit: 反映
-Property Title: 'プロパティタイトル'
-Property Type: 'プロパティタイプ'
-No field has been created yet: 'フィールドが作成されていません'
+Property Title: プロパティタイトル
+Property Type: プロパティタイプ
+No field has been created yet: フィールドが作成されていません
 New Field: 新しいフィールド
-Apply Current Edits?: '現在の編集を適用しますか?'
-This save will apply to all features in the current layer. Do you want to proceed?: 'この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？'
-Delete schema property field?: 'プロパティのフィールドを削除しますか?'
-This action will apply to all features in the current layer. Do you want to proceed?: 'この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？'
+Apply Current Edits?: 現在の編集を適用しますか?
+This save will apply to all features in the current layer. Do you want to proceed?: この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？
+Delete schema property field?: プロパティのフィールドを削除しますか?
+This action will apply to all features in the current layer. Do you want to proceed?: この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
 Save & Apply: 保存して適用
@@ -156,8 +156,8 @@ Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
-Delete this Layer?: ''
-Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: ''
+Delete this Layer?: このレイヤーを削除しますか？
+Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
@@ -428,10 +428,10 @@ Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
 Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
-Failed to update the custom property title.: ''
-Successfully updated the custom property title!: ''
-Failed to remove the custom property.: ''
-Successfully removed the custom property!: ''
+Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
+Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
+Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
+Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
