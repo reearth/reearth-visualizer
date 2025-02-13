@@ -192,6 +192,12 @@ export default () => {
           return;
         }
 
+        // Prevent path traversal
+        if (files.some((file) => file.name.includes(".."))) {
+          setNotification({ type: "error", text: "Invalid file paths in zip" });
+          return;
+        }
+
         const filePromises = files.map((file) => file.async("text"));
 
         Promise.all(filePromises)
