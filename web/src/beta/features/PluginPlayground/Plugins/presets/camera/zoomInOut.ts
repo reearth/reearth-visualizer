@@ -100,6 +100,6 @@ reearth.extension.on("message", (msg) => {
 
 export const zoomInOut: PluginType = {
   id: "zoom-in-out",
-  title: "Zoom In / Out",
+  title: "Zoom In and Out",
   files: [widgetFile, yamlFile]
 };
