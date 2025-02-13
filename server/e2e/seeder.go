@@ -447,7 +447,7 @@ func addLayerSimple(ctx context.Context, r *repo.Container) error {
 	return nil
 }
 
-func addGeoJson(layerID nlslayer.ID, ctx context.Context, r *repo.Container) error {
+func addGeoJson(layerID id.NLSLayerID, ctx context.Context, r *repo.Container) error {
 	layerSimple, err := r.NLSLayer.FindByID(ctx, layerID)
 	if err != nil {
 		return err
@@ -468,7 +468,7 @@ func addGeoJson(layerID nlslayer.ID, ctx context.Context, r *repo.Container) err
 	}
 
 	feature, err := nlslayer.NewFeature(
-		nlslayer.NewFeatureID(),
+		id.NewFeatureID(),
 		"Feature",
 		geometry,
 	)

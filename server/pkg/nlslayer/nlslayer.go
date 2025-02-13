@@ -1,11 +1,13 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type NLSLayer interface {
 	Cloner
-	ID() ID
+	ID() id.NLSLayerID
 	Index() *int
 	LayerType() LayerType
-	Scene() SceneID
+	Scene() id.SceneID
 	Config() *Config
 	Title() string
 	IsVisible() bool
@@ -61,10 +63,10 @@ func ToLayerSimpleRef(l *NLSLayer) *NLSLayerSimple {
 }
 
 type layerBase struct {
-	id        ID
+	id        id.NLSLayerID
 	index     *int
 	layerType LayerType
-	scene     SceneID
+	scene     id.SceneID
 	title     string
 	visible   bool
 	infobox   *Infobox
@@ -73,7 +75,7 @@ type layerBase struct {
 	sketch    *SketchInfo
 }
 
-func (l *layerBase) ID() ID {
+func (l *layerBase) ID() id.NLSLayerID {
 	return l.id
 }
 
@@ -84,7 +86,7 @@ func (l *layerBase) Index() *int {
 	return l.index
 }
 
-func (l *layerBase) IDRef() *ID {
+func (l *layerBase) IDRef() *id.NLSLayerID {
 	if l == nil {
 		return nil
 	}
@@ -98,7 +100,7 @@ func (l *layerBase) LayerType() LayerType {
 	return l.layerType
 }
 
-func (l *layerBase) Scene() SceneID {
+func (l *layerBase) Scene() id.SceneID {
 	return l.scene
 }
 
@@ -220,7 +222,7 @@ func (l *layerBase) Duplicate() NLSLayer {
 	}
 
 	duplicated := &layerBase{
-		id:        NewID(),
+		id:        id.NewNLSLayerID(),
 		index:     l.index,
 		layerType: l.layerType,
 		scene:     l.scene,

@@ -1,6 +1,9 @@
 package nlslayer
 
 import (
+	"sort"
+
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
@@ -16,7 +19,7 @@ func (ll NLSLayerList) Last() *NLSLayer {
 }
 
 func (ll NLSLayerList) IDs() *IDList {
-	ids := util.ExtractIDs[ID, NLSLayer](ll)
+	ids := util.ExtractIDs[id.NLSLayerID, NLSLayer](ll)
 	if len(ids) == 0 {
 		return nil
 	}
@@ -24,11 +27,11 @@ func (ll NLSLayerList) IDs() *IDList {
 }
 
 func (ll NLSLayerList) Pick(il *IDList) NLSLayerList {
-	return util.Pick[ID, NLSLayer](ll, il)
+	return util.Pick[id.NLSLayerID, NLSLayer](ll, il)
 }
 
-func (ll NLSLayerList) Find(lid ID) *NLSLayer {
-	return util.Find[ID, NLSLayer](ll, lid)
+func (ll NLSLayerList) Find(lid id.NLSLayerID) *NLSLayer {
+	return util.Find[id.NLSLayerID, NLSLayer](ll, lid)
 }
 
 func (ll NLSLayerList) ToLayerItemList() NLSLayerSimpleList {
@@ -61,15 +64,15 @@ func (ll NLSLayerList) Loader() Loader {
 }
 
 func (ll NLSLayerList) Map() Map {
-	return util.ListMap[ID, NLSLayer](ll)
+	return util.ListMap[id.NLSLayerID, NLSLayer](ll)
 }
 
-func (ll NLSLayerList) Remove(lids ...ID) NLSLayerList {
-	return util.Remove[ID, NLSLayer](ll, lids...)
+func (ll NLSLayerList) Remove(lids ...id.NLSLayerID) NLSLayerList {
+	return util.Remove[id.NLSLayerID, NLSLayer](ll, lids...)
 }
 
 func (ll NLSLayerList) AddUnique(newList ...*NLSLayer) NLSLayerList {
-	return util.AddUnique[ID, NLSLayer](ll, newList)
+	return util.AddUnique[id.NLSLayerID, NLSLayer](ll, newList)
 }
 
 type NLSLayerSimpleList []*NLSLayerSimple
@@ -102,59 +105,65 @@ func (ll NLSLayerGroupList) Last() *NLSLayerGroup {
 	return util.Last[NLSLayerGroup](ll)
 }
 
-type Map map[ID]*NLSLayer
+type Map map[id.NLSLayerID]*NLSLayer
 
 func MapFrom(l NLSLayer) Map {
 	return NLSLayerList{&l}.Map()
 }
 
 func (m Map) Add(layers ...*NLSLayer) Map {
-	return util.MapAdd[ID, NLSLayer](m, layers...)
+	return util.MapAdd[id.NLSLayerID, NLSLayer](m, layers...)
 }
 
 func (m Map) NLSLayerList() NLSLayerList {
-	return util.MapList[ID, NLSLayer](m, false)
+	return util.MapList[id.NLSLayerID, NLSLayer](m, false)
 }
 
 func (m Map) Clone() Map {
-	return util.Clone[ID, NLSLayer](m)
+	return util.Clone[id.NLSLayerID, NLSLayer](m)
 }
 
 func (m Map) Merge(m2 Map) Map {
-	return util.Merge[ID, NLSLayer](m, m2)
+	return util.Merge[id.NLSLayerID, NLSLayer](m, m2)
 }
 
 func (m Map) Pick(il *IDList) NLSLayerList {
-	return util.MapPick[ID, NLSLayer](m, il)
+	return util.MapPick[id.NLSLayerID, NLSLayer](m, il)
 }
 
-func (m Map) NLSLayer(i ID) NLSLayer {
+func (m Map) NLSLayer(i id.NLSLayerID) NLSLayer {
 	if l := m[i]; l != nil {
 		return *l
 	}
 	return nil
 }
 
-func (m Map) Item(i ID) *NLSLayerSimple {
+func (m Map) Item(i id.NLSLayerID) *NLSLayerSimple {
 	if l := ToNLSLayerSimple(m.NLSLayer(i)); l != nil {
 		return l
 	}
 	return nil
 }
 
-func (m Map) Group(i ID) *NLSLayerGroup {
+func (m Map) Group(i id.NLSLayerID) *NLSLayerGroup {
 	if l := ToNLSLayerGroup(m.NLSLayer(i)); l != nil {
 		return l
 	}
 	return nil
 }
 
-func (m Map) Keys() []ID {
-	keys := util.ExtractKeys[ID, NLSLayer](m)
+func (m Map) Keys() []id.NLSLayerID {
+	keys := util.ExtractKeys[id.NLSLayerID, NLSLayer](m)
 	sortIDs(keys)
 	return keys
 }
 
 func (m Map) Len() int {
 	return len(m)
+}
+
+func sortIDs(a []id.NLSLayerID) {
+	sort.SliceStable(a, func(i, j int) bool {
+		return a[i].Compare(a[j]) < 0
+	})
 }

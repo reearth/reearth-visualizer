@@ -3,6 +3,7 @@ package nlslayer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestNewFeatureWithNewId(t *testing.T) {
 	point := NewPoint("Point", []float64{1, 2})
 	properties := map[string]any{"key1": "value1"}
 	f, err := NewFeature(
-		NewFeatureID(),
+		id.NewFeatureID(),
 		featureType,
 		point,
 	)
@@ -24,7 +25,7 @@ func TestNewFeatureWithNewId(t *testing.T) {
 }
 
 func TestNewFeature(t *testing.T) {
-	id := NewFeatureID()
+	id := id.NewFeatureID()
 	featureType := "Feature"
 	point := NewPoint("Point", []float64{1, 2})
 	properties := map[string]any{"key1": "value1"}

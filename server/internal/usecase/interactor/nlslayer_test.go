@@ -148,7 +148,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
 
-	featureID := nlslayer.NewFeatureID()
+	featureID := id.NewFeatureID()
 	property := &map[string]any{"key": "value"}
 	feature, err := nlslayer.NewFeature(
 		featureID,
@@ -227,7 +227,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
 
-	featureID := nlslayer.NewFeatureID()
+	featureID := id.NewFeatureID()
 	property := &map[string]any{"key": "value"}
 	feature, err := nlslayer.NewFeature(
 		featureID,

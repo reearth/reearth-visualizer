@@ -1,16 +1,18 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type NLSLayerGroup struct {
 	layerBase
 	children *IDList
 	root     bool
 }
 
-func (l *NLSLayerGroup) ID() ID {
+func (l *NLSLayerGroup) ID() id.NLSLayerID {
 	return l.layerBase.ID()
 }
 
-func (l *NLSLayerGroup) IDRef() *ID {
+func (l *NLSLayerGroup) IDRef() *id.NLSLayerID {
 	if l == nil {
 		return nil
 	}
@@ -21,7 +23,7 @@ func (l *NLSLayerGroup) LayerType() LayerType {
 	return l.layerBase.LayerType()
 }
 
-func (l *NLSLayerGroup) Scene() SceneID {
+func (l *NLSLayerGroup) Scene() id.SceneID {
 	return l.layerBase.scene
 }
 

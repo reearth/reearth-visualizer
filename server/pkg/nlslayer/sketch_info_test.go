@@ -3,11 +3,12 @@ package nlslayer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewSketchInfon(t *testing.T) {
-	fid := NewFeatureID()
+	fid := id.NewFeatureID()
 	property := map[string]any{"key1": "value1"}
 	f, err := NewFeature(
 		fid,
@@ -32,7 +33,7 @@ func TestNewSketchInfon(t *testing.T) {
 }
 
 func TestSketchInfoClone(t *testing.T) {
-	fid := NewFeatureID()
+	fid := id.NewFeatureID()
 	property := map[string]any{"key1": "value1"}
 	f, err := NewFeature(
 		fid,

@@ -1,5 +1,7 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func NLSLayerSimpleFromLayer(l NLSLayer) *NLSLayerSimple {
 	li, ok := l.(*NLSLayerSimple)
 	if !ok {
@@ -29,7 +31,7 @@ func NewNLSLayerSimple() *NLSLayerSimpleBuilder {
 
 func (b *NLSLayerSimpleBuilder) Build() (*NLSLayerSimple, error) {
 	if b.l.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.l, nil
 }
@@ -47,13 +49,13 @@ func (b *NLSLayerSimpleBuilder) base(layer layerBase) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) ID(id ID) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) ID(id id.NLSLayerID) *NLSLayerSimpleBuilder {
 	b.l.id = id
 	return b
 }
 
 func (b *NLSLayerSimpleBuilder) NewID() *NLSLayerSimpleBuilder {
-	b.l.id = NewID()
+	b.l.id = id.NewNLSLayerID()
 	return b
 }
 
@@ -67,7 +69,7 @@ func (b *NLSLayerSimpleBuilder) LayerType(t LayerType) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Scene(s SceneID) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) Scene(s id.SceneID) *NLSLayerSimpleBuilder {
 	b.l.scene = s
 	return b
 }

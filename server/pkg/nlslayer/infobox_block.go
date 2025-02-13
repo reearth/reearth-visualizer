@@ -3,25 +3,26 @@ package nlslayer
 import (
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type InfoboxBlock struct {
-	id        InfoboxBlockID
-	plugin    PluginID
-	extension PluginExtensionID
-	property  PropertyID
+	id        id.InfoboxBlockID
+	plugin    id.PluginID
+	extension id.PluginExtensionID
+	property  id.PropertyID
 }
 
-func (i *InfoboxBlock) ID() InfoboxBlockID {
+func (i *InfoboxBlock) ID() id.InfoboxBlockID {
 	return i.id
 }
 
-func (i *InfoboxBlock) Property() PropertyID {
+func (i *InfoboxBlock) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *InfoboxBlock) PropertyRef() *PropertyID {
+func (i *InfoboxBlock) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}
@@ -52,10 +53,10 @@ func (i *InfoboxBlock) Clone() *InfoboxBlock {
 	}
 }
 
-func (i *InfoboxBlock) Plugin() PluginID {
+func (i *InfoboxBlock) Plugin() id.PluginID {
 	return i.plugin
 }
 
-func (i *InfoboxBlock) Extension() PluginExtensionID {
+func (i *InfoboxBlock) Extension() id.PluginExtensionID {
 	return i.extension
 }
