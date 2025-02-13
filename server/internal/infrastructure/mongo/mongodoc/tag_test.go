@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -103,7 +102,7 @@ func TestNewTags(t *testing.T) {
 
 	type args struct {
 		tags []*tag.Tag
-		f    scene.IDList
+		f    id.SceneIDList
 	}
 
 	tests := []struct {
@@ -136,7 +135,7 @@ func TestNewTags(t *testing.T) {
 				tags: []*tag.Tag{
 					&tgi,
 				},
-				f: scene.IDList{tgi.Scene()},
+				f: id.SceneIDList{tgi.Scene()},
 			},
 			want: []interface{}{
 				&TagDocument{
@@ -155,7 +154,7 @@ func TestNewTags(t *testing.T) {
 				tags: []*tag.Tag{
 					&tgi,
 				},
-				f: scene.IDList{},
+				f: id.SceneIDList{},
 			},
 			want:  []interface{}{},
 			want1: []string{},

@@ -4,12 +4,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestScene_SetUpdatedAt(t *testing.T) {
-	s := New().NewID().Workspace(accountdomain.NewWorkspaceID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
+	s := New().NewID().Workspace(accountdomain.NewWorkspaceID()).RootLayer(id.NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
 	s.SetUpdatedAt(time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC))
 	assert.Equal(t, time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC), s.UpdatedAt())
 	s = nil
@@ -18,21 +19,21 @@ func TestScene_SetUpdatedAt(t *testing.T) {
 }
 
 func TestScene_Properties(t *testing.T) {
-	pid1 := NewPropertyID()
-	pid2 := NewPropertyID()
+	pid1 := id.NewPropertyID()
+	pid2 := id.NewPropertyID()
 	s := New().
 		NewID().
 		Workspace(accountdomain.NewWorkspaceID()).
-		RootLayer(NewLayerID()).
+		RootLayer(id.NewLayerID()).
 		Property(pid1).
 		Widgets(
 			NewWidgets([]*Widget{
-				MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
+				MustWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
 			}, nil),
 		).
 		MustBuild()
 
-	assert.Equal(t, []PropertyID{pid1, pid2}, s.Properties())
+	assert.Equal(t, []id.PropertyID{pid1, pid2}, s.Properties())
 }
 
 func TestSceneNil(t *testing.T) {
@@ -49,7 +50,7 @@ func TestSceneNil(t *testing.T) {
 }
 
 func TestScene_Clusters(t *testing.T) {
-	c1, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
+	c1, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
 
 	tests := []struct {
 		name  string

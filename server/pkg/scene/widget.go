@@ -1,17 +1,19 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Widget struct {
-	id        WidgetID
-	plugin    PluginID
-	extension PluginExtensionID
-	property  PropertyID
+	id        id.WidgetID
+	plugin    id.PluginID
+	extension id.PluginExtensionID
+	property  id.PropertyID
 	enabled   bool
 	extended  bool
 }
 
-func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) (*Widget, error) {
+func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool, extended bool) (*Widget, error) {
 	if !plugin.Validate() || string(extension) == "" || property.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 
 	return &Widget{
@@ -24,7 +26,7 @@ func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, prope
 	}, nil
 }
 
-func MustWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) *Widget {
+func MustWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool, extended bool) *Widget {
 	w, err := NewWidget(wid, plugin, extension, property, enabled, extended)
 	if err != nil {
 		panic(err)
@@ -32,19 +34,19 @@ func MustWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, prop
 	return w
 }
 
-func (w *Widget) ID() WidgetID {
+func (w *Widget) ID() id.WidgetID {
 	return w.id
 }
 
-func (w *Widget) Plugin() PluginID {
+func (w *Widget) Plugin() id.PluginID {
 	return w.plugin
 }
 
-func (w *Widget) Extension() PluginExtensionID {
+func (w *Widget) Extension() id.PluginExtensionID {
 	return w.extension
 }
 
-func (w *Widget) Property() PropertyID {
+func (w *Widget) Property() id.PropertyID {
 	return w.property
 }
 
@@ -90,7 +92,7 @@ func (w *Widget) Clone() *Widget {
 	}
 }
 
-func (w *Widget) SetPlugin(pid PluginID) {
+func (w *Widget) SetPlugin(pid id.PluginID) {
 	if w == nil || pid.IsNil() {
 		return
 	}

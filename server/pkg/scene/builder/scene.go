@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 )
@@ -86,7 +87,7 @@ func findProperty(pp []*property.Property, i property.ID) *property.Property {
 	return nil
 }
 
-func toString(wids []scene.WidgetID) []string {
+func toString(wids []id.WidgetID) []string {
 	if wids == nil {
 		return nil
 	}

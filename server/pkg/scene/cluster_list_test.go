@@ -3,12 +3,13 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestList_Add(t *testing.T) {
-	c1, _ := NewCluster(NewClusterID(), "c1", NewPropertyID())
-	c2, _ := NewCluster(NewClusterID(), "c2", NewPropertyID())
+	c1, _ := NewCluster(id.NewClusterID(), "c1", id.NewPropertyID())
+	c2, _ := NewCluster(id.NewClusterID(), "c2", id.NewPropertyID())
 	type args struct {
 		clusters []*Cluster
 	}
@@ -44,8 +45,8 @@ func TestList_Add(t *testing.T) {
 }
 
 func TestList_Clusters(t *testing.T) {
-	c1, _ := NewCluster(NewClusterID(), "ccc", NewPropertyID())
-	c2, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
+	c1, _ := NewCluster(id.NewClusterID(), "ccc", id.NewPropertyID())
+	c2, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
 
 	tests := []struct {
 		name string
@@ -74,10 +75,10 @@ func TestList_Clusters(t *testing.T) {
 }
 
 func TestList_Has(t *testing.T) {
-	c1, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
+	c1, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
 
 	type args struct {
-		tid ClusterID
+		tid id.ClusterID
 	}
 
 	tests := []struct {
@@ -98,7 +99,7 @@ func TestList_Has(t *testing.T) {
 			name: "not existing: should return false",
 			list: NewClusterListFrom([]*Cluster{c1}),
 			args: args{
-				tid: NewClusterID(),
+				tid: id.NewClusterID(),
 			},
 			want: false,
 		},
@@ -121,12 +122,12 @@ func TestList_Has(t *testing.T) {
 }
 
 func TestList_Remove(t *testing.T) {
-	c1, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
-	c2, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
-	c3, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
+	c1, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
+	c2, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
+	c3, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
 
 	type args struct {
-		cluster ClusterID
+		cluster id.ClusterID
 	}
 
 	tests := []struct {
@@ -180,14 +181,14 @@ func TestList_Remove(t *testing.T) {
 }
 
 func TestClusterList_Get(t *testing.T) {
-	cid1 := NewClusterID()
-	cid2 := NewClusterID()
-	cid3 := NewClusterID()
-	c1, _ := NewCluster(cid1, "xxx", NewPropertyID())
-	c2, _ := NewCluster(cid2, "zzz", NewPropertyID())
-	c3, _ := NewCluster(cid3, "yyy", NewPropertyID())
+	cid1 := id.NewClusterID()
+	cid2 := id.NewClusterID()
+	cid3 := id.NewClusterID()
+	c1, _ := NewCluster(cid1, "xxx", id.NewPropertyID())
+	c2, _ := NewCluster(cid2, "zzz", id.NewPropertyID())
+	c3, _ := NewCluster(cid3, "yyy", id.NewPropertyID())
 	type args struct {
-		cid ClusterID
+		cid id.ClusterID
 	}
 
 	tests := []struct {
@@ -233,18 +234,18 @@ func TestClusterList_Get(t *testing.T) {
 }
 
 func TestClusterList_Properties(t *testing.T) {
-	c1, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
-	c2, _ := NewCluster(NewClusterID(), "yyy", NewPropertyID())
+	c1, _ := NewCluster(id.NewClusterID(), "xxx", id.NewPropertyID())
+	c2, _ := NewCluster(id.NewClusterID(), "yyy", id.NewPropertyID())
 
 	tests := []struct {
 		name string
 		list *ClusterList
-		want []PropertyID
+		want []id.PropertyID
 	}{
 		{
 			name: "should return properties",
 			list: NewClusterListFrom([]*Cluster{c1, c2}),
-			want: []PropertyID{c1.property, c2.property},
+			want: []id.PropertyID{c1.property, c2.property},
 		},
 		{
 			name: "nil_list: should return nil",
@@ -254,7 +255,7 @@ func TestClusterList_Properties(t *testing.T) {
 		{
 			name: "empty_list: should return empty",
 			list: NewClusterListFrom([]*Cluster{}),
-			want: []PropertyID{},
+			want: []id.PropertyID{},
 		},
 	}
 

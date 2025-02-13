@@ -3,7 +3,6 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"golang.org/x/exp/slices"
 )
 
@@ -99,7 +98,7 @@ func NewDatasetSchema(dataset *dataset.Schema) (*DatasetSchemaDocument, string) 
 	return &doc, did
 }
 
-func NewDatasetSchemas(datasetSchemas []*dataset.Schema, f scene.IDList) ([]interface{}, []string) {
+func NewDatasetSchemas(datasetSchemas []*dataset.Schema, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(datasetSchemas))
 	ids := make([]string, 0, len(datasetSchemas))
 	for _, d := range datasetSchemas {

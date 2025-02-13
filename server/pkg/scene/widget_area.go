@@ -1,13 +1,14 @@
 package scene
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
 
 // WidgetArea has the widgets and alignment information found in each part area of a section.
 type WidgetArea struct {
-	widgetIds  WidgetIDList
+	widgetIds  id.WidgetIDList
 	align      WidgetAlignType
 	padding    *WidgetAreaPadding
 	gap        *int
@@ -23,7 +24,7 @@ const (
 	WidgetAlignEnd      WidgetAlignType = "end"
 )
 
-func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap *int, centered bool, background *string) *WidgetArea {
+func NewWidgetArea(widgetIds []id.WidgetID, align WidgetAlignType, padding *WidgetAreaPadding, gap *int, centered bool, background *string) *WidgetArea {
 	wa := &WidgetArea{}
 	wa.AddAll(widgetIds)
 	wa.SetAlignment(align)
@@ -36,7 +37,7 @@ func NewWidgetArea(widgetIds []WidgetID, align WidgetAlignType, padding *WidgetA
 }
 
 // WidgetIds will return a slice of widget ids from a specific area.
-func (a *WidgetArea) WidgetIDs() WidgetIDList {
+func (a *WidgetArea) WidgetIDs() id.WidgetIDList {
 	if a == nil {
 		return nil
 	}
@@ -85,14 +86,14 @@ func (a *WidgetArea) Background() *string {
 	return util.CloneRef(a.background)
 }
 
-func (a *WidgetArea) Find(wid WidgetID) int {
+func (a *WidgetArea) Find(wid id.WidgetID) int {
 	if a == nil {
 		return -1
 	}
 	return lo.IndexOf(a.widgetIds, wid)
 }
 
-func (a *WidgetArea) Add(wid WidgetID, index int) {
+func (a *WidgetArea) Add(wid id.WidgetID, index int) {
 	if a == nil || a.widgetIds.Has(wid) {
 		return
 	}
@@ -106,7 +107,7 @@ func (a *WidgetArea) Add(wid WidgetID, index int) {
 	a.widgetIds = a.widgetIds.Insert(index, wid)
 }
 
-func (a *WidgetArea) AddAll(wids []WidgetID) {
+func (a *WidgetArea) AddAll(wids []id.WidgetID) {
 	if a == nil {
 		return
 	}
@@ -146,7 +147,7 @@ func (a *WidgetArea) SetBackground(bg *string) {
 	a.background = util.CloneRef(bg)
 }
 
-func (a *WidgetArea) Remove(wid WidgetID) {
+func (a *WidgetArea) Remove(wid id.WidgetID) {
 	if a == nil {
 		return
 	}

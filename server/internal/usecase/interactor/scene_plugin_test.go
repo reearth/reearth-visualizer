@@ -36,11 +36,11 @@ func TestScene_InstallPlugin(t *testing.T) {
 		wantErr               error
 	}
 
-	sid := scene.NewID()
+	sid := id.NewSceneID()
 	pid := plugin.MustID("plugin~1.0.0")
 	pid2 := plugin.MustID("plugin~1.0.1")
 	pid3 := plugin.MustID("plugin~1.0.1").WithScene(&sid)
-	pid4 := plugin.MustID("plugin~1.0.1").WithScene(scene.NewID().Ref())
+	pid4 := plugin.MustID("plugin~1.0.1").WithScene(id.NewSceneID().Ref())
 
 	tests := []test{
 		{
@@ -160,7 +160,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 		wantErr error
 	}
 
-	sid := scene.NewID()
+	sid := id.NewSceneID()
 	pid := plugin.MustID("plugin~1.0.0")
 	pid2 := plugin.MustID("plugin~1.0.1")
 	pid3 := plugin.MustID("plugin~1.0.2")
@@ -233,7 +233,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
-			sw, _ := scene.NewWidget(scene.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
+			sw, _ := scene.NewWidget(id.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
 			sc.Widgets().Add(sw)
 			sr := memory.NewSceneWith(sc)
 
@@ -305,7 +305,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 		wantErr error
 	}
 
-	sid := scene.NewID()
+	sid := id.NewSceneID()
 	pid1 := plugin.MustID("plugin~1.0.0")
 	pid2 := plugin.MustID("plugin~1.0.1")
 	pid3 := plugin.MustID("plugin~1.0.2")

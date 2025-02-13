@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type StyleBuilder struct {
 	s *Style
 }
@@ -10,7 +12,7 @@ func NewStyle() *StyleBuilder {
 
 func (b *StyleBuilder) Build() (*Style, error) {
 	if b.s.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.s, nil
 }
@@ -23,17 +25,17 @@ func (b *StyleBuilder) MustBuild() *Style {
 	return s
 }
 
-func (b *StyleBuilder) ID(id StyleID) *StyleBuilder {
+func (b *StyleBuilder) ID(id id.StyleID) *StyleBuilder {
 	b.s.id = id
 	return b
 }
 
 func (b *StyleBuilder) NewID() *StyleBuilder {
-	b.s.id = NewStyleID()
+	b.s.id = id.NewStyleID()
 	return b
 }
 
-func (b *StyleBuilder) Scene(scene ID) *StyleBuilder {
+func (b *StyleBuilder) Scene(scene id.SceneID) *StyleBuilder {
 	b.s.scene = scene
 	return b
 }

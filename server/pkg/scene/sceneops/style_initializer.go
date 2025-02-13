@@ -1,11 +1,12 @@
 package sceneops
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 )
 
 type Style struct {
-	SceneID scene.ID
+	SceneID id.SceneID
 	Value   *scene.StyleValue
 	Name    string
 }

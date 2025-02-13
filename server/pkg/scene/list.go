@@ -1,20 +1,25 @@
 package scene
 
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
+)
+
 type List []*Scene
 
-func (l List) IDs() []ID {
+func (l List) IDs() []id.SceneID {
 	if l == nil {
 		return nil
 	}
 
-	res := make([]ID, 0, len(l))
+	res := make([]id.SceneID, 0, len(l))
 	for _, s := range l {
 		res = append(res, s.ID())
 	}
 	return res
 }
 
-func (l List) FilterByID(ids ...ID) List {
+func (l List) FilterByID(ids ...id.SceneID) List {
 	if l == nil {
 		return nil
 	}
@@ -32,7 +37,7 @@ func (l List) FilterByID(ids ...ID) List {
 	return res
 }
 
-func (l List) FilterByWorkspace(workspaces ...WorkspaceID) List {
+func (l List) FilterByWorkspace(workspaces ...accountdomain.WorkspaceID) List {
 	if l == nil {
 		return nil
 	}

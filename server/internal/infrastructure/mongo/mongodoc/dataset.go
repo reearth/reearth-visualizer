@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/mongox"
 )
 
@@ -152,7 +151,7 @@ func NewDataset(dataset *dataset.Dataset) (*DatasetDocument, string) {
 	return &doc, did
 }
 
-func NewDatasets(datasets []*dataset.Dataset, f scene.IDList) ([]interface{}, []string) {
+func NewDatasets(datasets []*dataset.Dataset, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(datasets))
 	ids := make([]string, 0, len(datasets))
 	for _, d := range datasets {

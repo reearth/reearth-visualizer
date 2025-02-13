@@ -3,20 +3,21 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewWidget(t *testing.T) {
-	pid := MustPluginID("xxx~1.1.1")
-	pr := NewPropertyID()
-	wid := NewWidgetID()
+	pid := id.MustPluginID("xxx~1.1.1")
+	pr := id.NewPropertyID()
+	wid := id.NewWidgetID()
 
 	tests := []struct {
 		Name      string
-		ID        WidgetID
-		Plugin    PluginID
-		Extension PluginExtensionID
-		Property  PropertyID
+		ID        id.WidgetID
+		Plugin    id.PluginID
+		Extension id.PluginExtensionID
+		Property  id.PropertyID
 		Enabled   bool
 		Extended  bool
 		Err       error
@@ -39,7 +40,7 @@ func TestNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       ErrInvalidID,
+			Err:       id.ErrInvalidID,
 		},
 	}
 
@@ -63,16 +64,16 @@ func TestNewWidget(t *testing.T) {
 }
 
 func TestMustNewWidget(t *testing.T) {
-	pid := MustPluginID("xxx~1.1.1")
-	pr := NewPropertyID()
-	wid := NewWidgetID()
+	pid := id.MustPluginID("xxx~1.1.1")
+	pr := id.NewPropertyID()
+	wid := id.NewWidgetID()
 
 	tests := []struct {
 		Name      string
-		ID        WidgetID
-		Plugin    PluginID
-		Extension PluginExtensionID
-		Property  PropertyID
+		ID        id.WidgetID
+		Plugin    id.PluginID
+		Extension id.PluginExtensionID
+		Property  id.PropertyID
 		Enabled   bool
 		Extended  bool
 		Err       error
@@ -95,7 +96,7 @@ func TestMustNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       ErrInvalidID,
+			Err:       id.ErrInvalidID,
 		},
 	}
 
@@ -122,19 +123,19 @@ func TestMustNewWidget(t *testing.T) {
 }
 
 func TestWidget_SetEnabled(t *testing.T) {
-	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res := MustWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", id.NewPropertyID(), false, false)
 	res.SetEnabled(true)
 	assert.True(t, res.Enabled())
 }
 
 func TestWidget_SetExtended(t *testing.T) {
-	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res := MustWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", id.NewPropertyID(), false, false)
 	res.SetExtended(true)
 	assert.True(t, res.Extended())
 }
 
 func TestWidget_Clone(t *testing.T) {
-	res := MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", NewPropertyID(), false, false)
+	res := MustWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", id.NewPropertyID(), false, false)
 	res2 := res.Clone()
 	assert.Equal(t, res, res2)
 	assert.NotSame(t, res, res2)

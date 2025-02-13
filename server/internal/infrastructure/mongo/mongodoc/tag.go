@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
 	"golang.org/x/exp/slices"
 )
@@ -64,7 +63,7 @@ func NewTag(t tag.Tag) (*TagDocument, string) {
 	}, tid
 }
 
-func NewTags(tags []*tag.Tag, f scene.IDList) ([]interface{}, []string) {
+func NewTags(tags []*tag.Tag, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(tags))
 	ids := make([]string, 0, len(tags))
 	for _, d := range tags {

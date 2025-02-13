@@ -31,7 +31,7 @@ func NewStyle(s scene.Style) (*StyleDocument, string) {
 	}, id
 }
 
-func NewStyles(styles scene.StyleList, f scene.IDList) ([]interface{}, []string) {
+func NewStyles(styles scene.StyleList, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(styles))
 	ids := make([]string, 0, len(styles))
 	for _, d := range styles {

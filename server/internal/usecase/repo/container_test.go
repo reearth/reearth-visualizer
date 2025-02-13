@@ -3,7 +3,7 @@ package repo
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -30,20 +30,20 @@ func TestWorkspaceFilter_Merge(t *testing.T) {
 }
 
 func TestSceneFilter_Merge(t *testing.T) {
-	a := scene.NewID()
-	b := scene.NewID()
+	a := id.NewSceneID()
+	b := id.NewSceneID()
 	assert.Equal(t, SceneFilter{
-		Readable: scene.IDList{a, b},
-		Writable: scene.IDList{b, a},
+		Readable: id.SceneIDList{a, b},
+		Writable: id.SceneIDList{b, a},
 	}, SceneFilter{
-		Readable: scene.IDList{a, b},
-		Writable: scene.IDList{b},
+		Readable: id.SceneIDList{a, b},
+		Writable: id.SceneIDList{b},
 	}.Merge(SceneFilter{
-		Readable: scene.IDList{b},
-		Writable: scene.IDList{a},
+		Readable: id.SceneIDList{b},
+		Writable: id.SceneIDList{a},
 	}))
-	assert.Equal(t, SceneFilter{Readable: scene.IDList{}}, SceneFilter{}.Merge(SceneFilter{Readable: scene.IDList{}}))
-	assert.Equal(t, SceneFilter{Readable: scene.IDList{}}, SceneFilter{Readable: scene.IDList{}}.Merge(SceneFilter{}))
-	assert.Equal(t, SceneFilter{Writable: scene.IDList{}}, SceneFilter{}.Merge(SceneFilter{Writable: scene.IDList{}}))
-	assert.Equal(t, SceneFilter{Writable: scene.IDList{}}, SceneFilter{Writable: scene.IDList{}}.Merge(SceneFilter{}))
+	assert.Equal(t, SceneFilter{Readable: id.SceneIDList{}}, SceneFilter{}.Merge(SceneFilter{Readable: id.SceneIDList{}}))
+	assert.Equal(t, SceneFilter{Readable: id.SceneIDList{}}, SceneFilter{Readable: id.SceneIDList{}}.Merge(SceneFilter{}))
+	assert.Equal(t, SceneFilter{Writable: id.SceneIDList{}}, SceneFilter{}.Merge(SceneFilter{Writable: id.SceneIDList{}}))
+	assert.Equal(t, SceneFilter{Writable: id.SceneIDList{}}, SceneFilter{Writable: id.SceneIDList{}}.Merge(SceneFilter{}))
 }

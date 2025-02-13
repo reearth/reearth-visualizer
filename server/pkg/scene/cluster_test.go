@@ -3,11 +3,12 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCluster_ID(t *testing.T) {
-	cid := NewClusterID()
+	cid := id.NewClusterID()
 	clusterA := &Cluster{
 		id: cid,
 	}
@@ -15,7 +16,7 @@ func TestCluster_ID(t *testing.T) {
 	tests := []struct {
 		name    string
 		cluster *Cluster
-		want    ClusterID
+		want    id.ClusterID
 	}{
 		{
 			name:    "should return cluster id",
@@ -25,7 +26,7 @@ func TestCluster_ID(t *testing.T) {
 		{
 			name:    "should return empty if cluster is nil",
 			cluster: nil,
-			want:    ClusterID{},
+			want:    id.ClusterID{},
 		},
 	}
 
@@ -71,7 +72,7 @@ func TestCluster_Name(t *testing.T) {
 	}
 }
 func TestCluster_Property(t *testing.T) {
-	propertyId := NewPropertyID()
+	propertyId := id.NewPropertyID()
 	clusterA := &Cluster{
 		property: propertyId,
 	}
@@ -79,7 +80,7 @@ func TestCluster_Property(t *testing.T) {
 	tests := []struct {
 		name    string
 		cluster *Cluster
-		want    PropertyID
+		want    id.PropertyID
 	}{
 		{
 			name:    "should return cluster property",
@@ -89,7 +90,7 @@ func TestCluster_Property(t *testing.T) {
 		{
 			name:    "should return empty cluster property",
 			cluster: nil,
-			want:    PropertyID{},
+			want:    id.PropertyID{},
 		},
 	}
 
@@ -104,12 +105,12 @@ func TestCluster_Property(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
-	propertyId := NewPropertyID()
-	clusterId := NewClusterID()
+	propertyId := id.NewPropertyID()
+	clusterId := id.NewClusterID()
 	type args struct {
-		cid  ClusterID
+		cid  id.ClusterID
 		name string
-		pid  PropertyID
+		pid  id.PropertyID
 	}
 
 	tests := []struct {
@@ -135,7 +136,7 @@ func TestNew(t *testing.T) {
 		{
 			name: "should return invalid id error",
 			args: args{
-				cid:  ClusterID{},
+				cid:  id.ClusterID{},
 				name: "xxx",
 				pid:  propertyId,
 			},
@@ -156,8 +157,8 @@ func TestNew(t *testing.T) {
 }
 
 func TestCluster_Rename(t *testing.T) {
-	propertyId := NewPropertyID()
-	clusterId := NewClusterID()
+	propertyId := id.NewPropertyID()
+	clusterId := id.NewClusterID()
 
 	type args struct {
 		name string
@@ -205,12 +206,12 @@ func TestCluster_Rename(t *testing.T) {
 }
 
 func TestCluster_UpdateProperty(t *testing.T) {
-	propertyId := NewPropertyID()
-	propertyId2 := NewPropertyID()
-	clusterId := NewClusterID()
+	propertyId := id.NewPropertyID()
+	propertyId2 := id.NewPropertyID()
+	clusterId := id.NewClusterID()
 
 	type args struct {
-		property PropertyID
+		property id.PropertyID
 	}
 
 	tests := []struct {

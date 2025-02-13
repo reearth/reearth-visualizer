@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/mongox"
 )
 
@@ -166,7 +165,7 @@ func NewProperty(property *property.Property) (*PropertyDocument, string) {
 	return &doc, pid
 }
 
-func NewProperties(properties []*property.Property, f scene.IDList) ([]interface{}, []string) {
+func NewProperties(properties []*property.Property, f id.SceneIDList) ([]interface{}, []string) {
 	if properties == nil {
 		return nil, nil
 	}

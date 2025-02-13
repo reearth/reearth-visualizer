@@ -1,6 +1,9 @@
 package scene
 
-import "github.com/reearth/reearthx/util"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/util"
+)
 
 type ClusterList struct {
 	clusters []*Cluster
@@ -21,11 +24,11 @@ func (tl *ClusterList) Clusters() []*Cluster {
 	return append([]*Cluster{}, tl.clusters...)
 }
 
-func (tl *ClusterList) Has(tid ClusterID) bool {
+func (tl *ClusterList) Has(tid id.ClusterID) bool {
 	if tl == nil {
 		return false
 	}
-	return util.ListHas[ClusterID, Cluster](tl.clusters, (*Cluster).ID, tid)
+	return util.ListHas[id.ClusterID, Cluster](tl.clusters, (*Cluster).ID, tid)
 }
 
 func (tl *ClusterList) Add(clusters ...*Cluster) {
@@ -35,23 +38,23 @@ func (tl *ClusterList) Add(clusters ...*Cluster) {
 	tl.clusters = append(tl.clusters, clusters...)
 }
 
-func (tl *ClusterList) Get(cid ClusterID) *Cluster {
+func (tl *ClusterList) Get(cid id.ClusterID) *Cluster {
 	if tl == nil {
 		return nil
 	}
-	return util.Get[ClusterID, Cluster](tl.clusters, (*Cluster).ID, cid)
+	return util.Get[id.ClusterID, Cluster](tl.clusters, (*Cluster).ID, cid)
 }
 
-func (tl *ClusterList) Remove(clusters ...ClusterID) {
+func (tl *ClusterList) Remove(clusters ...id.ClusterID) {
 	if tl == nil {
 		return
 	}
-	tl.clusters = util.RemoveByIds[ClusterID, Cluster](tl.clusters, (*Cluster).ID, clusters...)
+	tl.clusters = util.RemoveByIds[id.ClusterID, Cluster](tl.clusters, (*Cluster).ID, clusters...)
 }
 
-func (tl *ClusterList) Properties() []PropertyID {
+func (tl *ClusterList) Properties() []id.PropertyID {
 	if tl == nil {
 		return nil
 	}
-	return util.Properties[PropertyID, Cluster](tl.clusters, (*Cluster).Property)
+	return util.Properties[id.PropertyID, Cluster](tl.clusters, (*Cluster).Property)
 }
