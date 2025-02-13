@@ -4,20 +4,21 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuilder_Build(t *testing.T) {
-	aid := NewID()
+	aid := id.NewAssetID()
 	tid := accountdomain.NewWorkspaceID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 
 	type args struct {
-		id          ID
+		id          id.AssetID
 		name        string
 		createdAt   time.Time
-		workspace   WorkspaceID
+		workspace   accountdomain.WorkspaceID
 		size        int64
 		url         string
 		contentType string
@@ -53,7 +54,7 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			name: "failed empty size",
 			args: args{
-				id:          NewID(),
+				id:          id.NewAssetID(),
 				createdAt:   d,
 				workspace:   accountdomain.NewWorkspaceID(),
 				size:        0,
@@ -65,7 +66,7 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			name: "failed empty url",
 			args: args{
-				id:          NewID(),
+				id:          id.NewAssetID(),
 				createdAt:   d,
 				workspace:   accountdomain.NewWorkspaceID(),
 				size:        10,
@@ -77,9 +78,9 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			name: "failed empty workspace",
 			args: args{
-				id:          NewID(),
+				id:          id.NewAssetID(),
 				createdAt:   d,
-				workspace:   WorkspaceID{},
+				workspace:   accountdomain.WorkspaceID{},
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -89,14 +90,14 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			name: "failed invalid Id",
 			args: args{
-				id:          ID{},
+				id:          id.AssetID{},
 				createdAt:   d,
 				workspace:   accountdomain.NewWorkspaceID(),
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			err: ErrInvalidID,
+			err: id.ErrInvalidID,
 		},
 	}
 
@@ -125,15 +126,15 @@ func TestBuilder_Build(t *testing.T) {
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	aid := NewID()
+	aid := id.NewAssetID()
 	tid := accountdomain.NewWorkspaceID()
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 
 	type args struct {
-		id          ID
+		id          id.AssetID
 		name        string
 		createdAt   time.Time
-		workspace   WorkspaceID
+		workspace   accountdomain.WorkspaceID
 		size        int64
 		url         string
 		contentType string
@@ -170,7 +171,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			name: "failed empty size",
 			args: args{
 				createdAt:   d,
-				id:          NewID(),
+				id:          id.NewAssetID(),
 				workspace:   accountdomain.NewWorkspaceID(),
 				size:        0,
 				url:         "tt://xxx.zz",
@@ -182,7 +183,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			name: "failed empty url",
 			args: args{
 				createdAt:   d,
-				id:          NewID(),
+				id:          id.NewAssetID(),
 				workspace:   accountdomain.NewWorkspaceID(),
 				size:        10,
 				url:         "",
@@ -194,8 +195,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 			name: "failed empty workspace",
 			args: args{
 				createdAt:   d,
-				id:          NewID(),
-				workspace:   WorkspaceID{},
+				id:          id.NewAssetID(),
+				workspace:   accountdomain.WorkspaceID{},
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -206,13 +207,13 @@ func TestBuilder_MustBuild(t *testing.T) {
 			name: "failed invalid Id",
 			args: args{
 				createdAt:   d,
-				id:          ID{},
+				id:          id.AssetID{},
 				workspace:   accountdomain.NewWorkspaceID(),
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			err: ErrInvalidID,
+			err: id.ErrInvalidID,
 		},
 	}
 
