@@ -10,6 +10,7 @@ type Props = {
   type: AppearanceType;
   appearanceNodes: AppearanceNode[];
   styleNodes: StyleNode[];
+  editMode?: boolean;
   onStyleNodesUpdate: (type: AppearanceType, nodes: StyleNode[]) => void;
 };
 
@@ -17,6 +18,7 @@ const StylePanel: FC<Props> = ({
   type,
   appearanceNodes,
   styleNodes,
+  editMode,
   onStyleNodesUpdate
 }) => {
   const t = useT();
@@ -87,6 +89,7 @@ const StylePanel: FC<Props> = ({
               size="small"
               icon="plus"
               appearance="primary"
+              disabled={!editMode}
             />
           }
         />
@@ -100,6 +103,7 @@ const StylePanel: FC<Props> = ({
                 node={node}
                 onUpdate={updateNode}
                 onDelete={deleteNode}
+                editMode={editMode}
               />
             ) : null
           )}

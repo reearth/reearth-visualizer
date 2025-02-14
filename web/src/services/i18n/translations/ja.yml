@@ -128,7 +128,7 @@ Layer Name: レイヤー名
 Format: 形式
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
-Save & Apply: 保存して適用
+Edit: 編集
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
@@ -145,7 +145,6 @@ Property Schema: プロパティスキーマ
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
-Save: 保存
 No style selected: スタイルが選択されていません
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
@@ -278,6 +277,7 @@ Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
 New Field: 新しいフィールド
+Save: 保存
 Display title: 表示タイトル
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
@@ -376,7 +376,6 @@ Location: 位置
 value: 値
 Rotation: 回転
 Position Set: 位置セット
-Edit: 編集
 Capture: キャプチャ
 New Item: 新規追加
 New Credit: 新しいクレジット
