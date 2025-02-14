@@ -8,9 +8,16 @@ export declare type SpatialId = {
 export declare type SpatialIdPickSpaceOptions = {
   zoom?: number;
   maxHeight?: number;
-  color?: string;
+  minHeight?: number;
   dataOnly?: boolean;
   rightClickToExit?: boolean;
+  color?: string;
+  outlineColor?: string;
+  groundIndicatorColor?: string;
+  selectorColor?: string;
+  selectorOutlineColor?: string;
+  verticalSpaceIndicatorColor?: string;
+  verticalSpaceIndicatorOutlineColor?: string;
 };
 
 export declare type SpatialIdSpacePickProps = SpatialIdSpaceData;
