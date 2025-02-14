@@ -1,9 +1,60 @@
-import { Typography } from "@reearth/beta/lib/reearth-ui";
+import AddMemberModal from "@reearth/beta/features/Dashboard/ContentsContainer/Members/AddMemberModal";
+import UpdateRoleModal from "@reearth/beta/features/Dashboard/ContentsContainer/Members/UpdateRoleModal";
+import { Button, PopupMenu, Typography } from "@reearth/beta/lib/reearth-ui";
+import { useWorkspaceFetcher } from "@reearth/services/api";
 import { TeamMember } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
+import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useCallback, useState } from "react";
 
-const ListItem: FC<{ member: TeamMember }> = ({ member }) => {
+const ListItem: FC<{
+  member: TeamMember;
+  currentWorkSpace: Workspace;
+  addMemberModalVisible: boolean;
+  setAddMemberModalVisible: (visible: boolean) => void;
+  updatingRoleMember: TeamMember | undefined;
+  setUpdatingRoleMember: (member: TeamMember) => void;
+}> = ({
+  member,
+  currentWorkSpace,
+  addMemberModalVisible,
+  setAddMemberModalVisible,
+  updatingRoleMember,
+  setUpdatingRoleMember
+}) => {
+  const t = useT();
+  const memerRoleTranslation = {
+    MAINTAINER: t("MAINTAINER"),
+    OWNER: t("OWNER"),
+    READER: t("READER"),
+    WRITER: t("WRITER")
+  };
+  type MemberRoleENG = keyof typeof memerRoleTranslation;
+  const allRoles = Object.keys(memerRoleTranslation);
+  const isMemberRoleENG = (str: string): str is MemberRoleENG => {
+    return allRoles.includes(str);
+  };
+
+  const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
+
+  const { useRemoveMemberFromWorkspace: removeMember } = useWorkspaceFetcher();
+  const handleRemoveMember = useCallback(
+    (userId: string) => {
+      if (!userId || !currentWorkSpace?.id) return;
+      removeMember({ teamId: currentWorkSpace?.id, userId });
+    },
+    [currentWorkSpace?.id, removeMember]
+  );
+
+  const handleUpdateRole = useCallback(
+    (member: TeamMember) => {
+      setUpdatingRoleMember(member);
+      setUpdateRoleModalVisible(true);
+    },
+    [setUpdatingRoleMember]
+  );
+
   return (
     <StyledListItem>
       <Avatar>
@@ -19,10 +70,50 @@ const ListItem: FC<{ member: TeamMember }> = ({ member }) => {
       </TypographyWrapper>
       <TypographyWrapper>
         <Typography size="body">
-          {member.role.charAt(0).toUpperCase() +
-            member.role.slice(1).toLowerCase()}
+          {isMemberRoleENG(memerRoleTranslation[member.role])
+            ? member.role.charAt(0).toUpperCase() +
+              member.role.slice(1).toLowerCase()
+            : memerRoleTranslation[member.role]}
         </Typography>
       </TypographyWrapper>
+      <TypographyWrapper>
+        <PopupMenu
+          label={
+            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+          }
+          menu={[
+            {
+              icon: "arrowLeftRight",
+              id: "changeRole",
+              title: t("Change Role"),
+              disabled: member.role === "OWNER",
+              onClick: () => handleUpdateRole(member)
+            },
+            {
+              icon: "close",
+              id: "remove",
+              title: t("Remove"),
+              disabled: member.role === "OWNER",
+              onClick: () => handleRemoveMember(member.userId)
+            }
+          ]}
+        />
+      </TypographyWrapper>
+      {addMemberModalVisible && (
+        <AddMemberModal
+          workspace={currentWorkSpace}
+          visible
+          onClose={() => setAddMemberModalVisible(false)}
+        />
+      )}
+      {updateRoleModalVisible && updatingRoleMember && (
+        <UpdateRoleModal
+          workspace={currentWorkSpace}
+          member={updatingRoleMember}
+          visible
+          onClose={() => setUpdateRoleModalVisible(false)}
+        />
+      )}
     </StyledListItem>
   );
 };
@@ -31,10 +122,9 @@ export default ListItem;
 
 const StyledListItem = styled("div")(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "auto 1fr 1fr 1fr",
+  gridTemplateColumns: "0.1fr 2.9fr 4fr 2fr 1fr",
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
   alignItems: "center",
-  background: theme.bg[1],
   borderRadius: theme.radius.normal,
   gap: theme.spacing.small
 }));
