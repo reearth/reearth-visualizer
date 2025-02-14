@@ -25,6 +25,7 @@ const (
 
 type CreateAssetParam struct {
 	WorkspaceID accountdomain.WorkspaceID
+	ProjectID   *id.ProjectID
 	CoreSupport bool
 	File        *file.File
 }
@@ -35,8 +36,9 @@ var (
 
 type Asset interface {
 	Fetch(context.Context, []id.AssetID, *usecase.Operator) ([]*asset.Asset, error)
-	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *string, *asset.SortType, *usecasex.Pagination, *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error)
+	FindByWorkspaceProject(context.Context, accountdomain.WorkspaceID, *id.ProjectID, *string, *asset.SortType, *usecasex.Pagination, *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error)
 	Create(context.Context, CreateAssetParam, *usecase.Operator) (*asset.Asset, error)
+	Update(context.Context, id.AssetID, *id.ProjectID, *usecase.Operator) (id.AssetID, *id.ProjectID, error)
 	Remove(context.Context, id.AssetID, *usecase.Operator) (id.AssetID, error)
-	UploadAssetFile(context.Context, string, *zip.File, idx.ID[accountdomain.Workspace]) (*url.URL, int64, error)
+	ImportAssetFiles(context.Context, string, *zip.File, idx.ID[accountdomain.Workspace], *id.ProjectID) (*url.URL, int64, error)
 }

@@ -6,51 +6,77 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/stretchr/testify/assert"
 )
 
-// go test -v -run TestGetAssets ./e2e/...
+// go test -v -run TestCoreSupportGetAssets ./e2e/...
 
-func TestGetAssets(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+func TestCoreSupportGetAssets(t *testing.T) {
+	e, r, _ := ServerAndRepos(t, baseSeeder)
 
 	teamId := wID.String()
 
-	res := createAsset(t, e, "test.png", true, teamId)
-	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		HasValue("teamId", teamId).
-		HasValue("name", "test.png").
-		HasValue("coreSupport", true)
+	res := createAsset(t, e, "test.png", true, teamId, nil)
+	a := res.Path("$.data.createAsset.asset")
+	JSONEqRegexpValue(t, a, `{
+		"__typename": "Asset",
+		"contentType": "",
+		"coreSupport": true,
+		"id": ".*",
+		"name": "test.png",
+		"projectId": null,
+		"size": 30438,
+		"teamId": ".*",
+		"url": ".*"
+	}`)
 
-	res = createAsset(t, e, "test.png", false, teamId)
-	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		HasValue("teamId", teamId).
-		HasValue("name", "test.png").
-		HasValue("coreSupport", false)
+	res = createAsset(t, e, "test.png", false, teamId, nil)
+	a = res.Path("$.data.createAsset.asset")
+	JSONEqRegexpValue(t, a, `{
+		"__typename": "Asset",
+		"contentType": "",
+		"coreSupport": false,
+		"id": ".*",
+		"name": "test.png",
+		"projectId": null,
+		"size": 30438,
+		"teamId": ".*",
+		"url": ".*"
+	}`)
 
-	res = createAsset(t, e, "test.csv", true, teamId)
-	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		HasValue("teamId", teamId).
-		HasValue("name", "test.csv").
-		HasValue("coreSupport", true)
+	res = createAsset(t, e, "test.csv", true, teamId, nil)
+	a = res.Path("$.data.createAsset.asset")
+	JSONEqRegexpValue(t, a, `{
+		"__typename": "Asset",
+		"contentType": "",
+		"coreSupport": true,
+		"id": ".*",
+		"name": "test.csv",
+		"projectId": null,
+		"size": 231,
+		"teamId": ".*",
+		"url": ".*"
+	}`)
 
-	res = createAsset(t, e, "test.csv", false, teamId)
-	res.Object().Value("data").Object().Value("createAsset").Object().Value("asset").Object().
-		HasValue("teamId", teamId).
-		HasValue("name", "test.csv").
-		HasValue("coreSupport", false)
+	res = createAsset(t, e, "test.csv", false, teamId, nil)
+	a = res.Path("$.data.createAsset.asset")
+	JSONEqRegexpValue(t, a, `{
+		"__typename": "Asset",
+		"contentType": "",
+		"coreSupport": false,
+		"id": ".*",
+		"name": "test.csv",
+		"projectId": null,
+		"size": 231,
+		"teamId": ".*",
+		"url": ".*"
+	}`)
 
 	// Write directly to the DB
+
 	ctx := context.Background()
 	a1, err := asset.New().
 		NewID().Workspace(wID).Name("test.png").Size(30438).URL("https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxx.png").
@@ -77,39 +103,101 @@ func TestGetAssets(t *testing.T) {
 	assert.Nil(t, err)
 
 	f := int64(20)
-	as, _, err := r.Asset.FindByWorkspace(ctx, wID, repo.AssetFilter{
+	as, _, err := r.Asset.FindByWorkspaceProject(ctx, wID, nil, repo.AssetFilter{
 		Pagination: usecasex.CursorPagination{
 			First: &f,
 		}.Wrap(),
 	})
 	assert.Nil(t, err)
-	assert.Equal(t, len(as), 3)
+	assert.Equal(t, len(as), 4)
 
-	res = getAssets(e, teamId)
-	assets := res.Object().Value("data").Object().Value("assets").Object().Value("nodes").Array().Iter()
+	res = getAssets(e, teamId, nil)
+	assets := res.Path("$.data.assets.nodes").Array().Iter()
 	for _, a := range assets {
 		a.Object().HasValue("coreSupport", true) // coreSupport true only
 	}
 
 }
 
-const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $file: Upload!, $coreSupport: Boolean!) {
-  createAsset(input: {teamId: $teamId, file: $file, coreSupport: $coreSupport}) {
+// go test -v -run TestAssociateProjectGetAssets ./e2e/...
+
+func TestAssociateProjectGetAssets(t *testing.T) {
+	e, _, _ := ServerAndRepos(t, baseSeeder)
+	teamId := wID.String()
+
+	// Create projectA >>> test.png
+	pidA := createProject(e, "projectA")
+	createAsset(t, e, "test.png", true, teamId, &pidA)
+
+	// Create projectB >>> test.csv
+	pidB := createProject(e, "projectB")
+	createAsset(t, e, "test.csv", true, teamId, &pidB)
+
+	// Get projectA >>> test.png
+	res := getAssets(e, teamId, &pidA)
+	assets := res.Path("$.data.assets.nodes").Array()
+	assets.Length().IsEqual(1)
+	assets.Value(0).Object().HasValue("name", "test.png")
+
+	// Get projectB >>> test.csv
+	res = getAssets(e, teamId, &pidB)
+	assets = res.Path("$.data.assets.nodes").Array()
+	assets.Length().IsEqual(1)
+	assets.Value(0).Object().HasValue("name", "test.csv")
+
+	// Get none project(Workspace) >>> test.png, test.csv
+	res = getAssets(e, teamId, nil)
+	assets = res.Path("$.data.assets.nodes").Array()
+	assets.Length().IsEqual(3)
+	assets.Value(0).Object().HasValue("name", "test.csv")
+	assets.Value(1).Object().HasValue("name", "test.png")
+
+	assetId0 := assets.Value(0).Object().Value("id").Raw().(string)
+	assetId1 := assets.Value(1).Object().Value("id").Raw().(string)
+
+	// Move projectA(test.png) >>> projectB
+	updateAsset(e, assetId1, &pidB)
+	res = getAssets(e, teamId, &pidB)
+	assets = res.Path("$.data.assets.nodes").Array()
+	assets.Length().IsEqual(2) // projectB  >>> test.png, test.csv
+
+	// Remove projectID test
+	updateAsset(e, assetId0, nil) // projectID > null
+	updateAsset(e, assetId1, nil) // projectID > null
+
+	res = getAssets(e, teamId, &pidB)
+	assets = res.Path("$.data.assets.nodes").Array()
+	assets.Length().IsEqual(0) // projectB >>> none
+
+	// Remove asset test
+	removeAsset(e, assetId0)
+	removeAsset(e, assetId1)
+
+	res = getAssets(e, teamId, nil)
+	assets = res.Path("$.data.assets.nodes").Array()
+	assets.Length().IsEqual(1)
+}
+
+const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!) {
+  createAsset(
+    input: {teamId: $teamId, projectId: $projectId, file: $file, coreSupport: $coreSupport}
+  ) {
     asset {
       id
       teamId
+      projectId
       name
       size
       url
-      contentType
 	  coreSupport
+      contentType
       __typename
     }
     __typename
   }
 }`
 
-func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSupport bool, teamId string) *httpexpect.Value {
+func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSupport bool, teamId string, projectId *string) *httpexpect.Value {
 	file, err := os.Open(filePath)
 	if err != nil {
 		t.Fatalf("failed to open file: %v", err)
@@ -123,6 +211,7 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 		"operationName": "CreateAsset",
 		"variables": map[string]interface{}{
 			"teamId":      teamId,
+			"projectId":   projectId,
 			"coreSupport": coreSupport,
 			"file":        nil,
 		},
@@ -132,7 +221,41 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 	return RequestWithMultipart(e, uID.String(), requestBody, filePath)
 }
 
-func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte, coreSupport bool, teamId string) *httpexpect.Value {
+func updateAsset(e *httpexpect.Expect, assetId string, projectId *string) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateAsset",
+		Query: `mutation UpdateAsset($assetId: ID!, $projectId: ID) {
+			updateAsset(input: { assetId: $assetId projectId: $projectId }) {
+				assetId
+				projectId
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"assetId":   assetId,
+			"projectId": projectId,
+		},
+	}
+	return Request(e, uID.String(), requestBody)
+}
+
+func removeAsset(e *httpexpect.Expect, assetId string) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "RemoveAsset",
+		Query: `mutation RemoveAsset($assetId: ID!) {
+			removeAsset(input: { assetId: $assetId }) {
+				assetId
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"assetId": assetId,
+		},
+	}
+	return Request(e, uID.String(), requestBody)
+}
+
+func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte, coreSupport bool, teamId string, projectId *string) *httpexpect.Value {
 	tempFile, err := os.CreateTemp("", "requestBody-*.json")
 	if err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
@@ -152,6 +275,7 @@ func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte
 		"operationName": "CreateAsset",
 		"variables": map[string]interface{}{
 			"teamId":      teamId,
+			"projectId":   projectId,
 			"coreSupport": coreSupport,
 			"file":        nil,
 		},
@@ -160,52 +284,59 @@ func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte
 	return RequestWithMultipart(e, uID.String(), requestBody, tempFile.Name())
 }
 
-const GetAssetsQuery = `query GetAssets($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
-	assets(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
-	  edges {
-		cursor
-		node {
-		  id
-		  teamId
-		  name
-		  size
-		  url
-		  createdAt
-		  contentType
-		  coreSupport
-		  __typename
-		}
-		__typename
-	  }
-	  nodes {
-		id
-		teamId
-		name
-		size
-		url
-		createdAt
-		contentType
-		coreSupport
-		__typename
-	  }
-	  pageInfo {
-		endCursor
-		hasNextPage
-		hasPreviousPage
-		startCursor
-		__typename
-	  }
-	  totalCount
-	  __typename
-	}
-  }`
-
-func getAssets(e *httpexpect.Expect, teamId string) *httpexpect.Value {
+func getAssets(e *httpexpect.Expect, teamId string, projectId *string) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "GetAssets",
-		Query:         GetAssetsQuery,
+		Query: `query GetAssets($teamId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
+  assets(
+    teamId: $teamId
+    projectId: $projectId
+    pagination: $pagination
+    keyword: $keyword
+    sort: $sort
+  ) {
+    edges {
+      cursor
+      node {
+        id
+        teamId
+        projectId
+        name
+        size
+        url
+        createdAt
+        contentType
+        coreSupport
+        __typename
+      }
+      __typename
+    }
+    nodes {
+      id
+      teamId
+      projectId
+      name
+      size
+      url
+      createdAt
+      contentType
+      coreSupport
+      __typename
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      __typename
+    }
+    totalCount
+    __typename
+  }
+}`,
 		Variables: map[string]any{
-			"teamId": teamId,
+			"teamId":    teamId,
+			"projectId": projectId,
 			"pagination": map[string]any{
 				"first": 20,
 			},

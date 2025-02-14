@@ -11,19 +11,12 @@
       "LayerGroup",
       "LayerItem"
     ],
-    "LayerTag": [
-      "LayerTagGroup",
-      "LayerTagItem"
-    ],
     "NLSLayer": [
       "NLSLayerGroup",
       "NLSLayerSimple"
     ],
     "Node": [
       "Asset",
-      "Dataset",
-      "DatasetSchema",
-      "DatasetSchemaField",
       "Project",
       "Property",
       "Scene",
@@ -36,10 +29,6 @@
     "PropertyItem": [
       "PropertyGroup",
       "PropertyGroupList"
-    ],
-    "Tag": [
-      "TagGroup",
-      "TagItem"
     ]
   }
 }

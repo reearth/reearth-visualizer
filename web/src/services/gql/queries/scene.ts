@@ -5,31 +5,11 @@ export const GET_SCENE = gql(`
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
-        rootLayerId
         teamId
         projectId
         property {
           id
           ...PropertyFragment
-        }
-        clusters {
-          id
-          name
-          propertyId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        tags {
-          id
-          label
-          ... on TagGroup {
-            tags {
-              id
-              label
-            }
-          }
         }
         plugins {
           property {
