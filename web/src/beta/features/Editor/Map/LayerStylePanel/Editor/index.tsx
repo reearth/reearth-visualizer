@@ -40,7 +40,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         flexHeight
         menuEdgeGap="small"
       />
-      <ButtonWrapper>
+      <ButtonWrapper isSelected={!selectedLayerStyle}>
         {selectedLayerStyle?.id &&
           (editMode ? (
             <>
@@ -84,14 +84,16 @@ const EditorContainer = styled("div")(({ theme }) => ({
   paddingTop: theme.spacing.smallest
 }));
 
-const ButtonWrapper = styled("div")(({ theme }) => ({
-  borderTop: `1px solid ${theme.outline.weaker}`,
-  padding: theme.spacing.small,
-  width: "100%",
-  background: theme.bg[1],
-  display: "flex",
-  flexDirection: "row",
-  gap: theme.spacing.small
-}));
+const ButtonWrapper = styled("div")<{ isSelected?: boolean }>(
+  ({ isSelected, theme }) => ({
+    borderTop: isSelected ? "none" : `1px solid ${theme.outline.weaker}`,
+    padding: theme.spacing.small,
+    width: "100%",
+    background: theme.bg[1],
+    display: "flex",
+    flexDirection: "row",
+    gap: theme.spacing.small
+  })
+);
 
 export default LayerStyleEditor;

@@ -101,7 +101,6 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
                   ? theme.content.main
                   : theme.content.weaker
               }
-              disabled={!editMode}
               appearance="simple"
               onClick={() => setActiveTab(action.id)}
             />
