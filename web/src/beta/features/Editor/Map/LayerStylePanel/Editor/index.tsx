@@ -17,11 +17,16 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   selectedLayerStyle,
   onLayerStyleValueUpdate
 }) => {
-  const { tabItems, handleSave } = useHooks({
+  const {
+    tabItems,
+    editMode,
+    handleSave,
+    handleEditLayerStyle,
+    handleCancelLayerStyle
+  } = useHooks({
     selectedLayerStyle,
     onLayerStyleValueUpdate
   });
-
   const t = useT();
 
   return (
@@ -35,17 +40,34 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
         flexHeight
         menuEdgeGap="small"
       />
-      {selectedLayerStyle?.id && (
-        <ButtonWrapper>
-          <Button
-            title={t("Save")}
-            extendWidth
-            size="small"
-            icon="floppyDisk"
-            onClick={handleSave}
-          />
-        </ButtonWrapper>
-      )}
+      <ButtonWrapper isSelected={!selectedLayerStyle}>
+        {selectedLayerStyle?.id &&
+          (editMode ? (
+            <>
+              <Button
+                onClick={handleCancelLayerStyle}
+                size="small"
+                icon="close"
+                extendWidth
+              />
+              <Button
+                extendWidth
+                icon="check"
+                size="small"
+                appearance="primary"
+                onClick={handleSave}
+              />
+            </>
+          ) : (
+            <Button
+              onClick={handleEditLayerStyle}
+              size="small"
+              icon="pencilSimple"
+              title={t("Edit")}
+              extendWidth
+            />
+          ))}
+      </ButtonWrapper>
     </EditorContainer>
   );
 };
@@ -62,11 +84,16 @@ const EditorContainer = styled("div")(({ theme }) => ({
   paddingTop: theme.spacing.smallest
 }));
 
-const ButtonWrapper = styled("div")(({ theme }) => ({
-  borderTop: `1px solid ${theme.outline.weaker}`,
-  padding: theme.spacing.small,
-  width: "100%",
-  background: theme.bg[1]
-}));
+const ButtonWrapper = styled("div")<{ isSelected?: boolean }>(
+  ({ isSelected, theme }) => ({
+    borderTop: isSelected ? "none" : `1px solid ${theme.outline.weaker}`,
+    padding: theme.spacing.small,
+    width: "100%",
+    background: theme.bg[1],
+    display: "flex",
+    flexDirection: "row",
+    gap: theme.spacing.small
+  })
+);
 
 export default LayerStyleEditor;
