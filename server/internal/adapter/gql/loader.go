@@ -15,7 +15,6 @@ const (
 type Loaders struct {
 	usecases  interfaces.Container
 	Asset     *AssetLoader
-	Dataset   *DatasetLoader
 	Layer     *LayerLoader
 	Plugin    *PluginLoader
 	Policy    *PolicyLoader
@@ -24,13 +23,10 @@ type Loaders struct {
 	Scene     *SceneLoader
 	Workspace *WorkspaceLoader
 	User      *UserLoader
-	Tag       *TagLoader
 }
 
 type DataLoaders struct {
 	Asset          AssetDataLoader
-	Dataset        DatasetDataLoader
-	DatasetSchema  DatasetSchemaDataLoader
 	LayerItem      LayerItemDataLoader
 	LayerGroup     LayerGroupDataLoader
 	Layer          LayerDataLoader
@@ -42,9 +38,6 @@ type DataLoaders struct {
 	Scene          SceneDataLoader
 	Workspace      WorkspaceDataLoader
 	User           UserDataLoader
-	Tag            TagDataLoader
-	TagItem        TagItemDataLoader
-	TagGroup       TagGroupDataLoader
 }
 
 func NewLoaders(usecases *interfaces.Container) *Loaders {
@@ -54,7 +47,6 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 	return &Loaders{
 		usecases:  *usecases,
 		Asset:     NewAssetLoader(usecases.Asset),
-		Dataset:   NewDatasetLoader(usecases.Dataset),
 		Layer:     NewLayerLoader(usecases.Layer),
 		Plugin:    NewPluginLoader(usecases.Plugin),
 		Policy:    NewPolicyLoader(usecases.Policy),
@@ -63,7 +55,6 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Scene:     NewSceneLoader(usecases.Scene),
 		Workspace: NewWorkspaceLoader(usecases.Workspace),
 		User:      NewUserLoader(usecases.User),
-		Tag:       NewTagLoader(usecases.Tag),
 	}
 }
 
@@ -77,8 +68,6 @@ func (l Loaders) DataLoadersWith(ctx context.Context, enabled bool) *DataLoaders
 func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 	return &DataLoaders{
 		Asset:          l.Asset.DataLoader(ctx),
-		Dataset:        l.Dataset.DataLoader(ctx),
-		DatasetSchema:  l.Dataset.SchemaDataLoader(ctx),
 		LayerItem:      l.Layer.ItemDataLoader(ctx),
 		LayerGroup:     l.Layer.GroupDataLoader(ctx),
 		Layer:          l.Layer.DataLoader(ctx),
@@ -89,17 +78,12 @@ func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 		Scene:          l.Scene.DataLoader(ctx),
 		Workspace:      l.Workspace.DataLoader(ctx),
 		User:           l.User.DataLoader(ctx),
-		Tag:            l.Tag.DataLoader(ctx),
-		TagItem:        l.Tag.ItemDataLoader(ctx),
-		TagGroup:       l.Tag.GroupDataLoader(ctx),
 	}
 }
 
 func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 	return &DataLoaders{
 		Asset:          l.Asset.OrdinaryDataLoader(ctx),
-		Dataset:        l.Dataset.OrdinaryDataLoader(ctx),
-		DatasetSchema:  l.Dataset.SchemaOrdinaryDataLoader(ctx),
 		LayerItem:      l.Layer.ItemOrdinaryDataLoader(ctx),
 		LayerGroup:     l.Layer.GroupOrdinaryDataLoader(ctx),
 		Layer:          l.Layer.OrdinaryDataLoader(ctx),
@@ -110,9 +94,6 @@ func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 		Scene:          l.Scene.OrdinaryDataLoader(ctx),
 		Workspace:      l.Workspace.OrdinaryDataLoader(ctx),
 		User:           l.User.OrdinaryDataLoader(ctx),
-		Tag:            l.Tag.OrdinaryDataLoader(ctx),
-		TagItem:        l.Tag.ItemDataLoader(ctx),
-		TagGroup:       l.Tag.GroupDataLoader(ctx),
 	}
 }
 

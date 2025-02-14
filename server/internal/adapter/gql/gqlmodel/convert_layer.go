@@ -23,7 +23,6 @@ func ToLayerItem(l *layer.Item, parent *id.LayerID) *LayerItem {
 		Infobox:         ToInfobox(l.Infobox(), l.ID(), l.Scene(), l.LinkedDataset()),
 		LinkedDatasetID: IDFromRef(l.LinkedDataset()),
 		ParentID:        IDFromRef(parent),
-		Tags:            ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
@@ -45,7 +44,6 @@ func ToLayerGroup(l *layer.Group, parent *id.LayerID) *LayerGroup {
 		LayerIds:              util.Map(l.Layers().Layers(), IDFrom[id.Layer]),
 		Root:                  l.IsRoot(),
 		ParentID:              IDFromRef(parent),
-		Tags:                  ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
@@ -159,50 +157,4 @@ func FromLayerEncodingFormat(v LayerEncodingFormat) decoding.LayerEncodingFormat
 	}
 
 	return decoding.LayerEncodingFormat("")
-}
-
-func ToLayerTagList(t *layer.TagList, sid id.SceneID) []LayerTag {
-	if t.IsEmpty() {
-		return nil
-	}
-
-	return util.FilterMap(t.Tags(), func(v layer.Tag) *LayerTag {
-		if t := ToLayerTag(v); t != nil {
-			return &t
-		}
-		return nil
-	})
-}
-
-func ToLayerTag(l layer.Tag) LayerTag {
-	if l == nil {
-		return nil
-	}
-	if tg := layer.TagGroupFrom(l); tg != nil {
-		return ToLayerTagGroup(tg)
-	}
-	if ti := layer.TagItemFrom(l); ti != nil {
-		return ToLayerTagItem(ti)
-	}
-	return nil
-}
-
-func ToLayerTagItem(t *layer.TagItem) *LayerTagItem {
-	if t == nil {
-		return nil
-	}
-	return &LayerTagItem{
-		TagID: IDFrom(t.ID()),
-	}
-}
-
-func ToLayerTagGroup(t *layer.TagGroup) *LayerTagGroup {
-	if t == nil {
-		return nil
-	}
-
-	return &LayerTagGroup{
-		TagID:    IDFrom(t.ID()),
-		Children: util.FilterMapR(t.Children(), ToLayerTagItem),
-	}
 }
