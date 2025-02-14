@@ -1,73 +1,68 @@
-import Visualizer from "@reearth/beta/features/Visualizer";
 import { useNotification } from "@reearth/services/state";
-import * as yaml from "js-yaml";
-import { ComponentProps, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { v4 } from "uuid";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
-import { WidgetLocation } from "../../Visualizer/Crust/Widgets/types";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
 import { FileType } from "../Plugins/constants";
-
-type Widgets = ComponentProps<typeof Visualizer>["widgets"];
-
-type ReearthYML = {
-  id: string;
-  name: string;
-  version: string;
-  extensions?: {
-    id: string;
-    type: string;
-    name: string;
-    description: string;
-    widgetLayout?: {
-      extended: boolean;
-      defaultLocation: {
-        zone: WidgetLocation["zone"];
-        section: WidgetLocation["section"];
-        area: WidgetLocation["area"];
-      };
-    };
-  }[];
-};
-
-type CustomInfoboxBlock = {
-  id: string;
-  name: string;
-  description: string;
-  __REEARTH_SOURCECODE: string;
-  extensionId: string;
-  pluginId: string;
-};
-
-type CustomStoryBlock = CustomInfoboxBlock;
+import {
+  CustomInfoboxBlock,
+  CustomSchemaField,
+  CustomStoryBlock,
+  FieldValue,
+  Group,
+  Widgets
+} from "../types";
+import { getYmlJson } from "../utils";
 
 type Props = {
   files: FileType[];
+  fieldValues: Record<string, FieldValue>;
   resetVisualizer: () => void;
 };
 
-const getYmlJson = (file: FileType) => {
-  if (file.sourceCode === "") {
-    return { success: false, message: "YAML file is empty" } as const;
-  }
-
-  try {
-    const data = yaml.load(file.sourceCode) as ReearthYML;
-    return { success: true, data } as const;
-  } catch (error) {
-    const message =
-      error instanceof yaml.YAMLException
-        ? error.message
-        : "Failed to parse YAML";
-    return { success: false, message } as const;
-  }
+type HookReturnType = {
+  executeCode: () => void;
+  infoboxBlocks?: CustomInfoboxBlock[];
+  schemaFields?: CustomSchemaField[];
+  story?: Story;
+  widgets?: Widgets;
 };
 
-export default ({ files, resetVisualizer }: Props) => {
+function generateProperty(
+  schema:
+    | {
+        groups: Group;
+      }
+    | undefined,
+  fieldValues: Record<string, FieldValue>,
+  pluginId: string,
+  extensionId: string
+) {
+  const property: Record<string, unknown> = {};
+  if (!schema || !schema.groups) return property;
+
+  schema.groups.forEach((group) => {
+    const groupProperty: Record<string, FieldValue> = {};
+    group.fields.forEach((field) => {
+      const id = `${pluginId}-${extensionId}-${group.id}-${field.id}`;
+      groupProperty[field.id] = fieldValues[id] ?? field.defaultValue;
+    });
+    property[group.id] = groupProperty;
+  });
+
+  return property;
+}
+
+export default ({
+  files,
+  fieldValues,
+  resetVisualizer
+}: Props): HookReturnType => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>();
+
   const [, setNotification] = useNotification();
 
   const executeCode = useCallback(() => {
@@ -126,6 +121,12 @@ export default ({ files, resetVisualizer }: Props) => {
                       name: cur.name,
                       extensionId: cur.id,
                       pluginId: ymlJson.id,
+                      property: generateProperty(
+                        cur.schema,
+                        fieldValues,
+                        ymlJson.id,
+                        cur.id
+                      ),
                       __REEARTH_SOURCECODE: file.sourceCode,
                       extended
                     }
@@ -144,7 +145,7 @@ export default ({ files, resetVisualizer }: Props) => {
     );
     setWidgets(widgets);
 
-    const infoboBlockFromExtension = ymlJson.extensions.reduce<
+    const infoboxBlockFromExtension = ymlJson.extensions.reduce<
       CustomInfoboxBlock[]
     >((prv, cur) => {
       if (cur.type !== "infoboxBlock") return prv;
@@ -163,12 +164,19 @@ export default ({ files, resetVisualizer }: Props) => {
           description: cur.description,
           __REEARTH_SOURCECODE: file.sourceCode,
           extensionId: cur.id,
-          pluginId: cur.id
+          pluginId: cur.id,
+          extensionType: "infoboxBlock",
+          propertyForPluginAPI: generateProperty(
+            cur.schema,
+            fieldValues,
+            ymlJson.id,
+            cur.id
+          )
         }
       ];
     }, []);
 
-    setInfoboxBlocks(infoboBlockFromExtension);
+    setInfoboxBlocks(infoboxBlockFromExtension);
 
     const storyBlocksFromExtension = ymlJson.extensions.reduce<
       CustomStoryBlock[]
@@ -187,7 +195,14 @@ export default ({ files, resetVisualizer }: Props) => {
         description: cur.description,
         __REEARTH_SOURCECODE: file.sourceCode,
         extensionId: cur.id,
-        pluginId: cur.id
+        pluginId: cur.id,
+        extensionType: "storyBlock",
+        propertyForPluginAPI: generateProperty(
+          cur.schema,
+          fieldValues,
+          ymlJson.id,
+          cur.id
+        )
       });
       return prv;
     }, []);
@@ -205,7 +220,7 @@ export default ({ files, resetVisualizer }: Props) => {
         }
       ]
     });
-  }, [files, resetVisualizer, setNotification]);
+  }, [files, fieldValues, resetVisualizer, setNotification]);
 
   return {
     executeCode,
