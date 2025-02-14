@@ -8,29 +8,29 @@ import (
 )
 
 type InfoboxField struct {
-	id        InfoboxFieldID
-	plugin    PluginID
-	extension PluginExtensionID
-	property  PropertyID
+	id        id.InfoboxFieldID
+	plugin    id.PluginID
+	extension id.PluginExtensionID
+	property  id.PropertyID
 }
 
-func (i *InfoboxField) ID() InfoboxFieldID {
+func (i *InfoboxField) ID() id.InfoboxFieldID {
 	return i.id
 }
 
-func (i *InfoboxField) Plugin() PluginID {
+func (i *InfoboxField) Plugin() id.PluginID {
 	return i.plugin
 }
 
-func (i *InfoboxField) Extension() PluginExtensionID {
+func (i *InfoboxField) Extension() id.PluginExtensionID {
 	return i.extension
 }
 
-func (i *InfoboxField) Property() PropertyID {
+func (i *InfoboxField) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *InfoboxField) PropertyRef() *PropertyID {
+func (i *InfoboxField) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}
@@ -46,7 +46,7 @@ func (i *InfoboxField) ValidateProperty(pm property.Map) error {
 	if lp == nil {
 		return errors.New("property does not exist")
 	}
-	if !lp.Schema().Equal(NewPropertySchemaID(i.plugin, i.extension.String())) {
+	if !lp.Schema().Equal(id.NewPropertySchemaID(i.plugin, i.extension.String())) {
 		return errors.New("property has a invalid schema")
 	}
 

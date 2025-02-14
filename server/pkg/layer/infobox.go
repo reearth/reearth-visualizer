@@ -5,21 +5,22 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Infobox struct {
-	property PropertyID
+	property id.PropertyID
 	fields   []*InfoboxField
 	// for checking duplication
-	ids map[InfoboxFieldID]struct{}
+	ids map[id.InfoboxFieldID]struct{}
 }
 
-func NewInfobox(fields []*InfoboxField, p PropertyID) *Infobox {
+func NewInfobox(fields []*InfoboxField, p id.PropertyID) *Infobox {
 	infobox := Infobox{
 		property: p,
 		fields:   make([]*InfoboxField, len(fields)),
-		ids:      make(map[InfoboxFieldID]struct{}, len(fields)),
+		ids:      make(map[id.InfoboxFieldID]struct{}, len(fields)),
 	}
 	for i, f := range fields {
 		if f == nil {
@@ -31,11 +32,11 @@ func NewInfobox(fields []*InfoboxField, p PropertyID) *Infobox {
 	return &infobox
 }
 
-func (i *Infobox) Property() PropertyID {
+func (i *Infobox) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *Infobox) PropertyRef() *PropertyID {
+func (i *Infobox) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}
@@ -50,7 +51,7 @@ func (i *Infobox) Fields() []*InfoboxField {
 	return append([]*InfoboxField{}, i.fields...)
 }
 
-func (i *Infobox) Field(field InfoboxFieldID) *InfoboxField {
+func (i *Infobox) Field(field id.InfoboxFieldID) *InfoboxField {
 	for _, f := range i.fields {
 		if f.ID() == field {
 			return f
@@ -66,7 +67,7 @@ func (i *Infobox) FieldAt(index int) *InfoboxField {
 	return i.fields[index]
 }
 
-func (i *Infobox) FieldsByPlugin(pid PluginID, eid *PluginExtensionID) []*InfoboxField {
+func (i *Infobox) FieldsByPlugin(pid id.PluginID, eid *id.PluginExtensionID) []*InfoboxField {
 	if i == nil {
 		return nil
 	}
@@ -79,7 +80,7 @@ func (i *Infobox) FieldsByPlugin(pid PluginID, eid *PluginExtensionID) []*Infobo
 	return fields
 }
 
-func (i *Infobox) Has(id InfoboxFieldID) bool {
+func (i *Infobox) Has(id id.InfoboxFieldID) bool {
 	_, ok := i.ids[id]
 	return ok
 }
@@ -102,7 +103,7 @@ func (i *Infobox) Add(field *InfoboxField, index int) {
 	i.ids[id] = struct{}{}
 }
 
-func (i *Infobox) Move(field InfoboxFieldID, toIndex int) {
+func (i *Infobox) Move(field id.InfoboxFieldID, toIndex int) {
 	for fromIndex, f := range i.fields {
 		if f.ID() == field {
 			i.MoveAt(fromIndex, toIndex)
@@ -128,7 +129,7 @@ func (i *Infobox) MoveAt(fromIndex int, toIndex int) {
 	i.fields = append(newSlice, i.fields[toIndex:]...)
 }
 
-func (i *Infobox) Remove(field InfoboxFieldID) {
+func (i *Infobox) Remove(field id.InfoboxFieldID) {
 	for index, f := range i.fields {
 		if f.ID() == field {
 			i.RemoveAt(index)
@@ -137,12 +138,12 @@ func (i *Infobox) Remove(field InfoboxFieldID) {
 	}
 }
 
-func (i *Infobox) RemoveAllByPlugin(pid PluginID, eid *PluginExtensionID) []PropertyID {
+func (i *Infobox) RemoveAllByPlugin(pid id.PluginID, eid *id.PluginExtensionID) []id.PropertyID {
 	if i == nil {
 		return nil
 	}
 
-	var properties []PropertyID
+	var properties []id.PropertyID
 	for j := 0; j < len(i.fields); j++ {
 		if i.fields[j].plugin.Equal(pid) && (eid == nil || i.fields[j].Extension() == *eid) {
 			properties = append(properties, i.fields[j].Property())
@@ -202,7 +203,7 @@ func (i *Infobox) Clone() *Infobox {
 		}
 	}
 
-	clonedIDs := make(map[InfoboxFieldID]struct{})
+	clonedIDs := make(map[id.InfoboxFieldID]struct{})
 	for id, val := range i.ids {
 		clonedIDs[id] = val
 	}

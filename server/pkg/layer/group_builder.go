@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func GroupFromLayer(l Layer) *Group {
 	li, ok := l.(*Group)
 	if !ok {
@@ -29,7 +31,7 @@ func NewGroup() *GroupBuilder {
 
 func (b *GroupBuilder) Build() (*Group, error) {
 	if b.l.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.l, nil
 }
@@ -47,17 +49,17 @@ func (b *GroupBuilder) base(layer layerBase) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) ID(id ID) *GroupBuilder {
+func (b *GroupBuilder) ID(id id.LayerID) *GroupBuilder {
 	b.l.id = id
 	return b
 }
 
 func (b *GroupBuilder) NewID() *GroupBuilder {
-	b.l.id = NewID()
+	b.l.id = id.NewLayerID()
 	return b
 }
 
-func (b *GroupBuilder) Scene(s SceneID) *GroupBuilder {
+func (b *GroupBuilder) Scene(s id.SceneID) *GroupBuilder {
 	b.l.scene = s
 	return b
 }
@@ -77,22 +79,22 @@ func (b *GroupBuilder) IsVisible(visible bool) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Plugin(plugin *PluginID) *GroupBuilder {
+func (b *GroupBuilder) Plugin(plugin *id.PluginID) *GroupBuilder {
 	b.l.plugin = plugin.CloneRef()
 	return b
 }
 
-func (b *GroupBuilder) Extension(extension *PluginExtensionID) *GroupBuilder {
+func (b *GroupBuilder) Extension(extension *id.PluginExtensionID) *GroupBuilder {
 	b.l.extension = extension.CloneRef()
 	return b
 }
 
-func (b *GroupBuilder) Property(property *PropertyID) *GroupBuilder {
+func (b *GroupBuilder) Property(property *id.PropertyID) *GroupBuilder {
 	b.l.property = property.CloneRef()
 	return b
 }
 
-func (b *GroupBuilder) Layers(ll *IDList) *GroupBuilder {
+func (b *GroupBuilder) Layers(ll *LayerIDList) *GroupBuilder {
 	b.l.layers = ll
 	return b
 }
@@ -102,7 +104,7 @@ func (b *GroupBuilder) Infobox(infobox *Infobox) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) LinkedDatasetSchema(linkedDatasetSchema *DatasetSchemaID) *GroupBuilder {
+func (b *GroupBuilder) LinkedDatasetSchema(linkedDatasetSchema *id.DatasetSchemaID) *GroupBuilder {
 	b.l.linkedDatasetSchema = linkedDatasetSchema.CloneRef()
 	return b
 }

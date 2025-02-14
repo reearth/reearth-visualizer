@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/reearth/reearth/server/pkg/czml"
-	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 )
 
@@ -33,7 +33,7 @@ func (e *CZMLEncoder) stringToCZMLColor(s string) *czml.Color {
 }
 
 func (e *CZMLEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*czml.Feature, error) {
-	if li.PluginID == nil || !layer.OfficialPluginID.Equal(*li.PluginID) {
+	if li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, nil
 	}
 

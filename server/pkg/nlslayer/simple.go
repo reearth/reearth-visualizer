@@ -2,7 +2,6 @@ package nlslayer
 
 import (
 	"github.com/reearth/reearth/server/pkg/id"
-	pl "github.com/reearth/reearth/server/pkg/layer"
 )
 
 type NLSLayerSimple struct {
@@ -32,7 +31,7 @@ func (l *NLSLayerSimple) Scene() id.SceneID {
 	return l.layerBase.scene
 }
 
-func (l *NLSLayerSimple) LinkedDataset() *pl.DatasetID {
+func (l *NLSLayerSimple) LinkedDataset() *id.DatasetID {
 	return nil
 }
 

@@ -48,7 +48,7 @@ var (
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
-	rootLayerID = layer.NewID()
+	rootLayerID = id.NewLayerID()
 
 	storyID = id.NewStoryID()
 	pageID  = id.NewPageID()

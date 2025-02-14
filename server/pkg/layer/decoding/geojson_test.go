@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -159,7 +159,7 @@ const geojsonmock = `{
 
 func TestGeoJSONDecoder_Decode(t *testing.T) {
 	r := strings.NewReader(geojsonmock)
-	s := layer.NewSceneID()
+	s := id.NewSceneID()
 	p := NewGeoJSONDecoder(r, s)
 	result, err := p.Decode()
 	assert.NoError(t, err)

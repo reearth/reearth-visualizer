@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -11,19 +12,19 @@ import (
 
 func TestMergeLayer(t *testing.T) {
 	// ids
-	scene := layer.NewSceneID()
-	dataset1 := layer.NewDatasetID()
+	scene := id.NewSceneID()
+	dataset1 := id.NewDatasetID()
 	ps := property.MustSchemaID("xxx~1.1.1/aa")
-	p := layer.MustPluginID("xxx~1.1.1")
-	e := layer.PluginExtensionID("foo")
+	p := id.MustPluginID("xxx~1.1.1")
+	e := id.PluginExtensionID("foo")
 	itemProperty := property.NewID()
 	groupProperty := property.NewID()
 	ib1pr := property.NewID()
 	ib2pr := property.NewID()
 	fpr := property.NewID()
-	l1 := layer.NewID()
-	l2 := layer.NewID()
-	l1if1 := layer.NewInfoboxFieldID()
+	l1 := id.NewLayerID()
+	l2 := id.NewLayerID()
+	l1if1 := id.NewInfoboxFieldID()
 
 	// property loader
 	ploader := property.LoaderFrom([]*property.Property{
@@ -51,7 +52,7 @@ func TestMergeLayer(t *testing.T) {
 			Infobox(layer.NewInfobox([]*layer.InfoboxField{
 				layer.NewInfoboxField().ID(l1if1).Plugin(p).Extension(e).Property(fpr).MustBuild(),
 			}, ib2pr)).
-			Layers(layer.NewIDList([]layer.ID{l1})).
+			Layers(layer.NewIDList([]id.LayerID{l1})).
 			IsVisible(false).
 			MustBuild(),
 	})

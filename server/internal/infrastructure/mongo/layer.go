@@ -64,7 +64,7 @@ func (r *Layer) FindByID(ctx context.Context, id id.LayerID) (layer.Layer, error
 	})
 }
 
-func (r *Layer) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.List, error) {
+func (r *Layer) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.LayerList, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -82,7 +82,7 @@ func (r *Layer) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.List, 
 	return filterLayers(ids, res), nil
 }
 
-func (r *Layer) FindAllByDatasetSchema(ctx context.Context, dsid id.DatasetSchemaID) (layer.List, error) {
+func (r *Layer) FindAllByDatasetSchema(ctx context.Context, dsid id.DatasetSchemaID) (layer.LayerList, error) {
 	return r.find(ctx, nil, bson.M{
 		"group.linkeddatasetschema": dsid.String(),
 	})
@@ -141,7 +141,7 @@ func (r *Layer) FindParentsByIDs(ctx context.Context, ids id.LayerIDList) (layer
 	})
 }
 
-func (r *Layer) FindByPluginAndExtension(ctx context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.List, error) {
+func (r *Layer) FindByPluginAndExtension(ctx context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.LayerList, error) {
 	filter := bson.M{
 		"plugin": pid.String(),
 	}
@@ -151,7 +151,7 @@ func (r *Layer) FindByPluginAndExtension(ctx context.Context, pid id.PluginID, e
 	return r.find(ctx, nil, filter)
 }
 
-func (r *Layer) FindByPluginAndExtensionOfBlocks(ctx context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.List, error) {
+func (r *Layer) FindByPluginAndExtensionOfBlocks(ctx context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.LayerList, error) {
 	filter := bson.M{
 		"infobox.fields.plugin": pid.String(),
 	}
@@ -177,7 +177,7 @@ func (r *Layer) FindParentByID(ctx context.Context, id id.LayerID) (*layer.Group
 	})
 }
 
-func (r *Layer) FindByScene(ctx context.Context, id id.SceneID) (layer.List, error) {
+func (r *Layer) FindByScene(ctx context.Context, id id.SceneID) (layer.LayerList, error) {
 	if !r.f.CanRead(id) {
 		return nil, nil
 	}
@@ -186,7 +186,7 @@ func (r *Layer) FindByScene(ctx context.Context, id id.SceneID) (layer.List, err
 	})
 }
 
-func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID) (layer.List, error) {
+func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID) (layer.LayerList, error) {
 	return r.find(ctx, nil, bson.M{
 		"$or": []bson.M{
 			{"tags.id": tagID.String()},
@@ -215,7 +215,7 @@ func (r *Layer) Save(ctx context.Context, layer layer.Layer) error {
 	return r.client.SaveOne(ctx, id, doc)
 }
 
-func (r *Layer) SaveAll(ctx context.Context, layers layer.List) error {
+func (r *Layer) SaveAll(ctx context.Context, layers layer.LayerList) error {
 	if len(layers) == 0 {
 		return nil
 	}
@@ -269,7 +269,7 @@ func (r *Layer) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 	return nil
 }
 
-func (r *Layer) find(ctx context.Context, dst layer.List, filter interface{}) (layer.List, error) {
+func (r *Layer) find(ctx context.Context, dst layer.LayerList, filter interface{}) (layer.LayerList, error) {
 	c := mongodoc.NewLayerConsumer(r.f.Readable)
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
@@ -315,7 +315,7 @@ func (r *Layer) findItems(ctx context.Context, dst layer.ItemList, filter interf
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	return layer.List(lo.ToSlicePtr(c.Result)).ToLayerItemList(), nil
+	return layer.LayerList(lo.ToSlicePtr(c.Result)).ToLayerItemList(), nil
 }
 
 func (r *Layer) findGroups(ctx context.Context, dst layer.GroupList, filter interface{}) (layer.GroupList, error) {
@@ -323,7 +323,7 @@ func (r *Layer) findGroups(ctx context.Context, dst layer.GroupList, filter inte
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	return layer.List(lo.ToSlicePtr(c.Result)).ToLayerGroupList(), nil
+	return layer.LayerList(lo.ToSlicePtr(c.Result)).ToLayerGroupList(), nil
 }
 
 func filterLayers(ids []id.LayerID, rows []*layer.Layer) []*layer.Layer {

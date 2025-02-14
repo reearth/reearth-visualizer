@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -14,7 +15,7 @@ import (
 var _ Encoder = (*KMLEncoder)(nil)
 
 func TestKMLEncoder_Encode(t *testing.T) {
-	lid := layer.MustID("01fmph48ykj1nd82r8e4znh6a6")
+	lid := id.MustLayerID("01fmph48ykj1nd82r8e4znh6a6")
 
 	tests := []struct {
 		name   string
@@ -27,10 +28,10 @@ func TestKMLEncoder_Encode(t *testing.T) {
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
 						Original:    lid,
-						Scene:       layer.NewSceneID(),
+						Scene:       id.NewSceneID(),
 						Name:        "test",
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("marker").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -112,10 +113,10 @@ func TestKMLEncoder_Encode(t *testing.T) {
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
 						Original:    lid,
-						Scene:       layer.NewSceneID(),
+						Scene:       id.NewSceneID(),
 						Name:        "test",
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -216,10 +217,10 @@ func TestKMLEncoder_Encode(t *testing.T) {
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
 						Original:    lid,
-						Scene:       layer.NewSceneID(),
+						Scene:       id.NewSceneID(),
 						Name:        "test",
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

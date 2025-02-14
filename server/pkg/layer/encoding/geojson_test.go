@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -25,11 +26,11 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 			target: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    layer.NewID(),
-						Scene:       layer.NewSceneID(),
+						Original:    id.NewLayerID(),
+						Scene:       id.NewSceneID(),
 						Name:        "test",
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("marker").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -81,11 +82,11 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 			target: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    layer.NewID(),
-						Scene:       layer.NewSceneID(),
+						Original:    id.NewLayerID(),
+						Scene:       id.NewSceneID(),
 						Name:        "test",
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -158,11 +159,11 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 			target: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    layer.NewID(),
-						Scene:       layer.NewSceneID(),
+						Original:    id.NewLayerID(),
+						Scene:       id.NewSceneID(),
 						Name:        "test",
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

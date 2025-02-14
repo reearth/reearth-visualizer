@@ -50,11 +50,11 @@ func (r *Layer) FindByID(ctx context.Context, id id.LayerID) (layer.Layer, error
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Layer) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.List, error) {
+func (r *Layer) FindByIDs(ctx context.Context, ids id.LayerIDList) (layer.LayerList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	result := layer.List{}
+	result := layer.LayerList{}
 	for _, id := range ids {
 		if d, ok := r.data[id]; ok && r.f.CanRead(d.Scene()) {
 			result = append(result, &d)
@@ -163,11 +163,11 @@ func (r *Layer) FindParentsByIDs(_ context.Context, ids id.LayerIDList) (layer.G
 	return res, nil
 }
 
-func (r *Layer) FindByPluginAndExtension(_ context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.List, error) {
+func (r *Layer) FindByPluginAndExtension(_ context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.LayerList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	res := layer.List{}
+	res := layer.LayerList{}
 	for _, l := range r.data {
 		l := l
 		if r.f.CanRead(l.Scene()) && l.Plugin() != nil && l.Plugin().Equal(pid) {
@@ -181,11 +181,11 @@ func (r *Layer) FindByPluginAndExtension(_ context.Context, pid id.PluginID, eid
 	return res, nil
 }
 
-func (r *Layer) FindByPluginAndExtensionOfBlocks(_ context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.List, error) {
+func (r *Layer) FindByPluginAndExtensionOfBlocks(_ context.Context, pid id.PluginID, eid *id.PluginExtensionID) (layer.LayerList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	res := layer.List{}
+	res := layer.LayerList{}
 	for _, l := range r.data {
 		l := l
 		if !r.f.CanRead(l.Scene()) || len(l.Infobox().FieldsByPlugin(pid, eid)) == 0 {
@@ -236,7 +236,7 @@ func (r *Layer) FindParentByID(ctx context.Context, id id.LayerID) (*layer.Group
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List, error) {
+func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.LayerList, error) {
 	if !r.f.CanRead(sceneID) {
 		return nil, nil
 	}
@@ -244,7 +244,7 @@ func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	res := layer.List{}
+	res := layer.LayerList{}
 	for _, l := range r.data {
 		l := l
 		if l.Scene() == sceneID {
@@ -254,11 +254,11 @@ func (r *Layer) FindByScene(ctx context.Context, sceneID id.SceneID) (layer.List
 	return res, nil
 }
 
-func (r *Layer) FindAllByDatasetSchema(ctx context.Context, datasetSchemaID id.DatasetSchemaID) (layer.List, error) {
+func (r *Layer) FindAllByDatasetSchema(ctx context.Context, datasetSchemaID id.DatasetSchemaID) (layer.LayerList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	res := layer.List{}
+	res := layer.LayerList{}
 	for _, l := range r.data {
 		l := l
 		if d := layer.ToLayerGroup(l).LinkedDatasetSchema(); d != nil && *d == datasetSchemaID && r.f.CanRead(l.Scene()) {
@@ -268,11 +268,11 @@ func (r *Layer) FindAllByDatasetSchema(ctx context.Context, datasetSchemaID id.D
 	return res, nil
 }
 
-func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID) (layer.List, error) {
+func (r *Layer) FindByTag(ctx context.Context, tagID id.TagID) (layer.LayerList, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	var res layer.List
+	var res layer.LayerList
 	for _, l := range r.data {
 		l := l
 		if l.Tags().Has(tagID) && r.f.CanRead(l.Scene()) {
@@ -313,7 +313,7 @@ func (r *Layer) Save(ctx context.Context, l layer.Layer) error {
 	return nil
 }
 
-func (r *Layer) SaveAll(ctx context.Context, ll layer.List) error {
+func (r *Layer) SaveAll(ctx context.Context, ll layer.LayerList) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

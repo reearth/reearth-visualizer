@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -10,19 +11,19 @@ import (
 func TestInitializer_Clone(t *testing.T) {
 	isVisible := false
 	i := &Initializer{
-		ID:         NewID().Ref(),
-		Plugin:     MustPluginID("reearth").Ref(),
-		Extension:  PluginExtensionID("marker").Ref(),
+		ID:         id.NewLayerID().Ref(),
+		Plugin:     id.MustPluginID("reearth").Ref(),
+		Extension:  id.PluginExtensionID("marker").Ref(),
 		Name:       "hoge",
 		Infobox:    &InitializerInfobox{},
-		PropertyID: NewPropertyID().Ref(),
+		PropertyID: id.NewPropertyID().Ref(),
 		Property: &property.Initializer{
-			ID: NewPropertyID().Ref(),
+			ID: id.NewPropertyID().Ref(),
 		},
 		Layers:              []*Initializer{{}},
 		IsVisible:           &isVisible,
-		LinkedDatasetSchema: NewDatasetSchemaID().Ref(),
-		LinkedDataset:       NewDatasetID().Ref(),
+		LinkedDatasetSchema: id.NewDatasetSchemaID().Ref(),
+		LinkedDataset:       id.NewDatasetID().Ref(),
 	}
 
 	actual := i.Clone()
@@ -43,24 +44,24 @@ func TestInitializer_Clone(t *testing.T) {
 }
 
 func TestInitializer_Layer(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	isVisible := false
 	i := &Initializer{
-		ID:        NewID().Ref(),
-		Plugin:    MustPluginID("reearth").Ref(),
-		Extension: PluginExtensionID("marker").Ref(),
+		ID:        id.NewLayerID().Ref(),
+		Plugin:    id.MustPluginID("reearth").Ref(),
+		Extension: id.PluginExtensionID("marker").Ref(),
 		Name:      "hoge",
 		Infobox: &InitializerInfobox{
-			PropertyID: NewPropertyID().Ref(),
+			PropertyID: id.NewPropertyID().Ref(),
 		},
-		PropertyID:          NewPropertyID().Ref(),
+		PropertyID:          id.NewPropertyID().Ref(),
 		IsVisible:           &isVisible,
-		LinkedDatasetSchema: NewDatasetSchemaID().Ref(),
-		LinkedDataset:       NewDatasetID().Ref(),
+		LinkedDatasetSchema: id.NewDatasetSchemaID().Ref(),
+		LinkedDataset:       id.NewDatasetID().Ref(),
 		Layers: []*Initializer{{
-			ID: NewID().Ref(),
+			ID: id.NewLayerID().Ref(),
 			Layers: []*Initializer{{
-				ID: NewID().Ref(),
+				ID: id.NewLayerID().Ref(),
 			}},
 		}},
 	}
@@ -75,10 +76,10 @@ func TestInitializer_Layer(t *testing.T) {
 		Infobox(NewInfobox(nil, *i.Infobox.PropertyID)).
 		Property(i.PropertyID).
 		Group().
-		Layers(NewIDList([]ID{*i.Layers[0].ID})).
+		Layers(NewIDList([]id.LayerID{*i.Layers[0].ID})).
 		LinkedDatasetSchema(i.LinkedDatasetSchema).
 		MustBuild()
-	expected2 := New().ID(*i.Layers[0].ID).Scene(sid).Group().Layers(NewIDList([]ID{*i.Layers[0].Layers[0].ID})).MustBuild()
+	expected2 := New().ID(*i.Layers[0].ID).Scene(sid).Group().Layers(NewIDList([]id.LayerID{*i.Layers[0].Layers[0].ID})).MustBuild()
 	expected3 := New().ID(*i.Layers[0].Layers[0].ID).Scene(sid).Item().MustBuild()
 
 	actual, err := i.Layer(sid)
@@ -98,15 +99,15 @@ func TestInitializer_Layer(t *testing.T) {
 
 func TestInitializerInfobox_Clone(t *testing.T) {
 	i := &InitializerInfobox{
-		PropertyID: NewPropertyID().Ref(),
+		PropertyID: id.NewPropertyID().Ref(),
 		Property: &property.Initializer{
-			ID: NewPropertyID().Ref(),
+			ID: id.NewPropertyID().Ref(),
 		},
 		Fields: []*InitializerInfoboxField{{
-			ID:         NewInfoboxFieldID().Ref(),
-			Plugin:     MustPluginID("reearth"),
-			Extension:  PluginExtensionID("marker"),
-			PropertyID: NewPropertyID().Ref(),
+			ID:         id.NewInfoboxFieldID().Ref(),
+			Plugin:     id.MustPluginID("reearth"),
+			Extension:  id.PluginExtensionID("marker"),
+			PropertyID: id.NewPropertyID().Ref(),
 		}},
 	}
 
@@ -120,14 +121,14 @@ func TestInitializerInfobox_Clone(t *testing.T) {
 }
 
 func TestInitializerInfobox_Infobox(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	i := &InitializerInfobox{
-		PropertyID: NewPropertyID().Ref(),
+		PropertyID: id.NewPropertyID().Ref(),
 		Fields: []*InitializerInfoboxField{{
-			ID:         NewInfoboxFieldID().Ref(),
-			Plugin:     MustPluginID("reearth"),
-			Extension:  PluginExtensionID("marker"),
-			PropertyID: NewPropertyID().Ref(),
+			ID:         id.NewInfoboxFieldID().Ref(),
+			Plugin:     id.MustPluginID("reearth"),
+			Extension:  id.PluginExtensionID("marker"),
+			PropertyID: id.NewPropertyID().Ref(),
 		}},
 	}
 
@@ -147,12 +148,12 @@ func TestInitializerInfobox_Infobox(t *testing.T) {
 
 func TestInitializerInfoboxField_Clone(t *testing.T) {
 	i := &InitializerInfoboxField{
-		ID:         NewInfoboxFieldID().Ref(),
-		Plugin:     MustPluginID("reearth"),
-		Extension:  PluginExtensionID("marker"),
-		PropertyID: NewPropertyID().Ref(),
+		ID:         id.NewInfoboxFieldID().Ref(),
+		Plugin:     id.MustPluginID("reearth"),
+		Extension:  id.PluginExtensionID("marker"),
+		PropertyID: id.NewPropertyID().Ref(),
 		Property: &property.Initializer{
-			ID: NewPropertyID().Ref(),
+			ID: id.NewPropertyID().Ref(),
 		},
 	}
 
@@ -165,12 +166,12 @@ func TestInitializerInfoboxField_Clone(t *testing.T) {
 }
 
 func TestInitializerInfoboxField_InfoboxField(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	i := &InitializerInfoboxField{
-		ID:         NewInfoboxFieldID().Ref(),
-		Plugin:     MustPluginID("reearth"),
-		Extension:  PluginExtensionID("marker"),
-		PropertyID: NewPropertyID().Ref(),
+		ID:         id.NewInfoboxFieldID().Ref(),
+		Plugin:     id.MustPluginID("reearth"),
+		Extension:  id.PluginExtensionID("marker"),
+		PropertyID: id.NewPropertyID().Ref(),
 	}
 
 	expected := NewInfoboxField().ID(*i.ID).Plugin(i.Plugin).Extension(i.Extension).Property(*i.PropertyID).MustBuild()

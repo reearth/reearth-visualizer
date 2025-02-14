@@ -263,7 +263,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		representativeFieldID := schema.RepresentativeFieldID()
 		removedProperties := []id.PropertyID{}
 		removedLayers := []id.LayerID{}
-		updatedLayers := append(layer.List{}, layerGroups.ToLayerList()...)
+		updatedLayers := append(layer.LayerList{}, layerGroups.ToLayerList()...)
 
 		for _, lg := range layerGroups {
 			if lg.Layers().LayerCount() > 0 {

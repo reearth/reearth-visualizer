@@ -25,5 +25,5 @@ func TestLayer_FindByTag(t *testing.T) {
 
 	out, err := repo.FindByTag(ctx, t1.ID())
 	assert.NoError(t, err)
-	assert.Equal(t, layer.List{lg.LayerRef()}, out)
+	assert.Equal(t, layer.LayerList{lg.LayerRef()}, out)
 }

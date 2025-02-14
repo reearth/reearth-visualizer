@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -17,7 +18,7 @@ var (
 )
 
 type InitializerResult struct {
-	Root       ID
+	Root       id.LayerID
 	Layers     Map
 	Properties property.Map
 }
@@ -39,18 +40,18 @@ func (r InitializerResult) RootLayerItem() *Item {
 }
 
 type Initializer struct {
-	ID                  *ID                   `json:"id"`
-	Plugin              *PluginID             `json:"plugin"`
-	Extension           *PluginExtensionID    `json:"extension"`
+	ID                  *id.LayerID           `json:"id"`
+	Plugin              *id.PluginID          `json:"plugin"`
+	Extension           *id.PluginExtensionID `json:"extension"`
 	Name                string                `json:"name"`
 	Infobox             *InitializerInfobox   `json:"infobox"`
-	PropertyID          *PropertyID           `json:"propertyId"`
+	PropertyID          *id.PropertyID        `json:"propertyId"`
 	Property            *property.Initializer `json:"property"`
 	Layers              []*Initializer        `json:"layers"`
-	LayerIDs            []ID                  `json:"layerIds"`
+	LayerIDs            []id.LayerID          `json:"layerIds"`
 	IsVisible           *bool                 `json:"isVisible"`
-	LinkedDatasetSchema *DatasetSchemaID      `json:"linkedDatasetSchema"`
-	LinkedDataset       *DatasetID            `json:"linkedDataset"`
+	LinkedDatasetSchema *id.DatasetSchemaID   `json:"linkedDatasetSchema"`
+	LinkedDataset       *id.DatasetID         `json:"linkedDataset"`
 }
 
 func (i *Initializer) Clone() *Initializer {
@@ -72,9 +73,9 @@ func (i *Initializer) Clone() *Initializer {
 		}
 	}
 
-	var layerIDs []ID
+	var layerIDs []id.LayerID
 	if len(i.LayerIDs) > 0 {
-		layerIDs = append([]ID{}, i.LayerIDs...)
+		layerIDs = append([]id.LayerID{}, i.LayerIDs...)
 	}
 
 	return &Initializer{
@@ -93,7 +94,7 @@ func (i *Initializer) Clone() *Initializer {
 	}
 }
 
-func (i *Initializer) Layer(sid SceneID) (r InitializerResult, err error) {
+func (i *Initializer) Layer(sid id.SceneID) (r InitializerResult, err error) {
 	if i == nil {
 		return
 	}
@@ -107,7 +108,7 @@ func (i *Initializer) Layer(sid SceneID) (r InitializerResult, err error) {
 
 	lid := i.ID
 	if i.ID == nil {
-		lid = NewID().Ref()
+		lid = id.NewLayerID().Ref()
 	}
 
 	pid := i.PropertyID
@@ -165,7 +166,7 @@ func (i *Initializer) Layer(sid SceneID) (r InitializerResult, err error) {
 	return
 }
 
-func (i *Initializer) MustBeLayer(sid SceneID) InitializerResult {
+func (i *Initializer) MustBeLayer(sid id.SceneID) InitializerResult {
 	r, err := i.Layer(sid)
 	if err != nil {
 		panic(err)
@@ -174,7 +175,7 @@ func (i *Initializer) MustBeLayer(sid SceneID) InitializerResult {
 }
 
 type InitializerInfobox struct {
-	PropertyID *PropertyID                `json:"propertyId"`
+	PropertyID *id.PropertyID             `json:"propertyId"`
 	Property   *property.Initializer      `json:"property"`
 	Fields     []*InitializerInfoboxField `json:"fields"`
 }
@@ -199,7 +200,7 @@ func (i *InitializerInfobox) Clone() *InitializerInfobox {
 	}
 }
 
-func (i *InitializerInfobox) Infobox(scene SceneID) (*Infobox, property.Map, error) {
+func (i *InitializerInfobox) Infobox(scene id.SceneID) (*Infobox, property.Map, error) {
 	if i == nil {
 		return nil, nil, nil
 	}
@@ -239,10 +240,10 @@ func (i *InitializerInfobox) Infobox(scene SceneID) (*Infobox, property.Map, err
 }
 
 type InitializerInfoboxField struct {
-	ID         *InfoboxFieldID       `json:"id"`
-	Plugin     PluginID              `json:"plugin"`
-	Extension  PluginExtensionID     `json:"extension"`
-	PropertyID *PropertyID           `json:"propertyId"`
+	ID         *id.InfoboxFieldID    `json:"id"`
+	Plugin     id.PluginID           `json:"plugin"`
+	Extension  id.PluginExtensionID  `json:"extension"`
+	PropertyID *id.PropertyID        `json:"propertyId"`
 	Property   *property.Initializer `json:"property"`
 }
 
@@ -260,16 +261,16 @@ func (i *InitializerInfoboxField) Clone() *InitializerInfoboxField {
 	}
 }
 
-func (i *InitializerInfoboxField) InfoboxField(scene SceneID) (*InfoboxField, *property.Property, error) {
+func (i *InitializerInfoboxField) InfoboxField(scene id.SceneID) (*InfoboxField, *property.Property, error) {
 	if i == nil {
 		return nil, nil, nil
 	}
 
-	psid := NewPropertySchemaID(i.Plugin, i.Extension.String())
+	psid := id.NewPropertySchemaID(i.Plugin, i.Extension.String())
 
 	fid := i.ID
 	if i.ID == nil {
-		fid = NewInfoboxFieldID().Ref()
+		fid = id.NewInfoboxFieldID().Ref()
 	}
 
 	pid := i.PropertyID

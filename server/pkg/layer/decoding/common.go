@@ -7,8 +7,8 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/kml"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -18,10 +18,10 @@ var (
 )
 
 var (
-	extensions = map[string]layer.PluginExtensionID{
-		"Point":    layer.PluginExtensionID("marker"),
-		"Polygon":  layer.PluginExtensionID("polygon"),
-		"Polyline": layer.PluginExtensionID("polyline"),
+	extensions = map[string]id.PluginExtensionID{
+		"Point":    id.PluginExtensionID("marker"),
+		"Polygon":  id.PluginExtensionID("polygon"),
+		"Polyline": id.PluginExtensionID("polyline"),
 	}
 	propertySchemas = map[string]property.SchemaID{
 		"Point":    property.MustSchemaID("reearth/marker"),
@@ -74,7 +74,7 @@ func rgbafToHex(rgbaf []float64) (string, error) {
 	return rgbaToHex(rgba)
 }
 
-func MustCreateProperty(t string, v interface{}, sceneID layer.SceneID, styleItem interface{}, extension string) *property.Property {
+func MustCreateProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) *property.Property {
 	p, err := createProperty(t, v, sceneID, styleItem, extension)
 	if err != nil {
 		panic(err)
@@ -82,7 +82,7 @@ func MustCreateProperty(t string, v interface{}, sceneID layer.SceneID, styleIte
 	return p
 }
 
-func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
+func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
 	propertySchema := propertySchemas[t]
 	item := propertyItems
 	field := propertyFields[t]
@@ -130,7 +130,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 			switch extension {
 			case "kml":
 				s, ok := styleItem.(kml.Style)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 				if s.IconStyle.Icon != nil && len(s.IconStyle.Icon.Href) > 0 {
@@ -221,7 +221,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 			switch extension {
 			case "kml":
 				s, ok := styleItem.(kml.Style)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 				if s.PolyStyle.Stroke {
@@ -282,7 +282,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 
 			case "czml":
 				s, ok := styleItem.(*czml.Polygon)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 				if s.Stroke {
@@ -370,7 +370,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 				}
 			case "geojson":
 				s, ok := styleItem.(GeoStyle)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 
@@ -421,7 +421,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 			switch extension {
 			case "kml":
 				s, ok := styleItem.(kml.Style)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 
@@ -450,7 +450,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 				}
 			case "czml":
 				s, ok := styleItem.(*czml.Polyline)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 
@@ -497,7 +497,7 @@ func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem in
 				}
 			case "geojson":
 				s, ok := styleItem.(GeoStyle)
-				if !ok && styleItem != nil {
+				if !ok {
 					return nil, ErrFieldType
 				}
 

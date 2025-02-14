@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -10,9 +11,9 @@ var _ Tag = &TagItem{}
 var _ Tag = &TagGroup{}
 
 func TestNewTagItem(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 	type args struct {
-		t TagID
+		t id.TagID
 	}
 
 	tests := []struct {
@@ -27,7 +28,7 @@ func TestNewTagItem(t *testing.T) {
 		},
 		{
 			name: "nil id",
-			args: args{t: TagID{}},
+			args: args{t: id.TagID{}},
 			want: nil,
 		},
 	}
@@ -42,7 +43,7 @@ func TestNewTagItem(t *testing.T) {
 }
 
 func TestTagItemFrom(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 	type args struct {
 		t Tag
 	}
@@ -89,12 +90,12 @@ func TestTagItemFrom(t *testing.T) {
 }
 
 func TestTagItem_ID(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 
 	tests := []struct {
 		name   string
 		target *TagItem
-		want   TagID
+		want   id.TagID
 	}{
 		{
 			name:   "ok",
@@ -104,7 +105,7 @@ func TestTagItem_ID(t *testing.T) {
 		{
 			name:   "nil",
 			target: nil,
-			want:   TagID{},
+			want:   id.TagID{},
 		},
 	}
 
@@ -118,7 +119,7 @@ func TestTagItem_ID(t *testing.T) {
 }
 
 func TestTagItem_Clone(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -148,7 +149,7 @@ func TestTagItem_Clone(t *testing.T) {
 }
 
 func TestTagItem_CloneItem(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -178,12 +179,12 @@ func TestTagItem_CloneItem(t *testing.T) {
 }
 
 func TestNewTagGroup(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
-		t        TagID
+		t        id.TagID
 		children []*TagItem
 	}
 
@@ -211,7 +212,7 @@ func TestNewTagGroup(t *testing.T) {
 		},
 		{
 			name: "nil id",
-			args: args{t: TagID{}},
+			args: args{t: id.TagID{}},
 			want: nil,
 		},
 	}
@@ -226,7 +227,7 @@ func TestNewTagGroup(t *testing.T) {
 }
 
 func TestTagGroupFrom(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 	type args struct {
 		t Tag
 	}
@@ -273,12 +274,12 @@ func TestTagGroupFrom(t *testing.T) {
 }
 
 func TestTagGroup_ID(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 
 	tests := []struct {
 		name   string
 		target *TagGroup
-		want   TagID
+		want   id.TagID
 	}{
 		{
 			name:   "ok",
@@ -288,7 +289,7 @@ func TestTagGroup_ID(t *testing.T) {
 		{
 			name:   "nil",
 			target: nil,
-			want:   TagID{},
+			want:   id.TagID{},
 		},
 	}
 
@@ -302,8 +303,8 @@ func TestTagGroup_ID(t *testing.T) {
 }
 
 func TestTagGroup_Children(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -336,12 +337,12 @@ func TestTagGroup_Children(t *testing.T) {
 }
 
 func TestTagGroup_Find(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
-		ti TagID
+		ti id.TagID
 	}
 
 	tests := []struct {
@@ -381,9 +382,9 @@ func TestTagGroup_Find(t *testing.T) {
 }
 
 func TestTagGroup_Add(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
 		ti *TagItem
@@ -435,12 +436,12 @@ func TestTagGroup_Add(t *testing.T) {
 }
 
 func TestTagGroup_Delete(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
-		ti TagID
+		ti id.TagID
 	}
 
 	tests := []struct {
@@ -483,8 +484,8 @@ func TestTagGroup_Delete(t *testing.T) {
 }
 
 func TestTagGroup_Clone(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -514,8 +515,8 @@ func TestTagGroup_Clone(t *testing.T) {
 }
 
 func TestTagGroup_CloneGroup(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -548,7 +549,7 @@ func TestTagGroup_CloneGroup(t *testing.T) {
 }
 
 func TestNewTagList(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 
 	type args struct {
 		tags []Tag
@@ -583,9 +584,9 @@ func TestNewTagList(t *testing.T) {
 }
 
 func TestTagList_Tags(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -620,9 +621,9 @@ func TestTagList_Tags(t *testing.T) {
 }
 
 func TestTagList_Add(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
 		ti Tag
@@ -712,13 +713,13 @@ func TestTagList_Add(t *testing.T) {
 }
 
 func TestTagList_Delete(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
-	tag4 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
+	tag4 := id.NewTagID()
 
 	type args struct {
-		ti TagID
+		ti id.TagID
 	}
 
 	tests := []struct {
@@ -776,13 +777,13 @@ func TestTagList_Delete(t *testing.T) {
 }
 
 func TestTagList_Find(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
-	tag4 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
+	tag4 := id.NewTagID()
 
 	type args struct {
-		ti TagID
+		ti id.TagID
 	}
 
 	tests := []struct {
@@ -861,12 +862,12 @@ func TestTagList_Find(t *testing.T) {
 }
 
 func TestTagList_FindGroup(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
-		ti TagID
+		ti id.TagID
 	}
 
 	tests := []struct {
@@ -915,12 +916,12 @@ func TestTagList_FindGroup(t *testing.T) {
 }
 
 func TestTagList_FindItem(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	type args struct {
-		ti TagID
+		ti id.TagID
 	}
 
 	tests := []struct {
@@ -980,9 +981,9 @@ func TestTagList_FindItem(t *testing.T) {
 }
 
 func TestTagList_RootItems(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -1030,7 +1031,7 @@ func TestTagList_RootItems(t *testing.T) {
 }
 
 func TestTagList_IsEmpty(t *testing.T) {
-	tag := NewTagID()
+	tag := id.NewTagID()
 
 	tests := []struct {
 		name   string
@@ -1066,9 +1067,9 @@ func TestTagList_IsEmpty(t *testing.T) {
 }
 
 func TestTagList_Clone(t *testing.T) {
-	tag1 := NewTagID()
-	tag2 := NewTagID()
-	tag3 := NewTagID()
+	tag1 := id.NewTagID()
+	tag2 := id.NewTagID()
+	tag3 := id.NewTagID()
 
 	tests := []struct {
 		name   string

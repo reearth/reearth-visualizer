@@ -23,7 +23,7 @@ type PluginMigrator struct {
 
 type MigratePluginsResult struct {
 	Scene             *scene.Scene
-	Layers            layer.List
+	Layers            layer.LayerList
 	Properties        []*property.Property
 	RemovedProperties property.IDList
 }
@@ -63,7 +63,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		return MigratePluginsResult{}, err
 	}
 
-	modifiedLayers := layer.List{}
+	modifiedLayers := layer.LayerList{}
 	propertyIDs := property.IDList{}
 	removedPropertyIDs := property.IDList{}
 

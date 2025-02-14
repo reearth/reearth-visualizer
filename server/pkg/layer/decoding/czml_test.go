@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -86,7 +86,7 @@ const (
 func TestCZMLDecoder_Decode(t *testing.T) {
 	r := strings.NewReader(czmlmock)
 	d := json.NewDecoder(r)
-	s := layer.NewSceneID()
+	s := id.NewSceneID()
 	p := NewCZMLDecoder(d, s)
 	result, err := p.Decode()
 	assert.NoError(t, err)

@@ -1,24 +1,26 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type TagList struct {
 	tags []Tag
 }
 
 type Tag interface {
-	ID() TagID
+	ID() id.TagID
 	Clone() Tag
 }
 
 type TagItem struct {
-	id TagID
+	id id.TagID
 }
 
 type TagGroup struct {
-	id       TagID
+	id       id.TagID
 	children []*TagItem
 }
 
-func NewTagItem(t TagID) *TagItem {
+func NewTagItem(t id.TagID) *TagItem {
 	if t.IsNil() {
 		return nil
 	}
@@ -27,9 +29,9 @@ func NewTagItem(t TagID) *TagItem {
 	}
 }
 
-func (t *TagItem) ID() TagID {
+func (t *TagItem) ID() id.TagID {
 	if t == nil {
-		return TagID{}
+		return id.TagID{}
 	}
 	return t.id
 }
@@ -50,7 +52,7 @@ func (t *TagItem) CloneItem() *TagItem {
 	return NewTagItem(t.id)
 }
 
-func NewTagGroup(t TagID, children []*TagItem) *TagGroup {
+func NewTagGroup(t id.TagID, children []*TagItem) *TagGroup {
 	if t.IsNil() {
 		return nil
 	}
@@ -65,9 +67,9 @@ func TagGroupFrom(t Tag) *TagGroup {
 	return t2
 }
 
-func (t *TagGroup) ID() TagID {
+func (t *TagGroup) ID() id.TagID {
 	if t == nil {
-		return TagID{}
+		return id.TagID{}
 	}
 	return t.id
 }
@@ -79,7 +81,7 @@ func (t *TagGroup) Children() []*TagItem {
 	return append(t.children[:0:0], t.children...)
 }
 
-func (t *TagGroup) Find(ti TagID) *TagItem {
+func (t *TagGroup) Find(ti id.TagID) *TagItem {
 	if t == nil {
 		return nil
 	}
@@ -99,7 +101,7 @@ func (t *TagGroup) Add(ti *TagItem) bool {
 	return true
 }
 
-func (t *TagGroup) Delete(ti TagID) (res bool) {
+func (t *TagGroup) Delete(ti id.TagID) (res bool) {
 	if t == nil {
 		return
 	}
@@ -144,7 +146,7 @@ func (t *TagList) Add(ti Tag) bool {
 	return true
 }
 
-func (t *TagList) Delete(ti TagID) (res bool) {
+func (t *TagList) Delete(ti id.TagID) (res bool) {
 	if t == nil {
 		return
 	}
@@ -161,12 +163,12 @@ func (t *TagList) Delete(ti TagID) (res bool) {
 	return
 }
 
-func (t *TagList) Has(ti TagID) bool {
+func (t *TagList) Has(ti id.TagID) bool {
 	g, i := t.Find(ti)
 	return g != nil || i != nil
 }
 
-func (t *TagList) Find(ti TagID) (*TagGroup, *TagItem) {
+func (t *TagList) Find(ti id.TagID) (*TagGroup, *TagItem) {
 	if t == nil {
 		return nil, nil
 	}
@@ -182,12 +184,12 @@ func (t *TagList) Find(ti TagID) (*TagGroup, *TagItem) {
 	return nil, nil
 }
 
-func (t *TagList) FindItem(ti TagID) *TagItem {
+func (t *TagList) FindItem(ti id.TagID) *TagItem {
 	_, i := t.Find(ti)
 	return i
 }
 
-func (t *TagList) FindGroup(ti TagID) *TagGroup {
+func (t *TagList) FindGroup(ti id.TagID) *TagGroup {
 	g, i := t.Find(ti)
 	if i != nil {
 		return nil

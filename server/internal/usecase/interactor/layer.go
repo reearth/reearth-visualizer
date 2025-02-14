@@ -65,7 +65,7 @@ func NewLayer(r *repo.Container) interfaces.Layer {
 	}
 }
 
-func (i *Layer) Fetch(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) (layer.List, error) {
+func (i *Layer) Fetch(ctx context.Context, ids []id.LayerID, operator *usecase.Operator) (layer.LayerList, error) {
 	return i.layerRepo.FindByIDs(ctx, ids)
 }
 
@@ -126,7 +126,7 @@ func (i *Layer) FetchParentAndMerged(ctx context.Context, org id.LayerID, operat
 	return layer.Merge(orgl, parent), nil
 }
 
-func (i *Layer) FetchByTag(ctx context.Context, tag id.TagID, operator *usecase.Operator) (layer.List, error) {
+func (i *Layer) FetchByTag(ctx context.Context, tag id.TagID, operator *usecase.Operator) (layer.LayerList, error) {
 	return i.layerRepo.FindByTag(ctx, tag)
 }
 
@@ -462,7 +462,7 @@ func (i *Layer) AddGroup(ctx context.Context, inp interfaces.AddLayerGroupInput,
 	// save
 	var pl layer.Layer = parentLayer
 	var gl layer.Layer = layerGroup
-	layers := layer.List{&pl, &gl}
+	layers := layer.LayerList{&pl, &gl}
 	properties := []*property.Property{}
 	if p != nil {
 		properties = append(properties, p)
@@ -673,7 +673,7 @@ func (i *Layer) Move(ctx context.Context, inp interfaces.MoveLayerInput, operato
 
 	toParentLayer.MoveLayerFrom(inp.LayerID, inp.Index, parentLayer)
 
-	layers := layer.List{parentLayer.LayerRef()}
+	layers := layer.LayerList{parentLayer.LayerRef()}
 	if parentLayer.ID() != toParentLayer.ID() {
 		layers = append(layers, toParentLayer.LayerRef())
 	}
@@ -973,7 +973,7 @@ func (i *Layer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID, e
 	return plugin, extension, nil
 }
 
-func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam, operator *usecase.Operator) (_ layer.List, _ *layer.Group, err error) {
+func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam, operator *usecase.Operator) (_ layer.LayerList, _ *layer.Group, err error) {
 	if inp.File == nil {
 		return nil, nil, interfaces.ErrFileNotIncluded
 	}

@@ -266,7 +266,7 @@ func (i *Tag) UpdateTag(ctx context.Context, inp interfaces.UpdateTagParam, oper
 	return &tg, nil
 }
 
-func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Operator) (*id.TagID, layer.List, error) {
+func (i *Tag) Remove(ctx context.Context, tagID id.TagID, operator *usecase.Operator) (*id.TagID, layer.LayerList, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err

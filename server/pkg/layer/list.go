@@ -1,48 +1,51 @@
 package layer
 
 import (
+	"sort"
+
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
 
-type List []*Layer
+type LayerList []*Layer
 
 func ListFrom(l []Layer) []*Layer {
 	return lo.ToSlicePtr(l)
 }
 
-func (ll List) Last() *Layer {
+func (ll LayerList) Last() *Layer {
 	return util.Last[Layer](ll)
 }
 
-func (ll List) IDs() *IDList {
-	ids := util.ExtractIDs[ID, Layer](ll)
+func (ll LayerList) IDs() *LayerIDList {
+	ids := util.ExtractIDs[id.LayerID, Layer](ll)
 	if len(ids) == 0 {
 		return nil
 	}
 	return NewIDList(ids)
 }
 
-func (ll List) Properties() []PropertyID {
+func (ll LayerList) Properties() []id.PropertyID {
 	if len(ll) == 0 {
 		return nil
 	}
-	ids := make([]PropertyID, 0, len(ll))
+	ids := make([]id.PropertyID, 0, len(ll))
 	for _, l := range ll.Deref() {
 		ids = append(ids, l.Properties()...)
 	}
 	return ids
 }
 
-func (ll List) Pick(il *IDList) List {
-	return util.Pick[ID, Layer](ll, il)
+func (ll LayerList) Pick(il *LayerIDList) LayerList {
+	return util.Pick[id.LayerID, Layer](ll, il)
 }
 
-func (ll List) Find(lid ID) *Layer {
-	return util.Find[ID, Layer](ll, lid)
+func (ll LayerList) Find(lid id.LayerID) *Layer {
+	return util.Find[id.LayerID, Layer](ll, lid)
 }
 
-func (ll List) FindByDataset(ds DatasetID) *Item {
+func (ll LayerList) FindByDataset(ds id.DatasetID) *Item {
 	for _, l := range ll {
 		if li := ItemFromLayerRef(l); li != nil {
 			dsid := li.LinkedDataset()
@@ -54,15 +57,15 @@ func (ll List) FindByDataset(ds DatasetID) *Item {
 	return nil
 }
 
-func (ll List) ToLayerItemList() ItemList {
+func (ll LayerList) ToLayerItemList() ItemList {
 	return util.ToGenericList[Layer, Item](ll, ItemFromLayerRef)
 }
 
-func (ll List) ToLayerGroupList() GroupList {
+func (ll LayerList) ToLayerGroupList() GroupList {
 	return util.ToGenericList[Layer, Group](ll, GroupFromLayerRef)
 }
 
-func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
+func (ll LayerList) SeparateLayerItemAndGroup() (ItemList, GroupList) {
 	resi := make(ItemList, 0, len(ll))
 	resg := make(GroupList, 0, len(ll))
 	for _, l := range ll {
@@ -75,29 +78,29 @@ func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
 	return resi, resg
 }
 
-func (ll List) Deref() []Layer {
+func (ll LayerList) Deref() []Layer {
 	return util.Deref[Layer](ll, false)
 }
 
-func (ll List) Loader() Loader {
+func (ll LayerList) Loader() Loader {
 	return LoaderFrom(ll.Deref())
 }
 
-func (ll List) Map() Map {
-	return util.ListMap[ID, Layer](ll)
+func (ll LayerList) Map() Map {
+	return util.ListMap[id.LayerID, Layer](ll)
 }
 
-func (ll List) Remove(lids ...ID) List {
-	return util.Remove[ID, Layer](ll, lids...)
+func (ll LayerList) Remove(lids ...id.LayerID) LayerList {
+	return util.Remove[id.LayerID, Layer](ll, lids...)
 }
 
-func (ll List) AddUnique(newList ...*Layer) List {
-	return util.AddUnique[ID, Layer](ll, newList)
+func (ll LayerList) AddUnique(newList ...*Layer) LayerList {
+	return util.AddUnique[id.LayerID, Layer](ll, newList)
 }
 
 type ItemList []*Item
 
-func (ll ItemList) FindByDataset(ds DatasetID) *Item {
+func (ll ItemList) FindByDataset(ds id.DatasetID) *Item {
 	for _, li := range ll {
 		dsid := li.LinkedDataset()
 		if dsid != nil && *dsid == ds {
@@ -107,8 +110,8 @@ func (ll ItemList) FindByDataset(ds DatasetID) *Item {
 	return nil
 }
 
-func (ll ItemList) ToLayerList() List {
-	res := make(List, 0, len(ll))
+func (ll ItemList) ToLayerList() LayerList {
+	res := make(LayerList, 0, len(ll))
 	for _, l := range ll {
 		var layer Layer = l
 		res = append(res, &layer)
@@ -122,8 +125,8 @@ func (ll ItemList) Last() *Item {
 
 type GroupList []*Group
 
-func (ll GroupList) ToLayerList() List {
-	res := make(List, 0, len(ll))
+func (ll GroupList) ToLayerList() LayerList {
+	res := make(LayerList, 0, len(ll))
 	for _, l := range ll {
 		var layer Layer = l
 		res = append(res, &layer)
@@ -135,59 +138,65 @@ func (ll GroupList) Last() *Group {
 	return util.Last[Group](ll)
 }
 
-type Map map[ID]*Layer
+type Map map[id.LayerID]*Layer
 
 func MapFrom(l Layer) Map {
-	return List{&l}.Map()
+	return LayerList{&l}.Map()
 }
 
 func (m Map) Add(layers ...*Layer) Map {
-	return util.MapAdd[ID, Layer](m, layers...)
+	return util.MapAdd[id.LayerID, Layer](m, layers...)
 }
 
-func (m Map) List() List {
-	return util.MapList[ID, Layer](m, false)
+func (m Map) List() LayerList {
+	return util.MapList[id.LayerID, Layer](m, false)
 }
 
 func (m Map) Clone() Map {
-	return util.Clone[ID, Layer](m)
+	return util.Clone[id.LayerID, Layer](m)
 }
 
 func (m Map) Merge(m2 Map) Map {
-	return util.Merge[ID, Layer](m, m2)
+	return util.Merge[id.LayerID, Layer](m, m2)
 }
 
-func (m Map) Pick(il *IDList) List {
-	return util.MapPick[ID, Layer](m, il)
+func (m Map) Pick(il *LayerIDList) LayerList {
+	return util.MapPick[id.LayerID, Layer](m, il)
 }
 
-func (m Map) Layer(i ID) Layer {
+func (m Map) Layer(i id.LayerID) Layer {
 	if l := m[i]; l != nil {
 		return *l
 	}
 	return nil
 }
 
-func (m Map) Item(i ID) *Item {
+func (m Map) Item(i id.LayerID) *Item {
 	if l := ToLayerItem(m.Layer(i)); l != nil {
 		return l
 	}
 	return nil
 }
 
-func (m Map) Group(i ID) *Group {
+func (m Map) Group(i id.LayerID) *Group {
 	if l := ToLayerGroup(m.Layer(i)); l != nil {
 		return l
 	}
 	return nil
 }
 
-func (m Map) Keys() []ID {
-	keys := util.ExtractKeys[ID, Layer](m)
+func (m Map) Keys() []id.LayerID {
+	keys := util.ExtractKeys[id.LayerID, Layer](m)
 	sortIDs(keys)
 	return keys
 }
 
 func (m Map) Len() int {
 	return len(m)
+}
+
+func sortIDs(a []id.LayerID) {
+	sort.SliceStable(a, func(i, j int) bool {
+		return a[i].Compare(a[j]) < 0
+	})
 }

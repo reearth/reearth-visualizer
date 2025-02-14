@@ -3,27 +3,28 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNLSLayerList_Last(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
 	tests := []struct {
 		name   string
-		target List
+		target LayerList
 		want   *Layer
 	}{
 		{
 			name:   "last element",
-			target: List{l1.LayerRef(), l2.LayerRef()},
+			target: LayerList{l1.LayerRef(), l2.LayerRef()},
 			want:   l2.LayerRef(),
 		},
 		{
 			name:   "empty list",
-			target: List{},
+			target: LayerList{},
 			want:   nil,
 		},
 	}
@@ -36,7 +37,7 @@ func TestNLSLayerList_Last(t *testing.T) {
 }
 
 func TestItemList_Last(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
@@ -65,22 +66,22 @@ func TestItemList_Last(t *testing.T) {
 }
 
 func TestList_IDs(t *testing.T) {
-	sid := NewSceneID()
-	l1 := NewID()
-	l2 := NewID()
+	sid := id.NewSceneID()
+	l1 := id.NewLayerID()
+	l2 := id.NewLayerID()
 
 	tests := []struct {
 		name   string
-		target List
-		want   *IDList
+		target LayerList
+		want   *LayerIDList
 	}{
 		{
 			name: "ok",
-			target: List{
+			target: LayerList{
 				New().ID(l1).Scene(sid).Item().MustBuild().LayerRef(),
 				New().ID(l2).Scene(sid).Group().MustBuild().LayerRef(),
 			},
-			want: NewIDList([]ID{l1, l2}),
+			want: NewIDList([]id.LayerID{l1, l2}),
 		},
 		{
 			name:   "nil",
@@ -97,25 +98,25 @@ func TestList_IDs(t *testing.T) {
 }
 
 func TestList_Properties(t *testing.T) {
-	sid := NewSceneID()
-	p1 := NewPropertyID()
-	p2 := NewPropertyID()
-	p3 := NewPropertyID()
+	sid := id.NewSceneID()
+	p1 := id.NewPropertyID()
+	p2 := id.NewPropertyID()
+	p3 := id.NewPropertyID()
 
 	tests := []struct {
 		name   string
-		target List
-		want   []PropertyID
+		target LayerList
+		want   []id.PropertyID
 	}{
 		{
 			name: "ok",
-			target: List{
+			target: LayerList{
 				New().NewID().Scene(sid).Property(&p1).Item().MustBuild().LayerRef(),
 				New().NewID().Scene(sid).Infobox(NewInfobox([]*InfoboxField{
 					{property: p3},
 				}, p2)).Group().MustBuild().LayerRef(),
 			},
-			want: []PropertyID{p1, p2, p3},
+			want: []id.PropertyID{p1, p2, p3},
 		},
 		{
 			name:   "nil",
@@ -132,25 +133,25 @@ func TestList_Properties(t *testing.T) {
 }
 
 func TestList_Pick(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
 
-	allLayers := List{l1.LayerRef(), l2.LayerRef()}
-	idList := NewIDList([]ID{l1.ID(), l3.ID()})
+	allLayers := LayerList{l1.LayerRef(), l2.LayerRef()}
+	idList := NewIDList([]id.LayerID{l1.ID(), l3.ID()})
 
 	tests := []struct {
 		name string
-		ll   List
-		il   *IDList
-		want List
+		ll   LayerList
+		il   *LayerIDList
+		want LayerList
 	}{
 		{
 			name: "select existing layers",
 			ll:   allLayers,
 			il:   idList,
-			want: List{l1.LayerRef()},
+			want: LayerList{l1.LayerRef()},
 		},
 		{
 			name: "nil IDList",
@@ -160,9 +161,9 @@ func TestList_Pick(t *testing.T) {
 		},
 		{
 			name: "empty list",
-			ll:   List{},
+			ll:   LayerList{},
 			il:   idList,
-			want: List{},
+			want: LayerList{},
 		},
 	}
 
@@ -174,38 +175,38 @@ func TestList_Pick(t *testing.T) {
 }
 
 func TestList_Find(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
-	nonExistentID := NewID()
+	nonExistentID := id.NewLayerID()
 
 	tests := []struct {
 		name   string
-		target List
-		lid    ID
+		target LayerList
+		lid    id.LayerID
 		want   *Layer
 	}{
 		{
 			name:   "find existing element",
-			target: List{l1.LayerRef(), l2.LayerRef()},
+			target: LayerList{l1.LayerRef(), l2.LayerRef()},
 			lid:    l1.ID(),
 			want:   l1.LayerRef(),
 		},
 		{
 			name:   "find non-existing element",
-			target: List{l1.LayerRef(), l2.LayerRef()},
+			target: LayerList{l1.LayerRef(), l2.LayerRef()},
 			lid:    nonExistentID,
 			want:   nil,
 		},
 		{
 			name:   "empty list",
-			target: List{},
+			target: LayerList{},
 			lid:    l1.ID(),
 			want:   nil,
 		},
 		{
 			name:   "list with nil element",
-			target: List{nil, l2.LayerRef()},
+			target: LayerList{nil, l2.LayerRef()},
 			lid:    l2.ID(),
 			want:   l2.LayerRef(),
 		},
@@ -219,28 +220,28 @@ func TestList_Find(t *testing.T) {
 }
 
 func TestList_Map(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
 	tests := []struct {
 		name   string
-		target List
+		target LayerList
 		want   Map
 	}{
 		{
 			name:   "normal case",
-			target: List{l1.LayerRef(), l2.LayerRef()},
+			target: LayerList{l1.LayerRef(), l2.LayerRef()},
 			want:   Map{l1.ID(): l1.LayerRef(), l2.ID(): l2.LayerRef()},
 		},
 		{
 			name:   "contains nil",
-			target: List{l1.LayerRef(), nil},
+			target: LayerList{l1.LayerRef(), nil},
 			want:   Map{l1.ID(): l1.LayerRef()},
 		},
 		{
 			name:   "empty slice",
-			target: List{},
+			target: LayerList{},
 			want:   Map{},
 		},
 		{
@@ -258,28 +259,28 @@ func TestList_Map(t *testing.T) {
 }
 
 func TestList_Remove(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
-	assert.Equal(t, List{l2.LayerRef()}, List{l1.LayerRef(), l2.LayerRef()}.Remove(l1.ID(), l3.ID()))
-	assert.Equal(t, List{l1.LayerRef(), l2.LayerRef()}, List{l1.LayerRef(), l2.LayerRef()}.Remove())
-	assert.Equal(t, List(nil), List(nil).Remove(l1.ID()))
-	assert.Equal(t, List{}, List{}.Remove(l1.ID()))
+	assert.Equal(t, LayerList{l2.LayerRef()}, LayerList{l1.LayerRef(), l2.LayerRef()}.Remove(l1.ID(), l3.ID()))
+	assert.Equal(t, LayerList{l1.LayerRef(), l2.LayerRef()}, LayerList{l1.LayerRef(), l2.LayerRef()}.Remove())
+	assert.Equal(t, LayerList(nil), LayerList(nil).Remove(l1.ID()))
+	assert.Equal(t, LayerList{}, LayerList{}.Remove(l1.ID()))
 }
 
 func TestList_AddUnique(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
-	assert.Equal(t, List{l2.LayerRef(), l1.LayerRef()}, List{l2.LayerRef()}.AddUnique(l1.LayerRef()))
-	assert.Equal(t, List{l2.LayerRef()}, List{l2.LayerRef()}.AddUnique(l2.LayerRef()))
-	assert.Equal(t, List{l1.LayerRef()}, List{}.AddUnique(l1.LayerRef(), l1.LayerRef()))
+	assert.Equal(t, LayerList{l2.LayerRef(), l1.LayerRef()}, LayerList{l2.LayerRef()}.AddUnique(l1.LayerRef()))
+	assert.Equal(t, LayerList{l2.LayerRef()}, LayerList{l2.LayerRef()}.AddUnique(l2.LayerRef()))
+	assert.Equal(t, LayerList{l1.LayerRef()}, LayerList{}.AddUnique(l1.LayerRef(), l1.LayerRef()))
 }
 
 func TestMap_Add(t *testing.T) {
-	sid1 := NewSceneID()
-	sid2 := NewSceneID()
+	sid1 := id.NewSceneID()
+	sid2 := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid1).MustBuild()
 	l2 := NewItem().NewID().Scene(sid1).MustBuild()
 	l3 := NewItem().NewID().Scene(sid2).MustBuild()
@@ -371,7 +372,7 @@ func TestMap_Add(t *testing.T) {
 }
 
 func TestMap_Merge(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
@@ -460,29 +461,29 @@ func TestMap_Merge(t *testing.T) {
 }
 
 func TestMap_List(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
 	tests := []struct {
 		name   string
 		target Map
-		want   List
+		want   LayerList
 	}{
 		{
 			name:   "normal case",
 			target: Map{l1.ID(): l1.LayerRef()},
-			want:   List{l1.LayerRef()},
+			want:   LayerList{l1.LayerRef()},
 		},
 		{
 			name:   "contains nil",
 			target: Map{l2.ID(): nil},
-			want:   List{nil},
+			want:   LayerList{nil},
 		},
 		{
 			name:   "empty slice",
 			target: Map{},
-			want:   List{},
+			want:   LayerList{},
 		},
 		{
 			name:   "nil slice",
@@ -499,18 +500,18 @@ func TestMap_List(t *testing.T) {
 }
 
 func TestList_Deref(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
 	tests := []struct {
 		name   string
-		target List
+		target LayerList
 		want   []Layer
 	}{
 		{
 			name: "non-nil elements",
-			target: List{
+			target: LayerList{
 				l1.LayerRef(),
 				l2.LayerRef(),
 			},
@@ -518,7 +519,7 @@ func TestList_Deref(t *testing.T) {
 		},
 		{
 			name: "including nil element",
-			target: List{
+			target: LayerList{
 				l1.LayerRef(),
 				nil,
 				l2.LayerRef(),
@@ -540,7 +541,7 @@ func TestList_Deref(t *testing.T) {
 }
 
 func TestMap_Clone(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
@@ -575,7 +576,7 @@ func TestMap_Clone(t *testing.T) {
 }
 
 func TestMap_Pick(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
@@ -585,19 +586,19 @@ func TestMap_Pick(t *testing.T) {
 		l2.ID(): l2.LayerRef(),
 	}
 
-	idList := NewIDList([]ID{l1.ID(), l3.ID()})
+	idList := NewIDList([]id.LayerID{l1.ID(), l3.ID()})
 
 	tests := []struct {
 		name string
 		m    Map
-		il   *IDList
-		want List
+		il   *LayerIDList
+		want LayerList
 	}{
 		{
 			name: "select existing layers",
 			m:    allLayers,
 			il:   idList,
-			want: List{l1.LayerRef()},
+			want: LayerList{l1.LayerRef()},
 		},
 		{
 			name: "nil IDList",
@@ -609,13 +610,13 @@ func TestMap_Pick(t *testing.T) {
 			name: "empty map",
 			m:    Map{},
 			il:   idList,
-			want: List{},
+			want: LayerList{},
 		},
 		{
 			name: "non-existing ID",
 			m:    allLayers,
-			il:   NewIDList([]ID{NewID()}),
-			want: List{},
+			il:   NewIDList([]id.LayerID{id.NewLayerID()}),
+			want: LayerList{},
 		},
 	}
 
@@ -627,7 +628,7 @@ func TestMap_Pick(t *testing.T) {
 }
 
 func TestMap_Keys(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
@@ -636,13 +637,13 @@ func TestMap_Keys(t *testing.T) {
 		l2.ID(): l2.LayerRef(),
 	}
 
-	expectedKeys := []ID{l1.ID(), l2.ID()}
+	expectedKeys := []id.LayerID{l1.ID(), l2.ID()}
 	sortIDs(expectedKeys)
 
 	tests := []struct {
 		name    string
 		mapData Map
-		want    []ID
+		want    []id.LayerID
 	}{
 		{
 			name:    "valid keys",
@@ -652,7 +653,7 @@ func TestMap_Keys(t *testing.T) {
 		{
 			name:    "empty map",
 			mapData: Map{},
-			want:    []ID{},
+			want:    []id.LayerID{},
 		},
 	}
 
@@ -664,7 +665,7 @@ func TestMap_Keys(t *testing.T) {
 }
 
 func TestList_ToLayerItemList(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	item1 := NewItem().NewID().Scene(sid).MustBuild()
 	item2 := NewItem().NewID().Scene(sid).MustBuild()
 	layer1 := item1.LayerRef()
@@ -672,22 +673,22 @@ func TestList_ToLayerItemList(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		target List
+		target LayerList
 		want   ItemList
 	}{
 		{
 			name:   "convert list to item list",
-			target: List{layer1, layer2},
+			target: LayerList{layer1, layer2},
 			want:   ItemList{item1, item2},
 		},
 		{
 			name:   "handle empty list",
-			target: List{},
+			target: LayerList{},
 			want:   ItemList{},
 		},
 		{
 			name:   "handle nil elements in list",
-			target: List{nil, layer1},
+			target: LayerList{nil, layer1},
 			want:   ItemList{item1},
 		},
 	}

@@ -1,21 +1,22 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Group struct {
 	layerBase
-	layers              *IDList
-	linkedDatasetSchema *DatasetSchemaID
+	layers              *LayerIDList
+	linkedDatasetSchema *id.DatasetSchemaID
 	root                bool
 }
 
-func (l *Group) ID() ID {
+func (l *Group) ID() id.LayerID {
 	return l.layerBase.ID()
 }
 
-func (l *Group) IDRef() *ID {
+func (l *Group) IDRef() *id.LayerID {
 	if l == nil {
 		return nil
 	}
@@ -26,14 +27,14 @@ func (l *Group) Name() string {
 	return l.layerBase.Name()
 }
 
-func (l *Group) Plugin() *PluginID {
+func (l *Group) Plugin() *id.PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.layerBase.Plugin()
 }
 
-func (l *Group) Extension() *PluginExtensionID {
+func (l *Group) Extension() *id.PluginExtensionID {
 	if l == nil {
 		return nil
 	}
@@ -44,7 +45,7 @@ func (l *Group) UsesPlugin() bool {
 	return l.layerBase.UsesPlugin()
 }
 
-func (l *Group) Property() *PropertyID {
+func (l *Group) Property() *id.PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -86,7 +87,7 @@ func (l *Group) SetVisible(visible bool) {
 	l.layerBase.SetVisible(visible)
 }
 
-func (l *Group) SetPlugin(plugin *PluginID) {
+func (l *Group) SetPlugin(plugin *id.PluginID) {
 	if l == nil {
 		return
 	}
@@ -100,14 +101,14 @@ func (l *Group) IsLinked() bool {
 	return l.linkedDatasetSchema != nil
 }
 
-func (l *Group) LinkedDatasetSchema() *DatasetSchemaID {
+func (l *Group) LinkedDatasetSchema() *id.DatasetSchemaID {
 	if l == nil {
 		return nil
 	}
 	return l.linkedDatasetSchema.CloneRef()
 }
 
-func (l *Group) Link(ds DatasetSchemaID) {
+func (l *Group) Link(ds id.DatasetSchemaID) {
 	if l == nil {
 		return
 	}
@@ -122,7 +123,7 @@ func (l *Group) Unlink() {
 	l.linkedDatasetSchema = nil
 }
 
-func (l *Group) Layers() *IDList {
+func (l *Group) Layers() *LayerIDList {
 	if l == nil {
 		return nil
 	}
@@ -132,7 +133,7 @@ func (l *Group) Layers() *IDList {
 	return l.layers
 }
 
-func (l *Group) MoveLayerFrom(id ID, index int, fromLayerGroup *Group) {
+func (l *Group) MoveLayerFrom(id id.LayerID, index int, fromLayerGroup *Group) {
 	if l == nil {
 		return
 	}
@@ -165,7 +166,7 @@ func (l *Group) IsRoot() bool {
 	return l.root
 }
 
-func (l *Group) Properties() []PropertyID {
+func (l *Group) Properties() []id.PropertyID {
 	if l == nil {
 		return nil
 	}

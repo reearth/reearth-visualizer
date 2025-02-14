@@ -1,6 +1,7 @@
 package merging
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -45,7 +46,7 @@ type SealedInfoboxField struct {
 }
 
 type SealedTag struct {
-	ID    layer.TagID
+	ID    id.TagID
 	Label string
 	Tags  []SealedTag
 }

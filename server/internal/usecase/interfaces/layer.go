@@ -85,14 +85,14 @@ var (
 )
 
 type Layer interface {
-	Fetch(context.Context, []id.LayerID, *usecase.Operator) (layer.List, error)
+	Fetch(context.Context, []id.LayerID, *usecase.Operator) (layer.LayerList, error)
 	FetchGroup(context.Context, []id.LayerID, *usecase.Operator) ([]*layer.Group, error)
 	FetchItem(context.Context, []id.LayerID, *usecase.Operator) ([]*layer.Item, error)
 	FetchParent(context.Context, id.LayerID, *usecase.Operator) (*layer.Group, error)
 	FetchByProperty(context.Context, id.PropertyID, *usecase.Operator) (layer.Layer, error)
 	FetchMerged(context.Context, id.LayerID, *id.LayerID, *usecase.Operator) (*layer.Merged, error)
 	FetchParentAndMerged(context.Context, id.LayerID, *usecase.Operator) (*layer.Merged, error)
-	FetchByTag(context.Context, id.TagID, *usecase.Operator) (layer.List, error)
+	FetchByTag(context.Context, id.TagID, *usecase.Operator) (layer.LayerList, error)
 	Export(context.Context, id.LayerID, string) (io.Reader, string, error)
 	AddItem(context.Context, AddLayerItemInput, *usecase.Operator) (*layer.Item, *layer.Group, error)
 	AddGroup(context.Context, AddLayerGroupInput, *usecase.Operator) (*layer.Group, *layer.Group, error)
@@ -104,7 +104,7 @@ type Layer interface {
 	AddInfoboxField(context.Context, AddInfoboxFieldParam, *usecase.Operator) (*layer.InfoboxField, layer.Layer, error)
 	MoveInfoboxField(context.Context, MoveInfoboxFieldParam, *usecase.Operator) (id.InfoboxFieldID, layer.Layer, int, error)
 	RemoveInfoboxField(context.Context, RemoveInfoboxFieldParam, *usecase.Operator) (id.InfoboxFieldID, layer.Layer, error)
-	ImportLayer(context.Context, ImportLayerParam, *usecase.Operator) (layer.List, *layer.Group, error)
+	ImportLayer(context.Context, ImportLayerParam, *usecase.Operator) (layer.LayerList, *layer.Group, error)
 	AttachTag(context.Context, id.LayerID, id.TagID, *usecase.Operator) (layer.Layer, error)
 	DetachTag(context.Context, id.LayerID, id.TagID, *usecase.Operator) (layer.Layer, error)
 }

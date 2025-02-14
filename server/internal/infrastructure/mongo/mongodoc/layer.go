@@ -114,7 +114,7 @@ func NewLayer(l layer.Layer) (*LayerDocument, string) {
 	}, id
 }
 
-func NewLayers(layers layer.List, f id.SceneIDList) ([]interface{}, []string) {
+func NewLayers(layers layer.LayerList, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(layers))
 	ids := make([]string, 0, len(layers))
 	for _, d := range layers {

@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type InfoboxFieldBuilder struct {
 	i *InfoboxField
 }
@@ -10,7 +12,7 @@ func NewInfoboxField() *InfoboxFieldBuilder {
 
 func (b *InfoboxFieldBuilder) Build() (*InfoboxField, error) {
 	if b.i.id.IsNil() || string(b.i.extension) == "" || b.i.property.IsNil() || b.i.plugin.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.i, nil
 }
@@ -23,27 +25,27 @@ func (b *InfoboxFieldBuilder) MustBuild() *InfoboxField {
 	return i
 }
 
-func (b *InfoboxFieldBuilder) ID(id InfoboxFieldID) *InfoboxFieldBuilder {
+func (b *InfoboxFieldBuilder) ID(id id.InfoboxFieldID) *InfoboxFieldBuilder {
 	b.i.id = id
 	return b
 }
 
 func (b *InfoboxFieldBuilder) NewID() *InfoboxFieldBuilder {
-	b.i.id = NewInfoboxFieldID()
+	b.i.id = id.NewInfoboxFieldID()
 	return b
 }
 
-func (b *InfoboxFieldBuilder) Plugin(plugin PluginID) *InfoboxFieldBuilder {
+func (b *InfoboxFieldBuilder) Plugin(plugin id.PluginID) *InfoboxFieldBuilder {
 	b.i.plugin = plugin
 	return b
 }
 
-func (b *InfoboxFieldBuilder) Extension(extension PluginExtensionID) *InfoboxFieldBuilder {
+func (b *InfoboxFieldBuilder) Extension(extension id.PluginExtensionID) *InfoboxFieldBuilder {
 	b.i.extension = extension
 	return b
 }
 
-func (b *InfoboxFieldBuilder) Property(p PropertyID) *InfoboxFieldBuilder {
+func (b *InfoboxFieldBuilder) Property(p id.PropertyID) *InfoboxFieldBuilder {
 	b.i.property = p
 	return b
 }

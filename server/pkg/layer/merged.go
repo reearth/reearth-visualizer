@@ -1,26 +1,27 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 // Merged represents a merged layer from two layers
 type Merged struct {
-	Original    ID
-	Parent      *ID
+	Original    id.LayerID
+	Parent      *id.LayerID
 	Name        string
-	Scene       SceneID
+	Scene       id.SceneID
 	Property    *property.MergedMetadata
 	Infobox     *MergedInfobox
-	PluginID    *PluginID
-	ExtensionID *PluginExtensionID
+	PluginID    *id.PluginID
+	ExtensionID *id.PluginExtensionID
 	IsVisible   bool
 	Tags        []MergedTag
 }
 
 // MergedTag represents a merged tag from two layers
 type MergedTag struct {
-	ID   TagID
+	ID   id.TagID
 	Tags []MergedTag
 }
 
@@ -32,9 +33,9 @@ type MergedInfobox struct {
 
 // MergedInfoboxField represents a field of MergedInfobox
 type MergedInfoboxField struct {
-	ID        InfoboxFieldID
-	Plugin    PluginID
-	Extension PluginExtensionID
+	ID        id.InfoboxFieldID
+	Plugin    id.PluginID
+	Extension id.PluginExtensionID
 	Property  *property.MergedMetadata
 }
 
@@ -90,7 +91,7 @@ func MergeTags(o, _p *TagList) []MergedTag {
 }
 
 // MergeInfobox merges two infoboxes
-func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
+func MergeInfobox(o *Infobox, p *Infobox, linked *id.DatasetID) *MergedInfobox {
 	if o == nil && p == nil {
 		return nil
 	}
@@ -127,13 +128,13 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
 	}
 }
 
-// Properties returns all property IDs in Merged
-func (m *Merged) Properties() []PropertyID {
+// Properties returns all propertyid.LayerIDs in Merged
+func (m *Merged) Properties() []id.PropertyID {
 	if m == nil {
 		return nil
 	}
-	added := map[PropertyID]struct{}{}
-	result := []PropertyID{}
+	added := map[id.PropertyID]struct{}{}
+	result := []id.PropertyID{}
 	if m.Property != nil {
 		if m.Property.Original != nil {
 			t := *m.Property.Original
@@ -197,7 +198,7 @@ func (m *Merged) AllTags() (res []MergedTag) {
 	return res
 }
 
-func (m *Merged) AllTagIDs() (res []TagID) {
+func (m *Merged) AllTagIDs() (res []id.TagID) {
 	if m == nil {
 		return nil
 	}

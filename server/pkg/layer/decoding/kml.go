@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/kml"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -15,11 +16,11 @@ import (
 
 type KMLDecoder struct {
 	decoder *xml.Decoder
-	sceneId layer.SceneID
+	sceneId id.SceneID
 	styles  map[string]kml.Style
 }
 
-func NewKMLDecoder(d *xml.Decoder, s layer.SceneID) *KMLDecoder {
+func NewKMLDecoder(d *xml.Decoder, s id.SceneID) *KMLDecoder {
 	return &KMLDecoder{
 		decoder: d,
 		sceneId: s,
@@ -176,7 +177,7 @@ func (d *KMLDecoder) decodeCollection(c kml.Collection, depth int) (*layer.Group
 func (d *KMLDecoder) decodePlacemark(p kml.Placemark) (*layer.Item, *property.Property, error) {
 	var layerItem *layer.Item
 	var prop *property.Property
-	var ex layer.PluginExtensionID
+	var ex id.PluginExtensionID
 	var styleId string
 	var layerName string
 
@@ -242,7 +243,7 @@ func (d *KMLDecoder) decodePlacemark(p kml.Placemark) (*layer.Item, *property.Pr
 		Scene(d.sceneId).
 		Property(prop.IDRef()).
 		Extension(&ex).
-		Plugin(&layer.OfficialPluginID).
+		Plugin(&id.OfficialPluginID).
 		Build()
 	if err != nil {
 		return nil, nil, err

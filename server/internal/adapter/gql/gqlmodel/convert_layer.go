@@ -61,7 +61,7 @@ func ToLayer(l layer.Layer, parent *id.LayerID) Layer {
 	return nil
 }
 
-func ToLayers(layers layer.List, parent *id.LayerID) []Layer {
+func ToLayers(layers layer.LayerList, parent *id.LayerID) []Layer {
 	return util.Map(layers, func(l *layer.Layer) Layer {
 		return ToLayer(*l, parent)
 	})

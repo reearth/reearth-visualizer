@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
 )
 
-type Loader func(context.Context, ...ID) (List, error)
-type LoaderByScene func(context.Context, SceneID) (List, error)
+type Loader func(context.Context, ...id.LayerID) (LayerList, error)
+type LoaderByScene func(context.Context, id.SceneID) (LayerList, error)
 
 var WalkerSkipChildren = errors.New("LAYER_WALKER_SKIP_CHILDREN")
 
 func LoaderFrom(data []Layer) Loader {
-	return func(ctx context.Context, ids ...ID) (List, error) {
+	return func(ctx context.Context, ids ...id.LayerID) (LayerList, error) {
 		res := make([]*Layer, 0, len(ids))
 		for _, i := range ids {
 			found := false
@@ -32,8 +33,8 @@ func LoaderFrom(data []Layer) Loader {
 	}
 }
 
-func LoaderFromMap(data map[ID]Layer) Loader {
-	return func(ctx context.Context, ids ...ID) (List, error) {
+func LoaderFromMap(data map[id.LayerID]Layer) Loader {
+	return func(ctx context.Context, ids ...id.LayerID) (LayerList, error) {
 		res := make([]*Layer, 0, len(ids))
 		for _, i := range ids {
 			if d, ok := data[i]; ok {
@@ -46,9 +47,9 @@ func LoaderFromMap(data map[ID]Layer) Loader {
 	}
 }
 
-func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, init []ID) error {
-	var walk func(ids []ID, parents GroupList) error
-	walk = func(ids []ID, parents GroupList) error {
+func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, init []id.LayerID) error {
+	var walk func(ids []id.LayerID, parents GroupList) error
+	walk = func(ids []id.LayerID, parents GroupList) error {
 		loaded, err := l(ctx, ids...)
 		if err != nil {
 			return err
@@ -74,7 +75,7 @@ func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, i
 }
 
 func LoaderBySceneFrom(data ...Layer) LoaderByScene {
-	return func(ctx context.Context, id SceneID) (List, error) {
+	return func(ctx context.Context, id id.SceneID) (LayerList, error) {
 		res := lo.Filter(data, func(l Layer, _ int) bool {
 			return l.Scene() == id
 		})

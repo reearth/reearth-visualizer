@@ -52,5 +52,5 @@ type Tag interface {
 	AttachItemToGroup(context.Context, AttachItemToGroupParam, *usecase.Operator) (*tag.Group, error)
 	DetachItemFromGroup(context.Context, DetachItemToGroupParam, *usecase.Operator) (*tag.Group, error)
 	UpdateTag(context.Context, UpdateTagParam, *usecase.Operator) (*tag.Tag, error)
-	Remove(context.Context, id.TagID, *usecase.Operator) (*id.TagID, layer.List, error)
+	Remove(context.Context, id.TagID, *usecase.Operator) (*id.TagID, layer.LayerList, error)
 }

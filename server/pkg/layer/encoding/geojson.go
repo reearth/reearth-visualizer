@@ -6,7 +6,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
-	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -43,7 +43,7 @@ func (e *GeoJSONEncoder) coordsToPoint(c property.Coordinates) []orb.Point {
 }
 
 func (e *GeoJSONEncoder) encodeSingleLayer(li *merging.SealedLayerItem) (*geojson.Feature, error) {
-	if li == nil || li.PluginID == nil || !layer.OfficialPluginID.Equal(*li.PluginID) {
+	if li == nil || li.PluginID == nil || !id.OfficialPluginID.Equal(*li.PluginID) {
 		return nil, nil
 	}
 

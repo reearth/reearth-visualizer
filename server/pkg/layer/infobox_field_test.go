@@ -20,22 +20,22 @@ func TestInfoboxField_UpgradePlugin(t *testing.T) {
 		{
 			name: "normal",
 			field: &InfoboxField{
-				plugin: MustPluginID("hoge~0.1.0"),
+				plugin: id.MustPluginID("hoge~0.1.0"),
 			},
 			args: args{
-				id: MustPluginID("hoge~0.2.0"),
+				id: id.MustPluginID("hoge~0.2.0"),
 			},
-			want: MustPluginID("hoge~0.2.0"),
+			want: id.MustPluginID("hoge~0.2.0"),
 		},
 		{
 			name: "different",
 			field: &InfoboxField{
-				plugin: MustPluginID("hoge~0.1.0"),
+				plugin: id.MustPluginID("hoge~0.1.0"),
 			},
 			args: args{
-				id: MustPluginID("xyz~0.2.0"),
+				id: id.MustPluginID("xyz~0.2.0"),
 			},
-			want: MustPluginID("hoge~0.1.0"),
+			want: id.MustPluginID("hoge~0.1.0"),
 		},
 	}
 	for _, tt := range tests {

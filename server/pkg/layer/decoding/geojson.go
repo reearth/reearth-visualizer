@@ -7,6 +7,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -19,11 +20,11 @@ type GeoStyle struct {
 type GeoJSONDecoder struct {
 	reader    io.Reader
 	features  []*geojson.Feature
-	sceneId   layer.SceneID
+	sceneId   id.SceneID
 	groupName string
 }
 
-func NewGeoJSONDecoder(r io.Reader, s layer.SceneID) *GeoJSONDecoder {
+func NewGeoJSONDecoder(r io.Reader, s id.SceneID) *GeoJSONDecoder {
 	return &GeoJSONDecoder{
 		reader:    r,
 		sceneId:   s,
@@ -113,7 +114,7 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 	var feat *geojson.Feature
 	var p *property.Property
 	var l *layer.Item
-	var ex layer.PluginExtensionID
+	var ex id.PluginExtensionID
 	var err error
 	var stroke, fillColor string
 	var strokeWidth float64
@@ -246,7 +247,7 @@ func (d *GeoJSONDecoder) decodeLayer() (*layer.Item, *property.Property, error) 
 		Scene(d.sceneId).
 		Property(p.IDRef()).
 		Extension(&ex).
-		Plugin(&layer.OfficialPluginID).
+		Plugin(&id.OfficialPluginID).
 		Build()
 	if err != nil {
 		return nil, nil, err

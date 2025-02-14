@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func ItemFromLayer(l Layer) *Item {
 	li, ok := l.(*Item)
 	if !ok {
@@ -29,7 +31,7 @@ func NewItem() *ItemBuilder {
 
 func (b *ItemBuilder) Build() (*Item, error) {
 	if b.l.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.l, nil
 }
@@ -47,17 +49,17 @@ func (b *ItemBuilder) base(layer layerBase) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) ID(id ID) *ItemBuilder {
+func (b *ItemBuilder) ID(id id.LayerID) *ItemBuilder {
 	b.l.id = id
 	return b
 }
 
 func (b *ItemBuilder) NewID() *ItemBuilder {
-	b.l.id = NewID()
+	b.l.id = id.NewLayerID()
 	return b
 }
 
-func (b *ItemBuilder) Scene(s SceneID) *ItemBuilder {
+func (b *ItemBuilder) Scene(s id.SceneID) *ItemBuilder {
 	b.l.scene = s
 	return b
 }
@@ -72,17 +74,17 @@ func (b *ItemBuilder) IsVisible(visible bool) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Plugin(plugin *PluginID) *ItemBuilder {
+func (b *ItemBuilder) Plugin(plugin *id.PluginID) *ItemBuilder {
 	b.l.plugin = plugin.CloneRef()
 	return b
 }
 
-func (b *ItemBuilder) Extension(extension *PluginExtensionID) *ItemBuilder {
+func (b *ItemBuilder) Extension(extension *id.PluginExtensionID) *ItemBuilder {
 	b.l.extension = extension.CloneRef()
 	return b
 }
 
-func (b *ItemBuilder) Property(p *PropertyID) *ItemBuilder {
+func (b *ItemBuilder) Property(p *id.PropertyID) *ItemBuilder {
 	b.l.property = p.CloneRef()
 	return b
 }
@@ -92,7 +94,7 @@ func (b *ItemBuilder) Infobox(infobox *Infobox) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) LinkedDataset(linkedDataset *DatasetID) *ItemBuilder {
+func (b *ItemBuilder) LinkedDataset(linkedDataset *id.DatasetID) *ItemBuilder {
 	b.l.linkedDataset = linkedDataset.CloneRef()
 	return b
 }

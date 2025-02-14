@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -15,8 +16,8 @@ import (
 var _ Encoder = (*CZMLEncoder)(nil)
 
 func TestCZMLEncoder_Encode(t *testing.T) {
-	lid := layer.NewID()
-	sid := layer.NewSceneID()
+	lid := id.NewLayerID()
+	sid := id.NewSceneID()
 	iid := property.NewItemID()
 
 	tests := []struct {
@@ -32,8 +33,8 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Original:    lid,
 						Name:        "test",
 						Scene:       sid,
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("marker").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -100,8 +101,8 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Original:    lid,
 						Name:        "test",
 						Scene:       sid,
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -195,8 +196,8 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Original:    lid,
 						Name:        "test",
 						Scene:       sid,
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

@@ -6,6 +6,7 @@ import (
 
 	"github.com/jonas-p/go-shp"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -25,13 +26,13 @@ func TestEncodeSHP(t *testing.T) {
 			layer: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    layer.NewID(),
+						Original:    id.NewLayerID(),
 						Parent:      nil,
-						Scene:       layer.NewSceneID(),
+						Scene:       id.NewSceneID(),
 						Property:    nil,
 						Infobox:     nil,
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -80,14 +81,14 @@ func TestEncodeSHP(t *testing.T) {
 			layer: &merging.SealedLayerItem{
 				SealedLayerCommon: merging.SealedLayerCommon{
 					Merged: layer.Merged{
-						Original:    layer.NewID(),
+						Original:    id.NewLayerID(),
 						Parent:      nil,
 						Name:        "test",
-						Scene:       layer.NewSceneID(),
+						Scene:       id.NewSceneID(),
 						Property:    nil,
 						Infobox:     nil,
-						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						PluginID:    &id.OfficialPluginID,
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

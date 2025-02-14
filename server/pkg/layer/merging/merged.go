@@ -1,6 +1,7 @@
 package merging
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -12,8 +13,8 @@ var (
 
 type MergedLayer interface {
 	Common() *MergedLayerCommon
-	AllDatasets() layer.DatasetIDList
-	AllTags() layer.TagIDList
+	AllDatasets() id.DatasetIDList
+	AllTags() id.TagIDList
 }
 
 type MergedLayerGroup struct {
@@ -56,19 +57,19 @@ func (l *MergedLayerItem) Common() *MergedLayerCommon {
 	return &l.MergedLayerCommon
 }
 
-func (l *MergedLayerCommon) Datasets() layer.DatasetIDList {
+func (l *MergedLayerCommon) Datasets() id.DatasetIDList {
 	return l.datasetIDSet().List()
 }
 
-func (l *MergedLayerCommon) Tags() []layer.TagID {
+func (l *MergedLayerCommon) Tags() []id.TagID {
 	return l.tagIDSet().List()
 }
 
-func (l *MergedLayerCommon) datasetIDSet() *layer.DatasetIDSet {
+func (l *MergedLayerCommon) datasetIDSet() *id.DatasetIDSet {
 	if l == nil {
 		return nil
 	}
-	res := layer.NewDatasetIDSet()
+	res := id.NewDatasetIDSet()
 	res.Add(l.Property.Datasets()...)
 	res.Add(l.Infobox.Property.Datasets()...)
 	for _, f := range l.Infobox.Fields {
@@ -77,30 +78,30 @@ func (l *MergedLayerCommon) datasetIDSet() *layer.DatasetIDSet {
 	return res
 }
 
-func (l *MergedLayerCommon) tagIDSet() *layer.TagIDSet {
+func (l *MergedLayerCommon) tagIDSet() *id.TagIDSet {
 	if l == nil {
 		return nil
 	}
-	res := layer.NewTagIDSet()
+	res := id.NewTagIDSet()
 	res.Add(l.Merged.AllTagIDs()...)
 	return res
 }
 
-func (l *MergedLayerItem) AllDatasets() layer.DatasetIDList {
+func (l *MergedLayerItem) AllDatasets() id.DatasetIDList {
 	if l == nil {
 		return nil
 	}
 	return l.Datasets()
 }
 
-func (l *MergedLayerItem) AllTags() layer.TagIDList {
+func (l *MergedLayerItem) AllTags() id.TagIDList {
 	if l == nil {
 		return nil
 	}
 	return l.Tags()
 }
 
-func (l *MergedLayerGroup) AllDatasets() layer.DatasetIDList {
+func (l *MergedLayerGroup) AllDatasets() id.DatasetIDList {
 	if l == nil {
 		return nil
 	}
@@ -111,7 +112,7 @@ func (l *MergedLayerGroup) AllDatasets() layer.DatasetIDList {
 	return d.List()
 }
 
-func (l *MergedLayerGroup) AllTags() layer.TagIDList {
+func (l *MergedLayerGroup) AllTags() id.TagIDList {
 	if l == nil {
 		return nil
 	}
