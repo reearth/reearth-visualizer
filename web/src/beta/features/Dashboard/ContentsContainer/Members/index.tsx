@@ -1,66 +1,105 @@
 import { Button, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
+import { useWorkspaceFetcher } from "@reearth/services/api";
+import { TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import { Workspace } from "../../type";
 
 import ListItem from "./ListItem";
 
-const Members: FC<{ currentWorkspace?: Workspace }> = ({
-  currentWorkspace
-}) => {
+const ROLE_PRIORITY = { OWNER: 1, MAINTAINER: 2, WRITER: 3, READER: 4 };
+
+type Props = { currentWorkspace?: Workspace };
+
+const Members: FC<Props> = ({ currentWorkspace }) => {
+  const { workspace } = useWorkspaceFetcher().useWorkspaceQuery(
+    currentWorkspace?.id
+  );
   const t = useT();
-  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredMembers, setFilteredMembers] = useState<
     Workspace["members"] | null
   >(null);
 
-  const handleMemberSearch = () => {
-    if (!currentWorkspace?.members) {
-      return;
-    }
-
-    const filtered = currentWorkspace.members.filter(
-      (member) =>
-        member?.user?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member?.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredMembers(filtered);
-  };
-
-  const handleSearchInputChange = (value: string) => {
-    setSearchQuery(value);
-    if (value === "" && currentWorkspace?.members)
-      setFilteredMembers(currentWorkspace.members);
-  };
+  const [updatingRoleMember, setUpdatingRoleMember] = useState<TeamMember>();
+  const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
 
   useEffect(() => {
-    if (currentWorkspace?.members) {
-      setFilteredMembers(currentWorkspace.members);
-    }
-  }, [currentWorkspace]);
+    setFilteredMembers(workspace?.members || null);
+  }, [workspace]);
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    if (!workspace?.members) return;
+    const v = value.toLowerCase();
+    const members = value
+      ? workspace.members.filter(({ user }) =>
+          [user?.name, user?.email].some((str) =>
+            str?.toLowerCase().includes(v)
+          )
+        )
+      : workspace.members;
+    setFilteredMembers(members);
+  };
+
+  const sortedMembers = useMemo(() => {
+    if (!filteredMembers) return [];
+    return filteredMembers.sort(
+      (a, b) =>
+        ROLE_PRIORITY[a.role] - ROLE_PRIORITY[b.role] ||
+        (a.user?.name || "").localeCompare(b.user?.name || "")
+    );
+  }, [filteredMembers]);
 
   return (
     <Wrapper>
-      <Search>
-        <TextInput
-          value={searchQuery}
-          extendWidth
-          onChange={handleSearchInputChange}
-          placeholder={t("Use Name or Email")}
-        />
-        <Button
-          icon="magnifyingGlass"
-          title={t("Find Member")}
-          size="small"
-          onClick={handleMemberSearch}
-        />
-      </Search>
+      <HeaderWrapper>
+        <Search>
+          <TextInput
+            value={searchQuery}
+            extendWidth
+            placeholder={t("Use Name or Email")}
+            onChange={handleSearch}
+          />
+          <Button
+            icon="magnifyingGlass"
+            title={t("Find Member")}
+            size="small"
+            onClick={() => handleSearch(searchQuery)}
+          />
+        </Search>
+        <div>
+          <Button
+            title={t("New member")}
+            appearance="primary"
+            icon="memberAdd"
+            onClick={() => setAddMemberModalVisible(true)}
+          />
+        </div>
+      </HeaderWrapper>
+      <Table>
+        <TableHeaderCell />
+        <TableHeaderCell>{t("User Name")}</TableHeaderCell>
+        <TableHeaderCell>{t("Email")}</TableHeaderCell>
+        <TableHeaderCell>{t("Role")}</TableHeaderCell>
+        <TableHeaderCell />
+      </Table>
+
       <ListWrapper>
-        {filteredMembers && filteredMembers?.length > 0 ? (
-          filteredMembers?.map((member) => (
-            <ListItem key={member.userId} member={member} />
+        {workspace && sortedMembers.length ? (
+          sortedMembers.map((member) => (
+            <ListItem
+              key={member.userId}
+              member={member}
+              currentWorkSpace={workspace}
+              addMemberModalVisible={addMemberModalVisible}
+              setAddMemberModalVisible={setAddMemberModalVisible}
+              updatingRoleMember={updatingRoleMember}
+              setUpdatingRoleMember={setUpdatingRoleMember}
+            />
           ))
         ) : (
           <TemplateWrapper>
@@ -76,23 +115,24 @@ const Members: FC<{ currentWorkspace?: Workspace }> = ({
 
 export default Members;
 
-const Wrapper = styled("div")(() => ({
+// styled components
+const Wrapper = styled("div")({
   display: "grid",
-  gridTemplateRows: "auto 1fr",
-  boxSizing: "border-box",
+  gridTemplateRows: "auto auto 1fr",
   height: "100%"
-}));
+});
+
+const HeaderWrapper = styled("div")({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center"
+});
 
 const Search = styled("div")(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "1fr 1fr",
+  gridTemplateColumns: "2fr 1fr",
   gap: theme.spacing.super,
-  width: "max-content",
-  padding: theme.spacing.largest,
-  "@media (min-width: 650px)": {
-    maxWidth: "550px",
-    gridTemplateColumns: "2fr 1fr"
-  }
+  padding: theme.spacing.largest
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({
@@ -100,13 +140,35 @@ const ListWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.normal,
   overflowY: "auto",
-  boxSizing: "border-box",
-  padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
+  padding: theme.spacing.largest
 }));
 
-const TemplateWrapper = styled("div")(() => ({
+const TemplateWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   height: "70vh"
+});
+
+const Table = styled("div")(({ theme }) => ({
+  padding: `${theme.spacing.smallest}px 32px`,
+  display: "grid",
+  gridTemplateColumns: "0.1fr 2.9fr 4fr 2fr 1fr",
+  gap: theme.spacing.small,
+  color: theme.content.main,
+  height: "28px"
+}));
+
+const TableHeaderCell = styled("div")(({ theme }) => ({
+  "&:nth-child(2)": {
+    transform: "translateX(-28px)"
+  },
+  "&:nth-child(3)": {
+    transform: "translateX(2px)"
+  },
+  fontSize: theme.fonts.sizes.body,
+  color: theme.content.weak,
+  lineHeight: "18px",
+  display: "flex",
+  alignItems: "center"
 }));
