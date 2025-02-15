@@ -3,6 +3,7 @@ package e2e
 import (
 	"testing"
 
+	"github.com/gavv/httpexpect/v2"
 	"golang.org/x/text/language"
 )
 
@@ -12,7 +13,7 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 	_, _, sID := createScene(e, pID)
 	r := getScene(e, sID, language.English.String())
 
-	for _, group := range r.Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
+	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
 		for _, field := range group.Object().Value("fields").Array().Iter() {
 			fieldId := field.Object().Value("fieldId").Raw().(string)
 
@@ -38,7 +39,7 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 	_, _, sID := createScene(e, pID)
 	r := getScene(e, sID, language.Japanese.String())
 
-	for _, group := range r.Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
+	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
 		for _, field := range group.Object().Value("fields").Array().Iter() {
 			fieldId := field.Object().Value("fieldId").Raw().(string)
 
@@ -67,8 +68,33 @@ func TestGetSceneNLSLayer(t *testing.T) {
 	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
 
 	r := getScene(e, sId, language.Und.String())
-	r.Value("newLayers").Array().Value(0).Object().HasValue("id", lId)
-	r.Value("newLayers").Array().Value(0).Object().HasValue("title", "someTitle99")
-	r.Value("newLayers").Array().Value(0).Object().HasValue("index", 99)
+	r.Object().Value("newLayers").Array().Value(0).Object().HasValue("id", lId)
+	r.Object().Value("newLayers").Array().Value(0).Object().HasValue("title", "someTitle99")
+	r.Object().Value("newLayers").Array().Value(0).Object().HasValue("index", 99)
 
+}
+
+func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateProject",
+		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
+			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport} ) { 
+				project { 
+					id
+					__typename 
+				} 
+				__typename 
+			}
+		}`,
+		Variables: map[string]any{
+			"name":        name,
+			"description": "abc",
+			"imageUrl":    "https://test.com/project.jpg",
+			"teamId":      wID.String(),
+			"visualizer":  "CESIUM",
+			"coreSupport": true,
+		},
+	}
+	res := Request(e, uID.String(), requestBody)
+	return res.Path("$.data.createProject.project.id").Raw().(string)
 }

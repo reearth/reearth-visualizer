@@ -15,6 +15,7 @@ type Asset struct {
 	id          ID
 	createdAt   time.Time
 	workspace   WorkspaceID
+	project     *ProjectID
 	name        string // file name
 	size        int64  // file size
 	url         string
@@ -28,6 +29,14 @@ func (a *Asset) ID() ID {
 
 func (a *Asset) Workspace() WorkspaceID {
 	return a.workspace
+}
+
+func (a *Asset) Project() *ProjectID {
+	return a.project
+}
+
+func (a *Asset) SetProject(project *ProjectID) {
+	a.project = project
 }
 
 func (a *Asset) Name() string {
