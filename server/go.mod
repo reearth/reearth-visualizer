@@ -2,17 +2,17 @@ module github.com/reearth/reearth/server
 
 require (
 	cloud.google.com/go/profiler v0.4.2
-	cloud.google.com/go/storage v1.49.0
-	github.com/99designs/gqlgen v0.17.64
+	cloud.google.com/go/storage v1.50.0
+	github.com/99designs/gqlgen v0.17.65
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.26.0
 	github.com/avast/retry-go/v4 v4.6.0
-	github.com/aws/aws-sdk-go-v2 v1.34.0
-	github.com/aws/aws-sdk-go-v2/config v1.29.2
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.74.1
+	github.com/aws/aws-sdk-go-v2 v1.36.1
+	github.com/aws/aws-sdk-go-v2/config v1.29.6
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.77.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/globusdigital/deep-copy v0.5.4
-	github.com/goccy/go-yaml v1.15.15
+	github.com/goccy/go-yaml v1.15.22
 	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
@@ -24,7 +24,7 @@ require (
 	github.com/kennygrant/sanitize v1.2.4
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/oklog/ulid v1.3.1
+	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.17.0
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
@@ -33,23 +33,23 @@ require (
 	github.com/spf13/afero v1.12.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
 	github.com/stretchr/testify v1.10.0
-	github.com/twpayne/go-kml v1.5.2
+	github.com/twpayne/go-kml/v3 v3.3.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser/v2 v2.5.22
-	github.com/zitadel/oidc v1.13.5
-	go.mongodb.org/mongo-driver v1.17.2
+	github.com/zitadel/oidc/v3 v3.34.1
+	go.mongodb.org/mongo-driver/v2 v2.0.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.59.0
 	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.59.0
 	go.opentelemetry.io/otel v1.34.0
 	go.opentelemetry.io/otel/sdk v1.34.0
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a
-	golang.org/x/net v0.34.0
-	golang.org/x/oauth2 v0.25.0
-	golang.org/x/text v0.21.0
-	golang.org/x/tools v0.29.0
-	google.golang.org/api v0.219.0
+	golang.org/x/net v0.35.0
+	golang.org/x/oauth2 v0.26.0
+	golang.org/x/text v0.22.0
+	golang.org/x/tools v0.30.0
+	google.golang.org/api v0.221.0
 	gopkg.in/go-playground/colors.v1 v1.2.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0
@@ -189,4 +189,4 @@ require (
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )
 
-go 1.23.5
+go 1.24.0
