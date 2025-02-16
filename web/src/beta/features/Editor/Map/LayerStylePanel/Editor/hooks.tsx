@@ -19,9 +19,14 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
   const [, setNotification] = useNotification();
 
   const [layerStyle, setLayerStyle] = useState(selectedLayerStyle);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     setLayerStyle(selectedLayerStyle);
+  }, [selectedLayerStyle]);
+
+  useEffect(() => {
+    if (!selectedLayerStyle) setEditMode(false);
   }, [selectedLayerStyle]);
 
   const tabItems: TabItem[] = useMemo(
@@ -34,6 +39,7 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
             layerStyle={layerStyle}
             setLayerStyle={setLayerStyle}
             key={layerStyle?.id}
+            editMode={editMode}
           />
         )
       },
@@ -41,11 +47,15 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
         id: "code",
         name: t("Code"),
         children: (
-          <StyleCode layerStyle={layerStyle} setLayerStyle={setLayerStyle} />
+          <StyleCode
+            layerStyle={layerStyle}
+            setLayerStyle={setLayerStyle}
+            editMode={editMode}
+          />
         )
       }
     ],
-    [layerStyle, t, setLayerStyle]
+    [t, layerStyle, editMode]
   );
 
   const handleSave = useCallback(() => {
@@ -58,6 +68,7 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
     } catch (_e) {
       setNotification({ type: "error", text: t("Invalid style") });
     }
+    setEditMode(false);
   }, [
     layerStyle?.id,
     layerStyle?.value,
@@ -66,8 +77,20 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
     t
   ]);
 
+  const handleEditLayerStyle = useCallback(() => {
+    setEditMode(true);
+  }, []);
+
+  const handleCancelLayerStyle = useCallback(() => {
+    setEditMode(false);
+    setLayerStyle(selectedLayerStyle);
+  }, [selectedLayerStyle]);
+
   return {
     tabItems,
-    handleSave
+    editMode,
+    handleSave,
+    handleEditLayerStyle,
+    handleCancelLayerStyle
   };
 };
