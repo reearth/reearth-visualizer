@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,12 +21,12 @@ func TestList_IDs(t *testing.T) {
 	tests := []struct {
 		name   string
 		target List
-		want   []ID
+		want   []id.PropertyID
 	}{
 		{
 			name:   "ok",
 			target: List{&Property{id: p1}, &Property{id: p2}, &Property{id: p1}},
-			want:   []ID{p1, p2},
+			want:   []id.PropertyID{p1, p2},
 		},
 	}
 
@@ -45,12 +46,12 @@ func TestList_Schemas(t *testing.T) {
 	tests := []struct {
 		name   string
 		target List
-		want   []SchemaID
+		want   []id.PropertySchemaID
 	}{
 		{
 			name:   "ok",
 			target: List{&Property{schema: ps1}, &Property{schema: ps2}, &Property{schema: ps1}},
-			want:   []SchemaID{ps1, ps2},
+			want:   []id.PropertySchemaID{ps1, ps2},
 		},
 	}
 

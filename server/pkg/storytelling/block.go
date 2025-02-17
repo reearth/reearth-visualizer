@@ -3,6 +3,7 @@ package storytelling
 import (
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -11,7 +12,7 @@ type Block struct {
 	id        BlockID
 	plugin    PluginID
 	extension PluginExtensionID
-	property  PropertyID
+	property  id.PropertyID
 }
 
 func (i *Block) ID() BlockID {
@@ -35,14 +36,14 @@ func (i *Block) Extension() PluginExtensionID {
 	return i.extension
 }
 
-func (i *Block) Property() PropertyID {
+func (i *Block) Property() id.PropertyID {
 	if i == nil {
-		return PropertyID{}
+		return id.PropertyID{}
 	}
 	return i.property
 }
 
-func (i *Block) PropertyRef() *PropertyID {
+func (i *Block) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}

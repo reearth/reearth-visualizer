@@ -6,7 +6,10 @@ type StoryID = id.StoryID
 type PageID = id.PageID
 type BlockID = id.BlockID
 type SceneID = id.SceneID
-type PropertyID = id.PropertyID
+type LayerID = id.NLSLayerID
+type LayerIDList = id.NLSLayerIDList
+
+// type PropertyID = id.PropertyID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 

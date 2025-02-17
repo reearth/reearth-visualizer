@@ -2,13 +2,17 @@ package property
 
 import (
 	"context"
+
+	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Sealed struct {
-	Original *ID
-	Parent   *ID
-	Schema   SchemaID
-	Items    []*SealedItem
+	Original      *id.PropertyID
+	Parent        *id.PropertyID
+	Schema        id.PropertySchemaID
+	LinkedDataset *DatasetID
+	Items         []*SealedItem
 }
 
 type SealedItem struct {

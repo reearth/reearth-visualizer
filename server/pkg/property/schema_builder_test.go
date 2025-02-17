@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestSchemaBuilder_Build(t *testing.T) {
 	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	type args struct {
-		ID       SchemaID
+		ID       id.PropertySchemaID
 		Version  int
 		Groups   *SchemaGroupList
 		Linkable LinkableFields
@@ -75,7 +76,7 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	type args struct {
-		ID       SchemaID
+		ID       id.PropertySchemaID
 		Version  int
 		Groups   *SchemaGroupList
 		Linkable LinkableFields

@@ -386,7 +386,7 @@ func ToMergedPropertyField(f *property.MergedField, s id.PropertySchemaID) *Merg
 	}
 }
 
-func ToPropertySchemaGroup(g *property.SchemaGroup, s property.SchemaID) *PropertySchemaGroup {
+func ToPropertySchemaGroup(g *property.SchemaGroup, s id.PropertySchemaID) *PropertySchemaGroup {
 	if g == nil {
 		return nil
 	}

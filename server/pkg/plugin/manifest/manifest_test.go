@@ -3,6 +3,7 @@ package manifest
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -62,7 +63,7 @@ func TestManifest_PropertySchema(t *testing.T) {
 	}
 
 	type args struct {
-		psid property.SchemaID
+		psid id.PropertySchemaID
 	}
 	tests := []struct {
 		name   string

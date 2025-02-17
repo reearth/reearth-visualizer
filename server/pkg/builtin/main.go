@@ -3,6 +3,7 @@ package builtin
 import (
 	_ "embed"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -49,7 +50,7 @@ func MustPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
 	return ps
 }
 
-func GetPropertySchema(id property.SchemaID) *property.Schema {
+func GetPropertySchema(id id.PropertySchemaID) *property.Schema {
 	for _, p := range pluginManifest.ExtensionSchema {
 		if id == p.ID() {
 			return p

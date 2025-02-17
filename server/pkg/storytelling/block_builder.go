@@ -1,5 +1,7 @@
 package storytelling
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type BlockBuilder struct {
 	block *Block
 }
@@ -43,7 +45,7 @@ func (b *BlockBuilder) Extension(extension PluginExtensionID) *BlockBuilder {
 	return b
 }
 
-func (b *BlockBuilder) Property(p PropertyID) *BlockBuilder {
+func (b *BlockBuilder) Property(p id.PropertyID) *BlockBuilder {
 	b.block.property = p
 	return b
 }

@@ -3,6 +3,7 @@ package plugin
 import (
 	"github.com/blang/semver"
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Plugin struct {
@@ -13,7 +14,7 @@ type Plugin struct {
 	repositoryURL  string
 	extensions     map[ExtensionID]*Extension
 	extensionOrder []ExtensionID
-	schema         *PropertySchemaID
+	schema         *id.PropertySchemaID
 }
 
 func (p *Plugin) ID() ID {
@@ -89,7 +90,7 @@ func (p *Plugin) Extension(id ExtensionID) *Extension {
 	return nil
 }
 
-func (p *Plugin) Schema() *PropertySchemaID {
+func (p *Plugin) Schema() *id.PropertySchemaID {
 	if p == nil {
 		return nil
 	}
@@ -101,7 +102,7 @@ func (p *Plugin) PropertySchemas() PropertySchemaIDList {
 		return nil
 	}
 
-	ps := make([]PropertySchemaID, 0, len(p.extensions)+1)
+	ps := make([]id.PropertySchemaID, 0, len(p.extensions)+1)
 	if p.schema != nil {
 		ps = append(ps, *p.schema)
 	}

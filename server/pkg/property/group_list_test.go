@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestGroupList_SchemaRef(t *testing.T) {
 		Name           string
 		GL             *GroupList
 		ExpectedSG     *SchemaGroupID
-		ExpectedSchema *SchemaID
+		ExpectedSchema *id.PropertySchemaID
 	}{
 		{
 			Name: "nil group list",

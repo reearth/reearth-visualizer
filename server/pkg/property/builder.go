@@ -1,5 +1,7 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Builder struct {
 	p *Property
 }
@@ -29,7 +31,7 @@ func (b *Builder) MustBuild() *Property {
 	return p
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.PropertyID) *Builder {
 	b.p.id = id
 	return b
 }
@@ -44,7 +46,7 @@ func (b *Builder) Scene(s SceneID) *Builder {
 	return b
 }
 
-func (b *Builder) Schema(schema SchemaID) *Builder {
+func (b *Builder) Schema(schema id.PropertySchemaID) *Builder {
 	b.p.schema = schema
 	return b
 }

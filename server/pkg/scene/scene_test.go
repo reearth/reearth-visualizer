@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +32,7 @@ func TestScene_Properties(t *testing.T) {
 		).
 		MustBuild()
 
-	assert.Equal(t, []PropertyID{pid1, pid2}, s.Properties())
+	assert.Equal(t, []id.PropertyID{pid1, pid2}, s.Properties())
 }
 
 func TestSceneNil(t *testing.T) {

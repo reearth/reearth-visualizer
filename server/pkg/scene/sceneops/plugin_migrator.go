@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -100,13 +103,13 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}, nil
 }
 
-func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[property.SchemaID]*property.Schema, error) {
+func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[id.PropertySchemaID]*property.Schema, error) {
 	schemasIDs := newPlugin.PropertySchemas().MergeUnique(oldPlugin.PropertySchemas())
 	schemas, err := s.PropertySchema(ctx, schemasIDs...)
 	if err != nil {
 		return nil, err
 	}
-	schemaMap := map[property.SchemaID]*property.Schema{}
+	schemaMap := map[id.PropertySchemaID]*property.Schema{}
 	if opsId := oldPlugin.Schema(); opsId != nil {
 		if npsId := newPlugin.Schema(); npsId != nil {
 			for _, s := range schemas {

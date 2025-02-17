@@ -4,20 +4,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Property struct {
-	id     ID
+	id     id.PropertyID
 	scene  SceneID
-	schema SchemaID
+	schema id.PropertySchemaID
 	items  []Item
 }
 
-func (p *Property) ID() ID {
+func (p *Property) ID() id.PropertyID {
 	return p.id
 }
 
-func (p *Property) IDRef() *ID {
+func (p *Property) IDRef() *id.PropertyID {
 	if p == nil {
 		return nil
 	}
@@ -28,7 +31,7 @@ func (p *Property) Scene() SceneID {
 	return p.scene
 }
 
-func (p *Property) Schema() SchemaID {
+func (p *Property) Schema() id.PropertySchemaID {
 	return p.schema
 }
 
@@ -556,7 +559,7 @@ func (p *Property) GuessSchema() *Schema {
 	return nil
 }
 
-func (p *Property) updateSchema(s SchemaID) bool {
+func (p *Property) updateSchema(s id.PropertySchemaID) bool {
 	if p == nil || s.IsNil() || p.schema.Equal(s) {
 		return false
 	}
@@ -564,6 +567,6 @@ func (p *Property) updateSchema(s SchemaID) bool {
 	return true
 }
 
-func (p *Property) SetSchema(schema SchemaID) {
+func (p *Property) SetSchema(schema id.PropertySchemaID) {
 	p.schema = schema.Clone()
 }

@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -159,7 +160,7 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 		ArgsPID          PluginID
 		ArgsEID          *PluginExtensionID
 		Target, Expected *Widgets
-		ExpectedResult   []PropertyID
+		ExpectedResult   []id.PropertyID
 	}{
 		{
 			Name:           "remove widgets",
@@ -167,7 +168,7 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 			ArgsEID:        nil,
 			Target:         NewWidgets([]*Widget{w1, w2, w3}, nil),
 			Expected:       NewWidgets([]*Widget{w3}, nil),
-			ExpectedResult: []PropertyID{w1.Property(), w2.Property()},
+			ExpectedResult: []id.PropertyID{w1.Property(), w2.Property()},
 		},
 		{
 			Name:           "remove widgets of extension",
@@ -175,7 +176,7 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 			ArgsEID:        PluginExtensionID("e2").Ref(),
 			Target:         NewWidgets([]*Widget{w1, w2, w3}, nil),
 			Expected:       NewWidgets([]*Widget{w1, w3}, nil),
-			ExpectedResult: []PropertyID{w2.Property()},
+			ExpectedResult: []id.PropertyID{w2.Property()},
 		},
 		{
 			Name:           "remove from nil widgets",
@@ -246,7 +247,7 @@ func TestWidgets_Properties(t *testing.T) {
 	tests := []struct {
 		Name     string
 		WS       *Widgets
-		Expected []PropertyID
+		Expected []id.PropertyID
 	}{
 		{
 			Name: "get properties",
@@ -254,7 +255,7 @@ func TestWidgets_Properties(t *testing.T) {
 				MustWidget(wid, pid, "eee", pr, true, false),
 				MustWidget(wid2, pid, "eee", pr2, true, false),
 			}, nil),
-			Expected: []PropertyID{pr, pr2},
+			Expected: []id.PropertyID{pr, pr2},
 		},
 		{
 			Name:     "get properties from nil widgets",

@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -95,9 +96,9 @@ func TestBuilder_Build(t *testing.T) {
 	propertySchemaGroup1ID := SchemaGroupID("A")
 
 	type args struct {
-		ID     ID
+		ID     id.PropertyID
 		Scene  SceneID
-		Schema SchemaID
+		Schema id.PropertySchemaID
 		Items  []Item
 	}
 
@@ -151,7 +152,7 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			Name: "fail invalid id",
 			Args: args{
-				ID: ID{},
+				ID: id.PropertyID{},
 			},
 			Err: ErrInvalidID,
 		},
