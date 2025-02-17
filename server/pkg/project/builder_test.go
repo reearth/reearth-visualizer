@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
@@ -170,13 +171,13 @@ func TestBuilder_Build(t *testing.T) {
 		alias, publicTitle string
 		publicDescription  string
 		publicImage        string
-		id                 ID
+		id                 id.ProjectID
 		isArchived         bool
 		updatedAt          time.Time
 		publishedAt        time.Time
 		imageURL           *url.URL
 		publicNoIndex      bool
-		workspace          WorkspaceID
+		workspace          accountdomain.WorkspaceID
 		visualizer         visualizer.Visualizer
 		publishmentStatus  PublishmentStatus
 	}
@@ -291,13 +292,13 @@ func TestBuilder_MustBuild(t *testing.T) {
 		alias, publicTitle string
 		publicDescription  string
 		publicImage        string
-		id                 ID
+		id                 id.ProjectID
 		isArchived         bool
 		updatedAt          time.Time
 		publishedAt        time.Time
 		imageURL           *url.URL
 		publicNoIndex      bool
-		workspace          WorkspaceID
+		workspace          accountdomain.WorkspaceID
 		visualizer         visualizer.Visualizer
 		publishmentStatus  PublishmentStatus
 		trackingId         string

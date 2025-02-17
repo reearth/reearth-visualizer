@@ -5,8 +5,8 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
-type ID = id.ProjectID
-type WorkspaceID = accountdomain.WorkspaceID
+// type ID = id.ProjectID
+// type WorkspaceID = accountdomain.WorkspaceID
 type SceneID = id.SceneID
 
 var NewID = id.NewProjectID
@@ -23,8 +23,8 @@ var WorkspaceIDFromRef = accountdomain.WorkspaceIDFromRef
 
 var ErrInvalidID = id.ErrInvalidID
 
-func MockNewID(pid ID) func() {
-	NewID = func() ID { return pid }
+func MockNewID(pid id.ProjectID) func() {
+	NewID = func() id.ProjectID { return pid }
 	return func() {
 		NewID = id.NewProjectID
 	}

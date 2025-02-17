@@ -2,6 +2,9 @@ package scene
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type Builder struct {
@@ -52,12 +55,12 @@ func (b *Builder) NewID() *Builder {
 	return b
 }
 
-func (b *Builder) Project(prj ProjectID) *Builder {
+func (b *Builder) Project(prj id.ProjectID) *Builder {
 	b.scene.project = prj
 	return b
 }
 
-func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+func (b *Builder) Workspace(workspace accountdomain.WorkspaceID) *Builder {
 	b.scene.workspace = workspace
 	return b
 }

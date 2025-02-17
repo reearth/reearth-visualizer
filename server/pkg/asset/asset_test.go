@@ -18,7 +18,7 @@ func TestAsset(t *testing.T) {
 		Expected struct {
 			ID          ID
 			CreatedAt   time.Time
-			Workspace   WorkspaceID
+			Workspace   accountdomain.WorkspaceID
 			Name        string
 			Size        int64
 			URL         string
@@ -31,7 +31,7 @@ func TestAsset(t *testing.T) {
 			Expected: struct {
 				ID          ID
 				CreatedAt   time.Time
-				Workspace   WorkspaceID
+				Workspace   accountdomain.WorkspaceID
 				Name        string
 				Size        int64
 				URL         string

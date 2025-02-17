@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -69,8 +70,8 @@ func TestBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID        ID
-		Project   ProjectID
-		Workspace WorkspaceID
+		Project   id.ProjectID
+		Workspace accountdomain.WorkspaceID
 		RootLayer LayerID
 		Widgets   *Widgets
 		Plugins   *Plugins
@@ -103,7 +104,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Workspace: WorkspaceID{},
+				Workspace: accountdomain.WorkspaceID{},
 				RootLayer: lid,
 				Widgets:   ws,
 				Plugins:   ps,
@@ -191,8 +192,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 
 	type args struct {
 		ID                ID
-		Project           ProjectID
-		Workspace         WorkspaceID
+		Project           id.ProjectID
+		Workspace         accountdomain.WorkspaceID
 		RootLayer         LayerID
 		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
@@ -227,7 +228,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Workspace:         WorkspaceID{},
+				Workspace:         accountdomain.WorkspaceID{},
 				RootLayer:         lid,
 				Widgets:           ws,
 				WidgetAlignSystem: was,
