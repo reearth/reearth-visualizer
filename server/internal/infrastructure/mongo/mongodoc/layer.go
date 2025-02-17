@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"golang.org/x/exp/slices"
 )
 
@@ -115,7 +114,7 @@ func NewLayer(l layer.Layer) (*LayerDocument, string) {
 	}, id
 }
 
-func NewLayers(layers layer.List, f scene.IDList) ([]interface{}, []string) {
+func NewLayers(layers layer.List, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(layers))
 	ids := make([]string, 0, len(layers))
 	for _, d := range layers {
