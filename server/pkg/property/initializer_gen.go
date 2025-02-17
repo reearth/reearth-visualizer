@@ -2,11 +2,15 @@
 
 package property
 
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+)
+
 // DeepCopy generates a deep copy of *Initializer
 func (o *Initializer) DeepCopy() *Initializer {
 	var cp Initializer = *o
 	if o.ID != nil {
-		cp.ID = new(ID)
+		cp.ID = new(id.PropertyID)
 		*cp.ID = *o.ID
 	}
 	if o.Items != nil {
