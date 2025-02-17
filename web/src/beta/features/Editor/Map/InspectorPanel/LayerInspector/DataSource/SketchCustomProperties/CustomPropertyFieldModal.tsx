@@ -4,19 +4,25 @@ import {
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import {
   Button,
-  Icon,
   Modal,
   ModalPanel,
-  PopupMenu,
-  PopupMenuItem,
-  TextInput,
-  Typography
+  Selector,
+  TextInput
 } from "@reearth/beta/lib/reearth-ui";
+import ConfirmModal from "@reearth/beta/ui/components/ConfirmModal";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
-import { SetStateAction } from "jotai";
-import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
+import { styled } from "@reearth/services/theme";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 
+import { dataTypes } from "../../../../SketchLayerCreator";
 import { CustomPropertyProp } from "../../../../SketchLayerCreator/type";
 
 type CustomPropertyFieldProps = {
@@ -26,43 +32,13 @@ type CustomPropertyFieldProps = {
     value: string;
   } | null;
   schemaJSON: Record<string, string>;
-  onBlur?: (title: string) => void;
-  onClose: () => void;
-  onCustomPropertySchemaUpdate?: (schema: CustomPropertyProp) => void;
-  onOpenConfirmModal?: () => void;
-  onSchemaJSONUpdate: Dispatch<SetStateAction<Record<string, string>>>;
+  showEditFieldConfirmModal?: boolean;
+  customPropertySchemaShown?: boolean;
+  onSubmit?: (schema: CustomPropertyProp, newTitle?: string) => void;
+  onClose?: () => void;
+  onCustomPropertySchemaState?: () => void;
+  onSchemaJSONUpdate?: Dispatch<SetStateAction<Record<string, string>>>;
 };
-
-const dataTypes = [
-  {
-    id: "text",
-    title: "Text"
-  },
-  {
-    id: "textArea",
-    title: "TextArea"
-  },
-  {
-    id: "url",
-    title: "URL"
-  },
-  {
-    id: "asset",
-    title: "Asset"
-  },
-  {
-    id: "float",
-    title: "Float"
-  },
-  {
-    id: "int",
-    title: "Int"
-  },
-  {
-    id: "bool",
-    title: "Boolean"
-  }
-];
 
 const dataTypeGroups = {
   string: ["Text", "TextArea", "URL", "Asset"],
@@ -74,157 +50,201 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
   selectedField,
   isEditField,
   schemaJSON,
-  onBlur,
+  customPropertySchemaShown,
   onClose,
-  onCustomPropertySchemaUpdate,
-  onOpenConfirmModal,
-  onSchemaJSONUpdate
+  onSubmit,
+  onSchemaJSONUpdate,
+  onCustomPropertySchemaState
 }) => {
   const t = useT();
-  const theme = useTheme();
-
   const [customPropertyTitle, setCustomPropertyTitle] = useState(
     selectedField?.key
   );
+
   const [dataType, setDataType] = useState(selectedField?.value || "");
 
-  const menuItems: PopupMenuItem[] = useMemo(() => {
-    const currentGroup = Object.keys(dataTypeGroups).find((group) =>
-      dataTypeGroups[group as keyof typeof dataTypeGroups].includes(dataType)
-    );
+  const [showEditFieldConfirmModal, setShowEditFieldConfirmModal] =
+    useState(false);
 
-    return dataTypes.map((dataTypeItem) => {
-      const isDisabled = !!(
-        isEditField &&
-        currentGroup &&
-        !dataTypeGroups[currentGroup as keyof typeof dataTypeGroups].includes(
-          dataTypeItem.title
-        )
-      );
+  const openEditFieldConfirmModal = useCallback(() => {
+    setShowEditFieldConfirmModal(true);
+    onCustomPropertySchemaState?.()
+  }, [onCustomPropertySchemaState]);
 
-      return {
-        id: dataTypeItem.id,
-        title: dataTypeItem.title,
-        disabled: isDisabled,
-        onClick: isDisabled ? undefined : () => setDataType(dataTypeItem.title)
-      };
-    });
-  }, [dataType, isEditField]);
+  const closeEditFieldConfirmModal = useCallback(() => {
+    setShowEditFieldConfirmModal(false);
+  }, []);
 
   useEffect(() => {
-    if (!selectedField?.value || !schemaJSON) return;
+    if (selectedField) {
+      setCustomPropertyTitle(selectedField.key);
+      setDataType(selectedField.value);
+    } else {
+      setCustomPropertyTitle("");
+      setDataType("");
+    }
+  }, [selectedField]);
 
-    setTimeout(() => {
-      onSchemaJSONUpdate((prevSchema) => {
-        const existingValue = prevSchema[selectedField.key] || "";
-        const match = existingValue.match(/_(\w+)$/);
-        const suffix = match ? match[0] : "";
+  const groupedDataTypes = useMemo(() => {
+    if (!isEditField || !selectedField?.value) return dataTypes;
 
-        const newValue = `${dataType}${suffix}`;
+    const groupKey = Object.keys(dataTypeGroups).find((key) =>
+      dataTypeGroups[key as keyof typeof dataTypeGroups].includes(
+        selectedField.value
+      )
+    );
 
-        if (existingValue === newValue) {
-          return prevSchema;
-        }
-        return { ...prevSchema, [selectedField.key]: `${dataType}${suffix}` };
-      });
-    }, 0); // Delay update to avoid immediate loop
+    return groupKey
+      ? dataTypeGroups[groupKey as keyof typeof dataTypeGroups]
+      : dataTypes;
+  }, [isEditField, selectedField?.value]);
+
+  const disabled = useMemo(() => {
+    const checkExistValue = dataType !== selectedField?.value;
+
+    return (
+      !customPropertyTitle ||
+      !dataType ||
+      (!isEditField &&
+        Object.prototype.hasOwnProperty.call(
+          schemaJSON,
+          customPropertyTitle
+        )) ||
+      (!checkExistValue &&
+        Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle))
+    );
   }, [
-    selectedField?.value,
-    selectedField?.key,
+    customPropertyTitle,
     dataType,
     schemaJSON,
-    onSchemaJSONUpdate
+    selectedField?.value,
+    isEditField
   ]);
-
-const disabled = useMemo(() => {
-  const checkExistValue = dataType !== selectedField?.value;
-
-  return (
-    !customPropertyTitle ||
-    !dataType ||
-    (!isEditField &&
-      Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle)) ||
-    (!checkExistValue &&
-      Object.prototype.hasOwnProperty.call(schemaJSON, customPropertyTitle))
-  );
-}, [
-  customPropertyTitle,
-  dataType,
-  schemaJSON,
-  selectedField?.value,
-  isEditField
-]);
 
   const handleSubmit = useCallback(() => {
     if (!customPropertyTitle) return;
-    onSchemaJSONUpdate?.((prevSchema = {}) => {
-      const updatedSchema = { ...prevSchema };
-      updatedSchema[customPropertyTitle] =
-        `${dataType}_${Object.keys(updatedSchema).length + 1}`;
-      onCustomPropertySchemaUpdate?.(updatedSchema);
 
+    onSchemaJSONUpdate?.((prevSchema = {}) => {
+      let updatedSchema = { ...prevSchema };
+
+      if (selectedField) {
+        const { [selectedField.key]: _, ...restSchema } = prevSchema;
+        updatedSchema = restSchema;
+        const isDataTypeChanged =
+          selectedField.key !== customPropertyTitle &&
+          selectedField.value === dataType;
+
+        const existingValue = prevSchema[selectedField.key];
+        const match = existingValue?.match(/_(\w+)$/);
+        const suffix = match
+          ? match[0]
+          : `${dataType}_${Object.keys(updatedSchema).length + 1}`;
+;
+
+        updatedSchema[customPropertyTitle] = isDataTypeChanged
+          ? existingValue
+          : `${dataType}${suffix}`;
+        
+        if (isDataTypeChanged) {
+          onSubmit?.(updatedSchema, customPropertyTitle);
+        } else {
+          onSubmit?.(updatedSchema);
+        }
+        closeEditFieldConfirmModal();
+      } else {
+        updatedSchema[customPropertyTitle] =
+          `${dataType}_${Object.keys(updatedSchema).length + 1}`;
+        onSubmit?.(updatedSchema);
+      }
+      onClose?.();
       return updatedSchema;
     });
-
-    onClose?.();
   }, [
-    onSchemaJSONUpdate,
-    onCustomPropertySchemaUpdate,
-    onClose,
     customPropertyTitle,
-    dataType
+    onSchemaJSONUpdate,
+    onClose,
+    selectedField,
+    dataType,
+    onSubmit,
+    closeEditFieldConfirmModal
   ]);
 
   return (
-    <Modal size="small" visible={true}>
-      <ModalPanel
-        title={
-          isEditField ? t("Edit Custom Property") : t("New Custom Property")
-        }
-        onCancel={onClose}
-        actions={
-          <>
-            <Button onClick={onClose} size="normal" title={t("Cancel")} />
-            <Button
-              onClick={isEditField ? onOpenConfirmModal : handleSubmit}
-              size="normal"
-              title={isEditField ? t("Submit") : t("Apply")}
-              appearance="primary"
-              disabled={disabled}
-            />
-          </>
-        }
-      >
-        <Wrapper>
-          <InputGroup label={t("Property Title")}>
-            <InputsWrapper>
-              <TextInput
-                value={customPropertyTitle}
-                onChange={setCustomPropertyTitle}
-                onBlur={onBlur}
-              />
-            </InputsWrapper>
-          </InputGroup>
+    <>
+      {customPropertySchemaShown && (
+        <Modal size="small" visible={customPropertySchemaShown}>
+          <ModalPanel
+            title={
+              isEditField ? t("Edit Custom Property") : t("New Custom Property")
+            }
+            onCancel={onClose}
+            actions={
+              <>
+                <Button onClick={onClose} size="normal" title={t("Cancel")} />
+                <Button
+                  onClick={
+                    isEditField ? openEditFieldConfirmModal : handleSubmit
+                  }
+                  size="normal"
+                  title={isEditField ? t("Submit") : t("Apply")}
+                  appearance="primary"
+                  disabled={disabled}
+                />
+              </>
+            }
+          >
+            <Wrapper>
+              <InputGroup label={t("Property Title")}>
+                <InputsWrapper>
+                  <TextInput
+                    value={customPropertyTitle}
+                    onBlur={setCustomPropertyTitle}
+                  />
+                </InputsWrapper>
+              </InputGroup>
 
-          <InputGroup label={t("Property Type")}>
-            <PopupMenu
-              extendTriggerWidth
-              extendContentWidth
-              menu={menuItems}
-              iconColor={theme.content.main}
-              label={
-                <LabelInput>
-                  <Typography size="body" color={theme.content.main}>
-                    {dataType}
-                  </Typography>
-                  <Icon icon="caretDown" />
-                </LabelInput>
-              }
-            />
-          </InputGroup>
-        </Wrapper>
-      </ModalPanel>
-    </Modal>
+              <InputGroup label={t("Property Type")}>
+                <Selector
+                  value={dataType}
+                  placeholder={t("Please select one type")}
+                  options={groupedDataTypes.map((v) => ({
+                    value: v,
+                    label: v
+                  }))}
+                  onChange={(value: string | string[]) =>
+                    setDataType(value as string)
+                  }
+                />
+              </InputGroup>
+            </Wrapper>
+          </ModalPanel>
+        </Modal>
+      )}
+      {showEditFieldConfirmModal && (
+        <ConfirmModal
+          visible={true}
+          title={t("Apply Current Edits?")}
+          description={t(
+            "This save will apply to all features in the current layer. Do you want to proceed?"
+          )}
+          actions={
+            <>
+              <Button
+                size="normal"
+                title={t("Cancel")}
+                onClick={closeEditFieldConfirmModal}
+              />
+              <Button
+                size="normal"
+                title={t("Apply")}
+                appearance="primary"
+                onClick={handleSubmit}
+              />
+            </>
+          }
+        />
+      )}
+    </>
   );
 };
 
@@ -234,21 +254,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal
-}));
-
-const LabelInput = styled("div")(({ theme }) => ({
-  boxSizing: "border-box",
-  backgroundColor: `${theme.bg[1]}`,
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: `${theme.spacing.small}px`,
-  borderRadius: `${theme.radius.small}px`,
-  border: `1px solid  ${theme.outline.weak}`,
-  boxShadow: `${theme.shadow.input}`,
-  width: "100%",
-  height: "28px",
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`
 }));
 
 export default CustomPropertyFieldModal;

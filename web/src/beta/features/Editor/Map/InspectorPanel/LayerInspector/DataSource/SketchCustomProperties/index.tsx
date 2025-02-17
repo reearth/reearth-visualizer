@@ -1,4 +1,4 @@
-import { Button } from "@reearth/beta/lib/reearth-ui";
+import { Button, IconName } from "@reearth/beta/lib/reearth-ui";
 import ConfirmModal from "@reearth/beta/ui/components/ConfirmModal";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -8,11 +8,26 @@ import { CustomPropertyProp } from "../../../../SketchLayerCreator/type";
 
 import CustomPropertyFieldItem from "./CustomPropertyFieldItem";
 import CustomPropertyFieldModal from "./CustomPropertyFieldModal";
-import useHooks, { getIcon } from "./hooks";
+import useHooks from "./hooks";
 
 type Props = {
   layerId?: string;
   customPropertySchema?: CustomPropertyProp;
+};
+
+export const getIcon = (value: string): IconName => {
+  const cleanedValue = value.replace(/_\d+$/, ""); // Remove _Number suffix
+  const iconMap: Record<string, IconName> = {
+    TextArea: "textarea",
+    Text: "textT",
+    URL: "linkSimpleHorizontal",
+    Asset: "file",
+    Float: "float",
+    Int: "numberNine",
+    Boolean: "toggleLeft"
+  };
+
+  return iconMap[cleanedValue] || "file";
 };
 
 const CustomPropertiesSchema: FC<Props> = ({
@@ -31,16 +46,12 @@ const CustomPropertiesSchema: FC<Props> = ({
     closeCustomPropertySchema,
     showDeleteFieldConfirmModal,
     closeDeleteFieldConfirmModal,
-    showEditFieldConfirmModal,
-    openEditFieldConfirmModal,
-    closeEditFieldConfirmModal,
-    handleUpdateCustomPropertySchema,
     handleAppyDelete,
     handleDeleteField,
     handleEditField,
     handleSubmit,
-    handleTitleBlur,
-    setSchemaJSON
+    setSchemaJSON,
+    handleCustomPropertySchemaState
   } = useHooks(layerId, customPropertySchema);
 
   return (
@@ -68,42 +79,16 @@ const CustomPropertiesSchema: FC<Props> = ({
           onClick={openCustomPropertySchema}
         />
       </ButtonWrapper>
-      {customPropertySchemaShown && (
-        <CustomPropertyFieldModal
-          selectedField={selectedField}
-          schemaJSON={schemaJSON}
-          isEditField={isEditField}
-          onBlur={handleTitleBlur}
-          onClose={closeCustomPropertySchema}
-          onOpenConfirmModal={openEditFieldConfirmModal}
-          onCustomPropertySchemaUpdate={handleUpdateCustomPropertySchema}
-          onSchemaJSONUpdate={setSchemaJSON}
-        />
-      )}
-      {showEditFieldConfirmModal && (
-        <ConfirmModal
-          visible={true}
-          title={t("Apply Current Edits?")}
-          description={t(
-            "This save will apply to all features in the current layer. Do you want to proceed?"
-          )}
-          actions={
-            <>
-              <Button
-                size="normal"
-                title={t("Cancel")}
-                onClick={closeEditFieldConfirmModal}
-              />
-              <Button
-                size="normal"
-                title={t("Apply")}
-                appearance="primary"
-                onClick={handleSubmit}
-              />
-            </>
-          }
-        />
-      )}
+      <CustomPropertyFieldModal
+        selectedField={selectedField}
+        schemaJSON={schemaJSON}
+        isEditField={isEditField}
+        customPropertySchemaShown={customPropertySchemaShown}
+        onClose={closeCustomPropertySchema}
+        onSubmit={handleSubmit}
+        onSchemaJSONUpdate={setSchemaJSON}
+        onCustomPropertySchemaState={handleCustomPropertySchemaState}
+      />
       {showDeleteFieldConfirmModal && (
         <ConfirmModal
           visible={true}

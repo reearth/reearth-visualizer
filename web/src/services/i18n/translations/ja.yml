@@ -135,10 +135,11 @@ New Custom Property: 新しいカスタムプロパティ
 Submit: 反映
 Property Title: プロパティタイトル
 Property Type: プロパティタイプ
-No field has been created yet: フィールドが作成されていません
-New Field: 新しいフィールド
+Please select one type: タイプを選択してください
 Apply Current Edits?: 現在の編集を適用しますか?
 This save will apply to all features in the current layer. Do you want to proceed?: この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？
+No field has been created yet: フィールドが作成されていません
+New Field: 新しいフィールド
 Delete schema property field?: プロパティのフィールドを削除しますか?
 This action will apply to all features in the current layer. Do you want to proceed?: この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？
 Unsupported custom field: サポートされていないカスタムフィールド
@@ -184,7 +185,6 @@ New Sketch Layer: 新しいスケッチレイヤー
 Create: 作成
 ' Text': ' テキスト'
 Type Title here: タイトルをここに入力
-Please select one type: タイプを選択してください
 Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください

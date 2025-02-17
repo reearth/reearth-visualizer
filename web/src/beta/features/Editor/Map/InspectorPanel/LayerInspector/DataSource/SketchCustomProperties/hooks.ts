@@ -35,8 +35,6 @@ export default function useHooks(
     value: string;
   } | null>(null);
 
-  const [newTitle, setNewTitle] = useState<string | undefined>();
-
   const [isEditField, setIsEditField] = useState(false);
   const isEmpty =
     !customPropertySchema || Object.keys(customPropertySchema).length === 0;
@@ -61,40 +59,24 @@ export default function useHooks(
       });
   }, [customPropertySchema]);
 
-  const handleTitleBlur = useCallback((title: string) => {
-    const trimmedTitle = title.trim();
-    setNewTitle(trimmedTitle);
-  }, []);
-
   const [customPropertySchemaShown, setCustomPropertySchemaShown] =
     useState(false);
 
   const openCustomPropertySchema = useCallback(() => {
     setCustomPropertySchemaShown(true);
-    setNewTitle(undefined);
+  }, []);
+
+  const handleCustomPropertySchemaState = useCallback(() => {
+    setCustomPropertySchemaShown(false);
+    setIsEditField(false);
   }, []);
 
   const closeCustomPropertySchema = useCallback(() => {
-    if (!customPropertySchema) return
-    setCustomPropertySchemaShown(false);
+    if (!customPropertySchema) return;
     setSelectedField(null);
-    setIsEditField(false);
+    handleCustomPropertySchemaState();
     setSchemaJSON(customPropertySchema);
-  }, [customPropertySchema]);
-
-  const [showEditFieldConfirmModal, setShowEditFieldConfirmModal] =
-    useState(false);
-
-  const openEditFieldConfirmModal = useCallback(() => {
-    setShowEditFieldConfirmModal(true);
-    setCustomPropertySchemaShown(false);
-    setIsEditField(false);
-  }, []);
-
-  const closeEditFieldConfirmModal = useCallback(() => {
-    setShowEditFieldConfirmModal(false);
-    setSelectedField(null);
-  }, []);
+  }, [customPropertySchema, handleCustomPropertySchemaState]);
 
   const [showDeleteFieldConfirmModal, setShowDeleteFieldConfirmModal] =
     useState(false);
@@ -164,13 +146,13 @@ export default function useHooks(
   );
 
   const handleUpdateCustomPropertyTitle = useCallback(
-    (updatedSchema: CustomPropertyProp) => {
+    (updatedSchema: CustomPropertyProp, newTitle: string) => {
       if (!customPropertySchema || !selectedField?.key || !newTitle) return;
 
       handleChangeCustomPropertyTitle({
         layerId: layerId || "",
         oldTitle: selectedField.key,
-        newTitle: newTitle,
+        newTitle,
         schema: updatedSchema
       });
     },
@@ -178,36 +160,19 @@ export default function useHooks(
       customPropertySchema,
       handleChangeCustomPropertyTitle,
       layerId,
-      newTitle,
       selectedField?.key
     ]
   );
 
-  const handleSubmit = useCallback(() => {
-    if (!customPropertySchema || !selectedField?.key) return;
-
-    const { [selectedField.key]: _, ...updatedSchema } = schemaJSON;
-
-    if (newTitle) {
-      updatedSchema[newTitle] = schemaJSON[selectedField.key];
-      setSchemaJSON(updatedSchema);
-      handleUpdateCustomPropertyTitle(updatedSchema);
-    }
-
-    if (!newTitle) {
-      handleUpdateCustomPropertySchema(schemaJSON);
-    }
-
-    closeEditFieldConfirmModal();
-  }, [
-    customPropertySchema,
-    selectedField?.key,
-    newTitle,
-    schemaJSON,
-    closeEditFieldConfirmModal,
-    handleUpdateCustomPropertyTitle,
-    handleUpdateCustomPropertySchema
-  ]);
+  const handleSubmit = useCallback(
+    (updatedSchema: CustomPropertyProp, newTitle?: string) => {
+      if (newTitle) {
+        handleUpdateCustomPropertyTitle(updatedSchema, newTitle);
+      }
+      if (!newTitle) handleUpdateCustomPropertySchema(updatedSchema);
+    },
+    [handleUpdateCustomPropertySchema, handleUpdateCustomPropertyTitle]
+  );
 
   return {
     sortedValues,
@@ -221,15 +186,12 @@ export default function useHooks(
     showDeleteFieldConfirmModal,
     openDeleteFieldConfirmModal,
     closeDeleteFieldConfirmModal,
-    showEditFieldConfirmModal,
-    openEditFieldConfirmModal,
-    closeEditFieldConfirmModal,
     handleUpdateCustomPropertySchema,
     handleAppyDelete,
     handleDeleteField,
     handleEditField,
     handleSubmit,
-    handleTitleBlur,
-    setSchemaJSON
+    setSchemaJSON,
+    handleCustomPropertySchemaState
   };
 }
