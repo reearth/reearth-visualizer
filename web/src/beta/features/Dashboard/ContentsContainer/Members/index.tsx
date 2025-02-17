@@ -138,17 +138,18 @@ const Wrapper = styled("div")({
   height: "100%"
 });
 
-const HeaderWrapper = styled("div")({
+const HeaderWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
-  alignItems: "center"
-});
+  alignItems: "center",
+  margin: `${theme.spacing.super}px 0px ${theme.spacing.large}px ${theme.spacing.super}px`
+}));
 
 const Search = styled("div")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "2fr 1fr",
   gap: theme.spacing.super,
-  padding: theme.spacing.largest
+  paddingBottom: theme.spacing.small
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({

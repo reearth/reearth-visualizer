@@ -57,7 +57,7 @@ const ListItem: FC<{
       </TypographyWrapper>
       <TypographyWrapper>
         <TypographyOfMember size="body">
-          {memerRoleTranslation[member.role].toLowerCase()}
+          {memerRoleTranslation[member.role]}
         </TypographyOfMember>
       </TypographyWrapper>
       <TypographyWrapper>
