@@ -57,10 +57,6 @@ READER: 閲覧者
 WRITER: 作成者
 Change Role: 役割を変更
 Remove: ゴミ箱へ移動
-Reader: 閲覧者
-Writer: 作成者
-Maintainer: 管理者
-Owner: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
 Last Created: 最終作成日

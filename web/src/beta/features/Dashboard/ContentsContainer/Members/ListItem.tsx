@@ -1,4 +1,3 @@
-import AddMemberModal from "@reearth/beta/features/Dashboard/ContentsContainer/Members/AddMemberModal";
 import UpdateRoleModal from "@reearth/beta/features/Dashboard/ContentsContainer/Members/UpdateRoleModal";
 import { Button, PopupMenu, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useWorkspaceFetcher } from "@reearth/services/api";
@@ -11,15 +10,11 @@ import { FC, useCallback, useState } from "react";
 const ListItem: FC<{
   member: TeamMember;
   currentWorkSpace: Workspace;
-  addMemberModalVisible: boolean;
-  setAddMemberModalVisible: (visible: boolean) => void;
   updatingRoleMember: TeamMember | undefined;
   setUpdatingRoleMember: (member: TeamMember) => void;
 }> = ({
   member,
   currentWorkSpace,
-  addMemberModalVisible,
-  setAddMemberModalVisible,
   updatingRoleMember,
   setUpdatingRoleMember
 }) => {
@@ -29,11 +24,6 @@ const ListItem: FC<{
     OWNER: t("OWNER"),
     READER: t("READER"),
     WRITER: t("WRITER")
-  };
-  type MemberRoleENG = keyof typeof memerRoleTranslation;
-  const allRoles = Object.keys(memerRoleTranslation);
-  const isMemberRoleENG = (str: string): str is MemberRoleENG => {
-    return allRoles.includes(str);
   };
 
   const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
@@ -96,13 +86,7 @@ const ListItem: FC<{
           ]}
         />
       </TypographyWrapper>
-      {addMemberModalVisible && (
-        <AddMemberModal
-          workspace={currentWorkSpace}
-          visible
-          onClose={() => setAddMemberModalVisible(false)}
-        />
-      )}
+
       {updateRoleModalVisible && updatingRoleMember && (
         <UpdateRoleModal
           workspace={currentWorkSpace}

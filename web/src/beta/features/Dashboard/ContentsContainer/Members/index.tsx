@@ -7,6 +7,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 
 import { Workspace } from "../../type";
 
+import AddMemberModal from "./AddMemberModal";
 import ListItem from "./ListItem";
 
 const ROLE_PRIORITY = { OWNER: 1, MAINTAINER: 2, WRITER: 3, READER: 4 };
@@ -95,8 +96,6 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               key={member.userId}
               member={member}
               currentWorkSpace={workspace}
-              addMemberModalVisible={addMemberModalVisible}
-              setAddMemberModalVisible={setAddMemberModalVisible}
               updatingRoleMember={updatingRoleMember}
               setUpdatingRoleMember={setUpdatingRoleMember}
             />
@@ -109,6 +108,13 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           </TemplateWrapper>
         )}
       </ListWrapper>
+      {addMemberModalVisible && (
+        <AddMemberModal
+          workspace={workspace}
+          visible
+          onClose={() => setAddMemberModalVisible(false)}
+        />
+      )}
     </Wrapper>
   );
 };
