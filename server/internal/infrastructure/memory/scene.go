@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -86,7 +85,7 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 
 	result := scene.List{}
 	for _, d := range r.data {
-		if user.WorkspaceIDList(workspaces).Has(d.Workspace()) && r.f.CanRead(d.Workspace()) {
+		if accountdomain.WorkspaceIDList(workspaces).Has(d.Workspace()) && r.f.CanRead(d.Workspace()) {
 			result = append(result, d)
 		}
 	}

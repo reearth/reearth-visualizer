@@ -2,6 +2,9 @@ package asset
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type Builder struct {
@@ -49,12 +52,12 @@ func (b *Builder) NewID() *Builder {
 	return b
 }
 
-func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+func (b *Builder) Workspace(workspace accountdomain.WorkspaceID) *Builder {
 	b.a.workspace = workspace
 	return b
 }
 
-func (b *Builder) Project(project *ProjectID) *Builder {
+func (b *Builder) Project(project *id.ProjectID) *Builder {
 	b.a.project = project
 	return b
 }

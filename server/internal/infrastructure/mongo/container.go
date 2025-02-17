@@ -12,7 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
@@ -126,7 +126,7 @@ func Init(r *repo.Container) error {
 	)
 }
 
-func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
+func applyWorkspaceFilter(filter interface{}, ids accountdomain.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter
 	}

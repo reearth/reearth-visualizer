@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -66,8 +67,8 @@ func TestBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID        ID
-		Project   ProjectID
-		Workspace WorkspaceID
+		Project   id.ProjectID
+		Workspace accountdomain.WorkspaceID
 		Widgets   *Widgets
 		Plugins   *Plugins
 		UpdatedAt time.Time
@@ -98,7 +99,20 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Workspace: WorkspaceID{},
+				Workspace: accountdomain.WorkspaceID{},
+				Widgets:   ws,
+				Plugins:   ps,
+				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:  ppid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "fail nil root layer id",
+			Args: args{
+				ID:        sid,
+				Project:   pid,
+				Workspace: tid,
 				Widgets:   ws,
 				Plugins:   ps,
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
@@ -167,8 +181,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 
 	type args struct {
 		ID                ID
-		Project           ProjectID
-		Workspace         WorkspaceID
+		Project           id.ProjectID
+		Workspace         accountdomain.WorkspaceID
 		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
 		Plugins           *Plugins
@@ -201,7 +215,21 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Workspace:         WorkspaceID{},
+				Workspace:         accountdomain.WorkspaceID{},
+				Widgets:           ws,
+				WidgetAlignSystem: was,
+				Plugins:           ps,
+				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
+				Property:          ppid,
+			},
+			Err: ErrInvalidID,
+		},
+		{
+			Name: "fail nil root layer id",
+			Args: args{
+				ID:                sid,
+				Project:           pid,
+				Workspace:         tid,
 				Widgets:           ws,
 				WidgetAlignSystem: was,
 				Plugins:           ps,

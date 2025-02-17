@@ -5,14 +5,15 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 var ErrSceneIsLocked error = errors.New("scene is locked")
 
 type Scene struct {
 	id        ID
-	project   ProjectID
-	workspace WorkspaceID
+	project   id.ProjectID
+	workspace accountdomain.WorkspaceID
 	widgets   *Widgets
 	plugins   *Plugins
 	updatedAt time.Time
@@ -34,16 +35,16 @@ func (s *Scene) CreatedAt() time.Time {
 	return s.id.Timestamp()
 }
 
-func (s *Scene) Project() ProjectID {
+func (s *Scene) Project() id.ProjectID {
 	if s == nil {
-		return ProjectID{}
+		return id.ProjectID{}
 	}
 	return s.project
 }
 
-func (s *Scene) Workspace() WorkspaceID {
+func (s *Scene) Workspace() accountdomain.WorkspaceID {
 	if s == nil {
-		return WorkspaceID{}
+		return accountdomain.WorkspaceID{}
 	}
 	return s.workspace
 }
