@@ -45,14 +45,11 @@ const widgetFile: FileType = {
       background: #2196F3;
       color: white;
       cursor: pointer;
-      transition: background 0.3s;
-      font-size: 12px;
     }
 
     .time-display-container {
       background: #fff;
       border-radius: 4px;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
       padding: 8px;
       text-align: center;
     }
@@ -89,37 +86,29 @@ const widgetFile: FileType = {
       font-size: 12px;
     }
 
-    .control-group {
-      width: 100%;
-    }
-
     .radio-group {
       display: flex;
+      flex-direction: column;
       gap: 8px;
       font-size: 12px;
-      padding: 12px 0;
+      padding-top: 8px;
     }
 
     .radio-option {
-      display: flex;
-      align-items: center;
-      gap: 3px;
+      display: grid;
+      grid-template-columns: auto 80px 1fr;
+      align-items: baseline;
+      gap: 4px;
     }
 
-    .radio-option input[type="radio"] {
-      margin: 0;
-    }
-
-    .radio-option label {
-      cursor: pointer;
-      white-space: nowrap;
+    .radio-description {
+      color: #666;
+      font-size: 11px;
     }
 
     .control-label {
       font-size: 12px;
       font-weight: bold;
-      margin-bottom: 4px;
-      text-align: left;
     }
   </style>
 
@@ -156,14 +145,17 @@ const widgetFile: FileType = {
           <div class="radio-option">
             <input type="radio" id="unbounded" name="rangeType" value="unbounded" checked>
             <label for="unbounded">Unbounded</label>
+            <span class="radio-description"> - Time continues indefinitely in both directions.</span>
           </div>
           <div class="radio-option">
             <input type="radio" id="clamped" name="rangeType" value="clamped">
             <label for="clamped">Clamped</label>
+            <span class="radio-description"> - Stops at the start/end of the time range.</span>
           </div>
           <div class="radio-option">
             <input type="radio" id="bounced" name="rangeType" value="bounced">
             <label for="bounced">Bounced</label>
+            <span class="radio-description"> - Reverses direction at the start/end of time range.</span>
           </div>
         </div>
       </div>
@@ -265,21 +257,6 @@ const widgetFile: FileType = {
         pbr: false,
         selectedFeatureColor: "red",
         shadows: "enabled",
-        maximumScreenSpaceError: 16,
-        maximumMemoryUsage: 512,
-        preloadFlightDestinations: true,
-        preferLeaves: true,
-        skipLevelOfDetail: false, // Ensure proper LOD loading
-        dynamicScreenSpaceError: true, // Better performance with distance
-        dynamicScreenSpaceErrorDensity: 0.00278,
-        dynamicScreenSpaceErrorFactor: 4.0,
-        color: {
-          expression: {
-            conditions: [
-              ["true", "color('#ffffff')"]
-            ]
-          }
-        }
     }
   };
 
@@ -291,22 +268,16 @@ const widgetFile: FileType = {
     globe: {
       enableLighting: true,
       depthTestAgainstTerrain: true,
-      baseColor: "#E6E6E6",
       atmosphere: {
         enabled: true,
         lightIntensity: 10.0,
-        brightnessShift: 0.3,
-        saturationShift: 0.2,
-        hueShift: 0.0
+        brightnessShift: 0.3
       }
     },
     terrain: {
       enabled: true
     },
     sky: {
-      skyBox: {
-        show: true
-      },
       sun: {
         show: true
       },
@@ -318,10 +289,6 @@ const widgetFile: FileType = {
         lightIntensity: 20.0,
         brightnessShift: 0.3,
         saturationShift: 0.2
-      },
-      fog: {
-        enabled: true,
-        density: 0.00001
       }
     },
     scene: {
@@ -332,20 +299,13 @@ const widgetFile: FileType = {
       },
       shadow: {
         enabled: true,
-        darkness: 0.3,
         shadowMap: {
           size: 2048,
-          softShadows: true,
-          darkness: 0.3,
-          maximumDistance: 5000
+          softShadows: true
         }
-      },
-      imageBasedLighting: {
-        enabled: true,
-        intensity: 1.5
       }
     }
-  });
+});
 
   // Set camera position for optimal ground+sky view
   reearth.camera.flyTo({
