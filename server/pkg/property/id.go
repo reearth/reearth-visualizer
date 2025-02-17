@@ -12,7 +12,8 @@ type SchemaGroupID = id.PropertySchemaGroupID
 type DatasetID = id.DatasetID
 type DatasetFieldID = id.DatasetFieldID
 type DatasetSchemaID = id.DatasetSchemaID
-type SceneID = id.SceneID
+
+// type SceneID = id.SceneID
 
 var NewID = id.NewPropertyID
 var NewItemID = id.NewPropertyItemID

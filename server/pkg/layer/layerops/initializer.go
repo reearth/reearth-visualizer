@@ -10,7 +10,7 @@ import (
 )
 
 type LayerItem struct {
-	SceneID                layer.SceneID
+	SceneID                id.SceneID
 	ParentLayerID          layer.ID
 	Plugin                 *plugin.Plugin
 	ExtensionID            *id.PluginExtensionID

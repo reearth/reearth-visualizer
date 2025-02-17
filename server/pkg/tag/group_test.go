@@ -26,7 +26,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 	tests := []struct {
 		Name, Label string
 		Id          ID
-		Scene       SceneID
+		Scene       id.SceneID
 		Tags        IDList
 		Expected    struct {
 			Group Group

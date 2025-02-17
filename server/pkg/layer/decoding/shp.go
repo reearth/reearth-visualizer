@@ -14,10 +14,10 @@ type ShapeReader interface {
 }
 type ShapeDecoder struct {
 	reader  ShapeReader
-	sceneId layer.SceneID
+	sceneId id.SceneID
 }
 
-func NewShapeDecoder(r ShapeReader, s layer.SceneID) *ShapeDecoder {
+func NewShapeDecoder(r ShapeReader, s id.SceneID) *ShapeDecoder {
 	return &ShapeDecoder{
 		reader:  r,
 		sceneId: s,

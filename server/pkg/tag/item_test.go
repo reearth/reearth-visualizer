@@ -3,6 +3,7 @@ package tag
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestItemBuilder_Build(t *testing.T) {
 	tests := []struct {
 		Name, Label           string
 		Id                    ID
-		Scene                 SceneID
+		Scene                 id.SceneID
 		LinkedDatasetFieldID  *DatasetFieldID
 		LinkedDatasetID       *DatasetID
 		LinkedDatasetSchemaID *DatasetSchemaID

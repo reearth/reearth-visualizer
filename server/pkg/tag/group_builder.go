@@ -1,5 +1,7 @@
 package tag
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type GroupBuilder struct {
 	g *Group
 }
@@ -52,7 +54,7 @@ func (b *GroupBuilder) Label(l string) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Scene(sid SceneID) *GroupBuilder {
+func (b *GroupBuilder) Scene(sid id.SceneID) *GroupBuilder {
 	b.g.sceneId = sid
 	return b
 }

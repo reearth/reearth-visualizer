@@ -10,7 +10,7 @@ import (
 var ErrSceneIsLocked error = errors.New("scene is locked")
 
 type Scene struct {
-	id        ID
+	id        id.SceneID
 	project   ProjectID
 	workspace WorkspaceID
 	rootLayer LayerID
@@ -22,9 +22,9 @@ type Scene struct {
 	styles    *StyleList
 }
 
-func (s *Scene) ID() ID {
+func (s *Scene) ID() id.SceneID {
 	if s == nil {
-		return ID{}
+		return id.SceneID{}
 	}
 	return s.id
 }

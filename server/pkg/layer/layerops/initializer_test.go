@@ -37,7 +37,7 @@ func TestInitialize(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		sceneID       *layer.SceneID
+		sceneID       *id.SceneID
 		parentLayerID *layer.ID
 		plugin        *plugin.Plugin
 		extID         *id.PluginExtensionID

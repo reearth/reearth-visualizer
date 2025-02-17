@@ -16,11 +16,11 @@ import (
 
 type KMLDecoder struct {
 	decoder *xml.Decoder
-	sceneId layer.SceneID
+	sceneId id.SceneID
 	styles  map[string]kml.Style
 }
 
-func NewKMLDecoder(d *xml.Decoder, s layer.SceneID) *KMLDecoder {
+func NewKMLDecoder(d *xml.Decoder, s id.SceneID) *KMLDecoder {
 	return &KMLDecoder{
 		decoder: d,
 		sceneId: s,

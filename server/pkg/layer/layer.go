@@ -24,7 +24,7 @@ type Layer interface {
 	Property() *PropertyID
 	HasInfobox() bool
 	Infobox() *Infobox
-	Scene() SceneID
+	Scene() id.SceneID
 	Tags() *TagList
 	Rename(string)
 	SetIndex(*int)
@@ -80,7 +80,7 @@ type layerBase struct {
 	extension *id.PluginExtensionID
 	property  *PropertyID
 	infobox   *Infobox
-	scene     SceneID
+	scene     id.SceneID
 	tags      *TagList
 }
 
@@ -155,7 +155,7 @@ func (l *layerBase) Infobox() *Infobox {
 	return l.infobox
 }
 
-func (l *layerBase) Scene() SceneID {
+func (l *layerBase) Scene() id.SceneID {
 	return l.scene
 }
 

@@ -20,11 +20,11 @@ type GeoStyle struct {
 type GeoJSONDecoder struct {
 	reader    io.Reader
 	features  []*geojson.Feature
-	sceneId   layer.SceneID
+	sceneId   id.SceneID
 	groupName string
 }
 
-func NewGeoJSONDecoder(r io.Reader, s layer.SceneID) *GeoJSONDecoder {
+func NewGeoJSONDecoder(r io.Reader, s id.SceneID) *GeoJSONDecoder {
 	return &GeoJSONDecoder{
 		reader:    r,
 		sceneId:   s,

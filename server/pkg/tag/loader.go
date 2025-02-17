@@ -1,9 +1,13 @@
 package tag
 
-import "context"
+import (
+	"context"
+
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
 type Loader func(context.Context, ...ID) ([]*Tag, error)
-type SceneLoader func(context.Context, SceneID) ([]*Tag, error)
+type SceneLoader func(context.Context, id.SceneID) ([]*Tag, error)
 
 func LoaderFrom(data List) Loader {
 	return func(ctx context.Context, ids ...ID) ([]*Tag, error) {
@@ -40,7 +44,7 @@ func LoaderFromMap(data map[ID]Tag) Loader {
 }
 
 func SceneLoaderFrom(data List) SceneLoader {
-	return func(ctx context.Context, id SceneID) ([]*Tag, error) {
+	return func(ctx context.Context, id id.SceneID) ([]*Tag, error) {
 		return data.FilterByScene(id).Refs(), nil
 	}
 }

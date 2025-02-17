@@ -28,7 +28,7 @@ func (b *Builder) NewID() *Builder {
 	return b
 }
 
-func (b *Builder) Scene(s SceneID) *Builder {
+func (b *Builder) Scene(s id.SceneID) *Builder {
 	b.base.scene = s
 	return b
 }

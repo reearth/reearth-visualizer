@@ -2,6 +2,8 @@ package scene
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -42,7 +44,7 @@ func (b *Builder) MustBuild() *Scene {
 	return r
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.SceneID) *Builder {
 	b.scene.id = id
 	return b
 }

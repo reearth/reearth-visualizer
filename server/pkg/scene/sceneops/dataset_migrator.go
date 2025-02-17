@@ -38,7 +38,7 @@ func (r MigrateDatasetResult) Merge(r2 MigrateDatasetResult) MigrateDatasetResul
 }
 
 // NOTE: DatasetSchemaの削除には対応していない（自動的に削除されない）
-func (srv DatasetMigrator) Migrate(ctx context.Context, sid dataset.SceneID, newdsl []*dataset.Schema, newdl dataset.List) (MigrateDatasetResult, error) {
+func (srv DatasetMigrator) Migrate(ctx context.Context, sid id.SceneID, newdsl []*dataset.Schema, newdl dataset.List) (MigrateDatasetResult, error) {
 	result := MigrateDatasetResult{}
 
 	// 削除対象
@@ -161,7 +161,7 @@ func (srv DatasetMigrator) Migrate(ctx context.Context, sid dataset.SceneID, new
 	return result, nil
 }
 
-func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID, oldds *dataset.Schema, newds *dataset.Schema, diff dataset.Diff) (MigrateDatasetResult, error) {
+func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid id.SceneID, oldds *dataset.Schema, newds *dataset.Schema, diff dataset.Diff) (MigrateDatasetResult, error) {
 	// 前のデータセットスキーマに紐づいたレイヤーグループを取得
 	layerGroups, err := srv.LayerRepo.FindGroupBySceneAndLinkedDatasetSchema(ctx, sid, oldds.ID())
 	if err != nil {

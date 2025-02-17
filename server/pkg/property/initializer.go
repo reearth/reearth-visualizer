@@ -4,6 +4,8 @@ package property
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var ErrSchemaDoesNotMatch = errors.New("schema of the initializer does not match schema of the argument")
@@ -34,7 +36,7 @@ func (p *Initializer) Clone() *Initializer {
 	}
 }
 
-func (p *Initializer) Property(scene SceneID) (*Property, error) {
+func (p *Initializer) Property(scene id.SceneID) (*Property, error) {
 	if p == nil {
 		return nil, nil
 	}
@@ -60,7 +62,7 @@ func (p *Initializer) Property(scene SceneID) (*Property, error) {
 }
 
 // PropertyIncludingEmpty generates a new property, but even if the initializer is empty, an empty property will be generated.
-func (p *Initializer) PropertyIncludingEmpty(scene SceneID, schema SchemaID) (*Property, error) {
+func (p *Initializer) PropertyIncludingEmpty(scene id.SceneID, schema SchemaID) (*Property, error) {
 	if p != nil && p.Schema != schema {
 		return nil, ErrSchemaDoesNotMatch
 	}
@@ -80,7 +82,7 @@ func (p *Initializer) PropertyIncludingEmpty(scene SceneID, schema SchemaID) (*P
 	return pr, nil
 }
 
-func (p *Initializer) MustBeProperty(scene SceneID) *Property {
+func (p *Initializer) MustBeProperty(scene id.SceneID) *Property {
 	r, err := p.Property(scene)
 	if err != nil {
 		panic(err)

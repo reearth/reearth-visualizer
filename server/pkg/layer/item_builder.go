@@ -59,7 +59,7 @@ func (b *ItemBuilder) NewID() *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Scene(s SceneID) *ItemBuilder {
+func (b *ItemBuilder) Scene(s id.SceneID) *ItemBuilder {
 	b.l.scene = s
 	return b
 }

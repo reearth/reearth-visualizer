@@ -1,6 +1,10 @@
 package dataset
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
 type Schema struct {
 	id                  SchemaID
@@ -9,7 +13,7 @@ type Schema struct {
 	fields              map[FieldID]*SchemaField
 	order               []FieldID
 	representativeField *FieldID
-	scene               SceneID
+	scene               id.SceneID
 }
 
 func (d *Schema) ID() (i SchemaID) {
@@ -26,7 +30,7 @@ func (d *Schema) IDRef() *SchemaID {
 	return d.id.Ref()
 }
 
-func (d *Schema) Scene() (i SceneID) {
+func (d *Schema) Scene() (i id.SceneID) {
 	if d == nil {
 		return
 	}

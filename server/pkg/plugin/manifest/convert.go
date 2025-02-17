@@ -14,7 +14,7 @@ import (
 
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
 
-func (i *Root) manifest(sid *plugin.SceneID, tl *TranslatedRoot) (*Manifest, error) {
+func (i *Root) manifest(sid *id.SceneID, tl *TranslatedRoot) (*Manifest, error) {
 	var pid id.PluginID
 	var err error
 	if i.System && string(i.ID) == plugin.OfficialPluginID.Name() {

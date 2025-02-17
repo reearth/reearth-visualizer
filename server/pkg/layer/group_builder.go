@@ -59,7 +59,7 @@ func (b *GroupBuilder) NewID() *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Scene(s SceneID) *GroupBuilder {
+func (b *GroupBuilder) Scene(s id.SceneID) *GroupBuilder {
 	b.l.scene = s
 	return b
 }

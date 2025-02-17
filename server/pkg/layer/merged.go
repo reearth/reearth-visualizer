@@ -10,7 +10,7 @@ type Merged struct {
 	Original    ID
 	Parent      *ID
 	Name        string
-	Scene       SceneID
+	Scene       id.SceneID
 	Property    *property.MergedMetadata
 	Infobox     *MergedInfobox
 	PluginID    *id.PluginID

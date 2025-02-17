@@ -75,7 +75,7 @@ func rgbafToHex(rgbaf []float64) (string, error) {
 	return rgbaToHex(rgba)
 }
 
-func MustCreateProperty(t string, v interface{}, sceneID layer.SceneID, styleItem interface{}, extension string) *property.Property {
+func MustCreateProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) *property.Property {
 	p, err := createProperty(t, v, sceneID, styleItem, extension)
 	if err != nil {
 		panic(err)
@@ -83,7 +83,7 @@ func MustCreateProperty(t string, v interface{}, sceneID layer.SceneID, styleIte
 	return p
 }
 
-func createProperty(t string, v interface{}, sceneID layer.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
+func createProperty(t string, v interface{}, sceneID id.SceneID, styleItem interface{}, extension string) (*property.Property, error) {
 	propertySchema := propertySchemas[t]
 	item := propertyItems
 	field := propertyFields[t]
