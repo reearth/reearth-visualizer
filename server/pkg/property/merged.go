@@ -1,29 +1,22 @@
 package property
 
-import (
-	"context"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 // Merged represents a merged property from two properties
 type Merged struct {
-	Original      *id.PropertyID
-	Parent        *id.PropertyID
-	Schema        id.PropertySchemaID
-	LinkedDataset *DatasetID
-	Groups        []*MergedGroup
+	Original *id.PropertyID
+	Parent   *id.PropertyID
+	Schema   id.PropertySchemaID
+	Groups   []*MergedGroup
 }
 
 // MergedGroup represents a group of Merged
 type MergedGroup struct {
-	Original      *ItemID
-	Parent        *ItemID
-	SchemaGroup   SchemaGroupID
-	LinkedDataset *DatasetID
-	Groups        []*MergedGroup
-	Fields        []*MergedField
+	Original    *ItemID
+	Parent      *ItemID
+	SchemaGroup id.PropertySchemaGroupID
+	Groups      []*MergedGroup
+	Fields      []*MergedField
 }
 
 // MergedField represents a field of Merged
@@ -31,41 +24,12 @@ type MergedField struct {
 	ID         FieldID
 	Type       ValueType
 	Value      *Value
-	Links      *Links
 	Overridden bool
 }
 
-// Datasets returns associated dataset IDs
-func (m *Merged) Datasets() []DatasetID {
-	if m == nil {
-		return nil
-	}
-	ids := []DatasetID{}
-	for _, g := range m.Groups {
-		ids = append(ids, g.Datasets()...)
-	}
-	return ids
-}
-
-// Datasets returns associated dataset IDs
-func (m *MergedGroup) Datasets() []DatasetID {
-	if m == nil {
-		return nil
-	}
-	ids := []DatasetID{}
-	for _, f := range m.Fields {
-		if f == nil {
-			continue
-		}
-		ids = append(ids, f.Links.DatasetIDs()...)
-	}
-	return ids
-}
-
 type MergedMetadata struct {
-	Original      *id.PropertyID
-	Parent        *id.PropertyID
-	LinkedDataset *DatasetID
+	Original *id.PropertyID
+	Parent   *id.PropertyID
 }
 
 // MergedMetadataFrom generates MergedMetadata from single property
@@ -96,18 +60,11 @@ func (m MergedMetadata) Merge(o *Property, p *Property) *Merged {
 	if m.Parent != nil && (p == nil || *m.Parent != p.ID()) {
 		return nil
 	}
-	return Merge(o, p, m.LinkedDataset)
-}
-
-func (f *MergedField) DatasetValue(ctx context.Context, d dataset.GraphLoader) (*dataset.Value, error) {
-	if f == nil {
-		return nil, nil
-	}
-	return f.Links.DatasetValue(ctx, d)
+	return Merge(o, p)
 }
 
 // Merge merges two properties
-func Merge(o *Property, p *Property, linked *DatasetID) *Merged {
+func Merge(o *Property, p *Property) *Merged {
 	if o == nil && p == nil || o != nil && p != nil && !o.Schema().Equal(p.Schema()) {
 		return nil
 	}
@@ -120,15 +77,14 @@ func Merge(o *Property, p *Property, linked *DatasetID) *Merged {
 	}
 
 	return &Merged{
-		Original:      o.IDRef(),
-		Parent:        p.IDRef(),
-		Schema:        schema,
-		Groups:        mergeItems(o.Items(), p.Items(), linked.CloneRef()),
-		LinkedDataset: linked.CloneRef(),
+		Original: o.IDRef(),
+		Parent:   p.IDRef(),
+		Schema:   schema,
+		Groups:   mergeItems(o.Items(), p.Items()),
 	}
 }
 
-func mergeItems(i1, i2 []Item, linked *DatasetID) []*MergedGroup {
+func mergeItems(i1, i2 []Item) []*MergedGroup {
 	if i1 == nil && i2 == nil || len(i1) == 0 && len(i2) == 0 {
 		return nil
 	}
@@ -147,7 +103,7 @@ func mergeItems(i1, i2 []Item, linked *DatasetID) []*MergedGroup {
 			}
 		}
 
-		if mg := mergeItem(item, parentItem, linked); mg != nil {
+		if mg := mergeItem(item, parentItem); mg != nil {
 			groups = append(groups, mg)
 		}
 	}
@@ -157,7 +113,7 @@ func mergeItems(i1, i2 []Item, linked *DatasetID) []*MergedGroup {
 			continue
 		}
 
-		if mg := mergeItem(nil, item, linked); mg != nil {
+		if mg := mergeItem(nil, item); mg != nil {
 			groups = append(groups, mg)
 		}
 	}
@@ -173,7 +129,7 @@ func group(o, p Item) (*Group, *Group) {
 	return ToGroup(o), ToGroup(p)
 }
 
-func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
+func mergeItem(o, p Item) *MergedGroup {
 	if o == nil && p == nil || o != nil && p != nil && o.SchemaGroup() != p.SchemaGroup() {
 		return nil
 	}
@@ -194,9 +150,9 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 		for _, gg := range groups {
 			var mi *MergedGroup
 			if og != nil {
-				mi = mergeItem(gg, nil, linked)
+				mi = mergeItem(gg, nil)
 			} else {
-				mi = mergeItem(nil, gg, linked)
+				mi = mergeItem(nil, gg)
 			}
 			if mi != nil {
 				mgroups = append(mgroups, mi)
@@ -207,7 +163,7 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 		fieldKeys := allFields(og.FieldIDs(), pg.FieldIDs())
 		mfields = make([]*MergedField, 0, len(fieldKeys))
 		for _, k := range fieldKeys {
-			mf := mergeField(og.Field(k), pg.Field(k), linked)
+			mf := mergeField(og.Field(k), pg.Field(k))
 			if mf != nil {
 				mfields = append(mfields, mf)
 			}
@@ -215,7 +171,7 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 	}
 
 	var oid, pid *ItemID
-	var sg SchemaGroupID
+	var sg id.PropertySchemaGroupID
 	if o != nil {
 		oid = o.IDRef()
 		sg = o.SchemaGroup()
@@ -226,16 +182,15 @@ func mergeItem(o, p Item, linked *DatasetID) *MergedGroup {
 	}
 
 	return &MergedGroup{
-		Original:      oid,
-		Parent:        pid,
-		SchemaGroup:   sg,
-		Fields:        mfields,
-		Groups:        mgroups,
-		LinkedDataset: linked,
+		Original:    oid,
+		Parent:      pid,
+		SchemaGroup: sg,
+		Fields:      mfields,
+		Groups:      mgroups,
 	}
 }
 
-func mergeField(original, parent *Field, linked *DatasetID) *MergedField {
+func mergeField(original, parent *Field) *MergedField {
 	if original == nil && parent == nil || original != nil && parent != nil && (original.Field() != parent.Field() || original.Type() != parent.Type()) {
 		return nil
 	}
@@ -266,21 +221,10 @@ func mergeField(original, parent *Field, linked *DatasetID) *MergedField {
 		overridden = parent != nil
 	}
 
-	var links *Links
-	if l := original.Links(); l != nil {
-		// original links are used but dataset is overrided
-		links = l.ApplyDataset(linked)
-		overridden = parent != nil
-	} else if l := parent.Links(); l != nil {
-		// parent links are used and dataset is overrided
-		links = l.ApplyDataset(linked)
-	}
-
 	return &MergedField{
 		ID:         fid,
 		Value:      v,
 		Type:       t,
-		Links:      links,
 		Overridden: overridden,
 	}
 }

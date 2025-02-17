@@ -39,6 +39,8 @@ type Story struct {
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
+	enableGa          bool
+	trackingID        string
 }
 
 func (s *Story) Id() StoryID {
@@ -54,6 +56,9 @@ func (s *Story) Scene() SceneID {
 }
 
 func (s *Story) Pages() *PageList {
+	if s == nil {
+		return nil
+	}
 	return s.pages
 }
 
@@ -127,6 +132,14 @@ func (s *Story) SetBgColor(bgColor string) {
 	s.bgColor = bgColor
 }
 
+func (s *Story) SetEnableGa(enableGa bool) {
+	s.enableGa = enableGa
+}
+
+func (s *Story) SetTrackingID(trackingID string) {
+	s.trackingID = trackingID
+}
+
 func (s *Story) Rename(name string) {
 	s.title = name
 	s.updatedAt = util.Now()
@@ -175,6 +188,14 @@ func (s *Story) BgColor() string {
 	return s.bgColor
 }
 
+func (s *Story) EnableGa() bool {
+	return s.enableGa
+}
+
+func (s *Story) TrackingID() string {
+	return s.trackingID
+}
+
 func (s *Story) ValidateProperties(pm property.Map) error {
 	if pm == nil {
 		return nil
@@ -197,7 +218,7 @@ func (s *Story) ValidateProperties(pm property.Map) error {
 	return nil
 }
 
-func (s *Story) Properties() property.IDList {
+func (s *Story) Properties() id.PropertyIDList {
 	if s == nil {
 		return nil
 	}

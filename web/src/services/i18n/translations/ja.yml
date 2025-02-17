@@ -124,28 +124,56 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
+Data source: データソース
 Layer Name: レイヤー名
 Format: 形式
+Custom property schema: カスタムプロパティスキーマ
+Edit Field: フィールド編集
+Delete Field: フィールド削除
+More: その他
+Edit Custom Property: カスタムプロパティ編集
+New Custom Property: 新しいカスタムプロパティ
+Submit: 反映
+Property Title: プロパティタイトル
+Property Type: プロパティタイプ
+Please select one type: タイプを選択してください
+Apply Current Edits?: 現在の編集を適用しますか?
+This save will apply to all features in the current layer. Do you want to proceed?: この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？
+No field has been created yet: フィールドが作成されていません
+New Field: 新しいフィールド
+Delete schema property field?: プロパティのフィールドを削除しますか?
+This action will apply to all features in the current layer. Do you want to proceed?: この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
 Edit: 編集
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
+Layer: レイヤー
+Feature: 地物
+Layer Style: レイヤースタイル
+Infobox: インフォボックス
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
 NO STYLE: スタイルなし
-Layer Style: レイヤースタイル
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
-Property Schema: プロパティスキーマ
+Fly to: 移動
+Visibility: 表示・非表示切り替え
+Delete this Layer?: このレイヤーを削除しますか？
+Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
 No style selected: スタイルが選択されていません
+Marker style: マーカースタイル
+Polyline style: ポリラインスタイル
+Polygon style: ポリゴンスタイル
+3dtiles style: 3Dタイルスタイル
+3D model style: 3Dモデルのスタイル
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
 ${your property name}: ${プロパティ名}
@@ -155,6 +183,8 @@ font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
+Assign style: スタイルの割り当て
+New style: 新しいスタイル
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -163,17 +193,22 @@ Sky: 空
 Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
+New Sketch Layer: 新しいスケッチレイヤー
+Create: 作成
+' Text': ' テキスト'
 Type Title here: タイトルをここに入力
-Please select one type: タイプを選択してください
 Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
-' Text': ' テキスト'
-General: 一般
-New Sketch Layer: 新しいスケッチレイヤー
-Create: 作成
-Custom properties Schema Setting: カスタムプロパティスキーマ設定
+Marker: マーカー
+Polyline: ポリライン
+Circle: 丸
+Rectangle: 長方形
+Polygon: ポリゴン
+Extruded circle: 円柱
+Extruded rectangle: 立方体
+Extruded polygon: 押し出しポリゴン
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
@@ -224,6 +259,8 @@ Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
+Dashboard: ダッシュボード
+Editor: エディタ
 Unknown: 不明
 Asset management: アセット管理
 Map: マップ
@@ -235,11 +272,73 @@ Error: エラー
 Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
+HTML Editor: HTML エディター
+This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
+No valid schema defined.: 有効なスキーマが定義されていません。
+Chiyoda 3D Tiles: 千代田区 3D Tiles
+Japanese Heritage Sites: 日本の遺産
+Viewer: ビューアー
+Plugins: プラグイン
+Extension Settings: 拡張機能の設定
+Custom: カスタム
+User Interface: ユーザーインターフェース
+Communication: コミュニケーション
+Viewer & Scene Settings: ビューアとシーン設定
+Manage Layer: レイヤーの管理
+Manage Layer Style: レイヤースタイルの管理
+Timeline: タイムライン
+Data Storage: データストレージ
+Extension: 拡張
+My Plugin: マイプラグイン
+Responsive Panel: レスポンシブ パネル
+Sidebar: サイドバー
+Header: ヘッダー
+Modal Window: モーダルウィンドウ
+UI Extension Messenger: エクステンションとコアとの通信
+Extension To Extension Messenger: エクステンション間での通信
+Enable Shadow Style: 影の表示を有効にする
+Enable Terrain: 3D地形を有効にする
+Show Label: ラベルを表示
+Take Screenshot: スクリーンショットを撮る
+Mouse Events: マウスイベント
+Add Geojson: Geojsonを追加
+Add CSV: CSVを追加
+Add KML: KMLを追加
+Add WMS: WMSを追加
+Add CZML: CZMLを追加
+Add 3D Tiles: 3Dタイルを追加
+Add Google Photorealistic 3D Tiles: Google Photorealistic 3D Tilesを追加
+Add OSM 3D Tiles: OSM 3D Tilesを追加
+Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
+Override Layer Data: レイヤーデータの上書き
+Show Selected Features Information: 選択された地物情報を表示
+Layer Styling Examples: レイヤースタイリング
+Feature Style 3D Model: フィーチャースタイル 3D モデル
+Feature Style 3D Tiles: フィーチャースタイル 3D タイル
+Filter Features by Style: スタイルでフィーチャーをフィルタリング
+Override Style: スタイルの上書き
+Style With Condition: 条件付きスタイル
+Playback Control: 再生コントロール
+Time Driven Features: 時系列による地物変化
+Time Driven Path: 時系列による線形移動
+Theme Selector: テーマセレクター
+Extension Property: 拡張プロパティ
+Zoom In Out: ズームイン/アウト
+Camera Rotation: カメラ回転
+Camera Position: カメラ位置
+No plugins: プラグインがありません
+Invalid shared plugin URL: 共有プラグインのURLが無効です
+File not found: ファイルが見つかりません
+Only zip files are supported: zipファイルのみサポートされています
+Zip file is empty: Zipファイルは空です
+Plugin link copied to clipboard: プラグインのリンクがクリップボードにコピーされました
+Show Story Panel: ストーリーパネルを表示
+UI Language: UI言語
+General: 一般
 Public: 公開
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
-Submit: 反映
 Danger Zone: 重要操作
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
@@ -276,7 +375,6 @@ Panel Position: パネル位置
 Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
-New Field: 新しいフィールド
 Save: 保存
 Display title: 表示タイトル
 New Camera: 新しいカメラ
@@ -355,9 +453,11 @@ Superscript: 上付き文字
 Clear Formatting: 書式をクリア
 Loading...: ロード中...
 Please select: 選択してください
+This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'
+Grid Layout: グリッドレイアウト
+List Layout: リストのレイアウト
 Version: バージョン
-This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 Wrong file format: 誤ったファイル形式
 Not set: 設定されていません
 Choose: 選択
@@ -414,6 +514,10 @@ Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
 Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
+Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
+Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
+Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
+Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。

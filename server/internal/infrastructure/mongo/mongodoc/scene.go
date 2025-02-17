@@ -16,13 +16,11 @@ type SceneDocument struct {
 	ID          string
 	Project     string
 	Team        string // DON'T CHANGE NAME'
-	RootLayer   string
 	Widgets     []SceneWidgetDocument
 	AlignSystem *WidgetAlignSystemDocument
 	Plugins     []ScenePluginDocument
 	UpdateAt    time.Time
 	Property    string
-	Clusters    []SceneClusterDocument
 }
 
 type SceneWidgetDocument struct {
@@ -37,12 +35,6 @@ type SceneWidgetDocument struct {
 type ScenePluginDocument struct {
 	Plugin   string
 	Property *string
-}
-
-type SceneClusterDocument struct {
-	ID       string
-	Name     string
-	Property string
 }
 
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]
@@ -81,11 +73,9 @@ func (c *SceneIDConsumer) Consume(raw bson.Raw) error {
 func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 	widgets := scene.Widgets().Widgets()
 	plugins := scene.Plugins().Plugins()
-	clusters := scene.Clusters().Clusters()
 
 	widgetsDoc := make([]SceneWidgetDocument, 0, len(widgets))
 	pluginsDoc := make([]ScenePluginDocument, 0, len(plugins))
-	clsuterDoc := make([]SceneClusterDocument, 0, len(clusters))
 
 	for _, w := range widgets {
 		widgetsDoc = append(widgetsDoc, SceneWidgetDocument{
@@ -105,26 +95,16 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		})
 	}
 
-	for _, cl := range clusters {
-		clsuterDoc = append(clsuterDoc, SceneClusterDocument{
-			ID:       cl.ID().String(),
-			Name:     cl.Name(),
-			Property: cl.Property().String(),
-		})
-	}
-
 	id := scene.ID().String()
 	return &SceneDocument{
 		ID:          id,
 		Project:     scene.Project().String(),
 		Team:        scene.Workspace().String(),
-		RootLayer:   scene.RootLayer().String(),
 		Widgets:     widgetsDoc,
 		Plugins:     pluginsDoc,
 		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
-		Clusters:    clsuterDoc,
 	}, id
 }
 
@@ -145,14 +125,9 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	if err != nil {
 		return nil, err
 	}
-	lid, err := id.LayerIDFrom(d.RootLayer)
-	if err != nil {
-		return nil, err
-	}
 
 	ws := make([]*scene.Widget, 0, len(d.Widgets))
 	ps := make([]*scene.Plugin, 0, len(d.Plugins))
-	clusters := make([]*scene.Cluster, 0, len(d.Clusters))
 
 	for _, w := range d.Widgets {
 		wid, err := id.WidgetIDFrom(w.ID)
@@ -189,30 +164,10 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		ps = append(ps, scene.NewPlugin(pid, id.PropertyIDFromRef(p.Property)))
 	}
 
-	for _, c := range d.Clusters {
-		cid, err := id.ClusterIDFrom(c.ID)
-		if err != nil {
-			return nil, err
-		}
-		pid, err := id.PropertyIDFrom(c.Property)
-		if err != nil {
-			return nil, err
-		}
-		cluster, err := scene.NewCluster(cid, c.Name, pid)
-		if err != nil {
-			return nil, err
-		}
-		clusters = append(clusters, cluster)
-	}
-
-	cl := scene.NewClusterListFrom(clusters)
-
 	return scene.New().
 		ID(sid).
 		Project(projectID).
 		Workspace(tid).
-		RootLayer(lid).
-		Clusters(cl).
 		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).

@@ -1,5 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { MapRef } from "@reearth/core";
+import { useT, useLang, useChangeLanguage } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
@@ -17,6 +18,10 @@ export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
   const [enabledVisualizer, setEnabledVisualizer] = useState(true);
   const [showStoryPanel, setShowStoryPanel] = useState(false);
+
+  const t = useT();
+  const lang = useLang();
+  const changeLanguage = useChangeLanguage();
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
   const resetVisualizer = useCallback(() => {
@@ -52,7 +57,7 @@ export default () => {
     updateFileTitle,
     updateFileSourceCode,
     deleteFile,
-    handleFileUpload,
+    handlePluginImport,
     handlePluginDownload,
     encodeAndSharePlugin,
     sharedPlugin
@@ -69,6 +74,13 @@ export default () => {
   const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
     DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
   );
+
+  const layerTitles: Record<string, string> = useMemo(() => {
+    return {
+      "chiyoda-3d-tiles": t("Chiyoda 3D Tiles"),
+      "japanese-heritage-sites": t("Japanese Heritage Sites")
+    };
+  }, [t]);
 
   const layers = useMemo(() => {
     return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {
@@ -89,10 +101,11 @@ export default () => {
               }
             }
           : {}),
-        visible: visibleLayerIds.includes(layer.id)
+        visible: visibleLayerIds.includes(layer.id),
+        title: layerTitles[layer.id]
       };
     });
-  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks]);
+  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks, layerTitles]);
 
   const handleLayerVisibilityUpdate = (layerId: string) => {
     setVisibleLayerIds((prev) =>
@@ -108,7 +121,7 @@ export default () => {
     () => [
       {
         id: "viewer",
-        name: "Viewer",
+        name: t("Viewer"),
         children: (
           <Viewer
             enabledVisualizer={enabledVisualizer}
@@ -121,7 +134,7 @@ export default () => {
         )
       }
     ],
-    [enabledVisualizer, layers, showStoryPanel, story, widgets]
+    [enabledVisualizer, layers, showStoryPanel, story, t, widgets]
   );
 
   const LayersPanel: FC = () => (
@@ -138,7 +151,7 @@ export default () => {
     () => [
       {
         id: "plugins",
-        name: "Plugins",
+        name: t("Plugins"),
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
@@ -150,7 +163,7 @@ export default () => {
             addFile={addFile}
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
-            handleFileUpload={handleFileUpload}
+            handlePluginImport={handlePluginImport}
             sharedPlugin={sharedPlugin}
             handlePluginDownload={handlePluginDownload}
           />
@@ -158,18 +171,19 @@ export default () => {
       }
     ],
     [
-      encodeAndSharePlugin,
-      presetPlugins,
-      selectedPlugin,
-      selectPlugin,
-      selectedFile,
-      selectFile,
       addFile,
-      updateFileTitle,
       deleteFile,
-      handleFileUpload,
+      encodeAndSharePlugin,
+      handlePluginDownload,
+      presetPlugins,
+      selectedFile,
+      selectedPlugin,
+      selectFile,
+      selectPlugin,
+      t,
+      handlePluginImport,
       sharedPlugin,
-      handlePluginDownload
+      updateFileTitle
     ]
   );
 
@@ -177,7 +191,7 @@ export default () => {
     () => [
       {
         id: "code",
-        name: "Code",
+        name: t("Code"),
         children: (
           <Code
             fileTitle={selectedFile.title}
@@ -193,11 +207,13 @@ export default () => {
         )
       }
     ],
-    [selectedFile, executeCode, updateFileSourceCode]
+    [executeCode, selectedFile, t, updateFileSourceCode]
   );
 
   const SettingsPanel: FC = () => (
     <SettingsList
+      changeLanguage={changeLanguage}
+      lang={lang}
       infoboxEnabled={infoboxEnabled}
       setInfoboxEnabled={setInfoboxEnabled}
       setShowStoryPanel={setShowStoryPanel}

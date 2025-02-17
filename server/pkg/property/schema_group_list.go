@@ -1,5 +1,7 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type SchemaGroupList struct {
 	groups []*SchemaGroup
 }
@@ -66,7 +68,7 @@ func (p *SchemaGroupList) Field(id FieldID) *SchemaField {
 	return nil
 }
 
-func (p *SchemaGroupList) Group(id SchemaGroupID) *SchemaGroup {
+func (p *SchemaGroupList) Group(id id.PropertySchemaGroupID) *SchemaGroup {
 	if p == nil {
 		return nil
 	}
@@ -105,13 +107,13 @@ func (p *SchemaGroupList) GroupAndField(f FieldID) *SchemaGroupAndField {
 	return nil
 }
 
-func (s *SchemaGroupList) duplicatedGroups() []SchemaGroupID {
+func (s *SchemaGroupList) duplicatedGroups() []id.PropertySchemaGroupID {
 	if s == nil {
 		return nil
 	}
 
-	var duplicated []SchemaGroupID
-	ids := map[SchemaGroupID]struct{}{}
+	var duplicated []id.PropertySchemaGroupID
+	ids := map[id.PropertySchemaGroupID]struct{}{}
 	for _, f := range s.Groups() {
 		i := f.ID()
 		if _, ok := ids[i]; ok {

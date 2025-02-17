@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -40,7 +39,7 @@ func TestCreateAndGetProject(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().IsEqual(1)
+	edges.Length().IsEqual(2)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("test2-1")
 
 	// check
@@ -142,7 +141,7 @@ func TestSortByName(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().IsEqual(4)
+	edges.Length().IsEqual(5)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
 	edges.Value(1).Object().Value("node").Object().Value("name").IsEqual("A-project")
 	edges.Value(2).Object().Value("node").Object().Value("name").IsEqual("b-project")
@@ -558,13 +557,7 @@ func projectsOldData(t *testing.T, ctx context.Context, r *repo.Container, count
 }
 
 func TestGetProjectPagination(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, r, _ := ServerAndRepos(t, baseSeeder)
 	ctx := context.Background()
 
 	projects(t, ctx, r, 20, wID, "[wID]project", "ALIAS1", true)
@@ -589,7 +582,7 @@ func TestGetProjectPagination(t *testing.T) {
 
 	projects := Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
 
-	projects.HasValue("totalCount", 20)
+	projects.HasValue("totalCount", 21)
 
 	edges := projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 16)
@@ -621,10 +614,10 @@ func TestGetProjectPagination(t *testing.T) {
 		},
 	}
 	projects = Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
-	projects.HasValue("totalCount", 4)
+	projects.HasValue("totalCount", 5)
 
 	edges = projects.Value("edges").Array().Iter()
-	assert.Equal(t, len(edges), 4)
+	assert.Equal(t, len(edges), 5)
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
@@ -636,13 +629,7 @@ func TestGetProjectPagination(t *testing.T) {
 }
 
 func TestGetProjectPaginationKeyword(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, r, _ := ServerAndRepos(t, baseSeeder)
 	ctx := context.Background()
 
 	// no match data

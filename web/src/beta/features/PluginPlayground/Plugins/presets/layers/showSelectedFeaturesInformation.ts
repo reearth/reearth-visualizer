@@ -144,7 +144,6 @@ reearth.layers.on("select", handleLayerSelect);`
 };
 
 export const showFeaturesInfo: PluginType = {
-  id: "show-features-info",
-  title: "Show Selected Features Information",
+  id: "show-selected-features-info",
   files: [widgetFile, yamlFile]
 };

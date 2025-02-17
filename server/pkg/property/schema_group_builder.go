@@ -2,6 +2,7 @@ package property
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type SchemaGroupBuilder struct {
@@ -29,7 +30,7 @@ func (b *SchemaGroupBuilder) MustBuild() *SchemaGroup {
 	return p
 }
 
-func (b *SchemaGroupBuilder) ID(id SchemaGroupID) *SchemaGroupBuilder {
+func (b *SchemaGroupBuilder) ID(id id.PropertySchemaGroupID) *SchemaGroupBuilder {
 	b.p.id = id
 	return b
 }

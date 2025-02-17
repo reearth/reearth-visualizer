@@ -4,6 +4,7 @@ import {
   Modal,
   ModalPanel
 } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
@@ -21,16 +22,17 @@ const HtmlEditModal: FC<Props> = ({
   onSubmit
 }) => {
   const [value, setValue] = useState(sourceCode);
+  const t = useT();
   return (
     <Modal size="large" visible={isOpened}>
       <ModalPanel
-        title="HTML Editor"
+        title={t("HTML Editor")}
         onCancel={onClose}
         actions={
           <>
-            <Button title="Cancel" onClick={onClose} />
+            <Button title={t("Cancel")} onClick={onClose} />
             <Button
-              title="Submit"
+              title={t("Submit")}
               appearance="primary"
               onClick={() => {
                 onSubmit(value);

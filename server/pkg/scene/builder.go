@@ -21,9 +21,6 @@ func (b *Builder) Build() (*Scene, error) {
 	if b.scene.workspace.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.scene.rootLayer.IsNil() {
-		return nil, ErrInvalidID
-	}
 	if b.scene.widgets == nil {
 		b.scene.widgets = NewWidgets(nil, nil)
 	}
@@ -74,11 +71,6 @@ func (b *Builder) Widgets(widgets *Widgets) *Builder {
 	return b
 }
 
-func (b *Builder) RootLayer(rootLayer LayerID) *Builder {
-	b.scene.rootLayer = rootLayer
-	return b
-}
-
 func (b *Builder) Plugins(plugins *Plugins) *Builder {
 	b.scene.plugins = plugins
 	return b
@@ -86,11 +78,6 @@ func (b *Builder) Plugins(plugins *Plugins) *Builder {
 
 func (b *Builder) Property(p id.PropertyID) *Builder {
 	b.scene.property = p
-	return b
-}
-
-func (b *Builder) Clusters(cl *ClusterList) *Builder {
-	b.scene.clusters = cl
 	return b
 }
 

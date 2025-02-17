@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestInitItemFrom(t *testing.T) {
 	sg := NewSchemaGroup().ID("aa").Fields([]*SchemaField{sf}).MustBuild()
 	sgl := NewSchemaGroup().ID("aa").IsList(true).Fields([]*SchemaField{sf}).MustBuild()
 	iid := NewItemID()
-	propertySchemaField1ID := SchemaGroupID("aa")
+	propertySchemaField1ID := id.PropertySchemaGroupID("aa")
 
 	tests := []struct {
 		Name     string
@@ -51,7 +52,7 @@ func TestToGroup(t *testing.T) {
 	iid := NewItemID()
 	propertySchemaID := MustSchemaID("xxx~1.1.1/aa")
 	propertySchemaField1ID := FieldID("a")
-	propertySchemaGroup1ID := SchemaGroupID("A")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
 	il := []Item{
 		NewGroup().ID(iid).SchemaGroup(propertySchemaGroup1ID).
 			Fields([]*Field{
@@ -69,7 +70,7 @@ func TestToGroup(t *testing.T) {
 func TestToGroupList(t *testing.T) {
 	iid := NewItemID()
 	propertySchemaID := MustSchemaID("xxx~1.1.1/aa")
-	propertySchemaGroup1ID := SchemaGroupID("A")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
 	il := []Item{
 		NewGroupList().ID(iid).SchemaGroup(propertySchemaGroup1ID).MustBuild(),
 	}

@@ -1,5 +1,7 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Builder struct {
 	base layerBase
 }
@@ -16,7 +18,7 @@ func (b *Builder) Simple() *NLSLayerSimpleBuilder {
 	return NewNLSLayerSimple().base(b.base)
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.NLSLayerID) *Builder {
 	b.base.id = id
 	return b
 }

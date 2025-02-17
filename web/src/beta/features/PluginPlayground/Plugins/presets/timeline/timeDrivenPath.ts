@@ -124,7 +124,6 @@ reearth.camera.flyTo(
 };
 
 export const timeDrivenPath: PluginType = {
-  id: "timeDrivenPath",
-  title: "Time Driven Path",
+  id: "time-driven-path",
   files: [widgetFile, yamlFile]
 };

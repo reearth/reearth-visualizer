@@ -1,4 +1,3 @@
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
@@ -10,7 +9,7 @@ export type SketchLayerDataType =
   | "Asset"
   | "Float"
   | "Int"
-  | "Boolean";
+  | "Boolean"
 
 export type PropertyListProp = {
   id: string;
@@ -29,7 +28,6 @@ export type CustomPropertyProps = {
 
 export type SketchLayerProps = {
   sceneId: string;
-  layerStyles?: LayerStyle[];
   onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
 };
@@ -44,3 +42,4 @@ export type CustomPropertyItemProps = {
   onDoubleClick?: (field: string) => void;
   onCustomPropertyDelete?: () => void;
 };
+

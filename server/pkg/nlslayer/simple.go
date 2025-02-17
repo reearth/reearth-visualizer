@@ -1,14 +1,12 @@
 package nlslayer
 
-import (
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type NLSLayerSimple struct {
 	layerBase
 }
 
-func (l *NLSLayerSimple) ID() ID {
+func (l *NLSLayerSimple) ID() id.NLSLayerID {
 	return l.layerBase.ID()
 }
 
@@ -16,7 +14,7 @@ func (l *NLSLayerSimple) Index() *int {
 	return l.layerBase.index
 }
 
-func (l *NLSLayerSimple) IDRef() *ID {
+func (l *NLSLayerSimple) IDRef() *id.NLSLayerID {
 	if l == nil {
 		return nil
 	}
@@ -29,10 +27,6 @@ func (l *NLSLayerSimple) LayerType() LayerType {
 
 func (l *NLSLayerSimple) Scene() SceneID {
 	return l.layerBase.scene
-}
-
-func (l *NLSLayerSimple) LinkedDataset() *pl.DatasetID {
-	return nil
 }
 
 func (l *NLSLayerSimple) Title() string {

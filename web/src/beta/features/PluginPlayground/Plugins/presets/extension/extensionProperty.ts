@@ -147,6 +147,5 @@ reearth.ui.postMessage({
 
 export const extensionProperty: PluginType = {
   id: "extension-property",
-  title: "Extension Property",
   files: [infoboxBlockFile, storyBlockFile, widgetFile, yamlFile]
 };

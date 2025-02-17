@@ -11,10 +11,6 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 )
 
-func (LayerItem) IsNode() {}
-
-func (LayerGroup) IsNode() {}
-
 func (l *PropertyFieldLink) Copy() *PropertyFieldLink {
 	if l == nil {
 		return nil
@@ -24,30 +20,6 @@ func (l *PropertyFieldLink) Copy() *PropertyFieldLink {
 		DatasetSchemaID:      l.DatasetSchemaID,
 		DatasetSchemaFieldID: l.DatasetSchemaFieldID,
 	}
-}
-
-func (d *Dataset) Field(id ID) *DatasetField {
-	if d == nil || id == "" {
-		return nil
-	}
-	for _, f := range d.Fields {
-		if f.FieldID == id {
-			return f
-		}
-	}
-	return nil
-}
-
-func (d *DatasetSchema) Field(id ID) *DatasetSchemaField {
-	if d == nil || id == "" {
-		return nil
-	}
-	for _, f := range d.Fields {
-		if f.ID == id {
-			return f
-		}
-	}
-	return nil
 }
 
 func (d *Property) Field(id id.PropertyFieldID) *PropertyField {
@@ -92,30 +64,6 @@ func (d *Plugin) Extension(id ID) *PluginExtension {
 	return nil
 }
 
-func (d *Infobox) Field(id ID) *InfoboxField {
-	if d == nil || id == "" {
-		return nil
-	}
-	for _, f := range d.Fields {
-		if f.ID == id {
-			return f
-		}
-	}
-	return nil
-}
-
-func (d *MergedInfobox) Field(id ID) *MergedInfoboxField {
-	if d == nil || id == "" {
-		return nil
-	}
-	for _, f := range d.Fields {
-		if f.OriginalID == id {
-			return f
-		}
-	}
-	return nil
-}
-
 func (d *NLSInfobox) Block(id ID) *InfoboxBlock {
 	if d == nil || id == "" {
 		return nil
@@ -126,32 +74,6 @@ func (d *NLSInfobox) Block(id ID) *InfoboxBlock {
 		}
 	}
 	return nil
-}
-
-func AttachParentLayer(layers []*Layer, parent ID) []Layer {
-	if layers == nil {
-		return nil
-	}
-	res := make([]Layer, 0, len(layers))
-	for _, l := range layers {
-		if l == nil {
-			res = append(res, nil)
-			continue
-		}
-		l2 := *l
-		if l2 == nil {
-			res = append(res, nil)
-			continue
-		}
-		if li, ok := l2.(*LayerItem); ok {
-			li.ParentID = &parent
-			res = append(res, li)
-		} else if lg, ok := l2.(*LayerGroup); ok {
-			lg.ParentID = &parent
-			res = append(res, lg)
-		}
-	}
-	return res
 }
 
 func NewEmptyPageInfo() *PageInfo {

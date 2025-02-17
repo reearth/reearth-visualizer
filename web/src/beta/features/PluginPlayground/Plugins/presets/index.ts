@@ -6,6 +6,7 @@ import { zoomInOut } from "./camera/zoomInOut";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
+import { themeSelector } from "./dataStorage/themeSelector";
 import { extensionProperty } from "./extension/extensionProperty";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
@@ -28,41 +29,46 @@ import { playbackControl } from "./timeline/playbackControl";
 import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { header } from "./ui/header";
+import { modalWindow } from "./ui/modalWindow";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
+import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
+import { mouseEvents } from "./viewerAndSceneSettings/mouseEvent";
+import { showLabel } from "./viewerAndSceneSettings/showLabel";
+import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 
 type PresetPluginCategory = {
   id: string;
-  title: string;
   plugins: PluginType[];
 };
 
 export type PresetPlugins = PresetPluginCategory[];
-
 export const presetPlugins: PresetPlugins = [
   {
     id: "custom",
-    title: "Custom",
     plugins: [myPlugin]
   },
   {
     id: "ui",
-    title: "User Interface",
-    plugins: [responsivePanel, sidebar, header]
+    plugins: [responsivePanel, sidebar, header, modalWindow]
   },
   {
     id: "communication",
-    title: "Communication",
     plugins: [uiExtensionMessenger, extensionExtensionMessenger]
   },
   {
     id: "viewerScene",
-    title: "Viewer & Scene Settings",
-    plugins: []
+    plugins: [
+      enableShadowStyle,
+      enableTerrain,
+      showLabel,
+      takeScreenshot,
+      mouseEvents
+    ]
   },
   {
     id: "layers",
-    title: "Manage Layer",
     plugins: [
       addGeojson,
       addCzml,
@@ -79,7 +85,6 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "layerStyles",
-    title: "Manage Layer Style",
     plugins: [
       layerStylingExamples,
       featureStyle3dTiles,
@@ -91,27 +96,18 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "camera",
-    title: "Camera",
     plugins: [zoomInOut, cameraRotation, cameraPosition]
   },
   {
     id: "timeline",
-    title: "Timeline",
-    plugins: [playbackControl,timeDrivenFeatures,timeDrivenPath]
+    plugins: [playbackControl, timeDrivenFeatures, timeDrivenPath]
   },
   {
     id: "dataStorage",
-    title: "Data Storage",
-    plugins: []
+    plugins: [themeSelector]
   },
   {
     id: "extension",
-    title: "Extension",
     plugins: [extensionProperty]
-  },
-  {
-    id: "sketch",
-    title: "Sketch",
-    plugins: []
   }
 ];

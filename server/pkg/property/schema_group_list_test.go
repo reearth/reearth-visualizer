@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -85,7 +86,7 @@ func TestSchemaGroupList_Group(t *testing.T) {
 	tests := []struct {
 		name   string
 		target *SchemaGroupList
-		input  SchemaGroupID
+		input  id.PropertySchemaGroupID
 		want   *SchemaGroup
 	}{
 		{
@@ -103,7 +104,7 @@ func TestSchemaGroupList_Group(t *testing.T) {
 		{
 			name:   "not found",
 			target: testSchemaGroupList1,
-			input:  SchemaGroupID("zz"),
+			input:  id.PropertySchemaGroupID("zz"),
 			want:   nil,
 		},
 	}

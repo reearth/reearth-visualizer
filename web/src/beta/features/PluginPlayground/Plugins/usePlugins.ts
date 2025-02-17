@@ -1,3 +1,4 @@
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
@@ -14,6 +15,7 @@ export default () => {
   const [searchParams] = useSearchParams();
   const [, setNotification] = useNotification();
 
+  const t = useT();
   const sharedPluginUrl = searchParams.get("plugin");
 
   const decodePluginURL = useCallback((encoded: string) => {
@@ -33,7 +35,10 @@ export default () => {
             id: `shared-${decoded.id}`
           };
         } catch (_error) {
-          setNotification({ type: "error", text: "Invalid shared plugin URL" });
+          setNotification({
+            type: "error",
+            text: t("Invalid shared plugin URL")
+          });
           return null;
         }
       })()
@@ -170,47 +175,68 @@ export default () => {
     [selectedPlugin, selectedFileId]
   );
 
-  const handleFileUpload = useFileInput((fileList) => {
-    const file = fileList?.[0];
-    if (!file) {
-      return;
-    }
-    const result = validateFileTitle(
-      file.name,
-      selectedPlugin.files.map((f) => f.title)
-    );
-    if (!result.success) {
-      setNotification({ type: "error", text: result.message });
-      return;
-    }
+  const handlePluginImport = useFileInput(
+    (fileList) => {
+      const file = fileList?.[0];
+      if (!file) {
+        setNotification({ type: "error", text: t("File not found") });
+        return;
+      }
 
-    const reader = new FileReader();
+      if (file.type !== "application/zip") {
+        setNotification({
+          type: "error",
+          text: t("Only zip files are supported")
+        });
+        return;
+      }
 
-    reader.onload = async (event) => {
-      const body = event?.target?.result;
-      if (typeof body != "string") return;
-      const fileItem = {
-        id: uuidv4(),
-        title: file.name,
-        sourceCode: body
-      };
-      // Note: When a new file is uploaded, select that file
-      setSelectedFileId(fileItem.id);
-      setPlugins((plugins) =>
-        plugins.map((plugin) =>
-          plugin.id === selectedPlugin.id
-            ? { ...plugin, files: [...plugin.files, fileItem] }
-            : plugin
-        )
-      );
-    };
-    reader.readAsText(file);
-  });
+      const zip = new JSZip();
+      zip.loadAsync(file).then((zip) => {
+        const files = Object.values(zip.files).filter((file) => !file.dir);
+
+        if (files.length === 0) {
+          setNotification({ type: "error", text: t("Zip file is empty") });
+          return;
+        }
+
+        const filePromises = files.map((file) => file.async("text"));
+
+        Promise.all(filePromises)
+          .then((fileContents) => {
+            const pluginFiles = fileContents.map((content, index) => ({
+              id: uuidv4(),
+              title: files[index].name.split("/")[1],
+              sourceCode: content
+            }));
+
+            const newPlugin = {
+              id: "my-plugin", // NOTE: id of the custom plugin
+              files: pluginFiles
+            };
+
+            setPlugins((plugins) => [
+              newPlugin,
+              ...plugins.filter((plugin) => plugin.id !== "my-plugin")
+            ]);
+            setSelectedPluginId(newPlugin.id);
+            setSelectedFileId(newPlugin.files[0].id);
+          })
+          .catch((err) => {
+            setNotification({
+              type: "error",
+              text: `Failed to load ZIP: ${err.message}`
+            });
+          });
+      });
+    },
+    { accept: "application/zip", multiple: false }
+  );
 
   const handlePluginDownload = useCallback(async () => {
     try {
       const zip = new JSZip();
-      const pluginFolder = zip.folder(selectedPlugin.title);
+      const pluginFolder = zip.folder(selectedPlugin.id);
       if (!pluginFolder) {
         throw new Error("Failed to create plugin folder");
       }
@@ -223,7 +249,7 @@ export default () => {
       const zipUrl = URL.createObjectURL(zipBlob);
       const link = document.createElement("a");
       link.href = zipUrl;
-      link.download = `${selectedPlugin.title}.zip`;
+      link.download = `${selectedPlugin.id}.zip`;
       link.click();
       URL.revokeObjectURL(zipUrl);
     } catch (error) {
@@ -256,7 +282,7 @@ export default () => {
 
         setNotification({
           type: "success",
-          text: "Plugin link copied to clipboard"
+          text: t("Plugin link copied to clipboard")
         });
         return compressed;
       } catch (error) {
@@ -266,7 +292,7 @@ export default () => {
         return;
       }
     },
-    [plugins, selectPlugin, setNotification]
+    [plugins, selectPlugin, setNotification, t]
   );
 
   return {
@@ -280,7 +306,7 @@ export default () => {
     updateFileTitle,
     updateFileSourceCode,
     deleteFile,
-    handleFileUpload,
+    handlePluginImport,
     handlePluginDownload,
     sharedPlugin
   };
