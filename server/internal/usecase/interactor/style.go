@@ -67,9 +67,6 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 	if err != nil {
 		return nil, err
 	}
-	if err != nil {
-		return nil, err
-	}
 
 	if err := i.styleRepo.Save(ctx, *style); err != nil {
 		return nil, err
