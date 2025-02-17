@@ -4,7 +4,6 @@ import "github.com/reearth/reearth/server/pkg/id"
 
 type ID = id.TagID
 
-// type SceneID = id.SceneID
 type DatasetID = id.DatasetID
 type DatasetSchemaID = id.DatasetSchemaID
 type DatasetFieldID = id.DatasetFieldID

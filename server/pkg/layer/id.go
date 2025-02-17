@@ -10,7 +10,6 @@ type ID = id.LayerID
 type InfoboxFieldID = id.InfoboxFieldID
 type TagID = id.TagID
 
-// type SceneID = id.SceneID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 type PropertyID = id.PropertyID

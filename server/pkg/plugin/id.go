@@ -7,8 +7,6 @@ type ExtensionID = id.PluginExtensionID
 type PropertySchemaID = id.PropertySchemaID
 type PropertySchemaIDList = id.PropertySchemaIDList
 
-// type SceneID = id.SceneID
-
 var NewID = id.NewPluginID
 var NewSceneID = id.NewSceneID
 var NewPropertySchemaID = id.NewPropertySchemaID
