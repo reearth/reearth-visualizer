@@ -49,7 +49,7 @@ func (b *NLSLayerGroupBuilder) base(layer layerBase) *NLSLayerGroupBuilder {
 	return b
 }
 
-func (b *NLSLayerGroupBuilder) ID(id ID) *NLSLayerGroupBuilder {
+func (b *NLSLayerGroupBuilder) ID(id id.NLSLayerID) *NLSLayerGroupBuilder {
 	b.l.id = id
 	return b
 }

@@ -47,3 +47,23 @@ export const UPDATE_CUSTOM_PROPERTY_SCHEMA = gql(`
     }
   }
 `);
+
+export const CHANGE_CUSTOM_PROPERTY_TITLE = gql(`
+  mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {
+    changeCustomPropertyTitle(input: $input) {
+      layer {
+        id
+      }
+    }
+  }
+`);
+
+export const REMOVE_CUSTOM_PROPERTY = gql(`
+  mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {
+    removeCustomProperty(input: $input) {
+      layer {
+        id
+      }
+    }
+  }
+`);

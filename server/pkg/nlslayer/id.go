@@ -6,9 +6,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
-type ID = id.NLSLayerID
-
-type LayerID = id.LayerID
 type PropertyID = id.PropertyID
 type InfoboxID = id.InfoboxID
 type InfoboxBlockID = id.InfoboxBlockID
@@ -20,7 +17,7 @@ var NewFeatureID = id.NewFeatureID
 
 var ErrInvalidID = id.ErrInvalidID
 
-func sortIDs(a []ID) {
+func sortIDs(a []id.NLSLayerID) {
 	sort.SliceStable(a, func(i, j int) bool {
 		return a[i].Compare(a[j]) < 0
 	})

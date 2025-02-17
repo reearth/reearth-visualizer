@@ -49,7 +49,7 @@ func (b *NLSLayerSimpleBuilder) base(layer layerBase) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) ID(id ID) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) ID(id id.NLSLayerID) *NLSLayerSimpleBuilder {
 	b.l.id = id
 	return b
 }

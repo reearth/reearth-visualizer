@@ -19,6 +19,8 @@ help:
 	@echo "  dev               Run the application with hot reloading"
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Run the MongoDB database using Docker Compose"
+	@echo "  run-reset         Initialize the MongoDB data"
+	@echo "  run-clear-cache   Clear the golang cache"
 	@echo "  up-gcs            Run the fake-gcs-server using Docker Compose"
 	@echo "  down-gcs          Stop the fake-gcs-server using Docker Compose"
 	@echo "  gql               Generate GraphQL code include dataloader"
@@ -81,6 +83,16 @@ run-app:
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 
+run-reset:
+	docker stop reearth-visualizer-reearth-mongo-1
+	rm -rf ../mongo
+	rm -rf data
+	make run-db
+	make mockuser
+
+run-clear-cache:
+	go clean -cache -modcache -testcache -fuzzcache
+
 generate: dev-install
 	go generate ./...
 
@@ -101,4 +113,4 @@ schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
 
-.PHONY: lint test failcheck e2e build dev-install dev run-app run-db gql up-gcs down-gcs mockuser schematyper
+.PHONY: lint test failcheck e2e build dev-install dev run-app run-db run-reset run-clear-cache gql up-gcs down-gcs mockuser schematyper

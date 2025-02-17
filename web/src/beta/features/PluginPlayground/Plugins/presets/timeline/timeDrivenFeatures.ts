@@ -143,7 +143,6 @@ reearth.camera.flyTo(
 };
 
 export const timeDrivenFeatures: PluginType = {
-  id: "timeDrivenFeatures",
-  title: "Time Driven Features",
+  id: "time-driven-features",
   files: [widgetFile, yamlFile]
 };

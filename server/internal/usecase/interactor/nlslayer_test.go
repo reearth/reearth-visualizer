@@ -31,7 +31,7 @@ func TestAddOrUpdateCustomProperties(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -82,7 +82,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -139,7 +139,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -218,7 +218,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -286,7 +286,7 @@ func TestImportNLSLayers(t *testing.T) {
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 
 	var sceneData map[string]interface{}

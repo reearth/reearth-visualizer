@@ -4,7 +4,7 @@ import "github.com/reearth/reearth/server/pkg/id"
 
 type NLSLayer interface {
 	Cloner
-	ID() ID
+	ID() id.NLSLayerID
 	Index() *int
 	LayerType() LayerType
 	Scene() id.SceneID
@@ -63,7 +63,7 @@ func ToLayerSimpleRef(l *NLSLayer) *NLSLayerSimple {
 }
 
 type layerBase struct {
-	id        ID
+	id        id.NLSLayerID
 	index     *int
 	layerType LayerType
 	scene     id.SceneID
@@ -75,7 +75,7 @@ type layerBase struct {
 	sketch    *SketchInfo
 }
 
-func (l *layerBase) ID() ID {
+func (l *layerBase) ID() id.NLSLayerID {
 	return l.id
 }
 
@@ -86,7 +86,7 @@ func (l *layerBase) Index() *int {
 	return l.index
 }
 
-func (l *layerBase) IDRef() *ID {
+func (l *layerBase) IDRef() *id.NLSLayerID {
 	if l == nil {
 		return nil
 	}

@@ -63,11 +63,21 @@ const LeftSection: React.FC<Props> = ({
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}
       >
-        <IconButton icon="grid" appearance="simple" size="large" />
+        <IconButton
+          icon="grid"
+          appearance="simple"
+          size="large"
+          tooltipText={t("Dashboard")}
+        />
       </StyledLink>
       {page === "projectSettings" && (
         <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
-          <IconButton icon="editor" appearance="simple" size="large" />
+          <IconButton
+            icon="editor"
+            appearance="simple"
+            size="large"
+              tooltipText={t("Editor")}
+          />
         </StyledLink>
       )}
       <Profile

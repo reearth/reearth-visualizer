@@ -2,25 +2,21 @@ package property
 
 import (
 	"context"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 type Sealed struct {
-	Original      *ID
-	Parent        *ID
-	Schema        SchemaID
-	LinkedDataset *DatasetID
-	Items         []*SealedItem
+	Original *ID
+	Parent   *ID
+	Schema   SchemaID
+	Items    []*SealedItem
 }
 
 type SealedItem struct {
-	Original      *ItemID
-	Parent        *ItemID
-	SchemaGroup   SchemaGroupID
-	LinkedDataset *DatasetID
-	Fields        []*SealedField
-	Groups        []*SealedItem
+	Original    *ItemID
+	Parent      *ItemID
+	SchemaGroup SchemaGroupID
+	Fields      []*SealedField
+	Groups      []*SealedItem
 }
 
 type SealedField struct {
@@ -35,13 +31,13 @@ func (f *SealedField) Value() *Value {
 	return f.Val.Value()
 }
 
-func Seal(ctx context.Context, p *Merged, d dataset.GraphLoader) (*Sealed, error) {
+func Seal(ctx context.Context, p *Merged) (*Sealed, error) {
 	if p == nil {
 		return nil, nil
 	}
 	items := make([]*SealedItem, 0, len(p.Groups))
 	for _, g := range p.Groups {
-		i, err := sealedItemFrom(ctx, g, d)
+		i, err := sealedItemFrom(ctx, g)
 		if err != nil {
 			return nil, err
 		}
@@ -49,11 +45,10 @@ func Seal(ctx context.Context, p *Merged, d dataset.GraphLoader) (*Sealed, error
 	}
 
 	return &Sealed{
-		Original:      p.Original.CloneRef(),
-		Parent:        p.Parent.CloneRef(),
-		Schema:        p.Schema,
-		LinkedDataset: p.LinkedDataset.CloneRef(),
-		Items:         items,
+		Original: p.Original.CloneRef(),
+		Parent:   p.Parent.CloneRef(),
+		Schema:   p.Schema,
+		Items:    items,
 	}, nil
 }
 
@@ -61,36 +56,35 @@ func SealProperty(ctx context.Context, p *Property) *Sealed {
 	if p == nil {
 		return nil
 	}
-	m := Merge(p, nil, nil)
-	s, _ := Seal(ctx, m, nil)
+	m := Merge(p, nil)
+	s, _ := Seal(ctx, m)
 	return s
 }
 
-func sealedItemFrom(ctx context.Context, g *MergedGroup, d dataset.GraphLoader) (item *SealedItem, err error) {
+func sealedItemFrom(ctx context.Context, g *MergedGroup) (item *SealedItem, err error) {
 	if g == nil {
 		return
 	}
 
 	item = &SealedItem{
-		Original:      g.Original.CloneRef(),
-		Parent:        g.Parent.CloneRef(),
-		SchemaGroup:   g.SchemaGroup,
-		LinkedDataset: g.LinkedDataset.CloneRef(),
+		Original:    g.Original.CloneRef(),
+		Parent:      g.Parent.CloneRef(),
+		SchemaGroup: g.SchemaGroup,
 	}
 
 	if len(g.Groups) > 0 {
-		item.Groups, err = sealedGroupList(ctx, g.Groups, d)
+		item.Groups, err = sealedGroupList(ctx, g.Groups)
 	} else if len(g.Fields) > 0 {
-		item.Fields, err = sealedGroup(ctx, g.Fields, d)
+		item.Fields, err = sealedGroup(ctx, g.Fields)
 	}
 
 	return
 }
 
-func sealedGroupList(ctx context.Context, gl []*MergedGroup, d dataset.GraphLoader) ([]*SealedItem, error) {
+func sealedGroupList(ctx context.Context, gl []*MergedGroup) ([]*SealedItem, error) {
 	res := make([]*SealedItem, 0, len(gl))
 	for _, g := range gl {
-		sg, err := sealedItemFrom(ctx, g, d)
+		sg, err := sealedItemFrom(ctx, g)
 		if err != nil {
 			return nil, err
 		}
@@ -99,15 +93,10 @@ func sealedGroupList(ctx context.Context, gl []*MergedGroup, d dataset.GraphLoad
 	return res, nil
 }
 
-func sealedGroup(ctx context.Context, fields []*MergedField, d dataset.GraphLoader) ([]*SealedField, error) {
+func sealedGroup(ctx context.Context, fields []*MergedField) ([]*SealedField, error) {
 	res := []*SealedField{}
 	for _, f := range fields {
-		dv, err := f.DatasetValue(ctx, d)
-		if err != nil {
-			return nil, err
-		}
-
-		if val := NewValueAndDatasetValue(f.Type, dv.Clone(), f.Value.Clone()); val != nil {
+		if val := NewValueAndDatasetValue(f.Type, f.Value.Clone()); val != nil {
 			res = append(res, &SealedField{
 				ID:  f.ID,
 				Val: val,

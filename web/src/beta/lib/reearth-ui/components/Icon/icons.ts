@@ -64,6 +64,7 @@ import FileHtml from "./Icons/FileHtml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
 import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import Flask from "./Icons/Flask.svg?react";
+import Float from "./Icons/Float.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
 import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
@@ -84,6 +85,7 @@ import LightBulb from "./Icons/LightBult.svg?react";
 import LineHeight from "./Icons/LineHeight.svg?react";
 import LineSegments from "./Icons/LineSegments.svg?react";
 import LinkSimple from "./Icons/LinkSimple.svg?react";
+import LinkSimpleHorizontal from "./Icons/LinkSimpleHorizontal.svg?react";
 import List from "./Icons/List.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
@@ -99,6 +101,7 @@ import More from "./Icons/More.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
 import NewWorkspace from "./Icons/NewWorkspace.svg?react";
 import Notebook from "./Icons/Notebook.svg?react";
+import NumberNine from "./Icons/NumberNine.svg?react";
 import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
 import Palette from "./Icons/Palette.svg?react";
@@ -152,6 +155,7 @@ import TextUnderline from "./Icons/TextUnderline.svg?react";
 import Timeline from "./Icons/Timeline.svg?react";
 import TimeOrder from "./Icons/TimeOrder.svg?react";
 import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
+import ToggleLeft from "./Icons/ToggleLeft.svg?react";
 import Trash from "./Icons/Trash.svg?react";
 import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
@@ -228,6 +232,7 @@ export default {
   fileMD: FileMD,
   fileMDFilled: FileMDFilled,
   flask: Flask,
+  float: Float,
   floppyDisk: FloppyDisk,
   folderFilled: FolderFilled,
   folderSimple: FolderSimple,
@@ -248,6 +253,7 @@ export default {
   lineHeight: LineHeight,
   lineSegments: LineSegments,
   linkSimple: LinkSimple,
+  linkSimpleHorizontal: LinkSimpleHorizontal,
   listDashes: ListDashes,
   listDashesFilled: ListDashesFilled,
   list: List,
@@ -263,6 +269,7 @@ export default {
   navigatorAngle: NavigatorAngle,
   newWorkspace: NewWorkspace,
   notebook: Notebook,
+  numberNine: NumberNine,
   padding: Padding,
   page: Page,
   palette: Palette,
@@ -316,6 +323,7 @@ export default {
   timeline: Timeline,
   timeOrder: TimeOrder,
   timeOrderInverse: TimeOrderInverse,
+  toggleLeft: ToggleLeft,
   trash: Trash,
   triangle: Triangle,
   uploadSimple: UploadSimple,

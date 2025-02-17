@@ -7,15 +7,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/layer"
-	"github.com/reearth/reearth/server/pkg/layer/encoding"
-	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
-	"github.com/reearth/reearth/server/pkg/tag"
 )
 
 const (
@@ -24,12 +19,8 @@ const (
 )
 
 type Builder struct {
-	ploader   property.Loader
-	tloader   tag.SceneLoader
-	nlsloader nlslayer.Loader
-	exporter  *encoding.Exporter
-	encoder   *encoder
-
+	ploader     property.Loader
+	nlsloader   nlslayer.Loader
 	scene       *scene.Scene
 	nlsLayer    *nlslayer.NLSLayerList
 	layerStyles *scene.StyleList
@@ -38,25 +29,11 @@ type Builder struct {
 	exportType bool
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
-	e := &encoder{}
+func New(pl property.Loader, nlsl nlslayer.Loader, exp bool) *Builder {
 	return &Builder{
 		ploader:    pl,
-		tloader:    tsl,
 		nlsloader:  nlsl,
-		encoder:    e,
 		exportType: exp,
-		exporter: &encoding.Exporter{
-			Merger: &merging.Merger{
-				LayerLoader:    ll,
-				PropertyLoader: pl,
-			},
-			Sealer: &merging.Sealer{
-				DatasetGraphLoader: dl,
-				TagLoader:          tl,
-			},
-			Encoder: e,
-		},
 	}
 }
 
@@ -177,13 +154,7 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSup
 		return nil, err
 	}
 
-	// layers
-	if err := b.exporter.ExportLayerByID(ctx, b.scene.RootLayer()); err != nil {
-		return nil, err
-	}
-	layers := b.encoder.Result()
-
-	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport, enableGa, trackingId)
+	return b.sceneJSON(ctx, publishedAt, p, coreSupport, enableGa, trackingId)
 }
 
 func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {

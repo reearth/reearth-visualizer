@@ -34,9 +34,6 @@ type Storytelling struct {
 	policyRepo       repo.Policy
 	projectRepo      repo.Project
 	sceneRepo        repo.Scene
-	layerRepo        repo.Layer
-	datasetRepo      repo.Dataset
-	tagRepo          repo.Tag
 	file             gateway.File
 	transaction      usecasex.Transaction
 	nlsLayerRepo     repo.NLSLayer
@@ -55,9 +52,6 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		policyRepo:       r.Policy,
 		projectRepo:      r.Project,
 		sceneRepo:        r.Scene,
-		layerRepo:        r.Layer,
-		datasetRepo:      r.Dataset,
-		tagRepo:          r.Tag,
 		file:             gr.File,
 		transaction:      r.Transaction,
 		nlsLayerRepo:     r.NLSLayer,
@@ -184,6 +178,14 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetBgColor(*inp.BgColor)
 	}
 
+	if inp.EnableGa != nil {
+		story.SetEnableGa(*inp.EnableGa)
+	}
+
+	if inp.TrackingID != nil {
+		story.SetTrackingID(*inp.TrackingID)
+	}
+
 	oldAlias := story.Alias()
 	if inp.Alias != nil && *inp.Alias != oldAlias {
 		if err := story.UpdateAlias(*inp.Alias); err != nil {
@@ -280,38 +282,27 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		return nil, err
 	}
 
-	// prj, err := i.projectRepo.FindByScene(ctx, story.Scene())
-	// if err != nil {
-	// 	return nil, err
-	// }
+	ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
+	if err != nil {
+		return nil, err
+	}
 
-	// enableGa := prj.EnableGA()
-	// trackingId := prj.TrackingID()
-
-	//
-	// Commenting this out till the point we make a decision on this: @pyshx
-	//
-	// ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate {
-	// 	// enforce policy
-	// 	if policyID := op.Policy(ws.Policy()); policyID != nil {
-	// 		p, err := i.policyRepo.FindByID(ctx, *policyID)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
-	// 			return nil, err
-	// 		}
-	// 	}
-	// }
+	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate {
+		// enforce policy
+		if policyID := op.Policy(ws.Policy()); policyID != nil {
+			p, err := i.policyRepo.FindByID(ctx, *policyID)
+			if err != nil {
+				return nil, err
+			}
+			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+			if err != nil {
+				return nil, err
+			}
+			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+				return nil, err
+			}
+		}
+	}
 
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
 	if err != nil {
@@ -364,7 +355,6 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		r, w := io.Pipe()
 
 		// Build
-		scenes := []id.SceneID{scene.ID()}
 		go func() {
 			var err error
 
@@ -373,14 +363,10 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 			}()
 
 			err = builder.New(
-				repo.LayerLoaderFrom(i.layerRepo),
 				repo.PropertyLoaderFrom(i.propertyRepo),
-				repo.DatasetGraphLoaderFrom(i.datasetRepo),
-				repo.TagLoaderFrom(i.tagRepo),
-				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
 				false,
-			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true, false, "")
+			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true, story.EnableGa(), story.TrackingID())
 		}()
 
 		// Save
@@ -1138,7 +1124,7 @@ func (i *Storytelling) getPlugin(ctx context.Context, pId *id.PluginID, eId *id.
 	plg, err := i.pluginRepo.FindByID(ctx, *pId)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
+			return nil, nil, ErrPluginNotFound
 		}
 		return nil, nil, err
 	}
@@ -1149,7 +1135,7 @@ func (i *Storytelling) getPlugin(ctx context.Context, pId *id.PluginID, eId *id.
 
 	extension := plg.Extension(*eId)
 	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
+		return nil, nil, ErrExtensionNotFound
 	}
 
 	return plg, extension, nil

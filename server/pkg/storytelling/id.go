@@ -5,9 +5,6 @@ import "github.com/reearth/reearth/server/pkg/id"
 type StoryID = id.StoryID
 type PageID = id.PageID
 type BlockID = id.BlockID
-
-type LayerID = id.NLSLayerID
-type LayerIDList = id.NLSLayerIDList
 type PropertyID = id.PropertyID
 
 var NewStoryID = id.NewStoryID

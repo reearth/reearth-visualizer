@@ -8,7 +8,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer/layerops"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
@@ -43,15 +42,15 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 	plugin, err := i.pluginCommon().GetOrDownloadPlugin(ctx, pid)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
+			return nil, nil, ErrPluginNotFound
 		}
 		return nil, nil, err
 	}
 	if plugin == nil {
-		return nil, nil, interfaces.ErrPluginNotFound
+		return nil, nil, ErrPluginNotFound
 	}
 	if psid := plugin.ID().Scene(); psid != nil && *psid != sid {
-		return nil, nil, interfaces.ErrPluginNotFound
+		return nil, nil, ErrPluginNotFound
 	}
 
 	var p *property.Property
@@ -108,7 +107,7 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 	pl, err := i.pluginRepo.FindByID(ctx, pid)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, interfaces.ErrPluginNotFound
+			return nil, ErrPluginNotFound
 		}
 		return nil, err
 	}
@@ -128,24 +127,6 @@ func (i *Scene) UninstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plug
 
 	// remove widgets
 	removedProperties = append(removedProperties, scene.Widgets().RemoveAllByPlugin(pid, nil)...)
-
-	// remove blocks
-	res, err := layerops.Processor{
-		LayerLoader: repo.LayerLoaderFrom(i.layerRepo),
-		RootLayerID: scene.RootLayer(),
-	}.UninstallPlugin(ctx, pid)
-	if err != nil {
-		return nil, err
-	}
-
-	removedProperties = append(removedProperties, res.RemovedProperties...)
-
-	// save
-	if len(res.ModifiedLayers) > 0 {
-		if err := i.layerRepo.SaveAll(ctx, res.ModifiedLayers); err != nil {
-			return nil, err
-		}
-	}
 
 	if len(removedProperties) > 0 {
 		if err := i.propertyRepo.RemoveAll(ctx, removedProperties); err != nil {
@@ -208,14 +189,12 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 	if plugin, err := i.pluginCommon().GetOrDownloadPlugin(ctx, newPluginID); err != nil {
 		return nil, err
 	} else if plugin == nil {
-		return nil, interfaces.ErrPluginNotFound
+		return nil, ErrPluginNotFound
 	}
 
 	pluginMigrator := sceneops.PluginMigrator{
 		Property:       repo.PropertyLoaderFrom(i.propertyRepo),
 		PropertySchema: repo.PropertySchemaLoaderFrom(i.propertySchemaRepo),
-		Dataset:        repo.DatasetLoaderFrom(i.datasetRepo),
-		Layer:          repo.LayerLoaderBySceneFrom(i.layerRepo),
 		Plugin:         repo.PluginLoaderFrom(i.pluginRepo),
 	}
 
@@ -228,9 +207,6 @@ func (i *Scene) UpgradePlugin(ctx context.Context, sid id.SceneID, oldPluginID, 
 		return nil, err
 	}
 	if err := i.propertyRepo.SaveAll(ctx, result.Properties); err != nil {
-		return nil, err
-	}
-	if err := i.layerRepo.SaveAll(ctx, result.Layers); err != nil {
 		return nil, err
 	}
 	if err := i.propertyRepo.RemoveAll(ctx, result.RemovedProperties); err != nil {

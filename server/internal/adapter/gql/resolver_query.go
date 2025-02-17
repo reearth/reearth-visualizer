@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/usecasex"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -13,8 +12,8 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
-	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
+func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, projectId *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
+	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, projectId, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.Me, error) {
@@ -30,30 +29,6 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 	switch typeArg {
 	case gqlmodel.NodeTypeAsset:
 		result, err := dataloaders.Asset.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeDataset:
-		result, err := dataloaders.Dataset.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeDatasetSchema:
-		result, err := dataloaders.DatasetSchema.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerItem:
-		result, err := dataloaders.LayerItem.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerGroup:
-		result, err := dataloaders.LayerGroup.Load(i)
 		if result == nil {
 			return nil, nil
 		}
@@ -103,46 +78,6 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 		nodes := make([]gqlmodel.Node, len(data))
 		for i := range data {
 			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeDataset:
-		data, err := dataloaders.Dataset.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeDatasetSchema:
-		data, err := dataloaders.DatasetSchema.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerItem:
-		data, err := dataloaders.LayerItem.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerGroup:
-		data, err := dataloaders.LayerGroup.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
 		}
 		return nodes, nil
 	case gqlmodel.NodeTypeProject:
@@ -224,28 +159,12 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 	return data, nil
 }
 
-func (r *queryResolver) Layer(ctx context.Context, layerID gqlmodel.ID) (gqlmodel.Layer, error) {
-	result, err := dataloaders(ctx).Layer.Load(layerID)
-	if result == nil || *result == nil {
-		return nil, nil
-	}
-	return *result, err
-}
-
 func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error) {
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
 func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
-}
-
-func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
-	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
-}
-
-func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
-	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
