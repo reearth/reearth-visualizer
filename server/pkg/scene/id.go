@@ -8,9 +8,6 @@ import (
 type ID = id.SceneID
 type WidgetID = id.WidgetID
 type PropertyID = id.PropertyID
-
-// type PluginID = id.PluginID
-// type PluginExtensionID = id.PluginExtensionID
 type ProjectID = id.ProjectID
 type WorkspaceID = accountdomain.WorkspaceID
 type StyleID = id.StyleID
