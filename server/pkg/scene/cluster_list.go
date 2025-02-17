@@ -1,6 +1,9 @@
 package scene
 
-import "github.com/reearth/reearthx/util"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/util"
+)
 
 type ClusterList struct {
 	clusters []*Cluster
@@ -49,9 +52,9 @@ func (tl *ClusterList) Remove(clusters ...ClusterID) {
 	tl.clusters = util.RemoveByIds[ClusterID, Cluster](tl.clusters, (*Cluster).ID, clusters...)
 }
 
-func (tl *ClusterList) Properties() []PropertyID {
+func (tl *ClusterList) Properties() []id.PropertyID {
 	if tl == nil {
 		return nil
 	}
-	return util.Properties[PropertyID, Cluster](tl.clusters, (*Cluster).Property)
+	return util.Properties[id.PropertyID, Cluster](tl.clusters, (*Cluster).Property)
 }

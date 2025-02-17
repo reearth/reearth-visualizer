@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -105,7 +106,7 @@ func TestList_Properties(t *testing.T) {
 	tests := []struct {
 		name   string
 		target List
-		want   []PropertyID
+		want   []id.PropertyID
 	}{
 		{
 			name: "ok",
@@ -115,7 +116,7 @@ func TestList_Properties(t *testing.T) {
 					{property: p3},
 				}, p2)).Group().MustBuild().LayerRef(),
 			},
-			want: []PropertyID{p1, p2, p3},
+			want: []id.PropertyID{p1, p2, p3},
 		},
 		{
 			name:   "nil",

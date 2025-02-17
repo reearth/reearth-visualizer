@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func ItemFromLayer(l Layer) *Item {
 	li, ok := l.(*Item)
 	if !ok {
@@ -82,7 +84,7 @@ func (b *ItemBuilder) Extension(extension *PluginExtensionID) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Property(p *PropertyID) *ItemBuilder {
+func (b *ItemBuilder) Property(p *id.PropertyID) *ItemBuilder {
 	b.l.property = p.CloneRef()
 	return b
 }

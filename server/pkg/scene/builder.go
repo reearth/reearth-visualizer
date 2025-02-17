@@ -2,6 +2,8 @@ package scene
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -82,7 +84,7 @@ func (b *Builder) Plugins(plugins *Plugins) *Builder {
 	return b
 }
 
-func (b *Builder) Property(p PropertyID) *Builder {
+func (b *Builder) Property(p id.PropertyID) *Builder {
 	b.scene.property = p
 	return b
 }

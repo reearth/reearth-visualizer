@@ -3,6 +3,7 @@ package layer
 import (
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -11,7 +12,7 @@ type InfoboxField struct {
 	id        InfoboxFieldID
 	plugin    PluginID
 	extension PluginExtensionID
-	property  PropertyID
+	property  id.PropertyID
 }
 
 func (i *InfoboxField) ID() InfoboxFieldID {
@@ -26,11 +27,11 @@ func (i *InfoboxField) Extension() PluginExtensionID {
 	return i.extension
 }
 
-func (i *InfoboxField) Property() PropertyID {
+func (i *InfoboxField) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *InfoboxField) PropertyRef() *PropertyID {
+func (i *InfoboxField) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}

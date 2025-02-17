@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -55,7 +56,7 @@ func (l *Item) UsesPlugin() bool {
 	return l.layerBase.UsesPlugin()
 }
 
-func (l *Item) Property() *PropertyID {
+func (l *Item) Property() *id.PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -134,7 +135,7 @@ func (l *Item) LayerRef() *Layer {
 	return &layer
 }
 
-func (l *Item) Properties() []PropertyID {
+func (l *Item) Properties() []id.PropertyID {
 	if l == nil {
 		return nil
 	}

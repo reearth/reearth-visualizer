@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -239,12 +240,12 @@ func TestClusterList_Properties(t *testing.T) {
 	tests := []struct {
 		name string
 		list *ClusterList
-		want []PropertyID
+		want []id.PropertyID
 	}{
 		{
 			name: "should return properties",
 			list: NewClusterListFrom([]*Cluster{c1, c2}),
-			want: []PropertyID{c1.property, c2.property},
+			want: []id.PropertyID{c1.property, c2.property},
 		},
 		{
 			name: "nil_list: should return nil",
@@ -254,7 +255,7 @@ func TestClusterList_Properties(t *testing.T) {
 		{
 			name: "empty_list: should return empty",
 			list: NewClusterListFrom([]*Cluster{}),
-			want: []PropertyID{},
+			want: []id.PropertyID{},
 		},
 	}
 

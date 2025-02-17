@@ -3,14 +3,15 @@ package property
 import (
 	"sort"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
 )
 
 type List []*Property
 
-func (l List) IDs() []ID {
-	ids := make([]ID, 0, len(l))
-	m := map[ID]struct{}{}
+func (l List) IDs() []id.PropertyID {
+	ids := make([]id.PropertyID, 0, len(l))
+	m := map[id.PropertyID]struct{}{}
 	for _, p := range l {
 		s := p.ID()
 		if _, ok := m[s]; ok {
@@ -22,8 +23,8 @@ func (l List) IDs() []ID {
 	return ids
 }
 
-func (l List) Schemas() []SchemaID {
-	schemas := make([]SchemaID, 0, len(l))
+func (l List) Schemas() []id.PropertySchemaID {
+	schemas := make([]id.PropertySchemaID, 0, len(l))
 	for _, p := range l {
 		s := p.Schema()
 		skip := false
@@ -52,7 +53,7 @@ func (l List) Map() Map {
 	return m.Add(l...)
 }
 
-type Map map[ID]*Property
+type Map map[id.PropertyID]*Property
 
 func MapFrom(properties ...*Property) Map {
 	return Map{}.Add(properties...)
@@ -105,7 +106,7 @@ func (m Map) Merge(m2 Map) Map {
 	return m3.Add(m2.List()...)
 }
 
-func (m Map) Keys() []ID {
+func (m Map) Keys() []id.PropertyID {
 	return IDList(lo.Keys(m)).Sort()
 }
 

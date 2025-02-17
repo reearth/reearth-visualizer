@@ -613,7 +613,7 @@ func TestSchemaDiffList_FromSchemas(t *testing.T) {
 	p1 := MustSchemaID("a~1.0.0/a")
 	p2 := MustSchemaID("a~1.0.0/b")
 
-	assert.Equal(t, []SchemaID{p1, p2}, SchemaDiffList{{From: p1}, {From: p2}, {From: p2}}.FromSchemas())
+	assert.Equal(t, []id.PropertySchemaID{p1, p2}, SchemaDiffList{{From: p1}, {From: p2}, {From: p2}}.FromSchemas())
 	assert.Nil(t, SchemaDiffList{}.FromSchemas())
 	assert.Nil(t, SchemaDiffList(nil).FromSchemas())
 }

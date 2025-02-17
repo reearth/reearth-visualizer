@@ -1,5 +1,7 @@
 package storytelling
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type PageBuilder struct {
 	page *Page
 }
@@ -33,7 +35,7 @@ func (b *PageBuilder) NewID() *PageBuilder {
 	return b
 }
 
-func (b *PageBuilder) Property(property PropertyID) *PageBuilder {
+func (b *PageBuilder) Property(property id.PropertyID) *PageBuilder {
 	b.page.property = property
 	return b
 }

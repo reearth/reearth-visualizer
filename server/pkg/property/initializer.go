@@ -4,14 +4,16 @@ package property
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var ErrSchemaDoesNotMatch = errors.New("schema of the initializer does not match schema of the argument")
 
 type Initializer struct {
-	ID     *ID                `json:"id"`
-	Schema SchemaID           `json:"schema"`
-	Items  []*InitializerItem `json:"items"`
+	ID     *id.PropertyID      `json:"id"`
+	Schema id.PropertySchemaID `json:"schema"`
+	Items  []*InitializerItem  `json:"items"`
 }
 
 func (p *Initializer) Clone() *Initializer {
@@ -60,7 +62,7 @@ func (p *Initializer) Property(scene SceneID) (*Property, error) {
 }
 
 // PropertyIncludingEmpty generates a new property, but even if the initializer is empty, an empty property will be generated.
-func (p *Initializer) PropertyIncludingEmpty(scene SceneID, schema SchemaID) (*Property, error) {
+func (p *Initializer) PropertyIncludingEmpty(scene SceneID, schema id.PropertySchemaID) (*Property, error) {
 	if p != nil && p.Schema != schema {
 		return nil, ErrSchemaDoesNotMatch
 	}

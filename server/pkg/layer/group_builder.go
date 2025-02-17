@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func GroupFromLayer(l Layer) *Group {
 	li, ok := l.(*Group)
 	if !ok {
@@ -87,7 +89,7 @@ func (b *GroupBuilder) Extension(extension *PluginExtensionID) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Property(property *PropertyID) *GroupBuilder {
+func (b *GroupBuilder) Property(property *id.PropertyID) *GroupBuilder {
 	b.l.property = property.CloneRef()
 	return b
 }

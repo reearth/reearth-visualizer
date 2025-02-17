@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -128,12 +129,12 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
 }
 
 // Properties returns all property IDs in Merged
-func (m *Merged) Properties() []PropertyID {
+func (m *Merged) Properties() []id.PropertyID {
 	if m == nil {
 		return nil
 	}
-	added := map[PropertyID]struct{}{}
-	result := []PropertyID{}
+	added := map[id.PropertyID]struct{}{}
+	result := []id.PropertyID{}
 	if m.Property != nil {
 		if m.Property.Original != nil {
 			t := *m.Property.Original

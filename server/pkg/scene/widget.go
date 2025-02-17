@@ -1,15 +1,17 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Widget struct {
 	id        WidgetID
 	plugin    PluginID
 	extension PluginExtensionID
-	property  PropertyID
+	property  id.PropertyID
 	enabled   bool
 	extended  bool
 }
 
-func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) (*Widget, error) {
+func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property id.PropertyID, enabled bool, extended bool) (*Widget, error) {
 	if !plugin.Validate() || string(extension) == "" || property.IsNil() {
 		return nil, ErrInvalidID
 	}
@@ -24,7 +26,7 @@ func NewWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, prope
 	}, nil
 }
 
-func MustWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property PropertyID, enabled bool, extended bool) *Widget {
+func MustWidget(wid WidgetID, plugin PluginID, extension PluginExtensionID, property id.PropertyID, enabled bool, extended bool) *Widget {
 	w, err := NewWidget(wid, plugin, extension, property, enabled, extended)
 	if err != nil {
 		panic(err)
@@ -44,7 +46,7 @@ func (w *Widget) Extension() PluginExtensionID {
 	return w.extension
 }
 
-func (w *Widget) Property() PropertyID {
+func (w *Widget) Property() id.PropertyID {
 	return w.property
 }
 

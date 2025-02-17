@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -79,7 +80,7 @@ func TestCluster_Property(t *testing.T) {
 	tests := []struct {
 		name    string
 		cluster *Cluster
-		want    PropertyID
+		want    id.PropertyID
 	}{
 		{
 			name:    "should return cluster property",
@@ -89,7 +90,7 @@ func TestCluster_Property(t *testing.T) {
 		{
 			name:    "should return empty cluster property",
 			cluster: nil,
-			want:    PropertyID{},
+			want:    id.PropertyID{},
 		},
 	}
 
@@ -109,7 +110,7 @@ func TestNew(t *testing.T) {
 	type args struct {
 		cid  ClusterID
 		name string
-		pid  PropertyID
+		pid  id.PropertyID
 	}
 
 	tests := []struct {
@@ -210,7 +211,7 @@ func TestCluster_UpdateProperty(t *testing.T) {
 	clusterId := NewClusterID()
 
 	type args struct {
-		property PropertyID
+		property id.PropertyID
 	}
 
 	tests := []struct {

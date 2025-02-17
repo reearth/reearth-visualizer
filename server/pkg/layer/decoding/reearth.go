@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -91,7 +92,7 @@ func (l *ReearthLayer) layer() *layer.Initializer {
 		}
 	}
 
-	var psid *property.SchemaID
+	var psid *id.PropertySchemaID
 	if l.Plugin != nil && l.Extension != nil {
 		psid = layer.NewPropertySchemaID(*l.Plugin, l.Extension.String()).Ref()
 	}
@@ -172,7 +173,7 @@ func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {
 
 type ReearthProperty map[property.SchemaGroupID]ReearthPropertyItem
 
-func (p ReearthProperty) property(schema *property.SchemaID) *property.Initializer {
+func (p ReearthProperty) property(schema *id.PropertySchemaID) *property.Initializer {
 	if schema == nil || p == nil {
 		return nil
 	}

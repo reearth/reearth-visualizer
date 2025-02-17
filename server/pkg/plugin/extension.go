@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
@@ -30,7 +31,7 @@ type Extension struct {
 	name          i18n.String
 	description   i18n.String
 	icon          string
-	schema        PropertySchemaID
+	schema        id.PropertySchemaID
 	visualizer    visualizer.Visualizer
 	singleOnly    bool
 	widgetLayout  *WidgetLayout
@@ -56,7 +57,7 @@ func (w *Extension) Icon() string {
 	return w.icon
 }
 
-func (w *Extension) Schema() PropertySchemaID {
+func (w *Extension) Schema() id.PropertySchemaID {
 	return w.schema
 }
 

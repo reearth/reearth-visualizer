@@ -3,6 +3,7 @@ package layerops
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 )
 
@@ -13,7 +14,7 @@ type Processor struct {
 
 type UninstallPluginResult struct {
 	ModifiedLayers    layer.List
-	RemovedProperties []layer.PropertyID
+	RemovedProperties []id.PropertyID
 }
 
 func (p Processor) UninstallPlugin(ctx context.Context, pluginID layer.PluginID) (res UninstallPluginResult, err error) {

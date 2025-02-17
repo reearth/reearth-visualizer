@@ -30,7 +30,7 @@ func TestProcessor_UninstallPlugin(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, UninstallPluginResult{
 		ModifiedLayers:    layer.List{l3.LayerRef()},
-		RemovedProperties: []layer.PropertyID{ibf1.Property()},
+		RemovedProperties: []id.PropertyID{ibf1.Property()},
 	}, res)
 	assert.Equal(t, []*layer.InfoboxField{ibf2}, ib.Fields())
 }

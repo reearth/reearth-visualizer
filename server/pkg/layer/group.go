@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -44,7 +45,7 @@ func (l *Group) UsesPlugin() bool {
 	return l.layerBase.UsesPlugin()
 }
 
-func (l *Group) Property() *PropertyID {
+func (l *Group) Property() *id.PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -165,7 +166,7 @@ func (l *Group) IsRoot() bool {
 	return l.root
 }
 
-func (l *Group) Properties() []PropertyID {
+func (l *Group) Properties() []id.PropertyID {
 	if l == nil {
 		return nil
 	}

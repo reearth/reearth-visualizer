@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -12,13 +13,13 @@ type BlockList []*InfoboxBlock
 
 type Infobox struct {
 	id       InfoboxID
-	property PropertyID
+	property id.PropertyID
 	blocks   BlockList
 	// for checking duplication
 	ids map[InfoboxBlockID]struct{}
 }
 
-func NewInfobox(Blocks []*InfoboxBlock, p PropertyID) *Infobox {
+func NewInfobox(Blocks []*InfoboxBlock, p id.PropertyID) *Infobox {
 	infobox := Infobox{
 		id:       NewInfoboxID(),
 		property: p,
@@ -39,11 +40,11 @@ func (i *Infobox) Id() InfoboxID {
 	return i.id
 }
 
-func (i *Infobox) Property() PropertyID {
+func (i *Infobox) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *Infobox) PropertyRef() *PropertyID {
+func (i *Infobox) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}

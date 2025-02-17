@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -410,7 +411,7 @@ func TestMergedProperties(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, []PropertyID{
+	assert.Equal(t, []id.PropertyID{
 		itemProperty, groupProperty, ib1pr, ib2pr, f1pr, f2pr, f3pr,
 	}, merged.Properties())
 }

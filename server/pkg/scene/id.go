@@ -9,7 +9,8 @@ type ID = id.SceneID
 type WidgetID = id.WidgetID
 type ClusterID = id.ClusterID
 type LayerID = id.LayerID
-type PropertyID = id.PropertyID
+
+// type PropertyID = id.PropertyID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 type ProjectID = id.ProjectID

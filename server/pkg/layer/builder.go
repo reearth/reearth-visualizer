@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Builder struct {
 	base layerBase
 }
@@ -58,7 +60,7 @@ func (b *Builder) Extension(extension *PluginExtensionID) *Builder {
 	return b
 }
 
-func (b *Builder) Property(p *PropertyID) *Builder {
+func (b *Builder) Property(p *id.PropertyID) *Builder {
 	b.base.property = p.CloneRef()
 	return b
 }

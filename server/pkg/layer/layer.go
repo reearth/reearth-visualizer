@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -20,7 +21,7 @@ type Layer interface {
 	Plugin() *PluginID
 	Extension() *PluginExtensionID
 	UsesPlugin() bool
-	Property() *PropertyID
+	Property() *id.PropertyID
 	HasInfobox() bool
 	Infobox() *Infobox
 	Scene() SceneID
@@ -30,7 +31,7 @@ type Layer interface {
 	SetVisible(bool)
 	SetInfobox(*Infobox)
 	SetPlugin(*PluginID)
-	Properties() []PropertyID
+	Properties() []id.PropertyID
 	ValidateProperties(property.Map) error
 }
 
@@ -77,7 +78,7 @@ type layerBase struct {
 	visible   bool
 	plugin    *PluginID
 	extension *PluginExtensionID
-	property  *PropertyID
+	property  *id.PropertyID
 	infobox   *Infobox
 	scene     SceneID
 	tags      *TagList
@@ -133,7 +134,7 @@ func (l *layerBase) Extension() *PluginExtensionID {
 	return l.extension.CloneRef()
 }
 
-func (l *layerBase) Property() *PropertyID {
+func (l *layerBase) Property() *id.PropertyID {
 	if l == nil {
 		return nil
 	}
@@ -193,11 +194,11 @@ func (l *layerBase) SetPlugin(plugin *PluginID) {
 	l.plugin = plugin.CloneRef()
 }
 
-func (l *layerBase) Properties() []PropertyID {
+func (l *layerBase) Properties() []id.PropertyID {
 	if l == nil {
 		return nil
 	}
-	res := []PropertyID{}
+	res := []id.PropertyID{}
 	if l.property != nil {
 		res = append(res, *l.property)
 	}

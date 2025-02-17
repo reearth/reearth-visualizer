@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
@@ -23,11 +24,11 @@ func (ll List) IDs() *IDList {
 	return NewIDList(ids)
 }
 
-func (ll List) Properties() []PropertyID {
+func (ll List) Properties() []id.PropertyID {
 	if len(ll) == 0 {
 		return nil
 	}
-	ids := make([]PropertyID, 0, len(ll))
+	ids := make([]id.PropertyID, 0, len(ll))
 	for _, l := range ll.Deref() {
 		ids = append(ids, l.Properties()...)
 	}

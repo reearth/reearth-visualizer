@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -44,7 +45,7 @@ type Initializer struct {
 	Extension           *PluginExtensionID    `json:"extension"`
 	Name                string                `json:"name"`
 	Infobox             *InitializerInfobox   `json:"infobox"`
-	PropertyID          *PropertyID           `json:"propertyId"`
+	PropertyID          *id.PropertyID        `json:"propertyId"`
 	Property            *property.Initializer `json:"property"`
 	Layers              []*Initializer        `json:"layers"`
 	LayerIDs            []ID                  `json:"layerIds"`
@@ -174,7 +175,7 @@ func (i *Initializer) MustBeLayer(sid SceneID) InitializerResult {
 }
 
 type InitializerInfobox struct {
-	PropertyID *PropertyID                `json:"propertyId"`
+	PropertyID *id.PropertyID             `json:"propertyId"`
 	Property   *property.Initializer      `json:"property"`
 	Fields     []*InitializerInfoboxField `json:"fields"`
 }
@@ -242,7 +243,7 @@ type InitializerInfoboxField struct {
 	ID         *InfoboxFieldID       `json:"id"`
 	Plugin     PluginID              `json:"plugin"`
 	Extension  PluginExtensionID     `json:"extension"`
-	PropertyID *PropertyID           `json:"propertyId"`
+	PropertyID *id.PropertyID        `json:"propertyId"`
 	Property   *property.Initializer `json:"property"`
 }
 
