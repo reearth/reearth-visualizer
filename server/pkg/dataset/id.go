@@ -6,8 +6,6 @@ type ID = id.DatasetID
 type FieldID = id.DatasetFieldID
 type SchemaID = id.DatasetSchemaID
 
-// type SceneID = id.SceneID
-
 var NewID = id.NewDatasetID
 var NewSchemaID = id.NewDatasetSchemaID
 var NewFieldID = id.NewDatasetFieldID
@@ -31,7 +29,6 @@ var SceneIDFromRef = id.SceneIDFromRef
 type IDSet = id.DatasetIDSet
 type SchemaIDSet = id.DatasetSchemaIDSet
 type FieldIDSet = id.DatasetFieldIDSet
-type SceneIDSet = id.SceneIDSet
 
 var NewIDSet = id.NewDatasetIDSet
 var NewSchemaIDset = id.NewDatasetSchemaIDSet
