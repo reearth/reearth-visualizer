@@ -8,8 +8,6 @@ type ID = id.PropertyID
 type ItemID = id.PropertyItemID
 type FieldID = id.PropertyFieldID
 
-// type SchemaID = id.PropertySchemaID
-// type SchemaGroupID = id.PropertySchemaGroupID
 type DatasetID = id.DatasetID
 type DatasetFieldID = id.DatasetFieldID
 type DatasetSchemaID = id.DatasetSchemaID
@@ -46,10 +44,6 @@ var DatasetIDFromRef = id.DatasetIDFromRef
 var DatasetFieldIDFromRef = id.DatasetFieldIDFromRef
 var DatasetSchemaIDFromRef = id.DatasetSchemaIDFromRef
 var SceneIDFromRef = id.SceneIDFromRef
-
-// type IDSet = id.PropertyIDSet
-// type IDList = id.PropertyIDList
-// type ItemIDSet = id.PropertyItemIDSet
 
 var NewIDSet = id.NewPropertyIDSet
 var NewItemIDSet = id.NewPropertyItemIDSet

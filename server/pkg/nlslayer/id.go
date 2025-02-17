@@ -10,7 +10,6 @@ type ID = id.NLSLayerID
 type SceneID = id.SceneID
 type LayerID = id.LayerID
 
-// type PropertyID = id.PropertyID
 type InfoboxID = id.InfoboxID
 type InfoboxBlockID = id.InfoboxBlockID
 type PluginID = id.PluginID

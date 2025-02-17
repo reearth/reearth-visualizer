@@ -8,8 +8,6 @@ type BlockID = id.BlockID
 type SceneID = id.SceneID
 type LayerID = id.NLSLayerID
 type LayerIDList = id.NLSLayerIDList
-
-// type PropertyID = id.PropertyID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 
