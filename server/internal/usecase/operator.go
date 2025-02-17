@@ -5,7 +5,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/util"
@@ -39,19 +38,19 @@ func (o *Operator) Workspaces(r workspace.Role) accountdomain.WorkspaceIDList {
 	return nil
 }
 
-func (o *Operator) AllReadableWorkspaces() user.WorkspaceIDList {
+func (o *Operator) AllReadableWorkspaces() accountdomain.WorkspaceIDList {
 	return o.AcOperator.AllReadableWorkspaces()
 }
 
-func (o *Operator) AllWritableWorkspaces() user.WorkspaceIDList {
+func (o *Operator) AllWritableWorkspaces() accountdomain.WorkspaceIDList {
 	return o.AcOperator.AllWritableWorkspaces()
 }
 
-func (o *Operator) AllMaintainingWorkspace() user.WorkspaceIDList {
+func (o *Operator) AllMaintainingWorkspace() accountdomain.WorkspaceIDList {
 	return o.AcOperator.AllMaintainingWorkspaces()
 }
 
-func (o *Operator) AllOwningWorkspaces() user.WorkspaceIDList {
+func (o *Operator) AllOwningWorkspaces() accountdomain.WorkspaceIDList {
 	return o.AcOperator.AllOwningWorkspaces()
 }
 
