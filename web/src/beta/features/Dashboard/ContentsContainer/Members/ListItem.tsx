@@ -1,21 +1,20 @@
-import UpdateRoleModal from "@reearth/beta/features/Dashboard/ContentsContainer/Members/UpdateRoleModal";
 import { Button, PopupMenu, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useWorkspaceFetcher } from "@reearth/services/api";
 import { TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback } from "react";
 
 const ListItem: FC<{
   member: TeamMember;
   currentWorkSpace: Workspace;
-  updatingRoleMember: TeamMember | undefined;
+  setUpdateRoleModalVisible: (visible: boolean) => void;
   setUpdatingRoleMember: (member: TeamMember) => void;
 }> = ({
   member,
   currentWorkSpace,
-  updatingRoleMember,
+  setUpdateRoleModalVisible,
   setUpdatingRoleMember
 }) => {
   const t = useT();
@@ -25,8 +24,6 @@ const ListItem: FC<{
     READER: t("READER"),
     WRITER: t("WRITER")
   };
-
-  const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
 
   const { useRemoveMemberFromWorkspace: removeMember } = useWorkspaceFetcher();
   const handleRemoveMember = useCallback(
@@ -42,7 +39,7 @@ const ListItem: FC<{
       setUpdatingRoleMember(member);
       setUpdateRoleModalVisible(true);
     },
-    [setUpdatingRoleMember]
+    [setUpdateRoleModalVisible, setUpdatingRoleMember]
   );
 
   return (
@@ -86,15 +83,6 @@ const ListItem: FC<{
           ]}
         />
       </TypographyWrapper>
-
-      {updateRoleModalVisible && updatingRoleMember && (
-        <UpdateRoleModal
-          workspace={currentWorkSpace}
-          member={updatingRoleMember}
-          visible
-          onClose={() => setUpdateRoleModalVisible(false)}
-        />
-      )}
     </StyledListItem>
   );
 };

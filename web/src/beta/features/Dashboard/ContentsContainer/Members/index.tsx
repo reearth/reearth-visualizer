@@ -9,6 +9,7 @@ import { Workspace } from "../../type";
 
 import AddMemberModal from "./AddMemberModal";
 import ListItem from "./ListItem";
+import UpdateRoleModal from "./UpdateRoleModal";
 
 const ROLE_PRIORITY = { OWNER: 1, MAINTAINER: 2, WRITER: 3, READER: 4 };
 
@@ -27,6 +28,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
 
   const [updatingRoleMember, setUpdatingRoleMember] = useState<TeamMember>();
   const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
+  const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
 
   useEffect(() => {
     setFilteredMembers(workspace?.members || null);
@@ -96,7 +98,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               key={member.userId}
               member={member}
               currentWorkSpace={workspace}
-              updatingRoleMember={updatingRoleMember}
+              setUpdateRoleModalVisible={setUpdateRoleModalVisible}
               setUpdatingRoleMember={setUpdatingRoleMember}
             />
           ))
@@ -108,6 +110,14 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           </TemplateWrapper>
         )}
       </ListWrapper>
+      {updateRoleModalVisible && updatingRoleMember && (
+        <UpdateRoleModal
+          workspace={workspace}
+          member={updatingRoleMember}
+          visible
+          onClose={() => setUpdateRoleModalVisible(false)}
+        />
+      )}
       {addMemberModalVisible && (
         <AddMemberModal
           workspace={workspace}
