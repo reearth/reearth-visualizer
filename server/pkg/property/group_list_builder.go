@@ -1,6 +1,10 @@
 package property
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
 var ErrInvalidGroupInGroupList = errors.New("cannot contain an invalid property group in the property group list")
 
@@ -60,7 +64,7 @@ func (b *GroupListBuilder) NewID() *GroupListBuilder {
 	return b
 }
 
-func (b *GroupListBuilder) SchemaGroup(g SchemaGroupID) *GroupListBuilder {
+func (b *GroupListBuilder) SchemaGroup(g id.PropertySchemaGroupID) *GroupListBuilder {
 	b.p.itemBase.SchemaGroup = g
 	return b
 }

@@ -7,9 +7,6 @@ import (
 type ID = id.PropertyID
 type ItemID = id.PropertyItemID
 type FieldID = id.PropertyFieldID
-
-// type SchemaID = id.PropertySchemaID
-type SchemaGroupID = id.PropertySchemaGroupID
 type SceneID = id.SceneID
 
 var NewID = id.NewPropertyID
@@ -31,10 +28,6 @@ var IDFromRef = id.PropertyIDFromRef
 var ItemIDFromRef = id.PropertyItemIDFromRef
 var SchemaIDFromRef = id.PropertySchemaIDFromRef
 var SceneIDFromRef = id.SceneIDFromRef
-
-type IDSet = id.PropertyIDSet
-type IDList = id.PropertyIDList
-type ItemIDSet = id.PropertyItemIDSet
 
 var NewIDSet = id.NewPropertyIDSet
 var NewItemIDSet = id.NewPropertyItemIDSet

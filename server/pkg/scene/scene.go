@@ -17,7 +17,6 @@ type Scene struct {
 	plugins   *Plugins
 	updatedAt time.Time
 	property  id.PropertyID
-	clusters  *ClusterList
 	styles    *StyleList
 }
 

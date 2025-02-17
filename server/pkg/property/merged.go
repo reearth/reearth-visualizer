@@ -1,26 +1,20 @@
 package property
 
-import (
-	"context"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 // Merged represents a merged property from two properties
 type Merged struct {
-	Original      *id.PropertyID
-	Parent        *id.PropertyID
-	Schema        id.PropertySchemaID
-	LinkedDataset *DatasetID
-	Groups        []*MergedGroup
+	Original *id.PropertyID
+	Parent   *id.PropertyID
+	Schema   id.PropertySchemaID
+	Groups   []*MergedGroup
 }
 
 // MergedGroup represents a group of Merged
 type MergedGroup struct {
 	Original    *ItemID
 	Parent      *ItemID
-	SchemaGroup SchemaGroupID
+	SchemaGroup id.PropertySchemaGroupID
 	Groups      []*MergedGroup
 	Fields      []*MergedField
 }
@@ -34,9 +28,8 @@ type MergedField struct {
 }
 
 type MergedMetadata struct {
-	Original      *id.PropertyID
-	Parent        *id.PropertyID
-	LinkedDataset *DatasetID
+	Original *id.PropertyID
+	Parent   *id.PropertyID
 }
 
 // MergedMetadataFrom generates MergedMetadata from single property
@@ -178,7 +171,7 @@ func mergeItem(o, p Item) *MergedGroup {
 	}
 
 	var oid, pid *ItemID
-	var sg SchemaGroupID
+	var sg id.PropertySchemaGroupID
 	if o != nil {
 		oid = o.IDRef()
 		sg = o.SchemaGroup()

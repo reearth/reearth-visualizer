@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestInitializer_Clone(t *testing.T) {
 		Schema: MustSchemaID("reearth/marker"),
 		Items: []*InitializerItem{{
 			ID:         NewItemID().Ref(),
-			SchemaItem: SchemaGroupID("hoge"),
+			SchemaItem: id.PropertySchemaGroupID("hoge"),
 		}},
 	}
 
@@ -31,7 +32,7 @@ func TestInitializer_Property(t *testing.T) {
 		Schema: MustSchemaID("reearth/marker"),
 		Items: []*InitializerItem{{
 			ID:         NewItemID().Ref(),
-			SchemaItem: SchemaGroupID("hoge"),
+			SchemaItem: id.PropertySchemaGroupID("hoge"),
 		}},
 	}
 
@@ -68,7 +69,7 @@ func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
 		Schema: psid2,
 		Items: []*InitializerItem{{
 			ID:         NewItemID().Ref(),
-			SchemaItem: SchemaGroupID("hoge"),
+			SchemaItem: id.PropertySchemaGroupID("hoge"),
 		}},
 	}
 
@@ -87,7 +88,7 @@ func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
 func TestInitializerItem_Clone(t *testing.T) {
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 		Groups: []*InitializerGroup{{
 			ID: NewItemID().Ref(),
 			Fields: []*InitializerField{{
@@ -111,7 +112,7 @@ func TestInitializerItem_Clone(t *testing.T) {
 func TestInitializerItem_PropertyItem(t *testing.T) {
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 	}
 
 	expected := NewItem().ID(*item.ID).SchemaGroup(item.SchemaItem).Group().MustBuild()
@@ -129,7 +130,7 @@ func TestInitializerItem_PropertyItem(t *testing.T) {
 func TestInitializerItem_PropertyGroup(t *testing.T) {
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 		Fields: []*InitializerField{{
 			Field: FieldID("name"),
 			Type:  ValueTypeString,
@@ -153,7 +154,7 @@ func TestInitializerItem_PropertyGroup(t *testing.T) {
 func TestInitializerItem_PropertyGroupList(t *testing.T) {
 	item := &InitializerItem{
 		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 		Groups: []*InitializerGroup{{
 			ID: NewItemID().Ref(),
 		}},
@@ -189,7 +190,7 @@ func TestInitializerGroup_Clone(t *testing.T) {
 }
 
 func TestInitializerGroup_PropertyGroup(t *testing.T) {
-	parentItem := SchemaGroupID("hoge")
+	parentItem := id.PropertySchemaGroupID("hoge")
 	item := &InitializerGroup{
 		ID: NewItemID().Ref(),
 		Fields: []*InitializerField{{

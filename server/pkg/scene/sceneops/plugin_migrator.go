@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -22,7 +20,7 @@ type PluginMigrator struct {
 type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Properties        []*property.Property
-	RemovedProperties property.IDList
+	RemovedProperties id.PropertyIDList
 }
 
 var (
@@ -54,8 +52,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	oldPlugin := plugins[0]
 	newPlugin := plugins[1]
 
-	propertyIDs := property.IDList{}
-	removedPropertyIDs := property.IDList{}
+	propertyIDs := id.PropertyIDList{}
+	removedPropertyIDs := id.PropertyIDList{}
 
 	// Obtain property schema and map old schema to new schema
 	schemaMap, err := s.loadSchemas(ctx, oldPlugin, newPlugin)

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
@@ -89,7 +88,7 @@ func (p *Property) GroupAndList(ptr *Pointer) (*Group, *GroupList) {
 }
 
 // ItemBySchema returns a root item by a schema group ID.
-func (p *Property) ItemBySchema(id SchemaGroupID) Item {
+func (p *Property) ItemBySchema(id id.PropertySchemaGroupID) Item {
 	if p == nil {
 		return nil
 	}
@@ -101,7 +100,7 @@ func (p *Property) ItemBySchema(id SchemaGroupID) Item {
 	return nil
 }
 
-func (p *Property) GroupBySchema(id SchemaGroupID) *Group {
+func (p *Property) GroupBySchema(id id.PropertySchemaGroupID) *Group {
 	i := p.ItemBySchema(id)
 	if i == nil {
 		return nil
@@ -112,7 +111,7 @@ func (p *Property) GroupBySchema(id SchemaGroupID) *Group {
 	return nil
 }
 
-func (p *Property) GroupListBySchema(id SchemaGroupID) *GroupList {
+func (p *Property) GroupListBySchema(id id.PropertySchemaGroupID) *GroupList {
 	i := p.ItemBySchema(id)
 	if i == nil {
 		return nil

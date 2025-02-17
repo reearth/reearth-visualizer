@@ -3,6 +3,8 @@ package property
 import (
 	"context"
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 // Group represents a group of property
@@ -25,11 +27,11 @@ func (g *Group) IDRef() *ItemID {
 	return g.itemBase.ID.Ref()
 }
 
-func (g *Group) SchemaGroup() SchemaGroupID {
+func (g *Group) SchemaGroup() id.PropertySchemaGroupID {
 	return g.itemBase.SchemaGroup
 }
 
-func (g *Group) SchemaGroupRef() *SchemaGroupID {
+func (g *Group) SchemaGroupRef() *id.PropertySchemaGroupID {
 	if g == nil {
 		return nil
 	}

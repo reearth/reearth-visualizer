@@ -3,22 +3,20 @@ package property
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Sealed struct {
-	Original      *id.PropertyID
-	Parent        *id.PropertyID
-	Schema        id.PropertySchemaID
-	LinkedDataset *DatasetID
-	Items         []*SealedItem
+	Original *id.PropertyID
+	Parent   *id.PropertyID
+	Schema   id.PropertySchemaID
+	Items    []*SealedItem
 }
 
 type SealedItem struct {
 	Original    *ItemID
 	Parent      *ItemID
-	SchemaGroup SchemaGroupID
+	SchemaGroup id.PropertySchemaGroupID
 	Fields      []*SealedField
 	Groups      []*SealedItem
 }
@@ -188,7 +186,7 @@ func (s *Sealed) ItemBy(ptr *Pointer) *SealedItem {
 	return nil
 }
 
-func (s *Sealed) ItemBySchemaGroup(i SchemaGroupID) *SealedItem {
+func (s *Sealed) ItemBySchemaGroup(i id.PropertySchemaGroupID) *SealedItem {
 	if s == nil {
 		return nil
 	}

@@ -1,14 +1,16 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 // Pointer is a pointer to a field and an item in properties and schemas
 type Pointer struct {
-	schemaGroup *SchemaGroupID
+	schemaGroup *id.PropertySchemaGroupID
 	item        *ItemID
 	field       *FieldID
 }
 
 // NewPointer creates a new Pointer.
-func NewPointer(sg *SchemaGroupID, i *ItemID, f *FieldID) *Pointer {
+func NewPointer(sg *id.PropertySchemaGroupID, i *ItemID, f *FieldID) *Pointer {
 	if sg == nil && i == nil && f == nil {
 		return nil
 	}
@@ -25,7 +27,7 @@ func PointToEverything() *Pointer {
 }
 
 // PointField creates a new Pointer pointing the field in properties.
-func PointField(sg *SchemaGroupID, i *ItemID, f FieldID) *Pointer {
+func PointField(sg *id.PropertySchemaGroupID, i *ItemID, f FieldID) *Pointer {
 	return &Pointer{
 		schemaGroup: sg.CloneRef(),
 		item:        i.CloneRef(),
@@ -41,7 +43,7 @@ func PointFieldOnly(fid FieldID) *Pointer {
 }
 
 // PointItemBySchema creates a new Pointer pointing the schema item in property schemas.
-func PointItemBySchema(sg SchemaGroupID) *Pointer {
+func PointItemBySchema(sg id.PropertySchemaGroupID) *Pointer {
 	return &Pointer{
 		schemaGroup: &sg,
 	}
@@ -55,7 +57,7 @@ func PointItem(i ItemID) *Pointer {
 }
 
 // PointFieldBySchemaGroup creates a new Pointer pointing to the field of the schema field in properties.
-func PointFieldBySchemaGroup(sg SchemaGroupID, f FieldID) *Pointer {
+func PointFieldBySchemaGroup(sg id.PropertySchemaGroupID, f FieldID) *Pointer {
 	return &Pointer{
 		schemaGroup: &sg,
 		field:       &f,
@@ -81,7 +83,7 @@ func (p *Pointer) Clone() *Pointer {
 	}
 }
 
-func (p *Pointer) ItemBySchemaGroupAndItem() (i SchemaGroupID, i2 ItemID, ok bool) {
+func (p *Pointer) ItemBySchemaGroupAndItem() (i id.PropertySchemaGroupID, i2 ItemID, ok bool) {
 	if p == nil || p.schemaGroup == nil || p.item == nil {
 		ok = false
 		return
@@ -92,7 +94,7 @@ func (p *Pointer) ItemBySchemaGroupAndItem() (i SchemaGroupID, i2 ItemID, ok boo
 	return
 }
 
-func (p *Pointer) ItemBySchemaGroup() (i SchemaGroupID, ok bool) {
+func (p *Pointer) ItemBySchemaGroup() (i id.PropertySchemaGroupID, ok bool) {
 	if p == nil || p.schemaGroup == nil {
 		ok = false
 		return
@@ -102,7 +104,7 @@ func (p *Pointer) ItemBySchemaGroup() (i SchemaGroupID, ok bool) {
 	return
 }
 
-func (p *Pointer) SchemaGroupAndItem() (i SchemaGroupID, i2 ItemID, ok bool) {
+func (p *Pointer) SchemaGroupAndItem() (i id.PropertySchemaGroupID, i2 ItemID, ok bool) {
 	ok = false
 	if p == nil {
 		return
@@ -146,7 +148,7 @@ func (p *Pointer) FieldByItem() (i ItemID, f FieldID, ok bool) {
 	return
 }
 
-func (p *Pointer) FieldBySchemaGroup() (sg SchemaGroupID, f FieldID, ok bool) {
+func (p *Pointer) FieldBySchemaGroup() (sg id.PropertySchemaGroupID, f FieldID, ok bool) {
 	if p == nil || p.schemaGroup == nil || p.item != nil || p.field == nil {
 		ok = false
 		return
@@ -193,7 +195,7 @@ func (p *Pointer) FieldOnlyRef() *FieldID {
 	return f.Ref()
 }
 
-func (p *Pointer) FieldIfItemIs(sg SchemaGroupID, i ItemID) (f FieldID, ok bool) {
+func (p *Pointer) FieldIfItemIs(sg id.PropertySchemaGroupID, i ItemID) (f FieldID, ok bool) {
 	if p == nil || p.field == nil || !p.TestItem(sg, i) {
 		ok = false
 		return
@@ -203,7 +205,7 @@ func (p *Pointer) FieldIfItemIs(sg SchemaGroupID, i ItemID) (f FieldID, ok bool)
 	return
 }
 
-func (p *Pointer) FieldIfItemIsRef(sg SchemaGroupID, i ItemID) *FieldID {
+func (p *Pointer) FieldIfItemIsRef(sg id.PropertySchemaGroupID, i ItemID) *FieldID {
 	f, ok := p.FieldIfItemIs(sg, i)
 	if !ok {
 		return nil
@@ -211,15 +213,15 @@ func (p *Pointer) FieldIfItemIsRef(sg SchemaGroupID, i ItemID) *FieldID {
 	return f.Ref()
 }
 
-func (p *Pointer) Test(sg SchemaGroupID, i ItemID, f FieldID) bool {
+func (p *Pointer) Test(sg id.PropertySchemaGroupID, i ItemID, f FieldID) bool {
 	return p.TestItem(sg, i) && p.TestField(f)
 }
 
-func (p *Pointer) TestItem(sg SchemaGroupID, i ItemID) bool {
+func (p *Pointer) TestItem(sg id.PropertySchemaGroupID, i ItemID) bool {
 	return p.TestSchemaGroup(sg) && (p.item == nil || *p.item == i)
 }
 
-func (p *Pointer) TestSchemaGroup(sg SchemaGroupID) bool {
+func (p *Pointer) TestSchemaGroup(sg id.PropertySchemaGroupID) bool {
 	return p != nil && (p.schemaGroup == nil || *p.schemaGroup == sg)
 }
 
@@ -238,7 +240,7 @@ func (p *Pointer) AllFields() *Pointer {
 	}
 }
 
-func (p *Pointer) GetAll() (sg *SchemaGroupID, i *ItemID, f *FieldID) {
+func (p *Pointer) GetAll() (sg *id.PropertySchemaGroupID, i *ItemID, f *FieldID) {
 	if p == nil {
 		return
 	}
