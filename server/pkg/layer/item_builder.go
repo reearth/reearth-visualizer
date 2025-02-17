@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func ItemFromLayer(l Layer) *Item {
 	li, ok := l.(*Item)
 	if !ok {
@@ -72,12 +74,12 @@ func (b *ItemBuilder) IsVisible(visible bool) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Plugin(plugin *PluginID) *ItemBuilder {
+func (b *ItemBuilder) Plugin(plugin *id.PluginID) *ItemBuilder {
 	b.l.plugin = plugin.CloneRef()
 	return b
 }
 
-func (b *ItemBuilder) Extension(extension *PluginExtensionID) *ItemBuilder {
+func (b *ItemBuilder) Extension(extension *id.PluginExtensionID) *ItemBuilder {
 	b.l.extension = extension.CloneRef()
 	return b
 }

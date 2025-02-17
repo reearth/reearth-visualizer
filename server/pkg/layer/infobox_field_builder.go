@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type InfoboxFieldBuilder struct {
 	i *InfoboxField
 }
@@ -33,12 +35,12 @@ func (b *InfoboxFieldBuilder) NewID() *InfoboxFieldBuilder {
 	return b
 }
 
-func (b *InfoboxFieldBuilder) Plugin(plugin PluginID) *InfoboxFieldBuilder {
+func (b *InfoboxFieldBuilder) Plugin(plugin id.PluginID) *InfoboxFieldBuilder {
 	b.i.plugin = plugin
 	return b
 }
 
-func (b *InfoboxFieldBuilder) Extension(extension PluginExtensionID) *InfoboxFieldBuilder {
+func (b *InfoboxFieldBuilder) Extension(extension id.PluginExtensionID) *InfoboxFieldBuilder {
 	b.i.extension = extension
 	return b
 }

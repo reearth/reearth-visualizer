@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -29,7 +30,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 						Scene:       layer.NewSceneID(),
 						Name:        "test",
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("marker").Ref(),
+						ExtensionID: id.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -85,7 +86,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 						Scene:       layer.NewSceneID(),
 						Name:        "test",
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -162,7 +163,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 						Scene:       layer.NewSceneID(),
 						Name:        "test",
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

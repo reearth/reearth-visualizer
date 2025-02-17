@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -30,7 +31,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 						Scene:       layer.NewSceneID(),
 						Name:        "test",
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("marker").Ref(),
+						ExtensionID: id.PluginExtensionID("marker").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -115,7 +116,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 						Scene:       layer.NewSceneID(),
 						Name:        "test",
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -219,7 +220,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 						Scene:       layer.NewSceneID(),
 						Name:        "test",
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

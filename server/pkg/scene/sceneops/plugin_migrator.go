@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -32,7 +33,7 @@ var (
 	ErrInvalidPlugins     = errors.New("invalid plugins")
 )
 
-func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID plugin.ID) (MigratePluginsResult, error) {
+func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID id.PluginID) (MigratePluginsResult, error) {
 	if s == nil {
 		return MigratePluginsResult{}, rerror.ErrInternalByWithContext(ctx, errors.New("scene is nil"))
 	}
@@ -48,7 +49,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	// Get plugins
-	plugins, err := s.Plugin(ctx, []plugin.ID{oldPluginID, newPluginID})
+	plugins, err := s.Plugin(ctx, []id.PluginID{oldPluginID, newPluginID})
 	if err != nil || len(plugins) < 2 {
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}

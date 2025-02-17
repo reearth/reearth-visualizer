@@ -3,22 +3,23 @@ package plugin
 import (
 	"github.com/blang/semver"
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Plugin struct {
-	id             ID
+	id             id.PluginID
 	name           i18n.String
 	author         string
 	description    i18n.String
 	repositoryURL  string
-	extensions     map[ExtensionID]*Extension
-	extensionOrder []ExtensionID
+	extensions     map[id.PluginExtensionID]*Extension
+	extensionOrder []id.PluginExtensionID
 	schema         *PropertySchemaID
 }
 
-func (p *Plugin) ID() ID {
+func (p *Plugin) ID() id.PluginID {
 	if p == nil {
-		return ID{}
+		return id.PluginID{}
 	}
 	return p.id
 }
@@ -77,7 +78,7 @@ func (p *Plugin) Extensions() []*Extension {
 	return list
 }
 
-func (p *Plugin) Extension(id ExtensionID) *Extension {
+func (p *Plugin) Extension(id id.PluginExtensionID) *Extension {
 	if p == nil {
 		return nil
 	}
@@ -116,17 +117,17 @@ func (p *Plugin) Clone() *Plugin {
 		return nil
 	}
 
-	var extensions map[ExtensionID]*Extension
+	var extensions map[id.PluginExtensionID]*Extension
 	if p.extensions != nil {
-		extensions = make(map[ExtensionID]*Extension, len(p.extensions))
+		extensions = make(map[id.PluginExtensionID]*Extension, len(p.extensions))
 		for _, e := range p.extensions {
 			extensions[e.ID()] = e.Clone()
 		}
 	}
 
-	var extensionOrder []ExtensionID
+	var extensionOrder []id.PluginExtensionID
 	if p.extensionOrder != nil {
-		extensionOrder = append([]ExtensionID{}, p.extensionOrder...)
+		extensionOrder = append([]id.PluginExtensionID{}, p.extensionOrder...)
 	}
 
 	return &Plugin{

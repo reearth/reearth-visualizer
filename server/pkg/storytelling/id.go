@@ -9,8 +9,9 @@ type SceneID = id.SceneID
 type LayerID = id.NLSLayerID
 type LayerIDList = id.NLSLayerIDList
 type PropertyID = id.PropertyID
-type PluginID = id.PluginID
-type PluginExtensionID = id.PluginExtensionID
+
+// type PluginID = id.PluginID
+// type PluginExtensionID = id.PluginExtensionID
 
 var NewStoryID = id.NewStoryID
 var NewPageID = id.NewPageID

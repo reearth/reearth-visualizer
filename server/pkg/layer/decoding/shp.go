@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/shp"
@@ -26,7 +27,7 @@ func NewShapeDecoder(r ShapeReader, s layer.SceneID) *ShapeDecoder {
 func (shd *ShapeDecoder) getLayer(t string, coords interface{}) (*layer.Item, *property.Property, error) {
 	var p *property.Property
 	var l *layer.Item
-	var ex layer.PluginExtensionID
+	var ex id.PluginExtensionID
 	var err error
 	p, err = createProperty(t, coords, shd.sceneId, nil, "")
 	if err != nil {

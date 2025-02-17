@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,8 +16,8 @@ var group = Group{
 		id:        NewID(),
 		name:      "xxx",
 		visible:   false,
-		plugin:    MustPluginID("aaa~1.1.1").Ref(),
-		extension: PluginExtensionID("foo").Ref(),
+		plugin:    id.MustPluginID("aaa~1.1.1").Ref(),
+		extension: id.PluginExtensionID("foo").Ref(),
 		property:  nil,
 		infobox:   nil,
 		tags:      nil,

@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -12,8 +13,8 @@ type Merged struct {
 	Scene       SceneID
 	Property    *property.MergedMetadata
 	Infobox     *MergedInfobox
-	PluginID    *PluginID
-	ExtensionID *PluginExtensionID
+	PluginID    *id.PluginID
+	ExtensionID *id.PluginExtensionID
 	IsVisible   bool
 	Tags        []MergedTag
 }
@@ -33,8 +34,8 @@ type MergedInfobox struct {
 // MergedInfoboxField represents a field of MergedInfobox
 type MergedInfoboxField struct {
 	ID        InfoboxFieldID
-	Plugin    PluginID
-	Extension PluginExtensionID
+	Plugin    id.PluginID
+	Extension id.PluginExtensionID
 	Property  *property.MergedMetadata
 }
 

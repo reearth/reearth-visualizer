@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -34,14 +35,14 @@ func (l *Item) IsVisible() bool {
 	return l.layerBase.IsVisible()
 }
 
-func (l *Item) Plugin() *PluginID {
+func (l *Item) Plugin() *id.PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.layerBase.Plugin()
 }
 
-func (l *Item) Extension() *PluginExtensionID {
+func (l *Item) Extension() *id.PluginExtensionID {
 	if l == nil {
 		return nil
 	}
@@ -90,7 +91,7 @@ func (l *Item) SetInfobox(infobox *Infobox) {
 	l.layerBase.SetInfobox(infobox)
 }
 
-func (l *Item) SetPlugin(plugin *PluginID) {
+func (l *Item) SetPlugin(plugin *id.PluginID) {
 	if l == nil {
 		return
 	}

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -65,15 +66,15 @@ func (r *ReearthRoot) Result(scene layer.SceneID) (result Result, err error) {
 }
 
 type ReearthLayer struct {
-	Plugin              *layer.PluginID          `json:"plugin"`
-	Extension           *layer.PluginExtensionID `json:"extension"`
-	Name                string                   `json:"name"`
-	Infobox             *ReearthInfobox          `json:"infobox"`
-	Property            *ReearthProperty         `json:"property"`
-	Layers              []ReearthLayer           `json:"layers"`
-	IsVisible           *bool                    `json:"isVisible"`
-	LinkedDatasetSchema *layer.DatasetSchemaID   `json:"linkedDatasetSchema"`
-	LinkedDataset       *layer.DatasetID         `json:"linkedDataset"`
+	Plugin              *id.PluginID           `json:"plugin"`
+	Extension           *id.PluginExtensionID  `json:"extension"`
+	Name                string                 `json:"name"`
+	Infobox             *ReearthInfobox        `json:"infobox"`
+	Property            *ReearthProperty       `json:"property"`
+	Layers              []ReearthLayer         `json:"layers"`
+	IsVisible           *bool                  `json:"isVisible"`
+	LinkedDatasetSchema *layer.DatasetSchemaID `json:"linkedDatasetSchema"`
+	LinkedDataset       *layer.DatasetID       `json:"linkedDataset"`
 }
 
 func (l *ReearthLayer) layer() *layer.Initializer {
@@ -146,9 +147,9 @@ func (i *ReearthInfobox) infobox() *layer.InitializerInfobox {
 }
 
 type ReearthInfoboxField struct {
-	Plugin    layer.PluginID          `json:"plugin"`
-	Extension layer.PluginExtensionID `json:"extension"`
-	Property  *ReearthProperty        `json:"property"`
+	Plugin    id.PluginID          `json:"plugin"`
+	Extension id.PluginExtensionID `json:"extension"`
+	Property  *ReearthProperty     `json:"property"`
 }
 
 func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {

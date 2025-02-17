@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/kml"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -176,7 +177,7 @@ func (d *KMLDecoder) decodeCollection(c kml.Collection, depth int) (*layer.Group
 func (d *KMLDecoder) decodePlacemark(p kml.Placemark) (*layer.Item, *property.Property, error) {
 	var layerItem *layer.Item
 	var prop *property.Property
-	var ex layer.PluginExtensionID
+	var ex id.PluginExtensionID
 	var styleId string
 	var layerName string
 

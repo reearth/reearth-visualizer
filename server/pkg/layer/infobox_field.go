@@ -3,14 +3,14 @@ package layer
 import (
 	"errors"
 
-	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type InfoboxField struct {
 	id        InfoboxFieldID
-	plugin    PluginID
-	extension PluginExtensionID
+	plugin    id.PluginID
+	extension id.PluginExtensionID
 	property  PropertyID
 }
 
@@ -18,11 +18,11 @@ func (i *InfoboxField) ID() InfoboxFieldID {
 	return i.id
 }
 
-func (i *InfoboxField) Plugin() PluginID {
+func (i *InfoboxField) Plugin() id.PluginID {
 	return i.plugin
 }
 
-func (i *InfoboxField) Extension() PluginExtensionID {
+func (i *InfoboxField) Extension() id.PluginExtensionID {
 	return i.extension
 }
 
@@ -53,7 +53,7 @@ func (i *InfoboxField) ValidateProperty(pm property.Map) error {
 	return nil
 }
 
-func (i *InfoboxField) UpgradePlugin(id plugin.ID) {
+func (i *InfoboxField) UpgradePlugin(id id.PluginID) {
 	if i == nil || !i.plugin.NameEqual(id) {
 		return
 	}

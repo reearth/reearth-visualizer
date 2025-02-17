@@ -124,7 +124,7 @@ func (p *Page) BlockAt(index int) *Block {
 	return p.blocks[index]
 }
 
-func (p *Page) BlocksByPlugin(pid PluginID, eid *PluginExtensionID) BlockList {
+func (p *Page) BlocksByPlugin(pid id.PluginID, eid *id.PluginExtensionID) BlockList {
 	if p == nil {
 		return nil
 	}
@@ -203,7 +203,7 @@ func (p *Page) RemoveBlock(block BlockID) {
 	}
 }
 
-func (p *Page) RemoveBlocksByPlugin(pid PluginID, eid *PluginExtensionID) []PropertyID {
+func (p *Page) RemoveBlocksByPlugin(pid id.PluginID, eid *id.PluginExtensionID) []PropertyID {
 	if p == nil {
 		return nil
 	}

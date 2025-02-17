@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -92,7 +93,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 	assert.Equal(t, (&layer.Initializer{
 		ID:         rootLayer.IDRef(),
 		Plugin:     layer.OfficialPluginID.Ref(),
-		Extension:  layer.PluginExtensionID("marker").Ref(),
+		Extension:  id.PluginExtensionID("marker").Ref(),
 		PropertyID: rootLayer.Property().Ref(),
 		Name:       "ABC",
 		Infobox: &layer.InitializerInfobox{
@@ -101,7 +102,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 				{
 					ID:         rootLayer.Infobox().FieldAt(0).ID().Ref(),
 					Plugin:     layer.OfficialPluginID,
-					Extension:  layer.PluginExtensionID("textblock"),
+					Extension:  id.PluginExtensionID("textblock"),
 					PropertyID: rootLayer.Infobox().FieldAt(0).Property().Ref(),
 				},
 			},
@@ -116,7 +117,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 	assert.Equal(t, (&layer.Initializer{
 		ID:            secondLayer.IDRef(),
 		Plugin:        layer.OfficialPluginID.Ref(),
-		Extension:     layer.PluginExtensionID("marker").Ref(),
+		Extension:     id.PluginExtensionID("marker").Ref(),
 		PropertyID:    secondLayer.Property().Ref(),
 		Name:          "abc",
 		IsVisible:     &tr,

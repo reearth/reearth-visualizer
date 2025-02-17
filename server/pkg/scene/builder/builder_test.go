@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -24,8 +25,8 @@ func TestSceneBuilder(t *testing.T) {
 	scenePropertyID := property.NewID()
 	propertySchemaID := property.MustSchemaID("hoge~0.1.0/foobar")
 	pluginID := layer.MustPluginID("hoge~0.1.0")
-	pluginExtension1ID := layer.PluginExtensionID("ext")
-	pluginExtension2ID := layer.PluginExtensionID("ext2")
+	pluginExtension1ID := id.PluginExtensionID("ext")
+	pluginExtension2ID := id.PluginExtensionID("ext2")
 	propertySchemaField1ID := property.FieldID("a")
 	propertySchemaField2ID := property.FieldID("b")
 	propertySchemaField3ID := property.FieldID("c")

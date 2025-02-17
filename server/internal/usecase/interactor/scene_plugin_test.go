@@ -25,7 +25,7 @@ import (
 
 func TestScene_InstallPlugin(t *testing.T) {
 	type args struct {
-		pluginID plugin.ID
+		pluginID id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -150,7 +150,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 
 func TestScene_UninstallPlugin(t *testing.T) {
 	type args struct {
-		pluginID plugin.ID
+		pluginID id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -294,8 +294,8 @@ func TestScene_UninstallPlugin(t *testing.T) {
 
 func TestScene_UpgradePlugin(t *testing.T) {
 	type args struct {
-		old      plugin.ID
-		new      plugin.ID
+		old      id.PluginID
+		new      id.PluginID
 		operator *usecase.Operator
 	}
 

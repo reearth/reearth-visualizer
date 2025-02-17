@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/layerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -212,7 +213,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID
 			// プラグインを取得
 			var plug *plugin.Plugin
 			if pid := lg.Plugin(); pid != nil {
-				plug2, err := srv.Plugin(ctx, []plugin.ID{*pid})
+				plug2, err := srv.Plugin(ctx, []id.PluginID{*pid})
 				if err != nil || len(plug2) < 1 {
 					return MigrateDatasetResult{}, err
 				}

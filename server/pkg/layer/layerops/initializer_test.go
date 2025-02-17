@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/stretchr/testify/assert"
@@ -12,8 +13,8 @@ import (
 func TestInitialize(t *testing.T) {
 	lid := layer.NewID()
 	ps := plugin.MustPropertySchemaID("xxx~1.1.1/aa")
-	eid := plugin.ExtensionID("foo")
-	eid2 := plugin.ExtensionID("foo2")
+	eid := id.PluginExtensionID("foo")
+	eid2 := id.PluginExtensionID("foo2")
 	e := plugin.NewExtension().
 		ID("foo").
 		Description(i18n.StringFrom("foo/des")).
@@ -39,7 +40,7 @@ func TestInitialize(t *testing.T) {
 		sceneID       *layer.SceneID
 		parentLayerID *layer.ID
 		plugin        *plugin.Plugin
-		extID         *layer.PluginExtensionID
+		extID         *id.PluginExtensionID
 		err           error
 	}{
 		{

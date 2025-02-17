@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -40,8 +41,8 @@ func (r InitializerResult) RootLayerItem() *Item {
 
 type Initializer struct {
 	ID                  *ID                   `json:"id"`
-	Plugin              *PluginID             `json:"plugin"`
-	Extension           *PluginExtensionID    `json:"extension"`
+	Plugin              *id.PluginID          `json:"plugin"`
+	Extension           *id.PluginExtensionID `json:"extension"`
 	Name                string                `json:"name"`
 	Infobox             *InitializerInfobox   `json:"infobox"`
 	PropertyID          *PropertyID           `json:"propertyId"`
@@ -240,8 +241,8 @@ func (i *InitializerInfobox) Infobox(scene SceneID) (*Infobox, property.Map, err
 
 type InitializerInfoboxField struct {
 	ID         *InfoboxFieldID       `json:"id"`
-	Plugin     PluginID              `json:"plugin"`
-	Extension  PluginExtensionID     `json:"extension"`
+	Plugin     id.PluginID           `json:"plugin"`
+	Extension  id.PluginExtensionID  `json:"extension"`
 	PropertyID *PropertyID           `json:"propertyId"`
 	Property   *property.Initializer `json:"property"`
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/jonas-p/go-shp"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -31,7 +32,7 @@ func TestEncodeSHP(t *testing.T) {
 						Property:    nil,
 						Infobox:     nil,
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polygon").Ref(),
+						ExtensionID: id.PluginExtensionID("polygon").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),
@@ -87,7 +88,7 @@ func TestEncodeSHP(t *testing.T) {
 						Property:    nil,
 						Infobox:     nil,
 						PluginID:    &layer.OfficialPluginID,
-						ExtensionID: layer.PluginExtensionID("polyline").Ref(),
+						ExtensionID: id.PluginExtensionID("polyline").Ref(),
 					},
 					Property: &property.Sealed{
 						Original: property.NewID().Ref(),

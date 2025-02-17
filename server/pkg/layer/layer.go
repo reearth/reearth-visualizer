@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -17,8 +18,8 @@ type Layer interface {
 	Index() *int
 	Name() string
 	IsVisible() bool
-	Plugin() *PluginID
-	Extension() *PluginExtensionID
+	Plugin() *id.PluginID
+	Extension() *id.PluginExtensionID
 	UsesPlugin() bool
 	Property() *PropertyID
 	HasInfobox() bool
@@ -29,7 +30,7 @@ type Layer interface {
 	SetIndex(*int)
 	SetVisible(bool)
 	SetInfobox(*Infobox)
-	SetPlugin(*PluginID)
+	SetPlugin(*id.PluginID)
 	Properties() []PropertyID
 	ValidateProperties(property.Map) error
 }
@@ -75,8 +76,8 @@ type layerBase struct {
 	index     *int
 	name      string
 	visible   bool
-	plugin    *PluginID
-	extension *PluginExtensionID
+	plugin    *id.PluginID
+	extension *id.PluginExtensionID
 	property  *PropertyID
 	infobox   *Infobox
 	scene     SceneID
@@ -119,14 +120,14 @@ func (l *layerBase) UsesPlugin() bool {
 	return l.plugin != nil && l.extension != nil
 }
 
-func (l *layerBase) Plugin() *PluginID {
+func (l *layerBase) Plugin() *id.PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.plugin.CloneRef()
 }
 
-func (l *layerBase) Extension() *PluginExtensionID {
+func (l *layerBase) Extension() *id.PluginExtensionID {
 	if l == nil {
 		return nil
 	}
@@ -186,7 +187,7 @@ func (l *layerBase) SetInfobox(infobox *Infobox) {
 	l.infobox = infobox
 }
 
-func (l *layerBase) SetPlugin(plugin *PluginID) {
+func (l *layerBase) SetPlugin(plugin *id.PluginID) {
 	if l == nil {
 		return
 	}

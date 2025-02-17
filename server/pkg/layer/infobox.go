@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -66,7 +67,7 @@ func (i *Infobox) FieldAt(index int) *InfoboxField {
 	return i.fields[index]
 }
 
-func (i *Infobox) FieldsByPlugin(pid PluginID, eid *PluginExtensionID) []*InfoboxField {
+func (i *Infobox) FieldsByPlugin(pid id.PluginID, eid *id.PluginExtensionID) []*InfoboxField {
 	if i == nil {
 		return nil
 	}
@@ -137,7 +138,7 @@ func (i *Infobox) Remove(field InfoboxFieldID) {
 	}
 }
 
-func (i *Infobox) RemoveAllByPlugin(pid PluginID, eid *PluginExtensionID) []PropertyID {
+func (i *Infobox) RemoveAllByPlugin(pid id.PluginID, eid *id.PluginExtensionID) []PropertyID {
 	if i == nil {
 		return nil
 	}

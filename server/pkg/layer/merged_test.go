@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ func TestMerge(t *testing.T) {
 	scene := NewSceneID()
 	dataset1 := NewDatasetID()
 	p := MustPluginID("xxx~1.1.1")
-	e := PluginExtensionID("foo")
+	e := id.PluginExtensionID("foo")
 
 	t1 := NewTagID()
 	t2 := NewTagID()

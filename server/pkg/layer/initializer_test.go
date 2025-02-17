@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,7 +13,7 @@ func TestInitializer_Clone(t *testing.T) {
 	i := &Initializer{
 		ID:         NewID().Ref(),
 		Plugin:     MustPluginID("reearth").Ref(),
-		Extension:  PluginExtensionID("marker").Ref(),
+		Extension:  id.PluginExtensionID("marker").Ref(),
 		Name:       "hoge",
 		Infobox:    &InitializerInfobox{},
 		PropertyID: NewPropertyID().Ref(),
@@ -48,7 +49,7 @@ func TestInitializer_Layer(t *testing.T) {
 	i := &Initializer{
 		ID:        NewID().Ref(),
 		Plugin:    MustPluginID("reearth").Ref(),
-		Extension: PluginExtensionID("marker").Ref(),
+		Extension: id.PluginExtensionID("marker").Ref(),
 		Name:      "hoge",
 		Infobox: &InitializerInfobox{
 			PropertyID: NewPropertyID().Ref(),
@@ -105,7 +106,7 @@ func TestInitializerInfobox_Clone(t *testing.T) {
 		Fields: []*InitializerInfoboxField{{
 			ID:         NewInfoboxFieldID().Ref(),
 			Plugin:     MustPluginID("reearth"),
-			Extension:  PluginExtensionID("marker"),
+			Extension:  id.PluginExtensionID("marker"),
 			PropertyID: NewPropertyID().Ref(),
 		}},
 	}
@@ -126,7 +127,7 @@ func TestInitializerInfobox_Infobox(t *testing.T) {
 		Fields: []*InitializerInfoboxField{{
 			ID:         NewInfoboxFieldID().Ref(),
 			Plugin:     MustPluginID("reearth"),
-			Extension:  PluginExtensionID("marker"),
+			Extension:  id.PluginExtensionID("marker"),
 			PropertyID: NewPropertyID().Ref(),
 		}},
 	}
@@ -149,7 +150,7 @@ func TestInitializerInfoboxField_Clone(t *testing.T) {
 	i := &InitializerInfoboxField{
 		ID:         NewInfoboxFieldID().Ref(),
 		Plugin:     MustPluginID("reearth"),
-		Extension:  PluginExtensionID("marker"),
+		Extension:  id.PluginExtensionID("marker"),
 		PropertyID: NewPropertyID().Ref(),
 		Property: &property.Initializer{
 			ID: NewPropertyID().Ref(),
@@ -169,7 +170,7 @@ func TestInitializerInfoboxField_InfoboxField(t *testing.T) {
 	i := &InitializerInfoboxField{
 		ID:         NewInfoboxFieldID().Ref(),
 		Plugin:     MustPluginID("reearth"),
-		Extension:  PluginExtensionID("marker"),
+		Extension:  id.PluginExtensionID("marker"),
 		PropertyID: NewPropertyID().Ref(),
 	}
 

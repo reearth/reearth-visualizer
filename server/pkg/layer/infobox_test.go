@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,7 +63,7 @@ func TestInfobox_FieldsByPlugin(t *testing.T) {
 	assert.Equal(t, []*InfoboxField(nil), (*Infobox)(nil).FieldsByPlugin(pid1, nil))
 	assert.Equal(t, []*InfoboxField{f1, f3}, infobox.FieldsByPlugin(pid1, nil))
 	assert.Equal(t, []*InfoboxField{f2, f4}, infobox.FieldsByPlugin(pid2, nil))
-	assert.Equal(t, []*InfoboxField{f2}, infobox.FieldsByPlugin(pid2, PluginExtensionID("b").Ref()))
+	assert.Equal(t, []*InfoboxField{f2}, infobox.FieldsByPlugin(pid2, id.PluginExtensionID("b").Ref()))
 }
 
 func TestInfobox_RemoveAllByPlugin(t *testing.T) {
@@ -80,6 +81,6 @@ func TestInfobox_RemoveAllByPlugin(t *testing.T) {
 	assert.Equal(t, []*InfoboxField{f2, f4}, infobox.fields)
 	assert.Equal(t, []PropertyID(nil), infobox.RemoveAllByPlugin(pid1, nil))
 	assert.Equal(t, []*InfoboxField{f2, f4}, infobox.fields)
-	assert.Equal(t, []PropertyID{f4.Property()}, infobox.RemoveAllByPlugin(pid2, PluginExtensionID("d").Ref()))
+	assert.Equal(t, []PropertyID{f4.Property()}, infobox.RemoveAllByPlugin(pid2, id.PluginExtensionID("d").Ref()))
 	assert.Equal(t, []*InfoboxField{f2}, infobox.fields)
 }

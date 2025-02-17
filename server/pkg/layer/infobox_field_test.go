@@ -3,19 +3,19 @@ package layer
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInfoboxField_UpgradePlugin(t *testing.T) {
 	type args struct {
-		id plugin.ID
+		id id.PluginID
 	}
 	tests := []struct {
 		name  string
 		field *InfoboxField
 		args  args
-		want  plugin.ID
+		want  id.PluginID
 	}{
 		{
 			name: "normal",

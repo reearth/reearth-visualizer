@@ -43,7 +43,7 @@ type Scene struct {
 	transaction        usecasex.Transaction
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
-	extensions         []plugin.ID
+	extensions         []id.PluginID
 	nlsLayerRepo       repo.NLSLayer
 	layerStyles        repo.Style
 	storytellingRepo   repo.Storytelling
@@ -923,8 +923,8 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 	return s3, nil
 }
 
-func injectExtensionsToScene(s *scene.Scene, ext []plugin.ID) {
-	lo.ForEach(ext, func(p plugin.ID, _ int) {
+func injectExtensionsToScene(s *scene.Scene, ext []id.PluginID) {
+	lo.ForEach(ext, func(p id.PluginID, _ int) {
 		s.Plugins().Add(scene.NewPlugin(p, nil))
 	})
 }

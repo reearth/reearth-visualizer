@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Builder struct {
 	base layerBase
 }
@@ -48,12 +50,12 @@ func (b *Builder) IsVisibleRef(visible *bool) *Builder {
 	return b
 }
 
-func (b *Builder) Plugin(plugin *PluginID) *Builder {
+func (b *Builder) Plugin(plugin *id.PluginID) *Builder {
 	b.base.plugin = plugin.CloneRef()
 	return b
 }
 
-func (b *Builder) Extension(extension *PluginExtensionID) *Builder {
+func (b *Builder) Extension(extension *id.PluginExtensionID) *Builder {
 	b.base.extension = extension.CloneRef()
 	return b
 }

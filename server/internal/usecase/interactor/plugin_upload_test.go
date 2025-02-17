@@ -294,7 +294,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	oldp3 := property.New().NewID().Schema(oldps.ID()).Scene(sid).MustBuild()
 	oldp4 := property.New().NewID().Schema(oldps2.ID()).Scene(sid).MustBuild()
 	ib := layer.NewInfobox([]*layer.InfoboxField{
-		layer.NewInfoboxField().NewID().Plugin(oldp3.Schema().Plugin()).Extension(plugin.ExtensionID(oldp3.Schema().ID())).Property(oldp3.ID()).MustBuild(),
+		layer.NewInfoboxField().NewID().Plugin(oldp3.Schema().Plugin()).Extension(id.PluginExtensionID(oldp3.Schema().ID())).Property(oldp3.ID()).MustBuild(),
 	}, oldp2.ID())
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(oldpid.Ref()).Extension(eid1.Ref()).Property(oldp.IDRef()).Infobox(ib).MustBuild()
 	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()

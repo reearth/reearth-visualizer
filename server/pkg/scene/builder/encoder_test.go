@@ -3,6 +3,7 @@ package builder
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -95,7 +96,7 @@ func TestEncoder_Layers(t *testing.T) {
 	lid := layer.NewID()
 	sid := scene.NewID()
 	pid := property.NewID()
-	ex := layer.PluginExtensionID("marker")
+	ex := id.PluginExtensionID("marker")
 	iid := property.NewItemID()
 	v1 := property.LatLng{
 		Lat: 4.4,

@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -26,14 +27,14 @@ func (l *Group) Name() string {
 	return l.layerBase.Name()
 }
 
-func (l *Group) Plugin() *PluginID {
+func (l *Group) Plugin() *id.PluginID {
 	if l == nil {
 		return nil
 	}
 	return l.layerBase.Plugin()
 }
 
-func (l *Group) Extension() *PluginExtensionID {
+func (l *Group) Extension() *id.PluginExtensionID {
 	if l == nil {
 		return nil
 	}
@@ -86,7 +87,7 @@ func (l *Group) SetVisible(visible bool) {
 	l.layerBase.SetVisible(visible)
 }
 
-func (l *Group) SetPlugin(plugin *PluginID) {
+func (l *Group) SetPlugin(plugin *id.PluginID) {
 	if l == nil {
 		return
 	}

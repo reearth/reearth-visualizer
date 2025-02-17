@@ -7,6 +7,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/kml"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -18,10 +19,10 @@ var (
 )
 
 var (
-	extensions = map[string]layer.PluginExtensionID{
-		"Point":    layer.PluginExtensionID("marker"),
-		"Polygon":  layer.PluginExtensionID("polygon"),
-		"Polyline": layer.PluginExtensionID("polyline"),
+	extensions = map[string]id.PluginExtensionID{
+		"Point":    id.PluginExtensionID("marker"),
+		"Polygon":  id.PluginExtensionID("polygon"),
+		"Polyline": id.PluginExtensionID("polyline"),
 	}
 	propertySchemas = map[string]property.SchemaID{
 		"Point":    property.MustSchemaID("reearth/marker"),

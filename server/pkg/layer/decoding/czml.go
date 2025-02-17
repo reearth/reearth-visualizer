@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -75,7 +76,7 @@ func (d *CZMLDecoder) Decode() (Result, error) {
 func (d *CZMLDecoder) decodeLayer(t string, coords []float64, style interface{}, layerName string) (*layer.Item, *property.Property, error) {
 	var p *property.Property
 	var l *layer.Item
-	var ex layer.PluginExtensionID
+	var ex id.PluginExtensionID
 	var err error
 	switch t {
 	case "Point":

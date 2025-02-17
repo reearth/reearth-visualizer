@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func GroupFromLayer(l Layer) *Group {
 	li, ok := l.(*Group)
 	if !ok {
@@ -77,12 +79,12 @@ func (b *GroupBuilder) IsVisible(visible bool) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Plugin(plugin *PluginID) *GroupBuilder {
+func (b *GroupBuilder) Plugin(plugin *id.PluginID) *GroupBuilder {
 	b.l.plugin = plugin.CloneRef()
 	return b
 }
 
-func (b *GroupBuilder) Extension(extension *PluginExtensionID) *GroupBuilder {
+func (b *GroupBuilder) Extension(extension *id.PluginExtensionID) *GroupBuilder {
 	b.l.extension = extension.CloneRef()
 	return b
 }

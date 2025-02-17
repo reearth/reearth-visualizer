@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +16,7 @@ func TestMergeLayer(t *testing.T) {
 	dataset1 := layer.NewDatasetID()
 	ps := property.MustSchemaID("xxx~1.1.1/aa")
 	p := layer.MustPluginID("xxx~1.1.1")
-	e := layer.PluginExtensionID("foo")
+	e := id.PluginExtensionID("foo")
 	itemProperty := property.NewID()
 	groupProperty := property.NewID()
 	ib1pr := property.NewID()
