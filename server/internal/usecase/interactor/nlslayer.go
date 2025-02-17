@@ -21,7 +21,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
-	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -97,14 +96,28 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	layerSimple, err := nlslayerops.LayerSimple{
-		SceneID:   inp.SceneID,
-		Config:    inp.Config,
-		LayerType: inp.LayerType,
-		Index:     inp.Index,
-		Title:     inp.Title,
-		Visible:   inp.Visible,
-	}.Initialize()
+	builder := nlslayer.NewNLSLayerSimple().
+		NewID().
+		Scene(inp.SceneID).
+		Config(inp.Config).
+		LayerType(inp.LayerType).
+		Title(inp.Title).
+		Index(inp.Index)
+	if inp.Visible != nil {
+		builder.IsVisible(*inp.Visible)
+	} else {
+		builder.IsVisible(true)
+	}
+	var layerSimple *nlslayer.NLSLayerSimple
+	if inp.LayerType.IsValidLayerType() {
+		layerSimple, err = builder.Build()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, errors.New("layer type must be 'simple' or 'group'")
+	}
+
 	if err != nil {
 		return nil, err
 	}
