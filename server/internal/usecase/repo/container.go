@@ -127,8 +127,8 @@ func (f WorkspaceFilter) CanWrite(id accountdomain.WorkspaceID) bool {
 }
 
 type SceneFilter struct {
-	Readable scene.IDList
-	Writable scene.IDList
+	Readable id.SceneIDList
+	Writable id.SceneIDList
 }
 
 func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
@@ -139,7 +139,7 @@ func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
 }
 
 func (f SceneFilter) Merge(g SceneFilter) SceneFilter {
-	var r, w scene.IDList
+	var r, w id.SceneIDList
 
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {

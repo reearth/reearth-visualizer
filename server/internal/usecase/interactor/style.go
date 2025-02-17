@@ -210,8 +210,8 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 		return nil, nil
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: id.SceneIDList{sceneID}}
 
 	styleIDs := idx.List[id.Style]{}
 	styles := []*scene.Style{}

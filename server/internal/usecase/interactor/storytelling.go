@@ -14,7 +14,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	scene2 "github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -992,8 +991,8 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	}
 	storyJSON := sceneJSON.Story
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: id.SceneIDList{sceneID}}
 
 	pages := []*storytelling.Page{}
 	for _, pageJSON := range storyJSON.Pages {

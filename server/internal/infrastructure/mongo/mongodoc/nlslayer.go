@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/exp/slices"
 )
@@ -132,7 +131,7 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 	}, id
 }
 
-func NewNLSLayers(layers nlslayer.NLSLayerList, f scene.IDList) ([]interface{}, []string) {
+func NewNLSLayers(layers nlslayer.NLSLayerList, f id.SceneIDList) ([]interface{}, []string) {
 	res := make([]interface{}, 0, len(layers))
 	ids := make([]string, 0, len(layers))
 	for _, d := range layers {

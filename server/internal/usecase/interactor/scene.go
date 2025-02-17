@@ -169,6 +169,13 @@ func addDefaultTiles(prop *property.Property, schema *property.Schema) {
 	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
 }
 
+func saveSceneComponents(ctx context.Context, i *Scene, sceneID id.SceneID, rootLayer *layer.Group, prop *property.Property) error {
+	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: id.SceneIDList{sceneID}}).Save(ctx, prop); err != nil {
+		return err
+	}
+	return i.layerRepo.Filtered(repo.SceneFilter{Writable: id.SceneIDList{sceneID}}).Save(ctx, rootLayer)
+}
+
 func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
 	eid := id.PluginExtensionID("dataAttribution")
 	pluginID, err := id.PluginIDFrom("reearth")
@@ -225,7 +232,7 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 		res.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
 	}
 
-	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
+	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: id.SceneIDList{sceneID}}).Save(ctx, prop); err != nil {
 		return err
 	}
 
@@ -630,8 +637,8 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		return nil, err
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sce.ID()}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sce.ID()}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sce.ID()}}
+	writableFilter := repo.SceneFilter{Writable: id.SceneIDList{sce.ID()}}
 
 	widgets := []*scene.Widget{}
 	replaceWidgetIDs := make(map[string]idx.ID[id.Widget])

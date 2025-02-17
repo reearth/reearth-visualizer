@@ -26,7 +26,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
@@ -1054,8 +1053,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 		return nil, nil, nil
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: id.SceneIDList{sceneID}}
 
 	nlayerIDs := idx.List[id.NLSLayer]{}
 	replaceNLSLayerIDs := make(map[string]idx.ID[id.NLSLayer])
