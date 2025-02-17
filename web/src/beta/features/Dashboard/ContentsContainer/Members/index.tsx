@@ -172,7 +172,7 @@ const Table = styled("div")(({ theme }) => ({
   gridTemplateColumns: "0.1fr 2.9fr 4fr 2fr 1fr",
   gap: theme.spacing.small,
   color: theme.content.main,
-  height: "28px"
+  height: `${theme.fonts.lineHeights.h4}px`
 }));
 
 const TableHeaderCell = styled("div")(({ theme }) => ({
