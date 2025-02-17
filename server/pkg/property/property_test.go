@@ -26,7 +26,7 @@ func TestProperty_MigrateSchema(t *testing.T) {
 	schemaField6ID := FieldID("f")
 	schemaField7ID := FieldID("g")
 	schemaField8ID := FieldID("h")
-	schemaGroupID := SchemaGroupID("i")
+	schemaGroupID := id.PropertySchemaGroupID("i")
 	datasetID := NewDatasetID()
 	datasetSchemaID := NewDatasetSchemaID()
 	datasetFieldID := NewDatasetFieldID()
@@ -124,8 +124,8 @@ func TestGetOrCreateItem(t *testing.T) {
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sf1id := FieldID("a")
 	sf2id := FieldID("b")
-	sg1id := SchemaGroupID("c")
-	sg2id := SchemaGroupID("d")
+	sg1id := id.PropertySchemaGroupID("c")
+	sg2id := id.PropertySchemaGroupID("d")
 
 	sf1 := NewSchemaField().ID(sf1id).Type(ValueTypeString).MustBuild()
 	sg1 := NewSchemaGroup().ID(sg1id).Fields([]*SchemaField{sf1}).MustBuild()
@@ -176,8 +176,8 @@ func TestGetOrCreateField(t *testing.T) {
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sf1id := FieldID("a")
 	sf2id := FieldID("b")
-	sg1id := SchemaGroupID("c")
-	sg2id := SchemaGroupID("d")
+	sg1id := id.PropertySchemaGroupID("c")
+	sg2id := id.PropertySchemaGroupID("d")
 
 	sf1 := NewSchemaField().ID(sf1id).Type(ValueTypeString).MustBuild()
 	sg1 := NewSchemaGroup().ID(sg1id).Fields([]*SchemaField{sf1}).MustBuild()
@@ -226,7 +226,7 @@ func TestAddListItem(t *testing.T) {
 	sceneID := NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sfid := FieldID("a")
-	sgid := SchemaGroupID("b")
+	sgid := id.PropertySchemaGroupID("b")
 	sf := NewSchemaField().ID(sfid).Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID(sgid).Fields([]*SchemaField{sf}).IsList(true).MustBuild()
 	ps := NewSchema().ID(sid).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild()
@@ -247,7 +247,7 @@ func TestAddListItem(t *testing.T) {
 func TestMoveListItem(t *testing.T) {
 	sceneID := NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
-	sgid := SchemaGroupID("b")
+	sgid := id.PropertySchemaGroupID("b")
 	g1 := NewGroup().NewID().SchemaGroup(sgid).MustBuild()
 	g2 := NewGroup().NewID().SchemaGroup(sgid).MustBuild()
 	gl := NewGroupList().NewID().SchemaGroup(sgid).Groups([]*Group{g1, g2}).MustBuild()
@@ -262,7 +262,7 @@ func TestMoveListItem(t *testing.T) {
 func TestRemoveListItem(t *testing.T) {
 	sceneID := NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
-	sgid := SchemaGroupID("b")
+	sgid := id.PropertySchemaGroupID("b")
 	g1 := NewGroup().NewID().SchemaGroup(sgid).MustBuild()
 	g2 := NewGroup().NewID().SchemaGroup(sgid).MustBuild()
 	gl := NewGroupList().NewID().SchemaGroup(sgid).Groups([]*Group{g1, g2}).MustBuild()
@@ -284,7 +284,7 @@ func TestPointer_Test(t *testing.T) {
 	itemID := NewItemID()
 
 	type args struct {
-		sg   SchemaGroupID
+		sg   id.PropertySchemaGroupID
 		i    ItemID
 		f    FieldID
 		want bool
@@ -296,60 +296,60 @@ func TestPointer_Test(t *testing.T) {
 	}{
 		{
 			name:   "schema group only",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref()},
 			args: []args{
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
-				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
+				{sg: id.PropertySchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
 			},
 		},
 		{
 			name:   "item only",
 			target: &Pointer{item: itemID.Ref()},
 			args: []args{
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
-				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: true},
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
-				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: id.PropertySchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: true},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
+				{sg: id.PropertySchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
 			},
 		},
 		{
 			name:   "schema group and item",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: itemID.Ref()},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref(), item: itemID.Ref()},
 			args: []args{
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
-				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
-				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
-				{sg: SchemaGroupID("yy"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: true},
+				{sg: id.PropertySchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("yy"), i: NewItemID(), f: FieldID("a"), want: false},
 			},
 		},
 		{
 			name:   "all",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: itemID.Ref(), field: FieldID("a").Ref()},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref(), item: itemID.Ref(), field: FieldID("a").Ref()},
 			args: []args{
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
-				{sg: SchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
-				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
-				{sg: SchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("a"), want: true},
+				{sg: id.PropertySchemaGroupID("yy"), i: itemID, f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: itemID, f: FieldID("b"), want: false},
 			},
 		},
 		{
 			name:   "empty",
 			target: &Pointer{},
 			args: []args{
-				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: true},
-				{sg: SchemaGroupID("yy"), i: NewItemID(), f: FieldID("b"), want: true},
-				{sg: SchemaGroupID("zz"), i: NewItemID(), f: FieldID("c"), want: true},
+				{sg: id.PropertySchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: true},
+				{sg: id.PropertySchemaGroupID("yy"), i: NewItemID(), f: FieldID("b"), want: true},
+				{sg: id.PropertySchemaGroupID("zz"), i: NewItemID(), f: FieldID("c"), want: true},
 			},
 		},
 		{
 			name:   "nil",
 			target: nil,
 			args: []args{
-				{sg: SchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
-				{sg: SchemaGroupID("yy"), i: NewItemID(), f: FieldID("b"), want: false},
-				{sg: SchemaGroupID("zz"), i: NewItemID(), f: FieldID("c"), want: false},
+				{sg: id.PropertySchemaGroupID("xx"), i: NewItemID(), f: FieldID("a"), want: false},
+				{sg: id.PropertySchemaGroupID("yy"), i: NewItemID(), f: FieldID("b"), want: false},
+				{sg: id.PropertySchemaGroupID("zz"), i: NewItemID(), f: FieldID("c"), want: false},
 			},
 		},
 	}
@@ -368,7 +368,7 @@ func TestPointer_TestItem(t *testing.T) {
 	iid := NewItemID()
 
 	type args struct {
-		sg SchemaGroupID
+		sg id.PropertySchemaGroupID
 		i  ItemID
 	}
 	tests := []struct {
@@ -379,50 +379,50 @@ func TestPointer_TestItem(t *testing.T) {
 	}{
 		{
 			name:   "true schema group only",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
-			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref()},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: iid},
 			want:   true,
 		},
 		{
 			name:   "true item only",
 			target: &Pointer{item: iid.Ref()},
-			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: iid},
 			want:   true,
 		},
 		{
 			name:   "true schema group and item",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: iid.Ref()},
-			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref(), item: iid.Ref()},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: iid},
 			want:   true,
 		},
 		{
 			name:   "true empty",
 			target: &Pointer{},
-			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: iid},
 			want:   true,
 		},
 		{
 			name:   "false schema group only",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
-			args:   args{sg: SchemaGroupID("yy"), i: iid},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref()},
+			args:   args{sg: id.PropertySchemaGroupID("yy"), i: iid},
 			want:   false,
 		},
 		{
 			name:   "false item only",
 			target: &Pointer{item: iid.Ref()},
-			args:   args{sg: SchemaGroupID("xx"), i: NewItemID()},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: NewItemID()},
 			want:   false,
 		},
 		{
 			name:   "false schema group and item",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref(), item: iid.Ref()},
-			args:   args{sg: SchemaGroupID("xx"), i: NewItemID()},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref(), item: iid.Ref()},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: NewItemID()},
 			want:   false,
 		},
 		{
 			name:   "false nil",
 			target: nil,
-			args:   args{sg: SchemaGroupID("xx"), i: iid},
+			args:   args{sg: id.PropertySchemaGroupID("xx"), i: iid},
 			want:   false,
 		},
 	}
@@ -436,7 +436,7 @@ func TestPointer_TestItem(t *testing.T) {
 
 func TestPointer_TestSchemaGroup(t *testing.T) {
 	type args struct {
-		sg SchemaGroupID
+		sg id.PropertySchemaGroupID
 	}
 	tests := []struct {
 		name   string
@@ -446,26 +446,26 @@ func TestPointer_TestSchemaGroup(t *testing.T) {
 	}{
 		{
 			name:   "true",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
-			args:   args{sg: SchemaGroupID("xx")},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref()},
+			args:   args{sg: id.PropertySchemaGroupID("xx")},
 			want:   true,
 		},
 		{
 			name:   "false",
-			target: &Pointer{schemaGroup: SchemaGroupID("xx").Ref()},
-			args:   args{sg: SchemaGroupID("yy")},
+			target: &Pointer{schemaGroup: id.PropertySchemaGroupID("xx").Ref()},
+			args:   args{sg: id.PropertySchemaGroupID("yy")},
 			want:   false,
 		},
 		{
 			name:   "empty",
 			target: &Pointer{},
-			args:   args{sg: SchemaGroupID("xx")},
+			args:   args{sg: id.PropertySchemaGroupID("xx")},
 			want:   true,
 		},
 		{
 			name:   "nil",
 			target: nil,
-			args:   args{sg: SchemaGroupID("xx")},
+			args:   args{sg: id.PropertySchemaGroupID("xx")},
 			want:   false,
 		},
 	}
@@ -555,7 +555,7 @@ func TestProperty_MoveFields(t *testing.T) {
 			}).MustBuild(),
 			args: args{
 				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
-				to:   NewPointer(SchemaGroupID("x").Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(id.PropertySchemaGroupID("x").Ref(), nil, testField1.Field().Ref()),
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},
@@ -568,7 +568,7 @@ func TestProperty_MoveFields(t *testing.T) {
 			}).MustBuild(),
 			args: args{
 				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
-				to:   NewPointer(SchemaGroupID("x").Ref(), nil, testField1.Field().Ref()),
+				to:   NewPointer(id.PropertySchemaGroupID("x").Ref(), nil, testField1.Field().Ref()),
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},
@@ -582,7 +582,7 @@ func TestProperty_MoveFields(t *testing.T) {
 			}).MustBuild(),
 			args: args{
 				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
-				to:   NewPointer(SchemaGroupID("x").Ref(), nil, FieldID("y").Ref()),
+				to:   NewPointer(id.PropertySchemaGroupID("x").Ref(), nil, FieldID("y").Ref()),
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},
@@ -596,7 +596,7 @@ func TestProperty_MoveFields(t *testing.T) {
 			}).MustBuild(),
 			args: args{
 				from: NewPointer(testGroup1.SchemaGroup().Ref(), nil, testField1.Field().Ref()),
-				to:   NewPointer(SchemaGroupID("x").Ref(), nil, nil),
+				to:   NewPointer(id.PropertySchemaGroupID("x").Ref(), nil, nil),
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},
@@ -619,14 +619,14 @@ func TestProperty_MoveFields(t *testing.T) {
 		{
 			name: "list -> group",
 			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
-				NewGroup().NewID().SchemaGroup(SchemaGroupID("x")).Fields([]*Field{testField1}).MustBuild(),
-				NewGroupList().NewID().SchemaGroup(SchemaGroupID("y")).Groups([]*Group{
-					NewGroup().ID(itemID1).SchemaGroup(SchemaGroupID("y")).Fields([]*Field{testField2}).MustBuild(),
+				NewGroup().NewID().SchemaGroup(id.PropertySchemaGroupID("x")).Fields([]*Field{testField1}).MustBuild(),
+				NewGroupList().NewID().SchemaGroup(id.PropertySchemaGroupID("y")).Groups([]*Group{
+					NewGroup().ID(itemID1).SchemaGroup(id.PropertySchemaGroupID("y")).Fields([]*Field{testField2}).MustBuild(),
 				}).MustBuild(),
 			}).MustBuild(),
 			args: args{
-				from: NewPointer(SchemaGroupID("y").Ref(), itemID1.Ref(), testField2.Field().Ref()),
-				to:   NewPointer(SchemaGroupID("x").Ref(), nil, testField2.Field().Ref()),
+				from: NewPointer(id.PropertySchemaGroupID("y").Ref(), itemID1.Ref(), testField2.Field().Ref()),
+				to:   NewPointer(id.PropertySchemaGroupID("x").Ref(), nil, testField2.Field().Ref()),
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},           // deleted
@@ -635,16 +635,16 @@ func TestProperty_MoveFields(t *testing.T) {
 		{
 			name: "list -> list",
 			target: New().NewID().Schema(testSchema1.ID()).Scene(id.NewSceneID()).Items([]Item{
-				NewGroupList().NewID().SchemaGroup(SchemaGroupID("x")).Groups([]*Group{
-					NewGroup().ID(itemID1).SchemaGroup(SchemaGroupID("x")).Fields([]*Field{testField1}).MustBuild(),
+				NewGroupList().NewID().SchemaGroup(id.PropertySchemaGroupID("x")).Groups([]*Group{
+					NewGroup().ID(itemID1).SchemaGroup(id.PropertySchemaGroupID("x")).Fields([]*Field{testField1}).MustBuild(),
 				}).MustBuild(),
-				NewGroupList().NewID().SchemaGroup(SchemaGroupID("y")).Groups([]*Group{
-					NewGroup().ID(itemID2).SchemaGroup(SchemaGroupID("y")).Fields([]*Field{testField2}).MustBuild(),
+				NewGroupList().NewID().SchemaGroup(id.PropertySchemaGroupID("y")).Groups([]*Group{
+					NewGroup().ID(itemID2).SchemaGroup(id.PropertySchemaGroupID("y")).Fields([]*Field{testField2}).MustBuild(),
 				}).MustBuild(),
 			}).MustBuild(),
 			args: args{
-				from: NewPointer(SchemaGroupID("x").Ref(), itemID1.Ref(), testField1.Field().Ref()),
-				to:   NewPointer(SchemaGroupID("y").Ref(), itemID2.Ref(), testField2.Field().Ref()),
+				from: NewPointer(id.PropertySchemaGroupID("x").Ref(), itemID1.Ref(), testField1.Field().Ref()),
+				to:   NewPointer(id.PropertySchemaGroupID("y").Ref(), itemID2.Ref(), testField2.Field().Ref()),
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},           // deleted
@@ -696,13 +696,13 @@ func TestProperty_GroupAndList(t *testing.T) {
 					&GroupList{
 						itemBase: itemBase{
 							ID:          pgid1,
-							SchemaGroup: SchemaGroupID("aaaa"),
+							SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 						},
 						groups: []*Group{
 							{
 								itemBase: itemBase{
 									ID:          pgid2,
-									SchemaGroup: SchemaGroupID("aaaa"),
+									SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 								},
 							},
 						},
@@ -711,7 +711,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 			},
 			args: args{
 				ptr: &Pointer{
-					schemaGroup: SchemaGroupID("aaaa").Ref(),
+					schemaGroup: id.PropertySchemaGroupID("aaaa").Ref(),
 					item:        pgid2.Ref(),
 					field:       nil,
 				},
@@ -719,19 +719,19 @@ func TestProperty_GroupAndList(t *testing.T) {
 			want: &Group{
 				itemBase: itemBase{
 					ID:          pgid2,
-					SchemaGroup: SchemaGroupID("aaaa"),
+					SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 				},
 			},
 			want1: &GroupList{
 				itemBase: itemBase{
 					ID:          pgid1,
-					SchemaGroup: SchemaGroupID("aaaa"),
+					SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 				},
 				groups: []*Group{
 					{
 						itemBase: itemBase{
 							ID:          pgid2,
-							SchemaGroup: SchemaGroupID("aaaa"),
+							SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 						},
 					},
 				},
@@ -744,13 +744,13 @@ func TestProperty_GroupAndList(t *testing.T) {
 					&GroupList{
 						itemBase: itemBase{
 							ID:          pgid1,
-							SchemaGroup: SchemaGroupID("aaaa"),
+							SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 						},
 						groups: []*Group{
 							{
 								itemBase: itemBase{
 									ID:          pgid2,
-									SchemaGroup: SchemaGroupID("aaaa"),
+									SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 								},
 							},
 						},
@@ -759,7 +759,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 			},
 			args: args{
 				ptr: &Pointer{
-					schemaGroup: SchemaGroupID("aaaa").Ref(),
+					schemaGroup: id.PropertySchemaGroupID("aaaa").Ref(),
 					item:        pgid1.Ref(),
 					field:       nil,
 				},
@@ -768,13 +768,13 @@ func TestProperty_GroupAndList(t *testing.T) {
 			want1: &GroupList{
 				itemBase: itemBase{
 					ID:          pgid1,
-					SchemaGroup: SchemaGroupID("aaaa"),
+					SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 				},
 				groups: []*Group{
 					{
 						itemBase: itemBase{
 							ID:          pgid2,
-							SchemaGroup: SchemaGroupID("aaaa"),
+							SchemaGroup: id.PropertySchemaGroupID("aaaa"),
 						},
 					},
 				},

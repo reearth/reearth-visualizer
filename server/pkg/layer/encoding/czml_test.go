@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -40,7 +41,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    &iid,
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("location"),
@@ -108,7 +109,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    &iid,
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("polygon"),
@@ -203,7 +204,7 @@ func TestCZMLEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    &iid,
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("coordinates"),

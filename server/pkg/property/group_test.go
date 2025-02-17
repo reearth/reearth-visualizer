@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,7 +27,7 @@ func TestGroup_SchemaGroup(t *testing.T) {
 	var g *Group
 	assert.Nil(t, g.SchemaGroupRef())
 
-	pfid := SchemaGroupID("aa")
+	pfid := id.PropertySchemaGroupID("aa")
 	g = NewGroup().NewID().SchemaGroup(pfid).MustBuild()
 	assert.Equal(t, pfid, g.SchemaGroup())
 	assert.Equal(t, pfid.Ref(), g.SchemaGroupRef())

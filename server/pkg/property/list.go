@@ -107,7 +107,7 @@ func (m Map) Merge(m2 Map) Map {
 }
 
 func (m Map) Keys() []id.PropertyID {
-	return IDList(lo.Keys(m)).Sort()
+	return id.PropertyIDList(lo.Keys(m)).Sort()
 }
 
 func (m Map) Len() int {

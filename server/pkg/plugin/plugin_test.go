@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,22 +52,22 @@ func TestPlugin_PropertySchemas(t *testing.T) {
 	tests := []struct {
 		name     string
 		plugin   *Plugin
-		expected PropertySchemaIDList
+		expected id.PropertySchemaIDList
 	}{
 		{
 			name:     "normal",
 			plugin:   New().ID(MustID("aaa~1.1.1")).Schema(&ps1).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
-			expected: PropertySchemaIDList{ps1, ps2, ps3},
+			expected: id.PropertySchemaIDList{ps1, ps2, ps3},
 		},
 		{
 			name:     "no plugin property schema",
 			plugin:   New().ID(MustID("aaa~1.1.1")).Extensions([]*Extension{NewExtension().ID("xxx").Schema(ps2).MustBuild(), NewExtension().ID("yyy").Schema(ps3).MustBuild()}).MustBuild(),
-			expected: PropertySchemaIDList{ps2, ps3},
+			expected: id.PropertySchemaIDList{ps2, ps3},
 		},
 		{
 			name:     "nil",
 			plugin:   nil,
-			expected: PropertySchemaIDList(nil),
+			expected: id.PropertySchemaIDList(nil),
 		},
 	}
 

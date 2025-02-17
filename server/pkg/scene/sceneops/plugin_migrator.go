@@ -25,7 +25,7 @@ type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Layers            layer.List
 	Properties        []*property.Property
-	RemovedProperties property.IDList
+	RemovedProperties id.PropertyIDList
 }
 
 var (
@@ -64,8 +64,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	modifiedLayers := layer.List{}
-	propertyIDs := property.IDList{}
-	removedPropertyIDs := property.IDList{}
+	propertyIDs := id.PropertyIDList{}
+	removedPropertyIDs := id.PropertyIDList{}
 
 	// Obtain property schema and map old schema to new schema
 	schemaMap, err := s.loadSchemas(ctx, oldPlugin, newPlugin)

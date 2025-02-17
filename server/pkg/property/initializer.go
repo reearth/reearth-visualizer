@@ -91,10 +91,10 @@ func (p *Initializer) MustBeProperty(scene SceneID) *Property {
 }
 
 type InitializerItem struct {
-	ID         *ItemID             `json:"id"`
-	SchemaItem SchemaGroupID       `json:"schemaItem"`
-	Groups     []*InitializerGroup `json:"groups"`
-	Fields     []*InitializerField `json:"fields"`
+	ID         *ItemID                  `json:"id"`
+	SchemaItem id.PropertySchemaGroupID `json:"schemaItem"`
+	Groups     []*InitializerGroup      `json:"groups"`
+	Fields     []*InitializerField      `json:"fields"`
 }
 
 func (p *InitializerItem) Clone() *InitializerItem {
@@ -206,7 +206,7 @@ func (p *InitializerGroup) Clone() *InitializerGroup {
 	}
 }
 
-func (p *InitializerGroup) PropertyGroup(parentItem SchemaGroupID) (*Group, error) {
+func (p *InitializerGroup) PropertyGroup(parentItem id.PropertySchemaGroupID) (*Group, error) {
 	if p == nil {
 		return nil, nil
 	}

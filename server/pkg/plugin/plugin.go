@@ -97,7 +97,7 @@ func (p *Plugin) Schema() *id.PropertySchemaID {
 	return p.schema
 }
 
-func (p *Plugin) PropertySchemas() PropertySchemaIDList {
+func (p *Plugin) PropertySchemas() id.PropertySchemaIDList {
 	if p == nil {
 		return nil
 	}

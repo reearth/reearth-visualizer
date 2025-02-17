@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -29,8 +30,8 @@ func TestSceneBuilder(t *testing.T) {
 	propertySchemaField1ID := property.FieldID("a")
 	propertySchemaField2ID := property.FieldID("b")
 	propertySchemaField3ID := property.FieldID("c")
-	propertySchemaGroup1ID := property.SchemaGroupID("A")
-	propertySchemaGroup2ID := property.SchemaGroupID("B")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
+	propertySchemaGroup2ID := id.PropertySchemaGroupID("B")
 	propertyItemID1 := property.NewItemID()
 	propertyItemID2 := property.NewItemID()
 

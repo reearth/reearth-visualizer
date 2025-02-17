@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,8 +17,8 @@ var (
 	opid   = NewID()
 	ppid   = NewID()
 	psid   = MustSchemaID("hoge~0.1.0/fff")
-	psiid1 = SchemaGroupID("x")
-	psiid2 = SchemaGroupID("y")
+	psiid1 = id.PropertySchemaGroupID("x")
+	psiid2 = id.PropertySchemaGroupID("y")
 	i1id   = NewItemID()
 	i2id   = NewItemID()
 	i3id   = NewItemID()

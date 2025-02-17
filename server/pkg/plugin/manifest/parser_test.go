@@ -10,6 +10,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -36,7 +37,7 @@ var normalExpected = &Manifest{
 	}).MustBuild(),
 	ExtensionSchema: []*property.Schema{
 		property.NewSchema().ID(property.MustSchemaID("aaa~1.1.1/hoge")).Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
-			property.NewSchemaGroup().ID(property.SchemaGroupID("default")).
+			property.NewSchemaGroup().ID(id.PropertySchemaGroupID("default")).
 				RepresentativeField(property.FieldID("a").Ref()).
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().ID(property.FieldID("a")).

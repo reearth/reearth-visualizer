@@ -171,7 +171,7 @@ func (f *ReearthInfoboxField) infoboxField() *layer.InitializerInfoboxField {
 	}
 }
 
-type ReearthProperty map[property.SchemaGroupID]ReearthPropertyItem
+type ReearthProperty map[id.PropertySchemaGroupID]ReearthPropertyItem
 
 func (p ReearthProperty) property(schema *id.PropertySchemaID) *property.Initializer {
 	if schema == nil || p == nil {
@@ -195,7 +195,7 @@ type ReearthPropertyItem struct {
 	Fields ReearthPropertyGroup   `json:"fields"`
 }
 
-func (p *ReearthPropertyItem) propertyItem(key property.SchemaGroupID) *property.InitializerItem {
+func (p *ReearthPropertyItem) propertyItem(key id.PropertySchemaGroupID) *property.InitializerItem {
 	if p == nil {
 		return nil
 	}

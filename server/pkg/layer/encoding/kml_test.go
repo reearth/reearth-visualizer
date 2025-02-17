@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -37,7 +38,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    property.NewItemID().Ref(),
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("location"),
@@ -122,7 +123,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    property.NewItemID().Ref(),
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("polygon"),
@@ -226,7 +227,7 @@ func TestKMLEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    property.NewItemID().Ref(),
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("coordinates"),

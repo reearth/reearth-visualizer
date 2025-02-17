@@ -23,7 +23,7 @@ func TestGroupList_SchemaRef(t *testing.T) {
 	tests := []struct {
 		Name           string
 		GL             *GroupList
-		ExpectedSG     *SchemaGroupID
+		ExpectedSG     *id.PropertySchemaGroupID
 		ExpectedSchema *id.PropertySchemaID
 	}{
 		{
@@ -31,8 +31,8 @@ func TestGroupList_SchemaRef(t *testing.T) {
 		},
 		{
 			Name:           "success",
-			GL:             NewGroupList().NewID().SchemaGroup(SchemaGroupID("xx")).MustBuild(),
-			ExpectedSG:     SchemaGroupID("xx").Ref(),
+			GL:             NewGroupList().NewID().SchemaGroup(id.PropertySchemaGroupID("xx")).MustBuild(),
+			ExpectedSG:     id.PropertySchemaGroupID("xx").Ref(),
 			ExpectedSchema: MustSchemaID("xx~1.0.0/aa").Ref(),
 		},
 	}

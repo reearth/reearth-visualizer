@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -133,7 +134,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 			Items: []*property.InitializerItem{
 				{
 					ID:         prop.Items()[0].ID().Ref(),
-					SchemaItem: property.SchemaGroupID("default"),
+					SchemaItem: id.PropertySchemaGroupID("default"),
 					Fields: []*property.InitializerField{
 						{
 							Field: property.FieldID("latlng"),
@@ -179,7 +180,7 @@ func TestReearthDecoder_Decode(t *testing.T) {
 			Items: []*property.InitializerItem{
 				{
 					ID:         prop.Items()[0].ID().Ref(),
-					SchemaItem: property.SchemaGroupID("hoge"),
+					SchemaItem: id.PropertySchemaGroupID("hoge"),
 					Groups: []*property.InitializerGroup{
 						{
 							ID: property.ToGroupList(prop.Items()[0]).GroupAt(0).IDRef(),

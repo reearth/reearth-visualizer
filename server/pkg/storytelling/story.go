@@ -197,7 +197,7 @@ func (s *Story) ValidateProperties(pm property.Map) error {
 	return nil
 }
 
-func (s *Story) Properties() property.IDList {
+func (s *Story) Properties() id.PropertyIDList {
 	if s == nil {
 		return nil
 	}

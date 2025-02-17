@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,10 +16,10 @@ func TestMerge(t *testing.T) {
 	ppid := NewID()
 	psid := MustSchemaID("hoge~0.1.0/fff")
 	psid2 := MustSchemaID("hoge~0.1.0/aaa")
-	psgid1 := SchemaGroupID("group1")
-	psgid2 := SchemaGroupID("group2")
-	psgid3 := SchemaGroupID("group3")
-	psgid4 := SchemaGroupID("group4")
+	psgid1 := id.PropertySchemaGroupID("group1")
+	psgid2 := id.PropertySchemaGroupID("group2")
+	psgid3 := id.PropertySchemaGroupID("group3")
+	psgid4 := id.PropertySchemaGroupID("group4")
 	i1id := NewItemID()
 	i2id := NewItemID()
 	i3id := NewItemID()

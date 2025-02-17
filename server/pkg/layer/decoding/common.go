@@ -29,7 +29,7 @@ var (
 		"Polygon":  property.MustSchemaID("reearth/polygon"),
 		"Polyline": property.MustSchemaID("reearth/polyline"),
 	}
-	propertyItems  = property.SchemaGroupID("default")
+	propertyItems  = id.PropertySchemaGroupID("default")
 	propertyFields = map[string]property.FieldID{
 		"Point":    property.FieldID("location"),
 		"Polygon":  property.FieldID("polygon"),

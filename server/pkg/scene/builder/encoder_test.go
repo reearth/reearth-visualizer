@@ -3,6 +3,7 @@ package builder
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -115,7 +116,7 @@ func TestEncoder_Layers(t *testing.T) {
 	item1 := property.SealedItem{
 		Original:      &iid,
 		Parent:        nil,
-		SchemaGroup:   property.SchemaGroupID("default"),
+		SchemaGroup:   id.PropertySchemaGroupID("default"),
 		LinkedDataset: nil,
 		Fields:        fl1,
 		Groups:        nil,

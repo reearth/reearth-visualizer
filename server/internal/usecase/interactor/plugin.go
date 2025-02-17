@@ -196,7 +196,7 @@ func parseSchemaFieldPointer(linkableFieldsMap map[string]interface{}) *property
 	sg := linkableFieldsMap["schemaGroupId"].(string)
 	f := linkableFieldsMap["fieldId"].(string)
 	return &property.SchemaFieldPointer{
-		SchemaGroup: property.SchemaGroupID(sg),
+		SchemaGroup: id.PropertySchemaGroupID(sg),
 		Field:       property.FieldID(f),
 	}
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -36,7 +37,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    property.NewItemID().Ref(),
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("location"),
@@ -92,7 +93,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    property.NewItemID().Ref(),
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("polygon"),
@@ -169,7 +170,7 @@ func TestGeoJSONEncoder_Encode(t *testing.T) {
 						Items: []*property.SealedItem{
 							{
 								Original:    property.NewItemID().Ref(),
-								SchemaGroup: property.SchemaGroupID("default"),
+								SchemaGroup: id.PropertySchemaGroupID("default"),
 								Fields: []*property.SealedField{
 									{
 										ID: property.FieldID("coordinates"),

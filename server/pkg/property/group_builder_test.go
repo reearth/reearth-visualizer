@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,7 +15,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID          ItemID
-		SchemaGroup SchemaGroupID
+		SchemaGroup id.PropertySchemaGroupID
 		Fields      []*Field
 	}
 
@@ -71,7 +72,7 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 
 	type args struct {
 		ID          ItemID
-		SchemaGroup SchemaGroupID
+		SchemaGroup id.PropertySchemaGroupID
 		Fields      []*Field
 	}
 

@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Item interface {
 	ID() ItemID
 	IDRef() *ItemID
-	SchemaGroup() SchemaGroupID
-	SchemaGroupRef() *SchemaGroupID
+	SchemaGroup() id.PropertySchemaGroupID
+	SchemaGroupRef() *id.PropertySchemaGroupID
 	HasLinkedField() bool
 	Datasets() []DatasetID
 	FieldsByLinkedDataset(DatasetSchemaID, DatasetID) []*Field
@@ -29,7 +30,7 @@ type Item interface {
 
 type itemBase struct {
 	ID          ItemID
-	SchemaGroup SchemaGroupID
+	SchemaGroup id.PropertySchemaGroupID
 }
 
 func ToGroup(i Item) *Group {

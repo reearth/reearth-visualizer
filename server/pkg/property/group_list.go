@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -34,14 +35,14 @@ func (g *GroupList) IDRef() *ItemID {
 }
 
 // SchemaGroup returns id of schema group
-func (g *GroupList) SchemaGroup() SchemaGroupID {
+func (g *GroupList) SchemaGroup() id.PropertySchemaGroupID {
 	if g == nil {
-		return SchemaGroupID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return g.itemBase.SchemaGroup
 }
 
-func (g *GroupList) SchemaGroupRef() *SchemaGroupID {
+func (g *GroupList) SchemaGroupRef() *id.PropertySchemaGroupID {
 	if g == nil {
 		return nil
 	}
