@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -170,7 +171,7 @@ func TestSceneBuilder(t *testing.T) {
 		Extension(&pluginExtension1ID).
 		Property(layer2p.IDRef()).
 		Infobox(layer2ib).
-		Layers(layer.NewIDList([]layer.ID{layer21.ID()})).
+		Layers(layer.NewIDList([]id.LayerID{layer21.ID()})).
 		Tags(layer.NewTagList([]layer.Tag{ltag1, ltag3})).
 		MustBuild()
 
@@ -273,7 +274,7 @@ func TestSceneBuilder(t *testing.T) {
 		Property(layer4p.IDRef()).
 		Infobox(layer4ib).
 		LinkedDatasetSchema(&dss3id).
-		Layers(layer.NewIDList([]layer.ID{layer41.ID()})).
+		Layers(layer.NewIDList([]id.LayerID{layer41.ID()})).
 		MustBuild()
 
 	// layer5: linked layer group and children with overrided property
@@ -334,7 +335,7 @@ func TestSceneBuilder(t *testing.T) {
 		Extension(&pluginExtension1ID).
 		Property(layer5p.IDRef()).
 		LinkedDatasetSchema(&dss1id).
-		Layers(layer.NewIDList([]layer.ID{layer51.ID()})).
+		Layers(layer.NewIDList([]id.LayerID{layer51.ID()})).
 		MustBuild()
 	layer6p := property.New().
 		NewID().
@@ -366,7 +367,7 @@ func TestSceneBuilder(t *testing.T) {
 		MustBuild()
 
 	// root layer
-	rootLayer := layer.NewGroup().NewID().Scene(sceneID).Layers(layer.NewIDList([]layer.ID{
+	rootLayer := layer.NewGroup().NewID().Scene(sceneID).Layers(layer.NewIDList([]id.LayerID{
 		layer1.ID(),
 		layer2.ID(),
 		layer3.ID(),
