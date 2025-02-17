@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
-// type ID = id.LayerID
 type InfoboxFieldID = id.InfoboxFieldID
 type TagID = id.TagID
 type SceneID = id.SceneID
@@ -48,7 +47,6 @@ var PropertyIDFromRef = id.PropertyIDFromRef
 var DatasetIDFromRef = id.DatasetIDFromRef
 var DatasetSchemaIDFromRef = id.DatasetSchemaIDFromRef
 
-type IDSet = id.LayerIDSet
 type InfoboxFIeldIDSet = id.InfoboxFieldIDSet
 type DatasetIDSet = id.DatasetIDSet
 type DatasetIDList = id.DatasetIDList
