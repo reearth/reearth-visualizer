@@ -160,10 +160,10 @@ const Table = styled("div")(({ theme }) => ({
 }));
 
 const TableHeaderCell = styled("div")(({ theme }) => ({
-  "&:nth-child(2)": {
-    transform: "translateX(-28px)"
+  "&:nth-of-type(2)": {
+    transform: "translateX(-24px)"
   },
-  "&:nth-child(3)": {
+  "&:nth-of-type(3)": {
     transform: "translateX(2px)"
   },
   fontSize: theme.fonts.sizes.body,
