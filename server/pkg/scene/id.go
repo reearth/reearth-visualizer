@@ -10,9 +10,6 @@ type WidgetID = id.WidgetID
 type ClusterID = id.ClusterID
 type LayerID = id.LayerID
 type PropertyID = id.PropertyID
-
-// type PluginID = id.PluginID
-// type PluginExtensionID = id.PluginExtensionID
 type ProjectID = id.ProjectID
 type WorkspaceID = accountdomain.WorkspaceID
 type StyleID = id.StyleID
