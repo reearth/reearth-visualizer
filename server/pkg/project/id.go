@@ -5,8 +5,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
-// type ID = id.ProjectID
-// type WorkspaceID = accountdomain.WorkspaceID
 type SceneID = id.SceneID
 
 var NewID = id.NewProjectID
