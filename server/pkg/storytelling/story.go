@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/util"
 )
@@ -20,7 +21,7 @@ var (
 type Story struct {
 	id            StoryID
 	property      PropertyID
-	scene         SceneID
+	scene         id.SceneID
 	title         string
 	pages         *PageList
 	panelPosition Position
@@ -50,7 +51,7 @@ func (s *Story) Property() PropertyID {
 	return s.property
 }
 
-func (s *Story) Scene() SceneID {
+func (s *Story) Scene() id.SceneID {
 	return s.scene
 }
 

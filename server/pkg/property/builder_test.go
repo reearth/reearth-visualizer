@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -96,7 +97,7 @@ func TestBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID     ID
-		Scene  SceneID
+		Scene  id.SceneID
 		Schema SchemaID
 		Items  []Item
 	}

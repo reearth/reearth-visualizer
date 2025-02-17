@@ -9,7 +9,11 @@ type ItemID = id.PropertyItemID
 type FieldID = id.PropertyFieldID
 type SchemaID = id.PropertySchemaID
 type SchemaGroupID = id.PropertySchemaGroupID
-type SceneID = id.SceneID
+type DatasetID = id.DatasetID
+type DatasetFieldID = id.DatasetFieldID
+type DatasetSchemaID = id.DatasetSchemaID
+
+// type SceneID = id.SceneID
 
 var NewID = id.NewPropertyID
 var NewItemID = id.NewPropertyItemID

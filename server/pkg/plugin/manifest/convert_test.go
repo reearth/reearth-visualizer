@@ -59,7 +59,7 @@ func TestManifest(t *testing.T) {
 	tests := []struct {
 		name     string
 		root     *Root
-		scene    *plugin.SceneID
+		scene    *id.SceneID
 		expected *Manifest
 		tl       *TranslatedRoot
 		err      string

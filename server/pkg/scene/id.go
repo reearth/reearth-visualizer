@@ -5,7 +5,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
-type ID = id.SceneID
+// type ID = id.SceneID
 type WidgetID = id.WidgetID
 type PropertyID = id.PropertyID
 type ProjectID = id.ProjectID

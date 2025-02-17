@@ -1,10 +1,12 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Style struct {
 	id    StyleID
 	name  string
 	value *StyleValue
-	scene ID
+	scene id.SceneID
 }
 
 func (s *Style) ID() StyleID {
@@ -42,7 +44,7 @@ func (s *Style) UpdateValue(sv *StyleValue) {
 	s.value = sv
 }
 
-func (l *Style) Scene() ID {
+func (l *Style) Scene() id.SceneID {
 	return l.scene
 }
 

@@ -31,7 +31,7 @@ func (p *Plugin) Version() semver.Version {
 	return p.id.Version()
 }
 
-func (p *Plugin) Scene() *SceneID {
+func (p *Plugin) Scene() *id.SceneID {
 	return p.ID().Scene()
 }
 

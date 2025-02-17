@@ -1,6 +1,9 @@
 package nlslayer
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	pl "github.com/reearth/reearth/server/pkg/layer"
+)
 
 type NLSLayerSimple struct {
 	layerBase
@@ -25,7 +28,7 @@ func (l *NLSLayerSimple) LayerType() LayerType {
 	return l.layerBase.LayerType()
 }
 
-func (l *NLSLayerSimple) Scene() SceneID {
+func (l *NLSLayerSimple) Scene() id.SceneID {
 	return l.layerBase.scene
 }
 

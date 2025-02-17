@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -170,10 +169,10 @@ func (f SceneFilter) Clone() SceneFilter {
 	}
 }
 
-func (f SceneFilter) CanRead(id scene.ID) bool {
+func (f SceneFilter) CanRead(id id.SceneID) bool {
 	return f.Readable == nil || f.Readable.Has(id)
 }
 
-func (f SceneFilter) CanWrite(id scene.ID) bool {
+func (f SceneFilter) CanWrite(id id.SceneID) bool {
 	return f.Writable == nil || f.Writable.Has(id)
 }
