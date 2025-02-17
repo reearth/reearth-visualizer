@@ -3,6 +3,7 @@ package plugin
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,9 +33,9 @@ func TestList_Map(t *testing.T) {
 func TestList_MapToIDs(t *testing.T) {
 	p1 := &Plugin{id: MustID("foo~1.0.0")}
 	p2 := &Plugin{id: MustID("bar~1.0.0")}
-	assert.Equal(t, List{nil, p2}, List{p1, p2}.MapToIDs([]ID{MustID("hoge~1.0.0"), p2.ID()}))
+	assert.Equal(t, List{nil, p2}, List{p1, p2}.MapToIDs([]id.PluginID{MustID("hoge~1.0.0"), p2.ID()}))
 	assert.Equal(t, List{}, List{p1, p2}.MapToIDs(nil))
-	assert.Equal(t, List{nil}, List(nil).MapToIDs([]ID{p1.ID()}))
+	assert.Equal(t, List{nil}, List(nil).MapToIDs([]id.PluginID{p1.ID()}))
 }
 
 func TestMap_List(t *testing.T) {

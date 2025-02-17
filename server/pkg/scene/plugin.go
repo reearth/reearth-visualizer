@@ -1,25 +1,27 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Plugin struct {
-	plugin   PluginID
+	plugin   id.PluginID
 	property *PropertyID
 }
 
-func NewPlugin(plugin PluginID, property *PropertyID) *Plugin {
+func NewPlugin(plugin id.PluginID, property *PropertyID) *Plugin {
 	return &Plugin{
 		plugin:   plugin,
 		property: property.CloneRef(),
 	}
 }
 
-func (s *Plugin) Plugin() PluginID {
+func (s *Plugin) Plugin() id.PluginID {
 	if s == nil {
-		return PluginID{}
+		return id.PluginID{}
 	}
 	return s.plugin
 }
 
-func (s *Plugin) PluginRef() *PluginID {
+func (s *Plugin) PluginRef() *id.PluginID {
 	if s == nil {
 		return nil
 	}

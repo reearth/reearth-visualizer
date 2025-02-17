@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Plugins struct {
 	plugins []*Plugin
 }
@@ -31,7 +33,7 @@ func (p *Plugins) Plugins() []*Plugin {
 	return append([]*Plugin{}, p.plugins...)
 }
 
-func (p *Plugins) Property(id PluginID) *PropertyID {
+func (p *Plugins) Property(id id.PluginID) *PropertyID {
 	for _, p := range p.plugins {
 		if p.plugin.Equal(id) {
 			return p.property.CloneRef()
@@ -40,7 +42,7 @@ func (p *Plugins) Property(id PluginID) *PropertyID {
 	return nil
 }
 
-func (p *Plugins) Has(id PluginID) bool {
+func (p *Plugins) Has(id id.PluginID) bool {
 	for _, p2 := range p.plugins {
 		if p2.plugin.Equal(id) {
 			return true
@@ -49,7 +51,7 @@ func (p *Plugins) Has(id PluginID) bool {
 	return false
 }
 
-func (p *Plugins) HasPlugin(id PluginID) bool {
+func (p *Plugins) HasPlugin(id id.PluginID) bool {
 	for _, p2 := range p.plugins {
 		if p2.plugin.Equal(id) {
 			return true
@@ -75,7 +77,7 @@ func (p *Plugins) Add(sp *Plugin) bool {
 	return true
 }
 
-func (p *Plugins) Remove(pid PluginID) {
+func (p *Plugins) Remove(pid id.PluginID) {
 	if pid.Equal(OfficialPluginID) {
 		return
 	}
@@ -87,7 +89,7 @@ func (p *Plugins) Remove(pid PluginID) {
 	}
 }
 
-func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool) {
+func (p *Plugins) Upgrade(from, to id.PluginID, pr *PropertyID, deleteProperty bool) {
 	if p == nil || from.IsNil() || to.IsNil() || from.Equal(to) || from.Equal(OfficialPluginID) {
 		return
 	}
@@ -121,7 +123,7 @@ func (p *Plugins) Properties() []PropertyID {
 	return res
 }
 
-func (p *Plugins) Plugin(pluginID PluginID) *Plugin {
+func (p *Plugins) Plugin(pluginID id.PluginID) *Plugin {
 	for _, pp := range p.plugins {
 		if pp.plugin.Equal(pluginID) {
 			return pp

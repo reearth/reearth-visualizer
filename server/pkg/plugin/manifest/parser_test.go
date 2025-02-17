@@ -10,6 +10,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -27,7 +28,7 @@ var minimumExpected = &Manifest{
 var normal string
 var normalExpected = &Manifest{
 	Plugin: plugin.New().ID(plugin.MustID("aaa~1.1.1")).Name(i18n.StringFrom("bbb")).Extensions([]*plugin.Extension{
-		plugin.NewExtension().ID(plugin.ExtensionID("hoge")).
+		plugin.NewExtension().ID(id.PluginExtensionID("hoge")).
 			Visualizer(visualizer.VisualizerCesium).
 			Type(plugin.ExtensionTypePrimitive).
 			WidgetLayout(nil).

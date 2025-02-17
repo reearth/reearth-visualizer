@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -14,7 +15,7 @@ import (
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
 
 func (i *Root) manifest(sid *plugin.SceneID, tl *TranslatedRoot) (*Manifest, error) {
-	var pid plugin.ID
+	var pid id.PluginID
 	var err error
 	if i.System && string(i.ID) == plugin.OfficialPluginID.Name() {
 		pid = plugin.OfficialPluginID
@@ -95,7 +96,7 @@ func (i *Root) manifest(sid *plugin.SceneID, tl *TranslatedRoot) (*Manifest, err
 	}, nil
 }
 
-func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtension) (*plugin.Extension, *property.Schema, error) {
+func (i Extension) extension(pluginID id.PluginID, sys bool, te *TranslatedExtension) (*plugin.Extension, *property.Schema, error) {
 	eid := string(i.ID)
 	var ts *TranslatedPropertySchema
 	if te != nil {
@@ -166,7 +167,7 @@ func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtensi
 	desc = desc.WithDefaultRef(i.Description)
 
 	ext, err := plugin.NewExtension().
-		ID(plugin.ExtensionID(eid)).
+		ID(id.PluginExtensionID(eid)).
 		Name(name).
 		Description(desc).
 		Visualizer(viz).
@@ -215,7 +216,7 @@ func (l *WidgetLayout) layout() *plugin.WidgetLayout {
 	return plugin.NewWidgetLayout(horizontallyExtendable, verticallyExtendable, extended, l.Floating, dl).Ref()
 }
 
-func (i *PropertySchema) schema(pluginID plugin.ID, idstr string, ts *TranslatedPropertySchema) (*property.Schema, error) {
+func (i *PropertySchema) schema(pluginID id.PluginID, idstr string, ts *TranslatedPropertySchema) (*property.Schema, error) {
 	psid, err := property.SchemaIDFrom(pluginID.String() + "/" + idstr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid id: %s", pluginID.String()+"/"+idstr)

@@ -2,6 +2,8 @@ package scene
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -96,7 +98,7 @@ func (w *Widgets) Remove(wid WidgetID) {
 	}
 }
 
-func (w *Widgets) RemoveAllByPlugin(p PluginID, e *PluginExtensionID) (res []PropertyID) {
+func (w *Widgets) RemoveAllByPlugin(p id.PluginID, e *id.PluginExtensionID) (res []PropertyID) {
 	if w == nil {
 		return nil
 	}
@@ -112,7 +114,7 @@ func (w *Widgets) RemoveAllByPlugin(p PluginID, e *PluginExtensionID) (res []Pro
 	return res
 }
 
-func (w *Widgets) UpgradePlugin(oldp, newp PluginID) {
+func (w *Widgets) UpgradePlugin(oldp, newp id.PluginID) {
 	if w == nil || w.widgets == nil || oldp.Equal(newp) || oldp.IsNil() || newp.IsNil() {
 		return
 	}
