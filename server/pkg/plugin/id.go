@@ -7,8 +7,6 @@ import "github.com/reearth/reearth/server/pkg/id"
 type PropertySchemaID = id.PropertySchemaID
 type PropertySchemaIDList = id.PropertySchemaIDList
 
-// type SceneID = id.SceneID
-
 var NewID = id.NewPluginID
 var NewSceneID = id.NewSceneID
 var NewPropertySchemaID = id.NewPropertySchemaID
