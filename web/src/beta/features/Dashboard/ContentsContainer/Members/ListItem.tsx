@@ -69,12 +69,9 @@ const ListItem: FC<{
         <Typography size="body">{member.user?.email}</Typography>
       </TypographyWrapper>
       <TypographyWrapper>
-        <Typography size="body">
-          {isMemberRoleENG(memerRoleTranslation[member.role])
-            ? member.role.charAt(0).toUpperCase() +
-              member.role.slice(1).toLowerCase()
-            : memerRoleTranslation[member.role]}
-        </Typography>
+        <TypographyOfMember size="body">
+          {memerRoleTranslation[member.role].toLowerCase()}
+        </TypographyOfMember>
       </TypographyWrapper>
       <TypographyWrapper>
         <PopupMenu
@@ -142,4 +139,8 @@ const Avatar = styled("div")(({ theme }) => ({
 const TypographyWrapper = styled("div")(() => ({
   overflow: "hidden",
   textOverflow: "ellipsis"
+}));
+
+const TypographyOfMember = styled(Typography)(() => ({
+  textTransform: "capitalize"
 }));

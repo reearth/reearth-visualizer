@@ -23,10 +23,10 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
 
   const roleOptions = useMemo(
     () => [
-      { value: "READER", label: t("Reader") },
-      { value: "WRITER", label: t("Writer") },
-      { value: "MAINTAINER", label: t("Maintainer") },
-      { value: "OWNER", label: t("Owner") }
+      { value: "READER", label: t("READER") },
+      { value: "WRITER", label: t("WRITER") },
+      { value: "MAINTAINER", label: t("MAINTAINER") },
+      { value: "OWNER", label: t("OWNER") }
     ],
     [t]
   );

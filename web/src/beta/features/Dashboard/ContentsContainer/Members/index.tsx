@@ -168,7 +168,7 @@ const TableHeaderCell = styled("div")(({ theme }) => ({
   },
   fontSize: theme.fonts.sizes.body,
   color: theme.content.weak,
-  lineHeight: theme.fonts.lineHeights.body,
+  lineHeight: `${theme.fonts.lineHeights.body}px`,
   display: "flex",
   alignItems: "center"
 }));
