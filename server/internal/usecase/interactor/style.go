@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
-	"github.com/reearth/reearth/server/pkg/scene/sceneops"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -60,11 +59,14 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 	// 	return nil, interfaces.ErrOperationDenied
 	// }
 
-	style, err := sceneops.Style{
-		SceneID: param.SceneID,
-		Value:   param.Value,
-		Name:    param.Name,
-	}.Initialize()
+	style, err := scene.NewStyle().
+		NewID().
+		Scene(param.SceneID).
+		Name(param.Name).
+		Value(param.Value).Build()
+	if err != nil {
+		return nil, err
+	}
 	if err != nil {
 		return nil, err
 	}
