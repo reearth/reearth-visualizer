@@ -3,13 +3,14 @@ package layerops
 import (
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type LayerItem struct {
-	SceneID                layer.SceneID
+	SceneID                id.SceneID
 	ParentLayerID          layer.ID
 	Plugin                 *plugin.Plugin
 	ExtensionID            *layer.PluginExtensionID

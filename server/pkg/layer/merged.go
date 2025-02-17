@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -9,7 +10,7 @@ type Merged struct {
 	Original    ID
 	Parent      *ID
 	Name        string
-	Scene       SceneID
+	Scene       id.SceneID
 	Property    *property.MergedMetadata
 	Infobox     *MergedInfobox
 	PluginID    *PluginID

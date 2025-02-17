@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -93,7 +94,7 @@ func (i *Initializer) Clone() *Initializer {
 	}
 }
 
-func (i *Initializer) Layer(sid SceneID) (r InitializerResult, err error) {
+func (i *Initializer) Layer(sid id.SceneID) (r InitializerResult, err error) {
 	if i == nil {
 		return
 	}
@@ -165,7 +166,7 @@ func (i *Initializer) Layer(sid SceneID) (r InitializerResult, err error) {
 	return
 }
 
-func (i *Initializer) MustBeLayer(sid SceneID) InitializerResult {
+func (i *Initializer) MustBeLayer(sid id.SceneID) InitializerResult {
 	r, err := i.Layer(sid)
 	if err != nil {
 		panic(err)
@@ -199,7 +200,7 @@ func (i *InitializerInfobox) Clone() *InitializerInfobox {
 	}
 }
 
-func (i *InitializerInfobox) Infobox(scene SceneID) (*Infobox, property.Map, error) {
+func (i *InitializerInfobox) Infobox(scene id.SceneID) (*Infobox, property.Map, error) {
 	if i == nil {
 		return nil, nil, nil
 	}
@@ -260,7 +261,7 @@ func (i *InitializerInfoboxField) Clone() *InitializerInfoboxField {
 	}
 }
 
-func (i *InitializerInfoboxField) InfoboxField(scene SceneID) (*InfoboxField, *property.Property, error) {
+func (i *InitializerInfoboxField) InfoboxField(scene id.SceneID) (*InfoboxField, *property.Property, error) {
 	if i == nil {
 		return nil, nil, nil
 	}

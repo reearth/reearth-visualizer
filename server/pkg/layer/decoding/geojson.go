@@ -7,6 +7,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -19,11 +20,11 @@ type GeoStyle struct {
 type GeoJSONDecoder struct {
 	reader    io.Reader
 	features  []*geojson.Feature
-	sceneId   layer.SceneID
+	sceneId   id.SceneID
 	groupName string
 }
 
-func NewGeoJSONDecoder(r io.Reader, s layer.SceneID) *GeoJSONDecoder {
+func NewGeoJSONDecoder(r io.Reader, s id.SceneID) *GeoJSONDecoder {
 	return &GeoJSONDecoder{
 		reader:    r,
 		sceneId:   s,

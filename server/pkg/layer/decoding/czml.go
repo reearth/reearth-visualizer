@@ -5,17 +5,18 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/czml"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type CZMLDecoder struct {
 	decoder   *json.Decoder
-	sceneId   layer.SceneID
+	sceneId   id.SceneID
 	groupName string
 }
 
-func NewCZMLDecoder(d *json.Decoder, s layer.SceneID) *CZMLDecoder {
+func NewCZMLDecoder(d *json.Decoder, s id.SceneID) *CZMLDecoder {
 	return &CZMLDecoder{
 		decoder:   d,
 		sceneId:   s,

@@ -1,5 +1,7 @@
 package dataset
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type SchemaBuilder struct {
 	d *Schema
 }
@@ -37,7 +39,7 @@ func (b *SchemaBuilder) NewID() *SchemaBuilder {
 	return b
 }
 
-func (b *SchemaBuilder) Scene(scene SceneID) *SchemaBuilder {
+func (b *SchemaBuilder) Scene(scene id.SceneID) *SchemaBuilder {
 	b.d.scene = scene
 	return b
 }

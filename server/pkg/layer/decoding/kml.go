@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/kml"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -15,11 +16,11 @@ import (
 
 type KMLDecoder struct {
 	decoder *xml.Decoder
-	sceneId layer.SceneID
+	sceneId id.SceneID
 	styles  map[string]kml.Style
 }
 
-func NewKMLDecoder(d *xml.Decoder, s layer.SceneID) *KMLDecoder {
+func NewKMLDecoder(d *xml.Decoder, s id.SceneID) *KMLDecoder {
 	return &KMLDecoder{
 		decoder: d,
 		sceneId: s,

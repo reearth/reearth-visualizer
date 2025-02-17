@@ -2,11 +2,12 @@ package nlslayerops
 
 import (
 	"github.com/pkg/errors"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 )
 
 type LayerSimple struct {
-	SceneID   nlslayer.SceneID
+	SceneID   id.SceneID
 	LayerType nlslayer.LayerType
 	Config    *nlslayer.Config
 	Index     *int

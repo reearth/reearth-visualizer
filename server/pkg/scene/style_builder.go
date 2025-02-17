@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type StyleBuilder struct {
 	s *Style
 }
@@ -33,7 +35,7 @@ func (b *StyleBuilder) NewID() *StyleBuilder {
 	return b
 }
 
-func (b *StyleBuilder) Scene(scene ID) *StyleBuilder {
+func (b *StyleBuilder) Scene(scene id.SceneID) *StyleBuilder {
 	b.s.scene = scene
 	return b
 }

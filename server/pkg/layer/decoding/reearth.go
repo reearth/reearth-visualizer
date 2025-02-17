@@ -5,16 +5,17 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type ReearthDecoder struct {
 	d     *json.Decoder
-	scene layer.SceneID
+	scene id.SceneID
 }
 
-func NewReearthDecoder(d *json.Decoder, scene layer.SceneID) *ReearthDecoder {
+func NewReearthDecoder(d *json.Decoder, scene id.SceneID) *ReearthDecoder {
 	return &ReearthDecoder{d: d, scene: scene}
 }
 
@@ -42,7 +43,7 @@ type ReearthRoot struct {
 	Layers  []*ReearthLayer `json:"layers"`
 }
 
-func (r *ReearthRoot) Result(scene layer.SceneID) (result Result, err error) {
+func (r *ReearthRoot) Result(scene id.SceneID) (result Result, err error) {
 	if r == nil {
 		return
 	}

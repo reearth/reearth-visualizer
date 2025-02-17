@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +37,7 @@ func TestInitialize(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		sceneID       *layer.SceneID
+		sceneID       *id.SceneID
 		parentLayerID *layer.ID
 		plugin        *plugin.Plugin
 		extID         *layer.PluginExtensionID

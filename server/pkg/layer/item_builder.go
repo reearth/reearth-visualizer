@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func ItemFromLayer(l Layer) *Item {
 	li, ok := l.(*Item)
 	if !ok {
@@ -57,7 +59,7 @@ func (b *ItemBuilder) NewID() *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Scene(s SceneID) *ItemBuilder {
+func (b *ItemBuilder) Scene(s id.SceneID) *ItemBuilder {
 	b.l.scene = s
 	return b
 }

@@ -1,5 +1,7 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func NLSLayerSimpleFromLayer(l NLSLayer) *NLSLayerSimple {
 	li, ok := l.(*NLSLayerSimple)
 	if !ok {
@@ -67,7 +69,7 @@ func (b *NLSLayerSimpleBuilder) LayerType(t LayerType) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Scene(s SceneID) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) Scene(s id.SceneID) *NLSLayerSimpleBuilder {
 	b.l.scene = s
 	return b
 }

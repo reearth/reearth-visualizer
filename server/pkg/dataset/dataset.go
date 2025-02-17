@@ -1,12 +1,14 @@
 package dataset
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Dataset struct {
 	id     ID
 	source string
 	schema SchemaID
 	fields map[FieldID]*Field
 	order  []FieldID
-	scene  SceneID
+	scene  id.SceneID
 }
 
 func (d *Dataset) ID() (i ID) {
@@ -16,7 +18,7 @@ func (d *Dataset) ID() (i ID) {
 	return d.id
 }
 
-func (d *Dataset) Scene() (i SceneID) {
+func (d *Dataset) Scene() (i id.SceneID) {
 	if d == nil {
 		return
 	}

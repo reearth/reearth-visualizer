@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/shp"
@@ -13,10 +14,10 @@ type ShapeReader interface {
 }
 type ShapeDecoder struct {
 	reader  ShapeReader
-	sceneId layer.SceneID
+	sceneId id.SceneID
 }
 
-func NewShapeDecoder(r ShapeReader, s layer.SceneID) *ShapeDecoder {
+func NewShapeDecoder(r ShapeReader, s id.SceneID) *ShapeDecoder {
 	return &ShapeDecoder{
 		reader:  r,
 		sceneId: s,

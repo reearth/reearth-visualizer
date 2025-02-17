@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func GroupFromLayer(l Layer) *Group {
 	li, ok := l.(*Group)
 	if !ok {
@@ -57,7 +59,7 @@ func (b *GroupBuilder) NewID() *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Scene(s SceneID) *GroupBuilder {
+func (b *GroupBuilder) Scene(s id.SceneID) *GroupBuilder {
 	b.l.scene = s
 	return b
 }

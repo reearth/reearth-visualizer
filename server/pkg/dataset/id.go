@@ -5,7 +5,8 @@ import "github.com/reearth/reearth/server/pkg/id"
 type ID = id.DatasetID
 type FieldID = id.DatasetFieldID
 type SchemaID = id.DatasetSchemaID
-type SceneID = id.SceneID
+
+// type SceneID = id.SceneID
 
 var NewID = id.NewDatasetID
 var NewSchemaID = id.NewDatasetSchemaID

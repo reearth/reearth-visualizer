@@ -1,11 +1,13 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type NLSLayer interface {
 	Cloner
 	ID() ID
 	Index() *int
 	LayerType() LayerType
-	Scene() SceneID
+	Scene() id.SceneID
 	Config() *Config
 	Title() string
 	IsVisible() bool
@@ -64,7 +66,7 @@ type layerBase struct {
 	id        ID
 	index     *int
 	layerType LayerType
-	scene     SceneID
+	scene     id.SceneID
 	title     string
 	visible   bool
 	infobox   *Infobox
@@ -98,7 +100,7 @@ func (l *layerBase) LayerType() LayerType {
 	return l.layerType
 }
 
-func (l *layerBase) Scene() SceneID {
+func (l *layerBase) Scene() id.SceneID {
 	return l.scene
 }
 

@@ -2,6 +2,8 @@ package tag
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -12,12 +14,12 @@ var (
 type tag struct {
 	id      ID
 	label   string
-	sceneId SceneID
+	sceneId id.SceneID
 }
 
 type Tag interface {
 	ID() ID
-	Scene() SceneID
+	Scene() id.SceneID
 	Label() string
 	Rename(string)
 }
@@ -26,7 +28,7 @@ func (t *tag) ID() ID {
 	return t.id
 }
 
-func (t *tag) Scene() SceneID {
+func (t *tag) Scene() id.SceneID {
 	return t.sceneId
 }
 

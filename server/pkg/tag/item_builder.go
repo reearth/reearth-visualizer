@@ -1,5 +1,7 @@
 package tag
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type ItemBuilder struct {
 	i *Item
 }
@@ -52,7 +54,7 @@ func (b *ItemBuilder) Label(l string) *ItemBuilder {
 	return b
 }
 
-func (b *ItemBuilder) Scene(sid SceneID) *ItemBuilder {
+func (b *ItemBuilder) Scene(sid id.SceneID) *ItemBuilder {
 	b.i.sceneId = sid
 	return b
 }

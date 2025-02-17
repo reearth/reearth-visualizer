@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -68,7 +69,7 @@ func TestBuilder_Build(t *testing.T) {
 	})
 
 	type args struct {
-		ID        ID
+		ID        id.SceneID
 		Project   ProjectID
 		Workspace WorkspaceID
 		RootLayer LayerID
@@ -87,7 +88,7 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			Name: "fail nil scene id",
 			Args: args{
-				ID:        ID{},
+				ID:        id.SceneID{},
 				Project:   pid,
 				Workspace: tid,
 				RootLayer: lid,
@@ -190,7 +191,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 	})
 
 	type args struct {
-		ID                ID
+		ID                id.SceneID
 		Project           ProjectID
 		Workspace         WorkspaceID
 		RootLayer         LayerID
@@ -210,7 +211,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			Name: "fail nil scene id",
 			Args: args{
-				ID:                ID{},
+				ID:                id.SceneID{},
 				Project:           pid,
 				Workspace:         tid,
 				RootLayer:         lid,

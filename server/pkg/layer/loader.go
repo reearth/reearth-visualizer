@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
 )
 
 type Loader func(context.Context, ...ID) (List, error)
-type LoaderByScene func(context.Context, SceneID) (List, error)
+type LoaderByScene func(context.Context, id.SceneID) (List, error)
 
 var WalkerSkipChildren = errors.New("LAYER_WALKER_SKIP_CHILDREN")
 
@@ -74,7 +75,7 @@ func (l Loader) Walk(ctx context.Context, walker func(Layer, GroupList) error, i
 }
 
 func LoaderBySceneFrom(data ...Layer) LoaderByScene {
-	return func(ctx context.Context, id SceneID) (List, error) {
+	return func(ctx context.Context, id id.SceneID) (List, error) {
 		res := lo.Filter(data, func(l Layer, _ int) bool {
 			return l.Scene() == id
 		})

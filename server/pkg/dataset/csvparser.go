@@ -6,6 +6,8 @@ import (
 	"io"
 	"strconv"
 	"strings"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -48,7 +50,7 @@ func (p *DatasetCSVParser) validateLine(line []string) bool {
 	return len(p.headers) == len(line)
 }
 
-func (p *DatasetCSVParser) GuessSchema(sid SceneID) error {
+func (p *DatasetCSVParser) GuessSchema(sid id.SceneID) error {
 	if !p.validateLine(p.firstline) {
 		return ErrFailedToParseCSVorTSVFile
 	}

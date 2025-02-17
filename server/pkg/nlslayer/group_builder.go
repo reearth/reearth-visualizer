@@ -1,5 +1,7 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 func NLSLayerGroupFromLayer(l NLSLayer) *NLSLayerGroup {
 	li, ok := l.(*NLSLayerGroup)
 	if !ok {
@@ -67,7 +69,7 @@ func (b *NLSLayerGroupBuilder) LayerType(t LayerType) *NLSLayerGroupBuilder {
 	return b
 }
 
-func (b *NLSLayerGroupBuilder) Scene(s SceneID) *NLSLayerGroupBuilder {
+func (b *NLSLayerGroupBuilder) Scene(s id.SceneID) *NLSLayerGroupBuilder {
 	b.l.scene = s
 	return b
 }

@@ -1,6 +1,9 @@
 package tag
 
-import "github.com/reearth/reearthx/util"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/util"
+)
 
 type List []Tag
 
@@ -16,8 +19,8 @@ func (l List) Groups() (res []*Group) {
 	return util.ToGenericListValue[Tag, Group](l, GroupFrom)
 }
 
-func (l List) FilterByScene(s SceneID) (res List) {
-	return util.ListFilter[SceneID, Tag](l, s, Tag.Scene)
+func (l List) FilterByScene(s id.SceneID) (res List) {
+	return util.ListFilter[id.SceneID, Tag](l, s, Tag.Scene)
 }
 
 func (l List) Roots() (res List) {

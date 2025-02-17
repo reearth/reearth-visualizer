@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -13,7 +14,7 @@ import (
 
 var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
 
-func (i *Root) manifest(sid *plugin.SceneID, tl *TranslatedRoot) (*Manifest, error) {
+func (i *Root) manifest(sid *id.SceneID, tl *TranslatedRoot) (*Manifest, error) {
 	var pid plugin.ID
 	var err error
 	if i.System && string(i.ID) == plugin.OfficialPluginID.Name() {

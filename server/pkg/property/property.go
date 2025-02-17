@@ -6,11 +6,12 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Property struct {
 	id     ID
-	scene  SceneID
+	scene  id.SceneID
 	schema SchemaID
 	items  []Item
 }
@@ -26,7 +27,7 @@ func (p *Property) IDRef() *ID {
 	return p.id.Ref()
 }
 
-func (p *Property) Scene() SceneID {
+func (p *Property) Scene() id.SceneID {
 	return p.scene
 }
 
