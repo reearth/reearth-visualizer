@@ -1,9 +1,6 @@
 package nlslayer
 
-import (
-	"github.com/reearth/reearth/server/pkg/id"
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type NLSLayerSimple struct {
 	layerBase

@@ -6,9 +6,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
-type ID = id.NLSLayerID
-
-type LayerID = id.LayerID
 type PropertyID = id.PropertyID
 type InfoboxID = id.InfoboxID
 type InfoboxBlockID = id.InfoboxBlockID

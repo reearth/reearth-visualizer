@@ -169,13 +169,6 @@ func addDefaultTiles(prop *property.Property, schema *property.Schema) {
 	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
 }
 
-func saveSceneComponents(ctx context.Context, i *Scene, sceneID id.SceneID, rootLayer *layer.Group, prop *property.Property) error {
-	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: id.SceneIDList{sceneID}}).Save(ctx, prop); err != nil {
-		return err
-	}
-	return i.layerRepo.Filtered(repo.SceneFilter{Writable: id.SceneIDList{sceneID}}).Save(ctx, rootLayer)
-}
-
 func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
 	eid := id.PluginExtensionID("dataAttribution")
 	pluginID, err := id.PluginIDFrom("reearth")

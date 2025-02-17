@@ -8,7 +8,7 @@ import (
 	"github.com/samber/lo"
 )
 
-type Loader func(context.Context, ...ID) (NLSLayerList, error)
+type Loader func(context.Context, ...id.NLSLayerID) (NLSLayerList, error)
 type LoaderByScene func(context.Context, id.SceneID) (NLSLayerList, error)
 
 var WalkerSkipChildren = errors.New("LAYER_WALKER_SKIP_CHILDREN")
