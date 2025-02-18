@@ -23,34 +23,30 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
     <style>
-      .btn {
+      #btn {
         padding: 8px;
         border-radius: 4px;
         border: none;
-        background: #f0ffff;
+        background: #ffffff;
         color: #000000;
         cursor: pointer;
-        width: 200px;
-        height: 40px;
-        font-size: 16px 
+        width: 180px;
+        height: 70px;
+        font-size: 18px 
       }
-      .scaleBtn:active {
+      #btn:active {
         background: #dcdcdc;
       }
-      .button-container {
-      display: flex;        
+
+      #button-container {
+      display: flex;
       gap: 8px;           
       }
-      p {
-        text-align: center; 
-      }
-  
+
     </style>
-    <div id="wrapper">
     <div id= "button-container">
       <button id="btn">Terrain ON</button>
     </div>
-</div>
 
 <script>
 let terrain = false;
