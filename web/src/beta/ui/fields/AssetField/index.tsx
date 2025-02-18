@@ -6,7 +6,11 @@ import {
   IMAGE_FILE_TYPES,
   MODEL_FILE_TYPES
 } from "@reearth/beta/features/AssetsManager/constants";
-import { TextInput, Button } from "@reearth/beta/lib/reearth-ui";
+import {
+  TextInput,
+  Button,
+  TextInputProps
+} from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -22,7 +26,7 @@ export type AssetFieldProps = CommonFieldProps & {
   assetsTypes?: AcceptedAssetsTypes;
   placeholder?: string;
   onChange?: (value: string | undefined, name: string | undefined) => void;
-};
+} & Pick<TextInputProps, "disabled" | "appearance">;
 
 const AssetField: FC<AssetFieldProps> = ({
   title,
@@ -31,6 +35,8 @@ const AssetField: FC<AssetFieldProps> = ({
   inputMethod,
   assetsTypes,
   placeholder,
+  disabled,
+  appearance,
   onChange
 }) => {
   const t = useT();
@@ -91,6 +97,8 @@ const AssetField: FC<AssetFieldProps> = ({
         <TextInput
           value={currentValue}
           onBlur={handleChange}
+          disabled={disabled}
+          appearance={appearance}
           placeholder={placeholder ?? t("Not set")}
         />
         {inputMethod === "asset" && (
@@ -100,12 +108,14 @@ const AssetField: FC<AssetFieldProps> = ({
               size="small"
               title={t("Choose")}
               onClick={handleClick}
+              disabled={disabled}
               extendWidth
             />
             <Button
               icon={"uploadSimple"}
               size="small"
               title={t("Upload")}
+              disabled={disabled}
               onClick={handleFileUpload}
               extendWidth
             />

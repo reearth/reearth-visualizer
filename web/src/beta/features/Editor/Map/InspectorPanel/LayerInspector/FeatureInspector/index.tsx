@@ -55,6 +55,8 @@ const FeatureData: FC<Props> = ({
   const t = useT();
   const theme = useTheme();
   const [fields, setFields] = useState<FieldProp[]>([]);
+  const [initialFields, setInitialFields] = useState<FieldProp[]>([]);
+  const [editMode, setEditMode] = useState(false);
 
   // Initialize collapsed state from localStorage
   const initialCollapsedStates = useMemo(() => {
@@ -104,7 +106,6 @@ const FeatureData: FC<Props> = ({
         const bIndex = parseInt(b.value.split("_")[1]);
         return aIndex - bIndex;
       });
-
     const fieldArray = sortedValues.map(({ key, value }) => ({
       id: key,
       type: value.replace(/_\d+$/, ""),
@@ -113,6 +114,7 @@ const FeatureData: FC<Props> = ({
     }));
 
     setFields(fieldArray);
+    setInitialFields(fieldArray);
   }, [layer?.sketch?.customPropertySchema, selectedFeature?.properties]);
 
   const handleSubmit = useCallback(() => {
@@ -129,6 +131,7 @@ const FeatureData: FC<Props> = ({
       geometry: selectedFeature.geometry,
       properties: newProperties
     });
+    setEditMode(false);
   }, [
     layer?.id,
     fields,
@@ -175,6 +178,15 @@ const FeatureData: FC<Props> = ({
       properties: newProperties
     });
   }, [selectedFeature, sketchFeature?.id, layer?.id, onGeoJsonFeatureUpdate]);
+
+  const handleEditCustomProperties = useCallback(() => {
+    setEditMode(true);
+  }, []);
+
+  const handleCancelEditCustomProperties = useCallback(() => {
+    setEditMode(false);
+    setFields(initialFields);
+  }, [initialFields]);
 
   return (
     <Wrapper>
@@ -225,17 +237,41 @@ const FeatureData: FC<Props> = ({
         >
           <FieldsWrapper>
             {fields.map((f) => (
-              <FieldComponent field={f} key={f.id} setFields={setFields} />
-            ))}
-            {fields.length > 0 && (
-              <Button
-                extendWidth
-                icon="return"
-                title={t("Save & Apply")}
-                size="small"
-                onClick={handleSubmit}
+              <FieldComponent
+                field={f}
+                key={f.id}
+                setFields={setFields}
+                editMode={editMode}
               />
-            )}
+            ))}
+            <SketchFeatureButtons>
+              {fields.length > 0 &&
+                (editMode ? (
+                  <>
+                    <Button
+                      onClick={handleCancelEditCustomProperties}
+                      size="small"
+                      icon="close"
+                      extendWidth
+                    />
+                    <Button
+                      extendWidth
+                      icon="check"
+                      size="small"
+                      appearance="primary"
+                      onClick={handleSubmit}
+                    />
+                  </>
+                ) : (
+                  <Button
+                    onClick={handleEditCustomProperties}
+                    size="small"
+                    icon="pencilSimple"
+                    title={t("Edit")}
+                    extendWidth
+                  />
+                ))}
+            </SketchFeatureButtons>
           </FieldsWrapper>
           {fields.length === 0 && (
             <Typography size="body" color={theme.content.weak}>

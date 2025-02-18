@@ -154,17 +154,6 @@ export default ({
     []
   );
 
-  const [customPropertySchemaShown, setCustomPropertySchemaShown] =
-    useState(false);
-  const openCustomPropertySchema = useCallback(
-    () => setCustomPropertySchemaShown(true),
-    []
-  );
-  const closeCustomPropertySchema = useCallback(
-    () => setCustomPropertySchemaShown(false),
-    []
-  );
-
   // devices - not in use
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const handleDeviceChange = useCallback(
@@ -190,8 +179,5 @@ export default ({
     closeSketchLayerCreator,
     selectedDevice,
     handleDeviceChange,
-    customPropertySchemaShown,
-    openCustomPropertySchema,
-    closeCustomPropertySchema
   };
 };
