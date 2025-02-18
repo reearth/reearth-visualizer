@@ -36,10 +36,17 @@ const fontWeightOptions = [
 
 type Props = {
   value: Typography | undefined;
+  disabled?: boolean;
+  appearance?: "readonly";
   onChange: (value: Typography | undefined) => void;
 };
 
-const TypographyInput: FC<Props> = ({ value, onChange }) => {
+const TypographyInput: FC<Props> = ({
+  value,
+  disabled,
+  appearance,
+  onChange
+}) => {
   const t = useT();
   return (
     <Wrapper>
@@ -48,11 +55,15 @@ const TypographyInput: FC<Props> = ({ value, onChange }) => {
           options={fontFamilyOptions}
           value={value?.fontFamily}
           onChange={(v) => onChange?.({ ...value, fontFamily: v as string })}
+          disabled={disabled}
+          appearance={appearance}
         />
       </PropertyItem>
       <PropertyItem title={t("font size")}>
         <NumberInput
           value={value?.fontSize}
+          disabled={disabled}
+          appearance={appearance}
           onChange={(v) => onChange?.({ ...value, fontSize: v })}
         />
       </PropertyItem>
@@ -60,6 +71,8 @@ const TypographyInput: FC<Props> = ({ value, onChange }) => {
         <Selector
           options={fontWeightOptions}
           value={value?.fontWeight}
+          disabled={disabled}
+          appearance={appearance}
           onChange={(v) =>
             onChange?.({
               ...value,
@@ -71,12 +84,16 @@ const TypographyInput: FC<Props> = ({ value, onChange }) => {
       <PropertyItem title={t("font color")}>
         <ColorInput
           value={value?.color as string}
+          disabled={disabled}
+          appearance={appearance}
           onChange={(v) => onChange?.({ ...value, color: v })}
         />
       </PropertyItem>
       <PropertyItem title={t("italic")}>
         <BooleanSelectorField
           value={value?.italic}
+          disabled={disabled}
+          appearance={appearance}
           onChange={(v) => onChange?.({ ...value, italic: v })}
         />
       </PropertyItem>

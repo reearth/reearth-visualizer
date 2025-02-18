@@ -9,7 +9,6 @@ import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
-import SketchLayerEditor from "./Map/SketchLayerEditor";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
 import Story from "./Story";
@@ -54,12 +53,6 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerAdd,
     sketchLayerCreatorShown,
     closeSketchLayerCreator,
-    customPropertySchemaShown,
-    closeCustomPropertySchema,
-    layerStyles,
-    layers,
-    layerId,
-    handleCustomPropertySchemaUpdate,
     handleCoreAPIReady
   } = useHooks({ sceneId, tab, projectId });
 
@@ -131,15 +124,6 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           onSubmit={handleLayerAdd}
           sceneId={sceneId}
           onClose={closeSketchLayerCreator}
-          layerStyles={layerStyles}
-        />
-      )}
-      {customPropertySchemaShown && (
-        <SketchLayerEditor
-          layers={layers}
-          layerId={layerId}
-          onClose={closeCustomPropertySchema}
-          onCustomPropertySchemaUpdate={handleCustomPropertySchemaUpdate}
         />
       )}
       <CursorStatus />

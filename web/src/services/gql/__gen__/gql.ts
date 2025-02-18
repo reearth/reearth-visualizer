@@ -43,6 +43,8 @@ const documents = {
     "\n  mutation UpdateNLSLayers($input: UpdateNLSLayersInput!) {\n    updateNLSLayers(input: $input) {\n      layers {\n        id\n      }\n    }\n  }\n": types.UpdateNlsLayersDocument,
     "\n  mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {\n    removeNLSLayer(input: $input) {\n      layerId\n    }\n  }\n": types.RemoveNlsLayerDocument,
     "\n  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {\n    updateCustomProperties(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.UpdateCustomPropertiesDocument,
+    "\n  mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {\n    changeCustomPropertyTitle(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.ChangeCustomPropertyTitleDocument,
+    "\n  mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {\n    removeCustomProperty(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.RemoveCustomPropertyDocument,
     "\n  mutation AddStyle($input: AddStyleInput!) {\n    addStyle(input: $input) {\n      style {\n        id\n        name\n      }\n    }\n  }\n": types.AddStyleDocument,
     "\n  mutation UpdateStyle($input: UpdateStyleInput!) {\n    updateStyle(input: $input) {\n      style {\n        id\n        name\n      }\n    }\n  }\n": types.UpdateStyleDocument,
     "\n  mutation RemoveStyle($input: RemoveStyleInput!) {\n    removeStyle(input: $input) {\n      styleId\n    }\n  }\n": types.RemoveStyleDocument,
@@ -232,6 +234,14 @@ export function gql(source: "\n  mutation RemoveNLSLayer($input: RemoveNLSLayerI
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {\n    updateCustomProperties(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {\n    updateCustomProperties(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {\n    changeCustomPropertyTitle(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {\n    changeCustomPropertyTitle(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {\n    removeCustomProperty(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {\n    removeCustomProperty(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

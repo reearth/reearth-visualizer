@@ -6,10 +6,16 @@ import { FC } from "react";
 type Props = {
   expression?: string;
   disabled?: boolean;
+  editMode?: boolean;
   onUpdate?: (expression: string) => void;
 };
 
-const ExpressionTab: FC<Props> = ({ expression, disabled, onUpdate }) => {
+const ExpressionTab: FC<Props> = ({
+  expression,
+  disabled,
+  editMode,
+  onUpdate
+}) => {
   const t = useT();
 
   return (
@@ -28,6 +34,8 @@ const ExpressionTab: FC<Props> = ({ expression, disabled, onUpdate }) => {
           <TextInput
             value={expression ?? ""}
             onBlur={onUpdate}
+            disabled={!editMode}
+            appearance={!editMode ? "readonly" : undefined}
             placeholder={t("${your property name}")}
           />
         </>

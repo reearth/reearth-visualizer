@@ -1,4 +1,5 @@
 export const PRESET_PLUGIN_COMMON_STYLE = `<style>
+
   body,
   h2,
   h3 {
