@@ -11,25 +11,34 @@ type UpdateRoleModalProps = {
   member: TeamMember;
   visible: boolean;
   onClose: () => void;
+  meRole: Role | undefined;
 };
 
 const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
   workspace,
   member,
   visible,
-  onClose
+  onClose,
+  meRole
 }) => {
   const t = useT();
 
-  const roleOptions = useMemo(
-    () => [
-      { value: "READER", label: t("READER") },
-      { value: "WRITER", label: t("WRITER") },
-      { value: "MAINTAINER", label: t("MAINTAINER") },
-      { value: "OWNER", label: t("OWNER") }
-    ],
-    [t]
-  );
+  const roleOptions = useMemo(() => {
+    if (meRole === "OWNER") {
+      return [
+        { value: "READER", label: t("READER") },
+        { value: "WRITER", label: t("WRITER") },
+        { value: "MAINTAINER", label: t("MAINTAINER") },
+        { value: "OWNER", label: t("OWNER") }
+      ];
+    } else if (meRole === "MAINTAINER") {
+      return [
+        { value: "READER", label: t("READER") },
+        { value: "WRITER", label: t("WRITER") },
+        { value: "MAINTAINER", label: t("MAINTAINER") }
+      ];
+    } else return [];
+  }, [meRole, t]);
 
   const [localRole, setLocalRole] = useState(member.role);
 

@@ -1,6 +1,7 @@
 import { Button, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
-import { useWorkspaceFetcher } from "@reearth/services/api";
-import { TeamMember } from "@reearth/services/gql";
+import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
+import { config } from "@reearth/services/config";
+import { Role, TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -18,6 +19,12 @@ type Props = { currentWorkspace?: Workspace };
 const Members: FC<Props> = ({ currentWorkspace }) => {
   const { workspace } = useWorkspaceFetcher().useWorkspaceQuery(
     currentWorkspace?.id
+  );
+  const { me } = useMeFetcher().useMeQuery();
+  const meId = me?.id;
+  const meRole = useMemo(
+    () => workspace?.members.find((m) => m.userId === meId)?.role,
+    [workspace, meId]
   );
   const t = useT();
 
@@ -75,16 +82,17 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           />
         </Search>
         <div>
-          <Button
-            title={t("New member")}
-            appearance="primary"
-            icon="memberAdd"
-            onClick={() => setAddMemberModalVisible(true)}
-          />
+          {(meRole === Role.Owner || meRole === Role.Maintainer) && (
+            <Button
+              title={t("New member")}
+              appearance="primary"
+              icon="memberAdd"
+              onClick={() => setAddMemberModalVisible(true)}
+            />
+          )}
         </div>
       </HeaderWrapper>
       <Table>
-        <TableHeaderCell />
         <TableHeaderCell>{t("User Name")}</TableHeaderCell>
         <TableHeaderCell>{t("Email")}</TableHeaderCell>
         <TableHeaderCell>{t("Role")}</TableHeaderCell>
@@ -100,6 +108,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               currentWorkSpace={workspace}
               setUpdateRoleModalVisible={setUpdateRoleModalVisible}
               setUpdatingRoleMember={setUpdatingRoleMember}
+              meRole={meRole}
             />
           ))
         ) : (
@@ -116,9 +125,10 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           member={updatingRoleMember}
           visible
           onClose={() => setUpdateRoleModalVisible(false)}
+          meRole={meRole}
         />
       )}
-      {addMemberModalVisible && (
+      {addMemberModalVisible && !config()?.disableWorkspaceManagement && (
         <AddMemberModal
           workspace={workspace}
           visible
@@ -170,19 +180,13 @@ const TemplateWrapper = styled("div")({
 const Table = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px 32px`,
   display: "grid",
-  gridTemplateColumns: "0.1fr 2.9fr 4fr 2fr 1fr",
+  gridTemplateColumns: "3fr 4fr 2fr 1fr",
   gap: theme.spacing.small,
   color: theme.content.main,
   height: `${theme.fonts.lineHeights.h4}px`
 }));
 
 const TableHeaderCell = styled("div")(({ theme }) => ({
-  "&:nth-of-type(2)": {
-    transform: "translateX(-24px)"
-  },
-  "&:nth-of-type(3)": {
-    transform: "translateX(2px)"
-  },
   fontSize: theme.fonts.sizes.body,
   color: theme.content.weak,
   lineHeight: `${theme.fonts.lineHeights.body}px`,

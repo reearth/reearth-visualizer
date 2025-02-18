@@ -1,6 +1,7 @@
 import { Button, PopupMenu, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useWorkspaceFetcher } from "@reearth/services/api";
-import { TeamMember } from "@reearth/services/gql";
+import { config } from "@reearth/services/config";
+import { Role, TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -11,11 +12,13 @@ const ListItem: FC<{
   currentWorkSpace: Workspace;
   setUpdateRoleModalVisible: (visible: boolean) => void;
   setUpdatingRoleMember: (member: TeamMember) => void;
+  meRole: string | undefined;
 }> = ({
   member,
   currentWorkSpace,
   setUpdateRoleModalVisible,
-  setUpdatingRoleMember
+  setUpdatingRoleMember,
+  meRole
 }) => {
   const t = useT();
   const memerRoleTranslation = {
@@ -44,14 +47,16 @@ const ListItem: FC<{
 
   return (
     <StyledListItem>
-      <Avatar>
-        <Typography size="body">
-          {member.user?.name.charAt(0).toUpperCase()}
-        </Typography>
-      </Avatar>
-      <TypographyWrapper>
-        <Typography size="body">{member.user?.name}</Typography>
-      </TypographyWrapper>
+      <UserWrapper>
+        <Avatar>
+          <Typography size="body">
+            {member.user?.name.charAt(0).toUpperCase()}
+          </Typography>
+        </Avatar>
+        <TypographyWrapper>
+          <Typography size="body">{member.user?.name}</Typography>
+        </TypographyWrapper>
+      </UserWrapper>
       <TypographyWrapper>
         <Typography size="body">{member.user?.email}</Typography>
       </TypographyWrapper>
@@ -60,28 +65,37 @@ const ListItem: FC<{
           {memerRoleTranslation[member.role].toLowerCase()}
         </TypographyOfMember>
       </TypographyWrapper>
+
       <TypographyWrapper>
-        <PopupMenu
-          label={
-            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
-          }
-          menu={[
-            {
-              icon: "arrowLeftRight",
-              id: "changeRole",
-              title: t("Change Role"),
-              disabled: member.role === "OWNER",
-              onClick: () => handleUpdateRole(member)
-            },
-            {
-              icon: "close",
-              id: "remove",
-              title: t("Remove"),
-              disabled: member.role === "OWNER",
-              onClick: () => handleRemoveMember(member.userId)
+        {!config()?.disableWorkspaceManagement && (
+          <PopupMenu
+            label={
+              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
             }
-          ]}
-        />
+            menu={[
+              {
+                icon: "arrowLeftRight",
+                id: "changeRole",
+                title: t("Change Role"),
+                disabled:
+                  meRole === Role.Reader ||
+                  meRole === Role.Writer ||
+                  (meRole === Role.Maintainer && member.role === Role.Owner),
+                onClick: () => handleUpdateRole(member)
+              },
+              {
+                icon: "close",
+                id: "remove",
+                title: t("Remove"),
+                disabled:
+                  meRole === Role.Reader ||
+                  meRole === Role.Writer ||
+                  (meRole === Role.Maintainer && member.role === Role.Owner),
+                onClick: () => handleRemoveMember(member.userId)
+              }
+            ]}
+          />
+        )}
       </TypographyWrapper>
     </StyledListItem>
   );
@@ -91,7 +105,7 @@ export default ListItem;
 
 const StyledListItem = styled("div")(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "0.1fr 2.9fr 4fr 2fr 1fr",
+  gridTemplateColumns: "3.0fr 4fr 2fr 1fr",
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
   alignItems: "center",
   borderRadius: theme.radius.normal,
@@ -111,6 +125,12 @@ const Avatar = styled("div")(({ theme }) => ({
 const TypographyWrapper = styled("div")(() => ({
   overflow: "hidden",
   textOverflow: "ellipsis"
+}));
+
+const UserWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: `${theme.spacing.small}px`
 }));
 
 const TypographyOfMember = styled(Typography)(() => ({
