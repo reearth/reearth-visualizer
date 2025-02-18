@@ -27,6 +27,8 @@ import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { playbackControl } from "./timeline/playbackControl";
 import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
+import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle.ts";
+import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain.ts";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -58,7 +60,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "viewerScene",
     title: "Viewer & Scene Settings",
-    plugins: []
+    plugins: [enableShadowStyle,enableTerrain]
   },
   {
     id: "layers",
