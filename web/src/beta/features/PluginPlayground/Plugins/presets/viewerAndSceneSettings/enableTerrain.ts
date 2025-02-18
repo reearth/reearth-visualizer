@@ -20,37 +20,40 @@ extensions:
 const widgetFile: FileType = {
   id: "enable-terrain",
   title: "enable-terrain.js",
-  sourceCode: `reearth.ui.show(\`
+  sourceCode: `// ================================
+// Define Plug-in UI side (iframe)
+// ================================
+
+reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-    <style>
-      #btn {
-        padding: 8px;
-        border-radius: 4px;
-        border: none;
-        background: #ffffff;
-        color: #000000;
-        cursor: pointer;
-        width: 180px;
-        height: 70px;
-        font-size: 18px 
-      }
-      #btn:active {
-        background: #dcdcdc;
-      }
+<style>
+  #btn {
+    padding: 8px;
+    border-radius: 4px;
+    bborder: 1px solid #808080;
+    background: #ffffff;
+    color: #000000;
+    cursor: pointer;
+    width: 180px;
+    height: 70px;
+    font-size: 18px 
+  }
+  #btn:active {
+    background: #dcdcdc;
+  }
 
-      #button-container {
-      display: flex;
-      gap: 8px;           
-      }
+  #button-container {
+  display: flex;
+  gap: 8px;           
+  }
+</style>
 
-    </style>
-    <div id= "button-container">
-      <button id="btn">Terrain ON</button>
-    </div>
+<div id= "button-container">
+  <button id="btn">Terrain ON</button>
+</div>
 
 <script>
 let terrain = false;
-let intervalId;
 const terrainBtn = document.getElementById("btn");
 
 // Set up an event listener
@@ -61,14 +64,16 @@ terrainBtn.addEventListener("click", () => {
     terrainBtn.textContent = "Terrain OFF";
       parent.postMessage({ action: "activateTerrain" }, "*");
   } else {
-    // Stop sending messages
     terrainBtn.textContent = "Terrain ON";
     parent.postMessage({ action: "deactivateTerrain" }, "*");
   }
 });
-
 </script>
     \`);
+
+// ================================
+// Define Re:Earth(Web Assembly) side
+// ================================
 
 reearth.camera.flyTo(
   // Define the camera position to be moved to
@@ -86,7 +91,7 @@ reearth.camera.flyTo(
   }
 );
 
-
+// Listen for messages from the UI to trigger terrain
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "activateTerrain") {
@@ -113,8 +118,7 @@ reearth.extension.on("message", (msg) => {
       },
     });
   }
-});
-`
+});`
 };
 
 export const enableTerrain: PluginType = {
