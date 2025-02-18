@@ -52,7 +52,7 @@ export default () => {
     updateFileTitle,
     updateFileSourceCode,
     deleteFile,
-    handleFileUpload,
+    handlePluginImport,
     handlePluginDownload,
     encodeAndSharePlugin,
     sharedPlugin
@@ -150,7 +150,7 @@ export default () => {
             addFile={addFile}
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
-            handleFileUpload={handleFileUpload}
+            handlePluginImport={handlePluginImport}
             sharedPlugin={sharedPlugin}
             handlePluginDownload={handlePluginDownload}
           />
@@ -167,7 +167,7 @@ export default () => {
       addFile,
       updateFileTitle,
       deleteFile,
-      handleFileUpload,
+      handlePluginImport,
       sharedPlugin,
       handlePluginDownload
     ]
