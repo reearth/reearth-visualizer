@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.3.3 - 2025-02-18
+
+### Web
+
+#### 🚀 Features
+
+- Plugin playground presets - create timeline playback control ([#1421](https://github.com/reearth/reearth-visualizer/pull/1421)) [`e40c69`](https://github.com/reearth/reearth-visualizer/commit/e40c69)
+- Add time series czml example ([#1417](https://github.com/reearth/reearth-visualizer/pull/1417)) [`1ad2fc`](https://github.com/reearth/reearth-visualizer/commit/1ad2fc)
+- Plugin playground preset plugin: filter features with style ([#1409](https://github.com/reearth/reearth-visualizer/pull/1409)) [`6b3a04`](https://github.com/reearth/reearth-visualizer/commit/6b3a04)
+- Add extension settings panel to plugin playground ([#1383](https://github.com/reearth/reearth-visualizer/pull/1383)) [`165b14`](https://github.com/reearth/reearth-visualizer/commit/165b14)
+- Add layer override api example ([#1381](https://github.com/reearth/reearth-visualizer/pull/1381)) [`c7b5ac`](https://github.com/reearth/reearth-visualizer/commit/c7b5ac)
+- Add zoom in out example ([#1413](https://github.com/reearth/reearth-visualizer/pull/1413)) [`cb1ffe`](https://github.com/reearth/reearth-visualizer/commit/cb1ffe)
+- Plugin playground presets - camera position ([#1412](https://github.com/reearth/reearth-visualizer/pull/1412)) [`13b788`](https://github.com/reearth/reearth-visualizer/commit/13b788)
+- Add rotate camera example ([#1411](https://github.com/reearth/reearth-visualizer/pull/1411)) [`a553eb`](https://github.com/reearth/reearth-visualizer/commit/a553eb)
+
+#### 🔧 Bug Fixes
+
+- Plugin playground presets - add an hidden overflow to plugin titles ([#1406](https://github.com/reearth/reearth-visualizer/pull/1406)) [`c767b7`](https://github.com/reearth/reearth-visualizer/commit/c767b7)
+
+#### ✨ Refactor
+
+- Sketch layer and the custom properties ([#1414](https://github.com/reearth/reearth-visualizer/pull/1414)) [`fe572c`](https://github.com/reearth/reearth-visualizer/commit/fe572c)
+- Update type on plugin api spatial id ([#1422](https://github.com/reearth/reearth-visualizer/pull/1422)) [`f43e77`](https://github.com/reearth/reearth-visualizer/commit/f43e77)
+- Support import plugin with zip file instead of single js file in plugin playground ([#1420](https://github.com/reearth/reearth-visualizer/pull/1420)) [`29c766`](https://github.com/reearth/reearth-visualizer/commit/29c766)
+- Support edit mode on sketch custom property value editor &amp; style editor ([#1419](https://github.com/reearth/reearth-visualizer/pull/1419)) [`49554d`](https://github.com/reearth/reearth-visualizer/commit/49554d)
+- Plugin playground presets - camera position ([#1415](https://github.com/reearth/reearth-visualizer/pull/1415)) [`98a374`](https://github.com/reearth/reearth-visualizer/commit/98a374)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.3.3 ([#1433](https://github.com/reearth/reearth-visualizer/pull/1433)) [`21a7eb`](https://github.com/reearth/reearth-visualizer/commit/21a7eb)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Attempt to fix golang lint file error ([#1431](https://github.com/reearth/reearth-visualizer/pull/1431)) [`ec8b31`](https://github.com/reearth/reearth-visualizer/commit/ec8b31)
+
+#### Miscellaneous Tasks
+
+- Removed unnecessary initializer ([#1432](https://github.com/reearth/reearth-visualizer/pull/1432)) [`455246`](https://github.com/reearth/reearth-visualizer/commit/455246)
+- Refactoring e2e test code ([#1393](https://github.com/reearth/reearth-visualizer/pull/1393)) [`6c9312`](https://github.com/reearth/reearth-visualizer/commit/6c9312)
+
 ## 1.0.0-beta.3.2 - 2025-02-05
 
 ### Web
