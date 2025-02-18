@@ -4,7 +4,7 @@ import {
   GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
-import { SketchEditingFeature } from "@reearth/core";
+import { Geometry, SketchEditingFeature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -33,6 +33,12 @@ type Props = {
   onSketchGeometryEditApply?: () => void;
 };
 
+export type InspectorFeature = {
+  id: string;
+  geometry: Geometry | undefined;
+  properties: any;
+};
+
 const InspectorTabs: FC<Props> = ({
   layers,
   layerStyles,
@@ -46,7 +52,7 @@ const InspectorTabs: FC<Props> = ({
   onSketchGeometryEditCancel,
   onSketchGeometryEditApply
 }) => {
-  const selectedFeature = useMemo(() => {
+  const selectedFeature: InspectorFeature | undefined = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
       selectedLayer.layer?.config?.data?.type === "3dtiles" ||

@@ -6,21 +6,23 @@ import {
   GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
-import { Geometry } from "@reearth/core";
+import {
+  generateNewPropertiesWithPhotoOverlay,
+  getPhotoOverlayValue
+} from "@reearth/beta/utils/sketch";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import JsonView from "react18-json-view";
 
+import { InspectorFeature } from "..";
+
 import { FieldComponent } from "./CustomPropertField";
+import PhotoOverlayCollapse from "./PhotoOverlayCollapse";
 
 type Props = {
-  selectedFeature?: {
-    id: string;
-    geometry: Geometry | undefined;
-    properties: Record<string, ValueProp>;
-  };
+  selectedFeature?: InspectorFeature;
   layer?: NLSLayer;
   sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
@@ -57,11 +59,13 @@ const FeatureData: FC<Props> = ({
   // Initialize collapsed state from localStorage
   const initialCollapsedStates = useMemo(() => {
     const storedStates: Record<string, boolean> = {};
-    ["customProperties", "geometry", "properties"].forEach((id) => {
-      storedStates[id] =
-        localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) ===
-        "true";
-    });
+    ["customProperties", "photoOverlay", "geometry", "properties"].forEach(
+      (id) => {
+        storedStates[id] =
+          localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) ===
+          "true";
+      }
+    );
     return storedStates;
   }, []);
 
@@ -151,6 +155,27 @@ const FeatureData: FC<Props> = ({
     });
   }, [layer?.id, sketchFeature?.id, onGeoJsonFeatureDelete]);
 
+  const handleDeletePhotoOverlay = useCallback(() => {
+    if (
+      !selectedFeature ||
+      !getPhotoOverlayValue(selectedFeature?.properties) ||
+      !sketchFeature?.id ||
+      !layer?.id
+    )
+      return;
+
+    const newProperties = generateNewPropertiesWithPhotoOverlay(
+      selectedFeature?.properties,
+      undefined
+    );
+    onGeoJsonFeatureUpdate?.({
+      layerId: layer?.id,
+      featureId: sketchFeature?.id,
+      geometry: selectedFeature.geometry,
+      properties: newProperties
+    });
+  }, [selectedFeature, sketchFeature?.id, layer?.id, onGeoJsonFeatureUpdate]);
+
   return (
     <Wrapper>
       {!!layer?.isSketch && sketchFeature?.id && (
@@ -218,6 +243,17 @@ const FeatureData: FC<Props> = ({
             </Typography>
           )}
         </Collapse>
+      )}
+      {!!layer?.isSketch && selectedFeature && sketchFeature && (
+        <PhotoOverlayCollapse
+          layerId={layer.id}
+          dataFeatureId={sketchFeature.id}
+          feature={selectedFeature}
+          value={selectedFeature?.properties?.["_reearth"]?.["photoOverlay"]}
+          collapsedStates={collapsedStates}
+          onCollapse={handleCollapse}
+          onDelete={handleDeletePhotoOverlay}
+        />
       )}
       <Collapse
         title={t("Geometry")}

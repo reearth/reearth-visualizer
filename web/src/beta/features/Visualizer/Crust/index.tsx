@@ -13,6 +13,7 @@ import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
+import PhotoOverlay from "./PhotoOverlay";
 import Plugins, {
   type ExternalPluginProps,
   ModalContainer,
@@ -361,6 +362,7 @@ export default function Crust({
           renderBlock={renderBlock}
         />
       )}
+      <PhotoOverlay selectedFeature={selectedComputedFeature} mapRef={mapRef} />
     </Plugins>
   );
 }
