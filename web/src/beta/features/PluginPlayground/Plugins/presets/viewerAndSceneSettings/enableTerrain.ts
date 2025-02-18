@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "enable-terrain-reearth-yml",
@@ -19,7 +20,60 @@ extensions:
 const widgetFile: FileType = {
   id: "enable-terrain",
   title: "enable-terrain.js",
-  sourceCode: `
+  sourceCode: `reearth.ui.show(\`
+${PRESET_PLUGIN_COMMON_STYLE}
+    <style>
+      .btn {
+        padding: 8px;
+        border-radius: 4px;
+        border: none;
+        background: #f0ffff;
+        color: #000000;
+        cursor: pointer;
+        width: 200px;
+        height: 40px;
+        font-size: 16px 
+      }
+      .scaleBtn:active {
+        background: #dcdcdc;
+      }
+      .button-container {
+      display: flex;        
+      gap: 8px;           
+      }
+      p {
+        text-align: center; 
+      }
+  
+    </style>
+    <div id="wrapper">
+    <div id= "button-container">
+      <button id="btn">Terrain ON</button>
+    </div>
+</div>
+
+<script>
+let terrain = false;
+let intervalId;
+const terrainBtn = document.getElementById("btn");
+
+// Set up an event listener
+terrainBtn.addEventListener("click", () => {
+  // Toggle the terrain state
+  terrain = !terrain;
+  if (terrain) {
+    terrainBtn.textContent = "Terrain OFF";
+      parent.postMessage({ action: "activateTerrain" }, "*");
+  } else {
+    // Stop sending messages
+    terrainBtn.textContent = "Terrain ON";
+    parent.postMessage({ action: "deactivateTerrain" }, "*");
+  }
+});
+
+</script>
+    \`);
+
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
@@ -36,22 +90,35 @@ reearth.camera.flyTo(
   }
 );
 
-reearth.viewer.overrideProperty({
-  // Enable Cesium World Terrain
-  terrain: {
-    enabled: true,
-  },
-  // Enable the function for buildings not to lift off the ground
-  globe: {
-    depthTestAgainstTerrain: true,
-  },
-  // Enable shadows
-  scene: {
-    shadow: {
-      enabled: true,
-    },
-  },
-});`
+
+reearth.extension.on("message", (msg) => {
+  const { action } = msg;
+  if (action === "activateTerrain") {
+    reearth.viewer.overrideProperty({
+      // Enable Cesium World Terrain
+      terrain: {
+        enabled: true,
+      },
+      // Enable the function for buildings not to lift off the ground
+      globe: {
+        depthTestAgainstTerrain: true,
+      },
+      // Enable shadows
+    });
+  } else if (action === "deactivateTerrain") {
+    reearth.viewer.overrideProperty({
+      // Disable Cesium World Terrain
+      terrain: {
+        enabled: false,
+      },
+      // Disable the function for buildings not to lift off the ground
+      globe: {
+        depthTestAgainstTerrain: false,
+      },
+    });
+  }
+});
+`
 };
 
 export const enableTerrain: PluginType = {
