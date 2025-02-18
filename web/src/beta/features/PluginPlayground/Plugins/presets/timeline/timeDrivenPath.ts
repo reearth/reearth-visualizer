@@ -21,7 +21,7 @@ const widgetFile: FileType = {
   title: "timeDrivenPath.js",
   sourceCode: ` // This example shows how to move a 3D model linearly along time
 
-// Define the CZML data that includes time series information  
+// Define the CZML data that includes time series information
 const czmlData = [
   {
     id: "document",
