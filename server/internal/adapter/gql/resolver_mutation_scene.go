@@ -17,7 +17,7 @@ func (r *mutationResolver) CreateScene(ctx context.Context, input gqlmodel.Creat
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Scene.Create(ctx, pid, getOperator(ctx))
+	res, err := usecases(ctx).Scene.Create(ctx, pid, getOperator(ctx), false)
 	if err != nil {
 		return nil, err
 	}
