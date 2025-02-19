@@ -30,7 +30,6 @@ type UploadFileParam struct {
 type LinkPropertyValueParam struct {
 	PropertyID id.PropertyID
 	Pointer    *property.Pointer
-	Links      *property.Links
 }
 
 type UnlinkPropertyValueParam struct {
@@ -83,7 +82,6 @@ var (
 type Property interface {
 	Fetch(context.Context, []id.PropertyID, *usecase.Operator) ([]*property.Property, error)
 	FetchSchema(context.Context, []id.PropertySchemaID, *usecase.Operator) ([]*property.Schema, error)
-	FetchMerged(context.Context, *id.PropertyID, *id.PropertyID, *id.DatasetID, *usecase.Operator) (*property.Merged, error)
 	UpdateValue(context.Context, UpdatePropertyValueParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error)
 	RemoveField(context.Context, RemovePropertyFieldParam, *usecase.Operator) (*property.Property, error)
 	LinkValue(context.Context, LinkPropertyValueParam, *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error)

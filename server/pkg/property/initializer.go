@@ -230,10 +230,9 @@ func (p *InitializerGroup) PropertyGroup(parentItem SchemaGroupID) (*Group, erro
 }
 
 type InitializerField struct {
-	Field FieldID            `json:"field"`
-	Type  ValueType          `json:"type"`
-	Value *Value             `json:"value"`
-	Links []*InitializerLink `json:"links"`
+	Field FieldID   `json:"field"`
+	Type  ValueType `json:"type"`
+	Value *Value    `json:"value"`
 }
 
 func (p *InitializerField) Clone() *InitializerField {
@@ -241,19 +240,10 @@ func (p *InitializerField) Clone() *InitializerField {
 		return nil
 	}
 
-	var links []*InitializerLink
-	if p.Links != nil {
-		links = make([]*InitializerLink, 0, len(p.Links))
-		for _, l := range p.Links {
-			links = append(links, l.Clone())
-		}
-	}
-
 	return &InitializerField{
 		Field: p.Field,
 		Type:  p.Type,
 		Value: p.Value.Clone(),
-		Links: links,
 	}
 }
 
@@ -262,50 +252,7 @@ func (p *InitializerField) PropertyField() *Field {
 		return nil
 	}
 
-	var plinks *Links
-	if p.Links != nil {
-		links := make([]*Link, 0, len(p.Links))
-		for _, l := range p.Links {
-			link := l.PropertyLink()
-			if link != nil {
-				links = append(links, link)
-			}
-		}
-		plinks = NewLinks(links)
-	}
-
 	return NewField(p.Field).
 		Value(NewOptionalValue(p.Type, p.Value.Clone())).
-		Links(plinks).
 		Build()
-}
-
-type InitializerLink struct {
-	Dataset *DatasetID      `json:"dataset"`
-	Schema  DatasetSchemaID `json:"schema"`
-	Field   DatasetFieldID  `json:"field"`
-}
-
-func (p *InitializerLink) Clone() *InitializerLink {
-	if p == nil {
-		return nil
-	}
-
-	return &InitializerLink{
-		Dataset: p.Dataset.CloneRef(),
-		Schema:  p.Schema,
-		Field:   p.Field,
-	}
-}
-
-func (p *InitializerLink) PropertyLink() *Link {
-	if p == nil {
-		return nil
-	}
-
-	if p.Dataset == nil {
-		return NewLinkFieldOnly(p.Schema, p.Field)
-	}
-
-	return NewLink(*p.Dataset, p.Schema, p.Field)
 }

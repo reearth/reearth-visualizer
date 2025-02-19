@@ -38,6 +38,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			// get sub from context
 			au := adapter.GetAuthInfo(ctx)
+
 			if u, ok := ctx.Value(contextUser).(string); ok {
 				userID = u
 			}
@@ -68,6 +69,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 					}
 				}
 
+				// This is from the past, and normally, it is retrieved via Sub. During testing, it is retrieved from the userID in the header.
 				if u == nil && userID != "" {
 					if userID2, err := accountdomain.UserIDFrom(userID); err == nil {
 						u2, err := multiUser.FetchByID(ctx, user.IDList{userID2})
