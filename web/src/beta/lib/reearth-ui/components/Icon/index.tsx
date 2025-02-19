@@ -1,3 +1,4 @@
+import Tooltip from "@reearth/beta/ui/components/Tooltip";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
@@ -11,6 +12,9 @@ export type IconProps = {
   color?: string;
   className?: string;
   ariaLabel?: string;
+  showToolTip?: boolean;
+  tooltipText?: string;
+  offset?: number;
 };
 
 export const Icon: FC<IconProps> = ({
@@ -18,7 +22,10 @@ export const Icon: FC<IconProps> = ({
   size = "normal",
   color,
   className,
-  ariaLabel
+  ariaLabel,
+  showToolTip = false,
+  tooltipText,
+  offset
 }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
@@ -37,7 +44,7 @@ export const Icon: FC<IconProps> = ({
     `;
   }, [icon, theme]);
 
-  return SvgIcon ? (
+  const IconComponent = SvgIcon ? (
     <SvgIcon
       size={size}
       color={color}
@@ -45,4 +52,16 @@ export const Icon: FC<IconProps> = ({
       aria-label={ariaLabel}
     />
   ) : null;
+
+  return showToolTip && IconComponent ? (
+    <Tooltip
+      type="custom"
+      text={tooltipText}
+      icon={icon}
+      offset={offset}
+      iconColor={color}
+    />
+  ) : (
+    IconComponent
+  );
 };

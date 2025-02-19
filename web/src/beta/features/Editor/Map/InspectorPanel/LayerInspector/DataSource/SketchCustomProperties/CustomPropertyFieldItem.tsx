@@ -59,6 +59,8 @@ const CustomPropertyFieldItem: FC<CustomPropertyFieldItemProps> = ({
                   icon="dotsThreeVertical"
                   size="small"
                   appearance="simple"
+                  showToolTip
+                  tooltipText={t("More")}
                 />
               }
               placement="bottom-start"

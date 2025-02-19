@@ -86,6 +86,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "dataSource",
         icon: "data",
+        showToolTip: true,
+        tooltipText: "Layer",
         children: selectedLayer?.layer && (
           <DataSource selectedLayer={selectedLayer.layer} />
         )
@@ -93,6 +95,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "featureInspector",
         icon: "mapPin",
+        showToolTip: true,
+        tooltipText: "Feature",
         children: selectedFeature && (
           <FeatureInspector
             selectedFeature={selectedFeature}
@@ -113,6 +117,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "layerStyle",
         icon: "palette",
+        showToolTip: true,
+        tooltipText: "Layer style",
         children: selectedLayer?.layer?.id && (
           <LayerStyle
             layerStyles={layerStyles}
@@ -126,6 +132,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "infoboxSettings",
         icon: "article",
+        showToolTip: true,
+        tooltipText: "Infobox",
         children: selectedLayer?.layer?.id && (
           <InfoboxSettings
             selectedLayerId={selectedLayer.layer.id}
@@ -135,19 +143,19 @@ const InspectorTabs: FC<Props> = ({
       }
     ],
     [
-      selectedLayer,
+      selectedLayer?.layer,
       selectedFeature,
       selectedSketchFeature,
+      sketchEditingFeature?.feature?.id,
+      onGeoJsonFeatureUpdate,
+      onGeoJsonFeatureDelete,
+      onSketchGeometryEditStart,
+      onSketchGeometryEditApply,
+      onSketchGeometryEditCancel,
       layerStyles,
       layers,
       sceneId,
-      onLayerConfigUpdate,
-      onGeoJsonFeatureUpdate,
-      onGeoJsonFeatureDelete,
-      sketchEditingFeature,
-      onSketchGeometryEditStart,
-      onSketchGeometryEditCancel,
-      onSketchGeometryEditApply
+      onLayerConfigUpdate
     ]
   );
 

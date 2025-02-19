@@ -72,6 +72,8 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
             disabled={!selectedLayer || !selectedLayerStyleId}
             onClick={handleApplyLayerStyle}
             stopPropagationOnClick
+            showToolTip
+            tooltipText={t("Assign style")}
           />
         </ActionsWrapper>
         <StylesWrapper>

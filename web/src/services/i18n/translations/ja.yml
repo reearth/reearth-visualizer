@@ -130,6 +130,7 @@ Format: 形式
 Custom property schema: カスタムプロパティスキーマ
 Edit Field: フィールド編集
 Delete Field: フィールド削除
+More: もっと
 Edit Custom Property: カスタムプロパティ編集
 New Custom Property: 新しいカスタムプロパティ
 Submit: 反映
@@ -157,6 +158,8 @@ Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
+Fly to: に飛ぶ
+Visibility: 可視性
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -172,6 +175,8 @@ font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
+Assign style: スタイルの割り当て
+New style: 新しいスタイル
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -238,6 +243,8 @@ Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
 Project settings: プロジェクト設定
 Plugin: プラグイン
+Dashboard: ダッシュボード
+Editor: エディタ
 Unknown: 不明
 Asset management: アセット管理
 Map: マップ
@@ -369,6 +376,8 @@ Clear Formatting: 書式をクリア
 Loading...: ロード中...
 Please select: 選択してください
 'Sort:': '並び替え:'
+Grid Layout: グリッドレイアウト
+List Layout: リストのレイアウト
 Version: バージョン
 This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 Wrong file format: 誤ったファイル形式

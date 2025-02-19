@@ -1,7 +1,7 @@
 import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback } from "react";
 
-import { IconName, Icon } from "../Icon";
+import { IconName, Icon, IconProps } from "../Icon";
 
 export type IconButtonProps = {
   icon: IconName;
@@ -15,7 +15,7 @@ export type IconButtonProps = {
   iconColor?: string;
   stopPropagationOnClick?: boolean;
   onClick?: (e: MouseEvent) => void;
-};
+} & Pick<IconProps, "showToolTip" | "tooltipText">;
 
 export const IconButton: FC<IconButtonProps> = ({
   appearance = "secondary",
@@ -28,7 +28,9 @@ export const IconButton: FC<IconButtonProps> = ({
   iconColor,
   stopPropagationOnClick,
   onClick,
-  hasBorder
+  hasBorder,
+  showToolTip,
+  tooltipText
 }) => {
   const handleClick = useCallback(
     (e: MouseEvent) => {
@@ -50,7 +52,13 @@ export const IconButton: FC<IconButtonProps> = ({
       onClick={handleClick}
       hasBorder={hasBorder}
     >
-      <Icon icon={icon} color={iconColor} />
+      <Icon
+        icon={icon}
+        color={iconColor}
+        offset={14}
+        showToolTip={showToolTip}
+        tooltipText={tooltipText}
+      />
     </StyledButton>
   );
 };

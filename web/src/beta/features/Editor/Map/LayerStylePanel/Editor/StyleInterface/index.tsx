@@ -109,6 +109,8 @@ const StyleInterface: FC<LayerStyleProps> = ({
       appearanceTypes.map((type) => ({
         id: type,
         icon: appearanceTypeIcons[type],
+        showToolTip: true,
+        tooltipText: `${type === "model" ? "3D " : ""}${type.charAt(0).toUpperCase()}${type.slice(1).toLowerCase()} style`,
         children: (
           <StylePanel
             key={type}

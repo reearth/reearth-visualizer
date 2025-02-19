@@ -8,9 +8,10 @@ import {
   useDismiss,
   useInteractions,
   useHover,
-  safePolygon
+  safePolygon,
+  arrow
 } from "@floating-ui/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { PopupProps } from ".";
 
@@ -25,6 +26,7 @@ const usePopover = ({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
+  const arrowRef = useRef(null);
 
   const open = isControlled ? controlledOpen : uncontrolledOpen;
 
@@ -50,7 +52,8 @@ const usePopover = ({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "start"
       }),
-      shift(shiftProps)
+      shift(shiftProps),
+      arrow({ element: arrowRef })
     ]
   });
 
@@ -69,6 +72,7 @@ const usePopover = ({
     () => ({
       open,
       setOpen,
+      arrowRef,
       ...interactions,
       ...data
     }),
