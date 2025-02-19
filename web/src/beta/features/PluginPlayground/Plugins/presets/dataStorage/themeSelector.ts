@@ -23,7 +23,11 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    .theme-content {
+  html{
+    width: 300px;
+  }
+  
+  .theme-content {
     transition: all 0.3s ease;
     border-radius: 4px;
     overflow: hidden;
