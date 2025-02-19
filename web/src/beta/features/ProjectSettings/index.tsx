@@ -14,12 +14,18 @@ import { useMemo } from "react";
 import CursorStatus from "../CursorStatus";
 
 import useHooks from "./hooks";
+import AssetSettings from "./innerPages/AssetSetting";
 import GeneralSettings from "./innerPages/GeneralSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 
-export type ProjectSettingsTab = "general" | "story" | "public" | "plugins";
+export type ProjectSettingsTab =
+  | "general"
+  | "story"
+  | "public"
+  | "plugins"
+  | "assets";
 
 type Props = {
   projectId: string;
@@ -65,6 +71,12 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         text: t("Story"),
         icon: "sidebar" as const,
         path: `/settings/projects/${projectId}/story`
+      },
+      {
+        id: "assets",
+        text: t("Assets"),
+        icon: "file" as const,
+        path: `/settings/projects/${projectId}/assets`
       },
       {
         id: "public",
@@ -149,6 +161,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               extensions={extensions}
             />
           )}
+          {tab === "assets" && project && <AssetSettings />}
         </Content>
       </MainSection>
       <CursorStatus />
