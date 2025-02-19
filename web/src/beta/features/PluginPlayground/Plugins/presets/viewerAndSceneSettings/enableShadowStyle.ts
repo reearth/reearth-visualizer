@@ -20,7 +20,9 @@ extensions:
 const widgetFile: FileType = {
   id: "enable-shadow-style",
   title: "enable-shadow-style.js",
-  sourceCode: `// ================================
+  sourceCode: `// This example shows how to activate the shadow style //
+
+// ================================
 // Define Plug-in UI side (iframe)
 // ================================
   

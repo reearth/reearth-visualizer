@@ -20,7 +20,9 @@ extensions:
 const widgetFile: FileType = {
   id: "enable-terrain",
   title: "enable-terrain.js",
-  sourceCode: `// ================================
+  sourceCode: `// This example shows how to activate the terrain //
+
+// ================================
 // Define Plug-in UI side (iframe)
 // ================================
 
