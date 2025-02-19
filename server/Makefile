@@ -20,6 +20,7 @@ help:
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Run the MongoDB database using Docker Compose"
 	@echo "  run-reset         Initialize the MongoDB data"
+	@echo "  run-clear-cache   Clear the golang cache"
 	@echo "  up-gcs            Run the fake-gcs-server using Docker Compose"
 	@echo "  down-gcs          Stop the fake-gcs-server using Docker Compose"
 	@echo "  gql               Generate GraphQL code include dataloader"
@@ -89,6 +90,9 @@ run-reset:
 	make run-db
 	make mockuser
 
+run-clear-cache:
+	go clean -cache -modcache -testcache -fuzzcache
+
 generate: dev-install
 	go generate ./...
 
@@ -109,4 +113,4 @@ schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
 
-.PHONY: lint test failcheck e2e build dev-install dev run-app run-db run-reset gql up-gcs down-gcs mockuser schematyper
+.PHONY: lint test failcheck e2e build dev-install dev run-app run-db run-reset run-clear-cache gql up-gcs down-gcs mockuser schematyper

@@ -157,41 +157,33 @@ func TestImportStory(t *testing.T) {
 	// expected
 	var expectedMap map[string]interface{}
 	err = json.Unmarshal([]byte(fmt.Sprintf(`{
-    "title": "",
-    "alias": "",
-    "pages": [
-        {
-            "title": "Untitled",
-            "blocks": [
-                {
-                    "pluginId": "reearth",
-                    "extensionId": "textStoryBlock"
-                },
-                {
-                    "pluginId": "reearth",
-                    "extensionId": "mdTextStoryBlock"
-                },
-                {
-                    "pluginId": "reearth",
-                    "extensionId": "imageStoryBlock"
-                }
-            ],
-            "swipeable": false,
-            "layersIds": null,
-            "layers": null
-        }
-    ],
-    "publishmentStatus": "",
-    "sceneId": "%s",
-    "panelPosition": "RIGHT",
-    "bgColor": "#b2efd8ff",
-    "isBasicAuthActive": false,
-    "basicAuthUsername": "",
-    "basicAuthPassword": "",
-    "publicTitle": "",
-    "publicDescription": "",
-    "publicImage": "",
-    "publicNoIndex": false
+  "alias": "",
+  "basicAuthPassword": "",
+  "basicAuthUsername": "",
+  "bgColor": "#b2efd8ff",
+  "enableGa": false,
+  "isBasicAuthActive": false,
+  "pages": [
+    {
+      "blocks": [
+        { "extensionId": "textStoryBlock", "pluginId": "reearth" },
+        { "extensionId": "mdTextStoryBlock", "pluginId": "reearth" },
+        { "extensionId": "imageStoryBlock", "pluginId": "reearth" }
+      ],
+      "layersIds": null,
+      "swipeable": false,
+      "title": "Untitled"
+    }
+  ],
+  "panelPosition": "RIGHT",
+  "publicDescription": "",
+  "publicImage": "",
+  "publicNoIndex": false,
+  "publicTitle": "",
+  "publishmentStatus": "",
+  "sceneId": "%s",
+  "title": "",
+  "trackingId": ""
 }`, scene.ID())), &expectedMap)
 	assert.NoError(t, err)
 	expectedJSON, err := json.Marshal(expectedMap)

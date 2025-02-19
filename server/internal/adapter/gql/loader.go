@@ -15,7 +15,6 @@ const (
 type Loaders struct {
 	usecases  interfaces.Container
 	Asset     *AssetLoader
-	Layer     *LayerLoader
 	Plugin    *PluginLoader
 	Policy    *PolicyLoader
 	Project   *ProjectLoader
@@ -27,9 +26,6 @@ type Loaders struct {
 
 type DataLoaders struct {
 	Asset          AssetDataLoader
-	LayerItem      LayerItemDataLoader
-	LayerGroup     LayerGroupDataLoader
-	Layer          LayerDataLoader
 	Plugin         PluginDataLoader
 	Policy         PolicyDataLoader
 	Project        ProjectDataLoader
@@ -47,7 +43,6 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 	return &Loaders{
 		usecases:  *usecases,
 		Asset:     NewAssetLoader(usecases.Asset),
-		Layer:     NewLayerLoader(usecases.Layer),
 		Plugin:    NewPluginLoader(usecases.Plugin),
 		Policy:    NewPolicyLoader(usecases.Policy),
 		Project:   NewProjectLoader(usecases.Project),
@@ -68,9 +63,6 @@ func (l Loaders) DataLoadersWith(ctx context.Context, enabled bool) *DataLoaders
 func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 	return &DataLoaders{
 		Asset:          l.Asset.DataLoader(ctx),
-		LayerItem:      l.Layer.ItemDataLoader(ctx),
-		LayerGroup:     l.Layer.GroupDataLoader(ctx),
-		Layer:          l.Layer.DataLoader(ctx),
 		Plugin:         l.Plugin.DataLoader(ctx),
 		Project:        l.Project.DataLoader(ctx),
 		Property:       l.Property.DataLoader(ctx),
@@ -84,9 +76,6 @@ func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 	return &DataLoaders{
 		Asset:          l.Asset.OrdinaryDataLoader(ctx),
-		LayerItem:      l.Layer.ItemOrdinaryDataLoader(ctx),
-		LayerGroup:     l.Layer.GroupOrdinaryDataLoader(ctx),
-		Layer:          l.Layer.OrdinaryDataLoader(ctx),
 		Plugin:         l.Plugin.OrdinaryDataLoader(ctx),
 		Project:        l.Project.OrdinaryDataLoader(ctx),
 		Property:       l.Property.OrdinaryDataLoader(ctx),

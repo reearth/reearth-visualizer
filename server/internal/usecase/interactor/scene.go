@@ -34,8 +34,6 @@ type Scene struct {
 	propertySchemaRepo repo.PropertySchema
 	projectRepo        repo.Project
 	pluginRepo         repo.Plugin
-	layerRepo          repo.Layer
-	datasetRepo        repo.Dataset
 	transaction        usecasex.Transaction
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
@@ -43,7 +41,6 @@ type Scene struct {
 	nlsLayerRepo       repo.NLSLayer
 	layerStyles        repo.Style
 	storytellingRepo   repo.Storytelling
-	tagRepo            repo.Tag
 }
 
 func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
@@ -53,8 +50,6 @@ func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 		propertySchemaRepo: r.PropertySchema,
 		projectRepo:        r.Project,
 		pluginRepo:         r.Plugin,
-		layerRepo:          r.Layer,
-		datasetRepo:        r.Dataset,
 		transaction:        r.Transaction,
 		file:               g.File,
 		pluginRegistry:     g.PluginRegistry,
@@ -62,7 +57,6 @@ func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 		nlsLayerRepo:       r.NLSLayer,
 		layerStyles:        r.Style,
 		storytellingRepo:   r.Storytelling,
-		tagRepo:            r.Tag,
 	}
 }
 
@@ -513,138 +507,6 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	return scene, nil
 }
 
-func (i *Scene) AddCluster(ctx context.Context, sceneID id.SceneID, name string, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	s, err := i.sceneRepo.FindByID(ctx, sceneID)
-	if err != nil {
-		return nil, nil, err
-	}
-	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
-		return nil, nil, err
-	}
-
-	prop, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sceneID).Build()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	cid := id.NewClusterID()
-	cluster, err := scene.NewCluster(cid, name, prop.ID())
-	if err != nil {
-		return nil, nil, err
-	}
-	s.Clusters().Add(cluster)
-
-	err = i.propertyRepo.Save(ctx, prop)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := i.sceneRepo.Save(ctx, s); err != nil {
-		return nil, nil, err
-	}
-
-	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	tx.Commit()
-	return s, cluster, nil
-}
-
-func (i *Scene) UpdateCluster(ctx context.Context, param interfaces.UpdateClusterParam, operator *usecase.Operator) (*scene.Scene, *scene.Cluster, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	s, err := i.sceneRepo.FindByID(ctx, param.SceneID)
-	if err != nil {
-		return nil, nil, err
-	}
-	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
-		return nil, nil, err
-	}
-
-	cluster := s.Clusters().Get(param.ClusterID)
-	if cluster == nil {
-		return nil, nil, rerror.ErrNotFound
-	}
-	if param.Name != nil {
-		cluster.Rename(*param.Name)
-	}
-	if param.PropertyID != nil {
-		cluster.UpdateProperty(*param.PropertyID)
-	}
-
-	if err := i.sceneRepo.Save(ctx, s); err != nil {
-		return nil, nil, err
-	}
-
-	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	tx.Commit()
-	return s, cluster, nil
-}
-
-func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID id.ClusterID, operator *usecase.Operator) (*scene.Scene, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	s, err := i.sceneRepo.FindByID(ctx, sceneID)
-	if err != nil {
-		return nil, err
-	}
-	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
-		return nil, err
-	}
-
-	s.Clusters().Remove(clusterID)
-
-	if err := i.sceneRepo.Save(ctx, s); err != nil {
-		return nil, err
-	}
-
-	err = updateProjectUpdatedAtByID(ctx, s.Project(), i.projectRepo)
-	if err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
-	return s, nil
-}
-
 func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter *zip.Writer) (*scene.Scene, map[string]interface{}, error) {
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
@@ -670,11 +532,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		story = (*storyList)[0]
 	}
 	sceneJSON, err := builder.New(
-		repo.LayerLoaderFrom(i.layerRepo),
 		repo.PropertyLoaderFrom(i.propertyRepo),
-		repo.DatasetGraphLoaderFrom(i.datasetRepo),
-		repo.TagLoaderFrom(i.tagRepo),
-		repo.TagSceneLoaderFrom(i.tagRepo, []id.SceneID{sceneID}),
 		repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
 		true,
 	).ForScene(sce).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).BuildResult(
@@ -882,13 +740,13 @@ func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.Plug
 	}
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, interfaces.ErrPluginNotFound
+			return nil, ErrPluginNotFound
 		}
 		return nil, err
 	}
 	extension := pr.Extension(eid)
 	if extension == nil {
-		return nil, interfaces.ErrExtensionNotFound
+		return nil, ErrExtensionNotFound
 	}
 	if extension.Type() != plugin.ExtensionTypeWidget {
 		return nil, interfaces.ErrExtensionTypeMustBeWidget

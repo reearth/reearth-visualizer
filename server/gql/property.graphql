@@ -85,7 +85,6 @@ type Property implements Node {
   schemaId: ID!
   items: [PropertyItem!]!
   schema: PropertySchema
-  layer: Layer
   merged: MergedProperty
 }
 

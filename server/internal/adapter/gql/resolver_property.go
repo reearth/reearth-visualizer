@@ -2,10 +2,8 @@ package gql
 
 import (
 	"context"
-	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/rerror"
 )
 
 func (r *Resolver) Property() PropertyResolver {
@@ -42,38 +40,7 @@ func (r *propertyResolver) Schema(ctx context.Context, obj *gqlmodel.Property) (
 	return dataloaders(ctx).PropertySchema.Load(obj.SchemaID)
 }
 
-func (r *propertyResolver) Layer(ctx context.Context, obj *gqlmodel.Property) (gqlmodel.Layer, error) {
-	l, err := loaders(ctx).Layer.FetchByProperty(ctx, obj.ID)
-	if err != nil || errors.Is(err, rerror.ErrNotFound) {
-		return nil, nil
-	}
-	return l, err
-}
-
 func (r *propertyResolver) Merged(ctx context.Context, obj *gqlmodel.Property) (*gqlmodel.MergedProperty, error) {
-	l, err := loaders(ctx).Layer.FetchByProperty(ctx, obj.ID)
-	if err != nil {
-		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	li, ok := l.(*gqlmodel.LayerItem)
-	if !ok {
-		return nil, nil
-	}
-	merged, err := r.LayerItem().Merged(ctx, li)
-	if err != nil {
-		return nil, err
-	}
-	if merged == nil {
-		return nil, nil
-	}
-	if merged.Property != nil && merged.Property.OriginalID != nil && *merged.Property.OriginalID == obj.ID {
-		return merged.Property, nil
-	} else if merged.Infobox != nil && merged.Infobox.Property != nil && merged.Infobox.Property.OriginalID != nil && *merged.Infobox.Property.OriginalID == obj.ID {
-		return merged.Infobox.Property, nil
-	}
 	return nil, nil
 }
 

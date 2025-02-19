@@ -17,7 +17,6 @@ type Scene struct {
 	plugins   *Plugins
 	updatedAt time.Time
 	property  PropertyID
-	clusters  *ClusterList
 	styles    *StyleList
 }
 
@@ -102,13 +101,5 @@ func (s *Scene) Properties() []PropertyID {
 	ids := []PropertyID{s.property}
 	ids = append(ids, s.plugins.Properties()...)
 	ids = append(ids, s.widgets.Properties()...)
-	ids = append(ids, s.clusters.Properties()...)
 	return ids
-}
-
-func (s *Scene) Clusters() *ClusterList {
-	if s == nil {
-		return nil
-	}
-	return s.clusters
 }

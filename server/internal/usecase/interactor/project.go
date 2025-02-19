@@ -32,45 +32,37 @@ import (
 type Project struct {
 	common
 	commonSceneLock
-	assetRepo         repo.Asset
-	projectRepo       repo.Project
-	storytellingRepo  repo.Storytelling
-	userRepo          accountrepo.User
-	workspaceRepo     accountrepo.Workspace
-	sceneRepo         repo.Scene
-	propertyRepo      repo.Property
-	layerRepo         repo.Layer
-	datasetRepo       repo.Dataset
-	datasetSchemaRepo repo.DatasetSchema
-	tagRepo           repo.Tag
-	transaction       usecasex.Transaction
-	policyRepo        repo.Policy
-	file              gateway.File
-	nlsLayerRepo      repo.NLSLayer
-	layerStyles       repo.Style
-	pluginRepo        repo.Plugin
+	assetRepo        repo.Asset
+	projectRepo      repo.Project
+	storytellingRepo repo.Storytelling
+	userRepo         accountrepo.User
+	workspaceRepo    accountrepo.Workspace
+	sceneRepo        repo.Scene
+	propertyRepo     repo.Property
+	transaction      usecasex.Transaction
+	policyRepo       repo.Policy
+	file             gateway.File
+	nlsLayerRepo     repo.NLSLayer
+	layerStyles      repo.Style
+	pluginRepo       repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
-		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
-		assetRepo:         r.Asset,
-		projectRepo:       r.Project,
-		storytellingRepo:  r.Storytelling,
-		userRepo:          r.User,
-		workspaceRepo:     r.Workspace,
-		sceneRepo:         r.Scene,
-		propertyRepo:      r.Property,
-		layerRepo:         r.Layer,
-		datasetRepo:       r.Dataset,
-		datasetSchemaRepo: r.DatasetSchema,
-		tagRepo:           r.Tag,
-		transaction:       r.Transaction,
-		policyRepo:        r.Policy,
-		file:              gr.File,
-		nlsLayerRepo:      r.NLSLayer,
-		layerStyles:       r.Style,
-		pluginRepo:        r.Plugin,
+		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
+		assetRepo:        r.Asset,
+		projectRepo:      r.Project,
+		storytellingRepo: r.Storytelling,
+		userRepo:         r.User,
+		workspaceRepo:    r.Workspace,
+		sceneRepo:        r.Scene,
+		propertyRepo:     r.Property,
+		transaction:      r.Transaction,
+		policyRepo:       r.Policy,
+		file:             gr.File,
+		nlsLayerRepo:     r.NLSLayer,
+		layerStyles:      r.Style,
+		pluginRepo:       r.Plugin,
 	}
 }
 
@@ -425,7 +417,6 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		r, w := io.Pipe()
 
 		// Build
-		scenes := []id.SceneID{sceneID}
 		go func() {
 			var err error
 
@@ -434,11 +425,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			}()
 
 			err = builder.New(
-				repo.LayerLoaderFrom(i.layerRepo),
 				repo.PropertyLoaderFrom(i.propertyRepo),
-				repo.DatasetGraphLoaderFrom(i.datasetRepo),
-				repo.TagLoaderFrom(i.tagRepo),
-				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
 				false,
 			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
@@ -492,12 +479,9 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 
 	deleter := ProjectDeleter{
 		SceneDeleter: SceneDeleter{
-			Scene:         i.sceneRepo,
-			SceneLock:     i.sceneLockRepo,
-			Layer:         i.layerRepo,
-			Property:      i.propertyRepo,
-			Dataset:       i.datasetRepo,
-			DatasetSchema: i.datasetSchemaRepo,
+			Scene:     i.sceneRepo,
+			SceneLock: i.sceneLockRepo,
+			Property:  i.propertyRepo,
 		},
 		File:    i.file,
 		Project: i.projectRepo,
