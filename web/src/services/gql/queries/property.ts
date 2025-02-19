@@ -23,10 +23,6 @@ export const UPDATE_PROPERTY_VALUE = gql(`
       property {
         id
         ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
       }
     }
   }
@@ -47,10 +43,6 @@ export const ADD_PROPERTY_ITEM = gql(`
       property {
         id
         ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
       }
     }
   }
@@ -64,10 +56,6 @@ export const REMOVE_PROPERTY_ITEM = gql(`
       property {
         id
         ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
       }
     }
   }
@@ -92,10 +80,6 @@ export const MOVE_PROPERTY_ITEM = gql(`
       property {
         id
         ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
       }
     }
   }
