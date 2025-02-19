@@ -29,6 +29,7 @@ import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
 import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
+import { showLabel } from "./viewerAndSceneSettings/showLabel";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
@@ -60,7 +61,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "viewerScene",
     title: "Viewer & Scene Settings",
-    plugins: [enableShadowStyle,enableTerrain]
+    plugins: [enableShadowStyle,enableTerrain,showLabel]
   },
   {
     id: "layers",
