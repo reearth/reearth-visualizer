@@ -1,4 +1,5 @@
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
@@ -28,6 +29,8 @@ const ExtensionSettings: FC<Props> = ({
   fieldValues,
   setFieldValues
 }): ReactNode => {
+  const t = useT();
+
   const ymlFile =
     selectedPlugin.files &&
     selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
@@ -58,7 +61,7 @@ const ExtensionSettings: FC<Props> = ({
     return (
       <Wrapper>
         <ErrorMessage>
-          This plugin does not have a valid reearth.yml file.
+          {t("This plugin does not have a valid reearth.yml file.")}
         </ErrorMessage>
       </Wrapper>
     );
@@ -96,7 +99,7 @@ const ExtensionSettings: FC<Props> = ({
     </Wrapper>
   ) : (
     <Wrapper>
-      <ErrorMessage>No valid schema defined.</ErrorMessage>
+      <ErrorMessage>{t("No valid schema defined.")}</ErrorMessage>
     </Wrapper>
   );
 };

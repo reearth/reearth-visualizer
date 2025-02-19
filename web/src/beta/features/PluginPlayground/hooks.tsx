@@ -1,5 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { MapRef } from "@reearth/core";
+import { useT, useLang, useChangeLanguage } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
@@ -17,6 +18,13 @@ export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
   const [enabledVisualizer, setEnabledVisualizer] = useState(true);
   const [showStoryPanel, setShowStoryPanel] = useState(false);
+
+  const t = useT();
+  const lang = useLang();
+  const changeLanguage = useChangeLanguage();
+  const viewerName = t("Viewer");
+  const codeName = t("Code");
+  const pluginsName = t("Plugins");
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
   const resetVisualizer = useCallback(() => {
@@ -108,7 +116,7 @@ export default () => {
     () => [
       {
         id: "viewer",
-        name: "Viewer",
+        name: viewerName,
         children: (
           <Viewer
             enabledVisualizer={enabledVisualizer}
@@ -121,7 +129,7 @@ export default () => {
         )
       }
     ],
-    [enabledVisualizer, layers, showStoryPanel, story, widgets]
+    [enabledVisualizer, layers, showStoryPanel, story, viewerName, widgets]
   );
 
   const LayersPanel: FC = () => (
@@ -138,7 +146,7 @@ export default () => {
     () => [
       {
         id: "plugins",
-        name: "Plugins",
+        name: pluginsName,
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
@@ -158,18 +166,19 @@ export default () => {
       }
     ],
     [
-      encodeAndSharePlugin,
-      presetPlugins,
-      selectedPlugin,
-      selectPlugin,
-      selectedFile,
-      selectFile,
       addFile,
-      updateFileTitle,
       deleteFile,
+      encodeAndSharePlugin,
       handleFileUpload,
+      handlePluginDownload,
+      pluginsName,
+      presetPlugins,
+      selectedFile,
+      selectedPlugin,
+      selectFile,
+      selectPlugin,
       sharedPlugin,
-      handlePluginDownload
+      updateFileTitle
     ]
   );
 
@@ -177,7 +186,7 @@ export default () => {
     () => [
       {
         id: "code",
-        name: "Code",
+        name: codeName,
         children: (
           <Code
             fileTitle={selectedFile.title}
@@ -193,11 +202,13 @@ export default () => {
         )
       }
     ],
-    [selectedFile, executeCode, updateFileSourceCode]
+    [codeName, executeCode, selectedFile, updateFileSourceCode]
   );
 
   const SettingsPanel: FC = () => (
     <SettingsList
+      changeLanguage={changeLanguage}
+      lang={lang}
       infoboxEnabled={infoboxEnabled}
       setInfoboxEnabled={setInfoboxEnabled}
       setShowStoryPanel={setShowStoryPanel}

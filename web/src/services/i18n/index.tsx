@@ -7,3 +7,4 @@ export { localesWithLabel } from "./locale";
 
 export const useT = () => useTranslation().t;
 export const useLang = () => useTranslation().i18n.language;
+export const useChangeLanguage = () => useTranslation().i18n.changeLanguage;

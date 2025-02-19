@@ -1,5 +1,6 @@
 import { Collapse, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/styled";
 import { FC, useState } from "react";
 
@@ -38,6 +39,7 @@ const Plugins: FC<Props> = ({
   sharedPlugin,
   handlePluginDownload
 }) => {
+  const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
   const handlePluginShare = (): void => {
@@ -112,7 +114,7 @@ const Plugins: FC<Props> = ({
                 collapsed={category.id !== "custom"}
                 iconPosition="left"
                 size="small"
-                title={category.title}
+                title={t(category.title)}
                 noPadding
               >
                 <PluginSubList>
@@ -128,7 +130,7 @@ const Plugins: FC<Props> = ({
                   ) : (
                     <EmptyTip>
                       <Typography size="body" color="weak" trait="italic">
-                        No plugins
+                        {t("No plugins")}
                       </Typography>
                     </EmptyTip>
                   )}
