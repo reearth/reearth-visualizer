@@ -57,8 +57,3 @@ func (b *FieldBuilder) Type(t ValueType) *FieldBuilder {
 	}
 	return b
 }
-
-func (b *FieldBuilder) Links(l *Links) *FieldBuilder {
-	b.p.links = l.Clone()
-	return b
-}

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearthx/usecasex"
@@ -16,13 +15,7 @@ import (
 // go test -v -run TestCoreSupportGetAssets ./e2e/...
 
 func TestCoreSupportGetAssets(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, r, _ := ServerAndRepos(t, baseSeeder)
 
 	teamId := wID.String()
 
@@ -129,15 +122,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 // go test -v -run TestAssociateProjectGetAssets ./e2e/...
 
 func TestAssociateProjectGetAssets(t *testing.T) {
-
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-
-	e, _, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, _, _ := ServerAndRepos(t, baseSeeder)
 	teamId := wID.String()
 
 	// Create projectA >>> test.png

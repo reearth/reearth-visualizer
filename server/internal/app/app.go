@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-	http2 "github.com/reearth/reearth/server/internal/adapter/http"
 
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
@@ -132,8 +131,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	apiPrivate := api.Group("", privateCache)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
-	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
-	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {

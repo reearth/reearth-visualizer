@@ -3,7 +3,6 @@ package property
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/stretchr/testify/assert"
 )
@@ -285,62 +284,6 @@ func TestValue_Cast(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.Cast(tt.args.t))
-		})
-	}
-}
-
-func TestValueFromDataset(t *testing.T) {
-	tests := []struct {
-		Name     string
-		Input    *dataset.Value
-		Expected struct {
-			V  *Value
-			Ok bool
-		}
-	}{
-		{
-			Name: "latlng",
-			Input: dataset.ValueTypeLatLng.ValueFrom(dataset.LatLng{
-				Lat: 10,
-				Lng: 12,
-			}),
-			Expected: struct {
-				V  *Value
-				Ok bool
-			}{
-				V: ValueTypeLatLng.ValueFrom(LatLng{
-					Lat: 10,
-					Lng: 12,
-				}),
-				Ok: true,
-			},
-		},
-		{
-			Name: "LatLngHeight",
-			Input: dataset.ValueTypeLatLngHeight.ValueFrom(dataset.LatLngHeight{
-				Lat:    10,
-				Lng:    12,
-				Height: 14,
-			}),
-			Expected: struct {
-				V  *Value
-				Ok bool
-			}{
-				V: ValueTypeLatLngHeight.ValueFrom(LatLngHeight{
-					Lat:    10,
-					Lng:    12,
-					Height: 14,
-				}),
-				Ok: true,
-			},
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, tc.Expected.V, valueFromDataset(tc.Input))
 		})
 	}
 }

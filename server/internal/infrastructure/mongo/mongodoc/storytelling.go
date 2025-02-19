@@ -31,6 +31,8 @@ type StorytellingDocument struct {
 	PublicDescription string
 	PublicImage       string
 	PublicNoIndex     bool
+	EnableGa          bool
+	TrackingID        string
 }
 
 type PageDocument struct {
@@ -82,6 +84,8 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
+		EnableGa:          s.EnableGa(),
+		TrackingID:        s.TrackingID(),
 	}, sId
 }
 
@@ -190,6 +194,8 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
 		PublicNoIndex(d.PublicNoIndex).
+		EnableGa(d.EnableGa).
+		TrackingID(d.TrackingID).
 		Build()
 	if err != nil {
 		return nil, err
