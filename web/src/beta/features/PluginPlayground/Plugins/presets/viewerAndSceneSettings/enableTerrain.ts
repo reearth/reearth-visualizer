@@ -69,12 +69,13 @@ terrainBtn.addEventListener("click", () => {
   }
 });
 </script>
-    \`);
+\`);
 
 // ================================
 // Define Re:Earth(Web Assembly) side
 // ================================
 
+// Move the camera to a specified position
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
@@ -100,11 +101,10 @@ reearth.extension.on("message", (msg) => {
       terrain: {
         enabled: true,
       },
-      // Enable the function for buildings not to lift off the ground
+      // Enable the function for features not to lift off the ground
       globe: {
         depthTestAgainstTerrain: true,
       },
-      // Enable shadows
     });
   } else if (action === "deactivateTerrain") {
     reearth.viewer.overrideProperty({
@@ -112,7 +112,7 @@ reearth.extension.on("message", (msg) => {
       terrain: {
         enabled: false,
       },
-      // Disable the function for buildings not to lift off the ground
+      // Disable the function for features not to lift off the ground
       globe: {
         depthTestAgainstTerrain: false,
       },
