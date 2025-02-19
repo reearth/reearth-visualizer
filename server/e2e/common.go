@@ -32,7 +32,15 @@ import (
 	"golang.org/x/text/language"
 )
 
-var fr *gateway.File
+var (
+	fr                 *gateway.File
+	disabledAuthConfig = &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+)
 
 type Seeder func(ctx context.Context, r *repo.Container, f gateway.File) error
 
@@ -127,96 +135,51 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 }
 
 func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	cfg := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
 	repos, _ := initRepos(t, true, seeder)
-	e, _, _ := StartGQLServerWithRepos(t, cfg, repos)
+	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()
 }
 
-func initServer(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container) {
-	gateways := initGateway()
-	return app.NewServer(ctx, &app.ServerConfig{
-		Config:       cfg,
-		Repos:        repos,
-		AccountRepos: repos.AccountRepos(),
-		Gateways:     gateways,
-		Debug:        true,
-	}), gateways
-}
-
-func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container) {
-	t.Helper()
-
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
-	ctx := context.Background()
-
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("server failed to listen: %v", err)
-	}
-
-	srv, gateways := initServer(cfg, repos, ctx)
-
-	ch := make(chan error)
-	go func() {
-		if err := srv.Serve(l); err != http.ErrServerClosed {
-			ch <- err
-		}
-		close(ch)
-	}()
-	t.Cleanup(func() {
-		if err := srv.Shutdown(context.Background()); err != nil {
-			t.Fatalf("server shutdown: %v", err)
-		}
-
-		if err := <-ch; err != nil {
-			t.Fatalf("server serve: %v", err)
-		}
-	})
-	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways
-}
-
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	repos, _ := initRepos(t, useMongo, seeder)
-	e, gateways := StartServerWithRepos(t, cfg, repos)
+	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
 }
 
-func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
-	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
-	return e
+func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	return startServer(t, disabledAuthConfig, true, seeder)
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
+	e, _, _ := startServer(t, disabledAuthConfig, true, seeder)
+	return e
+}
+
+func ServerPingTest(t *testing.T) *httpexpect.Expect {
+	e, _, _ := startServer(t, disabledAuthConfig, false, nil)
+	return e
+}
+
+func ServerMockTest(t *testing.T) *httpexpect.Expect {
 	c := &config.Config{
-		Origins: []string{"https://example.com"},
+		Dev:      true,
+		MockAuth: true,
+		Origins:  []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
 	}
-	return StartServer(t, c, true, seeder)
+	e, _, _ := startServer(t, c, true, nil)
+	return e
 }
 
 func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	return StartServer(t, c, true,
+	e, _, _ := startServer(t, disabledAuthConfig, true,
 		func(ctx context.Context, r *repo.Container, f gateway.File) error {
 			return baseSeederWithLang(ctx, r, f, lang)
 		},
 	)
+	return e
 }
 
 type GraphQLRequest struct {

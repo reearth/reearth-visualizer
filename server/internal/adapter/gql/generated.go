@@ -919,6 +919,7 @@ type ComplexityRoot struct {
 		BasicAuthUsername func(childComplexity int) int
 		BgColor           func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
+		EnableGa          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		IsBasicAuthActive func(childComplexity int) int
 		Pages             func(childComplexity int) int
@@ -934,6 +935,7 @@ type ComplexityRoot struct {
 		Scene             func(childComplexity int) int
 		SceneID           func(childComplexity int) int
 		Title             func(childComplexity int) int
+		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 	}
 
@@ -5798,6 +5800,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Story.CreatedAt(childComplexity), true
 
+	case "Story.enableGa":
+		if e.complexity.Story.EnableGa == nil {
+			break
+		}
+
+		return e.complexity.Story.EnableGa(childComplexity), true
+
 	case "Story.id":
 		if e.complexity.Story.ID == nil {
 			break
@@ -5902,6 +5911,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Story.Title(childComplexity), true
+
+	case "Story.trackingId":
+		if e.complexity.Story.TrackingID == nil {
+			break
+		}
+
+		return e.complexity.Story.TrackingID(childComplexity), true
 
 	case "Story.updatedAt":
 		if e.complexity.Story.UpdatedAt == nil {
@@ -8085,7 +8101,6 @@ extend type Mutation {
   scene: Scene
   panelPosition: Position!
   bgColor: String
-
   isBasicAuthActive: Boolean!
   basicAuthUsername: String!
   basicAuthPassword: String!
@@ -8093,6 +8108,8 @@ extend type Mutation {
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type StoryPage implements Node {
@@ -8143,7 +8160,7 @@ input UpdateStoryInput {
   panelPosition: Position
   bgColor: String
 
-#  publishment
+  # Publishment
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
@@ -8153,6 +8170,10 @@ input UpdateStoryInput {
   publicImage: String
   publicNoIndex: Boolean
   deletePublicImage: Boolean
+
+  # Google Analytics
+  enableGa: Boolean
+  trackingId: String
 }
 
 input MoveStoryInput {
@@ -8307,7 +8328,6 @@ extend type Mutation {
 
   addPageLayer(input: PageLayerInput!): StoryPagePayload!
   removePageLayer(input: PageLayerInput!): StoryPagePayload!
-
 
   createStoryBlock(input: CreateStoryBlockInput!): CreateStoryBlockPayload!
   moveStoryBlock(input: MoveStoryBlockInput!): MoveStoryBlockPayload!
@@ -13932,6 +13952,10 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -14302,6 +14326,10 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -22525,6 +22553,10 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -22773,6 +22805,10 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -22993,6 +23029,10 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -38821,6 +38861,10 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -39755,6 +39799,10 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -41870,6 +41918,94 @@ func (ec *executionContext) fieldContext_Story_publicNoIndex(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Story_enableGa(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_enableGa(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableGa, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_enableGa(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_trackingId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_trackingId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrackingID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_trackingId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _StoryBlock_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_StoryBlock_id(ctx, field)
 	if err != nil {
@@ -43071,6 +43207,10 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -43159,6 +43299,10 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Story_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Story_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -51753,7 +51897,7 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51865,6 +52009,20 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 				return it, err
 			}
 			it.DeletePublicImage = data
+		case "enableGa":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableGa"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EnableGa = data
+		case "trackingId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trackingId"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TrackingID = data
 		}
 	}
 
@@ -61313,6 +61471,16 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "publicNoIndex":
 			out.Values[i] = ec._Story_publicNoIndex(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "enableGa":
+			out.Values[i] = ec._Story_enableGa(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "trackingId":
+			out.Values[i] = ec._Story_trackingId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

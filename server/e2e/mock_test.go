@@ -3,21 +3,12 @@ package e2e
 import (
 	"net/http"
 	"testing"
-
-	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 // go test -v -run TestMockAuth ./e2e/...
 
 func TestMockAuth(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Dev:      true,
-		MockAuth: true,
-		Origins:  []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, true, nil)
+	e := ServerMockTest(t)
 
 	requestBody := map[string]interface{}{
 		"email":    "mock@example.com",
