@@ -30,7 +30,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   #btn {
     padding: 8px;
     border-radius: 4px;
-    bborder: 1px solid #808080;
+    border: 1px solid #808080;
     background: #ffffff;
     color: #000000;
     cursor: pointer;
