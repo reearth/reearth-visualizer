@@ -1,7 +1,6 @@
 import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
-import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
 import {
@@ -16,9 +15,9 @@ import {
   TextareaField,
   TimePointField,
   TwinInputField,
-  SliderField,
-  RangeField
+  SliderField
 } from "..";
+import RangeSliderField from "../RangeSliderField";
 import { SpacingValues } from "../SpacingField";
 
 import useHooks from "./hooks";
@@ -41,7 +40,6 @@ const PropertyField: FC<Props> = ({
   onFlyTo
 }) => {
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
-  const t = useT();
   const value = useMemo(
     () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
     [field?.mergedValue, field?.value, schema.defaultValue]
@@ -185,16 +183,14 @@ const PropertyField: FC<Props> = ({
           onFlyTo={onFlyTo}
         />
       ) : schema.type === "array" && schema.ui === "range" ? (
-        <RangeField
+        <RangeSliderField
           key={schema.id}
           title={schema.name}
-          values={value as number[]}
-          unit={schema.suffix}
+          value={value as number[]}
           min={schema.min}
           max={schema.max}
-          content={[t("min"), t("max")]}
           description={schema.description}
-          onBlur={handleChange}
+          onChange={handleChange}
         />
       ) : (
         <p key={schema.id}>{schema.name} field</p>
