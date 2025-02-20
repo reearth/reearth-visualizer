@@ -256,46 +256,9 @@ Viewer: ビューアー
 Plugins: プラグイン
 Extension Settings: 拡張機能の設定
 No plugins: プラグインがありません
+Default: デフォルト
 Show Story Panel: ストーリーパネルを表示
-Custom: カスタム
-User Interface: ユーザーインターフェース
-Communication: 通信
-Viewer & Scene Settings: ビューアー＆シーン設定
-Manage Layer: レイヤー管理
-Manage Layer Style: レイヤースタイル管理
-Timeline: タイムライン
-Data Storage: データストレージ
-Extension: 拡張機能
-Sketch: スケッチ
-My Plugin: マイプラグイン
-Responsive Panel: レスポンシブパネル
-Sidebar: サイドバー
-Header: ヘッダー
-UI Extension Manager: UI拡張機能マネージャー
-Extension to Extension Manager: 拡張機能マネージャー
-Add GeoJSON: GeoJSONを追加
-Add CZML: CZMLを追加
-Add KML: KMLを追加
-Add CSV: CSVを追加
-Add 3D Tiles: 3Dタイルを追加
-Add WMS (Web Map Service): WMS（Webマップサービス）を追加
-Add Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイルを追加
-Hide/Flyto/Delete Layer: レイヤーを非表示/フライト/削除
-Override Layer Data: レイヤーデータを上書き
-Show Selected Features Information: 選択されたフィーチャー情報を表示
-Layer Styling Examples: レイヤースタイリング例
-Feature Style 3D Tiles: フィーチャースタイル3Dタイル
-Feature Style 3D Model: フィーチャースタイル3Dモデル
-Override Feature Style: フィーチャースタイルを上書き
-Style With Condition: 条件付きスタイル
-Filter Features With Style: スタイルでフィーチャーをフィルタリング
-Zoom In / Out: ズームイン/アウト
-Camera Rotation: カメラ回転
-Camera Position: カメラ位置
-Playback Control: 再生コントロール
-Time Driven Features: 時間駆動フィーチャー
-Time Driven Path: 時間駆動パス
-Extension Property: 拡張機能プロパティ
+UI Language: ''
 General: 一般
 Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
@@ -497,7 +460,6 @@ Successfully upgraded plugin!: プラグインのアップグレードに成功�
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
-Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。
