@@ -6,6 +6,7 @@ import { zoomInOut } from "./camera/zoomInOut";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
+import { themeSelector } from "./dataStorage/themeSelector";
 import { extensionProperty } from "./extension/extensionProperty";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
@@ -99,21 +100,16 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "timeline",
     title: "Timeline",
-    plugins: [playbackControl,timeDrivenFeatures,timeDrivenPath]
+    plugins: [playbackControl, timeDrivenFeatures, timeDrivenPath]
   },
   {
     id: "dataStorage",
     title: "Data Storage",
-    plugins: []
+    plugins: [themeSelector]
   },
   {
     id: "extension",
     title: "Extension",
     plugins: [extensionProperty]
-  },
-  {
-    id: "sketch",
-    title: "Sketch",
-    plugins: []
   }
 ];
