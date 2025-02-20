@@ -269,7 +269,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	}
 
 	// need to create a Scene firstｓ
-	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), op, true)
+	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), op)
 	if err != nil {
 		return nil, err
 	}
