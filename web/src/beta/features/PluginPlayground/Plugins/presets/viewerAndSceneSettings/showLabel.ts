@@ -46,7 +46,9 @@ reearth.camera.flyTo(
   {
     duration: 2.0,
   }
-);`
+);
+
+// Data Attribution: 国土地理院最適化ベクトルタイル //`
 };
 
 export const showLabel: PluginType = {
