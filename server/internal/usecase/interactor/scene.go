@@ -97,7 +97,7 @@ func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *us
 	return s, nil
 }
 
-func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator, isImportProject bool) (_ *scene.Scene, err error) {
+func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (_ *scene.Scene, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
