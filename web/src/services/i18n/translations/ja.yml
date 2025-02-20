@@ -392,7 +392,8 @@ Position Set: 位置セット
 Capture: キャプチャ
 New Item: 新規追加
 New Credit: 新しいクレジット
-Zoom Level Editor: ズームレベルエディター
+min: 最小
+max: 最大
 Time Period Settings: 期間設定
 '* Start Time': '* 開始時間'
 Start time for the timeline: タイムラインの開始時間
@@ -406,6 +407,7 @@ Set Time: 時間を設定
 Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
+Zoom Level Editor: ズームレベルエディター
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
