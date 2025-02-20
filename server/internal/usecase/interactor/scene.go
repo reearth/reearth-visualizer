@@ -150,7 +150,8 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	if err := i.propertyRepo.Save(ctx, prop); err != nil {
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{res.ID()}}
+	if err := i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 		return nil, err
 	}
 
