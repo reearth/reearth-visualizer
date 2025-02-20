@@ -12,8 +12,8 @@ import CommonField, { CommonFieldProps } from "../CommonField";
 
 import EditPanel from "./EditPanel";
 
-export type RangeSliderFieldProps = CommonFieldProps & RangeSliderProps;
-const RangeSliderField: FC<RangeSliderFieldProps> = ({
+export type ZoomLevelFieldProps = CommonFieldProps & RangeSliderProps;
+const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
   description,
   value,
   disabled,
@@ -33,7 +33,7 @@ const RangeSliderField: FC<RangeSliderFieldProps> = ({
   }, [onChange]);
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField title={title} >
       <InputWrapper>
         <TextInput
           value={
@@ -97,4 +97,4 @@ const InputWrapper = styled("div")(({ theme }) => ({
   width: "100%"
 }));
 
-export default RangeSliderField;
+export default ZoomLevelField;

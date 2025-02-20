@@ -1,6 +1,7 @@
 import { Camera, LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
 import {
@@ -15,10 +16,11 @@ import {
   TextareaField,
   TimePointField,
   TwinInputField,
-  SliderField
+  SliderField,
+  RangeField
 } from "..";
-import RangeSliderField from "../RangeSliderField";
 import { SpacingValues } from "../SpacingField";
+import ZoomLevelField from "../ZoomLevelField";
 
 import useHooks from "./hooks";
 
@@ -39,6 +41,7 @@ const PropertyField: FC<Props> = ({
   schema,
   onFlyTo
 }) => {
+  const t = useT();
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
   const value = useMemo(
     () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
@@ -57,6 +60,7 @@ const PropertyField: FC<Props> = ({
     [schema.type, schema.ui]
   );
 
+  console.log("zoomLevel", schema);
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (
     <>
@@ -182,8 +186,8 @@ const PropertyField: FC<Props> = ({
           onSave={handleChange}
           onFlyTo={onFlyTo}
         />
-      ) : schema.type === "array" && schema.ui === "range" ? (
-        <RangeSliderField
+      ) : schema.type === "array" && schema.ui === "zoomLevel" ? (
+        <ZoomLevelField
           key={schema.id}
           title={schema.name}
           value={value as number[]}
@@ -191,6 +195,18 @@ const PropertyField: FC<Props> = ({
           max={schema.max}
           description={schema.description}
           onChange={handleChange}
+        />
+      ) : schema.type === "array" && schema.ui === "range" ? (
+        <RangeField
+          key={schema.id}
+          title={schema.name}
+          values={value as number[]}
+          unit={schema.suffix}
+          min={schema.min}
+          max={schema.max}
+          content={[t("min"), t("max")]}
+          description={schema.description}
+          onBlur={handleChange}
         />
       ) : (
         <p key={schema.id}>{schema.name} field</p>
