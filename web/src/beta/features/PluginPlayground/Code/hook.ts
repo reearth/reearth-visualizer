@@ -1,6 +1,5 @@
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useState } from "react";
-import { v4 } from "uuid";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
@@ -117,7 +116,7 @@ export default ({
                   widgets: [
                     ...(areaAlignSystem.widgets ?? []),
                     {
-                      id: v4(),
+                      id: `${ymlJson.id}-${cur.id}`,
                       name: cur.name,
                       extensionId: cur.id,
                       pluginId: ymlJson.id,
@@ -159,12 +158,12 @@ export default ({
       return [
         ...prv,
         {
-          id: cur.id,
+          id: `${ymlJson.id}-${cur.id}`,
           name: cur.name,
           description: cur.description,
           __REEARTH_SOURCECODE: file.sourceCode,
           extensionId: cur.id,
-          pluginId: cur.id,
+          pluginId: ymlJson.id,
           extensionType: "infoboxBlock",
           propertyForPluginAPI: generateProperty(
             cur.schema,
@@ -190,12 +189,12 @@ export default ({
       }
 
       prv.push({
-        id: cur.id,
+        id: `${ymlJson.id}-${cur.id}`,
         name: cur.name,
         description: cur.description,
         __REEARTH_SOURCECODE: file.sourceCode,
         extensionId: cur.id,
-        pluginId: cur.id,
+        pluginId: ymlJson.id,
         extensionType: "storyBlock",
         propertyForPluginAPI: generateProperty(
           cur.schema,
