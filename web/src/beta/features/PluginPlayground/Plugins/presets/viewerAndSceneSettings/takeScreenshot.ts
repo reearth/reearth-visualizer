@@ -20,7 +20,8 @@ extensions:
 const widgetFile: FileType = {
   id: "take-screenshot",
   title: "take-screenshot.js",
-  sourceCode: `// This example shows how to take a Screenshot //
+  sourceCode: `// This example shows how to take a screenshot //
+// Adjust the view angle, then click "Screenshot," and finally click "Download" to save the image locally //
 
 // ================================
 // Define Plug-in UI side (iframe)
@@ -50,48 +51,53 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   }
 </style>
 <div id = "wrapper">
-  <h3 id="message"></h3>
+  <h3 id="message">Adjust the screen angle</h3>
   <div id="button-container">
     <button class="btn" id="screenshot">ScreenShot</button>
     <button class="btn" id="download">Download</button>
   </div>
 </div>
 
-  
 <script>
-  const screenshotBtn = document.getElementById("screenshot");
-  const downloadBtn = document.getElementById("download");
-  const message = document.getElementById("message");
+const screenshotBtn = document.getElementById("screenshot");
+const downloadBtn = document.getElementById("download");
+const message = document.getElementById("message");
 
-  let screenshotDataUri = null;
+let screenshotDataUri = null;
 
-  screenshotBtn.addEventListener("click", () => {
-    parent.postMessage({ action: "takeScreenshot" }, "*");
-  });
+// Add an EventListener for the Screenshot button
+screenshotBtn.addEventListener("click", () => {
+  parent.postMessage({ action: "takeScreenshot" }, "*");
+});
 
-  // 2. Extension(プラグイン本体)からのメッセージを受け取る
-  window.addEventListener("message", e => {
-    const { action, data } = e.data || {};
-    if (action === "screenshotCaptured" && data) {
-      screenshotDataUri = data;
-      message.textContent = "Capture complete!";
-    }
-  });
-
-  downloadBtn.addEventListener("click", () => {
-    downloadImage(screenshotDataUri, "screenshot.png");
-    message.textContent = ""
-  });
-
-  // ダウンロード用の関数 (Base64を実際にファイルとして保存)
-  function downloadImage(uri, filename) {
-    const a = document.createElement("a");
-    a.href = uri;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+// Receive messages from extension side
+window.addEventListener("message", e => {
+  const { action, data } = e.data || {};
+  if (action === "screenshotCaptured" && data) {
+    screenshotDataUri = data;
+    message.textContent = "Capture complete!";
   }
+});
+
+// Define a function to download images
+function downloadImage(uri, filename) {
+  if (!uri) {
+    return;
+  }
+  const a = document.createElement("a");
+  a.href = uri; 
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// Add an event listener for the Download butto
+downloadBtn.addEventListener("click", () => {
+  downloadImage(screenshotDataUri, "screenshot.png");
+  message.textContent = "Adjust the screen angle"
+});
+
 </script>
 \`);
 
@@ -102,14 +108,15 @@ ${PRESET_PLUGIN_COMMON_STYLE}
 reearth.extension.on("message", async (msg) => {
   const { action } = msg;
   if (action === "takeScreenshot") {
+    // Execute a screenshot using "reearth.viewer.capture"
     const screenShot = reearth.viewer.capture("image/png");
+    // Send image data to the plugin UI
     reearth.ui.postMessage({
       action: "screenshotCaptured",
       data: screenShot,
     });
   }
-});
-`
+});`
 };
 
 export const takeScreenshot: PluginType = {
