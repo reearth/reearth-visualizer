@@ -283,7 +283,11 @@ func getAssetFileURL(base *url.URL, filename string) *url.URL {
 
 	// https://github.com/golang/go/issues/38351
 	b := *base
-	b.Path = path.Join(b.Path, assetDir, filename)
+	if b.Path == "/" {
+		b.Path = path.Join(b.Path, assetDir, filename)
+	} else {
+		b.Path = path.Join(b.Path, filename)
+	}
 	return &b
 }
 
