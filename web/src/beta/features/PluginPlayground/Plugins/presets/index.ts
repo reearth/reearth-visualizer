@@ -1,3 +1,5 @@
+import { useT } from "@reearth/services/i18n";
+
 import { PluginType } from "../constants";
 
 import { cameraPosition } from "./camera/cameraPosition";
@@ -38,8 +40,7 @@ type PresetPluginCategory = {
 };
 
 export type PresetPlugins = PresetPluginCategory[];
-
-export const presetPlugins: PresetPlugins = [
+const presetPlugins: PresetPlugins = [
   {
     id: "custom",
     title: "Custom",
@@ -115,3 +116,11 @@ export const presetPlugins: PresetPlugins = [
     plugins: []
   }
 ];
+
+export const usePresetPlugins = () => {
+  const t = useT();
+  return presetPlugins.map((plugin) => ({
+    ...plugin,
+    title: t(plugin.title)
+  }));
+};

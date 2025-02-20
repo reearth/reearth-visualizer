@@ -7,13 +7,14 @@ import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
 import { PluginType } from "./constants";
-import { presetPlugins } from "./presets";
+import { usePresetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
 export default () => {
   const [searchParams] = useSearchParams();
   const [, setNotification] = useNotification();
 
+  const presetPlugins = usePresetPlugins();
   const sharedPluginUrl = searchParams.get("plugin");
 
   const decodePluginURL = useCallback((encoded: string) => {
