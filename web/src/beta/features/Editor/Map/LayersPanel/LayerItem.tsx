@@ -92,8 +92,8 @@ const LayerItem: FC<LayerItemProps> = ({
                   icon="crosshair"
                   size="small"
                   appearance="simple"
-                  showToolTip
                   tooltipText={t("Fly to")}
+                  placement="top"
                   onClick={handleZoomToLayer}
                 />
               )
@@ -105,7 +105,7 @@ const LayerItem: FC<LayerItemProps> = ({
                   icon={layer.visible ? "eye" : "eyeSlash"}
                   size="small"
                   appearance="simple"
-                  showToolTip
+                  placement="top"
                   tooltipText={t("Visibility")}
                   onClick={handleToggleLayerVisibility}
                 />

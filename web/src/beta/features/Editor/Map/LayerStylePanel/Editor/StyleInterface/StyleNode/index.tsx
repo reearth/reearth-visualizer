@@ -113,8 +113,6 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
                     icon="dotsThreeVertical"
                     size="small"
                     appearance="simple"
-                    showToolTip
-                    tooltipText={t("More")}
                     disabled={!editMode}
                   />
                 }

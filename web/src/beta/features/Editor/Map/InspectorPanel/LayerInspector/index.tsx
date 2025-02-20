@@ -7,6 +7,7 @@ import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { SketchEditingFeature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { LayerConfigUpdateProps } from "../../../hooks/useLayers";
@@ -46,6 +47,7 @@ const InspectorTabs: FC<Props> = ({
   onSketchGeometryEditCancel,
   onSketchGeometryEditApply
 }) => {
+  const t = useT();
   const selectedFeature = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
@@ -86,8 +88,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "dataSource",
         icon: "data",
-        showToolTip: true,
-        tooltipText: "Layer",
+        tooltipText: t("Layer"),
+        placement: "left",
         children: selectedLayer?.layer && (
           <DataSource selectedLayer={selectedLayer.layer} />
         )
@@ -95,8 +97,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "featureInspector",
         icon: "mapPin",
-        showToolTip: true,
-        tooltipText: "Feature",
+        placement: "left",
+        tooltipText: t("Feature"),
         children: selectedFeature && (
           <FeatureInspector
             selectedFeature={selectedFeature}
@@ -117,8 +119,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "layerStyle",
         icon: "palette",
-        showToolTip: true,
-        tooltipText: "Layer style",
+        placement: "left",
+        tooltipText: t("Layer Style"),
         children: selectedLayer?.layer?.id && (
           <LayerStyle
             layerStyles={layerStyles}
@@ -132,8 +134,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "infoboxSettings",
         icon: "article",
-        showToolTip: true,
-        tooltipText: "Infobox",
+        placement: "left",
+        tooltipText: t("Infobox"),
         children: selectedLayer?.layer?.id && (
           <InfoboxSettings
             selectedLayerId={selectedLayer.layer.id}
@@ -143,6 +145,7 @@ const InspectorTabs: FC<Props> = ({
       }
     ],
     [
+      t,
       selectedLayer?.layer,
       selectedFeature,
       selectedSketchFeature,

@@ -149,10 +149,13 @@ Edit: 編集
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
+Layer: 層
+Feature: 特徴
+Layer Style: レイヤースタイル
+Infobox: 情報ボックス
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
 NO STYLE: スタイルなし
-Layer Style: レイヤースタイル
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
@@ -193,6 +196,14 @@ Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
+Marker: マーカー
+Polyline: ポリライン
+Circle: 丸
+Rectangle: 矩形
+Polygon: ポリゴン
+Extruded circle: 押し出された円
+Extruded rectangle: 押し出された長方形
+Extruded polygon: 押し出されたポリゴン
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする

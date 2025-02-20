@@ -15,7 +15,7 @@ export type IconButtonProps = {
   iconColor?: string;
   stopPropagationOnClick?: boolean;
   onClick?: (e: MouseEvent) => void;
-} & Pick<IconProps, "showToolTip" | "tooltipText">;
+} & Pick<IconProps, "placement" | "tooltipText">;
 
 export const IconButton: FC<IconButtonProps> = ({
   appearance = "secondary",
@@ -27,10 +27,10 @@ export const IconButton: FC<IconButtonProps> = ({
   iconRotate,
   iconColor,
   stopPropagationOnClick,
-  onClick,
   hasBorder,
-  showToolTip,
-  tooltipText
+  tooltipText,
+  placement,
+  onClick
 }) => {
   const handleClick = useCallback(
     (e: MouseEvent) => {
@@ -55,8 +55,8 @@ export const IconButton: FC<IconButtonProps> = ({
       <Icon
         icon={icon}
         color={iconColor}
-        offset={14}
-        showToolTip={showToolTip}
+        offset={12}
+        placement={placement}
         tooltipText={tooltipText}
       />
     </StyledButton>

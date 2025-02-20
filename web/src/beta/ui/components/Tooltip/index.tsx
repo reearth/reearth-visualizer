@@ -1,3 +1,4 @@
+import { Placement } from "@floating-ui/react";
 import {
   Icon,
   IconName,
@@ -14,6 +15,7 @@ type TooltipProps = {
   text?: string;
   offset?: number;
   iconColor?: string;
+  placement?: Placement;
 };
 
 const Tooltip: FC<TooltipProps> = ({
@@ -21,7 +23,8 @@ const Tooltip: FC<TooltipProps> = ({
   icon,
   text,
   offset = 6,
-  iconColor
+  iconColor,
+  placement
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -44,6 +47,7 @@ const Tooltip: FC<TooltipProps> = ({
   return (
     <Popup
       offset={offset}
+      placement={placement}
       trigger={
         tooltipIcon ? (
           <IconWrapper>

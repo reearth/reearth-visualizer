@@ -98,7 +98,7 @@ export const EntryItem: FC<EntryItemProps> = ({
                   icon="dotsThreeVertical"
                   size="small"
                   appearance="simple"
-                  showToolTip
+                  placement="top"
                   tooltipText={t("More")}
                 />
               }

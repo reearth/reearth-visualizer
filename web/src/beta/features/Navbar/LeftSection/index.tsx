@@ -67,7 +67,6 @@ const LeftSection: React.FC<Props> = ({
           icon="grid"
           appearance="simple"
           size="large"
-          showToolTip
           tooltipText={t("Dashboard")}
         />
       </StyledLink>
@@ -77,8 +76,7 @@ const LeftSection: React.FC<Props> = ({
             icon="editor"
             appearance="simple"
             size="large"
-            showToolTip
-            tooltipText={t("Editor")}
+              tooltipText={t("Editor")}
           />
         </StyledLink>
       )}

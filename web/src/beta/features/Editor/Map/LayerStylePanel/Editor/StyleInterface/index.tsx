@@ -1,5 +1,6 @@
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -30,7 +31,7 @@ const StyleInterface: FC<LayerStyleProps> = ({
   setLayerStyle
 }) => {
   const theme = useTheme();
-
+  const t = useT();
   const [styleNodes, setStyleNodes] = useState<StyleNodes>(
     convertToStyleNodes(layerStyle)
   );
@@ -106,23 +107,26 @@ const StyleInterface: FC<LayerStyleProps> = ({
 
   const appearanceTypeTabs: TabItem[] = useMemo(
     () =>
-      appearanceTypes.map((type) => ({
-        id: type,
-        icon: appearanceTypeIcons[type],
-        showToolTip: true,
-        tooltipText: `${type === "model" ? "3D " : ""}${type.charAt(0).toUpperCase()}${type.slice(1).toLowerCase()} style`,
-        children: (
-          <StylePanel
-            key={type}
-            type={type}
-            editMode={editMode}
-            appearanceNodes={appearanceNodes[type]}
-            styleNodes={styleNodes[type]}
-            onStyleNodesUpdate={handleStyleNodesUpdate}
-          />
-        )
-      })),
-    [editMode, handleStyleNodesUpdate, styleNodes]
+      appearanceTypes.map((type) => {
+        const styleLabel = `${type === "model" ? "3D " : ""}${type.charAt(0).toUpperCase()}${type.slice(1).toLowerCase()} style`;
+        return {
+          id: type,
+          icon: appearanceTypeIcons[type],
+          tooltipText: t(styleLabel),
+          placement: "top",
+          children: (
+            <StylePanel
+              key={type}
+              type={type}
+              editMode={editMode}
+              appearanceNodes={appearanceNodes[type]}
+              styleNodes={styleNodes[type]}
+              onStyleNodesUpdate={handleStyleNodesUpdate}
+            />
+          )
+        };
+      }),
+    [editMode, handleStyleNodesUpdate, styleNodes, t]
   );
 
   return layerStyle ? (

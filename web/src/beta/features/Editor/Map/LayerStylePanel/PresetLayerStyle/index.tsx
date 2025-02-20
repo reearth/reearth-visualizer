@@ -153,7 +153,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
         <IconButton
           icon="plus"
           size="large"
-          showToolTip
+          placement="top"
           tooltipText={t("New style")}
         />
       }

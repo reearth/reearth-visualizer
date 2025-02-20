@@ -1,3 +1,4 @@
+import { Placement } from "@floating-ui/react";
 import Tooltip from "@reearth/beta/ui/components/Tooltip";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
@@ -12,9 +13,9 @@ export type IconProps = {
   color?: string;
   className?: string;
   ariaLabel?: string;
-  showToolTip?: boolean;
   tooltipText?: string;
   offset?: number;
+  placement?: Placement;
 };
 
 export const Icon: FC<IconProps> = ({
@@ -23,9 +24,9 @@ export const Icon: FC<IconProps> = ({
   color,
   className,
   ariaLabel,
-  showToolTip = false,
   tooltipText,
-  offset
+  offset,
+  placement
 }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
@@ -53,13 +54,14 @@ export const Icon: FC<IconProps> = ({
     />
   ) : null;
 
-  return showToolTip && IconComponent ? (
+  return tooltipText && IconComponent ? (
     <Tooltip
       type="custom"
       text={tooltipText}
       icon={icon}
       offset={offset}
       iconColor={color}
+      placement={placement}
     />
   ) : (
     IconComponent

@@ -19,7 +19,7 @@ export type TabItem = {
   name?: string;
   icon?: IconName;
   children?: ReactNode;
-} & Pick<IconProps, "showToolTip" | "tooltipText">;
+} & Pick<IconProps, "placement" | "tooltipText">;
 
 export type TabsProps = {
   tabs: TabItem[] | [];
@@ -83,7 +83,7 @@ export const Tabs: FC<TabsProps> = ({
         background={background}
         edgeGap={menuEdgeGap}
       >
-        {tabs.map(({ id, icon, name, tooltipText, showToolTip }) => (
+        {tabs.map(({ id, icon, name, tooltipText, placement }) => (
           <Tab
             key={id}
             onClick={() => handleTabChange?.(id)}
@@ -93,9 +93,9 @@ export const Tabs: FC<TabsProps> = ({
           >
             {icon && (
               <Icon
-                showToolTip={showToolTip}
                 tooltipText={tooltipText}
                 icon={icon}
+                placement={placement}
                 color={
                   id === activeTab ? theme.content.main : theme.content.weak
                 }

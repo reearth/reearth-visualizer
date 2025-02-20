@@ -186,7 +186,6 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               icon="grid"
               appearance="simple"
               active={layout === "grid"}
-              showToolTip
               tooltipText={t("Grid Layout")}
               onClick={(e) => handleLayoutChange(e, "grid")}
             />
@@ -194,7 +193,6 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               icon="list"
               appearance="simple"
               active={layout === "list"}
-              showToolTip
               tooltipText={t("List Layout")}
               onClick={(e) => handleLayoutChange(e, "list")}
             />
