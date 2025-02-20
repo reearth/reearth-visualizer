@@ -3,8 +3,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
+import { ContentWrapper, Label } from "../../shared/SharedComponent";
 import { CustomPropertyProps } from "../../SketchLayerCreator/type";
-import { ContentWrapper } from "../SharedComponent";
 
 import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
@@ -72,6 +72,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   return (
     <ContentWrapper>
       <PropertyTable>
+        <Label>{t("Custom property schema")}</Label>
         <PropertyTableRow>
           <ActionCol />
           <PropertyHeaderCol>
@@ -129,7 +130,7 @@ const PropertyTableBody = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.normal,
-  maxHeight: "320px",
+  maxHeight: "260px",
   overflowY: "auto"
 }));
 

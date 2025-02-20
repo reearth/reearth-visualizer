@@ -171,42 +171,64 @@ export default () => {
     [selectedPlugin, selectedFileId]
   );
 
-  const handleFileUpload = useFileInput((fileList) => {
-    const file = fileList?.[0];
-    if (!file) {
-      return;
-    }
-    const result = validateFileTitle(
-      file.name,
-      selectedPlugin.files.map((f) => f.title)
-    );
-    if (!result.success) {
-      setNotification({ type: "error", text: result.message });
-      return;
-    }
+  const handlePluginImport = useFileInput(
+    (fileList) => {
+      const file = fileList?.[0];
+      if (!file) {
+        setNotification({ type: "error", text: "File not found" });
+        return;
+      }
 
-    const reader = new FileReader();
+      if (file.type !== "application/zip") {
+        setNotification({
+          type: "error",
+          text: "Only zip files are supported"
+        });
+        return;
+      }
 
-    reader.onload = async (event) => {
-      const body = event?.target?.result;
-      if (typeof body != "string") return;
-      const fileItem = {
-        id: uuidv4(),
-        title: file.name,
-        sourceCode: body
-      };
-      // Note: When a new file is uploaded, select that file
-      setSelectedFileId(fileItem.id);
-      setPlugins((plugins) =>
-        plugins.map((plugin) =>
-          plugin.id === selectedPlugin.id
-            ? { ...plugin, files: [...plugin.files, fileItem] }
-            : plugin
-        )
-      );
-    };
-    reader.readAsText(file);
-  });
+      const zip = new JSZip();
+      zip.loadAsync(file).then((zip) => {
+        const files = Object.values(zip.files).filter((file) => !file.dir);
+
+        if (files.length === 0) {
+          setNotification({ type: "error", text: "Zip file is empty" });
+          return;
+        }
+
+        const filePromises = files.map((file) => file.async("text"));
+
+        Promise.all(filePromises)
+          .then((fileContents) => {
+            const pluginFiles = fileContents.map((content, index) => ({
+              id: uuidv4(),
+              title: files[index].name.split("/")[1],
+              sourceCode: content
+            }));
+
+            const newPlugin = {
+              id: "my-plugin", // NOTE: id of the custom plugin
+              title: file.name,
+              files: pluginFiles
+            };
+
+            setPlugins((plugins) => [
+              newPlugin,
+              ...plugins.filter((plugin) => plugin.id !== "my-plugin")
+            ]);
+            setSelectedPluginId(newPlugin.id);
+            setSelectedFileId(newPlugin.files[0].id);
+          })
+          .catch((err) => {
+            setNotification({
+              type: "error",
+              text: `Failed to load ZIP: ${err.message}`
+            });
+          });
+      });
+    },
+    { accept: "application/zip", multiple: false }
+  );
 
   const handlePluginDownload = useCallback(async () => {
     try {
@@ -281,7 +303,7 @@ export default () => {
     updateFileTitle,
     updateFileSourceCode,
     deleteFile,
-    handleFileUpload,
+    handlePluginImport,
     handlePluginDownload,
     sharedPlugin
   };

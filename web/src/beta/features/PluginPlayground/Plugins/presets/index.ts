@@ -8,6 +8,7 @@ import { zoomInOut } from "./camera/zoomInOut";
 import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
 import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
+import { themeSelector } from "./dataStorage/themeSelector";
 import { extensionProperty } from "./extension/extensionProperty";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
@@ -32,6 +33,10 @@ import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
+import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
+import { showLabel } from "./viewerAndSceneSettings/showLabel";
+import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 
 type PresetPluginCategory = {
   id: string;
@@ -59,7 +64,7 @@ const presetPlugins: PresetPlugins = [
   {
     id: "viewerScene",
     title: "Viewer & Scene Settings",
-    plugins: []
+    plugins: [enableShadowStyle,enableTerrain,showLabel,takeScreenshot]
   },
   {
     id: "layers",
@@ -103,17 +108,12 @@ const presetPlugins: PresetPlugins = [
   {
     id: "dataStorage",
     title: "Data Storage",
-    plugins: []
+    plugins: [themeSelector]
   },
   {
     id: "extension",
     title: "Extension",
     plugins: [extensionProperty]
-  },
-  {
-    id: "sketch",
-    title: "Sketch",
-    plugins: []
   }
 ];
 

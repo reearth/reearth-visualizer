@@ -18,7 +18,7 @@ type UsePluginsReturn = Pick<
   | "addFile"
   | "updateFileTitle"
   | "deleteFile"
-  | "handleFileUpload"
+  | "handlePluginImport"
   | "sharedPlugin"
   | "handlePluginDownload"
 >;
@@ -35,7 +35,7 @@ const Plugins: FC<Props> = ({
   addFile,
   updateFileTitle,
   deleteFile,
-  handleFileUpload,
+  handlePluginImport,
   sharedPlugin,
   handlePluginDownload
 }) => {
@@ -72,7 +72,7 @@ const Plugins: FC<Props> = ({
         <IconButton
           appearance="simple"
           icon="import"
-          onClick={handleFileUpload}
+          onClick={handlePluginImport}
         />
         <IconButton
           appearance="simple"

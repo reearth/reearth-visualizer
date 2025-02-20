@@ -30,10 +30,14 @@ export default function useHooks({
       const newList = propertiesList.map((i) => ({ ...i }) as PropertyListProp);
       newList[idx].key = newKeyValue?.trim() ?? "";
       setPropertiesList?.(newList);
+      
+          const keyAlreadyExists = propertiesList.some(
+            (item, index) => index !== idx && item.key === newKeyValue?.trim()
+          );
       const hasForbiddenKey = newList.some((item) =>
         forbiddenKeywords.has(item.key)
       );
-      if (hasForbiddenKey) {
+      if (hasForbiddenKey || keyAlreadyExists) {
         setWarning?.(true);
       } else {
         setWarning?.(false);
