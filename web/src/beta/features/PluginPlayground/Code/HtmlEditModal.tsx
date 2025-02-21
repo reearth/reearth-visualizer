@@ -30,7 +30,7 @@ const HtmlEditModal: FC<Props> = ({
         onCancel={onClose}
         actions={
           <>
-            <Button title="Cancel" onClick={onClose} />
+            <Button title={t("Cancel")} onClick={onClose} />
             <Button
               title={t("Submit")}
               appearance="primary"

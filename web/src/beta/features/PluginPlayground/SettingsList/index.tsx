@@ -1,6 +1,6 @@
 import { CheckBox, Typography } from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
-import { useT } from "@reearth/services/i18n";
+import { useT, getLanguageOptions } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -21,20 +21,8 @@ const SettingsList: FC<Props> = ({
   showStoryPanel
 }) => {
   const t = useT();
-  const options = [
-    {
-      label: t("Default"),
-      value: "default"
-    },
-    {
-      label: "English",
-      value: "en"
-    },
-    {
-      label: "日本語",
-      value: "ja"
-    }
-  ];
+
+  const options = getLanguageOptions(t);
 
   return (
     <Wrapper>
