@@ -1,6 +1,6 @@
 import { ViewerProperty, ComputedFeature } from "@reearth/core";
 
-import { GeoidServer, LatLngHeight } from "./common";
+import { LatLngHeight } from "./common";
 
 export declare type MouseEventProps = {
   x?: number;
@@ -120,7 +120,6 @@ export declare type Tools = {
   readonly isPositionVisibleOnGlobe: (
     position: [x: number, y: number, z: number]
   ) => boolean;
-  readonly setGeoidServer: (params: GeoidServer) => void;
   readonly getGeoidHeight: (
     lng?: number,
     lat?: number

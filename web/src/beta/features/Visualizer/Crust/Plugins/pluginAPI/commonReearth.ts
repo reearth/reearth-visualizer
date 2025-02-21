@@ -36,7 +36,6 @@ export function commonReearth({
   cartesianToCartographic,
   transformByOffsetOnScreen,
   isPositionVisibleOnGlobe,
-  setGeoidServer,
   getGeoidHeight,
   // viewer events
   viewerEventsOn,
@@ -120,7 +119,6 @@ export function commonReearth({
   cartesianToCartographic: GlobalThis["reearth"]["viewer"]["tools"]["cartesianToCartographic"];
   transformByOffsetOnScreen: GlobalThis["reearth"]["viewer"]["tools"]["transformByOffsetOnScreen"];
   isPositionVisibleOnGlobe: GlobalThis["reearth"]["viewer"]["tools"]["isPositionVisibleOnGlobe"];
-  setGeoidServer: GlobalThis["reearth"]["viewer"]["tools"]["setGeoidServer"];
   getGeoidHeight: GlobalThis["reearth"]["viewer"]["tools"]["getGeoidHeight"];
   // viewer events
   viewerEventsOn: GlobalThis["reearth"]["viewer"]["on"];
@@ -223,7 +221,6 @@ export function commonReearth({
         cartesianToCartographic,
         transformByOffsetOnScreen,
         isPositionVisibleOnGlobe,
-        setGeoidServer,
         getGeoidHeight
       },
       on: viewerEventsOn,
