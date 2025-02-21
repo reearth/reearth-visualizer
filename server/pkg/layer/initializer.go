@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -17,7 +18,7 @@ var (
 )
 
 type InitializerResult struct {
-	Root       ID
+	Root       id.LayerID
 	Layers     Map
 	Properties property.Map
 }
@@ -39,7 +40,7 @@ func (r InitializerResult) RootLayerItem() *Item {
 }
 
 type Initializer struct {
-	ID                  *ID                   `json:"id"`
+	ID                  *id.LayerID           `json:"id"`
 	Plugin              *PluginID             `json:"plugin"`
 	Extension           *PluginExtensionID    `json:"extension"`
 	Name                string                `json:"name"`
@@ -47,7 +48,7 @@ type Initializer struct {
 	PropertyID          *PropertyID           `json:"propertyId"`
 	Property            *property.Initializer `json:"property"`
 	Layers              []*Initializer        `json:"layers"`
-	LayerIDs            []ID                  `json:"layerIds"`
+	LayerIDs            []id.LayerID          `json:"layerIds"`
 	IsVisible           *bool                 `json:"isVisible"`
 	LinkedDatasetSchema *DatasetSchemaID      `json:"linkedDatasetSchema"`
 	LinkedDataset       *DatasetID            `json:"linkedDataset"`
@@ -72,9 +73,9 @@ func (i *Initializer) Clone() *Initializer {
 		}
 	}
 
-	var layerIDs []ID
+	var layerIDs []id.LayerID
 	if len(i.LayerIDs) > 0 {
-		layerIDs = append([]ID{}, i.LayerIDs...)
+		layerIDs = append([]id.LayerID{}, i.LayerIDs...)
 	}
 
 	return &Initializer{

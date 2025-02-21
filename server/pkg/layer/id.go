@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
-type ID = id.LayerID
 type InfoboxFieldID = id.InfoboxFieldID
 type TagID = id.TagID
 type SceneID = id.SceneID
@@ -48,7 +47,6 @@ var PropertyIDFromRef = id.PropertyIDFromRef
 var DatasetIDFromRef = id.DatasetIDFromRef
 var DatasetSchemaIDFromRef = id.DatasetSchemaIDFromRef
 
-type IDSet = id.LayerIDSet
 type InfoboxFIeldIDSet = id.InfoboxFieldIDSet
 type DatasetIDSet = id.DatasetIDSet
 type DatasetIDList = id.DatasetIDList
@@ -63,7 +61,7 @@ var NewTagIDSet = id.NewTagIDSet
 var OfficialPluginID = id.OfficialPluginID
 var ErrInvalidID = id.ErrInvalidID
 
-func sortIDs(a []ID) {
+func sortIDs(a []id.LayerID) {
 	sort.SliceStable(a, func(i, j int) bool {
 		return a[i].Compare(a[j]) < 0
 	})

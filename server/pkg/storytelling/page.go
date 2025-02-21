@@ -14,8 +14,8 @@ type Page struct {
 	property        PropertyID
 	title           string
 	swipeable       bool
-	layers          LayerIDList
-	swipeableLayers LayerIDList
+	layers          id.NLSLayerIDList
+	swipeableLayers id.NLSLayerIDList
 	blocks          BlockList
 }
 
@@ -45,44 +45,44 @@ func (p *Page) Swipeable() bool {
 	return p.swipeable
 }
 
-func (p *Page) Layers() LayerIDList {
+func (p *Page) Layers() id.NLSLayerIDList {
 	return p.layers
 }
 
-func (p *Page) HasLayer(layer LayerID) bool {
+func (p *Page) HasLayer(layer id.NLSLayerID) bool {
 	if p == nil || p.layers == nil {
 		return false
 	}
 	return p.layers.Has(layer)
 }
 
-func (p *Page) AddLayer(layer LayerID) {
+func (p *Page) AddLayer(layer id.NLSLayerID) {
 	p.layers = p.layers.AddUniq(layer)
 }
 
-func (p *Page) RemoveLayer(layer LayerID) {
+func (p *Page) RemoveLayer(layer id.NLSLayerID) {
 	p.layers = p.layers.Delete(layer)
 }
 
-func (p *Page) SwipeableLayers() LayerIDList {
+func (p *Page) SwipeableLayers() id.NLSLayerIDList {
 	if !p.swipeable {
 		return nil
 	}
 	return p.swipeableLayers
 }
 
-func (p *Page) HasSwipeableLayer(layer LayerID) bool {
+func (p *Page) HasSwipeableLayer(layer id.NLSLayerID) bool {
 	if p == nil || p.swipeableLayers == nil {
 		return false
 	}
 	return p.swipeableLayers.Has(layer)
 }
 
-func (p *Page) AddSwipeableLayer(layer LayerID) {
+func (p *Page) AddSwipeableLayer(layer id.NLSLayerID) {
 	p.swipeableLayers = p.swipeableLayers.AddUniq(layer)
 }
 
-func (p *Page) RemoveSwipeableLayer(layer LayerID) {
+func (p *Page) RemoveSwipeableLayer(layer id.NLSLayerID) {
 	p.swipeableLayers = p.swipeableLayers.Delete(layer)
 }
 
@@ -261,11 +261,11 @@ func (p *Page) SetTitle(s string) {
 	p.title = s
 }
 
-func (p *Page) SetLayers(ids []LayerID) {
+func (p *Page) SetLayers(ids []id.NLSLayerID) {
 	if p == nil {
 		return
 	}
-	p.layers = append(LayerIDList{}, ids...)
+	p.layers = append(id.NLSLayerIDList{}, ids...)
 }
 
 func (p *Page) SetSwipeable(b bool) {
@@ -275,11 +275,11 @@ func (p *Page) SetSwipeable(b bool) {
 	p.swipeable = b
 }
 
-func (p *Page) SetSwipeableLayers(ids []LayerID) {
+func (p *Page) SetSwipeableLayers(ids []id.NLSLayerID) {
 	if p == nil {
 		return
 	}
-	p.swipeableLayers = append(LayerIDList{}, ids...)
+	p.swipeableLayers = append(id.NLSLayerIDList{}, ids...)
 }
 
 func (p *Page) Clone() *Page {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/layerops"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -23,7 +24,7 @@ type DatasetMigrator struct {
 type MigrateDatasetResult struct {
 	Layers                layer.Map
 	Properties            property.Map
-	RemovedLayers         *layer.IDSet
+	RemovedLayers         *id.LayerIDSet
 	RemovedDatasetSchemas []dataset.SchemaID
 	RemovedDatasets       []dataset.ID
 }
@@ -169,7 +170,7 @@ func (srv DatasetMigrator) migrateLayer(ctx context.Context, sid dataset.SceneID
 
 	addedAndUpdatedLayers := layer.List{}
 	addedProperties := property.List{}
-	removedLayers := []layer.ID{}
+	removedLayers := []id.LayerID{}
 
 	for _, lg := range layerGroups {
 		layers, err := srv.LayerRepo.FindByIDs(ctx, lg.Layers().Layers())

@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,8 +24,8 @@ var group = Group{
 		scene:     SceneID{},
 	},
 	layers: &IDList{
-		layers:   append(make([]ID, 0), l1, l2),
-		layerIDs: map[ID]struct{}{l1: {}, l2: {}},
+		layers:   append(make([]id.LayerID, 0), l1, l2),
+		layerIDs: map[id.LayerID]struct{}{l1: {}, l2: {}},
 	},
 	linkedDatasetSchema: nil,
 	root:                true,

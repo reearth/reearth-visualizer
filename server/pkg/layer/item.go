@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -9,11 +10,11 @@ type Item struct {
 	linkedDataset *DatasetID
 }
 
-func (l *Item) ID() ID {
+func (l *Item) ID() id.LayerID {
 	return l.layerBase.ID()
 }
 
-func (l *Item) IDRef() *ID {
+func (l *Item) IDRef() *id.LayerID {
 	if l == nil {
 		return nil
 	}
