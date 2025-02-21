@@ -1,13 +1,14 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 // Merged represents a merged layer from two layers
 type Merged struct {
-	Original    ID
-	Parent      *ID
+	Original    id.LayerID
+	Parent      *id.LayerID
 	Name        string
 	Scene       SceneID
 	Property    *property.MergedMetadata
@@ -127,7 +128,7 @@ func MergeInfobox(o *Infobox, p *Infobox, linked *DatasetID) *MergedInfobox {
 	}
 }
 
-// Properties returns all property IDs in Merged
+// Properties returns all property id.LayerIDs in Merged
 func (m *Merged) Properties() []PropertyID {
 	if m == nil {
 		return nil

@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
@@ -75,10 +76,10 @@ func TestInitializer_Layer(t *testing.T) {
 		Infobox(NewInfobox(nil, *i.Infobox.PropertyID)).
 		Property(i.PropertyID).
 		Group().
-		Layers(NewIDList([]ID{*i.Layers[0].ID})).
+		Layers(NewIDList([]id.LayerID{*i.Layers[0].ID})).
 		LinkedDatasetSchema(i.LinkedDatasetSchema).
 		MustBuild()
-	expected2 := New().ID(*i.Layers[0].ID).Scene(sid).Group().Layers(NewIDList([]ID{*i.Layers[0].Layers[0].ID})).MustBuild()
+	expected2 := New().ID(*i.Layers[0].ID).Scene(sid).Group().Layers(NewIDList([]id.LayerID{*i.Layers[0].Layers[0].ID})).MustBuild()
 	expected3 := New().ID(*i.Layers[0].Layers[0].ID).Scene(sid).Item().MustBuild()
 
 	actual, err := i.Layer(sid)

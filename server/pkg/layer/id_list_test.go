@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestLayerIDList(t *testing.T) {
 	l2 := NewID()
 	l3 := NewID()
 	l4 := NewID()
-	rawLayers := []ID{l1, l3}
+	rawLayers := []id.LayerID{l1, l3}
 	layers := NewIDList(rawLayers)
 
 	assert.NotNil(t, layers)
