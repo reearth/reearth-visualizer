@@ -57,12 +57,14 @@ const SettingsList: FC<Props> = ({
         </Typography>
       </Row>
       <Row>
-        <SelectField
-          title={t("UI Language")}
-          value={lang}
-          options={options}
-          onChange={(value) => changeLanguage(value as string)}
-        />
+        <SelectorWrapper>
+          <SelectField
+            title={t("UI Language")}
+            value={lang}
+            options={options}
+            onChange={(value) => changeLanguage(value as string)}
+          />
+        </SelectorWrapper>
       </Row>
     </Wrapper>
   );
@@ -85,6 +87,10 @@ const Row = styled.div(({ theme }) => ({
   },
   borderRadius: theme.radius.small,
   minHeight: 28
+}));
+
+const SelectorWrapper = styled.div(() => ({
+  width: "100%"
 }));
 
 export default SettingsList;
