@@ -107,19 +107,6 @@ func TestBuilder_Build(t *testing.T) {
 			Err: ErrInvalidID,
 		},
 		{
-			Name: "fail nil root layer id",
-			Args: args{
-				ID:        sid,
-				Project:   pid,
-				Workspace: tid,
-				Widgets:   ws,
-				Plugins:   ps,
-				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
-				Property:  ppid,
-			},
-			Err: ErrInvalidID,
-		},
-		{
 			Name: "success build new scene",
 			Args: args{
 				ID:        sid,
