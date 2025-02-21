@@ -9,6 +9,7 @@ import {
   Viewport,
   ViewportSize
 } from "../pluginAPI/types";
+import { GeoidServer } from "../pluginAPI/types/common";
 import { Props } from "../types";
 import { events, useEmit } from "../utils/events";
 
@@ -212,6 +213,20 @@ export default ({
     [engineRef]
   );
 
+  const setGeoidServer = useCallback(
+    (params: GeoidServer) => {
+      return engineRef?.setGeoidServer(params);
+    },
+    [engineRef]
+  );
+
+  const getGeoidHeight = useCallback(
+    async (lng?: number, lat?: number) => {
+      return await engineRef?.getGeoidHeight(lng, lat);
+    },
+    [engineRef]
+  );
+
   // events
   const [viewerEvents, emit] = useMemo(() => events<ViewerEventType>(), []);
 
@@ -306,6 +321,8 @@ export default ({
     cartesianToCartographic,
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
+    setGeoidServer,
+    getGeoidHeight,
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,
