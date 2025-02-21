@@ -47,21 +47,7 @@ const Plugins: FC<Props> = ({
     encodeAndSharePlugin(selectedPlugin.id);
   };
 
-  const PluginEntryItem: FC<{
-    plugin: { id: string; title: string };
-    selectedPluginId: string;
-    onSelect: (id: string) => void;
-  }> = ({ plugin, selectedPluginId, onSelect }) => (
-    <EntryItem
-      key={plugin.id}
-      highlighted={selectedPluginId === plugin.id}
-      onClick={() => onSelect(plugin.id)}
-      title={t(`${plugin.title}`)}
-      optionsMenuWidth={100}
-    />
-  );
-
-  const getCategoryTitles: Record<string, string> = useMemo(() => {
+  const getCategoryTitle: Record<string, string> = useMemo(() => {
     return {
       custom: t("Custom"),
       ui: t("User Interface"),
@@ -75,6 +61,65 @@ const Plugins: FC<Props> = ({
       extension: t("Extension")
     };
   }, [t]);
+
+  const getPluginTitle: Record<string, string> = useMemo(() => {
+    return {
+      "my-plugin": t("My Plugin"),
+      "responsive-panel": t("Responsive Panel"),
+      sidebar: t("Sidebar"),
+      header: t("Header"),
+      "ui-extension-messenger": t("UI Extension Messenger"),
+      "extension-to-extension-messenger": t("Extension To Extension Messenger"),
+      "enable-shadow-style": t("Enable Shadow Style"),
+      "enable-terrain": t("Enable Terrain"),
+      "show-label": t("Show Label"),
+      "take-screenshot": t("Take Screenshot"),
+      "add-geojson": t("Add Geojson"),
+      "add-csv": t("Add CSV"),
+      "add-kml": t("Add KML"),
+      "add-wms": t("Add WMS"),
+      "add-czml": t("Add CZML"),
+      "add-3d-tiles": t("Add 3D Tiles"),
+      "add-google-photorealistic-3d-tiles": t(
+        "Add Google Photorealistic 3D Tiles"
+      ),
+      "add-osm-3d-tiles": t("Add OSM 3D Tiles"),
+      "hide-fly-to-delete-layer": t("Hide Fly To Delete Layer"),
+      "override-layer-data": t("Override Layer Data"),
+      "show-selected-features-info": t("Show Selected Features Information"),
+      "layer-styling-examples": t("Layer Styling Examples"),
+      "feature-style-3d-model": t("Feature Style 3D Model"),
+      "feature-style-3d-tiles": t("Feature Style 3D Tiles"),
+      "filter-features-with-style": t("Filter Features by Style"),
+      "override-style": t("Override Style"),
+      "style-with-condition": t("Style With Condition"),
+      "playback-control": t("Playback Control"),
+      "time-driven-features": t("Time Driven Features"),
+      "time-driven-path": t("Time Driven Path"),
+      "theme-selector": t("Theme Selector"),
+      "extension-property": t("Extension Property"),
+      "zoom-in-out": t("Zoom In Out"),
+      "camera-rotation": t("Camera Rotation"),
+      "camera-position": t("Camera Position")
+    };
+  }, [t]);
+
+  const PluginEntryItem: FC<{
+    pluginId: string;
+    selectedPluginId: string;
+    title: string;
+    onSelect: (id: string) => void;
+  }> = ({ pluginId, selectedPluginId, onSelect, title }) => {
+    return (
+      <EntryItem
+        key={pluginId}
+        highlighted={selectedPluginId === pluginId}
+        onClick={() => onSelect(pluginId)}
+        title={t(`${title}`)}
+        optionsMenuWidth={100}
+      />
+    );
+  };
 
   return (
     <Wrapper>
@@ -113,8 +158,9 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   <PluginEntryItem
-                    plugin={sharedPlugin}
+                    pluginId={sharedPlugin.id}
                     key={sharedPlugin.id}
+                    title={getPluginTitle[sharedPlugin.id]}
                     selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
                   />
@@ -129,15 +175,16 @@ const Plugins: FC<Props> = ({
                 collapsed={category.id !== "custom"}
                 iconPosition="left"
                 size="small"
-                title={getCategoryTitles[category.id]}
+                title={getCategoryTitle[category.id]}
                 noPadding
               >
                 <PluginSubList>
                   {category.plugins.length > 0 ? (
                     category.plugins.map((plugin) => (
                       <PluginEntryItem
-                        plugin={plugin}
+                        pluginId={plugin.id}
                         key={plugin.id}
+                        title={getPluginTitle[plugin.id]}
                         selectedPluginId={selectedPlugin.id}
                         onSelect={selectPlugin}
                       />

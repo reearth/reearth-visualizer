@@ -3,7 +3,7 @@ import { Layer } from "@reearth/core";
 export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
   {
     type: "simple",
-    id: "1",
+    id: "chiyoda-3d-tiles",
     title: "Chiyoda 3D Tiles",
     visible: true,
     data: {
@@ -13,7 +13,7 @@ export const DEFAULT_LAYERS_PLUGIN_PLAYGROUND: Layer[] = [
   },
   {
     type: "simple",
-    id: "2",
+    id: "japanese-heritage-sites",
     title: "Japanese Heritage Sites",
     visible: true,
     data: {

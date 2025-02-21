@@ -254,6 +254,8 @@ This plugin does not have a valid reearth.yml file.: このプラグインには
 No valid schema defined.: 有効なスキーマが定義されていません。
 Viewer: ビューアー
 Plugins: プラグイン
+Chiyoda 3D Tiles: 千代田3Dタイル
+Japanese Heritage Sites: 日本の遺産
 Extension Settings: 拡張機能の設定
 Custom: カスタム
 User Interface: ユーザーインターフェース
@@ -264,6 +266,41 @@ Manage Layer Style: レイヤースタイルの管理
 Timeline: タイムライン
 Data Storage: データストレージ
 Extension: 拡張
+My Plugin: 私のプラグイン
+Responsive Panel: レスポンシブパネル
+Sidebar: サイドバー
+Header: ヘッダー
+UI Extension Messenger: UI拡張メッセンジャー
+Extension To Extension Messenger: 拡張から拡張へのメッセンジャー
+Enable Shadow Style: シャドウスタイルを有効にする
+Enable Terrain: 地形を有効にする
+Show Label: ラベルを表示
+Take Screenshot: スクリーンショットを撮る
+Add Geojson: Geojsonを追加
+Add CSV: CSVを追加
+Add KML: KMLを追加
+Add WMS: WMSを追加
+Add CZML: CZMLを追加
+Add 3D Tiles: 3Dタイルを追加
+Add Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイルを追加
+Add OSM 3D Tiles: OSM 3Dタイルを追加
+Hide Fly To Delete Layer: フライトゥとレイヤー削除を非表示
+Override Layer Data: レイヤーデータを上書き
+Show Selected Features Information: 選択されたフィーチャー情報を表示
+Layer Styling Examples: レイヤースタイリングの例
+Feature Style 3D Model: フィーチャースタイル 3D モデル
+Feature Style 3D Tiles: フィーチャースタイル 3D タイル
+Filter Features by Style: スタイルでフィーチャーをフィルタリング
+Override Style: スタイルを上書き
+Style With Condition: 条件付きスタイル
+Playback Control: 再生コントロール
+Time Driven Features: 時間駆動フィーチャー
+Time Driven Path: 時間駆動パス
+Theme Selector: テーマセレクター
+Extension Property: 拡張プロパティ
+Zoom In Out: ズームイン/アウト
+Camera Rotation: カメラ回転
+Camera Position: カメラ位置
 No plugins: プラグインがありません
 Invalid shared plugin URL: 共有プラグインの URL が無効です
 File not found: ファイルが見つかりません

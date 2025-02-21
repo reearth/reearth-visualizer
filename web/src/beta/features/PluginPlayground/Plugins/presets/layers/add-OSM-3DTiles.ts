@@ -59,7 +59,7 @@ reearth.camera.flyTo(
 };
 
 export const addOsm3dTiles: PluginType = {
-  id: "add-osm3dTiles",
+  id: "add-osm-3d-tiles",
   title: "Add OSM 3D Tiles",
   files: [widgetFile, yamlFile]
 };
