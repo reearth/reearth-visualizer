@@ -2,7 +2,7 @@ import { Collapse, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/styled";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import FileListItem from "./FileListItem";
 import usePlugins from "./usePlugins";
@@ -61,6 +61,21 @@ const Plugins: FC<Props> = ({
     />
   );
 
+  const getCategoryTitles: Record<string, string> = useMemo(() => {
+    return {
+      custom: t("Custom"),
+      ui: t("User Interface"),
+      communication: t("Communication"),
+      viewerScene: t("Viewer & Scene Settings"),
+      layers: t("Manage Layer"),
+      layerStyles: t("Manage Layer Style"),
+      camera: t("Camera"),
+      timeline: t("Timeline"),
+      dataStorage: t("Data Storage"),
+      extension: t("Extension")
+    };
+  }, [t]);
+
   return (
     <Wrapper>
       <IconList>
@@ -114,7 +129,7 @@ const Plugins: FC<Props> = ({
                 collapsed={category.id !== "custom"}
                 iconPosition="left"
                 size="small"
-                title={t(category.title)}
+                title={getCategoryTitles[category.id]}
                 noPadding
               >
                 <PluginSubList>
