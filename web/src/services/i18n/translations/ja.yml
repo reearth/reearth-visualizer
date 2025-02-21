@@ -256,9 +256,14 @@ Viewer: ビューアー
 Plugins: プラグイン
 Extension Settings: 拡張機能の設定
 No plugins: プラグインがありません
+Invalid shared plugin URL: 共有プラグインの URL が無効です
+File not found: ファイルが見つかりません
+Only zip files are supported: zipファイルのみサポートされています
+Zip file is empty: Zipファイルは空です
+Plugin link copied to clipboard: プラグインのリンクがクリップボードにコピーされました
 Default: デフォルト
 Show Story Panel: ストーリーパネルを表示
-UI Language: ''
+UI Language: UI言語
 General: 一般
 Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。

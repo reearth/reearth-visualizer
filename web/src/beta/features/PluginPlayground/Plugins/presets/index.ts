@@ -1,5 +1,3 @@
-import { useT } from "@reearth/services/i18n";
-
 import { PluginType } from "../constants";
 
 import { cameraPosition } from "./camera/cameraPosition";
@@ -45,7 +43,7 @@ type PresetPluginCategory = {
 };
 
 export type PresetPlugins = PresetPluginCategory[];
-const presetPlugins: PresetPlugins = [
+export const presetPlugins: PresetPlugins = [
   {
     id: "custom",
     title: "Custom",
@@ -64,7 +62,7 @@ const presetPlugins: PresetPlugins = [
   {
     id: "viewerScene",
     title: "Viewer & Scene Settings",
-    plugins: [enableShadowStyle,enableTerrain,showLabel,takeScreenshot]
+    plugins: [enableShadowStyle, enableTerrain, showLabel, takeScreenshot]
   },
   {
     id: "layers",
@@ -116,11 +114,3 @@ const presetPlugins: PresetPlugins = [
     plugins: [extensionProperty]
   }
 ];
-
-export const usePresetPlugins = () => {
-  const t = useT();
-  return presetPlugins.map((plugin) => ({
-    ...plugin,
-    title: t(plugin.title)
-  }));
-};

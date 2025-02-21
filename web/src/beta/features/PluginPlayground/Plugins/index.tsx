@@ -56,7 +56,7 @@ const Plugins: FC<Props> = ({
       key={plugin.id}
       highlighted={selectedPluginId === plugin.id}
       onClick={() => onSelect(plugin.id)}
-      title={plugin.title}
+      title={t(`${plugin.title}`)}
       optionsMenuWidth={100}
     />
   );
