@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -51,7 +52,7 @@ func TestMergeLayer(t *testing.T) {
 			Infobox(layer.NewInfobox([]*layer.InfoboxField{
 				layer.NewInfoboxField().ID(l1if1).Plugin(p).Extension(e).Property(fpr).MustBuild(),
 			}, ib2pr)).
-			Layers(layer.NewIDList([]layer.ID{l1})).
+			Layers(layer.NewIDList([]id.LayerID{l1})).
 			IsVisible(false).
 			MustBuild(),
 	})

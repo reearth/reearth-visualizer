@@ -3,6 +3,7 @@ package storytelling
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,11 +34,11 @@ func TestPageBuilder(t *testing.T) {
 	assert.Equal(t, true, b.page.swipeable)
 
 	layerID := NewLayerID()
-	b = b.Layers(LayerIDList{layerID})
-	assert.Equal(t, LayerIDList{layerID}, b.page.layers)
+	b = b.Layers(id.NLSLayerIDList{layerID})
+	assert.Equal(t, id.NLSLayerIDList{layerID}, b.page.layers)
 
-	b = b.SwipeableLayers(LayerIDList{layerID})
-	assert.Equal(t, LayerIDList{layerID}, b.page.swipeableLayers)
+	b = b.SwipeableLayers(id.NLSLayerIDList{layerID})
+	assert.Equal(t, id.NLSLayerIDList{layerID}, b.page.swipeableLayers)
 
 	block := &Block{}
 	b = b.Blocks(BlockList{block})
@@ -50,8 +51,8 @@ func TestPageBuilder(t *testing.T) {
 		property:        propertyID,
 		title:           "test",
 		swipeable:       true,
-		layers:          LayerIDList{layerID},
-		swipeableLayers: LayerIDList{layerID},
+		layers:          id.NLSLayerIDList{layerID},
+		swipeableLayers: id.NLSLayerIDList{layerID},
 		blocks:          BlockList{block},
 	}, p)
 
