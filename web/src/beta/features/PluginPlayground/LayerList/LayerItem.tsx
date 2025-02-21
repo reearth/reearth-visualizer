@@ -1,7 +1,6 @@
 import { IconButton } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem, EntryItemAction } from "@reearth/beta/ui/components";
 import { Layer } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo } from "react";
 
 interface LayerItemProps {
@@ -19,8 +18,6 @@ const LayerItem: FC<LayerItemProps> = ({
   selectedLayerId,
   setSelectedLayerId
 }) => {
-  const t = useT();
-
   const handleZoomToLayer = useCallback(() => {
     onFlyTo?.(layer.id, { duration: 0 });
   }, [onFlyTo, layer]);
@@ -64,7 +61,7 @@ const LayerItem: FC<LayerItemProps> = ({
 
   return (
     <EntryItem
-      title={t(`${layer.title}`)}
+      title={layer.title}
       icon="file"
       onClick={handleLayerItemClick}
       highlighted={layer.id === selectedLayerId}
