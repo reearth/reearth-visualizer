@@ -120,6 +120,10 @@ export declare type Tools = {
   readonly isPositionVisibleOnGlobe: (
     position: [x: number, y: number, z: number]
   ) => boolean;
+  readonly getGeoidHeight: (
+    lng?: number,
+    lat?: number
+  ) => Promise<number | undefined>;
 };
 
 export declare type ViewerEventType = {
