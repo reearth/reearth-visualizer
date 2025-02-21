@@ -107,6 +107,7 @@ const LayersPanel: FC = () => {
           />
           <EmptySpace onClick={() => handleLayerSelect(undefined)} />
         </LayersContainer>
+        
       </Wrapper>
     </Panel>
   );

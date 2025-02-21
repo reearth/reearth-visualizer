@@ -124,8 +124,24 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
+Data source: データソース
 Layer Name: レイヤー名
 Format: 形式
+Custom property schema: カスタムプロパティスキーマ
+Edit Field: フィールド編集
+Delete Field: フィールド削除
+Edit Custom Property: カスタムプロパティ編集
+New Custom Property: 新しいカスタムプロパティ
+Submit: 反映
+Property Title: プロパティタイトル
+Property Type: プロパティタイプ
+Please select one type: タイプを選択してください
+Apply Current Edits?: 現在の編集を適用しますか?
+This save will apply to all features in the current layer. Do you want to proceed?: この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？
+No field has been created yet: フィールドが作成されていません
+New Field: 新しいフィールド
+Delete schema property field?: プロパティのフィールドを削除しますか?
+This action will apply to all features in the current layer. Do you want to proceed?: この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
 Edit: 編集
@@ -141,7 +157,8 @@ Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
-Property Schema: プロパティスキーマ
+Delete this Layer?: このレイヤーを削除しますか？
+Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
@@ -163,17 +180,14 @@ Sky: 空
 Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
+New Sketch Layer: 新しいスケッチレイヤー
+Create: 作成
+' Text': ' テキスト'
 Type Title here: タイトルをここに入力
-Please select one type: タイプを選択してください
 Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
-' Text': ' テキスト'
-General: 一般
-New Sketch Layer: 新しいスケッチレイヤー
-Create: 作成
-Custom properties Schema Setting: カスタムプロパティスキーマ設定
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
@@ -235,11 +249,11 @@ Error: エラー
 Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
+General: 一般
 Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
-Submit: 反映
 Danger Zone: 重要操作
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
@@ -276,7 +290,6 @@ Panel Position: パネル位置
 Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
-New Field: 新しいフィールド
 Save: 保存
 Display title: 表示タイトル
 New Camera: 新しいカメラ
@@ -414,6 +427,10 @@ Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
 Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
+Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
+Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
+Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
+Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
