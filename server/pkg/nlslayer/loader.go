@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
 )
 
-type Loader func(context.Context, ...ID) (NLSLayerList, error)
+type Loader func(context.Context, ...id.NLSLayerID) (NLSLayerList, error)
 type LoaderByScene func(context.Context, SceneID) (NLSLayerList, error)
 
 var WalkerSkipChildren = errors.New("LAYER_WALKER_SKIP_CHILDREN")
 
 func LoaderFrom(data []NLSLayer) Loader {
-	return func(ctx context.Context, ids ...ID) (NLSLayerList, error) {
+	return func(ctx context.Context, ids ...id.NLSLayerID) (NLSLayerList, error) {
 		res := make([]*NLSLayer, 0, len(ids))
 		for _, i := range ids {
 			found := false
@@ -32,8 +33,8 @@ func LoaderFrom(data []NLSLayer) Loader {
 	}
 }
 
-func LoaderFromMap(data map[ID]NLSLayer) Loader {
-	return func(ctx context.Context, ids ...ID) (NLSLayerList, error) {
+func LoaderFromMap(data map[id.NLSLayerID]NLSLayer) Loader {
+	return func(ctx context.Context, ids ...id.NLSLayerID) (NLSLayerList, error) {
 		res := make([]*NLSLayer, 0, len(ids))
 		for _, i := range ids {
 			if d, ok := data[i]; ok {
@@ -46,9 +47,9 @@ func LoaderFromMap(data map[ID]NLSLayer) Loader {
 	}
 }
 
-func (l Loader) Walk(ctx context.Context, walker func(NLSLayer, NLSLayerGroupList) error, init []ID) error {
-	var walk func(ids []ID, parents NLSLayerGroupList) error
-	walk = func(ids []ID, parents NLSLayerGroupList) error {
+func (l Loader) Walk(ctx context.Context, walker func(NLSLayer, NLSLayerGroupList) error, init []id.NLSLayerID) error {
+	var walk func(ids []id.NLSLayerID, parents NLSLayerGroupList) error
+	walk = func(ids []id.NLSLayerID, parents NLSLayerGroupList) error {
 		loaded, err := l(ctx, ids...)
 		if err != nil {
 			return err

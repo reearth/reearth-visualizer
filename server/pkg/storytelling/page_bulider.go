@@ -1,5 +1,7 @@
 package storytelling
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type PageBuilder struct {
 	page *Page
 }
@@ -48,12 +50,12 @@ func (b *PageBuilder) Swipeable(swipeable bool) *PageBuilder {
 	return b
 }
 
-func (b *PageBuilder) Layers(layers LayerIDList) *PageBuilder {
+func (b *PageBuilder) Layers(layers id.NLSLayerIDList) *PageBuilder {
 	b.page.layers = layers.Clone()
 	return b
 }
 
-func (b *PageBuilder) SwipeableLayers(swipeableLayers LayerIDList) *PageBuilder {
+func (b *PageBuilder) SwipeableLayers(swipeableLayers id.NLSLayerIDList) *PageBuilder {
 	b.page.swipeableLayers = swipeableLayers.Clone()
 	return b
 }

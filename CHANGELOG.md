@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.3.4 - 2025-02-21
+
+### Web
+
+#### 🚀 Features
+
+- Plugin API: support geoid server ([#1442](https://github.com/reearth/reearth-visualizer/pull/1442)) [`ed6d56`](https://github.com/reearth/reearth-visualizer/commit/ed6d56)
+- Add viewer and scene settings example ([#1440](https://github.com/reearth/reearth-visualizer/pull/1440)) [`da066c`](https://github.com/reearth/reearth-visualizer/commit/da066c)
+- Plugin playground presets - create data storage plugin example ([#1435](https://github.com/reearth/reearth-visualizer/pull/1435)) [`bc7e51`](https://github.com/reearth/reearth-visualizer/commit/bc7e51)
+- Add example enable shadow style and terrain ([#1436](https://github.com/reearth/reearth-visualizer/pull/1436)) [`cea577`](https://github.com/reearth/reearth-visualizer/commit/cea577)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.3.4 ([#1446](https://github.com/reearth/reearth-visualizer/pull/1446)) [`7d5b0e`](https://github.com/reearth/reearth-visualizer/commit/7d5b0e)
+- Update core version ([#1434](https://github.com/reearth/reearth-visualizer/pull/1434)) [`77c5ae`](https://github.com/reearth/reearth-visualizer/commit/77c5ae)
+
+### Server
+
+#### Miscellaneous Tasks
+
+- Refactoring id Layer and NLSLayer ([#1430](https://github.com/reearth/reearth-visualizer/pull/1430)) [`9361bb`](https://github.com/reearth/reearth-visualizer/commit/9361bb)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update CODEOWNERS [`17883d`](https://github.com/reearth/reearth-visualizer/commit/17883d)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update CODEOWNERS [`17883d`](https://github.com/reearth/reearth-visualizer/commit/17883d)
+
 ## 1.0.0-beta.3.3 - 2025-02-18
 
 ### Web

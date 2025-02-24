@@ -2,6 +2,8 @@ package scene
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -72,7 +74,7 @@ func (b *Builder) Widgets(widgets *Widgets) *Builder {
 	return b
 }
 
-func (b *Builder) RootLayer(rootLayer LayerID) *Builder {
+func (b *Builder) RootLayer(rootLayer id.LayerID) *Builder {
 	b.scene.rootLayer = rootLayer
 	return b
 }

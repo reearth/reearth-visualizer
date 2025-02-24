@@ -1,6 +1,7 @@
 package nlslayer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	pl "github.com/reearth/reearth/server/pkg/layer"
 )
 
@@ -8,7 +9,7 @@ type NLSLayerSimple struct {
 	layerBase
 }
 
-func (l *NLSLayerSimple) ID() ID {
+func (l *NLSLayerSimple) ID() id.NLSLayerID {
 	return l.layerBase.ID()
 }
 
@@ -16,7 +17,7 @@ func (l *NLSLayerSimple) Index() *int {
 	return l.layerBase.index
 }
 
-func (l *NLSLayerSimple) IDRef() *ID {
+func (l *NLSLayerSimple) IDRef() *id.NLSLayerID {
 	if l == nil {
 		return nil
 	}
