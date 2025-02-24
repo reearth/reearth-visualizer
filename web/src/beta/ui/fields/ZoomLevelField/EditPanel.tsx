@@ -63,7 +63,7 @@ const EditPanel: FC<EditPanelProps> = ({
       }
     >
       <Wrapper>
-        <Icon icon="camera" />
+        <Icon icon="videoCamera" />
         <RangeSlider
           value={localValue}
           min={min}
