@@ -169,6 +169,11 @@ Interface: インターフェース
 Code: コード
 Invalid style: 無効なスタイル
 No style selected: スタイルが選択されていません
+Marker style: マーカースタイル
+Polyline style: ポリラインスタイル
+Polygon style: ポリゴンスタイル
+3dtiles style: 3Dタイルスタイル
+3D model style: 3Dモデルのスタイル
 Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
 Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
 ${your property name}: ${プロパティ名}

@@ -105,14 +105,24 @@ const StyleInterface: FC<LayerStyleProps> = ({
     [layerStyle, layerStyleWithActiveTab]
   );
 
+  const styleLabels: Record<AppearanceType, string> = useMemo(
+    () => ({
+      marker: t("Marker style"),
+      polyline: t("Polyline style"),
+      polygon: t("Polygon style"),
+      "3dtiles": t("3dtiles style"),
+      model: t("3D model style")
+    }),
+    [t]
+  );
+
   const appearanceTypeTabs: TabItem[] = useMemo(
     () =>
       appearanceTypes.map((type) => {
-        const styleLabel = `${type === "model" ? "3D " : ""}${type.charAt(0).toUpperCase()}${type.slice(1).toLowerCase()} style`;
         return {
           id: type,
           icon: appearanceTypeIcons[type],
-          tooltipText: t(styleLabel),
+          tooltipText: styleLabels[type],
           placement: "top",
           children: (
             <StylePanel
@@ -126,7 +136,7 @@ const StyleInterface: FC<LayerStyleProps> = ({
           )
         };
       }),
-    [editMode, handleStyleNodesUpdate, styleNodes, t]
+    [editMode, handleStyleNodesUpdate, styleLabels, styleNodes]
   );
 
   return layerStyle ? (
