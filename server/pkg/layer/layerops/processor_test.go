@@ -19,8 +19,8 @@ func TestProcessor_UninstallPlugin(t *testing.T) {
 	l1 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&id.OfficialPluginID).MustBuild()
 	l2 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&id.OfficialPluginID).MustBuild()
 	l3 := layer.NewItem().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Plugin(&id.OfficialPluginID).Infobox(ib).MustBuild()
-	l4 := layer.NewGroup().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Layers(layer.NewIDList([]layer.ID{l1.ID(), l2.ID()})).MustBuild()
-	l5 := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{l3.ID(), l4.ID()})).MustBuild()
+	l4 := layer.NewGroup().NewID().Scene(sid).Property(layer.NewPropertyID().Ref()).Layers(layer.NewIDList([]id.LayerID{l1.ID(), l2.ID()})).MustBuild()
+	l5 := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]id.LayerID{l3.ID(), l4.ID()})).MustBuild()
 
 	res, err := Processor{
 		LayerLoader: layer.LoaderFrom([]layer.Layer{l1, l2, l3, l4, l5}),

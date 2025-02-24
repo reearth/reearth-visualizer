@@ -169,7 +169,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	p1 := property.New().NewID().Schema(ps.ID()).Scene(sid).MustBuild()
 	p2 := property.New().NewID().Schema(ps2.ID()).Scene(sid).MustBuild()
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(pid.Ref()).Extension(eid1.Ref()).Property(p1.IDRef()).MustBuild()
-	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
+	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]id.LayerID{pluginLayer.ID()})).Root(true).MustBuild()
 	scene := scene.New().ID(sid).Workspace(ws).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(pid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{
@@ -247,7 +247,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 
 	nrl, err := repos.Layer.FindGroupByID(ctx, rootLayer.ID())
 	assert.NoError(t, err)
-	assert.Equal(t, []layer.ID{}, nrl.Layers().Layers()) // deleted
+	assert.Equal(t, []id.LayerID{}, nrl.Layers().Layers()) // deleted
 }
 
 // The plugin and its files should be newrly created (old plugin and files are deleted if the plugin is private)
@@ -297,7 +297,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 		layer.NewInfoboxField().NewID().Plugin(oldp3.Schema().Plugin()).Extension(plugin.ExtensionID(oldp3.Schema().ID())).Property(oldp3.ID()).MustBuild(),
 	}, oldp2.ID())
 	pluginLayer := layer.NewItem().NewID().Scene(sid).Plugin(oldpid.Ref()).Extension(eid1.Ref()).Property(oldp.IDRef()).Infobox(ib).MustBuild()
-	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]layer.ID{pluginLayer.ID()})).Root(true).MustBuild()
+	rootLayer := layer.NewGroup().NewID().Scene(sid).Layers(layer.NewIDList([]id.LayerID{pluginLayer.ID()})).Root(true).MustBuild()
 	scene := scene.New().ID(sid).Workspace(ws).RootLayer(rootLayer.ID()).Plugins(scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(oldpid, nil),
 	})).Widgets(scene.NewWidgets([]*scene.Widget{

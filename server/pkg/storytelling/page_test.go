@@ -36,7 +36,7 @@ func TestPage_SettersGetters(t *testing.T) {
 
 	layerID := NewLayerID()
 	assert.False(t, p.HasLayer(layerID))
-	p.SetLayers([]LayerID{layerID})
+	p.SetLayers([]id.NLSLayerID{layerID})
 	assert.Equal(t, 1, len(p.Layers()))
 	assert.True(t, p.HasLayer(layerID))
 	p.RemoveLayer(layerID)
@@ -48,7 +48,7 @@ func TestPage_SettersGetters(t *testing.T) {
 	assert.Equal(t, true, p.Swipeable())
 
 	assert.False(t, p.HasSwipeableLayer(layerID))
-	p.SetSwipeableLayers([]LayerID{layerID})
+	p.SetSwipeableLayers([]id.NLSLayerID{layerID})
 	assert.Equal(t, 1, len(p.SwipeableLayers()))
 	assert.True(t, p.HasSwipeableLayer(layerID))
 	p.RemoveSwipeableLayer(layerID)
