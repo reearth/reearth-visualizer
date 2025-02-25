@@ -32,7 +32,7 @@ func TestImportStory(t *testing.T) {
 
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 
 	var sceneData map[string]interface{}
