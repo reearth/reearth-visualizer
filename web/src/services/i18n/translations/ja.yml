@@ -130,7 +130,7 @@ Format: 形式
 Custom property schema: カスタムプロパティスキーマ
 Edit Field: フィールド編集
 Delete Field: フィールド削除
-More: もっと
+More: その他
 Edit Custom Property: カスタムプロパティ編集
 New Custom Property: 新しいカスタムプロパティ
 Submit: 反映
@@ -149,10 +149,10 @@ Edit: 編集
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
-Layer: 層
-Feature: 特徴
+Layer: レイヤー
+Feature: 地物
 Layer Style: レイヤースタイル
-Infobox: 情報ボックス
+Infobox: インフォボックス
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
 NO STYLE: スタイルなし
@@ -161,8 +161,8 @@ Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
-Fly to: に飛ぶ
-Visibility: 可視性
+Fly to: 移動
+Visibility: 表示・非表示切り替え
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -204,11 +204,11 @@ New Property: 新しいプロパティ
 Marker: マーカー
 Polyline: ポリライン
 Circle: 丸
-Rectangle: 矩形
+Rectangle: 長方形
 Polygon: ポリゴン
-Extruded circle: 押し出された円
-Extruded rectangle: 押し出された長方形
-Extruded polygon: 押し出されたポリゴン
+Extruded circle: 円柱
+Extruded rectangle: 立方体
+Extruded polygon: 押し出しポリゴン
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする

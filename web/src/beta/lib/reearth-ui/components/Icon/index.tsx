@@ -1,5 +1,5 @@
 import { Placement } from "@floating-ui/react";
-import Tooltip from "@reearth/beta/ui/components/Tooltip";
+import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
