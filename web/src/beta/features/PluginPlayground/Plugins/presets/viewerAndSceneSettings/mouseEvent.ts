@@ -23,7 +23,7 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    .location-info {
+    .coord-container {
       background: #fff;
       padding: 15px;
       border-radius: 5px;
@@ -32,29 +32,27 @@ const widgetFile: FileType = {
 
     .coordinates {
       font-family: monospace;
-      margin: 10px 0;
-      line-height: 1.5;
+      margin: 5px 0;
+      line-height: 1.6;
     }
 
-    .location-name {
-      font-weight: bold;
-      color: #333;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
+    .coords-title {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-align: left;
     }
 
     .coordinate-value {
-      color: #666;
-      margin-left: 5px;
+      font-weight: bold;
+      color: #333;
     }
   </style>
 
   <div id="wrapper">
-    <h2>Location Information</h2>
-    <div class="location-info">
-      <div id="locationName" class="location-name">
-        Click a location to see details
-      </div>
+    <h2>Click Coordinates</h2>
+    <div class="coord-container">
+      <div class="coords-title">Click on a location to see coordinates:</div>
       <div class="coordinates">
         <div>Latitude: <span id="lat" class="coordinate-value">-</span>°</div>
         <div>Longitude: <span id="lng" class="coordinate-value">-</span>°</div>
@@ -64,70 +62,37 @@ const widgetFile: FileType = {
   </div>
 
   <script>
-    // In the UI context, we can use fetch
-    (async () => {
-      try {
-        const url = "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/tokyo_locations_sample.geojson";
-        const response = await fetch(url);
-        const data = await response.json();
-
-        // Pass the data up to the plugin
-        parent.postMessage(
-          {
-            type: "geojsonReady",
-            data
-          },
-          "*"
-        );
-      } catch (err) {
-        console.error("Failed to fetch GeoJSON:", err);
-      }
-    })();
-
-    // Listen for position updates from plugin => display in UI
     window.addEventListener("message", e => {
       const msg = e.data;
       if (msg.type === "position") {
-        document.getElementById("lat").textContent = msg.lat?.toFixed(6) ?? "-";
-        document.getElementById("lng").textContent = msg.lng?.toFixed(6) ?? "-";
-        document.getElementById("height").textContent = msg.height?.toFixed(2) ?? "-";
-        document.getElementById("locationName").textContent =
-          msg.name || "Click a location to see details";
+        // Update UI with coordinates only
+        document.getElementById("lat").textContent = msg.lat?.toFixed(6) || "-";
+        document.getElementById("lng").textContent = msg.lng?.toFixed(6) || "-";
+        document.getElementById("height").textContent = msg.height?.toFixed(2) || "-";
       }
     });
   </script>
 \`);
 
-// Plugin listens for "geojsonReady"
-
-let tokyoLocations = null;
-
-reearth.extension.on("message", msg => {
-  // If the UI has fetched data, store it
-  if (msg.type === "geojsonReady") {
-    tokyoLocations = msg.data;
-
-    // Now that we have the data, add the layer
-    reearth.layers.add({
-      type: "simple",
-      data: {
-        type: "geojson",
-        value: tokyoLocations, // Use "value" because we have the raw object
-      },
-      marker: {
-        height: 1000,
-        heightReference: "relative",
-        pointColor: "#E9373D",
-        pointOutlineColor: "white",
-        pointOutlineWidth: 2,
-        pointSize: 15,
-        style: "point"
-      }
-    });
+// Add locations layer using the hosted GeoJSON URL and store the layer ID
+const locationsLayerId = reearth.layers.add({
+  type: "simple",
+  data: {
+    type: "geojson",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/tokyo_locations_sample.geojson"
+  },
+  marker: {
+    height: 1000,
+    heightReference: "relative",
+    pointColor: "#E9373D",
+    pointOutlineColor: "white",
+    pointOutlineWidth: 2,
+    pointSize: 15,
+    style: "point"
   }
 });
 
-// Camera setup
+// Initial camera position
 reearth.camera.flyTo(
   {
     lat: 35.6762,
@@ -140,39 +105,20 @@ reearth.camera.flyTo(
   { duration: 2 }
 );
 
-// Click handler with distance check
-reearth.viewer.on("click", event => {
-  const { lat, lng, height } = event;
+// Handle click events and send to UI only when a location is clicked
+reearth.viewer.on("click", (event) => {
+  const { lat, lng, height, layerId } = event;
 
-  // If data not loaded yet, just show the clicked coords
-  if (!tokyoLocations) {
+  // Check if the clicked layer is our locations layer or one of its features
+  if (layerId && (layerId === locationsLayerId || layerId.startsWith(locationsLayerId + "-"))) {
+    // Send coordinates to UI only when a landmark is clicked
     reearth.ui.postMessage({
       type: "position",
-      lat,
-      lng,
-      height,
-      name: null
+      lat: lat,
+      lng: lng,
+      height: height
     });
-    return;
   }
-
-  // Find the "closest" feature to the click
-  const clickedFeature = tokyoLocations.features.find(feature => {
-    const [featureLng, featureLat] = feature.geometry.coordinates;
-    const distance = Math.sqrt(
-      (featureLat - lat) ** 2 + (featureLng - lng) ** 2
-    );
-    return distance < 0.01;
-  });
-
-  // Send name + coords back to the UI
-  reearth.ui.postMessage({
-    type: "position",
-    lat,
-    lng,
-    height,
-    name: clickedFeature?.properties?.name || null
-  });
 });
   `
 };
