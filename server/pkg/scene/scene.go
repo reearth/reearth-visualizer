@@ -13,7 +13,7 @@ type Scene struct {
 	id        ID
 	project   ProjectID
 	workspace WorkspaceID
-	rootLayer LayerID
+	rootLayer id.LayerID
 	widgets   *Widgets
 	plugins   *Plugins
 	updatedAt time.Time
@@ -57,9 +57,9 @@ func (s *Scene) Property() PropertyID {
 	return s.property
 }
 
-func (s *Scene) RootLayer() LayerID {
+func (s *Scene) RootLayer() id.LayerID {
 	if s == nil {
-		return LayerID{}
+		return id.LayerID{}
 	}
 	return s.rootLayer
 }
