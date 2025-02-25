@@ -1,19 +1,37 @@
+import {
+  LayerConfigUpdateProps,
+  LayerNameUpdateProps
+} from "@reearth/beta/features/Editor/hooks/useLayers";
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
-import { InputField, TextareaField } from "@reearth/beta/ui/fields";
+import { InputField } from "@reearth/beta/ui/fields";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
+import ResourceUrl from "./ResourceUrl";
 import CustomPropertiesSchema from "./SketchCustomProperties";
 
 type Props = {
   selectedLayer: NLSLayer;
+  onLayerNameUpdate?: (inp: LayerNameUpdateProps) => void;
+  onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
 };
 
-const DataSource: FC<Props> = ({ selectedLayer }) => {
+const DataSource: FC<Props> = ({
+  selectedLayer,
+  onLayerNameUpdate,
+  onLayerConfigUpdate
+}) => {
   const t = useT();
   const theme = useTheme();
+  const [localTitle, setLocalTitle] = useState(selectedLayer.title);
+  const [localUrl, setLocalUrl] = useState(selectedLayer.config?.data?.url);
+
+  useEffect(() => {
+    setLocalTitle(selectedLayer.title);
+    setLocalUrl(selectedLayer.config?.data?.url);
+  }, [selectedLayer.config?.data?.url, selectedLayer.title]);
 
   const initialCollapsedStates = useMemo(() => {
     const storedStates: Record<string, boolean> = {};
@@ -47,6 +65,27 @@ const DataSource: FC<Props> = ({ selectedLayer }) => {
     [saveCollapseState]
   );
 
+  const handleTitleUpdate = useCallback(() => {
+    if (!localTitle || localTitle === selectedLayer.title) return;
+    onLayerNameUpdate?.({ layerId: selectedLayer.id, name: localTitle });
+  }, [localTitle, onLayerNameUpdate, selectedLayer.id, selectedLayer.title]);
+
+  const handleLayerUrlUpdate = useCallback(
+    (url: string) => {
+      const type = selectedLayer.config.data.type;
+      onLayerConfigUpdate?.({
+        layerId: selectedLayer.id,
+        config: {
+          data: {
+            type,
+            url
+          }
+        }
+      });
+    },
+    [onLayerConfigUpdate, selectedLayer.config.data.type, selectedLayer.id]
+  );
+
   return (
     <Wrapper>
       <Collapse
@@ -60,23 +99,21 @@ const DataSource: FC<Props> = ({ selectedLayer }) => {
         <InputWrapper>
           <InputField
             title={t("Layer Name")}
-            value={selectedLayer.title}
-            appearance="readonly"
-            disabled
+            value={localTitle}
+            onChange={setLocalTitle}
+            onBlur={handleTitleUpdate}
           />
           <InputField
             title={t("Format")}
             value={selectedLayer.config?.data?.type}
-            appearance="readonly"
+            appearance="present"
             disabled
           />
-          {selectedLayer.config?.data?.url && (
-            <TextareaField
+          {localUrl && (
+            <ResourceUrl
               title={t("Resource URL")}
-              value={selectedLayer.config?.data?.url}
-              appearance="readonly"
-              disabled
-              rows={3}
+              value={localUrl}
+              onSubmit={handleLayerUrlUpdate}
             />
           )}
         </InputWrapper>
