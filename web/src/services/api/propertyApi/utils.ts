@@ -314,6 +314,8 @@ export const toUi = (
       return "padding";
     case PropertySchemaFieldUi.Datetime:
       return "datetime";
+    case PropertySchemaFieldUi.Zoomlevel:
+      return "zoomLevel";
   }
   return undefined;
 };
