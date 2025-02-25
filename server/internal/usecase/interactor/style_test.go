@@ -8,7 +8,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -28,7 +27,7 @@ func TestImportStyles(t *testing.T) {
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 
 	var sceneData map[string]interface{}

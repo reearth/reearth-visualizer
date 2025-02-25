@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -35,7 +34,7 @@ func TestImportScene(t *testing.T) {
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
 	_ = db.Project.Save(ctx, prj)
-	sce, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	sce, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, sce)
 
 	var sceneData map[string]interface{}
@@ -138,7 +137,6 @@ func TestImportScene(t *testing.T) {
       }
     },
     "tags": [],
-    "clusters": [],
     "layerStyles": null,
     "coreSupport": true,
     "enableGa": false,
@@ -160,7 +158,6 @@ func TestImportScene(t *testing.T) {
 	var resultMap map[string]interface{}
 	err = json.Unmarshal(resultJSON, &resultMap)
 	assert.NoError(t, err)
-	delete(resultMap, "rootLayerId")
 	delete(resultMap, "propertyId")
 	delete(resultMap, "updatedAt")
 	delete(resultMap, "createdAt")
@@ -195,16 +192,12 @@ func TestImportScene(t *testing.T) {
 
 	// expected
 	exp := fmt.Sprintf(`{
-    "clusters": [],
-    "datasetSchemas": null,
     "id": "%s",
     "newLayers": null,
     "plugins": [],
     "projectId": "%s",
     "stories": null,
     "styles": null,
-    "tagIds": null,
-    "tags": null,
     "teamId": "%s",
     "widgetAlignSystem": {
         "inner": {

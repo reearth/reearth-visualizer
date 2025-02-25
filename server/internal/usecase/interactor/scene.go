@@ -17,7 +17,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -129,10 +128,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	schema := builtin.GetPropertySchemaByVisualizer(viz)
 
 	sceneID := id.NewSceneID()
-	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
-	if err != nil {
-		return nil, err
-	}
 	ps := scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(id.OfficialPluginID, nil),
 	})
@@ -149,14 +144,14 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		Project(pid).
 		Workspace(ws).
 		Property(prop.ID()).
-		RootLayer(rootLayer.ID()).
 		Plugins(ps).
 		Build()
 	if err != nil {
 		return nil, err
 	}
 
-	if err = saveSceneComponents(ctx, i, sceneID, rootLayer, prop); err != nil {
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{res.ID()}}
+	if err := i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 		return nil, err
 	}
 
@@ -181,13 +176,6 @@ func addDefaultTiles(prop *property.Property, schema *property.Schema) {
 	tiles := id.PropertySchemaGroupID("tiles")
 	g := prop.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
 	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
-}
-
-func saveSceneComponents(ctx context.Context, i *Scene, sceneID id.SceneID, rootLayer *layer.Group, prop *property.Property) error {
-	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
-		return err
-	}
-	return i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer)
 }
 
 func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
@@ -851,23 +839,6 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		widgets = append(widgets, widget)
 	}
 
-	clusters := []*scene.Cluster{}
-	for _, clusterJson := range sceneJSON.Clusters {
-		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sce.ID()).Build()
-		if err != nil {
-			return nil, err
-		}
-		// Save property
-		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, property); err != nil {
-			return nil, err
-		}
-		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
-		if err != nil {
-			return nil, err
-		}
-		clusters = append(clusters, cluster)
-	}
-	clusterList := scene.NewClusterListFrom(clusters)
 	var viz = visualizer.VisualizerCesium
 	if prj.CoreSupport() {
 		viz = visualizer.VisualizerCesiumBeta
@@ -898,11 +869,9 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		ID(sce.ID()).
 		Project(prj.ID()).
 		Workspace(prj.Workspace()).
-		RootLayer(sce.RootLayer()).
 		Widgets(scene.NewWidgets(widgets, alignSystem)).
 		UpdatedAt(time.Now()).
 		Property(prop.ID()).
-		Clusters(clusterList).
 		Plugins(plugins).
 		Build()
 	if err != nil {
