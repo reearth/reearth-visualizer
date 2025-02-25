@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -23,7 +25,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -510,7 +511,7 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
@@ -523,8 +524,25 @@ func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID,
 
 	// project image
 	if prj.ImageURL() != nil {
-		err := AddZipAsset(ctx, i.file, zipWriter, prj.ImageURL().Path)
+		trimmedName := strings.TrimPrefix(prj.ImageURL().Path, "/assets/")
+		stream, err := i.file.ReadAsset(ctx, trimmedName)
 		if err != nil {
+			return prj, nil // skip if external URL
+			// return nil, errors.New("assets " + err.Error())
+		}
+		defer func() {
+			if cerr := stream.Close(); cerr != nil {
+				fmt.Printf("Error closing file: %v\n", cerr)
+			}
+		}()
+		zipEntryPath := fmt.Sprintf("assets/%s", trimmedName)
+		zipEntry, err := zipWriter.Create(zipEntryPath)
+		if err != nil {
+			return nil, err
+		}
+		_, err = io.Copy(zipEntry, stream)
+		if err != nil {
+			_ = stream.Close()
 			return nil, err
 		}
 	}
@@ -563,34 +581,75 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProjectData(ctx context.Context, workspace idx.ID[accountdomain.Workspace], projectData map[string]interface{}, op *usecase.Operator) (*project.Project, usecasex.Tx, error) {
+func (i *Project) ImportProject(ctx context.Context, teamID string, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
 
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var p = jsonmodel.ToProjectFromJSON(projectData)
 
-	alias := ""
-	archived := false
-	coreSupport := true
-
-	prj, err := i.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: workspace,
-		Visualizer:  visualizer.Visualizer(input.Visualizer),
-		Name:        &input.Name,
-		Description: &input.Description,
-		ImageURL:    input.ImageURL,
-		Alias:       &alias,
-		Archived:    &archived,
-		CoreSupport: &coreSupport,
-	}, op)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(teamID)
 	if err != nil {
-		fmt.Printf("err:%v\n", err)
-		return nil, tx, err
+		return nil, nil, err
 	}
 
+	prjBuilder := project.New().
+		ID(project.NewID()).
+		Workspace(workspaceID).
+		IsArchived(p.IsArchived).
+		IsBasicAuthActive(p.IsBasicAuthActive).
+		BasicAuthUsername(p.BasicAuthUsername).
+		BasicAuthPassword(p.BasicAuthPassword).
+		Name(p.Name).
+		Description(p.Description).
+		Alias(p.Alias).
+		PublicTitle(p.PublicTitle).
+		PublicDescription(p.PublicDescription).
+		PublicImage(p.PublicImage).
+		PublicNoIndex(p.PublicNoIndex).
+		CoreSupport(p.CoreSupport).
+		EnableGA(p.EnableGa).
+		TrackingID(p.TrackingID).
+		Starred(p.Starred)
+
+	if !p.CreatedAt.IsZero() {
+		prjBuilder = prjBuilder.UpdatedAt(p.CreatedAt)
+	}
+	if p.PublishedAt != nil {
+		prjBuilder = prjBuilder.PublishedAt(*p.PublishedAt)
+	}
+
+	if p.ImageURL != nil {
+		if p.ImageURL.Host == "localhost:8080" || strings.HasSuffix(p.ImageURL.Host, ".reearth.dev") || strings.HasSuffix(p.ImageURL.Host, ".reearth.io") {
+			currentHost := adapter.CurrentHost(ctx)
+			currentHost = strings.TrimPrefix(currentHost, "https://")
+			currentHost = strings.TrimPrefix(currentHost, "http://")
+			if currentHost == "localhost:8080" {
+				p.ImageURL.Scheme = "http"
+			} else {
+				p.ImageURL.Scheme = "https"
+			}
+			p.ImageURL.Host = currentHost
+		}
+		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
+	}
+
+	prjBuilder = prjBuilder.Visualizer(visualizer.Visualizer(p.Visualizer))
+	prjBuilder = prjBuilder.PublishmentStatus(gqlmodel.FromPublishmentStatus(p.PublishmentStatus))
+
+	prj, err := prjBuilder.Build()
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, nil, err
+	}
+	prj, err = i.projectRepo.FindByID(ctx, prj.ID())
+	if err != nil {
+		return nil, nil, err
+	}
 	return prj, tx, nil
 }
 
@@ -619,30 +678,6 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	}
 	err = updateProjectUpdatedAtByID(ctx, scene.Project(), r)
 	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func AddZipAsset(ctx context.Context, file gateway.File, zipWriter *zip.Writer, path string) error {
-	fileName := strings.TrimPrefix(path, "/assets/")
-	stream, err := file.ReadAsset(ctx, fileName)
-	if err != nil {
-		return nil // skip if external URL
-	}
-	defer func() {
-		if cerr := stream.Close(); cerr != nil {
-			fmt.Printf("Error closing file: %v\n", cerr)
-		}
-	}()
-	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
-	zipEntry, err := zipWriter.Create(zipEntryPath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(zipEntry, stream)
-	if err != nil {
-		_ = stream.Close()
 		return err
 	}
 	return nil

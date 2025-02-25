@@ -8,7 +8,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -32,15 +31,13 @@ import (
 	"golang.org/x/text/language"
 )
 
-var fr *gateway.File
-
-type Seeder func(ctx context.Context, r *repo.Container, f gateway.File) error
+type Seeder func(ctx context.Context, r *repo.Container) error
 
 func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File) {
+func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container) {
 	ctx := context.Background()
 
 	if useMongo {
@@ -51,25 +48,18 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		repos = memory.New()
 	}
 
-	file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
-	fr = &file
 	if seeder != nil {
-		if err := seeder(ctx, repos, file); err != nil {
+		if err := seeder(ctx, repos); err != nil {
 			t.Fatalf("failed to seed the db: %s", err)
 		}
 	}
 
-	return repos, file
+	return repos
 }
 
 func initGateway() *gateway.Container {
-	if fr == nil {
-		return &gateway.Container{
-			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
-		}
-	}
 	return &gateway.Container{
-		File: *fr,
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
 	}
 }
 
@@ -133,7 +123,7 @@ func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *a
 			Disabled: true,
 		},
 	}
-	repos, _ := initRepos(t, true, seeder)
+	repos := initRepos(t, true, seeder)
 	e, _, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos.AccountRepos()
 }
@@ -185,7 +175,7 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 }
 
 func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	repos, _ := initRepos(t, useMongo, seeder)
+	repos := initRepos(t, useMongo, seeder)
 	e, gateways := StartServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
 }
@@ -213,8 +203,8 @@ func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
 		},
 	}
 	return StartServer(t, c, true,
-		func(ctx context.Context, r *repo.Container, f gateway.File) error {
-			return baseSeederWithLang(ctx, r, f, lang)
+		func(ctx context.Context, r *repo.Container) error {
+			return baseSeederWithLang(ctx, r, lang)
 		},
 	)
 }
@@ -285,12 +275,6 @@ func RegexpJSONEReadCloser(t *testing.T, actual io.ReadCloser, expected string) 
 	actualBuf := new(bytes.Buffer)
 	_, err := actualBuf.ReadFrom(actual)
 	assert.NoError(t, err)
-	// var data map[string]interface{}
-	// err = json.Unmarshal(actualBuf.Bytes(), &data)
-	// assert.NoError(t, err)
-	// if text, err := json.MarshalIndent(data, "", "  "); err == nil {
-	// 	fmt.Println(string(text))
-	// }
 	return JSONEqRegexp(t, actualBuf.String(), expected)
 }
 
@@ -298,13 +282,6 @@ func JSONEqRegexpInterface(t *testing.T, actual interface{}, expected string) bo
 	actualBytes, err := json.Marshal(actual)
 	assert.Nil(t, err)
 	return JSONEqRegexp(t, string(actualBytes), expected)
-}
-
-func JSONEqRegexpValue(t *testing.T, actual *httpexpect.Value, expected string) bool {
-	if actualData, ok := actual.Raw().(map[string]interface{}); ok {
-		return JSONEqRegexpInterface(t, actualData, expected)
-	}
-	return false
 }
 
 func aligningJSON(t *testing.T, str string) string {
@@ -318,17 +295,9 @@ func aligningJSON(t *testing.T, str string) string {
 }
 
 func ValueDump(val *httpexpect.Value) {
-	raw := val.Raw()
-	switch data := raw.(type) {
-	case map[string]interface{}:
+	if data, ok := val.Raw().(map[string]interface{}); ok {
 		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
 			fmt.Println(string(text))
 		}
-	case []interface{}:
-		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
-			fmt.Println(string(text))
-		}
-	default:
-		fmt.Println("Unsupported type:", reflect.TypeOf(raw))
 	}
 }

@@ -890,8 +890,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	feature, err := nlslayer.NewFeature(
-		nlslayer.NewFeatureID(),
+	feature, err := nlslayer.NewFeatureWithNewId(
 		inp.Type,
 		geometry,
 	)
@@ -1082,7 +1081,6 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 			ID(newNLSLayerID).
 			Simple().
 			Scene(sceneID).
-			Index(nlsLayerJSON.Index).
 			Title(nlsLayerJSON.Title).
 			LayerType(nlslayer.LayerType(nlsLayerJSON.LayerType)).
 			Config((*nlslayer.Config)(nlsLayerJSON.Config)).
@@ -1140,10 +1138,11 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 
 		// SketchInfo --------
 		if nlsLayerJSON.SketchInfo != nil {
-			features := make([]nlslayer.Feature, 0)
-			for _, featureJSON := range nlsLayerJSON.SketchInfo.FeatureCollection.Features {
+			i := nlsLayerJSON.SketchInfo
+			feature := make([]nlslayer.Feature, 0)
+			for _, v := range i.FeatureCollection.Features {
 				var geometry nlslayer.Geometry
-				for _, g := range featureJSON.Geometry {
+				for _, g := range v.Geometry {
 					if geometryMap, ok := g.(map[string]any); ok {
 						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
 						if err != nil {
@@ -1151,23 +1150,18 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 						}
 					}
 				}
-				feature, err := nlslayer.NewFeature(
-					nlslayer.NewFeatureID(),
-					featureJSON.Type,
-					geometry,
-				)
+				f, err := nlslayer.NewFeatureWithNewId(v.Type, geometry)
 				if err != nil {
 					return nil, nil, err
 				}
-				feature.UpdateProperties(featureJSON.Properties)
-				features = append(features, *feature)
+				feature = append(feature, *f)
 			}
 			featureCollection := nlslayer.NewFeatureCollection(
-				nlsLayerJSON.SketchInfo.FeatureCollection.Type,
-				features,
+				i.FeatureCollection.Type,
+				feature,
 			)
 			sketchInfo := nlslayer.NewSketchInfo(
-				nlsLayerJSON.SketchInfo.PropertySchema,
+				i.PropertySchema,
 				featureCollection,
 			)
 			nlBuilder = nlBuilder.Sketch(sketchInfo)

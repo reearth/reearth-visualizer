@@ -2,7 +2,6 @@ type Asset implements Node {
   id: ID!
   createdAt: DateTime!
   teamId: ID!
-  projectId: ID
   name: String!
   size: FileSize!
   url: String!
@@ -21,14 +20,8 @@ enum AssetSortField {
 
 input CreateAssetInput {
   teamId: ID!
-  projectId: ID
   coreSupport: Boolean!
   file: Upload!
-}
-
-input UpdateAssetInput {
-  assetId: ID!
-  projectId: ID
 }
 
 input RemoveAssetInput {
@@ -44,11 +37,6 @@ input AssetSort {
 
 type CreateAssetPayload {
   asset: Asset!
-}
-
-type UpdateAssetPayload {
-  assetId: ID!
-  projectId: ID
 }
 
 type RemoveAssetPayload {
@@ -72,7 +60,6 @@ type AssetEdge {
 extend type Query {
   assets(
     teamId: ID!
-    projectId: ID
     pagination: Pagination
     keyword: String
     sort: AssetSort
@@ -81,6 +68,5 @@ extend type Query {
 
 extend type Mutation {
   createAsset(input: CreateAssetInput!): CreateAssetPayload
-  updateAsset(input: UpdateAssetInput!): UpdateAssetPayload
   removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
 }
