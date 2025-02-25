@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearth/server/pkg/tag"
 )
 
 type sceneJSON struct {
@@ -15,11 +14,8 @@ type sceneJSON struct {
 	PublishedAt       time.Time               `json:"publishedAt"`
 	Property          propertyJSON            `json:"property"`
 	Plugins           map[string]propertyJSON `json:"plugins"`
-	Layers            []*layerJSON            `json:"layers"`
 	Widgets           []*widgetJSON           `json:"widgets"`
 	WidgetAlignSystem *widgetAlignSystemJSON  `json:"widgetAlignSystem"`
-	Tags              []*tagJSON              `json:"tags"`
-	Clusters          []*clusterJSON          `json:"clusters"`
 	Story             *storyJSON              `json:"story,omitempty"`
 	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
 	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
@@ -28,12 +24,7 @@ type sceneJSON struct {
 	TrackingID        string                  `json:"trackingId"`
 }
 
-func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
-	tags, err := b.tags(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, p []*property.Property, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	return &sceneJSON{
 		SchemaVersion:     version,
 		ID:                b.scene.ID().String(),
@@ -41,9 +32,6 @@ func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*lay
 		Property:          b.property(ctx, findProperty(p, b.scene.Property())),
 		Plugins:           b.plugins(ctx, p),
 		Widgets:           b.widgets(ctx, p),
-		Clusters:          b.clusters(ctx, p),
-		Layers:            l,
-		Tags:              tags,
 		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
 		CoreSupport:       coreSupport,
 		EnableGA:          enableGa,
@@ -83,58 +71,6 @@ func (b *Builder) widgets(ctx context.Context, p []*property.Property) []*widget
 		})
 	}
 	return res
-}
-
-func (b *Builder) clusters(ctx context.Context, p []*property.Property) []*clusterJSON {
-	sceneClusters := b.scene.Clusters().Clusters()
-	res := make([]*clusterJSON, 0, len(sceneClusters))
-	for _, c := range sceneClusters {
-		res = append(res, &clusterJSON{
-			ID:       c.ID().String(),
-			Name:     c.Name(),
-			Property: b.property(ctx, findProperty(p, c.Property())),
-		})
-	}
-	return res
-}
-
-func (b *Builder) tags(ctx context.Context) ([]*tagJSON, error) {
-	tags, err := b.tloader(ctx, b.scene.ID())
-	if err != nil {
-		return nil, err
-	}
-	tagMap := tag.MapFromRefList(tags)
-	rootTags := tag.DerefList(tags).Roots()
-	stags := make([]*tagJSON, 0, len(rootTags))
-	for _, t := range rootTags {
-		if t == nil {
-			continue
-		}
-		t2 := toTag(t, tagMap)
-		stags = append(stags, &t2)
-	}
-	return stags, nil
-}
-
-func toTag(t tag.Tag, m tag.Map) tagJSON {
-	var tags []tagJSON
-	if children := tag.GroupFrom(t).Tags(); children != nil {
-		tags = make([]tagJSON, 0, len(children))
-		for _, tid := range children {
-			t, ok := m[tid]
-			if !ok {
-				continue
-			}
-			t2 := toTag(t, m)
-			tags = append(tags, t2)
-		}
-	}
-
-	return tagJSON{
-		ID:    t.ID().String(),
-		Label: t.Label(),
-		Tags:  tags,
-	}
 }
 
 func (b *Builder) property(ctx context.Context, p *property.Property) propertyJSON {

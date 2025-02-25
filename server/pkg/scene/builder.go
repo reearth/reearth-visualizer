@@ -2,8 +2,6 @@ package scene
 
 import (
 	"time"
-
-	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -19,9 +17,6 @@ func (b *Builder) Build() (*Scene, error) {
 		return nil, ErrInvalidID
 	}
 	if b.scene.workspace.IsNil() {
-		return nil, ErrInvalidID
-	}
-	if b.scene.rootLayer.IsNil() {
 		return nil, ErrInvalidID
 	}
 	if b.scene.widgets == nil {
@@ -71,11 +66,6 @@ func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
 
 func (b *Builder) Widgets(widgets *Widgets) *Builder {
 	b.scene.widgets = widgets
-	return b
-}
-
-func (b *Builder) RootLayer(rootLayer id.LayerID) *Builder {
-	b.scene.rootLayer = rootLayer
 	return b
 }
 
