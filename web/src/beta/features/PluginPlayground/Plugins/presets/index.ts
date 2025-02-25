@@ -28,14 +28,15 @@ import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { playbackControl } from "./timeline/playbackControl";
 import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
-import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
-import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
-import { showLabel } from "./viewerAndSceneSettings/showLabel";
-import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
 import { modalWindow} from "./ui/modalWindow";
+import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
+import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
+import { mouseEvents } from "./viewerAndSceneSettings/mouseEvent";
+import { showLabel } from "./viewerAndSceneSettings/showLabel";
+import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 
 type PresetPluginCategory = {
   id: string;
@@ -64,7 +65,13 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "viewerScene",
     title: "Viewer & Scene Settings",
-    plugins: [enableShadowStyle,enableTerrain,showLabel,takeScreenshot]
+    plugins: [
+      enableShadowStyle,
+      enableTerrain,
+      showLabel,
+      takeScreenshot,
+      mouseEvents
+    ]
   },
   {
     id: "layers",
