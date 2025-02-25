@@ -135,7 +135,6 @@ type Asset struct {
 	ID          ID        `json:"id"`
 	CreatedAt   time.Time `json:"createdAt"`
 	TeamID      ID        `json:"teamId"`
-	ProjectID   *ID       `json:"projectId,omitempty"`
 	Name        string    `json:"name"`
 	Size        int64     `json:"size"`
 	URL         string    `json:"url"`
@@ -183,7 +182,6 @@ type ChangeCustomPropertyTitleInput struct {
 
 type CreateAssetInput struct {
 	TeamID      ID             `json:"teamId"`
-	ProjectID   *ID            `json:"projectId,omitempty"`
 	CoreSupport bool           `json:"coreSupport"`
 	File        graphql.Upload `json:"file"`
 }
@@ -1325,16 +1323,6 @@ type UnlinkPropertyValueInput struct {
 	SchemaGroupID *ID `json:"schemaGroupId,omitempty"`
 	ItemID        *ID `json:"itemId,omitempty"`
 	FieldID       ID  `json:"fieldId"`
-}
-
-type UpdateAssetInput struct {
-	AssetID   ID  `json:"assetId"`
-	ProjectID *ID `json:"projectId,omitempty"`
-}
-
-type UpdateAssetPayload struct {
-	AssetID   ID  `json:"assetId"`
-	ProjectID *ID `json:"projectId,omitempty"`
 }
 
 type UpdateCustomPropertySchemaInput struct {

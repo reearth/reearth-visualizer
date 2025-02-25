@@ -53,9 +53,6 @@ func (s *Story) Scene() SceneID {
 }
 
 func (s *Story) Pages() *PageList {
-	if s == nil {
-		return nil
-	}
 	return s.pages
 }
 

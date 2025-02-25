@@ -10,8 +10,7 @@ func TestNewFeatureWithNewId(t *testing.T) {
 	featureType := "Feature"
 	point := NewPoint("Point", []float64{1, 2})
 	properties := map[string]any{"key1": "value1"}
-	f, err := NewFeature(
-		NewFeatureID(),
+	f, err := NewFeatureWithNewId(
 		featureType,
 		point,
 	)

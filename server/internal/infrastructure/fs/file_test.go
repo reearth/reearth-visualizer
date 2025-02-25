@@ -113,8 +113,8 @@ func TestFSFile_UploadAssetFromURL(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			testGCS.UploadTestData(srcBucket, tc.fileName)
 
-			// fsBaseURL := "/assets"
-			newFileRepo, err := NewFile(mockFs(), "/")
+			fsBaseURL := "/assets"
+			newFileRepo, err := NewFile(mockFs(), fsBaseURL)
 			assert.NoError(t, err)
 
 			srcURL, _ := url.Parse(fmt.Sprintf("%s/%s", tc.filePath, tc.fileName))
@@ -162,7 +162,7 @@ func TestFile_RemoveAsset(t *testing.T) {
 			t.Parallel()
 
 			fs := mockFs()
-			f, _ := NewFile(fs, "https://example.com/")
+			f, _ := NewFile(fs, "https://example.com/assets")
 
 			u, _ := url.Parse(tc.URL)
 			err := f.RemoveAsset(context.Background(), u)
@@ -313,7 +313,7 @@ func TestFile_RemoveBuiltScene(t *testing.T) {
 func TestGetAssetFileURL(t *testing.T) {
 	e, err := url.Parse("http://hoge.com/assets/xxx.yyy")
 	assert.NoError(t, err)
-	b, err := url.Parse("http://hoge.com/")
+	b, err := url.Parse("http://hoge.com/assets")
 	assert.NoError(t, err)
 	assert.Equal(t, e, getAssetFileURL(b, "xxx.yyy"))
 }

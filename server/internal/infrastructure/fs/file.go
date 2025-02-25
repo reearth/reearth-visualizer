@@ -110,7 +110,7 @@ func (f *fileRepo) RemoveAsset(ctx context.Context, u *url.URL) error {
 		return nil
 	}
 	p := sanitize.Path(u.Path)
-	if p == "" || f.urlBase == nil || u.Scheme != f.urlBase.Scheme || u.Host != f.urlBase.Host || path.Dir(p) != filepath.Join(f.urlBase.Path, assetDir) {
+	if p == "" || f.urlBase == nil || u.Scheme != f.urlBase.Scheme || u.Host != f.urlBase.Host || path.Dir(p) != f.urlBase.Path {
 		return gateway.ErrInvalidFile
 	}
 	return f.delete(ctx, filepath.Join(assetDir, filepath.Base(p)))
@@ -283,11 +283,7 @@ func getAssetFileURL(base *url.URL, filename string) *url.URL {
 
 	// https://github.com/golang/go/issues/38351
 	b := *base
-	if b.Path == "/" {
-		b.Path = path.Join(b.Path, assetDir, filename)
-	} else {
-		b.Path = path.Join(b.Path, filename)
-	}
+	b.Path = path.Join(b.Path, filename)
 	return &b
 }
 

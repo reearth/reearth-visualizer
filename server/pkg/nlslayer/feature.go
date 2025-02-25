@@ -7,6 +7,14 @@ type Feature struct {
 	properties  *map[string]any
 }
 
+func NewFeatureWithNewId(featureType string, geometry Geometry) (*Feature, error) {
+	return &Feature{
+		id:          NewFeatureID(),
+		featureType: featureType,
+		geometry:    geometry,
+	}, nil
+}
+
 func NewFeature(id FeatureID, featureType string, geometry Geometry) (*Feature, error) {
 	return &Feature{
 		id:          id,

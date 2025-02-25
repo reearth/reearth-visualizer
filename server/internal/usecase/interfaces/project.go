@@ -11,7 +11,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -71,7 +70,7 @@ type Project interface {
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
 	CheckAlias(context.Context, string) (bool, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
-	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProjectData(context.Context, idx.ID[accountdomain.Workspace], map[string]interface{}, *usecase.Operator) (*project.Project, usecasex.Tx, error)
+	ExportProject(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
+	ImportProject(context.Context, string, map[string]interface{}) (*project.Project, usecasex.Tx, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]interface{}, *project.Project) error
 }
