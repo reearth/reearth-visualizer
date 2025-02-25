@@ -35,6 +35,7 @@ import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { modalWindow} from "./ui/modalWindow";
 
 type PresetPluginCategory = {
   id: string;
@@ -53,7 +54,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "User Interface",
-    plugins: [responsivePanel, sidebar, header]
+    plugins: [responsivePanel, sidebar, header, modalWindow]
   },
   {
     id: "communication",
