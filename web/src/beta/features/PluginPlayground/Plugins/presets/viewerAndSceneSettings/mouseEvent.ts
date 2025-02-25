@@ -52,7 +52,7 @@ const widgetFile: FileType = {
   <div id="wrapper">
     <h2>Click Coordinates</h2>
     <div class="coord-container">
-      <div class="coords-title">Click on a location to see coordinates:</div>
+      <div class="coords-title">Click anywhere to see coordinates:</div>
       <div class="coordinates">
         <div>Latitude: <span id="lat" class="coordinate-value">-</span>°</div>
         <div>Longitude: <span id="lng" class="coordinate-value">-</span>°</div>
@@ -65,7 +65,7 @@ const widgetFile: FileType = {
     window.addEventListener("message", e => {
       const msg = e.data;
       if (msg.type === "position") {
-        // Update UI with coordinates only
+        // Update UI with coordinates
         document.getElementById("lat").textContent = msg.lat?.toFixed(6) || "-";
         document.getElementById("lng").textContent = msg.lng?.toFixed(6) || "-";
         document.getElementById("height").textContent = msg.height?.toFixed(2) || "-";
@@ -74,51 +74,17 @@ const widgetFile: FileType = {
   </script>
 \`);
 
-// Add locations layer using the hosted GeoJSON URL and store the layer ID
-const locationsLayerId = reearth.layers.add({
-  type: "simple",
-  data: {
-    type: "geojson",
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/tokyo_locations_sample.geojson"
-  },
-  marker: {
-    height: 1000,
-    heightReference: "relative",
-    pointColor: "#E9373D",
-    pointOutlineColor: "white",
-    pointOutlineWidth: 2,
-    pointSize: 15,
-    style: "point"
-  }
-});
-
-// Initial camera position
-reearth.camera.flyTo(
-  {
-    lat: 35.6762,
-    lng: 139.7503,
-    height: 50000,
-    heading: 0,
-    pitch: -1.5,
-    roll: 0
-  },
-  { duration: 2 }
-);
-
-// Handle click events and send to UI only when a location is clicked
+// Handle click events and send to UI for any map click
 reearth.viewer.on("click", (event) => {
-  const { lat, lng, height, layerId } = event;
+  const { lat, lng, height } = event;
 
-  // Check if the clicked layer is our locations layer or one of its features
-  if (layerId && (layerId === locationsLayerId || layerId.startsWith(locationsLayerId + "-"))) {
-    // Send coordinates to UI only when a landmark is clicked
-    reearth.ui.postMessage({
-      type: "position",
-      lat: lat,
-      lng: lng,
-      height: height
-    });
-  }
+  // Send coordinates to UI for any click
+  reearth.ui.postMessage({
+    type: "position",
+    lat: lat,
+    lng: lng,
+    height: height
+  });
 });
   `
 };
