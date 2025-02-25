@@ -1,3 +1,5 @@
+import { Placement } from "@floating-ui/react";
+import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
@@ -11,6 +13,9 @@ export type IconProps = {
   color?: string;
   className?: string;
   ariaLabel?: string;
+  tooltipText?: string;
+  offset?: number;
+  placement?: Placement;
 };
 
 export const Icon: FC<IconProps> = ({
@@ -18,7 +23,10 @@ export const Icon: FC<IconProps> = ({
   size = "normal",
   color,
   className,
-  ariaLabel
+  ariaLabel,
+  tooltipText,
+  offset,
+  placement
 }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
@@ -37,7 +45,7 @@ export const Icon: FC<IconProps> = ({
     `;
   }, [icon, theme]);
 
-  return SvgIcon ? (
+  const IconComponent = SvgIcon ? (
     <SvgIcon
       size={size}
       color={color}
@@ -45,4 +53,17 @@ export const Icon: FC<IconProps> = ({
       aria-label={ariaLabel}
     />
   ) : null;
+
+  return tooltipText && IconComponent ? (
+    <Tooltip
+      type="custom"
+      text={tooltipText}
+      icon={icon}
+      offset={offset}
+      iconColor={color}
+      placement={placement}
+    />
+  ) : (
+    IconComponent
+  );
 };

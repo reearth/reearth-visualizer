@@ -33,6 +33,7 @@ import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
 import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
 import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
+import { mouseEvents } from "./viewerAndSceneSettings/mouseEvent";
 import { showLabel } from "./viewerAndSceneSettings/showLabel";
 import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 
@@ -57,7 +58,13 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "viewerScene",
-    plugins: [enableShadowStyle, enableTerrain, showLabel, takeScreenshot]
+    plugins: [
+      enableShadowStyle,
+      enableTerrain,
+      showLabel,
+      takeScreenshot,
+      mouseEvents
+    ]
   },
   {
     id: "layers",

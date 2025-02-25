@@ -57,6 +57,7 @@ export default function ({
     cartesianToCartographic,
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
+    getGeoidHeight,
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,
@@ -189,6 +190,7 @@ export default function ({
         cartesianToCartographic,
         transformByOffsetOnScreen,
         isPositionVisibleOnGlobe,
+        getGeoidHeight,
         // viewer events
         viewerEventsOn,
         viewerEventsOff,
@@ -282,6 +284,7 @@ export default function ({
       cartesianToCartographic,
       transformByOffsetOnScreen,
       isPositionVisibleOnGlobe,
+      getGeoidHeight,
       viewerEventsOn,
       viewerEventsOff,
       getCameraPosition,
