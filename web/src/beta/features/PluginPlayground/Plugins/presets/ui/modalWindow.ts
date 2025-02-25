@@ -92,6 +92,6 @@ reearth.extension.on("message", msg => {
 
 export const modalWindow: PluginType = {
   id: "modal-window",
-  title: "Modal Wiondow",
+  title: "Modal Window",
   files: [widgetFile, yamlFile]
 };
