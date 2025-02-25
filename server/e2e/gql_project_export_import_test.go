@@ -1,43 +1,146 @@
 package e2e
 
 import (
+	"encoding/json"
+	"fmt"
+	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestCallImportProject ./e2e/...
+// go test -v -run TestProjectExportImport ./e2e/...
 
-func TestCallImportProject(t *testing.T) {
+func TestProjectExportImport(t *testing.T) {
 
-	e := Server(t, baseSeeder)
+	e := Server(t, fullSeeder)
 
-	filePath := "test.zip"
+	// 1.Retrieve the data created by fullSeeder.
+	expected := getScene(e, sID.String(), language.English.String())
 
-	r := importProject(t, e, filePath)
+	// 2.Export the data.
+	fileName := exporProject(t, e, pID.String())
 
-	r.Value("project").NotNull()
-	r.Value("plugins").Array()
-	r.Value("schema").Array()
-	r.Value("scene").NotNull()
-	r.Value("nlsLayer").Array()
-	r.Value("style").Array()
-	r.Value("story").NotNull()
+	// 3.Import the exported data.
+	r := importProject(t, e, fileName)
 
-	sid := r.Value("scene").Object().Value("id").Raw().(string)
+	r.Object().Value("project").NotNull()
+	r.Object().Value("plugins").Array()
+	r.Object().Value("schema").Array()
+	r.Object().Value("scene").NotNull()
+	r.Object().Value("nlsLayer").Array()
+	r.Object().Value("style").Array()
+	r.Object().Value("story").NotNull()
 
-	r = getScene(e, sid, language.English.String())
-	// fmt.Println(toJSONString(r.Raw()))
+	r.Object().Value("project").Object().HasValue("name", pName)
+	r.Object().Value("project").Object().HasValue("description", pDesc)
 
-	r.Value("id").IsEqual(sid)
+	newId := r.Object().Value("scene").Object().Value("id").Raw().(string)
+
+	// 4.Retrieve the imported data.
+	actual := getScene(e, newId, language.English.String())
+
+	// 5. Compare and check each value individually.
+	compareValue(t, "styles", expected, actual)
+	compareValue(t, "widgets", expected, actual)
+	compareValue(t, "widgetAlignSystem", expected, actual)
+	compareValue(t, "stories", expected, actual)
+	compareValue(t, "newLayers", expected, actual)
+	compareValue(t, "plugins", expected, actual)
+	compareValue(t, "property", expected, actual)
+
+	defer func() {
+		err := os.Remove(fileName)
+		assert.Nil(t, err)
+	}()
 
 }
 
-func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexpect.Object {
+func convertLine(t *testing.T, key string, v *httpexpect.Value) []string {
+	v2, err := json.MarshalIndent(v.Object().Value(key).Raw(), "", "  ")
+	assert.Nil(t, err)
+	return strings.Split(strings.ReplaceAll(string(v2), "\r\n", "\n"), "\n")
+}
+
+func compareValue(t *testing.T, key string, e, a *httpexpect.Value) {
+	expected := convertLine(t, key, e)
+	actual := convertLine(t, key, a)
+
+	maxLines := len(expected)
+	if len(actual) > maxLines {
+		maxLines = len(actual)
+	}
+
+	for i := 0; i < maxLines; i++ {
+		var expectedLine, actualLine string
+
+		if i < len(expected) {
+			expectedLine = expected[i]
+		}
+		if i < len(actual) {
+			actualLine = actual[i]
+		}
+
+		if expectedLine != actualLine {
+			if isIgnore(`"id":`, expectedLine, actualLine) ||
+				isIgnore(`"propertyId":`, expectedLine, actualLine) ||
+				isIgnore(`"sceneId":`, expectedLine, actualLine) ||
+				(isID(expectedLine) && isID(actualLine)) {
+				continue
+			}
+			assert.Failf(t, "Mismatch in %s at line %d", key, i+1,
+				"Expected: %s\nActual: %s", expectedLine, actualLine)
+		}
+	}
+}
+
+func isIgnore(propertyName, expectedLine, actualLine string) bool {
+	expected := strings.TrimSpace(expectedLine)
+	actual := strings.TrimSpace(actualLine)
+	if strings.HasPrefix(expected, propertyName) && strings.HasPrefix(actual, propertyName) {
+		return true
+	}
+	return false
+}
+
+func isID(text string) bool {
+	v := strings.TrimSpace(text)
+	v = strings.Trim(v, `"`)
+	if _, err := idx.From[id.Widget](v); err != nil {
+		return false
+	}
+	return true
+}
+
+func exporProject(t *testing.T, e *httpexpect.Expect, p string) string {
+	requestBody := GraphQLRequest{
+		OperationName: "ExportProject",
+		Query:         "mutation ExportProject($projectId: ID!) { exportProject(input: {projectId: $projectId}) { projectDataPath __typename } }",
+		Variables: map[string]any{
+			"projectId": p,
+		},
+	}
+	r := Request(e, uID.String(), requestBody)
+	// ValueDump(r)
+	downloadPath := r.Path("$.data.exportProject.projectDataPath").Raw().(string)
+	downloadResponse := e.GET(fmt.Sprintf("http://localhost:8080%s", downloadPath)).
+		Expect().
+		Status(http.StatusOK).
+		Body().Raw()
+	fileName := "project_data.zip"
+	err := os.WriteFile(fileName, []byte(downloadResponse), os.ModePerm)
+	assert.Nil(t, err)
+	return fileName
+}
+
+func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexpect.Value {
 	file, err := os.Open(filePath)
 	if err != nil {
 		t.Fatalf("failed to open file: %v", err)
@@ -62,13 +165,14 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
 	}
 
 	assert.Nil(t, err)
-	r := RequestWithMultipart(e, uID.String(), requestBody, filePath).Object()
-	projectData := r.Value("data").Object().Value("importProject").Object().Value("projectData")
+	r := RequestWithMultipart(e, uID.String(), requestBody, filePath)
+	// ValueDump(r)
+	projectData := r.Object().Value("data").Object().Value("importProject").Object().Value("projectData")
 	projectData.NotNull()
-	return projectData.Object()
+	return projectData
 }
 
-func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
+func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "GetScene",
 		Query:         GetSceneGuery,
@@ -78,10 +182,11 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Object {
 		},
 	}
 
-	r := Request(e, uID.String(), requestBody).Object()
-	v := r.Value("data").Object().Value("node")
+	r := Request(e, uID.String(), requestBody)
+	// ValueDump(r)
+	v := r.Object().Value("data").Object().Value("node")
 	v.NotNull()
-	return v.Object()
+	return v
 }
 
 const GetSceneGuery = `
