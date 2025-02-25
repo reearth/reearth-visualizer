@@ -4,13 +4,13 @@ const yamlFile: FileType = {
   id: "modal-window-reearth-yml",
   title: "reearth.yml",
   sourceCode: `id: modal-window-plugin
-name: Set Modal Wiondow
+name: Set Modal Window
 version: 1.0.0
 extensions:
   - id: modal-window
     type: widget
-    name: Set Modal Wiondow
-    description: Set Modal Wiondow
+    name: Set Modal Window
+    description: Set Modal Window
   `,
   disableEdit: true,
   disableDelete: true
