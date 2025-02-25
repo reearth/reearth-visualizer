@@ -58,22 +58,24 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}
 
 	// auth
-	authConfig := cfg.Config.JWTProviders()
-	log.Infof("auth: config: %#v", authConfig)
-
 	var wrapHandler func(http.Handler) http.Handler
 	if cfg.Config.UseMockAuth() {
 		log.Infof("Using mock auth for local development")
 		wrapHandler = func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 				ctx := r.Context()
 				ctx = adapter.AttachMockAuth(ctx, true)
 				next.ServeHTTP(w, r.WithContext(ctx))
 			})
 		}
 	} else {
-		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+		authConfig := cfg.Config.JWTProviders()
+		log.Infof("auth: config: %#v", authConfig)
+		if cfg.Config.AuthSrv.Disabled {
+			wrapHandler = lo.Must(AuthMiddlewareDummy())
+		} else {
+			wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+		}
 	}
 
 	e.Use(echo.WrapMiddleware(wrapHandler))
@@ -157,6 +159,12 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}).Handler(e)
 
 	return e
+}
+
+func AuthMiddlewareDummy() (func(http.Handler) http.Handler, error) {
+	return func(next http.Handler) http.Handler {
+		return next
+	}, nil
 }
 
 func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
