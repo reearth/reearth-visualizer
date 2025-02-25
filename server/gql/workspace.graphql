@@ -5,20 +5,8 @@ type Team implements Node {
   personal: Boolean!
   policyId: ID
   policy: Policy
-  assets(
-    projectId: ID
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): AssetConnection!
-  projects(
-    includeArchived: Boolean
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): ProjectConnection!
+  assets(first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
+  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
 }
 
 type TeamMember {
@@ -118,8 +106,6 @@ extend type Mutation {
   deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
   updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
   addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
-  removeMemberFromTeam(
-    input: RemoveMemberFromTeamInput!
-  ): RemoveMemberFromTeamPayload
+  removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload
   updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
 }

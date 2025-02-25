@@ -42,7 +42,6 @@ func (b *Builder) storyJSON(ctx context.Context, p []*property.Property) (*story
 
 	return &storyJSON{
 		ID:       b.story.Id().String(),
-		Title:    b.story.Title(),
 		Property: b.property(ctx, findProperty(p, b.story.Property())),
 		Pages: lo.FilterMap(b.story.Pages().Pages(), func(page *storytelling.Page, _ int) (pageJSON, bool) {
 			if page == nil {

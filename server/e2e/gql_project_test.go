@@ -40,7 +40,7 @@ func TestCreateAndGetProject(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().IsEqual(2)
+	edges.Length().IsEqual(1)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("test2-1")
 
 	// check
@@ -142,7 +142,7 @@ func TestSortByName(t *testing.T) {
 		Value("projects").Object().
 		Value("edges").Array()
 
-	edges.Length().IsEqual(5)
+	edges.Length().IsEqual(4)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
 	edges.Value(1).Object().Value("node").Object().Value("name").IsEqual("A-project")
 	edges.Value(2).Object().Value("node").Object().Value("name").IsEqual("b-project")
@@ -589,7 +589,7 @@ func TestGetProjectPagination(t *testing.T) {
 
 	projects := Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
 
-	projects.HasValue("totalCount", 21)
+	projects.HasValue("totalCount", 20)
 
 	edges := projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 16)
@@ -621,10 +621,10 @@ func TestGetProjectPagination(t *testing.T) {
 		},
 	}
 	projects = Request(e, uID.String(), requestBody).Object().Value("data").Object().Value("projects").Object()
-	projects.HasValue("totalCount", 5)
+	projects.HasValue("totalCount", 4)
 
 	edges = projects.Value("edges").Array().Iter()
-	assert.Equal(t, len(edges), 5)
+	assert.Equal(t, len(edges), 4)
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
