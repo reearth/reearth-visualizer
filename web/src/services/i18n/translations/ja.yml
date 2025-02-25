@@ -299,6 +299,7 @@ Enable Shadow Style: シャドウスタイルを有効にする
 Enable Terrain: 地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
+Mouse Events: マウスイベント
 Add Geojson: Geojsonを追加
 Add CSV: CSVを追加
 Add KML: KMLを追加
@@ -330,7 +331,6 @@ File not found: ファイルが見つかりません
 Only zip files are supported: zipファイルのみサポートされています
 Zip file is empty: Zipファイルは空です
 Plugin link copied to clipboard: プラグインのリンクがクリップボードにコピーされました
-Default: デフォルト
 Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
 General: 一般
@@ -452,11 +452,11 @@ Superscript: 上付き文字
 Clear Formatting: 書式をクリア
 Loading...: ロード中...
 Please select: 選択してください
+This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 'Sort:': '並び替え:'
 Grid Layout: グリッドレイアウト
 List Layout: リストのレイアウト
 Version: バージョン
-This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 Wrong file format: 誤ったファイル形式
 Not set: 設定されていません
 Choose: 選択
@@ -536,6 +536,7 @@ Successfully upgraded plugin!: プラグインのアップグレードに成功�
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
+Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Failed to publish project.: プロジェクト公開に失敗しました。

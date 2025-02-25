@@ -74,6 +74,7 @@ const Plugins: FC<Props> = ({
       "enable-terrain": t("Enable Terrain"),
       "show-label": t("Show Label"),
       "take-screenshot": t("Take Screenshot"),
+      "mouse-events": t("Mouse Events"),
       "add-geojson": t("Add Geojson"),
       "add-csv": t("Add CSV"),
       "add-kml": t("Add KML"),
