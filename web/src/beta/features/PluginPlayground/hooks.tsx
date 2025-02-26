@@ -75,7 +75,7 @@ export default () => {
     DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
   );
 
-  const getLayerTitle: Record<string, string> = useMemo(() => {
+  const layerTitles: Record<string, string> = useMemo(() => {
     return {
       "chiyoda-3d-tiles": t("Chiyoda 3D Tiles"),
       "japanese-heritage-sites": t("Japanese Heritage Sites")
@@ -102,10 +102,10 @@ export default () => {
             }
           : {}),
         visible: visibleLayerIds.includes(layer.id),
-        title: getLayerTitle[layer.id]
+        title: layerTitles[layer.id]
       };
     });
-  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks, getLayerTitle]);
+  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks, layerTitles]);
 
   const handleLayerVisibilityUpdate = (layerId: string) => {
     setVisibleLayerIds((prev) =>
