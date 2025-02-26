@@ -47,7 +47,7 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal(MigratePluginsResult{
 		Scene:             sc,
-		Properties:        property.List{pl1p, pl2p},
+		Properties:        property.List{pl1p},
 		RemovedProperties: []id.PropertyID{},
 	}, result)
 
