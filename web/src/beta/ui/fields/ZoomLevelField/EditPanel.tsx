@@ -30,10 +30,10 @@ const EditPanel: FC<EditPanelProps> = ({
   const [localValue, setLocalValue] = useState(value);
 
   useEffect(() => {
-    if (value) {
+    if (value?.every((v) => v !== null)) {
       setLocalValue(value);
-    }
-  }, [value]);
+    } else setLocalValue([min, max] as number[]);
+  }, [max, min, value]);
 
   const handleSave = useCallback(() => {
     onSave?.(localValue || []);
@@ -85,7 +85,7 @@ export default EditPanel;
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
-  alignItems: "flex-start",
+  alignItems: "center",
   gap: theme.spacing.normal
 }));
 

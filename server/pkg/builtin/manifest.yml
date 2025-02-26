@@ -75,13 +75,13 @@ extensions:
               placeholder: please enter tile url
             - id: tile_zoomLevel
               type: array
-              title: zoom level
-              description: "Change the zoom level of the selected tile map. Min:0, Max:30"
-              defaultValue: [0,30]
+              title: Zoom level
+              description: "Change the zoom level of the selected tile map. Min:0, Max:25"
+              defaultValue: [0,25]
               ui: zoomLevel
               min: 0
-              max: 30
-              placeholder: please enter tile zoomLevel
+              max: 25
+              placeholder: please enter tile zoom level
             - id: tile_opacity
               type: number
               title: Opacity

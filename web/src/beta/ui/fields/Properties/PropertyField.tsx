@@ -60,7 +60,6 @@ const PropertyField: FC<Props> = ({
     [schema.type, schema.ui]
   );
 
-  console.log("zoomLevel", schema);
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (
     <>
