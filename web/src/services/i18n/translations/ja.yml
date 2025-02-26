@@ -275,10 +275,10 @@ You have reached a policy limit. Please contact an administrator of your Re:Eart
 HTML Editor: HTML エディター
 This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
-Viewer: ビューアー
-Plugins: プラグイン
 Chiyoda 3D Tiles: 千代田3Dタイル
 Japanese Heritage Sites: 日本の遺産
+Viewer: ビューアー
+Plugins: プラグイン
 Extension Settings: 拡張機能の設定
 Custom: カスタム
 User Interface: ユーザーインターフェース
@@ -293,6 +293,7 @@ My Plugin: 私のプラグイン
 Responsive Panel: レスポンシブパネル
 Sidebar: サイドバー
 Header: ヘッダー
+Modal Window: モーダルウィンドウ
 UI Extension Messenger: UI拡張メッセンジャー
 Extension To Extension Messenger: 拡張から拡張へのメッセンジャー
 Enable Shadow Style: シャドウスタイルを有効にする

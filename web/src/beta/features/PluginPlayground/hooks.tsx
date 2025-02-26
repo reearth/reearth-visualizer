@@ -22,9 +22,6 @@ export default () => {
   const t = useT();
   const lang = useLang();
   const changeLanguage = useChangeLanguage();
-  const viewerName = t("Viewer");
-  const codeName = t("Code");
-  const pluginsName = t("Plugins");
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
   const resetVisualizer = useCallback(() => {
@@ -124,7 +121,7 @@ export default () => {
     () => [
       {
         id: "viewer",
-        name: viewerName,
+        name: t("Viewer"),
         children: (
           <Viewer
             enabledVisualizer={enabledVisualizer}
@@ -137,7 +134,7 @@ export default () => {
         )
       }
     ],
-    [enabledVisualizer, layers, showStoryPanel, story, viewerName, widgets]
+    [enabledVisualizer, layers, showStoryPanel, story, t, widgets]
   );
 
   const LayersPanel: FC = () => (
@@ -154,7 +151,7 @@ export default () => {
     () => [
       {
         id: "plugins",
-        name: pluginsName,
+        name: t("Plugins"),
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
@@ -178,12 +175,12 @@ export default () => {
       deleteFile,
       encodeAndSharePlugin,
       handlePluginDownload,
-      pluginsName,
       presetPlugins,
       selectedFile,
       selectedPlugin,
       selectFile,
       selectPlugin,
+      t,
       handlePluginImport,
       sharedPlugin,
       updateFileTitle
@@ -194,7 +191,7 @@ export default () => {
     () => [
       {
         id: "code",
-        name: codeName,
+        name: t("Code"),
         children: (
           <Code
             fileTitle={selectedFile.title}
@@ -210,7 +207,7 @@ export default () => {
         )
       }
     ],
-    [codeName, executeCode, selectedFile, updateFileSourceCode]
+    [executeCode, selectedFile, t, updateFileSourceCode]
   );
 
   const SettingsPanel: FC = () => (

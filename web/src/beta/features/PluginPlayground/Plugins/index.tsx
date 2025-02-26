@@ -47,7 +47,7 @@ const Plugins: FC<Props> = ({
     encodeAndSharePlugin(selectedPlugin.id);
   };
 
-  const getCategoryTitle: Record<string, string> = useMemo(() => {
+  const categoryTitles: Record<string, string> = useMemo(() => {
     return {
       custom: t("Custom"),
       ui: t("User Interface"),
@@ -62,12 +62,13 @@ const Plugins: FC<Props> = ({
     };
   }, [t]);
 
-  const getPluginTitle: Record<string, string> = useMemo(() => {
+  const pluginTitles: Record<string, string> = useMemo(() => {
     return {
       "my-plugin": t("My Plugin"),
       "responsive-panel": t("Responsive Panel"),
       sidebar: t("Sidebar"),
       header: t("Header"),
+      "modal-window": t("Modal Window"),
       "ui-extension-messenger": t("UI Extension Messenger"),
       "extension-to-extension-messenger": t("Extension To Extension Messenger"),
       "enable-shadow-style": t("Enable Shadow Style"),
@@ -161,7 +162,7 @@ const Plugins: FC<Props> = ({
                   <PluginEntryItem
                     pluginId={sharedPlugin.id}
                     key={sharedPlugin.id}
-                    title={getPluginTitle[sharedPlugin.id]}
+                    title={pluginTitles[sharedPlugin.id]}
                     selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
                   />
@@ -176,7 +177,7 @@ const Plugins: FC<Props> = ({
                 collapsed={category.id !== "custom"}
                 iconPosition="left"
                 size="small"
-                title={getCategoryTitle[category.id]}
+                title={categoryTitles[category.id]}
                 noPadding
               >
                 <PluginSubList>
@@ -185,7 +186,7 @@ const Plugins: FC<Props> = ({
                       <PluginEntryItem
                         pluginId={plugin.id}
                         key={plugin.id}
-                        title={getPluginTitle[plugin.id]}
+                        title={pluginTitles[plugin.id]}
                         selectedPluginId={selectedPlugin.id}
                         onSelect={selectPlugin}
                       />
