@@ -371,6 +371,5 @@ reearth.popup.on("close", () => {
 
 export const popupPlugin: PluginType = {
   id: "popup-plugin",
-  title: "Popup",
   files: [widgetFile, yamlFile]
 };
