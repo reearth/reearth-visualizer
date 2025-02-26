@@ -91,6 +91,5 @@ reearth.viewer.on("click", (event) => {
 
 export const mouseEvents: PluginType = {
   id: "mouse-events",
-  title: "Mouse Events",
   files: [widgetFile, yamlFile]
 };
