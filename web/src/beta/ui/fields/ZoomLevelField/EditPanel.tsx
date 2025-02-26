@@ -63,19 +63,21 @@ const EditPanel: FC<EditPanelProps> = ({
       }
     >
       <Wrapper>
-        <Icon icon="videoCamera" />
-        <RangeSlider
-          value={localValue}
-          min={min}
-          max={max}
-          step={1}
-          onChange={setLocalValue}
-        />
-        <Icon icon="globeSimple" />
+        <SliderWrapper>
+          <Icon icon="videoCamera" />
+          <RangeSlider
+            value={localValue}
+            min={min}
+            max={max}
+            step={1}
+            onChange={setLocalValue}
+          />
+          <Icon icon="globeSimple" />
+        </SliderWrapper>
+        <Typography size="footnote" color={theme.content.weak}>
+          {description}
+        </Typography>
       </Wrapper>
-      <Typography size="footnote" color={theme.content.weak}>
-        {description}
-      </Typography>
     </PopupPanel>
   );
 };
@@ -83,6 +85,12 @@ const EditPanel: FC<EditPanelProps> = ({
 export default EditPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest
+}));
+
+const SliderWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
