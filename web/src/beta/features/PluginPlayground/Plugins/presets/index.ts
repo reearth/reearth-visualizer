@@ -29,9 +29,10 @@ import { playbackControl } from "./timeline/playbackControl";
 import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { header } from "./ui/header";
+import { modalWindow } from "./ui/modalWindow";
+import { popupPlugin } from "./ui/popup";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
-import { modalWindow} from "./ui/modalWindow";
 import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
 import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
 import { mouseEvents } from "./viewerAndSceneSettings/mouseEvent";
@@ -55,7 +56,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "User Interface",
-    plugins: [responsivePanel, sidebar, header, modalWindow]
+    plugins: [responsivePanel, sidebar, header, modalWindow, popupPlugin]
   },
   {
     id: "communication",
