@@ -43,7 +43,7 @@ const EditPanel: FC<EditPanelProps> = ({ onClose, onSubmit }) => {
         inputMethod={"URL"}
         value={localValue}
         placeholder="http://"
-        onChange={setLocalValue}
+        onInputChange={setLocalValue}
       />
     </PopupPanel>
   );
