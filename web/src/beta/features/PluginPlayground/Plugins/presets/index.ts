@@ -31,6 +31,7 @@ import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { header } from "./ui/header";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { modalWindow} from "./ui/modalWindow";
 import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
 import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
 import { mouseEvents } from "./viewerAndSceneSettings/mouseEvent";
@@ -54,7 +55,7 @@ export const presetPlugins: PresetPlugins = [
   {
     id: "ui",
     title: "User Interface",
-    plugins: [responsivePanel, sidebar, header]
+    plugins: [responsivePanel, sidebar, header, modalWindow]
   },
   {
     id: "communication",
