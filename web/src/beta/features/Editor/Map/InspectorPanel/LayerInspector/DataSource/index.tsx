@@ -30,8 +30,11 @@ const DataSource: FC<Props> = ({
 
   useEffect(() => {
     setLocalTitle(selectedLayer.title);
+  }, [selectedLayer.title]);
+
+  useEffect(() => {
     setLocalUrl(selectedLayer.config?.data?.url);
-  }, [selectedLayer.config?.data?.url, selectedLayer.title]);
+  }, [selectedLayer.config?.data?.url]);
 
   const initialCollapsedStates = useMemo(() => {
     const storedStates: Record<string, boolean> = {};
@@ -72,18 +75,17 @@ const DataSource: FC<Props> = ({
 
   const handleLayerUrlUpdate = useCallback(
     (url: string) => {
-      const type = selectedLayer.config.data.type;
       onLayerConfigUpdate?.({
         layerId: selectedLayer.id,
         config: {
           data: {
-            type,
+            ...selectedLayer.config.data,
             url
           }
         }
       });
     },
-    [onLayerConfigUpdate, selectedLayer.config.data.type, selectedLayer.id]
+    [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
   );
 
   return (

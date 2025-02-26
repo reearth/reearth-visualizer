@@ -128,9 +128,9 @@ Data source: データソース
 Layer Name: レイヤー名
 Format: 形式
 Custom property schema: カスタムプロパティスキーマ
-Update data resource URL: ''
-New data resource URL: ''
-Resource URL copied to clipboard: ''
+Update data resource URL: リソースURLを更新
+New data resource URL: 新しいリソースURL
+Resource URL copied to clipboard: リソースURLがクリップボードにコピーされました
 Edit: 編集
 Edit Field: フィールド編集
 Delete Field: フィールド削除
