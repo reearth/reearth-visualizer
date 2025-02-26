@@ -90,10 +90,10 @@ func TestProperty_MigrateSchema(t *testing.T) {
 
 	assert.Equal(t, schema.ID(), property.Schema())
 	assert.Equal(t, 1, len(property.Items()))
-	assert.Equal(t, 3, len(newFields))
+	assert.Equal(t, 2, len(newFields))
 	assert.NotNil(t, newGroup.Field(schemaField1ID))
 	assert.NotNil(t, newGroup.Field(schemaField3ID))
-	assert.NotNil(t, newGroup.Field(schemaField5ID))
+	assert.Nil(t, newGroup.Field(schemaField5ID))
 }
 
 func TestGetOrCreateItem(t *testing.T) {
