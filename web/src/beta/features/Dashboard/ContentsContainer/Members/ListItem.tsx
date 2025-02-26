@@ -62,7 +62,10 @@ const ListItem: FC<{
       </TypographyWrapper>
       <TypographyWrapper>
         <TypographyOfMember size="body">
-          {memerRoleTranslation[member.role].toLowerCase()}
+          {member.role === Role.Maintainer
+            ? //maintainer backend mutation work in progress for now
+              memerRoleTranslation[member.role].toLowerCase() + "(WIP)"
+            : memerRoleTranslation[member.role].toLowerCase()}
         </TypographyOfMember>
       </TypographyWrapper>
 
@@ -80,7 +83,9 @@ const ListItem: FC<{
                 disabled:
                   meRole === Role.Reader ||
                   meRole === Role.Writer ||
-                  (meRole === Role.Maintainer && member.role === Role.Owner),
+                  // (meRole === Role.Maintainer && member.role === Role.Owner),
+                  //maintainer can't change member role for now
+                  meRole === Role.Maintainer,
                 onClick: () => handleUpdateRole(member)
               },
               {
@@ -90,7 +95,9 @@ const ListItem: FC<{
                 disabled:
                   meRole === Role.Reader ||
                   meRole === Role.Writer ||
-                  (meRole === Role.Maintainer && member.role === Role.Owner),
+                  // (meRole === Role.Maintainer && member.role === Role.Owner),
+                  //maintainer can't remove member for now
+                  meRole === Role.Maintainer,
                 onClick: () => handleRemoveMember(member.userId)
               }
             ]}

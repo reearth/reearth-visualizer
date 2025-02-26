@@ -82,7 +82,9 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           />
         </Search>
         <div>
-          {(meRole === Role.Owner || meRole === Role.Maintainer) && (
+          {meRole === Role.Owner && (
+            //maintainer can't add new member for now
+            // || meRole === Role.Maintainer
             <Button
               title={t("New member")}
               appearance="primary"
