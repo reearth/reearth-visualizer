@@ -20,6 +20,7 @@ import {
   RangeField
 } from "..";
 import { SpacingValues } from "../SpacingField";
+import ZoomLevelField from "../ZoomLevelField";
 
 import useHooks from "./hooks";
 
@@ -40,8 +41,8 @@ const PropertyField: FC<Props> = ({
   schema,
   onFlyTo
 }) => {
-  const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
   const t = useT();
+  const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
   const value = useMemo(
     () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
     [field?.mergedValue, field?.value, schema.defaultValue]
@@ -183,6 +184,16 @@ const PropertyField: FC<Props> = ({
           description={schema.description}
           onSave={handleChange}
           onFlyTo={onFlyTo}
+        />
+      ) : schema.type === "array" && schema.ui === "zoomLevel" ? (
+        <ZoomLevelField
+          key={schema.id}
+          title={schema.name}
+          value={value as number[]}
+          min={schema.min}
+          max={schema.max}
+          description={schema.description}
+          onChange={handleChange}
         />
       ) : schema.type === "array" && schema.ui === "range" ? (
         <RangeField

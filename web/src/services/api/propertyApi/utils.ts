@@ -63,7 +63,8 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
     | "cameraPose"
     | "padding"
     | "margin"
-    | "datetime";
+    | "datetime"
+    | "zoomLevel";
   choices?: {
     key: string;
     label: string;
@@ -308,6 +309,8 @@ export const toUi = (
       return "padding";
     case PropertySchemaFieldUi.Datetime:
       return "datetime";
+    case PropertySchemaFieldUi.Zoomlevel:
+      return "zoomLevel";
   }
   return undefined;
 };

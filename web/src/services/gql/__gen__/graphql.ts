@@ -1544,7 +1544,8 @@ export enum PropertySchemaFieldUi {
   Range = 'RANGE',
   Selection = 'SELECTION',
   Slider = 'SLIDER',
-  Video = 'VIDEO'
+  Video = 'VIDEO',
+  Zoomlevel = 'ZOOMLEVEL'
 }
 
 export type PropertySchemaGroup = {
