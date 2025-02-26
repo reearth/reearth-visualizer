@@ -29,9 +29,14 @@ export type SketchFeatureProperties = Record<string, Value> &
 export type PhotoOverlayValue = {
   camera?: Camera;
   url?: string;
-  fill?: "contain" | "fixedWidthPct";
+  fill?: "contain" | "fixed";
   widthPct?: number;
   description?: string;
+};
+
+export type PhotoOverlayPreview = {
+  value?: PhotoOverlayValue;
+  transparency?: number;
 };
 
 export type PhotoOverlayEditingFeature = {

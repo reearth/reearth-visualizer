@@ -1,3 +1,4 @@
+import { VISUALIZER_CORE_DOM_ID } from "@reearth/beta/features/Visualizer/constaints";
 import { Button, Panel } from "@reearth/beta/lib/reearth-ui";
 import {
   AssetField,
@@ -6,20 +7,23 @@ import {
   SliderField,
   TextareaField
 } from "@reearth/beta/ui/fields";
+import { getImageDimensions } from "@reearth/beta/utils/image";
 import {
   generateNewPropertiesWithPhotoOverlay,
-  getPhotoOverlayValue,
-  PhotoOverlayValue
+  getPhotoOverlayValue
 } from "@reearth/beta/utils/sketch";
 import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useAtom } from "jotai";
 import { RESET } from "jotai/utils";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useMapPage } from "../context";
-import { photoOverlayEditingFeatureAtom } from "../state";
+import {
+  photoOverlayEditingFeatureAtom,
+  PhotoOverlayPreviewAtom
+} from "../state";
 
 const DEFAULT_PHOTO_SIZE_TYPE = "contain";
 
@@ -28,59 +32,175 @@ const PhotoOverlayEditor: FC = () => {
 
   const [feature, setFeature] = useAtom(photoOverlayEditingFeatureAtom);
 
-  const { handleGeoJsonFeatureUpdate } = useMapPage();
-
-  const handleCancel = useCallback(() => {
-    setFeature(RESET);
-  }, [setFeature]);
+  const { visualizerRef, handleGeoJsonFeatureUpdate, handleFlyTo } =
+    useMapPage();
 
   const photoSizeTypeOptions = useMemo(
     () => [
       { value: "contain", label: t("Contain") },
-      { value: "fixedWidthPct", label: t("Fixed") }
+      { value: "fixed", label: t("Fixed") }
     ],
     [t]
   );
 
-  const [photoTransparency, setPhotoTransparency] = useState(1);
-  const [value, setValue] = useState<PhotoOverlayValue | undefined>(
-    getPhotoOverlayValue(feature?.feature.properties)
+  const [preview, setPreview] = useAtom(PhotoOverlayPreviewAtom);
+
+  useEffect(() => {
+    setPreview((prev) => ({
+      value: getPhotoOverlayValue(feature?.feature.properties),
+      transparency: prev?.transparency ?? 1
+    }));
+  }, [feature?.feature.properties, setPreview]);
+
+  const handlePhotoUrlChange = useCallback(
+    (url: string | undefined) => {
+      setPreview((prev) => ({
+        ...prev,
+        value: { ...prev?.value, url, widthPct: undefined }
+      }));
+    },
+    [setPreview]
   );
 
-  const handlePhotoUrlChange = useCallback((url: string | undefined) => {
-    setValue((prev) => ({ ...prev, url }));
-  }, []);
+  const handlePhotoSizeTypeChange = useCallback(
+    (fill: string) => {
+      if (!fill || !["contain", "fixed"].includes(fill)) return;
+      const fillValue = fill as "contain" | "fixed";
+      setPreview((prev) => ({
+        ...prev,
+        value: {
+          ...prev?.value,
+          fill: fillValue,
+          widthPct: fillValue === "contain" ? undefined : prev?.value?.widthPct
+        }
+      }));
+    },
+    [setPreview]
+  );
 
-  const handlePhotoSizeTypeChange = useCallback((fill: string) => {
-    if (!fill || !["contain", "fixedWidthPct"].includes(fill)) return;
-    const fillValue = fill as "contain" | "fixedWidthPct";
-    setValue((prev) => ({ ...prev, fill: fillValue }));
-  }, []);
+  const handlePhotoWidthPctChange = useCallback(
+    (widthPct: number | undefined) => {
+      setPreview((prev) => ({
+        ...prev,
+        value: { ...prev?.value, widthPct }
+      }));
+    },
+    [setPreview]
+  );
 
   const handlePhotoDescriptionChange = useCallback(
     (description: string | undefined) => {
-      setValue((prev) => ({ ...prev, description }));
+      setPreview((prev) => ({
+        ...prev,
+        value: { ...prev?.value, description }
+      }));
     },
-    []
+    [setPreview]
   );
 
   const handleCameraChange = useCallback(
-    (camera: Camera | undefined) => setValue((prev) => ({ ...prev, camera })),
-    []
+    (camera: Camera | undefined) => {
+      setPreview((prev) => ({
+        ...prev,
+        value: {
+          ...prev?.value,
+          camera: camera
+            ? {
+                // Note: we don't need aspect ratio here
+                lng: camera.lng,
+                lat: camera.lat,
+                height: camera.height,
+                heading: camera.heading,
+                pitch: camera.pitch,
+                roll: camera.roll,
+                fov: camera.fov
+              }
+            : undefined
+        }
+      }));
+    },
+    [setPreview]
   );
 
-  const handleSave = useCallback(() => {
-    if (!feature || !value) return;
-    handleGeoJsonFeatureUpdate?.({
+  const handlePreviewTransparencyChange = useCallback(
+    (transparency: number | undefined) => {
+      setPreview((prev) => ({
+        ...prev,
+        transparency: transparency ?? 1
+      }));
+    },
+    [setPreview]
+  );
+
+  const handleSave = useCallback(async () => {
+    if (!feature || !preview?.value) return;
+    await handleGeoJsonFeatureUpdate?.({
       layerId: feature.layerId,
       featureId: feature.dataFeatureId,
       geometry: feature.feature.geometry,
       properties: generateNewPropertiesWithPhotoOverlay(
         feature.feature.properties,
-        value
+        preview.value
       )
     });
-  }, [feature, handleGeoJsonFeatureUpdate, value]);
+  }, [feature, handleGeoJsonFeatureUpdate, preview?.value]);
+
+  const handleCancel = useCallback(() => {
+    visualizerRef?.current?.layers?.select(undefined);
+    setTimeout(() => {
+      setFeature(RESET);
+      setPreview(RESET);
+    }, 100);
+  }, [setFeature, setPreview, visualizerRef]);
+
+  const imageDimensionCheckAbortController = useRef<AbortController | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (imageDimensionCheckAbortController.current) {
+      imageDimensionCheckAbortController.current.abort();
+    }
+
+    if (
+      preview?.value?.url &&
+      preview?.value?.fill === "fixed" &&
+      preview?.value?.widthPct === undefined
+    ) {
+      const controller = new AbortController();
+      imageDimensionCheckAbortController.current = controller;
+
+      getImageDimensions(preview.value.url, controller).then((dimensions) => {
+        const coreDomElement = document.getElementById(VISUALIZER_CORE_DOM_ID);
+        if (!coreDomElement) return;
+        const coreDomRect = coreDomElement.getBoundingClientRect();
+        const wrapperSize = {
+          width: coreDomRect.width * 0.9,
+          height: coreDomRect.height * 0.9
+        };
+        const imgAspectRatio = dimensions.width / dimensions.height;
+        const wrapperAspectRatio = wrapperSize.width / wrapperSize.height;
+
+        let imageWidthPct = 0;
+        if (wrapperAspectRatio > imgAspectRatio) {
+          const imageWidth = wrapperSize.height * imgAspectRatio;
+          imageWidthPct = (imageWidth / coreDomRect.width) * 100;
+        } else {
+          imageWidthPct = (wrapperSize.width / coreDomRect.width) * 100;
+        }
+
+        setPreview((prev) => ({
+          ...prev,
+          value: { ...prev?.value, widthPct: imageWidthPct }
+        }));
+      });
+    }
+  }, [
+    preview?.value?.url,
+    preview?.value?.fill,
+    preview?.value?.widthPct,
+    setPreview
+  ]);
 
   return (
     <Wrapper>
@@ -89,10 +209,11 @@ const PhotoOverlayEditor: FC = () => {
           <FieldsWrapper>
             <SliderField
               title={t("Photo transparency")}
-              value={photoTransparency}
+              value={preview?.transparency}
               min={0}
               max={1}
-              onChange={setPhotoTransparency}
+              step={0.01}
+              onChange={handlePreviewTransparencyChange}
             />
           </FieldsWrapper>
         </Panel>
@@ -109,7 +230,7 @@ const PhotoOverlayEditor: FC = () => {
                 title={t("Submit")}
                 extendWidth
                 onClick={handleSave}
-                disabled={!value}
+                disabled={!preview?.value}
               />
             </ActionWrapper>
           }
@@ -117,19 +238,29 @@ const PhotoOverlayEditor: FC = () => {
           <FieldsWrapper>
             <AssetField
               title={t("Photo")}
-              value={value?.url}
+              value={preview?.value?.url}
               onChange={handlePhotoUrlChange}
               inputMethod="asset"
             />
             <RadioGroupField
               title={t("Photo size type")}
-              value={value?.fill ?? DEFAULT_PHOTO_SIZE_TYPE}
+              value={preview?.value?.fill ?? DEFAULT_PHOTO_SIZE_TYPE}
               options={photoSizeTypeOptions}
               onChange={handlePhotoSizeTypeChange}
             />
+            {preview?.value?.fill === "fixed" && (
+              <SliderField
+                title={t("Fixed photo size")}
+                value={preview?.value?.widthPct ?? 0}
+                min={0}
+                max={100}
+                step={1}
+                onChange={handlePhotoWidthPctChange}
+              />
+            )}
             <TextareaField
               title={t("Photo description")}
-              value={value?.description}
+              value={preview?.value?.description}
               rows={3}
               onChange={handlePhotoDescriptionChange}
             />
@@ -138,8 +269,10 @@ const PhotoOverlayEditor: FC = () => {
           <FieldsWrapper>
             <CameraField
               title={t("Camera")}
-              value={value?.camera}
+              value={preview?.value?.camera}
               onSave={handleCameraChange}
+              withFOV
+              onFlyTo={handleFlyTo}
             />
           </FieldsWrapper>
         </Panel>

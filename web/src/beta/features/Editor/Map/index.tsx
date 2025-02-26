@@ -1,5 +1,5 @@
 import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { FC, useEffect, useRef } from "react";
 
@@ -9,7 +9,10 @@ import LayersPanel from "./LayersPanel";
 import LayerStylePanel from "./LayerStylePanel";
 import PhotoOverlayEditor from "./PhotoOverlayEditor";
 import ScenePanel from "./ScenePanel";
-import { photoOverlayEditingFeatureAtom } from "./state";
+import {
+  photoOverlayEditingFeatureAtom,
+  PhotoOverlayPreviewAtom
+} from "./state";
 import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
@@ -22,14 +25,16 @@ const Map: FC = () => {
   const [photoOverlayEditingFeature, setPhotoOverlayEditingFeature] = useAtom(
     photoOverlayEditingFeatureAtom
   );
+  const setPhotoOverlayPreview = useSetAtom(PhotoOverlayPreviewAtom);
 
   const hideNomralPanels = !!photoOverlayEditingFeature;
 
   useEffect(() => {
     return () => {
       setPhotoOverlayEditingFeature(RESET);
+      setPhotoOverlayPreview(RESET);
     };
-  }, [setPhotoOverlayEditingFeature]);
+  }, [setPhotoOverlayEditingFeature, setPhotoOverlayPreview]);
 
   return (
     <Window ref={windowRef}>

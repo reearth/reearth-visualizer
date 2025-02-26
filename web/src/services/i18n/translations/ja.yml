@@ -148,6 +148,9 @@ Edit: 編集
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
+Photo Overlay: ''
+Photo Overlay Set: ''
+Not set: 設定されていません
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
 NO STYLE: スタイルなし
@@ -172,12 +175,21 @@ font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
+Contain: ''
+Fixed: ''
+Photo transparency: ''
+PhotoOverlay settings: ''
+Photo: ''
+Photo size type: ''
+Fixed photo size: ''
+Photo description: ''
+Camera: カメラ
+FOV: ''
 Main: メイン
 Tiles: タイル
 Terrain: 地形
 Globe: 地球
 Sky: 空
-Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
 New Sketch Layer: 新しいスケッチレイヤー
@@ -372,7 +384,6 @@ Please select: 選択してください
 Version: バージョン
 This function is currently experimental and remains somewhat unstable.: この機能は現在、実験的な段階にあり、安定性に欠ける部分があります。
 Wrong file format: 誤ったファイル形式
-Not set: 設定されていません
 Choose: 選択
 Upload: アップロード
 Position Capture: 位置キャプチャ
