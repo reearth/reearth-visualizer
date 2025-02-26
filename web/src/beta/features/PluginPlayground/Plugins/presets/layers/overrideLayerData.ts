@@ -176,7 +176,6 @@ LayerManager.createInitialLayer();
 };
 
 export const overrideLayerData: PluginType = {
-  id: "Override Layer Data",
-  title: "Override Layer Data",
+  id: "override-layer-data",
   files: [widgetFile, yamlFile]
 };
