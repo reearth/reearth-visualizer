@@ -23,6 +23,11 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+    html {
+    width: 280px;
+    font-size: 14px;
+  }
+
     h3 {
     border-bottom: 1px solid #ccc;
     padding-bottom: 8px;
@@ -70,7 +75,6 @@ const widgetFile: FileType = {
   </style>
 
   <div id="wrapper">
-    <div id="container" style="width: 280px; font-size: 14px;">
       <h3>Popup API Demo</h3>
       <h4>Controls</h4>
       <div class="buttons">
@@ -82,7 +86,6 @@ const widgetFile: FileType = {
       </div>
       <h4>Received Message</h4>
       <div id="messageFromPopup" class="empty">No messages yet</div>
-    </div>
   </div>
 
   <script>
