@@ -41,31 +41,25 @@ import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 
 type PresetPluginCategory = {
   id: string;
-  title: string;
   plugins: PluginType[];
 };
 
 export type PresetPlugins = PresetPluginCategory[];
-
 export const presetPlugins: PresetPlugins = [
   {
     id: "custom",
-    title: "Custom",
     plugins: [myPlugin]
   },
   {
     id: "ui",
-    title: "User Interface",
     plugins: [responsivePanel, sidebar, header, modalWindow, popupPlugin]
   },
   {
     id: "communication",
-    title: "Communication",
     plugins: [uiExtensionMessenger, extensionExtensionMessenger]
   },
   {
     id: "viewerScene",
-    title: "Viewer & Scene Settings",
     plugins: [
       enableShadowStyle,
       enableTerrain,
@@ -76,7 +70,6 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "layers",
-    title: "Manage Layer",
     plugins: [
       addGeojson,
       addCzml,
@@ -93,7 +86,6 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "layerStyles",
-    title: "Manage Layer Style",
     plugins: [
       layerStylingExamples,
       featureStyle3dTiles,
@@ -105,22 +97,18 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "camera",
-    title: "Camera",
     plugins: [zoomInOut, cameraRotation, cameraPosition]
   },
   {
     id: "timeline",
-    title: "Timeline",
     plugins: [playbackControl, timeDrivenFeatures, timeDrivenPath]
   },
   {
     id: "dataStorage",
-    title: "Data Storage",
     plugins: [themeSelector]
   },
   {
     id: "extension",
-    title: "Extension",
     plugins: [extensionProperty]
   }
 ];

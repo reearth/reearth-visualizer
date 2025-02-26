@@ -254,6 +254,5 @@ reearth.extension.on("message", async msg => {
 
 export const themeSelector: PluginType = {
   id: "theme-selector",
-  title: "Theme Selector",
   files: [widgetFile, yamlFile]
 };
