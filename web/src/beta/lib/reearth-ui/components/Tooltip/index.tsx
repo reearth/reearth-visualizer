@@ -1,3 +1,4 @@
+import { Placement } from "@floating-ui/react";
 import {
   Icon,
   IconName,
@@ -12,9 +13,19 @@ type TooltipProps = {
   type: "experimental" | "custom";
   icon?: IconName;
   text?: string;
+  offset?: number;
+  iconColor?: string;
+  placement?: Placement;
 };
 
-const Tooltip: FC<TooltipProps> = ({ type, icon, text }) => {
+const Tooltip: FC<TooltipProps> = ({
+  type,
+  icon,
+  text,
+  offset = 6,
+  iconColor,
+  placement
+}) => {
   const theme = useTheme();
   const t = useT();
 
@@ -35,19 +46,34 @@ const Tooltip: FC<TooltipProps> = ({ type, icon, text }) => {
 
   return (
     <Popup
+      offset={offset}
+      placement={placement}
       trigger={
         tooltipIcon ? (
           <IconWrapper>
-            <Icon icon={tooltipIcon} color={theme.warning.weakest} />
+            <Icon
+              icon={tooltipIcon}
+              color={
+                type === "experimental" ? theme.warning.weakest : iconColor
+              }
+            />
           </IconWrapper>
         ) : (
           "TIPS" // TODO: support tigger as text
         )
       }
       triggerOnHover
+      tooltip
     >
       <TipPanel>
-        <Typography size="footnote" color={theme.warning.weak}>
+        <Typography
+          size="footnote"
+          color={
+            type === "experimental"
+              ? theme.warning.weakest
+              : theme.content.strong
+          }
+        >
           {tooltipText}
         </Typography>
       </TipPanel>

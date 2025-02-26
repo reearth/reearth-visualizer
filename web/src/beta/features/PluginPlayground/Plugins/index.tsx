@@ -1,7 +1,8 @@
 import { Collapse, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/styled";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import FileListItem from "./FileListItem";
 import usePlugins from "./usePlugins";
@@ -38,6 +39,7 @@ const Plugins: FC<Props> = ({
   sharedPlugin,
   handlePluginDownload
 }) => {
+  const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
 
   const handlePluginShare = (): void => {
@@ -45,19 +47,81 @@ const Plugins: FC<Props> = ({
     encodeAndSharePlugin(selectedPlugin.id);
   };
 
+  const categoryTitles: Record<string, string> = useMemo(() => {
+    return {
+      custom: t("Custom"),
+      ui: t("User Interface"),
+      communication: t("Communication"),
+      viewerScene: t("Viewer & Scene Settings"),
+      layers: t("Manage Layer"),
+      layerStyles: t("Manage Layer Style"),
+      camera: t("Camera"),
+      timeline: t("Timeline"),
+      dataStorage: t("Data Storage"),
+      extension: t("Extension")
+    };
+  }, [t]);
+
+  const pluginTitles: Record<string, string> = useMemo(() => {
+    return {
+      "my-plugin": t("My Plugin"),
+      "responsive-panel": t("Responsive Panel"),
+      sidebar: t("Sidebar"),
+      header: t("Header"),
+      "modal-window": t("Modal Window"),
+      "ui-extension-messenger": t("UI Extension Messenger"),
+      "extension-to-extension-messenger": t("Extension To Extension Messenger"),
+      "enable-shadow-style": t("Enable Shadow Style"),
+      "enable-terrain": t("Enable Terrain"),
+      "show-label": t("Show Label"),
+      "take-screenshot": t("Take Screenshot"),
+      "mouse-events": t("Mouse Events"),
+      "add-geojson": t("Add Geojson"),
+      "add-csv": t("Add CSV"),
+      "add-kml": t("Add KML"),
+      "add-wms": t("Add WMS"),
+      "add-czml": t("Add CZML"),
+      "add-3d-tiles": t("Add 3D Tiles"),
+      "add-google-photorealistic-3d-tiles": t(
+        "Add Google Photorealistic 3D Tiles"
+      ),
+      "add-osm-3d-tiles": t("Add OSM 3D Tiles"),
+      "hide-fly-to-delete-layer": t("Hide Fly To Delete Layer"),
+      "override-layer-data": t("Override Layer Data"),
+      "show-selected-features-info": t("Show Selected Features Information"),
+      "layer-styling-examples": t("Layer Styling Examples"),
+      "feature-style-3d-model": t("Feature Style 3D Model"),
+      "feature-style-3d-tiles": t("Feature Style 3D Tiles"),
+      "filter-features-with-style": t("Filter Features by Style"),
+      "override-style": t("Override Style"),
+      "style-with-condition": t("Style With Condition"),
+      "playback-control": t("Playback Control"),
+      "time-driven-features": t("Time Driven Features"),
+      "time-driven-path": t("Time Driven Path"),
+      "theme-selector": t("Theme Selector"),
+      "extension-property": t("Extension Property"),
+      "zoom-in-out": t("Zoom In Out"),
+      "camera-rotation": t("Camera Rotation"),
+      "camera-position": t("Camera Position")
+    };
+  }, [t]);
+
   const PluginEntryItem: FC<{
-    plugin: { id: string; title: string };
+    pluginId: string;
     selectedPluginId: string;
+    title: string;
     onSelect: (id: string) => void;
-  }> = ({ plugin, selectedPluginId, onSelect }) => (
-    <EntryItem
-      key={plugin.id}
-      highlighted={selectedPluginId === plugin.id}
-      onClick={() => onSelect(plugin.id)}
-      title={plugin.title}
-      optionsMenuWidth={100}
-    />
-  );
+  }> = ({ pluginId, selectedPluginId, onSelect, title }) => {
+    return (
+      <EntryItem
+        key={pluginId}
+        highlighted={selectedPluginId === pluginId}
+        onClick={() => onSelect(pluginId)}
+        title={title}
+        optionsMenuWidth={100}
+      />
+    );
+  };
 
   return (
     <Wrapper>
@@ -96,8 +160,9 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   <PluginEntryItem
-                    plugin={sharedPlugin}
+                    pluginId={sharedPlugin.id}
                     key={sharedPlugin.id}
+                    title={pluginTitles[sharedPlugin.id]}
                     selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
                   />
@@ -112,15 +177,16 @@ const Plugins: FC<Props> = ({
                 collapsed={category.id !== "custom"}
                 iconPosition="left"
                 size="small"
-                title={category.title}
+                title={categoryTitles[category.id]}
                 noPadding
               >
                 <PluginSubList>
                   {category.plugins.length > 0 ? (
                     category.plugins.map((plugin) => (
                       <PluginEntryItem
-                        plugin={plugin}
+                        pluginId={plugin.id}
                         key={plugin.id}
+                        title={pluginTitles[plugin.id]}
                         selectedPluginId={selectedPlugin.id}
                         onSelect={selectPlugin}
                       />
@@ -128,7 +194,7 @@ const Plugins: FC<Props> = ({
                   ) : (
                     <EmptyTip>
                       <Typography size="body" color="weak" trait="italic">
-                        No plugins
+                        {t("No plugins")}
                       </Typography>
                     </EmptyTip>
                   )}

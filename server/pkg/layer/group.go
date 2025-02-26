@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -11,11 +12,11 @@ type Group struct {
 	root                bool
 }
 
-func (l *Group) ID() ID {
+func (l *Group) ID() id.LayerID {
 	return l.layerBase.ID()
 }
 
-func (l *Group) IDRef() *ID {
+func (l *Group) IDRef() *id.LayerID {
 	if l == nil {
 		return nil
 	}
@@ -132,7 +133,7 @@ func (l *Group) Layers() *IDList {
 	return l.layers
 }
 
-func (l *Group) MoveLayerFrom(id ID, index int, fromLayerGroup *Group) {
+func (l *Group) MoveLayerFrom(id id.LayerID, index int, fromLayerGroup *Group) {
 	if l == nil {
 		return
 	}

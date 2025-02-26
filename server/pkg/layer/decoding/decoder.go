@@ -3,6 +3,7 @@ package decoding
 import (
 	"fmt"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -50,7 +51,7 @@ func (r Result) Validate() error {
 
 func resultFrom(lg *layer.Group, layers layer.Map, properties property.Map) (r Result, err error) {
 	r = Result{
-		Root:       layer.NewIDList([]layer.ID{lg.ID()}),
+		Root:       layer.NewIDList([]id.LayerID{lg.ID()}),
 		Layers:     layers.Add(lg.LayerRef()),
 		Properties: properties,
 	}

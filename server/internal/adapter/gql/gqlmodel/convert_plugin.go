@@ -77,8 +77,6 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 		return PluginExtensionTypeInfobox
 	case plugin.ExtensionTypeInfoboxBlock:
 		return PluginExtensionTypeInfoboxBlock
-	case plugin.ExtensionTypeCluster:
-		return PluginExtensionTypeCluster
 	case plugin.ExtensionTypeStory:
 		return PluginExtensionTypeStory
 	case plugin.ExtensionTypeStoryPage:

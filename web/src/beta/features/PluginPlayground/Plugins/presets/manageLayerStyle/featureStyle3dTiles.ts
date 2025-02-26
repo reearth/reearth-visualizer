@@ -91,6 +91,5 @@ reearth.camera.flyTo(
 
 export const featureStyle3dTiles: PluginType = {
   id: "feature-style-3d-tiles",
-  title: "Feature Style 3D Tiles",
   files: [widgetFile, yamlFile]
 };
