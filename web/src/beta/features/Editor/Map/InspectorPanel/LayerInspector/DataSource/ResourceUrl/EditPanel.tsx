@@ -33,6 +33,7 @@ const EditPanel: FC<EditPanelProps> = ({ onClose, onSubmit }) => {
             title={t("Apply")}
             appearance="primary"
             onClick={handleApply}
+            disabled={!localValue}
           />
         </ButtonWrapper>
       }

@@ -69,8 +69,9 @@ const DataSource: FC<Props> = ({
   );
 
   const handleTitleUpdate = useCallback(() => {
-    if (!localTitle || localTitle === selectedLayer.title) return;
-    onLayerNameUpdate?.({ layerId: selectedLayer.id, name: localTitle });
+    if (!localTitle || localTitle === selectedLayer.title) {
+      setLocalTitle(selectedLayer.title);
+    } else onLayerNameUpdate?.({ layerId: selectedLayer.id, name: localTitle });
   }, [localTitle, onLayerNameUpdate, selectedLayer.id, selectedLayer.title]);
 
   const handleLayerUrlUpdate = useCallback(
