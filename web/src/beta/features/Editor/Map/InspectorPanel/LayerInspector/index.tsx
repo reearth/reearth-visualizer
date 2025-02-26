@@ -1,4 +1,8 @@
-import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
+import {
+  LayerConfigUpdateProps,
+  LayerNameUpdateProps,
+  SelectedLayer
+} from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
   GeoJsonFeatureDeleteProps,
   GeoJsonFeatureUpdateProps
@@ -9,8 +13,6 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
-
-import { LayerConfigUpdateProps } from "../../../hooks/useLayers";
 
 import DataSource from "./DataSource";
 import FeatureInspector from "./FeatureInspector";
@@ -32,6 +34,7 @@ type Props = {
   onSketchGeometryEditStart?: () => void;
   onSketchGeometryEditCancel?: () => void;
   onSketchGeometryEditApply?: () => void;
+  onLayerNameUpdate?: (inp: LayerNameUpdateProps) => void;
 };
 
 const InspectorTabs: FC<Props> = ({
@@ -45,7 +48,8 @@ const InspectorTabs: FC<Props> = ({
   sketchEditingFeature,
   onSketchGeometryEditStart,
   onSketchGeometryEditCancel,
-  onSketchGeometryEditApply
+  onSketchGeometryEditApply,
+  onLayerNameUpdate
 }) => {
   const t = useT();
   const selectedFeature = useMemo(() => {
@@ -91,7 +95,11 @@ const InspectorTabs: FC<Props> = ({
         tooltipText: t("Layer"),
         placement: "left",
         children: selectedLayer?.layer && (
-          <DataSource selectedLayer={selectedLayer.layer} />
+          <DataSource
+            selectedLayer={selectedLayer.layer}
+            onLayerNameUpdate={onLayerNameUpdate}
+            onLayerConfigUpdate={onLayerConfigUpdate}
+          />
         )
       },
       {
@@ -147,6 +155,8 @@ const InspectorTabs: FC<Props> = ({
     [
       t,
       selectedLayer?.layer,
+      onLayerNameUpdate,
+      onLayerConfigUpdate,
       selectedFeature,
       selectedSketchFeature,
       sketchEditingFeature?.feature?.id,
@@ -157,8 +167,7 @@ const InspectorTabs: FC<Props> = ({
       onSketchGeometryEditCancel,
       layerStyles,
       layers,
-      sceneId,
-      onLayerConfigUpdate
+      sceneId
     ]
   );
 
