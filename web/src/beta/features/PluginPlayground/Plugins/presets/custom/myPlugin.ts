@@ -77,7 +77,6 @@ const demoStoryFile: FileType = {
 
 export const myPlugin: PluginType = {
   id: "my-plugin",
-  title: "My Plugin",
   files: [
     widgetFile,
     demoInfoboxBlock1File,

@@ -212,7 +212,6 @@ export default () => {
 
             const newPlugin = {
               id: "my-plugin", // NOTE: id of the custom plugin
-              title: file.name,
               files: pluginFiles
             };
 
@@ -237,7 +236,7 @@ export default () => {
   const handlePluginDownload = useCallback(async () => {
     try {
       const zip = new JSZip();
-      const pluginFolder = zip.folder(selectedPlugin.title);
+      const pluginFolder = zip.folder(selectedPlugin.id);
       if (!pluginFolder) {
         throw new Error("Failed to create plugin folder");
       }
@@ -250,7 +249,7 @@ export default () => {
       const zipUrl = URL.createObjectURL(zipBlob);
       const link = document.createElement("a");
       link.href = zipUrl;
-      link.download = `${selectedPlugin.title}.zip`;
+      link.download = `${selectedPlugin.id}.zip`;
       link.click();
       URL.revokeObjectURL(zipUrl);
     } catch (error) {

@@ -12,7 +12,6 @@ import PropertyItem from "./PropertyItem";
 type Props = {
   selectedPlugin: {
     id: string;
-    title: string;
     files: {
       id: string;
       title: string;
