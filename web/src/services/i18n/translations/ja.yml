@@ -186,6 +186,8 @@ font weight: フォントウェイト
 font color: フォントカラー
 italic: イタリック
 New node: 新しいノード
+Assign style: スタイルの割り当て
+New style: 新しいスタイル
 Contain: ''
 Fixed: ''
 Photo transparency: ''
@@ -195,9 +197,6 @@ Photo size type: ''
 Fixed photo size: ''
 Photo description: ''
 Camera: カメラ
-FOV: ''
-Assign style: スタイルの割り当て
-New style: 新しいスタイル
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -482,6 +481,7 @@ Current Rotation: 現在の回転
 Heading: ヘディング
 Pitch: ピッチ
 Roll: ロール
+FOV: ''
 Camera Position Editor: カメラ位置エディタ
 Location: 位置
 value: 値
