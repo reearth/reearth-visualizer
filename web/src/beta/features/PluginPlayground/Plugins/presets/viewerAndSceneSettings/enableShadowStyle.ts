@@ -152,6 +152,5 @@ reearth.extension.on("message", (msg) => {
 
 export const enableShadowStyle: PluginType = {
   id: "enable-shadow-style",
-  title: "Enable Shadow Style",
   files: [widgetFile, yamlFile]
 };

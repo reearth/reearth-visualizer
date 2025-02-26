@@ -29,6 +29,7 @@ import { playbackControl } from "./timeline/playbackControl";
 import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
 import { header } from "./ui/header";
+import { modalWindow } from "./ui/modalWindow";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
 import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
@@ -39,31 +40,25 @@ import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 
 type PresetPluginCategory = {
   id: string;
-  title: string;
   plugins: PluginType[];
 };
 
 export type PresetPlugins = PresetPluginCategory[];
-
 export const presetPlugins: PresetPlugins = [
   {
     id: "custom",
-    title: "Custom",
     plugins: [myPlugin]
   },
   {
     id: "ui",
-    title: "User Interface",
-    plugins: [responsivePanel, sidebar, header]
+    plugins: [responsivePanel, sidebar, header, modalWindow]
   },
   {
     id: "communication",
-    title: "Communication",
     plugins: [uiExtensionMessenger, extensionExtensionMessenger]
   },
   {
     id: "viewerScene",
-    title: "Viewer & Scene Settings",
     plugins: [
       enableShadowStyle,
       enableTerrain,
@@ -74,7 +69,6 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "layers",
-    title: "Manage Layer",
     plugins: [
       addGeojson,
       addCzml,
@@ -91,7 +85,6 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "layerStyles",
-    title: "Manage Layer Style",
     plugins: [
       layerStylingExamples,
       featureStyle3dTiles,
@@ -103,22 +96,18 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "camera",
-    title: "Camera",
     plugins: [zoomInOut, cameraRotation, cameraPosition]
   },
   {
     id: "timeline",
-    title: "Timeline",
     plugins: [playbackControl, timeDrivenFeatures, timeDrivenPath]
   },
   {
     id: "dataStorage",
-    title: "Data Storage",
     plugins: [themeSelector]
   },
   {
     id: "extension",
-    title: "Extension",
     plugins: [extensionProperty]
   }
 ];

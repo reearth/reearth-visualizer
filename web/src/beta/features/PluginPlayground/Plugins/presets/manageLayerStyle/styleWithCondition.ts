@@ -95,6 +95,5 @@ reearth.timeline.setTime({
 
 export const styleWithCondition: PluginType = {
   id: "style-with-condition",
-  title: "Style With Condition",
   files: [widgetFile, yamlFile]
 };

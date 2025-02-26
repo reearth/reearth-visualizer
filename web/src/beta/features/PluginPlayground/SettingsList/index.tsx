@@ -1,19 +1,29 @@
 import { CheckBox, Typography } from "@reearth/beta/lib/reearth-ui";
+import { SelectField } from "@reearth/beta/ui/fields";
+import { useT, getLanguageOptions } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 type Props = {
+  changeLanguage: (lang: string) => void;
   infoboxEnabled: boolean;
+  lang: string;
   setInfoboxEnabled: (infoBoxEnabled: boolean) => void;
   setShowStoryPanel: (showStoryPanel: boolean) => void;
   showStoryPanel: boolean;
 };
 const SettingsList: FC<Props> = ({
+  changeLanguage,
   infoboxEnabled,
+  lang,
   setInfoboxEnabled,
   setShowStoryPanel,
   showStoryPanel
 }) => {
+  const t = useT();
+
+  const options = getLanguageOptions(t);
+
   return (
     <Wrapper>
       <Row>
@@ -22,7 +32,7 @@ const SettingsList: FC<Props> = ({
           onChange={() => setInfoboxEnabled(!infoboxEnabled)}
         />
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
-          Enable Infobox
+          {t("Enable Infobox")}
         </Typography>
       </Row>
       <Row>
@@ -31,8 +41,18 @@ const SettingsList: FC<Props> = ({
           onChange={(value) => setShowStoryPanel(value)}
         />
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
-          Enable Story Panel
+          {t("Show Story Panel")}
         </Typography>
+      </Row>
+      <Row>
+        <SelectorWrapper>
+          <SelectField
+            title={t("UI Language")}
+            value={lang}
+            options={options}
+            onChange={(value) => changeLanguage(value as string)}
+          />
+        </SelectorWrapper>
       </Row>
     </Wrapper>
   );
@@ -42,6 +62,7 @@ const Wrapper = styled.div(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   overflow: "auto",
+  gap: theme.spacing.small,
   padding: theme.spacing.smallest
 }));
 
@@ -54,6 +75,10 @@ const Row = styled.div(({ theme }) => ({
   },
   borderRadius: theme.radius.small,
   minHeight: 28
+}));
+
+const SelectorWrapper = styled.div(() => ({
+  width: "100%"
 }));
 
 export default SettingsList;
