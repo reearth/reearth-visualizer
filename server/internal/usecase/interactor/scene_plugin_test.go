@@ -98,7 +98,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			ctx := context.Background()
 
 			tid := accountdomain.NewWorkspaceID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
 				sc.Plugins().Add(p)
 			}
@@ -226,11 +226,11 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			ibf := layer.NewInfoboxField().NewID().Plugin(pid).Extension("a").Property(id.NewPropertyID()).MustBuild()
 			ib := layer.NewInfobox([]*layer.InfoboxField{ibf}, id.NewPropertyID())
 			l1 := layer.New().NewID().Scene(sid).Infobox(ib).Item().MustBuild()
-			l2 := layer.New().NewID().Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
+			l2 := layer.New().NewID().Scene(sid).Group().Layers(layer.NewIDList([]id.LayerID{l1.ID()})).MustBuild()
 			lr := memory.NewLayerWith(l1, l2)
 
 			tid := accountdomain.NewWorkspaceID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
 			sw, _ := scene.NewWidget(scene.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
@@ -372,13 +372,13 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			ibf2 := layer.NewInfoboxField().NewID().Plugin(pid1).Extension("a").Property(pl2p.ID()).MustBuild()
 			ib := layer.NewInfobox([]*layer.InfoboxField{ibf1, ibf2}, id.NewPropertyID())
 			l1 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Infobox(ib).Item().MustBuild()
-			l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]layer.ID{l1.ID()})).MustBuild()
+			l2 := layer.New().NewID().Plugin(plugin.OfficialPluginID.Ref()).Scene(sid).Group().Layers(layer.NewIDList([]id.LayerID{l1.ID()})).MustBuild()
 			lr := memory.NewLayerWith(l1, l2)
 
 			dsr := memory.NewDataset()
 
 			tid := accountdomain.NewWorkspaceID()
-			sc := scene.New().ID(sid).RootLayer(id.NewLayerID()).Workspace(tid).MustBuild()
+			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 			sr := memory.NewSceneWith(sc)
 

@@ -35,6 +35,8 @@ type UpdateStoryInput struct {
 	PublicImage       *string
 	PublicNoIndex     *bool
 	DeletePublicImage *bool
+	EnableGa          *bool
+	TrackingID        *string
 }
 
 type MoveStoryInput struct {

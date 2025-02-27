@@ -3,10 +3,13 @@ package interactor
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
+	"net/http"
 	"net/url"
 	"path"
 	"strings"
@@ -146,10 +149,28 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		}
 	}
 
+	// geojson validate
 	if data, ok := (*inp.Config)["data"].(map[string]interface{}); ok {
 		if type_, ok := data["type"].(string); ok && type_ == "geojson" {
 			if url, ok := data["url"].(string); ok {
-				if err := i.validateGeoJsonOfAssets(ctx, path.Base(url)); err != nil {
+				maxDownloadSize := 10 * 1024 * 1024 // 10MB
+				buf, err := downloadToBuffer(url, int64(maxDownloadSize))
+				if err != nil {
+					// If the download fails, it will be downloaded directly from the Asset repository.
+					if err := i.validateGeoJsonOfAssets(ctx, path.Base(url)); err != nil {
+						return nil, err
+					}
+				} else {
+					if err := validateGeoJSONFeatureCollection(buf.Bytes()); err != nil {
+						return nil, err
+					}
+				}
+			} else if value, ok := data["value"].(map[string]interface{}); ok {
+				geojsonData, err := json.Marshal(value)
+				if err != nil {
+					return nil, err
+				}
+				if err := validateGeoJSONFeatureCollection(geojsonData); err != nil {
 					return nil, err
 				}
 			}
@@ -869,7 +890,8 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	feature, err := nlslayer.NewFeatureWithNewId(
+	feature, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		inp.Type,
 		geometry,
 	)
@@ -1060,6 +1082,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 			ID(newNLSLayerID).
 			Simple().
 			Scene(sceneID).
+			Index(nlsLayerJSON.Index).
 			Title(nlsLayerJSON.Title).
 			LayerType(nlslayer.LayerType(nlsLayerJSON.LayerType)).
 			Config((*nlslayer.Config)(nlsLayerJSON.Config)).
@@ -1117,11 +1140,10 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 
 		// SketchInfo --------
 		if nlsLayerJSON.SketchInfo != nil {
-			i := nlsLayerJSON.SketchInfo
-			feature := make([]nlslayer.Feature, 0)
-			for _, v := range i.FeatureCollection.Features {
+			features := make([]nlslayer.Feature, 0)
+			for _, featureJSON := range nlsLayerJSON.SketchInfo.FeatureCollection.Features {
 				var geometry nlslayer.Geometry
-				for _, g := range v.Geometry {
+				for _, g := range featureJSON.Geometry {
 					if geometryMap, ok := g.(map[string]any); ok {
 						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
 						if err != nil {
@@ -1129,18 +1151,23 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 						}
 					}
 				}
-				f, err := nlslayer.NewFeatureWithNewId(v.Type, geometry)
+				feature, err := nlslayer.NewFeature(
+					nlslayer.NewFeatureID(),
+					featureJSON.Type,
+					geometry,
+				)
 				if err != nil {
 					return nil, nil, err
 				}
-				feature = append(feature, *f)
+				feature.UpdateProperties(featureJSON.Properties)
+				features = append(features, *feature)
 			}
 			featureCollection := nlslayer.NewFeatureCollection(
-				i.FeatureCollection.Type,
-				feature,
+				nlsLayerJSON.SketchInfo.FeatureCollection.Type,
+				features,
 			)
 			sketchInfo := nlslayer.NewSketchInfo(
-				i.PropertySchema,
+				nlsLayerJSON.SketchInfo.PropertySchema,
 				featureCollection,
 			)
 			nlBuilder = nlBuilder.Sketch(sketchInfo)
@@ -1160,6 +1187,37 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 		return nil, nil, err
 	}
 	return nlayer, replaceNLSLayerIDs, nil
+}
+
+func downloadToBuffer(url string, maxDownloadSize int64) (*bytes.Buffer, error) {
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	resp, err := client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err2 := resp.Body.Close(); err2 != nil && err == nil {
+			err = err2
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to download file, status code: %d", resp.StatusCode)
+	}
+	if resp.ContentLength > maxDownloadSize {
+		return nil, fmt.Errorf("file too large: %d bytes", resp.ContentLength)
+	}
+	reader := io.LimitReader(resp.Body, maxDownloadSize)
+
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, reader)
+	if err != nil {
+		return nil, err
+	}
+
+	return &buf, nil
 }
 
 func (i *NLSLayer) validateGeoJsonOfAssets(ctx context.Context, assetFileName string) error {
@@ -1196,17 +1254,17 @@ func validateGeoJSONFeatureCollection(data []byte) error {
 		}
 	} else {
 		fc, err := geojson.UnmarshalFeatureCollection(data)
-		if fc.BBox != nil && !fc.BBox.Valid() {
-			validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
-		}
-		if err == nil {
+		if fc == nil || err != nil {
+			validationErrors = append(validationErrors, errors.New("Invalid GeoJSON data"))
+		} else {
+			if fc.BBox != nil && !fc.BBox.Valid() {
+				validationErrors = append(validationErrors, fmt.Errorf("Invalid BBox: %w", err))
+			}
 			for _, feature := range fc.Features {
 				if errs := validateGeoJSONFeature(feature); len(errs) > 0 {
 					validationErrors = append(validationErrors, errs...)
 				}
 			}
-		} else {
-			validationErrors = append(validationErrors, errors.New("Invalid GeoJSON data"))
 		}
 	}
 

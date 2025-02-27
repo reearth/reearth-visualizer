@@ -12,7 +12,7 @@ import { FC, useMemo, useState } from "react";
 import ListField, { ListItemProps } from "../ListField";
 
 import useHooks from "./hooks";
-import PropertyField from "./ProprtyField";
+import PropertyField from "./PropertyField";
 
 type Props = {
   propertyId: string;

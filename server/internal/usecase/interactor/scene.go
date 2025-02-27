@@ -4,25 +4,21 @@ import (
 	"archive/zip"
 	"context"
 	"errors"
-	"fmt"
-	"io"
 	"net/url"
-	"strings"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
@@ -129,10 +125,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	schema := builtin.GetPropertySchemaByVisualizer(viz)
 
 	sceneID := id.NewSceneID()
-	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
-	if err != nil {
-		return nil, err
-	}
 	ps := scene.NewPlugins([]*scene.Plugin{
 		scene.NewPlugin(id.OfficialPluginID, nil),
 	})
@@ -149,14 +141,14 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		Project(pid).
 		Workspace(ws).
 		Property(prop.ID()).
-		RootLayer(rootLayer.ID()).
 		Plugins(ps).
 		Build()
 	if err != nil {
 		return nil, err
 	}
 
-	if err = saveSceneComponents(ctx, i, sceneID, rootLayer, prop); err != nil {
+	writableFilter := repo.SceneFilter{Writable: scene.IDList{res.ID()}}
+	if err := i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
 		return nil, err
 	}
 
@@ -181,13 +173,6 @@ func addDefaultTiles(prop *property.Property, schema *property.Schema) {
 	tiles := id.PropertySchemaGroupID("tiles")
 	g := prop.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
 	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
-}
-
-func saveSceneComponents(ctx context.Context, i *Scene, sceneID id.SceneID, rootLayer *layer.Group, prop *property.Property) error {
-	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
-		return err
-	}
-	return i.layerRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, rootLayer)
 }
 
 func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
@@ -680,7 +665,10 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	if err != nil {
 		return nil, nil, errors.New("Fail storytelling :" + err.Error())
 	}
-	story := (*storyList)[0]
+	var story *storytelling.Story
+	if storyList != nil && len(*storyList) > 0 {
+		story = (*storyList)[0]
+	}
 	sceneJSON, err := builder.New(
 		repo.LayerLoaderFrom(i.layerRepo),
 		repo.PropertyLoaderFrom(i.propertyRepo),
@@ -708,11 +696,9 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			actualConfig := *c
 			if data, ok := actualConfig["data"].(map[string]any); ok {
 				if urlStr, ok := data["url"].(string); ok {
-					url, _ := url.Parse(urlStr)
-					if isReearth, u := convertReearthEnv(ctx, url); isReearth {
-						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
-						}
+					u, _ := url.Parse(urlStr)
+					if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+						log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
 					}
 				}
 			}
@@ -739,12 +725,8 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					continue
 				}
 				if field.GuessSchema().ID().String() == "buttonIcon" {
-					u, ok := field.Value().Value().(*url.URL)
-					if !ok {
-						continue
-					}
-					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
-						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+					if u, ok := field.Value().Value().(*url.URL); ok {
+						if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
 							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
@@ -768,13 +750,9 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		for _, item := range property.Items() {
 			for _, field := range item.Fields(nil) {
 				if field.GuessSchema().ID().String() == "src" {
-					u, ok := field.Value().Value().(*url.URL)
-					if !ok {
-						continue
-					}
-					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
-						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							log.Infofc(ctx, "Fail page block addZipAsset :", err.Error())
+					if u, ok := field.Value().Value().(*url.URL); ok {
+						if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
 				}
@@ -786,22 +764,6 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	res["scene"] = sceneJSON
 
 	return sce, res, nil
-}
-
-func convertReearthEnv(ctx context.Context, u *url.URL) (bool, *url.URL) {
-	if u.Host == "localhost:8080" || strings.HasSuffix(u.Host, ".reearth.dev") || strings.HasSuffix(u.Host, ".reearth.io") {
-		currentHost := adapter.CurrentHost(ctx)
-		currentHost = strings.TrimPrefix(currentHost, "https://")
-		currentHost = strings.TrimPrefix(currentHost, "http://")
-		if currentHost == "localhost:8080" {
-			u.Scheme = "http"
-		} else {
-			u.Scheme = "https"
-		}
-		u.Host = currentHost
-		return true, u
-	}
-	return false, nil
 }
 
 func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
@@ -851,23 +813,6 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		widgets = append(widgets, widget)
 	}
 
-	clusters := []*scene.Cluster{}
-	for _, clusterJson := range sceneJSON.Clusters {
-		property, err := property.New().NewID().Schema(id.MustPropertySchemaID("reearth/cluster")).Scene(sce.ID()).Build()
-		if err != nil {
-			return nil, err
-		}
-		// Save property
-		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, property); err != nil {
-			return nil, err
-		}
-		cluster, err := scene.NewCluster(id.NewClusterID(), clusterJson.Name, property.ID())
-		if err != nil {
-			return nil, err
-		}
-		clusters = append(clusters, cluster)
-	}
-	clusterList := scene.NewClusterListFrom(clusters)
 	var viz = visualizer.VisualizerCesium
 	if prj.CoreSupport() {
 		viz = visualizer.VisualizerCesiumBeta
@@ -898,11 +843,9 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.
 		ID(sce.ID()).
 		Project(prj.ID()).
 		Workspace(prj.Workspace()).
-		RootLayer(sce.RootLayer()).
 		Widgets(scene.NewWidgets(widgets, alignSystem)).
 		UpdatedAt(time.Now()).
 		Property(prop.ID()).
-		Clusters(clusterList).
 		Plugins(plugins).
 		Build()
 	if err != nil {
@@ -951,35 +894,4 @@ func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.Plug
 		return nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 	return extension, nil
-}
-
-func (i *Scene) addZipAsset(ctx context.Context, zipWriter *zip.Writer, url string) error {
-
-	parts := strings.Split(url, "/")
-	if len(parts) == 0 {
-		return errors.New("invalid URL format")
-	}
-	fileName := parts[len(parts)-1]
-	if fileName == "" {
-		return errors.New("empty filename extracted from URL")
-	}
-
-	stream, err := i.file.ReadAsset(ctx, fileName)
-	if err != nil {
-		return err
-	}
-	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
-	zipEntry, err := zipWriter.Create(zipEntryPath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(zipEntry, stream)
-	if err != nil {
-		_ = stream.Close()
-		return err
-	}
-	if err := stream.Close(); err != nil {
-		return err
-	}
-	return nil
 }

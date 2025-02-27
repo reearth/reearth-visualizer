@@ -1,6 +1,7 @@
 package nlslayer
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
@@ -16,7 +17,7 @@ func (ll NLSLayerList) Last() *NLSLayer {
 }
 
 func (ll NLSLayerList) IDs() *IDList {
-	ids := util.ExtractIDs[ID, NLSLayer](ll)
+	ids := util.ExtractIDs[id.NLSLayerID, NLSLayer](ll)
 	if len(ids) == 0 {
 		return nil
 	}
@@ -24,11 +25,11 @@ func (ll NLSLayerList) IDs() *IDList {
 }
 
 func (ll NLSLayerList) Pick(il *IDList) NLSLayerList {
-	return util.Pick[ID, NLSLayer](ll, il)
+	return util.Pick[id.NLSLayerID, NLSLayer](ll, il)
 }
 
-func (ll NLSLayerList) Find(lid ID) *NLSLayer {
-	return util.Find[ID, NLSLayer](ll, lid)
+func (ll NLSLayerList) Find(lid id.NLSLayerID) *NLSLayer {
+	return util.Find[id.NLSLayerID, NLSLayer](ll, lid)
 }
 
 func (ll NLSLayerList) ToLayerItemList() NLSLayerSimpleList {
@@ -60,11 +61,13 @@ func (ll NLSLayerList) Loader() Loader {
 	return LoaderFrom(ll.Deref())
 }
 
+type ID = id.NLSLayerID
+
 func (ll NLSLayerList) Map() Map {
 	return util.ListMap[ID, NLSLayer](ll)
 }
 
-func (ll NLSLayerList) Remove(lids ...ID) NLSLayerList {
+func (ll NLSLayerList) Remove(lids ...id.NLSLayerID) NLSLayerList {
 	return util.Remove[ID, NLSLayer](ll, lids...)
 }
 

@@ -55,6 +55,8 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 		PublicImage:       input.PublicImage,
 		PublicNoIndex:     input.PublicNoIndex,
 		DeletePublicImage: input.DeletePublicImage,
+		EnableGa:          input.EnableGa,
+		TrackingID:        input.TrackingID,
 	}
 
 	res, err := usecases(ctx).StoryTelling.Update(ctx, inp, getOperator(ctx))
