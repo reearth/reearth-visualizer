@@ -24,7 +24,7 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile url")
 			}
 			if fieldId == "tile_zoomLevel" {
-				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile zoomLevel")
+				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile zoom level")
 			}
 			if fieldId == "tile_opacity" {
 				field.Object().Value("translatedPlaceholder").IsEqual("please enter tile opacity")
