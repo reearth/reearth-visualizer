@@ -1,4 +1,8 @@
-import { SelectedLayer } from "@reearth/beta/features/Editor/hooks/useLayers";
+import {
+  LayerConfigUpdateProps,
+  LayerNameUpdateProps,
+  SelectedLayer
+} from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
   GeoJsonFeatureDeleteProps,
   GeoJsonFeatureUpdateProps
@@ -7,9 +11,8 @@ import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { SketchEditingFeature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
-
-import { LayerConfigUpdateProps } from "../../../hooks/useLayers";
 
 import DataSource from "./DataSource";
 import FeatureInspector from "./FeatureInspector";
@@ -31,6 +34,7 @@ type Props = {
   onSketchGeometryEditStart?: () => void;
   onSketchGeometryEditCancel?: () => void;
   onSketchGeometryEditApply?: () => void;
+  onLayerNameUpdate?: (inp: LayerNameUpdateProps) => void;
 };
 
 const InspectorTabs: FC<Props> = ({
@@ -44,8 +48,10 @@ const InspectorTabs: FC<Props> = ({
   sketchEditingFeature,
   onSketchGeometryEditStart,
   onSketchGeometryEditCancel,
-  onSketchGeometryEditApply
+  onSketchGeometryEditApply,
+  onLayerNameUpdate
 }) => {
+  const t = useT();
   const selectedFeature = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
@@ -86,13 +92,21 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "dataSource",
         icon: "data",
+        tooltipText: t("Layer"),
+        placement: "left",
         children: selectedLayer?.layer && (
-          <DataSource selectedLayer={selectedLayer.layer} />
+          <DataSource
+            selectedLayer={selectedLayer.layer}
+            onLayerNameUpdate={onLayerNameUpdate}
+            onLayerConfigUpdate={onLayerConfigUpdate}
+          />
         )
       },
       {
         id: "featureInspector",
         icon: "mapPin",
+        placement: "left",
+        tooltipText: t("Feature"),
         children: selectedFeature && (
           <FeatureInspector
             selectedFeature={selectedFeature}
@@ -113,6 +127,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "layerStyle",
         icon: "palette",
+        placement: "left",
+        tooltipText: t("Layer Style"),
         children: selectedLayer?.layer?.id && (
           <LayerStyle
             layerStyles={layerStyles}
@@ -126,6 +142,8 @@ const InspectorTabs: FC<Props> = ({
       {
         id: "infoboxSettings",
         icon: "article",
+        placement: "left",
+        tooltipText: t("Infobox"),
         children: selectedLayer?.layer?.id && (
           <InfoboxSettings
             selectedLayerId={selectedLayer.layer.id}
@@ -135,19 +153,21 @@ const InspectorTabs: FC<Props> = ({
       }
     ],
     [
-      selectedLayer,
+      t,
+      selectedLayer?.layer,
+      onLayerNameUpdate,
+      onLayerConfigUpdate,
       selectedFeature,
       selectedSketchFeature,
-      layerStyles,
-      layers,
-      sceneId,
-      onLayerConfigUpdate,
+      sketchEditingFeature?.feature?.id,
       onGeoJsonFeatureUpdate,
       onGeoJsonFeatureDelete,
-      sketchEditingFeature,
       onSketchGeometryEditStart,
+      onSketchGeometryEditApply,
       onSketchGeometryEditCancel,
-      onSketchGeometryEditApply
+      layerStyles,
+      layers,
+      sceneId
     ]
   );
 

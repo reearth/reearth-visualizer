@@ -149,7 +149,6 @@ func (l *Layer) Export(ctx context.Context, lid id.LayerID, ext string) (io.Read
 		Sealer: &merging.Sealer{
 			DatasetGraphLoader: repo.DatasetGraphLoaderFrom(l.datasetRepo),
 		},
-		Encoder: e,
 	}
 
 	go func() {
@@ -1047,11 +1046,6 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 		return nil, nil, err
 	}
 
-	rootLayers := result.RootLayers()
-	if len(rootLayers) == 0 {
-		return nil, nil, errors.New("no layers are imported")
-	}
-
 	if result.Root.LayerCount() > 0 {
 		parent.Layers().AppendLayers(result.Root.Layers()...)
 	}
@@ -1065,7 +1059,7 @@ func (i *Layer) ImportLayer(ctx context.Context, inp interfaces.ImportLayerParam
 	}
 
 	tx.Commit()
-	return rootLayers, parent, nil
+	return nil, parent, nil
 }
 
 func (i *Layer) AttachTag(ctx context.Context, layerID id.LayerID, tagID id.TagID, operator *usecase.Operator) (layer.Layer, error) {

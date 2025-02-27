@@ -148,7 +148,7 @@ const Wrapper = styled("div")<{
       size === "small"
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    boxShadow: theme.shadow.input,
+    boxShadow: appearance === "present" ? "none" : theme.shadow.input,
     width: !extendWidth ? "" : "100%"
   };
 });

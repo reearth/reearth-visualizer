@@ -350,8 +350,8 @@ github.com/ravilushqa/otelgqlgen v0.17.0 h1:bLwQfKqtj9P24QpjM2sc1ipBm5Fqv2u7DKN5
 github.com/ravilushqa/otelgqlgen v0.17.0/go.mod h1:orOIikuYsay1y3CmLgd5gsHcT9EsnXwNKmkAplzzYXQ=
 github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355 h1:hmQfd74d4+CdE7vz72n8OPAFocOwVo6yoczZ8eLYKi4=
 github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355/go.mod h1:YWoaA2PfCxtfLyH9+pz5tZh9kwKbPEbRoaIA/DSCt10=
-github.com/reearth/reearthx v0.0.0-20241128091912-9b8bc8adfdd7 h1:WyDySGPgHtNXlOu3cPfuQyWM7xbpJc0Cm2a5Ti/2ZwM=
-github.com/reearth/reearthx v0.0.0-20241128091912-9b8bc8adfdd7/go.mod h1:/ByvE9o0WANHL2nhOyZjOXWwY8cCgze0OmwyNzxcYoA=
+github.com/reearth/reearthx v0.0.0-20250227072024-4d11b59413a1 h1:beGT8v/WpjHd9R5JroxU7qCtqMpo4EXzNiatPzX/F4U=
+github.com/reearth/reearthx v0.0.0-20250227072024-4d11b59413a1/go.mod h1:/ByvE9o0WANHL2nhOyZjOXWwY8cCgze0OmwyNzxcYoA=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.2.2/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=

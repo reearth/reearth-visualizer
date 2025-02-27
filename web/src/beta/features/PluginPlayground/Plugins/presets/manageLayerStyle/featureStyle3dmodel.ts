@@ -123,6 +123,5 @@ reearth.camera.flyTo(
 
 export const featureStyle3dModel: PluginType = {
   id: "feature-style-3d-model",
-  title: "Feature style 3D Model",
   files: [widgetFile, yamlFile]
 };

@@ -3,11 +3,11 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
+import { ContentWrapper, Label } from "../../shared/SharedComponent";
 import { CustomPropertyProps } from "../../SketchLayerCreator/type";
 
 import CustomPropertyItem from "./CustomPropertyItem";
 import useHooks from "./hooks";
-import { ContentWrapper, Label } from "../../shared/SharedComponent";
 
 const CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME =
   "reearth-visualizer-editor-custom-properties-drag-handle";

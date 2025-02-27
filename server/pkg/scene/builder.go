@@ -19,9 +19,6 @@ func (b *Builder) Build() (*Scene, error) {
 	if b.scene.workspace.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.scene.rootLayer.IsNil() {
-		return nil, ErrInvalidID
-	}
 	if b.scene.widgets == nil {
 		b.scene.widgets = NewWidgets(nil, nil)
 	}
@@ -69,11 +66,6 @@ func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
 
 func (b *Builder) Widgets(widgets *Widgets) *Builder {
 	b.scene.widgets = widgets
-	return b
-}
-
-func (b *Builder) RootLayer(rootLayer LayerID) *Builder {
-	b.scene.rootLayer = rootLayer
 	return b
 }
 

@@ -3,6 +3,7 @@ package layer
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -80,7 +81,7 @@ func TestList_IDs(t *testing.T) {
 				New().ID(l1).Scene(sid).Item().MustBuild().LayerRef(),
 				New().ID(l2).Scene(sid).Group().MustBuild().LayerRef(),
 			},
-			want: NewIDList([]ID{l1, l2}),
+			want: NewIDList([]id.LayerID{l1, l2}),
 		},
 		{
 			name:   "nil",
@@ -138,7 +139,7 @@ func TestList_Pick(t *testing.T) {
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
 
 	allLayers := List{l1.LayerRef(), l2.LayerRef()}
-	idList := NewIDList([]ID{l1.ID(), l3.ID()})
+	idList := NewIDList([]id.LayerID{l1.ID(), l3.ID()})
 
 	tests := []struct {
 		name string
@@ -182,7 +183,7 @@ func TestList_Find(t *testing.T) {
 	tests := []struct {
 		name   string
 		target List
-		lid    ID
+		lid    id.LayerID
 		want   *Layer
 	}{
 		{
@@ -585,7 +586,7 @@ func TestMap_Pick(t *testing.T) {
 		l2.ID(): l2.LayerRef(),
 	}
 
-	idList := NewIDList([]ID{l1.ID(), l3.ID()})
+	idList := NewIDList([]id.LayerID{l1.ID(), l3.ID()})
 
 	tests := []struct {
 		name string
@@ -614,7 +615,7 @@ func TestMap_Pick(t *testing.T) {
 		{
 			name: "non-existing ID",
 			m:    allLayers,
-			il:   NewIDList([]ID{NewID()}),
+			il:   NewIDList([]id.LayerID{NewID()}),
 			want: List{},
 		},
 	}
@@ -636,13 +637,13 @@ func TestMap_Keys(t *testing.T) {
 		l2.ID(): l2.LayerRef(),
 	}
 
-	expectedKeys := []ID{l1.ID(), l2.ID()}
+	expectedKeys := []id.LayerID{l1.ID(), l2.ID()}
 	sortIDs(expectedKeys)
 
 	tests := []struct {
 		name    string
 		mapData Map
-		want    []ID
+		want    []id.LayerID
 	}{
 		{
 			name:    "valid keys",
@@ -652,7 +653,7 @@ func TestMap_Keys(t *testing.T) {
 		{
 			name:    "empty map",
 			mapData: Map{},
-			want:    []ID{},
+			want:    []id.LayerID{},
 		},
 	}
 

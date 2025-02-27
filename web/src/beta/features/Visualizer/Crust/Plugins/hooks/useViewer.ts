@@ -39,6 +39,7 @@ export default ({
   | "onLayerSelectWithRectEnd"
 >) => {
   const engineRef = mapRef?.current?.engine;
+  const geoidRef = mapRef?.current?.geoid;
 
   const getViewerProperty = useGet(viewerProperty);
 
@@ -212,6 +213,13 @@ export default ({
     [engineRef]
   );
 
+  const getGeoidHeight = useCallback(
+    async (lng?: number, lat?: number) => {
+      return await geoidRef?.getGeoidHeight(lng, lat);
+    },
+    [geoidRef]
+  );
+
   // events
   const [viewerEvents, emit] = useMemo(() => events<ViewerEventType>(), []);
 
@@ -306,6 +314,7 @@ export default ({
     cartesianToCartographic,
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
+    getGeoidHeight,
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,

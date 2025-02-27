@@ -16,6 +16,7 @@ const (
 	SchemaFieldUIDateTime   SchemaFieldUI = "datetime"
 	SchemaFieldUIMargin     SchemaFieldUI = "margin"
 	SchemaFieldUIPadding    SchemaFieldUI = "padding"
+	SchemaFieldUIzoomLevel  SchemaFieldUI = "zoomLevel"
 	// DON'T FORGET ADDING A NEW UI TO schemaFieldUIs ALSO!
 )
 
@@ -34,6 +35,7 @@ var (
 		SchemaFieldUIDateTime,
 		SchemaFieldUIMargin,
 		SchemaFieldUIPadding,
+		SchemaFieldUIzoomLevel,
 		// DON'T FORGET ADDING A NEW UI HERE ALSO!
 	}
 )

@@ -1,5 +1,7 @@
 package layer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Builder struct {
 	base layerBase
 }
@@ -16,7 +18,7 @@ func (b *Builder) Item() *ItemBuilder {
 	return NewItem().base(b.base)
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.LayerID) *Builder {
 	b.base.id = id
 	return b
 }

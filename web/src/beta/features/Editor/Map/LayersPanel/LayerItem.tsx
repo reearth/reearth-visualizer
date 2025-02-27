@@ -92,6 +92,8 @@ const LayerItem: FC<LayerItemProps> = ({
                   icon="crosshair"
                   size="small"
                   appearance="simple"
+                  tooltipText={t("Fly to")}
+                  placement="top"
                   onClick={handleZoomToLayer}
                 />
               )
@@ -103,6 +105,8 @@ const LayerItem: FC<LayerItemProps> = ({
                   icon={layer.visible ? "eye" : "eyeSlash"}
                   size="small"
                   appearance="simple"
+                  placement="top"
+                  tooltipText={t("Visibility")}
                   onClick={handleToggleLayerVisibility}
                 />
               ),
@@ -111,9 +115,10 @@ const LayerItem: FC<LayerItemProps> = ({
           ]
         : undefined,
     [
+      editingLayerNameId,
       layer.id,
       layer.visible,
-      editingLayerNameId,
+      t,
       handleZoomToLayer,
       handleToggleLayerVisibility
     ]
@@ -123,8 +128,9 @@ const LayerItem: FC<LayerItemProps> = ({
 
   const handleTitleUpdate = useCallback(() => {
     setEditingLayerNameId("");
-    if (!localTitle || localTitle === layer.title) return;
-    handleLayerNameUpdate({ layerId: layer.id, name: localTitle });
+    if (!localTitle || localTitle === layer.title) {
+      setLocalTitle(layer.title);
+    } else handleLayerNameUpdate({ layerId: layer.id, name: localTitle });
   }, [
     layer.id,
     layer.title,
