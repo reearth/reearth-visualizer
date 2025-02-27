@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/verror"
@@ -23,9 +24,6 @@ type Container struct {
 	Asset          Asset
 	AuthRequest    authserver.RequestRepo
 	Config         Config
-	DatasetSchema  DatasetSchema
-	Dataset        Dataset
-	Layer          Layer
 	NLSLayer       NLSLayer
 	Style          Style
 	Lock           Lock
@@ -35,7 +33,6 @@ type Container struct {
 	Property       Property
 	Scene          Scene
 	SceneLock      SceneLock
-	Tag            Tag
 	Workspace      accountrepo.Workspace
 	User           accountrepo.User
 	Policy         Policy
@@ -61,9 +58,6 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Asset:          c.Asset.Filtered(workspace),
 		AuthRequest:    c.AuthRequest,
 		Config:         c.Config,
-		DatasetSchema:  c.DatasetSchema.Filtered(scene),
-		Dataset:        c.Dataset.Filtered(scene),
-		Layer:          c.Layer.Filtered(scene),
 		NLSLayer:       c.NLSLayer.Filtered(scene),
 		Style:          c.Style.Filtered(scene),
 		Lock:           c.Lock,
@@ -75,7 +69,6 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Property:       c.Property.Filtered(scene),
 		Scene:          c.Scene.Filtered(workspace),
 		SceneLock:      c.SceneLock,
-		Tag:            c.Tag.Filtered(scene),
 		Transaction:    c.Transaction,
 		User:           c.User,
 		Workspace:      c.Workspace,
@@ -178,10 +171,10 @@ func (f SceneFilter) Clone() SceneFilter {
 	}
 }
 
-func (f SceneFilter) CanRead(id scene.ID) bool {
+func (f SceneFilter) CanRead(id id.SceneID) bool {
 	return f.Readable == nil || f.Readable.Has(id)
 }
 
-func (f SceneFilter) CanWrite(id scene.ID) bool {
+func (f SceneFilter) CanWrite(id id.SceneID) bool {
 	return f.Writable == nil || f.Writable.Has(id)
 }

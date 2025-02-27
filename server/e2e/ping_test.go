@@ -3,17 +3,10 @@ package e2e
 import (
 	"net/http"
 	"testing"
-
-	"github.com/reearth/reearth/server/internal/app/config"
 )
 
 func TestPingAPI(t *testing.T) {
-	e := StartServer(t, &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}, false, nil)
+	e := ServerPingTest(t)
 
 	e.OPTIONS("/api/ping").
 		WithHeader("Origin", "https://example.com").

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
@@ -58,7 +59,7 @@ func TestManifest(t *testing.T) {
 	tests := []struct {
 		name     string
 		root     *Root
-		scene    *plugin.SceneID
+		scene    *id.SceneID
 		expected *Manifest
 		tl       *TranslatedRoot
 		err      string
