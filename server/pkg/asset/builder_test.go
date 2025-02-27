@@ -17,7 +17,7 @@ func TestBuilder_Build(t *testing.T) {
 		id          ID
 		name        string
 		createdAt   time.Time
-		workspace   WorkspaceID
+		workspace   accountdomain.WorkspaceID
 		size        int64
 		url         string
 		contentType string
@@ -79,7 +79,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				id:          NewID(),
 				createdAt:   d,
-				workspace:   WorkspaceID{},
+				workspace:   accountdomain.WorkspaceID{},
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
@@ -133,7 +133,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		id          ID
 		name        string
 		createdAt   time.Time
-		workspace   WorkspaceID
+		workspace   accountdomain.WorkspaceID
 		size        int64
 		url         string
 		contentType string
@@ -195,7 +195,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			args: args{
 				createdAt:   d,
 				id:          NewID(),
-				workspace:   WorkspaceID{},
+				workspace:   accountdomain.WorkspaceID{},
 				size:        10,
 				url:         "tt://xxx.zz",
 				contentType: "bbb",

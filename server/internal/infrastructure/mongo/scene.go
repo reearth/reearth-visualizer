@@ -8,7 +8,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -75,7 +74,7 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, bson.M{
-		"team": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
+		"team": bson.M{"$in": accountdomain.WorkspaceIDList(workspaces2).Strings()},
 	})
 	if err != nil && err != mongo.ErrNilDocument && err != mongo.ErrNoDocuments {
 		return nil, err

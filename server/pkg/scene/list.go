@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearthx/account/accountdomain"
+
 type List []*Scene
 
 func (l List) IDs() []ID {
@@ -32,7 +34,7 @@ func (l List) FilterByID(ids ...ID) List {
 	return res
 }
 
-func (l List) FilterByWorkspace(workspaces ...WorkspaceID) List {
+func (l List) FilterByWorkspace(workspaces ...accountdomain.WorkspaceID) List {
 	if l == nil {
 		return nil
 	}

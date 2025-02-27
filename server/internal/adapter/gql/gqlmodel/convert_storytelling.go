@@ -31,6 +31,9 @@ func ToStory(s *storytelling.Story) *Story {
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
+
+		EnableGa:   s.EnableGa(),
+		TrackingID: s.TrackingID(),
 	}
 }
 
@@ -50,9 +53,7 @@ func ToPage(p *storytelling.Page) *StoryPage {
 		Blocks:             ToBlocks(p.Blocks()),
 		Swipeable:          p.Swipeable(),
 		LayersIds:          IDFromList(p.Layers()),
-		Layers:             nil,
 		SwipeableLayersIds: IDFromList(p.SwipeableLayers()),
-		SwipeableLayers:    nil,
 		PropertyID:         IDFrom(p.Property()),
 		Property:           nil,
 		CreatedAt:          p.Id().Timestamp(),

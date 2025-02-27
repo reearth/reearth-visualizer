@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -31,13 +32,23 @@ import (
 	"golang.org/x/text/language"
 )
 
-type Seeder func(ctx context.Context, r *repo.Container) error
+var (
+	fr                 *gateway.File
+	disabledAuthConfig = &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}
+)
+
+type Seeder func(ctx context.Context, r *repo.Container, f gateway.File) error
 
 func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container) {
+func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File) {
 	ctx := context.Background()
 
 	if useMongo {
@@ -48,18 +59,25 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		repos = memory.New()
 	}
 
+	file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
+	fr = &file
 	if seeder != nil {
-		if err := seeder(ctx, repos); err != nil {
+		if err := seeder(ctx, repos, file); err != nil {
 			t.Fatalf("failed to seed the db: %s", err)
 		}
 	}
 
-	return repos
+	return repos, file
 }
 
 func initGateway() *gateway.Container {
+	if fr == nil {
+		return &gateway.Container{
+			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
+		}
+	}
 	return &gateway.Container{
-		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+		File: *fr,
 	}
 }
 
@@ -117,96 +135,51 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 }
 
 func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	cfg := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	repos := initRepos(t, true, seeder)
-	e, _, _ := StartGQLServerWithRepos(t, cfg, repos)
+	repos, _ := initRepos(t, true, seeder)
+	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()
 }
 
-func initServer(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container) {
-	gateways := initGateway()
-	return app.NewServer(ctx, &app.ServerConfig{
-		Config:       cfg,
-		Repos:        repos,
-		AccountRepos: repos.AccountRepos(),
-		Gateways:     gateways,
-		Debug:        true,
-	}), gateways
-}
-
-func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container) {
-	t.Helper()
-
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
-	ctx := context.Background()
-
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("server failed to listen: %v", err)
-	}
-
-	srv, gateways := initServer(cfg, repos, ctx)
-
-	ch := make(chan error)
-	go func() {
-		if err := srv.Serve(l); err != http.ErrServerClosed {
-			ch <- err
-		}
-		close(ch)
-	}()
-	t.Cleanup(func() {
-		if err := srv.Shutdown(context.Background()); err != nil {
-			t.Fatalf("server shutdown: %v", err)
-		}
-
-		if err := <-ch; err != nil {
-			t.Fatalf("server serve: %v", err)
-		}
-	})
-	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways
-}
-
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	repos := initRepos(t, useMongo, seeder)
-	e, gateways := StartServerWithRepos(t, cfg, repos)
+func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	repos, _ := initRepos(t, useMongo, seeder)
+	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
 }
 
-func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
-	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
-	return e
+func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	return startServer(t, disabledAuthConfig, true, seeder)
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
+	e, _, _ := startServer(t, disabledAuthConfig, true, seeder)
+	return e
+}
+
+func ServerPingTest(t *testing.T) *httpexpect.Expect {
+	e, _, _ := startServer(t, disabledAuthConfig, false, nil)
+	return e
+}
+
+func ServerMockTest(t *testing.T) *httpexpect.Expect {
 	c := &config.Config{
-		Origins: []string{"https://example.com"},
+		Dev:      true,
+		MockAuth: true,
+		Origins:  []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
 	}
-	return StartServer(t, c, true, seeder)
+	e, _, _ := startServer(t, c, true, nil)
+	return e
 }
 
 func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	return StartServer(t, c, true,
-		func(ctx context.Context, r *repo.Container) error {
-			return baseSeederWithLang(ctx, r, lang)
+	e, _, _ := startServer(t, disabledAuthConfig, true,
+		func(ctx context.Context, r *repo.Container, f gateway.File) error {
+			return baseSeederWithLang(ctx, r, f, lang)
 		},
 	)
+	return e
 }
 
 type GraphQLRequest struct {
@@ -275,6 +248,12 @@ func RegexpJSONEReadCloser(t *testing.T, actual io.ReadCloser, expected string) 
 	actualBuf := new(bytes.Buffer)
 	_, err := actualBuf.ReadFrom(actual)
 	assert.NoError(t, err)
+	var data map[string]interface{}
+	err = json.Unmarshal(actualBuf.Bytes(), &data)
+	assert.NoError(t, err)
+	if text, err := json.MarshalIndent(data, "", "  "); err == nil {
+		fmt.Println(string(text))
+	}
 	return JSONEqRegexp(t, actualBuf.String(), expected)
 }
 
@@ -282,6 +261,13 @@ func JSONEqRegexpInterface(t *testing.T, actual interface{}, expected string) bo
 	actualBytes, err := json.Marshal(actual)
 	assert.Nil(t, err)
 	return JSONEqRegexp(t, string(actualBytes), expected)
+}
+
+func JSONEqRegexpValue(t *testing.T, actual *httpexpect.Value, expected string) bool {
+	if actualData, ok := actual.Raw().(map[string]interface{}); ok {
+		return JSONEqRegexpInterface(t, actualData, expected)
+	}
+	return false
 }
 
 func aligningJSON(t *testing.T, str string) string {
@@ -295,9 +281,17 @@ func aligningJSON(t *testing.T, str string) string {
 }
 
 func ValueDump(val *httpexpect.Value) {
-	if data, ok := val.Raw().(map[string]interface{}); ok {
+	raw := val.Raw()
+	switch data := raw.(type) {
+	case map[string]interface{}:
 		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
 			fmt.Println(string(text))
 		}
+	case []interface{}:
+		if text, err := json.MarshalIndent(data, "", "  "); err == nil {
+			fmt.Println(string(text))
+		}
+	default:
+		fmt.Println("Unsupported type:", reflect.TypeOf(raw))
 	}
 }
