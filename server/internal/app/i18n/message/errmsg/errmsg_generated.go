@@ -2,13 +2,13 @@
 package errmsg
 
 import (
-	"github.com/reearth/reearth/server/pkg/i18n/message"
 	"golang.org/x/text/language"
+	"github.com/reearth/reearth/server/pkg/i18n/message"
 )
 
 const (
 	ErrKeyRepoResourceNotFound message.ErrKey = "repo.resource_not_found"
-	ErrKeyUnknown              message.ErrKey = "unknown"
+	ErrKeyUnknown message.ErrKey = "unknown"
 )
 
 var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{

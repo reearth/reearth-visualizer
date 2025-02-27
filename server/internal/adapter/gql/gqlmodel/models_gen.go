@@ -1943,21 +1943,21 @@ func (e ProjectSortField) MarshalGQL(w io.Writer) {
 type PropertySchemaFieldUI string
 
 const (
-	PropertySchemaFieldUILayer                   PropertySchemaFieldUI = "LAYER"
-	PropertySchemaFieldUIMultiline               PropertySchemaFieldUI = "MULTILINE"
-	PropertySchemaFieldUISelection               PropertySchemaFieldUI = "SELECTION"
-	PropertySchemaFieldUIColor                   PropertySchemaFieldUI = "COLOR"
-	PropertySchemaFieldUIRange                   PropertySchemaFieldUI = "RANGE"
-	PropertySchemaFieldUISlider                  PropertySchemaFieldUI = "SLIDER"
-	PropertySchemaFieldUIImage                   PropertySchemaFieldUI = "IMAGE"
-	PropertySchemaFieldUIVideo                   PropertySchemaFieldUI = "VIDEO"
-	PropertySchemaFieldUIFile                    PropertySchemaFieldUI = "FILE"
-	PropertySchemaFieldUICameraPose              PropertySchemaFieldUI = "CAMERA_POSE"
-	PropertySchemaFieldUIDatetime                PropertySchemaFieldUI = "DATETIME"
-	PropertySchemaFieldUIMargin                  PropertySchemaFieldUI = "MARGIN"
-	PropertySchemaFieldUIPadding                 PropertySchemaFieldUI = "PADDING"
-	PropertySchemaFieldUIZoomlevel               PropertySchemaFieldUI = "ZOOMLEVEL"
-	PropertySchemaFieldUIDynamicPropertySelector PropertySchemaFieldUI = "DYNAMIC_PROPERTY_SELECTOR"
+	PropertySchemaFieldUILayer      PropertySchemaFieldUI = "LAYER"
+	PropertySchemaFieldUIMultiline  PropertySchemaFieldUI = "MULTILINE"
+	PropertySchemaFieldUISelection  PropertySchemaFieldUI = "SELECTION"
+	PropertySchemaFieldUIColor      PropertySchemaFieldUI = "COLOR"
+	PropertySchemaFieldUIRange      PropertySchemaFieldUI = "RANGE"
+	PropertySchemaFieldUISlider     PropertySchemaFieldUI = "SLIDER"
+	PropertySchemaFieldUIImage      PropertySchemaFieldUI = "IMAGE"
+	PropertySchemaFieldUIVideo      PropertySchemaFieldUI = "VIDEO"
+	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
+	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
+	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
+	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
+	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
+	PropertySchemaFieldUIZoomlevel  PropertySchemaFieldUI = "ZOOMLEVEL"
+	PropertySchemaFieldUIDynamicPropertySelector    PropertySchemaFieldUI = "DYNAMIC_PROPERTY_SELECTOR"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{

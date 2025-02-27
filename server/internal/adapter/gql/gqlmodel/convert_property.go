@@ -1,3 +1,4 @@
+
 package gqlmodel
 
 import (
