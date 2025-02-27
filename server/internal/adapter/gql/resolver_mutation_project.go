@@ -175,11 +175,6 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		Desc: true,
 	}
 
-	// pid2, err := gqlmodel.ToID[id.Project](gqlmodel.ID(prj.ID().String()))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	assets, _, err := usecases(ctx).Asset.FindByWorkspaceProject(ctx, prj.Workspace(), nil, nil, sort, page, getOperator(ctx))
 	if err != nil {
 		return nil, errors.New("Fail ExportAsset :" + err.Error())
