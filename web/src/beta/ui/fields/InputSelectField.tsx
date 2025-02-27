@@ -34,7 +34,7 @@ const InputSelectField: FC<InputFieldProps> = ({
 
   const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
 
-  const handleOnBulur = () => {
+  const handleOnBlur = () => {
     if (onBlur && typeof selectValue === "string") {
       onBlur(selectValue);
     }
@@ -53,7 +53,7 @@ const InputSelectField: FC<InputFieldProps> = ({
         <InputWrapper>
           <TextInput
             placeholder={placeholder}
-            onBlur={handleOnBulur}
+            onBlur={handleOnBlur}
             value={selectValue}
           />
         </InputWrapper>
