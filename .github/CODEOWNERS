@@ -1,6 +1,6 @@
 *                           @reearth/visualizer-codeowners
 
-/server/                    @pyshx
+/server/                    @pyshx @soneda-yuya
 
 /web/                       @airslice @mkumbobeaty
 /web/e2e/                   @keiya01

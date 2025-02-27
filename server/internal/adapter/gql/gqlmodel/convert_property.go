@@ -332,6 +332,8 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		ui2 = PropertySchemaFieldUIDatetime
 	case property.SchemaFieldUIDynamicPropertySelector:
 		ui2 = PropertySchemaFieldUIDynamicPropertySelector
+	case property.SchemaFieldUIzoomLevel:
+		ui2 = PropertySchemaFieldUIZoomlevel
 	}
 	if ui2 != PropertySchemaFieldUI("") {
 		return &ui2
@@ -374,6 +376,8 @@ func FromPropertySchemaFieldUI(ui *string) *property.SchemaFieldUI {
 		ui2 = property.SchemaFieldUIDateTime
 	case PropertySchemaFieldUIDynamicPropertySelector.String():
 		ui2 = property.SchemaFieldUIDynamicPropertySelector
+	case PropertySchemaFieldUIZoomlevel.String():
+		ui2 = property.SchemaFieldUIzoomLevel
 	}
 
 	if ui2 != "" {

@@ -28,7 +28,6 @@ type Builder struct {
 	tloader   tag.SceneLoader
 	nlsloader nlslayer.Loader
 	exporter  *encoding.Exporter
-	encoder   *encoder
 
 	scene       *scene.Scene
 	nlsLayer    *nlslayer.NLSLayerList
@@ -39,12 +38,10 @@ type Builder struct {
 }
 
 func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
-	e := &encoder{}
 	return &Builder{
 		ploader:    pl,
 		tloader:    tsl,
 		nlsloader:  nlsl,
-		encoder:    e,
 		exportType: exp,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
@@ -55,7 +52,6 @@ func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loa
 				DatasetGraphLoader: dl,
 				TagLoader:          tl,
 			},
-			Encoder: e,
 		},
 	}
 }
@@ -177,13 +173,7 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSup
 		return nil, err
 	}
 
-	// layers
-	if err := b.exporter.ExportLayerByID(ctx, b.scene.RootLayer()); err != nil {
-		return nil, err
-	}
-	layers := b.encoder.Result()
-
-	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport, enableGa, trackingId)
+	return b.sceneJSON(ctx, publishedAt, p, coreSupport, enableGa, trackingId)
 }
 
 func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {

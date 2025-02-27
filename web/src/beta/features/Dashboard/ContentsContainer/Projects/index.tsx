@@ -1,4 +1,5 @@
 import { Breadcrumb, Loading, Typography } from "@reearth/beta/lib/reearth-ui";
+import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import {
   ManagerContent,
   ManagerHeader,
@@ -7,7 +8,6 @@ import {
   ManagerWrapper
 } from "@reearth/beta/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/beta/ui/components/ManagerBase/ManagerEmptyContent";
-import Tooltip from "@reearth/beta/ui/components/Tooltip";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useRef, Fragment } from "react";

@@ -4,10 +4,11 @@ import {
   FloatingFocusManager,
   Placement,
   OffsetOptions,
-  ShiftOptions
+  ShiftOptions,
+  FloatingArrow
 } from "@floating-ui/react";
 import { Button } from "@reearth/beta/lib/reearth-ui";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import {
   forwardRef,
   useCallback,
@@ -63,30 +64,47 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
   }
 );
 
-const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
-  function Content({ style, ...props }, propRef) {
-    const { context: floatingContext, ...context } = usePopoverContext();
-    const ref = useMergeRefs([context.refs.setFloating, propRef]);
-    if (!floatingContext.open) return null;
+const Content = forwardRef<
+  HTMLDivElement,
+  HTMLProps<HTMLDivElement> & { tooltip?: boolean }
+>(function Content({ style, tooltip, ...props }, propRef) {
+  const { context: floatingContext, ...context } = usePopoverContext();
 
-    return (
-      <FloatingPortal>
-        <FloatingFocusManager context={floatingContext}>
-          <ContentWrapper
-            ref={ref}
-            style={{
-              ...context.floatingStyles,
-              ...style
-            }}
-            {...context.getFloatingProps(props)}
-          >
-            {props.children}
-          </ContentWrapper>
-        </FloatingFocusManager>
-      </FloatingPortal>
-    );
-  }
-);
+  const ref = useMergeRefs([context.refs.setFloating, propRef]);
+
+  const theme = useTheme();
+
+  if (!floatingContext.open) return null;
+
+  return (
+    <FloatingPortal>
+      <FloatingFocusManager context={floatingContext}>
+        <ContentWrapper
+          ref={ref}
+          style={{
+            ...context.floatingStyles,
+            ...style
+          }}
+          {...context.getFloatingProps(props)}
+        >
+          {tooltip && (
+            <FloatingArrow
+              ref={context.arrowRef}
+              context={floatingContext}
+              style={{
+                fill: theme.bg[1]
+              }}
+              width={8}
+              height={6}
+            />
+          )}
+
+          {props.children}
+        </ContentWrapper>
+      </FloatingFocusManager>
+    </FloatingPortal>
+  );
+});
 
 export type PopupProps = {
   children?: ReactNode;
@@ -101,6 +119,7 @@ export type PopupProps = {
   offset?: OffsetOptions;
   shift?: ShiftOptions;
   nested?: boolean;
+  tooltip?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
@@ -112,6 +131,7 @@ export const Popup = ({
   extendTriggerWidth,
   extendContentWidth,
   autoClose,
+  tooltip,
   ...restOptions
 }: PopupProps) => {
   const popover = usePopover({ ...restOptions, triggerOnHover });
@@ -153,7 +173,7 @@ export const Popup = ({
       >
         {trigger}
       </Trigger>
-      <Content onClick={handleAutoClose} style={contentStyle}>
+      <Content tooltip={tooltip} onClick={handleAutoClose} style={contentStyle}>
         {children}
       </Content>
     </PopoverContext.Provider>

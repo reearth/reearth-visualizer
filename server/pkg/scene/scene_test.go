@@ -9,7 +9,7 @@ import (
 )
 
 func TestScene_SetUpdatedAt(t *testing.T) {
-	s := New().NewID().Workspace(accountdomain.NewWorkspaceID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
+	s := New().NewID().Workspace(accountdomain.NewWorkspaceID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
 	s.SetUpdatedAt(time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC))
 	assert.Equal(t, time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC), s.UpdatedAt())
 	s = nil
@@ -23,7 +23,6 @@ func TestScene_Properties(t *testing.T) {
 	s := New().
 		NewID().
 		Workspace(accountdomain.NewWorkspaceID()).
-		RootLayer(NewLayerID()).
 		Property(pid1).
 		Widgets(
 			NewWidgets([]*Widget{
@@ -42,7 +41,6 @@ func TestSceneNil(t *testing.T) {
 	assert.Nil(t, s.Widgets())
 	assert.True(t, s.Project().IsEmpty())
 	assert.True(t, s.Workspace().IsEmpty())
-	assert.True(t, s.RootLayer().IsEmpty())
 	assert.True(t, s.CreatedAt().IsZero())
 	assert.Nil(t, s.Plugins())
 	assert.True(t, s.Property().IsEmpty())

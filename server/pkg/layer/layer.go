@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -13,7 +14,7 @@ var (
 )
 
 type Layer interface {
-	ID() ID
+	ID() id.LayerID
 	Index() *int
 	Name() string
 	IsVisible() bool
@@ -71,7 +72,7 @@ func ToLayerItemRef(l *Layer) *Item {
 }
 
 type layerBase struct {
-	id        ID
+	id        id.LayerID
 	index     *int
 	name      string
 	visible   bool
@@ -83,7 +84,7 @@ type layerBase struct {
 	tags      *TagList
 }
 
-func (l *layerBase) ID() ID {
+func (l *layerBase) ID() id.LayerID {
 	return l.id
 }
 
@@ -91,7 +92,7 @@ func (l *layerBase) Index() *int {
 	return l.index
 }
 
-func (l *layerBase) IDRef() *ID {
+func (l *layerBase) IDRef() *id.LayerID {
 	if l == nil {
 		return nil
 	}

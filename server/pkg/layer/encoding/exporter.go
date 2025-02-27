@@ -3,17 +3,17 @@ package encoding
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
 )
 
 type Exporter struct {
-	Merger  *merging.Merger
-	Sealer  *merging.Sealer
-	Encoder Encoder
+	Merger *merging.Merger
+	Sealer *merging.Sealer
 }
 
-func (e *Exporter) ExportLayerByID(ctx context.Context, l layer.ID) error {
+func (e *Exporter) ExportLayerByID(ctx context.Context, l id.LayerID) error {
 	if e == nil {
 		return nil
 	}
@@ -38,14 +38,6 @@ func (e *Exporter) ExportLayer(ctx context.Context, l layer.Layer) error {
 func (e *Exporter) Encode(ctx context.Context, m merging.MergedLayer) error {
 	if e == nil {
 		return nil
-	}
-	s, err := e.Sealer.Seal(ctx, m)
-	if err != nil {
-		return err
-	}
-	err = e.Encoder.Encode(s)
-	if err != nil {
-		return err
 	}
 	return nil
 }

@@ -122,7 +122,8 @@ export const context: Context = {
         cartographicToCartesian: act("cartographicToCartesian"),
         cartesianToCartographic: act("cartesianToCartographic"),
         transformByOffsetOnScreen: act("transformByOffsetOnScreen"),
-        isPositionVisibleOnGlobe: act("isPositionVisibleOnGlobe")
+        isPositionVisibleOnGlobe: act("isPositionVisibleOnGlobe"),
+        getGeoidHeight: act("getGeoidHeight")
       },
       on: act("on"),
       off: act("off")
