@@ -29,7 +29,6 @@ type Plugin struct {
 	pluginRepo         repo.Plugin
 	propertySchemaRepo repo.PropertySchema
 	propertyRepo       repo.Property
-	layerRepo          repo.Layer
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
 	transaction        usecasex.Transaction
@@ -38,7 +37,6 @@ type Plugin struct {
 func NewPlugin(r *repo.Container, gr *gateway.Container) interfaces.Plugin {
 	return &Plugin{
 		sceneRepo:          r.Scene,
-		layerRepo:          r.Layer,
 		pluginRepo:         r.Plugin,
 		propertySchemaRepo: r.PropertySchema,
 		propertyRepo:       r.Property,
@@ -292,8 +290,8 @@ func parseWidgetLayout(model *jsonmodel.WidgetLayout) *plugin.WidgetLayout {
 func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsData []interface{}, schemasData []interface{}) ([]*plugin.Plugin, property.SchemaList, error) {
 	var pluginsJSON = jsonmodel.ToPluginsFromJSON(pluginsData)
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sce.ID()}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sce.ID()}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sce.ID()}}
+	writableFilter := repo.SceneFilter{Writable: id.SceneIDList{sce.ID()}}
 
 	var propertySchemaIDs []id.PropertySchemaID
 	var pluginIDs []id.PluginID

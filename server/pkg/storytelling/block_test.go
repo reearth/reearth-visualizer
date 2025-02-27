@@ -12,15 +12,15 @@ func TestBlock_SettersGetters(t *testing.T) {
 	var b *Block
 	assert.True(t, b.ID().IsEmpty())
 	assert.True(t, b.Property().IsEmpty())
-	assert.Equal(t, PluginID{}, b.Plugin())
-	assert.Equal(t, PluginExtensionID(""), b.Extension())
+	assert.Equal(t, id.PluginID{}, b.Plugin())
+	assert.Equal(t, id.PluginExtensionID(""), b.Extension())
 	assert.Nil(t, b.PropertyRef())
 	assert.Nil(t, b.Clone())
 
 	blockID := NewBlockID()
 	propertyID := NewPropertyID()
 	pluginID, _ := id.NewPluginID("plugin", "1.0.0", nil)
-	extensionID := PluginExtensionID("extension")
+	extensionID := id.PluginExtensionID("extension")
 	b = &Block{
 		id:        blockID,
 		plugin:    pluginID,

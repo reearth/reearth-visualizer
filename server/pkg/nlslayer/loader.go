@@ -9,7 +9,7 @@ import (
 )
 
 type Loader func(context.Context, ...id.NLSLayerID) (NLSLayerList, error)
-type LoaderByScene func(context.Context, SceneID) (NLSLayerList, error)
+type LoaderByScene func(context.Context, id.SceneID) (NLSLayerList, error)
 
 var WalkerSkipChildren = errors.New("LAYER_WALKER_SKIP_CHILDREN")
 
@@ -75,7 +75,7 @@ func (l Loader) Walk(ctx context.Context, walker func(NLSLayer, NLSLayerGroupLis
 }
 
 func LoaderBySceneFrom(data ...NLSLayer) LoaderByScene {
-	return func(ctx context.Context, id SceneID) (NLSLayerList, error) {
+	return func(ctx context.Context, id id.SceneID) (NLSLayerList, error) {
 		res := lo.Filter(data, func(l NLSLayer, _ int) bool {
 			return l.Scene() == id
 		})

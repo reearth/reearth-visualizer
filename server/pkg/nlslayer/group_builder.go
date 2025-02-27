@@ -69,7 +69,7 @@ func (b *NLSLayerGroupBuilder) LayerType(t LayerType) *NLSLayerGroupBuilder {
 	return b
 }
 
-func (b *NLSLayerGroupBuilder) Scene(s SceneID) *NLSLayerGroupBuilder {
+func (b *NLSLayerGroupBuilder) Scene(s id.SceneID) *NLSLayerGroupBuilder {
 	b.l.scene = s
 	return b
 }

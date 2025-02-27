@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,8 +15,8 @@ func TestNewWidget(t *testing.T) {
 	tests := []struct {
 		Name      string
 		ID        WidgetID
-		Plugin    PluginID
-		Extension PluginExtensionID
+		Plugin    id.PluginID
+		Extension id.PluginExtensionID
 		Property  PropertyID
 		Enabled   bool
 		Extended  bool
@@ -70,8 +71,8 @@ func TestMustNewWidget(t *testing.T) {
 	tests := []struct {
 		Name      string
 		ID        WidgetID
-		Plugin    PluginID
-		Extension PluginExtensionID
+		Plugin    id.PluginID
+		Extension id.PluginExtensionID
 		Property  PropertyID
 		Enabled   bool
 		Extended  bool

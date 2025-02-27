@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
@@ -36,7 +37,7 @@ func (b *ExtensionBuilder) MustBuild() *Extension {
 	return p
 }
 
-func (b *ExtensionBuilder) ID(id ExtensionID) *ExtensionBuilder {
+func (b *ExtensionBuilder) ID(id id.PluginExtensionID) *ExtensionBuilder {
 	b.p.id = id
 	return b
 }

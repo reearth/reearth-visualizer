@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestPlugin_Extension(t *testing.T) {
 	tests := []struct {
 		name     string
 		plugin   *Plugin
-		key      ExtensionID
+		key      id.PluginExtensionID
 		expected *Extension
 	}{
 		{
@@ -98,19 +99,19 @@ func TestPlugin_Clone(t *testing.T) {
 			target: &Plugin{
 				id:   MustID("hoge~0.1.0"),
 				name: i18n.StringFrom("hoge"),
-				extensions: map[ExtensionID]*Extension{
-					ExtensionID("foo"): {
-						id:            ExtensionID("foo"),
+				extensions: map[id.PluginExtensionID]*Extension{
+					id.PluginExtensionID("foo"): {
+						id:            id.PluginExtensionID("foo"),
 						extensionType: ExtensionTypeBlock,
 						schema:        MustPropertySchemaID("hoge~0.1.0/foo"),
 					},
-					ExtensionID("bar"): {
-						id:            ExtensionID("bar"),
+					id.PluginExtensionID("bar"): {
+						id:            id.PluginExtensionID("bar"),
 						extensionType: ExtensionTypePrimitive,
 						schema:        MustPropertySchemaID("hoge~0.1.0/bar"),
 					},
 				},
-				extensionOrder: []ExtensionID{"foo", "bar"},
+				extensionOrder: []id.PluginExtensionID{"foo", "bar"},
 				schema:         MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
 		},

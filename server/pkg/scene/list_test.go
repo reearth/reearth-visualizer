@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,7 +40,7 @@ func TestList_IDs(t *testing.T) {
 	t1 := &Scene{id: sid1}
 	t2 := &Scene{id: sid2}
 
-	assert.Equal(t, []ID{sid1, sid2}, List{t1, t2}.IDs())
-	assert.Equal(t, []ID{}, List{}.IDs())
-	assert.Equal(t, []ID(nil), List(nil).IDs())
+	assert.Equal(t, []id.SceneID{sid1, sid2}, List{t1, t2}.IDs())
+	assert.Equal(t, []id.SceneID{}, List{}.IDs())
+	assert.Equal(t, []id.SceneID(nil), List(nil).IDs())
 }

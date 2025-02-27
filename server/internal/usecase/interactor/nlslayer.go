@@ -26,13 +26,30 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+)
+
+var (
+	ErrParentLayerNotFound                  error = errors.New("parent layer not found")
+	ErrPluginNotFound                       error = errors.New("plugin not found")
+	ErrExtensionNotFound                    error = errors.New("extension not found")
+	ErrInfoboxNotFound                      error = errors.New("infobox not found")
+	ErrInfoboxAlreadyExists                 error = errors.New("infobox already exists")
+	ErrCannotAddLayerToLinkedLayerGroup     error = errors.New("cannot add layer to linked layer group")
+	ErrCannotRemoveLayerToLinkedLayerGroup  error = errors.New("cannot remove layer to linked layer group")
+	ErrLinkedLayerItemCannotBeMoved         error = errors.New("linked layer item cannot be moved")
+	ErrLayerCannotBeMovedToLinkedLayerGroup error = errors.New("layer cannot be moved to linked layer group")
+	ErrCannotMoveLayerToOtherScene          error = errors.New("layer cannot layer to other scene")
+	ErrExtensionTypeMustBePrimitive         error = errors.New("extension type must be primitive")
+	ErrExtensionTypeMustBeBlock             error = errors.New("extension type must be block")
+	ErrInvalidExtensionType                 error = errors.New("invalid extension type")
+	ErrSketchNotFound                       error = errors.New("sketch not found")
+	ErrFeatureCollectionNotFound            error = errors.New("featureCollection not found")
 )
 
 type NLSLayer struct {
@@ -258,12 +275,6 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 		if l.Scene() != parentLayer.Scene() {
 			return lid, nil, errors.New("invalid layer")
 		}
-	}
-
-	if parentLayer != nil {
-		return lid, nil, interfaces.ErrCannotRemoveLayerToLinkedLayerGroup
-	}
-	if parentLayer != nil {
 		parentLayer.Children().RemoveLayer(lid)
 		err = i.nlslayerRepo.Save(ctx, parentLayer)
 		if err != nil {
@@ -373,7 +384,7 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 
 	infobox := l.Infobox()
 	if infobox != nil {
-		return nil, interfaces.ErrInfoboxAlreadyExists
+		return nil, ErrInfoboxAlreadyExists
 	}
 
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
@@ -431,7 +442,7 @@ func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, 
 
 	infobox := layer.Infobox()
 	if infobox == nil {
-		return nil, interfaces.ErrInfoboxNotFound
+		return nil, ErrInfoboxNotFound
 	}
 
 	layer.SetInfobox(nil)
@@ -463,7 +474,7 @@ func (i *NLSLayer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID
 	plugin, err := i.pluginRepo.FindByID(ctx, *p)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
+			return nil, nil, ErrPluginNotFound
 		}
 		return nil, nil, err
 	}
@@ -474,7 +485,7 @@ func (i *NLSLayer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID
 
 	extension := plugin.Extension(*e)
 	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
+		return nil, nil, ErrExtensionNotFound
 	}
 
 	return plugin, extension, nil
@@ -508,7 +519,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 
 	infobox := l.Infobox()
 	if infobox == nil {
-		return nil, nil, interfaces.ErrInfoboxNotFound
+		return nil, nil, ErrInfoboxNotFound
 	}
 
 	_, extension, err := i.getPlugin(ctx, l.Scene(), &inp.PluginID, &inp.ExtensionID)
@@ -516,7 +527,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 		return nil, nil, err
 	}
 	if extension.Type() != plugin.ExtensionTypeInfoboxBlock {
-		return nil, nil, interfaces.ErrExtensionTypeMustBeBlock
+		return nil, nil, ErrExtensionTypeMustBeBlock
 	}
 	property, err := property.New().NewID().Schema(extension.Schema()).Scene(l.Scene()).Build()
 	if err != nil {
@@ -586,7 +597,7 @@ func (i *NLSLayer) MoveNLSInfoboxBlock(ctx context.Context, inp interfaces.MoveN
 
 	infobox := layer.Infobox()
 	if infobox == nil {
-		return inp.InfoboxBlockID, nil, -1, interfaces.ErrInfoboxNotFound
+		return inp.InfoboxBlockID, nil, -1, ErrInfoboxNotFound
 	}
 
 	infobox.Move(inp.InfoboxBlockID, inp.Index)
@@ -633,7 +644,7 @@ func (i *NLSLayer) RemoveNLSInfoboxBlock(ctx context.Context, inp interfaces.Rem
 
 	infobox := layer.Infobox()
 	if infobox == nil {
-		return inp.InfoboxBlockID, nil, interfaces.ErrInfoboxNotFound
+		return inp.InfoboxBlockID, nil, ErrInfoboxNotFound
 	}
 
 	infobox.Remove(inp.InfoboxBlockID)
@@ -759,7 +770,7 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 	}
 
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
-		return nil, interfaces.ErrSketchNotFound
+		return nil, ErrSketchNotFound
 	}
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, interfaces.ErrOperationDenied
@@ -825,7 +836,7 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 		return nil, err
 	}
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
-		return nil, interfaces.ErrSketchNotFound
+		return nil, ErrSketchNotFound
 	}
 
 	// Check if removedTitle exists
@@ -890,7 +901,8 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	feature, err := nlslayer.NewFeatureWithNewId(
+	feature, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		inp.Type,
 		geometry,
 	)
@@ -1041,8 +1053,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 		return nil, nil, nil
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sceneID}}
+	writableFilter := repo.SceneFilter{Writable: id.SceneIDList{sceneID}}
 
 	nlayerIDs := idx.List[id.NLSLayer]{}
 	replaceNLSLayerIDs := make(map[string]idx.ID[id.NLSLayer])
@@ -1081,6 +1093,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 			ID(newNLSLayerID).
 			Simple().
 			Scene(sceneID).
+			Index(nlsLayerJSON.Index).
 			Title(nlsLayerJSON.Title).
 			LayerType(nlslayer.LayerType(nlsLayerJSON.LayerType)).
 			Config((*nlslayer.Config)(nlsLayerJSON.Config)).
@@ -1138,11 +1151,10 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 
 		// SketchInfo --------
 		if nlsLayerJSON.SketchInfo != nil {
-			i := nlsLayerJSON.SketchInfo
-			feature := make([]nlslayer.Feature, 0)
-			for _, v := range i.FeatureCollection.Features {
+			features := make([]nlslayer.Feature, 0)
+			for _, featureJSON := range nlsLayerJSON.SketchInfo.FeatureCollection.Features {
 				var geometry nlslayer.Geometry
-				for _, g := range v.Geometry {
+				for _, g := range featureJSON.Geometry {
 					if geometryMap, ok := g.(map[string]any); ok {
 						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
 						if err != nil {
@@ -1150,18 +1162,23 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 						}
 					}
 				}
-				f, err := nlslayer.NewFeatureWithNewId(v.Type, geometry)
+				feature, err := nlslayer.NewFeature(
+					nlslayer.NewFeatureID(),
+					featureJSON.Type,
+					geometry,
+				)
 				if err != nil {
 					return nil, nil, err
 				}
-				feature = append(feature, *f)
+				feature.UpdateProperties(featureJSON.Properties)
+				features = append(features, *feature)
 			}
 			featureCollection := nlslayer.NewFeatureCollection(
-				i.FeatureCollection.Type,
-				feature,
+				nlsLayerJSON.SketchInfo.FeatureCollection.Type,
+				features,
 			)
 			sketchInfo := nlslayer.NewSketchInfo(
-				i.PropertySchema,
+				nlsLayerJSON.SketchInfo.PropertySchema,
 				featureCollection,
 			)
 			nlBuilder = nlBuilder.Sketch(sketchInfo)

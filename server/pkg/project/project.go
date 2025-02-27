@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/i18n/message"
 	"github.com/reearth/reearth/server/pkg/i18n/message/entitymsg"
 	"github.com/reearth/reearth/server/pkg/i18n/message/errmsg"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"golang.org/x/text/language"
@@ -49,7 +50,7 @@ type Project struct {
 	coreSupport       bool
 	enableGa          bool
 	trackingId        string
-	sceneId           SceneID
+	sceneId           id.SceneID
 	starred           bool
 	isDeleted         bool
 }
@@ -131,7 +132,7 @@ func (p *Project) TrackingID() string {
 	return p.trackingId
 }
 
-func (p *Project) Scene() SceneID {
+func (p *Project) Scene() id.SceneID {
 	return p.sceneId
 }
 
@@ -254,7 +255,7 @@ func (p *Project) UpdateTrackingID(trackingId string) {
 	p.trackingId = trackingId
 }
 
-func (p *Project) UpdateSceneID(sceneId SceneID) {
+func (p *Project) UpdateSceneID(sceneId id.SceneID) {
 	p.sceneId = sceneId
 }
 

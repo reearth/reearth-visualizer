@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
@@ -25,7 +26,7 @@ var (
 )
 
 type Extension struct {
-	id            ExtensionID
+	id            id.PluginExtensionID
 	extensionType ExtensionType
 	name          i18n.String
 	description   i18n.String
@@ -36,7 +37,7 @@ type Extension struct {
 	widgetLayout  *WidgetLayout
 }
 
-func (w *Extension) ID() ExtensionID {
+func (w *Extension) ID() id.PluginExtensionID {
 	return w.id
 }
 

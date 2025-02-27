@@ -3,14 +3,14 @@ package storytelling
 import (
 	"errors"
 
-	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Block struct {
 	id        BlockID
-	plugin    PluginID
-	extension PluginExtensionID
+	plugin    id.PluginID
+	extension id.PluginExtensionID
 	property  PropertyID
 }
 
@@ -21,16 +21,16 @@ func (i *Block) ID() BlockID {
 	return i.id
 }
 
-func (i *Block) Plugin() PluginID {
+func (i *Block) Plugin() id.PluginID {
 	if i == nil {
-		return PluginID{}
+		return id.PluginID{}
 	}
 	return i.plugin
 }
 
-func (i *Block) Extension() PluginExtensionID {
+func (i *Block) Extension() id.PluginExtensionID {
 	if i == nil {
-		return PluginExtensionID("")
+		return id.PluginExtensionID("")
 	}
 	return i.extension
 }
@@ -65,7 +65,7 @@ func (i *Block) ValidateProperty(pm property.Map) error {
 	return nil
 }
 
-func (i *Block) UpgradePlugin(id plugin.ID) {
+func (i *Block) UpgradePlugin(id id.PluginID) {
 	if i == nil || !i.plugin.NameEqual(id) {
 		return
 	}

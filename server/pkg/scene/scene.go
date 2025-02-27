@@ -10,20 +10,19 @@ import (
 var ErrSceneIsLocked error = errors.New("scene is locked")
 
 type Scene struct {
-	id        ID
+	id        id.SceneID
 	project   ProjectID
 	workspace WorkspaceID
 	widgets   *Widgets
 	plugins   *Plugins
 	updatedAt time.Time
 	property  PropertyID
-	clusters  *ClusterList
 	styles    *StyleList
 }
 
-func (s *Scene) ID() ID {
+func (s *Scene) ID() id.SceneID {
 	if s == nil {
-		return ID{}
+		return id.SceneID{}
 	}
 	return s.id
 }
@@ -102,13 +101,5 @@ func (s *Scene) Properties() []PropertyID {
 	ids := []PropertyID{s.property}
 	ids = append(ids, s.plugins.Properties()...)
 	ids = append(ids, s.widgets.Properties()...)
-	ids = append(ids, s.clusters.Properties()...)
 	return ids
-}
-
-func (s *Scene) Clusters() *ClusterList {
-	if s == nil {
-		return nil
-	}
-	return s.clusters
 }

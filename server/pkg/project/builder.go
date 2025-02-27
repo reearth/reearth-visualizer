@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
@@ -152,7 +153,7 @@ func (b *Builder) TrackingID(trackingId string) *Builder {
 	return b
 }
 
-func (b *Builder) Scene(sceneId SceneID) *Builder {
+func (b *Builder) Scene(sceneId id.SceneID) *Builder {
 	b.p.sceneId = sceneId
 	return b
 }

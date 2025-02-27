@@ -6,13 +6,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
-type SceneID = id.SceneID
 type PropertyID = id.PropertyID
 type InfoboxID = id.InfoboxID
 type InfoboxBlockID = id.InfoboxBlockID
-type PluginID = id.PluginID
-type PluginExtensionID = id.PluginExtensionID
-type FeatureID = id.FeatureID
 
 var NewID = id.NewNLSLayerID
 var NewInfoboxID = id.NewInfoboxID

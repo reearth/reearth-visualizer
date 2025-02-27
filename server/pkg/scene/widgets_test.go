@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -156,8 +157,8 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 
 	tests := []struct {
 		Name             string
-		ArgsPID          PluginID
-		ArgsEID          *PluginExtensionID
+		ArgsPID          id.PluginID
+		ArgsEID          *id.PluginExtensionID
 		Target, Expected *Widgets
 		ExpectedResult   []PropertyID
 	}{
@@ -172,7 +173,7 @@ func TestWidgets_RemoveAllByPlugin(t *testing.T) {
 		{
 			Name:           "remove widgets of extension",
 			ArgsPID:        pid,
-			ArgsEID:        PluginExtensionID("e2").Ref(),
+			ArgsEID:        id.PluginExtensionID("e2").Ref(),
 			Target:         NewWidgets([]*Widget{w1, w2, w3}, nil),
 			Expected:       NewWidgets([]*Widget{w1, w3}, nil),
 			ExpectedResult: []PropertyID{w2.Property()},
@@ -203,7 +204,7 @@ func TestWidgets_UpgradePlugin(t *testing.T) {
 
 	tests := []struct {
 		Name         string
-		PID, NewID   PluginID
+		PID, NewID   id.PluginID
 		WS, Expected *Widgets
 	}{
 		{

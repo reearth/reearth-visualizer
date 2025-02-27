@@ -12,8 +12,8 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
-	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
+func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, projectId *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
+	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, projectId, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.Me, error) {
@@ -29,18 +29,6 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 	switch typeArg {
 	case gqlmodel.NodeTypeAsset:
 		result, err := dataloaders.Asset.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerItem:
-		result, err := dataloaders.LayerItem.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerGroup:
-		result, err := dataloaders.LayerGroup.Load(i)
 		if result == nil {
 			return nil, nil
 		}
@@ -90,26 +78,6 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 		nodes := make([]gqlmodel.Node, len(data))
 		for i := range data {
 			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerItem:
-		data, err := dataloaders.LayerItem.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerGroup:
-		data, err := dataloaders.LayerGroup.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
 		}
 		return nodes, nil
 	case gqlmodel.NodeTypeProject:
@@ -189,14 +157,6 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 		return nil, err[0]
 	}
 	return data, nil
-}
-
-func (r *queryResolver) Layer(ctx context.Context, layerID gqlmodel.ID) (gqlmodel.Layer, error) {
-	result, err := dataloaders(ctx).Layer.Load(layerID)
-	if result == nil || *result == nil {
-		return nil, nil
-	}
-	return *result, err
 }
 
 func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error) {

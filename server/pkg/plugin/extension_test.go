@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExtension(t *testing.T) {
 	expected := struct {
-		ID           ExtensionID
+		ID           id.PluginExtensionID
 		Type         ExtensionType
 		Name         i18n.String
 		Description  i18n.String

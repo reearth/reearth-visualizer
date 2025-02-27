@@ -1,5 +1,7 @@
 package nlslayer
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type InfoboxBlockBuilder struct {
 	i *InfoboxBlock
 }
@@ -38,12 +40,12 @@ func (b *InfoboxBlockBuilder) Property(p PropertyID) *InfoboxBlockBuilder {
 	return b
 }
 
-func (b *InfoboxBlockBuilder) Plugin(plugin PluginID) *InfoboxBlockBuilder {
+func (b *InfoboxBlockBuilder) Plugin(plugin id.PluginID) *InfoboxBlockBuilder {
 	b.i.plugin = plugin
 	return b
 }
 
-func (b *InfoboxBlockBuilder) Extension(extension PluginExtensionID) *InfoboxBlockBuilder {
+func (b *InfoboxBlockBuilder) Extension(extension id.PluginExtensionID) *InfoboxBlockBuilder {
 	b.i.extension = extension
 	return b
 }

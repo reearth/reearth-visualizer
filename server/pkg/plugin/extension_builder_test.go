@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +24,7 @@ func TestExtensionBuilder_Description(t *testing.T) {
 func TestExtensionBuilder_ID(t *testing.T) {
 	var b = NewExtension()
 	res := b.ID("xxx").MustBuild()
-	assert.Equal(t, ExtensionID("xxx"), res.ID())
+	assert.Equal(t, id.PluginExtensionID("xxx"), res.ID())
 }
 
 func TestExtensionBuilder_Type(t *testing.T) {
@@ -68,7 +69,7 @@ func TestExtensionBuilder_WidgetLayout(t *testing.T) {
 func TestExtensionBuilder_Build(t *testing.T) {
 	type args struct {
 		icon          string
-		id            ExtensionID
+		id            id.PluginExtensionID
 		extensionType ExtensionType
 		system        bool
 		ename         i18n.String
@@ -167,7 +168,7 @@ func TestExtensionBuilder_Build(t *testing.T) {
 func TestExtensionBuilder_MustBuild(t *testing.T) {
 	type args struct {
 		icon          string
-		id            ExtensionID
+		id            id.PluginExtensionID
 		extensionType ExtensionType
 		system        bool
 		ename         i18n.String

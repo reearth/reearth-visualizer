@@ -261,8 +261,6 @@ models:
         resolver: true
       property:
         resolver: true
-      rootLayer:
-        resolver: true
       newLayers:
         resolver: true
       datasetSchemas:

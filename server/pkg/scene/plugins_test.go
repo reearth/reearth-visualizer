@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -71,7 +72,7 @@ func TestPlugins_Property(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		Input    PluginID
+		Input    id.PluginID
 		PS       *Plugins
 		Expected *PropertyID
 	}{
@@ -111,7 +112,7 @@ func TestPlugins_Plugin(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		Input    PluginID
+		Input    id.PluginID
 		PS       *Plugins
 		Expected *Plugin
 	}{
@@ -213,7 +214,7 @@ func TestPlugins_Has(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		Input    PluginID
+		Input    id.PluginID
 		PS       *Plugins
 		Expected bool
 	}{
@@ -247,7 +248,7 @@ func TestPlugins_HasPlugin(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		Input    PluginID
+		Input    id.PluginID
 		PS       *Plugins
 		Expected bool
 	}{
@@ -365,7 +366,7 @@ func TestPlugins_Remove(t *testing.T) {
 
 	tests := []struct {
 		Name         string
-		Input        PluginID
+		Input        id.PluginID
 		PS, Expected *Plugins
 	}{
 		{
@@ -399,8 +400,8 @@ func TestPlugins_Upgrade(t *testing.T) {
 	pr2 := NewPropertyID().Ref()
 
 	type args struct {
-		From           PluginID
-		To             PluginID
+		From           id.PluginID
+		To             id.PluginID
 		Property       *PropertyID
 		DeleteProperty bool
 	}

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -76,7 +77,7 @@ func TestBuilder_RepositoryURL(t *testing.T) {
 
 func TestBuilder_Build(t *testing.T) {
 	type args struct {
-		id                    ID
+		id                    id.PluginID
 		author, repositoryURL string
 		pname, description    i18n.String
 		ext                   []*Extension
@@ -109,11 +110,11 @@ func TestBuilder_Build(t *testing.T) {
 				author:        "aaa",
 				description:   i18n.StringFrom("ddd"),
 				repositoryURL: "uuu",
-				extensions: map[ExtensionID]*Extension{
-					ExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
-					ExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
+				extensions: map[id.PluginExtensionID]*Extension{
+					id.PluginExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
+					id.PluginExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
 				},
-				extensionOrder: []ExtensionID{ExtensionID("xxx"), ExtensionID("yyy")},
+				extensionOrder: []id.PluginExtensionID{id.PluginExtensionID("xxx"), id.PluginExtensionID("yyy")},
 				schema:         MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
 		},
@@ -144,7 +145,7 @@ func TestBuilder_Build(t *testing.T) {
 func TestBuilder_MustBuild(t *testing.T) {
 	type args struct {
 		author, repositoryURL string
-		id                    ID
+		id                    id.PluginID
 		pname, description    i18n.String
 		ext                   []*Extension
 		schema                *PropertySchemaID
@@ -176,11 +177,11 @@ func TestBuilder_MustBuild(t *testing.T) {
 				author:        "aaa",
 				description:   i18n.StringFrom("ddd"),
 				repositoryURL: "uuu",
-				extensions: map[ExtensionID]*Extension{
-					ExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
-					ExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
+				extensions: map[id.PluginExtensionID]*Extension{
+					id.PluginExtensionID("xxx"): NewExtension().ID("xxx").MustBuild(),
+					id.PluginExtensionID("yyy"): NewExtension().ID("yyy").MustBuild(),
 				},
-				extensionOrder: []ExtensionID{ExtensionID("xxx"), ExtensionID("yyy")},
+				extensionOrder: []id.PluginExtensionID{id.PluginExtensionID("xxx"), id.PluginExtensionID("yyy")},
 				schema:         MustPropertySchemaID("hoge~0.1.0/fff").Ref(),
 			},
 		},
