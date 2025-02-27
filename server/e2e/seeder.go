@@ -351,7 +351,7 @@ func _createBlock(ctx context.Context, r *repo.Container) (*storytelling.Block, 
 		Build()
 }
 
-func addLayerStyle(SceneID scene.ID, ctx context.Context, r *repo.Container) error {
+func addLayerStyle(SceneID id.SceneID, ctx context.Context, r *repo.Container) error {
 	var s gqlmodel.JSON
 	err := json.Unmarshal([]byte(`{
       "marker": {
