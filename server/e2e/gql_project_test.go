@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -558,13 +557,7 @@ func projectsOldData(t *testing.T, ctx context.Context, r *repo.Container, count
 }
 
 func TestGetProjectPagination(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, r, _ := ServerAndRepos(t, baseSeeder)
 	ctx := context.Background()
 
 	projects(t, ctx, r, 20, wID, "[wID]project", "ALIAS1", true)
@@ -636,13 +629,7 @@ func TestGetProjectPagination(t *testing.T) {
 }
 
 func TestGetProjectPaginationKeyword(t *testing.T) {
-	c := &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
-	}
-	e, r, _ := StartServerAndRepos(t, c, true, baseSeeder)
+	e, r, _ := ServerAndRepos(t, baseSeeder)
 	ctx := context.Background()
 
 	// no match data
