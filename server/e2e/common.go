@@ -285,12 +285,7 @@ func RegexpJSONEReadCloser(t *testing.T, actual io.ReadCloser, expected string) 
 	actualBuf := new(bytes.Buffer)
 	_, err := actualBuf.ReadFrom(actual)
 	assert.NoError(t, err)
-	// var data map[string]interface{}
-	// err = json.Unmarshal(actualBuf.Bytes(), &data)
-	// assert.NoError(t, err)
-	// if text, err := json.MarshalIndent(data, "", "  "); err == nil {
-	// 	fmt.Println(string(text))
-	// }
+	// ActualDump(actualBuf)
 	return JSONEqRegexp(t, actualBuf.String(), expected)
 }
 
@@ -330,5 +325,18 @@ func ValueDump(val *httpexpect.Value) {
 		}
 	default:
 		fmt.Println("Unsupported type:", reflect.TypeOf(raw))
+	}
+}
+
+func ActualDump(actual *bytes.Buffer) {
+	var data interface{}
+	if err := json.Unmarshal(actual.Bytes(), &data); err != nil {
+		fmt.Println("Invalid JSON:", err)
+		return
+	}
+	if text, err := json.MarshalIndent(data, "", "  "); err == nil {
+		fmt.Println(string(text))
+	} else {
+		fmt.Println("Failed to format JSON:", err)
 	}
 }
