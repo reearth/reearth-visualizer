@@ -2,7 +2,7 @@ import {
   AssetField,
   CameraField,
   ColorField,
-  // InputField,
+  InputField,
   NumberField,
   RangeField,
   SelectField,
@@ -54,7 +54,6 @@ export const FieldComponent = ({
   sketchCustomProperties?: string[] | undefined;
 }) => {
   const t = useT();
-  console.log(field);
   const handlePropertyValueUpdate = useCallback(
     (
       schemaGroupId: string,
@@ -221,7 +220,7 @@ export const FieldComponent = ({
           field?.type
         )}
       />
-    ) : field?.ui === "dynamic_property_selector" ? (
+    ) : field?.ui === "dynamicPropertySelector" ? (
       <InputSelectField
         key={field.id}
         title={field?.title}
@@ -237,26 +236,12 @@ export const FieldComponent = ({
         )}
       />
     ) : (
-      // <InputField
-      //   key={field.id}
-      //   title={field?.title}
-      //   value={field?.value}
-      //   description={field?.description}
-      //   placeholder={field?.placeholder}
-      //   onBlur={handlePropertyValueUpdate(
-      //     groupId,
-      //     propertyId,
-      //     fieldId,
-      //     field?.type
-      //   )}
-      // />
-      <InputSelectField
+      <InputField
         key={field.id}
         title={field?.title}
+        value={field?.value}
         description={field?.description}
         placeholder={field?.placeholder}
-        sketchCustomProperties={sketchCustomProperties}
-        displayValue="{}"
         onBlur={handlePropertyValueUpdate(
           groupId,
           propertyId,

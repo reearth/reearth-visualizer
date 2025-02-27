@@ -64,7 +64,8 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
     | "padding"
     | "margin"
     | "datetime"
-    | "zoomLevel";
+    | "zoomLevel"
+    | "dynamicPropertySelector";
   choices?: {
     key: string;
     label: string;
@@ -311,6 +312,8 @@ export const toUi = (
       return "datetime";
     case PropertySchemaFieldUi.Zoomlevel:
       return "zoomLevel";
+    case PropertySchemaFieldUi.DynamicPropertySelector:
+      return "dynamicPropertySelector";
   }
   return undefined;
 };
