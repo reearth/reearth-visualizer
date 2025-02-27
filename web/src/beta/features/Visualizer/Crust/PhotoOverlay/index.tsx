@@ -83,6 +83,9 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
     value
   });
 
+  console.log("sizeBase", sizeBase);
+  console.log("heightPct", heightPct);
+
   const handlePhotoLoad = useCallback(
     (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       const image = e.target as HTMLImageElement;
@@ -103,10 +106,10 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
 
   return value ? (
     <Wrapper interactive={!preview}>
-      <PhotoWrapper
+      <div
         ref={photoWrapperRef}
-        visible={show && ready}
         onClick={handleExit}
+        className={`tw-absolute tw-w-full tw-h-full tw-left-0 tw-top-0 tw-flex tw-justify-center tw-items-center tw-transition-opacity tw-duration-200 ${show && ready ? "tw-opacity-100" : "tw-opacity-0"}`}
       >
         <PhotoInnerWrapper
           widthPct={value.widthPct}
@@ -122,7 +125,7 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
             onLoad={handlePhotoLoad}
           />
         </PhotoInnerWrapper>
-      </PhotoWrapper>
+      </div>
       {value.description && (
         <Description visible={show && ready}>{value.description}</Description>
       )}
@@ -145,21 +148,6 @@ const Wrapper: FC<{
 }> = ({ interactive, children }) => (
   <div
     className={`tw-absolute tw-w-full tw-h-full tw-left-0 tw-top-0 tw-z-photoOverlay ${interactive ? "tw-pointer-events-auto" : "tw-pointer-events-none"}`}
-  >
-    {children}
-  </div>
-);
-
-const PhotoWrapper: FC<{
-  ref: RefObject<HTMLDivElement>;
-  visible: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}> = ({ ref, visible, onClick, children }) => (
-  <div
-    ref={ref}
-    onClick={onClick}
-    className={`tw-absolute tw-w-full tw-h-full tw-left-0 tw-top-0 tw-flex tw-justify-center tw-items-center tw-transition-opacity tw-duration-200 ${visible ? "tw-opacity-100" : "tw-opacity-0"}`}
   >
     {children}
   </div>
