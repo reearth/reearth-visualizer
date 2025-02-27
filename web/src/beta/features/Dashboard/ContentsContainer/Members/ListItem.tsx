@@ -22,7 +22,8 @@ const ListItem: FC<{
 }) => {
   const t = useT();
   const memerRoleTranslation = {
-    MAINTAINER: t("MAINTAINER"),
+    //maintainer backend mutation work in progress for now
+    MAINTAINER: t("MAINTAINER") + "(WIP)",
     OWNER: t("OWNER"),
     READER: t("READER"),
     WRITER: t("WRITER")
@@ -62,10 +63,7 @@ const ListItem: FC<{
       </TypographyWrapper>
       <TypographyWrapper>
         <TypographyOfMember size="body">
-          {member.role === Role.Maintainer
-            ? //maintainer backend mutation work in progress for now
-              memerRoleTranslation[member.role].toLowerCase() + "(WIP)"
-            : memerRoleTranslation[member.role].toLowerCase()}
+          {memerRoleTranslation[member.role].toLowerCase()}
         </TypographyOfMember>
       </TypographyWrapper>
 

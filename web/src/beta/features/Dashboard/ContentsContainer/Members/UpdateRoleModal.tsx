@@ -28,14 +28,14 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
       return [
         { value: "READER", label: t("READER") },
         { value: "WRITER", label: t("WRITER") },
-        { value: "MAINTAINER", label: t("MAINTAINER") },
+        { value: "MAINTAINER", label: t("MAINTAINER") + "(WIP)" },
         { value: "OWNER", label: t("OWNER") }
       ];
     } else if (meRole === "MAINTAINER") {
       return [
         { value: "READER", label: t("READER") },
         { value: "WRITER", label: t("WRITER") },
-        { value: "MAINTAINER", label: t("MAINTAINER") }
+        { value: "MAINTAINER", label: t("MAINTAINER") + "(WIP)" }
       ];
     } else return [];
   }, [meRole, t]);

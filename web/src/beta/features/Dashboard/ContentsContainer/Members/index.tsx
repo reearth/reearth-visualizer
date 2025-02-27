@@ -82,7 +82,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           />
         </Search>
         <div>
-          {meRole === Role.Owner && (
+          {meRole === Role.Owner && !config()?.disableWorkspaceManagement && (
             //maintainer can't add new member for now
             // || meRole === Role.Maintainer
             <Button
@@ -143,7 +143,6 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
 
 export default Members;
 
-// styled components
 const Wrapper = styled("div")({
   display: "grid",
   gridTemplateRows: "auto auto 1fr",
@@ -154,7 +153,7 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  margin: `${theme.spacing.super}px 0px ${theme.spacing.large}px ${theme.spacing.super}px`
+  padding: `${theme.spacing.super}px`
 }));
 
 const Search = styled("div")(({ theme }) => ({
