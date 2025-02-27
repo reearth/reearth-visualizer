@@ -241,8 +241,6 @@ models:
         resolver: true
       newLayers:
         resolver: true
-      datasetSchemas:
-        resolver: true
       tags:
         resolver: true
       stories:

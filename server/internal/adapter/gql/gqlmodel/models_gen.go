@@ -392,13 +392,6 @@ type LineString struct {
 
 func (LineString) IsGeometry() {}
 
-type LinkDatasetToPropertyValueInput struct {
-	PropertyID    ID  `json:"propertyId"`
-	SchemaGroupID *ID `json:"schemaGroupId,omitempty"`
-	ItemID        *ID `json:"itemId,omitempty"`
-	FieldID       ID  `json:"fieldId"`
-}
-
 type Me struct {
 	ID       ID           `json:"id"`
 	Name     string       `json:"name"`
@@ -1549,8 +1542,6 @@ const (
 	NodeTypeScene          NodeType = "SCENE"
 	NodeTypePropertySchema NodeType = "PROPERTY_SCHEMA"
 	NodeTypeProperty       NodeType = "PROPERTY"
-	NodeTypeDatasetSchema  NodeType = "DATASET_SCHEMA"
-	NodeTypeDataset        NodeType = "DATASET"
 	NodeTypeLayerGroup     NodeType = "LAYER_GROUP"
 	NodeTypeLayerItem      NodeType = "LAYER_ITEM"
 )
@@ -1564,15 +1555,13 @@ var AllNodeType = []NodeType{
 	NodeTypeScene,
 	NodeTypePropertySchema,
 	NodeTypeProperty,
-	NodeTypeDatasetSchema,
-	NodeTypeDataset,
 	NodeTypeLayerGroup,
 	NodeTypeLayerItem,
 }
 
 func (e NodeType) IsValid() bool {
 	switch e {
-	case NodeTypeAsset, NodeTypeUser, NodeTypeTeam, NodeTypeProject, NodeTypePlugin, NodeTypeScene, NodeTypePropertySchema, NodeTypeProperty, NodeTypeDatasetSchema, NodeTypeDataset, NodeTypeLayerGroup, NodeTypeLayerItem:
+	case NodeTypeAsset, NodeTypeUser, NodeTypeTeam, NodeTypeProject, NodeTypePlugin, NodeTypeScene, NodeTypePropertySchema, NodeTypeProperty, NodeTypeLayerGroup, NodeTypeLayerItem:
 		return true
 	}
 	return false

@@ -209,13 +209,6 @@ input UploadFileToPropertyInput {
   file: Upload!
 }
 
-input LinkDatasetToPropertyValueInput {
-  propertyId: ID!
-  schemaGroupId: ID
-  itemId: ID
-  fieldId: ID!
-}
-
 input UnlinkPropertyValueInput {
   propertyId: ID!
   schemaGroupId: ID
@@ -279,9 +272,6 @@ extend type Mutation {
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(
-    input: LinkDatasetToPropertyValueInput!
-  ): PropertyFieldPayload
   unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
   addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
   movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload

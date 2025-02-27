@@ -410,13 +410,6 @@ export type LineString = {
   type: Scalars['String']['output'];
 };
 
-export type LinkDatasetToPropertyValueInput = {
-  fieldId: Scalars['ID']['input'];
-  itemId?: InputMaybe<Scalars['ID']['input']>;
-  propertyId: Scalars['ID']['input'];
-  schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export enum ListOperation {
   Add = 'ADD',
   Move = 'MOVE',
@@ -572,7 +565,6 @@ export type Mutation = {
   exportProject?: Maybe<ExportProjectPayload>;
   importProject?: Maybe<ImportProjectPayload>;
   installPlugin?: Maybe<InstallPluginPayload>;
-  linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
   moveNLSInfoboxBlock?: Maybe<MoveNlsInfoboxBlockPayload>;
   movePropertyItem?: Maybe<PropertyItemPayload>;
   moveStory: MoveStoryPayload;
@@ -756,11 +748,6 @@ export type MutationImportProjectArgs = {
 
 export type MutationInstallPluginArgs = {
   input: InstallPluginInput;
-};
-
-
-export type MutationLinkDatasetToPropertyValueArgs = {
-  input: LinkDatasetToPropertyValueInput;
 };
 
 
@@ -1040,8 +1027,6 @@ export type Node = {
 
 export enum NodeType {
   Asset = 'ASSET',
-  Dataset = 'DATASET',
-  DatasetSchema = 'DATASET_SCHEMA',
   LayerGroup = 'LAYER_GROUP',
   LayerItem = 'LAYER_ITEM',
   Plugin = 'PLUGIN',

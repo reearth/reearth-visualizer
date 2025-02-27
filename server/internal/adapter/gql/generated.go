@@ -330,78 +330,77 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddGeoJSONFeature          func(childComplexity int, input gqlmodel.AddGeoJSONFeatureInput) int
-		AddMemberToTeam            func(childComplexity int, input gqlmodel.AddMemberToTeamInput) int
-		AddNLSInfoboxBlock         func(childComplexity int, input gqlmodel.AddNLSInfoboxBlockInput) int
-		AddNLSLayerSimple          func(childComplexity int, input gqlmodel.AddNLSLayerSimpleInput) int
-		AddPageLayer               func(childComplexity int, input gqlmodel.PageLayerInput) int
-		AddPropertyItem            func(childComplexity int, input gqlmodel.AddPropertyItemInput) int
-		AddStyle                   func(childComplexity int, input gqlmodel.AddStyleInput) int
-		AddWidget                  func(childComplexity int, input gqlmodel.AddWidgetInput) int
-		ChangeCustomPropertyTitle  func(childComplexity int, input gqlmodel.ChangeCustomPropertyTitleInput) int
-		CreateAsset                func(childComplexity int, input gqlmodel.CreateAssetInput) int
-		CreateNLSInfobox           func(childComplexity int, input gqlmodel.CreateNLSInfoboxInput) int
-		CreateProject              func(childComplexity int, input gqlmodel.CreateProjectInput) int
-		CreateScene                func(childComplexity int, input gqlmodel.CreateSceneInput) int
-		CreateStory                func(childComplexity int, input gqlmodel.CreateStoryInput) int
-		CreateStoryBlock           func(childComplexity int, input gqlmodel.CreateStoryBlockInput) int
-		CreateStoryPage            func(childComplexity int, input gqlmodel.CreateStoryPageInput) int
-		CreateTeam                 func(childComplexity int, input gqlmodel.CreateTeamInput) int
-		DeleteGeoJSONFeature       func(childComplexity int, input gqlmodel.DeleteGeoJSONFeatureInput) int
-		DeleteMe                   func(childComplexity int, input gqlmodel.DeleteMeInput) int
-		DeleteProject              func(childComplexity int, input gqlmodel.DeleteProjectInput) int
-		DeleteStory                func(childComplexity int, input gqlmodel.DeleteStoryInput) int
-		DeleteTeam                 func(childComplexity int, input gqlmodel.DeleteTeamInput) int
-		DuplicateNLSLayer          func(childComplexity int, input gqlmodel.DuplicateNLSLayerInput) int
-		DuplicateStoryPage         func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
-		DuplicateStyle             func(childComplexity int, input gqlmodel.DuplicateStyleInput) int
-		ExportProject              func(childComplexity int, input gqlmodel.ExportProjectInput) int
-		ImportProject              func(childComplexity int, input gqlmodel.ImportProjectInput) int
-		InstallPlugin              func(childComplexity int, input gqlmodel.InstallPluginInput) int
-		LinkDatasetToPropertyValue func(childComplexity int, input gqlmodel.LinkDatasetToPropertyValueInput) int
-		MoveNLSInfoboxBlock        func(childComplexity int, input gqlmodel.MoveNLSInfoboxBlockInput) int
-		MovePropertyItem           func(childComplexity int, input gqlmodel.MovePropertyItemInput) int
-		MoveStory                  func(childComplexity int, input gqlmodel.MoveStoryInput) int
-		MoveStoryBlock             func(childComplexity int, input gqlmodel.MoveStoryBlockInput) int
-		MoveStoryPage              func(childComplexity int, input gqlmodel.MoveStoryPageInput) int
-		PublishProject             func(childComplexity int, input gqlmodel.PublishProjectInput) int
-		PublishStory               func(childComplexity int, input gqlmodel.PublishStoryInput) int
-		RemoveAsset                func(childComplexity int, input gqlmodel.RemoveAssetInput) int
-		RemoveCustomProperty       func(childComplexity int, input gqlmodel.RemoveCustomPropertyInput) int
-		RemoveMemberFromTeam       func(childComplexity int, input gqlmodel.RemoveMemberFromTeamInput) int
-		RemoveMyAuth               func(childComplexity int, input gqlmodel.RemoveMyAuthInput) int
-		RemoveNLSInfobox           func(childComplexity int, input gqlmodel.RemoveNLSInfoboxInput) int
-		RemoveNLSInfoboxBlock      func(childComplexity int, input gqlmodel.RemoveNLSInfoboxBlockInput) int
-		RemoveNLSLayer             func(childComplexity int, input gqlmodel.RemoveNLSLayerInput) int
-		RemovePageLayer            func(childComplexity int, input gqlmodel.PageLayerInput) int
-		RemovePropertyField        func(childComplexity int, input gqlmodel.RemovePropertyFieldInput) int
-		RemovePropertyItem         func(childComplexity int, input gqlmodel.RemovePropertyItemInput) int
-		RemoveStoryBlock           func(childComplexity int, input gqlmodel.RemoveStoryBlockInput) int
-		RemoveStoryPage            func(childComplexity int, input gqlmodel.DeleteStoryPageInput) int
-		RemoveStyle                func(childComplexity int, input gqlmodel.RemoveStyleInput) int
-		RemoveWidget               func(childComplexity int, input gqlmodel.RemoveWidgetInput) int
-		Signup                     func(childComplexity int, input gqlmodel.SignupInput) int
-		UninstallPlugin            func(childComplexity int, input gqlmodel.UninstallPluginInput) int
-		UnlinkPropertyValue        func(childComplexity int, input gqlmodel.UnlinkPropertyValueInput) int
-		UpdateAsset                func(childComplexity int, input gqlmodel.UpdateAssetInput) int
-		UpdateCustomProperties     func(childComplexity int, input gqlmodel.UpdateCustomPropertySchemaInput) int
-		UpdateGeoJSONFeature       func(childComplexity int, input gqlmodel.UpdateGeoJSONFeatureInput) int
-		UpdateMe                   func(childComplexity int, input gqlmodel.UpdateMeInput) int
-		UpdateMemberOfTeam         func(childComplexity int, input gqlmodel.UpdateMemberOfTeamInput) int
-		UpdateNLSLayer             func(childComplexity int, input gqlmodel.UpdateNLSLayerInput) int
-		UpdateNLSLayers            func(childComplexity int, input gqlmodel.UpdateNLSLayersInput) int
-		UpdateProject              func(childComplexity int, input gqlmodel.UpdateProjectInput) int
-		UpdatePropertyItems        func(childComplexity int, input gqlmodel.UpdatePropertyItemInput) int
-		UpdatePropertyValue        func(childComplexity int, input gqlmodel.UpdatePropertyValueInput) int
-		UpdateStory                func(childComplexity int, input gqlmodel.UpdateStoryInput) int
-		UpdateStoryPage            func(childComplexity int, input gqlmodel.UpdateStoryPageInput) int
-		UpdateStyle                func(childComplexity int, input gqlmodel.UpdateStyleInput) int
-		UpdateTeam                 func(childComplexity int, input gqlmodel.UpdateTeamInput) int
-		UpdateWidget               func(childComplexity int, input gqlmodel.UpdateWidgetInput) int
-		UpdateWidgetAlignSystem    func(childComplexity int, input gqlmodel.UpdateWidgetAlignSystemInput) int
-		UpgradePlugin              func(childComplexity int, input gqlmodel.UpgradePluginInput) int
-		UploadFileToProperty       func(childComplexity int, input gqlmodel.UploadFileToPropertyInput) int
-		UploadPlugin               func(childComplexity int, input gqlmodel.UploadPluginInput) int
+		AddGeoJSONFeature         func(childComplexity int, input gqlmodel.AddGeoJSONFeatureInput) int
+		AddMemberToTeam           func(childComplexity int, input gqlmodel.AddMemberToTeamInput) int
+		AddNLSInfoboxBlock        func(childComplexity int, input gqlmodel.AddNLSInfoboxBlockInput) int
+		AddNLSLayerSimple         func(childComplexity int, input gqlmodel.AddNLSLayerSimpleInput) int
+		AddPageLayer              func(childComplexity int, input gqlmodel.PageLayerInput) int
+		AddPropertyItem           func(childComplexity int, input gqlmodel.AddPropertyItemInput) int
+		AddStyle                  func(childComplexity int, input gqlmodel.AddStyleInput) int
+		AddWidget                 func(childComplexity int, input gqlmodel.AddWidgetInput) int
+		ChangeCustomPropertyTitle func(childComplexity int, input gqlmodel.ChangeCustomPropertyTitleInput) int
+		CreateAsset               func(childComplexity int, input gqlmodel.CreateAssetInput) int
+		CreateNLSInfobox          func(childComplexity int, input gqlmodel.CreateNLSInfoboxInput) int
+		CreateProject             func(childComplexity int, input gqlmodel.CreateProjectInput) int
+		CreateScene               func(childComplexity int, input gqlmodel.CreateSceneInput) int
+		CreateStory               func(childComplexity int, input gqlmodel.CreateStoryInput) int
+		CreateStoryBlock          func(childComplexity int, input gqlmodel.CreateStoryBlockInput) int
+		CreateStoryPage           func(childComplexity int, input gqlmodel.CreateStoryPageInput) int
+		CreateTeam                func(childComplexity int, input gqlmodel.CreateTeamInput) int
+		DeleteGeoJSONFeature      func(childComplexity int, input gqlmodel.DeleteGeoJSONFeatureInput) int
+		DeleteMe                  func(childComplexity int, input gqlmodel.DeleteMeInput) int
+		DeleteProject             func(childComplexity int, input gqlmodel.DeleteProjectInput) int
+		DeleteStory               func(childComplexity int, input gqlmodel.DeleteStoryInput) int
+		DeleteTeam                func(childComplexity int, input gqlmodel.DeleteTeamInput) int
+		DuplicateNLSLayer         func(childComplexity int, input gqlmodel.DuplicateNLSLayerInput) int
+		DuplicateStoryPage        func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
+		DuplicateStyle            func(childComplexity int, input gqlmodel.DuplicateStyleInput) int
+		ExportProject             func(childComplexity int, input gqlmodel.ExportProjectInput) int
+		ImportProject             func(childComplexity int, input gqlmodel.ImportProjectInput) int
+		InstallPlugin             func(childComplexity int, input gqlmodel.InstallPluginInput) int
+		MoveNLSInfoboxBlock       func(childComplexity int, input gqlmodel.MoveNLSInfoboxBlockInput) int
+		MovePropertyItem          func(childComplexity int, input gqlmodel.MovePropertyItemInput) int
+		MoveStory                 func(childComplexity int, input gqlmodel.MoveStoryInput) int
+		MoveStoryBlock            func(childComplexity int, input gqlmodel.MoveStoryBlockInput) int
+		MoveStoryPage             func(childComplexity int, input gqlmodel.MoveStoryPageInput) int
+		PublishProject            func(childComplexity int, input gqlmodel.PublishProjectInput) int
+		PublishStory              func(childComplexity int, input gqlmodel.PublishStoryInput) int
+		RemoveAsset               func(childComplexity int, input gqlmodel.RemoveAssetInput) int
+		RemoveCustomProperty      func(childComplexity int, input gqlmodel.RemoveCustomPropertyInput) int
+		RemoveMemberFromTeam      func(childComplexity int, input gqlmodel.RemoveMemberFromTeamInput) int
+		RemoveMyAuth              func(childComplexity int, input gqlmodel.RemoveMyAuthInput) int
+		RemoveNLSInfobox          func(childComplexity int, input gqlmodel.RemoveNLSInfoboxInput) int
+		RemoveNLSInfoboxBlock     func(childComplexity int, input gqlmodel.RemoveNLSInfoboxBlockInput) int
+		RemoveNLSLayer            func(childComplexity int, input gqlmodel.RemoveNLSLayerInput) int
+		RemovePageLayer           func(childComplexity int, input gqlmodel.PageLayerInput) int
+		RemovePropertyField       func(childComplexity int, input gqlmodel.RemovePropertyFieldInput) int
+		RemovePropertyItem        func(childComplexity int, input gqlmodel.RemovePropertyItemInput) int
+		RemoveStoryBlock          func(childComplexity int, input gqlmodel.RemoveStoryBlockInput) int
+		RemoveStoryPage           func(childComplexity int, input gqlmodel.DeleteStoryPageInput) int
+		RemoveStyle               func(childComplexity int, input gqlmodel.RemoveStyleInput) int
+		RemoveWidget              func(childComplexity int, input gqlmodel.RemoveWidgetInput) int
+		Signup                    func(childComplexity int, input gqlmodel.SignupInput) int
+		UninstallPlugin           func(childComplexity int, input gqlmodel.UninstallPluginInput) int
+		UnlinkPropertyValue       func(childComplexity int, input gqlmodel.UnlinkPropertyValueInput) int
+		UpdateAsset               func(childComplexity int, input gqlmodel.UpdateAssetInput) int
+		UpdateCustomProperties    func(childComplexity int, input gqlmodel.UpdateCustomPropertySchemaInput) int
+		UpdateGeoJSONFeature      func(childComplexity int, input gqlmodel.UpdateGeoJSONFeatureInput) int
+		UpdateMe                  func(childComplexity int, input gqlmodel.UpdateMeInput) int
+		UpdateMemberOfTeam        func(childComplexity int, input gqlmodel.UpdateMemberOfTeamInput) int
+		UpdateNLSLayer            func(childComplexity int, input gqlmodel.UpdateNLSLayerInput) int
+		UpdateNLSLayers           func(childComplexity int, input gqlmodel.UpdateNLSLayersInput) int
+		UpdateProject             func(childComplexity int, input gqlmodel.UpdateProjectInput) int
+		UpdatePropertyItems       func(childComplexity int, input gqlmodel.UpdatePropertyItemInput) int
+		UpdatePropertyValue       func(childComplexity int, input gqlmodel.UpdatePropertyValueInput) int
+		UpdateStory               func(childComplexity int, input gqlmodel.UpdateStoryInput) int
+		UpdateStoryPage           func(childComplexity int, input gqlmodel.UpdateStoryPageInput) int
+		UpdateStyle               func(childComplexity int, input gqlmodel.UpdateStyleInput) int
+		UpdateTeam                func(childComplexity int, input gqlmodel.UpdateTeamInput) int
+		UpdateWidget              func(childComplexity int, input gqlmodel.UpdateWidgetInput) int
+		UpdateWidgetAlignSystem   func(childComplexity int, input gqlmodel.UpdateWidgetAlignSystemInput) int
+		UpgradePlugin             func(childComplexity int, input gqlmodel.UpgradePluginInput) int
+		UploadFileToProperty      func(childComplexity int, input gqlmodel.UploadFileToPropertyInput) int
+		UploadPlugin              func(childComplexity int, input gqlmodel.UploadPluginInput) int
 	}
 
 	NLSInfobox struct {
@@ -1069,7 +1068,6 @@ type MutationResolver interface {
 	UpdatePropertyValue(ctx context.Context, input gqlmodel.UpdatePropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	RemovePropertyField(ctx context.Context, input gqlmodel.RemovePropertyFieldInput) (*gqlmodel.PropertyFieldPayload, error)
 	UploadFileToProperty(ctx context.Context, input gqlmodel.UploadFileToPropertyInput) (*gqlmodel.PropertyFieldPayload, error)
-	LinkDatasetToPropertyValue(ctx context.Context, input gqlmodel.LinkDatasetToPropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	UnlinkPropertyValue(ctx context.Context, input gqlmodel.UnlinkPropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	AddPropertyItem(ctx context.Context, input gqlmodel.AddPropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
 	MovePropertyItem(ctx context.Context, input gqlmodel.MovePropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
@@ -2474,18 +2472,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.InstallPlugin(childComplexity, args["input"].(gqlmodel.InstallPluginInput)), true
-
-	case "Mutation.linkDatasetToPropertyValue":
-		if e.complexity.Mutation.LinkDatasetToPropertyValue == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_linkDatasetToPropertyValue_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.LinkDatasetToPropertyValue(childComplexity, args["input"].(gqlmodel.LinkDatasetToPropertyValueInput)), true
 
 	case "Mutation.moveNLSInfoboxBlock":
 		if e.complexity.Mutation.MoveNLSInfoboxBlock == nil {
@@ -5837,7 +5823,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputExportProjectInput,
 		ec.unmarshalInputImportProjectInput,
 		ec.unmarshalInputInstallPluginInput,
-		ec.unmarshalInputLinkDatasetToPropertyValueInput,
 		ec.unmarshalInputMoveNLSInfoboxBlockInput,
 		ec.unmarshalInputMovePropertyItemInput,
 		ec.unmarshalInputMoveStoryBlockInput,
@@ -6008,8 +5993,6 @@ enum NodeType {
   SCENE
   PROPERTY_SCHEMA
   PROPERTY
-  DATASET_SCHEMA
-  DATASET
   LAYER_GROUP
   LAYER_ITEM
 }
@@ -6023,7 +6006,7 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 
-input Pagination{
+input Pagination {
   first: Int
   last: Int
   after: Cursor
@@ -6969,13 +6952,6 @@ input UploadFileToPropertyInput {
   file: Upload!
 }
 
-input LinkDatasetToPropertyValueInput {
-  propertyId: ID!
-  schemaGroupId: ID
-  itemId: ID
-  fieldId: ID!
-}
-
 input UnlinkPropertyValueInput {
   propertyId: ID!
   schemaGroupId: ID
@@ -7039,9 +7015,6 @@ extend type Mutation {
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(
-    input: LinkDatasetToPropertyValueInput!
-  ): PropertyFieldPayload
   unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
   addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
   movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload
@@ -8547,34 +8520,6 @@ func (ec *executionContext) field_Mutation_installPlugin_argsInput(
 	}
 
 	var zeroVal gqlmodel.InstallPluginInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_linkDatasetToPropertyValue_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Mutation_linkDatasetToPropertyValue_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_linkDatasetToPropertyValue_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (gqlmodel.LinkDatasetToPropertyValueInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.LinkDatasetToPropertyValueInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNLinkDatasetToPropertyValueInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐLinkDatasetToPropertyValueInput(ctx, tmp)
-	}
-
-	var zeroVal gqlmodel.LinkDatasetToPropertyValueInput
 	return zeroVal, nil
 }
 
@@ -19442,64 +19387,6 @@ func (ec *executionContext) fieldContext_Mutation_uploadFileToProperty(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_uploadFileToProperty_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_linkDatasetToPropertyValue(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_linkDatasetToPropertyValue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LinkDatasetToPropertyValue(rctx, fc.Args["input"].(gqlmodel.LinkDatasetToPropertyValueInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.PropertyFieldPayload)
-	fc.Result = res
-	return ec.marshalOPropertyFieldPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_linkDatasetToPropertyValue(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "property":
-				return ec.fieldContext_PropertyFieldPayload_property(ctx, field)
-			case "propertyField":
-				return ec.fieldContext_PropertyFieldPayload_propertyField(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PropertyFieldPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_linkDatasetToPropertyValue_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -44205,54 +44092,6 @@ func (ec *executionContext) unmarshalInputInstallPluginInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLinkDatasetToPropertyValueInput(ctx context.Context, obj any) (gqlmodel.LinkDatasetToPropertyValueInput, error) {
-	var it gqlmodel.LinkDatasetToPropertyValueInput
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"propertyId", "schemaGroupId", "itemId", "fieldId"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "propertyId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyId"))
-			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PropertyID = data
-		case "schemaGroupId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaGroupId"))
-			data, err := ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SchemaGroupID = data
-		case "itemId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("itemId"))
-			data, err := ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ItemID = data
-		case "fieldId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fieldId"))
-			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.FieldID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputMoveNLSInfoboxBlockInput(ctx context.Context, obj any) (gqlmodel.MoveNLSInfoboxBlockInput, error) {
 	var it gqlmodel.MoveNLSInfoboxBlockInput
 	asMap := map[string]any{}
@@ -49323,10 +49162,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "uploadFileToProperty":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_uploadFileToProperty(ctx, field)
-			})
-		case "linkDatasetToPropertyValue":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_linkDatasetToPropertyValue(ctx, field)
 			})
 		case "unlinkPropertyValue":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -56638,11 +56473,6 @@ func (ec *executionContext) marshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTa
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNLinkDatasetToPropertyValueInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐLinkDatasetToPropertyValueInput(ctx context.Context, v any) (gqlmodel.LinkDatasetToPropertyValueInput, error) {
-	res, err := ec.unmarshalInputLinkDatasetToPropertyValueInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNListOperation2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐListOperation(ctx context.Context, v any) (gqlmodel.ListOperation, error) {
