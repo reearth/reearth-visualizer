@@ -4,13 +4,9 @@ import (
 	"archive/zip"
 	"context"
 	"errors"
-	"fmt"
-	"io"
 	"net/url"
-	"strings"
 	"time"
 
-	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -22,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
@@ -668,7 +665,10 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	if err != nil {
 		return nil, nil, errors.New("Fail storytelling :" + err.Error())
 	}
-	story := (*storyList)[0]
+	var story *storytelling.Story
+	if storyList != nil && len(*storyList) > 0 {
+		story = (*storyList)[0]
+	}
 	sceneJSON, err := builder.New(
 		repo.LayerLoaderFrom(i.layerRepo),
 		repo.PropertyLoaderFrom(i.propertyRepo),
@@ -696,11 +696,9 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			actualConfig := *c
 			if data, ok := actualConfig["data"].(map[string]any); ok {
 				if urlStr, ok := data["url"].(string); ok {
-					url, _ := url.Parse(urlStr)
-					if isReearth, u := convertReearthEnv(ctx, url); isReearth {
-						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
-						}
+					u, _ := url.Parse(urlStr)
+					if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+						log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
 					}
 				}
 			}
@@ -727,12 +725,8 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 					continue
 				}
 				if field.GuessSchema().ID().String() == "buttonIcon" {
-					u, ok := field.Value().Value().(*url.URL)
-					if !ok {
-						continue
-					}
-					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
-						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
+					if u, ok := field.Value().Value().(*url.URL); ok {
+						if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
 							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
@@ -756,13 +750,9 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		for _, item := range property.Items() {
 			for _, field := range item.Fields(nil) {
 				if field.GuessSchema().ID().String() == "src" {
-					u, ok := field.Value().Value().(*url.URL)
-					if !ok {
-						continue
-					}
-					if isReearth, u := convertReearthEnv(ctx, u); isReearth {
-						if err := i.addZipAsset(ctx, zipWriter, u.Path); err != nil {
-							log.Infofc(ctx, "Fail page block addZipAsset :", err.Error())
+					if u, ok := field.Value().Value().(*url.URL); ok {
+						if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
 				}
@@ -774,22 +764,6 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	res["scene"] = sceneJSON
 
 	return sce, res, nil
-}
-
-func convertReearthEnv(ctx context.Context, u *url.URL) (bool, *url.URL) {
-	if u.Host == "localhost:8080" || strings.HasSuffix(u.Host, ".reearth.dev") || strings.HasSuffix(u.Host, ".reearth.io") {
-		currentHost := adapter.CurrentHost(ctx)
-		currentHost = strings.TrimPrefix(currentHost, "https://")
-		currentHost = strings.TrimPrefix(currentHost, "http://")
-		if currentHost == "localhost:8080" {
-			u.Scheme = "http"
-		} else {
-			u.Scheme = "https"
-		}
-		u.Host = currentHost
-		return true, u
-	}
-	return false, nil
 }
 
 func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
@@ -920,35 +894,4 @@ func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.Plug
 		return nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 	return extension, nil
-}
-
-func (i *Scene) addZipAsset(ctx context.Context, zipWriter *zip.Writer, url string) error {
-
-	parts := strings.Split(url, "/")
-	if len(parts) == 0 {
-		return errors.New("invalid URL format")
-	}
-	fileName := parts[len(parts)-1]
-	if fileName == "" {
-		return errors.New("empty filename extracted from URL")
-	}
-
-	stream, err := i.file.ReadAsset(ctx, fileName)
-	if err != nil {
-		return err
-	}
-	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
-	zipEntry, err := zipWriter.Create(zipEntryPath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(zipEntry, stream)
-	if err != nil {
-		_ = stream.Close()
-		return err
-	}
-	if err := stream.Close(); err != nil {
-		return err
-	}
-	return nil
 }
