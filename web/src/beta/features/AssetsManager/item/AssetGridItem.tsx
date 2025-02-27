@@ -1,4 +1,4 @@
-import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
 
@@ -16,10 +16,24 @@ const AssetGridItem: FC<AssetItemProps> = ({
   );
 
   const type = useMemo(() => getAssetType(asset), [asset]);
+  const theme = useTheme();
 
   const ext = useMemo(() => asset.url.split(".").pop()?.toLowerCase(), [asset]);
 
-  const theme = useTheme();
+  const iconType: IconName = useMemo(() => {
+    switch (ext) {
+      case "csv":
+        return "fileCSV";
+      case "geojson":
+        return "fileGeoJSON";
+      case "czml":
+        return "fileCzml";
+      case "kml":
+        return "fileKml";
+      default:
+        return "file";
+    }
+  }, [ext]);
 
   const handleAssetClick = useCallback(
     (e: MouseEvent) => {
@@ -37,10 +51,7 @@ const AssetGridItem: FC<AssetItemProps> = ({
             <AssetImage url={asset.url} />
           ) : (
             <IconWrapper>
-              <Icon icon="fileFilled" color={theme.content.weak} size={64} />
-              <StyledTypography size="body">
-                {ext?.toUpperCase()}
-              </StyledTypography>
+              <Icon icon={iconType} color={theme.content.weak} size={64} />
             </IconWrapper>
           )}
         </Thumbnail>
@@ -93,6 +104,7 @@ const Thumbnail = styled("div")(({ theme }) => ({
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
   background: url ? `url(${url}) center/contain no-repeat` : theme.bg[1],
+  backgroundSize: "cover",
   borderRadius: theme.radius.small,
   width: "100%"
 }));
@@ -102,13 +114,6 @@ const IconWrapper = styled("div")(() => ({
   alignItems: "center",
   justifyContent: "center",
   width: "100%"
-}));
-
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  position: "absolute",
-  color: theme.content.weak,
-  transform: "translate(0, 10px)",
-  fontWeight: "bold"
 }));
 
 const AssetName = styled("div")(() => ({

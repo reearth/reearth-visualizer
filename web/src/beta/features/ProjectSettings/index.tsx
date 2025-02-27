@@ -14,7 +14,7 @@ import { useMemo } from "react";
 import CursorStatus from "../CursorStatus";
 
 import useHooks from "./hooks";
-import AssetSettings from "./innerPages/AssetSetting";
+import Assets from "./innerPages/AssetSetting";
 import GeneralSettings from "./innerPages/GeneralSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
@@ -73,16 +73,16 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         path: `/settings/projects/${projectId}/story`
       },
       {
-        id: "assets",
-        text: t("Assets"),
-        icon: "file" as const,
-        path: `/settings/projects/${projectId}/assets`
-      },
-      {
         id: "public",
         text: t("Public"),
         icon: "paperPlaneTilt" as const,
         path: `/settings/projects/${projectId}/public`
+      },
+      {
+        id: "assets",
+        text: t("Assets"),
+        icon: "file" as const,
+        path: `/settings/projects/${projectId}/assets`
       },
       {
         id: "plugins",
@@ -121,7 +121,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
-        <Content>
+        <Content tab={tab}>
           {tab === "general" && project && (
             <GeneralSettings
               project={project}
@@ -152,6 +152,10 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               onUpdateProjectGA={handleUpdateProjectGA}
             />
           )}
+          {tab === "assets" && project && (
+            <Assets projectId={projectId} workspaceId={workspaceId} />
+          )}
+
           {tab === "plugins" && (
             <PluginSettings
               sceneId={sceneId}
@@ -161,7 +165,6 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               extensions={extensions}
             />
           )}
-          {tab === "assets" && project && <AssetSettings />}
         </Content>
       </MainSection>
       <CursorStatus />
@@ -198,15 +201,17 @@ const LeftSidePanel = styled("div")(({ theme }) => ({
   boxSizing: "border-box"
 }));
 
-const Content = styled("div")(({ theme }) => ({
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
-  width: "100%",
-  height: "100%",
-  alignItems: "center",
-  overflow: "auto",
-  padding: `${theme.spacing.super}px`
-}));
+const Content = styled("div")<{ tab?: ProjectSettingsTab }>(
+  ({ tab, theme }) => ({
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    overflow: "auto",
+    padding: tab === "assets" ? 0 : `${theme.spacing.super}px`
+  })
+);
 
 export default ProjectSettings;
