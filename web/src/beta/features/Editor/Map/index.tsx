@@ -27,7 +27,7 @@ const Map: FC = () => {
   );
   const setPhotoOverlayPreview = useSetAtom(PhotoOverlayPreviewAtom);
 
-  const hideNomralPanels = !!photoOverlayEditingFeature;
+  const hideNormalPanels = !!photoOverlayEditingFeature;
 
   useEffect(() => {
     return () => {
@@ -43,13 +43,13 @@ const Map: FC = () => {
           direction="column"
           resizableEdge="right"
           storageId="editor-map-left-area"
-          hidden={hideNomralPanels}
+          hidden={hideNormalPanels}
         >
           <ScenePanel />
           <LayersPanel />
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area initialHeight={34} hidden={hideNomralPanels}>
+          <Area initialHeight={34} hidden={hideNormalPanels}>
             <ToolsPanel />
           </Area>
           <Area
@@ -66,7 +66,7 @@ const Map: FC = () => {
           resizableEdge="left"
           storageId="editor-map-sec-right-area"
           ref={secRightAreaRef}
-          hidden={hideNomralPanels}
+          hidden={hideNormalPanels}
         >
           <InspectorPanel showCollapseArea areaRef={secRightAreaRef} />
         </Area>
@@ -75,7 +75,7 @@ const Map: FC = () => {
           resizableEdge="left"
           storageId="editor-map-right-area"
           ref={rightAreaRef}
-          hidden={hideNomralPanels}
+          hidden={hideNormalPanels}
         >
           <LayerStylePanel showCollapseArea areaRef={rightAreaRef} />
         </Area>
