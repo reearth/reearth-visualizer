@@ -51,7 +51,7 @@ export const FieldComponent = ({
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
-  sketchCustomProperties: string[] | undefined;
+  sketchCustomProperties?: string[] | undefined;
 }) => {
   const t = useT();
   console.log(field);

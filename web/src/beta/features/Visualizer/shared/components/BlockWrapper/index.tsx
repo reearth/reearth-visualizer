@@ -65,7 +65,7 @@ type Props = {
     itemId?: string
   ) => Promise<void>;
   onFlyTo?: FlyTo;
-  sketchCustomProperties: string[] | undefined;
+  sketchCustomProperties?: string[] | undefined;
 };
 
 const BlockWrapper: FC<Props> = ({
