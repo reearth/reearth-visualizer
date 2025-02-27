@@ -33,7 +33,12 @@ export default ({ value }: { value: PhotoOverlayValue | undefined }) => {
   }, [value]);
 
   useEffect(() => {
-    if (photoSize && value?.fill === "fixed" && value?.widthPct !== undefined) {
+    if (
+      photoSize?.width &&
+      photoSize?.height &&
+      value?.fill === "fixed" &&
+      value?.widthPct !== undefined
+    ) {
       const fixedHeightPct =
         photoSize.height / (photoSize.width / value?.widthPct);
       setHeightPct(fixedHeightPct);
