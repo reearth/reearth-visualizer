@@ -8,7 +8,7 @@ import {
   GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
-import { Geometry, SketchEditingFeature } from "@reearth/core";
+import { ComputedFeature, Geometry, SketchEditingFeature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -40,7 +40,7 @@ type Props = {
 export type InspectorFeature = {
   id: string;
   geometry: Geometry | undefined;
-  properties: any;
+  properties: ComputedFeature["properties"];
 };
 
 const InspectorTabs: FC<Props> = ({
