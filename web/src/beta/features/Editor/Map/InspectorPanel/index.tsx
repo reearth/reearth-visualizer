@@ -21,6 +21,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     sketchEditingFeature,
     handleFlyTo,
     handleLayerConfigUpdate,
+    handleLayerNameUpdate,
     handleGeoJsonFeatureUpdate,
     handleGeoJsonFeatureDelete,
     handleSketchGeometryEditStart,
@@ -65,6 +66,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           onSketchGeometryEditStart={handleSketchGeometryEditStart}
           onSketchGeometryEditCancel={handleSketchGeometryEditCancel}
           onSketchGeometryEditApply={handleSketchGeometryEditApply}
+          onLayerNameUpdate={handleLayerNameUpdate}
         />
       )}
     </Panel>

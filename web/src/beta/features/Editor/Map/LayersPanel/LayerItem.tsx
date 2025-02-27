@@ -128,8 +128,9 @@ const LayerItem: FC<LayerItemProps> = ({
 
   const handleTitleUpdate = useCallback(() => {
     setEditingLayerNameId("");
-    if (!localTitle || localTitle === layer.title) return;
-    handleLayerNameUpdate({ layerId: layer.id, name: localTitle });
+    if (!localTitle || localTitle === layer.title) {
+      setLocalTitle(layer.title);
+    } else handleLayerNameUpdate({ layerId: layer.id, name: localTitle });
   }, [
     layer.id,
     layer.title,

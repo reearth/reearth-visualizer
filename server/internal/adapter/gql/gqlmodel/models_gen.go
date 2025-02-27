@@ -1956,6 +1956,7 @@ const (
 	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
 	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
 	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
+	PropertySchemaFieldUIZoomlevel  PropertySchemaFieldUI = "ZOOMLEVEL"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1972,11 +1973,12 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIDatetime,
 	PropertySchemaFieldUIMargin,
 	PropertySchemaFieldUIPadding,
+	PropertySchemaFieldUIZoomlevel,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding, PropertySchemaFieldUIZoomlevel:
 		return true
 	}
 	return false

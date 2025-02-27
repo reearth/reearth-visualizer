@@ -68,6 +68,7 @@ const Plugins: FC<Props> = ({
       "responsive-panel": t("Responsive Panel"),
       sidebar: t("Sidebar"),
       header: t("Header"),
+      "popup-plugin": t("Popup"),
       "modal-window": t("Modal Window"),
       "ui-extension-messenger": t("UI Extension Messenger"),
       "extension-to-extension-messenger": t("Extension To Extension Messenger"),

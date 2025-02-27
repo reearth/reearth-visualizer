@@ -128,6 +128,10 @@ Data source: データソース
 Layer Name: レイヤー名
 Format: 形式
 Custom property schema: カスタムプロパティスキーマ
+Update data resource URL: リソースURLを更新
+New data resource URL: 新しいリソースURL
+Resource URL copied to clipboard: リソースURLがクリップボードにコピーされました
+Edit: 編集
 Edit Field: フィールド編集
 Delete Field: フィールド削除
 More: その他
@@ -145,7 +149,6 @@ Delete schema property field?: プロパティのフィールドを削除しま�
 This action will apply to all features in the current layer. Do you want to proceed?: この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？
 Unsupported custom field: サポートされていないカスタムフィールド
 Custom Properties: カスタムプロパティ
-Edit: 編集
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
@@ -304,6 +307,7 @@ My Plugin: マイプラグイン
 Responsive Panel: レスポンシブ パネル
 Sidebar: サイドバー
 Header: ヘッダー
+Popup: ポップアップ
 Modal Window: モーダルウィンドウ
 UI Extension Messenger: エクステンションとコアとの通信
 Extension To Extension Messenger: エクステンション間での通信
@@ -505,6 +509,7 @@ Set Time: 時間を設定
 Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
+Zoom Level Editor: ズームレベルエディター
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
