@@ -83,9 +83,6 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
     value
   });
 
-  console.log("sizeBase", sizeBase);
-  console.log("heightPct", heightPct);
-
   const handlePhotoLoad = useCallback(
     (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       const image = e.target as HTMLImageElement;
