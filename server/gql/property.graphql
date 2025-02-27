@@ -64,8 +64,8 @@ enum PropertySchemaFieldUI {
   DATETIME
   MARGIN
   PADDING
-  DYNAMIC_PROPERTY_SELECTOR
   ZOOMLEVEL
+  DYNAMIC_PROPERTY_SELECTOR
 }
 
 type PropertySchemaFieldChoice {
