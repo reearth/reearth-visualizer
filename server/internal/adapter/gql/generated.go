@@ -264,20 +264,18 @@ type ComplexityRoot struct {
 	}
 
 	MergedProperty struct {
-		Groups          func(childComplexity int) int
-		LinkedDatasetID func(childComplexity int) int
-		Original        func(childComplexity int) int
-		OriginalID      func(childComplexity int) int
-		Parent          func(childComplexity int) int
-		ParentID        func(childComplexity int) int
-		Schema          func(childComplexity int) int
-		SchemaID        func(childComplexity int) int
+		Groups     func(childComplexity int) int
+		Original   func(childComplexity int) int
+		OriginalID func(childComplexity int) int
+		Parent     func(childComplexity int) int
+		ParentID   func(childComplexity int) int
+		Schema     func(childComplexity int) int
+		SchemaID   func(childComplexity int) int
 	}
 
 	MergedPropertyField struct {
 		Field      func(childComplexity int) int
 		FieldID    func(childComplexity int) int
-		Links      func(childComplexity int) int
 		Overridden func(childComplexity int) int
 		Schema     func(childComplexity int) int
 		SchemaID   func(childComplexity int) int
@@ -288,7 +286,6 @@ type ComplexityRoot struct {
 	MergedPropertyGroup struct {
 		Fields             func(childComplexity int) int
 		Groups             func(childComplexity int) int
-		LinkedDatasetID    func(childComplexity int) int
 		Original           func(childComplexity int) int
 		OriginalID         func(childComplexity int) int
 		OriginalProperty   func(childComplexity int) int
@@ -501,8 +498,6 @@ type ComplexityRoot struct {
 	Policy struct {
 		AssetStorageSize      func(childComplexity int) int
 		BlocksCount           func(childComplexity int) int
-		DatasetCount          func(childComplexity int) int
-		DatasetSchemaCount    func(childComplexity int) int
 		ID                    func(childComplexity int) int
 		LayerCount            func(childComplexity int) int
 		MemberCount           func(childComplexity int) int
@@ -586,19 +581,12 @@ type ComplexityRoot struct {
 		Field    func(childComplexity int) int
 		FieldID  func(childComplexity int) int
 		ID       func(childComplexity int) int
-		Links    func(childComplexity int) int
 		Parent   func(childComplexity int) int
 		ParentID func(childComplexity int) int
 		Schema   func(childComplexity int) int
 		SchemaID func(childComplexity int) int
 		Type     func(childComplexity int) int
 		Value    func(childComplexity int) int
-	}
-
-	PropertyFieldLink struct {
-		DatasetID            func(childComplexity int) int
-		DatasetSchemaFieldID func(childComplexity int) int
-		DatasetSchemaID      func(childComplexity int) int
 	}
 
 	PropertyFieldPayload struct {
@@ -830,14 +818,13 @@ type ComplexityRoot struct {
 	}
 
 	StoryBlock struct {
-		Extension       func(childComplexity int) int
-		ExtensionID     func(childComplexity int) int
-		ID              func(childComplexity int) int
-		LinkedDatasetID func(childComplexity int) int
-		Plugin          func(childComplexity int) int
-		PluginID        func(childComplexity int) int
-		Property        func(childComplexity int) int
-		PropertyID      func(childComplexity int) int
+		Extension   func(childComplexity int) int
+		ExtensionID func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Plugin      func(childComplexity int) int
+		PluginID    func(childComplexity int) int
+		Property    func(childComplexity int) int
+		PropertyID  func(childComplexity int) int
 	}
 
 	StoryPage struct {
@@ -1865,13 +1852,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MergedProperty.Groups(childComplexity), true
 
-	case "MergedProperty.linkedDatasetId":
-		if e.complexity.MergedProperty.LinkedDatasetID == nil {
-			break
-		}
-
-		return e.complexity.MergedProperty.LinkedDatasetID(childComplexity), true
-
 	case "MergedProperty.original":
 		if e.complexity.MergedProperty.Original == nil {
 			break
@@ -1928,13 +1908,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MergedPropertyField.FieldID(childComplexity), true
 
-	case "MergedPropertyField.links":
-		if e.complexity.MergedPropertyField.Links == nil {
-			break
-		}
-
-		return e.complexity.MergedPropertyField.Links(childComplexity), true
-
 	case "MergedPropertyField.overridden":
 		if e.complexity.MergedPropertyField.Overridden == nil {
 			break
@@ -1983,13 +1956,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MergedPropertyGroup.Groups(childComplexity), true
-
-	case "MergedPropertyGroup.linkedDatasetId":
-		if e.complexity.MergedPropertyGroup.LinkedDatasetID == nil {
-			break
-		}
-
-		return e.complexity.MergedPropertyGroup.LinkedDatasetID(childComplexity), true
 
 	case "MergedPropertyGroup.original":
 		if e.complexity.MergedPropertyGroup.Original == nil {
@@ -3571,20 +3537,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Policy.BlocksCount(childComplexity), true
 
-	case "Policy.datasetCount":
-		if e.complexity.Policy.DatasetCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.DatasetCount(childComplexity), true
-
-	case "Policy.datasetSchemaCount":
-		if e.complexity.Policy.DatasetSchemaCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.DatasetSchemaCount(childComplexity), true
-
 	case "Policy.id":
 		if e.complexity.Policy.ID == nil {
 			break
@@ -3977,13 +3929,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyField.ID(childComplexity), true
 
-	case "PropertyField.links":
-		if e.complexity.PropertyField.Links == nil {
-			break
-		}
-
-		return e.complexity.PropertyField.Links(childComplexity), true
-
 	case "PropertyField.parent":
 		if e.complexity.PropertyField.Parent == nil {
 			break
@@ -4025,27 +3970,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PropertyField.Value(childComplexity), true
-
-	case "PropertyFieldLink.datasetId":
-		if e.complexity.PropertyFieldLink.DatasetID == nil {
-			break
-		}
-
-		return e.complexity.PropertyFieldLink.DatasetID(childComplexity), true
-
-	case "PropertyFieldLink.datasetSchemaFieldId":
-		if e.complexity.PropertyFieldLink.DatasetSchemaFieldID == nil {
-			break
-		}
-
-		return e.complexity.PropertyFieldLink.DatasetSchemaFieldID(childComplexity), true
-
-	case "PropertyFieldLink.datasetSchemaId":
-		if e.complexity.PropertyFieldLink.DatasetSchemaID == nil {
-			break
-		}
-
-		return e.complexity.PropertyFieldLink.DatasetSchemaID(childComplexity), true
 
 	case "PropertyFieldPayload.property":
 		if e.complexity.PropertyFieldPayload.Property == nil {
@@ -5207,13 +5131,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.StoryBlock.ID(childComplexity), true
-
-	case "StoryBlock.linkedDatasetId":
-		if e.complexity.StoryBlock.LinkedDatasetID == nil {
-			break
-		}
-
-		return e.complexity.StoryBlock.LinkedDatasetID(childComplexity), true
 
 	case "StoryBlock.plugin":
 		if e.complexity.StoryBlock.Plugin == nil {
@@ -6957,7 +6874,6 @@ type PropertyField {
   parentId: ID!
   schemaId: ID!
   fieldId: ID!
-  links: [PropertyFieldLink!]
   type: ValueType!
   value: Any
   parent: Property
@@ -6965,18 +6881,11 @@ type PropertyField {
   field: PropertySchemaField
 }
 
-type PropertyFieldLink {
-  datasetId: ID
-  datasetSchemaId: ID!
-  datasetSchemaFieldId: ID!
-}
-
 type MergedProperty {
   originalId: ID
   parentId: ID
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   original: Property
   parent: Property
   schema: PropertySchema
@@ -6991,7 +6900,6 @@ type MergedPropertyGroup {
   schemaGroupId: ID!
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   fields: [MergedPropertyField!]!
   groups: [MergedPropertyGroup!]!
   originalProperty: Property
@@ -7006,7 +6914,6 @@ type MergedPropertyField {
   fieldId: ID!
   value: Any
   type: ValueType!
-  links: [PropertyFieldLink!]
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
@@ -7067,9 +6974,6 @@ input LinkDatasetToPropertyValueInput {
   schemaGroupId: ID
   itemId: ID
   fieldId: ID!
-  datasetSchemaIds: [ID!]!
-  datasetSchemaFieldIds: [ID!]!
-  datasetIds: [ID!]
 }
 
 input UnlinkPropertyValueInput {
@@ -7250,7 +7154,6 @@ type StoryBlock implements Node {
   extension: PluginExtension
   propertyId: ID!
   property: Property
-  linkedDatasetId: ID
 }
 
 enum Position {
@@ -7769,8 +7672,6 @@ type Policy {
   publishedProjectCount: Int
   layerCount: Int
   assetStorageSize: FileSize
-  datasetSchemaCount: Int
-  datasetCount: Int
   nlsLayersCount: Int
   pageCount: Int
   blocksCount: Int
@@ -12904,8 +12805,6 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_block(_ context
 				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryBlock_property(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type StoryBlock", field.Name)
 		},
@@ -15614,47 +15513,6 @@ func (ec *executionContext) fieldContext_MergedProperty_schemaId(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _MergedProperty_linkedDatasetId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MergedProperty) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MergedProperty_linkedDatasetId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LinkedDatasetID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MergedProperty_linkedDatasetId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MergedProperty",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _MergedProperty_original(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MergedProperty) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MergedProperty_original(ctx, field)
 	if err != nil {
@@ -15861,8 +15719,6 @@ func (ec *executionContext) fieldContext_MergedProperty_groups(_ context.Context
 				return ec.fieldContext_MergedPropertyGroup_schemaGroupId(ctx, field)
 			case "schemaId":
 				return ec.fieldContext_MergedPropertyGroup_schemaId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_MergedPropertyGroup_linkedDatasetId(ctx, field)
 			case "fields":
 				return ec.fieldContext_MergedPropertyGroup_fields(ctx, field)
 			case "groups":
@@ -16052,55 +15908,6 @@ func (ec *executionContext) fieldContext_MergedPropertyField_type(_ context.Cont
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ValueType does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _MergedPropertyField_links(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MergedPropertyField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MergedPropertyField_links(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Links, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.PropertyFieldLink)
-	fc.Result = res
-	return ec.marshalOPropertyFieldLink2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldLinkᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MergedPropertyField_links(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MergedPropertyField",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetId":
-				return ec.fieldContext_PropertyFieldLink_datasetId(ctx, field)
-			case "datasetSchemaId":
-				return ec.fieldContext_PropertyFieldLink_datasetSchemaId(ctx, field)
-			case "datasetSchemaFieldId":
-				return ec.fieldContext_PropertyFieldLink_datasetSchemaFieldId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PropertyFieldLink", field.Name)
 		},
 	}
 	return fc, nil
@@ -16529,47 +16336,6 @@ func (ec *executionContext) fieldContext_MergedPropertyGroup_schemaId(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _MergedPropertyGroup_linkedDatasetId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MergedPropertyGroup) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MergedPropertyGroup_linkedDatasetId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LinkedDatasetID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MergedPropertyGroup_linkedDatasetId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MergedPropertyGroup",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _MergedPropertyGroup_fields(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MergedPropertyGroup) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MergedPropertyGroup_fields(ctx, field)
 	if err != nil {
@@ -16617,8 +16383,6 @@ func (ec *executionContext) fieldContext_MergedPropertyGroup_fields(_ context.Co
 				return ec.fieldContext_MergedPropertyField_value(ctx, field)
 			case "type":
 				return ec.fieldContext_MergedPropertyField_type(ctx, field)
-			case "links":
-				return ec.fieldContext_MergedPropertyField_links(ctx, field)
 			case "overridden":
 				return ec.fieldContext_MergedPropertyField_overridden(ctx, field)
 			case "schema":
@@ -16683,8 +16447,6 @@ func (ec *executionContext) fieldContext_MergedPropertyGroup_groups(_ context.Co
 				return ec.fieldContext_MergedPropertyGroup_schemaGroupId(ctx, field)
 			case "schemaId":
 				return ec.fieldContext_MergedPropertyGroup_schemaId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_MergedPropertyGroup_linkedDatasetId(ctx, field)
 			case "fields":
 				return ec.fieldContext_MergedPropertyGroup_fields(ctx, field)
 			case "groups":
@@ -25711,88 +25473,6 @@ func (ec *executionContext) fieldContext_Policy_assetStorageSize(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Policy_datasetSchemaCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_datasetSchemaCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetSchemaCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Policy_datasetSchemaCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_datasetCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_datasetCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Policy_datasetCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Policy_nlsLayersCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Policy_nlsLayersCount(ctx, field)
 	if err != nil {
@@ -27980,8 +27660,6 @@ func (ec *executionContext) fieldContext_Property_merged(_ context.Context, fiel
 				return ec.fieldContext_MergedProperty_parentId(ctx, field)
 			case "schemaId":
 				return ec.fieldContext_MergedProperty_schemaId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_MergedProperty_linkedDatasetId(ctx, field)
 			case "original":
 				return ec.fieldContext_MergedProperty_original(ctx, field)
 			case "parent":
@@ -28302,55 +27980,6 @@ func (ec *executionContext) fieldContext_PropertyField_fieldId(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _PropertyField_links(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PropertyField_links(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Links, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.PropertyFieldLink)
-	fc.Result = res
-	return ec.marshalOPropertyFieldLink2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldLinkᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_PropertyField_links(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PropertyField",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetId":
-				return ec.fieldContext_PropertyFieldLink_datasetId(ctx, field)
-			case "datasetSchemaId":
-				return ec.fieldContext_PropertyFieldLink_datasetSchemaId(ctx, field)
-			case "datasetSchemaFieldId":
-				return ec.fieldContext_PropertyFieldLink_datasetSchemaFieldId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PropertyFieldLink", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _PropertyField_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PropertyField_type(ctx, field)
 	if err != nil {
@@ -28619,135 +28248,6 @@ func (ec *executionContext) fieldContext_PropertyField_field(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _PropertyFieldLink_datasetId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyFieldLink) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PropertyFieldLink_datasetId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_PropertyFieldLink_datasetId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PropertyFieldLink",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _PropertyFieldLink_datasetSchemaId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyFieldLink) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PropertyFieldLink_datasetSchemaId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetSchemaID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_PropertyFieldLink_datasetSchemaId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PropertyFieldLink",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _PropertyFieldLink_datasetSchemaFieldId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyFieldLink) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PropertyFieldLink_datasetSchemaFieldId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetSchemaFieldID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_PropertyFieldLink_datasetSchemaFieldId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PropertyFieldLink",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _PropertyFieldPayload_property(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertyFieldPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PropertyFieldPayload_property(ctx, field)
 	if err != nil {
@@ -28848,8 +28348,6 @@ func (ec *executionContext) fieldContext_PropertyFieldPayload_propertyField(_ co
 				return ec.fieldContext_PropertyField_schemaId(ctx, field)
 			case "fieldId":
 				return ec.fieldContext_PropertyField_fieldId(ctx, field)
-			case "links":
-				return ec.fieldContext_PropertyField_links(ctx, field)
 			case "type":
 				return ec.fieldContext_PropertyField_type(ctx, field)
 			case "value":
@@ -29046,8 +28544,6 @@ func (ec *executionContext) fieldContext_PropertyGroup_fields(_ context.Context,
 				return ec.fieldContext_PropertyField_schemaId(ctx, field)
 			case "fieldId":
 				return ec.fieldContext_PropertyField_fieldId(ctx, field)
-			case "links":
-				return ec.fieldContext_PropertyField_links(ctx, field)
 			case "type":
 				return ec.fieldContext_PropertyField_type(ctx, field)
 			case "value":
@@ -37017,47 +36513,6 @@ func (ec *executionContext) fieldContext_StoryBlock_property(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _StoryBlock_linkedDatasetId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LinkedDatasetID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_linkedDatasetId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _StoryPage_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryPage) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_StoryPage_id(ctx, field)
 	if err != nil {
@@ -37199,8 +36654,6 @@ func (ec *executionContext) fieldContext_StoryPage_blocks(_ context.Context, fie
 				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryBlock_property(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type StoryBlock", field.Name)
 		},
@@ -38371,10 +37824,6 @@ func (ec *executionContext) fieldContext_Team_policy(_ context.Context, field gr
 				return ec.fieldContext_Policy_layerCount(ctx, field)
 			case "assetStorageSize":
 				return ec.fieldContext_Policy_assetStorageSize(ctx, field)
-			case "datasetSchemaCount":
-				return ec.fieldContext_Policy_datasetSchemaCount(ctx, field)
-			case "datasetCount":
-				return ec.fieldContext_Policy_datasetCount(ctx, field)
 			case "nlsLayersCount":
 				return ec.fieldContext_Policy_nlsLayersCount(ctx, field)
 			case "pageCount":
@@ -44763,7 +44212,7 @@ func (ec *executionContext) unmarshalInputLinkDatasetToPropertyValueInput(ctx co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"propertyId", "schemaGroupId", "itemId", "fieldId", "datasetSchemaIds", "datasetSchemaFieldIds", "datasetIds"}
+	fieldsInOrder := [...]string{"propertyId", "schemaGroupId", "itemId", "fieldId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44798,27 +44247,6 @@ func (ec *executionContext) unmarshalInputLinkDatasetToPropertyValueInput(ctx co
 				return it, err
 			}
 			it.FieldID = data
-		case "datasetSchemaIds":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetSchemaIds"))
-			data, err := ec.unmarshalNID2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐIDᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DatasetSchemaIds = data
-		case "datasetSchemaFieldIds":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetSchemaFieldIds"))
-			data, err := ec.unmarshalNID2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐIDᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DatasetSchemaFieldIds = data
-		case "datasetIds":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetIds"))
-			data, err := ec.unmarshalOID2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐIDᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DatasetIds = data
 		}
 	}
 
@@ -48967,8 +48395,6 @@ func (ec *executionContext) _MergedProperty(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._MergedProperty_parentId(ctx, field, obj)
 		case "schemaId":
 			out.Values[i] = ec._MergedProperty_schemaId(ctx, field, obj)
-		case "linkedDatasetId":
-			out.Values[i] = ec._MergedProperty_linkedDatasetId(ctx, field, obj)
 		case "original":
 			field := field
 
@@ -49155,8 +48581,6 @@ func (ec *executionContext) _MergedPropertyField(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "links":
-			out.Values[i] = ec._MergedPropertyField_links(ctx, field, obj)
 		case "overridden":
 			out.Values[i] = ec._MergedPropertyField_overridden(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -49277,8 +48701,6 @@ func (ec *executionContext) _MergedPropertyGroup(ctx context.Context, sel ast.Se
 			}
 		case "schemaId":
 			out.Values[i] = ec._MergedPropertyGroup_schemaId(ctx, field, obj)
-		case "linkedDatasetId":
-			out.Values[i] = ec._MergedPropertyGroup_linkedDatasetId(ctx, field, obj)
 		case "fields":
 			out.Values[i] = ec._MergedPropertyGroup_fields(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -51065,10 +50487,6 @@ func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Policy_layerCount(ctx, field, obj)
 		case "assetStorageSize":
 			out.Values[i] = ec._Policy_assetStorageSize(ctx, field, obj)
-		case "datasetSchemaCount":
-			out.Values[i] = ec._Policy_datasetSchemaCount(ctx, field, obj)
-		case "datasetCount":
-			out.Values[i] = ec._Policy_datasetCount(ctx, field, obj)
 		case "nlsLayersCount":
 			out.Values[i] = ec._Policy_nlsLayersCount(ctx, field, obj)
 		case "pageCount":
@@ -51726,8 +51144,6 @@ func (ec *executionContext) _PropertyField(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "links":
-			out.Values[i] = ec._PropertyField_links(ctx, field, obj)
 		case "type":
 			out.Values[i] = ec._PropertyField_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -51834,52 +51250,6 @@ func (ec *executionContext) _PropertyField(ctx context.Context, sel ast.Selectio
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var propertyFieldLinkImplementors = []string{"PropertyFieldLink"}
-
-func (ec *executionContext) _PropertyFieldLink(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.PropertyFieldLink) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, propertyFieldLinkImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("PropertyFieldLink")
-		case "datasetId":
-			out.Values[i] = ec._PropertyFieldLink_datasetId(ctx, field, obj)
-		case "datasetSchemaId":
-			out.Values[i] = ec._PropertyFieldLink_datasetSchemaId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "datasetSchemaFieldId":
-			out.Values[i] = ec._PropertyFieldLink_datasetSchemaFieldId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -54537,8 +53907,6 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "linkedDatasetId":
-			out.Values[i] = ec._StoryBlock_linkedDatasetId(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -57969,16 +57337,6 @@ func (ec *executionContext) marshalNPropertyField2ᚖgithubᚗcomᚋreearthᚋre
 	return ec._PropertyField(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPropertyFieldLink2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldLink(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PropertyFieldLink) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._PropertyFieldLink(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNPropertyGroup2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.PropertyGroup) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -59923,53 +59281,6 @@ func (ec *executionContext) marshalOPropertyField2ᚖgithubᚗcomᚋreearthᚋre
 		return graphql.Null
 	}
 	return ec._PropertyField(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOPropertyFieldLink2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldLinkᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.PropertyFieldLink) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPropertyFieldLink2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldLink(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalOPropertyFieldPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PropertyFieldPayload) graphql.Marshaler {

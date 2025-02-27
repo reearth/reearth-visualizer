@@ -114,7 +114,6 @@ type PropertyField {
   parentId: ID!
   schemaId: ID!
   fieldId: ID!
-  links: [PropertyFieldLink!]
   type: ValueType!
   value: Any
   parent: Property
@@ -122,18 +121,11 @@ type PropertyField {
   field: PropertySchemaField
 }
 
-type PropertyFieldLink {
-  datasetId: ID
-  datasetSchemaId: ID!
-  datasetSchemaFieldId: ID!
-}
-
 type MergedProperty {
   originalId: ID
   parentId: ID
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   original: Property
   parent: Property
   schema: PropertySchema
@@ -148,7 +140,6 @@ type MergedPropertyGroup {
   schemaGroupId: ID!
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   fields: [MergedPropertyField!]!
   groups: [MergedPropertyGroup!]!
   originalProperty: Property
@@ -163,7 +154,6 @@ type MergedPropertyField {
   fieldId: ID!
   value: Any
   type: ValueType!
-  links: [PropertyFieldLink!]
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
@@ -224,9 +214,6 @@ input LinkDatasetToPropertyValueInput {
   schemaGroupId: ID
   itemId: ID
   fieldId: ID!
-  datasetSchemaIds: [ID!]!
-  datasetSchemaFieldIds: [ID!]!
-  datasetIds: [ID!]
 }
 
 input UnlinkPropertyValueInput {

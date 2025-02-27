@@ -53,10 +53,6 @@ func (c *PropertyLoader) FetchSchema(ctx context.Context, ids []gqlmodel.ID) ([]
 	return util.Map(res, gqlmodel.ToPropertySchema), nil
 }
 
-func (c *PropertyLoader) FetchMerged(ctx context.Context, org, parent, linked *gqlmodel.ID) (*gqlmodel.MergedProperty, error) {
-	return nil, nil
-}
-
 // data loader
 
 type PropertyDataLoader interface {

@@ -99,11 +99,7 @@ func (r *mergedPropertyResolver) Groups(ctx context.Context, obj *gqlmodel.Merge
 	if obj.Groups != nil {
 		return obj.Groups, nil
 	}
-	m, err := loaders(ctx).Property.FetchMerged(ctx, obj.OriginalID, obj.ParentID, obj.LinkedDatasetID)
-	if err != nil || m == nil {
-		return nil, err
-	}
-	return m.Groups, nil
+	return nil, nil
 }
 
 type mergedPropertyGroupResolver struct{ *Resolver }

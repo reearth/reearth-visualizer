@@ -46,7 +46,6 @@ type StoryBlock implements Node {
   extension: PluginExtension
   propertyId: ID!
   property: Property
-  linkedDatasetId: ID
 }
 
 enum Position {

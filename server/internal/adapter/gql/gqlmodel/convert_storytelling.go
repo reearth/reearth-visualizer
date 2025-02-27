@@ -74,14 +74,13 @@ func ToBlock(b *storytelling.Block) *StoryBlock {
 		return nil
 	}
 	return &StoryBlock{
-		ID:              IDFrom(b.ID()),
-		PropertyID:      IDFrom(b.Property()),
-		Property:        nil,
-		PluginID:        IDFromPluginID(b.Plugin()),
-		Plugin:          nil,
-		ExtensionID:     IDFromString(b.Extension()),
-		Extension:       nil,
-		LinkedDatasetID: nil,
+		ID:          IDFrom(b.ID()),
+		PropertyID:  IDFrom(b.Property()),
+		Property:    nil,
+		PluginID:    IDFromPluginID(b.Plugin()),
+		Plugin:      nil,
+		ExtensionID: IDFromString(b.Extension()),
+		Extension:   nil,
 	}
 }
 

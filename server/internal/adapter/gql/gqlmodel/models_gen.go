@@ -393,13 +393,10 @@ type LineString struct {
 func (LineString) IsGeometry() {}
 
 type LinkDatasetToPropertyValueInput struct {
-	PropertyID            ID   `json:"propertyId"`
-	SchemaGroupID         *ID  `json:"schemaGroupId,omitempty"`
-	ItemID                *ID  `json:"itemId,omitempty"`
-	FieldID               ID   `json:"fieldId"`
-	DatasetSchemaIds      []ID `json:"datasetSchemaIds"`
-	DatasetSchemaFieldIds []ID `json:"datasetSchemaFieldIds"`
-	DatasetIds            []ID `json:"datasetIds,omitempty"`
+	PropertyID    ID  `json:"propertyId"`
+	SchemaGroupID *ID `json:"schemaGroupId,omitempty"`
+	ItemID        *ID `json:"itemId,omitempty"`
+	FieldID       ID  `json:"fieldId"`
 }
 
 type Me struct {
@@ -415,14 +412,13 @@ type Me struct {
 }
 
 type MergedProperty struct {
-	OriginalID      *ID                    `json:"originalId,omitempty"`
-	ParentID        *ID                    `json:"parentId,omitempty"`
-	SchemaID        *ID                    `json:"schemaId,omitempty"`
-	LinkedDatasetID *ID                    `json:"linkedDatasetId,omitempty"`
-	Original        *Property              `json:"original,omitempty"`
-	Parent          *Property              `json:"parent,omitempty"`
-	Schema          *PropertySchema        `json:"schema,omitempty"`
-	Groups          []*MergedPropertyGroup `json:"groups"`
+	OriginalID *ID                    `json:"originalId,omitempty"`
+	ParentID   *ID                    `json:"parentId,omitempty"`
+	SchemaID   *ID                    `json:"schemaId,omitempty"`
+	Original   *Property              `json:"original,omitempty"`
+	Parent     *Property              `json:"parent,omitempty"`
+	Schema     *PropertySchema        `json:"schema,omitempty"`
+	Groups     []*MergedPropertyGroup `json:"groups"`
 }
 
 type MergedPropertyField struct {
@@ -430,7 +426,6 @@ type MergedPropertyField struct {
 	FieldID    ID                   `json:"fieldId"`
 	Value      any                  `json:"value,omitempty"`
 	Type       ValueType            `json:"type"`
-	Links      []*PropertyFieldLink `json:"links,omitempty"`
 	Overridden bool                 `json:"overridden"`
 	Schema     *PropertySchema      `json:"schema,omitempty"`
 	Field      *PropertySchemaField `json:"field,omitempty"`
@@ -443,7 +438,6 @@ type MergedPropertyGroup struct {
 	ParentID           *ID                    `json:"parentId,omitempty"`
 	SchemaGroupID      ID                     `json:"schemaGroupId"`
 	SchemaID           *ID                    `json:"schemaId,omitempty"`
-	LinkedDatasetID    *ID                    `json:"linkedDatasetId,omitempty"`
 	Fields             []*MergedPropertyField `json:"fields"`
 	Groups             []*MergedPropertyGroup `json:"groups"`
 	OriginalProperty   *Property              `json:"originalProperty,omitempty"`
@@ -660,8 +654,6 @@ type Policy struct {
 	PublishedProjectCount *int   `json:"publishedProjectCount,omitempty"`
 	LayerCount            *int   `json:"layerCount,omitempty"`
 	AssetStorageSize      *int64 `json:"assetStorageSize,omitempty"`
-	DatasetSchemaCount    *int   `json:"datasetSchemaCount,omitempty"`
-	DatasetCount          *int   `json:"datasetCount,omitempty"`
 	NlsLayersCount        *int   `json:"nlsLayersCount,omitempty"`
 	PageCount             *int   `json:"pageCount,omitempty"`
 	BlocksCount           *int   `json:"blocksCount,omitempty"`
@@ -754,18 +746,11 @@ type PropertyField struct {
 	ParentID ID                   `json:"parentId"`
 	SchemaID ID                   `json:"schemaId"`
 	FieldID  ID                   `json:"fieldId"`
-	Links    []*PropertyFieldLink `json:"links,omitempty"`
 	Type     ValueType            `json:"type"`
 	Value    any                  `json:"value,omitempty"`
 	Parent   *Property            `json:"parent,omitempty"`
 	Schema   *PropertySchema      `json:"schema,omitempty"`
 	Field    *PropertySchemaField `json:"field,omitempty"`
-}
-
-type PropertyFieldLink struct {
-	DatasetID            *ID `json:"datasetId,omitempty"`
-	DatasetSchemaID      ID  `json:"datasetSchemaId"`
-	DatasetSchemaFieldID ID  `json:"datasetSchemaFieldId"`
 }
 
 type PropertyFieldPayload struct {
@@ -1073,14 +1058,13 @@ func (Story) IsNode()        {}
 func (this Story) GetID() ID { return this.ID }
 
 type StoryBlock struct {
-	ID              ID               `json:"id"`
-	PluginID        ID               `json:"pluginId"`
-	Plugin          *Plugin          `json:"plugin,omitempty"`
-	ExtensionID     ID               `json:"extensionId"`
-	Extension       *PluginExtension `json:"extension,omitempty"`
-	PropertyID      ID               `json:"propertyId"`
-	Property        *Property        `json:"property,omitempty"`
-	LinkedDatasetID *ID              `json:"linkedDatasetId,omitempty"`
+	ID          ID               `json:"id"`
+	PluginID    ID               `json:"pluginId"`
+	Plugin      *Plugin          `json:"plugin,omitempty"`
+	ExtensionID ID               `json:"extensionId"`
+	Extension   *PluginExtension `json:"extension,omitempty"`
+	PropertyID  ID               `json:"propertyId"`
+	Property    *Property        `json:"property,omitempty"`
 }
 
 func (StoryBlock) IsNode()        {}

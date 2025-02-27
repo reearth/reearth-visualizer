@@ -11,17 +11,6 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 )
 
-func (l *PropertyFieldLink) Copy() *PropertyFieldLink {
-	if l == nil {
-		return nil
-	}
-	return &PropertyFieldLink{
-		DatasetID:            l.DatasetID,
-		DatasetSchemaID:      l.DatasetSchemaID,
-		DatasetSchemaFieldID: l.DatasetSchemaFieldID,
-	}
-}
-
 func (d *Property) Field(id id.PropertyFieldID) *PropertyField {
 	if d == nil || id == "" {
 		return nil
