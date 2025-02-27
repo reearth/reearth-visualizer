@@ -12,6 +12,7 @@ import {
   TimePointField,
   TwinInputField
 } from "@reearth/beta/ui/fields";
+import InputSelectField from "@reearth/beta/ui/fields/InputSelectField";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
@@ -20,7 +21,8 @@ export const FieldComponent = ({
   groupId,
   fieldId,
   field,
-  onPropertyUpdate
+  onPropertyUpdate,
+  sketchCustomProperties
 }: {
   propertyId: string;
   groupId: string;
@@ -49,8 +51,10 @@ export const FieldComponent = ({
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
+  sketchCustomProperties: string[] | undefined;
 }) => {
   const t = useT();
+  console.log(field);
   const handlePropertyValueUpdate = useCallback(
     (
       schemaGroupId: string,
@@ -82,6 +86,7 @@ export const FieldComponent = ({
           : undefined,
     [field.ui]
   );
+  console.log(field);
 
   return field?.type === "spacing" ? (
     <SpacingField
@@ -216,13 +221,42 @@ export const FieldComponent = ({
           field?.type
         )}
       />
-    ) : (
-      <InputField
+    ) : field?.ui === "dynamic_property_selector" ? (
+      <InputSelectField
         key={field.id}
         title={field?.title}
-        value={field?.value}
         description={field?.description}
         placeholder={field?.placeholder}
+        sketchCustomProperties={sketchCustomProperties}
+        displayValue="{}"
+        onBlur={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
+      />
+    ) : (
+      // <InputField
+      //   key={field.id}
+      //   title={field?.title}
+      //   value={field?.value}
+      //   description={field?.description}
+      //   placeholder={field?.placeholder}
+      //   onBlur={handlePropertyValueUpdate(
+      //     groupId,
+      //     propertyId,
+      //     fieldId,
+      //     field?.type
+      //   )}
+      // />
+      <InputSelectField
+        key={field.id}
+        title={field?.title}
+        description={field?.description}
+        placeholder={field?.placeholder}
+        sketchCustomProperties={sketchCustomProperties}
+        displayValue="{}"
         onBlur={handlePropertyValueUpdate(
           groupId,
           propertyId,

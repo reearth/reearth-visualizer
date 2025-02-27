@@ -3,19 +3,20 @@ package property
 type SchemaFieldUI string
 
 const (
-	SchemaFieldUIMultiline  SchemaFieldUI = "multiline"
-	SchemaFieldUISelection  SchemaFieldUI = "selection"
-	SchemaFieldUIColor      SchemaFieldUI = "color"
-	SchemaFieldUIRange      SchemaFieldUI = "range"
-	SchemaFieldUISlider     SchemaFieldUI = "slider"
-	SchemaFieldUIImage      SchemaFieldUI = "image"
-	SchemaFieldUIVideo      SchemaFieldUI = "video"
-	SchemaFieldUIFile       SchemaFieldUI = "file"
-	SchemaFieldUILayer      SchemaFieldUI = "layer"
-	SchemaFieldUICameraPose SchemaFieldUI = "camera_pose"
-	SchemaFieldUIDateTime   SchemaFieldUI = "datetime"
-	SchemaFieldUIMargin     SchemaFieldUI = "margin"
-	SchemaFieldUIPadding    SchemaFieldUI = "padding"
+	SchemaFieldUIMultiline  				SchemaFieldUI = "multiline"
+	SchemaFieldUISelection  				SchemaFieldUI = "selection"
+	SchemaFieldUIColor      				SchemaFieldUI = "color"
+	SchemaFieldUIRange      				SchemaFieldUI = "range"
+	SchemaFieldUISlider     				SchemaFieldUI = "slider"
+	SchemaFieldUIImage      				SchemaFieldUI = "image"
+	SchemaFieldUIVideo      				SchemaFieldUI = "video"
+	SchemaFieldUIFile       				SchemaFieldUI = "file"
+	SchemaFieldUILayer      				SchemaFieldUI = "layer"
+	SchemaFieldUICameraPose 				SchemaFieldUI = "camera_pose"
+	SchemaFieldUIDateTime   				SchemaFieldUI = "datetime"
+	SchemaFieldUIMargin     				SchemaFieldUI = "margin"
+	SchemaFieldUIPadding    				SchemaFieldUI = "padding"
+	SchemaFieldUIDynamicPropertySelector    SchemaFieldUI = "dynamic_property_selector"
 	// DON'T FORGET ADDING A NEW UI TO schemaFieldUIs ALSO!
 )
 
@@ -34,6 +35,7 @@ var (
 		SchemaFieldUIDateTime,
 		SchemaFieldUIMargin,
 		SchemaFieldUIPadding,
+		SchemaFieldUIDynamicPropertySelector,
 		// DON'T FORGET ADDING A NEW UI HERE ALSO!
 	}
 )

@@ -24,6 +24,7 @@ export type SelectorProps = {
   maxHeight?: number;
   size?: "normal" | "small";
   appearance?: "readonly";
+  displayValue?: string;
   onChange?: (value: string | string[]) => void;
 };
 
@@ -36,6 +37,7 @@ export const Selector: FC<SelectorProps> = ({
   placeholder,
   disabled,
   maxHeight,
+  displayValue,
   onChange
 }) => {
   const theme = useTheme();
@@ -43,15 +45,20 @@ export const Selector: FC<SelectorProps> = ({
   const selectorRef = useRef<HTMLDivElement>(null);
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
-  >(value ?? (multiple ? [] : undefined));
+  >(displayValue ?? value ?? (multiple ? [] : undefined));
+
+  useEffect(() => {
+    if (displayValue) {
+      setSelectedValue(displayValue);
+    } else {
+      setSelectedValue(value ?? (multiple ? [] : undefined));
+    }
+  }, [value, multiple, displayValue]);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectorWidth, setSelectorWidth] = useState<number>();
 
   const optionValues = useMemo(() => options, [options]);
-
-  useEffect(() => {
-    setSelectedValue(value ?? (multiple ? [] : undefined));
-  }, [value, multiple]);
 
   useEffect(() => {
     const selectorElement = selectorRef.current;
@@ -111,13 +118,14 @@ export const Selector: FC<SelectorProps> = ({
   );
 
   const selectedLabels = useMemo(() => {
+    if (displayValue) return [displayValue];
     if (Array.isArray(selectedValue)) {
       return selectedValue.map(
         (val) => optionValues.find((item) => item.value === val)?.label
       );
     }
     return [optionValues.find((item) => item.value === selectedValue)?.label];
-  }, [optionValues, selectedValue]);
+  }, [optionValues, selectedValue, displayValue]);
 
   const renderTrigger = () => {
     return (
@@ -185,7 +193,10 @@ export const Selector: FC<SelectorProps> = ({
         disabled={disabled}
         placement="bottom-start"
       >
-        <DropDownWrapper maxHeight={maxHeight} width={selectorWidth}>
+        <DropDownWrapper
+          maxHeight={maxHeight}
+          width={displayValue ? 107 : selectorWidth}
+        >
           {optionValues.length === 0 ? (
             <DropDownItem>
               <Typography size="body" color={theme.content.weaker}>

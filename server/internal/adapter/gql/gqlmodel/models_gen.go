@@ -2466,6 +2466,7 @@ const (
 	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
 	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
 	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
+	PropertySchemaFieldUIDynamicPropertySelector    PropertySchemaFieldUI = "DYNAMIC_PROPERTY_SELECTOR"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -2482,11 +2483,12 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIDatetime,
 	PropertySchemaFieldUIMargin,
 	PropertySchemaFieldUIPadding,
+	PropertySchemaFieldUIDynamicPropertySelector,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding, PropertySchemaFieldUIDynamicPropertySelector:
 		return true
 	}
 	return false
