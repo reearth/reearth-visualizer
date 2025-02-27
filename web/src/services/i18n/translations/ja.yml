@@ -152,8 +152,8 @@ Custom Properties: カスタムプロパティ
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
-Photo Overlay: ''
-Photo Overlay Set: ''
+Photo Overlay: フォトオーバーレイ
+Photo Overlay Set: フォトオーバーレイ設定
 Not set: 設定されていません
 Layer: レイヤー
 Feature: 地物
@@ -191,14 +191,14 @@ italic: イタリック
 New node: 新しいノード
 Assign style: スタイルの割り当て
 New style: 新しいスタイル
-Contain: ''
-Fixed: ''
-Photo transparency: ''
-PhotoOverlay settings: ''
-Photo: ''
-Photo size type: ''
-Fixed photo size: ''
-Photo description: ''
+Contain: 含む
+Fixed: 固定
+Photo transparency: フォト透過度
+PhotoOverlay settings: フォトオーバーレイ設定
+Photo: フォト
+Photo size type: フォトサイズタイプ
+Fixed photo size: 固定フォトサイズ
+Photo description: フォト説明
 Camera: カメラ
 Main: メイン
 Tiles: タイル
