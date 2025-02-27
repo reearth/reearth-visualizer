@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID          ItemID
-		SchemaGroup SchemaGroupID
+		SchemaGroup id.PropertySchemaGroupID
 		Groups      []*Group
 	}
 
@@ -81,7 +82,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 
 	type args struct {
 		ID          ItemID
-		SchemaGroup SchemaGroupID
+		SchemaGroup id.PropertySchemaGroupID
 		Groups      []*Group
 	}
 
@@ -148,7 +149,7 @@ func TestInitGroupListFrom(t *testing.T) {
 	tests := []struct {
 		Name        string
 		SchemaGroup *SchemaGroup
-		Expected    SchemaGroupID
+		Expected    id.PropertySchemaGroupID
 	}{
 		{
 			Name: "nil schema group",

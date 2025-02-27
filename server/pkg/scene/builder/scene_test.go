@@ -3,6 +3,7 @@ package builder
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +21,7 @@ func TestScene_FindProperty(t *testing.T) {
 	tests := []struct {
 		Name     string
 		PL       []*property.Property
-		Input    property.ID
+		Input    id.PropertyID
 		Expected *property.Property
 	}{
 		{

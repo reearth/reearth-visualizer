@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -274,7 +275,7 @@ func (p *PropertyPointer) pointer() *property.SchemaFieldPointer {
 		return nil
 	}
 	return &property.SchemaFieldPointer{
-		SchemaGroup: property.SchemaGroupID(p.SchemaGroupID),
+		SchemaGroup: id.PropertySchemaGroupID(p.SchemaGroupID),
 		Field:       property.FieldID(p.FieldID),
 	}
 }
@@ -318,7 +319,7 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 	}
 
 	return property.NewSchemaGroup().
-		ID(property.SchemaGroupID(i.ID)).
+		ID(id.PropertySchemaGroupID(i.ID)).
 		IsList(i.List).
 		Fields(fields).
 		Title(title).

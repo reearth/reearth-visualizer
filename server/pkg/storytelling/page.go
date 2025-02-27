@@ -11,7 +11,7 @@ import (
 
 type Page struct {
 	id              PageID
-	property        PropertyID
+	property        id.PropertyID
 	title           string
 	swipeable       bool
 	layers          id.NLSLayerIDList
@@ -19,7 +19,7 @@ type Page struct {
 	blocks          BlockList
 }
 
-// func NewPage(blocks BlockList, p PropertyID) *Page {
+// func NewPage(blocks BlockList, p id.PropertyID) *Page {
 // 	Page := Page{
 // 		property: p,
 // 		blocks:   make(BlockList, len(blocks)),
@@ -86,11 +86,11 @@ func (p *Page) RemoveSwipeableLayer(layer id.NLSLayerID) {
 	p.swipeableLayers = p.swipeableLayers.Delete(layer)
 }
 
-func (p *Page) Property() PropertyID {
+func (p *Page) Property() id.PropertyID {
 	return p.property
 }
 
-func (p *Page) PropertyRef() *PropertyID {
+func (p *Page) PropertyRef() *id.PropertyID {
 	if p == nil {
 		return nil
 	}
@@ -203,12 +203,12 @@ func (p *Page) RemoveBlock(block BlockID) {
 	}
 }
 
-func (p *Page) RemoveBlocksByPlugin(pid PluginID, eid *PluginExtensionID) []PropertyID {
+func (p *Page) RemoveBlocksByPlugin(pid PluginID, eid *PluginExtensionID) []id.PropertyID {
 	if p == nil {
 		return nil
 	}
 
-	var properties []PropertyID
+	var properties []id.PropertyID
 	for j := 0; j < len(p.blocks); j++ {
 		if p.blocks[j].plugin.Equal(pid) && (eid == nil || p.blocks[j].Extension() == *eid) {
 			properties = append(properties, p.blocks[j].Property())

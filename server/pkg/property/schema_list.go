@@ -1,10 +1,13 @@
 package property
 
-import "github.com/reearth/reearthx/util"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/util"
+)
 
 type SchemaList []*Schema
 
-func (l SchemaList) Find(psid SchemaID) *Schema {
+func (l SchemaList) Find(psid id.PropertySchemaID) *Schema {
 	for _, s := range l {
 		if s != nil && s.ID().Equal(psid) {
 			return s
@@ -14,7 +17,7 @@ func (l SchemaList) Find(psid SchemaID) *Schema {
 }
 
 func (l SchemaList) Map() SchemaMap {
-	return util.MapWithIDFunc[SchemaID, Schema](l, (*Schema).ID, false)
+	return util.MapWithIDFunc[id.PropertySchemaID, Schema](l, (*Schema).ID, false)
 }
 
 func (l SchemaList) Loader() SchemaLoader {
@@ -25,7 +28,7 @@ func (l SchemaList) Concat(m SchemaList) SchemaList {
 	return append(l, m...)
 }
 
-func (l SchemaList) MapToIDs(ids []SchemaID) SchemaList {
+func (l SchemaList) MapToIDs(ids []id.PropertySchemaID) SchemaList {
 	results := make(SchemaList, 0, len(ids))
 	for _, id := range ids {
 		results = append(results, l.Find(id))
@@ -33,7 +36,7 @@ func (l SchemaList) MapToIDs(ids []SchemaID) SchemaList {
 	return results
 }
 
-type SchemaMap map[SchemaID]*Schema
+type SchemaMap map[id.PropertySchemaID]*Schema
 
 func (m SchemaMap) Add(schemas ...*Schema) {
 	if m == nil {
@@ -48,11 +51,11 @@ func (m SchemaMap) Add(schemas ...*Schema) {
 }
 
 func (m SchemaMap) List() SchemaList {
-	return util.MapList[SchemaID, Schema](m, false)
+	return util.MapList[id.PropertySchemaID, Schema](m, false)
 }
 
 func (m SchemaMap) Clone() SchemaMap {
-	return util.Clone[SchemaID, Schema](m)
+	return util.Clone[id.PropertySchemaID, Schema](m)
 }
 
 func (m SchemaMap) Merge(m2 SchemaMap) SchemaMap {

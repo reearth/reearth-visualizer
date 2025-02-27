@@ -25,19 +25,6 @@ func UnmarshalPropertyFieldID(v interface{}) (id.PropertyFieldID, error) {
 	return id.PropertyFieldID(""), errors.New("invalid ID")
 }
 
-func MarshalDatasetFieldID(t id.DatasetFieldID) graphql.Marshaler {
-	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(t.String()))
-	})
-}
-
-func UnmarshalDatasetFieldID(v interface{}) (id.DatasetFieldID, error) {
-	if tmpStr, ok := v.(string); ok {
-		return id.DatasetFieldIDFrom(tmpStr)
-	}
-	return id.NewDatasetFieldID(), errors.New("invalid ID")
-}
-
 func MarshalPluginID(t id.PluginID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
 		_, _ = io.WriteString(w, strconv.Quote(t.String()))

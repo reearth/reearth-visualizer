@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-	http2 "github.com/reearth/reearth/server/internal/adapter/http"
 
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
@@ -58,22 +57,24 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}
 
 	// auth
-	authConfig := cfg.Config.JWTProviders()
-	log.Infof("auth: config: %#v", authConfig)
-
 	var wrapHandler func(http.Handler) http.Handler
 	if cfg.Config.UseMockAuth() {
 		log.Infof("Using mock auth for local development")
 		wrapHandler = func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 				ctx := r.Context()
 				ctx = adapter.AttachMockAuth(ctx, true)
 				next.ServeHTTP(w, r.WithContext(ctx))
 			})
 		}
 	} else {
-		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+		authConfig := cfg.Config.JWTProviders()
+		log.Infof("auth: config: %#v", authConfig)
+		if cfg.Config.AuthSrv.Disabled {
+			wrapHandler = lo.Must(AuthMiddlewareDummy())
+		} else {
+			wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+		}
 	}
 
 	e.Use(echo.WrapMiddleware(wrapHandler))
@@ -130,8 +131,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	apiPrivate := api.Group("", privateCache)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
-	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
-	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {
@@ -157,6 +156,12 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}).Handler(e)
 
 	return e
+}
+
+func AuthMiddlewareDummy() (func(http.Handler) http.Handler, error) {
+	return func(next http.Handler) http.Handler {
+		return next
+	}, nil
 }
 
 func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {

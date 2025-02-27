@@ -1,7 +1,9 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type SchemaFieldPointer struct {
-	SchemaGroup SchemaGroupID
+	SchemaGroup id.PropertySchemaGroupID
 	Field       FieldID
 }
 

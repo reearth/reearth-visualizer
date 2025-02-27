@@ -35,7 +35,7 @@ func (b *PageBuilder) NewID() *PageBuilder {
 	return b
 }
 
-func (b *PageBuilder) Property(property PropertyID) *PageBuilder {
+func (b *PageBuilder) Property(property id.PropertyID) *PageBuilder {
 	b.page.property = property
 	return b
 }

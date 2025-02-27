@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
@@ -61,7 +62,7 @@ func (b *ExtensionBuilder) Icon(icon string) *ExtensionBuilder {
 	return b
 }
 
-func (b *ExtensionBuilder) Schema(schema PropertySchemaID) *ExtensionBuilder {
+func (b *ExtensionBuilder) Schema(schema id.PropertySchemaID) *ExtensionBuilder {
 	b.p.schema = schema
 	return b
 }

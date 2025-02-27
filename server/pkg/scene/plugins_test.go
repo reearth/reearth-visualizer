@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -73,7 +74,7 @@ func TestPlugins_Property(t *testing.T) {
 		Name     string
 		Input    PluginID
 		PS       *Plugins
-		Expected *PropertyID
+		Expected *id.PropertyID
 	}{
 		{
 			Name:     "property is found",
@@ -180,7 +181,7 @@ func TestPlugins_Properties(t *testing.T) {
 	tests := []struct {
 		Name     string
 		PS       *Plugins
-		Expected []PropertyID
+		Expected []id.PropertyID
 	}{
 		{
 			Name:     "plugins is nil",
@@ -193,7 +194,7 @@ func TestPlugins_Properties(t *testing.T) {
 				NewPlugin(MustPluginID("zzz~1.1.1"), pr),
 				NewPlugin(MustPluginID("xxx~1.1.1"), pr2),
 			}),
-			Expected: []PropertyID{*pr, *pr2},
+			Expected: []id.PropertyID{*pr, *pr2},
 		},
 	}
 
@@ -401,7 +402,7 @@ func TestPlugins_Upgrade(t *testing.T) {
 	type args struct {
 		From           PluginID
 		To             PluginID
-		Property       *PropertyID
+		Property       *id.PropertyID
 		DeleteProperty bool
 	}
 

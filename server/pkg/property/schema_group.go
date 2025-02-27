@@ -2,11 +2,12 @@ package property
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 // SchemaGroup represents a group of property that has some fields
 type SchemaGroup struct {
-	id                  SchemaGroupID
+	id                  id.PropertySchemaGroupID
 	fields              []*SchemaField
 	list                bool
 	isAvailableIf       *Condition
@@ -16,14 +17,14 @@ type SchemaGroup struct {
 }
 
 // ID returns id
-func (s *SchemaGroup) ID() SchemaGroupID {
+func (s *SchemaGroup) ID() id.PropertySchemaGroupID {
 	if s == nil {
-		return SchemaGroupID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return s.id
 }
 
-func (s *SchemaGroup) IDRef() *SchemaGroupID {
+func (s *SchemaGroup) IDRef() *id.PropertySchemaGroupID {
 	if s == nil {
 		return nil
 	}

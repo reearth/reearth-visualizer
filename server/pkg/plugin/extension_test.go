@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +16,7 @@ func TestExtension(t *testing.T) {
 		Name         i18n.String
 		Description  i18n.String
 		Icon         string
-		Schema       PropertySchemaID
+		Schema       id.PropertySchemaID
 		Visualizer   visualizer.Visualizer
 		SingleOnly   bool
 		WidgetLayout *WidgetLayout

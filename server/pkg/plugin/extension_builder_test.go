@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/stretchr/testify/assert"
 )
@@ -73,7 +74,7 @@ func TestExtensionBuilder_Build(t *testing.T) {
 		system        bool
 		ename         i18n.String
 		description   i18n.String
-		schema        PropertySchemaID
+		schema        id.PropertySchemaID
 		visualizer    visualizer.Visualizer
 		widgetLayout  *WidgetLayout
 	}
@@ -172,7 +173,7 @@ func TestExtensionBuilder_MustBuild(t *testing.T) {
 		system        bool
 		ename         i18n.String
 		description   i18n.String
-		schema        PropertySchemaID
+		schema        id.PropertySchemaID
 		visualizer    visualizer.Visualizer
 		widgetLayout  *WidgetLayout
 		singleOnly    bool

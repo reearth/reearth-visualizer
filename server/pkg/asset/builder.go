@@ -54,6 +54,11 @@ func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
 	return b
 }
 
+func (b *Builder) Project(project *ProjectID) *Builder {
+	b.a.project = project
+	return b
+}
+
 func (b *Builder) Name(name string) *Builder {
 	b.a.name = name
 	return b

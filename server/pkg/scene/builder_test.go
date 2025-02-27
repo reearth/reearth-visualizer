@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,7 +72,7 @@ func TestBuilder_Build(t *testing.T) {
 		Widgets   *Widgets
 		Plugins   *Plugins
 		UpdatedAt time.Time
-		Property  PropertyID
+		Property  id.PropertyID
 	}
 
 	tests := []struct {
@@ -173,7 +174,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		WidgetAlignSystem *WidgetAlignSystem
 		Plugins           *Plugins
 		UpdatedAt         time.Time
-		Property          PropertyID
+		Property          id.PropertyID
 	}
 
 	tests := []struct {

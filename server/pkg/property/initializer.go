@@ -4,14 +4,16 @@ package property
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var ErrSchemaDoesNotMatch = errors.New("schema of the initializer does not match schema of the argument")
 
 type Initializer struct {
-	ID     *ID                `json:"id"`
-	Schema SchemaID           `json:"schema"`
-	Items  []*InitializerItem `json:"items"`
+	ID     *id.PropertyID      `json:"id"`
+	Schema id.PropertySchemaID `json:"schema"`
+	Items  []*InitializerItem  `json:"items"`
 }
 
 func (p *Initializer) Clone() *Initializer {
@@ -60,7 +62,7 @@ func (p *Initializer) Property(scene SceneID) (*Property, error) {
 }
 
 // PropertyIncludingEmpty generates a new property, but even if the initializer is empty, an empty property will be generated.
-func (p *Initializer) PropertyIncludingEmpty(scene SceneID, schema SchemaID) (*Property, error) {
+func (p *Initializer) PropertyIncludingEmpty(scene SceneID, schema id.PropertySchemaID) (*Property, error) {
 	if p != nil && p.Schema != schema {
 		return nil, ErrSchemaDoesNotMatch
 	}
@@ -89,10 +91,10 @@ func (p *Initializer) MustBeProperty(scene SceneID) *Property {
 }
 
 type InitializerItem struct {
-	ID         *ItemID             `json:"id"`
-	SchemaItem SchemaGroupID       `json:"schemaItem"`
-	Groups     []*InitializerGroup `json:"groups"`
-	Fields     []*InitializerField `json:"fields"`
+	ID         *ItemID                  `json:"id"`
+	SchemaItem id.PropertySchemaGroupID `json:"schemaItem"`
+	Groups     []*InitializerGroup      `json:"groups"`
+	Fields     []*InitializerField      `json:"fields"`
 }
 
 func (p *InitializerItem) Clone() *InitializerItem {
@@ -204,7 +206,7 @@ func (p *InitializerGroup) Clone() *InitializerGroup {
 	}
 }
 
-func (p *InitializerGroup) PropertyGroup(parentItem SchemaGroupID) (*Group, error) {
+func (p *InitializerGroup) PropertyGroup(parentItem id.PropertySchemaGroupID) (*Group, error) {
 	if p == nil {
 		return nil, nil
 	}
@@ -230,10 +232,9 @@ func (p *InitializerGroup) PropertyGroup(parentItem SchemaGroupID) (*Group, erro
 }
 
 type InitializerField struct {
-	Field FieldID            `json:"field"`
-	Type  ValueType          `json:"type"`
-	Value *Value             `json:"value"`
-	Links []*InitializerLink `json:"links"`
+	Field FieldID   `json:"field"`
+	Type  ValueType `json:"type"`
+	Value *Value    `json:"value"`
 }
 
 func (p *InitializerField) Clone() *InitializerField {
@@ -241,19 +242,10 @@ func (p *InitializerField) Clone() *InitializerField {
 		return nil
 	}
 
-	var links []*InitializerLink
-	if p.Links != nil {
-		links = make([]*InitializerLink, 0, len(p.Links))
-		for _, l := range p.Links {
-			links = append(links, l.Clone())
-		}
-	}
-
 	return &InitializerField{
 		Field: p.Field,
 		Type:  p.Type,
 		Value: p.Value.Clone(),
-		Links: links,
 	}
 }
 
@@ -262,50 +254,7 @@ func (p *InitializerField) PropertyField() *Field {
 		return nil
 	}
 
-	var plinks *Links
-	if p.Links != nil {
-		links := make([]*Link, 0, len(p.Links))
-		for _, l := range p.Links {
-			link := l.PropertyLink()
-			if link != nil {
-				links = append(links, link)
-			}
-		}
-		plinks = NewLinks(links)
-	}
-
 	return NewField(p.Field).
 		Value(NewOptionalValue(p.Type, p.Value.Clone())).
-		Links(plinks).
 		Build()
-}
-
-type InitializerLink struct {
-	Dataset *DatasetID      `json:"dataset"`
-	Schema  DatasetSchemaID `json:"schema"`
-	Field   DatasetFieldID  `json:"field"`
-}
-
-func (p *InitializerLink) Clone() *InitializerLink {
-	if p == nil {
-		return nil
-	}
-
-	return &InitializerLink{
-		Dataset: p.Dataset.CloneRef(),
-		Schema:  p.Schema,
-		Field:   p.Field,
-	}
-}
-
-func (p *InitializerLink) PropertyLink() *Link {
-	if p == nil {
-		return nil
-	}
-
-	if p.Dataset == nil {
-		return NewLinkFieldOnly(p.Schema, p.Field)
-	}
-
-	return NewLink(*p.Dataset, p.Schema, p.Field)
 }

@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +17,7 @@ func TestNewWidget(t *testing.T) {
 		ID        WidgetID
 		Plugin    PluginID
 		Extension PluginExtensionID
-		Property  PropertyID
+		Property  id.PropertyID
 		Enabled   bool
 		Extended  bool
 		Err       error
@@ -72,7 +73,7 @@ func TestMustNewWidget(t *testing.T) {
 		ID        WidgetID
 		Plugin    PluginID
 		Extension PluginExtensionID
-		Property  PropertyID
+		Property  id.PropertyID
 		Enabled   bool
 		Extended  bool
 		Err       error

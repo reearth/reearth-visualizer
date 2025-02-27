@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/samber/lo"
 )
 
 func (r *Resolver) Story() StoryResolver {
@@ -27,32 +26,6 @@ func (r *Resolver) StoryPage() StoryPageResolver {
 }
 
 type storyPageResolver struct{ *Resolver }
-
-func (s storyPageResolver) Layers(ctx context.Context, obj *gqlmodel.StoryPage) ([]gqlmodel.Layer, error) {
-	layers, err := dataloaders(ctx).Layer.LoadAll(obj.LayersIds)
-	if len(err) > 0 && err[0] != nil {
-		return nil, err[0]
-	}
-	return lo.Map(layers, func(l *gqlmodel.Layer, _ int) gqlmodel.Layer {
-		if l == nil {
-			return nil
-		}
-		return *l
-	}), nil
-}
-
-func (s storyPageResolver) SwipeableLayers(ctx context.Context, obj *gqlmodel.StoryPage) ([]gqlmodel.Layer, error) {
-	layers, err := dataloaders(ctx).Layer.LoadAll(obj.SwipeableLayersIds)
-	if len(err) > 0 && err[0] != nil {
-		return nil, err[0]
-	}
-	return lo.Map(layers, func(l *gqlmodel.Layer, _ int) gqlmodel.Layer {
-		if l == nil {
-			return nil
-		}
-		return *l
-	}), nil
-}
 
 func (s storyPageResolver) Property(ctx context.Context, obj *gqlmodel.StoryPage) (*gqlmodel.Property, error) {
 	return dataloaders(ctx).Property.Load(obj.PropertyID)

@@ -3,6 +3,7 @@ package manifest
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
@@ -171,7 +172,7 @@ func TestDiff_DeletedPropertySchemas(t *testing.T) {
 	tests := []struct {
 		name   string
 		target Diff
-		want   []property.SchemaID
+		want   []id.PropertySchemaID
 	}{
 		{
 			name: "ok",
@@ -185,7 +186,7 @@ func TestDiff_DeletedPropertySchemas(t *testing.T) {
 					{PropertySchemaID: ps2},
 				},
 			},
-			want: []property.SchemaID{
+			want: []id.PropertySchemaID{
 				ps1,
 				ps2,
 			},
@@ -193,7 +194,7 @@ func TestDiff_DeletedPropertySchemas(t *testing.T) {
 		{
 			name:   "empty",
 			target: Diff{},
-			want:   []property.SchemaID{},
+			want:   []id.PropertySchemaID{},
 		},
 	}
 

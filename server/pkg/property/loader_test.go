@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +35,7 @@ func TestLoaderFromMap(t *testing.T) {
 	p1 := New().ID(pid1).Scene(scene).Schema(ps).MustBuild()
 	p2 := New().ID(pid2).Scene(scene).Schema(ps).MustBuild()
 
-	pl := LoaderFromMap(map[ID]*Property{
+	pl := LoaderFromMap(map[id.PropertyID]*Property{
 		pid1: p1,
 		pid2: p2,
 	})
@@ -62,7 +63,7 @@ func TestSchemaLoaderFromMap(t *testing.T) {
 	ps1 := NewSchema().ID(psid1).MustBuild()
 	ps2 := NewSchema().ID(psid2).MustBuild()
 
-	pl := SchemaLoaderFromMap(map[SchemaID]*Schema{
+	pl := SchemaLoaderFromMap(map[id.PropertySchemaID]*Schema{
 		psid1: ps1,
 		psid2: ps2,
 	})

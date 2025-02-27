@@ -3,6 +3,7 @@ package builtin
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -80,7 +81,7 @@ func TestGetPlugin(t *testing.T) {
 func TestGetPropertySchema(t *testing.T) {
 	tests := []struct {
 		name        string
-		psId        property.SchemaID
+		psId        id.PropertySchemaID
 		expectedNil bool
 	}{
 		{

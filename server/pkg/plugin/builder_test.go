@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +35,7 @@ func TestBuilder_Description(t *testing.T) {
 func TestBuilder_Schema(t *testing.T) {
 	tests := []struct {
 		name          string
-		sid, expected *PropertySchemaID
+		sid, expected *id.PropertySchemaID
 	}{
 		{
 			name:     "nil schema",
@@ -80,7 +81,7 @@ func TestBuilder_Build(t *testing.T) {
 		author, repositoryURL string
 		pname, description    i18n.String
 		ext                   []*Extension
-		schema                *PropertySchemaID
+		schema                *id.PropertySchemaID
 	}
 
 	tests := []struct {
@@ -147,7 +148,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		id                    ID
 		pname, description    i18n.String
 		ext                   []*Extension
-		schema                *PropertySchemaID
+		schema                *id.PropertySchemaID
 	}
 
 	tests := []struct {

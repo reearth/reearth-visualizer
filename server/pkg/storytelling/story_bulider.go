@@ -2,6 +2,8 @@ package storytelling
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type StoryBuilder struct {
@@ -44,7 +46,7 @@ func (b *StoryBuilder) NewID() *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) Property(property PropertyID) *StoryBuilder {
+func (b *StoryBuilder) Property(property id.PropertyID) *StoryBuilder {
 	b.s.property = property
 	return b
 }
@@ -118,5 +120,15 @@ func (b *StoryBuilder) PublicImage(image string) *StoryBuilder {
 
 func (b *StoryBuilder) PublicNoIndex(noIndex bool) *StoryBuilder {
 	b.s.publicNoIndex = noIndex
+	return b
+}
+
+func (b *StoryBuilder) EnableGa(enableGa bool) *StoryBuilder {
+	b.s.enableGa = enableGa
+	return b
+}
+
+func (b *StoryBuilder) TrackingID(trackingID string) *StoryBuilder {
+	b.s.trackingID = trackingID
 	return b
 }

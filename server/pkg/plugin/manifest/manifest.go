@@ -1,6 +1,7 @@
 package manifest
 
 import (
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 )
@@ -19,7 +20,7 @@ func (m Manifest) PropertySchemas() property.SchemaList {
 	return sl
 }
 
-func (m Manifest) PropertySchema(psid property.SchemaID) *property.Schema {
+func (m Manifest) PropertySchema(psid id.PropertySchemaID) *property.Schema {
 	if psid.IsNil() {
 		return nil
 	}

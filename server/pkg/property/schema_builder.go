@@ -2,6 +2,8 @@ package property
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -38,7 +40,7 @@ func (b *SchemaBuilder) MustBuild() *Schema {
 	return p
 }
 
-func (b *SchemaBuilder) ID(id SchemaID) *SchemaBuilder {
+func (b *SchemaBuilder) ID(id id.PropertySchemaID) *SchemaBuilder {
 	b.p.id = id
 	return b
 }

@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,166 +27,10 @@ func TestGroup_SchemaGroup(t *testing.T) {
 	var g *Group
 	assert.Nil(t, g.SchemaGroupRef())
 
-	pfid := SchemaGroupID("aa")
+	pfid := id.PropertySchemaGroupID("aa")
 	g = NewGroup().NewID().SchemaGroup(pfid).MustBuild()
 	assert.Equal(t, pfid, g.SchemaGroup())
 	assert.Equal(t, pfid.Ref(), g.SchemaGroupRef())
-}
-
-func TestGroup_HasLinkedField(t *testing.T) {
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	l := NewLink(NewDatasetID(), NewDatasetSchemaID(), NewDatasetFieldID())
-	ls := NewLinks([]*Link{l})
-	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
-	f2 := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
-
-	tests := []struct {
-		Name     string
-		Group    *Group
-		Expected bool
-	}{
-		{
-			Name:     "nil group",
-			Group:    nil,
-			Expected: false,
-		},
-		{
-			Name:     "true",
-			Group:    NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f}).MustBuild(),
-			Expected: true,
-		},
-		{
-			Name:     "false",
-			Group:    NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f2}).MustBuild(),
-			Expected: false,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tt.Group.HasLinkedField()
-			assert.Equal(t, tt.Expected, res)
-		})
-	}
-}
-func TestGroup_IsDatasetLinked(t *testing.T) {
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	dssid := NewDatasetSchemaID()
-	l := NewLink(dsid, dssid, NewDatasetFieldID())
-	ls := NewLinks([]*Link{l})
-	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
-	f2 := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
-
-	tests := []struct {
-		Name          string
-		Group         *Group
-		DatasetSchema DatasetSchemaID
-		Dataset       DatasetID
-		Expected      bool
-	}{
-		{
-			Name: "nil group",
-		},
-		{
-			Name:          "true",
-			Group:         NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f}).MustBuild(),
-			Dataset:       dsid,
-			DatasetSchema: dssid,
-			Expected:      true,
-		},
-		{
-			Name:     "false",
-			Group:    NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f2}).MustBuild(),
-			Expected: false,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tt.Group.IsDatasetLinked(tt.DatasetSchema, tt.Dataset)
-			assert.Equal(t, tt.Expected, res)
-		})
-	}
-}
-
-func TestGroup_Datasets(t *testing.T) {
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	l := NewLink(dsid, NewDatasetSchemaID(), NewDatasetFieldID())
-	ls := NewLinks([]*Link{l})
-	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
-
-	tests := []struct {
-		Name     string
-		Group    *Group
-		Expected []DatasetID
-	}{
-		{
-			Name:     "nil group",
-			Group:    nil,
-			Expected: nil,
-		},
-		{
-			Name:     "normal case",
-			Group:    NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f}).MustBuild(),
-			Expected: []DatasetID{dsid},
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tt.Group.Datasets()
-			assert.Equal(t, tt.Expected, res)
-		})
-	}
-}
-
-func TestGroup_FieldsByLinkedDataset(t *testing.T) {
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	dssid := NewDatasetSchemaID()
-	l := NewLink(dsid, dssid, NewDatasetFieldID())
-	ls := NewLinks([]*Link{l})
-	f := FieldFrom(sf).Value(OptionalValueFrom(v)).Links(ls).MustBuild()
-
-	tests := []struct {
-		Name          string
-		Group         *Group
-		DatasetSchema DatasetSchemaID
-		DataSet       DatasetID
-		Expected      []*Field
-	}{
-		{
-			Name: "nil group",
-		},
-		{
-			Name:          "normal case",
-			DataSet:       dsid,
-			DatasetSchema: dssid,
-			Group:         NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f}).MustBuild(),
-			Expected:      []*Field{f},
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.Name, func(t *testing.T) {
-			t.Parallel()
-			res := tt.Group.FieldsByLinkedDataset(tt.DatasetSchema, tt.DataSet)
-			assert.Equal(t, tt.Expected, res)
-		})
-	}
 }
 
 func TestGroup_IsEmpty(t *testing.T) {

@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -68,7 +69,7 @@ func (b *Builder) Extensions(extensions []*Extension) *Builder {
 	return b
 }
 
-func (b *Builder) Schema(schema *PropertySchemaID) *Builder {
+func (b *Builder) Schema(schema *id.PropertySchemaID) *Builder {
 	b.p.schema = schema.CopyRef()
 	return b
 }

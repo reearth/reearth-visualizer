@@ -11,8 +11,6 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -25,6 +23,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -33,45 +32,37 @@ import (
 type Project struct {
 	common
 	commonSceneLock
-	assetRepo         repo.Asset
-	projectRepo       repo.Project
-	storytellingRepo  repo.Storytelling
-	userRepo          accountrepo.User
-	workspaceRepo     accountrepo.Workspace
-	sceneRepo         repo.Scene
-	propertyRepo      repo.Property
-	layerRepo         repo.Layer
-	datasetRepo       repo.Dataset
-	datasetSchemaRepo repo.DatasetSchema
-	tagRepo           repo.Tag
-	transaction       usecasex.Transaction
-	policyRepo        repo.Policy
-	file              gateway.File
-	nlsLayerRepo      repo.NLSLayer
-	layerStyles       repo.Style
-	pluginRepo        repo.Plugin
+	assetRepo        repo.Asset
+	projectRepo      repo.Project
+	storytellingRepo repo.Storytelling
+	userRepo         accountrepo.User
+	workspaceRepo    accountrepo.Workspace
+	sceneRepo        repo.Scene
+	propertyRepo     repo.Property
+	transaction      usecasex.Transaction
+	policyRepo       repo.Policy
+	file             gateway.File
+	nlsLayerRepo     repo.NLSLayer
+	layerStyles      repo.Style
+	pluginRepo       repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
-		commonSceneLock:   commonSceneLock{sceneLockRepo: r.SceneLock},
-		assetRepo:         r.Asset,
-		projectRepo:       r.Project,
-		storytellingRepo:  r.Storytelling,
-		userRepo:          r.User,
-		workspaceRepo:     r.Workspace,
-		sceneRepo:         r.Scene,
-		propertyRepo:      r.Property,
-		layerRepo:         r.Layer,
-		datasetRepo:       r.Dataset,
-		datasetSchemaRepo: r.DatasetSchema,
-		tagRepo:           r.Tag,
-		transaction:       r.Transaction,
-		policyRepo:        r.Policy,
-		file:              gr.File,
-		nlsLayerRepo:      r.NLSLayer,
-		layerStyles:       r.Style,
-		pluginRepo:        r.Plugin,
+		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
+		assetRepo:        r.Asset,
+		projectRepo:      r.Project,
+		storytellingRepo: r.Storytelling,
+		userRepo:         r.User,
+		workspaceRepo:    r.Workspace,
+		sceneRepo:        r.Scene,
+		propertyRepo:     r.Property,
+		transaction:      r.Transaction,
+		policyRepo:       r.Policy,
+		file:             gr.File,
+		nlsLayerRepo:     r.NLSLayer,
+		layerStyles:      r.Style,
+		pluginRepo:       r.Plugin,
 	}
 }
 
@@ -426,7 +417,6 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		r, w := io.Pipe()
 
 		// Build
-		scenes := []id.SceneID{sceneID}
 		go func() {
 			var err error
 
@@ -435,11 +425,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			}()
 
 			err = builder.New(
-				repo.LayerLoaderFrom(i.layerRepo),
 				repo.PropertyLoaderFrom(i.propertyRepo),
-				repo.DatasetGraphLoaderFrom(i.datasetRepo),
-				repo.TagLoaderFrom(i.tagRepo),
-				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
 				false,
 			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
@@ -493,12 +479,9 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 
 	deleter := ProjectDeleter{
 		SceneDeleter: SceneDeleter{
-			Scene:         i.sceneRepo,
-			SceneLock:     i.sceneLockRepo,
-			Layer:         i.layerRepo,
-			Property:      i.propertyRepo,
-			Dataset:       i.datasetRepo,
-			DatasetSchema: i.datasetSchemaRepo,
+			Scene:     i.sceneRepo,
+			SceneLock: i.sceneLockRepo,
+			Property:  i.propertyRepo,
 		},
 		File:    i.file,
 		Project: i.projectRepo,
@@ -511,7 +494,7 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
@@ -524,25 +507,8 @@ func (i *Project) ExportProject(ctx context.Context, projectID id.ProjectID, zip
 
 	// project image
 	if prj.ImageURL() != nil {
-		trimmedName := strings.TrimPrefix(prj.ImageURL().Path, "/assets/")
-		stream, err := i.file.ReadAsset(ctx, trimmedName)
+		err := AddZipAsset(ctx, i.file, zipWriter, prj.ImageURL().Path)
 		if err != nil {
-			return prj, nil // skip if external URL
-			// return nil, errors.New("assets " + err.Error())
-		}
-		defer func() {
-			if cerr := stream.Close(); cerr != nil {
-				fmt.Printf("Error closing file: %v\n", cerr)
-			}
-		}()
-		zipEntryPath := fmt.Sprintf("assets/%s", trimmedName)
-		zipEntry, err := zipWriter.Create(zipEntryPath)
-		if err != nil {
-			return nil, err
-		}
-		_, err = io.Copy(zipEntry, stream)
-		if err != nil {
-			_ = stream.Close()
 			return nil, err
 		}
 	}
@@ -581,75 +547,34 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProject(ctx context.Context, teamID string, projectData map[string]interface{}) (*project.Project, usecasex.Tx, error) {
+func (i *Project) ImportProjectData(ctx context.Context, workspace idx.ID[accountdomain.Workspace], projectData map[string]interface{}, op *usecase.Operator) (*project.Project, usecasex.Tx, error) {
 
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var p = jsonmodel.ToProjectFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportFromJSON(projectData)
 
-	workspaceID, err := accountdomain.WorkspaceIDFrom(teamID)
+	alias := ""
+	archived := false
+	coreSupport := true
+
+	prj, err := i.Create(ctx, interfaces.CreateProjectParam{
+		WorkspaceID: workspace,
+		Visualizer:  visualizer.Visualizer(input.Visualizer),
+		Name:        &input.Name,
+		Description: &input.Description,
+		ImageURL:    input.ImageURL,
+		Alias:       &alias,
+		Archived:    &archived,
+		CoreSupport: &coreSupport,
+	}, op)
 	if err != nil {
-		return nil, nil, err
+		fmt.Printf("err:%v\n", err)
+		return nil, tx, err
 	}
 
-	prjBuilder := project.New().
-		ID(project.NewID()).
-		Workspace(workspaceID).
-		IsArchived(p.IsArchived).
-		IsBasicAuthActive(p.IsBasicAuthActive).
-		BasicAuthUsername(p.BasicAuthUsername).
-		BasicAuthPassword(p.BasicAuthPassword).
-		Name(p.Name).
-		Description(p.Description).
-		Alias(p.Alias).
-		PublicTitle(p.PublicTitle).
-		PublicDescription(p.PublicDescription).
-		PublicImage(p.PublicImage).
-		PublicNoIndex(p.PublicNoIndex).
-		CoreSupport(p.CoreSupport).
-		EnableGA(p.EnableGa).
-		TrackingID(p.TrackingID).
-		Starred(p.Starred)
-
-	if !p.CreatedAt.IsZero() {
-		prjBuilder = prjBuilder.UpdatedAt(p.CreatedAt)
-	}
-	if p.PublishedAt != nil {
-		prjBuilder = prjBuilder.PublishedAt(*p.PublishedAt)
-	}
-
-	if p.ImageURL != nil {
-		if p.ImageURL.Host == "localhost:8080" || strings.HasSuffix(p.ImageURL.Host, ".reearth.dev") || strings.HasSuffix(p.ImageURL.Host, ".reearth.io") {
-			currentHost := adapter.CurrentHost(ctx)
-			currentHost = strings.TrimPrefix(currentHost, "https://")
-			currentHost = strings.TrimPrefix(currentHost, "http://")
-			if currentHost == "localhost:8080" {
-				p.ImageURL.Scheme = "http"
-			} else {
-				p.ImageURL.Scheme = "https"
-			}
-			p.ImageURL.Host = currentHost
-		}
-		prjBuilder = prjBuilder.ImageURL(p.ImageURL)
-	}
-
-	prjBuilder = prjBuilder.Visualizer(visualizer.Visualizer(p.Visualizer))
-	prjBuilder = prjBuilder.PublishmentStatus(gqlmodel.FromPublishmentStatus(p.PublishmentStatus))
-
-	prj, err := prjBuilder.Build()
-	if err != nil {
-		return nil, nil, err
-	}
-	if err := i.projectRepo.Save(ctx, prj); err != nil {
-		return nil, nil, err
-	}
-	prj, err = i.projectRepo.FindByID(ctx, prj.ID())
-	if err != nil {
-		return nil, nil, err
-	}
 	return prj, tx, nil
 }
 
@@ -678,6 +603,30 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	}
 	err = updateProjectUpdatedAtByID(ctx, scene.Project(), r)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddZipAsset(ctx context.Context, file gateway.File, zipWriter *zip.Writer, path string) error {
+	fileName := strings.TrimPrefix(path, "/assets/")
+	stream, err := file.ReadAsset(ctx, fileName)
+	if err != nil {
+		return nil // skip if external URL
+	}
+	defer func() {
+		if cerr := stream.Close(); cerr != nil {
+			fmt.Printf("Error closing file: %v\n", cerr)
+		}
+	}()
+	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
+	zipEntry, err := zipWriter.Create(zipEntryPath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(zipEntry, stream)
+	if err != nil {
+		_ = stream.Close()
 		return err
 	}
 	return nil

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,15 +14,15 @@ var (
 )
 
 func TestSchemaGroup(t *testing.T) {
-	scid := SchemaGroupID("aa")
+	scid := id.PropertySchemaGroupID("aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
 	tests := []struct {
 		Name     string
 		G        *SchemaGroup
 		Expected struct {
-			GIDRef        *SchemaGroupID
-			GID           SchemaGroupID
+			GIDRef        *id.PropertySchemaGroupID
+			GID           id.PropertySchemaGroupID
 			Fields        []*SchemaField
 			Title         i18n.String
 			Collection    i18n.String
@@ -36,8 +37,8 @@ func TestSchemaGroup(t *testing.T) {
 			Name: "success",
 			G:    NewSchemaGroup().ID(scid).Fields([]*SchemaField{sf}).MustBuild(),
 			Expected: struct {
-				GIDRef        *SchemaGroupID
-				GID           SchemaGroupID
+				GIDRef        *id.PropertySchemaGroupID
+				GID           id.PropertySchemaGroupID
 				Fields        []*SchemaField
 				Title         i18n.String
 				Collection    i18n.String
@@ -70,7 +71,7 @@ func TestSchemaGroup(t *testing.T) {
 }
 
 func TestSchemaGroup_Field(t *testing.T) {
-	scid := SchemaGroupID("aa")
+	scid := id.PropertySchemaGroupID("aa")
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 
 	tests := []struct {
@@ -110,7 +111,7 @@ func TestSchemaGroup_Field(t *testing.T) {
 }
 
 func TestSchemaGroup_SetTitle(t *testing.T) {
-	sg := NewSchemaGroup().ID(SchemaGroupID("aa")).Fields([]*SchemaField{sf}).MustBuild()
+	sg := NewSchemaGroup().ID(id.PropertySchemaGroupID("aa")).Fields([]*SchemaField{sf}).MustBuild()
 	sg.SetTitle(i18n.StringFrom("ttt"))
 	assert.Equal(t, i18n.StringFrom("ttt"), sg.Title())
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/util"
 )
@@ -19,7 +20,7 @@ var (
 
 type Story struct {
 	id            StoryID
-	property      PropertyID
+	property      id.PropertyID
 	scene         SceneID
 	title         string
 	pages         *PageList
@@ -38,13 +39,15 @@ type Story struct {
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
+	enableGa          bool
+	trackingID        string
 }
 
 func (s *Story) Id() StoryID {
 	return s.id
 }
 
-func (s *Story) Property() PropertyID {
+func (s *Story) Property() id.PropertyID {
 	return s.property
 }
 
@@ -53,6 +56,9 @@ func (s *Story) Scene() SceneID {
 }
 
 func (s *Story) Pages() *PageList {
+	if s == nil {
+		return nil
+	}
 	return s.pages
 }
 
@@ -126,6 +132,14 @@ func (s *Story) SetBgColor(bgColor string) {
 	s.bgColor = bgColor
 }
 
+func (s *Story) SetEnableGa(enableGa bool) {
+	s.enableGa = enableGa
+}
+
+func (s *Story) SetTrackingID(trackingID string) {
+	s.trackingID = trackingID
+}
+
 func (s *Story) Rename(name string) {
 	s.title = name
 	s.updatedAt = util.Now()
@@ -174,6 +188,14 @@ func (s *Story) BgColor() string {
 	return s.bgColor
 }
 
+func (s *Story) EnableGa() bool {
+	return s.enableGa
+}
+
+func (s *Story) TrackingID() string {
+	return s.trackingID
+}
+
 func (s *Story) ValidateProperties(pm property.Map) error {
 	if pm == nil {
 		return nil
@@ -196,11 +218,11 @@ func (s *Story) ValidateProperties(pm property.Map) error {
 	return nil
 }
 
-func (s *Story) Properties() property.IDList {
+func (s *Story) Properties() id.PropertyIDList {
 	if s == nil {
 		return nil
 	}
-	ids := []PropertyID{s.property}
+	ids := []id.PropertyID{s.property}
 	ids = append(ids, s.Property())
 	ids = append(ids, s.pages.Properties()...)
 	return ids

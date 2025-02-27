@@ -1,9 +1,6 @@
 package gqldataloader
 
 //go:generate go run github.com/vektah/dataloaden AssetLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Asset
-//go:generate go run github.com/vektah/dataloaden LayerLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Layer
-//go:generate go run github.com/vektah/dataloaden LayerGroupLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.LayerGroup
-//go:generate go run github.com/vektah/dataloaden LayerItemLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.LayerItem
 //go:generate go run github.com/vektah/dataloaden PluginLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Plugin
 //go:generate go run github.com/vektah/dataloaden ProjectLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Project
 //go:generate go run github.com/vektah/dataloaden PropertyLoader github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID *github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Property

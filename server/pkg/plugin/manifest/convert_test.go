@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
@@ -558,7 +559,7 @@ func TestPointer(t *testing.T) {
 				SchemaGroupID: "aaa",
 			},
 			expected: &property.SchemaFieldPointer{
-				SchemaGroup: property.SchemaGroupID(sg),
+				SchemaGroup: id.PropertySchemaGroupID(sg),
 				Field:       property.FieldID(f),
 			},
 		},
@@ -637,8 +638,8 @@ func TestLinkable(t *testing.T) {
 				},
 			},
 			expected: property.LinkableFields{
-				LatLng: &property.SchemaFieldPointer{SchemaGroup: property.SchemaGroupID(d), Field: property.FieldID(l)},
-				URL:    &property.SchemaFieldPointer{SchemaGroup: property.SchemaGroupID(d), Field: property.FieldID(u)},
+				LatLng: &property.SchemaFieldPointer{SchemaGroup: id.PropertySchemaGroupID(d), Field: property.FieldID(l)},
+				URL:    &property.SchemaFieldPointer{SchemaGroup: id.PropertySchemaGroupID(d), Field: property.FieldID(u)},
 			},
 		},
 	}

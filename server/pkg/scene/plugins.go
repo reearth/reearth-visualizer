@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Plugins struct {
 	plugins []*Plugin
 }
@@ -31,7 +33,7 @@ func (p *Plugins) Plugins() []*Plugin {
 	return append([]*Plugin{}, p.plugins...)
 }
 
-func (p *Plugins) Property(id PluginID) *PropertyID {
+func (p *Plugins) Property(id PluginID) *id.PropertyID {
 	for _, p := range p.plugins {
 		if p.plugin.Equal(id) {
 			return p.property.CloneRef()
@@ -87,7 +89,7 @@ func (p *Plugins) Remove(pid PluginID) {
 	}
 }
 
-func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool) {
+func (p *Plugins) Upgrade(from, to PluginID, pr *id.PropertyID, deleteProperty bool) {
 	if p == nil || from.IsNil() || to.IsNil() || from.Equal(to) || from.Equal(OfficialPluginID) {
 		return
 	}
@@ -96,7 +98,7 @@ func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool
 		if !p2.plugin.Equal(from) {
 			continue
 		}
-		var newpr *PropertyID
+		var newpr *id.PropertyID
 		if !deleteProperty {
 			newpr = pr.CloneRef()
 			if newpr == nil {
@@ -108,11 +110,11 @@ func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool
 	}
 }
 
-func (p *Plugins) Properties() []PropertyID {
+func (p *Plugins) Properties() []id.PropertyID {
 	if p == nil {
 		return nil
 	}
-	res := make([]PropertyID, 0, len(p.plugins))
+	res := make([]id.PropertyID, 0, len(p.plugins))
 	for _, pp := range p.plugins {
 		if pp.property != nil {
 			res = append(res, *pp.property)

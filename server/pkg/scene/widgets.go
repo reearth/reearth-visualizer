@@ -2,6 +2,8 @@ package scene
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -96,7 +98,7 @@ func (w *Widgets) Remove(wid WidgetID) {
 	}
 }
 
-func (w *Widgets) RemoveAllByPlugin(p PluginID, e *PluginExtensionID) (res []PropertyID) {
+func (w *Widgets) RemoveAllByPlugin(p PluginID, e *PluginExtensionID) (res []id.PropertyID) {
 	if w == nil {
 		return nil
 	}
@@ -123,11 +125,11 @@ func (w *Widgets) UpgradePlugin(oldp, newp PluginID) {
 	}
 }
 
-func (w *Widgets) Properties() []PropertyID {
+func (w *Widgets) Properties() []id.PropertyID {
 	if w == nil {
 		return nil
 	}
-	res := make([]PropertyID, 0, len(w.widgets))
+	res := make([]id.PropertyID, 0, len(w.widgets))
 	for _, ww := range w.widgets {
 		res = append(res, ww.property)
 	}

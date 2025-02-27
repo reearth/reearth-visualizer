@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,9 +33,9 @@ func TestSchemaList_Map(t *testing.T) {
 func TestSchemaList_MapToIDs(t *testing.T) {
 	p1 := &Schema{id: MustSchemaID("foo~1.0.0/a")}
 	p2 := &Schema{id: MustSchemaID("bar~1.0.0/a")}
-	assert.Equal(t, SchemaList{nil, p2}, SchemaList{p1, p2}.MapToIDs([]SchemaID{MustSchemaID("hoge~1.0.0/a"), p2.ID()}))
+	assert.Equal(t, SchemaList{nil, p2}, SchemaList{p1, p2}.MapToIDs([]id.PropertySchemaID{MustSchemaID("hoge~1.0.0/a"), p2.ID()}))
 	assert.Equal(t, SchemaList{}, SchemaList{p1, p2}.MapToIDs(nil))
-	assert.Equal(t, SchemaList{nil}, SchemaList(nil).MapToIDs([]SchemaID{p1.ID()}))
+	assert.Equal(t, SchemaList{nil}, SchemaList(nil).MapToIDs([]id.PropertySchemaID{p1.ID()}))
 }
 
 func TestSchemaMap_List(t *testing.T) {
