@@ -2,8 +2,8 @@
 package entitymsg
 
 import (
-	"golang.org/x/text/language"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -12,7 +12,7 @@ const (
 
 var EntityMessages = map[message.EntityKey]map[language.Tag]string{
 	EntityKeyPkgProjectAliasAllowedChars: {
-		language.English: "alphanumeric, underscore, hyphen",
+		language.English:  "alphanumeric, underscore, hyphen",
 		language.Japanese: "英数字、アンダースコア、ハイフン",
 	},
 }

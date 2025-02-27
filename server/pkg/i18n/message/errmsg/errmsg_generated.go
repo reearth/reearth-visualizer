@@ -2,8 +2,8 @@
 package errmsg
 
 import (
-	"golang.org/x/text/language"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"golang.org/x/text/language"
 )
 
 const (
