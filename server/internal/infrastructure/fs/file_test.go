@@ -113,7 +113,6 @@ func TestFSFile_UploadAssetFromURL(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			testGCS.UploadTestData(srcBucket, tc.fileName)
 
-			// fsBaseURL := "/assets"
 			newFileRepo, err := NewFile(mockFs(), "/")
 			assert.NoError(t, err)
 
