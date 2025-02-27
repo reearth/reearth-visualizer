@@ -1535,6 +1535,7 @@ export enum PropertySchemaFieldUi {
   CameraPose = 'CAMERA_POSE',
   Color = 'COLOR',
   Datetime = 'DATETIME',
+  DynamicPropertySelector = 'DYNAMIC_PROPERTY_SELECTOR',
   File = 'FILE',
   Image = 'IMAGE',
   Layer = 'LAYER',
