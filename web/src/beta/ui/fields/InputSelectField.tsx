@@ -14,8 +14,11 @@ export type InputFieldProps = CommonFieldProps &
     TextInputProps,
     "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
   > &
-  Pick<SelectorProps, "displayValue"> & {
+  //temporary passinng [displayLabel] [menuWidth] [displayWidth] as props
+  Pick<SelectorProps, "displayLabel"> & {
     options?: { label?: string; value: string }[];
+    menuWidth?: number;
+    displayWidth?: number;
   };
 
 const InputSelectField: FC<InputFieldProps> = ({
@@ -24,7 +27,9 @@ const InputSelectField: FC<InputFieldProps> = ({
   placeholder,
   onBlur,
   options,
-  displayValue
+  displayLabel,
+  displayWidth,
+  menuWidth
 }) => {
   // const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
@@ -54,11 +59,12 @@ const InputSelectField: FC<InputFieldProps> = ({
           />
         </InputWrapper>
 
-        <SelectWrapper>
+        <SelectWrapper displayWidth={displayWidth}>
           <Selector
             options={options ?? []}
-            displayValue={displayValue}
+            displayLabel={displayLabel}
             onChange={handleOnChangeSelect}
+            menuWidth={menuWidth}
           />
         </SelectWrapper>
       </FieldsWrapper>
@@ -78,6 +84,8 @@ const InputWrapper = styled("div")(() => ({
   flex: "1"
 }));
 
-const SelectWrapper = styled("div")(({ theme }) => ({
-  width: `${theme.fonts.sizes.h1}px`
-}));
+const SelectWrapper = styled("div")(
+  ({ displayWidth }: { displayWidth: number | undefined }) => ({
+    width: `${displayWidth}px`
+  })
+);

@@ -24,8 +24,9 @@ export type SelectorProps = {
   maxHeight?: number;
   size?: "normal" | "small";
   appearance?: "readonly";
-  displayValue?: string;
+  displayLabel?: string;
   onChange?: (value: string | string[]) => void;
+  menuWidth?: number;
 };
 
 export const Selector: FC<SelectorProps> = ({
@@ -37,23 +38,24 @@ export const Selector: FC<SelectorProps> = ({
   placeholder,
   disabled,
   maxHeight,
-  displayValue,
-  onChange
+  displayLabel,
+  onChange,
+  menuWidth
 }) => {
   const theme = useTheme();
   const t = useT();
   const selectorRef = useRef<HTMLDivElement>(null);
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
-  >(displayValue ?? value ?? (multiple ? [] : undefined));
+  >(displayLabel ?? value ?? (multiple ? [] : undefined));
 
   useEffect(() => {
-    if (displayValue) {
-      setSelectedValue(displayValue);
+    if (displayLabel) {
+      setSelectedValue(displayLabel);
     } else {
       setSelectedValue(value ?? (multiple ? [] : undefined));
     }
-  }, [value, multiple, displayValue]);
+  }, [value, multiple, displayLabel]);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectorWidth, setSelectorWidth] = useState<number>();
@@ -118,14 +120,14 @@ export const Selector: FC<SelectorProps> = ({
   );
 
   const selectedLabels = useMemo(() => {
-    if (displayValue) return [displayValue];
+    if (displayLabel) return [displayLabel];
     if (Array.isArray(selectedValue)) {
       return selectedValue.map(
         (val) => optionValues.find((item) => item.value === val)?.label
       );
     }
     return [optionValues.find((item) => item.value === selectedValue)?.label];
-  }, [optionValues, selectedValue, displayValue]);
+  }, [optionValues, selectedValue, displayLabel]);
 
   const renderTrigger = () => {
     return (
@@ -195,7 +197,7 @@ export const Selector: FC<SelectorProps> = ({
       >
         <DropDownWrapper
           maxHeight={maxHeight}
-          width={displayValue ? 107 : selectorWidth}
+          width={menuWidth ?? selectorWidth}
         >
           {optionValues.length === 0 ? (
             <DropDownItem>
