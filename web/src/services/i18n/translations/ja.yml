@@ -44,9 +44,8 @@ Add: 追加
 Search by email address or user name: メールアドレスまたはユーザー名で検索
 Can't find the user: ユーザーが見つかりません
 User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
-Use Name or Email: 名前またはメールアドレスを使用
-Find Member: メンバーを検索
-New member: 新しいメンバー
+Search member by name or email: '名前またはEメールでメンバーを検索'
+invite user: 'ユーザーを招待'
 User Name: ユーザー名
 Email: メールアドレス
 Role: 役割

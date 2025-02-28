@@ -71,14 +71,8 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           <TextInput
             value={searchQuery}
             extendWidth
-            placeholder={t("Use Name or Email")}
+            placeholder={t("Search member by name or email")}
             onChange={handleSearch}
-          />
-          <Button
-            icon="magnifyingGlass"
-            title={t("Find Member")}
-            size="small"
-            onClick={() => handleSearch(searchQuery)}
           />
         </Search>
         <div>
@@ -86,7 +80,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
             //maintainer can't add new member for now
             // || meRole === Role.Maintainer
             <Button
-              title={t("New member")}
+              title={t("invite user")}
               appearance="primary"
               icon="memberAdd"
               onClick={() => setAddMemberModalVisible(true)}
@@ -157,9 +151,7 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
 }));
 
 const Search = styled("div")(({ theme }) => ({
-  display: "grid",
-  gridTemplateColumns: "2fr 1fr",
-  gap: theme.spacing.super,
+  width: "348px",
   paddingBottom: theme.spacing.small
 }));
 
