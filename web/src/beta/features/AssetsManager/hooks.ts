@@ -107,26 +107,19 @@ export default ({
   // assets
   const { useAssetsQuery, useRemoveAssets, useCreateAssets } =
     useAssetsFetcher();
-  const {
-    assets,
-    hasMoreAssets,
-    isRefetching,
-    endCursor,
-    loading,
-    refetch,
-    fetchMore
-  } = useAssetsQuery({
-    teamId: workspaceId ?? "",
-    projectId,
-    pagination: {
-      first: ASSETS_PER_PAGE
-    },
-    sort: {
-      direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
-      field: typeToGQLField[sort.type ?? "date"]
-    },
-    keyword: searchTerm
-  });
+  const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } =
+    useAssetsQuery({
+      teamId: workspaceId ?? "",
+      projectId,
+      pagination: {
+        first: ASSETS_PER_PAGE
+      },
+      sort: {
+        direction: sort.reverse ? SortDirection.Desc : SortDirection.Asc,
+        field: typeToGQLField[sort.type ?? "date"]
+      },
+      keyword: searchTerm
+    });
 
   const assetsExts = useMemo(
     () =>
@@ -143,12 +136,6 @@ export default ({
         .flat(),
     [assetsTypes]
   );
-
-  useEffect(() => {
-    if (projectId) {
-      refetch();
-    }
-  }, [projectId, refetch]);
 
   const filteredAssets = useMemo(() => {
     if (!assetsExts || !assets) return assets;

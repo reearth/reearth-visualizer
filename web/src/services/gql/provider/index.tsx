@@ -37,6 +37,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
           assets: {
             keyArgs: [
               "teamId",
+              "projectId",
               "keyword",
               "sort",
               "pagination",
