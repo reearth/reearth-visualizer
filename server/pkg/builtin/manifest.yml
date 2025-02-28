@@ -2709,6 +2709,9 @@ extensions:
                 field: enabled
                 type: bool
                 value: true
+            - id: photooverlay
+              type: photooverlay
+              title: PhotoOverlay
   - id: textInfoboxBetaBlock
     name: Text
     type: infoboxBlock

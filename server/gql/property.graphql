@@ -192,6 +192,7 @@ enum ValueType {
   SPACING
   ARRAY
   TIMELINE
+  PHOTOOVERLAY
 }
 
 # InputType

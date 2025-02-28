@@ -39,7 +39,7 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 
-input Pagination{
+input Pagination {
   first: Int
   last: Int
   after: Cursor
@@ -98,6 +98,11 @@ type Timeline {
   currentTime: String
   startTime: String
   endTime: String
+}
+
+type PhotoOverlay {
+  enabled: Boolean
+  cameraDuration: Int
 }
 
 enum TextAlign {

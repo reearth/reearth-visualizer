@@ -34,7 +34,8 @@
         "ref",
         "spacing",
         "array",
-        "timeline"
+        "timeline",
+        "photooverlay"
       ]
     },
     "propertyPointer": {
