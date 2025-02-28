@@ -15,7 +15,6 @@ export type InputFieldProps = CommonFieldProps &
     "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
   > &
   Pick<SelectorProps, "displayValue"> & { sketchCustomProperties?: string[] };
-//
 
 const InputSelectField: FC<InputFieldProps> = ({
   title,
