@@ -30,18 +30,38 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
       schema {
         id
         groups {
-          fields {
+          schemaGroupId
+          title
+          collection
+          isList
+          representativeFieldId
+          isAvailableIf {
             fieldId
             type
+            value
+          }
+          fields {
+            fieldId
             title
             description
+            placeholder
             prefix
             suffix
+            type
             defaultValue
             ui
             min
             max
-            placeholder
+            choices {
+              key
+              icon
+              title
+            }
+            isAvailableIf {
+              fieldId
+              type
+              value
+            }
           }
         }
       }
