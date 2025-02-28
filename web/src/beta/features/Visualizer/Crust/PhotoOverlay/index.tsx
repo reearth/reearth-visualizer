@@ -167,7 +167,7 @@ const PhotoInnerWrapper: FC<{
 
   return (
     <div
-      className={`tw-absolute tw-flex tw-justify-center tw-items-center ${sizeStyles}`}
+      className={`tw-absolute tw-flex tw-justify-center tw-items-center`}
       style={sizeStyles}
     >
       {children}
