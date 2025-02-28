@@ -563,6 +563,11 @@ type ComplexityRoot struct {
 		StartCursor     func(childComplexity int) int
 	}
 
+	PhotoOverlay struct {
+		CameraDuration func(childComplexity int) int
+		Enabled        func(childComplexity int) int
+	}
+
 	Plugin struct {
 		AllTranslatedDescription func(childComplexity int) int
 		AllTranslatedName        func(childComplexity int) int
@@ -4014,6 +4019,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
+	case "PhotoOverlay.cameraDuration":
+		if e.complexity.PhotoOverlay.CameraDuration == nil {
+			break
+		}
+
+		return e.complexity.PhotoOverlay.CameraDuration(childComplexity), true
+
+	case "PhotoOverlay.enabled":
+		if e.complexity.PhotoOverlay.Enabled == nil {
+			break
+		}
+
+		return e.complexity.PhotoOverlay.Enabled(childComplexity), true
+
 	case "Plugin.allTranslatedDescription":
 		if e.complexity.Plugin.AllTranslatedDescription == nil {
 			break
@@ -6859,7 +6878,7 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 
-input Pagination{
+input Pagination {
   first: Int
   last: Int
   after: Cursor
@@ -6918,6 +6937,11 @@ type Timeline {
   currentTime: String
   startTime: String
   endTime: String
+}
+
+type PhotoOverlay {
+  enabled: Boolean
+  cameraDuration: Int
 }
 
 enum TextAlign {
@@ -7919,6 +7943,7 @@ enum ValueType {
   SPACING
   ARRAY
   TIMELINE
+  PHOTOOVERLAY
 }
 
 # InputType
@@ -29002,6 +29027,88 @@ func (ec *executionContext) fieldContext_PageInfo_hasPreviousPage(_ context.Cont
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PhotoOverlay_enabled(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PhotoOverlay_enabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PhotoOverlay_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PhotoOverlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PhotoOverlay_cameraDuration(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PhotoOverlay_cameraDuration(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CameraDuration, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PhotoOverlay_cameraDuration(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PhotoOverlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -57537,6 +57644,44 @@ func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var photoOverlayImplementors = []string{"PhotoOverlay"}
+
+func (ec *executionContext) _PhotoOverlay(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.PhotoOverlay) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, photoOverlayImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PhotoOverlay")
+		case "enabled":
+			out.Values[i] = ec._PhotoOverlay_enabled(ctx, field, obj)
+		case "cameraDuration":
+			out.Values[i] = ec._PhotoOverlay_cameraDuration(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

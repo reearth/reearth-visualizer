@@ -499,7 +499,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
-func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {
+func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateNLSInfobox",
 		Query: `mutation CreateNLSInfobox($layerId: ID!) {
@@ -509,6 +509,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 					infobox {
 						id
 						layerId
+						propertyId
 					}
 				}
 			}
@@ -527,7 +528,10 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 		Value("infobox").Object().
 		HasValue("layerId", layerId)
 
-	return requestBody, res, res.Path("$.data.createNLSInfobox.layer.infobox.id").Raw().(string)
+	infobox := res.Path("$.data.createNLSInfobox.layer.infobox")
+	lId := infobox.Object().Value("layerId").Raw().(string)
+	pId := infobox.Object().Value("propertyId").Raw().(string)
+	return requestBody, res, lId, pId
 }
 
 // func removeNLSInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
@@ -734,7 +738,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("newLayers").Array().
 		Length().IsEqual(1)
 
-	_, _, _ = createInfobox(e, layerId)
+	_, _, _, _ = createInfobox(e, layerId)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
@@ -772,6 +776,65 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
+}
+
+func TestInfoboxProperty(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	pId := createProject(e, "test")
+	_, _, sId := createScene(e, pId)
+
+	// fetch scene
+	_, res := fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().IsEqual(0)
+
+	// Add NLSLayer
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().IsEqual(1)
+
+	_, _, _, propertyId := createInfobox(e, layerId)
+
+	// --- Position Property
+	_, r := updatePropertyValue(e, propertyId, "default", "", "position", "left", "STRING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("left")
+
+	// --- Padding Property
+	_, r = updatePropertyValue(e, propertyId, "default", "", "padding", map[string]any{
+		"top":    11,
+		"bottom": 12,
+		"left":   13,
+		"right":  14,
+	}, "SPACING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(map[string]any{
+		"top":    11,
+		"bottom": 12,
+		"left":   13,
+		"right":  14,
+	})
+
+	// --- Gap Property
+	_, r = updatePropertyValue(e, propertyId, "default", "", "gap", 10, "NUMBER")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(10)
+
+	// --- PhotoOverlay Property
+	_, r = updatePropertyValue(e, propertyId, "default", "", "photooverlay", map[string]any{
+		"enabled":        true,
+		"cameraDuration": 30,
+	}, "PHOTOOVERLAY")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(map[string]any{
+		"enabled":        true,
+		"cameraDuration": 30,
+	})
+
 }
 
 func updateCustomProperties(

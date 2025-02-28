@@ -46,6 +46,8 @@ var (
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
+	nlsLayerId = id.NewNLSLayerID()
+
 	storyID = storytelling.NewStoryID()
 	pageID  = storytelling.NewPageID()
 	blockID = storytelling.NewBlockID()
@@ -403,7 +405,7 @@ func addLayerSimple(ctx context.Context, r *repo.Container) error {
 	}
 
 	layerSimple, err := nlslayer.NewNLSLayerSimple().
-		NewID().
+		ID(nlsLayerId).
 		Scene(sID).
 		Config(gqlmodel.ToNLSConfig(config)).
 		LayerType(gqlmodel.ToNLSLayerType("simple")).

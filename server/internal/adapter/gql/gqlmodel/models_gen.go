@@ -758,6 +758,11 @@ type Pagination struct {
 	Before *usecasex.Cursor `json:"before,omitempty"`
 }
 
+type PhotoOverlay struct {
+	Enabled        *bool `json:"enabled,omitempty"`
+	CameraDuration *int  `json:"cameraDuration,omitempty"`
+}
+
 type Plugin struct {
 	ID                       ID                 `json:"id"`
 	SceneID                  *ID                `json:"sceneId,omitempty"`
@@ -2260,6 +2265,7 @@ const (
 	ValueTypeSpacing      ValueType = "SPACING"
 	ValueTypeArray        ValueType = "ARRAY"
 	ValueTypeTimeline     ValueType = "TIMELINE"
+	ValueTypePhotooverlay ValueType = "PHOTOOVERLAY"
 )
 
 var AllValueType = []ValueType{
@@ -2278,11 +2284,12 @@ var AllValueType = []ValueType{
 	ValueTypeSpacing,
 	ValueTypeArray,
 	ValueTypeTimeline,
+	ValueTypePhotooverlay,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing, ValueTypeArray, ValueTypeTimeline:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing, ValueTypeArray, ValueTypeTimeline, ValueTypePhotooverlay:
 		return true
 	}
 	return false
