@@ -1,3 +1,4 @@
+import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import { VISUALIZER_CORE_DOM_ID } from "@reearth/beta/features/Visualizer/constaints";
 import { Button, Panel } from "@reearth/beta/lib/reearth-ui";
 import {
@@ -242,6 +243,7 @@ const PhotoOverlayEditor: FC = () => {
               value={preview?.value?.url}
               onChange={handlePhotoUrlChange}
               inputMethod="asset"
+              assetsTypes={IMAGE_TYPES}
             />
             <RadioGroupField
               title={t("Photo size type")}
