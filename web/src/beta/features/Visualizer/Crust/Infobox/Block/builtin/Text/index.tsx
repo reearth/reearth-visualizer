@@ -6,17 +6,19 @@ import { FC } from "react";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
-import useSketchCustomProperty from "../useSketchCustomProperty";
+import useSketchCustomPropertyNames from "../useSketchCustomPropertyNames";
 
 const TextBlock: FC<BlockProps<InfoboxBlock>> = ({
   block,
+  layer,
   isSelected,
   ...props
 }) => {
   const src = block?.property?.default?.text?.value as ValueTypes["string"];
 
   const evaluatedSrc = useExpressionEval(src);
-  const sketchCustomProperties = useSketchCustomProperty();
+  const sketchCustomPropertyNames: string[] | undefined =
+    useSketchCustomPropertyNames(layer);
 
   return (
     <BlockWrapper
@@ -25,7 +27,7 @@ const TextBlock: FC<BlockProps<InfoboxBlock>> = ({
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      sketchCustomProperties={sketchCustomProperties}
+      sketchCustomProperties={sketchCustomPropertyNames}
       {...props}
     >
       {evaluatedSrc !== undefined ? <Text>{evaluatedSrc}</Text> : null}
