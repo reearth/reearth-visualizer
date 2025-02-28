@@ -132,6 +132,14 @@ const PhotoOverlayEditor: FC = () => {
     [setPreview]
   );
 
+  const handleCancel = useCallback(() => {
+    visualizerRef?.current?.layers?.select(undefined);
+    setTimeout(() => {
+      setFeature(RESET);
+      setPreview(RESET);
+    }, 100);
+  }, [setFeature, setPreview, visualizerRef]);
+
   const handleSave = useCallback(async () => {
     if (!feature || !preview?.value) return;
     await handleGeoJsonFeatureUpdate?.({
@@ -143,15 +151,8 @@ const PhotoOverlayEditor: FC = () => {
         preview.value
       )
     });
-  }, [feature, handleGeoJsonFeatureUpdate, preview?.value]);
-
-  const handleCancel = useCallback(() => {
-    visualizerRef?.current?.layers?.select(undefined);
-    setTimeout(() => {
-      setFeature(RESET);
-      setPreview(RESET);
-    }, 100);
-  }, [setFeature, setPreview, visualizerRef]);
+    handleCancel();
+  }, [feature, handleGeoJsonFeatureUpdate, preview?.value, handleCancel]);
 
   const imageDimensionCheckAbortController = useRef<AbortController | null>(
     null
