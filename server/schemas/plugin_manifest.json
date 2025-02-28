@@ -119,7 +119,7 @@
             "datetime",
             "padding",
             "margin",
-            "dynamic_property_selector",
+            "property_selector",
             "zoomLevel"
           ]
         },

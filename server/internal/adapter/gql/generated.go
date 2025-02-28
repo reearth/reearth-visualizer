@@ -7791,7 +7791,7 @@ enum PropertySchemaFieldUI {
   MARGIN
   PADDING
   ZOOMLEVEL
-  DYNAMIC_PROPERTY_SELECTOR
+  PROPERTY_SELECTOR
 }
 
 type PropertySchemaFieldChoice {

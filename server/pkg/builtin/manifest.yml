@@ -2731,7 +2731,7 @@ extensions:
               type: string
               title: Content
               placeholder: ${your property key}
-              ui: dynamic_property_selector
+              ui: property_selector
   - id: imageInfoboxBetaBlock
     name: Image
     type: infoboxBlock
@@ -2754,7 +2754,7 @@ extensions:
               type: string
               title: Image
               placeholder: ${your property key}
-              ui: dynamic_property_selector
+              ui: property_selector
   - id: propertyInfoboxBetaBlock
     type: infoboxBlock
     name: Property List Block
@@ -2814,7 +2814,7 @@ extensions:
               type: string
               title: Video
               placeholder: ${your property key}
-              ui: dynamic_property_selector
+              ui: property_selector
   - id: markdownInfoboxBetaBlock
     name: MD Text
     type: infoboxBlock
@@ -2837,4 +2837,4 @@ extensions:
               type: string
               title: Content
               placeholder: ${your property key}
-              ui: dynamic_property_selector
+              ui: property_selector
