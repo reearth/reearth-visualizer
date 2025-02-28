@@ -15,7 +15,10 @@ const ProjectSettingsPage: FC = () => {
 
   const namedTab: ProjectSettingsTab = useMemo(
     () =>
-      tab === "public" || tab === "story" || tab === "plugins"
+      tab === "public" ||
+      tab === "story" ||
+      tab === "plugins" ||
+      tab === "assets"
         ? tab
         : "general",
     [tab]
