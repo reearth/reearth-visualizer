@@ -65,6 +65,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		log.Infof("Using mock auth for local development")
 		wrapHandler = func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 				ctx := r.Context()
 				// Set the flag for Mock authentication, Mock user will be obtained with attachOpMiddlewar()
 				ctx = adapter.AttachMockAuth(ctx, true)
