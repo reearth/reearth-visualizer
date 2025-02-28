@@ -24,7 +24,9 @@ export type SelectorProps = {
   maxHeight?: number;
   size?: "normal" | "small";
   appearance?: "readonly";
+  displayLabel?: string;
   onChange?: (value: string | string[]) => void;
+  menuWidth?: number;
 };
 
 export const Selector: FC<SelectorProps> = ({
@@ -36,22 +38,29 @@ export const Selector: FC<SelectorProps> = ({
   placeholder,
   disabled,
   maxHeight,
-  onChange
+  displayLabel,
+  onChange,
+  menuWidth
 }) => {
   const theme = useTheme();
   const t = useT();
   const selectorRef = useRef<HTMLDivElement>(null);
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
-  >(value ?? (multiple ? [] : undefined));
+  >(displayLabel ?? value ?? (multiple ? [] : undefined));
+
+  useEffect(() => {
+    if (displayLabel) {
+      setSelectedValue(displayLabel);
+    } else {
+      setSelectedValue(value ?? (multiple ? [] : undefined));
+    }
+  }, [value, multiple, displayLabel]);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectorWidth, setSelectorWidth] = useState<number>();
 
   const optionValues = useMemo(() => options, [options]);
-
-  useEffect(() => {
-    setSelectedValue(value ?? (multiple ? [] : undefined));
-  }, [value, multiple]);
 
   useEffect(() => {
     const selectorElement = selectorRef.current;
@@ -111,13 +120,14 @@ export const Selector: FC<SelectorProps> = ({
   );
 
   const selectedLabels = useMemo(() => {
+    if (displayLabel) return [displayLabel];
     if (Array.isArray(selectedValue)) {
       return selectedValue.map(
         (val) => optionValues.find((item) => item.value === val)?.label
       );
     }
     return [optionValues.find((item) => item.value === selectedValue)?.label];
-  }, [optionValues, selectedValue]);
+  }, [optionValues, selectedValue, displayLabel]);
 
   const renderTrigger = () => {
     return (
@@ -185,7 +195,10 @@ export const Selector: FC<SelectorProps> = ({
         disabled={disabled}
         placement="bottom-start"
       >
-        <DropDownWrapper maxHeight={maxHeight} width={selectorWidth}>
+        <DropDownWrapper
+          maxHeight={maxHeight}
+          width={menuWidth ?? selectorWidth}
+        >
           {optionValues.length === 0 ? (
             <DropDownItem>
               <Typography size="body" color={theme.content.weaker}>

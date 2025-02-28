@@ -65,6 +65,7 @@ type Props = {
     itemId?: string
   ) => Promise<void>;
   onFlyTo?: FlyTo;
+  sketchCustomProperties?: string[] | undefined;
 };
 
 const BlockWrapper: FC<Props> = ({
@@ -89,7 +90,8 @@ const BlockWrapper: FC<Props> = ({
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
-  onFlyTo
+  onFlyTo,
+  sketchCustomProperties
 }) => {
   const {
     title,
@@ -175,6 +177,7 @@ const BlockWrapper: FC<Props> = ({
                       onPropertyItemAdd={onPropertyItemAdd}
                       onPropertyItemMove={onPropertyItemMove}
                       onPropertyItemDelete={onPropertyItemDelete}
+                      sketchCustomProperties={sketchCustomProperties}
                     />
                   );
                 })}

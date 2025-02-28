@@ -10,10 +10,7 @@
     },
     "id?": {
       "$id": "#id?",
-      "type": [
-        "string",
-        "null"
-      ],
+      "type": ["string", "null"],
       "pattern": "^[A-Za-z]{1}[\\w-:.]{0,}$"
     },
     "valuetype": {
@@ -39,10 +36,7 @@
     },
     "propertyPointer": {
       "$id": "#propertyPointer",
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": ["object", "null"],
       "properties": {
         "schemaGroupId": {
           "type": "string"
@@ -51,18 +45,12 @@
           "type": "string"
         }
       },
-      "required": [
-        "schemaGroupId",
-        "fieldId"
-      ],
+      "required": ["schemaGroupId", "fieldId"],
       "additionalProperties": false
     },
     "propertyLinkableFields": {
       "$id": "#propertyLinkableFields",
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": ["object", "null"],
       "properties": {
         "latlng": {
           "$ref": "#/definitions/propertyPointer"
@@ -75,10 +63,7 @@
     },
     "propertyCondition": {
       "$id": "#propertyCondition",
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": ["object", "null"],
       "properties": {
         "field": {
           "type": "string"
@@ -88,11 +73,7 @@
         },
         "value": {}
       },
-      "required": [
-        "field",
-        "type",
-        "value"
-      ],
+      "required": ["field", "type", "value"],
       "additionalProperties": false
     },
     "propertySchemaField": {
@@ -103,44 +84,26 @@
           "$ref": "#/definitions/id"
         },
         "title": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "description": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "placeholder": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "type": {
           "$ref": "#/definitions/valuetype"
         },
         "prefix": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "suffix": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "defaultValue": {},
         "ui": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "enum": [
             "layer",
             "color",
@@ -156,20 +119,15 @@
             "datetime",
             "padding",
             "margin",
+            "property_selector",
             "zoomLevel"
           ]
         },
         "min": {
-          "type": [
-            "number",
-            "null"
-          ]
+          "type": ["number", "null"]
         },
         "max": {
-          "type": [
-            "number",
-            "null"
-          ]
+          "type": ["number", "null"]
         },
         "choices": {
           "type": "array",
@@ -186,9 +144,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "key"
-            ],
+            "required": ["key"],
             "additionalProperties": false
           }
         },
@@ -196,11 +152,7 @@
           "$ref": "#/definitions/propertyCondition"
         }
       },
-      "required": [
-        "id",
-        "type",
-        "title"
-      ],
+      "required": ["id", "type", "title"],
       "additionalProperties": false
     },
     "propertySchemaGroup": {
@@ -211,19 +163,13 @@
           "$ref": "#/definitions/id"
         },
         "collection": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "title": {
           "type": "string"
         },
         "description": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "list": {
           "type": "boolean"
@@ -241,18 +187,12 @@
           }
         }
       },
-      "required": [
-        "id",
-        "title"
-      ],
+      "required": ["id", "title"],
       "additionalProperties": false
     },
     "propertySchema": {
       "$id": "#propertySchema",
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": ["object", "null"],
       "properties": {
         "version": {
           "type": "number"
@@ -271,33 +211,19 @@
     },
     "location": {
       "$id": "#location",
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": ["object", "null"],
       "properties": {
         "zone": {
           "type": "string",
-          "enum": [
-            "inner",
-            "outer"
-          ]
+          "enum": ["inner", "outer"]
         },
         "section": {
           "type": "string",
-          "enum": [
-            "left",
-            "center",
-            "right"
-          ]
+          "enum": ["left", "center", "right"]
         },
         "area": {
           "type": "string",
-          "enum": [
-            "top",
-            "middle",
-            "bottom"
-          ]
+          "enum": ["top", "middle", "bottom"]
         }
       }
     },
@@ -312,25 +238,14 @@
           "type": "string"
         },
         "description": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "icon": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "visualizer": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "enum": [
-            "cesium"
-          ]
+          "type": ["string", "null"],
+          "enum": ["cesium"]
         },
         "type": {
           "type": "string",
@@ -348,42 +263,24 @@
           ]
         },
         "singleOnly": {
-          "type": [
-            "boolean",
-            "null"
-          ]
+          "type": ["boolean", "null"]
         },
         "widgetLayout": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
             "extendable": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": ["object", "null"],
               "properties": {
                 "vertically": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": ["boolean", "null"]
                 },
                 "horizontally": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": ["boolean", "null"]
                 }
               }
             },
             "extended": {
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": ["boolean", "null"]
             },
             "floating": {
               "type": "boolean"
@@ -397,11 +294,7 @@
           "$ref": "#/definitions/propertySchema"
         }
       },
-      "required": [
-        "id",
-        "name",
-        "type"
-      ],
+      "required": ["id", "name", "type"],
       "additionalProperties": false
     },
     "root": {
@@ -421,28 +314,16 @@
           "type": "string"
         },
         "description": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "repository": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "author": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "main": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "extensions": {
           "type": "array",
@@ -454,10 +335,7 @@
           "$ref": "#/definitions/propertySchema"
         }
       },
-      "required": [
-        "id",
-        "name"
-      ],
+      "required": ["id", "name"],
       "additionalProperties": false
     }
   },
