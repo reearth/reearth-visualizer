@@ -1,7 +1,11 @@
 package e2e
 
 import (
+	"testing"
+
 	"github.com/gavv/httpexpect/v2"
+	"github.com/samber/lo"
+	"golang.org/x/text/language"
 )
 
 func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID, fieldID string, value any, valueType any) (GraphQLRequest, *httpexpect.Value) {
@@ -65,12 +69,39 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
           }
         }
       }
+      items {
+        ...PropertyItemFragment
+      }
     }
     propertyField {
       id
       type
       value
     }
+  }
+}
+
+fragment PropertyItemFragment on PropertyItem {
+  ... on PropertyGroupList {
+    id
+    schemaGroupId
+    groups {
+      ...PropertyGroupFragment
+    }
+  }
+  ... on PropertyGroup {
+    ...PropertyGroupFragment
+  }
+}
+
+fragment PropertyGroupFragment on PropertyGroup {
+  id
+  schemaGroupId
+  fields {
+    id
+    fieldId
+    type
+    value
   }
 }`,
 		Variables: map[string]any{
@@ -86,16 +117,138 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
 	return requestBody, res
 }
 
-// {
-//   "propertyId": "01jn55107e2rqww07kjd2p9f6v",
-//   "schemaGroupId": "default",
-//   "fieldId": "padding",
-//   "value": {
-//     "top": 22,
-//     "bottom": 21,
-//     "left": 22,
-//     "right": 21
-//   },
-//   "type": "SPACING",
-//   "lang": "en"
-// }
+func addPropertyItem(e *httpexpect.Expect, propertyID, schemaGroupID string) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "AddPropertyItem",
+		Query: `mutation AddPropertyItem($propertyId: ID!, $schemaGroupId: ID!) {
+  addPropertyItem(input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId }) {
+    property {
+      id
+      items {
+        ... on PropertyGroup {
+          id
+          schemaGroupId
+        }
+        ... on PropertyGroupList {
+          id
+          schemaGroupId
+        }
+      }
+    }
+  }
+}`,
+		Variables: map[string]any{
+			"propertyId":    propertyID,
+			"schemaGroupId": schemaGroupID,
+		},
+	}
+	res := Request(e, uID.String(), requestBody)
+	itemId := res.Path("$.data.addPropertyItem.property.items[0].id").Raw().(string)
+	return requestBody, res, itemId
+}
+
+func TestUpdatePropertyValue(t *testing.T) {
+	e := Server(t, fullSeeder)
+	sceneID := sID.String()
+	res := getScene(e, sceneID, language.Und.String())
+
+	// sceneProperty := res.Object().Value("property")
+	// ValueDump(sceneProperty)
+
+	storyID := res.Object().Path("$.stories[0].id").Raw().(string)
+
+	// Page Property test ---------------------------------------
+	pagePropertyId := res.Object().Path("$.stories[0].pages[0].property.id").Raw().(string)
+	pageId := res.Object().Path("$.stories[0].pages[0].id").Raw().(string)
+
+	// title
+	_, r := updatePropertyValue(e, pagePropertyId, "title", "", "title", "test", "STRING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("test")
+
+	// title color
+	_, r = updatePropertyValue(e, pagePropertyId, "title", "", "color", "#2914acff", "STRING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("#2914acff")
+
+	// cameraPosition
+	camera := map[string]any{
+		// "height":      313.66307524391044,
+		// "aspectRatio": 0.42407108239095315,
+		"altitude": 313.66307524391044,
+		"fov":      1.0471975511965976,
+		"heading":  6.283185307179581,
+		"lat":      35.682290440916404,
+		"lng":      139.7529563415448,
+		"pitch":    -1.569091180503932,
+		"roll":     0,
+	}
+	_, r = updatePropertyValue(e, pagePropertyId, "cameraAnimation", "", "cameraPosition", camera, "CAMERA")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(camera)
+
+	// cameraDuration
+	_, r = updatePropertyValue(e, pagePropertyId, "cameraAnimation", "", "cameraDuration", 3, "NUMBER")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(3)
+
+	// timePoint
+	_, r = updatePropertyValue(e, pagePropertyId, "timePoint", "", "timePoint", "2025-03-06T11:05:44+09:00", "STRING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("2025-03-06T11:05:44+09:00")
+
+	// Block Property test ---------------------------------------
+	blockPropertyId := res.Object().Path("$.stories[0].pages[0].blocks[0].property.id").Raw().(string)
+
+	_, res = updatePropertyValue(e, blockPropertyId, "default", "", "text", "test", "STRING")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("test")
+
+	// mdTextStoryBlock
+	_, _, _, blockPropertyId1 := createBlock(e, sceneID, storyID, pageId, "reearth", "mdTextStoryBlock", lo.ToPtr(1))
+	_, res = updatePropertyValue(e, blockPropertyId1, "default", "", "text", "test", "STRING")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("test")
+
+	// imageStoryBlock
+	_, _, _, blockPropertyId2 := createBlock(e, sceneID, storyID, pageId, "reearth", "imageStoryBlock", lo.ToPtr(2))
+	_, res = updatePropertyValue(e, blockPropertyId2, "default", "", "src", "http://localhost:8080/assets/01jn54nwbw1cwwma2z4e221zxf.png", "URL")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("http://localhost:8080/assets/01jn54nwbw1cwwma2z4e221zxf.png")
+
+	// videoStoryBlock
+	_, _, _, blockPropertyId3 := createBlock(e, sceneID, storyID, pageId, "reearth", "videoStoryBlock", lo.ToPtr(3))
+	_, res = updatePropertyValue(e, blockPropertyId3, "default", "", "src", "http://samplelib.com/lib/preview/mp4/sample-5s.mp4", "URL")
+	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("http://samplelib.com/lib/preview/mp4/sample-5s.mp4")
+
+	// cameraButtonStoryBlock
+	_, _, _, blockPropertyId4 := createBlock(e, sceneID, storyID, pageId, "reearth", "cameraButtonStoryBlock", lo.ToPtr(4))
+	_, _, itemId4 := addPropertyItem(e, blockPropertyId4, "default")
+	camera2 := map[string]any{
+		"lng":         139.7529563415448,
+		"lat":         35.6822904409164,
+		"height":      313.66307524254546,
+		"heading":     6.283185307179581,
+		"pitch":       -1.569091180503932,
+		"roll":        0,
+		"fov":         1.0471975511965976,
+		"aspectRatio": 0.27059773828756056,
+		"altitude":    313.66307524254546,
+	}
+
+	_, r = updatePropertyValue(e, blockPropertyId4, "default", itemId4, "cameraPosition", camera2, "CAMERA")
+	ValueDump(r)
+	// r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(camera2)
+
+	// linkButtonStoryBlock
+	// _, _, _, blockPropertyId5 := createBlock(e, sceneID, storyID, pageId, "reearth", "linkButtonStoryBlock", lo.ToPtr(5))
+
+	// showLayersStoryBlock
+	// _, _, _, blockPropertyId6 := createBlock(e, sceneID, storyID, pageId, "reearth", "showLayersStoryBlock", lo.ToPtr(6))
+	// _, res = updatePropertyValue(e, blockPropertyId6, "default", "", "showLayers", []string{nlsLayerId.String()}, "ARRAY")
+	// res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual([]string{nlsLayerId.String()})
+
+	// timelineStoryBlock
+	// _, _, _, blockPropertyId7 := createBlock(e, sceneID, storyID, pageId, "reearth", "timelineStoryBlock", lo.ToPtr(7))
+
+	// widgetsProperty := res.Object().Path("$.widgets[0].property")
+	// ValueDump(widgetsProperty)
+
+	// newLayers := res.Object().Value("newLayers")
+	// ValueDump(newLayers)
+
+	// r := getScene(e, sId, language.Und.String())
+
+}
