@@ -41,7 +41,7 @@ const Assets: FC<Props> = ({ workspaceId }) => {
 
         <Typography size="h5" color={theme.warning.main}>
           {t(
-            "Due to functional requirements, we have modified the data structure of the Visualizer. Starting from this version, asset management will no longer be centralized under the workspace but will instead be handled on each project's Asset page. As a result, this page will be removed in the next version.\n\nTo ensure the security of your project data, please complete the data migration in a timely manner by following the instructions on this page."
+            "Due to functional requirements, we have modified the data structure of the Visualizer. Starting from this version, asset management will no longer be centralized under the workspace but will instead be handled on each project's Asset page. As a result, this page will be removed in the next version. To ensure the security of your project data, please complete the data migration in a timely manner by following the instructions on this page."
           )}
         </Typography>
       </Warning>

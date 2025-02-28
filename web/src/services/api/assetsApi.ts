@@ -33,7 +33,7 @@ export default () => {
       GET_ASSETS,
       {
         variables: input,
-        skip: !input.teamId || !input.projectId
+        skip: !input.teamId 
       }
     );
 
