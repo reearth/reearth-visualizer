@@ -1,3 +1,4 @@
+import { PhotoOverlayPreview } from "@reearth/beta/utils/sketch";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
   coreContext,
@@ -7,12 +8,14 @@ import {
   type Camera,
   type MapRef
 } from "@reearth/core";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useMemo, type RefObject, useContext } from "react";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
+import PhotoOverlay from "./PhotoOverlay";
 import Plugins, {
   type ExternalPluginProps,
   ModalContainer,
@@ -152,6 +155,10 @@ export type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType]
   ) => Promise<void>;
+  // photoOverlay
+  photoOverlayPreview?: PhotoOverlayPreview;
+  nlsLayers?: NLSLayer[];
+  currentCameraRef?: RefObject<Camera | undefined>;
 };
 
 export default function Crust({
@@ -198,7 +205,11 @@ export default function Crust({
   onStoryBlockCreate,
   onStoryBlockMove,
   onStoryBlockDelete,
-  onPropertyValueUpdate
+  onPropertyValueUpdate,
+  // photoOverlay
+  photoOverlayPreview,
+  nlsLayers,
+  currentCameraRef
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -361,6 +372,14 @@ export default function Crust({
           renderBlock={renderBlock}
         />
       )}
+      <PhotoOverlay
+        preview={photoOverlayPreview}
+        selectedLayer={selectedLayer?.layer}
+        selectedFeature={selectedComputedFeature}
+        mapRef={mapRef}
+        nlsLayers={nlsLayers}
+        currentCameraRef={currentCameraRef}
+      />
     </Plugins>
   );
 }

@@ -3,18 +3,36 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback } from "react";
 
+import SliderField from "../SliderField";
 import TripletInputField from "../TripletInputField";
 
 import { radiansToDegrees } from "./hooks";
 
 import { PanelProps } from ".";
 
-const CapturePanel: FC<PanelProps> = ({ camera, onSave, onClose }) => {
+const CapturePanel: FC<PanelProps> = ({
+  camera,
+  withFOV,
+  onSave,
+  onClose,
+  onFlyTo
+}) => {
   const t = useT();
 
   const handleSave = useCallback(() => {
     onSave?.(camera);
   }, [camera, onSave]);
+
+  const handleFOVChange = useCallback(
+    (value: number) => {
+      if (!camera) return;
+      onFlyTo?.({
+        ...camera,
+        fov: value
+      });
+    },
+    [camera, onFlyTo]
+  );
 
   return (
     <PopupPanel
@@ -57,6 +75,16 @@ const CapturePanel: FC<PanelProps> = ({ camera, onSave, onClose }) => {
           disabled
           content={[t("Heading"), t("Pitch"), t("Roll")]}
         />
+        {withFOV && (
+          <SliderField
+            title={t("FOV")}
+            value={camera?.fov ?? 1.0}
+            min={0.1}
+            max={2.0}
+            step={0.01}
+            onChange={handleFOVChange}
+          />
+        )}
       </GroupWrapper>
     </PopupPanel>
   );

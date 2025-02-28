@@ -1,11 +1,15 @@
 import { AreaSize } from "@reearth/beta/ui/layout";
-import { FlyTo, SketchEditingFeature, SketchType } from "@reearth/core";
+import { FlyTo, MapRef, SketchEditingFeature, SketchType } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
-import { ChangeCustomPropertyTitleInput, RemoveCustomPropertyInput, UpdateCustomPropertySchemaInput } from "@reearth/services/gql";
-import { createContext, useContext, ReactNode } from "react";
+import {
+  ChangeCustomPropertyTitleInput,
+  RemoveCustomPropertyInput,
+  UpdateCustomPropertySchemaInput
+} from "@reearth/services/gql";
+import { createContext, useContext, ReactNode, MutableRefObject } from "react";
 
 import {
   LayerConfigUpdateProps,
@@ -25,6 +29,7 @@ import {
 } from "../hooks/useSketch";
 
 export interface MapPageContextType {
+  visualizerRef?: MutableRefObject<MapRef | null>;
   handleVisualizerResize?: (props: AreaSize) => void;
   scene?: Scene;
   selectedSceneSetting?: string;
