@@ -44,8 +44,11 @@ Add: 追加
 Search by email address or user name: メールアドレスまたはユーザー名で検索
 Can't find the user: ユーザーが見つかりません
 User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
-Search member by name or email: '名前またはEメールでメンバーを検索'
-invite user: 'ユーザーを招待'
+Remove: 削除
+'Your are removing member ': '次のメンバーを削除しています '
+' out of this workspace. Are you sure you want to do that?': ' 削除後このワークスペースに存在しない。本当に削除しますか？'
+Search member by name or email: 名前またはEメールでメンバーを検索
+invite user: ユーザーを招待
 User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
@@ -55,7 +58,6 @@ OWNER: 所有者
 READER: 閲覧者
 WRITER: 作成者
 Change Role: 役割を変更
-Remove: ゴミ箱へ移動
 Update Member Role: メンバーの役割を更新
 Update: 更新する
 Last Created: 最終作成日

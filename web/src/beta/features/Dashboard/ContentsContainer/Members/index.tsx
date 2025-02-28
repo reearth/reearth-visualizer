@@ -9,6 +9,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { Workspace } from "../../type";
 
 import AddMemberModal from "./AddMemberModal";
+import DeleteMemberWarningModal from "./DeleteMemberWarningModal";
 import ListItem from "./ListItem";
 import UpdateRoleModal from "./UpdateRoleModal";
 
@@ -33,9 +34,10 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     Workspace["members"] | null
   >(null);
 
-  const [updatingRoleMember, setUpdatingRoleMember] = useState<TeamMember>();
+  const [selectedMember, setSelectedMember] = useState<TeamMember>();
   const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
   const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
+  const [deleteMemerModalVisible, setDeleteMemerModalVisible] = useState(false);
 
   useEffect(() => {
     setFilteredMembers(workspace?.members || null);
@@ -101,9 +103,9 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
             <ListItem
               key={member.userId}
               member={member}
-              currentWorkSpace={workspace}
               setUpdateRoleModalVisible={setUpdateRoleModalVisible}
-              setUpdatingRoleMember={setUpdatingRoleMember}
+              setSelectedMember={setSelectedMember}
+              setDeleteMemerModalVisible={setDeleteMemerModalVisible}
               meRole={meRole}
             />
           ))
@@ -115,13 +117,21 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           </TemplateWrapper>
         )}
       </ListWrapper>
-      {updateRoleModalVisible && updatingRoleMember && (
+      {updateRoleModalVisible && selectedMember && (
         <UpdateRoleModal
           workspace={workspace}
-          member={updatingRoleMember}
+          member={selectedMember}
           visible
           onClose={() => setUpdateRoleModalVisible(false)}
           meRole={meRole}
+        />
+      )}
+      {deleteMemerModalVisible && !config()?.disableWorkspaceManagement && (
+        <DeleteMemberWarningModal
+          workspace={workspace}
+          member={selectedMember}
+          visible
+          onClose={() => setDeleteMemerModalVisible(false)}
         />
       )}
       {addMemberModalVisible && !config()?.disableWorkspaceManagement && (

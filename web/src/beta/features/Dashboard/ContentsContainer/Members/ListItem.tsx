@@ -1,23 +1,21 @@
 import { Button, PopupMenu, Typography } from "@reearth/beta/lib/reearth-ui";
-import { useWorkspaceFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { Role, TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback } from "react";
 
 const ListItem: FC<{
   member: TeamMember;
-  currentWorkSpace: Workspace;
   setUpdateRoleModalVisible: (visible: boolean) => void;
-  setUpdatingRoleMember: (member: TeamMember) => void;
+  setSelectedMember: (member: TeamMember) => void;
+  setDeleteMemerModalVisible: (visible: boolean) => void;
   meRole: string | undefined;
 }> = ({
   member,
-  currentWorkSpace,
   setUpdateRoleModalVisible,
-  setUpdatingRoleMember,
+  setSelectedMember,
+  setDeleteMemerModalVisible,
   meRole
 }) => {
   const t = useT();
@@ -28,21 +26,20 @@ const ListItem: FC<{
     WRITER: t("WRITER")
   };
 
-  const { useRemoveMemberFromWorkspace: removeMember } = useWorkspaceFetcher();
-  const handleRemoveMember = useCallback(
-    (userId: string) => {
-      if (!userId || !currentWorkSpace?.id) return;
-      removeMember({ teamId: currentWorkSpace?.id, userId });
-    },
-    [currentWorkSpace?.id, removeMember]
-  );
-
   const handleUpdateRole = useCallback(
     (member: TeamMember) => {
-      setUpdatingRoleMember(member);
+      setSelectedMember(member);
       setUpdateRoleModalVisible(true);
     },
-    [setUpdateRoleModalVisible, setUpdatingRoleMember]
+    [setUpdateRoleModalVisible, setSelectedMember]
+  );
+
+  const handleDeleteRole = useCallback(
+    (member: TeamMember) => {
+      setSelectedMember(member);
+      setDeleteMemerModalVisible(true);
+    },
+    [setDeleteMemerModalVisible, setSelectedMember]
   );
 
   return (
@@ -83,6 +80,7 @@ const ListItem: FC<{
                 disabled:
                   meRole === Role.Reader ||
                   meRole === Role.Writer ||
+                  member.role === Role.Owner ||
                   // (meRole === Role.Maintainer && member.role === Role.Owner),
                   //maintainer can't change member role for now
                   meRole === Role.Maintainer,
@@ -95,10 +93,11 @@ const ListItem: FC<{
                 disabled:
                   meRole === Role.Reader ||
                   meRole === Role.Writer ||
+                  member.role === Role.Owner ||
                   // (meRole === Role.Maintainer && member.role === Role.Owner),
                   //maintainer can't remove member for now
                   meRole === Role.Maintainer,
-                onClick: () => handleRemoveMember(member.userId)
+                onClick: () => handleDeleteRole(member)
               }
             ]}
           />
