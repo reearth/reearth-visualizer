@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
@@ -24,7 +25,7 @@ var (
 	iId1 = accountdomain.NewIntegrationID()
 )
 
-func baseSeederUser(ctx context.Context, r *repo.Container) error {
+func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) error {
 	auth := user.ReearthSub(uId1.String())
 	u := user.New().ID(uId1).
 		Name("e2e").

@@ -135,6 +135,7 @@ type Asset struct {
 	ID          ID        `json:"id"`
 	CreatedAt   time.Time `json:"createdAt"`
 	TeamID      ID        `json:"teamId"`
+	ProjectID   *ID       `json:"projectId,omitempty"`
 	Name        string    `json:"name"`
 	Size        int64     `json:"size"`
 	URL         string    `json:"url"`
@@ -182,6 +183,7 @@ type ChangeCustomPropertyTitleInput struct {
 
 type CreateAssetInput struct {
 	TeamID      ID             `json:"teamId"`
+	ProjectID   *ID            `json:"projectId,omitempty"`
 	CoreSupport bool           `json:"coreSupport"`
 	File        graphql.Upload `json:"file"`
 }
@@ -1216,6 +1218,8 @@ type Story struct {
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
+	EnableGa          bool              `json:"enableGa"`
+	TrackingID        string            `json:"trackingId"`
 }
 
 func (Story) IsNode()        {}
@@ -1323,6 +1327,16 @@ type UnlinkPropertyValueInput struct {
 	SchemaGroupID *ID `json:"schemaGroupId,omitempty"`
 	ItemID        *ID `json:"itemId,omitempty"`
 	FieldID       ID  `json:"fieldId"`
+}
+
+type UpdateAssetInput struct {
+	AssetID   ID  `json:"assetId"`
+	ProjectID *ID `json:"projectId,omitempty"`
+}
+
+type UpdateAssetPayload struct {
+	AssetID   ID  `json:"assetId"`
+	ProjectID *ID `json:"projectId,omitempty"`
 }
 
 type UpdateCustomPropertySchemaInput struct {
@@ -1442,6 +1456,8 @@ type UpdateStoryInput struct {
 	PublicImage       *string   `json:"publicImage,omitempty"`
 	PublicNoIndex     *bool     `json:"publicNoIndex,omitempty"`
 	DeletePublicImage *bool     `json:"deletePublicImage,omitempty"`
+	EnableGa          *bool     `json:"enableGa,omitempty"`
+	TrackingID        *string   `json:"trackingId,omitempty"`
 }
 
 type UpdateStoryPageInput struct {

@@ -13,7 +13,6 @@ type Story implements Node {
   scene: Scene
   panelPosition: Position!
   bgColor: String
-
   isBasicAuthActive: Boolean!
   basicAuthUsername: String!
   basicAuthPassword: String!
@@ -21,6 +20,8 @@ type Story implements Node {
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type StoryPage implements Node {
@@ -71,7 +72,7 @@ input UpdateStoryInput {
   panelPosition: Position
   bgColor: String
 
-#  publishment
+  # Publishment
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
@@ -81,6 +82,10 @@ input UpdateStoryInput {
   publicImage: String
   publicNoIndex: Boolean
   deletePublicImage: Boolean
+
+  # Google Analytics
+  enableGa: Boolean
+  trackingId: String
 }
 
 input MoveStoryInput {
@@ -235,7 +240,6 @@ extend type Mutation {
 
   addPageLayer(input: PageLayerInput!): StoryPagePayload!
   removePageLayer(input: PageLayerInput!): StoryPagePayload!
-
 
   createStoryBlock(input: CreateStoryBlockInput!): CreateStoryBlockPayload!
   moveStoryBlock(input: MoveStoryBlockInput!): MoveStoryBlockPayload!
