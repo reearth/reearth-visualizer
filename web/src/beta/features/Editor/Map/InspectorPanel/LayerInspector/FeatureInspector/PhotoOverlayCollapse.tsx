@@ -1,5 +1,6 @@
 import { useTheme } from "@emotion/react";
 import { Button, Collapse, TextInput } from "@reearth/beta/lib/reearth-ui";
+import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import {
   getPhotoOverlayValue,
   PhotoOverlayValue
@@ -53,6 +54,7 @@ const PhotoOverlayCollapse: FC<PhotoOverlayCollapseProps> = ({
   return (
     <Collapse
       title={t("Photo Overlay")}
+      titleSuffix={<Tooltip type="experimental" />}
       size="small"
       background={theme.relative.dim}
       headerBg={theme.relative.dim}

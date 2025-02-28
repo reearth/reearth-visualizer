@@ -250,7 +250,7 @@ const PhotoOverlayEditor: FC = () => {
             />
             {preview?.value?.fill === "fixed" && (
               <SliderField
-                title={t("Fixed photo size")}
+                title={t("Photo size")}
                 value={preview?.value?.widthPct ?? 0}
                 min={0}
                 max={100}
