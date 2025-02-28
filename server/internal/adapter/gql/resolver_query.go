@@ -33,18 +33,6 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 			return nil, nil
 		}
 		return result, err
-	case gqlmodel.NodeTypeLayerItem:
-		result, err := dataloaders.LayerItem.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
-	case gqlmodel.NodeTypeLayerGroup:
-		result, err := dataloaders.LayerGroup.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
 	case gqlmodel.NodeTypeProject:
 		result, err := dataloaders.Project.Load(i)
 		if result == nil {
@@ -90,26 +78,6 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 		nodes := make([]gqlmodel.Node, len(data))
 		for i := range data {
 			nodes[i] = data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerItem:
-		data, err := dataloaders.LayerItem.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
-		}
-		return nodes, nil
-	case gqlmodel.NodeTypeLayerGroup:
-		data, err := dataloaders.LayerGroup.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = *data[i]
 		}
 		return nodes, nil
 	case gqlmodel.NodeTypeProject:
@@ -189,14 +157,6 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 		return nil, err[0]
 	}
 	return data, nil
-}
-
-func (r *queryResolver) Layer(ctx context.Context, layerID gqlmodel.ID) (gqlmodel.Layer, error) {
-	result, err := dataloaders(ctx).Layer.Load(layerID)
-	if result == nil || *result == nil {
-		return nil, nil
-	}
-	return *result, err
 }
 
 func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error) {

@@ -25,8 +25,6 @@ export const CREATE_WORKSPACE = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
     }
@@ -66,8 +64,6 @@ export const UPDATE_WORKSPACE = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
     }
@@ -99,8 +95,6 @@ export const ADD_MEMBER_TO_WORKSPACE = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
     }
@@ -132,8 +126,6 @@ export const REMOVE_MEMBER_FROM_WORKSPACE = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
     }
@@ -167,8 +159,6 @@ export const UPDATE_MEMBER_OF_WORKSPACE = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
     }

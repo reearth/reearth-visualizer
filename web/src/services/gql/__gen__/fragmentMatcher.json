@@ -7,10 +7,6 @@
       "Point",
       "Polygon"
     ],
-    "Layer": [
-      "LayerGroup",
-      "LayerItem"
-    ],
     "NLSLayer": [
       "NLSLayerGroup",
       "NLSLayerSimple"

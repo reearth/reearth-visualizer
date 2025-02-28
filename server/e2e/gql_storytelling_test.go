@@ -475,12 +475,6 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 				pages {
 				  id
 				  title
-				  layers {
-					id
-				  }
-				  swipeableLayers {
-					id
-				  }
 				  blocks {
 					id
 					propertyId

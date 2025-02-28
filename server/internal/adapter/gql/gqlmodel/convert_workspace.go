@@ -70,8 +70,6 @@ func ToPolicy(p *policy.Policy) *Policy {
 		PublishedProjectCount: o.PublishedProjectCount,
 		LayerCount:            o.LayerCount,
 		AssetStorageSize:      o.AssetStorageSize,
-		DatasetSchemaCount:    o.DatasetSchemaCount,
-		DatasetCount:          o.DatasetCount,
 		NlsLayersCount:        o.NLSLayersCount,
 		PageCount:             o.PageCount,
 		BlocksCount:           o.BlocksCount,

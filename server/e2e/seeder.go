@@ -19,7 +19,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -179,10 +178,6 @@ func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 }
 
 func fullSetup(ctx context.Context, r *repo.Container) error {
-	rootLayer, err := layer.NewGroup().NewID().Scene(sID).Root(true).Build()
-	if err != nil {
-		return err
-	}
 	schema := builtin.GetPropertySchemaByVisualizer(visualizer.VisualizerCesiumBeta)
 	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sID).Build()
 	if err != nil {
@@ -204,9 +199,6 @@ func fullSetup(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 	if err = r.Property.Save(ctx, prop); err != err {
-		return err
-	}
-	if err = r.Layer.Save(ctx, rootLayer); err != err {
 		return err
 	}
 	if err = addWidget(ctx, s, r); err != err {

@@ -42,20 +42,6 @@ func (o *Initializer) DeepCopy() *Initializer {
 											cp.Items[i2].Groups[i5].Fields[i8].Value = new(Value)
 											*cp.Items[i2].Groups[i5].Fields[i8].Value = *o.Items[i2].Groups[i5].Fields[i8].Value
 										}
-										if o.Items[i2].Groups[i5].Fields[i8].Links != nil {
-											cp.Items[i2].Groups[i5].Fields[i8].Links = make([]*InitializerLink, len(o.Items[i2].Groups[i5].Fields[i8].Links))
-											copy(cp.Items[i2].Groups[i5].Fields[i8].Links, o.Items[i2].Groups[i5].Fields[i8].Links)
-											for i11 := range o.Items[i2].Groups[i5].Fields[i8].Links {
-												if o.Items[i2].Groups[i5].Fields[i8].Links[i11] != nil {
-													cp.Items[i2].Groups[i5].Fields[i8].Links[i11] = new(InitializerLink)
-													*cp.Items[i2].Groups[i5].Fields[i8].Links[i11] = *o.Items[i2].Groups[i5].Fields[i8].Links[i11]
-													if o.Items[i2].Groups[i5].Fields[i8].Links[i11].Dataset != nil {
-														cp.Items[i2].Groups[i5].Fields[i8].Links[i11].Dataset = new(DatasetID)
-														*cp.Items[i2].Groups[i5].Fields[i8].Links[i11].Dataset = *o.Items[i2].Groups[i5].Fields[i8].Links[i11].Dataset
-													}
-												}
-											}
-										}
 									}
 								}
 							}
@@ -72,20 +58,6 @@ func (o *Initializer) DeepCopy() *Initializer {
 							if o.Items[i2].Fields[i5].Value != nil {
 								cp.Items[i2].Fields[i5].Value = new(Value)
 								*cp.Items[i2].Fields[i5].Value = *o.Items[i2].Fields[i5].Value
-							}
-							if o.Items[i2].Fields[i5].Links != nil {
-								cp.Items[i2].Fields[i5].Links = make([]*InitializerLink, len(o.Items[i2].Fields[i5].Links))
-								copy(cp.Items[i2].Fields[i5].Links, o.Items[i2].Fields[i5].Links)
-								for i8 := range o.Items[i2].Fields[i5].Links {
-									if o.Items[i2].Fields[i5].Links[i8] != nil {
-										cp.Items[i2].Fields[i5].Links[i8] = new(InitializerLink)
-										*cp.Items[i2].Fields[i5].Links[i8] = *o.Items[i2].Fields[i5].Links[i8]
-										if o.Items[i2].Fields[i5].Links[i8].Dataset != nil {
-											cp.Items[i2].Fields[i5].Links[i8].Dataset = new(DatasetID)
-											*cp.Items[i2].Fields[i5].Links[i8].Dataset = *o.Items[i2].Fields[i5].Links[i8].Dataset
-										}
-									}
-								}
 							}
 						}
 					}

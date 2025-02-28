@@ -24,8 +24,6 @@ enum NodeType {
   SCENE
   PROPERTY_SCHEMA
   PROPERTY
-  DATASET_SCHEMA
-  DATASET
   LAYER_GROUP
   LAYER_ITEM
 }
@@ -39,7 +37,7 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 
-input Pagination{
+input Pagination {
   first: Int
   last: Int
   after: Cursor
