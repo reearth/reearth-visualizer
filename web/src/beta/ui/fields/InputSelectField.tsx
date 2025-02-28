@@ -78,6 +78,6 @@ const InputWrapper = styled("div")(() => ({
   flex: "1"
 }));
 
-const SelectWrapper = styled("div")(() => ({
-  width: "38px"
+const SelectWrapper = styled("div")(({ theme }) => ({
+  width: `${theme.fonts.sizes.h1}px`
 }));
