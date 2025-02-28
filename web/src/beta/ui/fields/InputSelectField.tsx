@@ -26,17 +26,18 @@ const InputSelectField: FC<InputFieldProps> = ({
   options,
   displayValue
 }) => {
-  const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
+  // const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
   const handleOnBlur = () => {
-    if (onBlur && typeof selectValue === "string") {
-      onBlur(selectValue);
+    if (onBlur && typeof inputValue === "string") {
+      onBlur(inputValue);
     }
   };
 
   const handleOnChangeSelect = (value: string | string[]) => {
     if (typeof value === "string" && onBlur) {
-      setSelectValue("${" + value + "}");
+      setInputValue("${" + value + "}");
       onBlur("${" + value + "}");
     }
   };
@@ -48,7 +49,8 @@ const InputSelectField: FC<InputFieldProps> = ({
           <TextInput
             placeholder={placeholder}
             onBlur={handleOnBlur}
-            value={selectValue}
+            onChange={setInputValue}
+            value={inputValue}
           />
         </InputWrapper>
 
