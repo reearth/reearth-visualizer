@@ -225,7 +225,7 @@ export const FieldComponent = ({
         title={field?.title}
         description={field?.description}
         placeholder={field?.placeholder}
-        sketchCustomProperties={sketchCustomProperties}
+        options={sketchCustomProperties}
         displayValue="{}"
         onBlur={handlePropertyValueUpdate(
           groupId,
