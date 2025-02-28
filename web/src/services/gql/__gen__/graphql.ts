@@ -110,6 +110,7 @@ export type Asset = Node & {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  projectId?: Maybe<Scalars['ID']['output']>;
   size: Scalars['FileSize']['output'];
   team?: Maybe<Team>;
   teamId: Scalars['ID']['output'];
@@ -162,6 +163,7 @@ export type ChangeCustomPropertyTitleInput = {
 export type CreateAssetInput = {
   coreSupport: Scalars['Boolean']['input'];
   file: Scalars['Upload']['input'];
+  projectId?: InputMaybe<Scalars['ID']['input']>;
   teamId: Scalars['ID']['input'];
 };
 
@@ -735,6 +737,7 @@ export type Mutation = {
   signup?: Maybe<SignupPayload>;
   uninstallPlugin?: Maybe<UninstallPluginPayload>;
   unlinkPropertyValue?: Maybe<PropertyFieldPayload>;
+  updateAsset?: Maybe<UpdateAssetPayload>;
   updateCustomProperties: UpdateNlsLayerPayload;
   updateGeoJSONFeature: Feature;
   updateMe?: Maybe<UpdateMePayload>;
@@ -1018,6 +1021,11 @@ export type MutationUninstallPluginArgs = {
 
 export type MutationUnlinkPropertyValueArgs = {
   input: UnlinkPropertyValueInput;
+};
+
+
+export type MutationUpdateAssetArgs = {
+  input: UpdateAssetInput;
 };
 
 
@@ -1535,13 +1543,13 @@ export enum PropertySchemaFieldUi {
   CameraPose = 'CAMERA_POSE',
   Color = 'COLOR',
   Datetime = 'DATETIME',
-  DynamicPropertySelector = 'DYNAMIC_PROPERTY_SELECTOR',
   File = 'FILE',
   Image = 'IMAGE',
   Layer = 'LAYER',
   Margin = 'MARGIN',
   Multiline = 'MULTILINE',
   Padding = 'PADDING',
+  PropertySelector = 'PROPERTY_SELECTOR',
   Range = 'RANGE',
   Selection = 'SELECTION',
   Slider = 'SLIDER',
@@ -1610,6 +1618,7 @@ export type Query = {
 export type QueryAssetsArgs = {
   keyword?: InputMaybe<Scalars['String']['input']>;
   pagination?: InputMaybe<Pagination>;
+  projectId?: InputMaybe<Scalars['ID']['input']>;
   sort?: InputMaybe<AssetSort>;
   teamId: Scalars['ID']['input'];
 };
@@ -1878,6 +1887,7 @@ export type Story = Node & {
   basicAuthUsername: Scalars['String']['output'];
   bgColor?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  enableGa: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
   isBasicAuthActive: Scalars['Boolean']['output'];
   pages: Array<StoryPage>;
@@ -1893,6 +1903,7 @@ export type Story = Node & {
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
   title: Scalars['String']['output'];
+  trackingId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -1963,6 +1974,7 @@ export type TeamAssetsArgs = {
   before?: InputMaybe<Scalars['Cursor']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  projectId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -2030,6 +2042,17 @@ export type UnlinkPropertyValueInput = {
   itemId?: InputMaybe<Scalars['ID']['input']>;
   propertyId: Scalars['ID']['input'];
   schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type UpdateAssetInput = {
+  assetId: Scalars['ID']['input'];
+  projectId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type UpdateAssetPayload = {
+  __typename?: 'UpdateAssetPayload';
+  assetId: Scalars['ID']['output'];
+  projectId?: Maybe<Scalars['ID']['output']>;
 };
 
 export type UpdateCustomPropertySchemaInput = {
@@ -2143,6 +2166,7 @@ export type UpdateStoryInput = {
   basicAuthUsername?: InputMaybe<Scalars['String']['input']>;
   bgColor?: InputMaybe<Scalars['String']['input']>;
   deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
+  enableGa?: InputMaybe<Scalars['Boolean']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
   isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
   panelPosition?: InputMaybe<Position>;
@@ -2153,6 +2177,7 @@ export type UpdateStoryInput = {
   sceneId: Scalars['ID']['input'];
   storyId: Scalars['ID']['input'];
   title?: InputMaybe<Scalars['String']['input']>;
+  trackingId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateStoryPageInput = {

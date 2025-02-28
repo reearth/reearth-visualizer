@@ -226,7 +226,7 @@ export const FieldComponent = ({
           field?.type
         )}
       />
-    ) : field?.ui === "dynamicPropertySelector" ? (
+    ) : field?.ui === "propertySelector" ? (
       <InputSelectField
         key={field.id}
         title={field?.title}
