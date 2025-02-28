@@ -86,6 +86,13 @@ export const FieldComponent = ({
     [field.ui]
   );
 
+  const sketchCustomPropertiesOption = sketchCustomProperties?.map(
+    (property) => ({
+      value: property,
+      label: property
+    })
+  );
+
   return field?.type === "spacing" ? (
     <SpacingField
       key={field?.id}
@@ -225,7 +232,7 @@ export const FieldComponent = ({
         title={field?.title}
         description={field?.description}
         placeholder={field?.placeholder}
-        options={sketchCustomProperties}
+        options={sketchCustomPropertiesOption}
         displayValue="{}"
         onBlur={handlePropertyValueUpdate(
           groupId,

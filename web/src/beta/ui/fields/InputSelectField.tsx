@@ -14,23 +14,18 @@ export type InputFieldProps = CommonFieldProps &
     TextInputProps,
     "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
   > &
-  Pick<SelectorProps, "displayValue"> & { options?: {label?:string; value:string}[] };
+  Pick<SelectorProps, "displayValue"> & {
+    options?: { label?: string; value: string }[];
+  };
 
 const InputSelectField: FC<InputFieldProps> = ({
   title,
   description,
   placeholder,
   onBlur,
-  sketchCustomProperties,
+  options,
   displayValue
 }) => {
-  const sketchCustomPropertiesOption = sketchCustomProperties?.map(
-    (property) => ({
-      value: property,
-      label: property
-    })
-  );
-
   const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
 
   const handleOnBlur = () => {
@@ -59,7 +54,7 @@ const InputSelectField: FC<InputFieldProps> = ({
 
         <SelectWrapper>
           <Selector
-            options={sketchCustomPropertiesOption ?? []}
+            options={options ?? []}
             displayValue={displayValue}
             onChange={handleOnChangeSelect}
           />
