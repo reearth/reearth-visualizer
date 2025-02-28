@@ -85,7 +85,6 @@ export const FieldComponent = ({
           : undefined,
     [field.ui]
   );
-  console.log(field);
 
   return field?.type === "spacing" ? (
     <SpacingField
