@@ -12,7 +12,11 @@ import {
   TextInputProps
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { useNotification, useWorkspace } from "@reearth/services/state";
+import {
+  useNotification,
+  useProject,
+  useWorkspace
+} from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
@@ -44,6 +48,7 @@ const AssetField: FC<AssetFieldProps> = ({
   const t = useT();
   const [open, setOpen] = useState(false);
   const [currentWorkspace] = useWorkspace();
+  const [currentProject] = useProject();
   const [, setNotification] = useNotification();
   const [currentValue, setCurrentValue] = useState(value);
 
@@ -87,6 +92,7 @@ const AssetField: FC<AssetFieldProps> = ({
 
   const { handleFileUpload } = useAssetUpload({
     workspaceId: currentWorkspace?.id,
+    projectId: currentProject?.id,
     onAssetSelect: handleChange,
     assetsTypes,
     multiple: false
@@ -136,6 +142,7 @@ const AssetField: FC<AssetFieldProps> = ({
           opened={open}
           onClose={handleModalClose}
           workspaceId={currentWorkspace?.id}
+          projectId={currentProject?.id}
           onAssetSelect={handleChange}
           assetsTypes={assetsTypes}
         />
