@@ -60,7 +60,7 @@ const AssetListItem: FC<AssetItemProps> = ({
           size={20}
         />
       </Thumbnail>
-      <Col width={50}>
+      <Col width={45}>
         <AssetName>
           <Typography size="body">{asset.name}</Typography>
         </AssetName>
@@ -68,16 +68,19 @@ const AssetListItem: FC<AssetItemProps> = ({
       <Col width={20}>
         <Typography size="body">{formattedDate}</Typography>
       </Col>
-      <Col width={20}>
+      <Col width={10}>
         <Typography size="body">{formattedSize}</Typography>
       </Col>
-      <Col width={10} title={asset.url}>
-        <IconButton
-          appearance="simple"
-          icon="copy"
-          onClick={handleIconClick}
-          size="medium"
-        />
+      <Col width={20} >
+        <PathWrapper>
+          <Typography size="body">{asset.url}</Typography>
+          <IconButton
+            appearance="simple"
+            icon="copy"
+            onClick={handleIconClick}
+            size="medium"
+          />
+        </PathWrapper>
       </Col>
     </Wrapper>
   );
@@ -130,6 +133,12 @@ const Col = styled("div")<{
   flexShrink: 0,
   display: "flex",
   alignItems: "center"
+}));
+
+const PathWrapper = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+  width: "100%"
 }));
 
 function formatBytes(bytes: number): string {

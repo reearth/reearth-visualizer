@@ -14,12 +14,21 @@ import { useMemo } from "react";
 import CursorStatus from "../CursorStatus";
 
 import useHooks from "./hooks";
+import Assets from "./innerPages/AssetSetting";
 import GeneralSettings from "./innerPages/GeneralSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 
-export type ProjectSettingsTab = "general" | "story" | "public" | "plugins";
+export const projectSettingsTabs = [
+  "general",
+  "story",
+  "public",
+  "plugins",
+  "assets"
+] as const;
+
+export type ProjectSettingsTab = (typeof projectSettingsTabs)[number];
 
 type Props = {
   projectId: string;
@@ -71,6 +80,12 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         path: `/settings/projects/${projectId}/public`
       },
       {
+        id: "assets",
+        text: t("Assets"),
+        icon: "file" as const,
+        path: `/settings/projects/${projectId}/assets`
+      },
+      {
         id: "plugins",
         text: t("Plugin"),
         icon: "puzzlePiece" as const,
@@ -107,7 +122,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
             <SidebarVersion />
           </SidebarWrapper>
         </LeftSidePanel>
-        <Content>
+        <Content tab={tab}>
           {tab === "general" && project && (
             <GeneralSettings
               project={project}
@@ -136,6 +151,10 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               onUpdateProjectGA={handleUpdateProjectGA}
             />
           )}
+          {tab === "assets" && project && (
+            <Assets projectId={projectId} workspaceId={workspaceId} />
+          )}
+
           {tab === "plugins" && (
             <PluginSettings
               sceneId={sceneId}
@@ -181,15 +200,17 @@ const LeftSidePanel = styled("div")(({ theme }) => ({
   boxSizing: "border-box"
 }));
 
-const Content = styled("div")(({ theme }) => ({
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
-  width: "100%",
-  height: "100%",
-  alignItems: "center",
-  overflow: "auto",
-  padding: `${theme.spacing.super}px`
-}));
+const Content = styled("div")<{ tab?: ProjectSettingsTab }>(
+  ({ tab, theme }) => ({
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    overflow: "auto",
+    padding: tab === "assets" ? 0 : `${theme.spacing.super}px`
+  })
+);
 
 export default ProjectSettings;
