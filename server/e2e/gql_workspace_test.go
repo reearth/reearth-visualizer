@@ -85,17 +85,15 @@ func TestAddMemberToTeam(t *testing.T) {
 
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
-	assert.False(t, w.Members().HasUser(uId2))
+	assert.True(t, w.Members().HasUser(uId2))
+	assert.Equal(t, w.Members().User(uId2).Role, workspace.RoleReader)
 
-	// assert.True(t, w.Members().HasUser(uId2))
-	// assert.Equal(t, w.Members().User(uId2).Role, workspace.RoleReader)
-
-	// query = fmt.Sprintf(`mutation { addMemberToTeam(input: {teamId: "%s", userId: "%s", role: READER}){ team{ id } }}`, wId1, uId2)
-	// request = GraphQLRequest{
-	// 	Query: query,
-	// }
-	// Request(e, uId1.String(), request).Object().
-	// 	Value("errors").Array().Value(0).Object().Value("message").IsEqual("user already joined")
+	query = fmt.Sprintf(`mutation { addMemberToTeam(input: {teamId: "%s", userId: "%s", role: READER}){ team{ id } }}`, wId1, uId2)
+	request = GraphQLRequest{
+		Query: query,
+	}
+	Request(e, uId1.String(), request).Object().
+		Value("errors").Array().Value(0).Object().Value("message").IsEqual("user already joined")
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
