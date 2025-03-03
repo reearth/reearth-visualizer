@@ -152,6 +152,9 @@ Custom Properties: カスタムプロパティ
 No custom properties: カスタムプロパティはありません
 Geometry: ジオメトリ
 Properties: プロパティ
+Photo Overlay: フォトオーバーレイ
+Photo Overlay Set: フォトオーバーレイ設定
+Not set: 設定されていません
 Layer: レイヤー
 Feature: 地物
 Layer Style: レイヤースタイル
@@ -188,12 +191,20 @@ italic: イタリック
 New node: 新しいノード
 Assign style: スタイルの割り当て
 New style: 新しいスタイル
+Contain: 収める
+Fixed: 固定
+Photo transparency: フォト透過度
+PhotoOverlay settings: フォトオーバーレイ設定
+Photo: フォト
+Photo size type: フォトサイズタイプ
+Photo size: フォトサイズ
+Photo description: フォト説明
+Camera: カメラ
 Main: メイン
 Tiles: タイル
 Terrain: 地形
 Globe: 地球
 Sky: 空
-Camera: カメラ
 Unknown scene setting: 不明なシーン設定
 Scene: シーン
 New Sketch Layer: 新しいスケッチレイヤー
@@ -463,7 +474,6 @@ Grid Layout: グリッドレイアウト
 List Layout: リストのレイアウト
 Version: バージョン
 Wrong file format: 誤ったファイル形式
-Not set: 設定されていません
 Choose: 選択
 Upload: アップロード
 Position Capture: 位置キャプチャ
@@ -475,6 +485,7 @@ Current Rotation: 現在の回転
 Heading: ヘディング
 Pitch: ピッチ
 Roll: ロール
+FOV: 視野角
 Camera Position Editor: カメラ位置エディタ
 Location: 位置
 value: 値

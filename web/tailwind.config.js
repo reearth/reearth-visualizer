@@ -7,7 +7,7 @@ export default {
   content: [
     "./src/beta/lib/reearth-widget-ui/**/*.{ts,tsx}",
     "./src/beta/features/Visualizer/Crust/Widgets/Widget/builtin/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}"
+    "./src/beta/features/Visualizer/Crust/PhotoOverlay/**/*.{ts,tsx}"
   ],
   theme: {
     extend: {
@@ -65,6 +65,23 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out"
+      },
+      zIndex: {
+        widget: 200,
+        storyPanel: 200,
+        storyBlock: 205,
+        storyBlockAddBar: 210,
+        storyPage: {
+          indicator: {
+            unselected: 210,
+            selected: 215
+          }
+        },
+        pluginPopup: 300,
+        pluginModal: 305,
+        infobox: 400,
+        photoOverlay: 500,
+        overlay: 600
       }
     }
   },
