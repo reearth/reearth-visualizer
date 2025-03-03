@@ -54,6 +54,8 @@ export default function useHooks({
       setVisualizerCamera(undefined);
     };
   }, [currentCamera, setVisualizerCamera]);
+  const currentCameraRef = useRef(currentCamera);
+  currentCameraRef.current = currentCamera;
 
   const [mapAPIReady, setMapAPIReady] = useState(false);
   const onCoreAPIReady = useCallback(() => {
@@ -69,6 +71,7 @@ export default function useHooks({
     visualizerCamera,
     handleCoreLayerSelect,
     mapAPIReady,
-    onCoreAPIReady
+    onCoreAPIReady,
+    currentCameraRef
   };
 }

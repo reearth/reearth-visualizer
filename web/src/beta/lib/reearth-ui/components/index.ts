@@ -4,6 +4,7 @@ export * from "./Typography";
 export * from "./NumberInput";
 export * from "./Popup";
 export * from "./PopupMenu";
+export * from "./Panel";
 export * from "./PopupPanel";
 export * from "./TextArea";
 export * from "./TextInput";
