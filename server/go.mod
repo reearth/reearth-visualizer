@@ -27,7 +27,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.17.0
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearthx v0.0.0-20250227103658-6f054a7c7d85
+	github.com/reearth/reearthx v0.0.0-20250303102720-b442a87b9bf6
 	github.com/samber/lo v1.49.1
 	github.com/spf13/afero v1.12.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
