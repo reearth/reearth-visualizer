@@ -14,7 +14,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import {
   useNotification,
-  useProject,
+  useProjectId,
   useWorkspace
 } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -48,7 +48,7 @@ const AssetField: FC<AssetFieldProps> = ({
   const t = useT();
   const [open, setOpen] = useState(false);
   const [currentWorkspace] = useWorkspace();
-  const [currentProject] = useProject();
+  const [currentProjectId] = useProjectId();
   const [, setNotification] = useNotification();
   const [currentValue, setCurrentValue] = useState(value);
 
@@ -92,7 +92,7 @@ const AssetField: FC<AssetFieldProps> = ({
 
   const { handleFileUpload } = useAssetUpload({
     workspaceId: currentWorkspace?.id,
-    projectId: currentProject?.id,
+    projectId: currentProjectId,
     onAssetSelect: handleChange,
     assetsTypes,
     multiple: false
@@ -142,7 +142,7 @@ const AssetField: FC<AssetFieldProps> = ({
           opened={open}
           onClose={handleModalClose}
           workspaceId={currentWorkspace?.id}
-          projectId={currentProject?.id}
+          projectId={currentProjectId}
           onAssetSelect={handleChange}
           assetsTypes={assetsTypes}
         />

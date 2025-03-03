@@ -20,12 +20,15 @@ import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 
-export type ProjectSettingsTab =
-  | "general"
-  | "story"
-  | "public"
-  | "plugins"
-  | "assets";
+export const projectSettingsTabs = [
+  "general",
+  "story",
+  "public",
+  "plugins",
+  "assets"
+] as const;
+
+export type ProjectSettingsTab = (typeof projectSettingsTabs)[number];
 
 type Props = {
   projectId: string;

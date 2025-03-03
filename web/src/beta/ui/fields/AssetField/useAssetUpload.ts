@@ -46,7 +46,6 @@ export default ({
     async (files?: FileList) => {
       if (!files) return;
       try {
-        console.log("called")
         const result = await useCreateAssets({
           teamId: workspaceId ?? "",
           projectId,

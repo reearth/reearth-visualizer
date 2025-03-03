@@ -104,7 +104,6 @@ const Thumbnail = styled("div")(({ theme }) => ({
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
   background: url ? `url(${url}) center/contain no-repeat` : theme.bg[1],
-  backgroundSize: "cover",
   borderRadius: theme.radius.small,
   width: "100%"
 }));
