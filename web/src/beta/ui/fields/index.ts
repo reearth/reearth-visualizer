@@ -19,3 +19,4 @@ export { default as RangeField } from "./RangeField";
 export { default as CheckboxField } from "./CheckboxField";
 export { default as SliderField } from "./SliderField";
 export { default as PropertySelectorField } from "./PropertySelectorField";
+export { default as RadioGroupField } from "./RadioGroupField";
