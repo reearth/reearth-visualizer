@@ -5,23 +5,24 @@ import {
   TextInputProps
 } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import CommonField, { CommonFieldProps } from "./CommonField";
 
-export type InputFieldProps = CommonFieldProps &
+export type PropertySelectorProps = CommonFieldProps &
   Pick<
     TextInputProps,
     "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
   > &
-  //temporary passinng [displayLabel] [menuWidth] [displayWidth] as props
+  // Note: temporary passinng [displayLabel] [menuWidth] [displayWidth] as props since it's difficult to support auto resize on current Selector component
   Pick<SelectorProps, "displayLabel"> & {
     options?: { label?: string; value: string }[];
     menuWidth?: number;
     displayWidth?: number;
   };
 
-const InputSelectField: FC<InputFieldProps> = ({
+const PropertySelectorField: FC<PropertySelectorProps> = ({
+  value,
   title,
   description,
   placeholder,
@@ -31,8 +32,11 @@ const InputSelectField: FC<InputFieldProps> = ({
   displayWidth,
   menuWidth
 }) => {
-  // const [selectValue, setSelectValue] = useState<string | undefined>(undefined);
-  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
+  const [inputValue, setInputValue] = useState<string | undefined>(value);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleOnBlur = () => {
     if (onBlur && typeof inputValue === "string") {
@@ -61,6 +65,8 @@ const InputSelectField: FC<InputFieldProps> = ({
 
         <SelectWrapper displayWidth={displayWidth}>
           <Selector
+            // Note: value will not match since the input will have ${} but it's okey
+            value={inputValue}
             options={options ?? []}
             displayLabel={displayLabel}
             onChange={handleOnChangeSelect}
@@ -71,7 +77,7 @@ const InputSelectField: FC<InputFieldProps> = ({
     </CommonField>
   );
 };
-export default InputSelectField;
+export default PropertySelectorField;
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",

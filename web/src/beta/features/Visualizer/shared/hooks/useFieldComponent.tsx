@@ -10,9 +10,9 @@ import {
   SwitchField,
   TimePeriodField,
   TimePointField,
-  TwinInputField
+  TwinInputField,
+  PropertySelectorField
 } from "@reearth/beta/ui/fields";
-import InputSelectField from "@reearth/beta/ui/fields/InputSelectField";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
@@ -227,9 +227,10 @@ export const FieldComponent = ({
         )}
       />
     ) : field?.ui === "propertySelector" ? (
-      <InputSelectField
+      <PropertySelectorField
         key={field.id}
         title={field?.title}
+        value={field?.value}
         description={field?.description}
         placeholder={field?.placeholder}
         options={sketchCustomPropertiesOption}
