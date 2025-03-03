@@ -30,9 +30,7 @@ type StoryPage implements Node {
   blocks: [StoryBlock!]!
   swipeable: Boolean!
   layersIds: [ID!]!
-  layers: [Layer!]!
   swipeableLayersIds: [ID!]
-  swipeableLayers: [Layer!]
   propertyId: ID!
   property: Property
   createdAt: DateTime!
@@ -48,7 +46,6 @@ type StoryBlock implements Node {
   extension: PluginExtension
   propertyId: ID!
   property: Property
-  linkedDatasetId: ID
 }
 
 enum Position {

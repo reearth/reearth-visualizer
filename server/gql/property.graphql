@@ -86,7 +86,6 @@ type Property implements Node {
   schemaId: ID!
   items: [PropertyItem!]!
   schema: PropertySchema
-  layer: Layer
   merged: MergedProperty
 }
 
@@ -115,7 +114,6 @@ type PropertyField {
   parentId: ID!
   schemaId: ID!
   fieldId: ID!
-  links: [PropertyFieldLink!]
   type: ValueType!
   value: Any
   parent: Property
@@ -123,18 +121,11 @@ type PropertyField {
   field: PropertySchemaField
 }
 
-type PropertyFieldLink {
-  datasetId: ID
-  datasetSchemaId: ID!
-  datasetSchemaFieldId: ID!
-}
-
 type MergedProperty {
   originalId: ID
   parentId: ID
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   original: Property
   parent: Property
   schema: PropertySchema
@@ -149,7 +140,6 @@ type MergedPropertyGroup {
   schemaGroupId: ID!
   # note: schemaId will not always be set
   schemaId: ID
-  linkedDatasetId: ID
   fields: [MergedPropertyField!]!
   groups: [MergedPropertyGroup!]!
   originalProperty: Property
@@ -164,7 +154,6 @@ type MergedPropertyField {
   fieldId: ID!
   value: Any
   type: ValueType!
-  links: [PropertyFieldLink!]
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
@@ -218,16 +207,6 @@ input UploadFileToPropertyInput {
   itemId: ID
   fieldId: ID!
   file: Upload!
-}
-
-input LinkDatasetToPropertyValueInput {
-  propertyId: ID!
-  schemaGroupId: ID
-  itemId: ID
-  fieldId: ID!
-  datasetSchemaIds: [ID!]!
-  datasetSchemaFieldIds: [ID!]!
-  datasetIds: [ID!]
 }
 
 input UnlinkPropertyValueInput {
@@ -293,9 +272,6 @@ extend type Mutation {
   updatePropertyValue(input: UpdatePropertyValueInput!): PropertyFieldPayload
   removePropertyField(input: RemovePropertyFieldInput!): PropertyFieldPayload
   uploadFileToProperty(input: UploadFileToPropertyInput!): PropertyFieldPayload
-  linkDatasetToPropertyValue(
-    input: LinkDatasetToPropertyValueInput!
-  ): PropertyFieldPayload
   unlinkPropertyValue(input: UnlinkPropertyValueInput!): PropertyFieldPayload
   addPropertyItem(input: AddPropertyItemInput!): PropertyItemPayload
   movePropertyItem(input: MovePropertyItemInput!): PropertyItemPayload

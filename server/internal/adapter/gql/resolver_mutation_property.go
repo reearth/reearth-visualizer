@@ -126,36 +126,6 @@ func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmo
 	}, nil
 }
 
-func (r *mutationResolver) LinkDatasetToPropertyValue(ctx context.Context, input gqlmodel.LinkDatasetToPropertyValueInput) (*gqlmodel.PropertyFieldPayload, error) {
-	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
-	if err != nil {
-		return nil, err
-	}
-
-	links, err := gqlmodel.FromPropertyFieldLink(input.DatasetSchemaIds, input.DatasetIds, input.DatasetSchemaFieldIds)
-	if err != nil {
-		return nil, err
-	}
-
-	p, pgl, pg, pf, err := usecases(ctx).Property.LinkValue(ctx, interfaces.LinkPropertyValueParam{
-		PropertyID: pid,
-		Pointer: gqlmodel.FromPointer(
-			gqlmodel.ToStringIDRef[id.PropertySchemaGroup](input.SchemaGroupID),
-			input.ItemID,
-			lo.ToPtr(id.PropertyFieldID(input.FieldID)),
-		),
-		Links: links,
-	}, getOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.PropertyFieldPayload{
-		Property:      gqlmodel.ToProperty(p),
-		PropertyField: gqlmodel.ToPropertyField(pf, p, pgl, pg),
-	}, nil
-}
-
 func (r *mutationResolver) UnlinkPropertyValue(ctx context.Context, input gqlmodel.UnlinkPropertyValueInput) (*gqlmodel.PropertyFieldPayload, error) {
 	pid, err := gqlmodel.ToID[id.Property](input.PropertyID)
 	if err != nil {

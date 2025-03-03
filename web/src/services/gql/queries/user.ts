@@ -30,8 +30,6 @@ export const GET_ME = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
       teams {
@@ -56,8 +54,6 @@ export const GET_ME = gql(`
           publishedProjectCount
           layerCount
           assetStorageSize
-          datasetSchemaCount
-          datasetCount
         }
       }
       auths

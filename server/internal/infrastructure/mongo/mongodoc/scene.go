@@ -21,7 +21,6 @@ type SceneDocument struct {
 	Plugins     []ScenePluginDocument
 	UpdateAt    time.Time
 	Property    string
-	Clusters    []SceneClusterDocument
 }
 
 type SceneWidgetDocument struct {
@@ -36,12 +35,6 @@ type SceneWidgetDocument struct {
 type ScenePluginDocument struct {
 	Plugin   string
 	Property *string
-}
-
-type SceneClusterDocument struct {
-	ID       string
-	Name     string
-	Property string
 }
 
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]

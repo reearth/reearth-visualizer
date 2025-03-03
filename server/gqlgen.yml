@@ -47,8 +47,6 @@ models:
         resolver: true
       extension:
         resolver: true
-      linkedDataset:
-        resolver: true
       merged:
         resolver: true
       scene:
@@ -65,8 +63,6 @@ models:
         resolver: true
       extension:
         resolver: true
-      linkedDatasetSchema:
-        resolver: true
       layers:
         resolver: true
       scene:
@@ -78,8 +74,6 @@ models:
       layer:
         resolver: true
       property:
-        resolver: true
-      linkedDataset:
         resolver: true
       merged:
         resolver: true
@@ -96,8 +90,6 @@ models:
       plugin:
         resolver: true
       extension:
-        resolver: true
-      linkedDataset:
         resolver: true
       merged:
         resolver: true
@@ -211,16 +203,6 @@ models:
         resolver: true
       field:
         resolver: true
-  PropertyFieldLink:
-    fields:
-      dataset:
-        resolver: true
-      datasetField:
-        resolver: true
-      datasetSchema:
-        resolver: true
-      datasetSchemaField:
-        resolver: true
   MergedProperty:
     fields:
       original:
@@ -228,8 +210,6 @@ models:
       parent:
         resolver: true
       schema:
-        resolver: true
-      linkedDataset:
         resolver: true
       groups:
         resolver: true
@@ -244,8 +224,6 @@ models:
       parent:
         resolver: true
       schema:
-        resolver: true
-      linkedDataset:
         resolver: true
   MergedPropertyField:
     fields:
@@ -262,8 +240,6 @@ models:
       property:
         resolver: true
       newLayers:
-        resolver: true
-      datasetSchemas:
         resolver: true
       tags:
         resolver: true

@@ -34,8 +34,6 @@ func TestToPolicy(t *testing.T) {
 		PublishedProjectCount: lo.ToPtr(3),
 		LayerCount:            lo.ToPtr(4),
 		AssetStorageSize:      lo.ToPtr(int64(5)),
-		DatasetCount:          lo.ToPtr(6),
-		DatasetSchemaCount:    lo.ToPtr(7),
 		NlsLayersCount:        lo.ToPtr(8),
 		PageCount:             lo.ToPtr(9),
 		BlocksCount:           lo.ToPtr(6),

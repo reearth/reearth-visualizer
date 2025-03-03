@@ -53,9 +53,7 @@ func ToPage(p *storytelling.Page) *StoryPage {
 		Blocks:             ToBlocks(p.Blocks()),
 		Swipeable:          p.Swipeable(),
 		LayersIds:          IDFromList(p.Layers()),
-		Layers:             nil,
 		SwipeableLayersIds: IDFromList(p.SwipeableLayers()),
-		SwipeableLayers:    nil,
 		PropertyID:         IDFrom(p.Property()),
 		Property:           nil,
 		CreatedAt:          p.Id().Timestamp(),
@@ -76,14 +74,13 @@ func ToBlock(b *storytelling.Block) *StoryBlock {
 		return nil
 	}
 	return &StoryBlock{
-		ID:              IDFrom(b.ID()),
-		PropertyID:      IDFrom(b.Property()),
-		Property:        nil,
-		PluginID:        IDFromPluginID(b.Plugin()),
-		Plugin:          nil,
-		ExtensionID:     IDFromString(b.Extension()),
-		Extension:       nil,
-		LinkedDatasetID: nil,
+		ID:          IDFrom(b.ID()),
+		PropertyID:  IDFrom(b.Property()),
+		Property:    nil,
+		PluginID:    IDFromPluginID(b.Plugin()),
+		Plugin:      nil,
+		ExtensionID: IDFromString(b.Extension()),
+		Extension:   nil,
 	}
 }
 
