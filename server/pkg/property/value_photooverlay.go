@@ -64,7 +64,7 @@ func (p *typePropertyPhotoOverlay) JSONSchema() map[string]any {
 		"title": "PhotoOverlay",
 		"properties": map[string]any{
 			"enabled": map[string]any{
-				"type": "bool",
+				"type": "boolean",
 			},
 			"cameraDuration": map[string]any{
 				"type": "number",
