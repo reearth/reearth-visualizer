@@ -18,6 +18,7 @@ import EditPanel from "./EditorPanel";
 
 export type PanelProps = {
   camera?: Camera;
+  withFOV?: boolean;
   onSave: (value?: Camera) => void;
   onFlyTo?: (camera?: Camera) => void;
   onClose: () => void;
@@ -28,6 +29,7 @@ export type CameraFieldProps = CommonFieldProps &
     description?: string;
     value?: Camera;
     disabled?: boolean;
+    withFOV?: boolean;
     onSave: (value?: Camera) => void;
     onFlyTo?: FlyTo;
   };
@@ -36,6 +38,7 @@ const CameraField: FC<CameraFieldProps> = ({
   description,
   value,
   disabled,
+  withFOV,
   title,
   onSave,
   onFlyTo
@@ -128,6 +131,7 @@ const CameraField: FC<CameraFieldProps> = ({
           {open === "editor" && (
             <EditPanel
               camera={value}
+              withFOV={withFOV}
               onSave={handleSave}
               onFlyTo={handleFlyto}
               onClose={handleClose}
@@ -152,8 +156,10 @@ const CameraField: FC<CameraFieldProps> = ({
           {open === "capture" && (
             <CapturePanel
               camera={currentCamera}
+              withFOV={withFOV}
               onSave={handleSave}
               onClose={handleClose}
+              onFlyTo={handleFlyto}
             />
           )}
         </Popup>

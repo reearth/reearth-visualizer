@@ -1,10 +1,10 @@
-import { Button, ClickAway } from "@reearth/beta/lib/reearth-ui";
+import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
 const DEFAULT_PANEL_WIDTH = 286;
 
-export type PopupPanelProps = {
+export type PanelProps = {
   title?: string;
   width?: number;
   children: ReactNode;
@@ -12,7 +12,7 @@ export type PopupPanelProps = {
   onCancel?: () => void;
 };
 
-export const PopupPanel: FC<PopupPanelProps> = ({
+export const Panel: FC<PanelProps> = ({
   title,
   width,
   children,
@@ -20,24 +20,22 @@ export const PopupPanel: FC<PopupPanelProps> = ({
   onCancel
 }) => {
   return (
-    <ClickAway onClickAway={onCancel}>
-      <Wrapper width={width}>
-        {title && (
-          <HeaderWrapper>
-            <Title>{title}</Title>
-            <Button
-              iconButton
-              icon="close"
-              size="small"
-              onClick={onCancel}
-              appearance="simple"
-            />
-          </HeaderWrapper>
-        )}
-        <Content>{children}</Content>
-        {actions && <ActionWrapper>{actions}</ActionWrapper>}
-      </Wrapper>
-    </ClickAway>
+    <Wrapper width={width}>
+      {title && (
+        <HeaderWrapper>
+          <Title>{title}</Title>
+          <Button
+            iconButton
+            icon="close"
+            size="small"
+            onClick={onCancel}
+            appearance="simple"
+          />
+        </HeaderWrapper>
+      )}
+      <Content>{children}</Content>
+      {actions && <ActionWrapper>{actions}</ActionWrapper>}
+    </Wrapper>
   );
 };
 
@@ -68,8 +66,7 @@ const Title = styled("div")(() => ({
   lineHeight: `${fonts.lineHeights.body}px`
 }));
 
-const Content = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small,
+const Content = styled("div")(() => ({
   alignSelf: "stretch"
 }));
 

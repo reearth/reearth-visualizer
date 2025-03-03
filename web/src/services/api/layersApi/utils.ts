@@ -44,6 +44,7 @@ export type NLSLayer = {
   sketch?: Sketch;
   isSketch?: boolean;
   infobox?: NLSInfobox;
+  // TODO: add photoOverlay
 };
 
 const getGeometryCoordinates = (geometry: Geometry) => {
