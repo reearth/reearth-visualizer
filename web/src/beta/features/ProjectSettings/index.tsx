@@ -53,9 +53,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory,
-    handleUpdateStoryBasicAuth,
-    handleUpdateStoryAlias
+    handleUpdateStory
   } = useHooks({
     projectId,
     subId
@@ -147,8 +145,6 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               currentStory={currentStory}
               subId={subId}
               onUpdateStory={handleUpdateStory}
-              onUpdateStoryBasicAuth={handleUpdateStoryBasicAuth}
-              onUpdateStoryAlias={handleUpdateStoryAlias}
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}
               onUpdateProjectAlias={handleUpdateProjectAlias}
