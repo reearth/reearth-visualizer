@@ -6,6 +6,7 @@ import { Typography } from "../Typography";
 
 export type CollapseProps = {
   title?: string;
+  titleSuffix?: ReactNode;
   background?: string;
   headerBg?: string;
   size?: "normal" | "small" | "large";
@@ -22,6 +23,7 @@ export type CollapseProps = {
 
 export const Collapse: FC<CollapseProps> = ({
   title,
+  titleSuffix,
   background,
   headerBg,
   size = "normal",
@@ -56,13 +58,16 @@ export const Collapse: FC<CollapseProps> = ({
         iconPosition={iconPosition}
         disabled={disabled}
       >
-        <Typography
-          size="body"
-          weight={weight}
-          otherProperties={{ whiteSpace: "nowrap" }}
-        >
-          {title}
-        </Typography>
+        <TitleWrapper>
+          <Typography
+            size="body"
+            weight={weight}
+            otherProperties={{ whiteSpace: "nowrap" }}
+          >
+            {title}
+          </Typography>
+          {titleSuffix}
+        </TitleWrapper>
         <ActionsWrapper>
           {actions}
           {!disabled && (
@@ -120,6 +125,12 @@ const StyledHeader = styled("div")<{
   backgroundColor: headerBg ? headerBg : `${theme.bg[1]}`,
   fontSize: 0,
   boxSizing: "border-box"
+}));
+
+const TitleWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({

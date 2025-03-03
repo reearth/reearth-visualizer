@@ -1,11 +1,18 @@
 import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
-import { FC, useRef } from "react";
+import { useAtom, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { FC, useEffect, useRef } from "react";
 
 import { useMapPage } from "./context";
 import InspectorPanel from "./InspectorPanel";
 import LayersPanel from "./LayersPanel";
 import LayerStylePanel from "./LayerStylePanel";
+import PhotoOverlayEditor from "./PhotoOverlayEditor";
 import ScenePanel from "./ScenePanel";
+import {
+  photoOverlayEditingFeatureAtom,
+  PhotoOverlayPreviewAtom
+} from "./state";
 import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
@@ -15,6 +22,20 @@ const Map: FC = () => {
   const secRightAreaRef = useRef<AreaRef>(null);
   const rightAreaRef = useRef<AreaRef>(null);
 
+  const [photoOverlayEditingFeature, setPhotoOverlayEditingFeature] = useAtom(
+    photoOverlayEditingFeatureAtom
+  );
+  const setPhotoOverlayPreview = useSetAtom(PhotoOverlayPreviewAtom);
+
+  const hideNormalPanels = !!photoOverlayEditingFeature;
+
+  useEffect(() => {
+    return () => {
+      setPhotoOverlayEditingFeature(RESET);
+      setPhotoOverlayPreview(RESET);
+    };
+  }, [setPhotoOverlayEditingFeature, setPhotoOverlayPreview]);
+
   return (
     <Window ref={windowRef}>
       <Area extend asWrapper>
@@ -22,12 +43,13 @@ const Map: FC = () => {
           direction="column"
           resizableEdge="right"
           storageId="editor-map-left-area"
+          hidden={hideNormalPanels}
         >
           <ScenePanel />
           <LayersPanel />
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area initialHeight={34}>
+          <Area initialHeight={34} hidden={hideNormalPanels}>
             <ToolsPanel />
           </Area>
           <Area
@@ -35,13 +57,16 @@ const Map: FC = () => {
             onResize={handleVisualizerResize}
             windowRef={windowRef}
             passive
-          />
+          >
+            {photoOverlayEditingFeature && <PhotoOverlayEditor />}
+          </Area>
         </Area>
         <Area
           direction="column"
           resizableEdge="left"
           storageId="editor-map-sec-right-area"
           ref={secRightAreaRef}
+          hidden={hideNormalPanels}
         >
           <InspectorPanel showCollapseArea areaRef={secRightAreaRef} />
         </Area>
@@ -50,6 +75,7 @@ const Map: FC = () => {
           resizableEdge="left"
           storageId="editor-map-right-area"
           ref={rightAreaRef}
+          hidden={hideNormalPanels}
         >
           <LayerStylePanel showCollapseArea areaRef={rightAreaRef} />
         </Area>
