@@ -39,9 +39,17 @@ const LeftSection: React.FC<Props> = ({
       {
         icon: "setting",
         id: "setting",
-        title: t("Project settings"),
+        title: t("Settings"),
         path: currentProject?.id
           ? `/settings/projects/${currentProject.id}`
+          : ""
+      },
+      {
+        id: "assets",
+        title: t("Assets"),
+        icon: "file" as const,
+        path: currentProject?.id
+          ? `/settings/projects/${currentProject.id}/assets`
           : ""
       },
       {
@@ -76,7 +84,7 @@ const LeftSection: React.FC<Props> = ({
             icon="editor"
             appearance="simple"
             size="large"
-              tooltipText={t("Editor")}
+            tooltipText={t("Editor")}
           />
         </StyledLink>
       )}
