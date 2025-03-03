@@ -343,6 +343,7 @@ export default function Crust({
       <Infobox
         key={featuredInfobox?.featureId}
         infobox={featuredInfobox}
+        layer={selectedLayer?.layer?.layer}
         installableInfoboxBlocks={installableInfoboxBlocks}
         isEditable={!!inEditor && !featuredInfobox?.readOnly}
         renderBlock={renderBlock}
