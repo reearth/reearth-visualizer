@@ -4,9 +4,10 @@ import {
   PopupMenu,
   PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
+import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 
 import { Project, Workspace } from "../types";
@@ -34,6 +35,14 @@ const LeftSection: React.FC<Props> = ({
 }) => {
   const t = useT();
 
+  const { useExportProject: exportProject } = useProjectFetcher();
+
+  const handleExportProject = useCallback(async () => {
+    if (!currentProject?.id) return;
+
+    await exportProject(currentProject.id);
+  }, [exportProject, currentProject?.id]);
+
   const menuItems: PopupMenuItem[] = useMemo(
     () => [
       {
@@ -59,9 +68,15 @@ const LeftSection: React.FC<Props> = ({
         path: currentProject?.id
           ? `/settings/projects/${currentProject.id}/plugins`
           : ""
+      },
+      {
+        icon: "downloadSimple",
+        id: "export",
+        title: t("Export"),
+        onClick: handleExportProject
       }
     ],
-    [currentProject?.id, t]
+    [currentProject?.id, t, handleExportProject]
   );
 
   return (
