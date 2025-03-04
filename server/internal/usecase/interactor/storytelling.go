@@ -847,7 +847,7 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 		}
 	}
 
-	_, extension, err := i.getPlugin(ctx, &inp.PluginID, &inp.ExtensionID)
+	_, extension, err := i.getPlugin(ctx, story.Scene(), &inp.PluginID, &inp.ExtensionID)
 	if err != nil {
 		return nil, nil, nil, -1, err
 	}
@@ -1017,7 +1017,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 				return nil, err
 			}
 			extensionID := id.PluginExtensionID(blockJSON.ExtensionId)
-			_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID)
+			_, extension, err := i.getPlugin(ctx, sceneID, &pluginID, &extensionID)
 			if err != nil {
 				return nil, err
 			}
@@ -1128,12 +1128,13 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID idx.ID[id.Scene]
 	return story, nil
 }
 
-func (i *Storytelling) getPlugin(ctx context.Context, pId *id.PluginID, eId *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
+func (i *Storytelling) getPlugin(ctx context.Context, sId id.SceneID, pId *id.PluginID, eId *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
 	if pId == nil {
 		return nil, nil, nil
 	}
 
-	plg, err := i.pluginRepo.FindByID(ctx, *pId)
+	readableFilter := repo.SceneFilter{Readable: scene.IDList{sId}}
+	plg, err := i.pluginRepo.Filtered(readableFilter).FindByID(ctx, *pId)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, interfaces.ErrPluginNotFound
