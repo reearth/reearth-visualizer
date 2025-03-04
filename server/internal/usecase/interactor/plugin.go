@@ -372,7 +372,12 @@ func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsDat
 	return plgs, pss, nil
 }
 
-func (i *Plugin) ImporPluginFile(ctx context.Context, pid id.PluginID, name string, zipFile *zip.File) error {
+func (i *Plugin) ImporPluginFile(ctx context.Context, newPluginId string, name string, zipFile *zip.File) error {
+
+	pid, err := id.PluginIDFrom(newPluginId)
+	if err != nil {
+		return err
+	}
 
 	readCloser, err := zipFile.Open()
 	if err != nil {

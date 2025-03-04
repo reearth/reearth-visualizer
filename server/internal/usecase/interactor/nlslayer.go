@@ -1032,7 +1032,7 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	return inp.FeatureID, nil
 }
 
-func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (nlslayer.NLSLayerList, map[string]idx.ID[id.NLSLayer], error) {
+func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}, replaceStyleIDs map[string]id.StyleID) (nlslayer.NLSLayerList, map[string]idx.ID[id.NLSLayer], error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, nil, err
@@ -1046,7 +1046,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
 	nlayerIDs := idx.List[id.NLSLayer]{}
-	replaceNLSLayerIDs := make(map[string]idx.ID[id.NLSLayer])
+	replaceNLSLayerIDs := make(map[string]id.NLSLayerID)
 	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
 		newNLSLayerID := id.NewNLSLayerID()
 		nlayerIDs = append(nlayerIDs, newNLSLayerID)
@@ -1072,6 +1072,14 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 							urlVal.Scheme = "https"
 						}
 						data["url"] = urlVal.String()
+					}
+				}
+			}
+
+			if oldId, ok := config["layerStyleId"].(string); ok {
+				for oldId2, newId := range replaceStyleIDs {
+					if oldId == oldId2 {
+						config["layerStyleId"] = newId.String()
 					}
 				}
 			}
