@@ -189,6 +189,7 @@ type GraphQLRequest struct {
 }
 
 func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
+	// RequestDump(requestBody)
 	return e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
@@ -273,6 +274,12 @@ func aligningJSON(t *testing.T, str string) string {
 	strBytes, err := json.Marshal(obj)
 	assert.Nil(t, err)
 	return string(strBytes)
+}
+
+func RequestDump(requestBody GraphQLRequest) {
+	if jsonData, err := json.MarshalIndent(requestBody, "", "  "); err == nil {
+		fmt.Println(string(jsonData))
+	}
 }
 
 func ValueDump(val *httpexpect.Value) {
