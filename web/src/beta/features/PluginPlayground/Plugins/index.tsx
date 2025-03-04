@@ -256,8 +256,7 @@ const PluginListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
   marginLeft: -theme.spacing.smallest,
-  flexGrow: 1,
-  overflow: "hidden"
+  flexGrow: 1
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
